@@ -1,0 +1,2 @@
+module Inferno
+end

@@ -1,0 +1,2 @@
+#!/bin/sh
+yardoc --output-dir docs/yard -m markdown

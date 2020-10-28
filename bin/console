@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require_relative '../config/application'
+
+Inferno::Application.finalize!
+
+binding.pry # rubocop:disable Lint/Debugger

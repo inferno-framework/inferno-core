@@ -1,0 +1,454 @@
+swagger: "2.0"
+info:
+  description: "Inferno JSON API"
+  version: "0.0.1"
+  title: "Inferno JSON API"
+  contact:
+    email: "inferno@groups.mitre.org"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost"
+basePath: "/api"
+tags:
+- name: "Test Suite"
+  description: "A collection of tests"
+- name: "Test Session"
+  description: "An individual testing session"
+- name: "Test Run"
+  description: "An individual test run"
+- name: "Request"
+  description: "Details of HTTP Requests"
+schemes:
+- "http"
+- "https"
+paths:
+  /test_suites:
+    get:
+      tags:
+      - "Test Suite"
+      summary: "List all test suites"
+      description: ""
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/TestSuite"
+  /test_suites/{test_suite_id}:
+    get:
+      tags:
+      - "Test Suite"
+      summary: "Get a single test suite"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_suite_id"
+        description: "ID of the test suite"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/TestSuite"
+        "404":
+          description: "Test suite not found"
+  /test_sessions:
+    post:
+      tags:
+      - "Test Session"
+      summary: "Start a new test session"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - in: "query"
+        type: "string"
+        name: "test_suite_id"
+        description: "ID of the test suite being run in this test session"
+        required: true
+      responses:
+        "201":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/TestSession"
+        "400":
+          description: "Invalid test_suite_id"
+  /test_sessions/{test_session_id}:
+    get:
+      tags:
+      - "Test Session"
+      summary: "Get an existing test session"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_session_id"
+        description: "ID of the test session"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/TestSession"
+        "404":
+          description: "Test session not found"
+  /test_sessions/{test_session_id}/results:
+    get:
+      tags:
+      - "Result"
+      summary: "Get the results for a test session"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_session_id"
+        description: "ID of the test session"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Result"
+        "404":
+          description: "Test session not found"
+  /test_runs:
+    post:
+      tags:
+      - "Test Run"
+      summary: "Execute a suite, group, or test"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Test suite, group, or test and inputs to execute."
+        required: true
+        schema:
+          $ref: "#/definitions/TestRun"
+      responses:
+        "200":
+          description: "Success"
+        "400":
+          description: "Invalid test_group_id, test_suite_id, test_id or inputs"
+  /test_runs/{test_run_id}:
+    get:
+      tags:
+      - "Test Run"
+      summary: "Get an existing test run"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_run_id"
+        description: "ID of the test run"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/TestRun"
+        "404":
+          description: "Test session not found"
+    delete:
+      tags:
+      - "Test Run"
+      summary: "Cancel an existing test run"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_run_id"
+        description: "ID of the test run"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/TestRun"
+        "404":
+          description: "Test session not found"
+#  /test_runs/{test_run_id}/send:
+  /test_runs/{test_run_id}/results:
+    get:
+      tags:
+      - "Result"
+      summary: "Get the results for a test run"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_run_id"
+        description: "ID of the test run"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Result"
+        "404":
+          description: "Test run not found"
+  /request/{request_id}:
+    get:
+      tags:
+      - "Request"
+      summary:
+        "Get the details of a request (and response)"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "request_id"
+        description: "ID of the request"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Request"
+        "404":
+          description: "HTTP request not found"
+definitions:
+  TestSession:
+    type: "object"
+    required:
+    - "test_suite_id"
+    properties:
+      id:
+        type: "string"
+        readOnly: true
+      test_suite:
+        $ref: "#/definitions/TestSuite"
+      test_run:
+        $ref: "#/definitions/TestRun"
+      results:
+        readOnly: true
+        type: "array"
+        items:
+          $ref: "#/definitions/Result"
+  TestRun:
+    type: "object"
+    required:
+    - "test_session_id"
+    properties:
+      id:
+        type: "string"
+        readOnly: true
+      test_session_id:
+        type: "string"
+      test_suite_id:
+        type: "string"
+      test_group_id:
+        type: "string"
+      test_id:
+        type: "string"
+      inputs:
+        type: "array"
+        items:
+          $ref: "#/definitions/Input"
+      results:
+        type: "array"
+        readOnly: true
+        items:
+          $ref: "#/definitions/Result"
+  Result:
+    type: "object"
+    required:
+    - "id"
+    properties:
+      id:
+        type: "string"
+      test_suite_id:
+        type: "string"
+      test_group_id:
+        type: "string"
+      test_id:
+        type: "string"
+      result:
+        type: "string"
+        enum: [pass, fail, skip, omit, error, running, wait, cancel]
+      test_run_id:
+        type: "string"
+      result_message:
+        type: "string"
+      messages:
+        type: "array"
+        items:
+          $ref: "#/definitions/Message"
+      requests:
+        type: "array"
+        items:
+          $ref: "#/definitions/RequestSummary"
+  RequestSummary:
+    type: "object"
+    required:
+    - "request_id"
+    - "method"
+    - "url"
+    - "direction"
+    properties:
+      request_id:
+        type: "string"
+      method:
+        type: "string"
+      url:
+        type: "string"
+      direction:
+        type: "string"
+        enum: ["in", "out"]
+      status:
+        type: "integer"
+  Request:
+    type: "object"
+    required:
+    - "id"
+    - "timestamp"
+    - "method"
+    - "url"
+    - "direction"
+    properties:
+      id:
+        type: "string"
+      timestamp:
+        type: "string"
+      verb:
+        type: "string"
+      url:
+        type: "string"
+      direction:
+        type: "string"
+        enum: ["in", "out"]
+      status:
+        type: "integer"
+      request_headers:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            name: 
+              type: "string"
+            value: 
+              type: "string"
+      response_headers:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            name: 
+              type: "string"
+            value: 
+              type: "string"
+      request_body:
+        type: "string"
+      response_body:
+        type: "string"
+  Message:
+    type: "object"
+    required:
+    - "type"
+    - "message"
+    properties:
+      type:
+        type: "string"
+        enum: [error, warning, info]
+      message:
+        type: "string"
+  TestSuite:
+    type: "object"
+    required:
+    - "id"
+    - "name"
+    properties:
+      id:
+        type: "string"
+      name:
+        type: "string"
+      test_groups:
+        type: "array"
+        items:
+          $ref: "#/definitions/TestGroup"
+      inputs:
+        type: "array"
+        items:
+          $ref: "#/definitions/Input"
+  TestGroup:
+    type: "object"
+    required:
+    - "id"
+    properties:
+      id:
+        type: "string"
+      name:
+        type: "string"
+      description:
+        type: "string"
+      run_as_group:
+        type: "boolean"
+      test_groups:
+        type: "array"
+        items:
+          $ref: "#/definitions/TestGroup"
+      tests:
+        type: "array"
+        items:
+          $ref: "#/definitions/Test"
+      inputs:
+        type: "array"
+        items:
+          $ref: "#/definitions/Input"
+  Test:
+    type: "object"
+    required:
+    - "id"
+    - "name"
+    properties:
+      id:
+        type: "string"
+      name:
+        type: "string"
+      description:
+        type: "string"
+      inputs:
+        type: "array"
+        items:
+          $ref: "#/definitions/Input"
+  Input:
+    type: "object"
+    required:
+    - "name"
+    properties:
+      name:
+        type: "string"
+      value:
+        type: "string"
+      label:
+        type: "string"
+        readOnly: true
+      description:
+        type: "string"
+        readOnly: true
+      required:
+        type: "boolean"
+        readOnly: true
