@@ -59,6 +59,20 @@ module Inferno
         @fhir_clients ||= {}
       end
 
+      # Perform a GET to a FHIR server.
+      #
+      # @param path [String]
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @param _options [Hash] TODO
+      # @return [Inferno::Entities::Request]
+      def fhir_get(path, client: :default, name: nil, **_options)
+        store_request('outgoing', name) do
+          fhir_client(client).get(path)
+        end
+      end
+
       # Perform a FHIR read interaction.
       #
       # @param resource_type [String, Symbol, Class]
