@@ -12,6 +12,16 @@ module IPS
         This test will verify that Device resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Device-observer-uv-ips'
+      makes_request :device_observer
+
+      run do
+        fhir_read(:device, device_id, name: :device_observer)
+
+        assert_response_status(200)
+        assert_resource_type(:device)
+        assert resource.id == device_id,
+               "Requested resource with id #{device_id}, received resource with id #{resource.id}"
+      end
     end
 
     test do
@@ -20,6 +30,11 @@ module IPS
         This test will validate that the Device resource returned from the server matches the Device (performer, observer) profile.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Device-observer-uv-ips'
+      uses_request :device_observer
+
+      run do
+        assert_valid_resource(profile_url: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Device-observer-uv-ips')
+      end
     end
   end
 end

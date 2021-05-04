@@ -5,6 +5,11 @@ module IPS
 
     group do
       title 'IPS Profiles'
+      input :url
+
+      fhir_client do
+        url :url
+      end
 
       group from: :ips_observation_alcohol_use
       group from: :ips_practitioner

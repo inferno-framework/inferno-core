@@ -12,6 +12,16 @@ module IPS
         This test will verify that Condition resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips'
+      makes_request :condition
+
+      run do
+        fhir_read(:condition, condition_id, name: :condition)
+
+        assert_response_status(200)
+        assert_resource_type(:condition)
+        assert resource.id == condition_id,
+               "Requested resource with id #{condition_id}, received resource with id #{resource.id}"
+      end
     end
 
     test do
@@ -20,6 +30,11 @@ module IPS
         This test will validate that the Condition resource returned from the server matches the Condition (IPS) profile.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips'
+      uses_request :condition
+
+      run do
+        assert_valid_resource(profile_url: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips')
+      end
     end
   end
 end
