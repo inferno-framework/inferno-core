@@ -15,7 +15,7 @@ module IPS
         title 'IPS Operations'
 
         group from: :ips_document_operation
-        # group from: :ips_summary_operation
+        group from: :ips_summary_operation
       end
 
       group do
