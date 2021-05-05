@@ -73,6 +73,15 @@ module Inferno
         end
       end
 
+      # Fetch the capability statement.
+      #
+      # @return [Inferno::Entities::Request]
+      def fhir_get_capability_statement(client: :default, name: nil, **_options)
+        store_request('outgoing', name) do
+          fhir_client(client).conformance_statement
+        end
+      end
+
       # Perform a FHIR read interaction.
       #
       # @param resource_type [String, Symbol, Class]

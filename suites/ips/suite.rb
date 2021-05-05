@@ -12,6 +12,13 @@ module IPS
       end
 
       group do
+        title 'IPS Operations'
+
+        group from: :ips_document_operation
+        # group from: :ips_summary_operation
+      end
+
+      group do
         title 'IPS Profiles'
 
         group from: :ips_observation_alcohol_use
