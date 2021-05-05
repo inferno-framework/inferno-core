@@ -73,6 +73,20 @@ module Inferno
         end
       end
 
+      # Perform a POST to a FHIR server.
+      #
+      # @param path [String]
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @param _options [Hash] TODO
+      # @return [Inferno::Entities::Request]
+      def fhir_post(path, body: nil, client: :default, name: nil, **_options)
+        store_request('outgoing', name) do
+          fhir_client(client).post(path)
+        end
+      end
+
       # Fetch the capability statement.
       #
       # @return [Inferno::Entities::Request]
