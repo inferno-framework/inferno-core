@@ -10,18 +10,22 @@ const updateRequestMock = jest.fn();
 const test1: Test = {
   id: 'test1',
   title: 'FHIR server makes SMART configuration available from well-known endpoint',
+  inputs: [],
 };
 const test2: Test = {
   id: 'test2',
   title: 'Well-known configuration contains required fields',
+  inputs: [],
 };
 const test3: Test = {
   id: 'test3',
   title: 'Client registration endpoint secured by transport layer security',
+  inputs: [],
 };
 const test4: Test = {
   id: 'test4',
   title: 'Client registration endpoint accepts POST messages',
+  inputs: [],
 };
 
 const testList1 = [test1, test2];

@@ -43,6 +43,7 @@ export interface Test {
   id: string;
   title: string;
   result?: Result;
+  inputs: TestInput[];
 }
 
 export interface TestGroup {
