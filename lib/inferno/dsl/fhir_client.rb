@@ -59,7 +59,10 @@ module Inferno
         @fhir_clients ||= {}
       end
 
-      # Perform a GET to a FHIR server.
+      # Perform a FHIR operation
+      #
+      # @note This is a placeholder method until the FHIR::Client supports
+      #   general operations
       #
       # @param path [String]
       # @param client [Symbol]
@@ -67,32 +70,24 @@ module Inferno
       #   other tests
       # @param _options [Hash] TODO
       # @return [Inferno::Entities::Request]
-      def fhir_get(path, client: :default, name: nil, **_options)
+      def fhir_operation(path, client: :default, name: nil, **_options)
         store_request('outgoing', name) do
-          fhir_client(client).get(path)
-        end
-      end
-
-      # Perform a POST to a FHIR server.
-      #
-      # @param path [String]
-      # @param client [Symbol]
-      # @param name [Symbol] Name for this request to allow it to be used by
-      #   other tests
-      # @param _options [Hash] TODO
-      # @return [Inferno::Entities::Request]
-      def fhir_post(path, body: nil, client: :default, name: nil, **_options)
-        store_request('outgoing', name) do
-          fhir_client(client).post(path)
+          headers = fhir_client(client).fhir_headers
+          fhir_client(client).send(:post, path, nil, headers)
         end
       end
 
       # Fetch the capability statement.
       #
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @param _options [Hash] TODO
       # @return [Inferno::Entities::Request]
       def fhir_get_capability_statement(client: :default, name: nil, **_options)
         store_request('outgoing', name) do
           fhir_client(client).conformance_statement
+          fhir_client(client).reply
         end
       end
 

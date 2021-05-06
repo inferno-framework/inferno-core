@@ -63,7 +63,7 @@ module IPS
           references_in_composition << value
         end
 
-        fhir_get("Composition/#{composition.id}/$document?persist=true", name: :document_operation)
+        fhir_operation("Composition/#{composition.id}/$document?persist=true", name: :document_operation)
         assert_response_status(200)
         assert_resource_type(:bundle)
 

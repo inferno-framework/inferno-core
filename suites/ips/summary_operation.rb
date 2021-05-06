@@ -45,7 +45,7 @@ module IPS
       makes_request :summary_operation
 
       run do
-        fhir_post("Patient/#{@instance.patient_id}/$summary", name: :summary_operation)
+        fhir_operation("Patient/#{@instance.patient_id}/$summary", name: :summary_operation)
         assert_response_status(200)
         assert_resource_type(:bundle)
         assert_valid_resource(profile: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips')
