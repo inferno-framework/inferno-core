@@ -3,6 +3,8 @@ module IPS
     title 'International Patient Summary (IPS)'
     description 'International Patient Summary (IPS)'
 
+    id 'ips'
+
     group do
       title 'IPS Profiles'
       input :url
