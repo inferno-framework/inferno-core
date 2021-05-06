@@ -32,6 +32,9 @@ function getInputsRecursive(testGroup: TestGroup): TestInput[] {
   testGroup.test_groups.forEach((subGroup) => {
     inputs = inputs.concat(getInputsRecursive(subGroup));
   });
+  testGroup.tests.forEach((test) => {
+    inputs = inputs.concat(test.inputs);
+  });
   return inputs;
 }
 
