@@ -11,6 +11,7 @@ module Covid19VCI
 
     test do
       title 'Server advertises health card support in its SMART configuration'
+      id 'vci-fhir-01'
 
       run do
         get("#{base_fhir_url}/.well-known/smart-configuration")
@@ -27,6 +28,7 @@ module Covid19VCI
 
     test do
       title 'Server advertises $health-card-issue operation support in its CapabilityStatement'
+      id 'vci-fhir-02'
 
       run do
         fhir_get_capability_statement
@@ -41,12 +43,15 @@ module Covid19VCI
 
         operation_defined = operations.any? { |operation| operation.name == 'health-cards-issue' }
 
-        assert operation_defined, 'Server CapabilityStatement did not declare support for $health-cards-issue operation in Composition resource.'
+        assert operation_defined,
+               'Server CapabilityStatement did not declare support for $health-cards-issue operation ' \
+               'in Composition resource.'
       end
     end
 
     test do
       title 'Server returns a health card from the $health-card-issue operation'
+      id 'vci-fhir-03'
       output :credential_strings
 
       run do
@@ -74,6 +79,14 @@ module Covid19VCI
 
         pass "#{count} verifiable #{'credential'.pluralize(count)} were received"
       end
+    end
+
+    test from: :vc_headers do
+      id 'vci-fhir-04'
+    end
+
+    test from: :vc_public_key_retrieval do
+      id 'vci-fhir-05'
     end
   end
 end
