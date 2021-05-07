@@ -29,7 +29,7 @@ module IPS
             ['document', 'composition-document'].include?(operation.name.downcase)
         end
 
-        assert operation_defined, 'Server CapabilityStatement did not declare support for $doucment operation in Composition resource.'
+        assert operation_defined, 'Server CapabilityStatement did not declare support for $document operation in Composition resource.'
       end
     end
 
@@ -49,8 +49,6 @@ module IPS
         assert_resource_type(:composition)
         assert resource.id == composition_id,
                "Requested resource with id #{composition_id}, received resource with id #{resource.id}"
-
-        skip_if resource.blank?, 'No resource found from Read test'
 
         assert_valid_resource(profile_url: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips')
 
@@ -80,8 +78,8 @@ module IPS
             end
 
         assert missing_resources.empty?,
-               'The following resources were missing in the response from the document' \
-               "operation: #{missing_resources.map(&:to_s).join(',')}"
+               'The following resources were missing in the response from the document ' \
+               "operation: #{missing_resources.map(&:reference).join(',')}"
       end
     end
 
@@ -96,6 +94,8 @@ module IPS
       uses_request :document_operation
 
       run do
+        skip_if !resource.is_a?(FHIR::Bundle), 'No Bundle returned from document operation'
+
         assert_valid_resource(profile_url: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips')
       end
     end
@@ -109,7 +109,7 @@ module IPS
       uses_request :document_operation
 
       run do
-        skip_if resource.blank?, 'No bundle returned from document operation'
+        skip_if !resource.is_a?(FHIR::Bundle), 'No Bundle returned from document operation'
 
         assert resource.entry.length.positive?, 'Bundle has no entries'
 
@@ -129,7 +129,7 @@ module IPS
       uses_request :document_operation
 
       run do
-        skip_if resource.blank?, 'No bundle returned from document operation'
+        skip_if !resource.is_a?(FHIR::Bundle), 'No Bundle returned from document operation'
 
         resources_present = resource.entry.any? { |r| r.resource.is_a?(FHIR::MedicationStatement) }
 
@@ -152,7 +152,7 @@ module IPS
       uses_request :document_operation
 
       run do
-        skip_if resource.blank?, 'No bundle returned from document operation'
+        skip_if !resource.is_a?(FHIR::Bundle), 'No Bundle returned from document operation'
 
         resources_present = resource.entry.any? { |r| r.resource.is_a?(FHIR::AllergyIntolerance) }
 
@@ -175,7 +175,7 @@ module IPS
       uses_request :document_operation
 
       run do
-        skip_if resource.blank?, 'No bundle returned from document operation'
+        skip_if !resource.is_a?(FHIR::Bundle), 'No Bundle returned from document operation'
 
         resources_present = resource.entry.any? { |r| r.resource.is_a?(FHIR::Condition) }
 
@@ -183,7 +183,7 @@ module IPS
 
         assert_valid_bundle_entries(
           resource_types: {
-            allergy_intolerance: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips'
+            condition: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips'
           }
         )
       end
