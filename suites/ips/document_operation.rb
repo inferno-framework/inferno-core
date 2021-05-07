@@ -21,7 +21,7 @@ module IPS
         operations = resource.rest&.flat_map do |rest|
           rest.resource
             &.select { |r| r.type == 'Composition' && r.respond_to?(:operation) }
-            &.map(&:operation)
+            &.flat_map(&:operation)
         end&.compact
 
         operation_defined = operations.any? do |operation|
@@ -96,7 +96,7 @@ module IPS
       uses_request :document_operation
 
       run do
-        assert_valid_resource(profile: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips')
+        assert_valid_resource(profile_url: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips')
       end
     end
 
@@ -116,7 +116,7 @@ module IPS
         entry = resource.entry.first
 
         assert entry.resource.is_a?(FHIR::Composition), 'The first entry in the Bundle is not a Composition'
-        assert_valid_resource(resource: entry, profile: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips')
+        assert_valid_resource(resource: entry, profile_url: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips')
       end
     end
 
