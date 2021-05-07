@@ -65,15 +65,16 @@ module Inferno
       #   general operations
       #
       # @param path [String]
+      # @param body [FHIR::Parameters]
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @param _options [Hash] TODO
       # @return [Inferno::Entities::Request]
-      def fhir_operation(path, client: :default, name: nil, **_options)
+      def fhir_operation(path, body: nil, client: :default, name: nil, **_options)
         store_request('outgoing', name) do
           headers = fhir_client(client).fhir_headers
-          fhir_client(client).send(:post, path, nil, headers)
+          fhir_client(client).send(:post, path, body, headers)
         end
       end
 

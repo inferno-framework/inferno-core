@@ -5,10 +5,7 @@ module Covid19VCI
     id 'c19-vci'
     title 'COVID-19 Vaccine Credential'
 
-    # group do
-    #   id 'vci-fhir-download'
-    # end
-
     group from: :vci_file_download
+    group from: :vci_fhir_operation
   end
 end
