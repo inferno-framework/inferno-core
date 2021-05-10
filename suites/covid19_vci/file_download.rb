@@ -92,5 +92,9 @@ module Covid19VCI
     test from: :vc_signature_verification do
       id 'vci-file-06'
     end
+
+    test from: :vc_payload_verification do
+      id 'vci-file-07'
+    end
   end
 end

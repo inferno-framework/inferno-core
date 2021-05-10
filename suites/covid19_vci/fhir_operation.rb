@@ -88,5 +88,9 @@ module Covid19VCI
     test from: :vc_signature_verification do
       id 'vci-fhir-05'
     end
+
+    test from: :vc_payload_verification do
+      id 'vci-fhir-06'
+    end
   end
 end
