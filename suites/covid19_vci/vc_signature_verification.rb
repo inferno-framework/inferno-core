@@ -1,9 +1,9 @@
 module Covid19VCI
-  class VCPublicKeyRetrieval < Inferno::Test
-    title 'Public key can be retrieved'
+  class VCSignatureVerification < Inferno::Test
+    title 'Verifiable Credential signatures can be verified'
     input :credential_strings
 
-    id :vc_public_key_retrieval
+    id :vc_signature_verification
 
     run do
       skip_if credential_strings.blank?, 'No Verifiable Credentials received'
@@ -35,16 +35,20 @@ module Covid19VCI
         key_set = JSON.parse(response[:body])
 
         public_key = key_set['keys'].find { |key| key['kid'] == jws.kid }
+        key_object = HealthCards::Key.from_jwk(public_key)
 
         assert public_key.present?, "Key set did not contain a key with a `kid` of #{jws.kid}"
         assert public_key['kty'] == 'EC', "Key had a `kty` value of `#{public_key['kty']}` instead of `EC`"
         assert public_key['use'] == 'sig', "Key had a `use` value of `#{public_key['use']}` instead of `sig`"
         assert public_key['alg'] == 'ES256', "Key had an `alg` value of `#{public_key['alg']}` instead of `ES256`"
         assert public_key['crv'] == 'P-256', "Key had a `crv` value of `#{public_key['crv']}` instead of `P-256`"
-        # Shall have x and y equal to base64url-encoded values...
         assert !public_key.include?('d'), 'Key SHALL NOT have the private key parameter `d`'
-      # Shall have kid equal to sha
+        assert public_key['kid'] == key_object.kid,
+               "'kid' SHALL be equal to the base64url-encoded SHA-256 JWK Thumbprint of the key. " \
+               "Received: '#{public_key['kid']}', Expected: '#{key_object.kid}'"
 
+        verifier = HealthCards::Verifier.new(keys: key_object, resolve_keys: false)
+        assert verifier.verify(jws), "JWS signature invalid"
       rescue StandardError => e
         assert false, "Error decoding credential: #{e.message}"
       end

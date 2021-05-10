@@ -27,7 +27,7 @@ module Covid19VCI
     end
 
     test do
-      title 'Server advertises $health-card-issue operation support in its CapabilityStatement'
+      title 'Server advertises $health-cards-issue operation support in its CapabilityStatement'
       id 'vci-fhir-02'
 
       run do
@@ -50,7 +50,7 @@ module Covid19VCI
     end
 
     test do
-      title 'Server returns a health card from the $health-card-issue operation'
+      title 'Server returns a health card from the $health-cards-issue operation'
       id 'vci-fhir-03'
       output :credential_strings
 
@@ -63,7 +63,7 @@ module Covid19VCI
             }
           ]
         )
-        fhir_operation("/Patient/#{patient_id}/$health-card-issue", request_params)
+        fhir_operation("/Patient/#{patient_id}/$health-cards-issue", body: request_params)
 
         assert_response_status((200..207).to_a)
         assert_resource_type(:parameters)
@@ -71,13 +71,13 @@ module Covid19VCI
         hc_parameters = resource.parameter.select { |parameter| parameter.name == 'verifiableCredential' }
 
         assert hc_parameters.present?, 'No COVID-19 health cards were returned'
-        credential_strings = hc_paramameters.map(&:value).join(',')
+        credential_strings = hc_parameters.map(&:value).join(',')
 
         output credential_strings: credential_strings
 
         count = hc_parameters.length
 
-        pass "#{count} verifiable #{'credential'.pluralize(count)} were received"
+        pass "#{count} verifiable #{'credential'.pluralize(count)} received"
       end
     end
 
@@ -85,7 +85,7 @@ module Covid19VCI
       id 'vci-fhir-04'
     end
 
-    test from: :vc_public_key_retrieval do
+    test from: :vc_signature_verification do
       id 'vci-fhir-05'
     end
   end

@@ -74,6 +74,7 @@ module Inferno
       def fhir_operation(path, body: nil, client: :default, name: nil, **_options)
         store_request('outgoing', name) do
           headers = fhir_client(client).fhir_headers
+          headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
           fhir_client(client).send(:post, path, body, headers)
         end
       end

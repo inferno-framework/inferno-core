@@ -89,7 +89,7 @@ module Covid19VCI
       id 'vci-file-05'
     end
 
-    test from: :vc_public_key_retrieval do
+    test from: :vc_signature_verification do
       id 'vci-file-06'
     end
   end
