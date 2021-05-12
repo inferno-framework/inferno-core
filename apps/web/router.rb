@@ -1,6 +1,8 @@
+require 'erb'
+
 module Inferno
   module Web
-    client_page = File.read("#{Inferno::Application.root}/public/index.html")
+    client_page = ERB.new(File.read("#{Inferno::Application.root}/public/index.html.erb")).result
     Router = Hanami::Router.new(namespace: Inferno::Web::Controllers) do
       namespace 'api' do
         resources 'test_runs', only: [:create, :show] do

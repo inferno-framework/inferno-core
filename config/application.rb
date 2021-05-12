@@ -13,6 +13,8 @@ module Inferno
       config.auto_register = ['lib', 'apps']
     end
 
+    Application.register('js_host', ENV.fetch('JS_HOST', ''))
+
     load_paths!('lib', 'apps')
   end
 
