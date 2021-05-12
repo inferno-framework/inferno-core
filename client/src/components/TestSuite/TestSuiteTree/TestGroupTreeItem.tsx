@@ -1,17 +1,16 @@
 import React, { FC, MouseEvent } from 'react';
-import { TestGroup, RunnableType, Test } from 'models/testSuiteModels';
+import { TestGroup, RunnableType } from 'models/testSuiteModels';
 import TreeItem from '@material-ui/lab/TreeItem';
 import TreeItemLabel from './TreeItemLabel';
 
 export interface TestGroupTreeItemProps extends TestGroup {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
-  onLabelClick: (event: MouseEvent<Element>, id: string, type: RunnableType) => void;
+  onLabelClick: (event: MouseEvent<Element>, id: string) => void;
 }
 
 const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
   title,
   id,
-  tests,
   test_groups,
   result,
   runTests,
@@ -27,25 +26,6 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
         key={`ti-${testGroup.id}`}
       ></TestGroupTreeItem>
     ));
-  } else if (tests?.length > 0) {
-    sublist = tests.map((test: Test) => {
-      return (
-        <TreeItem
-          nodeId={test.id}
-          label={
-            <TreeItemLabel
-              id={test.id}
-              title={test.title}
-              runTests={runTests}
-              result={test.result}
-              runnableType={RunnableType.Test}
-            />
-          }
-          onLabelClick={(event) => onLabelClick(event, id, RunnableType.TestGroup)}
-          key={`ti-${test.id}`}
-        />
-      );
-    });
   }
   return (
     <TreeItem
@@ -59,7 +39,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
           runnableType={RunnableType.TestGroup}
         />
       }
-      onLabelClick={(event) => onLabelClick(event, id, RunnableType.TestGroup)}
+      onLabelClick={(event) => onLabelClick(event, id)}
     >
       {sublist}
     </TreeItem>

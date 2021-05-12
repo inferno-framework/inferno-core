@@ -9,7 +9,7 @@ export default makeStyles((theme: Theme) => ({
       visibility: 'visible',
     },
   },
-  labelTitle: {
+  labelText: {
     flexGrow: 1,
   },
   labelRunButton: {
@@ -19,10 +19,15 @@ export default makeStyles((theme: Theme) => ({
     visibility: 'hidden',
   },
   testSuiteTreePanel: {
-    flexGrow: 1,
     height: 'fit-content',
+    width: '400px',
   },
-  testSuiteTreeCard: {
-    width: '500px',
+  treeRoot: {
+    '& $labelText': {
+      fontWeight: 600,
+    },
+    '& .MuiTreeItem-iconContainer': {
+      display: 'none',
+    },
   },
 }));

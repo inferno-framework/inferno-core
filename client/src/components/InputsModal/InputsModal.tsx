@@ -81,7 +81,7 @@ const InputsModal: FC<InputsModalProps> = ({
     );
   });
   return (
-    <Dialog open={modalVisible}>
+    <Dialog open={modalVisible} onClose={() => hideModal()}>
       <DialogTitle>Test Inputs</DialogTitle>
       <DialogContent>
         <DialogContentText>

@@ -3,7 +3,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 export default makeStyles((theme: Theme) => ({
   header: {
     color: theme.palette.primary.main,
-    height: '5em',
+    height: '4em',
     padding: '0.25em 0.25em',
     display: 'flex',
     alignItems: 'center',
@@ -11,6 +11,6 @@ export default makeStyles((theme: Theme) => ({
   },
   logo: {
     objectFit: 'contain',
-    height: '4em',
+    height: '3em',
   },
 }));

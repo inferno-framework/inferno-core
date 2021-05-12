@@ -1,8 +1,8 @@
 import { TestSuite } from 'models/testSuiteModels';
 
 export const mockedTestSuitesReturnValue: TestSuite[] = [
-  { id: 'DemoIG_STU1::DemoSuite', title: 'Demonstration Suite' },
-  { id: 'infra_test', title: 'Infrastructure Test' },
+  { id: 'DemoIG_STU1::DemoSuite', title: 'Demonstration Suite', description: '' },
+  { id: 'infra_test', title: 'Infrastructure Test', description: '' },
 ];
 
 export const mockedPostTestSuiteResponse = {

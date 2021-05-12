@@ -1,46 +1,43 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { IconButton, ListItem, ListItemSecondaryAction, ListItemText } from '@material-ui/core';
+import {
+  IconButton,
+  Link,
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+} from '@material-ui/core';
 import { RunnableType, TestGroup } from 'models/testSuiteModels';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-import { getIconFromResult } from '../TestSuiteUtilities';
+import FolderIcon from '@material-ui/icons/Folder';
+import ResultIcon from './ResultIcon';
 
 interface TestGroupListItemProps extends TestGroup {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
-  setSelectedRunnable: (id: string, type: RunnableType) => void;
-  alternateRow: boolean;
 }
 
-const TestGroupListItem: FC<TestGroupListItemProps> = ({
-  title,
-  result,
-  id,
-  alternateRow,
-  runTests,
-  setSelectedRunnable,
-}) => {
+const TestGroupListItem: FC<TestGroupListItemProps> = ({ title, result, id, runTests }) => {
   const styles = useStyles();
 
   return (
-    <ListItem className={alternateRow ? styles.testListItemAlternateRow : ''}>
+    <ListItem className={styles.listItem}>
+      <ListItemIcon>
+        <FolderIcon />
+      </ListItemIcon>
       <ListItemText
         primary={
-          <span
-            onClick={(event) => {
-              event.stopPropagation();
-              setSelectedRunnable(id, RunnableType.TestGroup);
-            }}
-            className={styles.clickableText}
-          >
+          <Link color="inherit" href={`#${id}`}>
             {title}
-          </span>
+          </Link>
         }
         secondary={result?.result_message}
       />
-      <div className={styles.testIcon}>{getIconFromResult(result)}</div>
+      <div className={styles.testIcon}>{<ResultIcon result={result} />}</div>
       <ListItemSecondaryAction>
         <IconButton
           edge="end"
+          size="small"
           onClick={() => {
             runTests(RunnableType.TestGroup, id);
           }}

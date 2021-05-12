@@ -47,8 +47,8 @@ const LandingPage: FC<LandingPageProps> = ({ presets }) => {
 
   function createTestSession(): void {
     postTestSessions(testSuiteChosen)
-      .then((testSession: TestSession) => {
-        if (testSession.test_suite) {
+      .then((testSession: TestSession | null) => {
+        if (testSession && testSession.test_suite) {
           history.push('test_sessions/' + testSession.id);
         }
       })

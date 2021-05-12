@@ -6,7 +6,7 @@ module Inferno
 
         # TODO: fill out test group
         field :title
-        # field :description
+        field :description
         # field :run_as_group
 
         association :groups, name: :test_groups, blueprint: TestGroup

@@ -1,46 +1,55 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { TestGroup, RunnableType, TestSuite, Request } from 'models/testSuiteModels';
-import TestSuiteDetails from './TestSuiteDetails';
-import TestGroupDetails from './TestGroupDetails';
+import { TestGroup, RunnableType, TestSuite, Request, Test } from 'models/testSuiteModels';
+import TestGroupListItem from './TestGroupListItem';
+import TestListItem from './TestListItem/TestListItem';
+import DescriptionCard from './DescriptionCard';
+import TestGroupCard from './TestGroupCard';
 
 interface TestSuiteDetailsPanelProps {
-  runnableType: RunnableType;
   runnable: TestSuite | TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
-  setSelectedRunnable: (id: string, type: RunnableType) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
 }
 
 const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
-  runnableType,
   runnable,
   runTests,
-  setSelectedRunnable,
   updateRequest,
 }) => {
   const styles = useStyles();
-  let runnableDetails: JSX.Element;
-  if (runnableType == RunnableType.TestSuite) {
-    runnableDetails = (
-      <TestSuiteDetails
-        {...(runnable as TestSuite)}
-        runTests={runTests}
-        setSelectedRunnable={setSelectedRunnable}
-        updateRequest={updateRequest}
-      />
-    );
-  } else {
-    runnableDetails = (
-      <TestGroupDetails
-        {...(runnable as TestGroup)}
-        runTests={runTests}
-        setSelectedRunnable={setSelectedRunnable}
-        updateRequest={updateRequest}
-      />
-    );
+
+  let listItems: JSX.Element[] = [];
+  if (runnable?.test_groups && runnable.test_groups.length > 0) {
+    listItems = runnable.test_groups.map((testGroup: TestGroup) => {
+      return <TestGroupListItem key={`li-${testGroup.id}`} {...testGroup} runTests={runTests} />;
+    });
+  } else if ('tests' in runnable) {
+    listItems = runnable.tests.map((test: Test) => {
+      return (
+        <TestListItem
+          key={`li-${test.id}`}
+          {...test}
+          runTests={runTests}
+          updateRequest={updateRequest}
+        />
+      );
+    });
   }
-  return <div className={styles.testSuiteDetailsPanel}>{runnableDetails}</div>;
+
+  const descriptionCard =
+    runnable.description && runnable.description.length > 0 ? (
+      <DescriptionCard description={runnable.description} />
+    ) : null;
+
+  return (
+    <div className={styles.testSuiteDetailsPanel}>
+      <TestGroupCard runTests={runTests} runnable={runnable}>
+        {listItems}
+      </TestGroupCard>
+      {descriptionCard}
+    </div>
+  );
 };
 
 export default TestSuiteDetailsPanel;
