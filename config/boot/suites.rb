@@ -6,6 +6,10 @@ Inferno::Application.boot(:suites) do
 
     files_to_load = Dir.glob(File.join(Inferno::Application.root, 'suites', '**', '*.rb'))
 
+    if ENV['APP_ENV'] != 'production'
+      files_to_load.concat Dir.glob(File.join(Inferno::Application.root, 'dev_suites', '**', '*.rb'))
+    end
+
     if ENV['APP_ENV'] == 'test'
       files_to_load.concat Dir.glob(File.join(Inferno::Application.root, 'spec', 'fixtures', '**', '*.rb'))
     end
