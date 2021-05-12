@@ -23,7 +23,7 @@ const App: FC = () => {
   return (
     <Router>
       <ThemeProvider>
-        <Header chipLabel="Community" />
+        <Header />
         <Container maxWidth="lg">
           <Switch>
             <Route exact path="/">

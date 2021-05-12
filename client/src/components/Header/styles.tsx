@@ -11,6 +11,6 @@ export default makeStyles((theme: Theme) => ({
   },
   logo: {
     objectFit: 'contain',
-    height: '3em',
+    height: '3.5em',
   },
 }));
