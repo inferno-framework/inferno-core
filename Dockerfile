@@ -3,7 +3,7 @@ FROM ruby:2.7.2
 RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
 RUN apt-get install -y nodejs
 
-ENV INSTALL_PATH=/opt/inferno
+ENV INSTALL_PATH=/opt/inferno/
 ENV APP_ENV=production
 ENV NODE_ENV=production
 RUN mkdir -p $INSTALL_PATH
