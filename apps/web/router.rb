@@ -1,6 +1,9 @@
+require 'erb'
+
 module Inferno
   module Web
-    client_page = File.read("#{Inferno::Application.root}/public/index.html")
+    client_page = ERB.new(File.read(File.join(Inferno::Application.root, 'apps', 'web', 'index.html.erb'))).result
+
     Router = Hanami::Router.new(namespace: Inferno::Web::Controllers) do
       namespace 'api' do
         resources 'test_runs', only: [:create, :show] do
@@ -15,6 +18,7 @@ module Inferno
 
         resources 'requests', only: [:show]
       end
+
       get '/', to: ->(_env) { [200, {}, [client_page]] }
       get '/test_sessions/:id', to: ->(_env) { [200, {}, [client_page]] }
     end
