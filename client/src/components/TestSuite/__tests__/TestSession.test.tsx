@@ -16,6 +16,7 @@ const testSuite: TestSuite = {
       test_groups: [],
       tests: [],
       inputs: [],
+      outputs: [],
     },
   ],
 };

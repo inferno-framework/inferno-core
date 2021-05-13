@@ -39,11 +39,16 @@ export interface TestInput {
   value?: string;
 }
 
+export interface TestOutput {
+  name: string;
+}
+
 export interface Test {
   id: string;
   title: string;
   result?: Result;
   inputs: TestInput[];
+  outputs: TestOutput[];
 }
 
 export interface TestGroup {
@@ -51,6 +56,7 @@ export interface TestGroup {
   title: string;
   test_groups: TestGroup[];
   inputs: TestInput[];
+  outputs: TestOutput[];
   result?: Result;
   tests: Test[];
 }
