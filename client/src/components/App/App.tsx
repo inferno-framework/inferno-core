@@ -7,19 +7,6 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import TestSessionWrapper from 'components/TestSuite/TestSessionWrapper';
 
 const App: FC = () => {
-  const presets = [
-    {
-      name: 'None',
-      fhirServer: '',
-      testSet: '',
-    },
-    {
-      name: 'Demonstration Sequence',
-      fhirServer: 'https://inferno.healthit.gov/reference-server/r4',
-      testSet: 'DemoIG_STU1::DemoSuite',
-    },
-  ];
-
   return (
     <Router>
       <ThemeProvider>
@@ -27,7 +14,7 @@ const App: FC = () => {
         <Container maxWidth="lg">
           <Switch>
             <Route exact path="/">
-              <LandingPage presets={presets} />
+              <LandingPage />
             </Route>
             <Route path="/test_sessions/:test_session_id">
               <TestSessionWrapper />
