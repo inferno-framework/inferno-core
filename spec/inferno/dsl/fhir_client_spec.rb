@@ -45,6 +45,102 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
+  describe '#fhir_operation' do
+    let(:path) { 'abc' }
+    let(:stub_operation_request) do
+      stub_request(:post, "#{base_url}/#{path}")
+        .to_return(status: 200, body: resource.to_json)
+    end
+
+    before do
+      setup_default_client
+      stub_operation_request
+    end
+
+    it 'performs a get' do
+      group.fhir_operation(path)
+
+      expect(stub_operation_request).to have_been_made.once
+    end
+
+    it 'returns an Inferno::Entities::Request' do
+      result = group.fhir_operation(path)
+
+      expect(result).to be_a(Inferno::Entities::Request)
+    end
+
+    it 'adds the request to the list of requests' do
+      result = group.fhir_operation(path)
+
+      expect(group.requests).to include(result)
+      expect(group.request).to eq(result)
+    end
+
+    context 'with the client parameter' do
+      it 'uses that client' do
+        other_url = 'http://www.example.com/fhir/r4'
+        group.fhir_clients[:other_client] = FHIR::Client.new(other_url)
+
+        other_request_stub =
+          stub_request(:post, "#{other_url}/#{path}")
+            .to_return(status: 200, body: resource.to_json)
+
+        group.fhir_operation(path, client: :other_client)
+
+        expect(other_request_stub).to have_been_made
+        expect(stub_operation_request).to_not have_been_made
+      end
+    end
+  end
+
+  describe '#fhir_get_capability_statement' do
+    let(:resource) { FHIR::CapabilityStatement.new(fhirVersion: '4.0.1') }
+    let(:stub_capability_request) do
+      stub_request(:get, "#{base_url}/metadata")
+        .to_return(status: 200, body: resource.to_json)
+    end
+
+    before do
+      setup_default_client
+      stub_capability_request
+    end
+
+    it 'performs a FHIR read' do
+      group.fhir_get_capability_statement
+
+      expect(stub_capability_request).to have_been_made.once
+    end
+
+    it 'returns an Inferno::Entities::Request' do
+      result = group.fhir_get_capability_statement
+
+      expect(result).to be_a(Inferno::Entities::Request)
+    end
+
+    it 'adds the request to the list of requests' do
+      result = group.fhir_get_capability_statement
+
+      expect(group.requests).to include(result)
+      expect(group.request).to eq(result)
+    end
+
+    context 'with the client parameter' do
+      it 'uses that client' do
+        other_url = 'http://www.example.com/fhir/r4'
+        group.fhir_clients[:other_client] = FHIR::Client.new(other_url)
+
+        other_request_stub =
+          stub_request(:get, "#{other_url}/metadata")
+            .to_return(status: 200, body: resource.to_json)
+
+        group.fhir_get_capability_statement(client: :other_client)
+
+        expect(other_request_stub).to have_been_made
+        expect(stub_capability_request).to_not have_been_made
+      end
+    end
+  end
+
   describe '#fhir_read' do
     let(:stub_read_request) do
       stub_request(:get, "#{base_url}/#{resource.resourceType}/#{resource_id}")
