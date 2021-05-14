@@ -4,14 +4,14 @@ module IPS
     description 'Verify support for the server capabilities required by the Condition (IPS) profile.'
     id :ips_condition
 
-    input :condition_id
-
     test do
       title 'Server returns correct Condition resource from the Condition read interaction'
       description %(
         This test will verify that Condition resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Condition-uv-ips'
+
+      input :condition_id
       makes_request :condition
 
       run do

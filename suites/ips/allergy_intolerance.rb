@@ -4,14 +4,14 @@ module IPS
     description 'Verify support for the server capabilities required by the Allergy Intolerance (IPS) profile.'
     id :ips_allergy_intolerance
 
-    input :allergy_intolerance_id
-
     test do
       title 'Server returns correct AllergyIntolerance resource from the AllergyIntolerance read interaction'
       description %(
         This test will verify that AllergyIntolerance resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/AllergyIntolerance-uv-ips'
+
+      input :allergy_intolerance_id
       makes_request :allergy_intolerance
 
       run do

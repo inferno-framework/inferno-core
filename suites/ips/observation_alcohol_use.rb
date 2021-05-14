@@ -4,23 +4,23 @@ module IPS
     description 'Verify support for the server capabilities required by the Observation (SH: alcohol use) profile.'
     id :ips_observation_alcohol_use
 
-    input :observation_id
-
     test do
       title 'Server returns correct Observation resource from the Observation read interaction'
       description %(
         This test will verify that Observation resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Observation-alcoholuse-uv-ips'
+
+      input :observation_alcohol_use_id
       makes_request :observation_alcohol_use
 
       run do
-        fhir_read(:observation, observation_id, name: :observation_alcohol_use)
+        fhir_read(:observation, observation_alcohol_use_id, name: :observation_alcohol_use)
 
         assert_response_status(200)
         assert_resource_type(:observation)
-        assert resource.id == observation_id,
-               "Requested resource with id #{observation_id}, received resource with id #{resource.id}"
+        assert resource.id == observation_alcohol_use_id,
+               "Requested resource with id #{observation_alcohol_use_id}, received resource with id #{resource.id}"
       end
     end
 

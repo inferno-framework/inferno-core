@@ -4,7 +4,7 @@ module IPS
     description 'Verify support for the server capabilities required by the Observation (Pregnancy: status) profile.'
     id :ips_observation_pregnancy_status
 
-    input :observation_id
+    input :observation_pregnancy_status_id
 
     test do
       title 'Server returns correct Observation resource from the Observation read interaction'
@@ -15,12 +15,12 @@ module IPS
       makes_request :observation_pregnancy_status
 
       run do
-        fhir_read(:observation, observation_id, name: :observation_pregnancy_status)
+        fhir_read(:observation, observation_pregnancy_status_id, name: :observation_pregnancy_status)
 
         assert_response_status(200)
         assert_resource_type(:observation)
-        assert resource.id == observation_id,
-               "Requested resource with id #{observation_id}, received resource with id #{resource.id}"
+        assert resource.id == observation_pregnancy_status_id,
+               "Requested resource with id #{observation_pregnancy_status_id}, received resource with id #{resource.id}"
       end
     end
 

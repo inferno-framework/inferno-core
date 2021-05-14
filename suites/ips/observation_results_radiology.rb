@@ -4,7 +4,7 @@ module IPS
     description 'Verify support for the server capabilities required by the Observation Results: radiology (IPS) profile.'
     id :ips_observation_results_radiology
 
-    input :observation_id
+    input :observation_results_radiology_id
 
     test do
       title 'Server returns correct Observation resource from the Observation read interaction'
@@ -15,12 +15,12 @@ module IPS
       makes_request :observation_radiology
 
       run do
-        fhir_read(:observation, observation_id, name: :observation_radiology)
+        fhir_read(:observation, observation_results_radiology_id, name: :observation_radiology)
 
         assert_response_status(200)
         assert_resource_type(:observation)
-        assert resource.id == observation_id,
-               "Requested resource with id #{observation_id}, received resource with id #{resource.id}"
+        assert resource.id == observation_results_radiology_id,
+               "Requested resource with id #{observation_results_radiology_id}, received resource with id #{resource.id}"
       end
     end
 

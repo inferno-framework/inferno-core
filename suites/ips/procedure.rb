@@ -4,14 +4,14 @@ module IPS
     description 'Verify support for the server capabilities required by the Procedure (IPS) profile.'
     id :ips_procedure
 
-    input :procedure_id
-
     test do
       title 'Server returns correct Procedure resource from the Procedure read interaction'
       description %(
         This test will verify that Procedure resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Procedure-uv-ips'
+
+      input :procedure_id
       makes_request :procedure
 
       run do

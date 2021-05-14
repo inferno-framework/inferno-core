@@ -4,8 +4,6 @@ module IPS
     description 'Verify support for the $document operation required by the Specimen (IPS) profile.'
     id :ips_document_operation
 
-    input :composition_id
-
     test do
       title 'IPS Server declares support for $document operation in CapabilityStatement'
       description %(
@@ -40,6 +38,8 @@ module IPS
         It will verify that all referenced resources in the composition are in the document bundle and that we are able to retrieve the bundle after it's generated.
       )
       # link 'https://www.hl7.org/fhir/composition-operation-document.html'
+
+      input :composition_id
       makes_request :document_operation
 
       run do

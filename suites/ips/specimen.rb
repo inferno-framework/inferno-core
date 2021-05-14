@@ -4,14 +4,14 @@ module IPS
     description 'Verify support for the server capabilities required by the Specimen (IPS) profile.'
     id :ips_specimen
 
-    input :specimen_id
-
     test do
       title 'Server returns correct Specimen resource from the Specimen read interaction'
       description %(
         This test will verify that Specimen resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Specimen-uv-ips'
+
+      input :specimen_id
       makes_request :specimen
 
       run do

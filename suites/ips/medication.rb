@@ -4,14 +4,14 @@ module IPS
     description 'Verify support for the server capabilities required by the Medication (IPS) profile.'
     id :ips_medication
 
-    input :medication_id
-
     test do
       title 'Server returns correct Medication resource from the Medication read interaction'
       description %(
         This test will verify that Medication resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Medication-uv-ips'
+
+      input :medication_id
       makes_request :medication
 
       run do

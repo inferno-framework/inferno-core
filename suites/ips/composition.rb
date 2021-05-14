@@ -4,14 +4,14 @@ module IPS
     description 'Verify support for the server capabilities required by the Composition (IPS) profile.'
     id :ips_composition
 
-    input :composition_id
-
     test do
       title 'Server returns correct Composition resource from the Composition read interaction'
       description %(
         This test will verify that Composition resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips'
+
+      input :composition_id
       makes_request :composition
 
       run do

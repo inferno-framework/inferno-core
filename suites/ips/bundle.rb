@@ -4,14 +4,14 @@ module IPS
     description 'Verify support for the server capabilities required by the Bundle (IPS) profile.'
     id :ips_bundle
 
-    input :bundle_id
-
     test do
       title 'Server returns correct Bundle resource from the Bundle read interaction'
       description %(
         This test will verify that Bundle resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Bundle-uv-ips'
+
+      input :bundle_id
       makes_request :bundle
 
       run do

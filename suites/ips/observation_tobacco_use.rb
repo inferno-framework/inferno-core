@@ -4,7 +4,7 @@ module IPS
     description 'Verify support for the server capabilities required by the Observation (SH: tobacco use) profile.'
     id :ips_observation_tobacco_use
 
-    input :observation_id
+    input :observation_tobacco_use_id
 
     test do
       title 'Server returns correct Observation resource from the Observation read interaction'
@@ -15,12 +15,12 @@ module IPS
       makes_request :observation_tobacco_use
 
       run do
-        fhir_read(:observation, observation_id, name: :observation_tobacco_use)
+        fhir_read(:observation, observation_tobacco_use_id, name: :observation_tobacco_use)
 
         assert_response_status(200)
         assert_resource_type(:observation)
-        assert resource.id == observation_id,
-               "Requested resource with id #{observation_id}, received resource with id #{resource.id}"
+        assert resource.id == observation_tobacco_use_id,
+               "Requested resource with id #{observation_tobacco_use_id}, received resource with id #{resource.id}"
       end
     end
 

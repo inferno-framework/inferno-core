@@ -4,14 +4,14 @@ module IPS
     description 'Verify support for the server capabilities required by the Device (IPS) profile.'
     id :ips_device
 
-    input :device_id
-
     test do
       title 'Server returns correct Device resource from the Device read interaction'
       description %(
         This test will verify that Device resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/Device-uv-ips'
+
+      input :device_id
       makes_request :device
 
       run do

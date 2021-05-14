@@ -4,14 +4,14 @@ module IPS
     description 'Verify support for the server capabilities required by the DiagnosticReport (IPS) profile.'
     id :ips_diagnostic_report
 
-    input :diagnostic_report_id
-
     test do
       title 'Server returns correct DiagnosticReport resource from the DiagnosticReport read interaction'
       description %(
         This test will verify that DiagnosticReport resources can be read from the server.
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition/DiagnosticReport-uv-ips'
+
+      input :diagnostic_report_id
       makes_request :diagnostic_report
 
       run do

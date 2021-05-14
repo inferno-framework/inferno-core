@@ -4,8 +4,6 @@ module IPS
     description 'Verify support for the $summary operation required by the Specimen (IPS) profile.'
     id :ips_summary_operation
 
-    input :patient_id
-
     test do
       title 'IPS Server declares support for $summary operation in CapabilityStatement'
       description %(
