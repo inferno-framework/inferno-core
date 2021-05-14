@@ -19,7 +19,7 @@ gem 'fhir_client'
 gem 'rake'
 gem 'faraday'
 
-gem 'health_cards', path: '../health_cards'
+gem 'health_cards'
 
 group :development, :test do
   gem 'pry'
