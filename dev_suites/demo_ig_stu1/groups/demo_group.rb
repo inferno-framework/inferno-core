@@ -81,6 +81,11 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       end
     end
 
+    test 'uses output example' do
+      input :observation_id
+      run { info "Received the following 'observation_id' variable: '#{observation_id}'" }
+    end
+
     test 'client use examples test' do
       run do
         fhir_read :patient, patient_id, client: :this_client_name

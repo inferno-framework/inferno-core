@@ -125,8 +125,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
       if (testGroup) {
         allInputs = getAllContainedInputs([testGroup]);
       }
+    } else {
+      const test = runnableMap.get(runnableId) as Test;
+      if (test) {
+        allInputs = test.inputs;
+      }
     }
-    console.log(allInputs);
     if (allInputs.length > 0) {
       showInputsModal(runnableType, runnableId, allInputs);
     } else {

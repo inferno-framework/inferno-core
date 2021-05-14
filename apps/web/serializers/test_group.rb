@@ -14,6 +14,9 @@ module Inferno
         field :inputs do |group, _options|
           group.inputs.map { |input| { name: input } }
         end
+        field :outputs do |group, _options|
+          group.outputs.map { |input| { name: input } }
+        end
       end
     end
   end

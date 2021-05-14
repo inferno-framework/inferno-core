@@ -9,18 +9,26 @@ const runTestsMock = jest.fn();
 const test1: Test = {
   id: 'test1',
   title: 'FHIR server makes SMART configuration available from well-known endpoint',
+  inputs: [],
+  outputs: [],
 };
 const test2: Test = {
   id: 'test2',
   title: 'Well-known configuration contains required fields',
+  inputs: [],
+  outputs: [],
 };
 const test3: Test = {
   id: 'test3',
   title: 'Client registration endpoint secured by transport layer security',
+  inputs: [],
+  outputs: [],
 };
 const test4: Test = {
   id: 'test4',
   title: 'Client registration endpoint accepts POST messages',
+  inputs: [],
+  outputs: [],
 };
 
 const testList1 = [test1, test2];
@@ -32,6 +40,7 @@ const sequence1: TestGroup = {
   title: 'SMART on FHIR Discovery',
   id: 'group0',
   inputs: [{ name: 'test input' }],
+  outputs: [],
 };
 
 const sequence2: TestGroup = {
@@ -40,6 +49,7 @@ const sequence2: TestGroup = {
   title: 'Dynamic Registration',
   id: 'group1',
   inputs: [{ name: 'second input' }],
+  outputs: [],
 };
 
 const nestedGroup: TestGroup = {
@@ -48,6 +58,7 @@ const nestedGroup: TestGroup = {
   title: 'nested group',
   id: 'group2',
   inputs: [],
+  outputs: [],
 };
 
 const parentGroup: TestGroup = {
@@ -56,6 +67,7 @@ const parentGroup: TestGroup = {
   title: 'i have a nested group',
   id: 'group3',
   inputs: [],
+  outputs: [],
 };
 
 const testSuiteTreeProps: TestSuiteTreeProps = {
