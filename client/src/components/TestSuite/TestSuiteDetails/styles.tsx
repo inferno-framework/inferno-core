@@ -22,7 +22,7 @@ export default makeStyles((theme: Theme) => ({
     padding: '8px 15px',
     fontWeight: 600,
     fontSize: '16px',
-    border: '1px solid #c8e1ff',
+    borderBottom: '1px solid rgba(0,0,0,.12)',
     backgroundColor: '#f1f8ff',
     borderTopLeftRadius: '4px',
     borderTopRightRadius: '4px',
