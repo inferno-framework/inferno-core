@@ -6,7 +6,7 @@ module IPS
     id 'ips'
 
     group do
-      title 'Restful API Tests'
+      title 'FHIR API Tests'
       input :url
 
       fhir_client do
@@ -14,14 +14,14 @@ module IPS
       end
 
       group do
-        title 'Operations'
+        title 'Perform Operations'
 
         group from: :ips_document_operation
         group from: :ips_summary_operation
       end
 
       group do
-        title 'Read and Validate Profiles'
+        title 'Read and Validate Resources'
 
         group from: :ips_allergy_intolerance
         group from: :ips_bundle
@@ -37,7 +37,7 @@ module IPS
         group from: :ips_medication
         group from: :ips_medication_statement
         group do
-          title 'Observation (IPS) Tests'
+          title 'Observation Resources'
           group from: :ips_observation_alcohol_use
           group from: :ips_observation_pregnancy_status
           group from: :ips_observation_pregnancy_edd
