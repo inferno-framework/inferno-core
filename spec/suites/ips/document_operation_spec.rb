@@ -1,6 +1,6 @@
 RSpec.describe IPS::DocumentOperation do
   let(:suite) { Inferno::Repositories::TestSuites.new.find('ips') }
-  let(:group) { suite.groups.first.groups.first }
+  let(:group) { suite.groups.first.groups.first.groups.first }
   let(:test_session) { repo_create(:test_session, test_suite_id: 'ips') }
   let(:url) { 'http://example.com/fhir' }
   let(:error_outcome) { FHIR::OperationOutcome.new(issue: [{ severity: 'error' }]) }

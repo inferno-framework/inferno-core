@@ -1,6 +1,6 @@
 RSpec.describe IPS::Condition do
   let(:suite) { Inferno::Repositories::TestSuites.new.find('ips') }
-  let(:group) { suite.groups[1].groups[21] }
+  let(:group) { suite.groups.first.groups[1].groups[3] }
   let(:test_session) { repo_create(:test_session, test_suite_id: 'ips') }
   let(:url) { 'http://example.com/fhir' }
   let(:error_outcome) { FHIR::OperationOutcome.new(issue: [{ severity: 'error' }]) }
