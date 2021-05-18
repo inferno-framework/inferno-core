@@ -50,7 +50,9 @@ module IPS
         assert resource.id == composition_id,
                "Requested resource with id #{composition_id}, received resource with id #{resource.id}"
 
-        assert_valid_resource(profile_url: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips')
+        warning do
+          assert_valid_resource(profile_url: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips')
+        end
 
         composition = resource
         references_in_composition = []
