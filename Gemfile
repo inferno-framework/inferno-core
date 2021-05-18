@@ -19,6 +19,8 @@ gem 'fhir_client'
 gem 'rake'
 gem 'faraday'
 
+gem 'health_cards'
+
 group :development, :test do
   gem 'pry'
   gem 'pry-byebug'

@@ -21,10 +21,10 @@ module Inferno
     end
 
     def run_test(runnable, inputs = {}, outputs = {})
-      test_instance = runnable.new(inputs: inputs, test_session_id: test_session.id)
+      test_instance = runnable.new(inputs: inputs.merge(outputs), test_session_id: test_session.id)
 
       result = begin
-        inputs.each do |key, value|
+        inputs.merge(outputs).each do |key, value|
           test_instance.instance_variable_set("@#{key}", value)
         end
         test_instance.load_named_requests

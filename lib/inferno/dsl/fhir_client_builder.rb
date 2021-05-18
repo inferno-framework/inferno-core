@@ -11,6 +11,7 @@ module Inferno
 
         FHIR::Client.new(url).tap do |client|
           client.additional_headers = headers if headers
+          client.default_json
         end
       end
 
