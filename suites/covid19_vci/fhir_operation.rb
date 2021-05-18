@@ -45,7 +45,7 @@ module Covid19VCI
 
         assert operation_defined,
                'Server CapabilityStatement did not declare support for $health-cards-issue operation ' \
-               'in Composition resource.'
+               'on the Patient resource.'
       end
     end
 

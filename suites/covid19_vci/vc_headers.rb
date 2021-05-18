@@ -1,6 +1,6 @@
 module Covid19VCI
   class VCHeaders < Inferno::Test
-    title 'Verifiable Credentials contain the correct headers'
+    title 'Health Cards contain the correct headers'
     input :credential_strings
 
     id :vc_headers

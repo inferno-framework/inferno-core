@@ -1,6 +1,6 @@
 module Covid19VCI
   class VCPayloadVerification < Inferno::Test
-    title 'Verifiable Credential payloads follow the spec requirements'
+    title 'Health Card payloads follow the spec requirements'
     input :credential_strings
 
     id :vc_payload_verification
