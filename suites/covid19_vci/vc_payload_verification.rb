@@ -22,7 +22,7 @@ module Covid19VCI
         assert decompressed_payload.length.positive?, 'Payload compression error. Unable to inflate payload.'
 
         payload_length = decompressed_payload.length
-        health_card = HealthCards::HealthCard.from_jws(credential)
+        health_card = HealthCards::COVIDHealthCard.from_jws(credential)
         health_card_length = health_card.to_json.length
 
         warning do

@@ -24,7 +24,7 @@ module Covid19VCI
         assert_response_status(200)
         assert_valid_json(response[:body])
 
-        cors_header = request.response_header('Control-Allow-Origin')
+        cors_header = request.response_header('Access-Control-Allow-Origin')
         warning do
           assert cors_header.present?,
                  'No CORS header received. Issuers SHALL publish their public keys with CORS enabled'
