@@ -40,9 +40,15 @@ module Covid19VCI
         assert public_key.present?, "Key set did not contain a key with a `kid` of #{jws.kid}"
 
         warning { assert public_key['kty'] == 'EC', "Key had a `kty` value of `#{public_key['kty']}` instead of `EC`" }
-        warning { assert public_key['use'] == 'sig', "Key had a `use` value of `#{public_key['use']}` instead of `sig`" }
-        warning { assert public_key['alg'] == 'ES256', "Key had an `alg` value of `#{public_key['alg']}` instead of `ES256`" }
-        warning { assert public_key['crv'] == 'P-256', "Key had a `crv` value of `#{public_key['crv']}` instead of `P-256`" }
+        warning do
+          assert public_key['use'] == 'sig', "Key had a `use` value of `#{public_key['use']}` instead of `sig`"
+        end
+        warning do
+          assert public_key['alg'] == 'ES256', "Key had an `alg` value of `#{public_key['alg']}` instead of `ES256`"
+        end
+        warning do
+          assert public_key['crv'] == 'P-256', "Key had a `crv` value of `#{public_key['crv']}` instead of `P-256`"
+        end
         warning { assert !public_key.include?('d'), 'Key SHALL NOT have the private key parameter `d`' }
         warning do
           assert public_key['kid'] == key_object.kid,
@@ -53,7 +59,7 @@ module Covid19VCI
         verifier = HealthCards::Verifier.new(keys: key_object, resolve_keys: false)
 
         begin
-          assert verifier.verify(jws), "JWS signature invalid"
+          assert verifier.verify(jws), 'JWS signature invalid'
         rescue StandardError => e
           assert false, "Error decoding credential: #{e.message}"
         end

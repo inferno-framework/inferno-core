@@ -84,11 +84,14 @@ module Covid19VCI
           end
 
           walk_resource(resource) do |value, meta, path|
-            if meta['type'] == 'CodeableConcept'
+            case meta['type']
+            when 'CodeableConcept'
               warning { assert value.text.nil?, "#{resource.resourceType} should not have a #{path}.text element" }
-            elsif meta['type'] == 'Coding'
-              warning { assert value.display.nil?, "#{resource.resourceType} should not have a #{path}.display element" }
-            elsif meta['type'] == 'Reference'
+            when 'Coding'
+              warning do
+                assert value.display.nil?, "#{resource.resourceType} should not have a #{path}.display element"
+              end
+            when 'Reference'
               warning do
                 next if value.reference.nil?
 
@@ -96,11 +99,12 @@ module Covid19VCI
                        "#{resource.resourceType}.#{path}.reference is not using the short resource URI scheme: " \
                        "#{value.reference}"
               end
-            elsif meta['type'] == 'Meta'
+            when 'Meta'
               hash = value.to_hash
               warning do
                 assert hash.length == 1 && hash.include?('security'),
-                       "If present, Bundle 'meta' field should only include 'security', but found: #{hash.keys.join(', ')}"
+                       "If present, Bundle 'meta' field should only include 'security', " \
+                       "but found: #{hash.keys.join(', ')}"
               end
             end
           end
