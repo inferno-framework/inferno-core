@@ -30,7 +30,7 @@ module Covid19VCI
         content_type = request.response_header('Content-Type')
 
         assert content_type.present?, 'Response did not include a Content-Type header'
-        assert content_type.value.start_with?('application/smart-health-card'),
+        assert content_type.value.match?(%r{\Aapplication/smart-health-card(\z|\W)}),
                "Content-Type header was '#{content_type.value}' instead of 'application/smart-health-card'"
       end
     end
