@@ -3,8 +3,6 @@ module Covid19VCI
     id 'vci_fhir_operation'
     title 'Download and validate a health card via FHIR $health-cards-issue operation'
 
-    input :base_fhir_url, :patient_id
-
     fhir_client do
       url :base_fhir_url
     end
@@ -12,6 +10,7 @@ module Covid19VCI
     test do
       title 'Server advertises health card support in its SMART configuration'
       id 'vci-fhir-01'
+      input :base_fhir_url
 
       run do
         get("#{base_fhir_url}/.well-known/smart-configuration")
@@ -29,6 +28,7 @@ module Covid19VCI
     test do
       title 'Server advertises $health-cards-issue operation support in its CapabilityStatement'
       id 'vci-fhir-02'
+      input :base_fhir_url
 
       run do
         fhir_get_capability_statement
@@ -52,9 +52,13 @@ module Covid19VCI
     test do
       title 'Server returns a health card from the $health-cards-issue operation'
       id 'vci-fhir-03'
+      input :base_fhir_url, :patient_id, :optional_bearer_token
       output :credential_strings
 
       run do
+        if optional_bearer_token.present?
+          fhir_client.set_bearer_token(optional_bearer_token)
+        end
         request_params = FHIR::Parameters.new(
           parameter: [
             {
@@ -93,7 +97,7 @@ module Covid19VCI
       id 'vci-fhir-06'
     end
 
-    test from: :vc_bundle_validation do
+    test from: :vc_fhir_verification do
       id 'vci-fhir-07'
     end
   end

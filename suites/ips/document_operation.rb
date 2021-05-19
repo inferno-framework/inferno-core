@@ -50,7 +50,9 @@ module IPS
         assert resource.id == composition_id,
                "Requested resource with id #{composition_id}, received resource with id #{resource.id}"
 
-        assert_valid_resource(profile_url: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips')
+        warning do
+          assert_valid_resource(profile_url: 'http://hl7.org/fhir/uv/ips/StructureDefinition/Composition-uv-ips')
+        end
 
         composition = resource
         references_in_composition = []
@@ -121,9 +123,9 @@ module IPS
     end
 
     test do
-      title 'IPS Server returns Bundle resource containing valid IPS MedicaitonStatement entry'
+      title 'IPS Server returns Bundle resource containing valid IPS MedicationStatement entry'
       description %(
-        IPS Server return valid IPS MedicaitonStatement resource in the Bundle as first entry
+        IPS Server return valid IPS MedicationStatement resource in the Bundle as first entry
       )
       # link 'http://hl7.org/fhir/uv/ips/StructureDefinition-MedicationStatement-uv-ips.html'
       uses_request :document_operation

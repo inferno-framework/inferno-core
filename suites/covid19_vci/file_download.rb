@@ -3,12 +3,12 @@ module Covid19VCI
     id 'vci_file_download'
     title 'Download and validate a health card via file download'
 
-    input :file_download_url
-
     test do
       id 'vci-file-01'
       title 'Health card can be downloaded'
       description 'The health card can be downloaded and is a valid JSON object'
+
+      input :file_download_url
       makes_request :vci_file_download
 
       run do
@@ -97,8 +97,8 @@ module Covid19VCI
       id 'vci-file-07'
     end
 
-    test from: :vc_bundle_validation do
-      id 'vci-fhir-08'
+    test from: :vc_fhir_verification do
+      id 'vci-file-08'
     end
   end
 end

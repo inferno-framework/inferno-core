@@ -19,16 +19,17 @@ module Covid19VCI
 
         key_set_url = "#{card.issuer}/.well-known/jwks.json"
 
-        get(key_set_url)
+        origin = 'https://inferno-dev.healthit.gov'
+        get(key_set_url, headers: { 'Origin' => origin })
 
         assert_response_status(200)
         assert_valid_json(response[:body])
 
-        cors_header = request.response_header('Control-Allow-Origin')
+        cors_header = request.response_header('Access-Control-Allow-Origin')
         warning do
           assert cors_header.present?,
                  'No CORS header received. Issuers SHALL publish their public keys with CORS enabled'
-          assert cors_header.value == '*',
+          assert ['*', origin].include?(cors_header.value),
                  "Expected CORS header value of `*`, but actual value was `#{cors_header.value}`"
         end
 
