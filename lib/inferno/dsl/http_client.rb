@@ -60,16 +60,21 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @param _options [Hash] TODO
+      # @param _options [Hash] TODO: explain headers, add to other methods
       # @return [Inferno::Entities::Request]
-      def get(url = '', client: :default, name: nil, **_options)
+      def get(url = '', client: :default, name: nil, **options)
         store_request('outgoing', name) do
           client = http_client(client)
 
           if client
+            # TODO: support headers
             client.get(url)
           elsif url.match?(%r{\Ahttps?://})
-            Faraday.get(url)
+            if options[:headers].present?
+              Faraday.get(url, nil, options[:headers])
+            else
+              Faraday.get(url)
+            end
           else
             raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
           end
