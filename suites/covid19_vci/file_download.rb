@@ -96,5 +96,9 @@ module Covid19VCI
     test from: :vc_payload_verification do
       id 'vci-file-07'
     end
+
+    test from: :vc_fhir_verification do
+      id 'vci-file-08'
+    end
   end
 end
