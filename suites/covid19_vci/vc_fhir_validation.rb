@@ -1,6 +1,6 @@
 module Covid19VCI
   class VCFHIRVerification < Inferno::Test
-    title 'Health Card payloads conform to the Vaccination Credential Bundle Profile'
+    title 'Health Card payloads conform to the Vaccination Credential Bundle Profiles'
     input :credential_strings
 
     id :vc_fhir_verification
@@ -39,10 +39,36 @@ module Covid19VCI
 
         bundle = FHIR::Bundle.new(raw_bundle)
 
-        assert_valid_resource(
-          resource: bundle,
-          profile_url: 'http://hl7.org/fhir/uv/smarthealthcards-vaccination/StructureDefinition/vaccination-credential-bundle-dm'
-        )
+        assert bundle.entry.any? { |r| r.resource.is_a?(FHIR::Immunization) } || bundle.entry.any? { |r| r.resource.is_a?(FHIR::Observation) }, 
+        "Bundle must have either Immunization entries or Observation entries"
+
+        if bundle.entry.any? { |r| r.resource.is_a?(FHIR::Immunization) }
+          assert_valid_resource(
+            resource: bundle, 
+            profile_url: 'http://hl7.org/fhir/uv/smarthealthcards-vaccination/StructureDefinition/vaccination-credential-bundle'
+          )
+
+          warning do
+            assert_valid_resource(
+              resource: bundle, 
+              profile_url: 'http://hl7.org/fhir/uv/smarthealthcards-vaccination/StructureDefinition/vaccination-credential-bundle-dm'
+            )
+          end
+        end
+
+        if bundle.entry.any? { |r| r.resource.is_a?(FHIR::Observation) }
+          assert_valid_resource(
+            resource: bundle, 
+            profile_url: 'http://hl7.org/fhir/uv/smarthealthcards-vaccination/StructureDefinition/covid19-laboratory-bundle'
+          )
+
+          warning do
+            assert_valid_resource(
+              resource: bundle, 
+              profile_url: 'http://hl7.org/fhir/uv/smarthealthcards-vaccination/StructureDefinition/covid19-laboratory-bundle-dm'
+            )
+          end
+        end
       end
     end
   end
