@@ -2,6 +2,7 @@ module Covid19VCI
   class VCPayloadVerification < Inferno::Test
     title 'Health Card payloads follow the spec requirements'
     input :credential_strings
+    output :fhir_bundle
 
     id :vc_payload_verification
 
@@ -71,7 +72,8 @@ module Covid19VCI
                  "The following Bundle entry urls do not use short resource-scheme URIs: #{bad_urls.join(', ')}"
         end
 
-        bundle = FHIR::Bundle.new(raw_bundle)
+        output fhir_bundle: raw_bundle
+        bundle = FHIR::Bundle.new(raw_bundle)        
         resources = bundle.entry.map(&:resource)
         bundle.entry.each { |entry| entry.resource = nil }
         resources << bundle

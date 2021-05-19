@@ -92,5 +92,9 @@ module Covid19VCI
     test from: :vc_payload_verification do
       id 'vci-fhir-06'
     end
+
+    test from: :vc_bundle_validation do
+      id 'vci-fhir-07'
+    end
   end
 end
