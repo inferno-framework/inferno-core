@@ -1,5 +1,3 @@
-require_relative 'attributes'
-
 module Inferno
   module Entities
     # A `Message` represents a message generated during a test.
