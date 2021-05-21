@@ -1,5 +1,3 @@
-require_relative 'attributes'
-
 module Inferno
   module Entities
     # A `Result` represents the result of running a `Test`, `TestGroup`,
