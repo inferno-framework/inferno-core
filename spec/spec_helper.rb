@@ -9,6 +9,11 @@ SimpleCov.start do
   add_filter '/spec/'
 end
 
+if ENV['GITHUB_ACTIONS']
+  require 'codecov'
+  SimpleCov.formatter = SimpleCov::Formatter::Codecov
+end
+
 require 'webmock/rspec'
 WebMock.disable_net_connect!
 

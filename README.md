@@ -1,4 +1,5 @@
 # Inferno Core
+[![codecov](https://codecov.io/gh/inferno-community/inferno-core/branch/main/graph/badge.svg?token=6NJTBHF82R)](https://codecov.io/gh/inferno-community/inferno-core)
 
 **Inferno Core is currently in alpha status**
 
