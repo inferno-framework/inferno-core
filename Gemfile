@@ -35,10 +35,11 @@ group :development do
 end
 
 group :test do
+  gem 'codecov'
   gem 'database_cleaner-sequel'
   gem 'rack-test'
   gem 'rspec'
-  gem 'simplecov', '~> 0.17.0', require: false
+  gem 'simplecov'
   gem 'webmock'
   gem 'factory_bot'
 end

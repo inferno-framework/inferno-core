@@ -36,12 +36,6 @@ jobs:
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Run tests
       run: bundle exec rake
-    - uses: paambaati/codeclimate-action@v2.7.5
-      name: Upload coverage to CC
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-      with:
-        coverageLocations: coverage/.resultset.json:simplecov
 
   lint:
     needs: build

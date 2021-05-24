@@ -5,8 +5,13 @@ ENV['APP_ENV'] ||= 'test'
 
 require 'simplecov'
 SimpleCov.start do
-  # enable_coverage :branch
+  enable_coverage :branch
   add_filter '/spec/'
+end
+
+if ENV['GITHUB_ACTIONS']
+  require 'codecov'
+  SimpleCov.formatter = SimpleCov::Formatter::Codecov
 end
 
 require 'webmock/rspec'
