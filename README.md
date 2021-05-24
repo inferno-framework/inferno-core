@@ -1,5 +1,5 @@
 # Inferno Core
-[![Test Coverage](https://api.codeclimate.com/v1/badges/49895e81b0fe7bd04756/test_coverage)](https://codeclimate.com/github/inferno-community/inferno-core/test_coverage)
+[![codecov](https://codecov.io/gh/inferno-community/inferno-core/branch/main/graph/badge.svg?token=6NJTBHF82R)](https://codecov.io/gh/inferno-community/inferno-core)
 
 **Inferno Core is currently in alpha status**
 
