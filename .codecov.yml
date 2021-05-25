@@ -1,5 +1,3 @@
-github_checks: true
-
 codecov:
   branch: main
   ignore:
@@ -7,11 +5,11 @@ codecov:
     - 'dev_suites/smart_scheduling_links/**/*'
 coverage:
   status:
-    project:
+    project: true
       default:
         target: 80%
         threshold: 1%
-    patch:
+    patch: true
       default:
         target: 80%
         threshold: 1%
