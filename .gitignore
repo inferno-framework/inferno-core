@@ -1,5 +1,5 @@
 /db/*.db
-/public/assets*
+/lib/inferno/public/assets*
 /tmp
 .env.local
 .env.*.local

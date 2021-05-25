@@ -129,7 +129,6 @@ end
 
 require_relative '../lib/inferno/config/application'
 Inferno::Application.finalize!
-binding.pry
 
 require_relative 'support/factory_bot'
 

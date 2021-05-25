@@ -1,4 +1,4 @@
-require_relative 'config/application'
+require_relative 'lib/inferno/config/application'
 
 use Rack::Static, urls: ['/public']
 
