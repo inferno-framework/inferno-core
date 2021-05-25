@@ -5,11 +5,11 @@ codecov:
     - 'dev_suites/smart_scheduling_links/**/*'
 coverage:
   status:
-    project: true
+    project:
       default:
         target: 80%
         threshold: 1%
-    patch: true
+    patch:
       default:
         target: 80%
         threshold: 1%
