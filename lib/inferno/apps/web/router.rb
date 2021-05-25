@@ -2,7 +2,7 @@ require 'erb'
 
 module Inferno
   module Web
-    client_page = ERB.new(File.read(File.join(Inferno::Application.root, 'apps', 'web', 'index.html.erb'))).result
+    client_page = ERB.new(File.read(File.join(Inferno::Application.root, 'inferno', 'apps', 'web', 'index.html.erb'))).result
 
     Router = Hanami::Router.new(namespace: Inferno::Web::Controllers) do
       namespace 'api' do

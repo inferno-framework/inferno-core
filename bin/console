@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require_relative '../config/application'
+require_relative '../lib/inferno/config/application'
 
 Inferno::Application.finalize!
 

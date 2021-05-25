@@ -1,6 +1,6 @@
 development:
   adapter: sqlite
-  database: db/inferno_development.db
+  database: /Users/smacvicar/code/inferno/db/inferno_development.db
   max_connections: 10
   # user:
   # password:

@@ -12,3 +12,9 @@ module Inferno
   module Repositories
   end
 end
+
+require_relative 'repositories/in_memory_repository'
+require_relative 'repositories/repository'
+Dir.glob(File.join('repositiories', '*.rb')).each do |path|
+  require_relative path
+end

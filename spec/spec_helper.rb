@@ -127,16 +127,15 @@ RSpec.configure do |config|
   end
 end
 
+require_relative '../lib/inferno/config/application'
+Inferno::Application.finalize!
+binding.pry
+
 require_relative 'support/factory_bot'
 
 RSpec::Matchers.define_negated_matcher :exclude, :include
-
-require_relative '../config/application'
-Inferno::Application.finalize!
 
 FHIR.logger = Inferno::Application['logger']
 
 DatabaseCleaner[:sequel].strategy = :truncation
 DatabaseCleaner[:sequel].db = Inferno::Application['db.connection']
-
-require_relative './fixtures/basic_test_suite'

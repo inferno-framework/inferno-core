@@ -1,3 +1,5 @@
+require_relative '../../lib/inferno/repositories'
+
 FactoryBot.define do
   factory :test_session, class: 'Inferno::Entities::TestSession' do
     test_suite_id { 'BasicTestSuite::Suite' }
