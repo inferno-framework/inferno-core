@@ -1,3 +1,7 @@
+require_relative 'vc_headers'
+require_relative 'vc_payload_verification'
+require_relative 'vc_signature_verification'
+
 module Covid19VCI
   class FileDownload < Inferno::TestGroup
     id 'vci_file_download'

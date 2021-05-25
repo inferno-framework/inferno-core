@@ -1,3 +1,5 @@
+Dir.glob(File.join(__dir__, 'multi_patient_api', '*.rb')).each { |path| require_relative path.delete_prefix("#{__dir__}/") }
+
 module ONCProgram
   class MultiPatientAPI < Inferno::TestGroup
     title 'Multi-Patient API'

@@ -1,3 +1,5 @@
+Dir.glob(File.join(__dir__, 'ehr_practitioner_app', '*.rb')).each { |path| require_relative path.delete_prefix("#{__dir__}/") }
+
 module ONCProgram
   class EHRPractitionerApp < Inferno::TestGroup
     title 'EHR Practitioner App'

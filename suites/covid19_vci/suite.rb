@@ -1,4 +1,6 @@
 require 'health_cards'
+require_relative 'file_download'
+require_relative 'fhir_operation'
 
 module Covid19VCI
   class Suite < Inferno::TestSuite

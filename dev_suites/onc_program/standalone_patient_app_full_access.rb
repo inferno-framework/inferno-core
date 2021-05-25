@@ -1,3 +1,5 @@
+Dir.glob(File.join(__dir__, 'standalone_patient_app_full_access', '*.rb')).each { |path| require_relative path.delete_prefix("#{__dir__}/") }
+
 module ONCProgram
   class StandalonePatientAppFullAccess < Inferno::TestGroup
     title 'Standalone Patient App - Full Patient Access'

@@ -1,5 +1,3 @@
-require_relative '../../utils/suite_tracker'
-
 Inferno::Application.boot(:suites) do
   init do
     use :logging, :entities
@@ -16,38 +14,10 @@ Inferno::Application.boot(:suites) do
 
     files_to_load.map! { |path| File.realpath(path) }
 
-    previous_length = 0
-
-    while files_to_load.length != previous_length
-      puts "Previous files: #{previous_length},    Current Files: #{files_to_load.length}"
-      previous_length = files_to_load.length
-      files_to_load.reject! do |path|
-        require_relative path
-        Inferno::Utils::SuiteTracker.classes_defined_at_path[path].each(&:add_self_to_repository)
-        true
-      rescue Inferno::Exceptions::ParentNotLoadedException, NameError
-        # Clear out the inline Test DSL classes, which will be added again on
-        # the next pass.
-        Inferno::Utils::SuiteTracker.classes_defined_at_path[path].delete_if { |klass| klass.name.nil? }
-        false
-      end
+    files_to_load.each do |path|
+      require_relative path
     end
 
     ObjectSpace.each_object(TracePoint, &:disable)
-
-    unless files_to_load.empty?
-      error_messages = files_to_load.each_with_object({}) do |path, errors|
-        require_relative path
-      rescue StandardError => e
-        errors[path] = "#{e.message} -- #{e.backtrace_locations.first}"
-      end
-
-      error_message =
-        error_messages
-          .map { |path, message| "Unable to load #{path}: #{message}" }
-          .join("\n")
-
-      raise StandardError, error_message
-    end
   end
 end

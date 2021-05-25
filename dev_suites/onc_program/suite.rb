@@ -1,3 +1,5 @@
+Dir.glob(File.join(__dir__, '*.rb')).each { |path| require_relative path.delete_prefix("#{__dir__}/") }
+
 module ONCProgram
   class Suite < Inferno::TestSuite
     title '2015 Edition Cures Update -  Standardized API Testing'

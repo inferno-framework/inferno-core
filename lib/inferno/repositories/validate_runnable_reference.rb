@@ -18,7 +18,7 @@ module Inferno
           reference_exists = runnable_reference_exists?(runnable_type, id)
           return if reference_exists
 
-          { key: runnable_type, message: "of #{id} is not valid" }
+          { key: runnable_type, message: "of #{id} does not exist" }
         else
           { key: :base, message: "must contain exactly one of 'test_id', 'test_group_id', or 'test_suite_id'" }
         end

@@ -1,3 +1,5 @@
+require_relative 'groups/demo_group'
+
 module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
   class DemoSuite < Inferno::TestSuite
     title 'Demonstration Suite'
