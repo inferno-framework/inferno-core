@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
 
-require_relative '../lib/inferno/config/application'
+require 'pry'
+require_relative '../lib/inferno'
 
 Inferno::Application.finalize!
 
-binding.pry # rubocop:disable Lint/Debugger
+Pry.start

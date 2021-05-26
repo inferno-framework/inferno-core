@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module Inferno
   module Repositories
     class InMemoryRepository

@@ -2,6 +2,8 @@ require_relative 'boot'
 
 module Inferno
   class Application < Dry::System::Container
+    ::Inferno::Import = injector
+
     use :env, inferrer: -> { ENV.fetch('APP_ENV', :development).to_sym }
 
     configure do |config|
@@ -17,6 +19,4 @@ module Inferno
 
     load_paths!('lib')
   end
-
-  Import = Application.injector
 end

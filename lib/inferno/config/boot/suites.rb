@@ -1,6 +1,6 @@
 Inferno::Application.boot(:suites) do
   init do
-    use :logging, :entities
+    use :logging
 
     files_to_load = Dir.glob(File.join(Inferno::Application.root, 'suites', '**', '*.rb'))
 

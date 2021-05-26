@@ -3,6 +3,8 @@ $VERBOSE = nil
 
 ENV['APP_ENV'] ||= 'test'
 
+require 'database_cleaner/sequel'
+
 require 'simplecov'
 SimpleCov.start do
   enable_coverage :branch
@@ -127,7 +129,7 @@ RSpec.configure do |config|
   end
 end
 
-require_relative '../lib/inferno/config/application'
+require_relative '../lib/inferno'
 Inferno::Application.finalize!
 
 require_relative 'support/factory_bot'
