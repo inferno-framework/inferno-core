@@ -1,6 +1,6 @@
 development:
   adapter: sqlite
-  database: ':memory:'
+  database: data/inferno_development.db
   max_connections: 10
   # user:
   # password:

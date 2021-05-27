@@ -6,7 +6,7 @@ Inferno::Application.boot(:db) do
 
     Sequel::Model.plugin :json_serializer
 
-    config_path = File.expand_path('database.yml', File.join(Inferno::Application.root, 'lib', 'inferno', 'config'))
+    config_path = File.expand_path('database.yml', File.join(Dir.pwd, 'config'))
     config = YAML.load_file(config_path)[ENV['APP_ENV']]
       .merge(logger: Inferno::Application['logger'])
     connection = Sequel.connect(config)
