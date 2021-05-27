@@ -237,7 +237,7 @@ DEPENDENCIES
   codecov
   database_cleaner-sequel
   dotenv
-  dry-system (~> 0.17)
+  dry-system (= 0.18.1)
   factory_bot
   faraday
   fhir_client

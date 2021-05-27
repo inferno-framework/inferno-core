@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'activesupport'
   spec.add_runtime_dependency 'blueprinter'
   spec.add_runtime_dependency 'dotenv'
-  spec.add_runtime_dependency 'dry-system', '~> 0.17'
+  spec.add_runtime_dependency 'dry-system', '0.18.1'
   spec.add_runtime_dependency 'faraday'
   spec.add_runtime_dependency 'fhir_client'
   spec.add_runtime_dependency 'hanami-controller', '~> 1.3'

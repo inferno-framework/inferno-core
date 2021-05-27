@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.7.2'
 
-gem 'dry-system', '~> 0.17'
+gem 'dry-system', '0.18.1'
 
 gem 'sqlite3'
 gem 'sequel'
