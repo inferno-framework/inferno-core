@@ -53,11 +53,13 @@ Gem::Specification.new do |spec|
     Dir['lib/inferno/public/*.png'],
     Dir['lib/inferno/public/*.ico'],
     Dir['lib/inferno/public/*.js'],
-    Dir['lib/inferno/public/bundle.js.LICENSE.txt'],
-    Dir['lib/inferno/public/assets.json']
+    'lib/inferno/public/bundle.js.LICENSE.txt',
+    'lib/inferno/public/assets.json',
+    'spec/support/factory_bot.rb',
+    Dir['spec/support/factories/**.*.rb']
   ].flatten
 
   spec.bindir        = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.require_paths = ['lib']
+  spec.require_paths = ['lib', 'spec']
 end
