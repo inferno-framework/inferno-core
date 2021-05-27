@@ -2,7 +2,7 @@ Inferno::Application.boot(:suites) do
   init do
     use :logging
 
-    files_to_load = Dir.glob(File.join(Inferno::Application.root, 'suites', '**', '*.rb'))
+    files_to_load = Dir.glob(File.join(Dir.pwd, 'lib', '*.rb'))
 
     if ENV['APP_ENV'] != 'production'
       files_to_load.concat Dir.glob(File.join(Inferno::Application.root, 'dev_suites', '**', '*.rb'))

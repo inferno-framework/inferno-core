@@ -6,7 +6,7 @@ module.exports = (env, argv) => {
   return {
     entry: './client/src/index.tsx',
     output: {
-      path: path.resolve(__dirname, 'public'),
+      path: path.resolve(__dirname, 'lib', 'inferno', 'public'),
       filename: 'bundle.js',
       publicPath: '/public/',
     },
@@ -63,7 +63,7 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new WebpackManifestPlugin({
-        fileName: path.resolve(__dirname, 'public/assets.json')
+        fileName: path.resolve(__dirname, 'lib', 'inferno', 'public', 'assets.json')
       }),
       new webpack.HotModuleReplacementPlugin()
     ]
