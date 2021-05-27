@@ -13,16 +13,15 @@ AllCops:
 Layout/LineLength:
   Max: 120
   Exclude:
-    - 'dev_suites/onc_program/**/*'
-    - 'suites/ips/**/*'
-    - 'dev_suites/smart_scheduling_links/**/*'
+    - 'ui_suites/onc_program/**/*'
+    - 'ui_suites/smart_scheduling_links/**/*'
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: 'indented'
 
 Lint/EmptyBlock:
   Exclude:
-    - 'dev_suites/onc_program/**/*'
+    - 'ui_suites/onc_program/**/*'
 
 Style/BlockComments:
   Exclude:
