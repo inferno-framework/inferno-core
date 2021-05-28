@@ -9,6 +9,7 @@ require 'simplecov'
 SimpleCov.start do
   enable_coverage :branch
   add_filter '/spec/'
+  add_filter '/lib/inferno/db/migrations'
 end
 
 if ENV['GITHUB_ACTIONS']
