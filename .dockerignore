@@ -1,5 +1,4 @@
 /db/*.db
-/public/assets*
 /tmp
 .env.local
 .env.*.local
@@ -14,8 +13,9 @@
 .idea
 
 /coverage
+/data
 /docs/yard
-.yardoc
+/.yardoc
 /node_modules
 /.git
 /.github

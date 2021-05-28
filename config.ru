@@ -1,6 +1,6 @@
 require_relative 'lib/inferno'
 
-use Rack::Static, urls: ['/public'], root: 'lib/inferno/public'
+use Rack::Static, urls: ['/public'], root: 'lib/inferno'
 
 Inferno::Application.finalize!
 
