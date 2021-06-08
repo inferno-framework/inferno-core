@@ -6,8 +6,8 @@ require 'rake'
 Gem::Specification.new do |spec|
   spec.name          = 'inferno_core'
   spec.version       = Inferno::VERSION
-  spec.authors       = ['Stephen MacVicar']
-  spec.email         = ['smacvicar@mitre.org']
+  spec.authors       = ['Stephen MacVicar', 'Robert Scanlon', 'Chase Zhou']
+  spec.email         = ['inferno@groups.mitre.org']
   spec.date          = Time.now.utc.strftime('%Y-%m-%d')
   spec.summary       = 'Inferno Core is an open source tool for testing data exchanges enabled by the FHIR standand'
   spec.description   = 'Inferno Core is an open source tool for testing data exchanges enabled by the FHIR standand'
@@ -21,7 +21,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'fhir_client'
   spec.add_runtime_dependency 'hanami-controller', '~> 1.3'
   spec.add_runtime_dependency 'hanami-router', '~> 1.3'
-  # spec.add_runtime_dependency 'health_cards' # TODO: remove
   spec.add_runtime_dependency 'oj'
   spec.add_runtime_dependency 'pry'
   spec.add_runtime_dependency 'pry-byebug'
@@ -44,7 +43,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/inferno_community/inferno-core'
-  spec.metadata['changelog_uri'] = 'https://github.com/dvci/health_cards/CHANGELOG.md'
+  spec.metadata['changelog_uri'] = 'https://github.com/inferno_community/inferno-core/CHANGELOG.md'
   spec.files = [
     'lib/inferno.rb',
     'LICENSE.txt',
