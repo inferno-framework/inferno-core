@@ -27,14 +27,14 @@ interface LandingPageProps {
 }
 
 const LandingPage: FC<LandingPageProps> = ({ presets }) => {
-  const [testSuites, setTestSuites] = React.useState<TestSuite[]>([]);
+  const [testSuites, setTestSuites] = React.useState<TestSuite[]>();
   const [testSuiteChosen, setTestSuiteChosen] = React.useState('');
   const [presetChosen, setPresetChosen] = React.useState(0);
   const styles = useStyles();
   const history = useHistory();
 
   useEffect(() => {
-    if (testSuites.length == 0) {
+    if (!testSuites) {
       getTestSuites()
         .then((testSuites: TestSuite[]) => {
           setTestSuites(testSuites);
@@ -86,7 +86,7 @@ const LandingPage: FC<LandingPageProps> = ({ presets }) => {
                         setTestSuiteChosen(event.target.value as string);
                       }}
                     >
-                      {testSuites.map((testSuite: TestSuite) => {
+                      {testSuites?.map((testSuite: TestSuite) => {
                         return (
                           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                           <MenuItem key={testSuite.title} value={testSuite.id}>

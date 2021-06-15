@@ -32,11 +32,13 @@ const mockedGetTestSuites = mocked(getTestSuites, true);
 const mockedPostTestSessions = mocked(postTestSessions, true);
 // need to mock resolved value in each test for some reason
 
-test('renders landing page', () => {
+test('renders landing page', async () => {
   mockedGetTestSuites.mockResolvedValue(mockedTestSuitesReturnValue);
   render(<LandingPage presets={presets} />);
-  const titleText = screen.getByText('FHIR Testing with Inferno');
-  expect(titleText).toBeVisible();
+  await waitFor(() => {
+    const titleText = screen.getByText('FHIR Testing with Inferno');
+    expect(titleText).toBeVisible();
+  });
 });
 
 test('test suites are displayed in the select options when clicked', async () => {
