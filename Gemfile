@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.7.2'
 
-gem 'dry-system', '~> 0.17', require: 'dry/system/container'
+gem 'dry-system', '0.18.1'
 
 gem 'sqlite3'
 gem 'sequel'
@@ -13,7 +13,7 @@ gem 'hanami-router', '~> 1.3'
 gem 'oj'
 gem 'puma'
 
-gem 'activesupport', require: 'active_support/all'
+gem 'activesupport'
 gem 'dotenv'
 gem 'fhir_client'
 gem 'rake'

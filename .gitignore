@@ -1,5 +1,10 @@
+/data/*.db
 /db/*.db
-/public/assets*
+/lib/inferno/public/assets*
+/lib/inferno/public/*.js
+/lib/inferno/public/*.LICENSE.txt
+/lib/inferno/public/*.png
+!/lib/inferno/public/logo*.png
 /tmp
 .env.local
 .env.*.local

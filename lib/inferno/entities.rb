@@ -1,3 +1,16 @@
+require_relative 'entities/attributes'
+require_relative 'entities/entity'
+require_relative 'entities/header'
+require_relative 'entities/message'
+require_relative 'entities/request'
+require_relative 'entities/result'
+require_relative 'entities/test'
+require_relative 'entities/test_group'
+require_relative 'entities/test_input'
+require_relative 'entities/test_run'
+require_relative 'entities/test_session'
+require_relative 'entities/test_suite'
+
 module Inferno
   # Entities are domain objects whose identity is based on an `id`. Entities
   # don't know anything about persistence, which is handled by Repositories.

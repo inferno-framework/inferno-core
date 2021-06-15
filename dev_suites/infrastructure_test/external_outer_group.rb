@@ -1,3 +1,5 @@
+require_relative 'external_inner_group'
+
 module InfrastructureTest
   class ExternalOuterGroup < Inferno::TestGroup
     id 'external_outer_group'

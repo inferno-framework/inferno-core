@@ -1,3 +1,5 @@
+require_relative 'external_outer_group'
+
 module InfrastructureTest
   class Suite < Inferno::TestSuite
     id 'infra_test'

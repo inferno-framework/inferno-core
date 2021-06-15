@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require 'pry'
+require_relative '../lib/inferno'
+
+Inferno::Application.finalize!
+
+Pry.start

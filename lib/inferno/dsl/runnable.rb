@@ -15,20 +15,6 @@ module Inferno
         super
 
         extending_class.define_singleton_method(:inherited) do |subclass|
-          # Whenever a Runnable class is defined, we need to clear out its
-          # instance variables. Runnable classes can fail to load becaus they
-          # depend on other Runnable classes which haven't been loaded yet. When
-          # this happens, any instance variables which were assigned before the
-          # failure remain, so they have to be removed so that the class starts
-          # with a clean slate when the next attempt to load it is made.
-          TracePoint.trace(:class) do |trace|
-            if trace.self == subclass
-              trace.self.instance_variables.each do |variable_name|
-                trace.self.instance_variable_set(variable_name, nil)
-              end
-            end
-          end
-
           copy_instance_variables(subclass)
 
           # Whenever the definition of a Runnable class ends, keep track of the
@@ -37,7 +23,7 @@ module Inferno
           # appropriate repositories.
           TracePoint.trace(:end) do |trace|
             if trace.self == subclass
-              Inferno::Utils::SuiteTracker.classes_defined_at_path[trace.path] << trace.self
+              subclass.add_self_to_repository
               trace.disable
             end
           end
@@ -95,6 +81,8 @@ module Inferno
         configure_child_class(klass, hash_args)
 
         handle_child_definition_block(klass, &block)
+
+        klass.add_self_to_repository
 
         klass
       end
@@ -168,14 +156,9 @@ module Inferno
           klass.send(key, *value)
         end
 
-        file_path =
-          caller_locations
-            .find { |path| !path.path.include? '/lib/inferno/' }
-            .path
-        Inferno::Utils::SuiteTracker.classes_defined_at_path[file_path] << klass
-
         klass.children.each do |child_class|
           klass.configure_child_class(child_class, {})
+          child_class.add_self_to_repository
         end
       end
 

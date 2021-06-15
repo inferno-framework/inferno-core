@@ -3,10 +3,13 @@ $VERBOSE = nil
 
 ENV['APP_ENV'] ||= 'test'
 
+require 'database_cleaner/sequel'
+
 require 'simplecov'
 SimpleCov.start do
   enable_coverage :branch
   add_filter '/spec/'
+  add_filter '/lib/inferno/db/migrations'
 end
 
 if ENV['GITHUB_ACTIONS']
@@ -127,16 +130,14 @@ RSpec.configure do |config|
   end
 end
 
+require_relative '../lib/inferno'
+Inferno::Application.finalize!
+
 require_relative 'support/factory_bot'
 
 RSpec::Matchers.define_negated_matcher :exclude, :include
-
-require_relative '../config/application'
-Inferno::Application.finalize!
 
 FHIR.logger = Inferno::Application['logger']
 
 DatabaseCleaner[:sequel].strategy = :truncation
 DatabaseCleaner[:sequel].db = Inferno::Application['db.connection']
-
-require_relative './fixtures/basic_test_suite'

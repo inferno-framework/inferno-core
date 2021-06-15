@@ -1,3 +1,5 @@
+require 'fhir_client'
+
 module Inferno
   module DSL
     # DSL for configuring FHIR clients

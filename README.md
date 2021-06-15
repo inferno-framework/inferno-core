@@ -89,7 +89,7 @@ GET http://localhost:4567/api/test_sessions/TEST_SESSION_ID/results
 ```
 
 ## Development
-To get to an interactive console, run `bundle exec bin/console`
+To get to an interactive console, run `bundle exec bin/inferno-console`
 
 ## License
 Copyright 2021 The MITRE Corporation

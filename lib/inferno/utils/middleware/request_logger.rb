@@ -1,5 +1,3 @@
-require 'pry'
-
 module Inferno
   module Utils
     # @api private

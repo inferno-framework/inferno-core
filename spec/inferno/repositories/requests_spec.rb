@@ -1,3 +1,5 @@
+require_relative '../../../lib/inferno/repositories/requests'
+
 RSpec.describe Inferno::Repositories::Requests do
   let(:repo) { described_class.new }
   let(:test_run) { repo_create(:test_run) }
