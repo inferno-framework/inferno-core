@@ -46,7 +46,7 @@ Gem::Specification.new do |spec|
   spec.metadata['changelog_uri'] = 'https://github.com/inferno_community/inferno-core/CHANGELOG.md'
   spec.files = [
     'lib/inferno.rb',
-    'LICENSE.txt',
+    'LICENSE',
     Dir['lib/inferno/**/*.rb'],
     'bin/inferno-console',
     Dir['lib/inferno/public/*.png'],
