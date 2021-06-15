@@ -4,32 +4,18 @@ import {
   Container,
   Button,
   Paper,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  Grid,
-  Divider,
+  List,
+  ListItem,
+  ListItemText,
 } from '@material-ui/core';
 import { TestSuite, TestSession } from 'models/testSuiteModels';
 import { getTestSuites, postTestSessions } from 'api/infernoApiService';
 import useStyles from './styles';
 import { useHistory } from 'react-router-dom';
 
-interface preset {
-  name: string;
-  fhirServer: string;
-  testSet: string;
-}
-
-interface LandingPageProps {
-  presets: preset[];
-}
-
-const LandingPage: FC<LandingPageProps> = ({ presets }) => {
+const LandingPage: FC<unknown> = () => {
   const [testSuites, setTestSuites] = React.useState<TestSuite[]>();
   const [testSuiteChosen, setTestSuiteChosen] = React.useState('');
-  const [presetChosen, setPresetChosen] = React.useState(0);
   const styles = useStyles();
   const history = useHistory();
 
@@ -47,8 +33,8 @@ const LandingPage: FC<LandingPageProps> = ({ presets }) => {
 
   function createTestSession(): void {
     postTestSessions(testSuiteChosen)
-      .then((testSession: TestSession) => {
-        if (testSession.test_suite) {
+      .then((testSession: TestSession | null) => {
+        if (testSession && testSession.test_suite) {
           history.push('test_sessions/' + testSession.id);
         }
       })
@@ -58,87 +44,47 @@ const LandingPage: FC<LandingPageProps> = ({ presets }) => {
   }
 
   return (
-    <div className={styles.main}>
-      <Container maxWidth="md">
+    <Container maxWidth="lg" className={styles.main}>
+      <div className={styles.leftSide}>
         <Typography variant="h2">FHIR Testing with Inferno</Typography>
-        <Typography variant="h5" className={styles.descriptionText}>
-          Inferno is an open source tool that tests whether patients can access their health data.
+        <Typography variant="h5">
           Test your server's conformance to authentication, authorization, and FHIR content
-          standards :)
+          standards.
         </Typography>
-        <Container maxWidth="md">
-          <Paper elevation={4} className={styles.getStarted}>
-            <Container maxWidth="md">
-              <Typography variant="h4" align="center">
-                Start Testing
-              </Typography>
-              <Grid container className={styles.inputGrid}>
-                <Grid item xs={7}>
-                  <FormControl className={styles.formControl}>
-                    <InputLabel>Test Set</InputLabel>
-                    <Select
-                      labelId="testSuite-select-label"
-                      id="testSuite-select"
-                      data-testid="testSuite-select"
-                      value={testSuiteChosen}
-                      disabled={presetChosen > 0}
-                      onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-                        setTestSuiteChosen(event.target.value as string);
-                      }}
-                    >
-                      {testSuites?.map((testSuite: TestSuite) => {
-                        return (
-                          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                          <MenuItem key={testSuite.title} value={testSuite.id}>
-                            {testSuite.title}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={1}>
-                  <Divider orientation="vertical" className={styles.divider} />
-                </Grid>
-                <Grid item xs={4}>
-                  <FormControl className={styles.formControl}>
-                    <InputLabel>Preset Configuration</InputLabel>
-                    <Select
-                      labelId="preset-select-label"
-                      id="preset-select"
-                      value={presetChosen}
-                      autoWidth={false}
-                      onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
-                        const preset = presets[event.target.value as number];
-                        setPresetChosen(event.target.value as number);
-                        setTestSuiteChosen(preset.testSet);
-                      }}
-                    >
-                      {presets.map((preset, index) => {
-                        return (
-                          <MenuItem key={index} value={index}>
-                            {preset.name}
-                          </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
-                </Grid>
-              </Grid>
-              <Button
-                variant="contained"
-                size="large"
-                color="primary"
-                data-testid="go-button"
-                onClick={() => createTestSession()}
-              >
-                GO!
-              </Button>
-            </Container>
-          </Paper>
-        </Container>
+      </div>
+      <Container maxWidth="md">
+        <Paper elevation={4} className={styles.getStarted}>
+          <Typography variant="h4" align="center">
+            Select a Test Suite
+          </Typography>
+          <List>
+            {testSuites?.map((testSuite: TestSuite) => {
+              return (
+                <ListItem
+                  key={testSuite.id}
+                  button
+                  selected={testSuiteChosen == testSuite.id}
+                  onClick={() => setTestSuiteChosen(testSuite.id)}
+                  classes={{ selected: styles.selectedItem }}
+                >
+                  <ListItemText primary={testSuite.title} />
+                </ListItem>
+              );
+            })}
+          </List>
+          <Button
+            variant="contained"
+            size="large"
+            color="primary"
+            data-testid="go-button"
+            className={styles.startTestingButton}
+            onClick={() => createTestSession()}
+          >
+            Start Testing
+          </Button>
+        </Paper>
       </Container>
-    </div>
+    </Container>
   );
 };
 

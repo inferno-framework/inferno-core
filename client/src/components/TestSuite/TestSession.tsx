@@ -16,6 +16,7 @@ import useStyles from './styles';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
+import { useLocation } from 'react-router-dom';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -73,12 +74,14 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
   const [resultsMap, setResultsMap] = React.useState<Map<string, Result>>(
     resultsToMap(previousResults)
   );
-  const [selectedRunnable, setSelectedRunnable] = React.useState<string>(test_suite.id);
-  const [selectedRunnableType, setSelectedRunnableType] = React.useState<RunnableType>(
-    RunnableType.TestSuite
-  );
 
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
+  const location = useLocation();
+  let selectedRunnable = location.hash.replace('#', '');
+  if (!runnableMap.get(selectedRunnable)) {
+    selectedRunnable = testSession.test_suite.id;
+  }
+
   function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
     setInputs(inputs);
     setRunnableType(runnableType);
@@ -153,12 +156,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
     detailsPanel = (
       <TestSuiteDetailsPanel
         runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
-        runnableType={selectedRunnableType}
         runTests={runTests}
-        setSelectedRunnable={(id: string, type: RunnableType) => {
-          setSelectedRunnable(id);
-          setSelectedRunnableType(type);
-        }}
         updateRequest={updateRequest}
       />
     );
@@ -169,10 +167,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
         {...test_suite}
         runTests={runTests}
         selectedRunnable={selectedRunnable}
-        setSelectedRunnable={(id: string, type: RunnableType) => {
-          setSelectedRunnable(id);
-          setSelectedRunnableType(type);
-        }}
       />
       {detailsPanel}
       <InputsModal

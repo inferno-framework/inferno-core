@@ -5,25 +5,25 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.common.white,
   },
   main: {
-    marginTop: '20px',
+    display: 'flex',
+    marginTop: '50px',
   },
-  descriptionText: {
-    width: '85%',
+  leftSide: {
+    marginTop: '125px',
+  },
+  selectedItem: {
+    backgroundColor: 'rgba(248, 139, 48, 0.12) !important',
   },
   getStarted: {
-    marginTop: '25px',
+    marginTop: '100px',
+    marginLeft: '50px',
     padding: '20px',
+    borderRadius: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    width: '400px',
   },
-  formControl: {
-    minWidth: '250px',
-    width: '100%',
-    paddingBottom: '10px',
-  },
-  inputGrid: {
-    margin: '0',
-    padding: '10px 0',
-  },
-  divider: {
-    margin: '10px auto',
+  startTestingButton: {
+    fontWeight: 600,
   },
 }));

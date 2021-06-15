@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent } from 'react';
 import { TestSuite, TestGroup, RunnableType } from 'models/testSuiteModels';
-import { Card, CardContent, CardHeader } from '@material-ui/core';
+import { Card, CardContent } from '@material-ui/core';
 import useStyles from './styles';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
@@ -8,10 +8,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TestGroupTreeItem from './TestGroupTreeItem';
 import TreeItemLabel from './TreeItemLabel';
+import { useHistory } from 'react-router-dom';
 
 export interface TestSuiteTreeProps extends TestSuite {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
-  setSelectedRunnable: (id: string, type: RunnableType) => void;
   selectedRunnable: string;
 }
 
@@ -31,23 +31,23 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   result,
   selectedRunnable,
   runTests,
-  setSelectedRunnable,
 }) => {
   const styles = useStyles();
+  const history = useHistory();
+
   const defaultExpanded: string[] = [id];
   if (test_groups) {
     addDefaultExpanded(test_groups, defaultExpanded);
   }
   const [expanded, setExpanded] = React.useState(defaultExpanded);
 
-  function treeItemLabelClick(event: MouseEvent<Element>, id: string, type: RunnableType) {
+  function treeItemLabelClick(event: MouseEvent<Element>, id: string) {
     event.preventDefault();
-    setSelectedRunnable(id, type);
+    history.push(`#${id}`);
   }
 
   // types aren't set in the library
   function nodeToggle(event: unknown, nodeIds: unknown) {
-    console.log('node toggle');
     setExpanded(nodeIds as string[]);
   }
 
@@ -63,8 +63,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
     ));
 
     return (
-      <Card className={styles.testSuiteTreePanel}>
-        <CardHeader title={`${title} Tests`} />
+      <Card className={styles.testSuiteTreePanel} variant="outlined">
         <CardContent>
           <TreeView
             defaultCollapseIcon={<ExpandMoreIcon />}
@@ -74,6 +73,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             selected={selectedRunnable}
           >
             <TreeItem
+              classes={{ content: styles.treeRoot }}
               nodeId={id}
               label={
                 <TreeItemLabel
@@ -84,7 +84,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
                   runnableType={RunnableType.TestSuite}
                 />
               }
-              onLabelClick={(event) => treeItemLabelClick(event, id, RunnableType.TestSuite)}
+              onLabelClick={(event) => treeItemLabelClick(event, id)}
             >
               {testGroupList}
             </TreeItem>

@@ -55,7 +55,7 @@ export function getTestSession(test_session_id: string): Promise<TestSession | n
     });
 }
 
-export function postTestSessions(testSuiteID: string): Promise<TestSession> {
+export function postTestSessions(testSuiteID: string): Promise<TestSession | null> {
   const testSuiteIDParameter = { name: 'test_suite_id', value: testSuiteID };
   const postEndpoint = getEndpoint('/test_sessions', [testSuiteIDParameter]);
   return fetch(postEndpoint, { method: 'POST' })
@@ -66,11 +66,7 @@ export function postTestSessions(testSuiteID: string): Promise<TestSession> {
     })
     .catch((e) => {
       console.log(e);
-      return {
-        id: 'error',
-        test_suite_id: testSuiteID,
-        test_suite: { title: 'error', id: 'error' },
-      };
+      return null;
     });
 }
 

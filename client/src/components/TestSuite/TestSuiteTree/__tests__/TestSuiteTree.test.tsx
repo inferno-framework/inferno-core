@@ -3,8 +3,12 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { TestGroup, Test, RunnableType } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
 
-const setSelectedRunnableMock = jest.fn();
 const runTestsMock = jest.fn();
+jest.mock('react-router-dom', () => ({
+  useHistory: () => ({
+    push: jest.fn(),
+  }),
+}));
 
 const test1: Test = {
   id: 'test1',
@@ -74,7 +78,6 @@ const testSuiteTreeProps: TestSuiteTreeProps = {
   title: 'DemonstrationSuite',
   id: 'example suite',
   test_groups: [sequence1, sequence2, parentGroup],
-  setSelectedRunnable: setSelectedRunnableMock,
   runTests: runTestsMock,
   selectedRunnable: 'example suite',
 };
@@ -105,7 +108,6 @@ test('Calls setSelectedRunnable when tree item is clicked', () => {
   render(<TestSuiteTree {...testSuiteTreeProps}></TestSuiteTree>);
   const testSuiteLabel = screen.getByTestId(`tiLabel-${testSuiteTreeProps.id}`);
   fireEvent.click(testSuiteLabel);
-  expect(setSelectedRunnableMock).toHaveBeenCalled();
 });
 
 test('Calls runTests when run button is clicked', () => {

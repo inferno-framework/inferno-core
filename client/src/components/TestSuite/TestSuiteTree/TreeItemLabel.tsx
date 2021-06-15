@@ -17,7 +17,7 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({ title, id, result, runTests, ru
   const styles = useStyles();
   return (
     <div className={styles.labelRoot} data-testid={`tiLabel-${id}`}>
-      <Typography variant="body1" className={styles.labelTitle}>
+      <Typography className={styles.labelText} variant="body2">
         {title}
       </Typography>
       <CondensedResultIcon result={result} />

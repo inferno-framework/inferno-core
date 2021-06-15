@@ -18,7 +18,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({ request, hideModal, m
     return (
       <Dialog open={modalVisible} fullWidth={true} maxWidth="md" onClose={() => hideModal()}>
         <DialogTitle className={styles.modalTitle} disableTypography={true}>
-          {request.verb.toUpperCase()} {request.url}
+          {request.verb.toUpperCase()} {request.url} &#8594; {request.status}
         </DialogTitle>
         <Divider />
         <DialogContent>

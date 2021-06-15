@@ -49,6 +49,7 @@ export interface Test {
   result?: Result;
   inputs: TestInput[];
   outputs: TestOutput[];
+  description?: string;
 }
 
 export interface TestGroup {
@@ -59,6 +60,7 @@ export interface TestGroup {
   outputs: TestOutput[];
   result?: Result;
   tests: Test[];
+  description?: string;
 }
 
 export interface TestSuite {
@@ -66,6 +68,7 @@ export interface TestSuite {
   id: string;
   result?: Result;
   test_groups?: TestGroup[];
+  description?: string;
 }
 
 export interface TestSession {
