@@ -201,7 +201,13 @@ module Inferno
       # @example
       #   input :patient_id, :bearer_token
       def input(*input_definitions)
-        inputs.concat(input_definitions)
+        input_definitions.each do |definition|
+          if definition.is_a? Hash
+            inputs.push({key: definition[:key], title: definition[:title], description: definition[:description]})
+          else
+            inputs.push({key: definition, title: nil, description: nil})
+          end
+        end
       end
 
       # Define outputs

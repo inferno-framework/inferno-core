@@ -10,8 +10,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     # about the purpose of these values.  We discussed including type hints here,
     # while also allowing type hints at a higher level.
 
-    input :url,
-          :patient_id
+    input ({key: :url, title: 'URL', description: 'FHIR endpoint used for demonstration'}),
+          ({key: :patient_id, title: 'Patient ID', description: 'ID of patient used for demonstration'})
 
     output :observation_id,
            :encounter_id,

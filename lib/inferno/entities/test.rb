@@ -110,7 +110,11 @@ module Inferno
           super
 
           input_definitions.each do |input|
-            attr_reader input
+            if input.is_a? Hash
+              attr_reader input[:key]
+            else
+              attr_reader input
+            end
           end
         end
 

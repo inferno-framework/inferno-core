@@ -64,12 +64,13 @@ const InputsModal: FC<InputsModalProps> = ({
   const [inputsMap, setInputsMap] = React.useState<Map<string, string>>(new Map());
 
   const inputFields = inputs.map((requirement: TestInput, index: number) => {
+    console.log(requirement.name);
     return (
       <ListItem key={`requirement${index}`}>
         <TextField
           id={`requirement${index}_input`}
           fullWidth
-          label={requirement.name}
+          label={requirement.title}
           value={inputsMap.get(requirement.name) || ''}
           onChange={(event) => {
             const value = event.target.value;

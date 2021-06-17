@@ -36,6 +36,8 @@ export interface Result {
 
 export interface TestInput {
   name: string;
+  title?: string;
+  description?: string;
   value?: string;
 }
 
