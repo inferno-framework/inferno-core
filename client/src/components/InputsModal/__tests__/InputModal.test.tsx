@@ -6,13 +6,13 @@ const hideModalMock = jest.fn();
 const createTestRunMock = jest.fn();
 const testInputs: TestInput[] = [
   {
-    name: 'url',
+    key: 'url',
   },
   {
-    name: 'some other input',
+    key: 'some other input',
   },
   {
-    name: 'yet another input',
+    key: 'yet another input',
   },
 ];
 
@@ -47,7 +47,7 @@ test('Modal visible and inputs are shown', () => {
   const titleText = screen.getByText('Test Inputs');
   expect(titleText).toBeVisible();
   testInputs.forEach((input: TestInput) => {
-    const inputField = screen.getByLabelText(input.name);
+    const inputField = screen.getByLabelText(input.key);
     expect(inputField).toBeVisible();
   });
 });

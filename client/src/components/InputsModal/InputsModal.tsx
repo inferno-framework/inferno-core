@@ -74,7 +74,8 @@ const InputsModal: FC<InputsModalProps> = ({
               label={requirement.title || requirement.key}
               value={inputsMap.get(requirement.key) || ''}
               multiline
-              rows={4}
+              variant="outlined"
+              rowsMax={4}
               onChange={(event) => {
                 const value = event.target.value;
                 inputsMap.set(requirement.key, value);

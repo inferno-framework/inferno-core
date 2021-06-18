@@ -37,8 +37,8 @@ export interface Result {
 export interface TestInput {
   key: string;
   title?: string;
-  description?: string;
   value?: string;
+  type?: string;
 }
 
 export interface TestOutput {

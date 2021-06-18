@@ -43,7 +43,7 @@ const sequence1: TestGroup = {
   test_groups: [],
   title: 'SMART on FHIR Discovery',
   id: 'group0',
-  inputs: [{ name: 'test input' }],
+  inputs: [{ key: 'test input' }],
   outputs: [],
 };
 
@@ -52,7 +52,7 @@ const sequence2: TestGroup = {
   test_groups: [],
   title: 'Dynamic Registration',
   id: 'group1',
-  inputs: [{ name: 'second input' }],
+  inputs: [{ key: 'second input' }],
   outputs: [],
 };
 
