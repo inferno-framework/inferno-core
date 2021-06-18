@@ -10,7 +10,7 @@ module Inferno
           def call(params)
             test_run = repo.create(create_params(params))
             inputs = (params[:inputs] || {}).each_with_object({}) do |input, new_inputs|
-              new_inputs[input[:name].to_sym] = input[:value]
+              new_inputs[input[:key].to_sym] = input[:value]
             end
 
             test_session = test_sessions_repo.find(test_run.test_session_id)

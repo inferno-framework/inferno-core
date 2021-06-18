@@ -2,7 +2,7 @@ import { TestGroup, TestInput } from 'models/testSuiteModels';
 
 function inputAlreadyExists(existing_inputs: TestInput[], new_input: TestInput): boolean {
   return existing_inputs.some((existing_input: TestInput) => {
-    return existing_input.name == new_input.name;
+    return existing_input.key == new_input.key;
   });
 }
 
@@ -22,12 +22,12 @@ export function getAllContainedInputs(testGroups: TestGroup[]): TestInput[] {
 }
 
 function getInputsRecursive(testGroup: TestGroup, testOutputs: Set<string>): TestInput[] {
-  let inputs = testGroup.inputs.filter((input) => !testOutputs.has(input.name));
+  let inputs = testGroup.inputs.filter((input) => !testOutputs.has(input.key));
   testGroup.test_groups.forEach((subGroup) => {
     inputs = inputs.concat(getInputsRecursive(subGroup, testOutputs));
   });
   testGroup.tests.forEach((test) => {
-    inputs = inputs.concat(test.inputs.filter((input) => !testOutputs.has(input.name)));
+    inputs = inputs.concat(test.inputs.filter((input) => !testOutputs.has(input.key)));
     test.outputs.forEach((output) => testOutputs.add(output.name));
   });
   testGroup.outputs.forEach((output) => testOutputs.add(output.name));

@@ -56,7 +56,7 @@ const InputsModal: FC<InputsModalProps> = ({
     }
     const inputs_with_values: TestInput[] = [];
     inputsMap.forEach((input_value, input_name) => {
-      inputs_with_values.push({ name: input_name, value: input_value });
+      inputs_with_values.push({ key: input_name, value: input_value });
     });
     createTestRun(runnableType, runnableId, inputs_with_values);
     hideModal();
@@ -64,22 +64,42 @@ const InputsModal: FC<InputsModalProps> = ({
   const [inputsMap, setInputsMap] = React.useState<Map<string, string>>(new Map());
 
   const inputFields = inputs.map((requirement: TestInput, index: number) => {
-    console.log(requirement.name);
-    return (
-      <ListItem key={`requirement${index}`}>
-        <TextField
-          id={`requirement${index}_input`}
-          fullWidth
-          label={requirement.title}
-          value={inputsMap.get(requirement.name) || ''}
-          onChange={(event) => {
-            const value = event.target.value;
-            inputsMap.set(requirement.name, value);
-            setInputsMap(new Map(inputsMap));
-          }}
-        />
-      </ListItem>
-    );
+    switch (requirement.type) {
+      case 'textarea':
+        return (
+          <ListItem key={`requirement${index}`}>
+            <TextField
+              id={`requirement${index}_input`}
+              fullWidth
+              label={requirement.title || requirement.key}
+              value={inputsMap.get(requirement.key) || ''}
+              multiline
+              rows={4}
+              onChange={(event) => {
+                const value = event.target.value;
+                inputsMap.set(requirement.key, value);
+                setInputsMap(new Map(inputsMap));
+              }}
+            />
+          </ListItem>
+        );
+      default:
+        return (
+          <ListItem key={`requirement${index}`}>
+            <TextField
+              id={`requirement${index}_input`}
+              fullWidth
+              label={requirement.title || requirement.key}
+              value={inputsMap.get(requirement.key) || ''}
+              onChange={(event) => {
+                const value = event.target.value;
+                inputsMap.set(requirement.key, value);
+                setInputsMap(new Map(inputsMap));
+              }}
+            />
+          </ListItem>
+        );
+    }
   });
   return (
     <Dialog open={modalVisible} onClose={() => hideModal()}>

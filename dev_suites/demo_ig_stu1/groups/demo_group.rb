@@ -10,8 +10,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     # about the purpose of these values.  We discussed including type hints here,
     # while also allowing type hints at a higher level.
 
-    input ({key: :url, title: 'URL', description: 'FHIR endpoint used for demonstration'}),
-          ({key: :patient_id, title: 'Patient ID', description: 'ID of patient used for demonstration'})
+    input :url, title: 'URL'
+    input :patient_id, title: 'Patient ID'
 
     output :observation_id,
            :encounter_id,
@@ -219,6 +219,12 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
         assert request == http_request, 'Default request is not the same as the named request'
       end
+    end
+
+    test 'textarea input' do
+      input :textarea, title: 'textarea test', type: 'textarea'
+
+      run { info "Received the following 'textarea' variable: '#{textarea}''" }
     end
   end
 end
