@@ -56,7 +56,7 @@ Gem::Specification.new do |spec|
     'lib/inferno/public/bundle.js.LICENSE.txt',
     'lib/inferno/public/assets.json',
     'spec/support/factory_bot.rb',
-    Dir['spec/support/factories/**.*.rb']
+    Dir['spec/factories/**/*.rb']
   ].flatten
 
   spec.bindir        = 'bin'
