@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import { RunnableType, TestInput } from 'models/testSuiteModels';
 import React, { FC } from 'react';
+import useStyles from './styles';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -61,8 +62,8 @@ const InputsModal: FC<InputsModalProps> = ({
     createTestRun(runnableType, runnableId, inputs_with_values);
     hideModal();
   }
+  const styles = useStyles();
   const [inputsMap, setInputsMap] = React.useState<Map<string, string>>(new Map());
-
   const inputFields = inputs.map((requirement: TestInput, index: number) => {
     switch (requirement.type) {
       case 'textarea':
@@ -72,10 +73,10 @@ const InputsModal: FC<InputsModalProps> = ({
               id={`requirement${index}_input`}
               fullWidth
               label={requirement.title || requirement.key}
+              helperText={requirement.description}
               value={inputsMap.get(requirement.key) || ''}
               multiline
-              variant="outlined"
-              rowsMax={4}
+              inputProps={{ className: styles.textarea }}
               onChange={(event) => {
                 const value = event.target.value;
                 inputsMap.set(requirement.key, value);
@@ -91,6 +92,7 @@ const InputsModal: FC<InputsModalProps> = ({
               id={`requirement${index}_input`}
               fullWidth
               label={requirement.title || requirement.key}
+              helperText={requirement.description}
               value={inputsMap.get(requirement.key) || ''}
               onChange={(event) => {
                 const value = event.target.value;
@@ -103,7 +105,7 @@ const InputsModal: FC<InputsModalProps> = ({
     }
   });
   return (
-    <Dialog open={modalVisible} onClose={() => hideModal()}>
+    <Dialog open={modalVisible} onClose={() => hideModal()} fullWidth={true} maxWidth="sm">
       <DialogTitle>Test Inputs</DialogTitle>
       <DialogContent>
         <DialogContentText>

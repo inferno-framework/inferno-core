@@ -10,7 +10,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     # about the purpose of these values.  We discussed including type hints here,
     # while also allowing type hints at a higher level.
 
-    input :url, title: 'URL'
+    input :url, title: 'URL', description: 'Insert url of FHIR server'
     input :patient_id, title: 'Patient ID'
 
     output :observation_id,
@@ -222,7 +222,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     test 'textarea input' do
-      input :textarea, title: 'textarea test', type: 'textarea'
+      input :textarea, title: 'Textarea Input Example', type: 'textarea', description: 'Insert something like a patient resource json here'
 
       run { info "Received the following 'textarea' variable: '#{textarea}''" }
     end

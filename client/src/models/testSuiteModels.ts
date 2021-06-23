@@ -39,6 +39,7 @@ export interface TestInput {
   title?: string;
   value?: string;
   type?: string;
+  description?: string;
 }
 
 export interface TestOutput {
