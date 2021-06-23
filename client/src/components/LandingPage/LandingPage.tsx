@@ -29,6 +29,12 @@ const LandingPage: FC<unknown> = () => {
         .catch((e) => {
           console.log(e);
         });
+    } else if (testSuites.length === 1) {
+      if (testSuiteChosen === '') {
+        setTestSuiteChosen(testSuites[0].id);
+      } else {
+        createTestSession();
+      }
     }
   });
 
