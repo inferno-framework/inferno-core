@@ -259,6 +259,16 @@ module Inferno
 
         @validator_url = url
       end
+
+      def suite
+        return self if ancestors.include? Inferno::Entities::TestSuite
+
+        parent.suite
+      end
+
+      def route(method, path, handler)
+        Inferno.routes << { method: method, path: path, handler: handler, suite: suite }
+      end
     end
   end
 end
