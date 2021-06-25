@@ -125,9 +125,9 @@ module Inferno
       # @api private
       def configure_child_class(klass, hash_args) # rubocop:disable Metrics/CyclomaticComplexity
         inputs.each do |input_definition|
-          next if klass.inputs.any? { |input| input[:key] == input_definition[:key] }
+          next if klass.inputs.any? { |input| input[:name] == input_definition[:name] }
 
-          klass.input input_definition[:key], input_definition
+          klass.input input_definition[:name], input_definition
         end
 
         outputs.each do |output_definition|
@@ -200,15 +200,15 @@ module Inferno
       # @return [void]
       # @example
       #   input :patient_id, :bearer_token
-      def input(key, *other_keys, **input_definitions)
-        if other_keys.present?
-          [key, *other_keys].each do |key|
-            inputs.push({key: key, title: nil, description: nil, type: nil})
+      def input(name, *other_names, **input_definition)
+        if other_names.present?
+          [name, *other_names].each do |input_name|
+            inputs.push({ name: input_name, title: nil, description: nil, type: nil })
           end
-        elsif input_definitions.present?
-          inputs.push({key: key}.merge(input_definitions))
+        elsif input_definition.present?
+          inputs.push({ name: name }.merge(input_definition))
         else
-          inputs.push({key: key})
+          inputs.push({ name: name })
         end
       end
 

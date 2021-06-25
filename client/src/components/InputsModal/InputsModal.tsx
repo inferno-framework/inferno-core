@@ -57,7 +57,7 @@ const InputsModal: FC<InputsModalProps> = ({
     }
     const inputs_with_values: TestInput[] = [];
     inputsMap.forEach((input_value, input_name) => {
-      inputs_with_values.push({ key: input_name, value: input_value });
+      inputs_with_values.push({ name: input_name, value: input_value });
     });
     createTestRun(runnableType, runnableId, inputs_with_values);
     hideModal();
@@ -72,14 +72,14 @@ const InputsModal: FC<InputsModalProps> = ({
             <TextField
               id={`requirement${index}_input`}
               fullWidth
-              label={requirement.title || requirement.key}
+              label={requirement.title || requirement.name}
               helperText={requirement.description}
-              value={inputsMap.get(requirement.key) || ''}
+              value={inputsMap.get(requirement.name) || ''}
               multiline
               inputProps={{ className: styles.textarea }}
               onChange={(event) => {
                 const value = event.target.value;
-                inputsMap.set(requirement.key, value);
+                inputsMap.set(requirement.name, value);
                 setInputsMap(new Map(inputsMap));
               }}
             />
@@ -91,12 +91,12 @@ const InputsModal: FC<InputsModalProps> = ({
             <TextField
               id={`requirement${index}_input`}
               fullWidth
-              label={requirement.title || requirement.key}
+              label={requirement.title || requirement.name}
               helperText={requirement.description}
-              value={inputsMap.get(requirement.key) || ''}
+              value={inputsMap.get(requirement.name) || ''}
               onChange={(event) => {
                 const value = event.target.value;
-                inputsMap.set(requirement.key, value);
+                inputsMap.set(requirement.name, value);
                 setInputsMap(new Map(inputsMap));
               }}
             />

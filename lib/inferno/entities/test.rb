@@ -106,13 +106,13 @@ module Inferno
         # @return [void]
         # @example
         #   input :patient_id, :bearer_token
-        def input(key, *other_keys, **input_definitions)
+        def input(name, *other_names, **input_definition)
           super
 
-          if other_keys.present?
-            [key, *other_keys].each { |input| attr_reader input }
+          if other_names.present?
+            [name, *other_names].each { |input| attr_reader input }
           else
-            attr_reader key
+            attr_reader name
           end
         end
 

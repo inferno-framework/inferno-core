@@ -21,7 +21,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'contains the correct inputs' do
-        expect(suite.inputs).to match_array([:suite_input])
+        expect(suite.inputs).to match_array([{ name: :suite_input }])
       end
 
       it 'contains the correct outputs' do
@@ -65,7 +65,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own inputs as well as its parents' inputs" do
-        expect(outer_inline_group.inputs).to match_array([:suite_input, :outer_group_input])
+        expect(outer_inline_group.inputs).to match_array([{ name: :suite_input }, { name: :outer_group_input }])
       end
 
       it "contains its own outputs as well as its parents' outputs" do
@@ -108,7 +108,8 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own inputs as well as its parents' inputs" do
-        expect(inner_inline_group.inputs).to match_array([:suite_input, :outer_group_input, :inner_group_input])
+        expect(inner_inline_group.inputs).to match_array([{ name: :suite_input }, { name: :outer_group_input },
+                                                          { name: :inner_group_input }])
       end
 
       it "contains its own outputs as well as its parents' outputs" do
@@ -156,7 +157,8 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own inputs as well as its parents' inputs" do
-        expected_inputs = [:suite_input, :outer_group_input, :inner_group_input, :test_input]
+        expected_inputs = [{ name: :suite_input }, { name: :outer_group_input }, { name: :inner_group_input },
+                           { name: :test_input }]
         expect(inline_test1.inputs).to match_array(expected_inputs)
       end
 
@@ -211,7 +213,8 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own inputs as well as its parents' inputs" do
-        expect(external_outer_group.inputs).to match_array([:suite_input, :external_outer_group_input])
+        expect(external_outer_group.inputs).to match_array([{ name: :suite_input },
+                                                            { name: :external_outer_group_input }])
       end
 
       it "contains its own outputs as well as its parents' outputs" do
@@ -254,7 +257,8 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own inputs as well as its parents' inputs" do
-        expected_inputs = [:suite_input, :external_outer_group_input, :external_inner_group_input]
+        expected_inputs = [{ name: :suite_input }, { name: :external_outer_group_input },
+                           { name: :external_inner_group_input }]
         expect(external_inner_group.inputs).to match_array(expected_inputs)
       end
 
@@ -301,10 +305,10 @@ RSpec.describe InfrastructureTest::Suite do
 
       it "contains its own inputs as well as its parents' inputs" do
         expected_inputs = [
-          :suite_input,
-          :external_outer_group_input,
-          :external_inner_group_input,
-          :external_test1_input
+          { name: :suite_input },
+          { name: :external_outer_group_input },
+          { name: :external_inner_group_input },
+          { name: :external_test1_input }
         ]
         expect(external_test.inputs).to match_array(expected_inputs)
       end
