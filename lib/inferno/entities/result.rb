@@ -44,6 +44,10 @@ module Inferno
       def runnable
         test || test_group || test_suite
       end
+
+      def waiting?
+        result == 'wait'
+      end
     end
   end
 end

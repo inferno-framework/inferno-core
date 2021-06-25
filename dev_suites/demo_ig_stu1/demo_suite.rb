@@ -43,5 +43,21 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         title 'Demo Group Instance 3'
       end
     end
+
+    group do
+      id 'wait_group'
+
+      test do
+        run { pass }
+      end
+
+      test do
+        run { wait }
+      end
+
+      test do
+        run { cancel }
+      end
+    end
   end
 end

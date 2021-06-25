@@ -49,6 +49,22 @@ module Inferno
       def omit_if(test, message = '')
         raise Exceptions::OmitException, message if test
       end
+
+      # Halt execution of the current test and wait for execution to resume.
+      #
+      # @param message [String]
+      def wait(message = '')
+        raise Exceptions::WaitException, message
+      end
+
+      # Halt execution of the current test. This provided for testing purposes
+      # and should not be used in real tests.
+      #
+      # @param message [String]
+      # @api private
+      def cancel(message = '')
+        raise Exceptions::CancelException, message
+      end
     end
   end
 end

@@ -55,7 +55,14 @@ module Inferno
     end
 
     def run_group(runnable, inputs = {}, outputs = {})
-      results = runnable.children.flat_map { |child| run(child, inputs, outputs) }
+      results = []
+      runnable.children.each do |child|
+        result = run(child, inputs, outputs)
+        results << result
+        break if result.last.waiting?
+      end
+
+      results.flatten!
 
       results << persist_result(
         {
