@@ -4,34 +4,24 @@ require 'sinatra/base'
 
 module SMART
   class SMARTSuite < Inferno::TestSuite
-    class ExampleController
+    class LaunchRoute
       include Hanami::Action
 
       def self.call(params)
         new.call(params)
       end
 
-      def call(_params)
+      def call(params)
+        iss = params.get(:iss)
+        repo = Inferno::Repositories::TestRuns.new
+        repo.find_latest_by_suite_and_input(test_suite_id: 'smart', input_name: 'url', input_value: 'iss')
+        binding.pry
         self.body = 'ExampleRoute Response'
       end
     end
 
-    class ExampleApp < Sinatra::Base
-      get '/' do
-        'App Response'
-      end
-
-      get '/2' do
-        'App Response 2'
-      end
-    end
+    route :get, '/launch', LaunchRoute
 
     id 'smart'
-
-    route :get, '/proc', ->(_env) { [200, {}, ['Proc Response']] }
-
-    route :get, '/controller', ExampleController
-
-    route :all, '/app', ExampleApp
   end
 end

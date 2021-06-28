@@ -24,6 +24,27 @@ module Inferno
           .map! { |result| results_repo.build_entity(result) }
       end
 
+      def find_latest_waiting_by_suite_and_input(test_suite_id:, input_name:, input_value:)
+        test_run_hash =
+          self.class::Model
+            .where(test_suite_id: test_suite_id)
+            .where(status: 'wait')
+            .join(TestRunInput.where(name: input_name, value: input_value))
+            .order(Sequel.desc(:updated_at))
+            .limit(1)
+            .to_a
+            &.first
+            &.to_hash
+
+        return nil if test_run_hash.nil?
+
+        results_repo.build_entity(test_run_hash)
+      end
+
+      def update_test_run_status(test_run_id, status)
+
+      end
+
       class Model < Sequel::Model(db)
         include ValidateRunnableReference
 
