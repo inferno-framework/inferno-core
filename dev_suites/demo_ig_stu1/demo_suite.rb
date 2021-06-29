@@ -1,4 +1,5 @@
 require_relative 'groups/demo_group'
+require 'sinatra/base'
 
 module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
   class DemoSuite < Inferno::TestSuite

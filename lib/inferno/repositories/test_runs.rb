@@ -24,12 +24,12 @@ module Inferno
           .map! { |result| results_repo.build_entity(result) }
       end
 
-      def find_latest_waiting_by_suite_and_input(test_suite_id:, input_name:, input_value:)
+      def find_latest_waiting_by_suite_and_identifier(test_suite_id:, identifier:)
         test_run_hash =
           self.class::Model
             .where(test_suite_id: test_suite_id)
             .where(status: 'wait')
-            .join(TestRunInput.where(name: input_name, value: input_value))
+            .where(identifier: identifier)
             .order(Sequel.desc(:updated_at))
             .limit(1)
             .to_a
@@ -41,8 +41,10 @@ module Inferno
         results_repo.build_entity(test_run_hash)
       end
 
-      def update_test_run_status(test_run_id, status)
-
+      def update_status_and_clear_identifier(_test_run_id, status)
+        self.class::Model
+          .find(id: test_test_run_id)
+          .update(status: status, identifier: nil, updated_at: Time.now)
       end
 
       class Model < Sequel::Model(db)

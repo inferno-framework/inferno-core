@@ -36,6 +36,14 @@ module Inferno
         @headers = params[:headers]&.map { |header| header.is_a?(Hash) ? Header.new(header) : header } || []
       end
 
+      def query_parameters
+        Addressable::URI.parse(url).query_values || {}
+      end
+
+      def add_response_header(name, value)
+        headers << Header.new(name: name, value: value, type: 'response')
+      end
+
       # Find a response header
       #
       # @param name [String] the header name
@@ -117,6 +125,26 @@ module Inferno
       end
 
       class << self
+        # @api private
+        def from_rack_env(env, name: nil)
+          rack_request = env['router.request'].rack_request
+          url = "#{rack_request.base_url}#{rack_request.path}"
+          url += "?#{rack_request.query_string}" if rack_request.query_string.present?
+          request_headers =
+            env
+              .select { |key, _| key.start_with? 'HTTP_' }
+              .transform_keys { |key| key.delete_prefix('HTTP_').tr('_', '-').downcase }
+              .map { |header_name, value| Header.new(name: header_name, value: value, type: 'request') }
+          new(
+            verb: rack_request.request_method.downcase,
+            url: url,
+            direction: 'incoming',
+            name: name,
+            request_body: rack_request.body,
+            headers: request_headers
+          )
+        end
+
         # @api private
         def from_http_response(response, test_session_id:, direction: 'outgoing', name: nil)
           request_headers =
