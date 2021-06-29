@@ -1,7 +1,7 @@
 require 'hanami-controller'
 require 'pry'
 
-class CustomRoute
+class ResumeTestRoute
   include Hanami::Action
 
   def self.call(params)
@@ -12,14 +12,16 @@ class CustomRoute
     @request ||= Inferno::Entities::Request.from_rack_env(@params.env)
   end
 
-  def find_test_run
-    Inferno::Repositories::TestRuns.new.find_latest_waiting_by_suite_and_identifier(
-      test_suite_id: 'smart',
-      identifier: test_run_identifier
-    )
+  def test_run
+    @test_run ||=
+      test_run_repo.find_latest_waiting_by_identifier(test_run_identifier)
   end
 
-  def handle_request; end
+  def test_run_repo
+    Inferno::Repositories::TestRuns.new
+  end
+
+  # def handle_request; end
 
   def results_repo
     Inferno::Repositories::Results.new
@@ -30,7 +32,7 @@ class CustomRoute
   end
 
   def update_result
-    results_repo.update_status(waiting_result.id, 'pass')
+    results_repo.update_result_and_message(waiting_result.id, 'pass', nil)
   end
 
   def persist_request
@@ -42,51 +44,61 @@ class CustomRoute
     )
   end
 
-  def set_response
-    self.body = request.response_body
-    response_headers = request.response_headers.each_with_object({}) do |header, header_hash|
-      header_hash[header.name] = header.value
-    end
-    headers.merge!(response_headers)
-    request.status ||= 200
-    self.status = request.status
-  end
+  # def set_response
+  #   self.body = request.response_body
+  #   response_headers = request.response_headers.each_with_object({}) do |header, header_hash|
+  #     header_hash[header.name] = header.value
+  #   end
+  #   headers.merge!(response_headers)
+  #   request.status ||= 200
+  #   self.status = request.status
+  # end
 
   def call(_params)
-    test_run = find_test_run
     if test_run.nil?
       status(500, "Unable to find test run with identifier '#{test_run_identifier}'.")
       return
     end
 
-    test_run.update_status_and_clear_identifier(test_run.id, 'running')
+    test_run_repo.update_status_and_identifier(test_run.id, 'running', nil)
 
-    handle_request
-    set_response
+    # handle_request
+    # set_response
 
     update_result
     persist_request
 
-    # resume execution with request
+    redirect_to "/test_sessions/#{test_run.test_session_id}"
   end
 end
 
 module SMART
   class SMARTSuite < Inferno::TestSuite
-    class LaunchRoute < CustomRoute
+    class LaunchRoute < ResumeTestRoute
       def test_run_identifier
         request.query_parameters['iss']
-      end
-
-      def handle_request
-        request.response_body = 'LaunchRoute response body'
-        request.add_response_header('X-ABC', 'DEF')
-        request.status = 201
       end
     end
 
     route :get, '/launch', LaunchRoute
 
     id 'smart'
+    title 'SMART'
+
+    group do
+      id 'smart_group'
+      title 'SMART Group'
+
+      test do
+        id 'wait_test'
+        title 'Wait test'
+        run do
+          wait(
+            identifier: 'abc',
+            message: "Waiting to receive a request at /custom/smart/launch with an iss of 'abc'"
+          )
+        end
+      end
+    end
   end
 end

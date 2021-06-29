@@ -24,10 +24,9 @@ module Inferno
           .map! { |result| results_repo.build_entity(result) }
       end
 
-      def find_latest_waiting_by_suite_and_identifier(test_suite_id:, identifier:)
+      def find_latest_waiting_by_identifier(identifier)
         test_run_hash =
           self.class::Model
-            .where(test_suite_id: test_suite_id)
             .where(status: 'wait')
             .where(identifier: identifier)
             .order(Sequel.desc(:updated_at))
@@ -38,13 +37,25 @@ module Inferno
 
         return nil if test_run_hash.nil?
 
-        results_repo.build_entity(test_run_hash)
+        build_entity(test_run_hash)
       end
 
-      def update_status_and_clear_identifier(_test_run_id, status)
+      def update_identifier(test_run_id, identifier)
         self.class::Model
-          .find(id: test_test_run_id)
-          .update(status: status, identifier: nil, updated_at: Time.now)
+          .find(id: test_run_id)
+          .update(identifier: identifier, updated_at: Time.now)
+      end
+
+      def update_status(test_run_id, status)
+        self.class::Model
+          .find(id: test_run_id)
+          .update(status: status, updated_at: Time.now)
+      end
+
+      def update_status_and_identifier(test_run_id, status, identifier)
+        self.class::Model
+          .find(id: test_run_id)
+          .update(status: status, identifier: identifier, updated_at: Time.now)
       end
 
       class Model < Sequel::Model(db)

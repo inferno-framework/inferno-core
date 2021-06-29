@@ -140,7 +140,7 @@ module Inferno
             url: url,
             direction: 'incoming',
             name: name,
-            request_body: rack_request.body,
+            request_body: rack_request.body.is_a?(Puma::NullIO) ? nil : rack_request.body,
             headers: request_headers
           )
         end

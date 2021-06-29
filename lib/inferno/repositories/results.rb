@@ -37,20 +37,22 @@ module Inferno
       def find_waiting_result(test_run_id:)
         result_hash =
           Model
-            .where(test_run_id: test_run_id, status: 'waiting')
+            .where(test_run_id: test_run_id, result: 'wait')
             .where { test_id !~ nil }
-            .one
-            .to_hash
+            .limit(1)
+            .to_a
+            .first
+            &.to_hash
 
         return nil if result_hash.nil?
 
         build_entity(result_hash)
       end
 
-      def update_result(result_id, result)
+      def update_result_and_message(result_id, result, message)
         self.class::Model
           .find(id: result_id)
-          .update(result: result, updated_at: Time.now)
+          .update(result: result, result_message: message, updated_at: Time.now)
       end
 
       def json_serializer_options

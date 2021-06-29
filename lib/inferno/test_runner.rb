@@ -42,6 +42,10 @@ module Inferno
         outputs[output] = test_instance.send(output)
       end
 
+      if result == 'wait'
+        Inferno::Repositories::TestRuns.new.update_status_and_identifier(test_run.id, 'wait', test_instance.identifier)
+      end
+
       [persist_result(
         {
           test_session_id: test_session.id,

@@ -81,7 +81,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       end
 
       test do
-        run { wait }
+        run { wait(identifier: 'abc') }
       end
 
       test do

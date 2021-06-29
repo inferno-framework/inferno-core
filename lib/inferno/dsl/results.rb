@@ -53,8 +53,13 @@ module Inferno
       # Halt execution of the current test and wait for execution to resume.
       #
       # @param message [String]
-      def wait(message = '')
+      def wait(identifier:, message: '')
+        identifier(identifier)
         raise Exceptions::WaitException, message
+      end
+
+      def identifier(identifier = nil)
+        @identifier ||= identifier
       end
 
       # Halt execution of the current test. This provided for testing purposes
