@@ -28,6 +28,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     fhir_client :this_client_name do # name optional
       url :url # if symbol just use a input?
       headers Authorize: 'something'
+      token :bearer_token
 
       # format: format # if you want to be able to specify in input
       # format: 'xml' # if you want to override default 'json'
