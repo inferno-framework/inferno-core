@@ -21,10 +21,12 @@ class ResumeTestRoute
     Inferno::Repositories::TestRuns.new
   end
 
-  # def handle_request; end
-
   def results_repo
     Inferno::Repositories::Results.new
+  end
+
+  def tests_repo
+    Inferno::Repositories::Tests.new
   end
 
   def waiting_result
@@ -44,15 +46,13 @@ class ResumeTestRoute
     )
   end
 
-  # def set_response
-  #   self.body = request.response_body
-  #   response_headers = request.response_headers.each_with_object({}) do |header, header_hash|
-  #     header_hash[header.name] = header.value
-  #   end
-  #   headers.merge!(response_headers)
-  #   request.status ||= 200
-  #   self.status = request.status
-  # end
+  def redirect_route
+    "/test_sessions/#{test_run.test_session_id}##{waiting_group_id}"
+  end
+
+  def waiting_group_id
+    tests_repo.find(waiting_result.test_id).parent.id
+  end
 
   def call(_params)
     if test_run.nil?
@@ -62,13 +62,10 @@ class ResumeTestRoute
 
     test_run_repo.update_status_and_identifier(test_run.id, 'running', nil)
 
-    # handle_request
-    # set_response
-
     update_result
     persist_request
 
-    redirect_to "/test_sessions/#{test_run.test_session_id}"
+    redirect_to redirect_route
   end
 end
 
@@ -93,11 +90,9 @@ module SMART
         id 'auth_redirect'
         title 'OAuth server redirects client browser to app redirect URI'
 
-        input :url, :client_id, :auth_url, :scope
-
         run do
           wait(
-            identifier: url,
+            identifier: 'abc',
             message: "Waiting to receive a request at /custom/smart/launch with an iss of 'abc'"
           )
         end
