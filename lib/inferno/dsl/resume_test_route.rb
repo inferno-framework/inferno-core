@@ -44,7 +44,7 @@ module Inferno
           request.to_hash.merge(
             test_session_id: test_run.test_session_id,
             result_id: waiting_result.id,
-            name: request_name
+            name: test.incoming_request_name
           )
         )
       end
@@ -55,8 +55,13 @@ module Inferno
       end
 
       # @api private
+      def test
+        @test ||= tests_repo.find(waiting_result.test_id)
+      end
+
+      # @api private
       def waiting_group_id
-        tests_repo.find(waiting_result.test_id).parent.id
+        test.parent.id
       end
 
       # @api private

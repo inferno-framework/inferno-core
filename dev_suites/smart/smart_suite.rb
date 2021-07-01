@@ -1,5 +1,3 @@
-require 'pry'
-
 module SMART
   class SMARTSuite < Inferno::TestSuite
     id 'smart'
@@ -16,7 +14,7 @@ module SMART
       test do
         id 'auth_redirect'
         title 'OAuth server redirects client browser to app redirect URI'
-        makes_request :launch
+        receives_request :launch
 
         run do
           wait(
@@ -36,7 +34,7 @@ module SMART
               .query_parameters
               .map { |name, value| "#{name}=#{value}" }
               .join('&')
-          info("Received the following query paramaters: #{query_string}")
+          info "Received the following query paramaters: #{query_string}"
         end
       end
     end
