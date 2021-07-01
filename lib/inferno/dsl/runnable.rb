@@ -1,3 +1,5 @@
+require_relative 'resume_test_route'
+
 module Inferno
   module DSL
     # This module contains the DSL for defining child entities in the test
@@ -243,6 +245,7 @@ module Inferno
         @outputs ||= []
       end
 
+      # @api private
       def child_types
         return [] if ancestors.include? Inferno::Entities::Test
         return [:groups] if ancestors.include? Inferno::Entities::TestSuite
@@ -250,6 +253,7 @@ module Inferno
         [:groups, :tests]
       end
 
+      # @api private
       def children
         @children ||= []
       end
@@ -260,10 +264,20 @@ module Inferno
         @validator_url = url
       end
 
+      # @api private
       def suite
         return self if ancestors.include? Inferno::Entities::TestSuite
 
         parent.suite
+      end
+
+      def resume_test_route(method, path, **options, &block)
+        route_class = Class.new(ResumeTestRoute) do
+          define_method(:test_run_identifier, &block)
+          define_method(:request_name, -> { options[:name] })
+        end
+
+        route(method, path, route_class)
       end
 
       def route(method, path, handler)
