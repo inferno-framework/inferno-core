@@ -3,7 +3,7 @@
 RSpec.describe Inferno::TestRunner do
   let(:base_url) { 'http://hapi.fhir.org/baseR4' }
   let(:patient_id) { 1215072 }
-  let(:bearer_token) {'some_token'}
+  let(:bearer_token) { 'some_token' }
   let(:group) { Inferno::Repositories::TestSuites.new.find('DemoIG_STU1::DemoSuite').groups.first.groups.first }
   let(:runner) { described_class.new(test_session: test_session, test_run: test_run) }
   let(:test_session) { repo_create(:test_session, test_suite_id: 'DemoIG_STU1::DemoSuite') }
@@ -39,9 +39,8 @@ RSpec.describe Inferno::TestRunner do
     stub_request(:get, 'http://example.com')
       .to_return(status: 200)
   end
-  
-  context 'without a bearer token' do
 
+  context 'without a bearer token' do
     it 'runs' do
       expect do
         runner.run(group, { url: base_url, patient_id: patient_id })
@@ -67,9 +66,8 @@ RSpec.describe Inferno::TestRunner do
       expect(error_results).to be_empty, error_results_message(error_results)
     end
   end
-  
-  context 'with a bearer token' do
 
+  context 'with a bearer token' do
     it 'runs' do
       expect do
         runner.run(group, { url: base_url, patient_id: patient_id, token: bearer_token })
@@ -94,6 +92,5 @@ RSpec.describe Inferno::TestRunner do
 
       expect(error_results).to be_empty, error_results_message(error_results)
     end
-
   end
 end
