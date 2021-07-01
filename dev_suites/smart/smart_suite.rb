@@ -90,11 +90,14 @@ module SMART
       title 'SMART Group'
 
       test do
-        id 'wait_test'
-        title 'Wait test'
+        id 'auth_redirect'
+        title 'OAuth server redirects client browser to app redirect URI'
+
+        input :url, :client_id, :auth_url, :scope
+
         run do
           wait(
-            identifier: 'abc',
+            identifier: url,
             message: "Waiting to receive a request at /custom/smart/launch with an iss of 'abc'"
           )
         end
