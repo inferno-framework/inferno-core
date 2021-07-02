@@ -48,7 +48,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     group do
       id 'wait_group'
 
-      resume_test_route :get, '/resume', name: :resume do
+      resume_test_route :get, '/resume' do
         request.query_parameters['xyz']
       end
 

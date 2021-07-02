@@ -2,6 +2,10 @@ require 'hanami-controller'
 
 module Inferno
   module DSL
+    # A base class for creating routes to resume test execution upon receiving
+    # an incoming request.
+    # @api private
+    # @see Inferno::DSL::Runnable#resume_test_route
     class ResumeTestRoute
       include Hanami::Action
       include Import[

@@ -52,6 +52,26 @@ module Inferno
 
       # Halt execution of the current test and wait for execution to resume.
       #
+      # @see Inferno::DSL::Runnable#resume_test_route
+      # @example
+      #   resume_test_route :get, '/launch' do
+      #     request.query_parameters['iss']
+      #   end
+      #
+      #   test do
+      #     input :issuer
+      #     receives_request :launch
+      #
+      #     run do
+      #       wait(
+      #         identifier: issuer,
+      #         message: "Wating to receive a request with an issuer of #{issuer}"
+      #       )
+      #     end
+      #   end
+      # @param identifier [String] An identifier which can uniquely identify
+      #   this test run based on an incoming request. This is necessary so that
+      #   the correct test run can be resumed.
       # @param message [String]
       def wait(identifier:, message: '')
         identifier(identifier)

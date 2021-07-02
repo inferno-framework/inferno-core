@@ -3,7 +3,7 @@ module SMART
     id 'smart'
     title 'SMART'
 
-    resume_test_route :get, '/launch', name: :launch do
+    resume_test_route :get, '/launch' do
       request.query_parameters['iss']
     end
 

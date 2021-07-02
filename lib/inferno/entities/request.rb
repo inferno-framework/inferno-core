@@ -36,12 +36,9 @@ module Inferno
         @headers = params[:headers]&.map { |header| header.is_a?(Hash) ? Header.new(header) : header } || []
       end
 
+      # @return [Hash<String, String>]
       def query_parameters
         Addressable::URI.parse(url).query_values || {}
-      end
-
-      def add_response_header(name, value)
-        headers << Header.new(name: name, value: value, type: 'response')
       end
 
       # Find a response header

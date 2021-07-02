@@ -41,10 +41,12 @@ module Inferno
         @requests = (params[:requests] || []).map { |request| Request.new(request) }
       end
 
+      # @return [Inferno::Entities::Test, Inferno::Entities::TestGroup, Inferno::Entities::TestSuite]
       def runnable
         test || test_group || test_suite
       end
 
+      # @return [Boolean]
       def waiting?
         result == 'wait'
       end
