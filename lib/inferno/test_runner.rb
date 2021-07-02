@@ -12,6 +12,18 @@ module Inferno
       @results_repo ||= Repositories::Results.new
     end
 
+    def test_runs_repo
+      @test_runs_repo ||= Repositories::TestRuns.new
+    end
+
+    def start(runnable, inputs = {}, outputs = {})
+      test_runs_repo.update_status(test_run.id, 'running')
+
+      run(runnable, inputs, outputs).tap do |results|
+        test_runs_repo.update_status(test_run.id, 'done') unless results.any?(&:waiting?)
+      end
+    end
+
     def run(runnable, inputs = {}, outputs = {})
       if runnable < Entities::Test
         run_test(runnable, inputs, outputs)
@@ -34,6 +46,7 @@ module Inferno
         test_instance.result_message = e.message
         e.result
       rescue StandardError => e
+        Application['logger'].error(e.full_message)
         test_instance.result_message = "Error: #{e.message}"
         'error'
       end
@@ -42,9 +55,7 @@ module Inferno
         outputs[output] = test_instance.send(output)
       end
 
-      if result == 'wait'
-        Inferno::Repositories::TestRuns.new.update_status_and_identifier(test_run.id, 'wait', test_instance.identifier)
-      end
+      test_runs_repo.update_status_and_identifier(test_run.id, 'wait', test_instance.identifier) if result == 'wait'
 
       [persist_result(
         {
