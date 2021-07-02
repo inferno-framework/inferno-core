@@ -8,7 +8,6 @@ module Inferno
                 requests_repo: 'repositories.requests',
                 results_repo: 'repositories.results',
                 test_runs_repo: 'repositories.test_runs',
-                test_sessions_repo: 'repositories.test_sessions',
                 tests_repo: 'repositories.tests'
               ]
 
@@ -21,11 +20,6 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def request
         @request ||= Inferno::Entities::Request.from_rack_env(@params.env)
-      end
-
-      def test_session
-        @test_session ||=
-          test_sessions_repo.find(test_run.test_session_id)
       end
 
       # @api private

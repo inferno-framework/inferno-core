@@ -23,7 +23,6 @@ gem 'health_cards'
 
 group :development, :test do
   gem 'pry'
-  gem 'sinatra'
   gem 'pry-byebug'
   gem 'rubocop', '~> 1.9'
   gem 'rubocop-rake', require: false

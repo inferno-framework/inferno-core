@@ -3,7 +3,7 @@ export const mockedTestRunReturnValue = {
   inputs: null,
   results: null,
   status: null,
-  test_group_id: 'DemoIG_STU1::DemoSuite-Group01',
+  test_group_id: 'demo-Group01',
   test_session_id: 'test session id',
 };
 

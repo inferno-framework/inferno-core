@@ -135,12 +135,15 @@ module Inferno
               .select { |key, _| key.start_with? 'HTTP_' }
               .transform_keys { |key| key.delete_prefix('HTTP_').tr('_', '-').downcase }
               .map { |header_name, value| Header.new(name: header_name, value: value, type: 'request') }
+
           new(
             verb: rack_request.request_method.downcase,
             url: url,
             direction: 'incoming',
             name: name,
-            request_body: rack_request.body.is_a?(Puma::NullIO) ? nil : rack_request.body,
+            # TODO: fix
+            # request_body: rack_request.body.is_a?(::Puma::NullIO) ? nil : rack_request.body,
+            request_body: rack_request.body,
             headers: request_headers
           )
         end

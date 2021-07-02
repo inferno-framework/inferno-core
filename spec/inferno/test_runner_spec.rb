@@ -2,7 +2,7 @@
 #   refactor.
 RSpec.describe Inferno::TestRunner do
   let(:runner) { described_class.new(test_session: test_session, test_run: test_run) }
-  let(:test_session) { repo_create(:test_session, test_suite_id: 'DemoIG_STU1::DemoSuite') }
+  let(:test_session) { repo_create(:test_session, test_suite_id: 'demo') }
   let(:test_run) do
     repo_create(:test_run, runnable: { test_group_id: group.id }, test_session_id: test_session.id)
   end
@@ -16,7 +16,7 @@ RSpec.describe Inferno::TestRunner do
   describe 'when running demo group' do
     let(:base_url) { 'http://hapi.fhir.org/baseR4' }
     let(:patient_id) { 1215072 }
-    let(:group) { Inferno::Repositories::TestSuites.new.find('DemoIG_STU1::DemoSuite').groups.first.groups.first }
+    let(:group) { Inferno::Repositories::TestSuites.new.find('demo').groups.first.groups.first }
     let(:patient) { FHIR::Patient.new(id: patient_id) }
     let(:observation_bundle) do
       FHIR::Bundle.new(
@@ -68,7 +68,7 @@ RSpec.describe Inferno::TestRunner do
   end
 
   describe 'when running wait group' do
-    let(:group) { Inferno::Repositories::TestSuites.new.find('DemoIG_STU1::DemoSuite').groups.last }
+    let(:group) { Inferno::Repositories::TestSuites.new.find('demo').groups.last }
 
     it 'gives a wait result' do
       results = runner.run(group, {})

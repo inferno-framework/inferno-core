@@ -1,9 +1,9 @@
 require_relative 'groups/demo_group'
-require 'sinatra/base'
 
 module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
   class DemoSuite < Inferno::TestSuite
     title 'Demonstration Suite'
+    id 'demo'
 
     # Ideas:
     # * Suite metadata (name, associated ig, version, etc etc)
@@ -45,42 +45,20 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       end
     end
 
-    class ExampleController
-      include Hanami::Action
-
-      def self.call(params)
-        new.call(params)
-      end
-
-      def call(_params)
-        self.body = 'ExampleRoute Response'
-      end
-    end
-
-    class ExampleApp < Sinatra::Base
-      get '/' do
-        'App Response'
-      end
-
-      get '/2' do
-        'App Response 2'
-      end
-    end
-
-    route :get, '/proc', ->(_env) { [200, {}, ['Proc Response']] }
-
-    route :get, '/controller', ExampleController
-
-    route :all, '/app', ExampleApp
-
     group do
       id 'wait_group'
+
+      resume_test_route :get, '/resume', name: :resume do
+        request.query_parameters['xyz']
+      end
 
       test do
         run { pass }
       end
 
       test do
+        receives_request :resume
+
         run { wait(identifier: 'abc') }
       end
 
