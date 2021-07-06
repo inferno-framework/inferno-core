@@ -34,7 +34,7 @@ module SMART
               .query_parameters
               .map { |name, value| "#{name}=#{value}" }
               .join('&')
-          info "Received the following query paramaters: #{query_string}"
+          info "Received the following query parameters: #{query_string}"
         end
       end
     end
