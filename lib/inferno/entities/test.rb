@@ -102,10 +102,14 @@ module Inferno
       class << self
         # Define inputs for this Test
         #
-        # @param inputs [Symbol]
+        # @param name [Symbol] name of the input
+        # @param other_names [Symbol] array of symbols if specifying multiple inputs
+        # @param input_definition [Hash] options for input such as type, description, or title
         # @return [void]
         # @example
-        #   input :patient_id, :bearer_token
+        #   input :patientid, title: 'Patient ID', description: 'The ID of the patient being searched for'
+        # @example
+        #   input :textarea, title: 'Textarea Input Example', type: 'textarea'
         def input(name, *other_names, **input_definition)
           super
 

@@ -196,19 +196,22 @@ module Inferno
 
       # Define inputs
       #
-      # @param inputs [Symbol]
+      # @param name [Symbol] name of the input
+      # @param other_names [Symbol] array of symbols if specifying multiple inputs
+      # @param input_definition [Hash] options for input such as type, description, or title
       # @return [void]
       # @example
-      #   input :patient_id, :bearer_token
+      #   input :patientid, title: 'Patient ID', description: 'The ID of the patient being searched for'
+      # @example
+      #   input :textarea, title: 'Textarea Input Example', type: 'textarea'
       def input(name, *other_names, **input_definition)
         if other_names.present?
           [name, *other_names].each do |input_name|
-            inputs.push({ name: input_name, title: nil, description: nil, type: nil })
+            inputs.push({ name: input_name, title: nil, description: nil, type: 'text' })
           end
-        elsif input_definition.present?
-          inputs.push({ name: name }.merge(input_definition))
         else
-          inputs.push({ name: name })
+          input_definition[:type] = 'text' unless input_definition.key? :type
+          inputs.push({ name: name }.merge(input_definition))
         end
       end
 

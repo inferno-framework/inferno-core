@@ -38,7 +38,7 @@ export interface TestInput {
   name: string;
   title?: string;
   value?: string;
-  type?: string;
+  type?: 'text' | 'textarea';
   description?: string;
 }
 

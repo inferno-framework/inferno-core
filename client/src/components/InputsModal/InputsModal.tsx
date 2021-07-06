@@ -57,7 +57,7 @@ const InputsModal: FC<InputsModalProps> = ({
     }
     const inputs_with_values: TestInput[] = [];
     inputsMap.forEach((input_value, input_name) => {
-      inputs_with_values.push({ name: input_name, value: input_value });
+      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
     });
     createTestRun(runnableType, runnableId, inputs_with_values);
     hideModal();
@@ -76,6 +76,7 @@ const InputsModal: FC<InputsModalProps> = ({
               helperText={requirement.description}
               value={inputsMap.get(requirement.name) || ''}
               multiline
+              rows={4}
               inputProps={{ className: styles.textarea }}
               onChange={(event) => {
                 const value = event.target.value;
