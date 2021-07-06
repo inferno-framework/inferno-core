@@ -12,8 +12,8 @@ module SMART
       title 'SMART Group'
 
       test do
-        id 'auth_redirect'
-        title 'OAuth server redirects client browser to app redirect URI'
+        id 'ehr_launch'
+        title 'EHR redirects client browser to app launch URI'
         receives_request :launch
 
         run do
