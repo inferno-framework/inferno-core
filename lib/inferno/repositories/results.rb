@@ -49,10 +49,8 @@ module Inferno
         build_entity(result_hash)
       end
 
-      def update_result_and_message(result_id, result, message)
-        self.class::Model
-          .find(id: result_id)
-          .update(result: result, result_message: message, updated_at: Time.now)
+      def pass_waiting_result(result_id, message = nil)
+        update(result_id, result: 'pass', result_message: message)
       end
 
       def json_serializer_options

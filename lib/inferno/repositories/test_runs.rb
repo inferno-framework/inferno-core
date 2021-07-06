@@ -40,22 +40,24 @@ module Inferno
         build_entity(test_run_hash)
       end
 
-      def update_identifier(test_run_id, identifier)
-        self.class::Model
-          .find(id: test_run_id)
-          .update(identifier: identifier, updated_at: Time.now)
+      def clear_identifier(test_run_id)
+        update(test_run_id, identifier: nil)
       end
 
-      def update_status(test_run_id, status)
-        self.class::Model
-          .find(id: test_run_id)
-          .update(status: status, updated_at: Time.now)
+      def mark_as_running(test_run_id)
+        update(test_run_id, status: 'running')
       end
 
-      def update_status_and_identifier(test_run_id, status, identifier)
-        self.class::Model
-          .find(id: test_run_id)
-          .update(status: status, identifier: identifier, updated_at: Time.now)
+      def mark_as_done(test_run_id)
+        update(test_run_id, status: 'done')
+      end
+
+      def mark_as_waiting(test_run_id, identifier)
+        update(
+          test_run_id,
+          status: 'waiting',
+          identifier: identifier
+        )
       end
 
       class Model < Sequel::Model(db)

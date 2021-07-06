@@ -17,10 +17,10 @@ module Inferno
     end
 
     def start(runnable, inputs = {}, outputs = {})
-      test_runs_repo.update_status(test_run.id, 'running')
+      test_runs_repo.mark_as_running(test_run.id)
 
       run(runnable, inputs, outputs).tap do |results|
-        test_runs_repo.update_status(test_run.id, 'done') unless results.any?(&:waiting?)
+        test_runs_repo.mark_as_done(test_run.id) unless results.any?(&:waiting?)
       end
     end
 
@@ -55,7 +55,7 @@ module Inferno
         outputs[output] = test_instance.send(output)
       end
 
-      test_runs_repo.update_status_and_identifier(test_run.id, 'wait', test_instance.identifier) if result == 'wait'
+      test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier) if result == 'wait'
 
       [persist_result(
         {

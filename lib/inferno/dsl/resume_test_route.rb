@@ -39,7 +39,7 @@ module Inferno
 
       # @api private
       def update_result
-        results_repo.update_result_and_message(waiting_result.id, 'pass', nil)
+        results_repo.pass_waiting_result(waiting_result.id)
       end
 
       # @api private
@@ -75,7 +75,7 @@ module Inferno
           return
         end
 
-        test_runs_repo.update_identifier(test_run.id, nil)
+        test_runs_repo.clear_identifier(test_run.id)
 
         update_result
         persist_request
