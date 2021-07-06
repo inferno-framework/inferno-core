@@ -29,6 +29,7 @@ module Inferno
           self.class::Model
             .where(status: 'wait')
             .where(identifier: identifier)
+            .where { wait_timeout >= Time.now }
             .order(Sequel.desc(:updated_at))
             .limit(1)
             .to_a
@@ -40,10 +41,6 @@ module Inferno
         build_entity(test_run_hash)
       end
 
-      def clear_identifier(test_run_id)
-        update(test_run_id, identifier: nil)
-      end
-
       def mark_as_running(test_run_id)
         update(test_run_id, status: 'running')
       end
@@ -52,11 +49,21 @@ module Inferno
         update(test_run_id, status: 'done')
       end
 
-      def mark_as_waiting(test_run_id, identifier)
+      def mark_as_waiting(test_run_id, identifier, timeout)
         update(
           test_run_id,
           status: 'waiting',
-          identifier: identifier
+          identifier: identifier,
+          wait_timeout: Time.now + timeout.seconds
+        )
+      end
+
+      def mark_as_no_longer_waiting(test_run_id)
+        update(
+          test_run_id,
+          status: 'paised',
+          identifier: nil,
+          wait_timeout: nil
         )
       end
 

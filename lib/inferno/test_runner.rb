@@ -55,7 +55,9 @@ module Inferno
         outputs[output] = test_instance.send(output)
       end
 
-      test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier) if result == 'wait'
+      if result == 'wait'
+        test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
+      end
 
       [persist_result(
         {

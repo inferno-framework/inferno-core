@@ -22,6 +22,7 @@ module Inferno
         :inputs,
         :results,
         :identifier,
+        :wait_timeout,
         :created_at,
         :updated_at
       ].freeze

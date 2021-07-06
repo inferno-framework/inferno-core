@@ -75,7 +75,7 @@ module Inferno
           return
         end
 
-        test_runs_repo.clear_identifier(test_run.id)
+        test_runs_repo.mark_as_no_longer_waiting(test_run.id)
 
         update_result
         persist_request

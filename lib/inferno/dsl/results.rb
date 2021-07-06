@@ -73,13 +73,21 @@ module Inferno
       #   this test run based on an incoming request. This is necessary so that
       #   the correct test run can be resumed.
       # @param message [String]
-      def wait(identifier:, message: '')
+      # @param timeout [Integer] Number of seconds to wait for an incoming
+      #   request
+      def wait(identifier:, message: '', timeout: 300)
         identifier(identifier)
+        wait_timeout(timeout)
+
         raise Exceptions::WaitException, message
       end
 
       def identifier(identifier = nil)
         @identifier ||= identifier
+      end
+
+      def wait_timeout(timeout = nil)
+        @wait_timeout ||= timeout
       end
 
       # Halt execution of the current test. This provided for testing purposes

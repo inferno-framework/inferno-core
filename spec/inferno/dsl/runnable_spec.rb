@@ -1,4 +1,5 @@
 require 'request_helper'
+require 'pry'
 
 RSpec.describe Inferno::DSL::Runnable do
   include Rack::Test::Methods
@@ -15,7 +16,8 @@ RSpec.describe Inferno::DSL::Runnable do
         test_session_id: test_session.id,
         runnable: { test_group_id: test_group.id },
         identifier: 'IDENTIFIER',
-        status: 'wait'
+        status: 'wait',
+        wait_timeout: Time.now + 300.seconds
       )
     end
 
@@ -36,7 +38,15 @@ RSpec.describe Inferno::DSL::Runnable do
       end
     end
 
-    context 'when the identifier does match a test run' do
+    context 'when the wait timeout has been passed' do
+      it 'renders a 500 error' do
+        Inferno::Repositories::TestRuns.new.update(test_run.id, wait_timeout: Time.now - 5.seconds)
+        get '/custom/demo/resume?xyz=IDENTIFIER'
+        expect(last_response.status).to eq(500)
+      end
+    end
+
+    context 'when a matching test run is found' do
       it 'redirects the user to the waiting group' do
         get '/custom/demo/resume?xyz=IDENTIFIER'
 
