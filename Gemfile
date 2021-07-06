@@ -18,6 +18,7 @@ gem 'dotenv'
 gem 'fhir_client'
 gem 'rake'
 gem 'faraday'
+gem 'sidekiq', '~> 6.2.1'
 
 group :development, :test do
   gem 'pry'
