@@ -27,7 +27,7 @@ module Inferno
       def find_latest_waiting_by_identifier(identifier)
         test_run_hash =
           self.class::Model
-            .where(status: 'wait')
+            .where(status: 'waiting')
             .where(identifier: identifier)
             .where { wait_timeout >= Time.now }
             .order(Sequel.desc(:updated_at))
@@ -61,7 +61,7 @@ module Inferno
       def mark_as_no_longer_waiting(test_run_id)
         update(
           test_run_id,
-          status: 'paised',
+          status: 'paused',
           identifier: nil,
           wait_timeout: nil
         )

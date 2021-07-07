@@ -47,22 +47,26 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
     group do
       id 'wait_group'
+      title 'Wait Group'
 
       resume_test_route :get, '/resume' do
         request.query_parameters['xyz']
       end
 
       test do
+        title 'Pass test'
         run { pass }
       end
 
       test do
+        title 'Wait test'
         receives_request :resume
 
         run { wait(identifier: 'abc') }
       end
 
       test do
+        title 'Cancel test'
         run { cancel }
       end
     end

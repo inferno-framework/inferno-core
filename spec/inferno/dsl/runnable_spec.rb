@@ -16,7 +16,7 @@ RSpec.describe Inferno::DSL::Runnable do
         test_session_id: test_session.id,
         runnable: { test_group_id: test_group.id },
         identifier: 'IDENTIFIER',
-        status: 'wait',
+        status: 'waiting',
         wait_timeout: Time.now + 300.seconds
       )
     end
