@@ -37,14 +37,14 @@ module Inferno
       # A string is interpreted as a token. A symbol is interpreted as the name of
       # an input to the Runnable.
       #
-      # @param token [String, Symbol]
+      # @param bearer_token [String, Symbol]
       # @return [void]
-      def token(token = nil)
-        @token ||=
-          if token.is_a? Symbol
-            runnable.send(token)
+      def bearer_token(bearer_token = nil)
+        @bearer_token ||=
+          if bearer_token.is_a? Symbol
+            runnable.send(bearer_token)
           else
-            token
+            bearer_token
           end
       end
 
