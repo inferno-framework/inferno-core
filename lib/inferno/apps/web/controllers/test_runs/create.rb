@@ -18,7 +18,7 @@ module Inferno
 
             TestRunner
               .new(test_session: test_session, test_run: test_run)
-              .start(test_run.runnable, inputs)
+              .start(inputs)
 
             self.body = serialize(test_run)
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation => e

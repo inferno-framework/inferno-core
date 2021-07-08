@@ -16,10 +16,12 @@ module Inferno
       @test_runs_repo ||= Repositories::TestRuns.new
     end
 
-    def start(runnable, inputs = {}, outputs = {})
+    def start(inputs = {}, outputs = {})
       test_runs_repo.mark_as_running(test_run.id)
 
-      run(runnable, inputs, outputs).tap do |results|
+      # TODO: persist inputs
+
+      run(test_run.runnable, inputs, outputs).tap do |results|
         test_runs_repo.mark_as_done(test_run.id) unless results.any?(&:waiting?)
       end
     end
@@ -52,6 +54,8 @@ module Inferno
       end
 
       runnable.outputs.each do |output|
+        # TODO: persist outputs
+
         outputs[output] = test_instance.send(output)
       end
 
