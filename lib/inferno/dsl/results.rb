@@ -49,6 +49,55 @@ module Inferno
       def omit_if(test, message = '')
         raise Exceptions::OmitException, message if test
       end
+
+      # Halt execution of the current test and wait for execution to resume.
+      #
+      # @see Inferno::DSL::Runnable#resume_test_route
+      # @example
+      #   resume_test_route :get, '/launch' do
+      #     request.query_parameters['iss']
+      #   end
+      #
+      #   test do
+      #     input :issuer
+      #     receives_request :launch
+      #
+      #     run do
+      #       wait(
+      #         identifier: issuer,
+      #         message: "Wating to receive a request with an issuer of #{issuer}"
+      #       )
+      #     end
+      #   end
+      # @param identifier [String] An identifier which can uniquely identify
+      #   this test run based on an incoming request. This is necessary so that
+      #   the correct test run can be resumed.
+      # @param message [String]
+      # @param timeout [Integer] Number of seconds to wait for an incoming
+      #   request
+      def wait(identifier:, message: '', timeout: 300)
+        identifier(identifier)
+        wait_timeout(timeout)
+
+        raise Exceptions::WaitException, message
+      end
+
+      def identifier(identifier = nil)
+        @identifier ||= identifier
+      end
+
+      def wait_timeout(timeout = nil)
+        @wait_timeout ||= timeout
+      end
+
+      # Halt execution of the current test. This provided for testing purposes
+      # and should not be used in real tests.
+      #
+      # @param message [String]
+      # @api private
+      def cancel(message = '')
+        raise Exceptions::CancelException, message
+      end
     end
   end
 end

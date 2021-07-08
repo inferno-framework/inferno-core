@@ -89,6 +89,18 @@ module Inferno
           named_requests_made.concat(names)
         end
 
+        # Specify the name for a request received by a test
+        #
+        # @param *names [Symbol] one or more Symbols
+        def receives_request(name)
+          @incoming_request_name = name
+        end
+
+        # @api private
+        def incoming_request_name
+          @incoming_request_name
+        end
+
         # Specify the named requests used by a test
         #
         # @param *names [Symbol] one or more Symbols

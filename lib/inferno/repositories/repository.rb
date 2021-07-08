@@ -80,6 +80,19 @@ module Inferno
         build_entity(result.to_hash.merge(handle_non_db_params(params)))
       end
 
+      # Update a record in the database.
+      #
+      # @param entity_id [String]
+      # @param params [Hash]
+      # @example
+      #   repo = Inferno::Repositories::SomeEntities.new
+      #   result = repo.update(id, key1: 'value1', key2: 'value2')
+      def update(entity_id, params = {})
+        self.class::Model
+          .find(id: entity_id)
+          .update(params.merge(updated_at: Time.now))
+      end
+
       # Creates an instance of the entity associated with this repository.
       # Override if any special logic is required to create the entity.
       #

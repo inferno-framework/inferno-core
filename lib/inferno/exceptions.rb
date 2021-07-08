@@ -27,6 +27,18 @@ module Inferno
       end
     end
 
+    class WaitException < TestResultException
+      def result
+        'wait'
+      end
+    end
+
+    class CancelException < TestResultException
+      def result
+        'cancel'
+      end
+    end
+
     class ParentNotLoadedException < RuntimeError
       def initialize(klass, id)
         super("No #{klass.name.demodulize} found with id '#{id}'")

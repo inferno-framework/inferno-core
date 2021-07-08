@@ -18,13 +18,14 @@ module Inferno
 
             TestRunner
               .new(test_session: test_session, test_run: test_run)
-              .run(test_run.runnable, inputs)
+              .start(test_run.runnable, inputs)
 
             self.body = serialize(test_run)
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation => e
             self.body = { errors: e.message }.to_json
             self.status = 422
           rescue StandardError => e
+            Application['logger'].error(e.full_message)
             self.body = { errors: e.message }.to_json
             self.status = 500
           end

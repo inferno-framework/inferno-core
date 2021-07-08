@@ -21,6 +21,8 @@ module Inferno
         :test_suite,
         :inputs,
         :results,
+        :identifier,
+        :wait_timeout,
         :created_at,
         :updated_at
       ].freeze
