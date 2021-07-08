@@ -125,9 +125,9 @@ module Inferno
       # @api private
       def configure_child_class(klass, hash_args) # rubocop:disable Metrics/CyclomaticComplexity
         inputs.each do |input_definition|
-          next if klass.inputs.include? input_definition
+          next if klass.inputs.any? { |input| input[:name] == input_definition[:name] }
 
-          klass.input input_definition
+          klass.input input_definition[:name], input_definition
         end
 
         outputs.each do |output_definition|
@@ -196,12 +196,26 @@ module Inferno
 
       # Define inputs
       #
-      # @param inputs [Symbol]
+      # @param name [Symbol] name of the input
+      # @param other_names [Symbol] array of symbols if specifying multiple inputs
+      # @param input_definition [Hash] options for input such as type, description, or title
+      # @option input_definition [String] :title Human readable title for input
+      # @option input_definition [String] :description Description for the input
+      # @option input_definition [String] :type text | textarea
       # @return [void]
       # @example
-      #   input :patient_id, :bearer_token
-      def input(*input_definitions)
-        inputs.concat(input_definitions)
+      #   input :patientid, title: 'Patient ID', description: 'The ID of the patient being searched for'
+      # @example
+      #   input :textarea, title: 'Textarea Input Example', type: 'textarea'
+      def input(name, *other_names, **input_definition)
+        if other_names.present?
+          [name, *other_names].each do |input_name|
+            inputs.push({ name: input_name, title: nil, description: nil, type: 'text' })
+          end
+        else
+          input_definition[:type] = 'text' unless input_definition.key? :type
+          inputs.push({ name: name }.merge(input_definition))
+        end
       end
 
       # Define outputs

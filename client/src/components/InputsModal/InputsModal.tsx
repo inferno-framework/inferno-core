@@ -11,6 +11,7 @@ import {
 } from '@material-ui/core';
 import { RunnableType, TestInput } from 'models/testSuiteModels';
 import React, { FC } from 'react';
+import useStyles from './styles';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -56,32 +57,56 @@ const InputsModal: FC<InputsModalProps> = ({
     }
     const inputs_with_values: TestInput[] = [];
     inputsMap.forEach((input_value, input_name) => {
-      inputs_with_values.push({ name: input_name, value: input_value });
+      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
     });
     createTestRun(runnableType, runnableId, inputs_with_values);
     hideModal();
   }
+  const styles = useStyles();
   const [inputsMap, setInputsMap] = React.useState<Map<string, string>>(new Map());
-
   const inputFields = inputs.map((requirement: TestInput, index: number) => {
-    return (
-      <ListItem key={`requirement${index}`}>
-        <TextField
-          id={`requirement${index}_input`}
-          fullWidth
-          label={requirement.name}
-          value={inputsMap.get(requirement.name) || ''}
-          onChange={(event) => {
-            const value = event.target.value;
-            inputsMap.set(requirement.name, value);
-            setInputsMap(new Map(inputsMap));
-          }}
-        />
-      </ListItem>
-    );
+    switch (requirement.type) {
+      case 'textarea':
+        return (
+          <ListItem key={`requirement${index}`}>
+            <TextField
+              id={`requirement${index}_input`}
+              fullWidth
+              label={requirement.title || requirement.name}
+              helperText={requirement.description}
+              value={inputsMap.get(requirement.name) || ''}
+              multiline
+              rows={4}
+              inputProps={{ className: styles.textarea }}
+              onChange={(event) => {
+                const value = event.target.value;
+                inputsMap.set(requirement.name, value);
+                setInputsMap(new Map(inputsMap));
+              }}
+            />
+          </ListItem>
+        );
+      default:
+        return (
+          <ListItem key={`requirement${index}`}>
+            <TextField
+              id={`requirement${index}_input`}
+              fullWidth
+              label={requirement.title || requirement.name}
+              helperText={requirement.description}
+              value={inputsMap.get(requirement.name) || ''}
+              onChange={(event) => {
+                const value = event.target.value;
+                inputsMap.set(requirement.name, value);
+                setInputsMap(new Map(inputsMap));
+              }}
+            />
+          </ListItem>
+        );
+    }
   });
   return (
-    <Dialog open={modalVisible} onClose={() => hideModal()}>
+    <Dialog open={modalVisible} onClose={() => hideModal()} fullWidth={true} maxWidth="sm">
       <DialogTitle>Test Inputs</DialogTitle>
       <DialogContent>
         <DialogContentText>
