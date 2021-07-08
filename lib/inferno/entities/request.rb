@@ -1,3 +1,4 @@
+require 'pry'
 module Inferno
   module Entities
     # A `Request` represents a request and response issued during a test.
@@ -138,9 +139,7 @@ module Inferno
             url: url,
             direction: 'incoming',
             name: name,
-            # TODO: fix
-            # request_body: rack_request.body.is_a?(::Puma::NullIO) ? nil : rack_request.body,
-            request_body: rack_request.body,
+            request_body: rack_request.body.string,
             headers: request_headers
           )
         end
