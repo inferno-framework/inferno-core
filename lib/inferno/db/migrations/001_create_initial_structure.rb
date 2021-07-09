@@ -1,26 +1,5 @@
 Sequel.migration do
   change do
-    #
-    # NOT NEEDED BECUASE THEY ARE DEFINED WITHIN TEST SUITE.
-    # MUST BE REFERENCED USING SOME KIND OF GLOBALLY UNIQUE KEY
-    # THAT IS REPRESENTED AS A STRING
-    #
-
-    # create_table :test_suites do
-    # end
-
-    # create_table :test_groups do
-    # end
-
-    # create_table :tests do
-    # end
-
-    # create_table :test_inputs do
-    # end
-
-    # create_table :test_outputs do
-    # end
-
     # A way for the test to signal that it requires some kind of action by the
     # app that is invoking the test (e.g. SMART Launch, perhaps mid-test manual verification)
     # create_table :test_prompts do
