@@ -38,7 +38,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(suite, {})
+        results = runner.run(suite)
 
         expect(results.length).to eq(10)
 
@@ -82,7 +82,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(outer_inline_group, {})
+        results = runner.run(outer_inline_group)
 
         expect(results.length).to eq(inner_inline_group.tests.length + 2)
 
@@ -134,7 +134,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(inner_inline_group, {})
+        results = runner.run(inner_inline_group)
 
         expect(results.length).to eq(inner_inline_group.tests.length + 1)
 
@@ -181,7 +181,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(inline_test1, {})
+        results = runner.run(inline_test1)
 
         expect(results.length).to eq(1)
 
@@ -238,7 +238,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(external_outer_group, {})
+        results = runner.run(external_outer_group)
 
         expect(results.length).to eq(3)
 
@@ -285,7 +285,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(external_inner_group, {})
+        results = runner.run(external_inner_group)
 
         expect(results.length).to eq(2)
 
@@ -337,7 +337,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(external_test, {})
+        results = runner.run(external_test)
 
         expect(results.length).to eq(1)
 

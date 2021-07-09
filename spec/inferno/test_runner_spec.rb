@@ -6,6 +6,7 @@ RSpec.describe Inferno::TestRunner do
   let(:test_run) do
     repo_create(:test_run, runnable: { test_group_id: group.id }, test_session_id: test_session.id)
   end
+  let(:session_data_repo) { Inferno::Repositories::SessionData.new }
 
   def error_results_message(error_results)
     error_results.map do |r|
@@ -39,24 +40,31 @@ RSpec.describe Inferno::TestRunner do
         .to_return(status: 200, body: FHIR::OperationOutcome.new.to_json)
       stub_request(:get, 'http://example.com')
         .to_return(status: 200)
+      { url: base_url, patient_id: patient_id }.each do |name, value|
+        session_data_repo.save(
+          test_session_id: test_session.id,
+          name: name,
+          value: value
+        )
+      end
     end
 
     it 'runs' do
       expect do
-        runner.run(group, { url: base_url, patient_id: patient_id })
+        runner.run(group)
       end.to_not raise_error
     end
 
     it 'creates results' do
       test_count = group.tests.length
 
-      results = runner.run(group, { url: base_url, patient_id: patient_id })
+      results = runner.run(group)
 
       expect(results.length).to eq(test_count + 1)
     end
 
     it 'only contains no "error" results apart from the "error test"' do
-      results = runner.run(group, { url: base_url, patient_id: patient_id })
+      results = runner.run(group)
       error_results =
         results
           .reject { |result| result.test&.title == 'error test' }
@@ -71,14 +79,14 @@ RSpec.describe Inferno::TestRunner do
     let(:group) { Inferno::Repositories::TestSuites.new.find('demo').groups.last }
 
     it 'gives a wait result' do
-      results = runner.run(group, {})
+      results = runner.run(group)
       group_result = results.find { |result| result.test_group_id.present? }
 
       expect(group_result.result).to eq('wait')
     end
 
     it 'does not run the last test' do
-      results = runner.run(group, {})
+      results = runner.run(group)
 
       expect(results.length).to eq(3)
     end

@@ -8,17 +8,23 @@ module Inferno
           PARAMS = [:test_session_id, :test_suite_id, :test_group_id, :test_id].freeze
 
           def call(params)
+            test_session = test_sessions_repo.find(params[:test_session_id])
+
             test_run = repo.create(create_params(params))
-            inputs = (params[:inputs] || {}).each_with_object({}) do |input, new_inputs|
-              new_inputs[input[:name].to_sym] = input[:value]
+
+            params[:inputs]&.each do |input|
+              session_data_repo.save(
+                test_session_id: test_session.id,
+                name: input[:name],
+                value: input[:value]
+              )
             end
 
-            test_session = test_sessions_repo.find(test_run.test_session_id)
             # if testsession.nil?
 
             TestRunner
               .new(test_session: test_session, test_run: test_run)
-              .start(inputs)
+              .start
 
             self.body = serialize(test_run)
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation => e
