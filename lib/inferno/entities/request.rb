@@ -3,21 +3,21 @@ module Inferno
   module Entities
     # A `Request` represents a request and response issued during a test.
     #
-    # @attr_reader [String] id of the request
-    # @attr_reader [String] index of the request. Used for ordering.
-    # @attr_reader [String] verb http verb
-    # @attr_reader [String] url request url
-    # @attr_reader [String] direction incoming/outgoing
-    # @attr_reader [String] name name for the request
-    # @attr_reader [String] status http response status code
-    # @attr_reader [String] request_body body of the http request
-    # @attr_reader [String] response_body body of the http response
-    # @attr_reader [Array<Inferno::Entities::Header>] headers http
+    # @attr_accessor [String] id of the request
+    # @attr_accessor [String] index of the request. Used for ordering.
+    # @attr_accessor [String] verb http verb
+    # @attr_accessor [String] url request url
+    # @attr_accessor [String] direction incoming/outgoing
+    # @attr_accessor [String] name name for the request
+    # @attr_accessor [String] status http response status code
+    # @attr_accessor [String] request_body body of the http request
+    # @attr_accessor [String] response_body body of the http response
+    # @attr_accessor [Array<Inferno::Entities::Header>] headers http
     #   request/response headers
-    # @attr_reader [String] result_id id of the result for this request
-    # @attr_reader [String] test_session_id id of the test session for this request
-    # @attr_reader [Time] created_at creation timestamp
-    # @attr_reader [Time] updated_at update timestamp
+    # @attr_accessor [String] result_id id of the result for this request
+    # @attr_accessor [String] test_session_id id of the test session for this request
+    # @attr_accessor [Time] created_at creation timestamp
+    # @attr_accessor [Time] updated_at update timestamp
     class Request < Entity
       ATTRIBUTES = [
         :id, :index, :verb, :url, :direction, :name, :status,

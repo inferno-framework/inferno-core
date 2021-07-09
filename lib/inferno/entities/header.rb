@@ -2,13 +2,13 @@ module Inferno
   module Entities
     # A `Header` represents an HTTP request/response header
     #
-    # @attr_reader [String] id of the header
-    # @attr_reader [String] request_id index of the HTTP request
-    # @attr_reader [String] name header name
-    # @attr_reader [String] value header value
-    # @attr_reader [String] type request/response
-    # @attr_reader [Time] created_at
-    # @attr_reader [Time] updated_at
+    # @attr_accessor [String] id of the header
+    # @attr_accessor [String] request_id index of the HTTP request
+    # @attr_accessor [String] name header name
+    # @attr_accessor [String] value header value
+    # @attr_accessor [String] type request/response
+    # @attr_accessor [Time] created_at
+    # @attr_accessor [Time] updated_at
     class Header < Entity
       ATTRIBUTES = [:id, :request_id, :name, :type, :value, :created_at, :updated_at].freeze
 
