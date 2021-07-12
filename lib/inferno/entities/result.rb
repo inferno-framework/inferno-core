@@ -45,10 +45,8 @@ module Inferno
       include Inferno::Entities::Attributes
 
       def initialize(params)
-        super(params, ATTRIBUTES - [:messages, :requests, :inputs, :outputs])
+        super(params, ATTRIBUTES - [:messages, :requests])
 
-        @input_json = JSON.generate(params[:inputs])
-        @output_json = JSON.generate(params[:outputs])
         @messages = (params[:messages] || []).map { |message| Message.new(message) }
         @requests = (params[:requests] || []).map { |request| Request.new(request) }
       end
