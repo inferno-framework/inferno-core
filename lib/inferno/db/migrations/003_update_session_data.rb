@@ -11,5 +11,8 @@ Sequel.migration do
 
     add_column :results, :input_json, String, text: true
     add_column :results, :output_json, String, text: true
+    add_index :results, [:test_session_id, :test_id], concurrently: true
+    add_index :results, [:test_session_id, :test_group_id], concurrently: true
+    add_index :results, [:test_session_id, :test_suite_id], concurrently: true
   end
 end

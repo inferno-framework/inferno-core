@@ -3,14 +3,14 @@ RSpec.describe Inferno::Repositories::Results do
   let(:test_suite) { test_run.test_suite }
   let(:test_session) { test_run.test_session }
   let(:test_run) { repo_create(:test_run) }
-  let(:result_params) do
+  let(:base_result_params) do
     {
       test_session_id: test_session.id,
       test_run_id: test_run.id,
-      test_suite_id: test_suite.id,
       result: 'pass'
     }
   end
+  let(:result_params) { base_result_params.merge(test_suite_id: test_suite.id) }
   let(:messages) do
     [
       {
@@ -69,6 +69,29 @@ RSpec.describe Inferno::Repositories::Results do
       invalid_params = result_params.merge(messages: [{ message: 'INVALID' }])
 
       expect { repo.create(invalid_params) }.to raise_error(Sequel::ValidationFailed)
+    end
+  end
+
+  describe '#current_results_for_test_session' do
+    let(:test_group) { test_suite.groups.first }
+    let(:test) { test_group.tests.first }
+
+    it 'returns only the most recent result for each test, group, and suite' do
+      repo_create(:result, result_params)
+      repo_create(:result, base_result_params.merge(runnable: test_group.reference_hash))
+      repo_create(:result, base_result_params.merge(runnable: test.reference_hash))
+      sleep 0.1
+      suite_result = repo_create(:result, result_params)
+      group_result = repo_create(:result, base_result_params.merge(runnable: test_group.reference_hash))
+      test_result = repo_create(:result, base_result_params.merge(runnable: test.reference_hash))
+
+      results = repo.current_results_for_test_session(test_session.id)
+      expect(results.length).to eq(3)
+
+      result_ids = results.map(&:id)
+      expected_ids = [suite_result, group_result, test_result].map(&:id)
+
+      expect(result_ids).to match_array(expected_ids)
     end
   end
 end
