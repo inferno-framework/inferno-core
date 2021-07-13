@@ -27,6 +27,24 @@ RSpec.describe '/test_runs' do
         expect(parsed_body['id']).to be_present
         expect(parsed_body['test_session_id']).to eq(test_session.id)
       end
+
+      it 'persists inputs to the session data table' do
+        session_data_repo = Inferno::Repositories::SessionData.new
+        inputs = [
+          { name: 'input1', value: 'value1' },
+          { name: 'input2', value: 'value2' }
+        ]
+        test_run_params = test_run_definition.merge(inputs: inputs)
+
+        post_json create_path, test_run_params
+
+        expect(session_data_repo.db.count).to eq(2)
+
+        inputs.each do |input|
+          value = session_data_repo.load(test_session_id: test_session.id, name: input[:name])
+          expect(value).to eq(input[:value])
+        end
+      end
     end
   end
 
