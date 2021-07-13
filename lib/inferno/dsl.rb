@@ -1,6 +1,5 @@
 require_relative 'dsl/assertions'
 require_relative 'dsl/fhir_client'
-require_relative 'dsl/fhir_manipulation'
 require_relative 'dsl/fhir_validation'
 require_relative 'dsl/http_client'
 require_relative 'dsl/results'
@@ -14,8 +13,7 @@ module Inferno
       FHIRClient,
       HTTPClient,
       Results,
-      FHIRValidation,
-      FHIRManipulation
+      FHIRValidation
     ].freeze
 
     EXTENDABLE_DSL_MODULES = [
