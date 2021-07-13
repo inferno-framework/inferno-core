@@ -79,6 +79,8 @@ module Inferno
         }.merge(test.reference_hash)
       )
 
+      # If running a single test, update its parents' results. If running a
+      # group or suite, #run_group handles updating the parents.
       return test_result if test_run.test_id.blank?
 
       update_parent_result(test.parent)

@@ -20,6 +20,13 @@ module Inferno
         end
       end
 
+      # Get the current result for a particular test/group
+      # @api private
+      # @example
+      #   repo.current_result_for_test_session(
+      #     test_session_id,
+      #     test_id: 'test_id'
+      #   )
       def current_result_for_test_session(test_session_id, **params)
         self.class::Model
           .where({ test_session_id: test_session_id }.merge(params))
@@ -64,6 +71,7 @@ module Inferno
         build_entity(result_hash)
       end
 
+      # Get all of the current results for a test session
       def current_results_for_test_session(test_session_id)
         self.class::Model
           .current_results_for_test_session(test_session_id)
@@ -79,6 +87,7 @@ module Inferno
           end
       end
 
+      # Get the current results for a list of child runnables
       def current_child_results_for_test_session(test_session_id, children)
         test_ids = children.select { |child| child < Entities::Test }.map!(&:id)
         group_ids = children.select { |child| child < Entities::TestGroup }.map!(&:id)
