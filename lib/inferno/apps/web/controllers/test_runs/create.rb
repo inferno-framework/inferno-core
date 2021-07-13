@@ -3,14 +3,20 @@ module Inferno
     module Controllers
       module TestRuns
         class Create < Controller
-          include Import[test_sessions_repo: 'repositories.test_sessions']
+          include Import[
+                    test_sessions_repo: 'repositories.test_sessions',
+                    session_data_repo: 'repositories.session_data'
+                  ]
 
           PARAMS = [:test_session_id, :test_suite_id, :test_group_id, :test_id].freeze
 
           def call(params)
             test_session = test_sessions_repo.find(params[:test_session_id])
 
+            # if testsession.nil?
+
             test_run = repo.create(create_params(params))
+            self.body = serialize(test_run)
 
             params[:inputs]&.each do |input|
               session_data_repo.save(
@@ -20,13 +26,11 @@ module Inferno
               )
             end
 
-            # if testsession.nil?
-
-            TestRunner
-              .new(test_session: test_session, test_run: test_run)
-              .start
-
-            self.body = serialize(test_run)
+            Jobs.perform(
+              Jobs::ExecuteTestRun,
+              test_session_id: test_session.id,
+              test_run_id: test_run.id
+            )
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation => e
             self.body = { errors: e.message }.to_json
             self.status = 422
