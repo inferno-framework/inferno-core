@@ -26,11 +26,7 @@ module Inferno
               )
             end
 
-            Jobs.perform(
-              Jobs::ExecuteTestRun,
-              test_session_id: test_session.id,
-              test_run_id: test_run.id
-            )
+            Jobs.perform(Jobs::ExecuteTestRun, test_run.id)
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation => e
             self.body = { errors: e.message }.to_json
             self.status = 422
