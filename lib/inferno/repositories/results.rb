@@ -20,6 +20,21 @@ module Inferno
         end
       end
 
+      def current_result_for_test_session(test_session_id, **params)
+        self.class::Model
+          .where({ test_session_id: test_session_id }.merge(params))
+          .order(Sequel.desc(:updated_at))
+          .limit(1)
+          .all
+          .map! do |result_hash|
+            build_entity(
+              result_hash
+                .to_json_data(json_serializer_options)
+                .deep_symbolize_keys!
+            )
+          end.first
+      end
+
       def build_entity(params)
         runnable =
           if params[:test_id]
@@ -64,6 +79,22 @@ module Inferno
           end
       end
 
+      def current_child_results_for_test_session(test_session_id, children)
+        test_ids = children.select { |child| child < Entities::Test }.map!(&:id)
+        group_ids = children.select { |child| child < Entities::TestGroup }.map!(&:id)
+
+        self.class::Model
+          .current_child_results_for_test_session(test_session_id, test_ids, group_ids)
+          .all
+          .map! do |result_hash|
+            build_entity(
+              result_hash
+                .to_json_data(json_serializer_options)
+                .deep_symbolize_keys!
+            )
+          end
+      end
+
       def pass_waiting_result(result_id, message = nil)
         update(result_id, result: 'pass', result_message: message)
       end
@@ -82,15 +113,29 @@ module Inferno
       class Model < Sequel::Model(db)
         include ValidateRunnableReference
 
+        CURRENT_CHILD_RESULTS_SQL = <<~SQL.gsub(/\s+/, ' ').freeze
+          SELECT * FROM results a
+          WHERE test_session_id = :test_session_id AND
+                (test_id IN :test_ids OR test_group_id IN :test_group_ids) AND
+                a.id IN  (
+                  SELECT id
+                  FROM results b
+                  WHERE (b.test_session_id = a.test_session_id AND b.test_id = a.test_id) OR
+                        (b.test_session_id = a.test_session_id AND b.test_group_id = a.test_group_id)
+                  ORDER BY updated_at DESC
+                  LIMIT 1
+                )
+        SQL
+
         CURRENT_RESULTS_SQL = <<~SQL.gsub(/\s+/, ' ').freeze
           SELECT * FROM results a
-          WHERE a.id in  (
+          WHERE a.id IN  (
             SELECT id
             FROM results b
             WHERE (b.test_session_id = a.test_session_id AND b.test_id = a.test_id) OR
                   (b.test_session_id = a.test_session_id AND b.test_group_id = a.test_group_id) OR
                   (b.test_session_id = a.test_session_id AND b.test_suite_id = a.test_suite_id)
-            ORDER BY created_at DESC
+            ORDER BY updated_at DESC
             LIMIT 1
           ) AND test_session_id = ?
         SQL
@@ -115,6 +160,15 @@ module Inferno
 
         def self.current_results_for_test_session(test_session_id)
           fetch(CURRENT_RESULTS_SQL, test_session_id)
+        end
+
+        def self.current_child_results_for_test_session(test_session_id, test_ids, test_group_ids)
+          fetch(
+            CURRENT_CHILD_RESULTS_SQL,
+            test_session_id: test_session_id,
+            test_ids: test_ids,
+            test_group_ids: test_group_ids
+          )
         end
       end
     end

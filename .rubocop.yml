@@ -9,6 +9,7 @@ AllCops:
   Exclude:
     - 'Gemfile'
     - 'vendor/**/*'
+    - 'lib/inferno/db/schema.rb'
 
 Layout/LineLength:
   Max: 120

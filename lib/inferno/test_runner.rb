@@ -8,6 +8,10 @@ module Inferno
       @test_run = test_run
     end
 
+    def run_results
+      @run_results ||= {}
+    end
+
     def results_repo
       @results_repo ||= Repositories::Results.new
     end
@@ -23,9 +27,11 @@ module Inferno
     def start
       test_runs_repo.mark_as_running(test_run.id)
 
-      run(test_run.runnable).tap do |results|
-        test_runs_repo.mark_as_done(test_run.id) unless results.any?(&:waiting?)
-      end
+      run(test_run.runnable)
+
+      test_runs_repo.mark_as_done(test_run.id) unless run_results.values.any?(&:waiting?)
+
+      run_results.values
     end
 
     def run(runnable)
@@ -62,10 +68,8 @@ module Inferno
         test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
       end
 
-      [persist_result(
+      test_result = persist_result(
         {
-          test_session_id: test_session.id,
-          test_run_id: test_run.id,
           messages: test_instance.messages,
           requests: test_instance.requests,
           result: result,
@@ -73,7 +77,13 @@ module Inferno
           input_json: input_json_string,
           output_json: output_json_string
         }.merge(test.reference_hash)
-      )]
+      )
+
+      return test_result if test_run.test_id.blank?
+
+      update_parent_result(test.parent)
+
+      test_result
     end
 
     def run_group(group)
@@ -81,18 +91,35 @@ module Inferno
       group.children.each do |child|
         result = run(child)
         results << result
-        break if result.last.waiting?
+        break if results.last.waiting?
       end
 
       results.flatten!
 
-      results << persist_result(
-        {
-          test_session_id: test_session.id,
-          test_run_id: test_run.id,
-          result: roll_up_result(results)
-        }.merge(group.reference_hash)
-      )
+      group_result = persist_result(group.reference_hash.merge(result: roll_up_result(results)))
+
+      update_parent_result(group.parent)
+
+      group_result
+    end
+
+    def update_parent_result(parent)
+      return if parent.nil?
+
+      children = parent.children
+      child_results = results_repo.current_child_results_for_test_session(test_session.id, children)
+      return if children.length != child_results.length
+
+      old_result = results_repo.current_result_for_test_session(test_session.id, parent.reference_hash)&.result
+      new_result = roll_up_result(child_results)
+
+      if new_result != old_result
+        persist_result(parent.reference_hash.merge(result: new_result))
+
+        update_parent_result(parent)
+      end
+
+      new_result
     end
 
     def load_inputs(runnable)
@@ -120,7 +147,11 @@ module Inferno
     end
 
     def persist_result(params)
-      results_repo.create(params)
+      result = results_repo.create(
+        params.merge(test_run_id: test_run.id, test_session_id: test_session.id)
+      )
+
+      run_results[result.runnable.id] = result
     end
 
     def roll_up_result(results)

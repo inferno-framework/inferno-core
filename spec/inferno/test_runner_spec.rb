@@ -7,6 +7,7 @@ RSpec.describe Inferno::TestRunner do
     repo_create(:test_run, runnable: { test_group_id: group.id }, test_session_id: test_session.id)
   end
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
+  let(:results_repo) { Inferno::Repositories::Results.new }
 
   def error_results_message(error_results)
     error_results.map do |r|
@@ -51,24 +52,24 @@ RSpec.describe Inferno::TestRunner do
 
     it 'runs' do
       expect do
-        runner.run(group)
+        runner.start
       end.to_not raise_error
     end
 
     it 'creates results' do
       test_count = group.tests.length
 
-      results = runner.run(group)
+      results = runner.start
 
-      expect(results.length).to eq(test_count + 1)
+      expect(results.length).to eq(test_count + 2)
     end
 
     it 'only contains no "error" results apart from the "error test"' do
-      results = runner.run(group)
+      results = runner.start
       error_results =
         results
           .reject { |result| result.test&.title == 'error test' }
-          .reject { |result| result.test_group&.title == 'Demo Group Instance 1' }
+          .reject { |result| result.runnable < Inferno::Entities::TestGroup }
           .select { |result| result.result == 'error' }
 
       expect(error_results).to be_empty, error_results_message(error_results)
@@ -79,14 +80,15 @@ RSpec.describe Inferno::TestRunner do
     let(:group) { Inferno::Repositories::TestSuites.new.find('demo').groups.last }
 
     it 'gives a wait result' do
-      results = runner.run(group)
-      group_result = results.find { |result| result.test_group_id.present? }
+      result = runner.run(group)
 
-      expect(group_result.result).to eq('wait')
+      expect(result.result).to eq('wait')
     end
 
     it 'does not run the last test' do
-      results = runner.run(group)
+      runner.run(group)
+
+      results = results_repo.current_results_for_test_session(test_session.id)
 
       expect(results.length).to eq(3)
     end

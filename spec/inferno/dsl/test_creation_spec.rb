@@ -5,6 +5,7 @@ RSpec.describe InfrastructureTest::Suite do
   let(:test_run) { Inferno::Entities::TestRun.new(id: SecureRandom.uuid) }
   let(:runner) { Inferno::TestRunner.new(test_session: test_session, test_run: test_run) }
   let(:test_session) { repo_create(:test_session, test_suite_id: suite.id) }
+  let(:results_repo) { Inferno::Repositories::Results.new }
 
   describe 'inline definitions' do
     let(:outer_inline_group) { suite.groups.first }
@@ -38,7 +39,9 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(suite)
+        runner.run(suite)
+
+        results = results_repo.current_results_for_test_session(test_session.id)
 
         expect(results.length).to eq(10)
 
@@ -82,7 +85,9 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(outer_inline_group)
+        runner.run(outer_inline_group)
+
+        results = results_repo.current_results_for_test_session(test_session.id)
 
         expect(results.length).to eq(inner_inline_group.tests.length + 2)
 
@@ -134,9 +139,11 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(inner_inline_group)
+        runner.run(inner_inline_group)
 
-        expect(results.length).to eq(inner_inline_group.tests.length + 1)
+        results = results_repo.current_results_for_test_session(test_session.id)
+
+        expect(results.length).to eq(inner_inline_group.tests.length + 2)
 
         non_passing_results = results.reject { |result| result.result == 'pass' }
 
@@ -181,15 +188,9 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(inline_test1)
+        result = runner.run(inline_test1)
 
-        expect(results.length).to eq(1)
-
-        non_passing_results = results.reject { |result| result.result == 'pass' }
-
-        expect(non_passing_results).to be_empty, non_passing_results.map { |r|
-          "#{r.runnable.title}: #{r.result_message}"
-        }.join("\n")
+        expect(result.result).to eq('pass')
       end
     end
   end
@@ -238,7 +239,9 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(external_outer_group)
+        runner.run(external_outer_group)
+
+        results = results_repo.current_results_for_test_session(test_session.id)
 
         expect(results.length).to eq(3)
 
@@ -285,9 +288,11 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(external_inner_group)
+        runner.run(external_inner_group)
 
-        expect(results.length).to eq(2)
+        results = results_repo.current_results_for_test_session(test_session.id)
+
+        expect(results.length).to eq(3)
 
         non_passing_results = results.reject { |result| result.result == 'pass' }
 
@@ -337,15 +342,9 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'passes' do
-        results = runner.run(external_test)
+        result = runner.run(external_test)
 
-        expect(results.length).to eq(1)
-
-        non_passing_results = results.reject { |result| result.result == 'pass' }
-
-        expect(non_passing_results).to be_empty, non_passing_results.map { |r|
-          "#{r.runnable.title}: #{r.result_message}"
-        }.join("\n")
+        expect(result.result).to eq('pass')
       end
     end
   end

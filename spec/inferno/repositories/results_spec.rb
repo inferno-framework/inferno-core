@@ -94,4 +94,25 @@ RSpec.describe Inferno::Repositories::Results do
       expect(result_ids).to match_array(expected_ids)
     end
   end
+
+  describe '#current_child_results_for_test_session' do
+    let(:test_group) { test_suite.groups.first }
+    let(:test) { test_group.tests.first }
+
+    it 'returns only the most recent result for each test, group, and suite' do
+      repo_create(:result, base_result_params.merge(runnable: test_group.reference_hash))
+      repo_create(:result, base_result_params.merge(runnable: test.reference_hash))
+      sleep 0.1
+      group_result = repo_create(:result, base_result_params.merge(runnable: test_group.reference_hash))
+      test_result = repo_create(:result, base_result_params.merge(runnable: test.reference_hash))
+
+      results = repo.current_child_results_for_test_session(test_session.id, test_group.children)
+      expect(results.length).to eq(1)
+      expect(results.first.id).to eq(test_result.id)
+
+      results = repo.current_child_results_for_test_session(test_session.id, test_suite.children)
+      expect(results.length).to eq(1)
+      expect(results.first.id).to eq(group_result.id)
+    end
+  end
 end
