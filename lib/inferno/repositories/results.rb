@@ -34,6 +34,25 @@ module Inferno
         entity_class.new(params.merge(runnable))
       end
 
+      def find_waiting_result(test_run_id:)
+        result_hash =
+          Model
+            .where(test_run_id: test_run_id, result: 'wait')
+            .where { test_id !~ nil }
+            .limit(1)
+            .to_a
+            .first
+            &.to_hash
+
+        return nil if result_hash.nil?
+
+        build_entity(result_hash)
+      end
+
+      def pass_waiting_result(result_id, message = nil)
+        update(result_id, result: 'pass', result_message: message)
+      end
+
       def json_serializer_options
         {
           include: {

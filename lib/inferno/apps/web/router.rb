@@ -22,6 +22,17 @@ module Inferno
 
       get '/', to: ->(_env) { [200, {}, [client_page]] }
       get '/test_sessions/:id', to: ->(_env) { [200, {}, [client_page]] }
+
+      Inferno.routes.each do |route|
+        cleaned_id = route[:suite].id.gsub(/[^a-zA-Z\d\-._~]/, '_')
+        path = "/custom/#{cleaned_id}#{route[:path]}"
+        Application['logger'].info("Registering custom route: #{path}")
+        if route[:method] == :all
+          mount route[:handler], at: path
+        else
+          send(route[:method], path, to: route[:handler])
+        end
+      end
     end
   end
 end

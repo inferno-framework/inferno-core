@@ -1,3 +1,5 @@
+require_relative 'resume_test_route'
+
 module Inferno
   module DSL
     # This module contains the DSL for defining child entities in the test
@@ -125,9 +127,9 @@ module Inferno
       # @api private
       def configure_child_class(klass, hash_args) # rubocop:disable Metrics/CyclomaticComplexity
         inputs.each do |input_definition|
-          next if klass.inputs.include? input_definition
+          next if klass.inputs.any? { |input| input[:name] == input_definition[:name] }
 
-          klass.input input_definition
+          klass.input input_definition[:name], input_definition
         end
 
         outputs.each do |output_definition|
@@ -196,12 +198,26 @@ module Inferno
 
       # Define inputs
       #
-      # @param inputs [Symbol]
+      # @param name [Symbol] name of the input
+      # @param other_names [Symbol] array of symbols if specifying multiple inputs
+      # @param input_definition [Hash] options for input such as type, description, or title
+      # @option input_definition [String] :title Human readable title for input
+      # @option input_definition [String] :description Description for the input
+      # @option input_definition [String] :type text | textarea
       # @return [void]
       # @example
-      #   input :patient_id, :bearer_token
-      def input(*input_definitions)
-        inputs.concat(input_definitions)
+      #   input :patientid, title: 'Patient ID', description: 'The ID of the patient being searched for'
+      # @example
+      #   input :textarea, title: 'Textarea Input Example', type: 'textarea'
+      def input(name, *other_names, **input_definition)
+        if other_names.present?
+          [name, *other_names].each do |input_name|
+            inputs.push({ name: input_name, title: nil, description: nil, type: 'text' })
+          end
+        else
+          input_definition[:type] = 'text' unless input_definition.key? :type
+          inputs.push({ name: name }.merge(input_definition))
+        end
       end
 
       # Define outputs
@@ -229,6 +245,7 @@ module Inferno
         @outputs ||= []
       end
 
+      # @api private
       def child_types
         return [] if ancestors.include? Inferno::Entities::Test
         return [:groups] if ancestors.include? Inferno::Entities::TestSuite
@@ -236,6 +253,7 @@ module Inferno
         [:groups, :tests]
       end
 
+      # @api private
       def children
         @children ||= []
       end
@@ -244,6 +262,71 @@ module Inferno
         return @validator_url ||= parent&.validator_url if url.nil?
 
         @validator_url = url
+      end
+
+      # @api private
+      def suite
+        return self if ancestors.include? Inferno::Entities::TestSuite
+
+        parent.suite
+      end
+
+      # Create a route which will resume a test run when a request is received
+      #
+      # @see Inferno::DSL::Results#wait
+      # @example
+      #   resume_test_route :get, '/launch' do
+      #     request.query_parameters['iss']
+      #   end
+      #
+      #   test do
+      #     input :issuer
+      #     receives_request :launch
+      #
+      #     run do
+      #       wait(
+      #         identifier: issuer,
+      #         message: "Wating to receive a request with an issuer of #{issuer}"
+      #       )
+      #     end
+      #   end
+      #
+      # @param method [Symbol] the HTTP request type (:get, :post, etc.) for the
+      #   incoming request
+      # @param path [String] the path for this request. The route will be served
+      #   with a prefix of `/custom/TEST_SUITE_ID` to prevent path conflicts.
+      #   [Any of the path options available in Hanami
+      #   Router](https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#a-beautiful-dsl)
+      #   can be used here.
+      # @yield This method takes a block which must return the identifier
+      #   defined when a test was set to wait for the test run that hit this
+      #   route. The block has access to the `request` method which returns a
+      #   {Inferno::DSL::Request} object with the information for the incoming
+      #   request.
+      def resume_test_route(method, path, &block)
+        route_class = Class.new(ResumeTestRoute) do
+          define_method(:test_run_identifier, &block)
+          define_method(:request_name, -> { options[:name] })
+        end
+
+        route(method, path, route_class)
+      end
+
+      # Create a route to handle a request
+      #
+      # @param method [Symbol] the HTTP request type (:get, :post, etc.) for the
+      #   incoming request. `:all` will accept all HTTP request types.
+      # @param path [String] the path for this request. The route will be served
+      #   with a prefix of `/custom/TEST_SUITE_ID` to prevent path conflicts.
+      #   [Any of the path options available in Hanami
+      #   Router](https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#a-beautiful-dsl)
+      #   can be used here.
+      # @param handler [#call] the route handler. This can be any Rack
+      #   compatible object (e.g. a `Proc` object, a [Sinatra
+      #   app](http://sinatrarb.com/)) as described in the [Hanami Router
+      #   documentation.](https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#mount-rack-applications)
+      def route(method, path, handler)
+        Inferno.routes << { method: method, path: path, handler: handler, suite: suite }
       end
     end
   end

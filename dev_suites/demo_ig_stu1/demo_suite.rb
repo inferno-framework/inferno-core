@@ -3,6 +3,7 @@ require_relative 'groups/demo_group'
 module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
   class DemoSuite < Inferno::TestSuite
     title 'Demonstration Suite'
+    id 'demo'
 
     # Ideas:
     # * Suite metadata (name, associated ig, version, etc etc)
@@ -41,6 +42,32 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       group from: 'DemoIG_STU1::DemoGroup' do
         id 'GHI'
         title 'Demo Group Instance 3'
+      end
+    end
+
+    group do
+      id 'wait_group'
+      title 'Wait Group'
+
+      resume_test_route :get, '/resume' do
+        request.query_parameters['xyz']
+      end
+
+      test do
+        title 'Pass test'
+        run { pass }
+      end
+
+      test do
+        title 'Wait test'
+        receives_request :resume
+
+        run { wait(identifier: 'abc') }
+      end
+
+      test do
+        title 'Cancel test'
+        run { cancel }
       end
     end
   end

@@ -12,6 +12,18 @@ module Inferno
       @results_repo ||= Repositories::Results.new
     end
 
+    def test_runs_repo
+      @test_runs_repo ||= Repositories::TestRuns.new
+    end
+
+    def start(runnable, inputs = {}, outputs = {})
+      test_runs_repo.mark_as_running(test_run.id)
+
+      run(runnable, inputs, outputs).tap do |results|
+        test_runs_repo.mark_as_done(test_run.id) unless results.any?(&:waiting?)
+      end
+    end
+
     def run(runnable, inputs = {}, outputs = {})
       if runnable < Entities::Test
         run_test(runnable, inputs, outputs)
@@ -34,12 +46,17 @@ module Inferno
         test_instance.result_message = e.message
         e.result
       rescue StandardError => e
+        Application['logger'].error(e.full_message)
         test_instance.result_message = "Error: #{e.message}"
         'error'
       end
 
       runnable.outputs.each do |output|
         outputs[output] = test_instance.send(output)
+      end
+
+      if result == 'wait'
+        test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
       end
 
       [persist_result(
@@ -55,7 +72,14 @@ module Inferno
     end
 
     def run_group(runnable, inputs = {}, outputs = {})
-      results = runnable.children.flat_map { |child| run(child, inputs, outputs) }
+      results = []
+      runnable.children.each do |child|
+        result = run(child, inputs, outputs)
+        results << result
+        break if result.last.waiting?
+      end
+
+      results.flatten!
 
       results << persist_result(
         {

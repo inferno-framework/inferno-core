@@ -24,6 +24,49 @@ module Inferno
           .map! { |result| results_repo.build_entity(result) }
       end
 
+      def find_latest_waiting_by_identifier(identifier)
+        test_run_hash =
+          self.class::Model
+            .where(status: 'waiting')
+            .where(identifier: identifier)
+            .where { wait_timeout >= Time.now }
+            .order(Sequel.desc(:updated_at))
+            .limit(1)
+            .to_a
+            &.first
+            &.to_hash
+
+        return nil if test_run_hash.nil?
+
+        build_entity(test_run_hash)
+      end
+
+      def mark_as_running(test_run_id)
+        update(test_run_id, status: 'running')
+      end
+
+      def mark_as_done(test_run_id)
+        update(test_run_id, status: 'done')
+      end
+
+      def mark_as_waiting(test_run_id, identifier, timeout)
+        update(
+          test_run_id,
+          status: 'waiting',
+          identifier: identifier,
+          wait_timeout: Time.now + timeout.seconds
+        )
+      end
+
+      def mark_as_no_longer_waiting(test_run_id)
+        update(
+          test_run_id,
+          status: 'paused',
+          identifier: nil,
+          wait_timeout: nil
+        )
+      end
+
       class Model < Sequel::Model(db)
         include ValidateRunnableReference
 

@@ -12,6 +12,7 @@ module Inferno
             self.body = { errors: e.message }.to_json
             self.status = 422
           rescue StandardError => e
+            Application['logger'].error(e.full_message)
             self.body = { errors: e.message }.to_json
             self.status = 500
           end

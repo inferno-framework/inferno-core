@@ -12,4 +12,7 @@ require_relative 'inferno/test_runner'
 require_relative 'inferno/version'
 
 module Inferno
+  def self.routes
+    @routes ||= []
+  end
 end

@@ -36,7 +36,10 @@ export interface Result {
 
 export interface TestInput {
   name: string;
+  title?: string;
   value?: string;
+  type?: 'text' | 'textarea';
+  description?: string;
 }
 
 export interface TestOutput {

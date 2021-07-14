@@ -11,9 +11,7 @@ module Inferno
 
         association :groups, name: :test_groups, blueprint: TestGroup
         association :tests, blueprint: Test
-        field :inputs do |group, _options|
-          group.inputs.map { |input| { name: input } }
-        end
+        field :inputs
         field :outputs do |group, _options|
           group.outputs.map { |input| { name: input } }
         end

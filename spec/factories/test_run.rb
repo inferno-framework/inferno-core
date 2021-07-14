@@ -12,6 +12,7 @@ FactoryBot.define do
     test_id { runnable[:test_id] }
 
     inputs { nil }
+    wait_timeout { nil }
 
     initialize_with { new(**attributes) }
 
