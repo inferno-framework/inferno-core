@@ -4,6 +4,11 @@ class FHIRClientDSLTestClass
   def test_session_id
     nil
   end
+
+  fhir_client :client_with_bearer_token do
+    url 'http://www.example.com/fhir'
+    bearer_token 'some_token'
+  end
 end
 
 RSpec.describe Inferno::DSL::FHIRClient do
@@ -309,6 +314,19 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
     it 'returns a FHIR class from a FHIR class' do
       expect(group.fhir_class_from_resource_type(FHIR::CarePlan)).to eq(FHIR::CarePlan)
+    end
+  end
+
+  describe '#fhir_client_with_bearer_token' do
+    let(:client) { group.fhir_client(:client_with_bearer_token) }
+
+    it 'uses the given bearer token in the security header' do
+      expect(client.security_headers).to eq({ 'Authorization' => 'Bearer some_token' })
+    end
+
+    it 'has the auth flags set correctly' do
+      expect(client.use_basic_auth).to be_truthy
+      expect(client.use_oauth2_auth).to be_falsey
     end
   end
 end
