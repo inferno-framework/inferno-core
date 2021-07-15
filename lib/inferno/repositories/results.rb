@@ -1,4 +1,5 @@
 require_relative 'validate_runnable_reference'
+require 'pry'
 
 module Inferno
   module Repositories
@@ -16,7 +17,10 @@ module Inferno
         requests = params.delete(:requests) || []
         super(params).tap do |result|
           messages.each { |message| messages_repo.create(message.merge(result_id: result.id)) }
-          requests.each { |request| requests_repo.create(request.to_hash.merge(result_id: result.id)) }
+          requests.each do |request|
+            requests_repo.create(request.to_hash.merge(result_id: result.id)) unless request.result_id.present?
+          end
+          binding.pry
         end
       end
 

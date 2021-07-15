@@ -19,6 +19,7 @@ export type Request = {
   response_headers?: RequestHeader[];
   request_body?: string;
   response_body?: string;
+  result_id: string;
 };
 
 export interface Result {

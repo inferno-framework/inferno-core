@@ -36,12 +36,13 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
   }
 
   const requestListItems =
-    requests.length > 0 ? (
-      requests.map((request: Request, index: number) => {
+  requests.length > 0 ? (
+    requests.map((request: Request, index: number) => {
+        console.log(`${resultId} --- ${request.result_id}`)
         return (
           <TableRow key={`msgRow-${index}`}>
             <TableCell>
-              <span>{request.direction}</span>
+              <span>{request.result_id !== resultId ? 'used other' : ''}{request.direction}</span>
             </TableCell>
             <TableCell>{request.verb}</TableCell>
             <TableCell>{request.url}</TableCell>
