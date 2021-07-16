@@ -109,7 +109,7 @@ module Inferno
       return if parent.nil?
 
       children = parent.children
-      child_results = results_repo.current_child_results_for_test_session(test_session.id, children)
+      child_results = results_repo.current_results_for_test_session_and_runnables(test_session.id, children)
       return if children.length != child_results.length
 
       old_result = results_repo.current_result_for_test_session(test_session.id, parent.reference_hash)&.result

@@ -88,12 +88,9 @@ module Inferno
       end
 
       # Get the current results for a list of child runnables
-      def current_child_results_for_test_session(test_session_id, children)
-        test_ids = children.select { |child| child < Entities::Test }.map!(&:id)
-        group_ids = children.select { |child| child < Entities::TestGroup }.map!(&:id)
-
+      def current_results_for_test_session_and_runnables(test_session_id, runnables)
         self.class::Model
-          .current_child_results_for_test_session(test_session_id, test_ids, group_ids)
+          .current_results_for_test_session_and_runnables(test_session_id, runnables)
           .all
           .map! do |result_hash|
             build_entity(
@@ -122,23 +119,11 @@ module Inferno
       class Model < Sequel::Model(db)
         include ValidateRunnableReference
 
-        CURRENT_CHILD_RESULTS_SQL = <<~SQL.gsub(/\s+/, ' ').freeze
+        CURRENT_RESULTS_FOR_RUNNABLES_SQL = <<~SQL.gsub(/\s+/, ' ').freeze
           SELECT * FROM results a
-          WHERE test_session_id = :test_session_id AND
-                (test_id IN :test_ids OR test_group_id IN :test_group_ids) AND
-                a.id IN  (
-                  SELECT id
-                  FROM results b
-                  WHERE (b.test_session_id = a.test_session_id AND b.test_id = a.test_id) OR
-                        (b.test_session_id = a.test_session_id AND b.test_group_id = a.test_group_id)
-                  ORDER BY updated_at DESC
-                  LIMIT 1
-                )
-        SQL
-
-        CURRENT_RESULTS_SQL = <<~SQL.gsub(/\s+/, ' ').freeze
-          SELECT * FROM results a
-          WHERE a.id IN  (
+          WHERE test_session_id = :test_session_id
+          AND (test_id IN :test_ids OR test_group_id IN :test_group_ids OR test_suite_id IN :test_suite_ids)
+          AND a.id IN  (
             SELECT id
             FROM results b
             WHERE (b.test_session_id = a.test_session_id AND b.test_id = a.test_id) OR
@@ -146,7 +131,21 @@ module Inferno
                   (b.test_session_id = a.test_session_id AND b.test_suite_id = a.test_suite_id)
             ORDER BY updated_at DESC
             LIMIT 1
-          ) AND test_session_id = ?
+          )
+        SQL
+
+        CURRENT_RESULTS_SQL = <<~SQL.gsub(/\s+/, ' ').freeze
+          SELECT * FROM results a
+          WHERE test_session_id = :test_session_id
+          AND a.id IN  (
+            SELECT id
+            FROM results b
+            WHERE (b.test_session_id = a.test_session_id AND b.test_id = a.test_id) OR
+                  (b.test_session_id = a.test_session_id AND b.test_group_id = a.test_group_id) OR
+                  (b.test_session_id = a.test_session_id AND b.test_suite_id = a.test_suite_id)
+            ORDER BY updated_at DESC
+            LIMIT 1
+          )
         SQL
 
         one_to_many :messages, class: 'Inferno::Repositories::Messages::Model', key: :result_id
@@ -168,15 +167,20 @@ module Inferno
         end
 
         def self.current_results_for_test_session(test_session_id)
-          fetch(CURRENT_RESULTS_SQL, test_session_id)
+          fetch(CURRENT_RESULTS_SQL, test_session_id: test_session_id)
         end
 
-        def self.current_child_results_for_test_session(test_session_id, test_ids, test_group_ids)
+        def self.current_results_for_test_session_and_runnables(test_session_id, runnables)
+          test_ids = runnables.select { |runnable| runnable < Entities::Test }.map!(&:id)
+          test_group_ids = runnables.select { |runnable| runnable < Entities::TestGroup }.map!(&:id)
+          test_suite_ids = runnables.select { |runnable| runnable < Entities::TestSuite }.map!(&:id)
+
           fetch(
-            CURRENT_CHILD_RESULTS_SQL,
+            CURRENT_RESULTS_FOR_RUNNABLES_SQL,
             test_session_id: test_session_id,
             test_ids: test_ids,
-            test_group_ids: test_group_ids
+            test_group_ids: test_group_ids,
+            test_suite_ids: test_suite_ids
           )
         end
       end

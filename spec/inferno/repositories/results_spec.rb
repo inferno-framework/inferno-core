@@ -95,7 +95,7 @@ RSpec.describe Inferno::Repositories::Results do
     end
   end
 
-  describe '#current_child_results_for_test_session' do
+  describe '#current_results_for_test_session_and_runnables' do
     let(:test_group) { test_suite.groups.first }
     let(:test) { test_group.tests.first }
 
@@ -106,11 +106,11 @@ RSpec.describe Inferno::Repositories::Results do
       group_result = repo_create(:result, base_result_params.merge(runnable: test_group.reference_hash))
       test_result = repo_create(:result, base_result_params.merge(runnable: test.reference_hash))
 
-      results = repo.current_child_results_for_test_session(test_session.id, test_group.children)
+      results = repo.current_results_for_test_session_and_runnables(test_session.id, test_group.children)
       expect(results.length).to eq(1)
       expect(results.first.id).to eq(test_result.id)
 
-      results = repo.current_child_results_for_test_session(test_session.id, test_suite.children)
+      results = repo.current_results_for_test_session_and_runnables(test_session.id, test_suite.children)
       expect(results.length).to eq(1)
       expect(results.first.id).to eq(group_result.id)
     end
