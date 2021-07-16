@@ -17,6 +17,7 @@ import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
+import { LinearProgress, Card } from '@material-ui/core';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -74,6 +75,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
   const [resultsMap, setResultsMap] = React.useState<Map<string, Result>>(
     resultsToMap(previousResults)
   );
+  const [testRun, setTestRun] = React.useState<TestRun>();
   const [sessionData, setSessionData] = React.useState<Map<string, string>>(new Map());
 
   useEffect(() => {
@@ -102,6 +104,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
   function pollTestRunResults(testRun: TestRun): void {
     getTestRunWithResults(testRun.id)
       .then((testRun_results: TestRun | null) => {
+        setTestRun(testRun_results);
         if (testRun_results && testRun_results.results) {
           const updatedMap = resultsToMap(testRun_results.results, resultsMap);
           setResultsMap(updatedMap);
@@ -166,12 +169,32 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
     setSessionData(new Map(sessionData));
     postTestRun(id, runnableType, runnableId, inputs)
       .then((testRun: TestRun) => {
+        setTestRun(testRun);
         pollTestRunResults(testRun);
       })
       .catch((e) => {
         console.log(e);
       });
   }
+
+  const completedTests = testRun?.results?.length || 0;
+
+  const testProgress = testRun?.test_count ? (100 * completedTests) / testRun?.test_count : 0;
+
+  const testRunProgressBar = () => {
+    console.log(testRun?.status);
+    if (testRun && testRun.status == 'running') {
+      return (
+        <div>
+          <Card className={styles.testGroupCard} variant="outlined">
+            <LinearProgress variant="determinate" value={testProgress} />
+          </Card>
+        </div>
+      );
+    } else {
+      return null;
+    }
+  };
 
   let detailsPanel: JSX.Element = <div>error</div>;
   if (runnableMap.get(selectedRunnable)) {
@@ -184,21 +207,26 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
     );
   }
   return (
-    <div className={styles.testSuiteMain}>
-      <TestSuiteTreeComponent
-        {...test_suite}
-        runTests={runTests}
-        selectedRunnable={selectedRunnable}
-      />
-      {detailsPanel}
-      <InputsModal
-        hideModal={() => setModalVisible(false)}
-        createTestRun={createTestRun}
-        modalVisible={modalVisible}
-        runnableType={runnableType}
-        runnableId={runnableId}
-        inputs={inputs}
-      />
+    <div>
+      <div>
+        {testRunProgressBar()}
+      </div>
+      <div className={styles.testSuiteMain}>
+        <TestSuiteTreeComponent
+          {...test_suite}
+          runTests={runTests}
+          selectedRunnable={selectedRunnable}
+        />
+        {detailsPanel}
+        <InputsModal
+          hideModal={() => setModalVisible(false)}
+          createTestRun={createTestRun}
+          modalVisible={modalVisible}
+          runnableType={runnableType}
+          runnableId={runnableId}
+          inputs={inputs}
+        />
+      </div>
     </div>
   );
 };

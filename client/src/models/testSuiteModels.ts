@@ -93,7 +93,7 @@ export interface TestRun {
   inputs?: TestInput[] | null;
   results?: Result[] | null;
   status?: string | null;
-  testCount: number;
+  testCount?: number;
   testGroupId?: string;
   testSuiteId?: string;
   testId?: string;
