@@ -39,7 +39,7 @@ module Inferno
       # @api private
       def copy_instance_variables(subclass)
         instance_variables.each do |variable|
-          next if [:@id, :@groups, :@tests, :@parent, :@children].include?(variable)
+          next if [:@id, :@groups, :@tests, :@parent, :@children, :@test_count].include?(variable)
 
           subclass.instance_variable_set(variable, instance_variable_get(variable).dup)
         end
@@ -329,6 +329,10 @@ module Inferno
       #   documentation.](https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#mount-rack-applications)
       def route(method, path, handler)
         Inferno.routes << { method: method, path: path, handler: handler, suite: suite }
+      end
+
+      def test_count
+        @test_count ||= children&.reduce(0) { |sum, child| sum + child.test_count } || 0
       end
     end
   end

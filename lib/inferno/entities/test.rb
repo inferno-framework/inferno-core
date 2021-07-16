@@ -162,6 +162,10 @@ module Inferno
           }
         end
 
+        def test_count
+          1
+        end
+
         def method_missing(name, *args, &block)
           parent_instance = parent&.new
           if parent_instance.respond_to?(name)

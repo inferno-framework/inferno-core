@@ -6,6 +6,7 @@ module Inferno
         field :test_session_id
 
         field :status
+        field :test_count
 
         field :test_group_id, if: :field_present?
         field :test_suite_id, if: :field_present?
