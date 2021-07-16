@@ -11,7 +11,7 @@ import {
   Request,
 } from 'models/testSuiteModels';
 import InputsModal from 'components/InputsModal/InputsModal';
-import { getTestResults, postTestRun } from 'api/infernoApiService';
+import { getTestRunWithResults, postTestRun } from 'api/infernoApiService';
 import useStyles from './styles';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
@@ -99,11 +99,16 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
     setModalVisible(true);
   }
 
-  function saveTestRunResults(testRun: TestRun): void {
-    getTestResults(testRun.id)
-      .then((testRun_results: Result[]) => {
-        const updatedMap = resultsToMap(testRun_results, resultsMap);
-        setResultsMap(updatedMap);
+  function pollTestRunResults(testRun: TestRun): void {
+    getTestRunWithResults(testRun.id)
+      .then((testRun_results: TestRun | null) => {
+        if (testRun_results && testRun_results.results) {
+          const updatedMap = resultsToMap(testRun_results.results, resultsMap);
+          setResultsMap(updatedMap);
+        }
+        if (testRun_results && testRun_results.status == 'running') {
+          setTimeout(() => pollTestRunResults(testRun_results), 1000);
+        }
       })
       .catch((e) => {
         console.log(e);
@@ -161,7 +166,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
     setSessionData(new Map(sessionData));
     postTestRun(id, runnableType, runnableId, inputs)
       .then((testRun: TestRun) => {
-        saveTestRunResults(testRun);
+        pollTestRunResults(testRun);
       })
       .catch((e) => {
         console.log(e);

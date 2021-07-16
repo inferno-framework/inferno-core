@@ -117,16 +117,16 @@ export function postTestRun(
     });
 }
 
-export function getTestResults(testRunId: string): Promise<Result[]> {
-  const endpoint = getEndpoint(`/test_runs/${testRunId}/results`);
+export function getTestRunWithResults(testRunId: string): Promise<TestRun | null> {
+  const endpoint = getEndpoint(`/test_runs/${testRunId}?include_results=true`);
   return fetch(endpoint)
     .then((response) => response.json())
-    .then((result) => {
-      return result as Result[];
+    .then((testRun) => {
+      return testRun as TestRun;
     })
     .catch((e) => {
       console.log(e);
-      return [];
+      return null;
     });
 }
 
