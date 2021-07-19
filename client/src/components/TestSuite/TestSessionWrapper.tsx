@@ -1,14 +1,16 @@
 import React, { FC } from 'react';
-import { Result, TestSession } from 'models/testSuiteModels';
+import { Result, TestRun, TestSession } from 'models/testSuiteModels';
 import TestSessionComponent from './TestSession';
 import { useParams } from 'react-router-dom';
-import { getTestSession, getTestSessionResults } from 'api/infernoApiService';
+import { getLastTestRun, getTestSession, getTestSessionResults } from 'api/infernoApiService';
 import Alert from '@material-ui/lab/Alert';
 import Backdrop from '@material-ui/core/Backdrop';
 
 const TestSessionWrapper: FC<unknown> = () => {
+  const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [testSession, setTestSession] = React.useState<TestSession>();
   const [testResults, setTestResults] = React.useState<Result[]>();
+  const [attemptedGetRun, setAttemptedGetRun] = React.useState(false);
   const [attemptedGetSession, setAttemptedGetSession] = React.useState(false);
   const [attemptedGetResults, setAttemptedGetResults] = React.useState(false);
 
@@ -25,6 +27,20 @@ const TestSessionWrapper: FC<unknown> = () => {
       .finally(() => setAttemptedGetSession(true));
   }
 
+  function tryGetTestRun(test_session_id: string) {
+    getLastTestRun(test_session_id)
+      .then((retrievedTestRun) => {
+        if (retrievedTestRun) {
+          setTestRun(retrievedTestRun);
+        } else {
+          setTestRun(null);
+        }
+      })
+      .catch((e) => console.log(e))
+      .finally(() => setAttemptedGetRun(true));
+  }
+
+  // TODO: only get the most recent results
   function tryGetTestResults(test_session_id: string) {
     getTestSessionResults(test_session_id)
       .then((results) => {
@@ -39,7 +55,13 @@ const TestSessionWrapper: FC<unknown> = () => {
   }
 
   if (testSession && testResults) {
-    return <TestSessionComponent testSession={testSession} previousResults={testResults} />;
+    return (
+      <TestSessionComponent
+        testSession={testSession}
+        previousResults={testResults}
+        initialTestRun={testRun}
+      />
+    );
   } else if (attemptedGetSession && attemptedGetResults) {
     return (
       <div>
@@ -51,6 +73,9 @@ const TestSessionWrapper: FC<unknown> = () => {
   } else {
     const { test_session_id } = useParams<{ test_session_id: string }>();
     if (test_session_id) {
+      if (!attemptedGetRun) {
+        tryGetTestRun(test_session_id);
+      }
       if (!attemptedGetSession) {
         tryGetTestSession(test_session_id);
       }

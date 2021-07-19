@@ -42,6 +42,19 @@ export function getTestSuites(): Promise<TestSuite[]> {
     });
 }
 
+export function getLastTestRun(test_session_id: string): Promise<TestRun | null> {
+  const testSessionsEndpoint = getEndpoint('/test_sessions/' + test_session_id + '/last_test_run');
+  return fetch(testSessionsEndpoint)
+    .then((response) => response.json())
+    .then((result) => {
+      return result as TestRun;
+    })
+    .catch((e) => {
+      console.log(e);
+      return null;
+    });
+}
+
 export function getTestSession(test_session_id: string): Promise<TestSession | null> {
   const testSessionsEndpoint = getEndpoint('/test_sessions/' + test_session_id);
   return fetch(testSessionsEndpoint)

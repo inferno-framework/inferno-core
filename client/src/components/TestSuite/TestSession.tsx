@@ -13,11 +13,12 @@ import {
 import InputsModal from 'components/InputsModal/InputsModal';
 import { getTestRunWithResults, postTestRun } from 'api/infernoApiService';
 import useStyles from './styles';
+import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
-import { Box, LinearProgress, Snackbar, Typography } from '@material-ui/core';
+import { Snackbar } from '@material-ui/core';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -63,9 +64,14 @@ function resultsToMap(results: Result[], map?: Map<string, Result>): Map<string,
 export interface TestSessionComponentProps {
   testSession: TestSession;
   previousResults: Result[];
+  initialTestRun: TestRun | null;
 }
 
-const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, previousResults }) => {
+const TestSessionComponent: FC<TestSessionComponentProps> = ({
+  testSession,
+  previousResults,
+  initialTestRun,
+}) => {
   const styles = useStyles();
   const { test_suite, id } = testSession;
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -86,6 +92,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
     });
     setSessionData(new Map(sessionData));
   }, [testSession]);
+
+  const [testRun, setTestRun] = React.useState<TestRun | null>(null);
+
+  if (!testRun && initialTestRun) {
+    setTestRun(initialTestRun);
+  }
 
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
   const location = useLocation();
@@ -177,45 +189,20 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
       });
   }
 
-  const completedTestCount = testRun?.results?.filter(result => result.test_id)?.length || 0;
-
-  const testProgress = testRun?.test_count ? (100 * completedTestCount) / testRun?.test_count : 0;
-
-
-  function TestRunProgressBar({testCount, completedCount}) {
-    const value = 100 * completedCount / testCount;
-    return (
-      <Box
-        display="flex"
-        alignItems="center"
-        bgcolor="text.secondary"
-        p="0.5em"
-        borderRadius="0.5em"
-      >
-        <Box minWidth={100} mr={1}>
-          <LinearProgress variant="determinate" value={value} />
-        </Box>
-        <Box minWidth={35} color="background.paper">
-          <Typography variant="body2">
-            {completedCount}/{testCount}
-          </Typography>
-        </Box>
-      </Box>
-    );
-  }
+  const completedTestCount = testRun?.results?.filter((result) => result.test_id)?.length || 0;
 
   function testRunProgressBar() {
     if (testRun?.status !== 'running') {
       return null;
     }
     return (
-      <Snackbar
-        open={true}
-        anchorOrigin ={{ vertical: 'bottom', horizontal: 'left' }}
-      >
-        <TestRunProgressBar testCount={testRun?.test_count} completedCount={completedTestCount} />
+      <Snackbar open={true} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+        <TestRunProgressBar
+          testCount={testRun?.test_count || 0}
+          completedCount={completedTestCount}
+        />
       </Snackbar>
-    )
+    );
   }
 
   let detailsPanel: JSX.Element = <div>error</div>;
