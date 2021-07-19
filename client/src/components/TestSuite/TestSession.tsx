@@ -17,7 +17,7 @@ import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
-import { LinearProgress, Card } from '@material-ui/core';
+import { Box, LinearProgress, Snackbar, Typography } from '@material-ui/core';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -110,7 +110,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
           setResultsMap(updatedMap);
         }
         if (testRun_results && testRun_results.status == 'running') {
-          setTimeout(() => pollTestRunResults(testRun_results), 1000);
+          setTimeout(() => pollTestRunResults(testRun_results), 500);
         }
       })
       .catch((e) => {
@@ -177,24 +177,46 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
       });
   }
 
-  const completedTests = testRun?.results?.length || 0;
+  const completedTestCount = testRun?.results?.filter(result => result.test_id)?.length || 0;
 
-  const testProgress = testRun?.test_count ? (100 * completedTests) / testRun?.test_count : 0;
+  const testProgress = testRun?.test_count ? (100 * completedTestCount) / testRun?.test_count : 0;
 
-  const testRunProgressBar = () => {
-    console.log(testRun?.status);
-    if (testRun && testRun.status == 'running') {
-      return (
-        <div>
-          <Card className={styles.testGroupCard} variant="outlined">
-            <LinearProgress variant="determinate" value={testProgress} />
-          </Card>
-        </div>
-      );
-    } else {
+
+  function TestRunProgressBar({testCount, completedCount}) {
+    const value = 100 * completedCount / testCount;
+    return (
+      <Box
+        display="flex"
+        alignItems="center"
+        bgcolor="text.secondary"
+        p="0.5em"
+        borderRadius="0.5em"
+      >
+        <Box minWidth={100} mr={1}>
+          <LinearProgress variant="determinate" value={value} />
+        </Box>
+        <Box minWidth={35} color="background.paper">
+          <Typography variant="body2">
+            {completedCount}/{testCount}
+          </Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  function testRunProgressBar() {
+    if (testRun?.status !== 'running') {
       return null;
     }
-  };
+    return (
+      <Snackbar
+        open={true}
+        anchorOrigin ={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <TestRunProgressBar testCount={testRun?.test_count} completedCount={completedTestCount} />
+      </Snackbar>
+    )
+  }
 
   let detailsPanel: JSX.Element = <div>error</div>;
   if (runnableMap.get(selectedRunnable)) {
@@ -208,10 +230,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
   }
   return (
     <div>
-      <div>
-        {testRunProgressBar()}
-      </div>
       <div className={styles.testSuiteMain}>
+        {testRunProgressBar()}
         <TestSuiteTreeComponent
           {...test_suite}
           runTests={runTests}
