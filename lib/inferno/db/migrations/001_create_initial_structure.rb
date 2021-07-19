@@ -140,5 +140,10 @@ Sequel.migration do
       column :value, String
       index [:test_session_id, :name]
     end
+
+    create_table :requestsresults do
+      foreign_key :result_id, :results, index: true, type: String, null: false
+      foreign_key :request_id, :requests, index: true, type: String, null: false
+    end
   end
 end
