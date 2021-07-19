@@ -41,6 +41,22 @@ module Inferno
         build_entity(test_run_hash)
       end
 
+      def last_test_run(test_session_id)
+        test_run_hash =
+          self.class::Model
+            .where(test_session_id: test_session_id)
+            .order(Sequel.desc(:updated_at))
+            .limit(1)
+            .to_a
+            .map { |record| record.to_json_data(json_serializer_options).deep_symbolize_keys! }
+            &.first
+            &.to_hash
+
+        return nil if test_run_hash.nil?
+
+        build_entity(test_run_hash)
+      end
+
       def mark_as_running(test_run_id)
         update(test_run_id, status: 'running')
       end

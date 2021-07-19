@@ -14,6 +14,9 @@ module Inferno
         resources 'test_sessions', only: [:create, :show] do
           resources 'results', only: [:index]
         end
+        get 'test_sessions/:test_session_id/last_test_run',
+            to: Inferno::Web::Controllers::TestSessions::LastTestRun,
+            as: :last_test_run
 
         resources 'test_suites', only: [:index, :show]
 

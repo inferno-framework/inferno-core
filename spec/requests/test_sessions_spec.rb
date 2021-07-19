@@ -72,4 +72,22 @@ RSpec.describe '/test_sessions' do
       expect(parsed_body.first['messages'].length).to eq(messages.length)
     end
   end
+
+  describe '/:id/last_test_run' do
+    let(:test_suite_id) { 'BasicTestSuite::Suite' }
+
+    it 'renders the test_run json for the most recent run' do
+      repo_create(
+        :test_run,
+        test_session_id: test_session.id,
+        created_at: 1.minute.ago,
+        updated_at: 1.minute.ago
+      )
+      last_test_run = repo_create(:test_run, test_session_id: test_session.id)
+      get router.path(:last_test_run, test_session_id: test_session.id)
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_body['id']).to eq(last_test_run.id)
+    end
+  end
 end

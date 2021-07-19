@@ -9,7 +9,7 @@ module Inferno
         field :test_suite_id
 
         association :test_suite, blueprint: TestSuite, view: :full
-        # association :test_run, blueprint: TestRun
+        # association :test_runs, blueprint: TestRun
         # association :results, blueprint: Result
       end
     end
