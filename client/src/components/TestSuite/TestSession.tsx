@@ -94,9 +94,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }, [testSession]);
 
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
+  const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
 
   if (!testRun && initialTestRun) {
     setTestRun(initialTestRun);
+    if (testRunNeedsProgressBar(initialTestRun)) {
+      setShowProgressBar(true);
+    }
   }
 
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
@@ -182,6 +186,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     postTestRun(id, runnableType, runnableId, inputs)
       .then((testRun: TestRun) => {
         setTestRun(testRun);
+        setShowProgressBar(true);
         pollTestRunResults(testRun);
       })
       .catch((e) => {
@@ -191,12 +196,19 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const completedTestCount = testRun?.results?.filter((result) => result.test_id)?.length || 0;
 
+  function testRunNeedsProgressBar(testRun: TestRun | null) {
+    return testRun?.status === 'running';
+  }
+
   function testRunProgressBar() {
-    if (testRun?.status !== 'running') {
-      return null;
-    }
+    const duration = testRunNeedsProgressBar(testRun) ? null : 2000;
     return (
-      <Snackbar open={true} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+      <Snackbar
+        open={showProgressBar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        autoHideDuration={duration}
+        onClose={() => setShowProgressBar(false)}
+      >
         <TestRunProgressBar
           testCount={testRun?.test_count || 0}
           completedCount={completedTestCount}

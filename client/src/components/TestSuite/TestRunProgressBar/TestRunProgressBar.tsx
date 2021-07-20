@@ -11,7 +11,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({ testCount, completedC
 
   return (
     <Box display="flex" alignItems="center" bgcolor="text.secondary" p="0.5em" borderRadius="0.5em">
-      <Box minWidth={100} mr={1}>
+      <Box minWidth={200} mr={1}>
         <LinearProgress variant="determinate" value={value} />
       </Box>
       <Box minWidth={35} color="background.paper">
