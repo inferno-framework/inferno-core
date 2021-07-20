@@ -53,7 +53,8 @@ RSpec.describe Inferno::Repositories::Results do
     end
 
     it 'persists requests if present' do
-      result = repo.create(result_params.merge(requests: [request_definition]))
+      request = Inferno::Repositories::Requests.new.create(request_definition)
+      result = repo.create(result_params.merge(requests: [request]))
 
       requests = Inferno::Repositories::Requests.new.requests_for_result(result.id)
       expect(requests.length).to eq(1)

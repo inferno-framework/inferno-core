@@ -155,7 +155,8 @@ module Inferno
         end
 
         one_to_many :messages, class: 'Inferno::Repositories::Messages::Model', key: :result_id
-        many_to_many :requests, class: 'Inferno::Repositories::Requests::Model', join_table: :requestsresults, left_key: :result_id, right_key: :request_id 
+        many_to_many :requests, class: 'Inferno::Repositories::Requests::Model', join_table: :requestsresults,
+                                left_key: :result_id, right_key: :request_id
         many_to_one :test_run, class: 'Inferno::Repositories::TestRuns::Model', key: :test_run_id
         many_to_one :test_session, class: 'Inferno::Repositories::TestSessions::Model', key: :test_session_id
 

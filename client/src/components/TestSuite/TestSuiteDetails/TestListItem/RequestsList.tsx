@@ -1,9 +1,8 @@
 import React, { FC, Fragment } from 'react';
-import { Table, TableBody, TableRow, TableCell, Button, Tooltip } from '@material-ui/core';
+import { Table, TableBody, TableRow, TableCell, Button } from '@material-ui/core';
 import { Request } from 'models/testSuiteModels';
 import { getRequestDetails } from 'api/infernoApiService';
 import RequestDetailModal from 'components/RequestDetailModal/RequestDetailModal';
-import InputIcon from '@material-ui/icons/Input';
 
 interface RequestsListProps {
   resultId: string;
@@ -36,15 +35,9 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
     }
   }
 
-  const usedRequestIcon = (
-    <Tooltip title="This request was performed in another test and the result is used by this test">
-      <InputIcon />
-    </Tooltip>
-  );
   const requestListItems =
     requests.length > 0 ? (
       requests.map((request: Request, index: number) => {
-        const usedRequest = request.result_id !== resultId;
         return (
           <TableRow key={`msgRow-${index}`}>
             <TableCell>
@@ -62,7 +55,6 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
               >
                 Details
               </Button>
-              {usedRequest ? usedRequestIcon : null}
             </TableCell>
           </TableRow>
         );
@@ -82,6 +74,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
         request={detailedRequest}
         modalVisible={showDetails}
         hideModal={() => setShowDetails(false)}
+        usedRequest={detailedRequest?.result_id !== resultId}
       />
     </Fragment>
   );
