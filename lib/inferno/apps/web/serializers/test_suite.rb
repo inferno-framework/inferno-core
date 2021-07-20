@@ -6,6 +6,7 @@ module Inferno
           identifier :id
           field :title
           field :description
+          field :test_count
         end
 
         view :full do

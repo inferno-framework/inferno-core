@@ -2,7 +2,6 @@ module Inferno
   module Web
     module Controllers
       module TestSessions
-        # TODO: document in swagger
         class LastTestRun < Controller
           include Import[test_runs_repo: 'repositories.test_runs']
 

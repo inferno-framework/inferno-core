@@ -143,7 +143,7 @@ export function getTestRunWithResults(testRunId: string): Promise<TestRun | null
     });
 }
 
-export function getTestSessionResults(test_session_id: string): Promise<Result[] | null> {
+export function getCurrentTestSessionResults(test_session_id: string): Promise<Result[] | null> {
   const endpoint = getEndpoint(`/test_sessions/${test_session_id}/results`);
   return fetch(endpoint)
     .then((response) => response.json())

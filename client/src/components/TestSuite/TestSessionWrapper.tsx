@@ -2,7 +2,11 @@ import React, { FC } from 'react';
 import { Result, TestRun, TestSession } from 'models/testSuiteModels';
 import TestSessionComponent from './TestSession';
 import { useParams } from 'react-router-dom';
-import { getLastTestRun, getTestSession, getTestSessionResults } from 'api/infernoApiService';
+import {
+  getLastTestRun,
+  getTestSession,
+  getCurrentTestSessionResults,
+} from 'api/infernoApiService';
 import Alert from '@material-ui/lab/Alert';
 import Backdrop from '@material-ui/core/Backdrop';
 
@@ -40,9 +44,8 @@ const TestSessionWrapper: FC<unknown> = () => {
       .finally(() => setAttemptedGetRun(true));
   }
 
-  // TODO: only get the most recent results
   function tryGetTestResults(test_session_id: string) {
-    getTestSessionResults(test_session_id)
+    getCurrentTestSessionResults(test_session_id)
       .then((results) => {
         if (results) {
           setTestResults(results);

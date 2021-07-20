@@ -7,7 +7,6 @@ module Inferno
             include Import[test_sessions_repo: 'repositories.test_sessions']
 
             def call(params)
-              # TODO: document this in swagger
               self.body =
                 if params[:all] == 'true'
                   serialize(test_sessions_repo.results_for_test_session(params[:test_session_id]))
