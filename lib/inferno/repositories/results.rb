@@ -1,5 +1,4 @@
 require_relative 'validate_runnable_reference'
-require 'pry'
 
 module Inferno
   module Repositories
