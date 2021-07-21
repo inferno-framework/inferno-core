@@ -208,6 +208,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         autoHideDuration={duration}
         onClose={() => setShowProgressBar(false)}
+        ClickAwayListenerProps={{ mouseEvent: false }}
       >
         <TestRunProgressBar
           testCount={testRun?.test_count || 0}
