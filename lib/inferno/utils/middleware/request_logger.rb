@@ -29,11 +29,17 @@ module Inferno
 
         def log_response(response, start_time, end_time, exception = nil)
           elapsed = end_time - start_time
-          status, _response_headers, response_body = response if response
+          status, _response_headers, body = response if response
           status, = response if exception
 
           logger.info("#{status} in #{elapsed.in_milliseconds} ms")
-          logger.info(response_body)
+          if body.present?
+            if body.length > 100
+              logger.info("#{body[0..100]}...")
+            else
+              logger.info(body)
+            end
+          end
         end
 
         def log_request(env)
@@ -47,7 +53,13 @@ module Inferno
           query_string = query.blank? ? '' : "?#{query}"
 
           logger.info("#{method} #{scheme}://#{host}#{path}#{query_string}")
-          logger.info(body) if body.present?
+          if body.present?
+            if body.length > 100
+              logger.info("#{body[0..100]}...")
+            else
+              logger.info(body)
+            end
+          end
         end
       end
     end
