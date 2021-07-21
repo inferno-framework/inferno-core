@@ -98,6 +98,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     setTestRun(initialTestRun);
     if (testRunNeedsProgressBar(initialTestRun)) {
       setShowProgressBar(true);
+      pollTestRunResults(initialTestRun);
     }
   }
 
