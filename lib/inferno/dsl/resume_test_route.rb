@@ -80,6 +80,8 @@ module Inferno
         update_result
         persist_request
 
+        Jobs.perform(Jobs::ResumeTestRun, test_run.id)
+
         redirect_to redirect_route
       end
     end

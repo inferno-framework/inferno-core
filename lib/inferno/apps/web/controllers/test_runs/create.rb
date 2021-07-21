@@ -15,7 +15,7 @@ module Inferno
 
             # if testsession.nil?
 
-            test_run = repo.create(create_params(params))
+            test_run = repo.create(create_params(params).merge(status: 'queued'))
             self.body = serialize(test_run)
 
             params[:inputs]&.each do |input|

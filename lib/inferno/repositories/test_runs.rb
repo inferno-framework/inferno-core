@@ -77,7 +77,7 @@ module Inferno
       def mark_as_no_longer_waiting(test_run_id)
         update(
           test_run_id,
-          status: 'paused',
+          status: 'queued',
           identifier: nil,
           wait_timeout: nil
         )

@@ -1,6 +1,7 @@
 require 'sidekiq'
 
 require_relative 'jobs/execute_test_run'
+require_relative 'jobs/resume_test_run'
 
 module Inferno
   module Jobs

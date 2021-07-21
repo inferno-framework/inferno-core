@@ -66,8 +66,9 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       end
 
       test do
-        title 'Cancel test'
-        run { cancel }
+        title 'Pass test'
+        uses_request :resume
+        run { pass }
       end
     end
   end

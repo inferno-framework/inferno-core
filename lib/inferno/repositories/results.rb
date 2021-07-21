@@ -66,6 +66,17 @@ module Inferno
         entity_class.new(params.merge(runnable))
       end
 
+      def result_for_test_run(test_run_id:, **params)
+        result_hash =
+          self.class::Model
+            .find({ test_run_id: test_run_id }.merge(params))
+            &.to_hash
+
+        return nil if result_hash.nil?
+
+        build_entity(result_hash)
+      end
+
       def find_waiting_result(test_run_id:)
         result_hash =
           Model
