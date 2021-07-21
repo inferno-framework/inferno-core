@@ -210,6 +210,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         ClickAwayListenerProps={{ mouseEvent: false }}
       >
         <TestRunProgressBar
+          status={testRun?.status}
           testCount={testRun?.test_count || 0}
           completedCount={completedTestCount}
         />
