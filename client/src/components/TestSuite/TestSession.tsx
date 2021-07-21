@@ -123,7 +123,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           const updatedMap = resultsToMap(testRun_results.results, resultsMap);
           setResultsMap(updatedMap);
         }
-        if (testRun_results && testRun_results.status == 'running') {
+        if (testRunNeedsProgressBar(testRun_results)) {
           setTimeout(() => pollTestRunResults(testRun_results), 500);
         }
       })
@@ -195,7 +195,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const completedTestCount = testRun?.results?.filter((result) => result.test_id)?.length || 0;
 
   function testRunNeedsProgressBar(testRun: TestRun | null) {
-    return testRun?.status === 'running';
+    return testRun && ['running', 'queued', 'waiting'].includes(testRun.status);
   }
 
   function testRunProgressBar() {
