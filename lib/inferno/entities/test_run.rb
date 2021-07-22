@@ -9,6 +9,7 @@ module Inferno
     # @attr_accessor [String] test_group_id
     # @attr_accessor [String] test_id
     class TestRun < Entity
+      STATUS_OPTIONS = ['queued', 'running', 'waiting', 'done'].freeze
       ATTRIBUTES = [
         :id,
         :test_session_id,

@@ -10,6 +10,7 @@ FactoryBot.define do
     test_suite_id { runnable[:test_suite_id] }
     test_group_id { runnable[:test_group_id] }
     test_id { runnable[:test_id] }
+    status { 'queued' }
 
     inputs { nil }
     wait_timeout { nil }
