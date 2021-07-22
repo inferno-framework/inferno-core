@@ -10,7 +10,6 @@ module Inferno
             if params[:include_results] == 'true'
               results_repo = Inferno::Repositories::Results.new
               test_run.results =
-                # TODO: document in swagger
                 if params[:after].present?
                   results_repo.test_run_results_after(test_run_id: test_run.id, after: Time.parse(params[:after]))
                 else
