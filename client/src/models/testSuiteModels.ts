@@ -33,6 +33,8 @@ export interface Result {
   messages?: Message[];
   requests?: Request[];
   result_message?: string;
+  created_at?: string;
+  updated_at: string;
 }
 
 export interface TestInput {

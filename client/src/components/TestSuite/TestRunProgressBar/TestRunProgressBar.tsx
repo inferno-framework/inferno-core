@@ -6,25 +6,25 @@ import QueueIcon from '@material-ui/icons/Queue';
 import { withStyles } from '@material-ui/core/styles';
 
 export interface TestRunProgressBarProps {
-  status: string | null;
+  status: string | null | undefined;
   testCount: number;
   completedCount: number;
 }
 
-const StyledProgressBar = withStyles((theme) => ({
+const StyledProgressBar = withStyles((_theme) => ({
   root: {
     height: 8,
     backgroundColor: 'rgba(0,0,0,0)',
   },
   bar: {
     borderRadius: 4,
-  }
+  },
 }))(LinearProgress);
 
-const StatusIndicator = status => {
-  switch(status) {
+const StatusIndicator = (status: string | null | undefined) => {
+  switch (status) {
     case 'running':
-      return(
+      return (
         <Tooltip title="Running">
           <CircularProgress size={24} />
         </Tooltip>
@@ -32,19 +32,19 @@ const StatusIndicator = status => {
     case 'waiting':
       return (
         <Tooltip title="Waiting">
-          <AccessTimeIcon color='primary'/>
+          <AccessTimeIcon color="primary" />
         </Tooltip>
       );
     case 'queued':
       return (
         <Tooltip title="Queued">
-          <QueueIcon color='primary'/>
+          <QueueIcon color="primary" />
         </Tooltip>
       );
     case 'done':
       return (
         <Tooltip title="Done">
-          <DoneIcon color='primary'/>
+          <DoneIcon color="primary" />
         </Tooltip>
       );
     default:
@@ -54,7 +54,7 @@ const StatusIndicator = status => {
 
 const TestRunProgressBar: FC<TestRunProgressBarProps> = ({ status, testCount, completedCount }) => {
   const value = testCount !== 0 ? (100 * completedCount) / testCount : 0;
-  const statusIndicator= StatusIndicator(status)
+  const statusIndicator = StatusIndicator(status);
 
   return (
     <Box display="flex" alignItems="center" bgcolor="text.secondary" p="0.5em" borderRadius="0.5em">
@@ -62,10 +62,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({ status, testCount, co
         {statusIndicator}
       </Box>
       <Box minWidth={200} mr={1}>
-        <StyledProgressBar
-          variant="determinate"
-          value={value}
-        />
+        <StyledProgressBar variant="determinate" value={value} />
       </Box>
       <Box color="background.paper">
         <Typography variant="body1">

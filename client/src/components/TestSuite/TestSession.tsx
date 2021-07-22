@@ -116,15 +116,26 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     setModalVisible(true);
   }
 
+  function latestResult(results: Result[] | null | undefined): Result | null {
+    if (!results) {
+      return null;
+    }
+    return results.reduce((lastResult, result) => {
+      return Date.parse(result.updated_at) > Date.parse(lastResult.updated_at)
+        ? result
+        : lastResult;
+    }, results[0]);
+  }
+
   function pollTestRunResults(testRun: TestRun): void {
-    getTestRunWithResults(testRun.id)
+    getTestRunWithResults(testRun.id, latestResult(testRun.results)?.updated_at)
       .then((testRun_results: TestRun | null) => {
         setTestRun(testRun_results);
         if (testRun_results && testRun_results.results) {
           const updatedMap = resultsToMap(testRun_results.results, resultsMap);
           setResultsMap(updatedMap);
         }
-        if (testRunNeedsProgressBar(testRun_results)) {
+        if (testRun_results && testRunNeedsProgressBar(testRun_results)) {
           setTimeout(() => pollTestRunResults(testRun_results), 500);
         }
       })
@@ -193,10 +204,18 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       });
   }
 
-  const completedTestCount = testRun?.results?.filter((result) => result.test_id)?.length || 0;
+  const completedTestCount = () => {
+    let count = 0;
+    resultsMap.forEach((result) => {
+      if (result.test_id && result.test_run_id === testRun?.id) {
+        count++;
+      }
+    });
+    return count;
+  };
 
   function testRunNeedsProgressBar(testRun: TestRun | null) {
-    return testRun && ['running', 'queued', 'waiting'].includes(testRun.status);
+    return testRun?.status && ['running', 'queued', 'waiting'].includes(testRun.status);
   }
 
   function testRunProgressBar() {
@@ -212,7 +231,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         <TestRunProgressBar
           status={testRun?.status}
           testCount={testRun?.test_count || 0}
-          completedCount={completedTestCount}
+          completedCount={completedTestCount()}
         />
       </Snackbar>
     );
