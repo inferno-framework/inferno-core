@@ -33,12 +33,12 @@ module Inferno
           status, = response if exception
 
           logger.info("#{status} in #{elapsed.in_milliseconds} ms")
-          if body.present?
-            if body.length > 100
-              logger.info("#{body[0..100]}...")
-            else
-              logger.info(body)
-            end
+          return unless body.present?
+
+          if body.length > 100
+            logger.info("#{body[0..100]}...")
+          else
+            logger.info(body)
           end
         end
 
@@ -53,12 +53,13 @@ module Inferno
           query_string = query.blank? ? '' : "?#{query}"
 
           logger.info("#{method} #{scheme}://#{host}#{path}#{query_string}")
-          if body.present?
-            if body.length > 100
-              logger.info("#{body[0..100]}...")
-            else
-              logger.info(body)
-            end
+
+          return unless body.present?
+
+          if body.length > 100
+            logger.info("#{body[0..100]}...")
+          else
+            logger.info(body)
           end
         end
       end

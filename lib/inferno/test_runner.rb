@@ -37,9 +37,8 @@ module Inferno
 
     def run(runnable)
       if runnable < Entities::Test
-        if resuming
-          return existing_test_result(runnable) || run_test(runnable)
-        end
+        return existing_test_result(runnable) || run_test(runnable) if resuming
+
         run_test(runnable)
       else
         run_group(runnable)

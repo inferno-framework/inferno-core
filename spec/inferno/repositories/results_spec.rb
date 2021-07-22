@@ -116,4 +116,24 @@ RSpec.describe Inferno::Repositories::Results do
       expect(results.first.id).to eq(group_result.id)
     end
   end
+
+  describe '#test_run_results_after' do
+    it 'returns results updated at or after the specified time' do
+      time = Time.now
+      repo_create(:result, test_run_id: test_run.id, updated_at: time - 0.001)
+      new_results = [
+        repo_create(:result, test_run_id: test_run.id, updated_at: time),
+        repo_create(:result, test_run_id: test_run.id, updated_at: time + 0.001)
+      ]
+
+      results = repo.test_run_results_after(test_run_id: test_run.id, after: time)
+
+      expect(results.length).to eq(new_results.length)
+
+      new_result_ids = new_results.map(&:id)
+      result_ids = results.map(&:id)
+
+      expect(new_result_ids).to match_array(result_ids)
+    end
+  end
 end
