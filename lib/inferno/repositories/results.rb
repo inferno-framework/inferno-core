@@ -77,7 +77,6 @@ module Inferno
         build_entity(result_hash)
       end
 
-      # TODO: add index for this
       def test_run_results_after(test_run_id:, after:)
         Model
           .where(test_run_id: test_run_id)

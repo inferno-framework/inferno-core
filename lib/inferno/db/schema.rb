@@ -63,6 +63,7 @@ Sequel.migration do
       primary_key [:id]
       
       index [:test_run_id]
+      index [:test_run_id, :updated_at]
       index [:test_session_id]
       index [:test_session_id, :test_group_id]
       index [:test_session_id, :test_id]
