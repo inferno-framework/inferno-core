@@ -73,7 +73,7 @@ module Inferno
       end
 
       class Model < Sequel::Model(db)
-        many_to_many :result, class: 'Inferno::Repositories::Results::Model', join_table: :requestsresults,
+        many_to_many :result, class: 'Inferno::Repositories::Results::Model', join_table: :requests_results,
                               left_key: :request_id, right_key: :result_id
         one_to_many :headers, class: 'Inferno::Repositories::Headers::Model', key: :request_id
 
