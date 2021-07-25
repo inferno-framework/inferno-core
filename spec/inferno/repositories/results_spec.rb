@@ -31,8 +31,8 @@ RSpec.describe Inferno::Repositories::Results do
       status: 200,
       request_body: 'REQUEST_BODY',
       response_body: 'RESPONSE_BODY',
-      request_headers: [{ name: 'REQUEST_HEADER_NAME', value: 'REQUEST_HEADER_VALUE', type: 'request' }],
-      response_headers: [{ name: 'RESPONSE_HEADER_NAME', value: 'RESPONSE_HEADER_VALUE', type: 'response' }]
+      headers: [{ name: 'REQUEST_HEADER_NAME', value: 'REQUEST_HEADER_VALUE', type: 'request' },
+                { name: 'RESPONSE_HEADER_NAME', value: 'RESPONSE_HEADER_VALUE', type: 'response' }]
     }
   end
 
@@ -53,10 +53,10 @@ RSpec.describe Inferno::Repositories::Results do
     end
 
     it 'persists requests if present' do
-      request = Inferno::Repositories::Requests.new.create(request_definition)
+      request = Inferno::Entities::Request.new(request_definition)
       result = repo.create(result_params.merge(requests: [request]))
-
       requests = Inferno::Repositories::Requests.new.requests_for_result(result.id)
+
       expect(requests.length).to eq(1)
     end
 
