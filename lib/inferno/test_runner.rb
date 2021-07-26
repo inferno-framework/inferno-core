@@ -118,7 +118,7 @@ module Inferno
       if new_result != old_result
         persist_result(parent.reference_hash.merge(result: new_result))
 
-        update_parent_result(parent)
+        update_parent_result(parent.parent)
       end
 
       new_result

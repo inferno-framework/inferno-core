@@ -64,6 +64,9 @@ Sequel.migration do
       
       index [:test_run_id]
       index [:test_session_id]
+      index [:test_session_id, :test_group_id]
+      index [:test_session_id, :test_id]
+      index [:test_session_id, :test_suite_id]
     end
     
     create_table(:messages, :ignore_index_errors=>true) do
