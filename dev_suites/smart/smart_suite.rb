@@ -1,3 +1,5 @@
+require_relative 'discovery_group'
+
 module SMART
   class SMARTSuite < Inferno::TestSuite
     id 'smart'
@@ -6,6 +8,8 @@ module SMART
     resume_test_route :get, '/launch' do
       request.query_parameters['iss']
     end
+
+    group from: :smart_discovery
 
     group do
       id 'smart_group'
