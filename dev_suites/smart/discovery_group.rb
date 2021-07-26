@@ -43,12 +43,12 @@ module SMART
       )
       input :url
       output :well_known_configuration,
-              :well_known_authorization_url,
-              :well_known_introspection_url,
-              :well_known_management_url,
-              :well_known_registration_url,
-              :well_known_revocation_url,
-              :well_known_token_url
+             :well_known_authorization_url,
+             :well_known_introspection_url,
+             :well_known_management_url,
+             :well_known_registration_url,
+             :well_known_revocation_url,
+             :well_known_token_url
       makes_request :smart_well_known_configuration
 
       run do
@@ -61,18 +61,53 @@ module SMART
 
         config = JSON.parse(request.response_body)
         output well_known_configuration: request.response_body,
-                well_known_authorization_url: config['authorization_endpoint'],
-                well_known_introspection_url: config['introspection_endpoint'],
-                well_known_management_url: config['management_endpoint'],
-                well_known_registration_url: config['registration_endpoint'],
-                well_known_revocation_url: config['revocation_endpoint'],
-                well_known_token_url: config['token_endpoint']
+               well_known_authorization_url: config['authorization_endpoint'],
+               well_known_introspection_url: config['introspection_endpoint'],
+               well_known_management_url: config['management_endpoint'],
+               well_known_registration_url: config['registration_endpoint'],
+               well_known_revocation_url: config['revocation_endpoint'],
+               well_known_token_url: config['token_endpoint']
 
         content_type = request.response_header('Content-Type')&.value
 
-        assert content_type.present?, "No `Content-Type` header received."
+        assert content_type.present?, 'No `Content-Type` header received.'
         assert content_type.start_with?('application/json'),
-                "`Content-Type` must be `application/json`, but received: `#{content_type}`"
+               "`Content-Type` must be `application/json`, but received: `#{content_type}`"
+      end
+    end
+
+    test do
+      title 'Well-known configuration contains required fields'
+      description %(
+        The JSON from .well-known/smart-configuration contains the following
+        required fields: `authorization_endpoint`, `token_endpoint`,
+        `capabilities`
+      )
+      input :well_known_configuration
+
+      run do
+        skip_if well_known_configuration.blank?, 'No well-known configuration found'
+        config = JSON.parse(well_known_configuration)
+
+        ['authorization_endpoint', 'token_endpoint', 'capabilities'].each do |key|
+          assert config.key?(key), "Well-known configuration does not include `#{key}`"
+          assert config[key].present?, "Well-known configuration field `#{key}` is blank"
+        end
+
+        assert config['authorization_endpoint'].is_a?(String),
+               'Well-known `authorization_endpoint` field must be a string'
+        assert config['token_endpoint'].is_a?(String),
+               'Well-known `token_endpoint` field must be a string'
+        assert config['capabilities'].is_a?(Array),
+               'Well-known `capabilities` field must be an array'
+
+        non_string_capabilities = config['capabilities'].reject { |capability| capability.is_a? String }
+
+        assert non_string_capabilities.blank?, %(
+          Well-known `capabilities` field must be an array of strings, but found
+          non-string values:
+          #{non_string_capabilities.map { |value| "`#{value.nil? ? 'nil' : value}`" }.join(', ')}
+        )
       end
     end
   end
