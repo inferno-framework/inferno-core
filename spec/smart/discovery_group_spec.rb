@@ -156,4 +156,115 @@ RSpec.describe SMART::DiscoveryGroup do
       expect(result.result_message).to match(/`nil`/)
     end
   end
+
+  describe 'capability statement test' do
+    let(:runnable) { group.tests[2] }
+    let(:minimal_capabilities) { FHIR::CapabilityStatement.new(fhirVersion: '4.0.1') }
+    let(:full_extensions) do
+      [
+        {
+          url: 'authorize',
+          valueUri: "#{url}/authorize"
+        },
+        {
+          url: 'introspect',
+          valueUri: "#{url}/introspect"
+        },
+        {
+          url: 'manage',
+          valueUri: "#{url}/manage"
+        },
+        {
+          url: 'register',
+          valueUri: "#{url}/register"
+        },
+        {
+          url: 'revoke',
+          valueUri: "#{url}/revoke"
+        },
+        {
+          url: 'token',
+          valueUri: "#{url}/token"
+        }
+      ]
+    end
+    let(:full_capabilities) { capabilities_with_smart(full_extensions) }
+
+    def capabilities_with_smart(extensions)
+      FHIR::CapabilityStatement.new(
+        fhirVersion: '4.0.1',
+        rest: [
+          security: {
+            service: [
+              {
+                coding: [
+                  {
+                    system: 'http://hl7.org/fhir/restful-security-service',
+                    code: 'SMART-on-FHIR'
+                  }
+                ],
+                extension: [
+                  {
+                    url: 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris',
+                    extension: extensions
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      )
+    end
+
+    it 'passes when all required extensions are present' do
+      stub_request(:get, "#{url}/metadata")
+        .to_return(status: 200, body: full_capabilities.to_json)
+
+      result = run(runnable, url: url)
+
+      expect(result.result).to eq('pass')
+    end
+
+    it 'fails when a non-200 response is received' do
+      stub_request(:get, "#{url}/metadata")
+        .to_return(status: 500, body: minimal_capabilities.to_json)
+
+      result = run(runnable, url: url)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/Bad response status/)
+    end
+
+    it 'fails when no SMART extensions are returned' do
+      stub_request(:get, "#{url}/metadata")
+        .to_return(status: 200, body: minimal_capabilities.to_json)
+
+      result = run(runnable, url: url)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to eq('No SMART extensions found in CapabilityStatement')
+    end
+
+    it 'fails when no authorize extension is returned' do
+      extensions = full_extensions.reject { |extension| extension[:url] == 'authorize' }
+      stub_request(:get, "#{url}/metadata")
+        .to_return(status: 200, body: capabilities_with_smart(extensions).to_json)
+
+      result = run(runnable, url: url)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to eq('No `authorize` extension found')
+    end
+
+    it 'fails when no token extension is returned' do
+      extensions = full_extensions.reject { |extension| extension[:url] == 'token' }
+      stub_request(:get, "#{url}/metadata")
+        .to_return(status: 200, body: capabilities_with_smart(extensions).to_json)
+
+      result = run(runnable, url: url)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to eq('No `token` extension found')
+    end
+  end
 end

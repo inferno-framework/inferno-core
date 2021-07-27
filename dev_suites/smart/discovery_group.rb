@@ -110,5 +110,59 @@ module SMART
         )
       end
     end
+
+    test do
+      title 'Conformance/CapabilityStatement provides OAuth 2.0 endpoints'
+      description %(
+        If a server requires SMART on FHIR authorization for access, its
+        metadata must support automated discovery of OAuth2 endpoints.
+      )
+      input :url
+      output :capability_authorization_url,
+             :capability_introspection_url,
+             :capability_management_url,
+             :capability_registration_url,
+             :capability_revocation_url,
+             :capability_token_url
+
+      fhir_client do
+        url :url
+      end
+
+      run do
+        fhir_get_capability_statement
+
+        assert_response_status(200)
+
+        smart_extension =
+          resource
+            .rest
+            &.map(&:security)
+            &.flat_map(&:service)
+            &.find { |service| service.coding.any? { |coding| coding.code == 'SMART-on-FHIR' } }
+            &.extension
+            &.find do |extension|
+              extension.url == 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris'
+            end
+
+        assert smart_extension.present?, 'No SMART extensions found in CapabilityStatement'
+
+        oauth_extension_urls = ['authorize', 'introspect', 'manage', 'register', 'revoke', 'token']
+
+        oauth_urls = oauth_extension_urls.each_with_object({}) do |url, urls|
+          urls[url] = smart_extension.extension.find { |extension| extension.url == url }&.valueUri
+        end
+
+        output capability_authorization_url: oauth_urls['authorize'],
+               capability_introspection_url: oauth_urls['introspect'],
+               capability_management_url: oauth_urls['manage'],
+               capability_registration_url: oauth_urls['register'],
+               capability_revocation_url: oauth_urls['revoke'],
+               capability_token_url: oauth_urls['token']
+
+        assert oauth_urls['authorize'].present?, 'No `authorize` extension found'
+        assert oauth_urls['token'].present?, 'No `token` extension found'
+      end
+    end
   end
 end
