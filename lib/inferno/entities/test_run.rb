@@ -2,12 +2,12 @@ module Inferno
   module Entities
     # A `TestRun` represents a request to execute an executable set of tests.
     #
-    # @attr_reader [String] id of the test input
-    # @attr_reader [String] test_session_id
-    # @attr_reader [String] status
-    # @attr_reader [String] test_suite_id
-    # @attr_reader [String] test_group_id
-    # @attr_reader [String] test_id
+    # @attr_accessor [String] id of the test input
+    # @attr_accessor [String] test_session_id
+    # @attr_accessor [String] status
+    # @attr_accessor [String] test_suite_id
+    # @attr_accessor [String] test_group_id
+    # @attr_accessor [String] test_id
     class TestRun < Entity
       ATTRIBUTES = [
         :id,

@@ -10,6 +10,7 @@ SimpleCov.start do
   enable_coverage :branch
   add_filter '/spec/'
   add_filter '/lib/inferno/db/migrations'
+  add_filter '/lib/inferno/db/schema.rb'
 end
 
 if ENV['GITHUB_ACTIONS']

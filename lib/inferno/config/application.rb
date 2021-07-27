@@ -6,6 +6,9 @@ module Inferno
 
     use :env, inferrer: -> { ENV.fetch('APP_ENV', :development).to_sym }
 
+    Application.register('js_host', ENV.fetch('JS_HOST', ''))
+    Application.register('async_jobs', ENV['ASYNC_JOBS'] != 'false')
+
     configure do |config|
       config.root = File.expand_path('../../..', __dir__)
       config.default_namespace = 'inferno'
@@ -14,8 +17,6 @@ module Inferno
 
       config.auto_register = 'lib'
     end
-
-    Application.register('js_host', ENV.fetch('JS_HOST', ''))
 
     load_paths!('lib')
   end

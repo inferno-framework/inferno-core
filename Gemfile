@@ -16,10 +16,10 @@ gem 'puma'
 gem 'activesupport'
 gem 'dotenv'
 gem 'fhir_client'
+gem 'fhir_models', '~> 4.2.0'
 gem 'rake'
 gem 'faraday'
-
-gem 'health_cards'
+gem 'sidekiq', '~> 6.2.1'
 
 group :development, :test do
   gem 'pry'
