@@ -304,34 +304,16 @@ definitions:
   RequestSummary:
     type: "object"
     required:
-    - "request_id"
-    - "method"
-    - "url"
-    - "direction"
-    properties:
-      request_id:
-        type: "string"
-      method:
-        type: "string"
-      url:
-        type: "string"
-      direction:
-        type: "string"
-        enum: ["in", "out"]
-      status:
-        type: "integer"
-  Request:
-    type: "object"
-    required:
     - "id"
-    - "timestamp"
-    - "method"
+    - "created_at"
+    - "verb"
     - "url"
     - "direction"
+    - "result_id"
     properties:
       id:
         type: "string"
-      timestamp:
+      created_at:
         type: "string"
       verb:
         type: "string"
@@ -342,6 +324,33 @@ definitions:
         enum: ["in", "out"]
       status:
         type: "integer"
+      result_id:
+        type: "string"
+  Request:
+    type: "object"
+    required:
+    - "id"
+    - "created_at"
+    - "verb"
+    - "url"
+    - "direction"
+    - "result_id"
+    properties:
+      id:
+        type: "string"
+      created_at:
+        type: "string"
+      verb:
+        type: "string"
+      url:
+        type: "string"
+      direction:
+        type: "string"
+        enum: ["in", "out"]
+      status:
+        type: "integer"
+      result_id:
+        type: "string"
       request_headers:
         type: "array"
         items:
