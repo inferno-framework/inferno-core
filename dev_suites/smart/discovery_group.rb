@@ -164,5 +164,58 @@ module SMART
         assert oauth_urls['token'].present?, 'No `token` extension found'
       end
     end
+
+    test do
+      title 'OAuth 2.0 Endpoints in the conformance statement match those from the well-known configuration'
+      description %(
+        The server SHALL convey the FHIR OAuth authorization endpoints that are listed
+        in the table below to app developers. The server SHALL use both a FHIR
+        CapabilityStatement and A Well-Known Uris JSON file.
+      )
+      input :well_known_authorization_url,
+            :well_known_introspection_url,
+            :well_known_management_url,
+            :well_known_registration_url,
+            :well_known_revocation_url,
+            :well_known_token_url,
+            :capability_authorization_url,
+            :capability_introspection_url,
+            :capability_management_url,
+            :capability_registration_url,
+            :capability_revocation_url,
+            :capability_token_url
+      output :smart_authorization_url,
+             :smart_introspection_url,
+             :smart_management_url,
+             :smart_registration_url,
+             :smart_revocation_url,
+             :smart_token_url
+
+      run do
+        mismatched_urls = []
+        ['authorization', 'token', 'introspection', 'management', 'registration', 'revocation'].each do |type|
+          well_known_url = send("well_known_#{type}_url")
+          capability_url = send("capability_#{type}_url")
+
+          output "smart_#{type}_url": well_known_url.presence || capability_url.presence
+
+          mismatched_urls << type if well_known_url != capability_url
+        end
+
+        pass_if mismatched_urls.empty?
+
+        error_message = 'The following urls do not match:'
+
+        mismatched_urls.each do |type|
+          well_known_url = send("well_known_#{type}_url")
+          capability_url = send("capability_#{type}_url")
+
+          error_message += "\n- #{type.capitalize}:"
+          error_message += "\n  - Well-Known: #{well_known_url}\n  - CapabilityStatement: #{capability_url}"
+        end
+
+        assert false, error_message
+      end
+    end
   end
 end

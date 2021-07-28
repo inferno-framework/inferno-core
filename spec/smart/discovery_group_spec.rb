@@ -267,4 +267,37 @@ RSpec.describe SMART::DiscoveryGroup do
       expect(result.result_message).to eq('No `token` extension found')
     end
   end
+
+  describe 'endpoints match test' do
+    let(:runnable) { group.tests[3] }
+    let(:full_inputs) do
+      [
+        'authorization',
+        'token',
+        'introspection',
+        'management',
+        'registration',
+        'revocation'
+      ].each_with_object({}) do |type, inputs|
+        inputs["well_known_#{type}_url".to_sym] = "#{type.upcase}_URL"
+        inputs["capability_#{type}_url".to_sym] = "#{type.upcase}_URL"
+      end
+    end
+
+    it 'passes if all urls match' do
+      result = run(runnable, full_inputs)
+
+      expect(result.result).to eq('pass')
+    end
+
+    it 'fails if a url does not match' do
+      full_inputs[:well_known_introspection_url] = 'abc'
+      result = run(runnable, full_inputs)
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/The following urls do not match:\n- Introspection/)
+      expect(result.result_message).to include(full_inputs[:well_known_introspection_url])
+      expect(result.result_message).to include(full_inputs[:capability_introspection_url])
+    end
+  end
 end
