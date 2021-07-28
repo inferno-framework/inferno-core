@@ -143,11 +143,11 @@ Sequel.migration do
     end
     
     create_table(:requests_results, :ignore_index_errors=>true) do
-      foreign_key :result_id, :results, :type=>String, :size=>255, :null=>false
-      foreign_key :request_id, :requests, :type=>String, :size=>255, :null=>false
+      foreign_key :results_id, :results, :type=>String, :size=>255, :null=>false
+      foreign_key :requests_id, :requests, :type=>String, :size=>255, :null=>false
       
-      index [:request_id]
-      index [:result_id]
+      index [:requests_id]
+      index [:results_id]
     end
   end
 end
