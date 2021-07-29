@@ -74,6 +74,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
         request={detailedRequest}
         modalVisible={showDetails}
         hideModal={() => setShowDetails(false)}
+        usedRequest={detailedRequest?.result_id !== resultId}
       />
     </Fragment>
   );

@@ -7,13 +7,13 @@ module Inferno
         request = self.class::Model.create(db_params(params))
 
         request_headers = (params[:request_headers] || []).map do |header|
-          headers_repo.create(header.merge(request_id: request.index, type: 'request'))
+          request.add_header(header.merge(request_id: request.index, type: 'request'))
         end
         response_headers = (params[:response_headers] || []).map do |header|
-          headers_repo.create(header.merge(request_id: request.index, type: 'response'))
+          request.add_header(header.merge(request_id: request.index, type: 'response'))
         end
 
-        headers = request_headers + response_headers
+        headers = (request_headers + response_headers).map { |header| headers_repo.build_entity(header.to_hash) }
 
         build_entity(
           request.to_hash
@@ -73,7 +73,8 @@ module Inferno
       end
 
       class Model < Sequel::Model(db)
-        many_to_one :result, class: 'Inferno::Repositories::Results::Model', key: :result_id
+        many_to_many :result, class: 'Inferno::Repositories::Results::Model', join_table: :requests_results,
+                              left_key: :request_id, right_key: :result_id
         one_to_many :headers, class: 'Inferno::Repositories::Headers::Model', key: :request_id
 
         def before_create

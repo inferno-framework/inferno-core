@@ -9,6 +9,7 @@ module Inferno
           field :url
           field :direction
           field :status
+          field :result_id
         end
 
         view :full do
