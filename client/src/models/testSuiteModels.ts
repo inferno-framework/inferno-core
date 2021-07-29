@@ -40,6 +40,7 @@ export interface TestInput {
   value?: string;
   type?: 'text' | 'textarea';
   description?: string;
+  default?: string;
 }
 
 export interface TestOutput {
@@ -70,7 +71,7 @@ export interface TestSuite {
   title: string;
   id: string;
   result?: Result;
-  test_groups?: TestGroup[];
+  test_groups: TestGroup[];
   description?: string;
 }
 

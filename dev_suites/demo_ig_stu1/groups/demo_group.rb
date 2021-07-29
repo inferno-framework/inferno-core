@@ -11,7 +11,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     # while also allowing type hints at a higher level.
 
     input :url, title: 'URL', description: 'Insert url of FHIR server'
-    input :patient_id, title: 'Patient ID'
+    input :patient_id, title: 'Patient ID', default: 'Default Patient'
 
     output :observation_id,
            :encounter_id,
