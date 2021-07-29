@@ -204,9 +204,10 @@ module Inferno
       # @option input_definition [String] :title Human readable title for input
       # @option input_definition [String] :description Description for the input
       # @option input_definition [String] :type text | textarea
+      # @option input_definition [String] :default The default value for the input
       # @return [void]
       # @example
-      #   input :patientid, title: 'Patient ID', description: 'The ID of the patient being searched for'
+      #   input :patientid, title: 'Patient ID', description: 'The ID of the patient being searched for', default: 'default_patient_id'
       # @example
       #   input :textarea, title: 'Textarea Input Example', type: 'textarea'
       def input(name, *other_names, **input_definition)
