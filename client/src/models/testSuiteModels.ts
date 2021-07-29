@@ -71,7 +71,7 @@ export interface TestSuite {
   title: string;
   id: string;
   result?: Result;
-  test_groups: TestGroup[];
+  test_groups?: TestGroup[];
   description?: string;
 }
 

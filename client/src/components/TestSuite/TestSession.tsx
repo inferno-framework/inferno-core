@@ -77,7 +77,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
   const [sessionData, setSessionData] = React.useState<Map<string, string>>(new Map());
 
   useEffect(() => {
-    const allInputs = getAllContainedInputs(test_suite.test_groups);
+    const allInputs = getAllContainedInputs(test_suite.test_groups as TestGroup[]);
     allInputs.forEach((input: TestInput) => {
       const defaultValue = input.default ? input.default : '';
       sessionData.set(input.name, defaultValue);
