@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   TestInput,
   RunnableType,
@@ -74,6 +74,16 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
   const [resultsMap, setResultsMap] = React.useState<Map<string, Result>>(
     resultsToMap(previousResults)
   );
+  const [sessionData, setSessionData] = React.useState<Map<string, string>>(new Map());
+
+  useEffect(() => {
+    const allInputs = getAllContainedInputs(test_suite.test_groups as TestGroup[]);
+    allInputs.forEach((input: TestInput) => {
+      const defaultValue = input.default ? input.default : '';
+      sessionData.set(input.name, defaultValue);
+    });
+    setSessionData(new Map(sessionData));
+  }, [testSession]);
 
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
   const location = useLocation();
@@ -134,6 +144,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
         allInputs = test.inputs;
       }
     }
+    allInputs.forEach((input: TestInput) => {
+      input.value = sessionData.get(input.name);
+    });
     if (allInputs.length > 0) {
       showInputsModal(runnableType, runnableId, allInputs);
     } else {
@@ -142,6 +155,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
   }
 
   function createTestRun(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
+    inputs.forEach((input: TestInput) => {
+      sessionData.set(input.name, input.value as string);
+    });
+    setSessionData(new Map(sessionData));
     postTestRun(id, runnableType, runnableId, inputs)
       .then((testRun: TestRun) => {
         saveTestRunResults(testRun);
@@ -175,7 +192,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
         modalVisible={modalVisible}
         runnableType={runnableType}
         runnableId={runnableId}
-        testSessionId={id}
         inputs={inputs}
       />
     </div>

@@ -10,7 +10,7 @@ import {
   TextField,
 } from '@material-ui/core';
 import { RunnableType, TestInput } from 'models/testSuiteModels';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import useStyles from './styles';
 
 export interface InputsModalProps {
@@ -18,7 +18,6 @@ export interface InputsModalProps {
   runnableId: string;
   inputs: TestInput[];
   modalVisible: boolean;
-  testSessionId: string;
   hideModal: () => void;
   createTestRun: (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => void;
 }
@@ -35,7 +34,6 @@ function runnableTypeReadable(runnableType: RunnableType) {
 }
 
 const InputsModal: FC<InputsModalProps> = ({
-  testSessionId,
   runnableType,
   runnableId,
   inputs,
@@ -44,17 +42,6 @@ const InputsModal: FC<InputsModalProps> = ({
   createTestRun,
 }) => {
   function submitClicked(): void {
-    switch (runnableType) {
-      case RunnableType.TestSuite:
-        console.log(`create test run for session: ${testSessionId}, testSuite: ${runnableId}`);
-        break;
-      case RunnableType.TestGroup:
-        console.log(`create test run for session: ${testSessionId}, testGroup: ${runnableId}`);
-        break;
-      case RunnableType.Test:
-        console.log(`create test run for session: ${testSessionId}, test: ${runnableId}`);
-        break;
-    }
     const inputs_with_values: TestInput[] = [];
     inputsMap.forEach((input_value, input_name) => {
       inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
@@ -64,6 +51,13 @@ const InputsModal: FC<InputsModalProps> = ({
   }
   const styles = useStyles();
   const [inputsMap, setInputsMap] = React.useState<Map<string, string>>(new Map());
+  useEffect(() => {
+    inputs.forEach((requirement: TestInput) => {
+      inputsMap.set(requirement.name, requirement.value || '');
+    });
+    setInputsMap(new Map(inputsMap));
+  }, [inputs]);
+
   const inputFields = inputs.map((requirement: TestInput, index: number) => {
     switch (requirement.type) {
       case 'textarea':
@@ -74,7 +68,7 @@ const InputsModal: FC<InputsModalProps> = ({
               fullWidth
               label={requirement.title || requirement.name}
               helperText={requirement.description}
-              value={inputsMap.get(requirement.name) || ''}
+              value={inputsMap.get(requirement.name)}
               multiline
               rows={4}
               inputProps={{ className: styles.textarea }}
@@ -94,7 +88,7 @@ const InputsModal: FC<InputsModalProps> = ({
               fullWidth
               label={requirement.title || requirement.name}
               helperText={requirement.description}
-              value={inputsMap.get(requirement.name) || ''}
+              value={inputsMap.get(requirement.name)}
               onChange={(event) => {
                 const value = event.target.value;
                 inputsMap.set(requirement.name, value);
