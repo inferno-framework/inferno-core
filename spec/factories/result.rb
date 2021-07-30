@@ -19,6 +19,13 @@ FactoryBot.define do
 
     initialize_with { new(**attributes) }
 
+    before(:create) do |instance, evaluator|
+      instance.instance_variable_set(
+        :@requests,
+        repo_create_list(:request, evaluator.request_count, result_id: instance.id)
+      )
+    end
+
     to_create do |instance|
       Inferno::Repositories::Results.new.create(instance.to_hash)
     end

@@ -1,4 +1,3 @@
-require 'pry'
 module Inferno
   module Entities
     # A `Request` represents a request and response issued during a test.

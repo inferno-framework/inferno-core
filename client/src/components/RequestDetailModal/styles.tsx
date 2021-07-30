@@ -23,4 +23,9 @@ export default makeStyles((_theme: Theme) => ({
     fontSize: 'small',
     marginTop: '10px',
   },
+  inputIcon: {
+    float: 'right',
+    verticalAlign: 'middle',
+    marginTop: '4px',
+  },
 }));

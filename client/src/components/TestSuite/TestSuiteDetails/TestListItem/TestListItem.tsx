@@ -125,6 +125,7 @@ const TestListItem: FC<TestListItemProps> = ({
           <Tab label="Messages" />
           <Tab label="HTTP Requests" />
         </Tabs>
+        <Divider />
         <TabPanel currentPanelIndex={panelIndex} index={0}>
           <Container className={styles.descriptionPanel}>{testDescription}</Container>
           <Divider />
