@@ -227,24 +227,22 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     );
   }
   return (
-    <div>
-      <div className={styles.testSuiteMain}>
-        {testRunProgressBar()}
-        <TestSuiteTreeComponent
-          {...test_suite}
-          runTests={runTests}
-          selectedRunnable={selectedRunnable}
-        />
-        {detailsPanel}
-        <InputsModal
-          hideModal={() => setModalVisible(false)}
-          createTestRun={createTestRun}
-          modalVisible={modalVisible}
-          runnableType={runnableType}
-          runnableId={runnableId}
-          inputs={inputs}
-        />
-      </div>
+    <div className={styles.testSuiteMain}>
+      {testRunProgressBar()}
+      <TestSuiteTreeComponent
+        {...test_suite}
+        runTests={runTests}
+        selectedRunnable={selectedRunnable}
+      />
+      {detailsPanel}
+      <InputsModal
+        hideModal={() => setModalVisible(false)}
+        createTestRun={createTestRun}
+        modalVisible={modalVisible}
+        runnableType={runnableType}
+        runnableId={runnableId}
+        inputs={inputs}
+      />
     </div>
   );
 };
