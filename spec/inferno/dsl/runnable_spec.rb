@@ -1,5 +1,4 @@
 require 'request_helper'
-require 'pry'
 
 RSpec.describe Inferno::DSL::Runnable do
   include Rack::Test::Methods
