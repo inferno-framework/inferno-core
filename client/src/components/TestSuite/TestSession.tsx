@@ -81,8 +81,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [resultsMap, setResultsMap] = React.useState<Map<string, Result>>(
     resultsToMap(previousResults)
   );
-  const [testRun, setTestRun] = React.useState<TestRun>();
+  const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [sessionData, setSessionData] = React.useState<Map<string, string>>(new Map());
+  const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
 
   useEffect(() => {
     const allInputs = getAllContainedInputs(test_suite.test_groups as TestGroup[]);
@@ -92,9 +93,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     });
     setSessionData(new Map(sessionData));
   }, [testSession]);
-
-  const [testRun, setTestRun] = React.useState<TestRun | null>(null);
-  const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
 
   if (!testRun && initialTestRun) {
     setTestRun(initialTestRun);
