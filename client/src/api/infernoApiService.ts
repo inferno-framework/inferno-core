@@ -42,6 +42,19 @@ export function getTestSuites(): Promise<TestSuite[]> {
     });
 }
 
+export function getLastTestRun(test_session_id: string): Promise<TestRun | null> {
+  const testSessionsEndpoint = getEndpoint('/test_sessions/' + test_session_id + '/last_test_run');
+  return fetch(testSessionsEndpoint)
+    .then((response) => response.json())
+    .then((result) => {
+      return result as TestRun;
+    })
+    .catch((e) => {
+      console.log(e);
+      return null;
+    });
+}
+
 export function getTestSession(test_session_id: string): Promise<TestSession | null> {
   const testSessionsEndpoint = getEndpoint('/test_sessions/' + test_session_id);
   return fetch(testSessionsEndpoint)
@@ -117,20 +130,20 @@ export function postTestRun(
     });
 }
 
-export function getTestResults(testRunId: string): Promise<Result[]> {
-  const endpoint = getEndpoint(`/test_runs/${testRunId}/results`);
+export function getTestRunWithResults(testRunId: string): Promise<TestRun | null> {
+  const endpoint = getEndpoint(`/test_runs/${testRunId}?include_results=true`);
   return fetch(endpoint)
     .then((response) => response.json())
-    .then((result) => {
-      return result as Result[];
+    .then((testRun) => {
+      return testRun as TestRun;
     })
     .catch((e) => {
       console.log(e);
-      return [];
+      return null;
     });
 }
 
-export function getTestSessionResults(test_session_id: string): Promise<Result[] | null> {
+export function getCurrentTestSessionResults(test_session_id: string): Promise<Result[] | null> {
   const endpoint = getEndpoint(`/test_sessions/${test_session_id}/results`);
   return fetch(endpoint)
     .then((response) => response.json())

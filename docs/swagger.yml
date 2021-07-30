@@ -106,7 +106,7 @@ paths:
       tags:
       - "Result"
       summary: "Get the results for a test session"
-      description: ""
+      description: "Get the most recent set of results for each test/group/suite in the session. Use the `all` query parameter to retrieve all results."
       produces:
       - "application/json"
       parameters:
@@ -115,6 +115,11 @@ paths:
         name: "test_session_id"
         description: "ID of the test session"
         required: true
+      - in: "query"
+        type: "boolean"
+        name: "all"
+        description: "Whether to retrieve all results rather than only the most recent"
+        required: false
       responses:
         "200":
           description: "Success"
@@ -158,6 +163,11 @@ paths:
         name: "test_run_id"
         description: "ID of the test run"
         required: true
+      - in: "query"
+        type: "boolean"
+        name: "include_results"
+        description: "Whether to include the test run's results"
+        required: false
       responses:
         "200":
           description: "Success"
@@ -185,7 +195,27 @@ paths:
             $ref: "#/definitions/TestRun"
         "404":
           description: "Test session not found"
-#  /test_runs/{test_run_id}/send:
+  /test_sessions/{test_session_id}/last_test_run:
+    get:
+      tags:
+      - "Test Run"
+      summary: "Get the most recent test run"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_session_id"
+        description: "ID of the test session"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/TestRun"
+        "404":
+          description: "Test session not found"
   /test_runs/{test_run_id}/results:
     get:
       tags:
@@ -255,6 +285,9 @@ definitions:
     properties:
       id:
         type: "string"
+        readOnly: true
+      test_count:
+        type: "number"
         readOnly: true
       test_session_id:
         type: "string"
@@ -402,6 +435,9 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Input"
+      test_count:
+        type: "number"
+        readOnly: true
   TestGroup:
     type: "object"
     required:
@@ -427,6 +463,9 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Input"
+      test_count:
+        type: "number"
+        readOnly: true
   Test:
     type: "object"
     required:

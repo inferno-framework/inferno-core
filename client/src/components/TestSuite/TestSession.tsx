@@ -11,12 +11,14 @@ import {
   Request,
 } from 'models/testSuiteModels';
 import InputsModal from 'components/InputsModal/InputsModal';
-import { getTestResults, postTestRun } from 'api/infernoApiService';
+import { getTestRunWithResults, postTestRun } from 'api/infernoApiService';
 import useStyles from './styles';
+import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
+import { Snackbar } from '@material-ui/core';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -62,9 +64,14 @@ function resultsToMap(results: Result[], map?: Map<string, Result>): Map<string,
 export interface TestSessionComponentProps {
   testSession: TestSession;
   previousResults: Result[];
+  initialTestRun: TestRun | null;
 }
 
-const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, previousResults }) => {
+const TestSessionComponent: FC<TestSessionComponentProps> = ({
+  testSession,
+  previousResults,
+  initialTestRun,
+}) => {
   const styles = useStyles();
   const { test_suite, id } = testSession;
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -74,7 +81,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
   const [resultsMap, setResultsMap] = React.useState<Map<string, Result>>(
     resultsToMap(previousResults)
   );
+  const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [sessionData, setSessionData] = React.useState<Map<string, string>>(new Map());
+  const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
 
   useEffect(() => {
     const allInputs = getAllContainedInputs(test_suite.test_groups as TestGroup[]);
@@ -84,6 +93,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
     });
     setSessionData(new Map(sessionData));
   }, [testSession]);
+
+  if (!testRun && initialTestRun) {
+    setTestRun(initialTestRun);
+    if (testRunNeedsProgressBar(initialTestRun)) {
+      setShowProgressBar(true);
+    }
+  }
 
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
   const location = useLocation();
@@ -99,11 +115,17 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
     setModalVisible(true);
   }
 
-  function saveTestRunResults(testRun: TestRun): void {
-    getTestResults(testRun.id)
-      .then((testRun_results: Result[]) => {
-        const updatedMap = resultsToMap(testRun_results, resultsMap);
-        setResultsMap(updatedMap);
+  function pollTestRunResults(testRun: TestRun): void {
+    getTestRunWithResults(testRun.id)
+      .then((testRun_results: TestRun | null) => {
+        setTestRun(testRun_results);
+        if (testRun_results && testRun_results.results) {
+          const updatedMap = resultsToMap(testRun_results.results, resultsMap);
+          setResultsMap(updatedMap);
+        }
+        if (testRun_results && testRun_results.status == 'running') {
+          setTimeout(() => pollTestRunResults(testRun_results), 500);
+        }
       })
       .catch((e) => {
         console.log(e);
@@ -161,11 +183,37 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
     setSessionData(new Map(sessionData));
     postTestRun(id, runnableType, runnableId, inputs)
       .then((testRun: TestRun) => {
-        saveTestRunResults(testRun);
+        setTestRun(testRun);
+        setShowProgressBar(true);
+        pollTestRunResults(testRun);
       })
       .catch((e) => {
         console.log(e);
       });
+  }
+
+  const completedTestCount = testRun?.results?.filter((result) => result.test_id)?.length || 0;
+
+  function testRunNeedsProgressBar(testRun: TestRun | null) {
+    return testRun?.status === 'running';
+  }
+
+  function testRunProgressBar() {
+    const duration = testRunNeedsProgressBar(testRun) ? null : 2000;
+    return (
+      <Snackbar
+        open={showProgressBar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        autoHideDuration={duration}
+        onClose={() => setShowProgressBar(false)}
+        ClickAwayListenerProps={{ mouseEvent: false }}
+      >
+        <TestRunProgressBar
+          testCount={testRun?.test_count || 0}
+          completedCount={completedTestCount}
+        />
+      </Snackbar>
+    );
   }
 
   let detailsPanel: JSX.Element = <div>error</div>;
@@ -180,6 +228,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({ testSession, prev
   }
   return (
     <div className={styles.testSuiteMain}>
+      {testRunProgressBar()}
       <TestSuiteTreeComponent
         {...test_suite}
         runTests={runTests}

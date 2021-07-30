@@ -11,10 +11,10 @@ module Inferno
     #   this session
     # @attr_accessor [Array<Inferno::Entities::TestRun>] test_runs the `TestRuns`
     #   associated with this session
-    # @attr_accessor [Array<Inferno::Entities::TestResult>] test_results the
+    # @attr_accessor [Array<Inferno::Entities::TestResult>] results the
     #   `TestResults` associated with this session
     class TestSession < Entity
-      ATTRIBUTES = [:id, :created_at, :updated_at, :test_suite_id, :test_suite, :test_runs, :test_results].freeze
+      ATTRIBUTES = [:id, :created_at, :updated_at, :test_suite_id, :test_suite, :test_runs, :results].freeze
 
       include Inferno::Entities::Attributes
 

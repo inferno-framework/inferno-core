@@ -49,6 +49,10 @@ module Inferno
         super.merge(test_session: test_session).compact
       end
 
+      def test_count
+        @test_count ||= runnable.test_count
+      end
+
       private
 
       def load_runnable

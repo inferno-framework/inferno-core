@@ -3,10 +3,12 @@ require 'request_helper'
 RSpec.describe Inferno::DSL::Runnable do
   include Rack::Test::Methods
   include RequestHelpers
+  let(:test_suites_repo) { Inferno::Repositories::TestSuites.new }
+  let(:test_groups_repo) { Inferno::Repositories::TestGroups.new }
 
   describe '.resume_test_route' do
-    let(:test_suite) { Inferno::Repositories::TestSuites.new.find('demo') }
-    let(:test_group) { Inferno::Repositories::TestGroups.new.find('demo-wait_group') }
+    let(:test_suite) { test_suites_repo.find('demo') }
+    let(:test_group) { test_groups_repo.find('demo-wait_group') }
     let(:wait_test) { test_group.tests[1] }
     let(:test_session) { repo_create(:test_session, test_suite_id: test_suite.id) }
     let!(:test_run) do
@@ -72,6 +74,35 @@ RSpec.describe Inferno::DSL::Runnable do
 
         expect(updated_run.identifier).to be_nil
       end
+    end
+  end
+
+  describe '.test_count' do
+    it 'returns 1 for a test' do
+      klass = Class.new(Inferno::Entities::Test)
+
+      expect(klass.test_count).to eq(1)
+    end
+
+    it 'returns the number of tests in a non-nested group' do
+      group = test_groups_repo.find('DemoIG_STU1::DemoGroup')
+
+      expect(group.test_count).to eq(group.children.length)
+    end
+
+    it 'returns the total number of tests in a nested group' do
+      base_group = test_groups_repo.find('DemoIG_STU1::DemoGroup')
+      parent_group = test_suites_repo.find('demo').children[1]
+
+      expect(parent_group.test_count).to eq(base_group.test_count * 2)
+    end
+
+    it 'returns the total number of tests in a suite' do
+      demo_group = test_groups_repo.find('DemoIG_STU1::DemoGroup')
+      wait_group = test_groups_repo.find('demo-wait_group')
+      suite = test_suites_repo.find('demo')
+
+      expect(suite.test_count).to eq(demo_group.test_count * 3 + wait_group.test_count)
     end
   end
 end
