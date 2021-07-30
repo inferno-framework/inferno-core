@@ -18,7 +18,6 @@ import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
-import { Snackbar } from '@material-ui/core';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -204,16 +203,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       });
   }
 
-  const completedTestCount = () => {
-    let count = 0;
-    resultsMap.forEach((result) => {
-      if (result.test_id && result.test_run_id === testRun?.id) {
-        count++;
-      }
-    });
-    return count;
-  };
-
   function testRunNeedsProgressBar(testRun: TestRun | null) {
     return testRun?.status && ['running', 'queued', 'waiting'].includes(testRun.status);
   }
@@ -221,19 +210,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   function testRunProgressBar() {
     const duration = testRunNeedsProgressBar(testRun) ? null : 2000;
     return (
-      <Snackbar
-        open={showProgressBar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        autoHideDuration={duration}
-        onClose={() => setShowProgressBar(false)}
-        ClickAwayListenerProps={{ mouseEvent: false }}
-      >
-        <TestRunProgressBar
-          status={testRun?.status}
-          testCount={testRun?.test_count || 0}
-          completedCount={completedTestCount()}
-        />
-      </Snackbar>
+      <TestRunProgressBar
+        showProgressBar={showProgressBar}
+        setShowProgressBar={setShowProgressBar}
+        duration={duration}
+        testRun={testRun}
+        resultsMap={resultsMap}
+      />
     );
   }
 

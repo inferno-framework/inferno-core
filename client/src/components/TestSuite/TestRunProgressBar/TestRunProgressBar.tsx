@@ -1,14 +1,24 @@
 import React, { FC } from 'react';
-import { Box, CircularProgress, LinearProgress, Tooltip, Typography } from '@material-ui/core';
+import { TestRun, Result } from 'models/testSuiteModels';
+import {
+  Box,
+  CircularProgress,
+  LinearProgress,
+  Snackbar,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import DoneIcon from '@material-ui/icons/Done';
 import QueueIcon from '@material-ui/icons/Queue';
 import { withStyles } from '@material-ui/core/styles';
 
 export interface TestRunProgressBarProps {
-  status: string | null | undefined;
-  testCount: number;
-  completedCount: number;
+  showProgressBar: boolean;
+  setShowProgressBar: (show: boolean) => void;
+  duration: number | null;
+  testRun: TestRun | null;
+  resultsMap: Map<string, Result>;
 }
 
 const StyledProgressBar = withStyles((_theme) => ({
@@ -52,24 +62,56 @@ const StatusIndicator = (status: string | null | undefined) => {
   }
 };
 
-const TestRunProgressBar: FC<TestRunProgressBarProps> = ({ status, testCount, completedCount }) => {
+const completedTestCount = (resultsMap: Map<string, Result>, testRun: TestRun | null) => {
+  let count = 0;
+  resultsMap.forEach((result) => {
+    if (result.test_id && result.test_run_id === testRun?.id) {
+      count++;
+    }
+  });
+  return count;
+};
+
+const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
+  showProgressBar,
+  setShowProgressBar,
+  duration,
+  testRun,
+  resultsMap,
+}) => {
+  const statusIndicator = StatusIndicator(testRun?.status);
+  const testCount = testRun?.test_count || 0;
+  const completedCount = completedTestCount(resultsMap, testRun);
   const value = testCount !== 0 ? (100 * completedCount) / testCount : 0;
-  const statusIndicator = StatusIndicator(status);
 
   return (
-    <Box display="flex" alignItems="center" bgcolor="text.secondary" p="0.5em" borderRadius="0.5em">
-      <Box mr={1} mt={0.3}>
-        {statusIndicator}
+    <Snackbar
+      open={showProgressBar}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      autoHideDuration={duration}
+      onClose={() => setShowProgressBar(false)}
+      ClickAwayListenerProps={{ mouseEvent: false }}
+    >
+      <Box
+        display="flex"
+        alignItems="center"
+        bgcolor="text.secondary"
+        p="0.5em"
+        borderRadius="0.5em"
+      >
+        <Box mr={1} mt={0.3}>
+          {statusIndicator}
+        </Box>
+        <Box minWidth={200} mr={1}>
+          <StyledProgressBar variant="determinate" value={value} />
+        </Box>
+        <Box color="background.paper">
+          <Typography variant="body1">
+            {completedCount}/{testCount}
+          </Typography>
+        </Box>
       </Box>
-      <Box minWidth={200} mr={1}>
-        <StyledProgressBar variant="determinate" value={value} />
-      </Box>
-      <Box color="background.paper">
-        <Typography variant="body1">
-          {completedCount}/{testCount}
-        </Typography>
-      </Box>
-    </Box>
+    </Snackbar>
   );
 };
 
