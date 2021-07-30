@@ -88,6 +88,11 @@ module Inferno
       rescue JSON::ParserError
         assert false, "Invalid JSON. #{message}"
       end
+
+      def assert_valid_http_uri(uri, message = '')
+        error_message = message || "\"#{uri}\" is not a valid URI"
+        assert uri =~ /\A#{URI.regexp(['http', 'https'])}\z/, error_message
+      end
     end
   end
 end

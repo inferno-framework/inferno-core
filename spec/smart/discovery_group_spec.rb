@@ -202,13 +202,13 @@ RSpec.describe SMART::DiscoveryGroup do
                     system: 'http://hl7.org/fhir/restful-security-service',
                     code: 'SMART-on-FHIR'
                   }
-                ],
-                extension: [
-                  {
-                    url: 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris',
-                    extension: extensions
-                  }
                 ]
+              }
+            ],
+            extension: [
+              {
+                url: 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris',
+                extension: extensions
               }
             ]
           }
