@@ -15,6 +15,8 @@ module Inferno
         field :created_at
         field :updated_at
 
+        field :output_json
+        
         association :messages, blueprint: Message, if: :field_present?
         association :requests, blueprint: Request, view: :summary, if: :field_present?
       end
