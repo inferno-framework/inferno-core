@@ -138,7 +138,13 @@ module SMART
           resource
             .rest
             &.map(&:security)
-            &.find { |security| security.service&.any? { |service| service.coding&.any? { |coding| coding.code == 'SMART-on-FHIR' } }}
+            &.find do |security|
+            security.service&.any? do |service|
+              service.coding&.any? do |coding|
+                coding.code == 'SMART-on-FHIR'
+              end
+            end
+          end
             &.extension
             &.find do |extension|
               extension.url == 'http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris'
