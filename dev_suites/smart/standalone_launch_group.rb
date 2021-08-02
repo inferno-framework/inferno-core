@@ -117,8 +117,9 @@ module SMART
             :smart_token_url,
             :client_id,
             :client_secret
-      makes_request :standalone_token
+      output :standalone_token_retrieval_time
       uses_request :standalone_redirect
+      makes_request :standalone_token
 
       description %(
         After obtaining an authorization code, the app trades the code for an
@@ -149,7 +150,76 @@ module SMART
 
         post(smart_token_url, body: oauth2_params, name: :standalone_token, headers: oauth2_headers)
 
+        output standalone_token_retrieval_time: Time.now.iso8601
+
         assert_response_status(200)
+      end
+    end
+
+    test do
+      title 'Token exchange response body contains required information encoded in JSON'
+      input :requested_scopes
+      output :standalone_id_token,
+             :standalone_refresh_token,
+             :standalone_access_token,
+             :standalone_expires_in,
+             :standalone_patient_id,
+             :standalone_encounter_id,
+             :standalone_received_scopes,
+             :standalone_intent
+      uses_request :standalone_token
+
+      description %(
+        The EHR authorization server shall return a JSON structure that includes
+        an access token or a message indicating that the authorization request
+        has been denied. `access_token`, `token_type`, and `scope` are required.
+        `token_type` must be Bearer. `expires_in` is required for token
+        refreshes.
+      )
+
+      run do
+        skip_if request.status != 200, 'Token exchange was unsuccessful'
+
+        assert_valid_json(request.response_body)
+        token_response_body = JSON.parse(request.response_body)
+
+        output standalone_id_token: token_response_body['id_token'],
+               standalone_refresh_token: token_response_body['refresh_token'],
+               standalone_access_token: token_response_body['access_token'],
+               standalone_expires_in: token_response_body['expires_in'],
+               standalone_patient_id: token_response_body['patient'],
+               standalone_encounter_id: token_response_body['encounter'],
+               standalone_received_scopes: token_response_body['scope'],
+               standalone_intent: token_response_body['intent']
+
+        assert standalone_access_token.present?, 'Token response did not contain an access token'
+        assert token_response_body['token_type']&.casecmp('Bearer')&.zero?,
+               '`token_type` field must have a value of `Bearer`'
+      end
+    end
+
+    test do
+      title 'Response includes correct HTTP Cache-Control and Pragma headers'
+      uses_request :standalone_token
+
+      description %(
+        The authorization servers response must include the HTTP Cache-Control
+        response header field with a value of no-store, as well as the Pragma
+        response header field with a value of no-cache.
+      )
+
+      run do
+        skip_if request.status != 200, 'Token exchange was unsuccessful'
+
+        cc_header = request.response_header('Cache-Control')&.value
+
+        assert cc_header&.downcase&.include?('no-store'),
+               'Token response must have `Cache-Control` header containing `no-store`.'
+
+        pragma_header = request.response_header('Pragma')&.value
+
+        assert pragma_header&.downcase&.include?('no-cache'),
+               'Token response must have `Pragma` header containing `no-cache`.'
       end
     end
   end

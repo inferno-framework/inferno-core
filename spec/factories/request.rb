@@ -12,6 +12,20 @@ FactoryBot.define do
     name { nil }
     status { 200 }
     direction { 'outgoing' }
+    headers do
+      [
+        {
+          type: 'request',
+          name: 'Request-Header',
+          value: 'REQUEST HEADER VALUE'
+        },
+        {
+          type: 'response',
+          name: 'Response-Header',
+          value: 'RESPONSE HEADER VALUE'
+        }
+      ]
+    end
 
     request_body { nil }
 
@@ -23,13 +37,6 @@ FactoryBot.define do
 
     to_create do |instance|
       Inferno::Repositories::Requests.new.create(instance.to_hash)
-    end
-
-    after(:create) do |instance, evaluator|
-      instance.instance_variable_set(
-        :@headers,
-        repo_create_list(:header, evaluator.header_count, request_id: instance.index)
-      )
     end
   end
 end
