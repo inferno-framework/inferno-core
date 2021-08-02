@@ -140,15 +140,18 @@ module Inferno
 
     def save_outputs(runnable_instance)
       outputs =
-        runnable_instance.outputs.each_with_object({}) do |output_name, output_hash|
-          output_hash[output_name] = runnable_instance.send(output_name)
-        end
-
-      outputs.each do |output_name, value|
+      runnable_instance.outputs.map do |output_name|
+          {
+            name: output_name,
+            value: runnable_instance.send(output_name)
+          }
+        end 
+        outputs.reject! {|output| output[:value].nil?}
+      outputs.each do |output|
         session_data_repo.save(
           test_session_id: test_session.id,
-          name: output_name,
-          value: value
+          name: output[:name],
+          value: output[:value]
         )
       end
 

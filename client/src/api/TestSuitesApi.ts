@@ -1,5 +1,5 @@
-import { TestSuite } from "models/testSuiteModels";
-import { getEndpoint } from "./infernoApiService";
+import { TestSuite } from 'models/testSuiteModels';
+import { getEndpoint } from './infernoApiService';
 
 export function getTestSuites(): Promise<TestSuite[]> {
   let testSets: TestSuite[] = [];

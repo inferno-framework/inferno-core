@@ -49,6 +49,7 @@ export interface TestInput {
 
 export interface TestOutput {
   name: string;
+  value: string | undefined;
 }
 
 export interface Test {

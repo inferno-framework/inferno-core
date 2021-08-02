@@ -1,4 +1,5 @@
-import { getEndpoint } from "./infernoApiService";
+import { getEndpoint } from './infernoApiService';
+import { Request } from 'models/testSuiteModels';
 
 export function getRequestDetails(requestId: string): Promise<Request | null> {
   const endpoint = getEndpoint(`/requests/${requestId}`);

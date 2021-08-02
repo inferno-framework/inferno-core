@@ -18,6 +18,10 @@ import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
+<<<<<<< HEAD
+=======
+import { Snackbar } from '@material-ui/core';
+>>>>>>> working
 import { getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
 
 function mapRunnableRecursive(
@@ -65,12 +69,14 @@ export interface TestSessionComponentProps {
   testSession: TestSession;
   previousResults: Result[];
   initialTestRun: TestRun | null;
+  initialSessionData: TestOutput[] | undefined;
 }
 
 const TestSessionComponent: FC<TestSessionComponentProps> = ({
   testSession,
   previousResults,
   initialTestRun,
+  initialSessionData,
 }) => {
   const styles = useStyles();
   const { test_suite, id } = testSession;
@@ -90,6 +96,11 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     allInputs.forEach((input: TestInput) => {
       const defaultValue = input.default ? input.default : '';
       sessionData.set(input.name, defaultValue);
+    });
+    initialSessionData?.forEach((initialSessionData: TestOutput) => {
+      if (initialSessionData.value) {
+        sessionData.set(initialSessionData.name, initialSessionData.value);
+      }
     });
     setSessionData(new Map(sessionData));
   }, [testSession]);
@@ -134,11 +145,11 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         if (testRunResults?.results) {
           testRunResults.results.forEach((result: Result) => {
             const outputs: TestOutput[] = JSON.parse(result.output_json as string) as TestOutput[];
-            for (output in outputs) {
-              if (outputs[name] !== null) {
-                sessionData.set(name, outputs[name]);
+            outputs.forEach((output: TestOutput) => {
+              if (output.value) {
+                sessionData.set(output.name, output.value);
               }
-            }
+            });
           });
           setSessionData(new Map(sessionData));
           const updatedMap = resultsToMap(testRunResults.results, resultsMap);
