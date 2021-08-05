@@ -20,6 +20,7 @@ const TestSessionWrapper: FC<unknown> = () => {
   const [attemptedGetSession, setAttemptedGetSession] = React.useState(false);
   const [attemptedGetResults, setAttemptedGetResults] = React.useState(false);
   const [attemptedGetSessionData, setAttemptedSessionData] = React.useState(false);
+  const [attemptingFetchSessionInfo, setAttemptingFetchSessionInfo] = React.useState(false);
 
   function tryGetTestSession(test_session_id: string) {
     getTestSession(test_session_id)
@@ -82,7 +83,12 @@ const TestSessionWrapper: FC<unknown> = () => {
         initialSessionData={sessionData}
       />
     );
-  } else if (attemptedGetSession && attemptedGetResults && attemptedGetSessionData) {
+  } else if (
+    attemptedGetSession &&
+    attemptedGetResults &&
+    attemptedGetSessionData &&
+    attemptedGetRun
+  ) {
     return (
       <div>
         <Alert severity="error">
@@ -92,19 +98,12 @@ const TestSessionWrapper: FC<unknown> = () => {
     );
   } else {
     const { test_session_id } = useParams<{ test_session_id: string }>();
-    if (test_session_id) {
-      if (!attemptedGetRun) {
-        tryGetTestRun(test_session_id);
-      }
-      if (!attemptedGetSession) {
-        tryGetTestSession(test_session_id);
-      }
-      if (!attemptedGetResults) {
-        tryGetTestResults(test_session_id);
-      }
-      if (!attemptedGetSessionData) {
-        tryGetSessionData(test_session_id);
-      }
+    if (test_session_id && !attemptingFetchSessionInfo) {
+      setAttemptingFetchSessionInfo(true);
+      tryGetTestRun(test_session_id);
+      tryGetTestSession(test_session_id);
+      tryGetTestResults(test_session_id);
+      tryGetSessionData(test_session_id);
     }
     return <Backdrop open={true}></Backdrop>;
   }
