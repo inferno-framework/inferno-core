@@ -9,6 +9,7 @@ module Inferno
 
     Application.register('js_host', ENV.fetch('JS_HOST', ''))
     Application.register('async_jobs', ENV['ASYNC_JOBS'] != 'false')
+    Application.register('inferno_host', ENV.fetch('INFERNO_HOST', 'http://localhost:4567'))
 
     configure do |config|
       config.root = File.expand_path('../../..', __dir__)
