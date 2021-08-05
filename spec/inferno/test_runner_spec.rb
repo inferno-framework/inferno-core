@@ -47,6 +47,14 @@ RSpec.describe Inferno::TestRunner do
           name: name,
           value: value
         )
+      stub_request(:get, "http://example.com/?User-Agent=Faraday%20v1.2.0").
+         with(
+           headers: {
+          'Accept'=>'*/*',
+          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'User-Agent'=>'Faraday v1.2.0'
+           }).
+         to_return(status: 200, body: "", headers: {})
       end
     end
 

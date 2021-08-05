@@ -64,12 +64,14 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def get(url = '', client: :default, name: nil, **_options)
         store_request('outgoing', name) do
+
           client = http_client(client)
 
           if client
-            client.get(url)
+            client.headers = client.headers.merge(_options[:headers]) if _options[:headers].present? 
+            client.get(url, client.headers)
           elsif url.match?(%r{\Ahttps?://})
-            Faraday.get(url)
+            Faraday.get(url, nil, _options[:headers]) 
           else
             raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
           end
@@ -92,9 +94,17 @@ module Inferno
           client = http_client(client)
 
           if client
-            client.post(url, body)
+            if client.headers
+              client.post(url, body, client.headers)
+            else
+              client.post(url, body)
+            end
           elsif url.match?(%r{\Ahttps?://})
-            Faraday.post(url, body)
+            if _options[:headers].present?
+              Faraday.get(url, body, nil, _options[:headers])
+            else
+              Faraday.post(url, body)
+            end
           else
             raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
           end
