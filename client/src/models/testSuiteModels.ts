@@ -33,6 +33,8 @@ export interface Result {
   messages?: Message[];
   requests?: Request[];
   result_message?: string;
+  created_at?: string;
+  updated_at: string;
 }
 
 export interface TestInput {
@@ -92,7 +94,7 @@ export interface TestRun {
   id: string;
   inputs?: TestInput[] | null;
   results?: Result[] | null;
-  status?: string | null;
+  status?: 'queued' | 'running' | 'waiting' | 'done';
   test_count?: number;
   testGroupId?: string;
   testSuiteId?: string;

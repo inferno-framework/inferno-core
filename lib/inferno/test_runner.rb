@@ -1,11 +1,12 @@
 module Inferno
   # @api private
   class TestRunner
-    attr_reader :test_session, :test_run
+    attr_reader :test_session, :test_run, :resuming
 
-    def initialize(test_session:, test_run:)
+    def initialize(test_session:, test_run:, resume: false)
       @test_session = test_session
       @test_run = test_run
+      @resuming = resume
     end
 
     def run_results
@@ -36,10 +37,16 @@ module Inferno
 
     def run(runnable)
       if runnable < Entities::Test
+        return existing_test_result(runnable) || run_test(runnable) if resuming
+
         run_test(runnable)
       else
         run_group(runnable)
       end
+    end
+
+    def existing_test_result(runnable)
+      results_repo.result_for_test_run(runnable.reference_hash.merge(test_run_id: test_run.id))
     end
 
     def run_test(test)

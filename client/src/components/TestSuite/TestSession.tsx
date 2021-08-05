@@ -18,7 +18,6 @@ import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
-import { Snackbar } from '@material-ui/core';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -98,6 +97,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     setTestRun(initialTestRun);
     if (testRunNeedsProgressBar(initialTestRun)) {
       setShowProgressBar(true);
+      pollTestRunResults(initialTestRun);
     }
   }
 
@@ -115,15 +115,26 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     setModalVisible(true);
   }
 
+  function latestResult(results: Result[] | null | undefined): Result | null {
+    if (!results) {
+      return null;
+    }
+    return results.reduce((lastResult, result) => {
+      return Date.parse(result.updated_at) > Date.parse(lastResult.updated_at)
+        ? result
+        : lastResult;
+    }, results[0]);
+  }
+
   function pollTestRunResults(testRun: TestRun): void {
-    getTestRunWithResults(testRun.id)
+    getTestRunWithResults(testRun.id, latestResult(testRun.results)?.updated_at)
       .then((testRun_results: TestRun | null) => {
         setTestRun(testRun_results);
         if (testRun_results && testRun_results.results) {
           const updatedMap = resultsToMap(testRun_results.results, resultsMap);
           setResultsMap(updatedMap);
         }
-        if (testRun_results && testRun_results.status == 'running') {
+        if (testRun_results && testRunNeedsProgressBar(testRun_results)) {
           setTimeout(() => pollTestRunResults(testRun_results), 500);
         }
       })
@@ -192,27 +203,20 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       });
   }
 
-  const completedTestCount = testRun?.results?.filter((result) => result.test_id)?.length || 0;
-
   function testRunNeedsProgressBar(testRun: TestRun | null) {
-    return testRun?.status === 'running';
+    return testRun?.status && ['running', 'queued', 'waiting'].includes(testRun.status);
   }
 
   function testRunProgressBar() {
     const duration = testRunNeedsProgressBar(testRun) ? null : 2000;
     return (
-      <Snackbar
-        open={showProgressBar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        autoHideDuration={duration}
-        onClose={() => setShowProgressBar(false)}
-        ClickAwayListenerProps={{ mouseEvent: false }}
-      >
-        <TestRunProgressBar
-          testCount={testRun?.test_count || 0}
-          completedCount={completedTestCount}
-        />
-      </Snackbar>
+      <TestRunProgressBar
+        showProgressBar={showProgressBar}
+        setShowProgressBar={setShowProgressBar}
+        duration={duration}
+        testRun={testRun}
+        resultsMap={resultsMap}
+      />
     );
   }
 

@@ -77,7 +77,7 @@ module Inferno
       def mark_as_no_longer_waiting(test_run_id)
         update(
           test_run_id,
-          status: 'paused',
+          status: 'queued',
           identifier: nil,
           wait_timeout: nil
         )
@@ -91,6 +91,13 @@ module Inferno
                     class: 'Inferno::Repositories::Results::Model',
                     key: :test_run_id
         many_to_one :test_session, class: 'Inferno::Repositories::TestSessions::Model', key: :test_session_id
+
+        def validate
+          super
+          if status.present? && !Entities::TestRun::STATUS_OPTIONS.include?(status) # rubocop:disable Style/GuardClause
+            errors.add(:status, "'#{status}' is not valid")
+          end
+        end
 
         def before_create
           self.id = SecureRandom.uuid

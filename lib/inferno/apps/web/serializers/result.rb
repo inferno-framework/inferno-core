@@ -12,6 +12,8 @@ module Inferno
         field :test_session_id
         field :result
         field :result_message, if: :field_present?
+        field :created_at
+        field :updated_at
 
         association :messages, blueprint: Message, if: :field_present?
         association :requests, blueprint: Request, view: :summary, if: :field_present?

@@ -66,6 +66,31 @@ module Inferno
         entity_class.new(params.merge(runnable))
       end
 
+      def result_for_test_run(test_run_id:, **params)
+        result_hash =
+          self.class::Model
+            .find({ test_run_id: test_run_id }.merge(params))
+            &.to_hash
+
+        return nil if result_hash.nil?
+
+        build_entity(result_hash)
+      end
+
+      def test_run_results_after(test_run_id:, after:)
+        Model
+          .where(test_run_id: test_run_id)
+          .where { updated_at >= after }
+          .to_a
+          .map! do |result_hash|
+          build_entity(
+            result_hash
+              .to_json_data(json_serializer_options)
+              .deep_symbolize_keys!
+          )
+        end
+      end
+
       def find_waiting_result(test_run_id:)
         result_hash =
           Model
@@ -97,7 +122,7 @@ module Inferno
           end
       end
 
-      # Get the current results for a list of child runnables
+      # Get the current results for a list of runnables
       def current_results_for_test_session_and_runnables(test_session_id, runnables)
         self.class::Model
           .current_results_for_test_session_and_runnables(test_session_id, runnables)

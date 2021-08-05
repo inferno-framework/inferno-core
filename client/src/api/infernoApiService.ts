@@ -130,8 +130,14 @@ export function postTestRun(
     });
 }
 
-export function getTestRunWithResults(testRunId: string): Promise<TestRun | null> {
-  const endpoint = getEndpoint(`/test_runs/${testRunId}?include_results=true`);
+export function getTestRunWithResults(
+  testRunId: string,
+  time: string | null | undefined
+): Promise<TestRun | null> {
+  let endpoint = getEndpoint(`/test_runs/${testRunId}?include_results=true`);
+  if (time) {
+    endpoint += `&after=${time}`;
+  }
   return fetch(endpoint)
     .then((response) => response.json())
     .then((testRun) => {
