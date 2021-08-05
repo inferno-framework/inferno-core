@@ -1,4 +1,3 @@
-require 'pry'
 RSpec.describe Inferno::Repositories::SessionData do
   let(:repo) { described_class.new }
   let(:test_session) { repo_create(:test_session) }

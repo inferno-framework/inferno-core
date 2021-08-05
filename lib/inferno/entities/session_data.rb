@@ -1,4 +1,3 @@
-require 'pry'
 module Inferno
   module Entities
     # `SessionData` represents a piece of saved state for a `TestSession`.
