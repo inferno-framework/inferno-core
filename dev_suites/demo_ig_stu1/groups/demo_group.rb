@@ -4,7 +4,7 @@
 module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
   class DemoGroup < Inferno::TestGroup
     title 'Demo Group'
-    
+
     description %(
     # This is a markdown header
     **Inferno** [github](https://github.com/inferno-community/inferno-core)
@@ -50,12 +50,12 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     test 'warning message test' do
-      run { 
-        warning %( 
+      run do
+        warning %(
           # blah
           *boo*
-        ) 
-      }
+        )
+      end
     end
 
     test 'error test' do
