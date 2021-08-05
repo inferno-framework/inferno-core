@@ -29,12 +29,12 @@ module Inferno
           .map! do |session_data_hash|
             build_entity(
               session_data_hash
-                .to_json_data()
+                .to_json_data
                 .deep_symbolize_keys!
             )
           end
       end
-      
+
       def entity_class_name
         'SessionData'
       end

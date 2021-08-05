@@ -18,10 +18,6 @@ import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
-<<<<<<< HEAD
-=======
-import { Snackbar } from '@material-ui/core';
->>>>>>> working
 import { getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
 
 function mapRunnableRecursive(
