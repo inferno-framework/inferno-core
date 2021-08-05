@@ -23,7 +23,7 @@ import PublicIcon from '@material-ui/icons/Public';
 import MailIcon from '@material-ui/icons/Mail';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ReactMarkdown from 'react-markdown';
+import MardownDisplay from 'components/MarkdownDisplay/MarkdownDisplay';
 
 interface TestListItemProps extends Test {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
@@ -85,7 +85,7 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const testDescription =
     description && description.length > 0 ? (
-      <ReactMarkdown>{description}</ReactMarkdown>
+      <MardownDisplay markdown={description} />
     ) : (
       'No description'
     );
