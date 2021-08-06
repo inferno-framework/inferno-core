@@ -60,18 +60,16 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @param _options [Hash] TODO
+      # @param options [Hash] TODO (now)
       # @return [Inferno::Entities::Request]
-      def get(url = '', client: :default, name: nil, **_options)
+      def get(url = '', client: :default, name: nil, **options)
         store_request('outgoing', name) do
-
           client = http_client(client)
 
           if client
-            client.headers = client.headers.merge(_options[:headers]) if _options[:headers].present? 
-            client.get(url, client.headers)
+            client.get(url, nil, options[:headers])
           elsif url.match?(%r{\Ahttps?://})
-            Faraday.get(url, nil, _options[:headers]) 
+            Faraday.get(url, nil, options[:headers])
           else
             raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
           end
@@ -89,22 +87,14 @@ module Inferno
       #   other tests
       # @param _options [Hash] TODO
       # @return [Inferno::Entities::Request]
-      def post(url = '', body: nil, client: :default, name: nil, **_options)
+      def post(url = '', body: nil, client: :default, name: nil, **options)
         store_request('outgoing', name) do
           client = http_client(client)
 
           if client
-            if client.headers
-              client.post(url, body, client.headers)
-            else
-              client.post(url, body)
-            end
+            client.post(url, body, options[:headers])
           elsif url.match?(%r{\Ahttps?://})
-            if _options[:headers].present?
-              Faraday.get(url, body, nil, _options[:headers])
-            else
-              Faraday.post(url, body)
-            end
+            Faraday.post(url, body, options[:headers])
           else
             raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
           end

@@ -21,6 +21,14 @@ RSpec.describe Inferno::DSL::HTTPClient do
     block = proc { url 'http://www.example.com/2' }
     Inferno::DSL::HTTPClientBuilder.new.build(group, block)
   end
+  let(:client_with_header) do
+    block =
+      proc do
+        url 'http://www.example.com'
+        headers 'ClientHeader' => 'DefaultHeader'
+      end
+    Inferno::DSL::HTTPClientBuilder.new.build(group, block)
+  end
 
   def setup_default_client
     group.instance_variable_set(
@@ -53,68 +61,33 @@ RSpec.describe Inferno::DSL::HTTPClient do
   end
 
   describe '#get' do
-    let(:stub_get_request) do
-      stub_request(:get, "#{base_url}/?User-Agent=Faraday%20v1.2.0").
-         with(headers: {
-          'Accept'=>'*/*',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'User-Agent'=>'Faraday v1.2.0'})
-         .to_return(status: 200, body: response_body, headers: {})
-    end
-    let(:stub_get_header_request) do
-      stub_request(:get, "http://www.example.com/?User-Agent=Faraday%20v1.2.0&Warning=Placeholder%20warning").
-         with(
-           headers: {
-          'Accept'=>'*/*',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'User-Agent'=>'Faraday v1.2.0',
-          'Warning'=>'Placeholder warning'
-           }).
-         to_return(status: 200, body: "", headers: {})
-    end
-
-    before { stub_get_request }
-    before { stub_get_header_request } 
-
     context 'with a default client defined' do
       before do
         setup_default_client
       end
 
       context 'without a url argument' do
-        it "performs a HTTP GET to the default client's base url without additional header" do
+        let(:stub_get_request) do
+          stub_request(:get, base_url)
+            .to_return(status: 200, body: response_body)
+        end
+
+        before { stub_get_request }
+
+        it "performs a HTTP GET to the default client's base url" do
           group.get
 
           expect(stub_get_request).to have_been_made.once
         end
 
-        it "performs a HTTP GET to the default client's base url with an additional header" do
-
-          result = group.get(headers: {'Warning' => 'Placeholder warning'})
-          expect(stub_get_header_request).to have_been_made.once
-        end
-
-        it 'returns an Inferno::Entities::Request without additional header' do
+        it 'returns an Inferno::Entities::Request' do
           result = group.get
 
           expect(result).to be_a(Inferno::Entities::Request)
         end
 
-        it 'returns an Inferno::Entities::Request with additional header' do
-          result = group.get(headers: {'Warning' => 'Placeholder warning'})
-
-          expect(result).to be_a(Inferno::Entities::Request)
-        end
-
-        it 'adds the request without additional header to the list of requests' do
+        it 'adds the request to the list of requests' do
           result = group.get
-
-          expect(group.requests).to include(result)
-          expect(group.request).to eq(result)
-        end
-
-        it 'adds the request with additional header to the list of requests' do
-          result = group.get(headers: {'Warning' => 'Placeholder warning'})
 
           expect(group.requests).to include(result)
           expect(group.request).to eq(result)
@@ -122,14 +95,10 @@ RSpec.describe Inferno::DSL::HTTPClient do
       end
 
       context 'with a url argument' do
-        it 'performs a GET to the base_url + url' do
+        it 'performs a GET to the base_url + path' do
           path = 'abc'
           stubbed_request =
-            stub_request(:get, "#{base_url}/#{path}?User-Agent=Faraday%20v1.2.0").
-              with(headers: {
-                'Accept'=>'*/*',
-                'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-                'User-Agent'=>'Faraday v1.2.0'})
+            stub_request(:get, "#{base_url}/#{path}")
               .to_return(status: 200, body: response_body, headers: {})
 
           group.get(path)
@@ -138,22 +107,52 @@ RSpec.describe Inferno::DSL::HTTPClient do
         end
       end
 
-      context 'with the client parameter' do
-        let(:stub_get_request) do
-          stub_request(:get, "#{other_url}?User-Agent=Faraday%20v1.2.0").
-            with(headers: {
-              'Accept'=>'*/*',
-              'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-              'User-Agent'=>'Faraday v1.2.0'})
-            .to_return(status: 200, body: "", headers: {})
+      context 'with custom headers' do
+        it "performs a HTTP GET to the default client's base url" do
+          stub_get_header_request =
+            stub_request(:get, base_url)
+              .with(headers: { 'Warning' => 'Placeholder warning' })
+              .to_return(status: 200, body: '', headers: {})
+
+          group.get(headers: { 'Warning' => 'Placeholder warning' })
+          expect(stub_get_header_request).to have_been_made.once
         end
 
+        it "perfoms a HTTP GET that includes the default client's existing headers" do
+          stub_get_header_request =
+            stub_request(:get, base_url)
+              .with(headers: { 'Clientheader' => 'DefaultHeader', 'Customheader' => 'MergedCustom' })
+              .to_return(status: 200, body: '', headers: {})
+
+          group.http_clients[:client_with_header] = client_with_header
+          group.get(client: :client_with_header, headers: { 'CustomHeader' => 'MergedCustom' })
+
+          expect(stub_get_header_request).to have_been_made.once
+        end
+      end
+
+      context 'with the client parameter' do
         it 'uses that client' do
+          stub_get_request =
+            stub_request(:get, other_url)
+              .to_return(status: 200, body: '', headers: {})
           group.http_clients[:other_client] = other_client
 
           group.get(client: :other_client)
 
           expect(stub_get_request).to have_been_made.once
+        end
+
+        it 'uses that client and its headers' do
+          stub_get_header_request =
+            stub_request(:get, base_url)
+              .with(headers: { 'ClientHeader' => 'DefaultHeader' })
+              .to_return(status: 200, body: '', headers: {})
+
+          group.http_clients[:client_with_header] = client_with_header
+          group.get(client: :client_with_header)
+
+          expect(stub_get_header_request).to have_been_made.once
         end
       end
     end
@@ -174,6 +173,17 @@ RSpec.describe Inferno::DSL::HTTPClient do
         url = 'abc'
 
         expect { group.get(url) }.to raise_error(/absolute url/)
+      end
+
+      it 'makes a request to an asbolute url with custom headers' do
+        url = 'https://example.com/abc'
+        stub_get_header_request =
+          stub_request(:get, url)
+            .with(headers: { 'Warning' => 'Placeholder warning' })
+            .to_return(status: 200, body: '', headers: {})
+
+        group.get(url, headers: { 'Warning' => 'Placeholder warning' })
+        expect(stub_get_header_request).to have_been_made.once
       end
     end
   end
@@ -241,6 +251,30 @@ RSpec.describe Inferno::DSL::HTTPClient do
         end
       end
 
+      context 'with custom headers' do
+        it "performs a HTTP POST to the default client's base url" do
+          stub_get_header_request =
+            stub_request(:post, base_url)
+              .with(headers: { 'Warning' => 'Placeholder warning' })
+              .to_return(status: 200, body: '', headers: {})
+
+          group.post(headers: { 'Warning' => 'Placeholder warning' })
+          expect(stub_get_header_request).to have_been_made.once
+        end
+
+        it "perfoms a HTTP POST that includes the default client's existing headers" do
+          stub_get_header_request =
+            stub_request(:post, base_url)
+              .with(headers: { 'ClientHeader' => 'DefaultHeader', 'CustomHeader' => 'MergedCustom' })
+              .to_return(status: 200, body: '', headers: {})
+
+          group.http_clients[:client_with_header] = client_with_header
+          group.post(client: :client_with_header, headers: { 'CustomHeader' => 'MergedCustom' })
+
+          expect(stub_get_header_request).to have_been_made.once
+        end
+      end
+
       context 'with the client parameter' do
         it 'uses that client' do
           stubbed_request =
@@ -252,6 +286,18 @@ RSpec.describe Inferno::DSL::HTTPClient do
           group.post(client: :other_client)
 
           expect(stubbed_request).to have_been_made.once
+        end
+
+        it 'uses that client and its headers' do
+          stub_get_header_request =
+            stub_request(:post, base_url)
+              .with(headers: { 'ClientHeader' => 'DefaultHeader' })
+              .to_return(status: 200, body: '', headers: {})
+
+          group.http_clients[:client_with_header] = client_with_header
+          group.post(client: :client_with_header)
+
+          expect(stub_get_header_request).to have_been_made.once
         end
       end
     end
@@ -278,12 +324,8 @@ RSpec.describe Inferno::DSL::HTTPClient do
 
   describe '#requests' do
     it 'returns an array of the requests made' do
-      stub_request(:get, "#{base_url}/?User-Agent=Faraday%20v1.2.0").
-         with(headers: {
-          'Accept'=>'*/*',
-          'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-          'User-Agent'=>'Faraday v1.2.0'})
-         .to_return(status: 200, body: response_body, headers: {})
+      stub_request(:get, base_url)
+        .to_return(status: 200, body: response_body, headers: {})
 
       setup_default_client
 
