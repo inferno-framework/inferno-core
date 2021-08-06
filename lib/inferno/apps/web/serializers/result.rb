@@ -1,3 +1,5 @@
+require 'json'
+
 module Inferno
   module Web
     module Serializers
@@ -15,7 +17,9 @@ module Inferno
         field :created_at
         field :updated_at
 
-        field :output_json
+        field :outputs do |result, _options|
+          JSON.parse(result.output_json)
+        end
 
         association :messages, blueprint: Message, if: :field_present?
         association :requests, blueprint: Request, view: :summary, if: :field_present?

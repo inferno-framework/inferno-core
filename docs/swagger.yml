@@ -369,6 +369,10 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/RequestSummary"
+      outputs:
+        type: "array"
+        items:
+          $ref: "#/definitions/SessionData"
   RequestSummary:
     type: "object"
     required:

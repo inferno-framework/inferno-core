@@ -140,7 +140,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         setTestRun(testRunResults);
         if (testRunResults?.results) {
           testRunResults.results.forEach((result: Result) => {
-            const outputs: TestOutput[] = JSON.parse(result.output_json as string) as TestOutput[];
+            const outputs: TestOutput[] = result.outputs;
             outputs.forEach((output: TestOutput) => {
               if (output.value) {
                 sessionData.set(output.name, output.value);

@@ -35,7 +35,7 @@ export interface Result {
   result_message?: string;
   created_at?: string;
   updated_at: string;
-  output_json?: string;
+  outputs: TestOutput[];
 }
 
 export interface TestInput {
