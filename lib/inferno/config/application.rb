@@ -1,3 +1,4 @@
+require 'dry/system/container'
 require_relative 'boot'
 
 module Inferno
