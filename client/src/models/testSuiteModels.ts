@@ -35,6 +35,7 @@ export interface Result {
   result_message?: string;
   created_at?: string;
   updated_at: string;
+  outputs: TestOutput[];
 }
 
 export interface TestInput {
@@ -48,6 +49,7 @@ export interface TestInput {
 
 export interface TestOutput {
   name: string;
+  value: string | undefined;
 }
 
 export interface Test {

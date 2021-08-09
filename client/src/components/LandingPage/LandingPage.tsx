@@ -9,9 +9,10 @@ import {
   ListItemText,
 } from '@material-ui/core';
 import { TestSuite, TestSession } from 'models/testSuiteModels';
-import { getTestSuites, postTestSessions } from 'api/infernoApiService';
 import useStyles from './styles';
 import { useHistory } from 'react-router-dom';
+import { getTestSuites } from 'api/TestSuitesApi';
+import { postTestSessions } from 'api/TestSessionApi';
 
 const LandingPage: FC<unknown> = () => {
   const [testSuites, setTestSuites] = React.useState<TestSuite[]>();

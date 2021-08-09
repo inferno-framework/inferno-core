@@ -1,8 +1,8 @@
 import React, { FC, Fragment } from 'react';
 import { Table, TableBody, TableRow, TableCell, Button } from '@material-ui/core';
 import { Request } from 'models/testSuiteModels';
-import { getRequestDetails } from 'api/infernoApiService';
 import RequestDetailModal from 'components/RequestDetailModal/RequestDetailModal';
+import { getRequestDetails } from 'api/RequestsApi';
 
 interface RequestsListProps {
   resultId: string;

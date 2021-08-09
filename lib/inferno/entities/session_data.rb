@@ -9,7 +9,7 @@ module Inferno
     # @attr_accessor [String] test_session_id
     # @attr_accessor [Time] created_at
     # @attr_accessor [Time] updated_at
-    class SessionData
+    class SessionData < Entity
       ATTRIBUTES = [:id, :name, :value, :test_session_id, :created_at, :updated_at].freeze
 
       include Inferno::Entities::Attributes
