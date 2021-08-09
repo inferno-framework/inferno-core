@@ -18,7 +18,7 @@ module Inferno
         field :updated_at
 
         field :outputs do |result, _options|
-          JSON.parse(result.output_json)
+          result.output_json.present? ? JSON.parse(result.output_json) : []
         end
 
         association :messages, blueprint: Message, if: :field_present?
