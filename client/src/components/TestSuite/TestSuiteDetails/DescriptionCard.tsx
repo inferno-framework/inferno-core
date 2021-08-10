@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
 import { Card, Container, Divider } from '@material-ui/core';
-import MardownDisplay from 'components/MarkdownDisplay/MarkdownDisplay';
+import ReactMarkdown from 'react-markdown';
 
 interface DescriptionCardProps {
   description: string;
@@ -15,7 +15,7 @@ const DescriptionCard: FC<DescriptionCardProps> = ({ description }) => {
       <div className={styles.descriptionCardHeader}>About</div>
       <Divider />
       <Container>
-        <MardownDisplay markdown={description} />
+        <ReactMarkdown>{description}</ReactMarkdown>
       </Container>
     </Card>
   );

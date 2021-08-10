@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import useStyles from './styles';
 import { Table, TableBody, TableRow, TableCell } from '@material-ui/core';
 import { Message } from 'models/testSuiteModels';
-import MardownDisplay from 'components/MarkdownDisplay/MarkdownDisplay';
+import ReactMarkdown from 'react-markdown';
 
 interface MessagesListProps {
   messages: Message[];
@@ -20,7 +20,7 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
               <span className={styles.messageType}>{message.type}:</span>
             </TableCell>
             <TableCell className={styles.messageMessage}>
-              <MardownDisplay markdown={message.message} />
+              <ReactMarkdown>{message.message}</ReactMarkdown>
             </TableCell>
           </TableRow>
         );
