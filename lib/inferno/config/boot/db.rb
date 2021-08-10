@@ -1,3 +1,5 @@
+require 'sequel'
+
 Inferno::Application.boot(:db) do
   init do
     use :logging
