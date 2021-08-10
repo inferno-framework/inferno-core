@@ -1,3 +1,7 @@
+# 0.0.5
+
+* Fix sidekiq dependency
+
 # 0.0.4
 
 * Add bearer token support to FHIR Client DSL
