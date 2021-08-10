@@ -7,6 +7,7 @@ module Inferno
     # definition framework.
     module Runnable
       attr_accessor :parent
+
       include Inferno::Utils::MarkdownFormatter
 
       # When a class (e.g. TestSuite/TestGroup) uses this module, set it up
