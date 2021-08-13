@@ -155,7 +155,7 @@ RSpec.describe SMART::StandaloneLaunchGroup do
     let(:token_url) { 'http://example.com/token' }
     let(:public_inputs) do
       {
-        code: 'CODE',
+        standalone_code: 'CODE',
         smart_token_url: token_url,
         client_id: 'CLIENT_ID'
       }
@@ -182,7 +182,15 @@ RSpec.describe SMART::StandaloneLaunchGroup do
       it 'passes if the token response has a 200 status' do
         create_redirect_request('http://example.com/redirect?code=CODE')
         stub_request(:post, token_url)
-          .with(body: { grant_type: 'authorization_code', code: 'CODE', client_id: 'CLIENT_ID', redirect_uri: '' })
+          .with(
+            body:
+              {
+                grant_type: 'authorization_code',
+                code: 'CODE',
+                client_id: 'CLIENT_ID',
+                redirect_uri: described_class.new.redirect_uri
+              }
+          )
           .to_return(status: 200)
 
         result = run(runnable, public_inputs)
@@ -194,7 +202,15 @@ RSpec.describe SMART::StandaloneLaunchGroup do
     it 'fails if a non-200 response is received' do
       create_redirect_request('http://example.com/redirect?code=CODE')
       stub_request(:post, token_url)
-        .with(body: { grant_type: 'authorization_code', code: 'CODE', client_id: 'CLIENT_ID', redirect_uri: '' })
+        .with(
+          body:
+            {
+              grant_type: 'authorization_code',
+              code: 'CODE',
+              client_id: 'CLIENT_ID',
+              redirect_uri: described_class.new.redirect_uri
+            }
+        )
         .to_return(status: 201)
 
       result = run(runnable, public_inputs)

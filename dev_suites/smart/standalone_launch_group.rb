@@ -27,6 +27,10 @@ module SMART
       * [Standalone Launch Sequence](http://hl7.org/fhir/smart-app-launch/#standalone-launch-sequence)
     )
 
+    def redirect_uri
+      "#{Inferno::Application['inferno_host']}/custom/smart/redirect"
+    end
+
     test do
       title 'OAuth server redirects client browser to app redirect URI'
       description %(
@@ -49,9 +53,6 @@ module SMART
         )
 
         output state: SecureRandom.uuid
-
-        # TODO: get host name
-        redirect_uri = ''
 
         oauth2_params = {
           'response_type' => 'code',
@@ -80,7 +81,7 @@ module SMART
         wait(
           identifier: state,
           message: %(
-            Redirect to: #{smart_authorization_url} Waiting to receive a request
+            Redirect to: #{authorization_url} Waiting to receive a request
             at /custom/smart/redirect with a state of `#{state}`.
           )
         )
@@ -94,6 +95,7 @@ module SMART
 
       run do
         code = request.query_parameters['code']
+        output standalone_code: code
 
         assert code.present?, 'No `code` paramater received'
 
@@ -113,7 +115,7 @@ module SMART
 
     test do
       title 'OAuth token exchange request succeeds when supplied correct information'
-      input :code,
+      input :standalone_code,
             :smart_token_url,
             :client_id,
             :client_secret
@@ -131,12 +133,10 @@ module SMART
 
       run do
         skip_if request.query_parameters['error'].present?, 'Error during authorization request'
-        # TODO: get host
-        redirect_uri = ''
 
         oauth2_params = {
           grant_type: 'authorization_code',
-          code: code,
+          code: standalone_code,
           redirect_uri: redirect_uri
         }
         oauth2_headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
