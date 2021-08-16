@@ -1,0 +1,47 @@
+module SMART
+  class TokenExchangeTest < Inferno::Test
+    title 'OAuth token exchange request succeeds when supplied correct information'
+    description %(
+      After obtaining an authorization code, the app trades the code for an
+      access token via HTTP POST to the EHR authorization server's token
+      endpoint URL, using content-type application/x-www-form-urlencoded, as
+      described in section [4.1.3 of
+      RFC6749](https://tools.ietf.org/html/rfc6749#section-4.1.3).
+    )
+    id :smart_token_exchange
+
+    input :standalone_code,
+          :smart_token_url,
+          :client_id
+    input :client_secret,
+          title: 'Client Secret',
+          description: 'Client Secret provided during registration of Inferno as a standalone application'
+    output :standalone_token_retrieval_time
+    uses_request :standalone_redirect
+    makes_request :standalone_token
+
+    run do
+      skip_if request.query_parameters['error'].present?, 'Error during authorization request'
+
+      oauth2_params = {
+        grant_type: 'authorization_code',
+        code: standalone_code,
+        redirect_uri: redirect_uri
+      }
+      oauth2_headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
+
+      if client_secret.present?
+        client_credentials = "#{client_id}:#{client_secret}"
+        oauth2_headers['Authorization'] = "Basic #{Base64.strict_encode64(client_credentials)}"
+      else
+        oauth2_params[:client_id] = client_id
+      end
+
+      post(smart_token_url, body: oauth2_params, name: :standalone_token, headers: oauth2_headers)
+
+      output standalone_token_retrieval_time: Time.now.iso8601
+
+      assert_response_status(200)
+    end
+  end
+end
