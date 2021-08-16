@@ -63,11 +63,11 @@ module Inferno
         test_instance.instance_eval(&test.block)
         'pass'
       rescue Exceptions::TestResultException => e
-        test_instance.result_message = e.message
+        test_instance.result_message = format_markdown(e.message)
         e.result
       rescue StandardError => e
         Application['logger'].error(e.full_message)
-        test_instance.result_message = "Error: #{e.message}"
+        test_instance.result_message = format_markdown("Error: #{e.message}")
         'error'
       end
 
@@ -83,7 +83,7 @@ module Inferno
           messages: test_instance.messages,
           requests: test_instance.requests,
           result: result,
-          result_message: format_markdown(test_instance.result_message),
+          result_message: test_instance.result_message,
           input_json: input_json_string,
           output_json: output_json_string
         }.merge(test.reference_hash)

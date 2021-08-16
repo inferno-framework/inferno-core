@@ -150,7 +150,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       run do
         skip %(
           This test is being skipped.
-          1. This 
+          1. This
           2. Is
           3. Markdown
         )

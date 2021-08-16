@@ -35,7 +35,7 @@ export default makeStyles((theme: Theme) => ({
     '& > *': {
       margin: 0,
     },
-    marginLeft: '45px',
+    marginLeft: '46px',
     marginBottom: '5px',
   },
 }));
