@@ -96,6 +96,53 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(stub_operation_request).to_not have_been_made
       end
     end
+
+    context 'with headers' do
+      let(:client_with_header) do
+        block =
+          proc do
+            url 'http://www.example.com/fhir'
+            headers 'DefaultHeader' => 'ClientHeader'
+          end
+        Inferno::DSL::FHIRClientBuilder.new.build(group, block)
+      end
+      let(:stub_custom_header_request) do
+        stub_request(:post, "#{base_url}/#{path}")
+          .with(headers: { 'CustomHeader' => 'CustomTest' })
+          .to_return(status: 200, body: resource.to_json)
+      end
+      let(:stub_default_header_request) do
+        stub_request(:post, "#{base_url}/#{path}")
+          .with(headers: { 'DefaultHeader' => 'ClientHeader' })
+          .to_return(status: 200, body: resource.to_json)
+      end
+
+      let(:stub_custom_and_default_header_request) do
+        stub_request(:post, "#{base_url}/#{path}")
+          .with(headers: { 'DefaultHeader' => 'ClientHeader', 'CustomHeader' => 'CustomTest' })
+          .to_return(status: 200, body: resource.to_json)
+      end
+
+      it 'as custom only, performs a get' do
+        group.fhir_operation(path, headers: { 'CustomHeader' => 'CustomTest' })
+
+        expect(stub_custom_header_request).to have_been_made.once
+      end
+
+      it 'as default only, performs a get' do
+        group.fhir_clients[:client_with_header] = client_with_header
+        group.fhir_operation(path, client: :client_with_header)
+
+        expect(stub_default_header_request).to have_been_made.once
+      end
+
+      it 'as both default and custom, performs a get' do
+        group.fhir_clients[:client_with_header] = client_with_header
+        group.fhir_operation(path, client: :client_with_header, headers: { 'CustomHeader' => 'CustomTest' })
+
+        expect(stub_custom_and_default_header_request).to have_been_made.once
+      end
+    end
   end
 
   describe '#fhir_get_capability_statement' do

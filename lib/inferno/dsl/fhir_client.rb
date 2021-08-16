@@ -69,12 +69,14 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @param _options [Hash] TODO
+      # @option options [Hash]  Input headers here - headers are optional and
+      #   must be entered as the last piece of input to this method
       # @return [Inferno::Entities::Request]
-      def fhir_operation(path, body: nil, client: :default, name: nil, **_options)
+      def fhir_operation(path, body: nil, client: :default, name: nil, **options)
         store_request('outgoing', name) do
           headers = fhir_client(client).fhir_headers
           headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
+          headers.merge!(options[:headers]) if options[:headers].present?
           fhir_client(client).send(:post, path, body, headers)
         end
       end

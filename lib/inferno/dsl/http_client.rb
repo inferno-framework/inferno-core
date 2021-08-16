@@ -60,7 +60,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @param options [Hash] Input headers here - headers are optional and
+      # @option options [Hash] Input headers here - headers are optional and
       #   must be entered as the last piece of input to this method
       # @return [Inferno::Entities::Request]
       def get(url = '', client: :default, name: nil, **options)
@@ -86,7 +86,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @param _options [Hash] Input headers here - headers are optional and
+      # @option options [Hash] Input headers here - headers are optional and
       #   must be entered as the last piece of input to this method
       # @return [Inferno::Entities::Request]
       def post(url = '', body: nil, client: :default, name: nil, **options)
