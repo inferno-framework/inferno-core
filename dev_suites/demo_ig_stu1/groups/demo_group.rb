@@ -148,7 +148,12 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
     test 'skip test' do
       run do
-        skip 'This test is being skipped'
+        skip %(
+          This test is being skipped.
+          1. This 
+          2. Is
+          3. Markdown
+        )
         assert false
       end
     end

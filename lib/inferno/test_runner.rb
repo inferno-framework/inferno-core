@@ -1,6 +1,9 @@
+require_relative './utils/markdown_formatter'
+
 module Inferno
   # @api private
   class TestRunner
+    include Inferno::Utils::MarkdownFormatter
     attr_reader :test_session, :test_run, :resuming
 
     def initialize(test_session:, test_run:, resume: false)
@@ -80,7 +83,7 @@ module Inferno
           messages: test_instance.messages,
           requests: test_instance.requests,
           result: result,
-          result_message: test_instance.result_message,
+          result_message: format_markdown(test_instance.result_message),
           input_json: input_json_string,
           output_json: output_json_string
         }.merge(test.reference_hash)
