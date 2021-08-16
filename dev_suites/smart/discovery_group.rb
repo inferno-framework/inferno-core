@@ -41,7 +41,10 @@ module SMART
         The authorization endpoints accepted by a FHIR resource server can
         be exposed as a Well-Known Uniform Resource Identifier
       )
-      input :url
+      input :url,
+            title: 'FHIR Endpoint',
+            description: 'URL of the FHIR endpoint used by SMART applications',
+            default: 'https://inferno.healthit.gov/reference-server/r4'
       output :well_known_configuration,
              :well_known_authorization_url,
              :well_known_introspection_url,
