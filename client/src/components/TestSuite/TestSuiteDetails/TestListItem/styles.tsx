@@ -36,6 +36,7 @@ export default makeStyles((theme: Theme) => ({
       margin: 0,
     },
     marginLeft: '46px',
-    marginBottom: '5px',
+    marginBottom: '15px',
+    color: 'rgba(0,0,0,0.6)',
   },
 }));
