@@ -1,11 +1,14 @@
 require_relative '../dsl'
 require_relative '../repositories/tests'
+require_relative '../utils/markdown_formatter'
+require 'pry'
 
 module Inferno
   module Entities
     class Test
       extend Forwardable
       include DSL
+      include Inferno::Utils::MarkdownFormatter
 
       def_delegators 'self.class', :title, :id, :block, :inputs, :outputs
 
@@ -22,7 +25,7 @@ module Inferno
       end
 
       def add_message(type, message)
-        messages << { type: type.to_s, message: message }
+        messages << { type: type.to_s, message: format_markdown(message) }
       end
 
       # Set output values. Once set, these values will be available to any

@@ -1,4 +1,5 @@
 require_relative 'resume_test_route'
+require_relative '../utils/markdown_formatter'
 
 module Inferno
   module DSL
@@ -6,6 +7,8 @@ module Inferno
     # definition framework.
     module Runnable
       attr_accessor :parent
+
+      include Inferno::Utils::MarkdownFormatter
 
       # When a class (e.g. TestSuite/TestGroup) uses this module, set it up
       # so that subclassing it works correctly.
@@ -193,7 +196,7 @@ module Inferno
       def description(new_description = nil)
         return @description if new_description.nil?
 
-        @description = new_description
+        @description = format_markdown(new_description)
       end
 
       # Define inputs

@@ -7,6 +7,7 @@ export default makeStyles((theme: Theme) => ({
   testSuiteMain: {
     display: 'flex',
     marginTop: '50px',
+    paddingBottom: '50px',
     '& > *': {
       margin: '0 25px',
     },

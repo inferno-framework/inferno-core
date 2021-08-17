@@ -31,4 +31,12 @@ export default makeStyles((theme: Theme) => ({
     padding: '15px',
     overflow: 'auto',
   },
+  resultMessageMarkdown: {
+    '& > *': {
+      margin: 0,
+    },
+    marginLeft: '46px',
+    marginBottom: '15px',
+    color: 'rgba(0,0,0,0.6)',
+  },
 }));

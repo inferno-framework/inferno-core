@@ -1,6 +1,9 @@
+require_relative './utils/markdown_formatter'
+
 module Inferno
   # @api private
   class TestRunner
+    include Inferno::Utils::MarkdownFormatter
     attr_reader :test_session, :test_run, :resuming
 
     def initialize(test_session:, test_run:, resume: false)
@@ -60,11 +63,11 @@ module Inferno
         test_instance.instance_eval(&test.block)
         'pass'
       rescue Exceptions::TestResultException => e
-        test_instance.result_message = e.message
+        test_instance.result_message = format_markdown(e.message)
         e.result
       rescue StandardError => e
         Application['logger'].error(e.full_message)
-        test_instance.result_message = "Error: #{e.message}"
+        test_instance.result_message = format_markdown("Error: #{e.message}")
         'error'
       end
 
