@@ -66,6 +66,7 @@ const InputsModal: FC<InputsModalProps> = ({
           <ListItem key={`requirement${index}`}>
             <TextField
               id={`requirement${index}_input`}
+              className={styles.inputField}
               fullWidth
               label={requirement.title || requirement.name}
               helperText={requirement.description}
@@ -86,6 +87,7 @@ const InputsModal: FC<InputsModalProps> = ({
           <ListItem key={`requirement${index}`}>
             <TextField
               id={`requirement${index}_input`}
+              className={styles.inputField}
               fullWidth
               label={requirement.title || requirement.name}
               helperText={requirement.description}
