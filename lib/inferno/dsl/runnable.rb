@@ -129,10 +129,10 @@ module Inferno
 
       # @api private
       def configure_child_class(klass, hash_args) # rubocop:disable Metrics/CyclomaticComplexity
-        inputs.each do |input_definition|
-          next if klass.inputs.any? { |input| input[:name] == input_definition[:name] }
+        inputs.each do |name, input_definition|
+          next if klass.inputs.any? { |klass_input_name, _input_definition| klass_input_name == name }
 
-          klass.input input_definition[:name], input_definition
+          klass.input name, input_definition
         end
 
         outputs.each do |output_definition|
@@ -199,6 +199,12 @@ module Inferno
         @description = format_markdown(new_description)
       end
 
+      def config(new_config = nil)
+        return @config if new_config.nil?
+
+        @config = new_config
+      end
+
       # Define inputs
       #
       # @param name [Symbol] name of the input
@@ -217,12 +223,15 @@ module Inferno
       def input(name, *other_names, **input_definition)
         if other_names.present?
           [name, *other_names].each do |input_name|
-            inputs.push({ name: input_name, title: nil, description: nil, type: 'text' })
+            inputs[name] = default_input_definition(name)
           end
         else
-          input_definition[:type] = 'text' unless input_definition.key? :type
-          inputs.push({ name: name }.merge(input_definition))
+          inputs[name] = default_input_definition(name).merge(input_definition)
         end
+      end
+
+      def default_input_definition(name)
+        { name: name, type: 'text' }
       end
 
       # Define outputs
@@ -242,7 +251,7 @@ module Inferno
 
       # @api private
       def inputs
-        @inputs ||= []
+        @inputs ||= {}
       end
 
       # @api private
