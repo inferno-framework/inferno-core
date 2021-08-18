@@ -26,7 +26,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'contains the correct outputs' do
-        expect(suite.outputs).to match_array([:suite_output])
+        expect(suite.outputs).to eq(suite_output: { name: :suite_output })
       end
 
       it 'contains the correct groups' do
@@ -76,7 +76,11 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own outputs as well as its parents' outputs" do
-        expect(outer_inline_group.outputs).to match_array([:suite_output, :outer_group_output])
+        expected_outputs = {
+          suite_output: { name: :suite_output },
+          outer_group_output: { name: :outer_group_output }
+        }
+        expect(outer_inline_group.outputs).to eq(expected_outputs)
       end
 
       it 'contains the correct groups' do
@@ -126,7 +130,12 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own outputs as well as its parents' outputs" do
-        expect(inner_inline_group.outputs).to match_array([:suite_output, :outer_group_output, :inner_group_output])
+        expected_outputs = {
+          suite_output: { name: :suite_output },
+          outer_group_output: { name: :outer_group_output },
+          inner_group_output: { name: :inner_group_output }
+        }
+        expect(inner_inline_group.outputs).to eq(expected_outputs)
       end
 
       it 'contains the correct groups' do
@@ -182,8 +191,13 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own outputs as well as its parents' outputs" do
-        expected_outputs = [:suite_output, :outer_group_output, :inner_group_output, :test_output]
-        expect(inline_test1.outputs).to match_array(expected_outputs)
+        expected_outputs = {
+          suite_output: { name: :suite_output },
+          outer_group_output: { name: :outer_group_output },
+          inner_group_output: { name: :inner_group_output },
+          test_output: { name: :test_output }
+        }
+        expect(inline_test1.outputs).to eq(expected_outputs)
       end
 
       it "contains its own fhir clients as well as its parents' fhir clients" do
@@ -234,7 +248,11 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own outputs as well as its parents' outputs" do
-        expect(external_outer_group.outputs).to match_array([:suite_output, :external_outer_group_output])
+        expected_outputs = {
+          suite_output: { name: :suite_output },
+          external_outer_group_output: { name: :external_outer_group_output }
+        }
+        expect(external_outer_group.outputs).to eq(expected_outputs)
       end
 
       it 'contains an externally defined inner group' do
@@ -284,8 +302,12 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own outputs as well as its parents' outputs" do
-        expected_outputs = [:suite_output, :external_outer_group_output, :external_inner_group_output]
-        expect(external_inner_group.outputs).to match_array(expected_outputs)
+        expected_outputs = {
+          suite_output: { name: :suite_output },
+          external_outer_group_output: { name: :external_outer_group_output },
+          external_inner_group_output: { name: :external_inner_group_output }
+        }
+        expect(external_inner_group.outputs).to eq(expected_outputs)
       end
 
       it "contains its own fhir clients as well as its parents' fhir clients" do
@@ -333,17 +355,17 @@ RSpec.describe InfrastructureTest::Suite do
           external_inner_group_input: { name: :external_inner_group_input, type: 'text' },
           external_test1_input: { name: :external_test1_input, type: 'text' }
         }
-        expect(external_test.inputs).to match_array(expected_inputs)
+        expect(external_test.inputs).to eq(expected_inputs)
       end
 
       it "contains its own outputs as well as its parents' outputs" do
-        expected_outputs = [
-          :suite_output,
-          :external_outer_group_output,
-          :external_inner_group_output,
-          :external_test1_output
-        ]
-        expect(external_test.outputs).to match_array(expected_outputs)
+        expected_outputs = {
+          suite_output: { name: :suite_output },
+          external_outer_group_output: { name: :external_outer_group_output },
+          external_inner_group_output: { name: :external_inner_group_output },
+          external_test1_output: { name: :external_test1_output }
+        }
+        expect(external_test.outputs).to eq(expected_outputs)
       end
 
       it "contains its own fhir clients as well as its parents' fhir clients" do
