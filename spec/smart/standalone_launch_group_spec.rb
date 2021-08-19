@@ -61,10 +61,9 @@ RSpec.describe SMART::StandaloneLaunchGroup do
     let(:runnable) { group.tests.first }
     let(:inputs) do
       {
-        client_id: 'CLIENT_ID',
-        redirect_uri: 'http://example.com/redirect',
-        requested_scopes: 'REQUESTED_SCOPES',
-        url: url,
+        standalone_client_id: 'CLIENT_ID',
+        standalone_requested_scopes: 'REQUESTED_SCOPES',
+        standalone_url: url,
         smart_authorization_url: 'http://example.com/auth'
       }
     end
@@ -157,10 +156,10 @@ RSpec.describe SMART::StandaloneLaunchGroup do
       {
         standalone_code: 'CODE',
         smart_token_url: token_url,
-        client_id: 'CLIENT_ID'
+        standalone_client_id: 'CLIENT_ID'
       }
     end
-    let(:confidential_inputs) { public_inputs.merge(client_secret: 'CLIENT_SECRET') }
+    let(:confidential_inputs) { public_inputs.merge(standalone_client_secret: 'CLIENT_SECRET') }
 
     context 'with a confidential client' do
       it 'passes if the token response has a 200 status', pending: true do

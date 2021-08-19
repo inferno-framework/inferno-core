@@ -7,30 +7,9 @@ module SMART
     )
     id :smart_app_redirect
 
-    input :client_id,
-          title: 'Client ID',
-          description: 'Client ID provided during registration of Inferno as a standalone application',
-          default: 'SAMPLE_PUBLIC_CLIENT_ID'
-    input :requested_scopes,
-          title: 'Standalone Scope',
-          description: 'OAuth 2.0 scope provided by system to enable all required functionality',
-          type: 'textarea',
-          default: %(
-            launch/patient openid fhirUser offline_access
-            patient/Medication.read patient/AllergyIntolerance.read
-            patient/CarePlan.read patient/CareTeam.read patient/Condition.read
-            patient/Device.read patient/DiagnosticReport.read
-            patient/DocumentReference.read patient/Encounter.read
-            patient/Goal.read patient/Immunization.read patient/Location.read
-            patient/MedicationRequest.read patient/Observation.read
-            patient/Organization.read patient/Patient.read
-            patient/Practitioner.read patient/Procedure.read
-            patient/Provenance.read patient/PractitionerRole.read
-          ).gsub(/\s{2,}/, ' ')
-    input :url,
-          title: 'FHIR Endpoint',
-          description: 'URL of the FHIR endpoint used by standalone applications',
-          default: 'https://inferno.healthit.gov/reference-server/r4'
+    input :client_id
+    input :requested_scopes
+    input :url
     input :smart_authorization_url
 
     output :state
@@ -71,8 +50,9 @@ module SMART
       wait(
         identifier: state,
         message: %(
-          Redirect to: #{authorization_url} Waiting to receive a request
-          at /custom/smart/redirect with a state of `#{state}`.
+          [Follow this link to authorize with the SMART
+          server](#{authorization_url}). Waiting to receive a request at
+          /custom/smart/redirect with a state of `#{state}`.
         )
       )
     end

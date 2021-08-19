@@ -13,9 +13,7 @@ module SMART
     input :standalone_code,
           :smart_token_url,
           :client_id
-    input :client_secret,
-          title: 'Client Secret',
-          description: 'Client Secret provided during registration of Inferno as a standalone application'
+    input :client_secret
     output :standalone_token_retrieval_time
     uses_request :standalone_redirect
     makes_request :standalone_token

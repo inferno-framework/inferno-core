@@ -37,6 +37,65 @@ module SMART
       "#{Inferno::Application['inferno_host']}/custom/smart/redirect"
     end
 
+    config(
+      inputs: {
+        client_id: {
+          name: :standalone_client_id,
+          title: 'Client ID',
+          description: 'Client ID provided during registration of Inferno as a standalone application',
+          default: 'SAMPLE_PUBLIC_CLIENT_ID'
+        },
+        client_secret: {
+          name: :standalone_client_secret,
+          title: 'Client Secret',
+          description: 'Client Secret provided during registration of Inferno as a standalone application'
+        },
+        requested_scopes: {
+          name: :standalone_requested_scopes,
+          title: 'Standalone Scope',
+          description: 'OAuth 2.0 scope provided by system to enable all required functionality',
+          type: 'textarea',
+          default: %(
+            launch/patient openid fhirUser offline_access
+            patient/Medication.read patient/AllergyIntolerance.read
+            patient/CarePlan.read patient/CareTeam.read patient/Condition.read
+            patient/Device.read patient/DiagnosticReport.read
+            patient/DocumentReference.read patient/Encounter.read
+            patient/Goal.read patient/Immunization.read patient/Location.read
+            patient/MedicationRequest.read patient/Observation.read
+            patient/Organization.read patient/Patient.read
+            patient/Practitioner.read patient/Procedure.read
+            patient/Provenance.read patient/PractitionerRole.read
+          ).gsub(/\s{2,}/, ' ').strip
+        },
+        url: {
+          name: :standalone_url,
+          title: 'FHIR Endpoint',
+          description: 'URL of the FHIR endpoint used by standalone applications',
+          default: 'https://inferno.healthit.gov/reference-server/r4'
+        },
+        code: {
+          name: :standalone_code
+        }
+      },
+      outputs: {
+        code: { name: :standalone_code },
+        token_retrieval_time: { name: :standalone_token_retrieval_time },
+        id_token: { name: :standalone_id_token },
+        refresh_token: { name: :standalone_refresh_token },
+        access_token: { name: :standalone_access_token },
+        expires_in: { name: :standalone_expires_in },
+        patient_id: { name: :standalone_patient_id },
+        encounter_id: { name: :standalone_encounter_id },
+        received_scopes: { name: :standalone_received_scopes },
+        intent: { name: :standalone_intent }
+      }
+      # requests: {
+      #   redirect: :standalone_redirect,
+      #   token: :standalone_token
+      # }
+    )
+
     test from: :smart_app_redirect
     test from: :smart_code_received
     test from: :smart_token_exchange
