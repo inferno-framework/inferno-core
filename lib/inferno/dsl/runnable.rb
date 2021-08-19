@@ -157,9 +157,13 @@ module Inferno
         end
         klass.instance_variable_set(:@http_client_definitions, new_http_client_definitions)
 
+        klass.config(config)
+
         hash_args.each do |key, value|
           klass.send(key, *value)
         end
+
+        klass.apply_config
 
         klass.children.each do |child_class|
           klass.configure_child_class(child_class, {})
@@ -199,10 +203,25 @@ module Inferno
         @description = format_markdown(new_description)
       end
 
-      def config(new_config = nil)
-        return @config if new_config.nil?
+      def config(new_config = {})
+        @config ||= {}
+        return @config if new_config.blank?
 
-        @config = new_config
+        @config = @config.deep_merge(new_config)
+      end
+
+      def apply_config # rubocop:disable Metrics/CyclomaticComplexity
+        config[:inputs]
+          &.select { |input_id, _| inputs.key? input_id }
+          &.each do |input_id, input_config|
+            inputs[input_id].merge!(input_config)
+          end
+
+        config[:outputs]
+          &.select { |output_id, _| outputs.key? output_id }
+          &.each do |output_id, output_config|
+            outputs[output_id].merge!(output_config)
+          end
       end
 
       # Define inputs

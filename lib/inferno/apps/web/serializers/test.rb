@@ -1,13 +1,13 @@
+require_relative 'hash_values_extractor'
+
 module Inferno
   module Web
     module Serializers
       class Test < Serializer
         identifier :id
         field :title
-        field :inputs
-        field :outputs do |test, _options|
-          test.outputs.map { |output| { name: output } }
-        end
+        field :inputs, extractor: HashValuesExtractor, blueprint: Input
+        field :outputs, extractor: HashValuesExtractor
         field :description
       end
     end
