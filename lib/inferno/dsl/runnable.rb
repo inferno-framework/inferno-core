@@ -214,13 +214,13 @@ module Inferno
         config[:inputs]
           &.select { |input_id, _| inputs.key? input_id }
           &.each do |input_id, input_config|
-            inputs[input_id].merge!(input_config)
+            inputs[input_id] = inputs[input_id].merge(input_config)
           end
 
         config[:outputs]
           &.select { |output_id, _| outputs.key? output_id }
           &.each do |output_id, output_config|
-            outputs[output_id].merge!(output_config)
+            outputs[output_id] = outputs[output_id].merge(output_config)
           end
       end
 
