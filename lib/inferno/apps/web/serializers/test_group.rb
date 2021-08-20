@@ -1,5 +1,3 @@
-require_relative 'hash_values_extractor'
-
 module Inferno
   module Web
     module Serializers
@@ -14,8 +12,8 @@ module Inferno
 
         association :groups, name: :test_groups, blueprint: TestGroup
         association :tests, blueprint: Test
-        field :inputs, extractor: HashValuesExtractor, blueprint: Input
-        field :outputs, extractor: HashValuesExtractor
+        field :input_definitions, name: :inputs, blueprint: Input
+        field :output_definitions, name: :outputs
       end
     end
   end

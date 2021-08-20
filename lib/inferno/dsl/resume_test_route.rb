@@ -48,7 +48,7 @@ module Inferno
           request.to_hash.merge(
             test_session_id: test_run.test_session_id,
             result_id: waiting_result.id,
-            name: test.configured_name(test.incoming_request_name)
+            name: test.config.request_name(test.incoming_request_name)
           )
         )
       end

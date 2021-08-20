@@ -1,3 +1,4 @@
+require_relative 'configurable'
 require_relative 'resume_test_route'
 require_relative '../utils/markdown_formatter'
 
@@ -18,6 +19,7 @@ module Inferno
       # @api private
       def self.extended(extending_class)
         super
+        extending_class.extend Configurable
 
         extending_class.define_singleton_method(:inherited) do |subclass|
           copy_instance_variables(subclass)
@@ -129,13 +131,13 @@ module Inferno
 
       # @api private
       def configure_child_class(klass, hash_args) # rubocop:disable Metrics/CyclomaticComplexity
-        inputs.each do |name, input_definition|
-          next if klass.inputs.any? { |klass_input_name, _input_definition| klass_input_name == name }
+        inputs.each do |name|
+          next if klass.inputs.any? { |klass_input_name| klass_input_name == name }
 
-          klass.input name, input_definition
+          klass.input name
         end
 
-        outputs.each do |output_name, _output_definition|
+        outputs.each do |output_name|
           next if klass.outputs.include? output_name
 
           klass.output output_name
@@ -162,8 +164,6 @@ module Inferno
         hash_args.each do |key, value|
           klass.send(key, *value)
         end
-
-        klass.apply_config
 
         klass.children.each do |child_class|
           klass.configure_child_class(child_class, {})
@@ -203,39 +203,10 @@ module Inferno
         @description = format_markdown(new_description)
       end
 
-      def config(new_config = {})
-        @config ||= {}
-        return @config if new_config.blank?
-
-        @config = @config.deep_merge(new_config)
-      end
-
-      def apply_config # rubocop:disable Metrics/CyclomaticComplexity
-        config[:inputs]
-          &.select { |input_id, _| inputs.key? input_id }
-          &.each do |input_id, input_config|
-            inputs[input_id] = inputs[input_id].merge(input_config)
-          end
-
-        config[:outputs]
-          &.select { |output_id, _| outputs.key? output_id }
-          &.each do |output_id, output_config|
-            outputs[output_id] = outputs[output_id].merge(output_config)
-          end
-
-        if self < Inferno::Entities::Test # rubocop:disable Style/GuardClause
-          config[:requests]
-            &.select { |request_id, _| request_definitions.key? request_id }
-            &.each do |request_id, request_config|
-              request_definitions[request_id] = request_definitions[request_id].merge(request_config)
-            end
-        end
-      end
-
       # Define inputs
       #
-      # @param name [Symbol] name of the input
-      # @param other_names [Symbol] array of symbols if specifying multiple inputs
+      # @param identifier [Symbol] identifier for the input
+      # @param other_identifiers [Symbol] array of symbols if specifying multiple inputs
       # @param input_definition [Hash] options for input such as type, description, or title
       # @option input_definition [String] :title Human readable title for input
       # @option input_definition [String] :description Description for the input
@@ -247,29 +218,28 @@ module Inferno
       #                     default: 'default_patient_id'
       # @example
       #   input :textarea, title: 'Textarea Input Example', type: 'textarea'
-      def input(name, *other_names, **input_definition)
-        if other_names.present?
-          [name, *other_names].each do |input_name|
-            inputs[input_name] = default_input_definition(input_name)
+      def input(identifier, *other_identifiers, **input_definition)
+        if other_identifiers.present?
+          [identifier, *other_identifiers].compact.each do |input_identifier|
+            inputs << input_identifier
+            config.add_input(identifier)
           end
         else
-          inputs[name] = default_input_definition(name).merge(input_definition)
+          inputs << identifier
+          config.add_input(identifier, input_definition)
         end
-      end
-
-      def default_input_definition(name)
-        { name: name, type: 'text' }
       end
 
       # Define outputs
       #
-      # @param output_definitions [Symbol]
+      # @param output_lists [Symbol]
       # @return [void]
       # @example
       #   output :patient_id, :bearer_token
       def output(*output_list)
-        output_list.each do |output_name|
-          outputs[output_name] = { name: output_name }
+        output_list.each do |output_identifier|
+          outputs << output_identifier
+          config.add_output(output_identifier)
         end
       end
 
@@ -280,12 +250,20 @@ module Inferno
 
       # @api private
       def inputs
-        @inputs ||= {}
+        @inputs ||= []
+      end
+
+      def input_definitions
+        config.inputs.slice(*inputs)
+      end
+
+      def output_definitions
+        config.outputs.slice(*outputs)
       end
 
       # @api private
       def outputs
-        @outputs ||= {}
+        @outputs ||= []
       end
 
       # @api private

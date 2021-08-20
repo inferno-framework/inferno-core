@@ -32,7 +32,7 @@ module SMART
         'aud' => url
       }
 
-      oauth2_params['launch'] = launch if self.class.inputs.key?(:launch)
+      oauth2_params['launch'] = launch if self.class.inputs.include?(:launch)
 
       authorization_url = smart_authorization_url
 

@@ -135,18 +135,18 @@ module Inferno
     end
 
     def load_inputs(runnable)
-      runnable.inputs.each_with_object({}) do |(input_name, input_definition), input_hash|
-        input_alias = input_definition[:name]
-        input_hash[input_name] = session_data_repo.load(test_session_id: test_session.id, name: input_alias)
+      runnable.inputs.each_with_object({}) do |input_identifier, input_hash|
+        input_alias = runnable.config.input_name(input_identifier)
+        input_hash[input_identifier] = session_data_repo.load(test_session_id: test_session.id, name: input_alias)
       end
     end
 
     def save_outputs(runnable_instance)
       outputs =
-        runnable_instance.outputs.map do |output_id, output_definition|
+        runnable_instance.outputs.map do |output_identifier|
           {
-            name: output_definition[:name],
-            value: runnable_instance.send(output_id)
+            name: runnable_instance.class.config.output_name(output_identifier),
+            value: runnable_instance.send(output_identifier)
           }
         end
 
