@@ -65,8 +65,9 @@ module Inferno
       def load_named_requests
         requests_repo = Inferno::Repositories::Requests.new
         self.class.named_requests_used.map do |request_name|
-          request = requests_repo.find_named_request(test_session_id, request_name)
-          raise StandardError, "Unable to find '#{request_name}' request" if request.nil?
+          request_alias = self.class.configured_name(request_name)
+          request = requests_repo.find_named_request(test_session_id, request_alias)
+          raise StandardError, "Unable to find '#{request_alias}' request" if request.nil?
 
           requests << request
         end
@@ -97,8 +98,10 @@ module Inferno
         #
         # @param *names [Symbol] one or more Symbols
         def makes_request(*names)
+          named_requests_made.concat(names)
           names.each do |name|
-            named_requests_made << configured_name(name)
+            request_config = config.dig(:requests, name) || {}
+            request_definitions[name] = { name: name }.merge(request_config)
           end
         end
 
@@ -106,7 +109,9 @@ module Inferno
         #
         # @param *names [Symbol] one or more Symbols
         def receives_request(name)
-          @incoming_request_name = configured_name(name)
+          request_config = config.dig(:requests, name) || {}
+          request_definitions[name] = { name: name }.merge(request_config)
+          @incoming_request_name = name
         end
 
         # @api private
@@ -118,8 +123,10 @@ module Inferno
         #
         # @param *names [Symbol] one or more Symbols
         def uses_request(*names)
+          named_requests_used.concat(names)
           names.each do |name|
-            named_requests_used << configured_name(name)
+            request_config = config.dig(:requests, name) || {}
+            request_definitions[name] = { name: name }.merge(request_config)
           end
         end
       end

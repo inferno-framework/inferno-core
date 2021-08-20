@@ -8,7 +8,7 @@ module SMART
     )
     id :smart_token_response_headers
 
-    uses_request :standalone_token
+    uses_request :token
 
     run do
       skip_if request.status != 200, 'Token exchange was unsuccessful'

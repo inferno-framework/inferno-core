@@ -223,12 +223,12 @@ module Inferno
             outputs[output_id] = outputs[output_id].merge(output_config)
           end
 
-        if self < Inferno::Entities::Test
+        if self < Inferno::Entities::Test # rubocop:disable Style/GuardClause
           config[:requests]
-            &.select { |request_id, _|  named_requests_made.include?(request_id) || named_requests_used.include?(request_id) }
+            &.select { |request_id, _| request_definitions.key? request_id }
             &.each do |request_id, request_config|
-            request_definitions[request_id] = request_definitions[request_id].merge(request_config)
-          end
+              request_definitions[request_id] = request_definitions[request_id].merge(request_config)
+            end
         end
       end
 

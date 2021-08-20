@@ -10,20 +10,20 @@ module SMART
     )
     id :smart_token_exchange
 
-    input :standalone_code,
+    input :code,
           :smart_token_url,
           :client_id
     input :client_secret
-    output :standalone_token_retrieval_time
-    uses_request :standalone_redirect
-    makes_request :standalone_token
+    output :token_retrieval_time
+    uses_request :redirect
+    makes_request :token
 
     run do
       skip_if request.query_parameters['error'].present?, 'Error during authorization request'
 
       oauth2_params = {
         grant_type: 'authorization_code',
-        code: standalone_code,
+        code: code,
         redirect_uri: redirect_uri
       }
       oauth2_headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
@@ -35,9 +35,9 @@ module SMART
         oauth2_params[:client_id] = client_id
       end
 
-      post(smart_token_url, body: oauth2_params, name: :standalone_token, headers: oauth2_headers)
+      post(smart_token_url, body: oauth2_params, name: :token, headers: oauth2_headers)
 
-      output standalone_token_retrieval_time: Time.now.iso8601
+      output token_retrieval_time: Time.now.iso8601
 
       assert_response_status(200)
     end

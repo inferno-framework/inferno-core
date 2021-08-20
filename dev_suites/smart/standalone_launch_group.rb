@@ -41,13 +41,13 @@ module SMART
       inputs: {
         client_id: {
           name: :standalone_client_id,
-          title: 'Client ID',
+          title: 'Standalone Client ID',
           description: 'Client ID provided during registration of Inferno as a standalone application',
           default: 'SAMPLE_PUBLIC_CLIENT_ID'
         },
         client_secret: {
           name: :standalone_client_secret,
-          title: 'Client Secret',
+          title: 'Standalone Client Secret',
           description: 'Client Secret provided during registration of Inferno as a standalone application'
         },
         requested_scopes: {
@@ -70,7 +70,7 @@ module SMART
         },
         url: {
           name: :standalone_url,
-          title: 'FHIR Endpoint',
+          title: 'Standalone FHIR Endpoint',
           description: 'URL of the FHIR endpoint used by standalone applications',
           default: 'https://inferno.healthit.gov/reference-server/r4'
         },
@@ -89,11 +89,11 @@ module SMART
         encounter_id: { name: :standalone_encounter_id },
         received_scopes: { name: :standalone_received_scopes },
         intent: { name: :standalone_intent }
+      },
+      requests: {
+        redirect: { name: :standalone_redirect },
+        token: { name: :standalone_token }
       }
-      # requests: {
-      #   redirect: :standalone_redirect,
-      #   token: :standalone_token
-      # }
     )
 
     test from: :smart_app_redirect

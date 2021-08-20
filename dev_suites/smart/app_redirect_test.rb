@@ -13,7 +13,7 @@ module SMART
     input :smart_authorization_url
 
     output :state
-    receives_request :standalone_redirect
+    receives_request :redirect
 
     run do
       assert_valid_http_uri(
@@ -31,6 +31,8 @@ module SMART
         'state' => state,
         'aud' => url
       }
+
+      oauth2_params['launch'] = launch if self.class.inputs.key?(:launch)
 
       authorization_url = smart_authorization_url
 

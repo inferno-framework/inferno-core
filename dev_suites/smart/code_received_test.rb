@@ -6,12 +6,12 @@ module SMART
     )
     id :smart_code_received
 
-    output :standalone_code
-    uses_request :standalone_redirect
+    output :code
+    uses_request :redirect
 
     run do
       code = request.query_parameters['code']
-      output standalone_code: code
+      output code: code
 
       assert code.present?, 'No `code` paramater received'
 

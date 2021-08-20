@@ -17,5 +17,7 @@ module SMART
     group from: :smart_discovery
 
     group from: :smart_standalone_launch
+
+    group from: :smart_ehr_launch
   end
 end
