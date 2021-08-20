@@ -38,13 +38,14 @@ module Inferno
 
       # TODO: do a check in the test runner
       def named_request(name)
-        requests.find { |request| request.name == name.to_sym }
+        requests.find { |request| request.name == self.class.configured_name(name.to_sym) }
       end
 
       # @api private
       def store_request(direction, name = nil, &block)
         response = block.call
 
+        name = self.class.configured_name(name)
         request =
           if response.is_a? FHIR::ClientReply
             Entities::Request.from_fhir_client_reply(
@@ -73,6 +74,16 @@ module Inferno
 
       module ClassMethods
         # @api private
+        def request_definitions
+          @request_definitions ||= {}
+        end
+
+        # @api private
+        def configured_name(name)
+          request_definitions.dig(name, :name) || name
+        end
+
+        # @api private
         def named_requests_made
           @named_requests_made ||= []
         end
@@ -86,14 +97,16 @@ module Inferno
         #
         # @param *names [Symbol] one or more Symbols
         def makes_request(*names)
-          named_requests_made.concat(names)
+          names.each do |name|
+            named_requests_made << configured_name(name)
+          end
         end
 
         # Specify the name for a request received by a test
         #
         # @param *names [Symbol] one or more Symbols
         def receives_request(name)
-          @incoming_request_name = name
+          @incoming_request_name = configured_name(name)
         end
 
         # @api private
@@ -105,7 +118,9 @@ module Inferno
         #
         # @param *names [Symbol] one or more Symbols
         def uses_request(*names)
-          named_requests_used.concat(names)
+          names.each do |name|
+            named_requests_used << configured_name(name)
+          end
         end
       end
     end

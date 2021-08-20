@@ -222,6 +222,14 @@ module Inferno
           &.each do |output_id, output_config|
             outputs[output_id] = outputs[output_id].merge(output_config)
           end
+
+        if self < Inferno::Entities::Test
+          config[:requests]
+            &.select { |request_id, _|  named_requests_made.include?(request_id) || named_requests_used.include?(request_id) }
+            &.each do |request_id, request_config|
+            request_definitions[request_id] = request_definitions[request_id].merge(request_config)
+          end
+        end
       end
 
       # Define inputs
