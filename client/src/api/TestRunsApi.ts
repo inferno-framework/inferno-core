@@ -14,7 +14,7 @@ export function postTestRun(
   runnableType: RunnableType,
   runnableId: string,
   inputs: TestInput[]
-): Promise<TestRun> {
+): Promise<TestRun | null> {
   const postEndpoint = getEndpoint('/test_runs');
   const postBody: CreateTestRunBody = {
     test_session_id: testSessionId,
@@ -44,7 +44,7 @@ export function postTestRun(
     })
     .catch((e) => {
       console.log(e);
-      return { id: 'error', testSessionId: testSessionId };
+      return null;
     });
 }
 

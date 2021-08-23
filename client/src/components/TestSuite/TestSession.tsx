@@ -18,7 +18,7 @@ import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
-import { getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
+import { getTestRunWithResults, postTestRun, ErrorResult } from 'api/TestRunsApi';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,

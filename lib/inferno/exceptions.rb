@@ -50,5 +50,11 @@ module Inferno
         super("No '#{validator_name}' validator found")
       end
     end
+
+    class RequiredInputsNotFound < RuntimeError
+      def initialize(missing_inputs)
+        super("Missing the following required inputs: #{missing_inputs.join(', ')}")
+      end
+    end
   end
 end
