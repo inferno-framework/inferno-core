@@ -44,10 +44,12 @@ module Inferno
       # @api private
       def copy_instance_variables(subclass)
         instance_variables.each do |variable|
-          next if [:@id, :@groups, :@tests, :@parent, :@children, :@test_count].include?(variable)
+          next if [:@id, :@groups, :@tests, :@parent, :@children, :@test_count, :@config].include?(variable)
 
           subclass.instance_variable_set(variable, instance_variable_get(variable).dup)
         end
+
+        subclass.config(config)
 
         child_types.each do |child_type|
           new_children = send(child_type).map do |child|

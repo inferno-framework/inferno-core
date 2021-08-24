@@ -4,7 +4,6 @@ module Inferno
       class TestGroup < Serializer
         identifier :id
 
-        # TODO: fill out test group
         field :title
         field :description
         field :test_count
@@ -12,8 +11,8 @@ module Inferno
 
         association :groups, name: :test_groups, blueprint: TestGroup
         association :tests, blueprint: Test
-        field :input_definitions, name: :inputs, blueprint: Input
-        field :output_definitions, name: :outputs
+        field :input_definitions, name: :inputs, extractor: HashValueExtractor, blueprint: Input
+        field :output_definitions, name: :outputs, extractor: HashValueExtractor
       end
     end
   end

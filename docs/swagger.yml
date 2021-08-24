@@ -464,7 +464,9 @@ definitions:
     properties:
       id:
         type: "string"
-      name:
+      title:
+        type: "string"
+      description:
         type: "string"
       test_groups:
         type: "array"
@@ -484,7 +486,7 @@ definitions:
     properties:
       id:
         type: "string"
-      name:
+      title:
         type: "string"
       description:
         type: "string"
@@ -513,7 +515,7 @@ definitions:
     properties:
       id:
         type: "string"
-      name:
+      title:
         type: "string"
       description:
         type: "string"
@@ -538,6 +540,9 @@ definitions:
         readOnly: true
       required:
         type: "boolean"
+        readOnly: true
+      type:
+        type: "string"
         readOnly: true
   SessionData:
     type: "object"
