@@ -33,6 +33,7 @@ module SMART
       * [Standalone Launch Sequence](http://hl7.org/fhir/smart-app-launch/#standalone-launch-sequence)
     )
 
+    # TODO: move to config
     def redirect_uri
       "#{Inferno::Application['inferno_host']}/custom/smart/redirect"
     end
@@ -69,18 +70,21 @@ module SMART
           ).gsub(/\s{2,}/, ' ').strip
         },
         url: {
-          name: :standalone_url,
           title: 'Standalone FHIR Endpoint',
           description: 'URL of the FHIR endpoint used by standalone applications',
           default: 'https://inferno.healthit.gov/reference-server/r4'
         },
         code: {
           name: :standalone_code
+        },
+        state: {
+          name: :standalone_state
         }
       },
       outputs: {
         code: { name: :standalone_code },
         token_retrieval_time: { name: :standalone_token_retrieval_time },
+        state: { name: :standalone_state },
         id_token: { name: :standalone_id_token },
         refresh_token: { name: :standalone_refresh_token },
         access_token: { name: :standalone_access_token },

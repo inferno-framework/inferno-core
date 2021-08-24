@@ -1,12 +1,12 @@
-require_relative '../../dev_suites/smart/standalone_launch_group'
+require_relative '../../dev_suites/smart/ehr_launch_group'
 require_relative '../request_helper'
 
-RSpec.describe SMART::StandaloneLaunchGroup do
+RSpec.describe SMART::EHRLaunchGroup do
   include Rack::Test::Methods
   include RequestHelpers
 
   let(:suite) { Inferno::Repositories::TestSuites.new.find('smart') }
-  let(:group) { Inferno::Repositories::TestGroups.new.find('smart_standalone_launch') }
+  let(:group) { Inferno::Repositories::TestGroups.new.find('smart_ehr_launch') }
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
   let(:results_repo) { Inferno::Repositories::Results.new }
   let(:requests_repo) { Inferno::Repositories::Requests.new }
@@ -18,8 +18,8 @@ RSpec.describe SMART::StandaloneLaunchGroup do
       url: url,
       smart_authorization_url: "#{url}/auth",
       smart_token_url: token_url,
-      standalone_client_id: 'CLIENT_ID',
-      standalone_requested_scopes: 'launch/patient patient/*.*'
+      ehr_client_id: 'CLIENT_ID',
+      ehr_requested_scopes: 'launch/patient patient/*.*'
     }
   end
   let(:token_response) do
@@ -56,7 +56,9 @@ RSpec.describe SMART::StandaloneLaunchGroup do
       .to_return(status: 200, body: token_response.to_json, headers: token_response_headers)
     run(group, inputs)
 
-    state = session_data_repo.load(test_session_id: test_session.id, name: 'standalone_state')
+    get "/custom/smart/launch?launch=LAUNCH&iss=#{url}"
+
+    state = session_data_repo.load(test_session_id: test_session.id, name: 'ehr_state')
     get "/custom/smart/redirect?state=#{state}&code=CODE"
 
     results = results_repo.current_results_for_test_session(test_session.id)
@@ -64,16 +66,17 @@ RSpec.describe SMART::StandaloneLaunchGroup do
     expect(results.map(&:result)).to all(eq('pass'))
 
     expected_outputs = {
-      standalone_access_token: token_response[:access_token],
-      standalone_id_token: token_response[:id_token],
-      standalone_refresh_token: token_response[:refresh_token],
-      standalone_expires_in: token_response[:expires_in],
-      standalone_patient_id: token_response[:patient],
-      standalone_encounter_id: token_response[:encounter],
-      standalone_received_scopes: token_response[:scope],
-      standalone_intent: token_response[:intent]
+      ehr_launch: 'LAUNCH',
+      ehr_access_token: token_response[:access_token],
+      ehr_id_token: token_response[:id_token],
+      ehr_refresh_token: token_response[:refresh_token],
+      ehr_expires_in: token_response[:expires_in],
+      ehr_patient_id: token_response[:patient],
+      ehr_encounter_id: token_response[:encounter],
+      ehr_received_scopes: token_response[:scope],
+      ehr_intent: token_response[:intent]
     }
-    other_outputs = [:standalone_code, :standalone_state, :standalone_token_retrieval_time]
+    other_outputs = [:ehr_code, :ehr_state, :ehr_token_retrieval_time]
 
     expected_outputs.each do |name, value|
       expect(session_data_repo.load(test_session_id: test_session.id, name: name)).to eq(value.to_s)
@@ -83,7 +86,7 @@ RSpec.describe SMART::StandaloneLaunchGroup do
       expect(session_data_repo.load(test_session_id: test_session.id, name: name)).to be_present
     end
 
-    [:standalone_redirect, :standalone_token].each do |name|
+    [:ehr_launch, :ehr_redirect, :ehr_token].each do |name|
       expect(requests_repo.find_named_request(test_session.id, name)).to be_present
     end
   end

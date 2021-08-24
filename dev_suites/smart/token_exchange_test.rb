@@ -12,11 +12,16 @@ module SMART
 
     input :code,
           :smart_token_url,
-          :client_id
-    input :client_secret
+          :client_id,
+          :client_secret
     output :token_retrieval_time
     uses_request :redirect
     makes_request :token
+
+    # TODO: move to config
+    def redirect_uri
+      "#{Inferno::Application['inferno_host']}/custom/smart/redirect"
+    end
 
     run do
       skip_if request.query_parameters['error'].present?, 'Error during authorization request'

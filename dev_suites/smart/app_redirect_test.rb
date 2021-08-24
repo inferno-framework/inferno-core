@@ -7,13 +7,15 @@ module SMART
     )
     id :smart_app_redirect
 
-    input :client_id
-    input :requested_scopes
-    input :url
-    input :smart_authorization_url
+    input :client_id, :requested_scopes, :url, :smart_authorization_url
 
     output :state
     receives_request :redirect
+
+    # TODO: move to config
+    def redirect_uri
+      "#{Inferno::Application['inferno_host']}/custom/smart/redirect"
+    end
 
     run do
       assert_valid_http_uri(

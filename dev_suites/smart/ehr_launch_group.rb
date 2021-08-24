@@ -73,18 +73,25 @@ module SMART
           ).gsub(/\s{2,}/, ' ').strip
         },
         url: {
-          name: :ehr_url,
           title: 'EHR Launch FHIR Endpoint',
           description: 'URL of the FHIR endpoint used by EHR launched applications',
           default: 'https://inferno.healthit.gov/reference-server/r4'
         },
         code: {
           name: :ehr_code
+        },
+        state: {
+          name: :ehr_state
+        },
+        launch: {
+          name: :ehr_launch
         }
       },
       outputs: {
+        launch: { name: :ehr_launch },
         code: { name: :ehr_code },
         token_retrieval_time: { name: :ehr_token_retrieval_time },
+        state: { name: :ehr_state },
         id_token: { name: :ehr_id_token },
         refresh_token: { name: :ehr_refresh_token },
         access_token: { name: :ehr_access_token },
@@ -95,6 +102,7 @@ module SMART
         intent: { name: :ehr_intent }
       },
       requests: {
+        launch: { name: :ehr_launch },
         redirect: { name: :ehr_redirect },
         token: { name: :ehr_token }
       }
