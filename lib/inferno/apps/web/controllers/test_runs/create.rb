@@ -1,5 +1,3 @@
-require 'pry'
-
 module Inferno
   module Web
     module Controllers
@@ -18,16 +16,6 @@ module Inferno
             # if testsession.nil?
 
             test_run = repo.create(create_params(params).merge(status: 'queued'))
-            missing_inputs = test_run.runnable.inputs.select do |input|
-              value_missing = params[:inputs]&.none? { |param_input|
-                param_input[:name] == input[:name].to_s && param_input[:value].present?
-              }
-              binding.pry if value_missing
-              !input[:optional] && value_missing
-            end
-            if missing_inputs.any?
-              raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs
-            end
 
             self.body = serialize(test_run)
 
@@ -40,8 +28,7 @@ module Inferno
             end
 
             Jobs.perform(Jobs::ExecuteTestRun, test_run.id)
-          rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation,
-                 Inferno::Exceptions::RequiredInputsNotFound => e
+          rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation => e
             self.body = { errors: e.message }.to_json
             self.status = 422
           rescue StandardError => e

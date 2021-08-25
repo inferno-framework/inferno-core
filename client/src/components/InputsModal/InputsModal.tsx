@@ -70,6 +70,7 @@ const InputsModal: FC<InputsModalProps> = ({
             index={index}
             inputsMap={inputsMap}
             setInputsMap={setInputsMap}
+            key={`input-${index}`}
           />
         );
       default:
@@ -79,6 +80,7 @@ const InputsModal: FC<InputsModalProps> = ({
             index={index}
             inputsMap={inputsMap}
             setInputsMap={setInputsMap}
+            key={`input-${index}`}
           />
         );
     }

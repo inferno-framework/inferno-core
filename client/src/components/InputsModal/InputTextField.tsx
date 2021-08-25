@@ -1,7 +1,6 @@
-import { InputAdornment, ListItem, TextField, Zoom } from '@material-ui/core';
+import { ListItem, TextField } from '@material-ui/core';
 import { TestInput } from 'models/testSuiteModels';
-import RequiredInputWarning from './RequiredInputWarning';
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 import useStyles from './styles';
 
 export interface InputTextFieldProps {
@@ -17,28 +16,24 @@ const InputTextField: FC<InputTextFieldProps> = ({
   inputsMap,
   setInputsMap,
 }) => {
-  const value = inputsMap.get(requirement.name);
   const styles = useStyles();
-  const missingRequired = !requirement.optional && value?.length == 0;
-  const requiredWarning = (
-    <Zoom in={missingRequired}>
-      <InputAdornment position="end">
-        <RequiredInputWarning />
-      </InputAdornment>
-    </Zoom>
+  const fieldLabel = requirement.optional ? (
+    requirement.title || requirement.name
+  ) : (
+    <Fragment>
+      {requirement.title || requirement.name}
+      <span className={styles.requiredLabel}> (required)</span>
+    </Fragment>
   );
   return (
-    <ListItem key={`requirement${index}`}>
+    <ListItem>
       <TextField
         id={`requirement${index}_input`}
         className={styles.inputField}
         fullWidth
-        label={requirement.title || requirement.name}
+        label={fieldLabel}
         helperText={requirement.description}
         value={inputsMap.get(requirement.name)}
-        InputProps={{
-          endAdornment: requiredWarning,
-        }}
         onChange={(event) => {
           const value = event.target.value;
           inputsMap.set(requirement.name, value);
