@@ -1,5 +1,6 @@
 require_relative 'discovery_group'
 require_relative 'standalone_launch_group'
+require_relative 'ehr_launch_group'
 
 module SMART
   class SMARTSuite < Inferno::TestSuite
