@@ -60,16 +60,17 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @param _options [Hash] TODO
+      # @option options [Hash] Input headers here - headers are optional and
+      #   must be entered as the last piece of input to this method
       # @return [Inferno::Entities::Request]
-      def get(url = '', client: :default, name: nil, **_options)
+      def get(url = '', client: :default, name: nil, **options)
         store_request('outgoing', name) do
           client = http_client(client)
 
           if client
-            client.get(url)
+            client.get(url, nil, options[:headers])
           elsif url.match?(%r{\Ahttps?://})
-            Faraday.get(url)
+            Faraday.get(url, nil, options[:headers])
           else
             raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
           end
@@ -85,16 +86,17 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @param _options [Hash] TODO
+      # @option options [Hash] Input headers here - headers are optional and
+      #   must be entered as the last piece of input to this method
       # @return [Inferno::Entities::Request]
-      def post(url = '', body: nil, client: :default, name: nil, **_options)
+      def post(url = '', body: nil, client: :default, name: nil, **options)
         store_request('outgoing', name) do
           client = http_client(client)
 
           if client
-            client.post(url, body)
+            client.post(url, body, options[:headers])
           elsif url.match?(%r{\Ahttps?://})
-            Faraday.post(url, body)
+            Faraday.post(url, body, options[:headers])
           else
             raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
           end

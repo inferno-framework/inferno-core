@@ -47,6 +47,8 @@ RSpec.describe Inferno::TestRunner do
           name: name,
           value: value
         )
+        stub_request(:get, base_url)
+          .to_return(status: 200, body: '', headers: {})
       end
     end
 
