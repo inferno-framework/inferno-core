@@ -18,7 +18,7 @@ import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
-import { getTestRunWithResults, postTestRun, ErrorResult } from 'api/TestRunsApi';
+import { getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -210,10 +210,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     });
     setSessionData(new Map(sessionData));
     postTestRun(id, runnableType, runnableId, inputs)
-      .then((testRun: TestRun) => {
-        setTestRun(testRun);
-        setShowProgressBar(true);
-        pollTestRunResults(testRun);
+      .then((testRun: TestRun | null) => {
+        if (testRun) {
+          setTestRun(testRun);
+          setShowProgressBar(true);
+          pollTestRunResults(testRun);
+        }
       })
       .catch((e) => {
         console.log(e);

@@ -19,9 +19,7 @@ module Inferno
             required_inputs = test_run.runnable.contained_required_inputs.map(&:to_s)
 
             missing_inputs = required_inputs - params[:inputs].map { |input| input[:name] }
-            if missing_inputs.any?
-              raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs
-            end
+            raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs.any?
 
             self.body = serialize(test_run)
 
