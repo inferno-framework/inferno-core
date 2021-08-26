@@ -1,6 +1,7 @@
 import React, { FC, Fragment } from 'react';
 import useStyles from './styles';
 import {
+  Box,
   Chip,
   Collapse,
   Container,
@@ -92,25 +93,32 @@ const TestListItem: FC<TestListItemProps> = ({
 
   return (
     <Fragment>
-      <ListItem className={styles.listItem}>
-        <div className={styles.testIcon}>{<ResultIcon result={result} />}</div>
-        <ListItemText primary={title} secondary={result?.result_message} />
-        {messagesBadge}
-        {requestsBadge}
-        {expandButton}
-        <ListItemSecondaryAction>
-          <IconButton
-            edge="end"
-            size="small"
-            onClick={() => {
-              runTests(RunnableType.Test, id);
-            }}
-            data-testid={`${id}-run-button`}
-          >
-            <PlayArrowIcon />
-          </IconButton>
-        </ListItemSecondaryAction>
-      </ListItem>
+      <Box className={styles.listItem}>
+        <ListItem>
+          <div className={styles.testIcon}>{<ResultIcon result={result} />}</div>
+          <ListItemText primary={title} />
+          {messagesBadge}
+          {requestsBadge}
+          {expandButton}
+          <ListItemSecondaryAction>
+            <IconButton
+              edge="end"
+              size="small"
+              onClick={() => {
+                runTests(RunnableType.Test, id);
+              }}
+              data-testid={`${id}-run-button`}
+            >
+              <PlayArrowIcon />
+            </IconButton>
+          </ListItemSecondaryAction>
+        </ListItem>
+        {result?.result_message ? (
+          <ReactMarkdown className={styles.resultMessageMarkdown}>
+            {result.result_message}
+          </ReactMarkdown>
+        ) : null}
+      </Box>
       <Collapse in={open} timeout="auto" className={styles.collapsible} unmountOnExit>
         <Divider />
         <Tabs

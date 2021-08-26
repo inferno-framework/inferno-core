@@ -129,6 +129,29 @@ paths:
               $ref: "#/definitions/Result"
         "404":
           description: "Test session not found"
+  /test_sessions/{test_session_id}/session_data:
+    get:
+      tags:
+      - "Session Data"
+      summary: "Get the session data for a test session"
+      description: "Get the most recent set of session data in a session. This represents the values from test inputs and outputs."
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_session_id"
+        description: "ID of the test session"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/SessionData"
+        "404":
+          description: "Test session not found"
   /test_runs:
     post:
       tags:
@@ -346,6 +369,10 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/RequestSummary"
+      outputs:
+        type: "array"
+        items:
+          $ref: "#/definitions/SessionData"
   RequestSummary:
     type: "object"
     required:
@@ -512,3 +539,12 @@ definitions:
       required:
         type: "boolean"
         readOnly: true
+  SessionData:
+    type: "object"
+    required:
+    - "name"
+    properties:
+      name:
+        type: "string"
+      value:
+        type: "string"

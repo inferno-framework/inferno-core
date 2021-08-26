@@ -1,8 +1,9 @@
 import React, { FC, Fragment } from 'react';
-import { Table, TableBody, TableRow, TableCell, Button } from '@material-ui/core';
+import { Button, Box } from '@material-ui/core';
 import { Request } from 'models/testSuiteModels';
-import { getRequestDetails } from 'api/infernoApiService';
 import RequestDetailModal from 'components/RequestDetailModal/RequestDetailModal';
+import { getRequestDetails } from 'api/RequestsApi';
+import useStyles from './styles';
 
 interface RequestsListProps {
   resultId: string;
@@ -13,6 +14,7 @@ interface RequestsListProps {
 const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest }) => {
   const [showDetails, setShowDetails] = React.useState(false);
   const [detailedRequest, setDetailedRequest] = React.useState<Request>();
+  const styles = useStyles();
 
   function showDetailsClick(request: Request) {
     if (request.request_headers == null) {
@@ -39,14 +41,16 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
     requests.length > 0 ? (
       requests.map((request: Request, index: number) => {
         return (
-          <TableRow key={`msgRow-${index}`}>
-            <TableCell>
+          <Box key={`reqRow-${index}`} className={styles.requestRow}>
+            <Box>
               <span>{request.direction}</span>
-            </TableCell>
-            <TableCell>{request.verb}</TableCell>
-            <TableCell>{request.url}</TableCell>
-            <TableCell>{request.status}</TableCell>
-            <TableCell>
+            </Box>
+            <Box>{request.verb}</Box>
+            <Box className={styles.requestUrl}>
+              <Box>{request.url}</Box>
+            </Box>
+            <Box>{request.status}</Box>
+            <Box>
               <Button
                 onClick={() => showDetailsClick(request)}
                 variant="contained"
@@ -55,21 +59,17 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
               >
                 Details
               </Button>
-            </TableCell>
-          </TableRow>
+            </Box>
+          </Box>
         );
       })
     ) : (
-      <TableRow key={`msgRow-none`}>
-        <TableCell>None</TableCell>
-      </TableRow>
+      <Box>None</Box>
     );
 
   return (
     <Fragment>
-      <Table>
-        <TableBody>{requestListItems}</TableBody>
-      </Table>
+      {requestListItems}
       <RequestDetailModal
         request={detailedRequest}
         modalVisible={showDetails}

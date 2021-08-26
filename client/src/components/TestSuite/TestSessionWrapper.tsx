@@ -1,22 +1,26 @@
 import React, { FC } from 'react';
-import { Result, TestRun, TestSession } from 'models/testSuiteModels';
+import { Result, TestOutput, TestRun, TestSession } from 'models/testSuiteModels';
 import TestSessionComponent from './TestSession';
 import { useParams } from 'react-router-dom';
-import {
-  getLastTestRun,
-  getTestSession,
-  getCurrentTestSessionResults,
-} from 'api/infernoApiService';
 import Alert from '@material-ui/lab/Alert';
 import Backdrop from '@material-ui/core/Backdrop';
+import {
+  getCurrentTestSessionResults,
+  getLastTestRun,
+  getTestSession,
+  getTestSessionData,
+} from 'api/TestSessionApi';
 
 const TestSessionWrapper: FC<unknown> = () => {
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [testSession, setTestSession] = React.useState<TestSession>();
   const [testResults, setTestResults] = React.useState<Result[]>();
+  const [sessionData, setSessionData] = React.useState<TestOutput[]>();
   const [attemptedGetRun, setAttemptedGetRun] = React.useState(false);
   const [attemptedGetSession, setAttemptedGetSession] = React.useState(false);
   const [attemptedGetResults, setAttemptedGetResults] = React.useState(false);
+  const [attemptedGetSessionData, setAttemptedSessionData] = React.useState(false);
+  const [attemptingFetchSessionInfo, setAttemptingFetchSessionInfo] = React.useState(false);
 
   function tryGetTestSession(test_session_id: string) {
     getTestSession(test_session_id)
@@ -57,15 +61,34 @@ const TestSessionWrapper: FC<unknown> = () => {
       .finally(() => setAttemptedGetResults(true));
   }
 
-  if (testSession && testResults) {
+  function tryGetSessionData(testSessionId: string) {
+    getTestSessionData(testSessionId)
+      .then((session_data) => {
+        if (session_data) {
+          setSessionData(session_data);
+        } else {
+          console.log('failed to load session data');
+        }
+      })
+      .catch((e) => console.log(e))
+      .finally(() => setAttemptedSessionData(true));
+  }
+
+  if (testSession && testResults && sessionData) {
     return (
       <TestSessionComponent
         testSession={testSession}
         previousResults={testResults}
         initialTestRun={testRun}
+        initialSessionData={sessionData}
       />
     );
-  } else if (attemptedGetSession && attemptedGetResults) {
+  } else if (
+    attemptedGetSession &&
+    attemptedGetResults &&
+    attemptedGetSessionData &&
+    attemptedGetRun
+  ) {
     return (
       <div>
         <Alert severity="error">
@@ -75,16 +98,12 @@ const TestSessionWrapper: FC<unknown> = () => {
     );
   } else {
     const { test_session_id } = useParams<{ test_session_id: string }>();
-    if (test_session_id) {
-      if (!attemptedGetRun) {
-        tryGetTestRun(test_session_id);
-      }
-      if (!attemptedGetSession) {
-        tryGetTestSession(test_session_id);
-      }
-      if (!attemptedGetResults) {
-        tryGetTestResults(test_session_id);
-      }
+    if (test_session_id && !attemptingFetchSessionInfo) {
+      setAttemptingFetchSessionInfo(true);
+      tryGetTestRun(test_session_id);
+      tryGetTestSession(test_session_id);
+      tryGetTestResults(test_session_id);
+      tryGetSessionData(test_session_id);
     }
     return <Backdrop open={true}></Backdrop>;
   }

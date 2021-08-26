@@ -1,6 +1,9 @@
+require_relative './utils/markdown_formatter'
+
 module Inferno
   # @api private
   class TestRunner
+    include Inferno::Utils::MarkdownFormatter
     attr_reader :test_session, :test_run, :resuming
 
     def initialize(test_session:, test_run:, resume: false)
@@ -60,11 +63,11 @@ module Inferno
         test_instance.instance_eval(&test.block)
         'pass'
       rescue Exceptions::TestResultException => e
-        test_instance.result_message = e.message
+        test_instance.result_message = format_markdown(e.message)
         e.result
       rescue StandardError => e
         Application['logger'].error(e.full_message)
-        test_instance.result_message = "Error: #{e.message}"
+        test_instance.result_message = format_markdown("Error: #{e.message}")
         'error'
       end
 
@@ -140,16 +143,15 @@ module Inferno
 
     def save_outputs(runnable_instance)
       outputs =
-        runnable_instance.outputs.each_with_object({}) do |output_name, output_hash|
-          output_hash[output_name] = runnable_instance.send(output_name)
+        runnable_instance.outputs.map do |output_name|
+          {
+            name: output_name,
+            value: runnable_instance.send(output_name)
+          }
         end
-
-      outputs.each do |output_name, value|
-        session_data_repo.save(
-          test_session_id: test_session.id,
-          name: output_name,
-          value: value
-        )
+      outputs.compact!
+      outputs.each do |output|
+        session_data_repo.save(output.merge(test_session_id: test_session.id))
       end
 
       outputs

@@ -6,4 +6,10 @@ export default makeStyles((_theme: Theme) => ({
     maxHeight: '400px',
     overflow: 'auto !important',
   },
+  inputField: {
+    '& > label.MuiInputLabel-shrink': {
+      fontWeight: 600,
+      color: 'rgba(0,0,0,0.85)',
+    },
+  },
 }));

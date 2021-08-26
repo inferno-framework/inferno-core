@@ -9,15 +9,16 @@ import {
   Test,
   TestSuite,
   Request,
+  TestOutput,
 } from 'models/testSuiteModels';
 import InputsModal from 'components/InputsModal/InputsModal';
-import { getTestRunWithResults, postTestRun } from 'api/infernoApiService';
 import useStyles from './styles';
 import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
+import { getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -64,12 +65,14 @@ export interface TestSessionComponentProps {
   testSession: TestSession;
   previousResults: Result[];
   initialTestRun: TestRun | null;
+  initialSessionData: TestOutput[] | undefined;
 }
 
 const TestSessionComponent: FC<TestSessionComponentProps> = ({
   testSession,
   previousResults,
   initialTestRun,
+  initialSessionData,
 }) => {
   const styles = useStyles();
   const { test_suite, id } = testSession;
@@ -89,6 +92,11 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     allInputs.forEach((input: TestInput) => {
       const defaultValue = input.default ? input.default : '';
       sessionData.set(input.name, defaultValue);
+    });
+    initialSessionData?.forEach((initialSessionData: TestOutput) => {
+      if (initialSessionData.value) {
+        sessionData.set(initialSessionData.name, initialSessionData.value);
+      }
     });
     setSessionData(new Map(sessionData));
   }, [testSession]);
@@ -128,14 +136,23 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   function pollTestRunResults(testRun: TestRun): void {
     getTestRunWithResults(testRun.id, latestResult(testRun.results)?.updated_at)
-      .then((testRun_results: TestRun | null) => {
-        setTestRun(testRun_results);
-        if (testRun_results && testRun_results.results) {
-          const updatedMap = resultsToMap(testRun_results.results, resultsMap);
+      .then((testRunResults: TestRun | null) => {
+        setTestRun(testRunResults);
+        if (testRunResults?.results) {
+          testRunResults.results.forEach((result: Result) => {
+            const outputs: TestOutput[] = result.outputs;
+            outputs.forEach((output: TestOutput) => {
+              if (output.value) {
+                sessionData.set(output.name, output.value);
+              }
+            });
+          });
+          setSessionData(new Map(sessionData));
+          const updatedMap = resultsToMap(testRunResults.results, resultsMap);
           setResultsMap(updatedMap);
         }
-        if (testRun_results && testRunNeedsProgressBar(testRun_results)) {
-          setTimeout(() => pollTestRunResults(testRun_results), 500);
+        if (testRunResults && testRunNeedsProgressBar(testRunResults)) {
+          setTimeout(() => pollTestRunResults(testRunResults), 500);
         }
       })
       .catch((e) => {

@@ -31,4 +31,37 @@ export default makeStyles((theme: Theme) => ({
     padding: '15px',
     overflow: 'auto',
   },
+  resultMessageMarkdown: {
+    '& > *': {
+      margin: 0,
+    },
+    marginLeft: '46px',
+    marginBottom: '15px',
+    color: 'rgba(0,0,0,0.6)',
+  },
+  requestRowItem: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  requestRow: {
+    display: 'flex',
+    textAlign: 'center',
+    height: '45px',
+    '& > *': {
+      display: 'flex',
+      alignItems: 'center',
+      margin: '10px',
+    },
+  },
+  requestUrl: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    flexGrow: 1,
+    '& > *': {
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+    },
+  },
 }));
