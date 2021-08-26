@@ -355,6 +355,15 @@ module Inferno
       def test_count
         @test_count ||= children&.reduce(0) { |sum, child| sum + child.test_count } || 0
       end
+
+      def contained_required_inputs(prior_outputs = [])
+        required_inputs = inputs.select { |input|
+                            (input[:optional].nil? || !input[:optional]) && !prior_outputs.include?(input[:name])
+                          }.map { |input| input[:name] }
+        children_required_inputs = children.map { |child| child.contained_required_inputs(prior_outputs) }.flatten
+        prior_outputs.concat(outputs)
+        (required_inputs + children_required_inputs).flatten.uniq
+      end
     end
   end
 end

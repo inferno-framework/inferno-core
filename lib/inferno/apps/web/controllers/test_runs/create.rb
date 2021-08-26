@@ -16,6 +16,12 @@ module Inferno
             # if testsession.nil?
 
             test_run = repo.create(create_params(params).merge(status: 'queued'))
+            required_inputs = test_run.runnable.contained_required_inputs.map(&:to_s)
+
+            missing_inputs = required_inputs - params[:inputs].map { |input| input[:name] }
+            if missing_inputs.any?
+              raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs
+            end
 
             self.body = serialize(test_run)
 
@@ -28,7 +34,8 @@ module Inferno
             end
 
             Jobs.perform(Jobs::ExecuteTestRun, test_run.id)
-          rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation => e
+          rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation,
+                 Inferno::Exceptions::RequiredInputsNotFound => e
             self.body = { errors: e.message }.to_json
             self.status = 422
           rescue StandardError => e
