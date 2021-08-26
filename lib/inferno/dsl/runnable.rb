@@ -214,12 +214,13 @@ module Inferno
       # @option input_definition [String] :description Description for the input
       # @option input_definition [String] :type text | textarea
       # @option input_definition [String] :default The default value for the input
+      # @option input_definition [Boolean] :optional Set to true to not require input for test execution
       # @return [void]
       # @example
       #   input :patientid, title: 'Patient ID', description: 'The ID of the patient being searched for',
       #                     default: 'default_patient_id'
       # @example
-      #   input :textarea, title: 'Textarea Input Example', type: 'textarea'
+      #   input :textarea, title: 'Textarea Input Example', type: 'textarea', optional: true
       def input(identifier, *other_identifiers, **input_definition)
         if other_identifiers.present?
           [identifier, *other_identifiers].compact.each do |input_identifier|
