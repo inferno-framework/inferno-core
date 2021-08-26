@@ -18,7 +18,11 @@ module Inferno
             test_run = repo.create(create_params(params).merge(status: 'queued'))
             required_inputs = test_run.runnable.contained_required_inputs.map(&:to_s)
 
-            missing_inputs = required_inputs - params[:inputs].map { |input| input[:name] }
+            if params[:inputs].nil?
+              missing_inputs = required_inputs
+            else
+              missing_inputs = required_inputs - params[:inputs].map { |input| input[:name] }
+            end
             raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs.any?
 
             self.body = serialize(test_run)
