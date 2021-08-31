@@ -64,7 +64,7 @@ RSpec.describe '/test_runs' do
         repo_create(:test_run, runnable: { test_group_id: wait_group.id }, test_session_id: wait_test_session.id)
       end
       let(:wait_group) { Inferno::Repositories::TestSuites.new.find('demo').groups.last }
-      
+
       it 'returns a 409 error' do
         runner.run(wait_group)
         post_json create_path, test_run_definition
