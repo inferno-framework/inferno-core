@@ -1,5 +1,6 @@
 class HTTPClientDSLTestClass
   include Inferno::DSL::HTTPClient
+  extend Inferno::DSL::Configurable
 
   def test_session_id
     nil

@@ -46,7 +46,7 @@ module Inferno
       # @param name [String] the header name
       # @return [Inferno::Entities::RequestHeader, nil]
       def response_header(name)
-        response_headers.find { |header| header.name == name.downcase }
+        response_headers.find { |header| header.name.casecmp(name).zero? }
       end
 
       # Find a request header
@@ -54,7 +54,7 @@ module Inferno
       # @param name [String] the header name
       # @return [Inferno::Entities::RequestHeader, nil]
       def request_header(name)
-        request_headers.find { |header| header.name == name.downcase }
+        request_headers.find { |header| header.name.casecmp(name).zero? }
       end
 
       # All of the request headers

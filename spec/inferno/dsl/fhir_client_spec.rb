@@ -1,5 +1,6 @@
 class FHIRClientDSLTestClass
   include Inferno::DSL::FHIRClient
+  extend Inferno::DSL::Configurable
 
   def test_session_id
     nil

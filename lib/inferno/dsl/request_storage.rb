@@ -38,13 +38,14 @@ module Inferno
 
       # TODO: do a check in the test runner
       def named_request(name)
-        requests.find { |request| request.name == name.to_sym }
+        requests.find { |request| request.name == self.class.config.request_name(name.to_sym) }
       end
 
       # @api private
       def store_request(direction, name = nil, &block)
         response = block.call
 
+        name = self.class.config.request_name(name)
         request =
           if response.is_a? FHIR::ClientReply
             Entities::Request.from_fhir_client_reply(
@@ -64,8 +65,9 @@ module Inferno
       def load_named_requests
         requests_repo = Inferno::Repositories::Requests.new
         self.class.named_requests_used.map do |request_name|
-          request = requests_repo.find_named_request(test_session_id, request_name)
-          raise StandardError, "Unable to find '#{request_name}' request" if request.nil?
+          request_alias = self.class.config.request_name(request_name)
+          request = requests_repo.find_named_request(test_session_id, request_alias)
+          raise StandardError, "Unable to find '#{request_alias}' request" if request.nil?
 
           requests << request
         end
@@ -84,16 +86,20 @@ module Inferno
 
         # Specify the named requests made by a test
         #
-        # @param *names [Symbol] one or more Symbols
-        def makes_request(*names)
-          named_requests_made.concat(names)
+        # @param *identifiers [Symbol] one or more Symbols
+        def makes_request(*identifiers)
+          named_requests_made.concat(identifiers).uniq!
+          identifiers.each do |identifier|
+            config.add_request(identifier)
+          end
         end
 
         # Specify the name for a request received by a test
         #
-        # @param *names [Symbol] one or more Symbols
-        def receives_request(name)
-          @incoming_request_name = name
+        # @param *identifiers [Symbol] one or more Symbols
+        def receives_request(identifier)
+          config.add_request(identifier)
+          @incoming_request_name = identifier
         end
 
         # @api private
@@ -103,9 +109,12 @@ module Inferno
 
         # Specify the named requests used by a test
         #
-        # @param *names [Symbol] one or more Symbols
-        def uses_request(*names)
-          named_requests_used.concat(names)
+        # @param *identifiers [Symbol] one or more Symbols
+        def uses_request(*identifiers)
+          named_requests_used.concat(identifiers).uniq!
+          identifiers.each do |identifier|
+            config.add_request(identifier)
+          end
         end
       end
     end

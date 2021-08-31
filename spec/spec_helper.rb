@@ -3,6 +3,7 @@ $VERBOSE = nil
 
 ENV['APP_ENV'] ||= 'test'
 
+require 'pry'
 require 'database_cleaner/sequel'
 
 require 'simplecov'
