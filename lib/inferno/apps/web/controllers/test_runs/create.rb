@@ -14,6 +14,12 @@ module Inferno
             test_session = test_sessions_repo.find(params[:test_session_id])
 
             # if testsession.nil?
+            if test_sessions_repo.test_running?(test_session.id)
+              self.status = 409
+              self.body = { error: 'Cannot start a new test run while
+                 another test run is in progress'}.to_json
+              return
+            end
 
             test_run = repo.create(create_params(params).merge(status: 'queued'))
             missing_inputs = test_run.runnable.missing_inputs(params[:inputs])

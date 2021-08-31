@@ -26,6 +26,17 @@ module Inferno
           .map! { |result| results_repo.build_entity(result) }
       end
 
+      # Boolean function that returns true if some test_run is currently
+      # in progress 
+      def test_running?(test_session_id)
+        session = 
+          self.class::Model
+            .find(id: test_session_id)
+
+        return false if session.nil?
+        return session.test_runs.any? { |run| run.status != 'done'}
+      end
+
       class Model < Sequel::Model(db)
         include Import[test_suites_repo: 'repositories.test_suites']
 
