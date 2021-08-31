@@ -29,6 +29,7 @@ import ReactMarkdown from 'react-markdown';
 interface TestListItemProps extends Test {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
+  testRunInProgress: boolean;
 }
 
 const TestListItem: FC<TestListItemProps> = ({
@@ -38,6 +39,7 @@ const TestListItem: FC<TestListItemProps> = ({
   description,
   runTests,
   updateRequest,
+  testRunInProgress,
 }) => {
   const styles = useStyles();
 
@@ -102,6 +104,7 @@ const TestListItem: FC<TestListItemProps> = ({
           {expandButton}
           <ListItemSecondaryAction>
             <IconButton
+              disabled={testRunInProgress}
               edge="end"
               size="small"
               onClick={() => {

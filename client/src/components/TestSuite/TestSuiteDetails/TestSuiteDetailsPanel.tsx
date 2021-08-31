@@ -10,19 +10,21 @@ interface TestSuiteDetailsPanelProps {
   runnable: TestSuite | TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
+  testRunInProgresss: boolean;
 }
 
 const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
   runnable,
   runTests,
   updateRequest,
+  testRunInProgresss,
 }) => {
   const styles = useStyles();
 
   let listItems: JSX.Element[] = [];
   if (runnable?.test_groups && runnable.test_groups.length > 0) {
     listItems = runnable.test_groups.map((testGroup: TestGroup) => {
-      return <TestGroupListItem key={`li-${testGroup.id}`} {...testGroup} runTests={runTests} />;
+      return <TestGroupListItem key={`li-${testGroup.id}`} {...testGroup} runTests={runTests} testRunInProgress={testRunInProgresss} />;
     });
   } else if ('tests' in runnable) {
     listItems = runnable.tests.map((test: Test) => {
@@ -32,6 +34,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
           {...test}
           runTests={runTests}
           updateRequest={updateRequest}
+          testRunInProgress={testRunInProgresss}
         />
       );
     });
@@ -44,7 +47,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
 
   return (
     <div className={styles.testSuiteDetailsPanel}>
-      <TestGroupCard runTests={runTests} runnable={runnable}>
+      <TestGroupCard runTests={runTests} runnable={runnable} testRunInProgress={testRunInProgresss}>
         {listItems}
       </TestGroupCard>
       {descriptionCard}

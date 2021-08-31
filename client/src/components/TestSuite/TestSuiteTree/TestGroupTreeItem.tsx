@@ -6,6 +6,7 @@ import TreeItemLabel from './TreeItemLabel';
 export interface TestGroupTreeItemProps extends TestGroup {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   onLabelClick: (event: MouseEvent<Element>, id: string) => void;
+  testRunInProgress: boolean;
 }
 
 const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
@@ -15,6 +16,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
   result,
   runTests,
   onLabelClick,
+  testRunInProgress,
 }) => {
   let sublist: JSX.Element[] = [];
   if (test_groups.length > 0) {
@@ -24,6 +26,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
         runTests={runTests}
         onLabelClick={onLabelClick}
         key={`ti-${testGroup.id}`}
+        testRunInProgress={testRunInProgress}
       ></TestGroupTreeItem>
     ));
   }
@@ -37,6 +40,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
           runTests={runTests}
           result={result}
           runnableType={RunnableType.TestGroup}
+          testRunInProgress={testRunInProgress}
         />
       }
       onLabelClick={(event) => onLabelClick(event, id)}

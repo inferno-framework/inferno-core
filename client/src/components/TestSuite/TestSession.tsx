@@ -222,8 +222,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       });
   }
 
-  function testRunNeedsProgressBar(testRun: TestRun | null) {
-    return testRun?.status && ['running', 'queued', 'waiting'].includes(testRun.status);
+  function testRunNeedsProgressBar(testRun: TestRun | null): boolean {
+    return (testRun?.status) ? ['running', 'queued', 'waiting'].includes(testRun?.status) : false;
   }
 
   function testRunProgressBar() {
@@ -246,6 +246,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
         runTests={runTests}
         updateRequest={updateRequest}
+        testRunInProgresss={testRunNeedsProgressBar(testRun)}
       />
     );
   }
@@ -256,6 +257,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         {...test_suite}
         runTests={runTests}
         selectedRunnable={selectedRunnable}
+        testRunInProgress={testRunNeedsProgressBar(testRun)}
       />
       {detailsPanel}
       <InputsModal

@@ -15,9 +15,10 @@ import ResultIcon from './ResultIcon';
 
 interface TestGroupListItemProps extends TestGroup {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
+  testRunInProgress: boolean;
 }
 
-const TestGroupListItem: FC<TestGroupListItemProps> = ({ title, result, id, runTests }) => {
+const TestGroupListItem: FC<TestGroupListItemProps> = ({ title, result, id, runTests, testRunInProgress }) => {
   const styles = useStyles();
 
   return (
@@ -36,6 +37,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({ title, result, id, runT
       <div className={styles.testIcon}>{<ResultIcon result={result} />}</div>
       <ListItemSecondaryAction>
         <IconButton
+          disabled={testRunInProgress}
           edge="end"
           size="small"
           onClick={() => {

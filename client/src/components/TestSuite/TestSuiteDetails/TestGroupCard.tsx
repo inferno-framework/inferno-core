@@ -8,9 +8,10 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 interface TestGroupCardProps {
   runnable: TestSuite | TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
+  testRunInProgress: boolean;
 }
 
-const TestGroupCard: FC<TestGroupCardProps> = ({ runnable, runTests, children }) => {
+const TestGroupCard: FC<TestGroupCardProps> = ({ runnable, runTests, children, testRunInProgress }) => {
   const styles = useStyles();
 
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
@@ -23,6 +24,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ runnable, runTests, children })
         </span>
         <span className={styles.testGroupCardHeaderText}>{runnable.title}</span>
         <IconButton
+          disabled={testRunInProgress}
           edge="end"
           size="small"
           onClick={() => {
