@@ -223,7 +223,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }
 
   function testRunNeedsProgressBar(testRun: TestRun | null): boolean {
-    return (testRun?.status) ? ['running', 'queued', 'waiting'].includes(testRun?.status) : false;
+    return testRun?.status ? ['running', 'queued', 'waiting'].includes(testRun?.status) : false;
   }
 
   function testRunProgressBar() {

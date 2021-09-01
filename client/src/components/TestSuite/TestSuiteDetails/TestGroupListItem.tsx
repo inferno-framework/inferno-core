@@ -18,7 +18,13 @@ interface TestGroupListItemProps extends TestGroup {
   testRunInProgress: boolean;
 }
 
-const TestGroupListItem: FC<TestGroupListItemProps> = ({ title, result, id, runTests, testRunInProgress }) => {
+const TestGroupListItem: FC<TestGroupListItemProps> = ({
+  title,
+  result,
+  id,
+  runTests,
+  testRunInProgress,
+}) => {
   const styles = useStyles();
 
   return (

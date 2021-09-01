@@ -24,7 +24,14 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
   let listItems: JSX.Element[] = [];
   if (runnable?.test_groups && runnable.test_groups.length > 0) {
     listItems = runnable.test_groups.map((testGroup: TestGroup) => {
-      return <TestGroupListItem key={`li-${testGroup.id}`} {...testGroup} runTests={runTests} testRunInProgress={testRunInProgresss} />;
+      return (
+        <TestGroupListItem
+          key={`li-${testGroup.id}`}
+          {...testGroup}
+          runTests={runTests}
+          testRunInProgress={testRunInProgresss}
+        />
+      );
     });
   } else if ('tests' in runnable) {
     listItems = runnable.tests.map((test: Test) => {

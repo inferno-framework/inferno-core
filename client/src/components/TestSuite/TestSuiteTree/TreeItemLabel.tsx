@@ -14,7 +14,14 @@ export interface TreeItemLabelProps {
   testRunInProgress: boolean;
 }
 
-const TreeItemLabel: FC<TreeItemLabelProps> = ({ title, id, result, runTests, runnableType, testRunInProgress }) => {
+const TreeItemLabel: FC<TreeItemLabelProps> = ({
+  title,
+  id,
+  result,
+  runTests,
+  runnableType,
+  testRunInProgress,
+}) => {
   const styles = useStyles();
   return (
     <div className={styles.labelRoot} data-testid={`tiLabel-${id}`}>

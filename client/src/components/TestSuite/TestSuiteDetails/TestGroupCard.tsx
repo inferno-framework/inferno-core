@@ -11,7 +11,12 @@ interface TestGroupCardProps {
   testRunInProgress: boolean;
 }
 
-const TestGroupCard: FC<TestGroupCardProps> = ({ runnable, runTests, children, testRunInProgress }) => {
+const TestGroupCard: FC<TestGroupCardProps> = ({
+  runnable,
+  runTests,
+  children,
+  testRunInProgress,
+}) => {
   const styles = useStyles();
 
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
