@@ -16,7 +16,7 @@ module Inferno
             # if testsession.nil?
 
             test_run = repo.create(create_params(params).merge(status: 'queued'))
-            missing_inputs = get_missing_inputs(test_run.runnable, params[:inputs])
+            missing_inputs = test_run.runnable.get_missing_inputs(params[:inputs])
 
             raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs.any?
 
@@ -43,13 +43,6 @@ module Inferno
 
           def create_params(params)
             params.to_h.slice(*PARAMS)
-          end
-
-          def get_missing_inputs(runnable, submitted_inputs)
-            required_inputs = runnable.contained_required_inputs.map(&:to_s)
-            submitted_inputs = [] if submitted_inputs.nil?
-
-            required_inputs - submitted_inputs.map { |input| input[:name] }
           end
         end
       end

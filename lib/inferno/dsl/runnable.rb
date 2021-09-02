@@ -359,12 +359,18 @@ module Inferno
 
       def contained_required_inputs(prior_outputs = [])
         required_inputs = inputs.select do |input|
-          (input[:optional].nil? || !input[:optional]) && !prior_outputs.include?(input[:name])
+          !input_definitions[input][:optional] && !prior_outputs.include?(input)
         end
-        required_inputs.map! { |input| input[:name] }
         children_required_inputs = children.map { |child| child.contained_required_inputs(prior_outputs) }.flatten
         prior_outputs.concat(outputs)
         (required_inputs + children_required_inputs).flatten.uniq
+      end
+
+      def get_missing_inputs(submitted_inputs)
+        required_inputs = contained_required_inputs.map(&:to_s)
+        submitted_inputs = [] if submitted_inputs.nil?
+
+        required_inputs - submitted_inputs.map { |input| input[:name] }
       end
     end
   end
