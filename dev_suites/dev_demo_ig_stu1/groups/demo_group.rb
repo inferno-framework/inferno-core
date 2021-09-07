@@ -247,12 +247,19 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       run { info "Received the following 'textarea' variable: '#{textarea}''" }
     end
 
+<<<<<<< HEAD:dev_suites/dev_demo_ig_stu1/groups/demo_group.rb
     test 'write to scratch' do
       run { scratch[:abc] = 'xyz' }
     end
 
     test 'read from scratch' do
       run { assert scratch[:abc] == 'xyz' }
+=======
+    test 'locked input' do
+      input :patient_name, title: 'Locked Patient Name', description: 'Example of locked, empty input field', locked: true
+      input :url_locked, title: 'Locked URL', description: 'Example of locked, filled input field',
+        default: 'https://inferno.healthit.gov/reference-server/r4', locked: true
+>>>>>>> ae1094b (Added the 'locked?' attribute to the TestInput interface in testSuiteModels.ts and then modified the InputModal to use that attribute. Also, added an example of 'locked input' to demo suite.):dev_suites/demo_ig_stu1/groups/demo_group.rb
     end
   end
 end

@@ -62,9 +62,11 @@ const InputsModal: FC<InputsModalProps> = ({
   }, [inputs]);
 
   const inputFields = inputs.map((requirement: TestInput, index: number) => {
+    debugger;
     switch (requirement.type) {
       case 'textarea':
         return (
+<<<<<<< HEAD
           <InputTextArea
             requirement={requirement}
             index={index}
@@ -82,6 +84,46 @@ const InputsModal: FC<InputsModalProps> = ({
             setInputsMap={setInputsMap}
             key={`input-${index}`}
           />
+=======
+          <ListItem key={`requirement${index}`} disabled={requirement.locked}>
+            <TextField
+              disabled={requirement.locked}
+              id={`requirement${index}_input`}
+              className={styles.inputField}
+              fullWidth
+              label={requirement.title || requirement.name}
+              helperText={requirement.description}
+              value={inputsMap.get(requirement.name) + (requirement.locked ? ' (*locked input)' : '')}
+              multiline
+              rows={4}
+              inputProps={{ className: styles.textarea }}
+              onChange={(event) => {
+                const value = event.target.value;
+                inputsMap.set(requirement.name, value);
+                setInputsMap(new Map(inputsMap));
+              }}
+            />
+          </ListItem>
+        );
+      default:
+        return (
+          <ListItem key={`requirement${index}`} disabled={requirement.locked}>
+            <TextField
+              disabled={requirement.locked}
+              id={`requirement${index}_input`}
+              className={styles.inputField}
+              fullWidth
+              label={requirement.title || requirement.name}
+              helperText={requirement.description}
+              value={inputsMap.get(requirement.name) + (requirement.locked ? ' (*locked input)' : '')}
+              onChange={(event) => {
+                const value = event.target.value;
+                inputsMap.set(requirement.name, value);
+                setInputsMap(new Map(inputsMap));
+              }}
+            />
+          </ListItem>
+>>>>>>> ae1094b (Added the 'locked?' attribute to the TestInput interface in testSuiteModels.ts and then modified the InputModal to use that attribute. Also, added an example of 'locked input' to demo suite.)
         );
     }
   });
