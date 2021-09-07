@@ -66,10 +66,11 @@ RSpec.describe Inferno::TestRunner do
       expect(results.length).to eq(test_count + 2)
     end
 
-    it 'only contains no "error" results apart from the "error test"' do
+    it 'only contains no "error" results apart from the "locked input" and "error test"' do
       results = runner.start
       error_results =
         results
+          .reject { |result| result.test&.title == 'locked input' }
           .reject { |result| result.test&.title == 'error test' }
           .reject { |result| result.runnable < Inferno::Entities::TestGroup }
           .select { |result| result.result == 'error' }
