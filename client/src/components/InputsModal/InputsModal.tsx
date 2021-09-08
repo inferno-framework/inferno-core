@@ -62,7 +62,6 @@ const InputsModal: FC<InputsModalProps> = ({
   }, [inputs]);
 
   const inputFields = inputs.map((requirement: TestInput, index: number) => {
-    debugger;
     switch (requirement.type) {
       case 'textarea':
         return (
@@ -93,7 +92,10 @@ const InputsModal: FC<InputsModalProps> = ({
               fullWidth
               label={requirement.title || requirement.name}
               helperText={requirement.description}
-              value={inputsMap.get(requirement.name) + (requirement.locked ? ' (*locked input)' : '')}
+              value={
+                (inputsMap.get(requirement.name) ?? '') +
+                (requirement.locked ? ' (*locked input)' : '')
+              }
               multiline
               rows={4}
               inputProps={{ className: styles.textarea }}
@@ -115,7 +117,10 @@ const InputsModal: FC<InputsModalProps> = ({
               fullWidth
               label={requirement.title || requirement.name}
               helperText={requirement.description}
-              value={inputsMap.get(requirement.name) + (requirement.locked ? ' (*locked input)' : '')}
+              value={
+                (inputsMap.get(requirement.name) ?? '') +
+                (requirement.locked ? ' (*locked input)' : '')
+              }
               onChange={(event) => {
                 const value = event.target.value;
                 inputsMap.set(requirement.name, value);
