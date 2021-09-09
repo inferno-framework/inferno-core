@@ -225,7 +225,7 @@ module Inferno
         if other_identifiers.present?
           [identifier, *other_identifiers].compact.each do |input_identifier|
             inputs << input_identifier
-            config.add_input(identifier)
+            config.add_input(input_identifier)
           end
         else
           inputs << identifier
