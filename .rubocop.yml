@@ -14,15 +14,15 @@ AllCops:
 Layout/LineLength:
   Max: 120
   Exclude:
-    - 'ui_suites/onc_program/**/*'
-    - 'ui_suites/smart_scheduling_links/**/*'
+    - 'dev_suites/ui_onc_program/**/*'
+    - 'dev_suites/ui_smart_scheduling_links/**/*'
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: 'indented'
 
 Lint/EmptyBlock:
   Exclude:
-    - 'ui_suites/onc_program/**/*'
+    - 'dev_suites/ui_onc_program/**/*'
 
 Style/BlockComments:
   Exclude:

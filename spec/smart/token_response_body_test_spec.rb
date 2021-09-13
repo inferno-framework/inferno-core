@@ -1,4 +1,4 @@
-require_relative '../../dev_suites/smart/token_exchange_test'
+require_relative '../../dev_suites/dev_smart/token_exchange_test'
 require_relative '../request_helper'
 
 RSpec.describe SMART::TokenResponseBodyTest do

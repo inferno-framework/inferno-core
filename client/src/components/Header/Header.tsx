@@ -4,10 +4,15 @@ import logo from 'images/inferno_logo.png';
 import { Box, Button, Container } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 
-const Header: FC<unknown> = () => {
+export interface HeaderProps {
+  setTestSuiteChosen: (id: string) => void;
+}
+
+const Header: FC<HeaderProps> = ({ setTestSuiteChosen }) => {
   const styles = useStyles();
   const history = useHistory();
   function returnHome() {
+    setTestSuiteChosen('');
     history.push('/');
   }
   return (

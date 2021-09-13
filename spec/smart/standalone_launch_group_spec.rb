@@ -1,4 +1,4 @@
-require_relative '../../dev_suites/smart/standalone_launch_group'
+require_relative '../../dev_suites/dev_smart/standalone_launch_group'
 require_relative '../request_helper'
 
 RSpec.describe SMART::StandaloneLaunchGroup do

@@ -1,4 +1,4 @@
-require_relative '../../dev_suites/smart/discovery_group'
+require_relative '../../dev_suites/dev_smart/discovery_group'
 
 RSpec.describe SMART::DiscoveryGroup do
   let(:suite) { Inferno::Repositories::TestSuites.new.find('smart') }

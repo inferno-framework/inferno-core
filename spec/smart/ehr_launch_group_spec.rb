@@ -1,4 +1,4 @@
-require_relative '../../dev_suites/smart/ehr_launch_group'
+require_relative '../../dev_suites/dev_smart/ehr_launch_group'
 require_relative '../request_helper'
 
 RSpec.describe SMART::EHRLaunchGroup do

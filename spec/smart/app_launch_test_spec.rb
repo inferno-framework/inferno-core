@@ -1,4 +1,4 @@
-require_relative '../../dev_suites/smart/app_launch_test'
+require_relative '../../dev_suites/dev_smart/app_launch_test'
 require_relative '../request_helper'
 
 RSpec.describe SMART::AppLaunchTest do

@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import {
   Typography,
   Container,
@@ -8,47 +8,23 @@ import {
   ListItem,
   ListItemText,
 } from '@material-ui/core';
-import { TestSuite, TestSession } from 'models/testSuiteModels';
+import { TestSuite } from 'models/testSuiteModels';
 import useStyles from './styles';
-import { useHistory } from 'react-router-dom';
-import { getTestSuites } from 'api/TestSuitesApi';
-import { postTestSessions } from 'api/TestSessionApi';
 
-const LandingPage: FC<unknown> = () => {
-  const [testSuites, setTestSuites] = React.useState<TestSuite[]>();
-  const [testSuiteChosen, setTestSuiteChosen] = React.useState('');
+export interface LandingPageProps {
+  testSuites: TestSuite[] | undefined;
+  createTestSession: () => void;
+  testSuiteChosen: string;
+  setTestSuiteChosen: (id: string) => void;
+}
+
+const LandingPage: FC<LandingPageProps> = ({
+  testSuites,
+  createTestSession,
+  testSuiteChosen,
+  setTestSuiteChosen,
+}) => {
   const styles = useStyles();
-  const history = useHistory();
-
-  useEffect(() => {
-    if (!testSuites) {
-      getTestSuites()
-        .then((testSuites: TestSuite[]) => {
-          setTestSuites(testSuites);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    } else if (testSuites.length === 1) {
-      if (testSuiteChosen === '') {
-        setTestSuiteChosen(testSuites[0].id);
-      } else {
-        createTestSession();
-      }
-    }
-  });
-
-  function createTestSession(): void {
-    postTestSessions(testSuiteChosen)
-      .then((testSession: TestSession | null) => {
-        if (testSession && testSession.test_suite) {
-          history.push('test_sessions/' + testSession.id);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }
 
   return (
     <Container maxWidth="lg" className={styles.main}>
