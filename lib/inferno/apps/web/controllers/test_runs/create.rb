@@ -16,7 +16,7 @@ module Inferno
             # if testsession.nil?
 
             test_run = repo.create(create_params(params).merge(status: 'queued'))
-            missing_inputs = test_run.runnable.get_missing_inputs(params[:inputs])
+            missing_inputs = test_run.runnable.missing_inputs(params[:inputs])
 
             raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs.any?
 

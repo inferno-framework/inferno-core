@@ -106,15 +106,15 @@ RSpec.describe Inferno::DSL::Runnable do
     end
   end
 
-  describe '.get_missing_inputs' do
+  describe '.missing_inputs' do
     it 'returns missing inputs for a test' do
       example_test = Class.new(Inferno::Entities::Test)
       example_test.input :a, :b, :c
       example_test.input :d, optional: true
-      missing_inputs = example_test.get_missing_inputs([{ name: 'a', value: 'a' }])
+      missing_inputs = example_test.missing_inputs([{ name: 'a', value: 'a' }])
       expect(missing_inputs).to eq(['b', 'c'])
 
-      missing_inputs = example_test.get_missing_inputs([{ name: 'a', value: 'a' }, { name: 'b', value: 'b' },
+      missing_inputs = example_test.missing_inputs([{ name: 'a', value: 'a' }, { name: 'b', value: 'b' },
                                                         { name: 'c', value: 'c' }])
       expect(missing_inputs).to eq([])
     end
@@ -126,10 +126,10 @@ RSpec.describe Inferno::DSL::Runnable do
         input :a, :b, :c
         input :d, optional: true
       end
-      missing_inputs = example_test_group.get_missing_inputs([{ name: 'a', value: 'a' }, { name: 'e', value: 'e' }])
+      missing_inputs = example_test_group.missing_inputs([{ name: 'a', value: 'a' }, { name: 'e', value: 'e' }])
       expect(missing_inputs).to eq(['f', 'b', 'c'])
 
-      missing_inputs = example_test_group.get_missing_inputs([{ name: 'a', value: 'a' }, { name: 'b', value: 'b' },
+      missing_inputs = example_test_group.missing_inputs([{ name: 'a', value: 'a' }, { name: 'b', value: 'b' },
                                                               { name: 'c', value: 'c' }, { name: 'e', value: 'e' },
                                                               { name: 'f', value: 'f' }])
       expect(missing_inputs).to eq([])
@@ -144,7 +144,7 @@ RSpec.describe Inferno::DSL::Runnable do
       example_test_group.test 'child test uses output' do
         input :c, :d
       end
-      missing_inputs = example_test_group.get_missing_inputs([{ name: 'a', value: 'a' }, { name: 'd', value: 'd' }])
+      missing_inputs = example_test_group.missing_inputs([{ name: 'a', value: 'a' }, { name: 'd', value: 'd' }])
       expect(missing_inputs).to eq(['b'])
     end
 
@@ -156,7 +156,7 @@ RSpec.describe Inferno::DSL::Runnable do
       example_test_group.test 'child test with output' do
         output :a
       end
-      missing_inputs = example_test_group.get_missing_inputs([{ name: 'b', value: 'b' }])
+      missing_inputs = example_test_group.missing_inputs([{ name: 'b', value: 'b' }])
       expect(missing_inputs).to eq(['a'])
     end
   end
