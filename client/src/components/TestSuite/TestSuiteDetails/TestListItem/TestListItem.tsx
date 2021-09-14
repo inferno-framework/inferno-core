@@ -37,6 +37,7 @@ const TestListItem: FC<TestListItemProps> = ({
   result,
   id,
   description,
+  user_runnable,
   runTests,
   updateRequest,
   testRunInProgress,
@@ -93,6 +94,26 @@ const TestListItem: FC<TestListItemProps> = ({
       'No description'
     );
 
+  const runButton = user_runnable ? (
+    <ListItemSecondaryAction>
+      <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
+        <div>
+          <IconButton
+            disabled={testRunInProgress}
+            edge="end"
+            size="small"
+            onClick={() => {
+              runTests(RunnableType.Test, id);
+            }}
+            data-testid={`${id}-run-button`}
+          >
+            <PlayArrowIcon />
+          </IconButton>
+        </div>
+      </Tooltip>
+    </ListItemSecondaryAction>
+  ) : null;
+
   return (
     <Fragment>
       <Box className={styles.listItem}>
@@ -102,23 +123,7 @@ const TestListItem: FC<TestListItemProps> = ({
           {messagesBadge}
           {requestsBadge}
           {expandButton}
-          <ListItemSecondaryAction>
-            <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
-              <div>
-                <IconButton
-                  disabled={testRunInProgress}
-                  edge="end"
-                  size="small"
-                  onClick={() => {
-                    runTests(RunnableType.Test, id);
-                  }}
-                  data-testid={`${id}-run-button`}
-                >
-                  <PlayArrowIcon />
-                </IconButton>
-              </div>
-            </Tooltip>
-          </ListItemSecondaryAction>
+          {runButton}
         </ListItem>
         {result?.result_message ? (
           <ReactMarkdown className={styles.resultMessageMarkdown}>

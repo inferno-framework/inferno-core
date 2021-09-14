@@ -12,6 +12,7 @@ export interface TreeItemLabelProps {
   runnableType: RunnableType;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   testRunInProgress: boolean;
+  user_runnable?: boolean;
 }
 
 const TreeItemLabel: FC<TreeItemLabelProps> = ({
@@ -21,6 +22,7 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({
   runTests,
   runnableType,
   testRunInProgress,
+  user_runnable
 }) => {
   const styles = useStyles();
   return (
@@ -29,6 +31,7 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({
         {title}
       </Typography>
       <CondensedResultIcon result={result} />
+      {user_runnable ? (
       <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
         <div className={styles.buttonWrapper}>
           <IconButton
@@ -41,6 +44,7 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({
           </IconButton>
         </div>
       </Tooltip>
+      ) : null}
     </div>
   );
 };

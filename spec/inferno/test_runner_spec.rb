@@ -79,7 +79,11 @@ RSpec.describe Inferno::TestRunner do
   end
 
   describe 'when running wait group' do
-    let(:group) { Inferno::Repositories::TestSuites.new.find('demo').groups.last }
+    let(:group) do
+      Inferno::Repositories::TestSuites.new.find('demo').groups.find do |group|
+        group.id == 'demo-wait_group'
+      end
+    end
 
     it 'gives a wait result' do
       result = runner.run(group)

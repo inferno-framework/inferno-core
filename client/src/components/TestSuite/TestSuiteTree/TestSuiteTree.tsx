@@ -86,6 +86,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
                   result={result}
                   runnableType={RunnableType.TestSuite}
                   testRunInProgress={testRunInProgress}
+                  user_runnable={true}
                 />
               }
               onLabelClick={(event) => treeItemLabelClick(event, id)}

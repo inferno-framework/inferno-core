@@ -24,10 +24,29 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   result,
   id,
   runTests,
+  user_runnable,
   testRunInProgress,
 }) => {
   const styles = useStyles();
-
+  const runButton = user_runnable ? (
+    <ListItemSecondaryAction>
+      <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
+        <div>
+          <IconButton
+            disabled={testRunInProgress}
+            edge="end"
+            size="small"
+            onClick={() => {
+              runTests(RunnableType.TestGroup, id);
+            }}
+            data-testid={`${id}-run-button`}
+          >
+            <PlayArrowIcon />
+          </IconButton>
+        </div>
+      </Tooltip>
+    </ListItemSecondaryAction>
+  ) : null;
   return (
     <ListItem className={styles.listItem}>
       <ListItemIcon>
@@ -42,23 +61,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         secondary={result?.result_message}
       />
       <div className={styles.testIcon}>{<ResultIcon result={result} />}</div>
-      <ListItemSecondaryAction>
-        <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
-          <div>
-            <IconButton
-              disabled={testRunInProgress}
-              edge="end"
-              size="small"
-              onClick={() => {
-                runTests(RunnableType.TestGroup, id);
-              }}
-              data-testid={`${id}-run-button`}
-            >
-              <PlayArrowIcon />
-            </IconButton>
-          </div>
-        </Tooltip>
-      </ListItemSecondaryAction>
+      {runButton}
     </ListItem>
   );
 };

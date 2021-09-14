@@ -60,6 +60,7 @@ export interface Test {
   inputs: TestInput[];
   outputs: TestOutput[];
   description?: string;
+  user_runnable?: boolean;
 }
 
 export interface TestGroup {
@@ -71,6 +72,8 @@ export interface TestGroup {
   result?: Result;
   tests: Test[];
   description?: string;
+  run_as_group?: boolean;
+  user_runnable?: boolean;
 }
 
 export interface TestSuite {
@@ -99,7 +102,11 @@ export interface TestRun {
   results?: Result[] | null;
   status?: 'queued' | 'running' | 'waiting' | 'done';
   test_count?: number;
-  testGroupId?: string;
-  testSuiteId?: string;
-  testId?: string;
+  test_group_id?: string;
+  test_suite_id?: string;
+  test_id?: string;
+}
+
+export function runnableIsTestSuite(runnable: TestSuite | TestGroup | Test): runnable is TestSuite {
+  return (runnable as TestGroup).inputs == undefined;
 }

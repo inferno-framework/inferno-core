@@ -371,6 +371,13 @@ module Inferno
 
         required_inputs.map(&:to_s) - submitted_inputs.map { |input| input[:name] }
       end
+
+      def user_runnable?
+        @user_runnable ||= parent.nil? ||
+                           !parent.respond_to?(:user_runnable?) ||
+                           !parent.respond_to?(:run_as_group?) ||
+                           (parent.user_runnable? && !parent.run_as_group?)
+      end
     end
   end
 end

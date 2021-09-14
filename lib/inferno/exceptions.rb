@@ -56,5 +56,11 @@ module Inferno
         super("Missing the following required inputs: #{missing_inputs.join(', ')}")
       end
     end
+
+    class NotUserRunnableException < RuntimeError
+      def initialize
+        super('The chosen runnable must be run as part of a group')
+      end
+    end
   end
 end

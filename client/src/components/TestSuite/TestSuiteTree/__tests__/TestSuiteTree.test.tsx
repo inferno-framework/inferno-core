@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { TestGroup, Test, RunnableType } from 'models/testSuiteModels';
+import { Test, TestGroup, RunnableType } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
 
 const runTestsMock = jest.fn();
