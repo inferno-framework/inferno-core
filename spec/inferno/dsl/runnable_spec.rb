@@ -115,7 +115,7 @@ RSpec.describe Inferno::DSL::Runnable do
       expect(missing_inputs).to eq(['b', 'c'])
 
       missing_inputs = example_test.missing_inputs([{ name: 'a', value: 'a' }, { name: 'b', value: 'b' },
-                                                        { name: 'c', value: 'c' }])
+                                                    { name: 'c', value: 'c' }])
       expect(missing_inputs).to eq([])
     end
 
@@ -130,8 +130,8 @@ RSpec.describe Inferno::DSL::Runnable do
       expect(missing_inputs).to eq(['f', 'b', 'c'])
 
       missing_inputs = example_test_group.missing_inputs([{ name: 'a', value: 'a' }, { name: 'b', value: 'b' },
-                                                              { name: 'c', value: 'c' }, { name: 'e', value: 'e' },
-                                                              { name: 'f', value: 'f' }])
+                                                          { name: 'c', value: 'c' }, { name: 'e', value: 'e' },
+                                                          { name: 'f', value: 'f' }])
       expect(missing_inputs).to eq([])
     end
 
