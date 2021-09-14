@@ -8,23 +8,31 @@ import {
   ListItem,
   ListItemText,
 } from '@material-ui/core';
-import { TestSuite } from 'models/testSuiteModels';
+import { TestSuite, TestSession } from 'models/testSuiteModels';
 import useStyles from './styles';
+import { useHistory } from 'react-router-dom';
+import { postTestSessions } from 'api/TestSessionApi';
 
 export interface LandingPageProps {
   testSuites: TestSuite[] | undefined;
-  createTestSession: () => void;
-  testSuiteChosen: string;
-  setTestSuiteChosen: (id: string) => void;
 }
 
-const LandingPage: FC<LandingPageProps> = ({
-  testSuites,
-  createTestSession,
-  testSuiteChosen,
-  setTestSuiteChosen,
-}) => {
+const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
+  const [testSuiteChosen, setTestSuiteChosen] = React.useState('');
   const styles = useStyles();
+  const history = useHistory();
+
+  function createTestSession(): void {
+    postTestSessions(testSuiteChosen)
+      .then((testSession: TestSession | null) => {
+        if (testSession && testSession.test_suite) {
+          history.push('test_sessions/' + testSession.id);
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }
 
   return (
     <Container maxWidth="lg" className={styles.main}>
