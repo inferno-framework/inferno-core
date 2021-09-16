@@ -1,4 +1,4 @@
-require_relative '../../dev_suites/smart/code_received_test'
+require_relative '../../dev_suites/dev_smart/code_received_test'
 require_relative '../request_helper'
 
 RSpec.describe SMART::CodeReceivedTest do

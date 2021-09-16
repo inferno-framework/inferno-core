@@ -4,12 +4,10 @@ Inferno::Application.boot(:suites) do
 
     files_to_load = Dir.glob(File.join(Dir.pwd, 'lib', '*.rb'))
 
-    if ENV['LOAD_DEV_SUITES'] == 'true'
-      files_to_load.concat Dir.glob(File.join(Inferno::Application.root, 'dev_suites', '**', '*.rb'))
-    end
-
-    if ENV['LOAD_UI_SUITES'] == 'true'
-      files_to_load.concat Dir.glob(File.join(Inferno::Application.root, 'ui_suites', '**', '*.rb'))
+    if ENV['LOAD_DEV_SUITES'].present?
+      ENV['LOAD_DEV_SUITES'].split(',').map(&:strip).reject(&:empty?).each do |suite|
+        files_to_load.concat Dir.glob(File.join(Inferno::Application.root, 'dev_suites', suite, '**', '*.rb'))
+      end
     end
 
     if ENV['APP_ENV'] == 'test'

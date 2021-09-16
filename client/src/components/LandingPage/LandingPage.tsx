@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import {
   Typography,
   Container,
@@ -11,26 +11,16 @@ import {
 import { TestSuite, TestSession } from 'models/testSuiteModels';
 import useStyles from './styles';
 import { useHistory } from 'react-router-dom';
-import { getTestSuites } from 'api/TestSuitesApi';
 import { postTestSessions } from 'api/TestSessionApi';
 
-const LandingPage: FC<unknown> = () => {
-  const [testSuites, setTestSuites] = React.useState<TestSuite[]>();
+export interface LandingPageProps {
+  testSuites: TestSuite[] | undefined;
+}
+
+const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const [testSuiteChosen, setTestSuiteChosen] = React.useState('');
   const styles = useStyles();
   const history = useHistory();
-
-  useEffect(() => {
-    if (!testSuites) {
-      getTestSuites()
-        .then((testSuites: TestSuite[]) => {
-          setTestSuites(testSuites);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    }
-  });
 
   function createTestSession(): void {
     postTestSessions(testSuiteChosen)
