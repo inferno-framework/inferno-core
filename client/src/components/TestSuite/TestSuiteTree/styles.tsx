@@ -12,6 +12,13 @@ export default makeStyles((theme: Theme) => ({
   labelText: {
     flexGrow: 1,
   },
+  buttonWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    '&:hover > $labelRunButton': {
+      visibility: 'visible',
+    },
+  },
   labelRunButton: {
     width: '10px',
     height: '10px',
