@@ -45,6 +45,7 @@ export interface TestInput {
   type?: 'text' | 'textarea';
   description?: string;
   default?: string;
+  optional?: boolean;
 }
 
 export interface TestOutput {

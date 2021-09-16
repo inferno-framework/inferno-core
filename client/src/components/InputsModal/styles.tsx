@@ -12,4 +12,9 @@ export default makeStyles((_theme: Theme) => ({
       color: 'rgba(0,0,0,0.85)',
     },
   },
+  requiredLabel: {
+    'label.MuiInputLabel-shrink &': {
+      display: 'none',
+    },
+  },
 }));

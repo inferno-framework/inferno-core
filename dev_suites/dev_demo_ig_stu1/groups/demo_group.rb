@@ -241,7 +241,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       input :textarea,
             title: 'Textarea Input Example',
             type: 'textarea',
-            description: 'Insert something like a patient resource json here'
+            description: 'Insert something like a patient resource json here',
+            optional: true
 
       run { info "Received the following 'textarea' variable: '#{textarea}''" }
     end

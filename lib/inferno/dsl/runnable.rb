@@ -214,17 +214,18 @@ module Inferno
       # @option input_definition [String] :description Description for the input
       # @option input_definition [String] :type text | textarea
       # @option input_definition [String] :default The default value for the input
+      # @option input_definition [Boolean] :optional Set to true to not require input for test execution
       # @return [void]
       # @example
       #   input :patientid, title: 'Patient ID', description: 'The ID of the patient being searched for',
       #                     default: 'default_patient_id'
       # @example
-      #   input :textarea, title: 'Textarea Input Example', type: 'textarea'
+      #   input :textarea, title: 'Textarea Input Example', type: 'textarea', optional: true
       def input(identifier, *other_identifiers, **input_definition)
         if other_identifiers.present?
           [identifier, *other_identifiers].compact.each do |input_identifier|
             inputs << input_identifier
-            config.add_input(identifier)
+            config.add_input(input_identifier)
           end
         else
           inputs << identifier
@@ -354,6 +355,21 @@ module Inferno
 
       def test_count
         @test_count ||= children&.reduce(0) { |sum, child| sum + child.test_count } || 0
+      end
+
+      def required_inputs(prior_outputs = [])
+        required_inputs = inputs.select do |input|
+          !input_definitions[input][:optional] && !prior_outputs.include?(input)
+        end
+        children_required_inputs = children.flat_map { |child| child.required_inputs(prior_outputs) }
+        prior_outputs.concat(outputs)
+        (required_inputs + children_required_inputs).flatten.uniq
+      end
+
+      def missing_inputs(submitted_inputs)
+        submitted_inputs = [] if submitted_inputs.nil?
+
+        required_inputs.map(&:to_s) - submitted_inputs.map { |input| input[:name] }
       end
     end
   end

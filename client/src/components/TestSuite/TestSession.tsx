@@ -210,10 +210,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     });
     setSessionData(new Map(sessionData));
     postTestRun(id, runnableType, runnableId, inputs)
-      .then((testRun: TestRun) => {
-        setTestRun(testRun);
-        setShowProgressBar(true);
-        pollTestRunResults(testRun);
+      .then((testRun: TestRun | null) => {
+        if (testRun) {
+          setTestRun(testRun);
+          setShowProgressBar(true);
+          pollTestRunResults(testRun);
+        }
       })
       .catch((e) => {
         console.log(e);

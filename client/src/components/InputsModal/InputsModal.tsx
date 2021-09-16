@@ -6,12 +6,11 @@ import {
   DialogContentText,
   DialogTitle,
   List,
-  ListItem,
-  TextField,
 } from '@material-ui/core';
 import { RunnableType, TestInput } from 'models/testSuiteModels';
 import React, { FC, useEffect } from 'react';
-import useStyles from './styles';
+import InputTextArea from './InputTextArea';
+import InputTextField from './InputTextField';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -41,6 +40,10 @@ const InputsModal: FC<InputsModalProps> = ({
   hideModal,
   createTestRun,
 }) => {
+  const [inputsMap, setInputsMap] = React.useState<Map<string, string>>(new Map());
+  const missingRequiredInput = inputs.some((input: TestInput) => {
+    return !input.optional && inputsMap.get(input.name)?.length == 0;
+  });
   function submitClicked(): void {
     const inputs_with_values: TestInput[] = [];
     inputsMap.forEach((input_value, input_name) => {
@@ -49,8 +52,7 @@ const InputsModal: FC<InputsModalProps> = ({
     createTestRun(runnableType, runnableId, inputs_with_values);
     hideModal();
   }
-  const styles = useStyles();
-  const [inputsMap, setInputsMap] = React.useState<Map<string, string>>(new Map());
+
   useEffect(() => {
     inputsMap.clear();
     inputs.forEach((requirement: TestInput) => {
@@ -63,42 +65,23 @@ const InputsModal: FC<InputsModalProps> = ({
     switch (requirement.type) {
       case 'textarea':
         return (
-          <ListItem key={`requirement${index}`}>
-            <TextField
-              id={`requirement${index}_input`}
-              className={styles.inputField}
-              fullWidth
-              label={requirement.title || requirement.name}
-              helperText={requirement.description}
-              value={inputsMap.get(requirement.name)}
-              multiline
-              rows={4}
-              inputProps={{ className: styles.textarea }}
-              onChange={(event) => {
-                const value = event.target.value;
-                inputsMap.set(requirement.name, value);
-                setInputsMap(new Map(inputsMap));
-              }}
-            />
-          </ListItem>
+          <InputTextArea
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={setInputsMap}
+            key={`input-${index}`}
+          />
         );
       default:
         return (
-          <ListItem key={`requirement${index}`}>
-            <TextField
-              id={`requirement${index}_input`}
-              className={styles.inputField}
-              fullWidth
-              label={requirement.title || requirement.name}
-              helperText={requirement.description}
-              value={inputsMap.get(requirement.name)}
-              onChange={(event) => {
-                const value = event.target.value;
-                inputsMap.set(requirement.name, value);
-                setInputsMap(new Map(inputsMap));
-              }}
-            />
-          </ListItem>
+          <InputTextField
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={setInputsMap}
+            key={`input-${index}`}
+          />
         );
     }
   });
@@ -115,7 +98,7 @@ const InputsModal: FC<InputsModalProps> = ({
         <Button color="primary" onClick={() => hideModal()} data-testid="cancel-button">
           Cancel
         </Button>
-        <Button color="primary" onClick={() => submitClicked()}>
+        <Button color="primary" onClick={() => submitClicked()} disabled={missingRequiredInput}>
           Submit
         </Button>
       </DialogActions>

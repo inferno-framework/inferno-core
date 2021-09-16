@@ -10,6 +10,7 @@ const testInputs: TestInput[] = [
   },
   {
     name: 'some other input',
+    optional: true,
   },
   {
     name: 'yet another input',
@@ -45,8 +46,13 @@ test('Modal visible and inputs are shown', () => {
   const titleText = screen.getByText('Test Inputs');
   expect(titleText).toBeVisible();
   testInputs.forEach((input: TestInput) => {
-    const inputField = screen.getByLabelText(input.name);
-    expect(inputField).toBeVisible();
+    if (input.optional) {
+      const inputField = screen.getByLabelText(input.name);
+      expect(inputField).toBeVisible();
+    } else {
+      const inputField = screen.getByLabelText(input.name + ' (required)');
+      expect(inputField).toBeVisible();
+    }
   });
 });
 
