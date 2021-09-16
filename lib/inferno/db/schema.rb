@@ -62,9 +62,6 @@ Sequel.migration do
       
       primary_key [:id]
       
-      index [:test_session_id, :test_group_id], :name=>:results_session_group
-      index [:test_session_id, :test_suite_id], :name=>:results_session_suite
-      index [:test_session_id, :test_id], :name=>:results_session_test
       index [:test_run_id]
       index [:test_run_id, :updated_at]
       index [:test_session_id]
