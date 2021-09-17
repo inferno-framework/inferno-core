@@ -16,8 +16,7 @@ module Inferno
             # if testsession.nil?
             if test_sessions_repo.test_running?(test_session.id)
               self.status = 409
-              self.body = { error: 'Cannot start a new test run while
-                 another test run is in progress' }.to_json
+              self.body = { error: 'Cannot run new test while another test run is in progress' }.to_json
               return
             end
 
