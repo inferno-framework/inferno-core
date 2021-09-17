@@ -29,7 +29,7 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({
         {title}
       </Typography>
       <CondensedResultIcon result={result} />
-      <Tooltip title={testRunInProgress ? 'Disabled During Ongoing Test.' : ''}>
+      <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
         <div className={styles.buttonWrapper}>
           <IconButton
             disabled={testRunInProgress}

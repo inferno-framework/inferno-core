@@ -7,6 +7,7 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  Tooltip,
 } from '@material-ui/core';
 import { RunnableType, TestGroup } from 'models/testSuiteModels';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
@@ -42,17 +43,21 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       />
       <div className={styles.testIcon}>{<ResultIcon result={result} />}</div>
       <ListItemSecondaryAction>
-        <IconButton
-          disabled={testRunInProgress}
-          edge="end"
-          size="small"
-          onClick={() => {
-            runTests(RunnableType.TestGroup, id);
-          }}
-          data-testid={`${id}-run-button`}
-        >
-          <PlayArrowIcon />
-        </IconButton>
+      <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
+          <div>
+            <IconButton
+              disabled={testRunInProgress}
+              edge="end"
+              size="small"
+              onClick={() => {
+                runTests(RunnableType.TestGroup, id);
+              }}
+              data-testid={`${id}-run-button`}
+            >
+              <PlayArrowIcon />
+            </IconButton>
+          </div>
+        </Tooltip>
       </ListItemSecondaryAction>
     </ListItem>
   );

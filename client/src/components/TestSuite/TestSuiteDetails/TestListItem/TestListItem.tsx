@@ -103,17 +103,21 @@ const TestListItem: FC<TestListItemProps> = ({
           {requestsBadge}
           {expandButton}
           <ListItemSecondaryAction>
-            <IconButton
-              disabled={testRunInProgress}
-              edge="end"
-              size="small"
-              onClick={() => {
-                runTests(RunnableType.Test, id);
-              }}
-              data-testid={`${id}-run-button`}
-            >
-              <PlayArrowIcon />
-            </IconButton>
+            <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
+              <div>
+                <IconButton
+                  disabled={testRunInProgress}
+                  edge="end"
+                  size="small"
+                  onClick={() => {
+                    runTests(RunnableType.Test, id);
+                  }}
+                  data-testid={`${id}-run-button`}
+                >
+                  <PlayArrowIcon />
+                </IconButton>
+              </div>
+            </Tooltip>
           </ListItemSecondaryAction>
         </ListItem>
         {result?.result_message ? (
