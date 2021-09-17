@@ -43,7 +43,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       />
       <div className={styles.testIcon}>{<ResultIcon result={result} />}</div>
       <ListItemSecondaryAction>
-      <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
+        <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
           <div>
             <IconButton
               disabled={testRunInProgress}

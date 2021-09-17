@@ -15,7 +15,7 @@ export default makeStyles((theme: Theme) => ({
   buttonWrapper: {
     display: 'flex',
     alignItems: 'center',
-    visibility: 'hidden'
+    visibility: 'hidden',
   },
   labelRunButton: {
     width: '10px',
