@@ -17,7 +17,10 @@ module SMART
       request.query_parameters['state']
     end
 
-    config options: { redirect_uri: "#{Inferno::Application['inferno_host']}/custom/smart/redirect" }
+    config options: {
+      redirect_uri: "#{Inferno::Application['inferno_host']}/custom/smart/redirect",
+      launch_uri: "#{Inferno::Application['inferno_host']}/custom/smart/launch"
+    }
 
     group do
       title 'Standalone Launch'

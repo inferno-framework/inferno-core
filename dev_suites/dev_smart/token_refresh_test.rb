@@ -21,7 +21,8 @@ module SMART
       the Pragma response header field with a value of no-cache to be
       consistent with the requirements of the inital access token exchange.
     )
-    input :well_known_token_url, :refresh_token, :client_id, :client_secret, :received_scopes
+    input :well_known_token_url, :refresh_token, :client_id, :received_scopes
+    input :client_secret, optional: true
     makes_request :token_refresh
 
     run do
