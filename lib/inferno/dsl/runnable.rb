@@ -365,6 +365,7 @@ module Inferno
         required_inputs = inputs.select do |input|
           !input_definitions[input][:optional] && !prior_outputs.include?(input)
         end
+        required_inputs.map! { |input_identifier| input_definitions[input_identifier][:name] }
         children_required_inputs = children.flat_map { |child| child.required_inputs(prior_outputs) }
         prior_outputs.concat(outputs)
         (required_inputs + children_required_inputs).flatten.uniq
