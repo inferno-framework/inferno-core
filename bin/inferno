@@ -2,7 +2,6 @@
 
 require 'pry'
 require_relative '../lib/inferno'
+require_relative '../lib/inferno/apps/cli'
 
-Inferno::Application.finalize!
-
-Pry.start
+Inferno::CLI::Main.start
