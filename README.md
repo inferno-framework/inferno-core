@@ -30,7 +30,7 @@ npm install
 bundle install
 
 # Set up database
-bundle exec rake db:migrate
+bundle exec bin/inferno migrate
 
 # Start Inferno Core server and UI
 npm run dev

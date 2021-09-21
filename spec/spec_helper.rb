@@ -12,6 +12,7 @@ SimpleCov.start do
   add_filter '/spec/'
   add_filter '/lib/inferno/db/migrations'
   add_filter '/lib/inferno/db/schema.rb'
+  add_filter '/lib/inferno/apps/cli'
 end
 
 if ENV['GITHUB_ACTIONS']
@@ -132,7 +133,9 @@ RSpec.configure do |config|
   end
 end
 
-require_relative '../lib/inferno'
+require_relative '../lib/inferno/config/application'
+require_relative '../lib/inferno/utils/migration'
+Inferno::Utils::Migration.new.run
 Inferno::Application.finalize!
 
 require_relative 'support/factory_bot'

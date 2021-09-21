@@ -1,4 +1,7 @@
+require 'active_support/all'
+require 'dotenv'
 require 'dry/system/container'
+require 'sequel'
 require_relative 'boot'
 
 module Inferno

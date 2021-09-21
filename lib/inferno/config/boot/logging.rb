@@ -11,6 +11,8 @@ Inferno::Application.boot(:logging) do
         Logger.new($stdout)
       end
 
+    logger.level = Logger::INFO
+
     register('logger', logger)
   end
 end
