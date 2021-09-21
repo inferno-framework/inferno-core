@@ -37,9 +37,19 @@ module Inferno
       # @example
       #   output(patient_id: '5', bearer_token: 'ABC')
       def output(outputs)
+        # TODO: update to track outputs that need to be updated
         outputs.each do |key, value|
           send("#{key}=", value)
+          outputs_to_persist[key] = value
         end
+      end
+
+      # @api private
+      # A hash containing outputs that have been set during execution and need
+      # to be persisted. A test may not always update all outputs, so this is
+      # used to prevent overwriting an output with nil when it wasn't updated.
+      def outputs_to_persist
+        @outputs_to_persist ||= {}
       end
 
       # Add an informational message to the results of a test. If passed a

@@ -12,10 +12,7 @@ module SMART
     output :state
     receives_request :redirect
 
-    # TODO: move to config
-    def redirect_uri
-      "#{Inferno::Application['inferno_host']}/custom/smart/redirect"
-    end
+    config options: { redirect_uri: "#{Inferno::Application['inferno_host']}/custom/smart/redirect" }
 
     run do
       assert_valid_http_uri(
@@ -28,7 +25,7 @@ module SMART
       oauth2_params = {
         'response_type' => 'code',
         'client_id' => client_id,
-        'redirect_uri' => redirect_uri,
+        'redirect_uri' => config.options[:redirect_uri],
         'scope' => requested_scopes,
         'state' => state,
         'aud' => url
@@ -56,7 +53,7 @@ module SMART
         message: %(
           [Follow this link to authorize with the SMART
           server](#{authorization_url}). Waiting to receive a request at
-          /custom/smart/redirect with a state of `#{state}`.
+          `#{config.options[:redirect_uri]}` with a state of `#{state}`.
         )
       )
     end

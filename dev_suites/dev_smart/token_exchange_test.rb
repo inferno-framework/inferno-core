@@ -18,10 +18,7 @@ module SMART
     uses_request :redirect
     makes_request :token
 
-    # TODO: move to config
-    def redirect_uri
-      "#{Inferno::Application['inferno_host']}/custom/smart/redirect"
-    end
+    config options: { redirect_uri: "#{Inferno::Application['inferno_host']}/custom/smart/redirect" }
 
     run do
       skip_if request.query_parameters['error'].present?, 'Error during authorization request'
@@ -29,7 +26,7 @@ module SMART
       oauth2_params = {
         grant_type: 'authorization_code',
         code: code,
-        redirect_uri: redirect_uri
+        redirect_uri: config.options[:redirect_uri]
       }
       oauth2_headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
 

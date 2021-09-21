@@ -67,7 +67,7 @@ module Inferno
         e.result
       rescue StandardError => e
         Application['logger'].error(e.full_message)
-        test_instance.result_message = format_markdown("Error: #{e.message}")
+        test_instance.result_message = format_markdown("Error: #{e.message}\n\n#{e.backtrace.first}")
         'error'
       end
 
@@ -143,10 +143,10 @@ module Inferno
 
     def save_outputs(runnable_instance)
       outputs =
-        runnable_instance.outputs.map do |output_identifier|
+        runnable_instance.outputs_to_persist.map do |output_identifier, value|
           {
             name: runnable_instance.class.config.output_name(output_identifier),
-            value: runnable_instance.send(output_identifier)
+            value: value
           }
         end
 

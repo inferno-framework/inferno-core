@@ -39,11 +39,16 @@ RSpec.describe SMART::TokenExchangeTest do
   end
 
   context 'with a confidential client' do
-    it 'passes if the token response has a 200 status', pending: true do
+    it 'passes if the token response has a 200 status' do
       create_redirect_request('http://example.com/redirect?code=CODE')
       stub_request(:post, token_url)
         .with(
-          body: { grant_type: 'authorization_code', code: 'CODE', redirect_uri: '' },
+          body:
+            {
+              grant_type: 'authorization_code',
+              code: 'CODE',
+              redirect_uri: 'http://localhost:4567/custom/smart/redirect'
+            },
           headers: { 'Authorization' => "Basic #{Base64.strict_encode64('CLIENT_ID:CLIENT_SECRET')}" }
         )
         .to_return(status: 200)
@@ -64,7 +69,7 @@ RSpec.describe SMART::TokenExchangeTest do
               grant_type: 'authorization_code',
               code: 'CODE',
               client_id: 'CLIENT_ID',
-              redirect_uri: described_class.new.redirect_uri
+              redirect_uri: described_class.config.options[:redirect_uri]
             }
         )
         .to_return(status: 200)
@@ -84,7 +89,7 @@ RSpec.describe SMART::TokenExchangeTest do
             grant_type: 'authorization_code',
             code: 'CODE',
             client_id: 'CLIENT_ID',
-            redirect_uri: described_class.new.redirect_uri
+            redirect_uri: described_class.config.options[:redirect_uri]
           }
       )
       .to_return(status: 201)

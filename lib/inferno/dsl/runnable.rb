@@ -164,7 +164,11 @@ module Inferno
         klass.config(config)
 
         hash_args.each do |key, value|
-          klass.send(key, *value)
+          if value.is_a? Array
+            klass.send(key, *value)
+          else
+            klass.send(key, value)
+          end
         end
 
         klass.children.each do |child_class|

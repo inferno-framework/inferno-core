@@ -33,11 +33,6 @@ module SMART
       * [Standalone Launch Sequence](http://hl7.org/fhir/smart-app-launch/#standalone-launch-sequence)
     )
 
-    # TODO: move to config
-    def redirect_uri
-      "#{Inferno::Application['inferno_host']}/custom/smart/redirect"
-    end
-
     config(
       inputs: {
         client_id: {

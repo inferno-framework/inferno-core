@@ -93,6 +93,21 @@ module Inferno
         error_message = message || "\"#{uri}\" is not a valid URI"
         assert uri =~ /\A#{URI::DEFAULT_PARSER.make_regexp(['http', 'https'])}\z/, error_message
       end
+
+      def assert_response_content_type(type, request: self.request)
+        header = request.response_header('Content-Type')
+        assert header.present?, no_content_type_message
+
+        assert header.value.start_with?(type), bad_content_type_message(type, header.value)
+      end
+
+      def no_content_type_message
+        'Response did not contain a `Content-Type` header.'
+      end
+
+      def bad_content_type_message(expected, received)
+        "Expected `Content-Type` to be `#{expected}`, but found `#{received}`"
+      end
     end
   end
 end
