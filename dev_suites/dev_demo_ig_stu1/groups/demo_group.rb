@@ -246,5 +246,13 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
       run { info "Received the following 'textarea' variable: '#{textarea}''" }
     end
+
+    test 'write to scratch' do
+      run { scratch[:abc] = 'xyz' }
+    end
+
+    test 'read from scratch' do
+      run { assert scratch[:abc] == 'xyz' }
+    end
   end
 end
