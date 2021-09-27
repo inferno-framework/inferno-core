@@ -13,10 +13,11 @@ module Inferno
       def_delegators 'self.class', :title, :id, :block, :inputs, :outputs
 
       attr_accessor :result_message
-      attr_reader :test_session_id
+      attr_reader :test_session_id, :scratch
 
       def initialize(**params)
         params[:inputs]&.each { |key, value| instance_variable_set("@#{key}", value) }
+        @scratch = params[:scratch]
         @test_session_id = params[:test_session_id]
       end
 

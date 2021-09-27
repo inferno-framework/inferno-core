@@ -38,13 +38,13 @@ module Inferno
       run_results.values
     end
 
-    def run(runnable)
+    def run(runnable, scratch = {})
       if runnable < Entities::Test
-        return existing_test_result(runnable) || run_test(runnable) if resuming
+        return existing_test_result(runnable) || run_test(runnable, scratch) if resuming
 
-        run_test(runnable)
+        run_test(runnable, scratch)
       else
-        run_group(runnable)
+        run_group(runnable, scratch)
       end
     end
 
@@ -52,11 +52,11 @@ module Inferno
       results_repo.result_for_test_run(runnable.reference_hash.merge(test_run_id: test_run.id))
     end
 
-    def run_test(test)
+    def run_test(test, scratch)
       inputs = load_inputs(test)
 
       input_json_string = JSON.generate(inputs)
-      test_instance = test.new(inputs: inputs, test_session_id: test_session.id)
+      test_instance = test.new(inputs: inputs, test_session_id: test_session.id, scratch: scratch)
 
       result = begin
         test_instance.load_named_requests
@@ -98,10 +98,10 @@ module Inferno
       test_result
     end
 
-    def run_group(group)
+    def run_group(group, scratch)
       results = []
       group.children.each do |child|
-        result = run(child)
+        result = run(child, scratch)
         results << result
         break if results.last.waiting?
       end
