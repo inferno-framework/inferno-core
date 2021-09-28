@@ -1,6 +1,7 @@
-require 'pry'
 
-module ONCProgram
+require_relative 'tls_test'
+
+module USCore
   class USCoreCapabilityStatement < Inferno::TestGroup
     title 'Capability Statement'
     description <<~DESCRIPTION
@@ -40,26 +41,11 @@ module ONCProgram
       * List of queries parameters supported
     DESCRIPTION
 
-    id :us_core_capability_statement
-
     input :url
     output :oauth_authorize_endpoint, :oauth_token_endpoint, :oauth_register_endpoint
 
-    test do
-      title 'FHIR server secured by transport layer security'
-      description <<~DESCRIPTION
-        All exchange of production data should be secured with TLS/SSL v1.2.
-      DESCRIPTION
-      # link 'https://www.hl7.org/fhir/security.html'
-
-
-      disable_tls_tests = ENV.fetch('DISABLE_TLS_TESTS').downcase
-      run do 
-        # config.yml?
-        omit 'Test has been omitted because TLS tests have been disabled by configuration.' if disable_tls_tests == 'true'
-
-      end
-    end
+    test from: :tls_test
+    
 
     test do
       title 'FHIR server supports the conformance interaction'
@@ -87,10 +73,6 @@ module ONCProgram
         if it contains the required information. It only checks to see if
         the RESTful interaction is supported and returns a valid
         CapabilityStatement resource.
-        
-        This test does not check to see if the server supports the `OPTION` command, though DSTU2 provides
-        this as a second method to retrieve the Conformance for the server.  It is not expected that clients
-        will broadly support this method, so this test does not cover this option.
       DESCRIPTION
       # link 'http://hl7.org/fhir/DSTU2/http.html#conformance'
 
