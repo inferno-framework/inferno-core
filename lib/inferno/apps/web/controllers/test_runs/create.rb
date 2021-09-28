@@ -5,7 +5,8 @@ module Inferno
         class Create < Controller
           include Import[
                     test_sessions_repo: 'repositories.test_sessions',
-                    session_data_repo: 'repositories.session_data'
+                    session_data_repo: 'repositories.session_data',
+                    test_runs_repo: 'repositories.test_runs'
                   ]
 
           PARAMS = [:test_session_id, :test_suite_id, :test_group_id, :test_id].freeze
@@ -14,7 +15,7 @@ module Inferno
             test_session = test_sessions_repo.find(params[:test_session_id])
 
             # if testsession.nil?
-            if test_sessions_repo.test_running?(test_session.id)
+            if test_runs_repo.active_test_run_for_session?(test_session.id)
               self.status = 409
               self.body = { error: 'Cannot run new test while another test run is in progress' }.to_json
               return
