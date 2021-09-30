@@ -17,17 +17,17 @@ const InputTextField: FC<InputTextFieldProps> = ({
   setInputsMap,
 }) => {
   const styles = useStyles();
-  const fieldLabel = requirement.optional ? (
-    requirement.title || requirement.name
-  ) : (
+  const fieldLabelText = (requirement.title || requirement.name) + (requirement.locked ? ' (*LOCKED)' : '');
+  const fieldLabel = requirement.optional ? ('fieldLabelText') : (
     <Fragment>
-      {requirement.title || requirement.name}
+      {fieldLabelText}
       <span className={styles.requiredLabel}> (required)</span>
     </Fragment>
   );
   return (
-    <ListItem>
+    <ListItem disabled={requirement.locked}>
       <TextField
+        disabled={requirement.locked}
         id={`requirement${index}_input`}
         className={styles.inputField}
         fullWidth
@@ -39,6 +39,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
           inputsMap.set(requirement.name, value);
           setInputsMap(new Map(inputsMap));
         }}
+        InputLabelProps={{ shrink: true }}
       />
     </ListItem>
   );

@@ -45,11 +45,8 @@ export interface TestInput {
   type?: 'text' | 'textarea';
   description?: string;
   default?: string;
-<<<<<<< HEAD
   optional?: boolean;
-=======
   locked?: boolean;
->>>>>>> ae1094b (Added the 'locked?' attribute to the TestInput interface in testSuiteModels.ts and then modified the InputModal to use that attribute. Also, added an example of 'locked input' to demo suite.)
 }
 
 export interface TestOutput {
