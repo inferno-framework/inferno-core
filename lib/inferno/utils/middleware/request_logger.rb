@@ -1,6 +1,6 @@
 module Inferno
   module Utils
-    # @api private
+    # @private
     module Middleware
       class RequestLogger
         attr_reader :app

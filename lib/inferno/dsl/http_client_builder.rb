@@ -4,7 +4,7 @@ module Inferno
     class HTTPClientBuilder
       attr_accessor :runnable
 
-      # @api private
+      # @private
       def build(runnable, block)
         self.runnable = runnable
         instance_exec(self, &block)
@@ -38,14 +38,14 @@ module Inferno
         @headers ||= headers
       end
 
-      # @api private
+      # @private
       def method_missing(name, *args, &block)
         return runnable.call(name, *args, &block) if runnable.respond_to? name
 
         super
       end
 
-      # @api private
+      # @private
       def respond_to_missing?(name)
         runnable.respond_to?(name) || super
       end

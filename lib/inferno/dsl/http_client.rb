@@ -16,7 +16,7 @@ module Inferno
     #         # performs a GET to https://example.com
     #         get
     #         # performs a GET to https://example.com/abc
-    #          get('abc')
+    #         get('abc')
     #
     #         request  # the most recent request
     #         response # the most recent response
@@ -27,7 +27,7 @@ module Inferno
     # @see Inferno::FHIRClientBuilder Documentation for the client
     #   configuration DSL
     module HTTPClient
-      # @api private
+      # @private
       def self.included(klass)
         klass.extend ClassMethods
         klass.include RequestStorage
@@ -47,7 +47,7 @@ module Inferno
         http_clients[client] = HTTPClientBuilder.new.build(self, definition)
       end
 
-      # @api private
+      # @private
       def http_clients
         @http_clients ||= {}
       end
@@ -104,7 +104,7 @@ module Inferno
       end
 
       module ClassMethods
-        # @api private
+        # @private
         def http_client_definitions
           @http_client_definitions ||= {}
         end

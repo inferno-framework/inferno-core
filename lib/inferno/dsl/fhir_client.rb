@@ -35,7 +35,7 @@ module Inferno
     # @see Inferno::FHIRClientBuilder Documentation for the client
     #   configuration DSL
     module FHIRClient
-      # @api private
+      # @private
       def self.included(klass)
         klass.extend ClassMethods
         klass.extend Forwardable
@@ -54,7 +54,7 @@ module Inferno
           FHIRClientBuilder.new.build(self, self.class.fhir_client_definitions[client])
       end
 
-      # @api private
+      # @private
       def fhir_clients
         @fhir_clients ||= {}
       end
@@ -128,13 +128,13 @@ module Inferno
 
       # @todo Make this a FHIR class method? Something like
       #   FHIR.class_for(resource_type)
-      # @api private
+      # @private
       def fhir_class_from_resource_type(resource_type)
         FHIR.const_get(resource_type.to_s.camelize)
       end
 
       module ClassMethods
-        # @api private
+        # @private
         def fhir_client_definitions
           @fhir_client_definitions ||= {}
         end

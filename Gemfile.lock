@@ -10,6 +10,7 @@ GEM
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     ast (2.4.2)
+    backports (3.21.0)
     bcp47 (0.3.3)
       i18n
     blueprinter (0.25.2)
@@ -262,6 +263,10 @@ GEM
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
     yard (0.9.26)
+    yard-junk (0.0.9)
+      backports (>= 3.18)
+      rainbow
+      yard
     zeitwerk (2.4.2)
 
 PLATFORMS
@@ -298,6 +303,7 @@ DEPENDENCIES
   sqlite3
   webmock
   yard
+  yard-junk
 
 RUBY VERSION
    ruby 2.7.3p183

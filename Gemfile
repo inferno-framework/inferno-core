@@ -33,6 +33,7 @@ end
 
 group :development do
   gem 'yard'
+  gem 'yard-junk'
 end
 
 group :test do

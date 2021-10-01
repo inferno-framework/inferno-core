@@ -94,7 +94,7 @@ module Inferno
       # and should not be used in real tests.
       #
       # @param message [String]
-      # @api private
+      # @private
       def cancel(message = '')
         raise Exceptions::CancelException, message
       end

@@ -2,12 +2,35 @@ module Inferno
   module Entities
     # A `TestRun` represents a request to execute an executable set of tests.
     #
-    # @attr_accessor [String] id of the test input
-    # @attr_accessor [String] test_session_id
-    # @attr_accessor [String] status
-    # @attr_accessor [String] test_suite_id
-    # @attr_accessor [String] test_group_id
-    # @attr_accessor [String] test_id
+    # @!attribute id
+    #   @return [String] id of the test run
+    # @!attribute created_at
+    #   @return [Time] creation timestamp
+    # @!attribute updated_at
+    #   @return [Time] update timestamp
+    # @!attribute test_session_id
+    #   @return [String]
+    # @!attribute status
+    #   @return [String]
+    # @!attribute test_id
+    #   @return [String, nil] id of the `Test` this result belongs to
+    # @!attribute test
+    #   @return [Test, nil] the `Test` this result belongs to
+    # @!attribute test_group_id
+    #   @return [String, nil] id of the `TestGroup` this result belongs to
+    # @!attribute test_group
+    #   @return [TestGroup, nil] the `TestGroup` this result belongs to
+    # @!attribute test_suite_id
+    #   @return [String, nil] id of the `TestSuite` this result belongs to
+    # @!attribute test_suite
+    #   @return [TestSuite, nil] the `TestSuite` this result belongs to
+    # @!attribute inputs
+    #   @return [Array<Hash>]
+    # @!attribute results
+    #   @return [Array<Inferno::Entities::Result>]
+    # @!attribute identifier
+    #   @return [String, nil] identfier for a waiting `TestRun`
+    # @!attribute wait_timeout
     class TestRun < Entity
       STATUS_OPTIONS = ['queued', 'running', 'waiting', 'done'].freeze
       ATTRIBUTES = [
