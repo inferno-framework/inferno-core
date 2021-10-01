@@ -253,7 +253,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       input :url_locked, title: 'URL', description: 'Example of locked, filled input field',
                          default: 'https://inferno.healthit.gov/reference-server/r4', locked: true
       input :textarea_locked, title: 'Textarea Input', description: 'Example of locked, filled input field',
-                              type: 'textarea', default: 'Hello Inferno demo user :)', locked: true
+                              type: 'textarea', default: 'Hello Inferno demo user.', locked: true
     end
 
     test 'write to scratch' do
