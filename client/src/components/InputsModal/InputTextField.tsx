@@ -17,8 +17,11 @@ const InputTextField: FC<InputTextFieldProps> = ({
   setInputsMap,
 }) => {
   const styles = useStyles();
-  const fieldLabelText = (requirement.title || requirement.name) + (requirement.locked ? ' (*LOCKED)' : '');
-  const fieldLabel = requirement.optional ? ('fieldLabelText') : (
+  const fieldLabelText =
+    (requirement.title || requirement.name) + (requirement.locked ? ' (*LOCKED)' : '');
+  const fieldLabel = requirement.optional ? (
+    'fieldLabelText'
+  ) : (
     <Fragment>
       {fieldLabelText}
       <span className={styles.requiredLabel}> (required)</span>

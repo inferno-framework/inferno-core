@@ -12,8 +12,11 @@ export interface InputTextAreaProps {
 
 const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, setInputsMap }) => {
   const styles = useStyles();
-  const fieldLabelText = (requirement.title || requirement.name) + (requirement.locked ? ' (*LOCKED)' : '');
-  const fieldLabel = requirement.optional ? (fieldLabelText) : (
+  const fieldLabelText =
+    (requirement.title || requirement.name) + (requirement.locked ? ' (*LOCKED)' : '');
+  const fieldLabel = requirement.optional ? (
+    fieldLabelText
+  ) : (
     <Fragment>
       {fieldLabelText}
       <span className={styles.requiredLabel}> (required)</span>
@@ -21,7 +24,7 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
   );
   return (
     <ListItem disabled={requirement.locked}>
-      <TextField 
+      <TextField
         disabled={requirement.locked}
         id={`requirement${index}_input`}
         className={styles.inputField}
