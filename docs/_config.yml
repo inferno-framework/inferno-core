@@ -24,9 +24,7 @@ url: "https://inferno-core.github.io" # the base hostname & protocol for your si
 
 # Build settings
 markdown: kramdown
-theme: minima
-plugins:
-  - jekyll-feed
+theme: just-the-docs
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
