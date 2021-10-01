@@ -20,7 +20,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
   const fieldLabelText =
     (requirement.title || requirement.name) + (requirement.locked ? ' (*LOCKED)' : '');
   const fieldLabel = requirement.optional ? (
-    'fieldLabelText'
+    fieldLabelText
   ) : (
     <Fragment>
       {fieldLabelText}
