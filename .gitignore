@@ -18,6 +18,6 @@
 
 /coverage
 /spec/examples.txt
-/docs/yard
+/docs/docs
 .yardoc
 node_modules

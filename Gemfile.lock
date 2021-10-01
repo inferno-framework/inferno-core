@@ -280,7 +280,7 @@ DEPENDENCIES
   fhir_models (~> 4.2.0)
   hanami-controller (~> 1.3)
   hanami-router (~> 1.3)
-  jekyll
+  jekyll (~> 3.6.3)
   oj
   pry
   pry-byebug
