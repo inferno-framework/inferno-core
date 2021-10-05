@@ -16,12 +16,13 @@
 title: Inferno
 email: inferno@groups.mitre.org
 description: Inferno documentation
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://inferno-core.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/inferno-core" # the subpath of your site, e.g. /blog
+url: "https://inferno-community.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 
 # Build settings
 markdown: kramdown
-theme: just-the-docs
+remote_theme: pmarsceill/just-the-docs
+# theme: just-the-docs
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
@@ -37,8 +38,8 @@ theme: just-the-docs
 
 aux_links:
   "Ruby API Docs":
-    - "/docs"
+    - "/inferno-core/docs"
   "JSON API Swagger Docs":
-    - "/api-docs"
+    - "/inferno-core/api-docs"
 
 aux_links_new_tab: true
