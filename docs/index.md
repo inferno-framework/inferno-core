@@ -41,3 +41,8 @@ Inferno is a tool for testing FHIR server implementations.
 test kit that you would like included here.
 - [International Patient Summary (IPS) IG Test Kit](https://github.com/inferno-community/ips-test-kit)
 - [SMART Health Cards: Vaccination and Testing IG Test Kit](https://github.com/inferno-community/shc-vaccination-test-kit)
+
+## Contact the Inferno Team
+The fastest way to reach the Inferno team is via the [Inferno Zulip
+stream](https://chat.fhir.org/#narrow/stream/179309-inferno). You can also
+[e-mail the team](mailto:inferno@groups.mitre.org).

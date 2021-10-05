@@ -27,12 +27,6 @@ After installation, run the `./run.sh` script to start Inferno.
 - Navigate to [localhost/validator](http://localhost/validator) to access a
   standalone validator that can be used to validate individual FHIR resources.
 
-## Finding Help
-The fastest way to get help with Inferno is by reaching out to the team on the
-[Inferno
-Zulip stream](https://chat.fhir.org/#narrow/stream/179309-inferno). You can
-also [e-mail the team](mailto:inferno@groups.mitre.org).
-
 ## Next Steps
 Now that Inferno is running, you could learn about [the file/directory
 organization](/repo-layout-and-organizatiot.html) or just start [writing
