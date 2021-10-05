@@ -26,12 +26,12 @@ module ONCProgram
     input :url,
           :client_id,
           :confidential_client,
-          :client_secret,
           :scopes,
           :oauth_authorize_endpoint,
           :oauth_token_endpoint,
           :initiate_login_uri,
           :redirect_uris
+    input :client_secret, optional: true
 
     id :smart_invalid_launch
 

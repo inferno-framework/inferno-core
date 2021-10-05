@@ -10,10 +10,11 @@ interface MessagesListProps {
 
 const MessagesList: FC<MessagesListProps> = ({ messages }) => {
   const styles = useStyles();
+  const uniqueMessages = messages; //new Set<Message>();
 
   const messageListItems =
-    messages.length > 0 ? (
-      messages.map((message: Message, index: number) => {
+    uniqueMessages.length > 0 ? (
+      uniqueMessages.map((message: Message, index: number) => {
         return (
           <TableRow key={`msgRow-${index}`}>
             <TableCell>

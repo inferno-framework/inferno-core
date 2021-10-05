@@ -119,10 +119,18 @@ module Inferno
       #   other tests
       # @param _options [Hash] TODO
       # @return [Inferno::Entities::Request]
-      def fhir_search(resource_type, client: :default, params: {}, name: nil, **_options)
+      def fhir_search(resource_type, client: :default, params: {}, name: nil, search_method: :get, **_options)
         store_request('outgoing', name) do
+          options = {
+            search: {
+              compartment: nil
+            }
+          }
+  
+          options[:search][:parameters] = params if search_method == :get
+          options[:search][:body] = params if search_method == :post
           fhir_client(client)
-            .search(fhir_class_from_resource_type(resource_type), search: { parameters: params })
+            .search(fhir_class_from_resource_type(resource_type), options)
         end
       end
 

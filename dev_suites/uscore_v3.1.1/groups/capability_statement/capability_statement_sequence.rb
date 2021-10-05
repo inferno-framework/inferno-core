@@ -76,7 +76,19 @@ module USCore
       DESCRIPTION
       # link 'http://hl7.org/fhir/DSTU2/http.html#conformance'
 
-      run {}
+      run do
+        client = fhir_client(:single_patient_client)
+        client.set_no_auth
+        conformance = client.conformance_statement
+        assert_response_status(200, client.reply)
+
+        # output conformance: conformance
+
+        # fhir_version?
+        # assert_valid_conformance(conformance)
+
+        # how to handle server capabilities?
+      end
     end
 
     test do

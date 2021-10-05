@@ -93,6 +93,11 @@ module Inferno
         error_message = message || "\"#{uri}\" is not a valid URI"
         assert uri =~ /\A#{URI::DEFAULT_PARSER.make_regexp(['http', 'https'])}\z/, error_message
       end
+
+      def assert_response_ok(response: self.response, error_message: '')
+        message = "Bad response code: expected 200, 201, but found #{response.code}. #{error_message}"
+        assert [200, 201].include?(response.code), message
+      end
     end
   end
 end

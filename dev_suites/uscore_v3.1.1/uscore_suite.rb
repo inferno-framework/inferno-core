@@ -39,8 +39,10 @@ module USCore # rubocop:disable Naming/ClassAndModuleCamelCase
       title 'Single Patient API'
 
       input :url
-  
-      fhir_client :single_patient_api do
+      input :standalone_patient_id, title: 'Patient ID'
+      input :standalone_access_token, title: 'Bearer Token'
+
+      fhir_client :single_patient_client do
         url :url
         bearer_token :standalone_access_token 
       end

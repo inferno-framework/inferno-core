@@ -12,8 +12,9 @@ module SMART
 
     input :code,
           :smart_token_url,
-          :client_id,
-          :client_secret
+          :client_id
+
+    input :client_secret, optional: true
     output :token_retrieval_time
     uses_request :redirect
     makes_request :token
