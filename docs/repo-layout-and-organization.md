@@ -60,6 +60,9 @@ distributed.
 - All other test files should live in a subdirectory in `lib`, and
   conventionally this subdirectory has the same name as the single file in `lib`
   without the extension.
+- The `package.tgz` file for the IG you're test against should be placed in
+  `lib/your_test_kit_name/igs`. This will allow you to validate against the
+  profiles in that IG.
 
 For example, if I were creating a test kit for the US Core Implementation Guide,
 my `lib` folder might look like this:

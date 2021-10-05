@@ -18,8 +18,6 @@ email: inferno@groups.mitre.org
 description: Inferno documentation
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://inferno-core.github.io" # the base hostname & protocol for your site, e.g. http://example.com
-# twitter_username: jekyllrb
-# github_username:  jekyll
 
 # Build settings
 markdown: kramdown
@@ -36,3 +34,11 @@ theme: just-the-docs
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+
+aux_links:
+  "Ruby API Docs":
+    - "/docs"
+  "JSON API Swagger Docs":
+    - "/api-docs"
+
+aux_links_new_tab: true
