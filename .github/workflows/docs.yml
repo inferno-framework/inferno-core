@@ -1,0 +1,32 @@
+name: Docs
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ['2.7.3']
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - name: Remove /docs/docs from .gitignore
+      run: sed -i '/\/docs\/docs/d' .gitignore
+    - name: Generate yard docs
+      run: bundle exec bin/docs
+    - name: Commit docs
+      run: git add docs/docs && git commit -m 'generate docs'
+    - name: Push to gh-pages branch
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        force: true
