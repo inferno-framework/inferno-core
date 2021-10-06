@@ -36,8 +36,9 @@ Inferno also implements more specific assertion to handle common cases, such as:
 - Verifying that a string is valid JSON.
 - Validating a FHIR Resource.
 
-Check out the [assertions API documentation](/docs/Inferno/DSL/Assertions.html)
-for all available assertions.
+Check out the [assertions API
+documentation](/inferno-core/docs/Inferno/DSL/Assertions.html) for all available
+assertions.
 
 ## Results
 Tests can have the following results in Inferno:
@@ -69,7 +70,7 @@ Inferno provides methods to assign some specific results to a test:
 The `*_if` methods take the same kind of arguments as `assert`, a value whose
 truthiness will be evaluated, and a message to be displayed. The other methods
 just take a message. For more information, view the [results API
-documentation](/docs/Inferno/DSL/Results.html).
+documentation](/inferno-core/docs/Inferno/DSL/Results.html).
 
 ```ruby
 test do
@@ -113,6 +114,8 @@ test do
   end
 end
 ```
-[`info` in the API docs](/docs/Inferno/Entities/Test.html#info-instance_method)
+[`info` in the API
+docs](/inferno-core/docs/Inferno/Entities/Test.html#info-instance_method)
 
-[`warning` in the API docs](/docs/Inferno/Entities/Test.html#warning-instance_method)
+[`warning` in the API
+docs](/inferno-core/docs/Inferno/Entities/Test.html#warning-instance_method)

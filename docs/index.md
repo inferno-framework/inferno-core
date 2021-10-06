@@ -16,10 +16,10 @@ nav_order: 1
 Inferno is a tool for testing FHIR server implementations.
 
 ## Documentation Resources
-- View the [JSON API Documentation](/api-docs) for information on interacting
-  with Inferno via a JSON API.
-- View the [Inferno Ruby Documentation](/docs) for detailed information on
-  Inferno's ruby api.
+- View the [JSON API Documentation](/inferno-core/api-docs) for information on
+  interacting with Inferno via a JSON API.
+- View the [Inferno Ruby Documentation](/inferno-core/docs) for detailed
+  information on Inferno's ruby api.
 
 ## Main Inferno Repositories
 - [Inferno Core](https://github.com/inferno-community/inferno-core) - The

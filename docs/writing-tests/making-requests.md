@@ -18,8 +18,9 @@ Inferno provides support for making FHIR and generic http requests.
 ### Accessing Requests and Responses
 After making a FHIR/http request, information about it is made available via several
 methods:
-- `request` - returns a [`Request`](/docs/Inferno/Entities/Request.html) object
-  which contains all of the information about the request and the response.
+- `request` - returns a
+  [`Request`](/inferno-core/docs/Inferno/Entities/Request.html) object which
+  contains all of the information about the request and the response.
 - `response` - returns a Hash containing the `status`, `headers`, and `body` of
   the response.
 - `resource` - returns the response body as a FHIR model.
@@ -36,11 +37,11 @@ test do
 end
 ```
 
-When making [assertions](/docs/Inferno/DSL/Assertions.html) against a response
-or resource, the assertions which are designed to be used with responses and
-resources will automatically use the response/resource from the last request, so
-it isn't necessary to pass one in unless you want to make assertions against a
-different response/resource.
+When making [assertions](/inferno-core/docs/Inferno/DSL/Assertions.html) against
+a response or resource, the assertions which are designed to be used with
+responses and resources will automatically use the response/resource from the
+last request, so it isn't necessary to pass one in unless you want to make
+assertions against a different response/resource.
 
 ```ruby
 test do
@@ -141,7 +142,7 @@ test do
   end
 end
 ```
-[methods for defining FHIR clients in the API docs](/docs/Inferno/DSL/FHIRClientBuilder.html)
+[methods for defining FHIR clients in the API docs](/inferno-core/docs/Inferno/DSL/FHIRClientBuilder.html)
 
 ### Available FHIR Request Methods
 The following methods are currently available for making FHIR requests:
@@ -150,9 +151,9 @@ The following methods are currently available for making FHIR requests:
 - `fhir_search`
 - `fhir_operation`
 For more details on these methods, see the [FHIR Client API
-documentation](/docs/Inferno/DSL/FHIRClient.html). If you need to make other
-types of FHIR requests, [contact the Inferno team](/#contact-the-inferno-team)
-so we can prioritize adding them.
+documentation](/inferno-core/docs/Inferno/DSL/FHIRClient.html). If you need to
+make other types of FHIR requests, [contact the Inferno
+team](/#contact-the-inferno-team) so we can prioritize adding them.
 
 ### Making Requests to Multiple Servers
 If you need to make requests to multiple fhir servers, this can be accomplished
@@ -211,6 +212,6 @@ The following methods are currently available for making http requests:
 - `get`
 - `post`
 For more details on these methods, see the [HTTP Client API
-documentation](/docs/Inferno/DSL/HTTPClient.html). If you need to make other
-types of http requests, [contact the Inferno team](/#contact-the-inferno-team)
-so we can prioritize adding them.
+documentation](/inferno-core/docs/Inferno/DSL/HTTPClient.html). If you need to
+make other types of http requests, [contact the Inferno
+team](/#contact-the-inferno-team) so we can prioritize adding them.

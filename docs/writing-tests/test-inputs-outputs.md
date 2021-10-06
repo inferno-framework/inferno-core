@@ -45,7 +45,8 @@ test do
   end
 end
 ```
-[`input` in the API docs](/docs/Inferno/DSL/Runnable.html#input-instance_method)
+[`input` in the API
+docs](/inferno-core/docs/Inferno/DSL/Runnable.html#input-instance_method)
 
 ### Defining Multiple Inputs
 It is possible to define multiple inputs in a single `input` call, but not with
@@ -82,9 +83,10 @@ test do
   ...
 end
 ```
-[`output` for defining outputs in the API docs](/docs/Inferno/Entities/Test.html#output-class_method)
+[`output` for defining outputs in the API docs](/inferno-core/docs/Inferno/Entities/Test.html#output-class_method)
 
-[`output` for assigning values to outputs in the API docs](/docs/Inferno/Entities/Test.html#output-instance_method)
+[`output` for assigning values to outputs in the API
+docs](/inferno-core/docs/Inferno/Entities/Test.html#output-instance_method)
 
 ## Handling Complex Objects
 Since inputs and outputs are all stored as strings, special handling is needed

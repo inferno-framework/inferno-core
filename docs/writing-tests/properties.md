@@ -19,7 +19,8 @@ test do
   title 'US Core Patient Read Interaction'
 end
 ```
-[`title` in the API docs](/docs/Inferno/DSL/Runnable.html#title-instance_method)
+[`title` in the API
+docs](/inferno-core/docs/Inferno/DSL/Runnable.html#title-instance_method)
 
 ## Id
 A unique identifier for a test/group/suite. Inferno will automatically create
@@ -35,7 +36,8 @@ group do
   test from: :us_core_patient_read
 end
 ```
-[`id` in the API docs](/docs/Inferno/DSL/Runnable.html#id-instance_method)
+[`id` in the API
+docs](/inferno-core/docs/Inferno/DSL/Runnable.html#id-instance_method)
 
 ## Description
 A detailed description which is displayed in the UI.
@@ -60,12 +62,13 @@ test do
   )
 end
 ```
-[`description` in the API docs](/docs/Inferno/DSL/Runnable.html#description-instance_method)
+[`description` in the API
+docs](/inferno-core/docs/Inferno/DSL/Runnable.html#description-instance_method)
 
 ## Run
 (`Test`s only) `run` defines a block of code which is executed when the test is
 run. A test will typically make one or more
-[assertions](/docs/Inferno/DSL/Assertions.html). If no assertions fail, then the
+[assertions](/inferno-core/docs/Inferno/DSL/Assertions.html). If no assertions fail, then the
 test passes.
 ```ruby
 test do
@@ -74,4 +77,5 @@ test do
   end
 end
 ```
-[`run` in the API docs](/docs/Inferno/Entities/Test.html#block-class_method)
+[`run` in the API
+docs](/inferno-core/docs/Inferno/Entities/Test.html#block-class_method)

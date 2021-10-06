@@ -29,5 +29,5 @@ After installation, run the `./run.sh` script to start Inferno.
 
 ## Next Steps
 Now that Inferno is running, you could learn about [the file/directory
-organization](/repo-layout-and-organizatiot.html) or just start [writing
-tests](/writing-tests).
+organization](/inferno-core/repo-layout-and-organization.html) or just start
+[writing tests](/inferno-core/writing-tests).
