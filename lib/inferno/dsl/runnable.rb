@@ -69,6 +69,7 @@ module Inferno
       end
 
       # An instance of the repository for the class using this module
+      # @private
       def repository
         nil
       end
@@ -182,6 +183,10 @@ module Inferno
         klass.class_eval(&block) if block_given?
       end
 
+      # Set/Get a runnable's id
+      #
+      # @param new_id [String,Symbol]
+      # @return [String,Symbol] the id
       def id(new_id = nil)
         return @id if new_id.nil? && @id.present?
 
@@ -197,12 +202,20 @@ module Inferno
         @id = "#{prefix}#{@base_id}"
       end
 
+      # Set/Get a runnable's title
+      #
+      # @param new_title [String]
+      # @return [String] the title
       def title(new_title = nil)
         return @title if new_title.nil?
 
         @title = new_title
       end
 
+      # Set/Get a runnable's description
+      #
+      # @param new_description [String]
+      # @return [String] the description
       def description(new_description = nil)
         return @description if new_description.nil?
 
@@ -260,10 +273,12 @@ module Inferno
         @inputs ||= []
       end
 
+      # @private
       def input_definitions
         config.inputs.slice(*inputs)
       end
 
+      # @private
       def output_definitions
         config.outputs.slice(*outputs)
       end
@@ -357,10 +372,12 @@ module Inferno
         Inferno.routes << { method: method, path: path, handler: handler, suite: suite }
       end
 
+      # @private
       def test_count
         @test_count ||= children&.reduce(0) { |sum, child| sum + child.test_count } || 0
       end
 
+      # @private
       def required_inputs(prior_outputs = [])
         required_inputs = inputs.select do |input|
           !input_definitions[input][:optional] && !prior_outputs.include?(input)
@@ -371,6 +388,7 @@ module Inferno
         (required_inputs + children_required_inputs).flatten.uniq
       end
 
+      # @private
       def missing_inputs(submitted_inputs)
         submitted_inputs = [] if submitted_inputs.nil?
 
