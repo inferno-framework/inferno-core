@@ -153,7 +153,7 @@ The following methods are currently available for making FHIR requests:
 For more details on these methods, see the [FHIR Client API
 documentation](/inferno-core/docs/Inferno/DSL/FHIRClient.html). If you need to
 make other types of FHIR requests, [contact the Inferno
-team](/#contact-the-inferno-team) so we can prioritize adding them.
+team](/inferno-core/#contact-the-inferno-team) so we can prioritize adding them.
 
 ### Making Requests to Multiple Servers
 If you need to make requests to multiple fhir servers, this can be accomplished
@@ -214,4 +214,4 @@ The following methods are currently available for making http requests:
 For more details on these methods, see the [HTTP Client API
 documentation](/inferno-core/docs/Inferno/DSL/HTTPClient.html). If you need to
 make other types of http requests, [contact the Inferno
-team](/#contact-the-inferno-team) so we can prioritize adding them.
+team](/inferno-core/#contact-the-inferno-team) so we can prioritize adding them.

@@ -5,12 +5,6 @@ has_children: true
 ---
 # Writing Tests in Inferno
 {: .no_toc}
-
-## Table of Contents
-{: .no_toc .text-delta}
-
-1. TOC
-{:toc}
 ---
 ## Test Suite Structure
 There are three classes used to organize tests in Inferno:
