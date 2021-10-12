@@ -13,6 +13,7 @@ import { useHistory } from 'react-router-dom';
 export interface TestSuiteTreeProps extends TestSuite {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   selectedRunnable: string;
+  testRunInProgress: boolean;
 }
 
 function addDefaultExpanded(testGroups: TestGroup[], defaultExpanded: string[]): void {
@@ -31,6 +32,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   result,
   selectedRunnable,
   runTests,
+  testRunInProgress,
 }) => {
   const styles = useStyles();
   const history = useHistory();
@@ -59,6 +61,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
         data-testid={`${testGroup.id}-treeitem`}
         onLabelClick={treeItemLabelClick}
         runTests={runTests}
+        testRunInProgress={testRunInProgress}
       />
     ));
 
@@ -82,6 +85,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
                   runTests={runTests}
                   result={result}
                   runnableType={RunnableType.TestSuite}
+                  testRunInProgress={testRunInProgress}
                 />
               }
               onLabelClick={(event) => treeItemLabelClick(event, id)}

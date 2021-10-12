@@ -7,6 +7,7 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  Tooltip,
 } from '@material-ui/core';
 import { RunnableType, TestGroup } from 'models/testSuiteModels';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
@@ -15,9 +16,16 @@ import ResultIcon from './ResultIcon';
 
 interface TestGroupListItemProps extends TestGroup {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
+  testRunInProgress: boolean;
 }
 
-const TestGroupListItem: FC<TestGroupListItemProps> = ({ title, result, id, runTests }) => {
+const TestGroupListItem: FC<TestGroupListItemProps> = ({
+  title,
+  result,
+  id,
+  runTests,
+  testRunInProgress,
+}) => {
   const styles = useStyles();
 
   return (
@@ -35,16 +43,21 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({ title, result, id, runT
       />
       <div className={styles.testIcon}>{<ResultIcon result={result} />}</div>
       <ListItemSecondaryAction>
-        <IconButton
-          edge="end"
-          size="small"
-          onClick={() => {
-            runTests(RunnableType.TestGroup, id);
-          }}
-          data-testid={`${id}-run-button`}
-        >
-          <PlayArrowIcon />
-        </IconButton>
+        <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
+          <div>
+            <IconButton
+              disabled={testRunInProgress}
+              edge="end"
+              size="small"
+              onClick={() => {
+                runTests(RunnableType.TestGroup, id);
+              }}
+              data-testid={`${id}-run-button`}
+            >
+              <PlayArrowIcon />
+            </IconButton>
+          </div>
+        </Tooltip>
       </ListItemSecondaryAction>
     </ListItem>
   );

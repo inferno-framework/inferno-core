@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Result, RunnableType } from 'models/testSuiteModels';
-import { IconButton, Typography } from '@material-ui/core';
+import { IconButton, Typography, Tooltip } from '@material-ui/core';
 import useStyles from './styles';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import CondensedResultIcon from './CondensedResultIcon';
@@ -11,9 +11,17 @@ export interface TreeItemLabelProps {
   result?: Result;
   runnableType: RunnableType;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
+  testRunInProgress: boolean;
 }
 
-const TreeItemLabel: FC<TreeItemLabelProps> = ({ title, id, result, runTests, runnableType }) => {
+const TreeItemLabel: FC<TreeItemLabelProps> = ({
+  title,
+  id,
+  result,
+  runTests,
+  runnableType,
+  testRunInProgress,
+}) => {
   const styles = useStyles();
   return (
     <div className={styles.labelRoot} data-testid={`tiLabel-${id}`}>
@@ -21,13 +29,18 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({ title, id, result, runTests, ru
         {title}
       </Typography>
       <CondensedResultIcon result={result} />
-      <IconButton
-        data-testid={`runButton-${id}`}
-        onClick={() => runTests(runnableType, id)}
-        className={styles.labelRunButton}
-      >
-        <PlayArrowIcon />
-      </IconButton>
+      <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
+        <div className={styles.buttonWrapper}>
+          <IconButton
+            disabled={testRunInProgress}
+            data-testid={`runButton-${id}`}
+            onClick={() => runTests(runnableType, id)}
+            className={styles.labelRunButton}
+          >
+            <PlayArrowIcon />
+          </IconButton>
+        </div>
+      </Tooltip>
     </div>
   );
 };

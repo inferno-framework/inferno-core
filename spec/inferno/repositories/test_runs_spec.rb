@@ -83,4 +83,22 @@ RSpec.describe Inferno::Repositories::TestRuns do
       expect(results.first.requests.length).to eq(requests.length)
     end
   end
+
+  describe '#check_for_active_test_run' do
+    context 'with an active test' do
+      it 'returns true' do
+        repo.mark_as_running(test_run.id)
+
+        expect(repo.active_test_run_for_session?(test_session.id)).to be true
+      end
+    end
+
+    context 'without an active test' do
+      it 'returns false' do
+        repo.mark_as_done(test_run.id)
+
+        expect(repo.active_test_run_for_session?(test_session.id)).to be false
+      end
+    end
+  end
 end

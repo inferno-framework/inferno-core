@@ -80,6 +80,7 @@ const testSuiteTreeProps: TestSuiteTreeProps = {
   test_groups: [sequence1, sequence2, parentGroup],
   runTests: runTestsMock,
   selectedRunnable: 'example suite',
+  testRunInProgress: false,
 };
 
 test('Test tree renders', () => {

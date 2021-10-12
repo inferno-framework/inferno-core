@@ -5,18 +5,22 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     padding: theme.spacing(0.5, 0),
-    '&:hover > $labelRunButton': {
+    '&:hover > $buttonWrapper': {
       visibility: 'visible',
     },
   },
   labelText: {
     flexGrow: 1,
   },
+  buttonWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    visibility: 'hidden',
+  },
   labelRunButton: {
     width: '10px',
     height: '10px',
     marginRight: '5px',
-    visibility: 'hidden',
   },
   testSuiteTreePanel: {
     height: 'fit-content',

@@ -29,6 +29,7 @@ import ReactMarkdown from 'react-markdown';
 interface TestListItemProps extends Test {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
+  testRunInProgress: boolean;
 }
 
 const TestListItem: FC<TestListItemProps> = ({
@@ -38,6 +39,7 @@ const TestListItem: FC<TestListItemProps> = ({
   description,
   runTests,
   updateRequest,
+  testRunInProgress,
 }) => {
   const styles = useStyles();
 
@@ -101,16 +103,21 @@ const TestListItem: FC<TestListItemProps> = ({
           {requestsBadge}
           {expandButton}
           <ListItemSecondaryAction>
-            <IconButton
-              edge="end"
-              size="small"
-              onClick={() => {
-                runTests(RunnableType.Test, id);
-              }}
-              data-testid={`${id}-run-button`}
-            >
-              <PlayArrowIcon />
-            </IconButton>
+            <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
+              <div>
+                <IconButton
+                  disabled={testRunInProgress}
+                  edge="end"
+                  size="small"
+                  onClick={() => {
+                    runTests(RunnableType.Test, id);
+                  }}
+                  data-testid={`${id}-run-button`}
+                >
+                  <PlayArrowIcon />
+                </IconButton>
+              </div>
+            </Tooltip>
           </ListItemSecondaryAction>
         </ListItem>
         {result?.result_message ? (

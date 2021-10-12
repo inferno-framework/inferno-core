@@ -19,6 +19,7 @@ RSpec.describe '/test_runs' do
 
     context 'with valid input' do
       it 'renders the test_run json' do
+        Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
         post_json create_path, test_run_definition
 
         expect(last_response.status).to eq(200)
@@ -29,6 +30,7 @@ RSpec.describe '/test_runs' do
       end
 
       it 'persists inputs to the session data table' do
+        Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
         session_data_repo = Inferno::Repositories::SessionData.new
         inputs = [
           { name: 'input1', value: 'value1' },
@@ -44,6 +46,30 @@ RSpec.describe '/test_runs' do
           value = session_data_repo.load(test_session_id: test_session.id, name: input[:name])
           expect(value).to eq(input[:value])
         end
+      end
+    end
+
+    context 'with a test_run currently in progress' do
+      it 'returns a 409 error' do
+        post_json create_path, test_run_definition
+
+        expect(last_response.status).to eq(409)
+      end
+    end
+
+    context 'with the wait_group in progress' do
+      let(:runner) { Inferno::TestRunner.new(test_session: wait_test_session, test_run: wait_test_run) }
+      let(:wait_test_session) { repo_create(:test_session, test_suite_id: 'demo') }
+      let(:wait_test_run) do
+        repo_create(:test_run, runnable: { test_group_id: wait_group.id }, test_session_id: wait_test_session.id)
+      end
+      let(:wait_group) { Inferno::Repositories::TestSuites.new.find('demo').groups.last }
+
+      it 'returns a 409 error' do
+        runner.run(wait_group)
+        post_json create_path, test_run_definition
+
+        expect(last_response.status).to eq(409)
       end
     end
   end
