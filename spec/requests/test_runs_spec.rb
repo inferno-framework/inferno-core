@@ -63,13 +63,55 @@ RSpec.describe '/test_runs' do
       let(:wait_test_run) do
         repo_create(:test_run, runnable: { test_group_id: wait_group.id }, test_session_id: wait_test_session.id)
       end
-      let(:wait_group) { Inferno::Repositories::TestSuites.new.find('demo').groups.last }
+      let(:wait_group) do
+        Inferno::Repositories::TestSuites.new.find('demo').groups.find do |group|
+          group.id == 'demo-wait_group'
+        end
+      end
 
       it 'returns a 409 error' do
         runner.run(wait_group)
         post_json create_path, test_run_definition
 
         expect(last_response.status).to eq(409)
+      end
+    end
+
+    context 'with a runnable that is marked as not user runnable' do
+      let(:run_as_group_group_test_run_definition) do
+        {
+          test_session_id: run_as_group_test_session.id,
+          test_group_id: run_as_group_group.id
+        }
+      end
+      let(:run_as_group_test_test_run_definition) do
+        {
+          test_session_id: run_as_group_test_session.id,
+          test_id: run_as_group_test.id
+        }
+      end
+      let(:run_as_group_test_session) { repo_create(:test_session, test_suite_id: 'demo') }
+      let(:run_as_group_group) do
+        Inferno::Repositories::TestSuites.new.find('demo').groups.find do |group|
+          group.id == 'demo-run_as_group_examples'
+        end.groups.first.groups.first
+      end
+      let(:run_as_group_test) do
+        Inferno::Repositories::TestSuites.new.find('demo').groups.find do |group|
+          group.id == 'demo-run_as_group_examples'
+        end.groups.first.groups.first.tests.first
+      end
+
+      it 'returns a 422 error for an unrunnable group' do
+        post_json create_path, run_as_group_group_test_run_definition
+
+        expect(last_response.status).to eq(422)
+      end
+
+      it 'returns a 422 error for an unrunnable test' do
+        post_json create_path, run_as_group_test_test_run_definition
+
+        expect(last_response.status).to eq(422)
       end
     end
   end
