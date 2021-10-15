@@ -22,7 +22,7 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({
   runTests,
   runnableType,
   testRunInProgress,
-  user_runnable
+  user_runnable,
 }) => {
   const styles = useStyles();
   return (
@@ -32,18 +32,18 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({
       </Typography>
       <CondensedResultIcon result={result} />
       {user_runnable ? (
-      <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
-        <div className={styles.buttonWrapper}>
-          <IconButton
-            disabled={testRunInProgress}
-            data-testid={`runButton-${id}`}
-            onClick={() => runTests(runnableType, id)}
-            className={styles.labelRunButton}
-          >
-            <PlayArrowIcon />
-          </IconButton>
-        </div>
-      </Tooltip>
+        <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
+          <div className={styles.buttonWrapper}>
+            <IconButton
+              disabled={testRunInProgress}
+              data-testid={`runButton-${id}`}
+              onClick={() => runTests(runnableType, id)}
+              className={styles.labelRunButton}
+            >
+              <PlayArrowIcon />
+            </IconButton>
+          </div>
+        </Tooltip>
       ) : null}
     </div>
   );

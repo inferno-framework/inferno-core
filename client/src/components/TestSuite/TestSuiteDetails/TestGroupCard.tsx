@@ -20,8 +20,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
   const styles = useStyles();
 
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
-  const showRunButton =
-    runnableIsTestSuite(runnable) || (runnable as TestGroup).user_runnable;
+  const showRunButton = runnableIsTestSuite(runnable) || (runnable as TestGroup).user_runnable;
   const runButton = showRunButton ? (
     <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
       <div>
