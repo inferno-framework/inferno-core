@@ -95,8 +95,8 @@ module Inferno
       end
 
       def assert_response_ok(response: self.response, error_message: '')
-        message = "Bad response code: expected 200, 201, but found #{response.code}. #{error_message}"
-        assert [200, 201].include?(response.code), message
+        message = "Bad response code: expected 200, 201, but found #{response[:status]}. #{error_message}"
+        assert [200, 201].include?(response[:status]), message
       end
     end
   end

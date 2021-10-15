@@ -1,7 +1,7 @@
 require_relative '../../utils/tls_tester'
 require_relative '../../utils/tls_assertions'
 module USCore
-  class AppLaunchTest < Inferno::Test
+  class TLSTest < Inferno::Test
     include USCoreUtils::TLS_Assertions
 
     title 'FHIR server secured by transport layer security --test--'

@@ -24,17 +24,20 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
     listItems = runnable.test_groups.map((testGroup: TestGroup) => {
       return <TestGroupListItem key={`li-${testGroup.id}`} {...testGroup} runTests={runTests} />;
     });
-  } else if ('tests' in runnable) {
-    listItems = runnable.tests.map((test: Test) => {
-      return (
-        <TestListItem
-          key={`li-${test.id}`}
-          {...test}
-          runTests={runTests}
-          updateRequest={updateRequest}
-        />
-      );
-    });
+  }
+  if ('tests' in runnable) {
+    listItems = listItems.concat(
+      runnable.tests.map((test: Test) => {
+        return (
+          <TestListItem
+            key={`li-${test.id}`}
+            {...test}
+            runTests={runTests}
+            updateRequest={updateRequest}
+          />
+        );
+      })
+    );
   }
 
   const descriptionCard =

@@ -52,45 +52,43 @@ module ONCProgram
       DESCRIPTION
       # link 'https://www.hl7.org/fhir/security.html'
 
-
       disable_tls_tests = ENV.fetch('DISABLE_TLS_TESTS').downcase
-      run do 
+      run do
         # config.yml?
         omit 'Test has been omitted because TLS tests have been disabled by configuration.' if disable_tls_tests == 'true'
-
       end
     end
 
     test do
       title 'FHIR server supports the conformance interaction'
       description <<~DESCRIPTION
-        The conformance 'whole system' interaction provides a method to get
-        the conformance statement for the FHIR server. This test checks that
-        the server responds to a `GET` request at the following endpoint:
-
-        ```
-        GET [base]/metadata
-        ```
-
-        This test checks the following SHALL requirement:
-
-        > Applications SHALL return a resource that describes the
-          functionality of the server end-point.
-
-        [http://hl7.org/fhir/R4/http.html#capabilities](http://hl7.org/fhir/R4/http.html#capabilities)
-
-        It does this by checking that the server responds with an HTTP OK
-        200 status code and that the body of the response contains a valid
-        [CapabilityStatement
-        resource](http://hl7.org/fhir/R4/capabilitystatement.html). This
-        test does not inspect the content of the Conformance resource to see
-        if it contains the required information. It only checks to see if
-        the RESTful interaction is supported and returns a valid
-        CapabilityStatement resource.
-        
-        This test does not check to see if the server supports the `OPTION` command, though DSTU2 provides
-        this as a second method to retrieve the Conformance for the server.  It is not expected that clients
-        will broadly support this method, so this test does not cover this option.
+                        The conformance 'whole system' interaction provides a method to get
+                        the conformance statement for the FHIR server. This test checks that
+                        the server responds to a `GET` request at the following endpoint:
+        #{'        '}
+                        ```
+                        GET [base]/metadata
+                        ```
+        #{'        '}
+                        This test checks the following SHALL requirement:
+        #{'        '}
+                        > Applications SHALL return a resource that describes the
+                          functionality of the server end-point.
+        #{'        '}
+                        [http://hl7.org/fhir/R4/http.html#capabilities](http://hl7.org/fhir/R4/http.html#capabilities)
+        #{'        '}
+                        It does this by checking that the server responds with an HTTP OK
+                        200 status code and that the body of the response contains a valid
+                        [CapabilityStatement
+                        resource](http://hl7.org/fhir/R4/capabilitystatement.html). This
+                        test does not inspect the content of the Conformance resource to see
+                        if it contains the required information. It only checks to see if
+                        the RESTful interaction is supported and returns a valid
+                        CapabilityStatement resource.
+                #{'        '}
+                        This test does not check to see if the server supports the `OPTION` command, though DSTU2 provides
+                        this as a second method to retrieve the Conformance for the server.  It is not expected that clients
+                        will broadly support this method, so this test does not cover this option.
       DESCRIPTION
       # link 'http://hl7.org/fhir/DSTU2/http.html#conformance'
 

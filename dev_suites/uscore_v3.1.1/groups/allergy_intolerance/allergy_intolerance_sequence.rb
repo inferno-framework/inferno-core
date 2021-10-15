@@ -1,36 +1,10 @@
 require_relative '../../utils/shared_functions'
-require_relative './allergy_intolerance_definitions'
+Dir[File.join(__dir__, '*.rb')].each { |file| require file }
 
 module USCore
   class AllergyIntoleranceSequence < Inferno::TestGroup
     include USCore::HelperFunctions
     include USCore::ProfileDefinitions
-
-    def validate_resource_item(resource, property, value)
-      case property
-
-      when 'clinical-status'
-        values_found = resolve_path(resource, 'clinicalStatus')
-        coding_system = value.split('|').first.empty? ? nil : value.split('|').first
-        coding_value = value.split('|').last
-        match_found = values_found.any? do |codeable_concept|
-          if value.include? '|'
-            codeable_concept.coding.any? { |coding| coding.system == coding_system && coding.code == coding_value }
-          else
-            codeable_concept.coding.any? { |coding| coding.code == value }
-          end
-        end
-        assert match_found, "clinical-status in AllergyIntolerance/#{resource.id} (#{values_found}) does not match clinical-status requested (#{value})"
-
-      when 'patient'
-        values_found = resolve_path(resource, 'patient.reference')
-        value = value.split('Patient/').last
-        match_found = values_found.any? { |reference| [value, 'Patient/' + value, "#{@instance.url}/Patient/#{value}"].include? reference }
-        assert match_found, "patient in AllergyIntolerance/#{resource.id} (#{values_found}) does not match patient requested (#{value})"
-
-      end
-    end
-
     title 'AllergyIntolerance Tests'
 
     description %(
@@ -81,9 +55,9 @@ module USCore
       and will fail if any attempted read fails.
     )
 
-
     input :standalone_patient_id
-    test 'search by patient' do
+
+    group 'Server returns valid results for AllergyIntolerance search by patient.' do
       description %(
 
         A server SHALL support searching by patient on the AllergyIntolerance resource.
@@ -105,40 +79,23 @@ module USCore
 
       )
 
-      run do
-        # skip_if_known_search_not_supported('AllergyIntolerance', ['patient'])
-        search_params = {
-          patient: standalone_patient_id
-        }
-        fhir_search :AllergyIntolerance,
-                    client: :single_patient_client,
-                    params: search_params
+      
+      test from: :allergy_intolerance_search_patient_test
+      test from: :allergy_intolerance_search_params_validation
+      test from: :allergy_intolerance_search_post
+      test from: :allergy_intolerance_search_reference
+    end
 
-        # perform_search_with_status if response[:status] == 400
-        assert_response_status(200)
+    group 'Server returns valid results for AllergyIntolerance search by patient+clinical-status.' do
+      test from: :allergy_intolerance_search_patient_clinical_status_test
+      test from: :allergy_intolerance_search_params_validation
+    end
 
-        assert_valid_bundle_entries(resource_types: ['AllergyIntolerance', 'OperationOutcome'])
-
-        any_resources = resource.entry.any? { |entry| entry.resource.resourceType == 'AllergyIntolerance' }
-
-        resources_returned = fetch_all_bundled_resources(resource, fhir_client(:single_patient_client))
-        # next unless any_resources
-        scratch[:allergy_intolerance_resources] = resources_returned
-        save_delayed_sequence_references(resources_returned, AllergyintoleranceSequenceDefinitions::DELAYED_REFERENCES, scratch)
-        # save resource references
-        # validate_reply_entries(resources_returned, search_params)
-        resources_returned.each do |resource|
-          search_params.each do |key, value|
-            unescaped_value = value&.gsub('\\,', ',')
-            validate_resource_item(resource, key.to_s, unescaped_value)
-          end
-        end
-
-        #search by post
-        # search by reference variant
-        
-
-      end
-    end 
+    test from: :allergy_intolerance_read_test
+    test from: :allergy_intolerance_vread_test
+    test from: :allergy_intolerance_history_test
+    test from: :allergy_intolerance_rev_include_test
+    test from: :allergy_intolerance_validate_test
+    test from: :allergy_intolerance_must_support_test
   end
 end

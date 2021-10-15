@@ -1,4 +1,3 @@
-
 require_relative 'tls_test'
 
 module USCore
@@ -45,7 +44,6 @@ module USCore
     output :oauth_authorize_endpoint, :oauth_token_endpoint, :oauth_register_endpoint
 
     test from: :tls_test
-    
 
     test do
       title 'FHIR server supports the conformance interaction'

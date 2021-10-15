@@ -34,7 +34,7 @@ module USCoreUtils
         that use of TLS is explicit.
       ) + disable_tls_instructions
     end
-    
+
     def tls_socket_error_details(uri)
       %(
         The following URI did not accept socket connections over port 443:
@@ -67,18 +67,18 @@ module USCoreUtils
       tls_tester = TlsTester.new(uri: uri)
 
       # need to add details to assert
-      assert uri.downcase.start_with?('https'), "URI is not HTTPS: #{uri}"#, uri_not_https_details(uri)
+      assert uri.downcase.start_with?('https'), "URI is not HTTPS: #{uri}" # , uri_not_https_details(uri)
       begin
         passed, message, details = tls_tester.verify_ensure_tls_v1_2
-        assert passed, message#, details
+        assert passed, message # , details
       rescue AssertionException => e
-        raise_error AssertionException 
+        raise_error AssertionException
       rescue SocketError => e
-        assert false, "Unable to connect to #{uri}: #{e.message}"#, tls_socket_error_details(uri)
+        assert false, "Unable to connect to #{uri}: #{e.message}" # , tls_socket_error_details(uri)
       rescue StandardError => e
         assert false,
-               "Unable to connect to #{uri}: #{e.class.name}, #{e.message}"#,
-               #tls_unexpected_error_details(uri)
+               "Unable to connect to #{uri}: #{e.class.name}, #{e.message}" # ,
+        # tls_unexpected_error_details(uri)
       end
     end
 
@@ -87,22 +87,22 @@ module USCoreUtils
 
       begin
         passed, message, details = tls_tester.verify_deny_ssl_v3
-        assert passed, message#, details
+        assert passed, message # , details
 
         passed, message, details = tls_tester.verify_deny_tls_v1_1
-        assert passed, message#, details
+        assert passed, message # , details
 
         passed, message, details = tls_tester.verify_deny_tls_v1
-        assert passed, message#, details
+        assert passed, message # , details
       rescue AssertionException => e
-        raise_error AssertionException 
+        raise_error AssertionException
       rescue SocketError => e
-        assert false, "Unable to connect to #{uri}: #{e.message}"#, tls_socket_error_details(uri)
+        assert false, "Unable to connect to #{uri}: #{e.message}" # , tls_socket_error_details(uri)
       rescue StandardError => e
         assert false,
-               "Unable to connect to #{uri}: #{e.class.name}, #{e.message}"#,
-               #tls_unexpected_error_details(uri)
+               "Unable to connect to #{uri}: #{e.class.name}, #{e.message}" # ,
+        # tls_unexpected_error_details(uri)
       end
     end
-  end 
+  end
 end

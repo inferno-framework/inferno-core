@@ -1,4 +1,4 @@
-Dir[File.join(__dir__,'groups','**','*.rb')].each {|file| require file }
+Dir[File.join(__dir__, 'groups', '**', '*.rb')].each { |file| require file }
 require_relative '../dev_smart/discovery_group'
 require_relative '../dev_smart/standalone_launch_group'
 
@@ -44,9 +44,9 @@ module USCore # rubocop:disable Naming/ClassAndModuleCamelCase
 
       fhir_client :single_patient_client do
         url :url
-        bearer_token :standalone_access_token 
+        bearer_token :standalone_access_token
       end
-      
+
       group from: 'USCore::USCoreCapabilityStatement'
       group from: 'USCore::AllergyIntoleranceSequence'
     end
