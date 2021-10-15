@@ -27,12 +27,14 @@ const test3: Test = {
   title: 'Client registration endpoint secured by transport layer security',
   inputs: [],
   outputs: [],
+  user_runnable: true,
 };
 const test4: Test = {
   id: 'test4',
   title: 'Client registration endpoint accepts POST messages',
   inputs: [],
   outputs: [],
+  user_runnable: true,
 };
 
 const testList1 = [test1, test2];
@@ -45,6 +47,7 @@ const sequence1: TestGroup = {
   id: 'group0',
   inputs: [{ name: 'test input' }],
   outputs: [],
+  user_runnable: true,
 };
 
 const sequence2: TestGroup = {
@@ -54,6 +57,7 @@ const sequence2: TestGroup = {
   id: 'group1',
   inputs: [{ name: 'second input' }],
   outputs: [],
+  user_runnable: true,
 };
 
 const nestedGroup: TestGroup = {
@@ -63,6 +67,7 @@ const nestedGroup: TestGroup = {
   id: 'group2',
   inputs: [],
   outputs: [],
+  user_runnable: true,
 };
 
 const parentGroup: TestGroup = {
@@ -72,6 +77,7 @@ const parentGroup: TestGroup = {
   id: 'group3',
   inputs: [],
   outputs: [],
+  user_runnable: true,
 };
 
 const testSuiteTreeProps: TestSuiteTreeProps = {
@@ -80,7 +86,7 @@ const testSuiteTreeProps: TestSuiteTreeProps = {
   test_groups: [sequence1, sequence2, parentGroup],
   runTests: runTestsMock,
   selectedRunnable: 'example suite',
-  testRunInProgress: false,
+  testRunInProgress: false
 };
 
 test('Test tree renders', () => {
