@@ -18,12 +18,12 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
 }) => {
   let sublist: JSX.Element[] = [];
   if (testGroup.test_groups.length > 0) {
-    sublist = testGroup.test_groups.map((subTestGroup) => (
+    sublist = testGroup.test_groups.map((subTestGroup, index) => (
       <TestGroupTreeItem
         testGroup={subTestGroup}
         runTests={runTests}
         onLabelClick={onLabelClick}
-        key={`ti-${testGroup.id}`}
+        key={`ti-${testGroup.id}-${index}`}
         testRunInProgress={testRunInProgress}
       ></TestGroupTreeItem>
     ));
