@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { Test, TestGroup, RunnableType } from 'models/testSuiteModels';
+import { Test, TestGroup, TestSuite, RunnableType } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
 
 const runTestsMock = jest.fn();
@@ -80,10 +80,14 @@ const parentGroup: TestGroup = {
   user_runnable: true,
 };
 
-const testSuiteTreeProps: TestSuiteTreeProps = {
+const demoTestSuite: TestSuite = {
   title: 'DemonstrationSuite',
   id: 'example suite',
   test_groups: [sequence1, sequence2, parentGroup],
+};
+
+const testSuiteTreeProps: TestSuiteTreeProps = {
+  testSuite: demoTestSuite,
   runTests: runTestsMock,
   selectedRunnable: 'example suite',
   testRunInProgress: false,
@@ -91,7 +95,7 @@ const testSuiteTreeProps: TestSuiteTreeProps = {
 
 test('Test tree renders', () => {
   render(<TestSuiteTree {...testSuiteTreeProps}></TestSuiteTree>);
-  const treeTitle = screen.getByText(testSuiteTreeProps.title);
+  const treeTitle = screen.getByText(testSuiteTreeProps.testSuite.title);
   expect(treeTitle).toBeVisible();
   const sequence1Title = screen.getByText(sequence1.title);
   expect(sequence1Title).toBeVisible();
@@ -113,15 +117,18 @@ test('Individual tests are not shown by default', () => {
 
 test('Calls setSelectedRunnable when tree item is clicked', () => {
   render(<TestSuiteTree {...testSuiteTreeProps}></TestSuiteTree>);
-  const testSuiteLabel = screen.getByTestId(`tiLabel-${testSuiteTreeProps.id}`);
+  const testSuiteLabel = screen.getByTestId(`tiLabel-${testSuiteTreeProps.testSuite.id}`);
   fireEvent.click(testSuiteLabel);
 });
 
 test('Calls runTests when run button is clicked', () => {
   render(<TestSuiteTree {...testSuiteTreeProps}></TestSuiteTree>);
-  const suiteRunButton = screen.getByTestId(`runButton-${testSuiteTreeProps.id}`);
+  const suiteRunButton = screen.getByTestId(`runButton-${testSuiteTreeProps.testSuite.id}`);
   fireEvent.click(suiteRunButton);
-  expect(runTestsMock).toHaveBeenCalledWith(RunnableType.TestSuite, testSuiteTreeProps.id);
+  expect(runTestsMock).toHaveBeenCalledWith(
+    RunnableType.TestSuite,
+    testSuiteTreeProps.testSuite.id
+  );
 
   const groupRunButton = screen.getByTestId(`runButton-${sequence1.id}`);
   fireEvent.click(groupRunButton);

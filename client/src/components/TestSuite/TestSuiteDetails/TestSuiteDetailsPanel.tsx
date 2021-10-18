@@ -27,7 +27,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
       return (
         <TestGroupListItem
           key={`li-${testGroup.id}`}
-          {...testGroup}
+          testGroup={testGroup}
           runTests={runTests}
           testRunInProgress={testRunInProgresss}
         />
@@ -38,7 +38,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
       return (
         <TestListItem
           key={`li-${test.id}`}
-          {...test}
+          test={test}
           runTests={runTests}
           updateRequest={updateRequest}
           testRunInProgress={testRunInProgresss}

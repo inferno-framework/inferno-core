@@ -1,50 +1,29 @@
 import React, { FC } from 'react';
-import { Result, RunnableType } from 'models/testSuiteModels';
-import { IconButton, Typography, Tooltip } from '@material-ui/core';
+import { RunnableType, TestGroup, TestSuite } from 'models/testSuiteModels';
+import { Typography } from '@material-ui/core';
 import useStyles from './styles';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import CondensedResultIcon from './CondensedResultIcon';
+import TestRunButton from '../TestRunButton/TestRunButton';
 
 export interface TreeItemLabelProps {
-  title: string;
-  id: string;
-  result?: Result;
-  runnableType: RunnableType;
+  runnable: TestSuite | TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   testRunInProgress: boolean;
-  user_runnable?: boolean;
 }
 
-const TreeItemLabel: FC<TreeItemLabelProps> = ({
-  title,
-  id,
-  result,
-  runTests,
-  runnableType,
-  testRunInProgress,
-  user_runnable,
-}) => {
+const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, runTests, testRunInProgress }) => {
   const styles = useStyles();
   return (
-    <div className={styles.labelRoot} data-testid={`tiLabel-${id}`}>
+    <div className={styles.labelRoot} data-testid={`tiLabel-${runnable.id}`}>
       <Typography className={styles.labelText} variant="body2">
-        {title}
+        {runnable.title}
       </Typography>
-      <CondensedResultIcon result={result} />
-      {user_runnable ? (
-        <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
-          <div className={styles.buttonWrapper}>
-            <IconButton
-              disabled={testRunInProgress}
-              data-testid={`runButton-${id}`}
-              onClick={() => runTests(runnableType, id)}
-              className={styles.labelRunButton}
-            >
-              <PlayArrowIcon />
-            </IconButton>
-          </div>
-        </Tooltip>
-      ) : null}
+      <CondensedResultIcon result={runnable.result} />
+      <TestRunButton
+        runnable={runnable}
+        runTests={runTests}
+        testRunInProgress={testRunInProgress}
+      />
     </div>
   );
 };
