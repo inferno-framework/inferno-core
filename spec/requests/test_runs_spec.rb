@@ -91,15 +91,9 @@ RSpec.describe '/test_runs' do
         }
       end
       let(:run_as_group_test_session) { repo_create(:test_session, test_suite_id: 'demo') }
+      let(:run_as_group_test) { run_as_group_group.tests.first }
       let(:run_as_group_group) do
-        Inferno::Repositories::TestSuites.new.find('demo').groups.find do |group|
-          group.id == 'demo-run_as_group_examples'
-        end.groups.first.groups.first
-      end
-      let(:run_as_group_test) do
-        Inferno::Repositories::TestSuites.new.find('demo').groups.find do |group|
-          group.id == 'demo-run_as_group_examples'
-        end.groups.first.groups.first.tests.first
+        Inferno::Repositories::TestGroups.new.find('demo-run_as_group_examples').groups.first.groups.first
       end
 
       it 'returns a 422 error for an unrunnable group' do
