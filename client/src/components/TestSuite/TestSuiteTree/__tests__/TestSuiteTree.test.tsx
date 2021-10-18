@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { TestGroup, Test, RunnableType } from 'models/testSuiteModels';
+import { Test, TestGroup, TestSuite, RunnableType } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
 
 const runTestsMock = jest.fn();
@@ -27,12 +27,14 @@ const test3: Test = {
   title: 'Client registration endpoint secured by transport layer security',
   inputs: [],
   outputs: [],
+  user_runnable: true,
 };
 const test4: Test = {
   id: 'test4',
   title: 'Client registration endpoint accepts POST messages',
   inputs: [],
   outputs: [],
+  user_runnable: true,
 };
 
 const testList1 = [test1, test2];
@@ -45,6 +47,7 @@ const sequence1: TestGroup = {
   id: 'group0',
   inputs: [{ name: 'test input' }],
   outputs: [],
+  user_runnable: true,
 };
 
 const sequence2: TestGroup = {
@@ -54,6 +57,7 @@ const sequence2: TestGroup = {
   id: 'group1',
   inputs: [{ name: 'second input' }],
   outputs: [],
+  user_runnable: true,
 };
 
 const nestedGroup: TestGroup = {
@@ -63,6 +67,7 @@ const nestedGroup: TestGroup = {
   id: 'group2',
   inputs: [],
   outputs: [],
+  user_runnable: true,
 };
 
 const parentGroup: TestGroup = {
@@ -72,12 +77,17 @@ const parentGroup: TestGroup = {
   id: 'group3',
   inputs: [],
   outputs: [],
+  user_runnable: true,
 };
 
-const testSuiteTreeProps: TestSuiteTreeProps = {
+const demoTestSuite: TestSuite = {
   title: 'DemonstrationSuite',
   id: 'example suite',
   test_groups: [sequence1, sequence2, parentGroup],
+};
+
+const testSuiteTreeProps: TestSuiteTreeProps = {
+  testSuite: demoTestSuite,
   runTests: runTestsMock,
   selectedRunnable: 'example suite',
   testRunInProgress: false,
@@ -85,7 +95,7 @@ const testSuiteTreeProps: TestSuiteTreeProps = {
 
 test('Test tree renders', () => {
   render(<TestSuiteTree {...testSuiteTreeProps}></TestSuiteTree>);
-  const treeTitle = screen.getByText(testSuiteTreeProps.title);
+  const treeTitle = screen.getByText(testSuiteTreeProps.testSuite.title);
   expect(treeTitle).toBeVisible();
   const sequence1Title = screen.getByText(sequence1.title);
   expect(sequence1Title).toBeVisible();
@@ -107,15 +117,18 @@ test('Individual tests are not shown by default', () => {
 
 test('Calls setSelectedRunnable when tree item is clicked', () => {
   render(<TestSuiteTree {...testSuiteTreeProps}></TestSuiteTree>);
-  const testSuiteLabel = screen.getByTestId(`tiLabel-${testSuiteTreeProps.id}`);
+  const testSuiteLabel = screen.getByTestId(`tiLabel-${testSuiteTreeProps.testSuite.id}`);
   fireEvent.click(testSuiteLabel);
 });
 
 test('Calls runTests when run button is clicked', () => {
   render(<TestSuiteTree {...testSuiteTreeProps}></TestSuiteTree>);
-  const suiteRunButton = screen.getByTestId(`runButton-${testSuiteTreeProps.id}`);
+  const suiteRunButton = screen.getByTestId(`runButton-${testSuiteTreeProps.testSuite.id}`);
   fireEvent.click(suiteRunButton);
-  expect(runTestsMock).toHaveBeenCalledWith(RunnableType.TestSuite, testSuiteTreeProps.id);
+  expect(runTestsMock).toHaveBeenCalledWith(
+    RunnableType.TestSuite,
+    testSuiteTreeProps.testSuite.id
+  );
 
   const groupRunButton = screen.getByTestId(`runButton-${sequence1.id}`);
   fireEvent.click(groupRunButton);

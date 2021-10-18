@@ -25,6 +25,7 @@ module Inferno
             missing_inputs = test_run.runnable.missing_inputs(params[:inputs])
 
             raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs.any?
+            raise Inferno::Exceptions::NotUserRunnableException unless test_run.runnable.user_runnable?
 
             self.body = serialize(test_run)
 
@@ -38,7 +39,8 @@ module Inferno
 
             Jobs.perform(Jobs::ExecuteTestRun, test_run.id)
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation,
-                 Inferno::Exceptions::RequiredInputsNotFound => e
+                 Inferno::Exceptions::RequiredInputsNotFound,
+                 Inferno::Exceptions::NotUserRunnableException => e
             self.body = { errors: e.message }.to_json
             self.status = 422
           rescue StandardError => e

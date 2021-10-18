@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
 import { TestGroup, RunnableType, TestSuite } from 'models/testSuiteModels';
-import { Card, IconButton, List, Tooltip } from '@material-ui/core';
+import { Card, List } from '@material-ui/core';
 import ResultIcon from './ResultIcon';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import TestRunButton from '../TestRunButton/TestRunButton';
 
 interface TestGroupCardProps {
   runnable: TestSuite | TestGroup;
@@ -19,8 +19,6 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
 }) => {
   const styles = useStyles();
 
-  const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
-
   return (
     <Card className={styles.testGroupCard} variant="outlined">
       <div className={styles.testGroupCardHeader}>
@@ -28,21 +26,11 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           <ResultIcon result={runnable.result} />
         </span>
         <span className={styles.testGroupCardHeaderText}>{runnable.title}</span>
-        <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
-          <div>
-            <IconButton
-              disabled={testRunInProgress}
-              edge="end"
-              size="small"
-              onClick={() => {
-                runTests(runnableType, runnable.id);
-              }}
-              data-testid={`${runnable.id}-run-button`}
-            >
-              <PlayArrowIcon />
-            </IconButton>
-          </div>
-        </Tooltip>
+        <TestRunButton
+          runnable={runnable}
+          runTests={runTests}
+          testRunInProgress={testRunInProgress}
+        />
       </div>
       <List className={styles.testGroupCardList}>{children}</List>
     </Card>

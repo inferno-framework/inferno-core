@@ -254,7 +254,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     <div className={styles.testSuiteMain}>
       {testRunProgressBar()}
       <TestSuiteTreeComponent
-        {...test_suite}
+        testSuite={test_suite}
         runTests={runTests}
         selectedRunnable={selectedRunnable}
         testRunInProgress={testRunNeedsProgressBar(testRun)}

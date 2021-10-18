@@ -10,7 +10,8 @@ import TestGroupTreeItem from './TestGroupTreeItem';
 import TreeItemLabel from './TreeItemLabel';
 import { useHistory } from 'react-router-dom';
 
-export interface TestSuiteTreeProps extends TestSuite {
+export interface TestSuiteTreeProps {
+  testSuite: TestSuite;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   selectedRunnable: string;
   testRunInProgress: boolean;
@@ -26,10 +27,7 @@ function addDefaultExpanded(testGroups: TestGroup[], defaultExpanded: string[]):
 }
 
 const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
-  title,
-  id,
-  test_groups,
-  result,
+  testSuite,
   selectedRunnable,
   runTests,
   testRunInProgress,
@@ -37,9 +35,9 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   const styles = useStyles();
   const history = useHistory();
 
-  const defaultExpanded: string[] = [id];
-  if (test_groups) {
-    addDefaultExpanded(test_groups, defaultExpanded);
+  const defaultExpanded: string[] = [testSuite.id];
+  if (testSuite.test_groups) {
+    addDefaultExpanded(testSuite.test_groups, defaultExpanded);
   }
   const [expanded, setExpanded] = React.useState(defaultExpanded);
 
@@ -53,13 +51,13 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
     setExpanded(nodeIds as string[]);
   }
 
-  if (test_groups) {
-    const testGroupList = test_groups.map((testGroup) => (
+  if (testSuite.test_groups) {
+    const testGroupList = testSuite.test_groups.map((testGroup) => (
       <TestGroupTreeItem
-        {...testGroup}
         key={testGroup.id}
         data-testid={`${testGroup.id}-treeitem`}
         onLabelClick={treeItemLabelClick}
+        testGroup={testGroup}
         runTests={runTests}
         testRunInProgress={testRunInProgress}
       />
@@ -77,18 +75,15 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           >
             <TreeItem
               classes={{ content: styles.treeRoot }}
-              nodeId={id}
+              nodeId={testSuite.id}
               label={
                 <TreeItemLabel
-                  id={id}
-                  title={title}
+                  runnable={testSuite}
                   runTests={runTests}
-                  result={result}
-                  runnableType={RunnableType.TestSuite}
                   testRunInProgress={testRunInProgress}
                 />
               }
-              onLabelClick={(event) => treeItemLabelClick(event, id)}
+              onLabelClick={(event) => treeItemLabelClick(event, testSuite.id)}
             >
               {testGroupList}
             </TreeItem>
@@ -97,7 +92,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
       </Card>
     );
   } else {
-    return <div>{title}</div>;
+    return <div>{testSuite.title}</div>;
   }
 };
 

@@ -79,6 +79,14 @@ module Inferno
             test_group_id: id
           }
         end
+
+        def run_as_group(value = true) # rubocop:disable Style/OptionalBooleanParameter
+          @run_as_group = value
+        end
+
+        def run_as_group?
+          @run_as_group || false
+        end
       end
     end
   end

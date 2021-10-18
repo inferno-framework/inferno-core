@@ -7,7 +7,8 @@ module Inferno
         field :title
         field :description
         field :test_count
-        # field :run_as_group
+        field :run_as_group?, name: :run_as_group
+        field :user_runnable?, name: :user_runnable
 
         association :groups, name: :test_groups, blueprint: TestGroup
         association :tests, blueprint: Test

@@ -71,5 +71,63 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         run { pass }
       end
     end
+
+    group do
+      id 'run_as_group_examples'
+      title 'Run as Group Examples'
+
+      group do
+        id 'run_as_group_multi'
+        title 'Run as Group On (nested groups)'
+        run_as_group
+
+        group do
+          id 'run_as_group_on'
+          title 'Run as group also set at this level (should not be runnable)'
+          run_as_group
+
+          test do
+            title 'Test should not be runnable'
+            run { pass }
+          end
+
+          test do
+            title 'Test should not be runnable'
+            run { pass }
+          end
+        end
+
+        group do
+          id 'run_as_group_off'
+          title 'Run as group not set at this level (should not be runnable)'
+
+          test do
+            title 'Test should not be runnable'
+            run { pass }
+          end
+
+          test do
+            title 'Test should not be runnable'
+            run { pass }
+          end
+        end
+      end
+
+      group do
+        id 'run_as_group_single'
+        title 'Run as Group On (no nested groups)'
+        run_as_group
+
+        test do
+          title 'Test should not be runnable'
+          run { pass }
+        end
+
+        test do
+          title 'Test should not be runnable'
+          run { pass }
+        end
+      end
+    end
   end
 end

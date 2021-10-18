@@ -1,33 +1,23 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import {
-  IconButton,
-  Link,
-  ListItem,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-  Tooltip,
-} from '@material-ui/core';
+import { Link, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { RunnableType, TestGroup } from 'models/testSuiteModels';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import FolderIcon from '@material-ui/icons/Folder';
 import ResultIcon from './ResultIcon';
+import TestRunButton from '../TestRunButton/TestRunButton';
 
-interface TestGroupListItemProps extends TestGroup {
+interface TestGroupListItemProps {
+  testGroup: TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   testRunInProgress: boolean;
 }
 
 const TestGroupListItem: FC<TestGroupListItemProps> = ({
-  title,
-  result,
-  id,
+  testGroup,
   runTests,
   testRunInProgress,
 }) => {
   const styles = useStyles();
-
   return (
     <ListItem className={styles.listItem}>
       <ListItemIcon>
@@ -35,30 +25,18 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       </ListItemIcon>
       <ListItemText
         primary={
-          <Link color="inherit" href={`#${id}`}>
-            {title}
+          <Link color="inherit" href={`#${testGroup.id}`}>
+            {testGroup.title}
           </Link>
         }
-        secondary={result?.result_message}
+        secondary={testGroup.result?.result_message}
       />
-      <div className={styles.testIcon}>{<ResultIcon result={result} />}</div>
-      <ListItemSecondaryAction>
-        <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
-          <div>
-            <IconButton
-              disabled={testRunInProgress}
-              edge="end"
-              size="small"
-              onClick={() => {
-                runTests(RunnableType.TestGroup, id);
-              }}
-              data-testid={`${id}-run-button`}
-            >
-              <PlayArrowIcon />
-            </IconButton>
-          </div>
-        </Tooltip>
-      </ListItemSecondaryAction>
+      <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
+      <TestRunButton
+        runnable={testGroup}
+        runTests={runTests}
+        testRunInProgress={testRunInProgress}
+      />
     </ListItem>
   );
 };

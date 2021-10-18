@@ -100,9 +100,12 @@ RSpec.describe Inferno::DSL::Runnable do
     it 'returns the total number of tests in a suite' do
       demo_group = test_groups_repo.find('DemoIG_STU1::DemoGroup')
       wait_group = test_groups_repo.find('demo-wait_group')
+      run_as_group_examples = test_groups_repo.find('demo-run_as_group_examples')
       suite = test_suites_repo.find('demo')
 
-      expect(suite.test_count).to eq(demo_group.test_count * 3 + wait_group.test_count)
+      expect(suite.test_count).to eq(demo_group.test_count * 3 +
+                                     wait_group.test_count +
+                                     run_as_group_examples.test_count)
     end
   end
 
@@ -158,6 +161,37 @@ RSpec.describe Inferno::DSL::Runnable do
       end
       missing_inputs = example_test_group.missing_inputs([{ name: 'b', value: 'b' }])
       expect(missing_inputs).to eq(['a'])
+    end
+  end
+
+  describe '.user_runnable?' do
+    let(:run_as_group_examples) { test_groups_repo.find('demo-run_as_group_examples') }
+
+    it 'sets user_runnable on groups and tests to true by default' do
+      example_test_group = Class.new(Inferno::Entities::TestGroup)
+      example_test_group.test 'test' do
+        input :a
+      end
+      expect(example_test_group.user_runnable?).to eq(true)
+      expect(example_test_group.tests.first.user_runnable?).to eq(true)
+    end
+
+    it 'sets user_runnable on groups to true if not under groups set to run_as_group' do
+      expect(run_as_group_examples.groups.first.user_runnable?).to be(true)
+    end
+
+    it 'sets user_runnable on groups to false if under groups set to run_as_group' do
+      expect(run_as_group_examples.groups.first.groups.first.user_runnable?).to be(false)
+      expect(run_as_group_examples.groups.first.groups.second.user_runnable?).to be(false)
+    end
+
+    it 'sets user_runnable on tests two levels under groups that are run_as_group to be false' do
+      expect(run_as_group_examples.groups.first.groups.first.tests.first.user_runnable?).to be(false)
+      expect(run_as_group_examples.groups.first.groups.second.tests.first.user_runnable?).to be(false)
+    end
+
+    it 'sets user_runnable on tests immediately under groups that are run_as_group to be false' do
+      expect(run_as_group_examples.groups.second.tests.first.user_runnable?).to be(false)
     end
   end
 end

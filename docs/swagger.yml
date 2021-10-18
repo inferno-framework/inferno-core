@@ -507,6 +507,9 @@ definitions:
       test_count:
         type: "number"
         readOnly: true
+      user_runnable:
+        type: "boolean"
+        readonly: true
   Test:
     type: "object"
     required:
@@ -523,6 +526,9 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Input"
+      user_runnable:
+        type: "boolean"
+        readonly: true
   Input:
     type: "object"
     required:
