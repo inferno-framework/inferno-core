@@ -21,9 +21,6 @@ gem 'rake'
 gem 'faraday'
 gem 'sidekiq', '~> 6.2.1'
 
-# TODO: remove with SMART tests
-gem 'jwt'
-
 group :development, :test do
   gem 'pry'
   gem 'pry-byebug'
