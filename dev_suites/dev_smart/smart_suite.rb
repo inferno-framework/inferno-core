@@ -25,6 +25,8 @@ module SMART
     group do
       title 'Standalone Launch'
 
+      run_as_group
+
       group from: :smart_discovery
 
       group from: :smart_standalone_launch
@@ -80,6 +82,8 @@ module SMART
 
     group do
       title 'EHR Launch'
+
+      run_as_group
 
       group from: :smart_discovery
 
