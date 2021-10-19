@@ -242,7 +242,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
             title: 'Textarea Input Example',
             type: 'textarea',
             description: 'Insert something like a patient resource json here',
-            optional: true
+            optional: false
 
       run { info "Received the following 'textarea' variable: '#{textarea}''" }
     end
@@ -250,6 +250,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     test 'locked input' do
       input :patient_name, title: 'Patient Name', description: 'Example of locked, empty input field',
                            locked: true
+      input :patient_age, title: 'Age', description: 'Example of locked, required input field',
+                           locked: true, default: '12'
       input :url_locked, title: 'URL', description: 'Example of locked, filled input field',
                          default: 'https://inferno.healthit.gov/reference-server/r4', locked: true
       input :textarea_locked, title: 'Textarea Input', description: 'Example of locked, filled input field',
