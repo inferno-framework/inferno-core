@@ -290,7 +290,7 @@ RSpec.describe SMART::DiscoveryGroup do
       expect(result.result).to eq('pass')
     end
 
-    it 'fails if a url does not match', pending: true do
+    it 'fails if a url does not match' do
       full_inputs[:well_known_introspection_url] = 'abc'
       result = run(runnable, full_inputs)
 

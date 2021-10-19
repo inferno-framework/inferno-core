@@ -382,4 +382,25 @@ RSpec.describe Inferno::DSL::Assertions do
       end
     end
   end
+
+  describe '#assert_response_content_type' do
+    it 'raises an exception when no Content-Type header is present' do
+      request = repo_create(:request)
+      expect { klass.assert_response_content_type('abc', request: request) }.to(
+        raise_error(assertion_exception, klass.no_content_type_message)
+      )
+    end
+
+    it 'raises an exception when the Content-Type header does not match' do
+      request = repo_create(:request, headers: [{ type: 'response', name: 'Content-Type', value: 'xyz' }])
+      expect { klass.assert_response_content_type('abc', request: request) }.to(
+        raise_error(assertion_exception, klass.bad_content_type_message('abc', 'xyz'))
+      )
+    end
+
+    it 'does not raise an exception when the Content-Type headers starts with the supplied value' do
+      request = repo_create(:request, headers: [{ type: 'response', name: 'Content-Type', value: 'abcdef' }])
+      expect { klass.assert_response_content_type('abc', request: request) }.to_not raise_error
+    end
+  end
 end

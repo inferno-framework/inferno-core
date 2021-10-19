@@ -37,10 +37,6 @@ module SMART
       * [SMART EHR Launch Sequence](http://hl7.org/fhir/smart-app-launch/index.html#ehr-launch-sequence)
     )
 
-    def redirect_uri
-      "#{Inferno::Application['inferno_host']}/custom/smart/redirect"
-    end
-
     config(
       inputs: {
         client_id: {

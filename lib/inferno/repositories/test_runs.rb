@@ -13,6 +13,14 @@ module Inferno
         }
       end
 
+      def build_entity(params)
+        super.tap do |test_run|
+          test_run&.results&.map! do |result|
+            result.is_a?(Entities::Result) ? result : Entities::Result.new(result)
+          end
+        end
+      end
+
       def results_for_test_run(test_run_id)
         test_run_hash =
           self.class::Model

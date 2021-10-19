@@ -6,6 +6,14 @@ RSpec.describe SMART::TokenResponseBodyTest do
   include RequestHelpers
 
   let(:test) { Inferno::Repositories::Tests.new.find('smart_token_response_body') }
+  let(:valid_body) do
+    {
+      access_token: 'ACCESS_TOKEN',
+      token_type: 'bearer',
+      expires_in: 3600,
+      scope: 'patient/*.*'
+    }
+  end
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
   let(:test_session) { repo_create(:test_session, test_suite_id: 'smart') }
 
@@ -44,9 +52,9 @@ RSpec.describe SMART::TokenResponseBodyTest do
   end
 
   it 'passes if the body contains the required fields' do
-    create_token_request(body: { access_token: 'ACCESS_TOKEN', token_type: 'bearer' })
+    create_token_request(body: valid_body)
 
-    result = run(test)
+    result = run(test, requested_scopes: 'patient/*.*')
 
     expect(result.result).to eq('pass')
   end
@@ -69,22 +77,38 @@ RSpec.describe SMART::TokenResponseBodyTest do
     expect(result.result_message).to match(/Invalid JSON/)
   end
 
-  it 'fails if the body does not contain an access token' do
-    create_token_request(body: { token_type: 'bearer' })
+  it 'fails if the body does not contain a required field' do
+    valid_body.each_key do |field|
+      bad_body = valid_body.reject { |key, _| key == field }
+      create_token_request(body: bad_body)
 
-    result = run(test)
+      result = run(test)
 
-    expect(result.result).to eq('fail')
-    expect(result.result_message).to match(/did not contain an access token/)
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/`#{field}`/)
+    end
   end
 
-  it 'fails if the body does not contain a token type' do
-    create_token_request(body: { access_token: 'ACCESS_TOKEN' })
+  it 'fails is the fields are the wrong types' do
+    described_class::STRING_FIELDS.each do |field|
+      body = valid_body.merge(field => 123)
+      create_token_request(body: body)
 
-    result = run(test)
+      result = run(test, requested_scopes: 'patient/*.*')
 
-    expect(result.result).to eq('fail')
-    expect(result.result_message).to match(/`token_type` field must have/)
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/String/)
+    end
+
+    described_class::NUMERIC_FIELDS.each do |field|
+      body = valid_body.merge(field => '123')
+      create_token_request(body: body)
+
+      result = run(test, requested_scopes: 'patient/*.*')
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to match(/Numeric/)
+    end
   end
 
   it 'persists outputs' do
@@ -92,7 +116,7 @@ RSpec.describe SMART::TokenResponseBodyTest do
       access_token: 'ACCESS_TOKEN',
       id_token: 'ID_TOKEN',
       refresh_token: 'REFRESH_TOKEN',
-      expires_in: 'EXPIRES_IN',
+      expires_in: 3600,
       patient: 'PATIENT',
       encounter: 'ENCOUNTER',
       scope: 'SCOPE',
@@ -111,14 +135,14 @@ RSpec.describe SMART::TokenResponseBodyTest do
     }
     create_token_request(body: inputs)
 
-    result = run(test)
+    result = run(test, requested_scopes: 'SCOPE')
 
     expect(result.result).to eq('pass')
 
     expected_outputs.each do |name, value|
       persisted_data = session_data_repo.load(test_session_id: test_session.id, name: name)
 
-      expect(persisted_data).to eq(value)
+      expect(persisted_data).to eq(value.to_s)
     end
   end
 end

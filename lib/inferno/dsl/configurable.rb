@@ -2,6 +2,11 @@ module Inferno
   module DSL
     # This module contains the DSL for managing runnable configuration.
     module Configurable
+      def self.extended(klass)
+        klass.extend Forwardable
+        klass.def_delegator 'self.class', :config
+      end
+
       def config(new_configuration = {})
         @config ||= Configuration.new
 
@@ -27,6 +32,10 @@ module Inferno
             end
 
           self.configuration = configuration.deep_merge(config_to_apply)
+        end
+
+        def options
+          configuration[:options] ||= {}
         end
 
         ### Input Configuration ###

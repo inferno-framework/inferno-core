@@ -71,7 +71,7 @@ RSpec.describe SMART::AppRedirectTest do
     result = run(test, inputs)
     expect(result.result).to eq('wait')
 
-    state = result.result_message.match(/`(.*)`/)[1]
+    state = result.result_message.match(/with a state of `(.*)`/)[1]
     persisted_state = session_data_repo.load(test_session_id: test_session.id, name: 'state')
 
     expect(persisted_state).to eq(state)

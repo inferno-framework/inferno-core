@@ -1,5 +1,9 @@
+require_relative 'token_payload_validation'
+
 module SMART
   class TokenResponseBodyTest < Inferno::Test
+    include TokenPayloadValidation
+
     title 'Token exchange response body contains required information encoded in JSON'
     description %(
       The EHR authorization server shall return a JSON structure that includes
@@ -35,6 +39,11 @@ module SMART
              encounter_id: token_response_body['encounter'],
              received_scopes: token_response_body['scope'],
              intent: token_response_body['intent']
+
+      validate_required_fields_present(token_response_body, ['access_token', 'token_type', 'expires_in', 'scope'])
+      validate_token_field_types(token_response_body)
+      validate_token_type(token_response_body)
+      check_for_missing_scopes(requested_scopes, token_response_body)
 
       assert access_token.present?, 'Token response did not contain an access token'
       assert token_response_body['token_type']&.casecmp('Bearer')&.zero?,
