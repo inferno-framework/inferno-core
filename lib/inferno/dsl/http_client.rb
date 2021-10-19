@@ -103,6 +103,36 @@ module Inferno
         end
       end
 
+      # Perform a security protocol verification. 
+      #
+      # @param deny/ensure [String] denotes whether the call verifies that can or denies 
+      # @param uri [String]
+      # @param version [String]
+      # @option options [Hash] additional information here, like port/host
+      def verify_protocol(url: '', action: 'ensure', client: :default, name: nil)
+        store_request('outgoing', name) do 
+
+        end 
+
+        # if raw_uri.nil?
+        #   if !!options[:host] && !!options[:port]
+        #     port = options[:port]
+        #     host = options[:host]
+        #   else  
+        #     raise StandardError 'verify_protocol expects a URI or host/port and recieved niether.'
+        #   end 
+        # else
+        #   uri = URI(raw_uri)
+        #   port = uri.port
+        #   host = uri.host
+        # end 
+      
+        # connection = Faraday::Connection.new('https://example.com') do |builder|
+        #   builder.adapter.port = port
+        #   builder.adapter.host = host
+        # end 
+      end
+
       module ClassMethods
         # @api private
         def http_client_definitions

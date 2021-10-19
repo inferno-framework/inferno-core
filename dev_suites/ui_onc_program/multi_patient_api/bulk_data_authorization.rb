@@ -16,7 +16,7 @@ module ONCProgram
 
     id :bulk_data_authorization
 
-    input :bulk_client_id, :bulk_jwks_url_auth, :bulk_encryption_method, :bulk_token_endpoint, :bulk_scope
+    input :bulk_client_id, :bulk_jwks_url_auth, :bulk_encryption_method, :bulk_scope
     output :bulk_access_token
 
     test do
@@ -27,9 +27,17 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#security-considerations'
 
-      run {}
+      input :bulk_token_endpoint
+      http_client do
+        url 'https://hapi.fhir.org/'
+      end 
+
+      run do
+        http_client.verify_protocol('ensure', 'https://example.com')
+      end 
     end
 
+    # TO_DO: Deprecated in program. Should I implement?
     test do
       title 'Authorization request fails when client supplies invalid content_type'
       description <<~DESCRIPTION
@@ -40,6 +48,7 @@ module ONCProgram
       run {}
     end
 
+    # TO_DO: Deprecated in program. Should I implement?
     test do
       title 'Authorization request fails when client supplies invalid scope'
       description <<~DESCRIPTION
@@ -61,6 +70,7 @@ module ONCProgram
       run {}
     end
 
+
     test do
       title 'Authorization request fails when client supplies invalid grant_type'
       description <<~DESCRIPTION
@@ -79,6 +89,8 @@ module ONCProgram
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#protocol-details'
 
       run {}
+        #Check that it fails
+        #Check that it returns the correct failure message 
     end
 
     test do
