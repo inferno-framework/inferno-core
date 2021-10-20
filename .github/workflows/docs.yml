@@ -2,7 +2,7 @@ name: Docs
 
 on:
   push:
-    branches: [ main ]
+    branches: [ fi-1254-fix-action ]
 
 jobs:
   generate:
