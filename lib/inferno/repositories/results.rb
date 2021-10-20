@@ -31,7 +31,7 @@ module Inferno
       end
 
       # Get the current result for a particular test/group
-      # @api private
+      # @private
       # @example
       #   repo.current_result_for_test_session(
       #     test_session_id,

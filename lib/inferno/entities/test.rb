@@ -15,12 +15,14 @@ module Inferno
       attr_accessor :result_message
       attr_reader :test_session_id, :scratch
 
+      # @private
       def initialize(**params)
         params[:inputs]&.each { |key, value| instance_variable_set("@#{key}", value) }
         @scratch = params[:scratch]
         @test_session_id = params[:test_session_id]
       end
 
+      # @private
       def messages
         @messages ||= []
       end
@@ -100,6 +102,7 @@ module Inferno
         add_message('warning', e.message)
       end
 
+      # @private
       def method_missing(name, *args, &block)
         parent_instance = self.class.parent&.new
         if parent_instance.respond_to?(name)
@@ -109,6 +112,7 @@ module Inferno
         end
       end
 
+      # @private
       def respond_to_missing?(name, _include_private = false)
         self.class.parent&.new&.respond_to?(name)
       end
@@ -155,6 +159,10 @@ module Inferno
           Inferno::Repositories::Tests.new
         end
 
+        # Set/Get the block that is executed when a Test is run
+        #
+        # @param block [Proc]
+        # @return [Proc] the block that is executed when a Test is run
         def block(&block)
           return @block unless block_given?
 
@@ -163,6 +171,7 @@ module Inferno
 
         alias run block
 
+        # @private
         def default_id
           return name if name.present?
 
@@ -170,16 +179,19 @@ module Inferno
           "Test#{suffix}"
         end
 
+        # @private
         def reference_hash
           {
             test_id: id
           }
         end
 
+        # @private
         def test_count
           1
         end
 
+        # @private
         def method_missing(name, *args, &block)
           parent_instance = parent&.new
           if parent_instance.respond_to?(name)
@@ -189,6 +201,7 @@ module Inferno
           end
         end
 
+        # @private
         def respond_to_missing?(name, _include_private = false)
           parent&.new&.respond_to?(name)
         end

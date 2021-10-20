@@ -1,5 +1,5 @@
 module Inferno
-  # @api private
+  # @private
   # This module provides constants so that unit tests in suite repositories can
   # load the factories defined in inferno.
   module SpecSupport

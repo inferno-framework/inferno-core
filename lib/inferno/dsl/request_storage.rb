@@ -41,7 +41,7 @@ module Inferno
         requests.find { |request| request.name == self.class.config.request_name(name.to_sym) }
       end
 
-      # @api private
+      # @private
       def store_request(direction, name = nil, &block)
         response = block.call
 
@@ -61,7 +61,7 @@ module Inferno
         request
       end
 
-      # @api private
+      # @private
       def load_named_requests
         requests_repo = Inferno::Repositories::Requests.new
         self.class.named_requests_used.map do |request_name|
@@ -74,19 +74,19 @@ module Inferno
       end
 
       module ClassMethods
-        # @api private
+        # @private
         def named_requests_made
           @named_requests_made ||= []
         end
 
-        # @api private
+        # @private
         def named_requests_used
           @named_requests_used ||= []
         end
 
         # Specify the named requests made by a test
         #
-        # @param *identifiers [Symbol] one or more Symbols
+        # @param identifiers [Symbol] one or more request identifiers
         def makes_request(*identifiers)
           named_requests_made.concat(identifiers).uniq!
           identifiers.each do |identifier|
@@ -96,20 +96,20 @@ module Inferno
 
         # Specify the name for a request received by a test
         #
-        # @param *identifiers [Symbol] one or more Symbols
+        # @param identifier [Symbol]
         def receives_request(identifier)
           config.add_request(identifier)
           @incoming_request_name = identifier
         end
 
-        # @api private
+        # @private
         def incoming_request_name
           @incoming_request_name
         end
 
         # Specify the named requests used by a test
         #
-        # @param *identifiers [Symbol] one or more Symbols
+        # @param identifiers [Symbol] one or more request identifiers
         def uses_request(*identifiers)
           named_requests_used.concat(identifiers).uniq!
           identifiers.each do |identifier|

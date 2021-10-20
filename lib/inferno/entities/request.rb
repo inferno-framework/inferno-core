@@ -2,21 +2,34 @@ module Inferno
   module Entities
     # A `Request` represents a request and response issued during a test.
     #
-    # @attr_accessor [String] id of the request
-    # @attr_accessor [String] index of the request. Used for ordering.
-    # @attr_accessor [String] verb http verb
-    # @attr_accessor [String] url request url
-    # @attr_accessor [String] direction incoming/outgoing
-    # @attr_accessor [String] name name for the request
-    # @attr_accessor [String] status http response status code
-    # @attr_accessor [String] request_body body of the http request
-    # @attr_accessor [String] response_body body of the http response
-    # @attr_accessor [Array<Inferno::Entities::Header>] headers http
-    #   request/response headers
-    # @attr_accessor [String] result_id id of the result for this request
-    # @attr_accessor [String] test_session_id id of the test session for this request
-    # @attr_accessor [Time] created_at creation timestamp
-    # @attr_accessor [Time] updated_at update timestamp
+    # @!attribute id
+    #   @return [String] id of the request
+    # @!attribute index
+    #   @return [String] index of the request. Used for ordering.
+    # @!attribute verb
+    #   @return [String] http verb
+    # @!attribute url
+    #   @return [String] request url
+    # @!attribute direction
+    #   @return [String] incoming/outgoing
+    # @!attribute name
+    #   @return [String] name for the request
+    # @!attribute status
+    #   @return [String] http response status code
+    # @!attribute request_body
+    #   @return [String] body of the http request
+    # @!attribute response_body
+    #   @return [String] body of the http response
+    # @!attribute headers
+    #   @return [Array<Inferno::Entities::Header>] http request/response headers
+    # @!attribute result_id
+    #   @return [String] id of the result for this request
+    # @!attribute test_session_id
+    #   @return [String] id of the test session for this request
+    # @!attribute created_at
+    #   @return [Time] creation timestamp
+    # @!attribute updated_at
+    #   @return [Time] update timestamp
     class Request < Entity
       ATTRIBUTES = [
         :id, :index, :verb, :url, :direction, :name, :status,
@@ -94,7 +107,7 @@ module Inferno
         }
       end
 
-      # @api private
+      # @private
       def to_hash
         {
           id: id,
@@ -122,7 +135,7 @@ module Inferno
       end
 
       class << self
-        # @api private
+        # @private
         def from_rack_env(env, name: nil)
           rack_request = env['router.request'].rack_request
           url = "#{rack_request.base_url}#{rack_request.path}"
@@ -143,7 +156,7 @@ module Inferno
           )
         end
 
-        # @api private
+        # @private
         def from_http_response(response, test_session_id:, direction: 'outgoing', name: nil)
           request_headers =
             response.env.request_headers
@@ -165,7 +178,7 @@ module Inferno
           )
         end
 
-        # @api private
+        # @private
         def from_fhir_client_reply(reply, test_session_id:, direction: 'outgoing', name: nil)
           request = reply.request
           response = reply.response

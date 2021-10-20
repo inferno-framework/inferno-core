@@ -16,7 +16,7 @@ module Inferno
       # - add the subclass to the relevant repository when it is created
       # - copy the class instance variables from the superclass
       # - add a hook to the subclass so that its subclasses do the same
-      # @api private
+      # @private
       def self.extended(extending_class)
         super
         extending_class.extend Configurable
@@ -41,7 +41,7 @@ module Inferno
       # classes. When inheriting from a Runnable class, these class instance
       # variables need to be copied. Any child Runnable classes will themselves
       # need to be subclassed so that their parent can be updated.
-      # @api private
+      # @private
       def copy_instance_variables(subclass)
         instance_variables.each do |variable|
           next if [:@id, :@groups, :@tests, :@parent, :@children, :@test_count, :@config].include?(variable)
@@ -63,12 +63,13 @@ module Inferno
         end
       end
 
-      # @api private
+      # @private
       def add_self_to_repository
         repository.insert(self)
       end
 
       # An instance of the repository for the class using this module
+      # @private
       def repository
         nil
       end
@@ -76,7 +77,7 @@ module Inferno
       # This method defines a child entity. Classes using this module should
       # alias the method name they wish to use to define child entities to this
       # method.
-      # @api private
+      # @private
       def define_child(*args, &block)
         hash_args = process_args(args)
 
@@ -96,7 +97,7 @@ module Inferno
         klass
       end
 
-      # @api private
+      # @private
       def process_args(args)
         hash_args =
           if args[0].is_a? Hash
@@ -112,13 +113,13 @@ module Inferno
         hash_args
       end
 
-      # @api private
+      # @private
       def child_metadata(metadata = nil)
         @child_metadata = metadata if metadata
         @child_metadata
       end
 
-      # @api private
+      # @private
       def create_child_class(hash_args)
         superclass_id = hash_args.delete :from
 
@@ -131,7 +132,7 @@ module Inferno
         Class.new(superclass)
       end
 
-      # @api private
+      # @private
       def configure_child_class(klass, hash_args) # rubocop:disable Metrics/CyclomaticComplexity
         inputs.each do |name|
           next if klass.inputs.any? { |klass_input_name| klass_input_name == name }
@@ -177,11 +178,15 @@ module Inferno
         end
       end
 
-      # @api private
+      # @private
       def handle_child_definition_block(klass, &block)
         klass.class_eval(&block) if block_given?
       end
 
+      # Set/Get a runnable's id
+      #
+      # @param new_id [String,Symbol]
+      # @return [String,Symbol] the id
       def id(new_id = nil)
         return @id if new_id.nil? && @id.present?
 
@@ -197,12 +202,20 @@ module Inferno
         @id = "#{prefix}#{@base_id}"
       end
 
+      # Set/Get a runnable's title
+      #
+      # @param new_title [String]
+      # @return [String] the title
       def title(new_title = nil)
         return @title if new_title.nil?
 
         @title = new_title
       end
 
+      # Set/Get a runnable's description
+      #
+      # @param new_description [String]
+      # @return [String] the description
       def description(new_description = nil)
         return @description if new_description.nil?
 
@@ -239,7 +252,7 @@ module Inferno
 
       # Define outputs
       #
-      # @param output_lists [Symbol]
+      # @param output_list [Symbol]
       # @return [void]
       # @example
       #   output :patient_id, :bearer_token
@@ -250,30 +263,32 @@ module Inferno
         end
       end
 
-      # @api private
+      # @private
       def default_id
         to_s
       end
 
-      # @api private
+      # @private
       def inputs
         @inputs ||= []
       end
 
+      # @private
       def input_definitions
         config.inputs.slice(*inputs)
       end
 
+      # @private
       def output_definitions
         config.outputs.slice(*outputs)
       end
 
-      # @api private
+      # @private
       def outputs
         @outputs ||= []
       end
 
-      # @api private
+      # @private
       def child_types
         return [] if ancestors.include? Inferno::Entities::Test
         return [:groups] if ancestors.include? Inferno::Entities::TestSuite
@@ -281,7 +296,7 @@ module Inferno
         [:groups, :tests]
       end
 
-      # @api private
+      # @private
       def children
         @children ||= []
       end
@@ -292,7 +307,7 @@ module Inferno
         @validator_url = url
       end
 
-      # @api private
+      # @private
       def suite
         return self if ancestors.include? Inferno::Entities::TestSuite
 
@@ -329,8 +344,8 @@ module Inferno
       # @yield This method takes a block which must return the identifier
       #   defined when a test was set to wait for the test run that hit this
       #   route. The block has access to the `request` method which returns a
-      #   {Inferno::DSL::Request} object with the information for the incoming
-      #   request.
+      #   {Inferno::Entities::Request} object with the information for the
+      #   incoming request.
       def resume_test_route(method, path, &block)
         route_class = Class.new(ResumeTestRoute) do
           define_method(:test_run_identifier, &block)
@@ -357,10 +372,12 @@ module Inferno
         Inferno.routes << { method: method, path: path, handler: handler, suite: suite }
       end
 
+      # @private
       def test_count
         @test_count ||= children&.reduce(0) { |sum, child| sum + child.test_count } || 0
       end
 
+      # @private
       def required_inputs(prior_outputs = [])
         required_inputs = inputs.select do |input|
           !input_definitions[input][:optional] && !prior_outputs.include?(input)
@@ -371,6 +388,7 @@ module Inferno
         (required_inputs + children_required_inputs).flatten.uniq
       end
 
+      # @private
       def missing_inputs(submitted_inputs)
         submitted_inputs = [] if submitted_inputs.nil?
 

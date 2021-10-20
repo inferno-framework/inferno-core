@@ -3,36 +3,43 @@ module Inferno
     # A `Result` represents the result of running a `Test`, `TestGroup`,
     # or `TestSuite`
     #
-    # @attr_accessor [String] id id of the session
-    # @attr_accessor [Time] created_at creation timestamp
-    # @attr_accessor [Time] updated_at update timestamp
-    # @attr_accessor [String] reference_type type of entity this result belongs
-    #   to (`Test`, `TestGroup`, or `TestSuite`)
-    # @attr_accessor [String, nil] test_id id of the `Test` this result belongs
-    #   to
-    # @attr_accessor [Test, nil] test the `Test` this result belongs to
-    # @attr_accessor [String, nil] test_group_id id of the `TestGroup` this
-    #   result belongs to
-    # @attr_accessor [TestGroup, nil] test_group the `TestGroup` this result
-    #   belongs to
-    # @attr_accessor [String, nil] test_suite_id id of the `TestSuite` this
-    #   result belongs to
-    # @attr_accessor [TestSuite, nil] test_suite the `TestSuite` this result
-    #   belongs to
-    # @attr_accessor [String] result the result (`pass`, `fail`, `skip`, `omit`,
-    #   `error`, `running`, `wait`, `cancel`)
-    # @attr_accessor [String] result_message summary message for this result
-    # @attr_accessor [String] test_run_id the `TestRun` this result belongs to
-    # @attr_accessor [String] test_session_id the `TestSession` this result
-    #   belongs to
-    # @attr_accessor [Array<Inferno::Entities::Message>] messages additional
-    #   messages for this result
-    # @attr_accessor [Array<Inferno::Entities::Request>] request_summaries
-    #   summaries of the requests associated with this result
-    # @attr_accessor [String] input_json JSON string of the inputs used for this
+    # @!attribute id
+    #   @return [String] id of the session
+    # @!attribute created_at
+    #   @return [Time] creation timestamp
+    # @!attribute updated_at
+    #   @return [Time] update timestamp
+    # @!attribute test_id
+    #   @return [String, nil] id of the `Test` this result belongs to
+    # @!attribute test
+    #   @return [Test, nil] the `Test` this result belongs to
+    # @!attribute test_group_id
+    #   @return [String, nil] id of the `TestGroup` this result belongs to
+    # @!attribute test_group
+    #   @return [TestGroup, nil] the `TestGroup` this result belongs to
+    # @!attribute test_suite_id
+    #   @return [String, nil] id of the `TestSuite` this result belongs to
+    # @!attribute test_suite
+    #   @return [TestSuite, nil] the `TestSuite` this result belongs to
+    # @!attribute result
+    #   @return [String] the result (`pass`, `fail`, `skip`, `omit`, `error`,
+    #   `running`, `wait`, `cancel`)
+    # @!attribute result_message
+    #   @return [String] summary message for this result
+    # @!attribute test_run_id
+    #   @return [String] the `TestRun` this result belongs to
+    # @!attribute test_session_id
+    #   @return [String] the `TestSession` this result belongs to
+    # @!attribute messages
+    #   @return [Array<Inferno::Entities::Message>] additional messages for this
     #   result
-    # @attr_accessor [String] output_json JSON string of the outputs created by
-    #   this result
+    # @!attribute requests
+    #   @return [Array<Inferno::Entities::Request>] summaries of the requests
+    #   associated with this result
+    # @!attribute input_json
+    #   @return [String] JSON string of the inputs used for this result
+    # @!attribute output_json
+    #   @return [String] JSON string of the outputs created by this result
     class Result < Entity
       ATTRIBUTES = [
         :id, :created_at, :updated_at, :test_id, :test, :test_group_id,

@@ -15,7 +15,7 @@ module Inferno
         @config.apply(new_configuration)
       end
 
-      # @api private
+      # @private
       class Configuration
         attr_accessor :configuration
 

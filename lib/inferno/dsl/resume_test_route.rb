@@ -4,7 +4,7 @@ module Inferno
   module DSL
     # A base class for creating routes to resume test execution upon receiving
     # an incoming request.
-    # @api private
+    # @private
     # @see Inferno::DSL::Runnable#resume_test_route
     class ResumeTestRoute
       include Hanami::Action
@@ -26,23 +26,23 @@ module Inferno
         @request ||= Inferno::Entities::Request.from_rack_env(@params.env)
       end
 
-      # @api private
+      # @private
       def test_run
         @test_run ||=
           test_runs_repo.find_latest_waiting_by_identifier(test_run_identifier)
       end
 
-      # @api private
+      # @private
       def waiting_result
         @waiting_result ||= results_repo.find_waiting_result(test_run_id: test_run.id)
       end
 
-      # @api private
+      # @private
       def update_result
         results_repo.pass_waiting_result(waiting_result.id)
       end
 
-      # @api private
+      # @private
       def persist_request
         requests_repo.create(
           request.to_hash.merge(
@@ -53,22 +53,22 @@ module Inferno
         )
       end
 
-      # @api private
+      # @private
       def redirect_route
         "/test_sessions/#{test_run.test_session_id}##{waiting_group_id}"
       end
 
-      # @api private
+      # @private
       def test
         @test ||= tests_repo.find(waiting_result.test_id)
       end
 
-      # @api private
+      # @private
       def waiting_group_id
         test.parent.id
       end
 
-      # @api private
+      # @private
       def call(_params)
         if test_run.nil?
           status(500, "Unable to find test run with identifier '#{test_run_identifier}'.")

@@ -1,6 +1,6 @@
 module Inferno
   module Utils
-    # @api private
+    # @private
     module MarkdownFormatter
       def format_markdown(markdown) # rubocop:disable Metrics/CyclomaticComplexity
         lines = markdown.lines

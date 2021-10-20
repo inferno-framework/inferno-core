@@ -89,7 +89,7 @@ module Inferno
       end
 
       module ClassMethods
-        # @api private
+        # @private
         def fhir_validators
           @fhir_validators ||= {}
         end

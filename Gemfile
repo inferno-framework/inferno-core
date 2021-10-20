@@ -22,6 +22,7 @@ gem 'faraday'
 gem 'sidekiq', '~> 6.2.1'
 
 group :development, :test do
+  gem "jekyll", "~> 3.6.3"
   gem 'pry'
   gem 'pry-byebug'
   gem 'rubocop', '~> 1.9'
@@ -32,6 +33,7 @@ end
 
 group :development do
   gem 'yard'
+  gem 'yard-junk'
 end
 
 group :test do

@@ -1,7 +1,7 @@
 require_relative './utils/markdown_formatter'
 
 module Inferno
-  # @api private
+  # @private
   class TestRunner
     include Inferno::Utils::MarkdownFormatter
     attr_reader :test_session, :test_run, :resuming

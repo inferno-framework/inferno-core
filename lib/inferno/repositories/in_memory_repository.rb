@@ -24,7 +24,7 @@ module Inferno
           @all ||= []
         end
 
-        # @api private
+        # @private
         def all_by_id
           @all_by_id ||= {}
           @all_by_id.length == all.length ? @all_by_id : index_by_id
