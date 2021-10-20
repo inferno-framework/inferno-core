@@ -22,6 +22,10 @@ jobs:
       run: sed -i '/\/docs\/docs/d' .gitignore
     - name: Generate yard docs
       run: bundle exec bin/docs
+    - name: Set github author
+      run: |
+          git config --global user.email "inferno-developers@groups.mitre.org"
+          git config --global user.name "Inferno CI"
     - name: Commit docs
       run: git add docs/docs && git commit -m 'generate docs'
     - name: Push to gh-pages branch
