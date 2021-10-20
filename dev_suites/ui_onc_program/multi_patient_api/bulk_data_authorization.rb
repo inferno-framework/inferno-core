@@ -16,9 +16,6 @@ module ONCProgram
 
     id :bulk_data_authorization
 
-    input :bulk_client_id, :bulk_jwks_url_auth, :bulk_encryption_method, :bulk_scope
-    output :bulk_access_token
-
     test do
       title 'Authorization service token endpoint secured by transport layer security'
       description <<~DESCRIPTION
@@ -28,48 +25,9 @@ module ONCProgram
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#security-considerations'
 
       input :bulk_token_endpoint
-      http_client do
-        url 'https://hapi.fhir.org/'
-      end 
-
-      run do
-        http_client.verify_protocol('ensure', 'https://example.com')
-      end 
-    end
-
-    # TO_DO: Deprecated in program. Should I implement?
-    test do
-      title 'Authorization request fails when client supplies invalid content_type'
-      description <<~DESCRIPTION
-        The client requests a new access token via HTTP POST to the FHIR authorization server’s token endpoint URL, using content-type application/x-www-form-urlencoded
-      DESCRIPTION
-      # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#protocol-details'
 
       run {}
     end
-
-    # TO_DO: Deprecated in program. Should I implement?
-    test do
-      title 'Authorization request fails when client supplies invalid scope'
-      description <<~DESCRIPTION
-        The Backend Service Authorization specification defines the required fields for the
-        authorization request, made via HTTP POST to authorization token endpoint.  This
-        request includes the `scope` parameter, where the value must be a system scope.
-        System scopes have the format `system/(:resourceType|*).(read|write|*).
-
-        The OAuth 2.0 Authorization Framework describes the proper response for an
-        invalid request in the client credentials grant flow:
-
-        ```
-        If the request failed client authentication or is invalid, the authorization server returns an
-        error response as described in [Section 5.2](https://tools.ietf.org/html/rfc6749#section-5.2).
-        ```
-      DESCRIPTION
-      # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#scopes'
-
-      run {}
-    end
-
 
     test do
       title 'Authorization request fails when client supplies invalid grant_type'

@@ -94,19 +94,13 @@ module Inferno
         assert uri =~ /\A#{URI::DEFAULT_PARSER.make_regexp(['http', 'https'])}\z/, error_message
       end
 
-      def assert_security_protocol(uri, version)
+      def assert_security_protocol(uri, action, version)
         assert uri.downcase.starts_with?('https'), "URI is not HTTPS: #{uri}", uri_not_https_details(uri)
-        protocols = ['SSLv2.0', 'SSLv3.0', 'TLSv1.0', 'TLSv1.1', 'TLSv1.2', 'TLSv1.3']
-        unsupported_protocols = protocols.slice(0, protocols.index(version))
-
+        
+        tls_tester = TlsTester.new(uri: uri)
         begin
-          passed, message, details = verify_protocol('ensure', uri, version) 
+          passed, message, details = tls_tester.verify_protocol(action, string_to_protocol(version), version)
           assert passed, message, details
-
-          for unsupported_version in unsupported_protocols 
-            passed, message, details = verify_protocol('deny', uri, unsupported_version) 
-            assert passed, message, details
-          end
         rescue AssertionException => e
           raise e
         rescue SocketError => e
@@ -115,6 +109,38 @@ module Inferno
           assert false,
                  "Unable to connect to #{uri}: #{e.class.name}, #{e.message}",
                  tls_unexpected_error_details(uri)
+        end
+      end 
+
+      def assert_strict_verify_protocol(uri, action, version)
+        assert uri.downcase.starts_with?('https'), "URI is not HTTPS: #{uri}", uri_not_https_details(uri)
+        protocols = ['SSLv2.0', 'SSLv3.0', 'TLSv1.0', 'TLSv1.1', 'TLSv1.2', 'TLSv1.3']
+        unsupported_protocols = protocols.slice(0, protocols.index(version))
+
+        begin 
+          assert_security_protocol(uri, string_to_protocol(version))
+          for protocol in unsupported_protocols
+            assert_security_protocol(uri, 'deny', string_to_protocol(protocol))
+          end 
+        rescue AssertionException => e
+          raise e
+        end
+      end
+
+      def string_to_protocol(version)
+        case version
+        when 'SSLv2.0'
+          return OpenSSL::SSL::SSL2_VERSION
+        when 'SSLv3.0'
+          return OpenSSL::SSL::SSL3_VERSION
+        when 'TLSv1.0'
+          return OpenSSL::SSL::TLS1_VERSION
+        when 'TLSv1.1'
+          return OpenSSL::SSL::TLS1_1_VERSION
+        when 'TLSv1.3'
+          return OpenSSL::SSL::TLS1_3_VERSION
+        else 
+          return OpenSSL::SSL::TLS1_2_VERSION
         end
       end 
 

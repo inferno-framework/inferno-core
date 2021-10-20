@@ -338,21 +338,4 @@ RSpec.describe Inferno::DSL::HTTPClient do
       expect(group.requests).to all(be_a(Inferno::Entities::Request))
     end
   end
-
-  describe '#verify_protocol' do
-    context 'without a defualt client defined' do
-
-    end
-    
-      'it attempts to verify using the given url'
-      url = 'https://example.com/abc'
-      stubbed_request = 
-        stub_request(:post, url)
-          .to_return
-    end 
-    context 'with a defualt client defined' do
-    end 
-
-  
-  end 
 end
