@@ -18,36 +18,34 @@ module ONCProgram
 
     id :bulk_data_authorization
 
-    input :bulk_token_endpoint
     output :bulk_access_token
 
     http_client :token_endpoint do
-      url :bulk_token_endpoint 
+      url :bulk_token_endpoint
     end
 
-    # Locally stored JWK related code i.e. pulling from  bulk_data_jwks.json. 
+    # Locally stored JWK related code i.e. pulling from  bulk_data_jwks.json.
     # Takes an encryption method as a string and filters for the corresponding
     # key. The :bulk_encryption_method symbol was not recognized from within the
-    # scope of this method, hence why its passed as a parameter. 
+    # scope of this method, hence why its passed as a parameter.
     #
     # In program, this information was set within the config.yml file and related
     # methods written within the testing_instance.rb file. The following
     # code cherry picks what was needed from those files, but we should probably
-    # make an organizational decision about where this stuff will live. 
+    # make an organizational decision about where this stuff will live.
     def get_bulk_selected_private_key(encryption)
-      binding.pry
       bulk_data_jwks = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'bulk_data_jwks.json')))
       bulk_private_key_set = bulk_data_jwks['keys'].select { |key| key['key_ops']&.include?('sign') }
       bulk_private_key_set.find { |key| key['alg'] == encryption }
     end
 
-    # Heavy lifting for authorization - token signing and the like. 
+    # Heavy lifting for authorization - token signing and the like.
     #
     # Returns a hash containing everything necessary for an authorization post
-    # request. I ran into difficulty trying to make the request from within the 
-    # authorize function itself. I think its because the http_client is only 
+    # request. I ran into difficulty trying to make the request from within the
+    # authorize function itself. I think its because the http_client is only
     # usable from within the 'test' context - which is too bad because making the
-    # request from within this function would be cleaner.  
+    # request from within this function would be cleaner.
     def authorize(bulk_encryption_method,
                   scope,
                   iss,
@@ -58,7 +56,7 @@ module ONCProgram
                   client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
                   exp: 5.minutes.from_now,
                   jti: SecureRandom.hex(32))
-      header = 
+      header =
         {
           content_type: content_type,
           accept: 'application/json'
@@ -83,8 +81,8 @@ module ONCProgram
       uri = Addressable::URI.new
       uri.query_values = query_values
 
-      return { body: uri.query, headers: header } 
-    end 
+      { body: uri.query, headers: header }
+    end
 
     test do
       title 'Authorization service token endpoint secured by transport layer security'
@@ -93,10 +91,11 @@ module ONCProgram
         all exchanges described herein between a client and a server SHALL be secured using Transport Layer Security (TLS) Protocol Version 1.2 (RFC5246).
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#security-considerations'
+      input :bulk_token_endpoint
 
-      run {
+      run do
         assert_valid_http_uri(bulk_token_endpoint, "Invalid token endpoint: #{bulk_token_endpoint}")
-      }
+      end
     end
 
     test do
@@ -116,20 +115,20 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#protocol-details'
 
-      input :bulk_encryption_method, :bulk_scope, :bulk_client_id
+      input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
 
-      run {
-        post_request_content = authorize(bulk_encryption_method, 
-                             bulk_scope, 
-                             bulk_client_id,
-                             bulk_client_id, 
-                             bulk_token_endpoint,
-                             grant_type: 'not_a_grant_type')
-              
-        post(post_request_content.merge({:client => :token_endpoint}))
+      run do
+        post_request_content = authorize(bulk_encryption_method,
+                                         bulk_scope,
+                                         bulk_client_id,
+                                         bulk_client_id,
+                                         bulk_token_endpoint,
+                                         grant_type: 'not_a_grant_type')
+
+        post(post_request_content.merge({ client: :token_endpoint }))
 
         assert_response_status(400)
-      }
+      end
     end
 
     test do
@@ -149,20 +148,20 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#protocol-details'
 
-      input :bulk_encryption_method, :bulk_scope, :bulk_client_id
+      input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
 
-      run {
-        post_request_content = authorize(bulk_encryption_method, 
-                             bulk_scope, 
-                             bulk_client_id,
-                             bulk_client_id, 
-                             bulk_token_endpoint,
-                             client_assertion_type: 'not_a_assertion_type')
-              
-        post(post_request_content.merge({:client => :token_endpoint}))
+      run do
+        post_request_content = authorize(bulk_encryption_method,
+                                         bulk_scope,
+                                         bulk_client_id,
+                                         bulk_client_id,
+                                         bulk_token_endpoint,
+                                         client_assertion_type: 'not_a_assertion_type')
+
+        post(post_request_content.merge({ client: :token_endpoint }))
 
         assert_response_status(400)
-      }
+      end
     end
 
     test do
@@ -191,19 +190,19 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#protocol-details'
 
-      input :bulk_encryption_method, :bulk_scope, :bulk_client_id
+      input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
 
-      run {
-        post_request_content = authorize(bulk_encryption_method, 
-                             bulk_scope, 
-                             'not-a-valid-iss', 
-                             bulk_client_id, 
-                             bulk_token_endpoint)
+      run do
+        post_request_content = authorize(bulk_encryption_method,
+                                         bulk_scope,
+                                         'not-a-valid-iss',
+                                         bulk_client_id,
+                                         bulk_token_endpoint)
 
-        post(post_request_content.merge({:client => :token_endpoint}))
+        post(post_request_content.merge({ client: :token_endpoint }))
 
         assert_response_status(400)
-      }
+      end
     end
 
     test do
@@ -213,20 +212,21 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#issuing-access-tokens'
 
-      input :bulk_encryption_method, :bulk_scope, :bulk_client_id
+      input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
+      output :authentication_response
 
-      run {
-        post_request_content = authorize(bulk_encryption_method, 
-          bulk_scope, 
-          bulk_client_id,
-          bulk_client_id, 
-          bulk_token_endpoint)
+      run do
+        post_request_content = authorize(bulk_encryption_method,
+                                         bulk_scope,
+                                         bulk_client_id,
+                                         bulk_client_id,
+                                         bulk_token_endpoint)
 
-        response = post(post_request_content.merge({:client => :token_endpoint}))
+        response = post(post_request_content.merge({ client: :token_endpoint }))
 
         assert_response_status([200, 201])
-        @access_token = response
-      }
+        output authentication_response: response.to_json
+      end
     end
 
     test do
@@ -243,7 +243,27 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#issuing-access-tokens'
 
-      run {}
+      input :authentication_response
+      output :bulk_access_token
+
+      run do
+        skip_if authentication_response.blank?, 'No token response received'
+        authentication_response_obj = JSON.parse(authentication_response)
+
+        assert_valid_json(authentication_response_obj['response_body'])
+        authentication_response_body = JSON.parse(authentication_response_obj['response_body'])
+
+        access_token = authentication_response_body['access_token']
+        assert access_token.present?, 'Token response did not contain access_token as required'
+
+        output bulk_access_token: access_token
+
+        required_keys = ['token_type', 'expires_in', 'scope']
+
+        required_keys.each do |key|
+          assert authentication_response_body[key].present?, "Token response did not contain #{key} as required"
+        end
+      end
     end
   end
 end

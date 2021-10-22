@@ -96,7 +96,7 @@ module Inferno
 
       def assert_security_protocol(uri, action, version)
         assert uri.downcase.starts_with?('https'), "URI is not HTTPS: #{uri}", uri_not_https_details(uri)
-        
+
         tls_tester = TlsTester.new(uri: uri)
         begin
           passed, message, details = tls_tester.verify_protocol(action, string_to_protocol(version), version)
@@ -110,18 +110,18 @@ module Inferno
                  "Unable to connect to #{uri}: #{e.class.name}, #{e.message}",
                  tls_unexpected_error_details(uri)
         end
-      end 
+      end
 
-      def assert_strict_verify_protocol(uri, action, version)
+      def assert_strict_verify_protocol(uri, _action, version)
         assert uri.downcase.starts_with?('https'), "URI is not HTTPS: #{uri}", uri_not_https_details(uri)
         protocols = ['SSLv2.0', 'SSLv3.0', 'TLSv1.0', 'TLSv1.1', 'TLSv1.2', 'TLSv1.3']
         unsupported_protocols = protocols.slice(0, protocols.index(version))
 
-        begin 
+        begin
           assert_security_protocol(uri, string_to_protocol(version))
-          for protocol in unsupported_protocols
+          unsupported_protocols.each do |protocol|
             assert_security_protocol(uri, 'deny', string_to_protocol(protocol))
-          end 
+          end
         rescue AssertionException => e
           raise e
         end
@@ -130,36 +130,36 @@ module Inferno
       def string_to_protocol(version)
         case version
         when 'SSLv2.0'
-          return OpenSSL::SSL::SSL2_VERSION
+          OpenSSL::SSL::SSL2_VERSION
         when 'SSLv3.0'
-          return OpenSSL::SSL::SSL3_VERSION
+          OpenSSL::SSL::SSL3_VERSION
         when 'TLSv1.0'
-          return OpenSSL::SSL::TLS1_VERSION
+          OpenSSL::SSL::TLS1_VERSION
         when 'TLSv1.1'
-          return OpenSSL::SSL::TLS1_1_VERSION
+          OpenSSL::SSL::TLS1_1_VERSION
         when 'TLSv1.3'
-          return OpenSSL::SSL::TLS1_3_VERSION
-        else 
-          return OpenSSL::SSL::TLS1_2_VERSION
+          OpenSSL::SSL::TLS1_3_VERSION
+        else
+          OpenSSL::SSL::TLS1_2_VERSION
         end
-      end 
+      end
 
       def uri_not_https_details(uri)
         %(
           The following URI does not use the HTTPS protocol identifier:
-  
+
           [#{uri}](#{uri})
-  
+
           The HTTPS protocol identifier is required for TLS connections.
-  
+
           HTTP/TLS is differentiated from HTTP by using the `https`
           protocol identifier in place of the `http` protocol identifier. An
           example URI specifying HTTP/TLS is:
           `https://www.example.org`
-  
+
           [HTTP Over TLS](https://tools.ietf.org/html/rfc2818#section-2.4)
-  
-  
+
+
           In order to fix this error you must secure this endpoint with TLS 1.2
           and ensure that references to this URL point to the HTTPS protocol so
           that use of TLS is explicit.
@@ -169,16 +169,16 @@ module Inferno
       def tls_socket_error_details(uri)
         %(
           The following URI did not accept socket connections over port 443:
-  
+
           [#{uri}](#{uri})
-  
+
           ```
           When HTTP/TLS is being run over a TCP/IP connection, the default port
           is 443.
           ```
           [HTTP Over TLS](https://tools.ietf.org/html/rfc2818#section-2.3)
-  
-  
+
+
           To fix this error ensure that this URI is protected by TLS.
         ) + disable_tls_instructions
       end
@@ -187,9 +187,9 @@ module Inferno
         %(
           An unexpected error occured when attempting to connect to the
           following URI using TLS.
-  
+
           [#{uri}](#{uri})
-  
+
           To fix this error ensure that this URI is protected by TLS.
         ) + disable_tls_instructions
       end
