@@ -1,3 +1,5 @@
+require 'json/jwt'
+
 module ONCProgram
   class BulkDataAuthorization < Inferno::TestGroup
     title 'Bulk Data Authorization'
@@ -16,6 +18,73 @@ module ONCProgram
 
     id :bulk_data_authorization
 
+    input :bulk_token_endpoint
+    output :bulk_access_token
+
+    http_client :token_endpoint do
+      url :bulk_token_endpoint 
+    end
+
+    # Locally stored JWK related code i.e. pulling from  bulk_data_jwks.json. 
+    # Takes an encryption method as a string and filters for the corresponding
+    # key. The :bulk_encryption_method symbol was not recognized from within the
+    # scope of this method, hence why its passed as a parameter. 
+    #
+    # In program, this information was set within the config.yml file and related
+    # methods written within the testing_instance.rb file. The following
+    # code cherry picks what was needed from those files, but we should probably
+    # make an organizational decision about where this stuff will live. 
+    def get_bulk_selected_private_key(encryption)
+      bulk_data_jwks = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'bulk_data_jwks.json')))
+      bulk_private_key_set = bulk_data_jwks['keys'].select { |key| key['key_ops']&.include?('sign') }
+      bulk_private_key_set.find { |key| key['alg'] == encryption }
+    end
+
+    # Heavy lifting for authorization - token signing and the like. 
+    #
+    # Returns a hash containing everything necessary for an authorization post
+    # request. I ran into difficulty trying to make the request from within the 
+    # authorize function itself. I think its because the http_client is only 
+    # usable from within the 'test' context - which is too bad because making the
+    # request from within this function would be cleaner.  
+    def authorize(bulk_encryption_method,
+                  scope,
+                  iss,
+                  sub,
+                  aud,
+                  content_type: 'application/x-www-form-urlencoded',
+                  grant_type: 'client_credentials',
+                  client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+                  exp: 5.minutes.from_now,
+                  jti: SecureRandom.hex(32))
+      header = 
+        {
+          content_type: content_type,
+          accept: 'application/json'
+        }.compact
+
+      bulk_private_key = get_bulk_selected_private_key(bulk_encryption_method)
+      jwt_token = JSON::JWT.new(iss: iss, sub: sub, aud: aud, exp: exp, jti: jti).compact
+      jwk = JSON::JWK.new(bulk_private_key)
+
+      jwt_token.kid = jwk['kid']
+      jwk_private_key = jwk.to_key
+      client_assertion = jwt_token.sign(jwk_private_key, bulk_private_key['alg'])
+
+      query_values =
+        {
+          'scope' => scope,
+          'grant_type' => grant_type,
+          'client_assertion_type' => client_assertion_type,
+          'client_assertion' => client_assertion.to_s
+        }.compact
+
+      uri = Addressable::URI.new
+      uri.query_values = query_values
+
+      return { body: uri.query, headers: header } 
+    end 
+
     test do
       title 'Authorization service token endpoint secured by transport layer security'
       description <<~DESCRIPTION
@@ -24,9 +93,9 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#security-considerations'
 
-      input :bulk_token_endpoint
-
-      run {}
+      run {
+        assert_valid_http_uri(bulk_token_endpoint, "Invalid token endpoint: #{bulk_token_endpoint}")
+      }
     end
 
     test do
@@ -46,9 +115,22 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#protocol-details'
 
-      run {}
-        #Check that it fails
-        #Check that it returns the correct failure message 
+      input :bulk_encryption_method, :bulk_scope, :bulk_client_id
+
+      run {
+        assert_valid_http_uri(bulk_token_endpoint, "Invalid token endpoint: #{bulk_token_endpoint}")
+
+        post_request_content = authorize(bulk_encryption_method, 
+                             bulk_scope, 
+                             bulk_client_id,
+                             bulk_client_id, 
+                             bulk_token_endpoint,
+                             grant_type: 'not_a_grant_type')
+              
+        post(post_request_content.merge({:client => :token_endpoint}))
+
+        assert_response_status(400)
+      }
     end
 
     test do

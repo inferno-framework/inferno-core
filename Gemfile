@@ -20,6 +20,7 @@ gem 'fhir_models', '~> 4.2.0'
 gem 'rake'
 gem 'faraday'
 gem 'sidekiq', '~> 6.2.1'
+gem 'json-jwt'
 
 group :development, :test do
   gem 'pry'

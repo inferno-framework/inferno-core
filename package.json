@@ -25,7 +25,7 @@
     "puma": "bundle exec puma",
     "redis": "docker run -p 6379:6379 redis",
     "sidekiq": "bundle exec sidekiq -r ./worker.rb",
-    "dev": "concurrently --kill-others \"npm run start\" \"npm run puma\" \"npm run redis\" \"npm run sidekiq\"",
+    "dev": "concurrently --kill-others \"npm run start\" \"npm run puma\" \"npm run redis\" ",
     "test": "jest ./client/src/**/*",
     "eject": "react-scripts eject",
     "lint": "tsc --noEmit && eslint './client/src/**/*.{ts,tsx}'",
