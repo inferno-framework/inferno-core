@@ -1,0 +1,10 @@
+
+[1mFrom:[0m /home/czhou/inferno-core/dev_suites/uscore_v3.1.1/utils/data_absent_reason_checker.rb:9 USCore::DataAbsentReasonChecker#check_for_data_absent_reasons:
+
+     [1;34m8[0m: [32mdef[0m [1;34mcheck_for_data_absent_reasons[0m
+ =>  [1;34m9[0m:   proc [32mdo[0m |reply|
+    [1;34m10[0m:     check_for_data_absent_extension(reply)
+    [1;34m11[0m:     check_for_data_absent_code(reply)
+    [1;34m12[0m:   [32mend[0m
+    [1;34m13[0m: [32mend[0m
+

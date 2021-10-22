@@ -23,7 +23,6 @@ module USCore
       resolved_one = search_params.none? { |_param, value| value.nil? }
       skip 'Could not resolve all parameters (patient, clinical-status) in any resource.' unless resolved_one
       fhir_search :AllergyIntolerance,
-                  client: :single_patient_client,
                   params: search_params
       
                   
@@ -32,7 +31,7 @@ module USCore
 
       any_resources = resource.entry.any? { |entry| entry.resource.resourceType == 'AllergyIntolerance' }
  
-      resources_returned = fetch_all_bundled_resources(resource, fhir_client(:single_patient_client))
+      resources_returned = fetch_all_bundled_resources(resource, fhir_client)
       resources_returned.select! { |resource| resource.resourceType == 'AllergyIntolerance' }
       
       # next unless any_resources

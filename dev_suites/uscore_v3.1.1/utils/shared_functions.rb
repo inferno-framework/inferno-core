@@ -12,7 +12,7 @@ module USCore
 
         reply = client.raw_read_url(next_bundle_link)
         error_message = "Could not resolve next bundle. #{next_bundle_link}"
-        assert_response_ok(reply, error_message)
+        assert_response_ok(error_message: error_message)
         assert_valid_json(reply.body, error_message)
 
         bundle = client.parse_reply(FHIR::Bundle, client.default_format, reply)
@@ -134,7 +134,7 @@ module USCore
       escaped_value
     end
 
-    def validate_read_reply(resource_given, client, reply_handler = nil)
+    def validate_read_reply(resource_given, reply_handler = nil)
       class_name = resource_given.class.name.demodulize
       if resource_given.is_a? FHIR::Reference
         store_request('outgoing') do
@@ -144,17 +144,17 @@ module USCore
       else
         id = resource_given&.id
         assert !id.nil?, "#{class_name} id not returned"
-        fhir_read class_name, id, client: client
+        fhir_read class_name, id
         assert_response_ok
         reply_handler&.call(resource)
       end
       assert !resource.nil?, "Expected #{class_name} resource to be present."
       assert resource.is_a?(resource_given.class), "Expected resource to be of type #{class_name}."
-      assert resource.id.present? && resource_given.id == id, "Expected resource to contain id: #{id}"
+      assert resource.id.present? && resource_given.id == resource.id, "Expected resource to contain id: #{id}"
       resource
     end
 
-    def validate_vread_reply(resource_given, client)
+    def validate_vread_reply(resource_given)
       class_name = resource_given.class.name.demodulize
       assert !resource_given.nil?, "No #{class_name} resources available from search."
       id = resource_given.try(:id)
@@ -162,7 +162,7 @@ module USCore
       version_id = resource_given.try(:meta).try(:versionId)
       assert !version_id.nil?, "#{class_name} version_id not returned"
       store_request('outgoing') do
-        fhir_client(client).vread(class_name, id, version_id)
+        fhir_client.vread(class_name, id, version_id)
       end
       assert_response_ok
       assert !resource.nil?, "Expected valid #{class_name} resource to be present"
@@ -191,13 +191,13 @@ module USCore
       end
     end
 
-    def validate_history_reply(resource_given, client)
+    def validate_history_reply(resource_given)
       class_name = resource_given.class.name.demodulize
       assert !resource_given.nil?, "No #{class_name} resources available from search."
       id = resource_given.try(:id)
       assert !id.nil?, "#{class_name} id not returned"
       store_request('outgoing') do
-        fhir_client(client).resource_instance_history(class_name, id)
+        fhir_client.resource_instance_history(class_name, id)
       end
       assert_response_ok
       # assert_valid_bundle_entries
@@ -265,6 +265,129 @@ module USCore
         end
       end
       assert(validation_results.all?, "Resource does not conform to the profile: #{specified_profile}")
+    end
+
+    def walk_resource(resource, path = nil, &block)
+      resource.class::METADATA.each do |field_name, meta|
+        local_name = meta.fetch :local_name, field_name
+        values = [resource.instance_variable_get("@#{local_name}")].flatten.compact
+        next if values.empty?
+    
+        values.each_with_index do |value, i|
+          child_path = if path.nil?
+                         field_name
+                       elsif meta['max'] > 1
+                         "#{path}.#{field_name}[#{i}]"
+                       else
+                         "#{path}.#{field_name}"
+                       end
+          yield value, meta, child_path
+          walk_resource value, child_path, &block unless FHIR::PRIMITIVES.include? meta['type']
+        end
+      end
+    end
+
+    class InvalidReferenceResource < StandardError; end
+    
+    def validate_reference_resolutions(resource, resolved_references = Set.new, max_resolutions = 1_000_000)
+      problems = []
+
+      walk_resource(resource) do |value, meta, path|
+        next if meta['type'] != 'Reference'
+        next if value.reference.blank?
+        next if resolved_references.include?(value.reference)
+        break if resolved_references.length > max_resolutions
+
+        if value.contained?
+
+          # if reference_id is blank it is referring to itself, so we know it exists
+          next if value.reference_id.blank?
+
+          # otherwise check to make sure the base resource has the contained element
+          valid_contained = resource.contained.any? { |contained_resource| contained_resource&.id == value.reference_id }
+          problems << "#{path} has contained reference to id '#{value.reference_id}' that does not exist" unless valid_contained
+          next
+        end
+
+        begin
+          # Should potentially update valid? method in fhir_dstu2_models
+          # to check for this type of thing
+          # e.g. "patient/54520" is invalid (fhir_client resource_class method would expect "Patient/54520")
+          if value.relative?
+            begin
+              value.resource_class
+            rescue NameError
+              problems << "#{path} has invalid resource type in reference: #{value.type}"
+              next
+            end
+          end
+          reference = value.reference
+          reference_type = value.resource_type
+          resolved_resource = value.read
+
+          raise InvalidReferenceResource if resolved_resource&.resourceType != reference_type
+
+          resolved_references.add(value.reference)
+        rescue ClientException => e
+          problems << "#{path} did not resolve: #{e}"
+        rescue InvalidReferenceResource
+          problems << "Expected #{reference} to refer to a #{reference_type} resource, but found a #{resolved_resource&.resourceType} resource."
+        end
+      end
+
+      # Inferno.logger.info "Surpassed the maximum reference resolutions: #{max_resolutions}" if resolved_references.length > max_resolutions
+
+      assert(problems.empty?, "\n* " + problems.join("\n* "))
+    end
+
+    # pattern, values, type
+    def find_slice(resource, path_to_ary, discriminator)
+      resolve_element_from_path(resource, path_to_ary) do |array_el|
+        case discriminator[:type]
+        when 'patternCodeableConcept'
+          path_to_coding = discriminator[:path].present? ? [discriminator[:path], 'coding'].join('.') : 'coding'
+          resolve_element_from_path(array_el, path_to_coding) do |coding|
+            coding.code == discriminator[:code] && coding.system == discriminator[:system]
+          end
+        when 'patternIdentifier'
+          resolve_element_from_path(array_el, discriminator[:path]) { |identifier| identifier.system == discriminator[:system] }
+        when 'value'
+          values_clone = discriminator[:values].deep_dup
+          values_clone.each do |value_def|
+            value_def[:path] = value_def[:path].split('.')
+          end
+          find_slice_by_values(array_el, values_clone)
+        when 'type'
+          case discriminator[:code]
+          when 'Date'
+            begin
+              Date.parse(array_el)
+            rescue ArgumentError
+              false
+            end
+          when 'String'
+            array_el.is_a? String
+          else
+            array_el.is_a? FHIR.const_get(discriminator[:code])
+          end
+        end
+      end
+    end
+
+    def find_slice_by_values(element, values)
+      unique_first_part = values.map { |value_def| value_def[:path].first }.uniq
+      Array.wrap(element).find do |el|
+        unique_first_part.all? do |part|
+          values_matching = values.select { |value_def| value_def[:path].first == part }
+          values_matching.each { |value_def| value_def[:path] = value_def[:path].drop(1) }
+          resolve_element_from_path(el, part) do |el_found|
+            all_matches = values_matching.select { |value_def| value_def[:path].empty? }.all? { |value_def| value_def[:value] == el_found }
+            remaining_values = values_matching.reject { |value_def| value_def[:path].empty? }
+            remaining_matches = remaining_values.present? ? find_slice_by_values(el_found, remaining_values) : true
+            all_matches && remaining_matches
+          end
+        end
+      end
     end
   end
 end

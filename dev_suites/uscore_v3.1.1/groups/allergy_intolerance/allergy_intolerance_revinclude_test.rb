@@ -34,14 +34,13 @@ module USCore
       }
 
       fhir_search :AllergyIntolerance,
-                  client: :single_patient_client,
                   params: search_params
 
       # reply = perform_search_with_status(reply, search_params, search_method: :get) if reply.code == 400
 
       assert_response_ok
       # assert_valid_bundle_entries
-      provenance_results += fetch_all_bundled_resources(resource, fhir_client(:single_patient_client), reply_handler: check_for_data_absent_reasons)
+      provenance_results += fetch_all_bundled_resources(resource, fhir_client, reply_handler: check_for_data_absent_reasons)
         .select { |resource| resource.resourceType == 'Provenance' }
       # end
 

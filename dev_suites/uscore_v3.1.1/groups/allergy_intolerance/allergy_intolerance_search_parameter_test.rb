@@ -39,6 +39,7 @@ module USCore
     run do
       allergy_intolerance_resources = scratch[:resources_returned]
       search_params = scratch[:search_parameters_used]
+      omit_if allergy_intolerance_resources.nil? || search_params.nil?, 'No Allergy Intolerance resources found'
       allergy_intolerance_resources.each do |resource|
         search_params.each do |key, value|
           unescaped_value = value&.gsub('\\,', ',')

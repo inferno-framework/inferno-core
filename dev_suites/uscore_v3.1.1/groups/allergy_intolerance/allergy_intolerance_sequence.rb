@@ -78,8 +78,7 @@ module USCore
         the response will be used for subsequent tests.
 
       )
-
-      
+ 
       test from: :allergy_intolerance_search_patient_test
       test from: :allergy_intolerance_search_params_validation
       test from: :allergy_intolerance_search_post
@@ -97,5 +96,6 @@ module USCore
     test from: :allergy_intolerance_rev_include_test
     test from: :allergy_intolerance_validate_test
     test from: :allergy_intolerance_must_support_test
+    test from: :allergy_intolerance_reference_resolution_test
   end
 end

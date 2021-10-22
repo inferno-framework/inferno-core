@@ -17,7 +17,7 @@ module USCore
       allergy_intolerance_resources = scratch[:allergy_intolerance_resources]
       skip 'No Allergy Intolerance resources appeart to be available. Please use patients with more information' unless allergy_intolerance_resources.any?
 
-      validate_vread_reply(allergy_intolerance_resources.first, :single_patient_client) #check for data absent reason
+      validate_vread_reply(allergy_intolerance_resources.first) #check for data absent reason
     end
   end
 end

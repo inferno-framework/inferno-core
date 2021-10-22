@@ -19,7 +19,6 @@ module USCore
 
       search_params = search_params.merge(patient: "Patient/#{standalone_patient_id}")
       fhir_search :AllergyIntolerance,
-                  client: :single_patient_client,
                   params: search_params
       assert_response_status(200)
       # assert_valid_bundle_entries(resource_types: ['AllergyIntolerance', 'OperationOutcome'])

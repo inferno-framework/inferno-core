@@ -42,13 +42,14 @@ module USCore # rubocop:disable Naming/ClassAndModuleCamelCase
       input :standalone_patient_id, title: 'Patient ID'
       input :standalone_access_token, title: 'Bearer Token'
 
-      fhir_client :single_patient_client do
+      fhir_client do
         url :url
         bearer_token :standalone_access_token
       end
 
       group from: 'USCore::USCoreCapabilityStatement'
       group from: 'USCore::AllergyIntoleranceSequence'
+      group from: 'USCore::CarePlanSequence'
     end
   end
 end
