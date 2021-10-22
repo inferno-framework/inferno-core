@@ -118,8 +118,6 @@ module ONCProgram
       input :bulk_encryption_method, :bulk_scope, :bulk_client_id
 
       run {
-        assert_valid_http_uri(bulk_token_endpoint, "Invalid token endpoint: #{bulk_token_endpoint}")
-
         post_request_content = authorize(bulk_encryption_method, 
                              bulk_scope, 
                              bulk_client_id,
@@ -150,7 +148,20 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#protocol-details'
 
-      run {}
+      input :bulk_encryption_method, :bulk_scope, :bulk_client_id
+
+      run {
+        post_request_content = authorize(bulk_encryption_method, 
+                             bulk_scope, 
+                             bulk_client_id,
+                             bulk_client_id, 
+                             bulk_token_endpoint,
+                             client_assertion_type: 'not_a_assertion_type')
+              
+        post(post_request_content.merge({:client => :token_endpoint}))
+
+        assert_response_status(400)
+      }
     end
 
     test do
