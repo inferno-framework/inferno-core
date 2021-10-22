@@ -35,6 +35,7 @@ module ONCProgram
     # code cherry picks what was needed from those files, but we should probably
     # make an organizational decision about where this stuff will live. 
     def get_bulk_selected_private_key(encryption)
+      binding.pry
       bulk_data_jwks = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'bulk_data_jwks.json')))
       bulk_private_key_set = bulk_data_jwks['keys'].select { |key| key['key_ops']&.include?('sign') }
       bulk_private_key_set.find { |key| key['alg'] == encryption }
@@ -190,7 +191,19 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#protocol-details'
 
-      run {}
+      input :bulk_encryption_method, :bulk_scope, :bulk_client_id
+
+      run {
+        post_request_content = authorize(bulk_encryption_method, 
+                             bulk_scope, 
+                             'not-a-valid-iss', 
+                             bulk_client_id, 
+                             bulk_token_endpoint)
+
+        post(post_request_content.merge({:client => :token_endpoint}))
+
+        assert_response_status(400)
+      }
     end
 
     test do
@@ -200,7 +213,20 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#issuing-access-tokens'
 
-      run {}
+      input :bulk_encryption_method, :bulk_scope, :bulk_client_id
+
+      run {
+        post_request_content = authorize(bulk_encryption_method, 
+          bulk_scope, 
+          bulk_client_id,
+          bulk_client_id, 
+          bulk_token_endpoint)
+
+        response = post(post_request_content.merge({:client => :token_endpoint}))
+
+        assert_response_status([200, 201])
+        @access_token = response
+      }
     end
 
     test do
