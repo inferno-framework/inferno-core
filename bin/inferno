@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'pry'
+require_relative '../lib/inferno/config/application'
+require_relative '../lib/inferno/apps/cli'
+
+Inferno::CLI::Main.start

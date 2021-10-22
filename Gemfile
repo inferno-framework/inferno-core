@@ -20,6 +20,7 @@ gem 'fhir_models', '~> 4.2.0'
 gem 'rake'
 gem 'faraday'
 gem 'sidekiq', '~> 6.2.1'
+gem 'thor', '~> 1.1.0'
 
 group :development, :test do
   gem "jekyll", "~> 3.6.3"

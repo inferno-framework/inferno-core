@@ -30,7 +30,7 @@ npm install
 bundle install
 
 # Set up database
-bundle exec rake db:migrate
+bundle exec bin/inferno migrate
 
 # Start Inferno Core server and UI
 npm run dev
@@ -84,7 +84,7 @@ GET http://localhost:4567/api/test_sessions/TEST_SESSION_ID/results
 ```
 
 ## Development
-To get to an interactive console, run `bundle exec bin/inferno-console`
+To get to an interactive console, run `bundle exec bin/inferno console`
 
 ## License
 Copyright 2021 The MITRE Corporation

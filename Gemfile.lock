@@ -248,6 +248,7 @@ GEM
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.3)
     sqlite3 (1.4.2)
+    thor (1.1.0)
     tilt (2.0.10)
     transproc (1.1.1)
     tzinfo (2.0.4)
@@ -301,6 +302,7 @@ DEPENDENCIES
   sidekiq (~> 6.2.1)
   simplecov
   sqlite3
+  thor (~> 1.1.0)
   webmock
   yard
   yard-junk

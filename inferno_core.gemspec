@@ -30,6 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'sequel', '~> 5.42'
   spec.add_runtime_dependency 'sidekiq', '~> 6.2.1'
   spec.add_runtime_dependency 'sqlite3', '~> 1.4'
+  spec.add_runtime_dependency 'thor', '~> 1.1.0'
   spec.add_development_dependency 'codecov', '0.5.2'
   spec.add_development_dependency 'database_cleaner-sequel', '~> 1.8'
   spec.add_development_dependency 'factory_bot', '~> 6.1'
@@ -51,7 +52,7 @@ Gem::Specification.new do |spec|
     'LICENSE',
     Dir['lib/inferno/**/*.rb'],
     Dir['lib/inferno/**/*.erb'],
-    'bin/inferno-console',
+    'bin/inferno',
     Dir['lib/inferno/public/*.png'],
     Dir['lib/inferno/public/*.ico'],
     Dir['lib/inferno/public/*.js'],

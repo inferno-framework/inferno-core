@@ -1,7 +1,3 @@
-require 'active_support/all'
-require 'dotenv'
-require 'dry/system/container'
-require 'sequel'
 require_relative 'inferno/config/application'
 require_relative 'inferno/dsl'
 require_relative 'inferno/entities'

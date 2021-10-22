@@ -9,7 +9,8 @@ namespace :db do
   desc 'Apply changes to the database'
   task :migrate do
     require_relative 'lib/inferno/config/application'
+    require_relative 'lib/inferno/apps/cli/migration'
 
-    Inferno::Application.start(:db)
+    Inferno::CLI::Migration.new.run
   end
 end
