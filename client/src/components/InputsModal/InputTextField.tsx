@@ -30,7 +30,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
       {lockedIcon}
     </Fragment>
   );
-  
+
   return (
     <ListItem disabled={requirement.locked}>
       <TextField

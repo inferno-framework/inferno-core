@@ -25,7 +25,7 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
       {lockedIcon}
     </Fragment>
   );
-  
+
   return (
     <ListItem disabled={requirement.locked}>
       <TextField
