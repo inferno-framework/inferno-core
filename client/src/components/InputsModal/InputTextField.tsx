@@ -1,4 +1,5 @@
 import { ListItem, TextField } from '@material-ui/core';
+import LockIcon from '@material-ui/icons/Lock';
 import { TestInput } from 'models/testSuiteModels';
 import React, { FC, Fragment } from 'react';
 import useStyles from './styles';
@@ -17,17 +18,23 @@ const InputTextField: FC<InputTextFieldProps> = ({
   setInputsMap,
 }) => {
   const styles = useStyles();
-  const fieldLabel = requirement.optional ? (
-    requirement.title || requirement.name
-  ) : (
+  const fieldLabelText = requirement.title || requirement.name;
+  const lockedIcon = requirement.locked ? (
+    <LockIcon fontSize="small" className={styles.lockedIcon} />
+  ) : null;
+  const requiredLabel = !requirement.optional && !requirement.locked ? ' (required)' : '';
+  const fieldLabel = (
     <Fragment>
-      {requirement.title || requirement.name}
-      <span className={styles.requiredLabel}> (required)</span>
+      {fieldLabelText}
+      {requiredLabel}
+      {lockedIcon}
     </Fragment>
   );
+
   return (
-    <ListItem>
+    <ListItem disabled={requirement.locked}>
       <TextField
+        disabled={requirement.locked}
         id={`requirement${index}_input`}
         className={styles.inputField}
         fullWidth
@@ -39,6 +46,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
           inputsMap.set(requirement.name, value);
           setInputsMap(new Map(inputsMap));
         }}
+        InputLabelProps={{ shrink: true }}
       />
     </ListItem>
   );

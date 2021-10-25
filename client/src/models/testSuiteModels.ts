@@ -46,6 +46,7 @@ export interface TestInput {
   description?: string;
   default?: string;
   optional?: boolean;
+  locked?: boolean;
 }
 
 export interface TestOutput {
