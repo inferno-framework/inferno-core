@@ -10,9 +10,9 @@ If you are interested in developing tests using Inferno Core, use the [Inferno
 Template Repository](https://github.com/inferno-community/inferno-template).
 
 ## Documentation
-- [Inferno documentation](https://inferno-community.github.io/inferno-core/)
-- [Ruby API documentation](https://inferno-community.github.io/inferno-core/docs)
-- [JSON API documentation](https://inferno-community.github.io/inferno-core/api-docs)
+- [Inferno documentation](https://inferno-framework.github.io/inferno-core/)
+- [Ruby API documentation](https://inferno-framework.github.io/inferno-core/docs)
+- [JSON API documentation](https://inferno-framework.github.io/inferno-core/api-docs)
 
 ## Requirements
 Inferno Core requires [Ruby 2.7+](https://www.ruby-lang.org/en/) and [Node.js
