@@ -20,6 +20,7 @@ gem 'fhir_models', '~> 4.2.0'
 gem 'rake'
 gem 'faraday'
 gem 'sidekiq', '~> 6.2.1'
+#TODO: Remove once tests are moved to their own repo
 gem 'json-jwt'
 
 group :development, :test do

@@ -5,6 +5,7 @@ module ONCProgram
     title '2015 Edition Cures Update -  Standardized API Testing'
     description 'ONC Standardized API Testing '
 
+    # TODO: Don't forget to uncomment all this fun stuff
     # group from: :standalone_patient_app_full_access
     # group from: :standalone_patient_app_limited_access
     # group from: :ehr_practitioner_app
