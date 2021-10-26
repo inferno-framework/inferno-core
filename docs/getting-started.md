@@ -14,7 +14,7 @@ nav_order: 2
 ## Installation
 1. Install [Docker](https://www.docker.com/get-started).
 1. Clone the [Inferno Template
-   repository](https://github.com/inferno-community/inferno-template). You can
+   repository](https://github.com/inferno-framework/inferno-template). You can
    either clone this repository directly, or click the green "Use this template"
    button to create your own repository based on this one.
 1. Run `./setup.sh` in the template repository to retrieve the necessary docker

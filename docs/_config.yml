@@ -17,7 +17,7 @@ title: Inferno
 email: inferno@groups.mitre.org
 description: Inferno documentation
 baseurl: "/inferno-core" # the subpath of your site, e.g. /blog
-url: "https://inferno-community.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://inferno-framework.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 
 # Build settings
 markdown: kramdown

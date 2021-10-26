@@ -7,7 +7,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
     description %(
     # This is a markdown header
-    **Inferno** [github](https://github.com/inferno-community/inferno-core)
+    **Inferno** [github](https://github.com/inferno-framework/inferno-core)
 
     )
 
