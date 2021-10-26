@@ -46,11 +46,11 @@ module ONCProgram
     # authorize function itself. I think its because the http_client is only
     # usable from within the 'test' context - which is too bad because making the
     # request from within this function would be cleaner.
-    def authorize(bulk_encryption_method,
-                  scope,
-                  iss,
-                  sub,
-                  aud,
+    def build_authorization_request(encryption_method:,
+                  scope:,
+                  iss:,
+                  sub:,
+                  aud:,
                   content_type: 'application/x-www-form-urlencoded',
                   grant_type: 'client_credentials',
                   client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
@@ -62,7 +62,7 @@ module ONCProgram
           accept: 'application/json'
         }.compact
 
-      bulk_private_key = get_bulk_selected_private_key(bulk_encryption_method)
+      bulk_private_key = get_bulk_selected_private_key(encryption_method)
       jwt_token = JSON::JWT.new(iss: iss, sub: sub, aud: aud, exp: exp, jti: jti).compact
       jwk = JSON::JWK.new(bulk_private_key)
 
@@ -118,14 +118,14 @@ module ONCProgram
       input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
 
       run do
-        post_request_content = authorize(bulk_encryption_method,
-                                         bulk_scope,
-                                         bulk_client_id,
-                                         bulk_client_id,
-                                         bulk_token_endpoint,
-                                         grant_type: 'not_a_grant_type')
+        post_request_content = build_authorization_request(encryption_method: bulk_encryption_method,
+                                        scope: bulk_scope,
+                                        iss: bulk_client_id,
+                                        sub: bulk_client_id,
+                                        aud: bulk_token_endpoint,
+                                        grant_type: 'not_a_grant_type')
 
-        post(post_request_content.merge({ client: :token_endpoint }))
+        post({ client: :token_endpoint }.merge(post_request_content))
 
         assert_response_status(400)
       end
@@ -151,14 +151,14 @@ module ONCProgram
       input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
 
       run do
-        post_request_content = authorize(bulk_encryption_method,
-                                         bulk_scope,
-                                         bulk_client_id,
-                                         bulk_client_id,
-                                         bulk_token_endpoint,
-                                         client_assertion_type: 'not_a_assertion_type')
+        post_request_content = build_authorization_request(encryption_method: bulk_encryption_method,
+                                        scope: bulk_scope,
+                                        iss: bulk_client_id,
+                                        sub: bulk_client_id,
+                                        aud: bulk_token_endpoint,
+                                        client_assertion_type: 'not_an_assertion_type')
 
-        post(post_request_content.merge({ client: :token_endpoint }))
+        post({ client: :token_endpoint }.merge(post_request_content))
 
         assert_response_status(400)
       end
@@ -193,13 +193,13 @@ module ONCProgram
       input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
 
       run do
-        post_request_content = authorize(bulk_encryption_method,
-                                         bulk_scope,
-                                         'not-a-valid-iss',
-                                         bulk_client_id,
-                                         bulk_token_endpoint)
+        post_request_content = build_authorization_request(encryption_method: bulk_encryption_method,
+                                        scope: bulk_scope,
+                                        iss: 'not-a-valid-iss',
+                                        sub: bulk_client_id,
+                                        aud: bulk_token_endpoint)
 
-        post(post_request_content.merge({ client: :token_endpoint }))
+        post({ client: :token_endpoint }.merge(post_request_content))
 
         assert_response_status(400)
       end
@@ -216,11 +216,11 @@ module ONCProgram
       makes_request :authentication
 
       run do
-        post_request_content = authorize(bulk_encryption_method,
-                                         bulk_scope,
-                                         bulk_client_id,
-                                         bulk_client_id,
-                                         bulk_token_endpoint)
+        post_request_content = build_authorization_request(encryption_method: bulk_encryption_method,
+                                        scope: bulk_scope,
+                                        iss: bulk_client_id,
+                                        sub: bulk_client_id,
+                                        aud: bulk_token_endpoint)
 
         post({ client: :token_endpoint, name: :authentication }.merge(post_request_content))
 
