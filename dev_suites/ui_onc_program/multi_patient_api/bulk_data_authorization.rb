@@ -213,7 +213,7 @@ module ONCProgram
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#issuing-access-tokens'
 
       input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
-      output :authentication_response
+      makes_request :authentication
 
       run do
         post_request_content = authorize(bulk_encryption_method,
@@ -222,10 +222,9 @@ module ONCProgram
                                          bulk_client_id,
                                          bulk_token_endpoint)
 
-        response = post(post_request_content.merge({ client: :token_endpoint }))
+        post({ client: :token_endpoint, name: :authentication }.merge(post_request_content))
 
         assert_response_status([200, 201])
-        output authentication_response: response.to_json
       end
     end
 
@@ -243,17 +242,16 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#issuing-access-tokens'
 
-      input :authentication_response
       output :bulk_access_token
+      uses_request :authentication
 
       run do
-        skip_if authentication_response.blank?, 'No token response received'
-        authentication_response_obj = JSON.parse(authentication_response)
+        skip_if response.blank?, 'No token response received'
 
-        assert_valid_json(authentication_response_obj['response_body'])
-        authentication_response_body = JSON.parse(authentication_response_obj['response_body'])
+        assert_valid_json(response[:body])
+        response_body = JSON.parse(response[:body])
 
-        access_token = authentication_response_body['access_token']
+        access_token = response_body['access_token']
         assert access_token.present?, 'Token response did not contain access_token as required'
 
         output bulk_access_token: access_token
@@ -261,7 +259,7 @@ module ONCProgram
         required_keys = ['token_type', 'expires_in', 'scope']
 
         required_keys.each do |key|
-          assert authentication_response_body[key].present?, "Token response did not contain #{key} as required"
+          assert response_body[key].present?, "Token response did not contain #{key} as required"
         end
       end
     end
