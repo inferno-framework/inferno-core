@@ -1,3 +1,18 @@
+# 0.0.7
+
+* Add [documentation in github pages](https://inferno-framework.github.io/inferno-core/)
+* Add ability to lock inputs
+* Add initial version of `inferno` CLI command.
+  * **Breaking change:** migrations are no longer run automatically. They can be
+    run manually with `inferno migrate`. This will also break unit tests in test
+    kit repos. Test kit repos should add these lines above the line with
+    `require 'inferno'` in `spec/spec_helper.rb`:
+    ```
+    require 'inferno/config/application'
+    require 'inferno/utils/migration'
+    Inferno::Utils::Migration.new.run
+    ```
+
 # 0.0.6
 
 * Fix long request URLs pushing buttons off screen
