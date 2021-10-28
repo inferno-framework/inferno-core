@@ -1,5 +1,5 @@
 # Inferno Core
-[![codecov](https://codecov.io/gh/inferno-community/inferno-core/branch/main/graph/badge.svg?token=6NJTBHF82R)](https://codecov.io/gh/inferno-community/inferno-core)
+[![codecov](https://codecov.io/gh/inferno-framework/inferno-core/branch/main/graph/badge.svg?token=6NJTBHF82R)](https://codecov.io/gh/inferno-framework/inferno-core)
 
 **Inferno Core is currently in alpha status**
 
@@ -7,12 +7,12 @@ Inferno Core is an open source tool for testing data exchanges enabled by the [F
 Healthcare Interoperability Resources (FHIR)](http://hl7.org/fhir/) standard. 
 
 If you are interested in developing tests using Inferno Core, use the [Inferno
-Template Repository](https://github.com/inferno-community/inferno-template).
+Template Repository](https://github.com/inferno-framework/inferno-template).
 
 ## Documentation
-- [Inferno documentation](https://inferno-community.github.io/inferno-core/)
-- [Ruby API documentation](https://inferno-community.github.io/inferno-core/docs)
-- [JSON API documentation](https://inferno-community.github.io/inferno-core/api-docs)
+- [Inferno documentation](https://inferno-framework.github.io/inferno-core/)
+- [Ruby API documentation](https://inferno-framework.github.io/inferno-core/docs)
+- [JSON API documentation](https://inferno-framework.github.io/inferno-core/api-docs)
 
 ## Requirements
 Inferno Core requires [Ruby 2.7+](https://www.ruby-lang.org/en/) and [Node.js
@@ -21,7 +21,7 @@ and NPM](https://www.npmjs.com/get-npm).
 ## Running Inferno Core
 
 If you are interested in developing tests using Inferno Core, use the [Inferno
-Template Repository](https://github.com/inferno-community/inferno-template).
+Template Repository](https://github.com/inferno-framework/inferno-template).
 These instructions are for developers working on Inferno Core itself.
 
 ```
