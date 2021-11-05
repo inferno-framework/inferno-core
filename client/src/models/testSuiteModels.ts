@@ -36,6 +36,7 @@ export interface Result {
   created_at?: string;
   updated_at: string;
   outputs: TestOutput[];
+  optional: boolean;
 }
 
 export interface TestInput {

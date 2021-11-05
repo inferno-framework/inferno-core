@@ -1,4 +1,5 @@
 require_relative 'external_outer_group'
+require_relative 'passing_optional_group'
 
 module InfrastructureTest
   class Suite < Inferno::TestSuite
@@ -70,25 +71,8 @@ module InfrastructureTest
       end
     end
 
-    group 'Optional Group with Test' do
-      optional
-      test 'Test in Optional Group' do
-        run { assert false }
-      end
-    end
-
-    group 'Required Group with Optional Test' do
-      test 'Failing Optional Test' do
-        optional
-        run { assert false }
-      end
-      test 'Passing Required Test' do
-        run { assert true }
-      end
-    end
-
-    group
-
+    group from: 'passing_optional_group'
+    group from: 'failing_optional_group'
     group from: 'external_outer_group'
   end
 end
