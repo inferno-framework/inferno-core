@@ -30,7 +30,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'contains the correct groups' do
-        expect(suite.groups.length).to eq(2)
+        expect(suite.groups.length).to eq(4)
         expect(suite.groups.first).to eq(outer_inline_group)
       end
 
@@ -38,14 +38,24 @@ RSpec.describe InfrastructureTest::Suite do
         expect(suite.fhir_client_definitions.keys).to eq([:suite])
       end
 
+      it 'contains failing optional tests' do
+        runner.run(suite)
+        results = results_repo.current_results_for_test_session(test_session.id)
+
+        optional_results = results.select(&:optional?)
+        failing_optional_results = optional_results.select { |result| result.result == 'fail' }
+        expect(failing_optional_results).to_not be_empty
+      end
+
       it 'passes' do
         runner.run(suite)
 
         results = results_repo.current_results_for_test_session(test_session.id)
 
-        expect(results.length).to eq(10)
+        expect(results.length).to eq(14)
 
-        non_passing_results = results.reject { |result| result.result == 'pass' }
+        required_results = results.reject(&:optional?)
+        non_passing_results = required_results.reject { |result| result.result == 'pass' }
 
         expect(non_passing_results).to be_empty, non_passing_results.map { |r|
           "#{r.runnable.title}: #{r.result_message}"
