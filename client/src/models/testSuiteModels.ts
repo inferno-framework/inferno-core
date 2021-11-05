@@ -85,6 +85,7 @@ export interface TestGroup {
   run_as_group?: boolean;
   user_runnable?: boolean;
   test_count?: number;
+  optional: boolean;
 }
 
 export interface TestSuite {
@@ -94,6 +95,8 @@ export interface TestSuite {
   result?: Result;
   test_count?: number;
   test_groups?: TestGroup[];
+  description?: string;
+  optional: boolean;
 }
 
 export interface TestSession {
