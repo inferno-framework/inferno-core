@@ -259,18 +259,22 @@ module Inferno
       #
       # @example
       #   optional
+      # rubocop:disable Style/OptionalBooleanParameter
       def optional(optional = true)
         @optional = optional
       end
+      # rubocop:enable Style/OptionalBooleanParameter
 
       # Mark as required
       #
       # Tests are required by default. This method is primarily used to make an existing optional test required.
       #
       # @return [void]
+      # rubocop:disable Style/OptionalBooleanParameter
       def required(required = true)
         @optional = !required
       end
+      # rubocop:enable Style/OptionalBooleanParameter
 
       # The test or group is optional if true
       #
