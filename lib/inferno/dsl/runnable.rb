@@ -252,6 +252,37 @@ module Inferno
         end
       end
 
+      # Mark as optional
+      #
+      # @return [void]
+      #
+      # @example
+      #   optional
+      def optional(optional = true)
+        @optional = optional
+      end
+
+      # Mark as required
+      #
+      # Tests are required by default. This method is primarily used to make an existing optional test required.
+      #
+      # @return [void]
+      def required(required = true)
+        @optional = !required
+      end
+
+      # The test or group is optional if true
+      #
+      # @return [FalseClass]
+      def optional?
+        @optional
+      end
+
+      # The test or group is required if true
+      def required?
+        !@optional
+      end
+
       # Define outputs
       #
       # @param identifier [Symbol] identifier for the output
