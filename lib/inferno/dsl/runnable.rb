@@ -176,6 +176,8 @@ module Inferno
           klass.configure_child_class(child_class, {})
           child_class.add_self_to_repository
         end
+
+        klass.required
       end
 
       # @private
