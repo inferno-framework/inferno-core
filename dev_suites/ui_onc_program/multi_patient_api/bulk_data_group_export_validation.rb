@@ -9,6 +9,7 @@ module ONCProgram
 
     input :bulk_status_output, :bulk_lines_to_validate, :bulk_patient_ids_in_group, :bulk_device_types_in_group
 
+    # TODO: Add in TLS Tester Class
     test do
       title 'Bulk Data Server is secured by transport layer security'
       description <<~DESCRIPTION
@@ -31,7 +32,12 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#file-request'
 
-      run {}
+      run {
+        skip 'Could not verify this functionality when requireAccessToken is false' unless @requires_access_token
+        skip 'Could not verify this functionality when bearer token is not set' if @instance.bulk_access_token.blank?
+
+        
+      }
     end
 
     test do

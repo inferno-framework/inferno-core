@@ -7,7 +7,15 @@ module ONCProgram
 
     id :bulk_data_group_export
 
-    input :bulk_url, :bulk_access_token, :bulk_lines_to_validate
+    input :bulk_server_url, :bulk_access_token #, :bulk_lines_to_validate
+
+    fhir_client :bulk_server do
+      url :bulk_server_url
+    end
+
+    http_client :bulk_server do
+      url :bulk_server_url
+    end
 
     test do
       title 'Bulk Data Server is secured by transport layer security'
@@ -17,7 +25,9 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#security-considerations'
 
-      run {}
+      run {
+        assert_valid_http_uri(bulk_server_url)
+      }
     end
 
     test do
@@ -27,10 +37,15 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/OperationDefinition-group-export.html'
 
-      run {}
+      include BulkDataUtils
+
+      run {
+        check_capability_statement
+      }
     end
 
     test do
+
       title 'Bulk Data Server rejects $export request without authorization'
       description <<~DESCRIPTION
         The FHIR server SHALL limit the data returned to only those FHIR resources for which the client is authorized.
@@ -41,31 +56,14 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#bulk-data-kick-off-request'
 
-      run {}
-    end
+      include BulkDataUtils
 
-    test do
-      title 'Bulk Data Server rejects $export operation with invalid Accept header'
-      description <<~DESCRIPTION
-        Accept (string, required)
+      run {
+        skip 'Could not verify this functionality when bearer token is not set' unless bulk_access_token
 
-        * Specifies the format of the optional OperationOutcome resource response to the kick-off request. Currently, only application/fhir+json is supported.
-      DESCRIPTION
-      # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#headers'
-
-      run {}
-    end
-
-    test do
-      title 'Bulk Data Server rejects $export operation with invalid Prefer header'
-      description <<~DESCRIPTION
-        Prefer (string, required)
-
-        * Specifies whether the response is immediate or asynchronous. The header SHALL be set to respond-async https://tools.ietf.org/html/rfc7240.
-      DESCRIPTION
-      # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#headers'
-
-      run {}
+        export_kick_off(false)
+        assert_response_status(401)
+      }
     end
 
     test do
@@ -78,7 +76,18 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#response---success'
 
-      run {}
+      include BulkDataUtils
+      output :polling_url
+
+      run {
+        export_kick_off
+        assert_response_status(202)
+
+        polling_url = response[:headers].find { |header| header.name == 'content-location' }.value
+        assert !!polling_url, 'Export response header did not include "Content-Location"'
+        
+        output polling_url: polling_url
+      }
     end
 
     test do
@@ -95,7 +104,29 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#bulk-data-status-request'
 
-      run {}
+      include BulkDataUtils
+      input :polling_url
+      makes_request :status_check
+
+      http_client :polling_location do
+        url :polling_url
+      end
+
+      run {
+        timeout = 180
+        skip 'Server response did not have Content-Location in header' unless polling_url
+        check_export_status(timeout)
+
+        skip "Server took more than #{timeout} seconds to process the request." if response[:status] == 202
+        assert response[:status] == 200, "Bad response code: expected 200, 202, but found #{response[:status]}."
+
+        assert_valid_json(response[:body])
+        response_body = JSON.parse(response[:body])
+
+        ['transactionTime', 'request', 'requiresAccessToken', 'output', 'error'].each do |key|
+          assert response_body.key?(key), "Complete Status response did not contain \"#{key}\" as required"
+        end
+      }
     end
 
     test do
@@ -114,7 +145,18 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#response---complete-status'
 
-      run {}
+      uses_request :status_check
+
+      run {
+        output = JSON.parse(response[:body])['output']
+        assert output.present?, 'Sever response did not have output data'
+
+        output.each do |file|
+          ['type', 'url'].each do |key|
+            assert file.key?(key), "Output file did not contain \"#{key}\" as required"
+          end
+        end
+      }
     end
 
     test do
@@ -124,7 +166,13 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#response---complete-status'
 
-      run {}
+      uses_request :status_check
+
+      run {
+        assert response.present?, 'Bulk Data server response is empty'
+        requires_access_token = JSON.parse(response[:body])['requiresAccessToken']
+        assert requires_access_token.present? && requires_access_token.to_s.downcase == 'true', 'Bulk Data file server access SHALL require access token.'
+      }
     end
 
     test do
@@ -135,7 +183,16 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#bulk-data-delete-request'
 
-      run {}
+      run {
+        export_kick_off
+        assert_response_status(202)
+       
+        polling_url = response[:headers].find { |header| header.name == 'content-location' }.value
+        assert !!polling_url, 'Export response header did not include "Content-Location"'
+
+        # Should we add delete support to http_client?
+
+      }
     end
   end
 end
