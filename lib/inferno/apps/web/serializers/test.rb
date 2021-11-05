@@ -8,6 +8,7 @@ module Inferno
         field :output_definitions, name: :outputs, extractor: HashValueExtractor
         field :description
         field :user_runnable?, name: :user_runnable
+        field :optional?, name: :optional
       end
     end
   end
