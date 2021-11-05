@@ -52,6 +52,7 @@ module Inferno
       ].freeze
 
       include Inferno::Entities::Attributes
+      include Inferno::Entities::HasRunnable
 
       attr_accessor :test_session
 
@@ -63,30 +64,12 @@ module Inferno
         @test_session = params[:test_session]
       end
 
-      def runnable
-        return @runnable if @runnable
-
-        @runnable = (test || test_group || test_suite || load_runnable)
-      end
-
       def to_hash
         super.merge(test_session: test_session).compact
       end
 
       def test_count
         @test_count ||= runnable.test_count
-      end
-
-      private
-
-      def load_runnable
-        if test_id.present?
-          @test = Inferno::Repositories::Tests.new.find(test_id)
-        elsif test_group_id.present?
-          @test_group = Inferno::Repositories::TestGroups.new.find(test_group_id)
-        elsif test_suite_id.present?
-          @test_suite = Inferno::Repositories::TestSuites.new.find(test_suite_id)
-        end
       end
     end
   end

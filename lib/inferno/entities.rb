@@ -1,4 +1,5 @@
 require_relative 'entities/attributes'
+require_relative 'entities/has_runnable'
 require_relative 'entities/entity'
 require_relative 'entities/header'
 require_relative 'entities/message'
