@@ -71,6 +71,7 @@ export interface Test {
   outputs: TestOutput[];
   description?: string;
   user_runnable?: boolean;
+  optional: boolean;
 }
 
 export interface TestGroup {
