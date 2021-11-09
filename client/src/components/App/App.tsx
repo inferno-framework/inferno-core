@@ -40,6 +40,7 @@ const App: FC<unknown> = () => {
   if (!testSuites || (testSuites.length == 1 && !testSession)) {
     return <div></div>;
   }
+
   return (
     <Router>
       <ThemeProvider>

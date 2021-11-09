@@ -7,13 +7,15 @@ import { useHistory } from 'react-router-dom';
 const Header: FC<unknown> = () => {
   const styles = useStyles();
   const history = useHistory();
-  function returnHome() {
+
+  const returnHome = () => {
     history.push('/');
-  }
+  };
+
   return (
-    <AppBar position="sticky" color="default">
+    <AppBar position="sticky" color="default" className={styles.appbar}>
       <Toolbar>
-        <Button onClick={() => returnHome()}>
+        <Button onClick={returnHome}>
           <img src={logo as string} alt="inferno logo" className={styles.logo} />
         </Button>
       </Toolbar>

@@ -19,6 +19,7 @@ import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
 import { getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
+import { Drawer, Toolbar, Box } from '@material-ui/core';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -251,24 +252,29 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     );
   }
   return (
-    <div className={styles.testSuiteMain}>
+    <Box className={styles.testSuiteMain}>
       {testRunProgressBar()}
-      <TestSuiteTreeComponent
-        testSuite={test_suite}
-        runTests={runTests}
-        selectedRunnable={selectedRunnable}
-        testRunInProgress={testRunNeedsProgressBar(testRun)}
-      />
-      {detailsPanel}
-      <InputsModal
-        hideModal={() => setModalVisible(false)}
-        createTestRun={createTestRun}
-        modalVisible={modalVisible}
-        runnableType={runnableType}
-        runnableId={runnableId}
-        inputs={inputs}
-      />
-    </div>
+      <Drawer variant="permanent" anchor="left" className={styles.drawer}>
+        <Toolbar />
+        <TestSuiteTreeComponent
+          testSuite={test_suite}
+          runTests={runTests}
+          selectedRunnable={selectedRunnable}
+          testRunInProgress={testRunNeedsProgressBar(testRun)}
+        />
+      </Drawer>
+      <Box className={styles.contentContainer}>
+        {detailsPanel}
+        <InputsModal
+          hideModal={() => setModalVisible(false)}
+          createTestRun={createTestRun}
+          modalVisible={modalVisible}
+          runnableType={runnableType}
+          runnableId={runnableId}
+          inputs={inputs}
+        />
+      </Box>
+    </Box>
   );
 };
 

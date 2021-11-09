@@ -7,6 +7,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Box,
 } from '@material-ui/core';
 import { TestSuite, TestSession } from 'models/testSuiteModels';
 import useStyles from './styles';
@@ -36,13 +37,13 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
 
   return (
     <Container maxWidth="lg" className={styles.main}>
-      <div className={styles.leftSide}>
+      <Box className={styles.leftSide}>
         <Typography variant="h2">FHIR Testing with Inferno</Typography>
         <Typography variant="h5">
           Test your server's conformance to authentication, authorization, and FHIR content
           standards.
         </Typography>
-      </div>
+      </Box>
       <Container maxWidth="md">
         <Paper elevation={4} className={styles.getStarted}>
           <Typography variant="h4" align="center">

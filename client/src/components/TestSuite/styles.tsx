@@ -4,13 +4,16 @@ export default makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
   },
+  contentContainer: {
+    flexGrow: 1,
+    margin: '24px 48px',
+  },
+  drawer: {
+    flexShrink: 0,
+    width: '400px',
+  },
   testSuiteMain: {
     display: 'flex',
-    marginTop: '50px',
-    paddingBottom: '50px',
-    '& > *': {
-      margin: '0 25px',
-    },
   },
   testSuitePanel: {
     flexBasis: '300px',

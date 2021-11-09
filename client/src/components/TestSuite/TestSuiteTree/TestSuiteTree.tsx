@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent } from 'react';
 import { TestSuite, TestGroup, RunnableType } from 'models/testSuiteModels';
-import { Card, CardContent } from '@material-ui/core';
+import { CardContent, Box } from '@material-ui/core';
 import useStyles from './styles';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
@@ -64,7 +64,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
     ));
 
     return (
-      <Card className={styles.testSuiteTreePanel} variant="outlined">
+      <Box className={styles.testSuiteTreePanel}>
         <CardContent>
           <TreeView
             defaultCollapseIcon={<ExpandMoreIcon />}
@@ -89,10 +89,10 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             </TreeItem>
           </TreeView>
         </CardContent>
-      </Card>
+      </Box>
     );
   } else {
-    return <div>{testSuite.title}</div>;
+    return <Box>{testSuite.title}</Box>;
   }
 };
 
