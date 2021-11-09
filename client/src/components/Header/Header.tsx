@@ -1,25 +1,25 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
 import logo from 'images/inferno_logo.png';
-import { Box, Button, Container } from '@material-ui/core';
+import { Button, AppBar, Toolbar } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 
 const Header: FC<unknown> = () => {
   const styles = useStyles();
   const history = useHistory();
-  function returnHome() {
+
+  const returnHome = () => {
     history.push('/');
-  }
+  };
+
   return (
-    <header className={styles.header}>
-      <Container maxWidth="lg">
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Button onClick={() => returnHome()}>
-            <img src={logo as string} alt="inferno logo" className={styles.logo} />
-          </Button>
-        </Box>
-      </Container>
-    </header>
+    <AppBar position="sticky" color="default" className={styles.appbar}>
+      <Toolbar>
+        <Button onClick={returnHome}>
+          <img src={logo as string} alt="inferno logo" className={styles.logo} />
+        </Button>
+      </Toolbar>
+    </AppBar>
   );
 };
 
