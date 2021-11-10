@@ -68,6 +68,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             variant="contained"
             size="large"
             color="primary"
+            disabled={!testSuiteChosen}
             data-testid="go-button"
             className={styles.startTestingButton}
             onClick={() => createTestSession()}

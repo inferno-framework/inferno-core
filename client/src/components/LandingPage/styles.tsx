@@ -12,7 +12,7 @@ export default makeStyles((theme: Theme) => ({
     marginTop: '125px',
   },
   selectedItem: {
-    backgroundColor: 'rgba(248, 139, 48, 0.12) !important',
+    backgroundColor: 'rgba(248, 139, 48, 0.42) !important',
   },
   getStarted: {
     marginTop: '100px',
