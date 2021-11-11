@@ -74,6 +74,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
                 variant="contained"
                 size="large"
                 color="primary"
+                fullWidth
                 disabled={!testSuiteChosen}
                 data-testid="go-button"
                 className={styles.startTestingButton}

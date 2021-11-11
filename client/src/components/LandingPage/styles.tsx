@@ -12,8 +12,6 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: 'rgba(248, 139, 48, 0.42) !important',
   },
   getStarted: {
-    display: 'flex',
-    flexDirection: 'column',
     marginTop: '20px',
     padding: '20px',
     borderRadius: '16px',
