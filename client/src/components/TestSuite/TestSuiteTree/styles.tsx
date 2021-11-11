@@ -22,9 +22,6 @@ export default makeStyles((theme: Theme) => ({
     height: '10px',
     marginRight: '5px',
   },
-  selectedItem: {
-    backgroundColor: 'rgba(248, 139, 48, 0.42) !important',
-  },
   testSuiteTreePanel: {
     width: '400px',
   },
