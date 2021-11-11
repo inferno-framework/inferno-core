@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 const TreeItem = withStyles({
   root: {
-    '&.Mui-selected > .MuiTreeItem-content': {
+    '&.Mui-selected > .MuiTreeItem-content .MuiTreeItem-label': {
       backgroundColor: 'rgba(248, 139, 48, 0.42) !important',
     },
     '&.MuiTreeItem-root > .MuiTreeItem-content:hover': {},
