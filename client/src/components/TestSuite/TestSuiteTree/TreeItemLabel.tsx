@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { RunnableType, TestGroup, TestSuite } from 'models/testSuiteModels';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import useStyles from './styles';
 import CondensedResultIcon from './CondensedResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';

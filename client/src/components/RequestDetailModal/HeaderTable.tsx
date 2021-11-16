@@ -1,4 +1,4 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableRow } from '@material-ui/core';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableRow } from '@mui/material';
 import { RequestHeader } from 'models/testSuiteModels';
 import React, { FC } from 'react';
 import useStyles from './styles';

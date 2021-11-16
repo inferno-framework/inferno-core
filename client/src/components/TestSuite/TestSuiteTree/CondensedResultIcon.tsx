@@ -1,8 +1,8 @@
 import React, { FC, Fragment } from 'react';
 import { Result } from 'models/testSuiteModels';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import { Tooltip } from '@material-ui/core';
-import { green, red } from '@material-ui/core/colors';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { Tooltip } from '@mui/material';
+import { green, red } from '@mui/material/colors';
 
 export interface CondensedResultIconProps {
   result?: Result;

@@ -1,19 +1,17 @@
-import React, { FC, MouseEvent } from 'react';
+import React, { FC } from 'react';
 import { TestGroup, RunnableType } from 'models/testSuiteModels';
-import TreeItem from '../../_common/TreeItem';
+import CustomTreeItem from '../../_common/TreeItem';
 import TreeItemLabel from './TreeItemLabel';
 
 export interface TestGroupTreeItemProps {
   testGroup: TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
-  onLabelClick: (event: MouseEvent<Element>, id: string) => void;
   testRunInProgress: boolean;
 }
 
 const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
   testGroup,
   runTests,
-  onLabelClick,
   testRunInProgress,
 }) => {
   let sublist: JSX.Element[] = [];
@@ -22,7 +20,6 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
       <TestGroupTreeItem
         testGroup={subTestGroup}
         runTests={runTests}
-        onLabelClick={onLabelClick}
         key={`ti-${testGroup.id}-${index}`}
         testRunInProgress={testRunInProgress}
       />
@@ -30,7 +27,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
   }
 
   return (
-    <TreeItem
+    <CustomTreeItem
       nodeId={testGroup.id}
       label={
         <TreeItemLabel
@@ -39,10 +36,10 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
           testRunInProgress={testRunInProgress}
         />
       }
-      onLabelClick={(event) => onLabelClick(event, testGroup.id)}
+      ContentProps={{ testId: testGroup.id } as any}
     >
       {sublist}
-    </TreeItem>
+    </CustomTreeItem>
   );
 };
 

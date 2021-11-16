@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { Table, TableBody, TableRow, TableCell } from '@material-ui/core';
+import { Table, TableBody, TableRow, TableCell } from '@mui/material';
 import { Message } from 'models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 

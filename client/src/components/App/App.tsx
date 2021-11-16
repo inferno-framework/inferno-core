@@ -1,13 +1,13 @@
 import React, { FC, useEffect } from 'react';
-import ThemeProvider from 'components/ThemeProvider';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { StyledEngineProvider } from '@mui/material/styles';
+import { postTestSessions } from 'api/TestSessionApi';
+import { getTestSuites } from 'api/TestSuitesApi';
 import Header from 'components/Header';
 import LandingPage from 'components/LandingPage';
-import { Switch, Route, Redirect } from 'react-router-dom';
-import { TestSuite, TestSession } from 'models/testSuiteModels';
 import TestSessionWrapper from 'components/TestSuite/TestSessionWrapper';
-import { getTestSuites } from 'api/TestSuitesApi';
-import { postTestSessions } from 'api/TestSessionApi';
+import ThemeProvider from 'components/ThemeProvider';
+import { TestSession, TestSuite } from 'models/testSuiteModels';
 
 const App: FC<unknown> = () => {
   const [testSuites, setTestSuites] = React.useState<TestSuite[]>();
@@ -43,21 +43,23 @@ const App: FC<unknown> = () => {
 
   return (
     <Router>
-      <ThemeProvider>
-        <Header />
-        <Switch>
-          <Route exact path="/">
-            {testSuites.length == 1 && testSession ? (
-              <Redirect to={`/test_sessions/${testSession.id}`} />
-            ) : (
-              <LandingPage testSuites={testSuites} />
-            )}
-          </Route>
-          <Route path="/test_sessions/:test_session_id">
-            <TestSessionWrapper />
-          </Route>
-        </Switch>
-      </ThemeProvider>
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider>
+          <Header />
+          <Switch>
+            <Route exact path="/">
+              {testSuites.length == 1 && testSession ? (
+                <Redirect to={`/test_sessions/${testSession.id}`} />
+              ) : (
+                <LandingPage testSuites={testSuites} />
+              )}
+            </Route>
+            <Route path="/test_sessions/:test_session_id">
+              <TestSessionWrapper />
+            </Route>
+          </Switch>
+        </ThemeProvider>
+      </StyledEngineProvider>
     </Router>
   );
 };

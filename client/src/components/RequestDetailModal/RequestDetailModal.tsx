@@ -5,13 +5,13 @@ import {
   Divider,
   Tooltip,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { Request } from 'models/testSuiteModels';
 import React, { FC } from 'react';
 import CodeBlock from './CodeBlock';
 import HeaderTable from './HeaderTable';
 import useStyles from './styles';
-import InputIcon from '@material-ui/icons/Input';
+import InputIcon from '@mui/icons-material/Input';
 
 export interface RequestDetailModalProps {
   request?: Request;
@@ -37,7 +37,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
   if (request) {
     return (
       <Dialog open={modalVisible} fullWidth={true} maxWidth="md" onClose={() => hideModal()}>
-        <DialogTitle className={styles.modalTitle} disableTypography={true}>
+        <DialogTitle className={styles.modalTitle}>
           {request.verb.toUpperCase()} {request.url} &#8594; {request.status}
           {usedRequest ? usedRequestIcon : null}
         </DialogTitle>
