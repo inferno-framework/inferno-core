@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent } from 'react';
 import { TestGroup, RunnableType } from 'models/testSuiteModels';
-import TreeItem from '@material-ui/lab/TreeItem';
+import TreeItem from '../../_common/TreeItem';
 import TreeItemLabel from './TreeItemLabel';
 
 export interface TestGroupTreeItemProps {
@@ -25,9 +25,10 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
         onLabelClick={onLabelClick}
         key={`ti-${testGroup.id}-${index}`}
         testRunInProgress={testRunInProgress}
-      ></TestGroupTreeItem>
+      />
     ));
   }
+
   return (
     <TreeItem
       nodeId={testGroup.id}
