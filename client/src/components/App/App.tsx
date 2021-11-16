@@ -38,7 +38,7 @@ const App: FC<unknown> = () => {
   }, [testSuites]);
 
   if (!testSuites || (testSuites.length == 1 && !testSession)) {
-    return <div></div>;
+    return <></>;
   }
 
   return (

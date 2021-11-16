@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useLocation } from 'react-router-dom';
 import useStyles from './styles';
 import { Link, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { RunnableType, TestGroup } from 'models/testSuiteModels';
@@ -18,6 +19,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   testRunInProgress,
 }) => {
   const styles = useStyles();
+  const location = useLocation();
+
   return (
     <ListItem className={styles.listItem}>
       <ListItemIcon>
@@ -25,7 +28,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       </ListItemIcon>
       <ListItemText
         primary={
-          <Link color="inherit" href={`#${testGroup.id}`} underline="hover">
+          <Link color="inherit" href={`${location.pathname}#${testGroup.id}`} underline="hover">
             {testGroup.title}
           </Link>
         }
