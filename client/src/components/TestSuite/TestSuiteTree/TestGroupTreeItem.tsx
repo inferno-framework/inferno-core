@@ -36,6 +36,8 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
           testRunInProgress={testRunInProgress}
         />
       }
+      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       ContentProps={{ testId: testGroup.id } as any}
     >
       {sublist}
