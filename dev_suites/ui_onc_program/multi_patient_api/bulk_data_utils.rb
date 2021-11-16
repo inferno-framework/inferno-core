@@ -51,4 +51,13 @@ module BulkDataUtils
 		end while response[:status] == 202 and timeout > 0
 
 	end 
+
+	def get_file(file, use_token = true)
+
+		headers = { accept: 'application/fhir+ndjson' }
+		headers.merge!({ authorization: "Bearer #{bulk_access_token}" }) if use_token
+
+	 	get(client: :bulk_file_endpoint, headers: headers)
+
+	end 
 end 

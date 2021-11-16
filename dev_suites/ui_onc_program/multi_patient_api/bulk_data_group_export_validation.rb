@@ -5,9 +5,11 @@ module ONCProgram
       Verify that Group compartment export from the Bulk Data server follow US Core Implementation Guide
     DESCRIPTION
 
+    include BulkDataUtils
+
     id :bulk_data_group_export_validation
 
-    input :bulk_status_output, :bulk_lines_to_validate, :bulk_patient_ids_in_group, :bulk_device_types_in_group
+    #input :bulk_status_output, :bulk_lines_to_validate, :bulk_patient_ids_in_group, :bulk_device_types_in_group
 
     # TODO: Add in TLS Tester Class
     test do
@@ -32,11 +34,23 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#file-request'
 
-      run {
-        skip 'Could not verify this functionality when requireAccessToken is false' unless @requires_access_token
-        skip 'Could not verify this functionality when bearer token is not set' if @instance.bulk_access_token.blank?
+      input :requires_access_token
+      input :bulk_access_token
+      input :bulk_file_url
 
-        
+      http_client :bulk_file_endpoint do
+        url :bulk_file_url
+      end 
+
+      run {
+        skip 'Could not verify this functionality when requireAccessToken is false' unless requires_access_token
+        skip 'Could not verify this functionality when bearer token is not set' unless bulk_access_token
+
+        get_file
+
+        # Is this the whole gauntlet of 'bad' tests that could/should be returned?
+        # Probably should make an assert_response_bad assertion
+        assert_response_status(401)
       }
     end
 

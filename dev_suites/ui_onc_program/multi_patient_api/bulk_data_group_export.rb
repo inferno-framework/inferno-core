@@ -8,6 +8,7 @@ module ONCProgram
     id :bulk_data_group_export
 
     input :bulk_server_url, :bulk_access_token #, :bulk_lines_to_validate
+    output :requires_access_token, :bulk_status_output
 
     fhir_client :bulk_server do
       url :bulk_server_url
@@ -146,10 +147,13 @@ module ONCProgram
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#response---complete-status'
 
       uses_request :status_check
+      output :bulk_status_output
 
       run {
         output = JSON.parse(response[:body])['output']
         assert output.present?, 'Sever response did not have output data'
+
+        output bulk_status_output: output
 
         output.each do |file|
           ['type', 'url'].each do |key|
@@ -167,11 +171,13 @@ module ONCProgram
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#response---complete-status'
 
       uses_request :status_check
+      output :bulk_access_token
 
       run {
         assert response.present?, 'Bulk Data server response is empty'
         requires_access_token = JSON.parse(response[:body])['requiresAccessToken']
         assert requires_access_token.present? && requires_access_token.to_s.downcase == 'true', 'Bulk Data file server access SHALL require access token.'
+        output requires_access_token: true
       }
     end
 
