@@ -32,6 +32,7 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
         disabled={requirement.locked}
         id={`requirement${index}_input`}
         className={styles.inputField}
+        variant="standard"
         fullWidth
         label={fieldLabel}
         helperText={requirement.description}
