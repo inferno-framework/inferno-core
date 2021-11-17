@@ -1,11 +1,4 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Divider, Tooltip, Typography } from '@mui/material';
 import { Request } from 'models/testSuiteModels';
 import React, { FC } from 'react';
 import CodeBlock from './CodeBlock';

@@ -49,14 +49,16 @@ const paletteBase = {
   common: colors,
 };
 
-const lightTheme = createTheme(adaptV4Theme({
-  palette: { ...paletteBase },
-  typography: {
-    h2: {
-      fontWeight: 'bold',
-      fontFamily: ['Roboto Condensed', 'sans-serif'].join(','),
+const lightTheme = createTheme(
+  adaptV4Theme({
+    palette: { ...paletteBase },
+    typography: {
+      h2: {
+        fontWeight: 'bold',
+        fontFamily: ['Roboto Condensed', 'sans-serif'].join(','),
+      },
     },
-  },
-}));
+  })
+);
 
 export default lightTheme;
