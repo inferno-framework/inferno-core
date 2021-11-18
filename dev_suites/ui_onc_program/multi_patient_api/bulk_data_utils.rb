@@ -60,4 +60,20 @@ module BulkDataUtils
 	 	get(client: :bulk_file_endpoint, headers: headers)
 
 	end 
+
+	def test_output_against_profile
+		# bulk_status_output should contain the response from the server for
+		# status check after export is completed --> basically the output
+		# in inferno-program since it has already been parsed 
+
+		skip 'Bulk Data Server response does not have output data' unless output.present?
+ 
+		# Validate all lines
+		# Search through all files for the given type
+
+		# All we are really doing is going through each file given in the ouput
+		# and validating that file's existence 
+
+
+	end 
 end 

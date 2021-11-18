@@ -61,7 +61,17 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient'
 
-      run {}
+      run {
+        profile_definitions = [
+          {
+            profile: nil,
+            must_support_info: USCore311PatientSequenceDefinitions::MUST_SUPPORTS.deep_dup,
+            binding_info: USCore311PatientSequenceDefinitions::BINDINGS.deep_dup
+          }
+        ]
+        
+        test_output_against_profile()
+      }
     end
 
     test do
@@ -71,7 +81,9 @@ module ONCProgram
       DESCRIPTION
       # link 'http://ndjson.org/'
 
-      run {}
+      run {
+
+      }
     end
 
     test do
