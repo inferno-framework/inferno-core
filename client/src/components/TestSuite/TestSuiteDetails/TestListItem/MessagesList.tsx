@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { Table, TableBody, TableRow, TableCell } from '@mui/material';
+import { Table, TableBody, TableRow, TableCell, Typography } from '@mui/material';
 import { Message } from 'models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 
@@ -27,7 +27,9 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
       })
     ) : (
       <TableRow key={`msgRow-none`}>
-        <TableCell>None</TableCell>
+        <TableCell>
+          <Typography>None</Typography>
+        </TableCell>
       </TableRow>
     );
 

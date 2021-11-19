@@ -44,6 +44,7 @@ const InputsModal: FC<InputsModalProps> = ({
   const missingRequiredInput = inputs.some((input: TestInput) => {
     return !input.optional && inputsMap.get(input.name)?.length == 0;
   });
+
   function submitClicked(): void {
     const inputs_with_values: TestInput[] = [];
     inputsMap.forEach((input_value, input_name) => {
@@ -85,6 +86,7 @@ const InputsModal: FC<InputsModalProps> = ({
         );
     }
   });
+
   return (
     <Dialog open={modalVisible} onClose={() => hideModal()} fullWidth={true} maxWidth="sm">
       <DialogTitle>Test Inputs</DialogTitle>
