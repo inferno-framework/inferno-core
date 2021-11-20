@@ -20,6 +20,7 @@ Inferno Core requires:
 - [Ruby 2.7+](https://www.ruby-lang.org/en/) 
 - [Node.js and NPM](https://www.npmjs.com/get-npm).
 - [Redis](https://phoenixnap.com/kb/install-redis-on-mac) 
+- [Docker](https://www.docker.com/products/docker-desktop). 
 
 ```bash
 # update to the latest ruby
@@ -30,6 +31,10 @@ rvm install ruby-2.7.3
 brew update
 brew install redis
 brew services start redis
+
+# confirm that the docker daemon is running
+docker --version
+docker info
 ```
 
 ## Running Inferno Core
