@@ -15,8 +15,22 @@ Template Repository](https://github.com/inferno-framework/inferno-template).
 - [JSON API documentation](https://inferno-framework.github.io/inferno-core/api-docs)
 
 ## Requirements
-Inferno Core requires [Ruby 2.7+](https://www.ruby-lang.org/en/) and [Node.js
-and NPM](https://www.npmjs.com/get-npm).
+Inferno Core requires:
+
+- [Ruby 2.7+](https://www.ruby-lang.org/en/) 
+- [Node.js and NPM](https://www.npmjs.com/get-npm).
+- [Redis](https://phoenixnap.com/kb/install-redis-on-mac) 
+
+```bash
+# update to the latest ruby
+curl -L https://get.rvm.io | bash -s stable
+rvm install ruby-2.7.3
+
+# install and start Redis
+brew update
+brew install redis
+brew services start redis
+```
 
 ## Running Inferno Core
 
