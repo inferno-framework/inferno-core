@@ -107,41 +107,40 @@ RSpec.describe Inferno::DSL::FHIRClient do
           end
         Inferno::DSL::FHIRClientBuilder.new.build(group, block)
       end
-      let(:stub_custom_header_request) do
-        stub_request(:post, "#{base_url}/#{path}")
-          .with(headers: { 'CustomHeader' => 'CustomTest' })
-          .to_return(status: 200, body: resource.to_json)
-      end
-      let(:stub_default_header_request) do
-        stub_request(:post, "#{base_url}/#{path}")
-          .with(headers: { 'DefaultHeader' => 'ClientHeader' })
-          .to_return(status: 200, body: resource.to_json)
-      end
-
-      let(:stub_custom_and_default_header_request) do
-        stub_request(:post, "#{base_url}/#{path}")
-          .with(headers: { 'DefaultHeader' => 'ClientHeader', 'CustomHeader' => 'CustomTest' })
-          .to_return(status: 200, body: resource.to_json)
-      end
 
       it 'as custom only, performs a get' do
+        operation_request =
+          stub_request(:post, "#{base_url}/#{path}")
+            .with(headers: { 'CustomHeader' => 'CustomTest' })
+            .to_return(status: 200, body: resource.to_json)
+
         group.fhir_operation(path, headers: { 'CustomHeader' => 'CustomTest' })
 
-        expect(stub_custom_header_request).to have_been_made.once
+        expect(operation_request).to have_been_made.once
       end
 
       it 'as default only, performs a get' do
+        operation_request =
+          stub_request(:post, "#{base_url}/#{path}")
+            .with(headers: { 'DefaultHeader' => 'ClientHeader' })
+            .to_return(status: 200, body: resource.to_json)
+
         group.fhir_clients[:client_with_header] = client_with_header
         group.fhir_operation(path, client: :client_with_header)
 
-        expect(stub_default_header_request).to have_been_made.once
+        expect(operation_request).to have_been_made.once
       end
 
       it 'as both default and custom, performs a get' do
+        operation_request =
+          stub_request(:post, "#{base_url}/#{path}")
+            .with(headers: { 'DefaultHeader' => 'ClientHeader', 'CustomHeader' => 'CustomTest' })
+            .to_return(status: 200, body: resource.to_json)
+
         group.fhir_clients[:client_with_header] = client_with_header
         group.fhir_operation(path, client: :client_with_header, headers: { 'CustomHeader' => 'CustomTest' })
 
-        expect(stub_custom_and_default_header_request).to have_been_made.once
+        expect(operation_request).to have_been_made.once
       end
     end
   end
@@ -242,48 +241,70 @@ RSpec.describe Inferno::DSL::FHIRClient do
   end
 
   describe '#fhir_search' do
-    let(:stub_search_request) do
-      stub_request(:get, "#{base_url}/#{resource.resourceType}?patient=123")
-        .to_return(status: 200, body: bundle.to_json)
+    context 'when performing a GET search' do
+      let(:stub_search_request) do
+        stub_request(:get, "#{base_url}/#{resource.resourceType}?patient=123")
+          .to_return(status: 200, body: bundle.to_json)
+      end
+
+      before do
+        setup_default_client
+        stub_search_request
+      end
+
+      it 'performs a FHIR search' do
+        group.fhir_search(resource.resourceType, params: { patient: 123 })
+
+        expect(stub_search_request).to have_been_made.once
+      end
+
+      it 'returns an Inferno::Entities::Request' do
+        result = group.fhir_search(resource.resourceType, params: { patient: 123 })
+
+        expect(result).to be_a(Inferno::Entities::Request)
+      end
+
+      it 'adds the request to the list of requests' do
+        result = group.fhir_search(resource.resourceType, params: { patient: 123 })
+
+        expect(group.requests).to include(result)
+        expect(group.request).to eq(result)
+      end
+
+      context 'with the client parameter' do
+        it 'uses that client' do
+          other_url = 'http://www.example.com/fhir/r4'
+          group.fhir_clients[:other_client] = FHIR::Client.new(other_url)
+
+          other_request_stub =
+            stub_request(:get, "#{other_url}/#{resource.resourceType}?patient=123")
+              .to_return(status: 200, body: resource.to_json)
+
+          group.fhir_search(resource.resourceType, client: :other_client, params: { patient: 123 })
+
+          expect(other_request_stub).to have_been_made
+          expect(stub_search_request).to_not have_been_made
+        end
+      end
     end
 
-    before do
-      setup_default_client
-      stub_search_request
-    end
+    context 'when performing a POST search' do
+      let(:search_params) { { patient: '123' } }
+      let(:stub_search_request) do
+        stub_request(:post, "#{base_url}/#{resource.resourceType}/_search")
+          .with(body: search_params)
+          .to_return(status: 200, body: bundle.to_json)
+      end
 
-    it 'performs a FHIR search' do
-      group.fhir_search(resource.resourceType, params: { patient: 123 })
+      before do
+        setup_default_client
+        stub_search_request
+      end
 
-      expect(stub_search_request).to have_been_made.once
-    end
+      it 'performs a FHIR search' do
+        group.fhir_search(resource.resourceType, params: search_params, search_method: :post)
 
-    it 'returns an Inferno::Entities::Request' do
-      result = group.fhir_search(resource.resourceType, params: { patient: 123 })
-
-      expect(result).to be_a(Inferno::Entities::Request)
-    end
-
-    it 'adds the request to the list of requests' do
-      result = group.fhir_search(resource.resourceType, params: { patient: 123 })
-
-      expect(group.requests).to include(result)
-      expect(group.request).to eq(result)
-    end
-
-    context 'with the client parameter' do
-      it 'uses that client' do
-        other_url = 'http://www.example.com/fhir/r4'
-        group.fhir_clients[:other_client] = FHIR::Client.new(other_url)
-
-        other_request_stub =
-          stub_request(:get, "#{other_url}/#{resource.resourceType}?patient=123")
-            .to_return(status: 200, body: resource.to_json)
-
-        group.fhir_search(resource.resourceType, client: :other_client, params: { patient: 123 })
-
-        expect(other_request_stub).to have_been_made
-        expect(stub_search_request).to_not have_been_made
+        expect(stub_search_request).to have_been_made.once
       end
     end
   end
