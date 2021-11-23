@@ -35,7 +35,6 @@ module Inferno
             end
           end
         end
-        @optional = false
       end
 
       # Class instance variables are used to hold the metadata for Runnable
@@ -280,7 +279,7 @@ module Inferno
       #
       # @return [FalseClass]
       def optional?
-        @optional
+        !!@optional
       end
 
       # The test or group is required if true
