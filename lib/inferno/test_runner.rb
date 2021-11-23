@@ -174,7 +174,7 @@ module Inferno
       unique_required_results = results.select(&:required?)
       all_optional = unique_required_results.empty?
       unique_results = all_optional ? results : unique_required_results
-      unique_results = unique_results.map(&:result).uniq
+      unique_results.map!(&:result).uniq!
       result_priority.find do |result|
         unique_results.include? result
       end
