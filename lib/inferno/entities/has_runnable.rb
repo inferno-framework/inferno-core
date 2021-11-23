@@ -1,7 +1,7 @@
 module Inferno
   module Entities
     module HasRunnable
-      # Returns the Test, TestGroup, or TestSuite associated with this result
+      # Returns the Test, TestGroup, or TestSuite associated with this entity
       #
       # @return [Inferno::Entities::Test, Inferno::Entities::TestGroup, Inferno::Entities::TestSuite]
       def runnable
