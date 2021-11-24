@@ -1,5 +1,4 @@
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import { Router } from 'react-router';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -15,14 +14,7 @@ test('renders Inferno Header', () => {
   );
 
   const logoElement = screen.getByRole('img');
-  const logoPath = '../../../images/inferno_logo.png';
-
   expect(logoElement).toHaveAttribute('alt', 'inferno logo');
-  console.log(logoElement);
-
-  expect(logoElement).toHaveAttribute('src');
-  // expect(logoElement.getAttribute('src')).toHaveAttribute('src', logoPath);
-  // TODO: Broken test
 });
 
 test('should navigate home when logo is clicked', () => {
