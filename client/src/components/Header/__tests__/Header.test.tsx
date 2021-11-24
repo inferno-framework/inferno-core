@@ -18,7 +18,7 @@ test('renders Inferno Header', () => {
   const logoPath = '../../../images/inferno_logo.png';
 
   expect(logoElement).toHaveAttribute('alt', 'inferno logo');
-  // console.log(JSON.stringify(logoElement.getAttribute('src')));
+  console.log(logoElement);
 
   expect(logoElement).toHaveAttribute('src');
   // expect(logoElement.getAttribute('src')).toHaveAttribute('src', logoPath);
