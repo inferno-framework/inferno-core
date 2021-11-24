@@ -50,7 +50,7 @@ test('Modal visible and inputs are shown', () => {
       const inputField = screen.getByLabelText(input.name);
       expect(inputField).toBeVisible();
     } else {
-      const inputField = screen.getByLabelText(input.name + ' (required)');
+      const inputField = screen.getByLabelText(input.name + ' (required) *');
       expect(inputField).toBeVisible();
     }
   });

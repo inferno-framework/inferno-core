@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import logo from 'images/inferno_logo.png';
+import logo from 'dne.png';
+// import logo from 'images/inferno_logo.png';
 import { Button, AppBar, Toolbar } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 

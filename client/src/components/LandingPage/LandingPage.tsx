@@ -61,6 +61,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
                     <ListItem
                       key={testSuite.id}
                       button
+                      data-testid="testing-suite-option"
                       selected={testSuiteChosen == testSuite.id}
                       onClick={() => setTestSuiteChosen(testSuite.id)}
                       classes={{ selected: styles.selectedItem }}
