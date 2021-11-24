@@ -66,10 +66,7 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
   expect(labelElement).toBeInTheDocument();
   expect(treeItemElement).toHaveAttribute('aria-expanded', 'true');
 
-  act(() => {
-    userEvent.click(labelElement);
-  });
-
+  userEvent.click(labelElement);
   expect(treeItemElement).toHaveAttribute('aria-expanded', 'true');
 });
 
@@ -101,9 +98,6 @@ test('clicking on TreeItem should navigate to group or test instance', () => {
   const labelElement = screen.getAllByTestId('tiLabel', { exact: false })[0];
   expect(labelElement).toBeInTheDocument();
 
-  act(() => {
-    userEvent.click(labelElement);
-  });
-
+  userEvent.click(labelElement);
   expect(history.location.hash).toBe('#testId');
 });

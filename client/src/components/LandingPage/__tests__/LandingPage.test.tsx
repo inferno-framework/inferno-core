@@ -1,5 +1,4 @@
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import { Router } from 'react-router';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -34,7 +33,7 @@ test('Start Testing button should be disabled when test suite is not selected', 
   expect(buttonElement).toBeDisabled();
 });
 
-test('should navigate to test session when Start Testing is clicked', () => {
+test('should enable Start Testing when test suite is selected', () => {
   const history = createMemoryHistory();
   const testSuites = [{ title: 'title', id: 'id' }] as TestSuite[];
 
@@ -49,13 +48,7 @@ test('should navigate to test session when Start Testing is clicked', () => {
   const testSuiteElement = screen.getAllByTestId('testing-suite-option')[0];
   const buttonElement = screen.getByTestId('go-button');
 
-  act(() => {
-    userEvent.click(testSuiteElement);
-    // TODO: Broken test
-    // expect(buttonElement).toBeEnabled();
-    // expect(testSuiteElement).toHaveAttribute('Mui-selected');
-
-    userEvent.click(buttonElement);
-    // expect(history.location.pathname).toContain('/test_sessions');
-  });
+  userEvent.click(testSuiteElement);
+  expect(testSuiteElement).toHaveFocus();
+  expect(buttonElement).toBeEnabled();
 });

@@ -37,10 +37,6 @@ test('should navigate home when logo is clicked', () => {
   );
 
   const buttonElement = screen.getByRole('button');
-
-  act(() => {
-    userEvent.click(buttonElement);
-  });
-
+  userEvent.click(buttonElement);
   expect(history.location.pathname).toBe('/');
 });
