@@ -1,9 +1,12 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import InputsModal from '../InputsModal';
 import { RunnableType, TestInput } from 'models/testSuiteModels';
+
 const hideModalMock = jest.fn();
 const createTestRunMock = jest.fn();
+
 const testInputs: TestInput[] = [
   {
     name: 'url',
@@ -43,8 +46,10 @@ test('Modal visible and inputs are shown', () => {
       inputs={testInputs}
     />
   );
+
   const titleText = screen.getByText('Test Inputs');
   expect(titleText).toBeVisible();
+
   testInputs.forEach((input: TestInput) => {
     if (input.optional) {
       const inputField = screen.getByLabelText(input.name);
@@ -69,6 +74,6 @@ test('Pressing cancel hides the modal', () => {
   );
 
   const cancelButton = screen.getByTestId('cancel-button');
-  fireEvent.click(cancelButton);
+  userEvent.click(cancelButton);
   expect(hideModalMock).toHaveBeenCalled();
 });

@@ -4,11 +4,11 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ThemeProvider from 'components/ThemeProvider';
 import { createMemoryHistory } from 'history';
-import { TestSuite } from 'models/testSuiteModels';
 import LandingPage from '../LandingPage';
+import { mockedTestSuitesReturnValue } from '../__mocked_data__/mockData';
 
 test('renders Inferno Landing Page', () => {
-  const testSuites = [] as TestSuite[];
+  const testSuites = mockedTestSuitesReturnValue;
 
   render(
     <ThemeProvider>
@@ -21,7 +21,7 @@ test('renders Inferno Landing Page', () => {
 });
 
 test('Start Testing button should be disabled when test suite is not selected', () => {
-  const testSuites = [] as TestSuite[];
+  const testSuites = mockedTestSuitesReturnValue;
 
   render(
     <ThemeProvider>
@@ -29,13 +29,13 @@ test('Start Testing button should be disabled when test suite is not selected', 
     </ThemeProvider>
   );
 
-  const buttonElement = screen.getByRole('button');
+  const buttonElement = screen.getByTestId('go-button');
   expect(buttonElement).toBeDisabled();
 });
 
 test('should enable Start Testing when test suite is selected', () => {
   const history = createMemoryHistory();
-  const testSuites = [{ title: 'title', id: 'id' }] as TestSuite[];
+  const testSuites = mockedTestSuitesReturnValue;
 
   render(
     <Router history={history}>

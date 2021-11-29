@@ -7,23 +7,26 @@ import TreeItemLabel from 'components/TestSuite/TestSuiteTree/TreeItemLabel';
 import ThemeProvider from 'components/ThemeProvider';
 import { createMemoryHistory } from 'history';
 import CustomTreeItem from '../TreeItem';
+import { mockedTestSuite } from '../__mocked_data__/mockData';
+
+const runTestsMock = jest.fn();
 
 test('renders custom TreeItem', () => {
   render(
     <ThemeProvider>
       <TreeView>
         <CustomTreeItem
-          nodeId={'test'}
+          nodeId={mockedTestSuite.id}
           label={
             <TreeItemLabel
-              runnable={{ title: 'title', id: 'id' }}
-              runTests={() => undefined}
+              runnable={mockedTestSuite}
+              runTests={runTestsMock}
               testRunInProgress={false}
             />
           }
           // eslint-disable-next-line max-len
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-          ContentProps={{ testId: 'test' } as any}
+          ContentProps={{ testId: mockedTestSuite.id } as any}
         />
       </TreeView>
     </ThemeProvider>
@@ -39,19 +42,19 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
   render(
     <Router history={history}>
       <ThemeProvider>
-        <TreeView expanded={['treeItem']}>
+        <TreeView expanded={[mockedTestSuite.id]}>
           <CustomTreeItem
-            nodeId={'treeItem'}
+            nodeId={mockedTestSuite.id}
             label={
               <TreeItemLabel
-                runnable={{ title: 'title', id: 'id' }}
-                runTests={() => undefined}
+                runnable={mockedTestSuite}
+                runTests={runTestsMock}
                 testRunInProgress={false}
               />
             }
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-            ContentProps={{ testId: 'testId' } as any}
+            ContentProps={{ testId: mockedTestSuite.id } as any}
           >
             <></>
           </CustomTreeItem>
@@ -77,17 +80,17 @@ test('clicking on TreeItem should navigate to group or test instance', () => {
       <ThemeProvider>
         <TreeView>
           <CustomTreeItem
-            nodeId={'treeItem'}
+            nodeId={mockedTestSuite.id}
             label={
               <TreeItemLabel
-                runnable={{ title: 'title', id: 'id' }}
-                runTests={() => undefined}
+                runnable={mockedTestSuite}
+                runTests={runTestsMock}
                 testRunInProgress={false}
               />
             }
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-            ContentProps={{ testId: 'testId' } as any}
+            ContentProps={{ testId: mockedTestSuite.id } as any}
           />
         </TreeView>
       </ThemeProvider>
@@ -98,5 +101,5 @@ test('clicking on TreeItem should navigate to group or test instance', () => {
   expect(labelElement).toBeInTheDocument();
 
   userEvent.click(labelElement);
-  expect(history.location.hash).toBe('#testId');
+  expect(history.location.hash).toBe(`#${mockedTestSuite.id}`);
 });
