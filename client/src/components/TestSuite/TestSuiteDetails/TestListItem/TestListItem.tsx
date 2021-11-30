@@ -12,16 +12,16 @@ import {
   Tab,
   Tabs,
   Tooltip,
-} from '@material-ui/core';
+} from '@mui/material';
 import { RunnableType, Test, Request } from 'models/testSuiteModels';
 import TabPanel from './TabPanel';
 import MessagesList from './MessagesList';
 import RequestsList from './RequestsList';
 import ResultIcon from '../ResultIcon';
-import PublicIcon from '@material-ui/icons/Public';
-import MailIcon from '@material-ui/icons/Mail';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import PublicIcon from '@mui/icons-material/Public';
+import MailIcon from '@mui/icons-material/Mail';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReactMarkdown from 'react-markdown';
 import TestRunButton from '../../TestRunButton/TestRunButton';
 

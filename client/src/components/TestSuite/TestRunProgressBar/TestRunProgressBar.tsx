@@ -7,11 +7,11 @@ import {
   Snackbar,
   Tooltip,
   Typography,
-} from '@material-ui/core';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import DoneIcon from '@material-ui/icons/Done';
-import QueueIcon from '@material-ui/icons/Queue';
-import { withStyles } from '@material-ui/core/styles';
+} from '@mui/material';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import DoneIcon from '@mui/icons-material/Done';
+import QueueIcon from '@mui/icons-material/Queue';
+import withStyles from '@mui/styles/withStyles';
 
 export interface TestRunProgressBarProps {
   showProgressBar: boolean;

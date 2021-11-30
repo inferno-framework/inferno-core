@@ -19,7 +19,7 @@ import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
 import { getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
-import { Drawer, Toolbar, Box } from '@material-ui/core';
+import { Drawer, Toolbar, Box } from '@mui/material';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,

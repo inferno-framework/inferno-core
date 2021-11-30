@@ -6,7 +6,7 @@ import {
   DialogContentText,
   DialogTitle,
   List,
-} from '@material-ui/core';
+} from '@mui/material';
 import { RunnableType, TestInput } from 'models/testSuiteModels';
 import React, { FC, useEffect } from 'react';
 import InputTextArea from './InputTextArea';

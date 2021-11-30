@@ -8,7 +8,7 @@ import {
   ListItem,
   ListItemText,
   Grid,
-} from '@material-ui/core';
+} from '@mui/material';
 import { TestSuite, TestSession } from 'models/testSuiteModels';
 import useStyles from './styles';
 import { useHistory } from 'react-router-dom';
@@ -37,7 +37,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
 
   return (
     <Container maxWidth="lg" className={styles.main}>
-      <Grid container spacing={10} justify="center">
+      <Grid container spacing={10} justifyContent="center">
         <Grid container item xs={6} alignItems="center">
           <Grid item>
             <Typography variant="h2" component="h1">
@@ -49,7 +49,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             </Typography>
           </Grid>
         </Grid>
-        <Grid container item xs={6} alignItems="center" justify="center">
+        <Grid container item xs={6} alignItems="center" justifyContent="center">
           <Grid item>
             <Paper elevation={4} className={styles.getStarted}>
               <Typography variant="h4" component="h2" align="center">

@@ -1,6 +1,6 @@
-import { Tooltip } from '@material-ui/core';
+import { Tooltip } from '@mui/material';
 import React, { FC } from 'react';
-import WarningIcon from '@material-ui/icons/Warning';
+import WarningIcon from '@mui/icons-material/Warning';
 
 const RequiredInputWarning: FC = () => {
   return (

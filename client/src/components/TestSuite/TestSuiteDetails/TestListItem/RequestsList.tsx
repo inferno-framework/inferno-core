@@ -1,5 +1,5 @@
 import React, { FC, Fragment } from 'react';
-import { Button, Box } from '@material-ui/core';
+import { Button, Box } from '@mui/material';
 import { Request } from 'models/testSuiteModels';
 import RequestDetailModal from 'components/RequestDetailModal/RequestDetailModal';
 import { getRequestDetails } from 'api/RequestsApi';

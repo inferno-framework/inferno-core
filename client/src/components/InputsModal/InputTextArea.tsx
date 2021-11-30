@@ -1,5 +1,5 @@
-import { ListItem, TextField } from '@material-ui/core';
-import LockIcon from '@material-ui/icons/Lock';
+import { ListItem, TextField } from '@mui/material';
+import LockIcon from '@mui/icons-material/Lock';
 import { TestInput } from 'models/testSuiteModels';
 import React, { FC, Fragment } from 'react';
 import useStyles from './styles';
@@ -32,6 +32,7 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
         disabled={requirement.locked}
         id={`requirement${index}_input`}
         className={styles.inputField}
+        variant="standard"
         fullWidth
         label={fieldLabel}
         helperText={requirement.description}

@@ -1,4 +1,5 @@
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
+import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
   buttonWrapper: {
@@ -16,6 +17,8 @@ export default makeStyles((theme: Theme) => ({
   },
   labelText: {
     flexGrow: 1,
+    overflow: 'auto',
+    overflowWrap: 'break-word',
   },
   labelRunButton: {
     width: '10px',
@@ -24,6 +27,7 @@ export default makeStyles((theme: Theme) => ({
   },
   testSuiteTreePanel: {
     width: '400px',
+    overflowX: 'hidden',
   },
   treeRoot: {
     '& $labelText': {
