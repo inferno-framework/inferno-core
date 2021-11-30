@@ -10,7 +10,7 @@ module Inferno
     #
     #   validator do
     #     url 'http://example.com/validator'
-    #     exclude_message { |message| message[:type] == 'info' }
+    #     exclude_message { |message| message.type == 'info' }
     #     perform_additional_validation do |resource, profile_url|
     #       if something_is_wrong
     #         { type: 'error', message: 'something is wrong' }
@@ -99,8 +99,9 @@ module Inferno
         #
         # @example
         #   validator do
-        #     exclude_message { |message| message[:type] == 'info' }
+        #     exclude_message { |message| message.type == 'info' }
         #   end
+        # @yieldparam message [Inferno::Entities::Message]
         def exclude_message(&block)
           @exclude_message = block if block_given?
           @exclude_message
@@ -183,7 +184,7 @@ module Inferno
         # @example
         #   validator do
         #     url 'http://example.com/validator'
-        #     exclude_message { |message| message[:type] == 'info' }
+        #     exclude_message { |message| message.type == 'info' }
         #     perform_additional_validation do |resource, profile_url|
         #       if something_is_wrong
         #         { type: 'error', message: 'something is wrong' }
