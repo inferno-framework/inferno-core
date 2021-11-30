@@ -22,6 +22,10 @@ test('Test session renders', () => {
     </Router>
   );
 
-  const testSessionWrapperComponent = screen.getByRole('tree');
-  expect(testSessionWrapperComponent).toBeInTheDocument();
+  const testSessionTitleComponentList = screen.getAllByRole('link');
+  testSessionTitleComponentList.forEach((testSessionTitleComponent, i) => {
+    const testGroups = mockedTestSession.test_suite.test_groups || [];
+    const testGroupTitle = testGroups[i].title || null;
+    expect(testSessionTitleComponent).toHaveAccessibleName(testGroupTitle);
+  });
 });

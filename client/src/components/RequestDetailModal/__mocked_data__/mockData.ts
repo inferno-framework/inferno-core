@@ -3,7 +3,7 @@ import { Request } from 'models/testSuiteModels';
 export const mockedRequest: Request = {
   direction: 'outgoing',
   id: '20a3709a-eebf-42a7-9035-a58b00c8f104',
-  request_body: undefined,
+  request_body: null,
   request_headers: [
     { name: 'user-agent', value: 'Ruby FHIR Client' },
     { name: 'accept-charset', value: 'utf-8' },
