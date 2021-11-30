@@ -17,6 +17,8 @@ export default makeStyles((theme: Theme) => ({
   },
   labelText: {
     flexGrow: 1,
+    overflow: 'auto',
+    overflowWrap: 'break-word',
   },
   labelRunButton: {
     width: '10px',
@@ -25,6 +27,7 @@ export default makeStyles((theme: Theme) => ({
   },
   testSuiteTreePanel: {
     width: '400px',
+    overflowX: 'hidden',
   },
   treeRoot: {
     '& $labelText': {
