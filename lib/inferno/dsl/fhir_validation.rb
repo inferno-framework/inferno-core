@@ -28,6 +28,20 @@ module Inferno
           @url
         end
 
+        def additional_validations
+          @additional_validations ||= []
+        end
+
+        def perform_additional_validation(&block)
+          additional_validations << block
+        end
+
+        def additional_validation_messages(resource, profile_url)
+          additional_validations
+            .flat_map { |step| step.call(resource, profile_url) }
+            .select { |message| message.is_a? Hash }
+        end
+
         def exclude_message(&block)
           @exclude_message = block if block_given?
           @exclude_message
@@ -39,6 +53,8 @@ module Inferno
           outcome = FHIR::OperationOutcome.new(JSON.parse(validate(resource, profile_url)))
 
           message_hashes = outcome.issue&.map { |issue| message_hash_from_issue(issue) } || []
+
+          message_hashes.concat(additional_validation_messages(resource, profile_url))
 
           filter_messages(message_hashes)
 
