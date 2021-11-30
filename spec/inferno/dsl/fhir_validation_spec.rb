@@ -1,6 +1,6 @@
 RSpec.describe Inferno::DSL::FHIRValidation do
   let(:validation_url) { 'http://example.com' }
-  let(:profile_url) { 'PROFILE'}
+  let(:profile_url) { 'PROFILE' }
   let(:validator) do
     Inferno::DSL::FHIRValidation::Validator.new do
       url 'http://example.com'
@@ -29,7 +29,7 @@ RSpec.describe Inferno::DSL::FHIRValidation do
 
     context 'when the step returns an hash' do
       let(:extra_message) do
-          { type: 'info', message: 'INFO' }
+        { type: 'info', message: 'INFO' }
       end
 
       it 'adds the messages to the runnable' do
@@ -44,7 +44,7 @@ RSpec.describe Inferno::DSL::FHIRValidation do
       let(:extra_messages) do
         [
           { type: 'info', message: 'INFO' },
-          { type: 'warning', message: 'WARNING'}
+          { type: 'warning', message: 'WARNING' }
         ]
       end
 
@@ -60,7 +60,7 @@ RSpec.describe Inferno::DSL::FHIRValidation do
       let(:extra_messages) do
         [
           { type: 'info', message: 'INFO' },
-          { type: 'error', message: 'ERROR'}
+          { type: 'error', message: 'ERROR' }
         ]
       end
 
