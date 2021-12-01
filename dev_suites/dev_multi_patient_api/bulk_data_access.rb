@@ -1,8 +1,8 @@
-Dir.glob(File.join(__dir__, 'multi_patient_api', '*.rb')).each { |path| require_relative path.delete_prefix("#{__dir__}/") }
+Dir.glob(File.join(__dir__, 'bulk_data_access', '*.rb')).each { |path| require_relative path.delete_prefix("#{__dir__}/") }
 
-module ONCProgram
-  class MultiPatientAPI < Inferno::TestGroup
-    title 'Multi-Patient API'
+module MultiPatientAPI
+  class BulkDataAccess < Inferno::TestGroup
+    title 'Bulk Data Access'
     description <<~DESCRIPTION
       Demonstrate the ability to export clinical data for multiple patients
       in a group using [FHIR Bulk Data Access
@@ -21,10 +21,10 @@ module ONCProgram
       required resources.
     DESCRIPTION
 
-    id :multi_patient_api
+    id :bulk_data_access
 
     group from: :bulk_data_authorization
     group from: :bulk_data_group_export
     group from: :bulk_data_group_export_validation
-  end
-end
+  end 
+end 

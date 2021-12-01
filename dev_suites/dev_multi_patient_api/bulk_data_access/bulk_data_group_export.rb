@@ -1,4 +1,4 @@
-module ONCProgram
+module MultiPatientAPI
   class BulkDataGroupExport < Inferno::TestGroup
     title 'Group Compartment Export Tests'
     description <<~DESCRIPTION
@@ -7,9 +7,11 @@ module ONCProgram
 
     id :bulk_data_group_export
 
-    input :bulk_server_url, :bulk_access_token #, :bulk_lines_to_validate
+    include BulkDataUtils #TODO --> Remove BulkDataUtils statements in individual tests
+    input :bulk_access_token # Does this need to exist here? or in individual tests?
     output :requires_access_token, :bulk_status_output
 
+    #Q: Do I need both fhir and http client?
     fhir_client :bulk_server do
       url :bulk_server_url
     end
@@ -18,6 +20,12 @@ module ONCProgram
       url :bulk_server_url
     end
 
+    # TODO: Reorganize this client. Where does it fit best?
+    http_client :polling_location do
+      url :polling_url
+    end 
+
+    # TODO: Implement TLS Tester Class 
     test do
       title 'Bulk Data Server is secured by transport layer security'
       description <<~DESCRIPTION
@@ -25,6 +33,8 @@ module ONCProgram
         all exchanges described herein between a client and a server SHALL be secured using Transport Layer Security (TLS) Protocol Version 1.2 (RFC5246).
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#security-considerations'
+
+      input :bulk_server_url
 
       run {
         assert_valid_http_uri(bulk_server_url)
@@ -39,9 +49,10 @@ module ONCProgram
       # link 'http://hl7.org/fhir/uv/bulkdata/OperationDefinition-group-export.html'
 
       include BulkDataUtils
+      input :bulk_server_url
 
       run {
-        check_capability_statement
+        assert declared_export_support?, 'Server CapabilityStatement did not declare support for export operation in Group resource.'
       }
     end
 
@@ -58,10 +69,9 @@ module ONCProgram
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#bulk-data-kick-off-request'
 
       include BulkDataUtils
+      input :bulk_server_url
 
       run {
-        skip 'Could not verify this functionality when bearer token is not set' unless bulk_access_token
-
         export_kick_off(false)
         assert_response_status(401)
       }
@@ -78,15 +88,18 @@ module ONCProgram
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#response---success'
 
       include BulkDataUtils
+      input :bulk_server_url, :bulk_access_token, :group_id
       output :polling_url
 
       run {
         export_kick_off
         assert_response_status(202)
 
-        polling_url = response[:headers].find { |header| header.name == 'content-location' }.value
-        assert !!polling_url, 'Export response header did not include "Content-Location"'
-        
+        content_location = response[:headers].find { |header| header.name == 'content-location' }
+        polling_url = content_location.try(:value)
+
+        assert polling_url, 'Export response headers did not include "Content-Location"'
+        assert_valid_http_uri(polling_url)
         output polling_url: polling_url
       }
     end
@@ -107,15 +120,12 @@ module ONCProgram
 
       include BulkDataUtils
       input :polling_url
-      makes_request :status_check
-
-      http_client :polling_location do
-        url :polling_url
-      end
+      output :status_response_body
 
       run {
-        timeout = 180
         skip 'Server response did not have Content-Location in header' unless polling_url
+        
+        timeout = 180
         check_export_status(timeout)
 
         skip "Server took more than #{timeout} seconds to process the request." if response[:status] == 202
@@ -127,6 +137,8 @@ module ONCProgram
         ['transactionTime', 'request', 'requiresAccessToken', 'output', 'error'].each do |key|
           assert response_body.key?(key), "Complete Status response did not contain \"#{key}\" as required"
         end
+
+        output status_response_body: response[:body]
       }
     end
 
@@ -146,16 +158,18 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#response---complete-status'
 
-      uses_request :status_check
+      input :status_response_body
       output :bulk_status_output
 
       run {
-        output = JSON.parse(response[:body])['output']
-        assert output.present?, 'Sever response did not have output data'
+        skip 'Bulk Data Server status response not found' unless status_response_body
 
-        output bulk_status_output: output
+        bulk_status_output = JSON.parse(status_response_body)['output']
+        assert bulk_status_output, 'Bulk Data Server response does not contain output data'
 
-        output.each do |file|
+        output bulk_status_output: bulk_status_output.to_json
+
+        bulk_status_output.each do |file|
           ['type', 'url'].each do |key|
             assert file.key?(key), "Output file did not contain \"#{key}\" as required"
           end
@@ -170,14 +184,17 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#response---complete-status'
 
-      uses_request :status_check
-      output :bulk_access_token
+      input :status_response_body
 
       run {
-        assert response.present?, 'Bulk Data server response is empty'
-        requires_access_token = JSON.parse(response[:body])['requiresAccessToken']
-        assert requires_access_token.present? && requires_access_token.to_s.downcase == 'true', 'Bulk Data file server access SHALL require access token.'
-        output requires_access_token: true
+        skip 'Bulk Data Server status response not found' unless status_response_body
+
+        requires_access_token = JSON.parse(status_response_body)['requiresAccessToken']
+
+        output requires_access_token: requires_access_token
+
+        assert !requires_access_token.nil?, 'Bulk Data Server response does not contain requiresAccessToken'
+        assert requires_access_token.to_s.downcase == 'true', 'Bulk Data file server does not require access token'
       }
     end
 
@@ -189,6 +206,9 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#bulk-data-delete-request'
 
+      include BulkDataUtils
+
+      # TODO: Add delete request to http_client then come back and finish
       run {
         export_kick_off
         assert_response_status(202)
@@ -196,8 +216,8 @@ module ONCProgram
         polling_url = response[:headers].find { |header| header.name == 'content-location' }.value
         assert !!polling_url, 'Export response header did not include "Content-Location"'
 
-        # Should we add delete support to http_client?
-
+        delete(client: :polling_location)
+        assert_response_status(202)
       }
     end
   end

@@ -1,17 +1,18 @@
-module ONCProgram
+module MultiPatientAPI
   class BulkDataGroupExportValidation < Inferno::TestGroup
     title 'Group Compartment Export Validation Tests'
     description <<~DESCRIPTION
       Verify that Group compartment export from the Bulk Data server follow US Core Implementation Guide
     DESCRIPTION
 
-    include BulkDataUtils
-
+    include BulkDataUtils #TODO --> Remove BulkDataUtils statements in individual tests -- to troubleshoot, see about moving bulkDatautils after http_client declaration
     id :bulk_data_group_export_validation
 
-    #input :bulk_status_output, :bulk_lines_to_validate, :bulk_patient_ids_in_group, :bulk_device_types_in_group
+    http_client :ndjson_endpoint do
+      url :output_endpoint
+    end 
 
-    # TODO: Add in TLS Tester Class
+    # TODO: Create after implementing TLS Tester Class.
     test do
       title 'Bulk Data Server is secured by transport layer security'
       description <<~DESCRIPTION
@@ -20,7 +21,9 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#security-considerations'
 
-      run {}
+      run {
+        
+      }
     end
 
     test do
@@ -34,23 +37,19 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#file-request'
 
-      input :requires_access_token
-      input :bulk_access_token
-      input :bulk_file_url
+      include BulkDataUtils
 
-      http_client :bulk_file_endpoint do
-        url :bulk_file_url
-      end 
+      input :requires_access_token, :bulk_status_output
 
       run {
+        skip 'Could not verify this functionality when requiresAccessToken is not provided' if requires_access_token.nil?
         skip 'Could not verify this functionality when requireAccessToken is false' unless requires_access_token
-        skip 'Could not verify this functionality when bearer token is not set' unless bulk_access_token
+        skip 'Could not verify this functionality when bulk_status_output is not provided' if bulk_status_output.nil?
 
-        get_file
+        output_endpoint = JSON.parse(bulk_status_output)[0]['url']
+        get_file(output_endpoint, false)
 
-        # Is this the whole gauntlet of 'bad' tests that could/should be returned?
-        # Probably should make an assert_response_bad assertion
-        assert_response_status(401)
+        assert_response_bad_or_unauthorized
       }
     end
 
@@ -61,16 +60,23 @@ module ONCProgram
       DESCRIPTION
       # link 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient'
 
+      include BulkDataUtils
+      input :bulk_status_output, :requires_access_token, :bulk_access_token
+
       run {
+        skip 'Could not verify this functionality when bulk_status_output is not provided' if bulk_status_output.nil?
+
+        # TODO: Skip tests for rat and bulk_access_token
+
         profile_definitions = [
           {
-            profile: nil,
-            must_support_info: USCore311PatientSequenceDefinitions::MUST_SUPPORTS.deep_dup,
-            binding_info: USCore311PatientSequenceDefinitions::BINDINGS.deep_dup
+            profile: nil
+           # must_support_info: USCore311PatientSequenceDefinitions::MUST_SUPPORTS.deep_dup,
+           # binding_info: USCore311PatientSequenceDefinitions::BINDINGS.deep_dup
           }
         ]
         
-        test_output_against_profile()
+        test_output_against_profile('Patient', profile_definitions)
       }
     end
 

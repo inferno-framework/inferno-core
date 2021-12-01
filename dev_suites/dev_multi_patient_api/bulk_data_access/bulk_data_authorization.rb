@@ -1,6 +1,8 @@
+require_relative './bulk_data_utils'
 require 'json/jwt'
+require 'pry'
 
-module ONCProgram
+module MultiPatientAPI
   class BulkDataAuthorization < Inferno::TestGroup
     title 'Bulk Data Authorization'
     description <<~DESCRIPTION
@@ -20,68 +22,10 @@ module ONCProgram
 
     output :bulk_access_token
 
+    include BulkDataUtils
+
     http_client :token_endpoint do
       url :bulk_token_endpoint
-    end
-
-    # Locally stored JWK related code i.e. pulling from  bulk_data_jwks.json.
-    # Takes an encryption method as a string and filters for the corresponding
-    # key. The :bulk_encryption_method symbol was not recognized from within the
-    # scope of this method, hence why its passed as a parameter.
-    #
-    # In program, this information was set within the config.yml file and related
-    # methods written within the testing_instance.rb file. The following
-    # code cherry picks what was needed from those files, but we should probably
-    # make an organizational decision about where this stuff will live.
-    def get_bulk_selected_private_key(encryption)
-      bulk_data_jwks = JSON.parse(File.read(File.join(File.dirname(__FILE__), 'bulk_data_jwks.json')))
-      bulk_private_key_set = bulk_data_jwks['keys'].select { |key| key['key_ops']&.include?('sign') }
-      bulk_private_key_set.find { |key| key['alg'] == encryption }
-    end
-
-    # Heavy lifting for authorization - token signing and the like.
-    #
-    # Returns a hash containing everything necessary for an authorization post
-    # request. I ran into difficulty trying to make the request from within the
-    # authorize function itself. I think its because the http_client is only
-    # usable from within the 'test' context - which is too bad because making the
-    # request from within this function would be cleaner.
-    def build_authorization_request(encryption_method:,
-                  scope:,
-                  iss:,
-                  sub:,
-                  aud:,
-                  content_type: 'application/x-www-form-urlencoded',
-                  grant_type: 'client_credentials',
-                  client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
-                  exp: 5.minutes.from_now,
-                  jti: SecureRandom.hex(32))
-      header =
-        {
-          content_type: content_type,
-          accept: 'application/json'
-        }.compact
-
-      bulk_private_key = get_bulk_selected_private_key(encryption_method)
-      jwt_token = JSON::JWT.new(iss: iss, sub: sub, aud: aud, exp: exp, jti: jti).compact
-      jwk = JSON::JWK.new(bulk_private_key)
-
-      jwt_token.kid = jwk['kid']
-      jwk_private_key = jwk.to_key
-      client_assertion = jwt_token.sign(jwk_private_key, bulk_private_key['alg'])
-
-      query_values =
-        {
-          'scope' => scope,
-          'grant_type' => grant_type,
-          'client_assertion_type' => client_assertion_type,
-          'client_assertion' => client_assertion.to_s
-        }.compact
-
-      uri = Addressable::URI.new
-      uri.query_values = query_values
-
-      { body: uri.query, headers: header }
     end
 
     test do
@@ -91,11 +35,8 @@ module ONCProgram
         all exchanges described herein between a client and a server SHALL be secured using Transport Layer Security (TLS) Protocol Version 1.2 (RFC5246).
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#security-considerations'
-      input :bulk_token_endpoint
-
-      run do
-        assert_valid_http_uri(bulk_token_endpoint, "Invalid token endpoint: #{bulk_token_endpoint}")
-      end
+      run {
+      }
     end
 
     test do
@@ -118,14 +59,36 @@ module ONCProgram
       input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
 
       run do
-        post_request_content = build_authorization_request(encryption_method: bulk_encryption_method,
-                                        scope: bulk_scope,
-                                        iss: bulk_client_id,
-                                        sub: bulk_client_id,
-                                        aud: bulk_token_endpoint,
-                                        grant_type: 'not_a_grant_type')
 
-        post({ client: :token_endpoint }.merge(post_request_content))
+      #  binding.pry
+        client_assertion = create_client_assertion(encryption_method: bulk_encryption_method,
+          iss: bulk_client_id,
+          sub: bulk_client_id,
+          aud: bulk_token_endpoint,
+          exp: SecureRandom.hex(32),
+          jti: 'lol'
+        )
+
+        num = SecureRandom.hex(32)
+        request_content = build_authorization_request(encryption_method: bulk_encryption_method,
+                                                      scope: bulk_scope,
+                                                      iss: bulk_client_id,
+                                                      sub: bulk_client_id,
+                                                      aud: bulk_token_endpoint,
+                                                      grant_type: 'not_a_grant_type',
+                                                      jti: num)
+
+        request_content_00 = build_authorization_request(encryption_method: bulk_encryption_method,
+                                                      scope: bulk_scope,
+                                                      iss: bulk_client_id,
+                                                      sub: bulk_client_id,
+                                                      aud: bulk_token_endpoint,
+                                                      grant_type: 'not_a_grant_type',
+                                                      jti: num)
+
+                                
+       # binding.pry                                              
+        post({ client: :token_endpoint }.merge(request_content))
 
         assert_response_status(400)
       end
@@ -151,13 +114,14 @@ module ONCProgram
       input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
 
       run do
+
         post_request_content = build_authorization_request(encryption_method: bulk_encryption_method,
                                         scope: bulk_scope,
                                         iss: bulk_client_id,
                                         sub: bulk_client_id,
                                         aud: bulk_token_endpoint,
                                         client_assertion_type: 'not_an_assertion_type')
-
+                                      
         post({ client: :token_endpoint }.merge(post_request_content))
 
         assert_response_status(400)

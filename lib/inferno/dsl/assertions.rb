@@ -15,6 +15,11 @@ module Inferno
         assert Array.wrap(status).include?(response[:status]), bad_response_status_message(status, response[:status])
       end
 
+      def assert_response_bad_or_unauthorized(status: self.response[:status])
+        message = "Bad response code: expected 400 or 401, but found #{status}"
+        assert [400, 401].include?(status), message
+      end 
+
       def bad_resource_type_message(expected, received)
         "Bad resource type received: expected #{expected}, but received #{received}"
       end
@@ -89,7 +94,7 @@ module Inferno
         assert false, "Invalid JSON. #{message}"
       end
 
-      def assert_valid_http_uri(uri, message = '')
+      def assert_valid_http_uri(uri, message = nil)
         error_message = message || "\"#{uri}\" is not a valid URI"
         assert uri =~ /\A#{URI::DEFAULT_PARSER.make_regexp(['http', 'https'])}\z/, error_message
       end
