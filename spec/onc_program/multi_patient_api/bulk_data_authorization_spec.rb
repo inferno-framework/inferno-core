@@ -1,9 +1,8 @@
-require 'pry' #TODO: Remove
+require 'pry' # TODO: Remove
 require_relative '../../../dev_suites/dev_multi_patient_api/bulk_data_access/bulk_data_authorization'
 require_relative '../../../dev_suites/dev_multi_patient_api/bulk_data_access/bulk_data_utils'
 
-RSpec.describe MultiPatientAPI::BulkDataAuthorization do 
-
+RSpec.describe MultiPatientAPI::BulkDataAuthorization do
   include BulkDataUtils
 
   let(:suite) { Inferno::Repositories::TestSuites.new.find('multi_patient_api') }
@@ -14,75 +13,235 @@ RSpec.describe MultiPatientAPI::BulkDataAuthorization do
   let(:bulk_encryption_method) { 'ES384' }
   let(:bulk_scope) { 'system/Patient.read' }
   let(:bulk_client_id) { 'clientID' }
-  let(:default_input) { {
-    bulk_token_endpoint: bulk_token_endpoint,
-    bulk_encryption_method: bulk_encryption_method,
-    bulk_scope: bulk_scope,
-    bulk_client_id: bulk_client_id
-  } }
+  let(:exp) { 5.minutes.from_now }
+  let(:jti) { SecureRandom.hex(32) }
+  let(:default_input) do
+    {
+      bulk_token_endpoint: bulk_token_endpoint,
+      bulk_encryption_method: bulk_encryption_method,
+      bulk_scope: bulk_scope,
+      bulk_client_id: bulk_client_id
+    }
+  end
+  let(:client_assertion_input) do
+    {
+      encryption_method: bulk_encryption_method,
+      iss: bulk_client_id,
+      sub: bulk_client_id,
+      aud: bulk_token_endpoint,
+      exp: exp,
+      jti: jti
+    }
+  end
 
   def run(runnable, inputs = {})
     test_run_params = { test_session_id: test_session.id }.merge(runnable.reference_hash)
     test_run = Inferno::Repositories::TestRuns.new.create(test_run_params)
     inputs.each do |name, value|
       session_data_repo.save(test_session_id: test_session.id, name: name, value: value)
-    end 
+    end
     Inferno::TestRunner.new(test_session: test_session, test_run: test_run).run(runnable)
-  end 
+  end
 
-
-  # Issue --> client assertion in body of request_content does not match the 
-  # client assertion in the body of post request made in the runnable. The
-  # nitty gritty: JTI is randomly generated, and then used to create a JWT_token.
-  # So, even though key is the same, the token being signed is changed. 
-  def test_client_credentials(runnable, credentials_change, expectation)
-
-    authorization_inputs = {
-      encryption_method: bulk_encryption_method,
-      scope: bulk_scope,
-      iss: bulk_client_id,
-      sub: bulk_client_id,
-      aud: bulk_token_endpoint
-    }.merge(credentials_change)
-
-    # request_content = build_authorization_request(authorization_inputs)
-
-    # stub_request(:post, bulk_token_endpoint)
-    #   .with(
-    #     body: request_content[:body],
-    #     headers: {
-    #       'Accept'=>'application/json',
-    #       'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-    #       'Content-Type'=>'application/x-www-form-urlencoded',
-    #       'User-Agent'=>'Faraday v1.2.0'
-    #     })
-    #   .to_return(status: 400, body: "", headers: {})
-    
-    result = run(runnable, default_input)
-    expect(result.result).to eq(expectation)
-
-  end 
-
-  # TODO: After TLS tester class is implemented, create this test 
+  # TODO: After TLS tester class is implemented, create this test
   describe 'endpoint TLS tests' do
+  end
 
-  end 
- 
   describe '[Invalid grant_type] test' do
     let(:runnable) { group.tests[1] }
+    let(:client_assertion) { create_client_assertion(client_assertion_input) }
+    let(:body) do
+      {
+        'scope' => bulk_scope,
+        'grant_type' => 'not_a_grant_type',
+        'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+        'client_assertion' => client_assertion.to_s
+      }.compact
+    end
 
-    it 'passes when token endpoint requires valid grant_type' do 
-      #credentials_change = { grant_type: 'not_a_grant_type' }
-      #test_client_credentials(runnable, credentials_change, 'pass')
+    it 'passes when token endpoint requires valid grant_type' do
+      stub_request(:post, bulk_token_endpoint)
+        .with(body: body)
+        .to_return(status: 400, body: "", headers: {})
+
+      allow_any_instance_of(described_class).to receive(:create_client_assertion).and_return(client_assertion)
+      result = run(runnable, default_input)
+
+      expect(result.result).to eq('pass')
+    end
+
+    it 'fails when token endpoint allows invalid grant_type' do
+      stub_request(:post, bulk_token_endpoint)
+        .with(body: body)
+        .to_return(status: 200, body: "", headers: {})
+
+      allow_any_instance_of(described_class).to receive(:create_client_assertion).and_return(client_assertion)
+      result = run(runnable, default_input)
+      
+      expect(result.result).to eq('fail')
+    end
+  end
+
+  describe '[Invalid client_assertion_type] test' do
+    let(:runnable) { group.tests[2] }
+    let(:client_assertion) { create_client_assertion(client_assertion_input) }
+    let(:body) do
+      {
+        'scope' => bulk_scope,
+        'grant_type' => 'client_credentials',
+        'client_assertion_type' => 'not_an_assertion_type',
+        'client_assertion' => client_assertion.to_s
+      }.compact
+    end
+
+    it 'passes when token endpoint requires valid client_assertion_type' do
+      stub_request(:post, bulk_token_endpoint)
+        .with(body: body)
+        .to_return(status: 400, body: "", headers: {})
+
+      allow_any_instance_of(described_class).to receive(:create_client_assertion).and_return(client_assertion)
+      result = run(runnable, default_input)
+
+      expect(result.result).to eq('pass')
+    end
+
+    it 'fails when token endpoint allows invalid client_assertion_type' do
+      stub_request(:post, bulk_token_endpoint)
+        .with(body: body)
+        .to_return(status: 200, body: "", headers: {})
+
+      allow_any_instance_of(described_class).to receive(:create_client_assertion).and_return(client_assertion)
+      result = run(runnable, default_input)
+      
+      expect(result.result).to eq('fail')
+    end
+  end
+
+  describe '[Invalid JWT token] test' do
+    let(:runnable) { group.tests[3] }
+    let(:client_assertion) do
+      client_assertion_input[:iss] = 'not_a_valid_iss'
+      create_client_assertion(client_assertion_input) 
+    end
+    let(:body) do
+      {
+        'scope' => bulk_scope,
+        'grant_type' => 'client_credentials',
+        'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+        'client_assertion' => client_assertion.to_s
+      }.compact
+    end
+
+    it 'passes when token endpoint requires valid JWT token' do
+      stub_request(:post, bulk_token_endpoint)
+        .with(body: body)
+        .to_return(status: 400, body: "", headers: {})
+
+      allow_any_instance_of(described_class).to receive(:create_client_assertion).and_return(client_assertion)
+      result = run(runnable, default_input)
+
+      expect(result.result).to eq('pass')
+    end
+
+    it 'fails when token endpoint allows invalid JWT token' do
+      stub_request(:post, bulk_token_endpoint)
+        .with(body: body)
+        .to_return(status: 200, body: "", headers: {})
+
+      allow_any_instance_of(described_class).to receive(:create_client_assertion).and_return(client_assertion)
+      result = run(runnable, default_input)
+      
+      expect(result.result).to eq('fail')
+    end
+  end
+
+  describe 'Authorization request succeeds when supplied correct information test' do
+    let(:runnable) { group.tests[4] }
+    let(:client_assertion) { create_client_assertion(client_assertion_input) }
+    let(:body) do
+      {
+        'scope' => bulk_scope,
+        'grant_type' => 'client_credentials',
+        'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+        'client_assertion' => client_assertion.to_s
+      }.compact
+    end
+
+    it 'passes if the access token request is valid and authorized' do
+      stub_request(:post, bulk_token_endpoint)
+        .with(body: body)
+        .to_return(status: 200, body: '', headers: {})
+
+      allow_any_instance_of(described_class).to receive(:create_client_assertion).and_return(client_assertion)
+      result = run(runnable, default_input)
+
+      expect(result.result).to eq('pass')
+    end
+
+    it 'fails if the access token request is rejected' do
+      stub_request(:post, bulk_token_endpoint)
+        .with(body: body)
+        .to_return(status: 400, body: '', headers: {})
+
+      allow_any_instance_of(described_class).to receive(:create_client_assertion).and_return(client_assertion)
+      result = run(runnable, default_input)
+
+      expect(result.result).to eq('fail')
+    end
+  end
+
+  describe 'Authorization request response body contains required information test' do
+    let(:runnable) { group.tests[5] }
+    let!(:response_body) do
+      {
+        'access_token' => 'its_the_token',
+        'token_type' => 'its_a_token',
+        'expires_in' => 'a_couple_minutes',
+        'scope' => 'system'
+      } 
+    end
+    let(:authentication_response) { { 'response_body' => response_body } }
+
+    it 'skips when no authentication response received' do 
+      result = run(runnable)
+
+      expect(result.result).to eq('skip')
+      expect(result.result_message).to eq('No authentication response received.')
     end 
 
-    it 'fails when token endpoint does not require a grant_type header' do 
-
+    it 'fails when authentication response is invalid JSON' do 
+      result = run(runnable, {authentication_response: '{/}'})
+      
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to eq('Invalid JSON. ')
     end 
 
-    it 'fails when token endpoint allows invalid grant_type' do 
+    it 'fails when authentication response does not contain a response_body' do
+      result = run(runnable, {authentication_response: "{\"verb\":\"post\"}"})
+      
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to eq('Authentication response does not contain response_body.')
+    end
 
-    end 
-  end 
+    it 'fails when response_body does not contain access_token' do
+      result = run(runnable, {authentication_response: "{\"response_body\":\"post\"}"})
+      
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to eq('Token response did not contain access_token as required')
+    end
 
-end 
+    it 'fails when access_token is present but does not contain required keys' do
+      missing_key_auth_response = { 'response_body' => { 'access_token' => 'its_the_token' } }
+      result = run(runnable, {authentication_response: missing_key_auth_response.to_json})
+
+      expect(result.result).to eq('fail')
+      expect(result.result_message).to eq('Token response did not contain token_type as required')
+    end
+
+    it 'passes when access_token is present and contains the required keys' do
+      result = run(runnable, {authentication_response: authentication_response.to_json})
+      
+      expect(result.result).to eq('pass')
+    end
+  end
+end

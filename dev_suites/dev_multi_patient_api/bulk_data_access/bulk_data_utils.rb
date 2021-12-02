@@ -1,9 +1,8 @@
 require 'pry'
 module BulkDataUtils
-	attr_accessor :client_assertion
 
 	def self.included(klass)
-		@client_assertion = nil
+
 	end 
 
 	# Locally stored JWK related code i.e. pulling from  bulk_data_jwks.json.
@@ -21,8 +20,7 @@ module BulkDataUtils
 		bulk_private_key_set.find { |key| key['alg'] == encryption }
 	end
 
-	# Would it be better to pass a hash containing these values? 
-	# def clean it up 
+	# TODO: Clean up params
 	def create_client_assertion(encryption_method:, iss:, sub:, aud:, exp:, jti:)
 		bulk_private_key = get_bulk_selected_private_key(encryption_method)
 		jwt_token = JSON::JWT.new(iss: iss, sub: sub, aud: aud, exp: exp, jti: jti).compact
@@ -50,15 +48,6 @@ module BulkDataUtils
 			}.compact
 
 		client_assertion = create_client_assertion(encryption_method: encryption_method, iss: iss, sub: sub, aud: aud, exp: exp, jti: jti)
-		
-		
-		# bulk_private_key = get_bulk_selected_private_key(encryption_method)
-		# jwt_token = JSON::JWT.new(iss: iss, sub: sub, aud: aud, exp: exp, jti: jti).compact
-		# jwk = JSON::JWK.new(bulk_private_key)
-
-		# jwt_token.kid = jwk['kid']
-		# jwk_private_key = jwk.to_key
-		# client_assertion = jwt_token.sign(jwk_private_key, bulk_private_key['alg'])
 
 		query_values =
 			{

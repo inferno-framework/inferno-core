@@ -59,36 +59,14 @@ module MultiPatientAPI
       input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
 
       run do
-
-      #  binding.pry
-        client_assertion = create_client_assertion(encryption_method: bulk_encryption_method,
-          iss: bulk_client_id,
-          sub: bulk_client_id,
-          aud: bulk_token_endpoint,
-          exp: SecureRandom.hex(32),
-          jti: 'lol'
-        )
-
-        num = SecureRandom.hex(32)
-        request_content = build_authorization_request(encryption_method: bulk_encryption_method,
+        post_request_content = build_authorization_request(encryption_method: bulk_encryption_method,
                                                       scope: bulk_scope,
                                                       iss: bulk_client_id,
                                                       sub: bulk_client_id,
                                                       aud: bulk_token_endpoint,
-                                                      grant_type: 'not_a_grant_type',
-                                                      jti: num)
-
-        request_content_00 = build_authorization_request(encryption_method: bulk_encryption_method,
-                                                      scope: bulk_scope,
-                                                      iss: bulk_client_id,
-                                                      sub: bulk_client_id,
-                                                      aud: bulk_token_endpoint,
-                                                      grant_type: 'not_a_grant_type',
-                                                      jti: num)
-
-                                
-       # binding.pry                                              
-        post({ client: :token_endpoint }.merge(request_content))
+                                                      grant_type: 'not_a_grant_type')
+         
+        post({ client: :token_endpoint }.merge(post_request_content))
 
         assert_response_status(400)
       end
@@ -114,7 +92,6 @@ module MultiPatientAPI
       input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
 
       run do
-
         post_request_content = build_authorization_request(encryption_method: bulk_encryption_method,
                                         scope: bulk_scope,
                                         iss: bulk_client_id,
@@ -159,7 +136,7 @@ module MultiPatientAPI
       run do
         post_request_content = build_authorization_request(encryption_method: bulk_encryption_method,
                                         scope: bulk_scope,
-                                        iss: 'not-a-valid-iss',
+                                        iss: 'not_a_valid_iss',
                                         sub: bulk_client_id,
                                         aud: bulk_token_endpoint)
 
@@ -177,16 +154,13 @@ module MultiPatientAPI
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#issuing-access-tokens'
 
       input :bulk_token_endpoint, :bulk_encryption_method, :bulk_scope, :bulk_client_id
-      makes_request :authentication
+      output :authentication_response
 
       run do
-        post_request_content = build_authorization_request(encryption_method: bulk_encryption_method,
-                                        scope: bulk_scope,
-                                        iss: bulk_client_id,
-                                        sub: bulk_client_id,
-                                        aud: bulk_token_endpoint)
+        post_request_content = build_authorization_request(encryption_method: bulk_encryption_method, scope: bulk_scope, iss: bulk_client_id, sub: bulk_client_id, aud: bulk_token_endpoint)
 
-        post({ client: :token_endpoint, name: :authentication }.merge(post_request_content))
+        authentication_response = post({ client: :token_endpoint }.merge(post_request_content))
+        output authentication_response: authentication_response.to_json
 
         assert_response_status([200, 201])
       end
@@ -206,14 +180,16 @@ module MultiPatientAPI
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/authorization/index.html#issuing-access-tokens'
 
+      input :authentication_response
       output :bulk_access_token
-      uses_request :authentication
 
       run do
-        skip_if response.blank?, 'No token response received'
+        skip_if authentication_response.nil?, 'No authentication response received.'
 
-        assert_valid_json(response[:body])
-        response_body = JSON.parse(response[:body])
+        assert_valid_json(authentication_response)
+        response_body = JSON.parse(authentication_response)['response_body']
+
+        assert response_body, 'Authentication response does not contain response_body.'
 
         access_token = response_body['access_token']
         assert access_token.present?, 'Token response did not contain access_token as required'
