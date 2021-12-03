@@ -21,7 +21,7 @@ export default makeStyles((theme: Theme) => ({
     width: '90%',
   },
   testBadge: {
-    marginRight: '10px',
+    margin: '0 4px',
   },
   listItem: {
     borderBottom: '1px solid rgba(0,0,0,.12)',

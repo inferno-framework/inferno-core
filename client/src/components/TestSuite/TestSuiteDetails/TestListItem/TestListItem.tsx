@@ -2,7 +2,6 @@ import React, { FC, Fragment } from 'react';
 import useStyles from './styles';
 import {
   Box,
-  Chip,
   Collapse,
   Container,
   Divider,
@@ -12,6 +11,7 @@ import {
   Tab,
   Tabs,
   Tooltip,
+  Badge,
 } from '@mui/material';
 import { RunnableType, Test, Request } from 'models/testSuiteModels';
 import TabPanel from './TabPanel';
@@ -43,35 +43,37 @@ const TestListItem: FC<TestListItemProps> = ({
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
 
-  const messagesBadge =
-    test.result?.messages && test.result.messages.length > 0 ? (
-      <Tooltip className={styles.testBadge} title={`${test.result.messages.length} messages`}>
-        <Chip
-          variant="outlined"
-          label={test.result.messages.length}
-          avatar={<MailIcon />}
-          onClick={() => {
-            setPanelIndex(1);
-            setOpen(true);
-          }}
-        />
-      </Tooltip>
-    ) : null;
+  const messagesBadge = test.result?.messages && test.result.messages.length > 0 && (
+    <IconButton
+      className={styles.testBadge}
+      onClick={() => {
+        setPanelIndex(1);
+        setOpen(true);
+      }}
+    >
+      <Badge badgeContent={test.result.messages.length} color="primary">
+        <Tooltip title={`${test.result.messages.length} messages`}>
+          <MailIcon color="secondary" />
+        </Tooltip>
+      </Badge>
+    </IconButton>
+  );
 
-  const requestsBadge =
-    test.result?.requests && test.result.requests.length > 0 ? (
-      <Tooltip className={styles.testBadge} title={`${test.result.requests.length} http requests`}>
-        <Chip
-          variant="outlined"
-          label={test.result.requests.length}
-          avatar={<PublicIcon />}
-          onClick={() => {
-            setPanelIndex(2);
-            setOpen(true);
-          }}
-        />
-      </Tooltip>
-    ) : null;
+  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
+    <IconButton
+      className={styles.testBadge}
+      onClick={() => {
+        setPanelIndex(2);
+        setOpen(true);
+      }}
+    >
+      <Badge badgeContent={test.result.requests.length} color="primary">
+        <Tooltip title={`${test.result.requests.length} messages`}>
+          <PublicIcon color="secondary" />
+        </Tooltip>
+      </Badge>
+    </IconButton>
+  );
 
   const expandButton = open ? (
     <IconButton onClick={() => setOpen(false)} size="small">
