@@ -200,12 +200,11 @@ RSpec.describe MultiPatientAPI::BulkDataAuthorization do
         'scope' => 'system'
       } 
     end
-    let(:authentication_response) { { 'response_body' => response_body } }
 
-    it 'skips when no authentication response received' do 
+    it 'fails when no authentication response received' do 
       result = run(runnable)
 
-      expect(result.result).to eq('skip')
+      expect(result.result).to eq('fail')
       expect(result.result_message).to eq('No authentication response received.')
     end 
 
@@ -216,14 +215,7 @@ RSpec.describe MultiPatientAPI::BulkDataAuthorization do
       expect(result.result_message).to eq('Invalid JSON. ')
     end 
 
-    it 'fails when authentication response does not contain a response_body' do
-      result = run(runnable, {authentication_response: "{\"verb\":\"post\"}"})
-      
-      expect(result.result).to eq('fail')
-      expect(result.result_message).to eq('Authentication response does not contain response_body.')
-    end
-
-    it 'fails when response_body does not contain access_token' do
+    it 'fails when authentication response does not contain access_token' do
       result = run(runnable, {authentication_response: "{\"response_body\":\"post\"}"})
       
       expect(result.result).to eq('fail')
@@ -231,7 +223,7 @@ RSpec.describe MultiPatientAPI::BulkDataAuthorization do
     end
 
     it 'fails when access_token is present but does not contain required keys' do
-      missing_key_auth_response = { 'response_body' => { 'access_token' => 'its_the_token' } }
+      missing_key_auth_response = { 'access_token' => 'its_the_token' }
       result = run(runnable, {authentication_response: missing_key_auth_response.to_json})
 
       expect(result.result).to eq('fail')
@@ -239,7 +231,7 @@ RSpec.describe MultiPatientAPI::BulkDataAuthorization do
     end
 
     it 'passes when access_token is present and contains the required keys' do
-      result = run(runnable, {authentication_response: authentication_response.to_json})
+      result = run(runnable, {authentication_response: response_body.to_json})
       
       expect(result.result).to eq('pass')
     end

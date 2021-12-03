@@ -28,6 +28,7 @@ module MultiPatientAPI
       url :bulk_token_endpoint
     end
 
+    # TODO: Write test after TLStester class is implemented. 
     test do
       title 'Authorization service token endpoint secured by transport layer security'
       description <<~DESCRIPTION
@@ -36,6 +37,7 @@ module MultiPatientAPI
       DESCRIPTION
       # link 'http://hl7.org/fhir/uv/bulkdata/export/index.html#security-considerations'
       run {
+
       }
     end
 
@@ -160,7 +162,7 @@ module MultiPatientAPI
         post_request_content = build_authorization_request(encryption_method: bulk_encryption_method, scope: bulk_scope, iss: bulk_client_id, sub: bulk_client_id, aud: bulk_token_endpoint)
 
         authentication_response = post({ client: :token_endpoint }.merge(post_request_content))
-        output authentication_response: authentication_response.to_json
+        output authentication_response: authentication_response.response_body
 
         assert_response_status([200, 201])
       end
@@ -184,12 +186,11 @@ module MultiPatientAPI
       output :bulk_access_token
 
       run do
-        skip_if authentication_response.nil?, 'No authentication response received.'
 
+        assert authentication_response.present?, 'No authentication response received.'
         assert_valid_json(authentication_response)
-        response_body = JSON.parse(authentication_response)['response_body']
 
-        assert response_body, 'Authentication response does not contain response_body.'
+        response_body = JSON.parse(authentication_response)
 
         access_token = response_body['access_token']
         assert access_token.present?, 'Token response did not contain access_token as required'

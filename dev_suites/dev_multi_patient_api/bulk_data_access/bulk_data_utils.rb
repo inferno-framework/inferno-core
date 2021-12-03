@@ -137,11 +137,12 @@ module BulkDataUtils
 
 	# Responsibility falls on the process_chunk block to check whether the input
 	# line is nil or empty. 
-	def stream_ndjson(endpoint, headers, process_chunk_line)
+	def stream_ndjson(endpoint, headers, process_chunk_line, process_response)
 
 		hanging_chunk = String.new 
 
 		process_body = proc { |chunk| 
+			
 			hanging_chunk << chunk 
 			chunk_by_lines = hanging_chunk.lines
 
@@ -153,6 +154,7 @@ module BulkDataUtils
 		}	
 
 		stream(endpoint, process_body, headers)
+		process_response.call(response) 
 		process_chunk_line.call(hanging_chunk)
 	end
 
@@ -166,7 +168,7 @@ module BulkDataUtils
 		headers.merge!( { authorization: "Bearer #{bulk_access_token}" } ) unless requires_access_token
 
 		proc { |resource|
-			next if resource.nil? || resource.strip.empty? ## Will this next if iterate to 
+			next if resource.nil? || resource.strip.empty? 
 
 			line_count += 1
 			leading_lines << resource unless line_count > max_lines
