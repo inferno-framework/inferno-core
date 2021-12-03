@@ -9,6 +9,10 @@ module Inferno
           @app = app
         end
 
+        def verbose_logging?
+          @verbose_logging ||= ENV['VERBOSE_REQUEST_LOGGING']&.downcase == true
+        end
+
         def logger
           @logger ||= Application['logger']
         end
@@ -35,7 +39,9 @@ module Inferno
           logger.info("#{status} in #{elapsed.in_milliseconds} ms")
           return unless body.present?
 
-          if body.length > 100
+          body = body.is_a?(Array) ? body.first : body
+
+          if body.length > 100 && !verbose_logging?
             logger.info("#{body[0..100]}...")
           else
             logger.info(body)
@@ -56,7 +62,7 @@ module Inferno
 
           return unless body.present?
 
-          if body.length > 100
+          if body.length > 100 && !verbose_logging?
             logger.info("#{body[0..100]}...")
           else
             logger.info(body)
