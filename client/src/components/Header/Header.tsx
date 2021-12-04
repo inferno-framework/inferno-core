@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
 import logo from 'images/inferno_logo.png';
-import { AppBar, Toolbar, Link } from '@mui/material';
+import { AppBar, Toolbar } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 
 const Header: FC<unknown> = () => {
@@ -15,9 +15,9 @@ const Header: FC<unknown> = () => {
   return (
     <AppBar position="sticky" color="default" className={styles.appbar}>
       <Toolbar>
-        <Link onClick={returnHome} component="button">
+        <a href="/" onClick={returnHome}>
           <img src={logo as string} alt="inferno logo" className={styles.logo} />
-        </Link>
+        </a>
       </Toolbar>
     </AppBar>
   );
