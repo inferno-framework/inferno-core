@@ -24,8 +24,6 @@ test('renders custom TreeItem', () => {
               testRunInProgress={false}
             />
           }
-          // eslint-disable-next-line max-len
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
           ContentProps={{ testId: mockedTestSuite.id } as any}
         />
       </TreeView>
@@ -52,8 +50,6 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
                 testRunInProgress={false}
               />
             }
-            // eslint-disable-next-line max-len
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
             ContentProps={{ testId: mockedTestSuite.id } as any}
           >
             <></>
@@ -88,8 +84,6 @@ test('clicking on TreeItem should navigate to group or test instance', () => {
                 testRunInProgress={false}
               />
             }
-            // eslint-disable-next-line max-len
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
             ContentProps={{ testId: mockedTestSuite.id } as any}
           />
         </TreeView>
