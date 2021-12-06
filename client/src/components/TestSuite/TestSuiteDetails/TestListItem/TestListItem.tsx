@@ -12,6 +12,7 @@ import {
   Tab,
   Tabs,
   Tooltip,
+  Typography,
 } from '@mui/material';
 import { RunnableType, Test, Request } from 'models/testSuiteModels';
 import TabPanel from './TabPanel';
@@ -43,35 +44,33 @@ const TestListItem: FC<TestListItemProps> = ({
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
 
-  const messagesBadge =
-    test.result?.messages && test.result.messages.length > 0 ? (
-      <Tooltip className={styles.testBadge} title={`${test.result.messages.length} messages`}>
-        <Chip
-          variant="outlined"
-          label={test.result.messages.length}
-          avatar={<MailIcon />}
-          onClick={() => {
-            setPanelIndex(1);
-            setOpen(true);
-          }}
-        />
-      </Tooltip>
-    ) : null;
+  const messagesBadge = test.result?.messages && test.result.messages.length > 0 && (
+    <Tooltip className={styles.testBadge} title={`${test.result.messages.length} messages`}>
+      <Chip
+        variant="outlined"
+        label={test.result.messages.length}
+        avatar={<MailIcon />}
+        onClick={() => {
+          setPanelIndex(1);
+          setOpen(true);
+        }}
+      />
+    </Tooltip>
+  );
 
-  const requestsBadge =
-    test.result?.requests && test.result.requests.length > 0 ? (
-      <Tooltip className={styles.testBadge} title={`${test.result.requests.length} http requests`}>
-        <Chip
-          variant="outlined"
-          label={test.result.requests.length}
-          avatar={<PublicIcon />}
-          onClick={() => {
-            setPanelIndex(2);
-            setOpen(true);
-          }}
-        />
-      </Tooltip>
-    ) : null;
+  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
+    <Tooltip className={styles.testBadge} title={`${test.result.requests.length} http requests`}>
+      <Chip
+        variant="outlined"
+        label={test.result.requests.length}
+        avatar={<PublicIcon />}
+        onClick={() => {
+          setPanelIndex(2);
+          setOpen(true);
+        }}
+      />
+    </Tooltip>
+  );
 
   const expandButton = open ? (
     <IconButton onClick={() => setOpen(false)} size="small">
@@ -127,8 +126,9 @@ const TestListItem: FC<TestListItemProps> = ({
         </Tabs>
         <Divider />
         <TabPanel currentPanelIndex={panelIndex} index={0}>
-          <Container className={styles.descriptionPanel}>{testDescription}</Container>
-          <Divider />
+          <Container className={styles.descriptionPanel}>
+            <Typography>{testDescription}</Typography>
+          </Container>
         </TabPanel>
         <TabPanel currentPanelIndex={panelIndex} index={1}>
           <MessagesList messages={test.result?.messages || []} />

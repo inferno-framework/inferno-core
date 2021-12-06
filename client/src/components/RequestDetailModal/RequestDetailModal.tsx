@@ -29,7 +29,13 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
 
   if (request) {
     return (
-      <Dialog open={modalVisible} fullWidth={true} maxWidth="md" onClose={() => hideModal()}>
+      <Dialog
+        open={modalVisible}
+        fullWidth={true}
+        maxWidth="md"
+        onClose={() => hideModal()}
+        data-testid="requestDetailModal"
+      >
         <DialogTitle className={styles.modalTitle}>
           {request.verb.toUpperCase()} {request.url} &#8594; {request.status}
           {usedRequest ? usedRequestIcon : null}
