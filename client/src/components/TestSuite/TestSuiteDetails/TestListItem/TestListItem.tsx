@@ -100,12 +100,12 @@ const TestListItem: FC<TestListItemProps> = ({
           <ListItemText primary={test.title} />
           {messagesBadge}
           {requestsBadge}
-          {expandButton}
           <TestRunButton
             runnable={test}
             runTests={runTests}
             testRunInProgress={testRunInProgress}
           />
+          {expandButton}
         </ListItem>
         {test.result?.result_message ? (
           <ReactMarkdown className={styles.resultMessageMarkdown}>
