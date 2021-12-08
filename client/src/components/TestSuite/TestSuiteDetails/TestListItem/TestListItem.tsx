@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC } from 'react';
 import useStyles from './styles';
 import {
   Box,
@@ -94,10 +94,12 @@ const TestListItem: FC<TestListItemProps> = ({
     );
 
   return (
-    <Fragment>
+    <>
       <Box className={styles.listItem}>
         <ListItem>
-          <div className={styles.testIcon}>{<ResultIcon result={test.result} />}</div>
+          <div className={styles.testIcon}>
+            <ResultIcon result={test.result} />
+          </div>
           <ListItemText primary={test.title} />
           {messagesBadge}
           {requestsBadge}
@@ -108,11 +110,11 @@ const TestListItem: FC<TestListItemProps> = ({
           />
           {expandButton}
         </ListItem>
-        {test.result?.result_message ? (
+        {test.result?.result_message && (
           <ReactMarkdown className={styles.resultMessageMarkdown}>
             {test.result.result_message}
           </ReactMarkdown>
-        ) : null}
+        )}
       </Box>
       <Collapse in={open} timeout="auto" className={styles.collapsible} unmountOnExit>
         <Divider />
@@ -131,7 +133,7 @@ const TestListItem: FC<TestListItemProps> = ({
         <Divider />
         <TabPanel currentPanelIndex={panelIndex} index={0}>
           <Container className={styles.descriptionPanel}>
-            <Typography>{testDescription}</Typography>
+            <Typography variant="subtitle2">{testDescription}</Typography>
           </Container>
         </TabPanel>
         <TabPanel currentPanelIndex={panelIndex} index={1}>
@@ -145,7 +147,7 @@ const TestListItem: FC<TestListItemProps> = ({
           />
         </TabPanel>
       </Collapse>
-    </Fragment>
+    </>
   );
 };
 

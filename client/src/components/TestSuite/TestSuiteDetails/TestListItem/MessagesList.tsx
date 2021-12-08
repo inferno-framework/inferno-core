@@ -17,7 +17,9 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
         return (
           <TableRow key={`msgRow-${index}`}>
             <TableCell>
-              <span className={styles.messageType}>{message.type}:</span>
+              <Typography variant="subtitle2" className={styles.messageType}>
+                {message.type}:
+              </Typography>
             </TableCell>
             <TableCell className={styles.messageMessage}>
               <ReactMarkdown>{message.message}</ReactMarkdown>
@@ -28,7 +30,7 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
     ) : (
       <TableRow key={`msgRow-none`}>
         <TableCell>
-          <Typography>None</Typography>
+          <Typography variant="subtitle2">None</Typography>
         </TableCell>
       </TableRow>
     );

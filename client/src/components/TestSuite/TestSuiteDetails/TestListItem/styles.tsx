@@ -19,6 +19,7 @@ export default makeStyles((theme: Theme) => ({
   },
   messageMessage: {
     width: '90%',
+    padding: '0 !important',
   },
   testBadge: {
     margin: '0 4px',
@@ -42,29 +43,10 @@ export default makeStyles((theme: Theme) => ({
     marginBottom: '15px',
     color: 'rgba(0,0,0,0.6)',
   },
-  requestRowItem: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  requestRow: {
-    display: 'flex',
-    textAlign: 'center',
-    height: '45px',
-    '& > *': {
-      display: 'flex',
-      alignItems: 'center',
-      margin: '10px',
-    },
-  },
   requestUrl: {
+    width: '90%',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    flexGrow: 1,
-    '& > *': {
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-    },
   },
 }));
