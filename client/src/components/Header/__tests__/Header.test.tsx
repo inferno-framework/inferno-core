@@ -28,7 +28,7 @@ test('should navigate home when logo is clicked', () => {
     </Router>
   );
 
-  const buttonElement = screen.getByRole('button');
-  userEvent.click(buttonElement);
+  const linkElement = screen.getByRole('link');
+  userEvent.click(linkElement);
   expect(history.location.pathname).toBe('/');
 });
