@@ -9,6 +9,13 @@
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:prettier/recommended"
   ],
+  "overrides": [{
+    "files": ["**/*.test.tsx"],
+    "rules": {
+      "@typescript-eslint/no-unsafe-assignment": ["off"],
+      "@typescript-eslint/no-explicit-any": ["off"]
+    }
+  }],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "tsconfig.json",

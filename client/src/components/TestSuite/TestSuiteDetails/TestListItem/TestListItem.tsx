@@ -12,6 +12,7 @@ import {
   Tabs,
   Tooltip,
   Badge,
+  Typography,
 } from '@mui/material';
 import { RunnableType, Test, Request } from 'models/testSuiteModels';
 import TabPanel from './TabPanel';
@@ -129,8 +130,9 @@ const TestListItem: FC<TestListItemProps> = ({
         </Tabs>
         <Divider />
         <TabPanel currentPanelIndex={panelIndex} index={0}>
-          <Container className={styles.descriptionPanel}>{testDescription}</Container>
-          <Divider />
+          <Container className={styles.descriptionPanel}>
+            <Typography>{testDescription}</Typography>
+          </Container>
         </TabPanel>
         <TabPanel currentPanelIndex={panelIndex} index={1}>
           <MessagesList messages={test.result?.messages || []} />

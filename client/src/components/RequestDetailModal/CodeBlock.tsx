@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import useStyles from './styles';
 
 export interface CodeBlockProps {
-  body: string | undefined;
+  body?: string | null;
 }
 
 const CodeBlock: FC<CodeBlockProps> = ({ body }) => {

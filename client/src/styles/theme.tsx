@@ -1,4 +1,4 @@
-import { createTheme, adaptV4Theme } from '@mui/material';
+import { createTheme } from '@mui/material';
 
 // https://material-ui.com/customization/palette/#adding-new-colors
 declare module '@mui/material/styles/createPalette' {
@@ -49,16 +49,14 @@ const paletteBase = {
   common: colors,
 };
 
-const lightTheme = createTheme(
-  adaptV4Theme({
-    palette: { ...paletteBase },
-    typography: {
-      h2: {
-        fontWeight: 'bold',
-        fontFamily: ['Roboto Condensed', 'sans-serif'].join(','),
-      },
+const lightTheme = createTheme({
+  palette: { ...paletteBase },
+  typography: {
+    h2: {
+      fontWeight: 'bold',
+      fontFamily: ['Roboto Condensed', 'sans-serif'].join(','),
     },
-  })
-);
+  },
+});
 
 export default lightTheme;

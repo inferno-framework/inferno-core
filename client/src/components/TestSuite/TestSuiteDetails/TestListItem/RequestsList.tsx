@@ -1,5 +1,5 @@
 import React, { FC, Fragment } from 'react';
-import { Button, Box } from '@mui/material';
+import { Button, Box, Typography } from '@mui/material';
 import { Request } from 'models/testSuiteModels';
 import RequestDetailModal from 'components/RequestDetailModal/RequestDetailModal';
 import { getRequestDetails } from 'api/RequestsApi';
@@ -64,7 +64,11 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
         );
       })
     ) : (
-      <Box>None</Box>
+      <>
+        <Box className={styles.descriptionPanel}>
+          <Typography>None</Typography>
+        </Box>
+      </>
     );
 
   return (

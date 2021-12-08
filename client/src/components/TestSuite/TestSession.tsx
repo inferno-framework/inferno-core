@@ -240,17 +240,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     );
   }
 
-  let detailsPanel: JSX.Element = <div>error</div>;
-  if (runnableMap.get(selectedRunnable)) {
-    detailsPanel = (
-      <TestSuiteDetailsPanel
-        runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
-        runTests={runTests}
-        updateRequest={updateRequest}
-        testRunInProgresss={testRunNeedsProgressBar(testRun)}
-      />
-    );
-  }
   return (
     <Box className={styles.testSuiteMain}>
       {testRunProgressBar()}
@@ -264,7 +253,16 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         />
       </Drawer>
       <Box className={styles.contentContainer}>
-        {detailsPanel}
+        {runnableMap.get(selectedRunnable) ? (
+          <TestSuiteDetailsPanel
+            runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
+            runTests={runTests}
+            updateRequest={updateRequest}
+            testRunInProgresss={testRunNeedsProgressBar(testRun)}
+          />
+        ) : (
+          <div>error</div>
+        )}
         <InputsModal
           hideModal={() => setModalVisible(false)}
           createTestRun={createTestRun}
