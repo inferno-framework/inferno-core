@@ -116,7 +116,7 @@ Sequel.migration do
       # Requires requests to be a part of tests now.
       foreign_key :result_id, :results, index: true, type: String
       foreign_key :test_session_id, :test_sessions, index: true, type: String
-      add_index [:test_session_id, :name], concurrently: true
+      index [:test_session_id, :name], concurrently: true
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
