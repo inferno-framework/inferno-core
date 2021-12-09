@@ -2,9 +2,11 @@
 
 * Update Material UI to v5
 * Various UI improvements
+* Update fhir_client version
 * Add support for search with POST to FHIR Client
 * Add support for adding additional validation functions
 * Fix issue where entire response bodies were always logged
+* Fix a migration error
 
 # 0.0.7
 
