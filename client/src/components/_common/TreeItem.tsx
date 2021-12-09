@@ -83,6 +83,9 @@ const CustomTreeItem = styled((props: TreeItemProps) => (
   [`& .${treeItemClasses.selected}`]: {
     backgroundColor: 'rgba(248, 139, 48, 0.42) !important',
   },
+  [`& .${treeItemClasses.content}`]: {
+    width: 'auto',
+  },
 }));
 
 export default CustomTreeItem;

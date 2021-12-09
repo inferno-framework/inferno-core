@@ -1,7 +1,7 @@
 import React, { FC, Fragment } from 'react';
 import { Result } from 'models/testSuiteModels';
 import { Tooltip } from '@mui/material';
-import { green, red } from '@mui/material/colors';
+import { green, red, purple } from '@mui/material/colors';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -45,7 +45,10 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
       case 'error':
         return (
           <Tooltip title="error">
-            <ErrorIcon style={{ color: red[500] }} data-testid={`${result.id}-${result.result}`} />
+            <ErrorIcon
+              style={{ color: purple[500] }}
+              data-testid={`${result.id}-${result.result}`}
+            />
           </Tooltip>
         );
       case 'wait':

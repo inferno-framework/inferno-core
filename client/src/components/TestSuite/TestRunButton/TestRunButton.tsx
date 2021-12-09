@@ -23,6 +23,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({ runTests, runnable, testRunInPr
       <div>
         <IconButton
           disabled={testRunInProgress}
+          color="secondary"
           edge="end"
           size="small"
           onClick={() => {
