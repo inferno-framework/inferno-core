@@ -159,7 +159,11 @@ module MultiPatientAPI
       output :authentication_response
 
       run do
-        post_request_content = build_authorization_request(encryption_method: bulk_encryption_method, scope: bulk_scope, iss: bulk_client_id, sub: bulk_client_id, aud: bulk_token_endpoint)
+        post_request_content = build_authorization_request(encryption_method: bulk_encryption_method, 
+                                        scope: bulk_scope, 
+                                        iss: bulk_client_id, 
+                                        sub: bulk_client_id, 
+                                        aud: bulk_token_endpoint)
 
         authentication_response = post({ client: :token_endpoint }.merge(post_request_content))
         output authentication_response: authentication_response.response_body

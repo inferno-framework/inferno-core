@@ -68,15 +68,18 @@ module MultiPatientAPI
 
         # TODO: Skip tests for rat and bulk_access_token
 
+        # TODO: Replace in G10 suite
+        metadata = YAML.load_file(File.join(__dir__, 'metadata/patient.yml'))
+
         profile_definitions = [
           {
-            profile: nil
-           # must_support_info: USCore311PatientSequenceDefinitions::MUST_SUPPORTS.deep_dup,
-           # binding_info: USCore311PatientSequenceDefinitions::BINDINGS.deep_dup
+            profile: metadata[:profile_url], # metadata[:profile_name] TODO: Remove
+            must_support_info: metadata[:must_supports].deep_dup,
+            binding_info: metadata[:bindings].deep_dup
           }
         ]
         
-        test_output_against_profile('Patient', profile_definitions)
+        output_conforms_to_profile?('Patient', profile_definitions)
       }
     end
 

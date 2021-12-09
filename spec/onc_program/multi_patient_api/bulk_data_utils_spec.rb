@@ -46,7 +46,7 @@ RSpec.describe BulkDataUtils do
       expect(streamed_response).to eq(['expected'])
     end
 
-    it 'applies process_header serveral times, upon reception of multiple chunks' do
+    it 'applies process_header several times, upon reception of multiple chunks' do
 
     end
 
