@@ -95,13 +95,13 @@ Sequel.migration do
       String :response_body, :text=>true
       foreign_key :result_id, :results, :type=>String, :size=>255
       foreign_key :test_session_id, :test_sessions, :type=>String, :size=>255
-      String :"[:test_session_id, :name]"
       DateTime :created_at, :null=>false
       DateTime :updated_at, :null=>false
       
       index [:id]
       index [:result_id]
       index [:test_session_id]
+      index [:test_session_id, :name]
     end
     
     create_table(:result_outputs, :ignore_index_errors=>true) do
