@@ -11,6 +11,7 @@ import { RunnableType, TestInput } from 'models/testSuiteModels';
 import React, { FC, useEffect } from 'react';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
+import InputOAuthCredentials from './InputOAuthCredentials';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -63,6 +64,16 @@ const InputsModal: FC<InputsModalProps> = ({
 
   const inputFields = inputs.map((requirement: TestInput, index: number) => {
     switch (requirement.type) {
+      case 'oauth_credentials':
+        return (
+          <InputOAuthCredentials
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={setInputsMap}
+            key={`input-${index}`}
+          />
+        );
       case 'textarea':
         return (
           <InputTextArea

@@ -28,6 +28,94 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       exclude_message { |message| message.type == 'info' }
     end
 
+    group :oauth_validator_demo do
+      title 'OAuth credentials proof of concept'
+
+      group :output_example do
+        title 'Launch that would provide a bearer token & relevant content from code exchange response'
+        output :creds
+
+        test do 
+          title 'hi'
+          id :something
+
+          run do
+
+            creds = {
+              access_token: 'blah',
+              refresh_token: 'blah, blah',
+              expires_in: 400,
+              client_id: 'hi',
+              client_secret: 'bye',
+              oauth_token_endpoint: 'https://example.com'
+            }.to_json
+
+            output creds: creds
+
+          end
+        end
+      end
+
+      group :input_example do
+        title 'Some simple test that may use smart credentials'
+        input :url
+        input :patient_id
+        input :creds, type: 'oauth_credentials'  # this is json, but types probably should have their own classes...
+        output :creds
+
+        fhir_client do
+          url :url
+
+          # instead of this
+          # bearer JSON.parse(creds)['access_token']
+
+          # do something like this
+          #oauth_credentials :creds
+
+        end
+
+        test do 
+          title 'hi'
+          id :something
+          output :creds
+
+          run do
+            creds = {
+              access_token: 'refreshed blah token',
+              refresh_token: 'blah, blah',
+              expires_in: 400,
+              client_id: 'hi',
+              client_secret: 'bye',
+              oauth_token_endpoint: 'https://example.com'
+            }.to_json
+
+            output creds: creds
+          end
+
+
+        end
+      end
+
+      # test 'OAuth credentials outputted' do
+      #   id :first_test
+      #   output :creds
+
+      #   run do
+
+      #     creds = {
+      #       access_token: 'blah',
+      #       refresh_token: 'blah, blah',
+      #       refresh_date: '5/5/555'
+      #     }.to_json
+
+      #     output creds: 'hi'
+          
+      #   end
+
+      # end
+
+    end
+
     group :simple_group do
       title 'Group 1'
       group from: 'DemoIG_STU1::DemoGroup', title: 'Demo Group Instance 1'
