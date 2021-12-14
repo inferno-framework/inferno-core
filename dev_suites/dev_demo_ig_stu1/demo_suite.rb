@@ -35,12 +35,11 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         title 'Launch that would provide a bearer token & relevant content from code exchange response'
         output :creds
 
-        test do 
+        test do
           title 'hi'
           id :something
 
           run do
-
             creds = {
               access_token: 'blah',
               refresh_token: 'blah, blah',
@@ -51,7 +50,6 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
             }.to_json
 
             output creds: creds
-
           end
         end
       end
@@ -60,7 +58,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         title 'Some simple test that may use smart credentials'
         input :url
         input :patient_id
-        input :creds, type: 'oauth_credentials'  # this is json, but types probably should have their own classes...
+        input :creds, type: 'oauth_credentials' # this is json, but types probably should have their own classes...
         output :creds
 
         fhir_client do
@@ -70,11 +68,10 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
           # bearer JSON.parse(creds)['access_token']
 
           # do something like this
-          #oauth_credentials :creds
-
+          # oauth_credentials :creds
         end
 
-        test do 
+        test do
           title 'hi'
           id :something
           output :creds
@@ -91,8 +88,6 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
             output creds: creds
           end
-
-
         end
       end
 
@@ -109,14 +104,14 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       #     }.to_json
 
       #     output creds: 'hi'
-          
+
       #   end
 
       # end
-
     end
 
-    group :simple_group do
+    group do
+      id :simple_group
       title 'Group 1'
       group from: 'DemoIG_STU1::DemoGroup', title: 'Demo Group Instance 1'
     end
@@ -124,7 +119,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     # Note that in order to support test procedures that run the same group
     # under different conditions, groups in groups need to be considered
     # separate groups (so their results don't collide)
-    group :repetitive_group do
+    group do
+      id :repetitive_group
       title 'Group 2'
       group from: 'DemoIG_STU1::DemoGroup', id: 'DEF', title: 'Demo Group Instance 2'
       group from: 'DemoIG_STU1::DemoGroup' do

@@ -92,20 +92,17 @@ RSpec.describe Inferno::DSL::Runnable do
 
     it 'returns the total number of tests in a nested group' do
       base_group = test_groups_repo.find('DemoIG_STU1::DemoGroup')
-      parent_group = test_suites_repo.find('demo').children[1]
+      parent_group = test_groups_repo.find('demo-repetitive_group')
 
       expect(parent_group.test_count).to eq(base_group.test_count * 2)
     end
 
     it 'returns the total number of tests in a suite' do
-      demo_group = test_groups_repo.find('DemoIG_STU1::DemoGroup')
-      wait_group = test_groups_repo.find('demo-wait_group')
-      run_as_group_examples = test_groups_repo.find('demo-run_as_group_examples')
       suite = test_suites_repo.find('demo')
 
-      expect(suite.test_count).to eq(demo_group.test_count * 3 +
-                                     wait_group.test_count +
-                                     run_as_group_examples.test_count)
+      expected_count = suite.groups.reduce(0) { |sum, group| sum + group.test_count }
+
+      expect(suite.test_count).to eq(expected_count)
     end
   end
 
