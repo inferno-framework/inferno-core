@@ -131,6 +131,21 @@ module Inferno
         end
       end
 
+      # Perform a FHIR delete interaction.
+      #
+      # @param resource_type [String, Symbol, Class]
+      # @param id [String]
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @param _options [Hash] TODO
+      # @return [Inferno::Entities::Request]
+      def fhir_delete(resource_type, id = nil, client: :default, name: nil)
+        store_request('outgoing', name) do
+          fhir_client(client).destroy(fhir_class_from_resource_type(resource_type), id) 
+        end
+      end 
+
       # @todo Make this a FHIR class method? Something like
       #   FHIR.class_for(resource_type)
       # @api private
