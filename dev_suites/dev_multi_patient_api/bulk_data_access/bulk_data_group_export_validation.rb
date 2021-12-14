@@ -39,12 +39,12 @@ module MultiPatientAPI
 
       include BulkDataUtils
 
-      input :requires_access_token, :bulk_status_output
+      input :requires_access_token, :bulk_status_output, :bulk_access_token
 
       run {
         skip 'Could not verify this functionality when requiresAccessToken is not provided' if requires_access_token.nil?
         skip 'Could not verify this functionality when requireAccessToken is false' unless requires_access_token
-        skip 'Could not verify this functionality when bulk_status_output is not provided' if bulk_status_output.nil?
+        skip 'Could not verify this functionality when bulk_status_output is not provided' if bulk_status_output.nil? 
 
         output_endpoint = JSON.parse(bulk_status_output)[0]['url']
         get_file(output_endpoint, false)
@@ -64,21 +64,20 @@ module MultiPatientAPI
       input :bulk_status_output, :requires_access_token, :bulk_access_token
 
       run {
-        skip 'Could not verify this functionality when bulk_status_output is not provided' if bulk_status_output.nil?
-
-        # TODO: Skip tests for rat and bulk_access_token
+        skip 'Could not verify this functionality when bulk_status_output is not provided' unless bulk_status_output.present?
+        skip 'Could not verify this functionality when requires_access_token is not set' unless requires_access_token.present?
+        skip 'Could not verify this functionality when remote_access_token is required and not provided' if requires_access_token && !bulk_access_token.present?
 
         # TODO: Replace in G10 suite
         metadata = YAML.load_file(File.join(__dir__, 'metadata/patient.yml'))
 
         profile_definitions = [
           {
-            profile: metadata[:profile_url], # metadata[:profile_name] TODO: Remove
+            profile: metadata[:profile_url],
             must_support_info: metadata[:must_supports].deep_dup,
             binding_info: metadata[:bindings].deep_dup
           }
         ]
-        
         output_conforms_to_profile?('Patient', profile_definitions)
       }
     end
@@ -91,7 +90,9 @@ module MultiPatientAPI
       # link 'http://ndjson.org/'
 
       run {
+        skip 'No Patient resources processed from bulk data export.' unless @@patient_ids_seen.present?
 
+        assert @@patient_ids_seen.length >= MIN_RESOURCE_COUNT, 'Bulk data export did not have multiple Patient resources'
       }
     end
 
@@ -103,7 +104,15 @@ module MultiPatientAPI
       DESCRIPTION
       # link 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient'
 
-      run {}
+      input :bulk_patient_ids_in_group
+
+      run {
+        omit 'No patient ids were given.' unless bulk_patient_ids_in_group.present?
+
+        expected_ids = Set.new(bulk_patient_ids_in_group.split(',').map(&:strip))
+
+        assert @@patient_ids_seen.sort == expected_ids.sort, "Mismatch between patient ids seen (#{@@patient_ids_seen.to_a.join(', ')}) and patient ids expected (#{bulk_patient_ids_in_group})"
+      }
     end
 
     test do
@@ -113,7 +122,21 @@ module MultiPatientAPI
       DESCRIPTION
       # link 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-allergyintolerance'
 
-      run {}
+      include BulkDataUtils
+      input :bulk_status_output, :requires_access_token, :bulk_access_token
+
+      run {
+        metadata = YAML.load_file(File.join(__dir__, 'metadata/allergyintolerance.yml'))
+
+        profile_definitions = [
+          {
+            profile: metadata[:profile_url],
+            must_support_info: metadata[:must_supports].deep_dup,
+            binding_info: metadata[:bindings].deep_dup
+          }
+        ]
+        assert output_conforms_to_profile?('AllergyIntolerance', profile_definitions), ''
+      }
     end
 
     test do
@@ -123,7 +146,21 @@ module MultiPatientAPI
       DESCRIPTION
       # link 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-careplan'
 
-      run {}
+      include BulkDataUtils
+      input :bulk_status_output, :requires_access_token, :bulk_access_token
+
+      run {
+        metadata = YAML.load_file(File.join(__dir__, 'metadata/careplan.yml'))
+
+        profile_definitions = [
+          {
+            profile: metadata[:profile_url],
+            must_support_info: metadata[:must_supports].deep_dup,
+            binding_info: metadata[:bindings].deep_dup
+          }
+        ]
+        assert output_conforms_to_profile?('CarePlan', profile_definitions), ''
+      }
     end
 
     test do
@@ -133,7 +170,12 @@ module MultiPatientAPI
       DESCRIPTION
       # link 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-careteam'
 
-      run {}
+      include BulkDataUtils
+      input :bulk_status_output, :requires_access_token, :bulk_access_token
+
+      run {
+        
+      }
     end
 
     test do

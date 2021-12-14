@@ -1,12 +1,19 @@
 require 'pry'
 module BulkDataUtils
 
+	include Inferno::DSL::Assertions
+
 	VERSION = 'R4'
 	NON_US_CORE_KLASS = ['Location'].freeze
 	MAX_NUM_RECENT_LINES = 100
+	MIN_RESOURCE_COUNT = 2
+
+	attr_accessor :patient_ids_seen
+
+	@@patient_ids_seen = []
 
 	def self.included(klass)
-
+		
 	end 
 
 	# Locally stored JWK related code i.e. pulling from  bulk_data_jwks.json.
@@ -141,6 +148,8 @@ module BulkDataUtils
 
 	# Responsibility falls on the process_chunk block to check whether the input
 	# line is nil or empty. 
+	# Observation: chunk_by_lines may very well be a singleton array of a MASSIVE resource that is incomplete. 
+	# The responsibility of dealing with that should fall on process_chunk_line
 	def stream_ndjson(endpoint, headers, process_chunk_line, process_response)
 
 		hanging_chunk = String.new 
@@ -175,9 +184,12 @@ module BulkDataUtils
 	end 
 
 	# TODO: Deal with device and lab edge cases
-	def determine_profile(resource)
+	# Returns the canonical url denoting the profile
+	def determine_profile(profile_definitions, resource)
 
-		return unless profile_definitions[0][:profile].nil?
+		return profile_definitions[0][:profile] unless profile_definitions[0][:profile].nil?
+
+		assert false, "Profile for #{resource.class.name.demodulize} could not be determined." 
 
 		#return nil if resource.resourceType == 'Device' && !predefined_device_type?(resource)
 		#return nil if NON_US_CORE_KLASS.include(resource.resourceType)
@@ -185,34 +197,51 @@ module BulkDataUtils
 		#Inferno::ValidationUtil.guess_profile(resource, @version)
 	end 
 
-	def validate(klass, resource, profile)
-
-		# TODO: How do I collect errors? 
-		assert resource_is_valid?(resource: resource, profile_url: profile)
-
-	end 
-
-	def walk_element(element, steps)
-		return nil if element.nil? 
-		return yield(element)	if steps.empty?
+	# DFS of a resource. Intended to be called only as a helper from within 
+	#	resolve_element_from_path.
+	def walk_resource(resource, steps, block)
+		return block.call(resource) if steps.empty?
+		return false if resource.nil? 
 			
-		step = steps.shift
+		return (resource.find { |elem| walk_resource(elem, steps, block) } || false) if resource.is_a?(Array)
 
-		return element.find { |elem| !walk_element(elem, steps).nil? } if element.is_a?(Array)
-		walk_element(element.send(step.to_sym), steps) if element.respond_to?(step.to_sym)
+		resource.respond_to?(steps.first.to_sym) ? walk_resource(resource.send(steps.first.to_sym), steps.drop(1), block) : false
 	end 
 
-	# NOTE: Block will be called regardless of if retrieved is nil. It is up 
-	#				up to block writer to account for nil case
-	def resolve_element_from_path(element, path)
-		steps = path.split('.')
+	# Searches resource for the element maintained at the end of the path. 
+	#
+	# @param resource [FHIR Resource]
+	# @param path [String] String concatenation of valid, nested attributes of 
+	#											 the given resource type.	Steps in the path must be 
+	#											 delimited by '.'
+	# @output [Boolean] Result of applying the given block to the found element.
+	#										The given block must return a boolean. If no block given,
+	#										true is returned if path is walkable within the resource.
+	def resolve_element_from_path(resource, path)
+		return false if path.nil?
+		return false unless path.respond_to?(:split)
+
+		steps = path.split('.') 
 		steps.delete_if { |step| step.empty? }
-		retrieved = walk_element(element, steps) { yield if block_given?}
+
+		block = proc { |element| block_given? ? yield(element) : true }
+		walk_resource(resource, steps, block)
 	end 
 
-	# TODO: Implement 
 	def find_slice_by_values(element, values)
-
+		unique_first_part = values.map { |value_def| value_def[:path].first }.uniq
+		Array.wrap(element).find do |el|
+			unique_first_part.all? do |part|
+				values_matching = values.select { |value_def| value_def[:path].first == part }
+				values_matching.each { |value_def| value_def[:path] = value_def[:path].drop(1) }
+				resolve_element_from_path(el, part) do |el_found|
+					all_matches = values_matching.select { |value_def| value_def[:path].empty? }.all? { |value_def| value_def[:value] == el_found }
+					remaining_values = values_matching.reject { |value_def| value_def[:path].empty? }
+					remaining_matches = remaining_values.present? ? find_slice_by_values(el_found, remaining_values) : true
+					all_matches && remaining_matches
+				end
+			end
+		end
 	end
 
 	def find_slice(resource, path, discriminator)
@@ -235,7 +264,9 @@ module BulkDataUtils
 				case discriminator[:code]
 				when 'Date'
 					begin
-					rescue
+						Date.parse(list)
+					rescue ArgumentError
+						false
 					end 
 				when 'String'
 					list.is_a? String
@@ -247,6 +278,8 @@ module BulkDataUtils
 	end 
 
 	def process_must_support(must_support_info, resource)
+		return if must_support_info.nil?
+
 		must_support_info[:elements].reject! do |ms_elem|
 			resolve_element_from_path(resource, ms_elem[:path]) do |value|
 				value.to_hash.reject! { |key, _| key == 'extension' } if value.respond_to?(:to_hash)
@@ -263,30 +296,28 @@ module BulkDataUtils
 		end
 	end 
 
-	def pull_invalid_bindings(binding_def, resource)
-	
-	end 
+	def process_profile_definition(profile_definitions, profile_url, resource)
+		return if profile_definitions.empty? 
 
-	def validate_bindings(bindings, resource)
-
-		bindings.select { |binding_def| binding_def[:strength] == 'required' }.each do |binding_def|
-			begin
-				bad_bindings = pull_invalid_bindings(binding_def, resource)
-			rescue
-				break
-			end 
-		end 
-
-	end 
-
-	def process_profile_definitions(profile_definitions, profile_url, resource)
-
-		binding.pry
-		profile_definition = profile_definitions.find { |prof_def| prof_def[:profile] == profile_url }
+		profile_definition = profile_definitions.find { |prof_def| prof_def[:profile] == profile_url } || profile_definitions.first
 		process_must_support(profile_definition[:must_support_info], resource)
-		validate_bindings(profile_definition[:binding_info], resource)
-		
 	end 
+
+	def assert_must_supports_found(profile_definitions)
+		profile_definitions.each do |must_support|
+			error_string = "Could not verify presence#{' for profile ' + must_support[:profile] if must_support[:profile].present?} of the following must support %s: %s"
+			missing_must_supports = must_support[:must_support_info]
+
+			missing_elements_list = missing_must_supports[:elements].map { |el| "#{el[:path]}#{': ' + el[:fixed_value] if el[:fixed_value].present?}" }
+			skip_if missing_elements_list.present?, format(error_string, 'elements', missing_elements_list.join(', '))
+
+			missing_slices_list = missing_must_supports[:slices].map { |slice| slice[:name] }
+			skip_if missing_slices_list.present?, format(error_string, 'slices', missing_slices_list.join(', '))
+
+			missing_extensions_list = missing_must_supports[:extensions].map { |extension| extension[:id] }
+			skip_if missing_extensions_list.present?, format(error_string, 'extensions', missing_extensions_list.join(', '))
+		end
+	end
 
 	# Use stream_ndjson to keep pulling chunks off the response body as they come in
 	# lots of unclear if statements based off lines to validate --> investigate this
@@ -299,62 +330,58 @@ module BulkDataUtils
 												 lines_to_validate, 
 												 profile_definitions)
 
-		patient_ids_seen = [] # TODO: Explore --> any reason to make this global?
-		line_collection = []
-		line_count = 0
-
 		headers = { accept: 'application/fhir+ndjson' }
 		headers.merge!( { authorization: "Bearer #{bulk_access_token}" } ) if requires_access_token
+												 
+		recent_resources = []
+		incomplete_resource = String.new
+		line_count = 0
 
+		# TODO: Tidy this up. It's disjointed. 
 		process_line = proc { |resource|
+			break unless validate_all || line_count < lines_to_validate || (klass == 'Patient' && @@patient_ids_seen.length < MIN_RESOURCE_COUNT)
+			next if resource.nil? || resource.strip.empty?
 
-			break unless validate_all || line_count < lines_to_validate # TOFIX || klass == 'Patient' && @patient_ids_seen.length < MIN_RESOURCE_COUNT
-
-			next if resource.nil? || resource.strip.empty? 
-
-			line_collection << resource unless line_count < MAX_NUM_RECENT_LINES
+			recent_resources << resource unless line_count >= MAX_NUM_RECENT_LINES
 			line_count += 1
 			
-			resource = FHIR.from_contents(resource)
+			begin 
+				resource = FHIR.from_contents(resource)
+			rescue 
+				assert false, "Server response at line \"#{line_count}\" is not a processable FHIR resource."
+			end 
+
 			resource_type = resource.class.name.demodulize
 			assert resource_type == klass, "Resource type \"#{resource_type}\" at line \"#{line_count}\" does not match type defined in output \"#{klass}\")"
 			
-			patient_ids_seen << resource.id if klass == 'Patient'
+			@@patient_ids_seen << resource.id if klass == 'Patient'
 
-			# TODO: Do I need this? I should pull directly from metadata, right? determine_profile(resource, profile_definitions)
+			profile_url = determine_profile(profile_definitions, resource)
+			assert resource_is_valid?(resource: resource, profile_url: profile_url), invalid_resource_message(profile_url)
 
-			profile_url = profile_definitions[0][:profile]
-
-			validate(klass, resource, profile_url)
-
-			process_profile_definitions(profile_definitions, profile_url, resource)
-
-
-
-
-
-
-			# Called on every single line, even though leading lines kinda partitions the input
-
-			#	IMPLEMENT --> break if statement prevents how many lines we need to validate
-			
-			# Where is this coming from?
-			# resource = versioned_resource_class.from_contents(resource)
-		  #	resource_type = resource.class.name.demodulize
-			# assert resource_type == klass, "Resource type \"#{resource_type}\" at line \"#{line_count}\" does not match type defined in output \"#{klass}\")"
-			
-			
+			process_profile_definition(profile_definitions, profile_url, resource)			
 		}
 
-		process_headers = proc { |headers| 
-
+		process_headers = proc { |response| 
+			header = response[:headers].find { |header| header.name.downcase == 'content-type' }
+			value = header.value || 'type left unspecified.'
+			assert value.start_with?('application/fhir+ndjson'), "Content type must have 'application/fhir+ndjson' but found '#{value}'"
 		}
 
 		stream_ndjson(file['url'], headers, process_line, process_headers)
 
+		assert_must_supports_found(profile_definitions)
+
+		if validate_all && file.key?('count')
+			warning do
+				assert file['count'].to_s == line_count.to_s, "Count in status output (#{file['count']}) did not match actual number of resources returned (#{line_count})"
+			end
+		end 
+
+		line_count
 	end 
 
-	# Determine whether the file items in bulk_status_output contains resources 
+	# Determine whether the file items in bulk_status_output contain resources 
 	#	that conform to the given profiles. 
 	# 
 	# @param klass [FHIR ResourceType] 
@@ -365,10 +392,11 @@ module BulkDataUtils
 																	profile_definitions = [], 
 																	lines_to_validate = 100,
 																	validate_all = false)
-
-		skip 'A non-zero number of lines must be validated'	unless validate_all || lines_to_validate > 0												
-		skip 'Output from Bulk Data Server not found' unless bulk_status_output.present?
-
+		
+		skip 'Could not verify this functionality when bulk_status_output is not provided' unless bulk_status_output.present?
+		skip 'Could not verify this functionality when requires_access_token is not set' unless requires_access_token.present?
+		skip 'Could not verify this functionality when remote_access_token is required and not provided' if requires_access_token && !bulk_access_token.present? 
+														
 		assert_valid_json(bulk_status_output)
 
 		file_list = JSON.parse(bulk_status_output).select { |file| file['type'] == klass }

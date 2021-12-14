@@ -58,4 +58,15 @@ RSpec.describe MultiPatientAPI::BulkDataGroupExportValidation do
     end 
   end 
 
+  describe '[Group export has at least two patients]' do 
+
+  end 
+
+  describe '[Patient IDs match those expected in Group]' do
+    
+  end
+
+  describe '' do
+    
+  end
 end 

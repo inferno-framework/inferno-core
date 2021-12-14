@@ -101,8 +101,32 @@ module Inferno
             raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
           end
         end
-        #return the result of streaming 
       end
+
+      # Perform an HTTP DELETE request
+      #
+      # @param url [String] if this request is using a defined client, this will
+      #   be appended to the client's url. Must be an absolute url for requests
+      #   made without a defined client
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @option options [Hash] Input headers here - headers are optional and
+      #   must be entered as the last piece of input to this method
+      # @return [Inferno::Entities::Request]
+      def delete(url = '', client: :default, name: :nil, **options)
+        store_request('outgoing', name) do
+          client = http_client(client)
+
+          if client
+            client.delete(url, nil, options[:headers])
+          elsif url.match?(%r{\Ahttps?://})
+            Faraday.delete(url, nil, options[:headers])
+          else
+            raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+          end 
+        end
+      end 
 
       # Perform an HTTP GET request and stream the response
       #

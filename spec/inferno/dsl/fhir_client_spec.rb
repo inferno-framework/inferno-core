@@ -288,6 +288,53 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
+  describe '#fhir_delete' do
+    let(:stub_delete_request) do
+      stub_request(:delete, "#{base_url}/#{resource.resourceType}/#{resource_id}")
+        .to_return(status: 202)
+    end
+
+    before do
+      setup_default_client
+      stub_delete_request
+    end
+
+    it 'performs a FHIR delete' do
+      group.fhir_delete(resource.resourceType, resource_id)
+
+      expect(stub_delete_request).to have_been_made.once
+    end
+
+    it 'returns an Inferno::Entities::Request' do
+      result = group.fhir_delete(resource.resourceType, resource_id)
+
+      expect(result).to be_a(Inferno::Entities::Request)
+    end
+
+    it 'adds the request to the list of requests' do 
+      result = group.fhir_delete(resource.resourceType, resource_id)
+
+      expect(group.requests).to include(result)
+      expect(group.request).to eq(result)
+    end 
+
+    context 'with the client parameter' do 
+      it 'uses that client' do
+        other_url = 'http://www.example.com/fhir/r4'
+        group.fhir_clients[:other_client] = FHIR::Client.new(other_url)
+
+        other_request_stub =
+          stub_request(:delete, "#{other_url}/#{resource.resourceType}/#{resource_id}")
+            .to_return(status: 202)
+
+        group.fhir_delete(resource.resourceType, resource_id, client: :other_client)
+
+        expect(other_request_stub).to have_been_made
+        expect(stub_delete_request).to_not have_been_made
+      end
+    end 
+  end
+
   describe '#requests' do
     it 'returns an array of the requests made' do
       setup_default_client

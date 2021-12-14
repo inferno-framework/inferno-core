@@ -1,0 +1,294 @@
+---
+:name: us_core_careplan
+:class_name: USCorev311CareplanSequence
+:version: v3.1.1
+:reformatted_version: v311
+:resource: CarePlan
+:profile_url: http://hl7.org/fhir/us/core/StructureDefinition/us-core-careplan
+:profile_name: US Core CarePlan Profile
+:title: CarePlan
+:interactions:
+- :code: create
+  :expectation: MAY
+- :code: search-type
+  :expectation: SHALL
+- :code: read
+  :expectation: SHALL
+- :code: vread
+  :expectation: SHOULD
+- :code: update
+  :expectation: MAY
+- :code: patch
+  :expectation: MAY
+- :code: delete
+  :expectation: MAY
+- :code: history-instance
+  :expectation: SHOULD
+- :code: history-type
+  :expectation: MAY
+:operations: []
+:searches:
+- :expectation: SHALL
+  :names:
+  - patient
+  - category
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - category
+  - status
+  - date
+  :names_not_must_support_or_mandatory:
+  - date
+  :must_support_or_mandatory: false
+- :expectation: SHOULD
+  :names:
+  - patient
+  - category
+  - status
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - category
+  - date
+  :names_not_must_support_or_mandatory:
+  - date
+  :must_support_or_mandatory: false
+:search_definitions:
+  :patient:
+    :path: subject
+    :full_path: CarePlan.subject
+    :comparators: {}
+    :values: []
+    :type: Reference
+    :contains_multiple: false
+    :multiple_or: MAY
+  :category:
+    :path: category
+    :full_path: CarePlan.category
+    :comparators: {}
+    :values:
+    - assess-plan
+    :type: CodeableConcept
+    :contains_multiple: true
+    :multiple_or: MAY
+  :status:
+    :path: status
+    :full_path: CarePlan.status
+    :comparators: {}
+    :values:
+    - draft
+    - active
+    - on-hold
+    - revoked
+    - completed
+    - entered-in-error
+    - unknown
+    :type: code
+    :contains_multiple: false
+    :multiple_or: SHALL
+  :date:
+    :path: period
+    :full_path: CarePlan.period
+    :comparators:
+      :eq: MAY
+      :ne: MAY
+      :gt: SHALL
+      :ge: SHALL
+      :lt: SHALL
+      :le: SHALL
+      :sa: MAY
+      :eb: MAY
+      :ap: MAY
+    :values: []
+    :type: Period
+    :contains_multiple: false
+    :multiple_or: MAY
+:include_params: []
+:revincludes:
+- Provenance:target
+:required_concepts: []
+:must_supports:
+  :extensions: []
+  :slices:
+  - :name: CarePlan.category:AssessPlan
+    :path: category
+    :discriminator:
+      :type: patternCodeableConcept
+      :path: ''
+      :code: assess-plan
+      :system: http://hl7.org/fhir/us/core/CodeSystem/careplan-category
+  :elements:
+  - :path: text
+  - :path: text.status
+  - :path: status
+  - :path: intent
+  - :path: category
+  - :path: subject
+:mandatory_elements:
+- CarePlan.text
+- CarePlan.text.status
+- CarePlan.text.div
+- CarePlan.status
+- CarePlan.intent
+- CarePlan.category
+- CarePlan.category
+- CarePlan.subject
+- CarePlan.activity.detail.status
+:bindings:
+- :type: code
+  :strength: preferred
+  :system: http://hl7.org/fhir/ValueSet/languages
+  :path: language
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/us/core/ValueSet/us-core-narrative-status
+  :path: text.status
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/request-status
+  :path: status
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/care-plan-intent
+  :path: intent
+- :type: CodeableConcept
+  :strength: example
+  :system: http://hl7.org/fhir/ValueSet/care-plan-category
+  :path: category
+- :type: CodeableConcept
+  :strength: example
+  :system: http://hl7.org/fhir/ValueSet/care-plan-category
+  :path: category
+- :type: CodeableConcept
+  :strength: example
+  :system: http://hl7.org/fhir/ValueSet/care-plan-activity-outcome
+  :path: activity.outcomeCodeableConcept
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/care-plan-activity-kind
+  :path: activity.detail.kind
+- :type: CodeableConcept
+  :strength: example
+  :system: http://hl7.org/fhir/ValueSet/procedure-code
+  :path: activity.detail.code
+- :type: CodeableConcept
+  :strength: example
+  :system: http://hl7.org/fhir/ValueSet/clinical-findings
+  :path: activity.detail.reasonCode
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/care-plan-activity-status
+  :path: activity.detail.status
+- :type: CodeableConcept
+  :strength: example
+  :system: http://hl7.org/fhir/ValueSet/medication-codes
+  :path: activity.detail.product
+:references:
+- :path: CarePlan.basedOn
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/CarePlan
+- :path: CarePlan.replaces
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/CarePlan
+- :path: CarePlan.partOf
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/CarePlan
+- :path: CarePlan.subject
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+- :path: CarePlan.encounter
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Encounter
+- :path: CarePlan.author
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/Practitioner
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  - http://hl7.org/fhir/StructureDefinition/Device
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+  - http://hl7.org/fhir/StructureDefinition/Organization
+  - http://hl7.org/fhir/StructureDefinition/CareTeam
+- :path: CarePlan.contributor
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/Practitioner
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  - http://hl7.org/fhir/StructureDefinition/Device
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+  - http://hl7.org/fhir/StructureDefinition/Organization
+  - http://hl7.org/fhir/StructureDefinition/CareTeam
+- :path: CarePlan.careTeam
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/CareTeam
+- :path: CarePlan.addresses
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Condition
+- :path: CarePlan.supportingInfo
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Resource
+- :path: CarePlan.goal
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Goal
+- :path: CarePlan.activity.outcomeReference
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Resource
+- :path: CarePlan.activity.reference
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Appointment
+  - http://hl7.org/fhir/StructureDefinition/CommunicationRequest
+  - http://hl7.org/fhir/StructureDefinition/DeviceRequest
+  - http://hl7.org/fhir/StructureDefinition/MedicationRequest
+  - http://hl7.org/fhir/StructureDefinition/NutritionOrder
+  - http://hl7.org/fhir/StructureDefinition/Task
+  - http://hl7.org/fhir/StructureDefinition/ServiceRequest
+  - http://hl7.org/fhir/StructureDefinition/VisionPrescription
+  - http://hl7.org/fhir/StructureDefinition/RequestGroup
+- :path: CarePlan.activity.detail.reasonReference
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Condition
+  - http://hl7.org/fhir/StructureDefinition/Observation
+  - http://hl7.org/fhir/StructureDefinition/DiagnosticReport
+  - http://hl7.org/fhir/StructureDefinition/DocumentReference
+- :path: CarePlan.activity.detail.goal
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Goal
+- :path: CarePlan.activity.detail.location
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Location
+- :path: CarePlan.activity.detail.performer
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Practitioner
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  - http://hl7.org/fhir/StructureDefinition/Organization
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/CareTeam
+  - http://hl7.org/fhir/StructureDefinition/HealthcareService
+  - http://hl7.org/fhir/StructureDefinition/Device
+:tests:
+- :id: us_core_311_care_plan_patient_category_search_test
+  :file_name: care_plan_patient_category_search_test.rb
+- :id: us_core_311_care_plan_patient_category_status_date_search_test
+  :file_name: care_plan_patient_category_status_date_search_test.rb
+- :id: us_core_311_care_plan_patient_category_status_search_test
+  :file_name: care_plan_patient_category_status_search_test.rb
+- :id: us_core_311_care_plan_patient_category_date_search_test
+  :file_name: care_plan_patient_category_date_search_test.rb
+- :id: us_core_311_care_plan_read_test
+  :file_name: care_plan_read_test.rb
+- :id: us_core_311_care_plan_provenance_revinclude_search_test
+  :file_name: care_plan_provenance_revinclude_search_test.rb
+- :id: us_core_311_care_plan_validation_test
+  :file_name: care_plan_validation_test.rb
+- :id: us_core_311_care_plan_must_support_test
+  :file_name: care_plan_must_support_test.rb
+- :id: us_core_311_care_plan_reference_resolution_test
+  :file_name: care_plan_reference_resolution_test.rb
+:id: us_core_311_care_plan
+:file_name: care_plan_group.rb
+:delayed_references: []

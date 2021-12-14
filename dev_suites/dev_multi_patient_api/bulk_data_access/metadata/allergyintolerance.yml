@@ -1,0 +1,163 @@
+---
+:name: us_core_allergyintolerance
+:class_name: USCorev311AllergyintoleranceSequence
+:version: v3.1.1
+:reformatted_version: v311
+:resource: AllergyIntolerance
+:profile_url: http://hl7.org/fhir/us/core/StructureDefinition/us-core-allergyintolerance
+:profile_name: US Core AllergyIntolerance Profile
+:title: AllergyIntolerance
+:interactions:
+- :code: create
+  :expectation: MAY
+- :code: search-type
+  :expectation: SHALL
+- :code: read
+  :expectation: SHALL
+- :code: vread
+  :expectation: SHOULD
+- :code: update
+  :expectation: MAY
+- :code: patch
+  :expectation: MAY
+- :code: delete
+  :expectation: MAY
+- :code: history-instance
+  :expectation: SHOULD
+- :code: history-type
+  :expectation: MAY
+:operations: []
+:searches:
+- :names:
+  - patient
+  :expectation: SHALL
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - clinical-status
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+:search_definitions:
+  :patient:
+    :path: patient
+    :full_path: AllergyIntolerance.patient
+    :comparators: {}
+    :values: []
+    :type: Reference
+    :contains_multiple: false
+    :multiple_or: MAY
+  :clinical-status:
+    :path: clinicalStatus
+    :full_path: AllergyIntolerance.clinicalStatus
+    :comparators: {}
+    :values:
+    - active
+    - inactive
+    - resolved
+    :type: CodeableConcept
+    :contains_multiple: false
+    :multiple_or: MAY
+:include_params: []
+:revincludes:
+- Provenance:target
+:required_concepts:
+- clinicalStatus
+- verificationStatus
+:must_supports:
+  :extensions: []
+  :slices: []
+  :elements:
+  - :path: clinicalStatus
+  - :path: verificationStatus
+  - :path: code
+  - :path: patient
+  - :path: reaction
+  - :path: reaction.manifestation
+:mandatory_elements:
+- AllergyIntolerance.code
+- AllergyIntolerance.patient
+- AllergyIntolerance.reaction.manifestation
+:bindings:
+- :type: code
+  :strength: preferred
+  :system: http://hl7.org/fhir/ValueSet/languages
+  :path: language
+- :type: CodeableConcept
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/allergyintolerance-clinical
+  :path: clinicalStatus
+- :type: CodeableConcept
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/allergyintolerance-verification
+  :path: verificationStatus
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/allergy-intolerance-type
+  :path: type
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/allergy-intolerance-category
+  :path: category
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/allergy-intolerance-criticality
+  :path: criticality
+- :type: CodeableConcept
+  :strength: extensible
+  :system: http://hl7.org/fhir/us/core/ValueSet/us-core-allergy-substance
+  :path: code
+- :type: CodeableConcept
+  :strength: example
+  :system: http://hl7.org/fhir/ValueSet/substance-code
+  :path: reaction.substance
+- :type: CodeableConcept
+  :strength: extensible
+  :system: http://hl7.org/fhir/ValueSet/clinical-findings
+  :path: reaction.manifestation
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/reaction-event-severity
+  :path: reaction.severity
+- :type: CodeableConcept
+  :strength: example
+  :system: http://hl7.org/fhir/ValueSet/route-codes
+  :path: reaction.exposureRoute
+:references:
+- :path: AllergyIntolerance.patient
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+- :path: AllergyIntolerance.encounter
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Encounter
+- :path: AllergyIntolerance.recorder
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Practitioner
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+- :path: AllergyIntolerance.asserter
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+  - http://hl7.org/fhir/StructureDefinition/Practitioner
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+:tests:
+- :id: us_core_311_allergy_intolerance_patient_search_test
+  :file_name: allergy_intolerance_patient_search_test.rb
+- :id: us_core_311_allergy_intolerance_patient_clinical_status_search_test
+  :file_name: allergy_intolerance_patient_clinical_status_search_test.rb
+- :id: us_core_311_allergy_intolerance_read_test
+  :file_name: allergy_intolerance_read_test.rb
+- :id: us_core_311_allergy_intolerance_provenance_revinclude_search_test
+  :file_name: allergy_intolerance_provenance_revinclude_search_test.rb
+- :id: us_core_311_allergy_intolerance_validation_test
+  :file_name: allergy_intolerance_validation_test.rb
+- :id: us_core_311_allergy_intolerance_must_support_test
+  :file_name: allergy_intolerance_must_support_test.rb
+- :id: us_core_311_allergy_intolerance_reference_resolution_test
+  :file_name: allergy_intolerance_reference_resolution_test.rb
+:id: us_core_311_allergy_intolerance
+:file_name: allergy_intolerance_group.rb
+:delayed_references: []
