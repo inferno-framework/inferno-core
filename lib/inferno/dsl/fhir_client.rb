@@ -135,7 +135,7 @@ module Inferno
       #   other tests
       # @param _options [Hash] TODO
       # @return [Inferno::Entities::Request]
-      def fhir_delete(resource_type, id = nil, client: :default, name: nil, **options)
+      def fhir_delete(resource_type, id = nil, client: :default, name: nil, **_options)
         store_request('outgoing', name) do
           fhir_client(client).destroy(fhir_class_from_resource_type(resource_type), id, options) 
         end
