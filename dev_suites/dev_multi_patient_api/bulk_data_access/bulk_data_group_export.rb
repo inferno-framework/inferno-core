@@ -208,15 +208,16 @@ module MultiPatientAPI
 
       include BulkDataUtils
 
-      # TODO: Add delete request to http_client then come back and finish
+      input :bulk_server_url, :bulk_access_token, :group_id
+
       run {
         export_kick_off
         assert_response_status(202)
        
         polling_url = response[:headers].find { |header| header.name == 'content-location' }.value
-        assert !!polling_url, 'Export response header did not include "Content-Location"'
+        assert polling_url.present?, 'Export response header did not include "Content-Location"'
 
-        delete(client: :polling_location)
+        delete(polling_url)
         assert_response_status(202)
       }
     end
