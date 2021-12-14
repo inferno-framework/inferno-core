@@ -141,7 +141,7 @@ module Inferno
       # @option options [Hash] Input headers here - headers are optional and
       #   must be entered as the last piece of input to this method
       # @return [Inferno::Entities::Request]
-      def stream(block = proc { |s| s }, url = '', client: :default, name: nil, **options)
+      def stream(block, url = '', client: :default, name: nil, **options)
         store_request('outgoing', name) do
           client = http_client(client)
 
