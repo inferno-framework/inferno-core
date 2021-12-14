@@ -15,7 +15,7 @@ gem 'puma'
 
 gem 'activesupport'
 gem 'dotenv'
-gem 'fhir_client'
+gem 'fhir_client', '>= 5.0.3'
 gem 'fhir_models', '~> 4.2.0'
 gem 'rake'
 gem 'faraday'
