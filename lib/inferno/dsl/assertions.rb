@@ -30,10 +30,10 @@ module Inferno
       #
       # @param status [Integer, Array<Integer>] a single integer or an array of
       #   integer status codes
-      def assert_response_bad_or_unauthorized(status: self.response[:status])
+      def assert_response_bad_or_unauthorized(status: response[:status])
         message = "Bad response code: expected 400 or 401, but found #{status}"
         assert [400, 401].include?(status), message
-      end 
+      end
 
       # @private
       def bad_resource_type_message(expected, received)

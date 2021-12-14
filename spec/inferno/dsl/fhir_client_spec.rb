@@ -397,14 +397,14 @@ RSpec.describe Inferno::DSL::FHIRClient do
       expect(result).to be_a(Inferno::Entities::Request)
     end
 
-    it 'adds the request to the list of requests' do 
+    it 'adds the request to the list of requests' do
       result = group.fhir_delete(resource.resourceType, resource_id)
 
       expect(group.requests).to include(result)
       expect(group.request).to eq(result)
-    end 
+    end
 
-    context 'with the client parameter' do 
+    context 'with the client parameter' do
       it 'uses that client' do
         other_url = 'http://www.example.com/fhir/r4'
         group.fhir_clients[:other_client] = FHIR::Client.new(other_url)
@@ -418,7 +418,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(other_request_stub).to have_been_made
         expect(stub_delete_request).to_not have_been_made
       end
-    end 
+    end
   end
 
   describe '#requests' do

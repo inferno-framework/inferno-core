@@ -142,9 +142,9 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def fhir_delete(resource_type, id = nil, client: :default, name: nil)
         store_request('outgoing', name) do
-          fhir_client(client).destroy(fhir_class_from_resource_type(resource_type), id) 
+          fhir_client(client).destroy(fhir_class_from_resource_type(resource_type), id)
         end
-      end 
+      end
 
       # @todo Make this a FHIR class method? Something like
       #   FHIR.class_for(resource_type)

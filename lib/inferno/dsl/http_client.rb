@@ -124,9 +124,9 @@ module Inferno
             Faraday.delete(url, nil, options[:headers])
           else
             raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
-          end 
+          end
         end
-      end 
+      end
 
       # Perform an HTTP GET request and stream the response
       #
@@ -135,7 +135,7 @@ module Inferno
       #   made without a defined client
       # @param block [Proc] A code block to be executed on the String chunks
       #   returned piecewise by the get request. Best practice entails creating
-      #   a variable outside the block and using it to persist storage from 
+      #   a variable outside the block and using it to persist storage from
       #   within the block.
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
@@ -148,13 +148,13 @@ module Inferno
           client = http_client(client)
 
           if client
-            client.get(url, nil, options[:headers]) { |req| req.options.on_data = block } 
+            client.get(url, nil, options[:headers]) { |req| req.options.on_data = block }
           elsif url.match?(%r{\Ahttps?://})
             Faraday.get(url, nil, options[:headers]) { |req| req.options.on_data = block }
-          else 
+          else
             raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
-          end 
-        end 
+          end
+        end
       end
 
       module ClassMethods
