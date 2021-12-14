@@ -324,21 +324,24 @@ RSpec.describe Inferno::DSL::HTTPClient do
   end
 
   describe '#stream' do
-    let(:generic_block) { Proc.new { |chunk| } }
+    let(:generic_block) { proc { |chunk| chunk } }
     let(:streamed) { [] }
-    let(:block) { proc { |chunk|  
-      streamed << chunk
-    } }
-    context 'with a default client defined' do
-      before do 
-        setup_default_client
-      end 
+    let(:block) do
+      proc { |chunk|
+        streamed << chunk
+      }
+    end
 
-      context 'without a url argument' do 
+    context 'with a default client defined' do
+      before do
+        setup_default_client
+      end
+
+      context 'without a url argument' do
         let(:stub_get_request) do
           stub_request(:get, base_url)
             .to_return(status: 200, body: response_body)
-        end 
+        end
 
         before { stub_get_request }
 
@@ -349,10 +352,10 @@ RSpec.describe Inferno::DSL::HTTPClient do
         end
 
         it 'receives and stores a chunk of the response via :block' do
-          group.stream(block) 
+          group.stream(block)
 
           expect(streamed).to eq([response_body])
-        end 
+        end
 
         it 'returns an Inferno::Entities::Request' do
           result = group.stream(generic_block)
@@ -366,7 +369,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
           expect(group.requests).to include(result)
           expect(group.request).to eq(result)
         end
-      end 
+      end
 
       context 'with a url argument' do
         it 'performs a GET to the base_url + path' do
@@ -375,7 +378,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
             stub_request(:get, "#{base_url}/#{path}")
               .to_return(status: 200, body: response_body, headers: {})
 
-          group.stream(path, generic_block)
+          group.stream(generic_block, path)
 
           expect(stubbed_request).to have_been_made.once
         end
@@ -438,26 +441,25 @@ RSpec.describe Inferno::DSL::HTTPClient do
           stub_request(:get, url)
             .to_return(status: 200, body: response_body)
 
-        group.stream(url, generic_block)
+        group.stream(generic_block, url)
 
         expect(stubbed_request).to have_been_made.once
       end
 
       it 'receives and stores a chunk of the response via :block' do
         url = 'https://example.com/abc'
-        stubbed_request =
-          stub_request(:get, url)
-            .to_return(status: 200, body: response_body)
+        stub_request(:get, url)
+          .to_return(status: 200, body: response_body)
 
-        group.stream(url, block) 
+        group.stream(block, url)
 
         expect(streamed).to eq([response_body])
-      end 
+      end
 
       it 'raises an error if given a relative url' do
         url = 'abc'
 
-        expect { group.stream(url, generic_block) }.to raise_error(/absolute url/)
+        expect { group.stream(generic_block, url) }.to raise_error(/absolute url/)
       end
 
       it 'makes a request to an asbolute url with custom headers' do
@@ -467,11 +469,11 @@ RSpec.describe Inferno::DSL::HTTPClient do
             .with(headers: { 'Warning' => 'Placeholder warning' })
             .to_return(status: 200, body: '', headers: {})
 
-        group.stream(url, generic_block, headers: { 'Warning' => 'Placeholder warning' })
+        group.stream(generic_block, url, headers: { 'Warning' => 'Placeholder warning' })
         expect(stub_get_header_request).to have_been_made.once
       end
     end
-  end 
+  end
 
   describe '#delete' do
     context 'with a default client defined' do
@@ -487,17 +489,17 @@ RSpec.describe Inferno::DSL::HTTPClient do
 
         before { stub_delete_request }
 
-        it "performs a HTTP DELETE to the default client's base url" do 
+        it "performs a HTTP DELETE to the default client's base url" do
           group.delete
 
           expect(stub_delete_request).to have_been_made.once
-        end 
+        end
 
         it 'returns an Inferno::Entities::Request' do
           result = group.delete
 
           expect(result).to be_a(Inferno::Entities::Request)
-        end 
+        end
 
         it 'adds the request to the list of requests' do
           result = group.delete
@@ -508,7 +510,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
       end
 
       context 'with a url argument' do
-        it 'performs a DELETE to the base_url + path' do 
+        it 'performs a DELETE to the base_url + path' do
           path = 'abc'
           stubbed_request =
             stub_request(:delete, "#{base_url}/#{path}")
@@ -517,7 +519,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
           group.delete(path)
 
           expect(stubbed_request).to have_been_made.once
-        end 
+        end
       end
 
       context 'with custom headers' do
@@ -541,7 +543,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
           group.delete(client: :client_with_header, headers: { 'CustomHeader' => 'MergedCustom' })
 
           expect(stub_delete_header_request).to have_been_made.once
-        end 
+        end
       end
 
       context 'with the client parameter' do
@@ -588,7 +590,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
         expect { group.delete(url) }.to raise_error(/absolute url/)
       end
 
-      it 'makes a request to an absolute url with custom headers' do 
+      it 'makes a request to an absolute url with custom headers' do
         url = 'https://example.com/abc'
         stub_delete_header_request =
           stub_request(:delete, url)
@@ -597,7 +599,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
 
         group.delete(url, headers: { 'Warning' => 'Placeholder warning' })
         expect(stub_delete_header_request).to have_been_made.once
-      end 
+      end
     end
   end
 

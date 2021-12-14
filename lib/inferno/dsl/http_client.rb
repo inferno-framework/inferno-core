@@ -130,20 +130,18 @@ module Inferno
 
       # Perform an HTTP GET request and stream the response
       #
-      # @param url [String] if this request is using a defined client, this will
+      # @param block [Proc] A code block to be executed on the String chunks
+      #   returned piecewise by the get request.
+      # @param url [String] If this request is using a defined client, this will
       #   be appended to the client's url. Must be an absolute url for requests
       #   made without a defined client
-      # @param block [Proc] A code block to be executed on the String chunks
-      #   returned piecewise by the get request. Best practice entails creating
-      #   a variable outside the block and using it to persist storage from
-      #   within the block.
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @option options [Hash] Input headers here - headers are optional and
       #   must be entered as the last piece of input to this method
       # @return [Inferno::Entities::Request]
-      def stream(url = '', block, client: :default, name: nil, **options)
+      def stream(block = proc { |s| s }, url = '', client: :default, name: nil, **options)
         store_request('outgoing', name) do
           client = http_client(client)
 
