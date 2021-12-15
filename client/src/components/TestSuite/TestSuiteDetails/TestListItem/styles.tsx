@@ -51,7 +51,9 @@ export default makeStyles((theme: Theme) => ({
     overflow: 'hidden',
     maxHeight: '1.5em',
     wordBreak: 'break-all',
-    textOverflow: 'ellipsis',
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: '1',
   },
   requestUrlContainer: {
     width: '100%',
