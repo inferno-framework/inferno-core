@@ -186,6 +186,12 @@ module Inferno
             .map { |header_name, value| Header.new(name: header_name.downcase, value: value, type: 'request') }
           response_headers = response[:headers]
             .map { |header_name, value| Header.new(name: header_name.downcase, value: value, type: 'response') }
+          request_body =
+            if request.dig(:headers, 'Content-Type')&.include?('application/x-www-form-urlencoded')
+              URI.encode_www_form(request[:payload])
+            else
+              request[:payload]
+            end
 
           new(
             verb: request[:method],
@@ -193,7 +199,7 @@ module Inferno
             direction: direction,
             name: name,
             status: response[:code].to_i,
-            request_body: request[:payload],
+            request_body: request_body,
             response_body: response[:body],
             test_session_id: test_session_id,
             headers: request_headers + response_headers
