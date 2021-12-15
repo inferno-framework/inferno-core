@@ -104,7 +104,7 @@ Sequel.migration do
 
     create_table :requests do
       primary_key :index
-      column :id, String, index: true, null: false
+      column :id, String, index: true, unique: true, null: false
       column :verb, String
       column :url, String
       column :direction, String
@@ -116,7 +116,7 @@ Sequel.migration do
       # Requires requests to be a part of tests now.
       foreign_key :result_id, :results, index: true, type: String
       foreign_key :test_session_id, :test_sessions, index: true, type: String
-      index [:test_session_id, :name], concurrently: true
+      index [:test_session_id, :name]
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
@@ -124,7 +124,7 @@ Sequel.migration do
 
     create_table :headers do
       column :id, String, index: true, null: false
-      foreign_key :request_id, :requests, index: true, type: String
+      foreign_key :request_id, :requests, index: true, type: Integer
       column :type, String # request / response
       column :name, String
       column :value, String

@@ -102,6 +102,7 @@ Sequel.migration do
       index [:result_id]
       index [:test_session_id]
       index [:test_session_id, :name]
+      index [:id], :name=>:sqlite_autoindex_requests_1, :unique=>true
     end
     
     create_table(:result_outputs, :ignore_index_errors=>true) do
@@ -132,7 +133,7 @@ Sequel.migration do
     
     create_table(:headers, :ignore_index_errors=>true) do
       String :id, :size=>255, :null=>false
-      foreign_key :request_id, :requests, :type=>String, :size=>255
+      foreign_key :request_id, :requests
       String :type, :size=>255
       String :name, :size=>255
       String :value, :size=>255
@@ -145,7 +146,7 @@ Sequel.migration do
     
     create_table(:requests_results, :ignore_index_errors=>true) do
       foreign_key :results_id, :results, :type=>String, :size=>255, :null=>false
-      foreign_key :requests_id, :requests, :type=>String, :size=>255, :null=>false
+      foreign_key :requests_id, :requests, :null=>false
       
       index [:requests_id]
       index [:results_id]
