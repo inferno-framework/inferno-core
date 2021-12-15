@@ -28,6 +28,11 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       exclude_message { |message| message.type == 'info' }
     end
 
+ 
+    config options: {
+      wait_test_url: "#{Inferno::Application['inferno_host']}/custom/demo/resume",
+    }
+
     group :simple_group do
       title 'Group 1'
       group from: 'DemoIG_STU1::DemoGroup', title: 'Demo Group Instance 1'
@@ -62,7 +67,15 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         title 'Wait test'
         receives_request :resume
 
-        run { wait(identifier: 'abc') }
+        run do
+          wait(
+            identifier: 'abc',
+            message: %(
+              [Follow this link to proceed](#{config.options[:wait_test_url]}?xyz=abc).
+              Waiting to receive a request at ```#{config.options[:wait_test_url]}?xyz=abc```.
+            )
+          )
+        end
       end
 
       test do
