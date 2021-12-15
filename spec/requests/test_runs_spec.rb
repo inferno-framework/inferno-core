@@ -18,9 +18,16 @@ RSpec.describe '/test_runs' do
     end
 
     context 'with valid input' do
+      let(:inputs) do
+        [
+          { name: 'input1', value: 'value1' },
+          { name: 'input2', value: 'value2' }
+        ]
+      end
+
       it 'renders the test_run json' do
         Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
-        post_json create_path, test_run_definition
+        post_json create_path, test_run_definition.merge(inputs: inputs)
 
         expect(last_response.status).to eq(200)
 
@@ -32,10 +39,6 @@ RSpec.describe '/test_runs' do
       it 'persists inputs to the session data table' do
         Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
         session_data_repo = Inferno::Repositories::SessionData.new
-        inputs = [
-          { name: 'input1', value: 'value1' },
-          { name: 'input2', value: 'value2' }
-        ]
         test_run_params = test_run_definition.merge(inputs: inputs)
 
         post_json create_path, test_run_params

@@ -45,7 +45,8 @@ RSpec.describe Inferno::TestRunner do
         session_data_repo.save(
           test_session_id: test_session.id,
           name: name,
-          value: value
+          value: value,
+          type: 'text'
         )
         stub_request(:get, base_url)
           .to_return(status: 200, body: '', headers: {})
@@ -77,6 +78,22 @@ RSpec.describe Inferno::TestRunner do
           .select { |result| result.result == 'error' }
 
       expect(error_results).to be_empty, error_results_message(error_results)
+    end
+
+    it 'includes output types in the results' do
+      results = runner.start
+
+      result_outputs =
+        results
+          .map(&:output_json)
+          .compact
+          .map { |output_json| JSON.parse(output_json) }
+          .select(&:present?)
+          .flatten
+
+      result_outputs.each do |output|
+        expect(output['type']).to be_present
+      end
     end
   end
 

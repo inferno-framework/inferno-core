@@ -75,17 +75,9 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Enabled: false
 
-# TODO: remove with SMART tests
 RSpec/FilePath:
   CustomTransform:
-    OpenIDDecodeIDTokenTest: openid_decode_id_token_test
-    OpenIDRetrieveConfigurationTest: openid_retrieve_configuration_test
-    OpenIDFHIRUserClaimTest: openid_fhir_user_claim_test
-    OpenIDRequiredConfigurationFieldsTest: openid_required_configuration_fields_test
-    OpenIDRetrieveJWKSTest: openid_retrieve_jwks_test
-    OpenIDTokenHeaderTest: openid_token_header_test
-    OpenIDTokenPayloadTest: openid_token_payload_test
-    OpenIDConnectGroup: openid_connect_group
+    OAuthCredentials: oauth_credentials
 
 RSpec/MultipleExpectations:
   Enabled: false

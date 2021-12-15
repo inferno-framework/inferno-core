@@ -234,7 +234,7 @@ module Inferno
       # @option input_definition [Boolean] :optional Set to true to not require input for test execution
       # @return [void]
       # @example
-      #   input :patientid, title: 'Patient ID', description: 'The ID of the patient being searched for',
+      #   input :patient_id, title: 'Patient ID', description: 'The ID of the patient being searched for',
       #                     default: 'default_patient_id'
       # @example
       #   input :textarea, title: 'Textarea Input Example', type: 'textarea', optional: true
@@ -252,14 +252,24 @@ module Inferno
 
       # Define outputs
       #
-      # @param output_list [Symbol]
+      # @param identifier [Symbol] identifier for the output
+      # @param other_identifiers [Symbol] array of symbols if specifying multiple outputs
+      # @param output_definition [Hash] options for output
+      # @option output_definition [String] :type text | textarea | oauth_credentials
       # @return [void]
       # @example
-      #   output :patient_id, :bearer_token
-      def output(*output_list)
-        output_list.each do |output_identifier|
-          outputs << output_identifier
-          config.add_output(output_identifier)
+      #   output :patient_id, :condition_id, :observation_id
+      # @example
+      #   output :oauth_credentials, type: 'oauth_credentials'
+      def output(identifier, *other_identifiers, **output_definition)
+        if other_identifiers.present?
+          [identifier, *other_identifiers].compact.each do |output_identifier|
+            outputs << output_identifier
+            config.add_output(output_identifier)
+          end
+        else
+          outputs << identifier
+          config.add_output(identifier, output_definition)
         end
       end
 
