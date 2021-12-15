@@ -10,6 +10,15 @@ class FHIRClientDSLTestClass
     url 'http://www.example.com/fhir'
     bearer_token 'some_token'
   end
+
+  fhir_client :client_with_oauth_credentials do
+    url 'http://www.example.com/fhir'
+    oauth_credentials(
+      Inferno::DSL::OAuthCredentials.new(
+        access_token: 'TOKEN'
+      )
+    )
+  end
 end
 
 RSpec.describe Inferno::DSL::FHIRClient do
@@ -365,7 +374,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
-  describe '#fhir_client_with_bearer_token' do
+  describe '#bearer_token' do
     let(:client) { group.fhir_client(:client_with_bearer_token) }
 
     it 'uses the given bearer token in the security header' do
@@ -375,6 +384,23 @@ RSpec.describe Inferno::DSL::FHIRClient do
     it 'has the auth flags set correctly' do
       expect(client.use_basic_auth).to be_truthy
       expect(client.use_oauth2_auth).to be_falsey
+    end
+  end
+
+  describe '#oauth_credentials' do
+    let(:client) { group.fhir_client(:client_with_oauth_credentials) }
+
+    it 'uses the given bearer token in the security header' do
+      expect(client.security_headers).to eq({ 'Authorization' => 'Bearer TOKEN' })
+    end
+
+    it 'has the auth flags set correctly' do
+      expect(client.use_basic_auth).to be_truthy
+      expect(client.use_oauth2_auth).to be_falsey
+    end
+
+    it 'stores the credentials on the client' do
+      expect(client.instance_variable_get(:@oauth_credentials)).to be_a(Inferno::DSL::OAuthCredentials)
     end
   end
 end

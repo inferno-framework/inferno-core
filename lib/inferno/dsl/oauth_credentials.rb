@@ -25,6 +25,7 @@ module Inferno
         end
       end
 
+      # @api private
       def to_hash
         self.class::ATTRIBUTES.each_with_object({}) do |attribute, hash|
           value = send(attribute)
@@ -34,8 +35,18 @@ module Inferno
         end
       end
 
+      # @api private
       def to_s
         JSON.generate(to_hash)
+      end
+
+      # @api private
+      def add_to_client(client)
+        client.instance_variable_set(:@oauth_credentials, self)
+
+        return unless access_token.present?
+
+        client.set_bearer_token(access_token)
       end
     end
   end
