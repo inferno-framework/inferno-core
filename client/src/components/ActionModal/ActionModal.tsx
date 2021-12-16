@@ -21,7 +21,7 @@ const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTest }
       <DialogTitle>User Action Required</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          <ReactMarkdown>{message ? message : ''}</ReactMarkdown>
+          <ReactMarkdown>{message || ''}</ReactMarkdown>
         </DialogContentText>
       </DialogContent>
       <DialogActions>
