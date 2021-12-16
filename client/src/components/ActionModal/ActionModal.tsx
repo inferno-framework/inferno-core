@@ -25,7 +25,7 @@ const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTest }
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={() => cancelTest()} data-testid="cancel-button">
+        <Button color="primary" onClick={cancelTest} data-testid="cancel-button">
           Cancel
         </Button>
       </DialogActions>
