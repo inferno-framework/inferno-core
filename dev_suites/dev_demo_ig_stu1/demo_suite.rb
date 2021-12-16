@@ -28,9 +28,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       exclude_message { |message| message.type == 'info' }
     end
 
- 
     config options: {
-      wait_test_url: "#{Inferno::Application['inferno_host']}/custom/demo/resume",
+      wait_test_url: "#{Inferno::Application['inferno_host']}/custom/demo/resume"
     }
 
     group :simple_group do
