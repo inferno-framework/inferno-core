@@ -57,7 +57,7 @@ const InputsModal: FC<InputsModalProps> = ({
   useEffect(() => {
     inputsMap.clear();
     inputs.forEach((requirement: TestInput) => {
-      inputsMap.set(requirement.name, requirement.value || '');
+      inputsMap.set(requirement.name, requirement.value || (requirement.default as string) || '');
     });
     setInputsMap(new Map(inputsMap));
   }, [inputs]);

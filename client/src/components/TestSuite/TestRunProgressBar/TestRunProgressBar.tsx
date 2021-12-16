@@ -87,7 +87,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
   return (
     <Snackbar
       open={showProgressBar}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       autoHideDuration={duration}
       onClose={() => setShowProgressBar(false)}
       ClickAwayListenerProps={{ mouseEvent: false }}

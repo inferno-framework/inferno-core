@@ -6,6 +6,10 @@ export default makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
   },
+  table: {
+    width: 'auto',
+    tableLayout: 'auto',
+  },
   testIcon: {
     minWidth: '30px',
     display: 'inline-flex',
@@ -44,9 +48,14 @@ export default makeStyles((theme: Theme) => ({
     color: 'rgba(0,0,0,0.6)',
   },
   requestUrl: {
-    width: '90%',
-    whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    maxHeight: '1.5em',
+    wordBreak: 'break-all',
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: '1',
+  },
+  requestUrlContainer: {
+    width: '100%',
   },
 }));

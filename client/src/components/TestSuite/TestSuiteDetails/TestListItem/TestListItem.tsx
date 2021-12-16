@@ -116,7 +116,7 @@ const TestListItem: FC<TestListItemProps> = ({
           </ReactMarkdown>
         )}
       </Box>
-      <Collapse in={open} timeout="auto" className={styles.collapsible} unmountOnExit>
+      <Collapse in={open} className={styles.collapsible} unmountOnExit>
         <Divider />
         <Tabs
           value={panelIndex}

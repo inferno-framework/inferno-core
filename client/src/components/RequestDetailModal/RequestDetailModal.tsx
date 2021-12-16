@@ -1,4 +1,12 @@
-import { Dialog, DialogContent, DialogTitle, Divider, Tooltip, Typography } from '@mui/material';
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { Request } from 'models/testSuiteModels';
 import React, { FC } from 'react';
 import CodeBlock from './CodeBlock';
@@ -27,6 +35,22 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
     </Tooltip>
   );
 
+  const requestDialogTitle = (
+    <Tooltip
+      title={`${request?.verb.toUpperCase() || ''} ${request?.url || ''} \u2192 ${
+        request?.status || ''
+      }`}
+      placement="bottom-start"
+    >
+      <Box className={styles.modalTitle}>
+        <Box className={styles.modalTitleContainerShrink}>{request?.verb.toUpperCase()}</Box>
+        <Box className={styles.modalTitleURL}>{request?.url}</Box>
+        <Box className={styles.modalTitleContainerNoShrink}>&#8594; {request?.status}</Box>
+        {usedRequest && <Box className={styles.modalTitleIcon}>{usedRequestIcon}</Box>}
+      </Box>
+    </Tooltip>
+  );
+
   if (request) {
     return (
       <Dialog
@@ -36,10 +60,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
         onClose={() => hideModal()}
         data-testid="requestDetailModal"
       >
-        <DialogTitle className={styles.modalTitle}>
-          {request.verb.toUpperCase()} {request.url} &#8594; {request.status}
-          {usedRequest ? usedRequestIcon : null}
-        </DialogTitle>
+        <DialogTitle>{requestDialogTitle}</DialogTitle>
         <Divider />
         <DialogContent>
           <div className={styles.section}>

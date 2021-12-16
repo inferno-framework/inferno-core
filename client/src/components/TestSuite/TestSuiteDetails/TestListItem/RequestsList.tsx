@@ -57,9 +57,11 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
             <TableCell>
               <Typography variant="subtitle2">{request.verb}</Typography>
             </TableCell>
-            <TableCell className={styles.requestUrl}>
+            <TableCell className={styles.requestUrlContainer}>
               <Tooltip title={request.url} placement="bottom-start">
-                <Typography variant="subtitle2">{request.url}</Typography>
+                <Typography variant="subtitle2" className={styles.requestUrl}>
+                  {request.url}
+                </Typography>
               </Tooltip>
             </TableCell>
             <TableCell>
@@ -90,7 +92,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
   return (
     <>
       <TableContainer>
-        <Table>
+        <Table className={styles.table}>
           <TableBody>{requestListItems} </TableBody>
         </Table>
       </TableContainer>
