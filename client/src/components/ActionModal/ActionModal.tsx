@@ -17,7 +17,7 @@ export interface ActionModalProps {
 
 const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTest }) => {
   return (
-    <Dialog open={modalVisible} fullWidth={true} maxWidth="sm">
+    <Dialog open={modalVisible} fullWidth maxWidth="sm">
       <DialogTitle>User Action Required</DialogTitle>
       <DialogContent>
         <DialogContentText>
