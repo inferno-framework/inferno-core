@@ -119,8 +119,6 @@ Sequel.migration do
       foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 36, key: [:id]
       index [:test_session_id, :name]
 
-
-
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
     end
