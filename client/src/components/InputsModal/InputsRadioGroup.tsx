@@ -2,6 +2,7 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
+  InputLabel,
   ListItem,
   Radio,
   RadioGroup,
@@ -40,13 +41,25 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
 
   return (
     <ListItem disabled={requirement.locked}>
-      <FormControl component="fieldset">
-        <FormLabel component="legend">{fieldLabel}</FormLabel>
-        <RadioGroup row aria-label={requirement.name} name="radio-buttons-group">
+      <FormControl component="fieldset" fullWidth>
+        <InputLabel variant="standard" shrink className={styles.inputLabel}>
+          {fieldLabel}
+        </InputLabel>
+        <RadioGroup
+          row
+          aria-label={requirement.name}
+          name="radio-buttons-group"
+          className={styles.radioGroup}
+          onChange={(event) => {
+            const value = event.target.value;
+            inputsMap.set(requirement.name, value);
+            setInputsMap(new Map(inputsMap));
+          }}
+        >
           {requirement.inputOptions?.map((inputOption) => (
             <FormControlLabel
               value={inputOption.value}
-              control={<Radio />}
+              control={<Radio size="small" />}
               label={inputOption.label}
             />
           ))}

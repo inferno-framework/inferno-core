@@ -9,13 +9,20 @@ export default makeStyles((_theme: Theme) => ({
     overflow: 'auto !important',
   },
   inputField: {
-    '& > label.MuiInputLabel-shrink': {
+    '&!$focused > label.MuiInputLabel-shrink': {
       fontWeight: 600,
       color: 'rgba(0,0,0,0.85)',
     },
   },
+  inputLabel: {
+    fontWeight: 600,
+    color: 'rgba(0,0,0,0.85)',
+  },
   lockedIcon: {
     marginLeft: '5px',
     verticalAlign: 'text-bottom',
+  },
+  radioGroup: {
+    marginTop: '16px',
   },
 }));
