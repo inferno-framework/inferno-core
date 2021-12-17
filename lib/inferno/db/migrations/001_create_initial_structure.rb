@@ -104,7 +104,7 @@ Sequel.migration do
 
     create_table :requests do
       primary_key :index
-      column :id, String, index: true, unique: true, null: false, size: 255
+      column :id, String, null: false, size: 255
       column :verb, String, size: 255
       column :url, String, text: true
       column :direction, String, size: 255
@@ -112,11 +112,14 @@ Sequel.migration do
       column :name, String, size: 255
       column :request_body, String, text: true
       column :response_body, String, text: true # It would be nice if we could store this on disk
+      index [:id], unique: true
 
       # Requires requests to be a part of tests now.
       foreign_key :result_id, :results, index: true, type: String, size: 255
       foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 255
       index [:test_session_id, :name]
+
+
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false

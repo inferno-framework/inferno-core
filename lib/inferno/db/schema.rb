@@ -98,11 +98,10 @@ Sequel.migration do
       DateTime :created_at, :null=>false
       DateTime :updated_at, :null=>false
       
-      index [:id]
+      index [:id], :unique=>true
       index [:result_id]
       index [:test_session_id]
       index [:test_session_id, :name]
-      index [:id], :name=>:sqlite_autoindex_requests_1, :unique=>true
     end
     
     create_table(:headers, :ignore_index_errors=>true) do
