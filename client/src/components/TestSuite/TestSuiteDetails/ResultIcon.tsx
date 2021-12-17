@@ -49,7 +49,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
         return (
           <Tooltip title="error">
             <ErrorIcon
-              style={{color: result.optional ? purple[100] : purple[500] }}
+              style={{ color: result.optional ? purple[100] : purple[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
           </Tooltip>
