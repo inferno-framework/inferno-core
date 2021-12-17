@@ -42,7 +42,7 @@ export interface TestInput {
   name: string;
   title?: string;
   value?: string;
-  type?: 'text' | 'textarea';
+  type?: 'text' | 'textarea' | 'radio';
   description?: string;
   default?: string;
   optional?: boolean;
