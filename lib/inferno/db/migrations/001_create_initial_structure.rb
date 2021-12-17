@@ -21,7 +21,7 @@ Sequel.migration do
     create_table :test_runs do
       column :id, String, primary_key: true, null: false, size: 255
       column :status, String, size: 255
-      foreign_key :test_session_id, :test_sessions, index: true, type: String
+      foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 255, key: [:id]
       index [:test_session_id, :status] # Searching by unfinished test runs seems like it will be a likely query
 
       column :test_suite_id, String, index: true, size: 255
@@ -34,7 +34,7 @@ Sequel.migration do
 
     create_table :test_run_inputs do
       column :id, String, primary_key: true, null: false, size: 255
-      foreign_key :test_run_id, :test_runs, index: true, type: String
+      foreign_key :test_run_id, :test_runs, index: true, type: String, key: [:id]
       column :test_input_id, String, size: 255
       column :value, String, text: true
 
@@ -45,8 +45,8 @@ Sequel.migration do
     create_table :results do
       column :id, String, primary_key: true, null: false, size: 255
 
-      foreign_key :test_run_id, :test_runs, index: true, type: String, size: 255
-      foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 255
+      foreign_key :test_run_id, :test_runs, index: true, type: String, size: 255, key: [:id]
+      foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 255, key: [:id]
 
       column :result, String, size: 255
       column :result_message, String, text: true
@@ -61,7 +61,7 @@ Sequel.migration do
 
     create_table :result_inputs do
       column :id, String, primary_key: true, null: false, size: 255
-      foreign_key :result_id, :results, index: true, type: String, size: 255
+      foreign_key :result_id, :results, index: true, type: String, size: 255, key: [:id]
       column :test_input_id, String, size: 255
       column :value, String, text: true
 
@@ -71,7 +71,7 @@ Sequel.migration do
 
     create_table :result_outputs do
       column :id, String, primary_key: true, null: false, size: 255
-      foreign_key :result_id, :results, index: true, type: String, size: 255
+      foreign_key :result_id, :results, index: true, type: String, size: 255, key: [:id]
       column :test_output_id, String, size: 255
       column :value, String, text: true
 
@@ -82,7 +82,7 @@ Sequel.migration do
     create_table :result_prompt_values do
       column :id, String, primary_key: true, null: false, size: 255
 
-      foreign_key :result_id, :results, index: true, type: String, size: 255
+      foreign_key :result_id, :results, index: true, type: String, size: 255, key: [:id]
 
       column :test_prompt_id, String, null: false, size: 255
       column :value, String, null: false, text: true
@@ -94,7 +94,7 @@ Sequel.migration do
     create_table :messages do
       primary_key :index
       column :id, String, index: true, null: false, size: 255
-      foreign_key :result_id, :results, index: true, type: String, size: 255
+      foreign_key :result_id, :results, index: true, type: String, size: 255, key: [:id]
       column :type, String, size: 255
       column :message, String, text: true
 
@@ -115,8 +115,8 @@ Sequel.migration do
       index [:id], unique: true
 
       # Requires requests to be a part of tests now.
-      foreign_key :result_id, :results, index: true, type: String, size: 255
-      foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 255
+      foreign_key :result_id, :results, index: true, type: String, size: 255, key: [:id]
+      foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 255, key: [:id]
       index [:test_session_id, :name]
 
 
@@ -127,7 +127,7 @@ Sequel.migration do
 
     create_table :headers do
       column :id, String, index: true, null: false, size: 255
-      foreign_key :request_id, :requests, index: true, type: Integer
+      foreign_key :request_id, :requests, index: true, type: Integer, key: [:index]
       column :type, String, size: 255 # request / response
       column :name, String, size: 255
       column :value, String, text: true
@@ -138,7 +138,7 @@ Sequel.migration do
 
     create_table :session_data do
       column :id, String, index: true, null: false, size: 255
-      foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 255
+      foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 255, key: [:id]
       column :name, String, size: 255
       column :value, String, text: true
       index [:test_session_id, :name]
