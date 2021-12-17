@@ -1,4 +1,5 @@
 require 'fhir_client'
+require_relative '../ext/fhir_client'
 
 module Inferno
   module DSL

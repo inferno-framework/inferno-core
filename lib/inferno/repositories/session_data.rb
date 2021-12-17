@@ -13,6 +13,7 @@ module Inferno
               raise Exceptions::BadSessionDataType.new(params[:name], DSL::OAuthCredentials, params[:value].class)
             end
 
+            params[:value].name = name
             params[:value].to_s
           else
             raise Exceptions::UnknownSessionDataType, params
