@@ -64,29 +64,16 @@ const InputsModal: FC<InputsModalProps> = ({
   }, [inputs]);
 
   const inputFields = inputs.map((requirement: TestInput, index: number) => {
-    requirement.inputOptions = [
-      { label: 'a', value: 1 },
-      { label: 'b', value: 2 },
-    ];
     switch (requirement.type) {
       case 'textarea':
         return (
-          <>
-            <InputTextArea
-              requirement={requirement}
-              index={index}
-              inputsMap={inputsMap}
-              setInputsMap={setInputsMap}
-              key={`input-${index}`}
-            />
-            <InputRadioGroup
-              requirement={requirement}
-              index={index}
-              inputsMap={inputsMap}
-              setInputsMap={setInputsMap}
-              key={`input-${index}`}
-            />
-          </>
+          <InputTextArea
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={setInputsMap}
+            key={`input-${index}`}
+          />
         );
       case 'radio':
         return (

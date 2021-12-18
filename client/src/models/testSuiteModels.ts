@@ -47,6 +47,12 @@ export interface TestInput {
   default?: string;
   optional?: boolean;
   locked?: boolean;
+  inputOptions?: InputOption[];
+}
+
+export interface InputOption {
+  label: string;
+  value: string | number | boolean;
 }
 
 export interface TestOutput {
