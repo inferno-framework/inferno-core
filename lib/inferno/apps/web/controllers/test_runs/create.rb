@@ -34,7 +34,7 @@ module Inferno
                 test_session_id: test_session.id,
                 name: input[:name],
                 value: input[:value],
-                type: test_run.runnable.config.input_type(input[:name].to_sym)
+                type: input[:type]
               )
             end
 

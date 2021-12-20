@@ -29,7 +29,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
       'expires_in': '',
       'client_id': '',
       'client_secret': '',
-      'oauth_token_endpoint': ''
+      'token_url': ''
     });
   const oauthCredentials = JSON.parse(inputsMap.get(requirement.name) || template);
   const showRefreshDetails = oauthCredentials['refresh_token'].length;
@@ -46,16 +46,16 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
       <ListItem disabled={requirement.locked}>
         <TextField
           disabled={requirement.locked}
-          id={`requirement${index}_token_endpoint`}
+          id={`requirement${index}_token_url`}
           className={styles.inputField}
           fullWidth
           label='Token Endpoint'
           helperText={requirement.description}
-          value={oauthCredentials['oauth_token_endpoint']}
+          value={oauthCredentials['token_url']}
           onChange={(event) => {
             const value = event.target.value;
             inputsMap.set(requirement.name, value);
-            oauthCredentials['oauth_token_endpoint'] = value;
+            oauthCredentials['token_url'] = value;
             inputsMap.set(requirement.name, JSON.stringify(oauthCredentials));
             setInputsMap(new Map(inputsMap));
           } }

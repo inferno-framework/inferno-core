@@ -4,20 +4,9 @@ module Inferno
       def save(params)
         name = params[:name].to_s.downcase
         test_session_id = params[:test_session_id]
-        value =
-          case params[:type]&.to_s
-          when 'text', 'text_area'
-            params[:value].to_s
-          when 'oauth_credentials'
-            unless params[:value].is_a? DSL::OAuthCredentials
-              raise Exceptions::BadSessionDataType.new(params[:name], DSL::OAuthCredentials, params[:value].class)
-            end
 
-            params[:value].name = name
-            params[:value].to_s
-          else
-            raise Exceptions::UnknownSessionDataType, params
-          end
+        value = value_to_persist(params)
+
         db
           .insert_conflict(
             target: :id,
@@ -59,6 +48,29 @@ module Inferno
 
       def entity_class_name
         'SessionData'
+      end
+
+      def value_to_persist(params)
+        return nil if params[:value].blank?
+
+        case params[:type]&.to_s
+        when 'text', 'textarea'
+          params[:value].to_s
+        when 'oauth_credentials'
+          credentials =
+            if params[:value].is_a? String
+              DSL::OAuthCredentials.new(JSON.parse(params[:value]))
+            elsif !params[:value].is_a? DSL::OAuthCredentials
+              raise Exceptions::BadSessionDataType.new(params[:name], DSL::OAuthCredentials, params[:value].class)
+            else
+              params[:value]
+            end
+
+          credentials.name = params[:name]
+          credentials.to_s
+        else
+          raise Exceptions::UnknownSessionDataType, params
+        end
       end
 
       class Model < Sequel::Model(db)

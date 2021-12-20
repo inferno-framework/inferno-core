@@ -549,7 +549,6 @@ definitions:
         readOnly: true
       type:
         type: "string"
-        readOnly: true
   SessionData:
     type: "object"
     required:

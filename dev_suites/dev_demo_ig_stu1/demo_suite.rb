@@ -46,7 +46,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
               expires_in: 400,
               client_id: 'hi',
               client_secret: 'bye',
-              oauth_token_endpoint: 'https://example.com'
+              token_url: 'https://example.com'
             }.to_json
 
             output creds: creds
@@ -83,7 +83,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
               expires_in: 400,
               client_id: 'hi',
               client_secret: 'bye',
-              oauth_token_endpoint: 'https://example.com'
+              token_url: 'https://example.com'
             }.to_json
 
             output creds: creds

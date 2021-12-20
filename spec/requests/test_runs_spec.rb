@@ -20,8 +20,8 @@ RSpec.describe '/test_runs' do
     context 'with valid input' do
       let(:inputs) do
         [
-          { name: 'input1', value: 'value1' },
-          { name: 'input2', value: 'value2' }
+          { name: 'input1', value: 'value1', type: 'text' },
+          { name: 'input2', value: 'value2', type: 'textarea' }
         ]
       end
 

@@ -46,10 +46,11 @@ const InputsModal: FC<InputsModalProps> = ({
     return !input.optional && inputsMap.get(input.name)?.length == 0;
   });
   function submitClicked(): void {
-    const inputs_with_values: TestInput[] = [];
-    inputsMap.forEach((input_value, input_name) => {
-      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
-    });
+    const inputs_with_values =
+      inputs
+        .filter(input => inputsMap.has(input.name))
+        .map(input => ({ name: input.name, value: inputsMap.get(input.name), type: input.type }))
+    debugger;
     createTestRun(runnableType, runnableId, inputs_with_values);
     hideModal();
   }

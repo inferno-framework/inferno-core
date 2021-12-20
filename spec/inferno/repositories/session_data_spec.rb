@@ -80,17 +80,20 @@ RSpec.describe Inferno::Repositories::SessionData do
         expect(persisted_value).to eq(credentials.to_s)
       end
 
-      it 'raises an error if the value is not an OAuthCredentials instance' do
-        credentials = Inferno::DSL::OAuthCredentials.new(access_token: 'TOKEN', client_id: 'CLIENT_ID').to_s
+      it 'accepts a json string' do
+        credentials = Inferno::DSL::OAuthCredentials.new(access_token: 'TOKEN', client_id: 'CLIENT_ID')
         name = 'creds'
         params = {
           name: name,
-          value: credentials,
+          value: credentials.to_s,
           type: 'oauth_credentials',
           test_session_id: test_session.id
         }
 
-        expect { repo.save(params) }.to raise_error(Inferno::Exceptions::BadSessionDataType, /String/)
+        repo.save(params)
+
+        persisted_value = repo.class.db.where(name: name).first[:value]
+        expect(JSON.parse(persisted_value)).to include(JSON.parse(credentials.to_s))
       end
     end
   end
