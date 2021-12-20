@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import InputsModal from '../InputsModal';
 import { RunnableType, TestInput } from 'models/testSuiteModels';
+import ThemeProvider from 'components/ThemeProvider';
 
 const hideModalMock = jest.fn();
 const createTestRunMock = jest.fn();
@@ -22,14 +23,16 @@ const testInputs: TestInput[] = [
 
 test('Input modal not visible if visibility set to false', () => {
   render(
-    <InputsModal
-      hideModal={hideModalMock}
-      createTestRun={createTestRunMock}
-      modalVisible={false}
-      runnableType={RunnableType.TestGroup}
-      runnableId={'test group id'}
-      inputs={testInputs}
-    />
+    <ThemeProvider>
+      <InputsModal
+        hideModal={hideModalMock}
+        createTestRun={createTestRunMock}
+        modalVisible={false}
+        runnableType={RunnableType.TestGroup}
+        runnableId={'test group id'}
+        inputs={testInputs}
+      />
+    </ThemeProvider>
   );
   const titleText = screen.queryByText('Test Inputs');
   expect(titleText).toBeNull();
@@ -37,14 +40,16 @@ test('Input modal not visible if visibility set to false', () => {
 
 test('Modal visible and inputs are shown', () => {
   render(
-    <InputsModal
-      hideModal={hideModalMock}
-      createTestRun={createTestRunMock}
-      modalVisible={true}
-      runnableType={RunnableType.TestGroup}
-      runnableId={'test group id'}
-      inputs={testInputs}
-    />
+    <ThemeProvider>
+      <InputsModal
+        hideModal={hideModalMock}
+        createTestRun={createTestRunMock}
+        modalVisible={true}
+        runnableType={RunnableType.TestGroup}
+        runnableId={'test group id'}
+        inputs={testInputs}
+      />
+    </ThemeProvider>
   );
 
   const titleText = screen.getByText('Test Inputs');
@@ -63,14 +68,16 @@ test('Modal visible and inputs are shown', () => {
 
 test('Pressing cancel hides the modal', () => {
   render(
-    <InputsModal
-      hideModal={hideModalMock}
-      createTestRun={createTestRunMock}
-      modalVisible={true}
-      runnableType={RunnableType.TestGroup}
-      runnableId={'test group id'}
-      inputs={testInputs}
-    />
+    <ThemeProvider>
+      <InputsModal
+        hideModal={hideModalMock}
+        createTestRun={createTestRunMock}
+        modalVisible={true}
+        runnableType={RunnableType.TestGroup}
+        runnableId={'test group id'}
+        inputs={testInputs}
+      />
+    </ThemeProvider>
   );
 
   const cancelButton = screen.getByTestId('cancel-button');
