@@ -50,7 +50,6 @@ const InputsModal: FC<InputsModalProps> = ({
       inputs
         .filter(input => inputsMap.has(input.name))
         .map(input => ({ name: input.name, value: inputsMap.get(input.name), type: input.type }))
-    debugger;
     createTestRun(runnableType, runnableId, inputs_with_values);
     hideModal();
   }
