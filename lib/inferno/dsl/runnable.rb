@@ -233,7 +233,7 @@ module Inferno
       # @option input_definition [String] :default The default value for the input
       # @option input_definition [Boolean] :optional Set to true to not require input for test execution
       # @option input_definition [Hash] :options Possible input option formats based on input type
-      #   @option options [Array] :list_options Array of options for input formats that require a list of possible values
+      # @option options [Array] :list_options Array of options for input formats that require a list of possible values
       # @return [void]
       # @example
       #   input :patientid, title: 'Patient ID', description: 'The ID of the patient being searched for',
