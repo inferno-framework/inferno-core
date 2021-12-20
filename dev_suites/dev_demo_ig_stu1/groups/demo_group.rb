@@ -252,17 +252,19 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
             title: 'Radio Group Input Example',
             type: 'radio',
             optional: true,
-            inputOptions: [{
-              id: 'label1',
-              label: 'Label 1',
-              value: 'value1'
-            }, {
-              id: 'label2',
-              label: 'Label 2',
-              value: 'value2'
-            }]
+            options: {
+              list_options: [
+                {
+                  label: 'Label 1',
+                  value: 'value1'
+                }, {
+                  label: 'Label 2',
+                  value: 'value2'
+                }
+              ]
+            }
 
-      run { info "Received the following 'radio' variable: '#{radio}''" }
+      run { info "Received the following 'radio' variable: '#{radio}'" }
     end
 
     test 'locked input' do

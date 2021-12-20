@@ -47,11 +47,12 @@ export interface TestInput {
   default?: string;
   optional?: boolean;
   locked?: boolean;
-  inputOptions?: InputOption[];
+  options?: {
+    list_options?: InputOption[];
+  };
 }
 
 export interface InputOption {
-  id: string;
   label: string;
   value: string | number | boolean;
 }
