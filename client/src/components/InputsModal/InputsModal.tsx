@@ -99,7 +99,7 @@ const InputsModal: FC<InputsModalProps> = ({
   });
 
   return (
-    <Dialog open={modalVisible} onClose={() => hideModal()} fullWidth={true} maxWidth="sm">
+    <Dialog open={modalVisible} onClose={hideModal} fullWidth maxWidth="sm">
       <DialogTitle>Test Inputs</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -108,10 +108,10 @@ const InputsModal: FC<InputsModalProps> = ({
         <List>{inputFields}</List>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={() => hideModal()} data-testid="cancel-button">
+        <Button color="primary" onClick={hideModal} data-testid="cancel-button">
           Cancel
         </Button>
-        <Button color="primary" onClick={() => submitClicked()} disabled={missingRequiredInput}>
+        <Button color="primary" onClick={submitClicked} disabled={missingRequiredInput}>
           Submit
         </Button>
       </DialogActions>
