@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :result, class: 'Inferno::Entities::Result' do
     transient do
       runnable { test_run.runnable.reference_hash }
-      test_run
+      test_run { repo_create(:test_run) }
       test_session { test_run.test_session }
       message_count { 0 }
       request_count { 0 }
@@ -23,7 +23,7 @@ FactoryBot.define do
     before(:create) do |instance, evaluator|
       instance.instance_variable_set(
         :@requests,
-        repo_create_list(:request, evaluator.request_count, result_id: instance.id)
+        build_list(:request, evaluator.request_count, result: instance)
       )
     end
 
