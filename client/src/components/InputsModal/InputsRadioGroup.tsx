@@ -60,6 +60,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
               value={inputOption.value}
               control={<Radio size="small" />}
               label={inputOption.label}
+              key={inputOption.id}
             />
           ))}
         </RadioGroup>
