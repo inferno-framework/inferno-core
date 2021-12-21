@@ -11,81 +11,81 @@ Sequel.migration do
     # end
 
     create_table :test_sessions do
-      column :id, String, primary_key: true, null: false
-      column :test_suite_id, String
+      column :id, String, primary_key: true, null: false, size: 36
+      column :test_suite_id, String, size: 255
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
     end
 
     create_table :test_runs do
-      column :id, String, primary_key: true, null: false
-      column :status, String
-      foreign_key :test_session_id, :test_sessions, index: true, type: String
+      column :id, String, primary_key: true, null: false, size: 36
+      column :status, String, size: 255
+      foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 36, key: [:id]
       index [:test_session_id, :status] # Searching by unfinished test runs seems like it will be a likely query
 
-      column :test_suite_id, String, index: true
-      column :test_group_id, String, index: true
-      column :test_id, String, index: true
+      column :test_suite_id, String, index: true, size: 255
+      column :test_group_id, String, index: true, size: 255
+      column :test_id, String, index: true, size: 255
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
     end
 
     create_table :test_run_inputs do
-      column :id, String, primary_key: true, null: false
-      foreign_key :test_run_id, :test_runs, index: true, type: String
-      column :test_input_id, String
-      column :value, String
+      column :id, String, primary_key: true, null: false, size: 36
+      foreign_key :test_run_id, :test_runs, index: true, type: String, key: [:id]
+      column :test_input_id, String, size: 255
+      column :value, String, text: true
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
     end
 
     create_table :results do
-      column :id, String, primary_key: true, null: false
+      column :id, String, primary_key: true, null: false, size: 36
 
-      foreign_key :test_run_id, :test_runs, index: true, type: String
-      foreign_key :test_session_id, :test_sessions, index: true, type: String
+      foreign_key :test_run_id, :test_runs, index: true, type: String, size: 36, key: [:id]
+      foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 36, key: [:id]
 
-      column :result, String
-      column :result_message, String
+      column :result, String, size: 255
+      column :result_message, String, text: true
 
-      column :test_suite_id, String
-      column :test_group_id, String
-      column :test_id, String
+      column :test_suite_id, String, size: 255
+      column :test_group_id, String, size: 255
+      column :test_id, String, size: 255
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
     end
 
     create_table :result_inputs do
-      column :id, String, primary_key: true, null: false
-      foreign_key :result_id, :results, index: true, type: String
-      column :test_input_id, String
-      column :value, String
+      column :id, String, primary_key: true, null: false, size: 36
+      foreign_key :result_id, :results, index: true, type: String, size: 36, key: [:id]
+      column :test_input_id, String, size: 255
+      column :value, String, text: true
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
     end
 
     create_table :result_outputs do
-      column :id, String, primary_key: true, null: false
-      foreign_key :result_id, :results, index: true, type: String
-      column :test_output_id, String
-      column :value, String
+      column :id, String, primary_key: true, null: false, size: 36
+      foreign_key :result_id, :results, index: true, type: String, size: 36, key: [:id]
+      column :test_output_id, String, size: 255
+      column :value, String, text: true
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
     end
 
     create_table :result_prompt_values do
-      column :id, String, primary_key: true, null: false
+      column :id, String, primary_key: true, null: false, size: 36
 
-      foreign_key :result_id, :results, index: true, type: String
+      foreign_key :result_id, :results, index: true, type: String, size: 36, key: [:id]
 
-      column :test_prompt_id, String, null: false
-      column :value, String, null: false
+      column :test_prompt_id, String, null: false, size: 255
+      column :value, String, null: false, text: true
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
@@ -93,10 +93,10 @@ Sequel.migration do
 
     create_table :messages do
       primary_key :index
-      column :id, String, index: true, null: false
-      foreign_key :result_id, :results, index: true, type: String
-      column :type, String
-      column :message, String
+      column :id, String, index: true, null: false, size: 36
+      foreign_key :result_id, :results, index: true, type: String, size: 36, key: [:id]
+      column :type, String, size: 255
+      column :message, String, text: true
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
@@ -104,40 +104,41 @@ Sequel.migration do
 
     create_table :requests do
       primary_key :index
-      column :id, String, index: true, null: false
-      column :verb, String
-      column :url, String
-      column :direction, String
+      column :id, String, null: false, size: 36
+      column :verb, String, size: 255
+      column :url, String, text: true
+      column :direction, String, size: 255
       column :status, Integer
-      column :name, String
+      column :name, String, size: 255
       column :request_body, String, text: true
       column :response_body, String, text: true # It would be nice if we could store this on disk
+      index [:id], unique: true
 
       # Requires requests to be a part of tests now.
-      foreign_key :result_id, :results, index: true, type: String
-      foreign_key :test_session_id, :test_sessions, index: true, type: String
-      index [:test_session_id, :name], concurrently: true
+      foreign_key :result_id, :results, index: true, type: String, size: 36, key: [:id]
+      foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 36, key: [:id]
+      index [:test_session_id, :name]
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
     end
 
     create_table :headers do
-      column :id, String, index: true, null: false
-      foreign_key :request_id, :requests, index: true, type: String
-      column :type, String # request / response
-      column :name, String
-      column :value, String
+      column :id, String, index: true, null: false, size: 36
+      foreign_key :request_id, :requests, index: true, type: Integer, key: [:index]
+      column :type, String, size: 255 # request / response
+      column :name, String, size: 255
+      column :value, String, text: true
 
       column :created_at, DateTime, null: false
       column :updated_at, DateTime, null: false
     end
 
     create_table :session_data do
-      column :id, String, index: true, null: false
-      foreign_key :test_session_id, :test_sessions, index: true, type: String
-      column :name, String
-      column :value, String
+      column :id, String, index: true, null: false, size: 255
+      foreign_key :test_session_id, :test_sessions, index: true, type: String, size: 36, key: [:id]
+      column :name, String, size: 255
+      column :value, String, text: true
       index [:test_session_id, :name]
     end
   end

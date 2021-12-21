@@ -31,6 +31,7 @@ RSpec.describe Inferno::Repositories::Results do
       status: 200,
       request_body: 'REQUEST_BODY',
       response_body: 'RESPONSE_BODY',
+      test_session_id: test_session.id,
       headers: [{ name: 'REQUEST_HEADER_NAME', value: 'REQUEST_HEADER_VALUE', type: 'request' },
                 { name: 'RESPONSE_HEADER_NAME', value: 'RESPONSE_HEADER_VALUE', type: 'response' }]
     }

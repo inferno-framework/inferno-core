@@ -1,5 +1,5 @@
 Sequel.migration do
   change do
-    add_index :results, [:test_run_id, :updated_at], concurrently: true
+    add_index :results, [:test_run_id, :updated_at]
   end
 end
