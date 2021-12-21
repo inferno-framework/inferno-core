@@ -59,16 +59,23 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         input :url
         input :patient_id
         input :creds, type: 'oauth_credentials' # this is json, but types probably should have their own classes...
-        output :creds
 
-        fhir_client do
+        fhir_client :creds_client do
           url :url
+          oauth_credentials :creds
+        end
 
-          # instead of this
-          # bearer JSON.parse(creds)['access_token']
+        test do
+          id :oauth_creds_use
+          title 'Patient read with OAuth creds'
+          input :patient_id, title: 'Patient ID'
 
-          # do something like this
-          # oauth_credentials :creds
+          run do
+            fhir_read(:patient, patient_id, client: :creds_client)
+
+            assert_response_status(200)
+            assert_resource_type(:patient)
+          end
         end
 
         test do
