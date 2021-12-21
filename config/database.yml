@@ -2,14 +2,15 @@ development:
   adapter: sqlite
   database: data/inferno_development.db
   max_connections: 10
-  # user:
-  # password:
-  # host:
-  # port:
+  # adapter: postgres
+  # database: inferno_development
+  # max_connections: 10
+  # user: postgres
+  # host: 127.0.0.1
 
 production:
   adapter: sqlite
-  database: ':memory:'
+  database: data/inferno_production.db
   max_connections: 10
 
 test:

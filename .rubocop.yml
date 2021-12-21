@@ -98,3 +98,7 @@ RSpec/NestedGroups:
 
 RSpec/NotToNot:
   EnforcedStyle: to_not
+
+# Following this rule's suggestions breaks postgres support
+Sequel/ConcurrentIndex:
+  Enabled: false

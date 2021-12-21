@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :request, class: 'Inferno::Entities::Request' do
     transient do
-      result
+      result { repo_create(:result, request_count: 0) }
       header_count { 2 }
     end
 
