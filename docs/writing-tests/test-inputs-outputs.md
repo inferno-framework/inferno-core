@@ -33,6 +33,8 @@ only the identifier is required:
   - `'radio'` - for a radio button singular selection field.
 - `default:` - default value for the input.
 - `optional:` - (**default: false**) whether the input is optional.
+- `options:` - possible input option formats based on input type.
+  - `list_options:` - options for input formats that require a list of possible values.
 
 ```ruby
 test do
