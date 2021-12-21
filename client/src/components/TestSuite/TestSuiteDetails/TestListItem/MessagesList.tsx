@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { Table, TableBody, TableRow, TableCell } from '@material-ui/core';
+import { Table, TableBody, TableRow, TableCell, Typography } from '@mui/material';
 import { Message } from 'models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 
@@ -17,7 +17,9 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
         return (
           <TableRow key={`msgRow-${index}`}>
             <TableCell>
-              <span className={styles.messageType}>{message.type}:</span>
+              <Typography variant="subtitle2" className={styles.messageType}>
+                {message.type}:
+              </Typography>
             </TableCell>
             <TableCell className={styles.messageMessage}>
               <ReactMarkdown>{message.message}</ReactMarkdown>
@@ -27,7 +29,9 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
       })
     ) : (
       <TableRow key={`msgRow-none`}>
-        <TableCell>None</TableCell>
+        <TableCell>
+          <Typography variant="subtitle2">None</Typography>
+        </TableCell>
       </TableRow>
     );
 

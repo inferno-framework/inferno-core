@@ -1,8 +1,7 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC } from 'react';
 import useStyles from './styles';
 import {
   Box,
-  Chip,
   Collapse,
   Container,
   Divider,
@@ -12,16 +11,18 @@ import {
   Tab,
   Tabs,
   Tooltip,
-} from '@material-ui/core';
+  Badge,
+  Typography,
+} from '@mui/material';
 import { RunnableType, Test, Request } from 'models/testSuiteModels';
 import TabPanel from './TabPanel';
 import MessagesList from './MessagesList';
 import RequestsList from './RequestsList';
 import ResultIcon from '../ResultIcon';
-import PublicIcon from '@material-ui/icons/Public';
-import MailIcon from '@material-ui/icons/Mail';
-import ExpandLessIcon from '@material-ui/icons/ExpandLess';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import PublicIcon from '@mui/icons-material/Public';
+import MailIcon from '@mui/icons-material/Mail';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReactMarkdown from 'react-markdown';
 import TestRunButton from '../../TestRunButton/TestRunButton';
 
@@ -43,35 +44,37 @@ const TestListItem: FC<TestListItemProps> = ({
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
 
-  const messagesBadge =
-    test.result?.messages && test.result.messages.length > 0 ? (
-      <Tooltip className={styles.testBadge} title={`${test.result.messages.length} messages`}>
-        <Chip
-          variant="outlined"
-          label={test.result.messages.length}
-          avatar={<MailIcon />}
-          onClick={() => {
-            setPanelIndex(1);
-            setOpen(true);
-          }}
-        />
-      </Tooltip>
-    ) : null;
+  const messagesBadge = test.result?.messages && test.result.messages.length > 0 && (
+    <IconButton
+      className={styles.testBadge}
+      onClick={() => {
+        setPanelIndex(1);
+        setOpen(true);
+      }}
+    >
+      <Badge badgeContent={test.result.messages.length} color="primary">
+        <Tooltip title={`${test.result.messages.length} messages`}>
+          <MailIcon color="secondary" />
+        </Tooltip>
+      </Badge>
+    </IconButton>
+  );
 
-  const requestsBadge =
-    test.result?.requests && test.result.requests.length > 0 ? (
-      <Tooltip className={styles.testBadge} title={`${test.result.requests.length} http requests`}>
-        <Chip
-          variant="outlined"
-          label={test.result.requests.length}
-          avatar={<PublicIcon />}
-          onClick={() => {
-            setPanelIndex(2);
-            setOpen(true);
-          }}
-        />
-      </Tooltip>
-    ) : null;
+  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
+    <IconButton
+      className={styles.testBadge}
+      onClick={() => {
+        setPanelIndex(2);
+        setOpen(true);
+      }}
+    >
+      <Badge badgeContent={test.result.requests.length} color="primary">
+        <Tooltip title={`${test.result.requests.length} messages`}>
+          <PublicIcon color="secondary" />
+        </Tooltip>
+      </Badge>
+    </IconButton>
+  );
 
   const expandButton = open ? (
     <IconButton onClick={() => setOpen(false)} size="small">
@@ -91,27 +94,29 @@ const TestListItem: FC<TestListItemProps> = ({
     );
 
   return (
-    <Fragment>
+    <>
       <Box className={styles.listItem}>
         <ListItem>
-          <div className={styles.testIcon}>{<ResultIcon result={test.result} />}</div>
+          <div className={styles.testIcon}>
+            <ResultIcon result={test.result} />
+          </div>
           <ListItemText primary={test.title} />
           {messagesBadge}
           {requestsBadge}
-          {expandButton}
           <TestRunButton
             runnable={test}
             runTests={runTests}
             testRunInProgress={testRunInProgress}
           />
+          {expandButton}
         </ListItem>
-        {test.result?.result_message ? (
+        {test.result?.result_message && (
           <ReactMarkdown className={styles.resultMessageMarkdown}>
             {test.result.result_message}
           </ReactMarkdown>
-        ) : null}
+        )}
       </Box>
-      <Collapse in={open} timeout="auto" className={styles.collapsible} unmountOnExit>
+      <Collapse in={open} className={styles.collapsible} unmountOnExit>
         <Divider />
         <Tabs
           value={panelIndex}
@@ -127,8 +132,9 @@ const TestListItem: FC<TestListItemProps> = ({
         </Tabs>
         <Divider />
         <TabPanel currentPanelIndex={panelIndex} index={0}>
-          <Container className={styles.descriptionPanel}>{testDescription}</Container>
-          <Divider />
+          <Container className={styles.descriptionPanel}>
+            <Typography variant="subtitle2">{testDescription}</Typography>
+          </Container>
         </TabPanel>
         <TabPanel currentPanelIndex={panelIndex} index={1}>
           <MessagesList messages={test.result?.messages || []} />
@@ -141,7 +147,7 @@ const TestListItem: FC<TestListItemProps> = ({
           />
         </TabPanel>
       </Collapse>
-    </Fragment>
+    </>
   );
 };
 

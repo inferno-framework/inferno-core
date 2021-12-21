@@ -1,7 +1,9 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Test, TestGroup, TestSuite, RunnableType } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
+import ThemeProvider from 'components/ThemeProvider';
 
 const runTestsMock = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -94,7 +96,11 @@ const testSuiteTreeProps: TestSuiteTreeProps = {
 };
 
 test('Test tree renders', () => {
-  render(<TestSuiteTree {...testSuiteTreeProps}></TestSuiteTree>);
+  render(
+    <ThemeProvider>
+      <TestSuiteTree {...testSuiteTreeProps} />
+    </ThemeProvider>
+  );
   const treeTitle = screen.getByText(testSuiteTreeProps.testSuite.title);
   expect(treeTitle).toBeVisible();
   const sequence1Title = screen.getByText(sequence1.title);
@@ -108,7 +114,11 @@ test('Test tree renders', () => {
 });
 
 test('Individual tests are not shown by default', () => {
-  render(<TestSuiteTree {...testSuiteTreeProps}></TestSuiteTree>);
+  render(
+    <ThemeProvider>
+      <TestSuiteTree {...testSuiteTreeProps} />
+    </ThemeProvider>
+  );
   sequence1.tests.forEach((test) => {
     const testTitle = screen.queryByText(test.title);
     expect(testTitle).toBeNull();
@@ -116,21 +126,29 @@ test('Individual tests are not shown by default', () => {
 });
 
 test('Calls setSelectedRunnable when tree item is clicked', () => {
-  render(<TestSuiteTree {...testSuiteTreeProps}></TestSuiteTree>);
+  render(
+    <ThemeProvider>
+      <TestSuiteTree {...testSuiteTreeProps} />
+    </ThemeProvider>
+  );
   const testSuiteLabel = screen.getByTestId(`tiLabel-${testSuiteTreeProps.testSuite.id}`);
-  fireEvent.click(testSuiteLabel);
+  userEvent.click(testSuiteLabel);
 });
 
 test('Calls runTests when run button is clicked', () => {
-  render(<TestSuiteTree {...testSuiteTreeProps}></TestSuiteTree>);
+  render(
+    <ThemeProvider>
+      <TestSuiteTree {...testSuiteTreeProps} />
+    </ThemeProvider>
+  );
   const suiteRunButton = screen.getByTestId(`runButton-${testSuiteTreeProps.testSuite.id}`);
-  fireEvent.click(suiteRunButton);
+  userEvent.click(suiteRunButton);
   expect(runTestsMock).toHaveBeenCalledWith(
     RunnableType.TestSuite,
     testSuiteTreeProps.testSuite.id
   );
 
   const groupRunButton = screen.getByTestId(`runButton-${sequence1.id}`);
-  fireEvent.click(groupRunButton);
+  userEvent.click(groupRunButton);
   expect(runTestsMock).toHaveBeenCalledWith(RunnableType.TestGroup, sequence1.id);
 });

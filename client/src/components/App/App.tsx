@@ -1,18 +1,18 @@
 import React, { FC, useEffect } from 'react';
-import ThemeProvider from 'components/ThemeProvider';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { StyledEngineProvider } from '@mui/material/styles';
+import { postTestSessions } from 'api/TestSessionApi';
+import { getTestSuites } from 'api/TestSuitesApi';
 import Header from 'components/Header';
 import LandingPage from 'components/LandingPage';
-import { Container } from '@material-ui/core';
-import { Switch, Route, Redirect } from 'react-router-dom';
-import { TestSuite, TestSession } from 'models/testSuiteModels';
 import TestSessionWrapper from 'components/TestSuite/TestSessionWrapper';
-import { getTestSuites } from 'api/TestSuitesApi';
-import { postTestSessions } from 'api/TestSessionApi';
+import ThemeProvider from 'components/ThemeProvider';
+import { TestSession, TestSuite } from 'models/testSuiteModels';
 
 const App: FC<unknown> = () => {
   const [testSuites, setTestSuites] = React.useState<TestSuite[]>();
   const [testSession, setTestSession] = React.useState<TestSession>();
+
   useEffect(() => {
     getTestSuites()
       .then((testSuites: TestSuite[]) => {
@@ -38,13 +38,14 @@ const App: FC<unknown> = () => {
   }, [testSuites]);
 
   if (!testSuites || (testSuites.length == 1 && !testSession)) {
-    return <div></div>;
+    return <></>;
   }
+
   return (
     <Router>
-      <ThemeProvider>
-        <Header />
-        <Container maxWidth="lg">
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider>
+          <Header />
           <Switch>
             <Route exact path="/">
               {testSuites.length == 1 && testSession ? (
@@ -57,8 +58,8 @@ const App: FC<unknown> = () => {
               <TestSessionWrapper />
             </Route>
           </Switch>
-        </Container>
-      </ThemeProvider>
+        </ThemeProvider>
+      </StyledEngineProvider>
     </Router>
   );
 };

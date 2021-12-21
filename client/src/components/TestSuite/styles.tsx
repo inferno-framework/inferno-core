@@ -1,16 +1,21 @@
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
   },
+  contentContainer: {
+    flexGrow: 1,
+    margin: '24px 48px',
+  },
+  drawer: {
+    flexShrink: 0,
+    width: '400px',
+  },
   testSuiteMain: {
     display: 'flex',
-    marginTop: '50px',
-    paddingBottom: '50px',
-    '& > *': {
-      margin: '0 25px',
-    },
   },
   testSuitePanel: {
     flexBasis: '300px',

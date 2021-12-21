@@ -1,9 +1,9 @@
-import { Container, Paper } from '@material-ui/core';
+import { Container, Paper } from '@mui/material';
 import React, { FC } from 'react';
 import useStyles from './styles';
 
 export interface CodeBlockProps {
-  body: string | undefined;
+  body?: string | null;
 }
 
 const CodeBlock: FC<CodeBlockProps> = ({ body }) => {

@@ -1,13 +1,14 @@
-import { makeStyles, Theme } from '@material-ui/core/styles';
+// Necessary to override default z-index value of appbar
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+import { Theme } from '@mui/material/styles';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
-  header: {
-    color: theme.palette.primary.main,
-    height: '4em',
-    padding: '0.25em 0.25em',
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: theme.palette.common.white,
+  appbar: {
+    zIndex: `${theme.zIndex.drawer + 1} !important` as any,
   },
   logo: {
     objectFit: 'contain',

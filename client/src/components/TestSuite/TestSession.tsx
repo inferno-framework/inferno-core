@@ -11,6 +11,7 @@ import {
   Request,
   TestOutput,
 } from 'models/testSuiteModels';
+import ActionModal from 'components/ActionModal/ActionModal';
 import InputsModal from 'components/InputsModal/InputsModal';
 import useStyles from './styles';
 import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
@@ -19,6 +20,7 @@ import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
 import { getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
+import { Drawer, Toolbar, Box } from '@mui/material';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -76,7 +78,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 }) => {
   const styles = useStyles();
   const { test_suite, id } = testSession;
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [inputModalVisible, setInputModalVisible] = React.useState(false);
+  const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
   const [inputs, setInputs] = React.useState<TestInput[]>([]);
   const [runnableType, setRunnableType] = React.useState<RunnableType>(RunnableType.TestSuite);
   const [runnableId, setRunnableId] = React.useState<string>('');
@@ -109,6 +112,19 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   }
 
+  useEffect(() => {
+    let waitingTestId = null;
+    if (testRun?.status === 'waiting') {
+      resultsMap.forEach((result) => {
+        if (result.test_id && result.result === 'wait') {
+          waitingTestId = result.test_id;
+        }
+      });
+    }
+
+    setWaitingTestId(waitingTestId);
+  }, [resultsMap]);
+
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
   const location = useLocation();
   let selectedRunnable = location.hash.replace('#', '');
@@ -120,7 +136,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     setInputs(inputs);
     setRunnableType(runnableType);
     setRunnableId(runnableId);
-    setModalVisible(true);
+    setInputModalVisible(true);
   }
 
   function latestResult(results: Result[] | null | undefined): Result | null {
@@ -239,36 +255,44 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     );
   }
 
-  let detailsPanel: JSX.Element = <div>error</div>;
-  if (runnableMap.get(selectedRunnable)) {
-    detailsPanel = (
-      <TestSuiteDetailsPanel
-        runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
-        runTests={runTests}
-        updateRequest={updateRequest}
-        testRunInProgresss={testRunNeedsProgressBar(testRun)}
-      />
-    );
-  }
   return (
-    <div className={styles.testSuiteMain}>
+    <Box className={styles.testSuiteMain}>
       {testRunProgressBar()}
-      <TestSuiteTreeComponent
-        testSuite={test_suite}
-        runTests={runTests}
-        selectedRunnable={selectedRunnable}
-        testRunInProgress={testRunNeedsProgressBar(testRun)}
-      />
-      {detailsPanel}
-      <InputsModal
-        hideModal={() => setModalVisible(false)}
-        createTestRun={createTestRun}
-        modalVisible={modalVisible}
-        runnableType={runnableType}
-        runnableId={runnableId}
-        inputs={inputs}
-      />
-    </div>
+      <Drawer variant="permanent" anchor="left" className={styles.drawer}>
+        <Toolbar />
+        <TestSuiteTreeComponent
+          testSuite={test_suite}
+          runTests={runTests}
+          selectedRunnable={selectedRunnable}
+          testRunInProgress={testRunNeedsProgressBar(testRun)}
+        />
+      </Drawer>
+      <Box className={styles.contentContainer}>
+        {runnableMap.get(selectedRunnable) ? (
+          <TestSuiteDetailsPanel
+            runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
+            runTests={runTests}
+            updateRequest={updateRequest}
+            testRunInProgresss={testRunNeedsProgressBar(testRun)}
+          />
+        ) : (
+          <div>error</div>
+        )}
+        <InputsModal
+          hideModal={() => setInputModalVisible(false)}
+          createTestRun={createTestRun}
+          modalVisible={inputModalVisible}
+          runnableType={runnableType}
+          runnableId={runnableId}
+          inputs={inputs}
+        />
+        <ActionModal
+          cancelTest={() => alert('TODO: CANCEL TEST')}
+          message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
+          modalVisible={waitingTestId != null}
+        />
+      </Box>
+    </Box>
   );
 };
 

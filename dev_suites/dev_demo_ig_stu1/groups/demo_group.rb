@@ -7,7 +7,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
     description %(
     # This is a markdown header
-    **Inferno** [github](https://github.com/inferno-community/inferno-core)
+    **Inferno** [github](https://github.com/inferno-framework/inferno-core)
 
     )
 
@@ -19,6 +19,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
     input :url, title: 'URL', description: 'Insert url of FHIR server', default: 'https://inferno.healthit.gov/reference-server/r4'
     input :patient_id, title: 'Patient ID', default: '85'
+    input :bearer_token, optional: true, default: 'SAMPLE_TOKEN'
 
     output :observation_id,
            :encounter_id,

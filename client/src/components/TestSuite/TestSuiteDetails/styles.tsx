@@ -1,13 +1,10 @@
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
-  },
-  testSuiteDetailsPanel: {
-    flexGrow: 3,
-    height: 'fit-content',
-    width: '750px',
   },
   testIcon: {
     minWidth: '30px',

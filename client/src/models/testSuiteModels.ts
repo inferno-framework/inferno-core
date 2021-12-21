@@ -17,8 +17,8 @@ export type Request = {
   verb: string;
   request_headers?: RequestHeader[];
   response_headers?: RequestHeader[];
-  request_body?: string;
-  response_body?: string;
+  request_body?: string | null;
+  response_body?: string | null;
   result_id: string;
 };
 
@@ -70,19 +70,21 @@ export interface TestGroup {
   test_groups: TestGroup[];
   inputs: TestInput[];
   outputs: TestOutput[];
-  result?: Result;
   tests: Test[];
-  description?: string;
+  result?: Result;
+  description?: string | null;
   run_as_group?: boolean;
   user_runnable?: boolean;
+  test_count?: number;
 }
 
 export interface TestSuite {
   title: string;
   id: string;
+  description?: string | null;
   result?: Result;
+  test_count?: number;
   test_groups?: TestGroup[];
-  description?: string;
 }
 
 export interface TestSession {

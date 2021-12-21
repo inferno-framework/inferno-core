@@ -1,8 +1,8 @@
 import React, { FC, Fragment } from 'react';
 import { Result } from 'models/testSuiteModels';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import { Tooltip } from '@material-ui/core';
-import { green, red } from '@material-ui/core/colors';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { Tooltip } from '@mui/material';
+import { green, red, purple } from '@mui/material/colors';
 
 export interface CondensedResultIconProps {
   result?: Result;
@@ -51,7 +51,7 @@ const CondensedResultIcon: FC<CondensedResultIconProps> = ({ result }) => {
         return (
           <Tooltip title="error">
             <FiberManualRecordIcon
-              style={{ color: red[500], width: '0.5em', height: '0.5em' }}
+              style={{ color: purple[500], width: '0.5em', height: '0.5em' }}
               data-testid={`${result.id}-${result.result}`}
             />
           </Tooltip>

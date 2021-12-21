@@ -1,14 +1,13 @@
-import React, { FC, MouseEvent } from 'react';
+import React, { FC } from 'react';
 import { TestSuite, TestGroup, RunnableType } from 'models/testSuiteModels';
-import { Card, CardContent } from '@material-ui/core';
+import { CardContent, Box } from '@mui/material';
 import useStyles from './styles';
-import TreeView from '@material-ui/lab/TreeView';
-import TreeItem from '@material-ui/lab/TreeItem';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import TreeView from '@mui/lab/TreeView';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import CustomTreeItem from '../../_common/TreeItem';
 import TestGroupTreeItem from './TestGroupTreeItem';
 import TreeItemLabel from './TreeItemLabel';
-import { useHistory } from 'react-router-dom';
 
 export interface TestSuiteTreeProps {
   testSuite: TestSuite;
@@ -33,18 +32,12 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   testRunInProgress,
 }) => {
   const styles = useStyles();
-  const history = useHistory();
 
   const defaultExpanded: string[] = [testSuite.id];
   if (testSuite.test_groups) {
     addDefaultExpanded(testSuite.test_groups, defaultExpanded);
   }
   const [expanded, setExpanded] = React.useState(defaultExpanded);
-
-  function treeItemLabelClick(event: MouseEvent<Element>, id: string) {
-    event.preventDefault();
-    history.push(`#${id}`);
-  }
 
   // types aren't set in the library
   function nodeToggle(event: unknown, nodeIds: unknown) {
@@ -56,7 +49,6 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
       <TestGroupTreeItem
         key={testGroup.id}
         data-testid={`${testGroup.id}-treeitem`}
-        onLabelClick={treeItemLabelClick}
         testGroup={testGroup}
         runTests={runTests}
         testRunInProgress={testRunInProgress}
@@ -64,7 +56,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
     ));
 
     return (
-      <Card className={styles.testSuiteTreePanel} variant="outlined">
+      <Box className={styles.testSuiteTreePanel}>
         <CardContent>
           <TreeView
             defaultCollapseIcon={<ExpandMoreIcon />}
@@ -73,7 +65,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             expanded={expanded}
             selected={selectedRunnable}
           >
-            <TreeItem
+            <CustomTreeItem
               classes={{ content: styles.treeRoot }}
               nodeId={testSuite.id}
               label={
@@ -83,16 +75,18 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
                   testRunInProgress={testRunInProgress}
                 />
               }
-              onLabelClick={(event) => treeItemLabelClick(event, testSuite.id)}
+              // eslint-disable-next-line max-len
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+              ContentProps={{ testId: testSuite.id } as any}
             >
               {testGroupList}
-            </TreeItem>
+            </CustomTreeItem>
           </TreeView>
         </CardContent>
-      </Card>
+      </Box>
     );
   } else {
-    return <div>{testSuite.title}</div>;
+    return <Box>{testSuite.title}</Box>;
   }
 };
 

@@ -6,7 +6,7 @@ import {
   DialogContentText,
   DialogTitle,
   List,
-} from '@material-ui/core';
+} from '@mui/material';
 import { RunnableType, TestInput } from 'models/testSuiteModels';
 import React, { FC, useEffect } from 'react';
 import InputTextArea from './InputTextArea';
@@ -46,10 +46,14 @@ const InputsModal: FC<InputsModalProps> = ({
     return !input.optional && inputsMap.get(input.name)?.length == 0;
   });
   function submitClicked(): void {
-    const inputs_with_values =
-      inputs
-        .filter(input => inputsMap.has(input.name))
-        .map(input => ({ name: input.name, value: inputsMap.get(input.name), type: input.type }))
+    // const inputs_with_values =
+    //   inputs
+    //     .filter(input => inputsMap.has(input.name))
+    //     .map(input => ({ name: input.name, value: inputsMap.get(input.name), type: input.type }))
+    const inputs_with_values: TestInput[] = [];
+    inputsMap.forEach((input_value, input_name) => {
+      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
+    });
     createTestRun(runnableType, runnableId, inputs_with_values);
     hideModal();
   }
@@ -96,8 +100,9 @@ const InputsModal: FC<InputsModalProps> = ({
         );
     }
   });
+
   return (
-    <Dialog open={modalVisible} onClose={() => hideModal()} fullWidth={true} maxWidth="sm">
+    <Dialog open={modalVisible} onClose={hideModal} fullWidth maxWidth="sm">
       <DialogTitle>Test Inputs</DialogTitle>
       <DialogContent>
         <DialogContentText>
@@ -106,10 +111,10 @@ const InputsModal: FC<InputsModalProps> = ({
         <List>{inputFields}</List>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={() => hideModal()} data-testid="cancel-button">
+        <Button color="primary" onClick={hideModal} data-testid="cancel-button">
           Cancel
         </Button>
-        <Button color="primary" onClick={() => submitClicked()} disabled={missingRequiredInput}>
+        <Button color="primary" onClick={submitClicked} disabled={missingRequiredInput}>
           Submit
         </Button>
       </DialogActions>

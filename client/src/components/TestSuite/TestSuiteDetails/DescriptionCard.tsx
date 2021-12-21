@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { Card, Container, Divider } from '@material-ui/core';
+import { Card, Container, Divider } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 
 interface DescriptionCardProps {

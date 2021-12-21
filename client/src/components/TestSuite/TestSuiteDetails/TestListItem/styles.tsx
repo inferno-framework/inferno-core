@@ -1,8 +1,14 @@
-import { makeStyles, Theme } from '@material-ui/core/styles';
+import { Theme } from '@mui/material/styles';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
+  },
+  table: {
+    width: 'auto',
+    tableLayout: 'auto',
   },
   testIcon: {
     minWidth: '30px',
@@ -17,9 +23,10 @@ export default makeStyles((theme: Theme) => ({
   },
   messageMessage: {
     width: '90%',
+    padding: '0 !important',
   },
   testBadge: {
-    marginRight: '10px',
+    margin: '0 4px',
   },
   listItem: {
     borderBottom: '1px solid rgba(0,0,0,.12)',
@@ -28,8 +35,9 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: 'rgba(0,0,0,0.05)',
   },
   descriptionPanel: {
-    padding: '15px',
+    padding: '16px',
     overflow: 'auto',
+    borderBottom: '1px solid rgba(224, 224, 224, 1)',
   },
   resultMessageMarkdown: {
     '& > *': {
@@ -39,29 +47,15 @@ export default makeStyles((theme: Theme) => ({
     marginBottom: '15px',
     color: 'rgba(0,0,0,0.6)',
   },
-  requestRowItem: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  requestRow: {
-    display: 'flex',
-    textAlign: 'center',
-    height: '45px',
-    '& > *': {
-      display: 'flex',
-      alignItems: 'center',
-      margin: '10px',
-    },
-  },
   requestUrl: {
-    whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    flexGrow: 1,
-    '& > *': {
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-    },
+    maxHeight: '1.5em',
+    wordBreak: 'break-all',
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: '1',
+  },
+  requestUrlContainer: {
+    width: '100%',
   },
 }));

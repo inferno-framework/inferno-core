@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import useStyles from './styles';
 import { TestGroup, RunnableType, TestSuite, Request, Test } from 'models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
@@ -19,8 +18,6 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
   updateRequest,
   testRunInProgresss,
 }) => {
-  const styles = useStyles();
-
   let listItems: JSX.Element[] = [];
   if (runnable?.test_groups && runnable.test_groups.length > 0) {
     listItems = runnable.test_groups.map((testGroup: TestGroup) => {
@@ -53,12 +50,12 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
     ) : null;
 
   return (
-    <div className={styles.testSuiteDetailsPanel}>
+    <>
       <TestGroupCard runTests={runTests} runnable={runnable} testRunInProgress={testRunInProgresss}>
         {listItems}
       </TestGroupCard>
       {descriptionCard}
-    </div>
+    </>
   );
 };
 

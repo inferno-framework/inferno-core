@@ -1,6 +1,6 @@
 import React, { FC, Fragment } from 'react';
-import { Tooltip, IconButton } from '@material-ui/core';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import { Tooltip, IconButton } from '@mui/material';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
   TestGroup,
   RunnableType,
@@ -23,6 +23,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({ runTests, runnable, testRunInPr
       <div>
         <IconButton
           disabled={testRunInProgress}
+          color="secondary"
           edge="end"
           size="small"
           onClick={() => {

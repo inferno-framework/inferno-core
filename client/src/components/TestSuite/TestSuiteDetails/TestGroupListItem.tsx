@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
+import { useLocation } from 'react-router-dom';
 import useStyles from './styles';
-import { Link, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Link, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { RunnableType, TestGroup } from 'models/testSuiteModels';
-import FolderIcon from '@material-ui/icons/Folder';
+import FolderIcon from '@mui/icons-material/Folder';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 
@@ -18,6 +19,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   testRunInProgress,
 }) => {
   const styles = useStyles();
+  const location = useLocation();
+
   return (
     <ListItem className={styles.listItem}>
       <ListItemIcon>
@@ -25,7 +28,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       </ListItemIcon>
       <ListItemText
         primary={
-          <Link color="inherit" href={`#${testGroup.id}`}>
+          <Link color="inherit" href={`${location.pathname}#${testGroup.id}`} underline="hover">
             {testGroup.title}
           </Link>
         }

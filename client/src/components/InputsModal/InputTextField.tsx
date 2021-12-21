@@ -1,5 +1,5 @@
-import { ListItem, TextField } from '@material-ui/core';
-import LockIcon from '@material-ui/icons/Lock';
+import { ListItem, TextField } from '@mui/material';
+import LockIcon from '@mui/icons-material/Lock';
 import { TestInput } from 'models/testSuiteModels';
 import React, { FC, Fragment } from 'react';
 import useStyles from './styles';
@@ -19,9 +19,9 @@ const InputTextField: FC<InputTextFieldProps> = ({
 }) => {
   const styles = useStyles();
   const fieldLabelText = requirement.title || requirement.name;
-  const lockedIcon = requirement.locked ? (
+  const lockedIcon = requirement.locked && (
     <LockIcon fontSize="small" className={styles.lockedIcon} />
-  ) : null;
+  );
   const requiredLabel = !requirement.optional && !requirement.locked ? ' (required)' : '';
   const fieldLabel = (
     <Fragment>
@@ -35,8 +35,10 @@ const InputTextField: FC<InputTextFieldProps> = ({
     <ListItem disabled={requirement.locked}>
       <TextField
         disabled={requirement.locked}
+        required={!requirement.optional && !requirement.locked}
         id={`requirement${index}_input`}
         className={styles.inputField}
+        variant="standard"
         fullWidth
         label={fieldLabel}
         helperText={requirement.description}

@@ -69,15 +69,15 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @option options [Hash]  Input headers here - headers are optional and
-      #   must be entered as the last piece of input to this method
+      # @param headers [Hash] custom headers for this operation
       # @return [Inferno::Entities::Request]
-      def fhir_operation(path, body: nil, client: :default, name: nil, **options)
+      def fhir_operation(path, body: nil, client: :default, name: nil, headers: {}, **options)
         store_request_and_refresh_token(fhir_client(client), name) do
-          headers = fhir_client(client).fhir_headers
-          headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
-          headers.merge!(options[:headers]) if options[:headers].present?
-          fhir_client(client).send(:post, path, body, headers)
+          operation_headers = fhir_client(client).fhir_headers
+          operation_headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
+          operation_headers.merge!(headers) if headers.present?
+
+          fhir_client(client).send(:post, path, body, operation_headers)
         end
       end
 
@@ -86,7 +86,6 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @param _options [Hash] TODO
       # @return [Inferno::Entities::Request]
       def fhir_get_capability_statement(client: :default, name: nil, **_options)
         store_request_and_refresh_token(fhir_client(client), name) do
@@ -102,7 +101,6 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @param _options [Hash] TODO
       # @return [Inferno::Entities::Request]
       def fhir_read(resource_type, id, client: :default, name: nil, **_options)
         store_request_and_refresh_token(fhir_client(client), name) do
@@ -117,12 +115,18 @@ module Inferno
       # @param params [Hash] the search params
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @param _options [Hash] TODO
+      # @param search_method [Symbol] Use `:post` to search via POST
       # @return [Inferno::Entities::Request]
-      def fhir_search(resource_type, client: :default, params: {}, name: nil, **_options)
-        store_request_and_refresh_token(fhir_client(client), name) do
+      def fhir_search(resource_type, client: :default, params: {}, name: nil, search_method: :get, **_options)
+        search =
+          if search_method == :post
+            { body: params }
+          else
+            { parameters: params }
+          end
+          store_request_and_refresh_token(fhir_client(client), name) do
           fhir_client(client)
-            .search(fhir_class_from_resource_type(resource_type), search: { parameters: params })
+            .search(fhir_class_from_resource_type(resource_type), { search: search })
         end
       end
 

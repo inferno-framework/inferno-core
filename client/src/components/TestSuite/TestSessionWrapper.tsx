@@ -2,8 +2,8 @@ import React, { FC } from 'react';
 import { Result, TestOutput, TestRun, TestSession } from 'models/testSuiteModels';
 import TestSessionComponent from './TestSession';
 import { useParams } from 'react-router-dom';
-import Alert from '@material-ui/lab/Alert';
-import Backdrop from '@material-ui/core/Backdrop';
+import Alert from '@mui/material/Alert';
+import Backdrop from '@mui/material/Backdrop';
 import {
   getCurrentTestSessionResults,
   getLastTestRun,

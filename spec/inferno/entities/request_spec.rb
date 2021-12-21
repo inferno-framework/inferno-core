@@ -60,5 +60,17 @@ RSpec.describe Inferno::Entities::Request do
         end
       ).to eq(true)
     end
+
+    it 'correctly handles form encoded bodies' do
+      params = { _id: 'ABC' }
+      stub_request(:post, "#{url}/_search")
+        .to_return(status: 200)
+
+      response = FHIR::Client.new('http://example.com').search(FHIR::Patient, search: { body: params })
+
+      entity = described_class.from_fhir_client_reply(response, test_session_id: nil)
+
+      expect(entity.request_body).to eq(URI.encode_www_form(params))
+    end
   end
 end

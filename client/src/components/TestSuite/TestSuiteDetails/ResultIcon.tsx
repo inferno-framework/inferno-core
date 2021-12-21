@@ -1,13 +1,13 @@
 import React, { FC, Fragment } from 'react';
 import { Result } from 'models/testSuiteModels';
-import { Tooltip } from '@material-ui/core';
-import { green, red } from '@material-ui/core/colors';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import CancelIcon from '@material-ui/icons/Cancel';
-import ErrorIcon from '@material-ui/icons/Error';
-import { RedoOutlined } from '@material-ui/icons';
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import { Tooltip } from '@mui/material';
+import { green, red, purple } from '@mui/material/colors';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import ErrorIcon from '@mui/icons-material/Error';
+import { RedoOutlined } from '@mui/icons-material';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 export interface ResultIconProps {
   result?: Result;
 }
@@ -45,7 +45,10 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
       case 'error':
         return (
           <Tooltip title="error">
-            <ErrorIcon style={{ color: red[500] }} data-testid={`${result.id}-${result.result}`} />
+            <ErrorIcon
+              style={{ color: purple[500] }}
+              data-testid={`${result.id}-${result.result}`}
+            />
           </Tooltip>
         );
       case 'wait':
