@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { RunnableType, TestInput } from 'models/testSuiteModels';
 import React, { FC, useEffect } from 'react';
+import InputRadioGroup from './InputsRadioGroup';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 
@@ -67,6 +68,16 @@ const InputsModal: FC<InputsModalProps> = ({
       case 'textarea':
         return (
           <InputTextArea
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={setInputsMap}
+            key={`input-${index}`}
+          />
+        );
+      case 'radio':
+        return (
+          <InputRadioGroup
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}

@@ -509,7 +509,7 @@ definitions:
         readOnly: true
       user_runnable:
         type: "boolean"
-        readonly: true
+        readOnly: true
   Test:
     type: "object"
     required:
@@ -528,7 +528,7 @@ definitions:
           $ref: "#/definitions/Input"
       user_runnable:
         type: "boolean"
-        readonly: true
+        readOnly: true
   Input:
     type: "object"
     required:
@@ -550,6 +550,21 @@ definitions:
       type:
         type: "string"
         readOnly: true
+      options:
+        type: "array"
+        readOnly: true
+        items:
+          type: "object"
+          properties:
+            list_options:
+              type: "array"
+              items:
+                type: "object"
+                properties:
+                  label:
+                    type: "string"
+                  value:
+                    type: "string"
   SessionData:
     type: "object"
     required:
