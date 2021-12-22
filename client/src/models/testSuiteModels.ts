@@ -54,7 +54,7 @@ export interface TestInput {
 
 export interface InputOption {
   label: string;
-  value: string | number | boolean;
+  value: string;
 }
 
 export interface TestOutput {

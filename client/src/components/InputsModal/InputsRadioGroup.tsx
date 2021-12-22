@@ -26,7 +26,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
 }) => {
   const styles = useStyles();
   const [value, setValue] = React.useState(
-    inputsMap.get(requirement.name) || requirement.default || null
+    inputsMap.get(requirement.name) || requirement.default || ''
   );
   const fieldLabelText = requirement.title || requirement.name;
   const lockedIcon = requirement.locked && (
