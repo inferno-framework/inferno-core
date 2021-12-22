@@ -17,6 +17,15 @@ export interface InputOAuthField {
   label?: string | ReactJSXElement;
 }
 
+export interface InputOAuthCredentials {
+  access_token: string;
+  refresh_token: string;
+  expires_in: string;
+  client_id: string;
+  client_secret: string;
+  token_url: string;
+}
+
 const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   requirement,
   index,
@@ -37,8 +46,10 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     client_secret: '',
     token_url: '',
   });
-  const oAuthCredentials = JSON.parse(inputsMap.get(requirement.name) || template);
-  const showRefreshDetails = oAuthCredentials['refresh_token'].length;
+  const oAuthCredentials = JSON.parse(
+    inputsMap.get(requirement.name) || template
+  ) as InputOAuthCredentials;
+  const showRefreshDetails = oAuthCredentials['refresh_token'].length > 0;
   const fieldLabel = (
     <Fragment>
       {fieldLabelText}
@@ -79,6 +90,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     return refreshFields.map((field) => oAuthField(field));
   };
 
+  console.log(showRefreshDetails);
   return (
     <>
       {oAuthField({ name: 'access_token', label: fieldLabel })}
