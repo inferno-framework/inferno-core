@@ -12,18 +12,23 @@ export interface InputOAuthCredentialsProps {
   setInputsMap: (map: Map<string, string>) => void;
 }
 
-export interface InputOAuthField {
-  name: string;
-  label?: string | ReactJSXElement;
+// Necessary to prevent "implicit any" errors when indexing objects of type InputOAuthCredentials
+export interface InputOAuthCredentialsType {
+  [key: string]: string;
 }
 
-export interface InputOAuthCredentials {
+export interface InputOAuthCredentials extends InputOAuthCredentialsType {
   access_token: string;
   refresh_token: string;
   expires_in: string;
   client_id: string;
   client_secret: string;
   token_url: string;
+}
+
+export interface InputOAuthField {
+  name: string;
+  label?: string | ReactJSXElement;
 }
 
 const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
