@@ -25,6 +25,9 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   setInputsMap,
 }) => {
   const styles = useStyles();
+  const [value, setValue] = React.useState(
+    inputsMap.get(requirement.name) || requirement.default || null
+  );
   const fieldLabelText = requirement.title || requirement.name;
   const lockedIcon = requirement.locked && (
     <LockIcon fontSize="small" className={styles.lockedIcon} />
@@ -38,9 +41,22 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
     </Fragment>
   );
 
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setValue(value);
+    inputsMap.set(requirement.name, value);
+    setInputsMap(new Map(inputsMap));
+  };
+
   return (
     <ListItem disabled={requirement.locked}>
-      <FormControl component="fieldset" fullWidth id={`requirement${index}_input`}>
+      <FormControl
+        component="fieldset"
+        id={`requirement${index}_input`}
+        required={!requirement.optional && !requirement.locked}
+        disabled={requirement.locked}
+        fullWidth
+      >
         <InputLabel variant="standard" shrink className={styles.inputLabel}>
           {fieldLabel}
         </InputLabel>
@@ -49,11 +65,8 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
           aria-label={`${requirement.name}-radio-buttons-group`}
           name={`${requirement.name}-radio-buttons-group`}
           className={styles.radioGroup}
-          onChange={(event) => {
-            const value = event.target.value;
-            inputsMap.set(requirement.name, value);
-            setInputsMap(new Map(inputsMap));
-          }}
+          value={value}
+          onChange={handleChange}
         >
           {requirement.options?.list_options?.map((option, i) => (
             <FormControlLabel
