@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { RunnableType, TestInput } from 'models/testSuiteModels';
 import React, { FC, useEffect } from 'react';
+import InputRadioGroup from './InputsRadioGroup';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import InputOAuthCredentials from './InputOAuthCredentials';
@@ -45,11 +46,8 @@ const InputsModal: FC<InputsModalProps> = ({
   const missingRequiredInput = inputs.some((input: TestInput) => {
     return !input.optional && inputsMap.get(input.name)?.length == 0;
   });
+
   function submitClicked(): void {
-    // const inputs_with_values =
-    //   inputs
-    //     .filter(input => inputsMap.has(input.name))
-    //     .map(input => ({ name: input.name, value: inputsMap.get(input.name), type: input.type }))
     const inputs_with_values: TestInput[] = [];
     inputsMap.forEach((input_value, input_name) => {
       inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
@@ -61,7 +59,7 @@ const InputsModal: FC<InputsModalProps> = ({
   useEffect(() => {
     inputsMap.clear();
     inputs.forEach((requirement: TestInput) => {
-      inputsMap.set(requirement.name, requirement.value || '');
+      inputsMap.set(requirement.name, requirement.value || (requirement.default as string) || '');
     });
     setInputsMap(new Map(inputsMap));
   }, [inputs]);
@@ -81,6 +79,16 @@ const InputsModal: FC<InputsModalProps> = ({
       case 'textarea':
         return (
           <InputTextArea
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={setInputsMap}
+            key={`input-${index}`}
+          />
+        );
+      case 'radio':
+        return (
+          <InputRadioGroup
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}

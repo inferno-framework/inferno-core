@@ -42,11 +42,19 @@ export interface TestInput {
   name: string;
   title?: string;
   value?: string;
-  type?: 'text' | 'textarea' | 'oauth_credentials';
+  type?: 'text' | 'textarea' | 'oauth_credentials' | 'radio';
   description?: string;
   default?: string;
   optional?: boolean;
   locked?: boolean;
+  options?: {
+    list_options?: InputOption[];
+  };
+}
+
+export interface InputOption {
+  label: string;
+  value: string;
 }
 
 export interface TestOutput {

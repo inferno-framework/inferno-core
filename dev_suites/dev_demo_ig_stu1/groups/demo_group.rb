@@ -248,6 +248,27 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       run { info "Received the following 'textarea' variable: '#{textarea}''" }
     end
 
+    test 'radio group input' do
+      input :radio,
+            title: 'Radio Group Input Example',
+            type: 'radio',
+            optional: false,
+            default: 'value1',
+            options: {
+              list_options: [
+                {
+                  label: 'Label 1',
+                  value: 'value1'
+                }, {
+                  label: 'Label 2',
+                  value: 'value2'
+                }
+              ]
+            }
+
+      run { info "Received the following 'radio' variable: '#{radio}'" }
+    end
+
     test 'locked input' do
       input :patient_name, title: 'Patient Name', description: 'Example of locked, empty input field',
                            locked: true, optional: true

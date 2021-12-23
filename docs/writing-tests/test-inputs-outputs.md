@@ -27,11 +27,14 @@ only the identifier is required:
 - `title:` -  a title which is displayed in the UI.
 - `description:` - a description which is displayed in the UI.
 - `type:` - controls the type of html input element used in the UI. Currently
-  two possible values:
+  three possible values:
   - `'text'` - (**default**) a regular input field.
   - `'textarea'` - for a text area input field.
+  - `'radio'` - for a radio button singular selection field.
 - `default:` - default value for the input.
 - `optional:` - (**default: false**) whether the input is optional.
+- `options:` - possible input option formats based on input type.
+  - `list_options:` - options for input formats that require a list of possible values.
 
 ```ruby
 test do
