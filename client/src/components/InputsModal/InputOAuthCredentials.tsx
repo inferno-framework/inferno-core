@@ -1,6 +1,6 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { ListItem, TextField } from '@material-ui/core';
-import LockIcon from '@material-ui/icons/Lock';
+import { ListItem, TextField } from '@mui/material';
+import LockIcon from '@mui/icons-material/Lock';
 import { TestInput } from 'models/testSuiteModels';
 import React, { FC, Fragment } from 'react';
 import useStyles from './styles';
@@ -54,7 +54,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   const oAuthCredentials = JSON.parse(
     inputsMap.get(requirement.name) || template
   ) as InputOAuthCredentials;
-  const showRefreshDetails = oAuthCredentials['refresh_token'].length > 0;
+  const showRefreshDetails = oAuthCredentials.refresh_token.length > 0;
   const fieldLabel = (
     <Fragment>
       {fieldLabelText}
@@ -68,11 +68,12 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
       <TextField
         disabled={requirement.locked}
         id={`requirement${index}_${field.name}`}
-        className={styles.inputField}
-        fullWidth
         label={field.label || field.name}
         helperText={requirement.description}
         value={oAuthCredentials[field.name]}
+        className={styles.inputField}
+        variant="standard"
+        fullWidth
         onChange={(event) => {
           const value = event.target.value;
           inputsMap.set(requirement.name, value);
