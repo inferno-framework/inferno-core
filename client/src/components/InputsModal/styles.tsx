@@ -14,6 +14,10 @@ export default makeStyles((_theme: Theme) => ({
       color: 'rgba(0,0,0,0.85)',
     },
   },
+  inputLabel: {
+    fontWeight: 600,
+    color: 'rgba(0,0,0,0.85)',
+  },
   lockedIcon: {
     marginLeft: '5px',
     verticalAlign: 'text-bottom',

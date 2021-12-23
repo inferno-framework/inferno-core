@@ -1,5 +1,14 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { ListItem, TextField } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  InputLabel,
+  List,
+  ListItem,
+  TextField,
+} from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import { TestInput } from 'models/testSuiteModels';
 import React, { FC, Fragment } from 'react';
@@ -98,14 +107,30 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
 
   console.log(showRefreshDetails);
   return (
-    <>
-      {oAuthField({ name: 'access_token', label: fieldLabel })}
-      {oAuthField({
-        name: 'refresh_token',
-        label: 'Refresh Token (token will automatically refresh if available)',
-      })}
-      {showRefreshDetails && refreshDetails()}
-    </>
+    <ListItem>
+      <Card
+        variant="outlined"
+        sx={{ width: '100%', margin: '8px 0', borderColor: 'rgba(0,0,0,0.3)' }}
+      >
+        <CardContent>
+          <InputLabel
+            required={!requirement.optional && !requirement.locked}
+            className={styles.inputLabel}
+            shrink
+          >
+            {fieldLabel}
+          </InputLabel>
+          <List>
+            {oAuthField({ name: 'access_token', label: 'Bearer Token' })}
+            {oAuthField({
+              name: 'refresh_token',
+              label: 'Refresh Token (token will automatically refresh if available)',
+            })}
+            {showRefreshDetails && refreshDetails()}
+          </List>
+        </CardContent>
+      </Card>
+    </ListItem>
   );
 };
 
