@@ -71,7 +71,7 @@ module Inferno
       #   other tests
       # @param headers [Hash] custom headers for this operation
       # @return [Inferno::Entities::Request]
-      def fhir_operation(path, body: nil, client: :default, name: nil, headers: {}, **options)
+      def fhir_operation(path, body: nil, client: :default, name: nil, headers: {})
         store_request_and_refresh_token(fhir_client(client), name) do
           operation_headers = fhir_client(client).fhir_headers
           operation_headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
@@ -87,7 +87,7 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_get_capability_statement(client: :default, name: nil, **_options)
+      def fhir_get_capability_statement(client: :default, name: nil)
         store_request_and_refresh_token(fhir_client(client), name) do
           fhir_client(client).conformance_statement
           fhir_client(client).reply
@@ -102,7 +102,7 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_read(resource_type, id, client: :default, name: nil, **_options)
+      def fhir_read(resource_type, id, client: :default, name: nil)
         store_request_and_refresh_token(fhir_client(client), name) do
           fhir_client(client).read(fhir_class_from_resource_type(resource_type), id)
         end
@@ -117,14 +117,15 @@ module Inferno
       #   other tests
       # @param search_method [Symbol] Use `:post` to search via POST
       # @return [Inferno::Entities::Request]
-      def fhir_search(resource_type, client: :default, params: {}, name: nil, search_method: :get, **_options)
+      def fhir_search(resource_type, client: :default, params: {}, name: nil, search_method: :get)
         search =
           if search_method == :post
             { body: params }
           else
             { parameters: params }
           end
-          store_request_and_refresh_token(fhir_client(client), name) do
+
+        store_request_and_refresh_token(fhir_client(client), name) do
           fhir_client(client)
             .search(fhir_class_from_resource_type(resource_type), { search: search })
         end
