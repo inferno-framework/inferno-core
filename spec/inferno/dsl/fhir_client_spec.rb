@@ -293,21 +293,25 @@ RSpec.describe Inferno::DSL::FHIRClient do
   end
 
   describe '#fhir_search' do
-    context 'when performing a GET search' do
-      let(:stub_search_request) do
-        stub_request(:get, "#{base_url}/#{resource.resourceType}?patient=123")
-          .to_return(status: 200, body: bundle.to_json)
-      end
+    let(:stub_get_search_request) do
+      stub_request(:get, "#{base_url}/#{resource.resourceType}?patient=123")
+        .to_return(status: 200, body: bundle.to_json)
+    end
+    let(:stub_post_search_request) do
+      stub_request(:post, "#{base_url}/#{resource.resourceType}/_search")
+        .with(body: search_params)
+        .to_return(status: 200, body: bundle.to_json)
+    end
 
+    context 'when performing a GET search' do
       before do
-        setup_default_client
-        stub_search_request
+        stub_get_search_request
       end
 
       it 'performs a FHIR search' do
         group.fhir_search(resource.resourceType, params: { patient: 123 })
 
-        expect(stub_search_request).to have_been_made.once
+        expect(stub_get_search_request).to have_been_made.once
       end
 
       it 'returns an Inferno::Entities::Request' do
@@ -335,33 +339,28 @@ RSpec.describe Inferno::DSL::FHIRClient do
           group.fhir_search(resource.resourceType, client: :other_client, params: { patient: 123 })
 
           expect(other_request_stub).to have_been_made
-          expect(stub_search_request).to_not have_been_made
+          expect(stub_get_search_request).to_not have_been_made
         end
       end
     end
 
     context 'when performing a POST search' do
       let(:search_params) { { patient: '123' } }
-      let(:stub_search_request) do
-        stub_request(:post, "#{base_url}/#{resource.resourceType}/_search")
-          .with(body: search_params)
-          .to_return(status: 200, body: bundle.to_json)
-      end
 
       before do
-        setup_default_client
-        stub_search_request
+        stub_post_search_request
       end
 
       it 'performs a FHIR search' do
         group.fhir_search(resource.resourceType, params: search_params, search_method: :post)
 
-        expect(stub_search_request).to have_been_made.once
+        expect(stub_post_search_request).to have_been_made.once
       end
     end
 
     context 'with oauth_credentials' do
       it 'performs a refresh if the token is about to expire' do
+        stub_get_search_request
         client = group.fhir_client(:client_with_oauth_credentials)
         allow(client).to receive(:need_to_refresh?).and_return(true)
         allow(client).to receive(:able_to_refresh?).and_return(true)
@@ -369,7 +368,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
         group.fhir_search(resource.resourceType, params: { patient: 123 }, client: :client_with_oauth_credentials)
 
-        expect(stub_search_request).to have_been_made.once
+        expect(stub_get_search_request).to have_been_made.once
         expect(group).to have_received(:perform_refresh)
       end
     end
