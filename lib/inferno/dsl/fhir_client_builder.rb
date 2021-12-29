@@ -1,4 +1,5 @@
 require 'fhir_client'
+require_relative '../ext/fhir_client'
 
 module Inferno
   module DSL
@@ -15,6 +16,7 @@ module Inferno
           client.additional_headers = headers if headers
           client.default_json
           client.set_bearer_token bearer_token if bearer_token
+          oauth_credentials&.add_to_client(client)
         end
       end
 
@@ -45,6 +47,20 @@ module Inferno
             runnable.send(bearer_token)
           else
             bearer_token
+          end
+      end
+
+      # Define OAuth credentials for a client. These can allow a client to
+      # automatically refresh its access token when it expires.
+      #
+      # @param oauth_credentials [Inferno::DSL::OAuthCredentials, Symbol]
+      # @return [void]
+      def oauth_credentials(oauth_credentials = nil)
+        @oauth_credentials ||=
+          if oauth_credentials.is_a? Symbol
+            runnable.send(oauth_credentials)
+          else
+            oauth_credentials
           end
       end
 

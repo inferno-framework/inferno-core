@@ -7,6 +7,7 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
   let(:test_group_id) { test_suite.groups.first.id }
   let(:test_run) { repo_create(:test_run, runnable: { test_group_id: test_group_id }) }
   let(:test_session) { test_run.test_session }
+  let(:session_data_repo) { Inferno::Repositories::SessionData.new }
   let!(:result) do
     repo_create(:result, message_count: 1, test_run_id: test_run.id, test_session_id: test_session.id)
   end

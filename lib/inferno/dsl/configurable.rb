@@ -65,20 +65,23 @@ module Inferno
           inputs.dig(identifier, :name) || identifier
         end
 
+        def input_type(identifier)
+          inputs.dig(identifier, :type)
+        end
+
         ### Output Configuration ###
 
         def outputs
           configuration[:outputs] ||= {}
         end
 
-        def add_output(identifier)
-          return if output_config_exists?(identifier)
-
-          outputs[identifier] = default_output_config(identifier)
+        def add_output(identifier, new_config = {})
+          existing_config = output_config(identifier) || {}
+          outputs[identifier] = default_output_config(identifier).merge(existing_config, new_config)
         end
 
         def default_output_config(identifier)
-          { name: identifier }
+          { name: identifier, type: 'text' }
         end
 
         def output_config_exists?(identifier)
@@ -91,6 +94,10 @@ module Inferno
 
         def output_name(identifier)
           outputs.dig(identifier, :name) || identifier
+        end
+
+        def output_type(identifier)
+          outputs.dig(identifier, :type)
         end
 
         ### Request Configuration ###

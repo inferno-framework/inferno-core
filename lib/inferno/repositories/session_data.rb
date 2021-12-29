@@ -4,22 +4,33 @@ module Inferno
       def save(params)
         name = params[:name].to_s.downcase
         test_session_id = params[:test_session_id]
+
+        value = value_to_persist(params)
+
         db
           .insert_conflict(
             target: :id,
-            update: { value: params[:value] }
+            update: { value: value }
           ).insert(
             id: "#{test_session_id}_#{name}",
             name: name,
-            value: params[:value],
+            value: value,
             test_session_id: test_session_id
           )
       end
 
-      def load(test_session_id:, name:)
-        self.class::Model
-          .find(test_session_id: test_session_id, name: name.to_s.downcase)
-          &.value
+      def load(test_session_id:, name:, type: 'text')
+        raw_value =
+          self.class::Model
+            .find(test_session_id: test_session_id, name: name.to_s.downcase)
+            &.value
+
+        case type.to_s
+        when 'oauth_credentials'
+          DSL::OAuthCredentials.new(JSON.parse(raw_value))
+        else
+          raw_value
+        end
       end
 
       def get_all_from_session(test_session_id)
@@ -37,6 +48,29 @@ module Inferno
 
       def entity_class_name
         'SessionData'
+      end
+
+      def value_to_persist(params)
+        return nil if params[:value].blank?
+
+        case params[:type]&.to_s
+        when 'text', 'textarea'
+          params[:value].to_s
+        when 'oauth_credentials'
+          credentials =
+            if params[:value].is_a? String
+              DSL::OAuthCredentials.new(JSON.parse(params[:value]))
+            elsif !params[:value].is_a? DSL::OAuthCredentials
+              raise Exceptions::BadSessionDataType.new(params[:name], DSL::OAuthCredentials, params[:value].class)
+            else
+              params[:value]
+            end
+
+          credentials.name = params[:name]
+          credentials.to_s
+        else
+          raise Exceptions::UnknownSessionDataType, params
+        end
       end
 
       class Model < Sequel::Model(db)

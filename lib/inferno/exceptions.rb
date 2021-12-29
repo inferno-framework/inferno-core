@@ -62,5 +62,24 @@ module Inferno
         super('The chosen runnable must be run as part of a group')
       end
     end
+
+    class UnknownAttributeException < RuntimeError
+      def initialize(attributes, klass)
+        attributes_string = attributes.map { |attribute| "'#{attribute}'" }.join(', ')
+        super("Unknown attributes for #{klass.name}: #{attributes_string}")
+      end
+    end
+
+    class UnknownSessionDataType < RuntimeError
+      def initialize(output)
+        super("Unknown type '#{output[:type]}' for '#{output[:name]}'.")
+      end
+    end
+
+    class BadSessionDataType < RuntimeError
+      def initialize(name, expected_class, actual_class)
+        super("Expected '#{name}' to be a #{expected_class.name}, but found a #{actual_class.name}.")
+      end
+    end
   end
 end

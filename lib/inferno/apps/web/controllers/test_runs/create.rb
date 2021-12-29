@@ -33,7 +33,8 @@ module Inferno
               session_data_repo.save(
                 test_session_id: test_session.id,
                 name: input[:name],
-                value: input[:value]
+                value: input[:value],
+                type: input[:type]
               )
             end
 

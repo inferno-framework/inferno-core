@@ -18,7 +18,7 @@ RSpec.describe Inferno::TestRunner do
   describe 'when running demo group' do
     let(:base_url) { 'http://hapi.fhir.org/baseR4' }
     let(:patient_id) { 1215072 }
-    let(:group) { Inferno::Repositories::TestSuites.new.find('demo').groups.first.groups.first }
+    let(:group) { Inferno::Repositories::TestGroups.new.find('demo-simple_group') }
     let(:patient) { FHIR::Patient.new(id: patient_id) }
     let(:observation_bundle) do
       FHIR::Bundle.new(
@@ -45,7 +45,8 @@ RSpec.describe Inferno::TestRunner do
         session_data_repo.save(
           test_session_id: test_session.id,
           name: name,
-          value: value
+          value: value,
+          type: 'text'
         )
         stub_request(:get, base_url)
           .to_return(status: 200, body: '', headers: {})
@@ -59,10 +60,11 @@ RSpec.describe Inferno::TestRunner do
     end
 
     it 'creates results' do
-      test_count = group.tests.length
+      test_count = group.test_count
 
       results = runner.start
 
+      # Plus two for the group results
       expect(results.length).to eq(test_count + 2)
     end
 
@@ -76,6 +78,22 @@ RSpec.describe Inferno::TestRunner do
           .select { |result| result.result == 'error' }
 
       expect(error_results).to be_empty, error_results_message(error_results)
+    end
+
+    it 'includes output types in the results' do
+      results = runner.start
+
+      result_outputs =
+        results
+          .map(&:output_json)
+          .compact
+          .map { |output_json| JSON.parse(output_json) }
+          .select(&:present?)
+          .flatten
+
+      result_outputs.each do |output|
+        expect(output['type']).to be_present
+      end
     end
   end
 

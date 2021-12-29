@@ -72,7 +72,7 @@ module Inferno
       # @param headers [Hash] custom headers for this operation
       # @return [Inferno::Entities::Request]
       def fhir_operation(path, body: nil, client: :default, name: nil, headers: {})
-        store_request('outgoing', name) do
+        store_request_and_refresh_token(fhir_client(client), name) do
           operation_headers = fhir_client(client).fhir_headers
           operation_headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
           operation_headers.merge!(headers) if headers.present?
@@ -88,7 +88,7 @@ module Inferno
       #   other tests
       # @return [Inferno::Entities::Request]
       def fhir_get_capability_statement(client: :default, name: nil)
-        store_request('outgoing', name) do
+        store_request_and_refresh_token(fhir_client(client), name) do
           fhir_client(client).conformance_statement
           fhir_client(client).reply
         end
@@ -103,7 +103,7 @@ module Inferno
       #   other tests
       # @return [Inferno::Entities::Request]
       def fhir_read(resource_type, id, client: :default, name: nil)
-        store_request('outgoing', name) do
+        store_request_and_refresh_token(fhir_client(client), name) do
           fhir_client(client).read(fhir_class_from_resource_type(resource_type), id)
         end
       end
@@ -124,7 +124,8 @@ module Inferno
           else
             { parameters: params }
           end
-        store_request('outgoing', name) do
+
+        store_request_and_refresh_token(fhir_client(client), name) do
           fhir_client(client)
             .search(fhir_class_from_resource_type(resource_type), { search: search })
         end
@@ -132,13 +133,50 @@ module Inferno
 
       # @todo Make this a FHIR class method? Something like
       #   FHIR.class_for(resource_type)
-      # @private
+      # @api private
       def fhir_class_from_resource_type(resource_type)
         FHIR.const_get(resource_type.to_s.camelize)
       end
 
+      # This method wraps a request to automatically refresh its access token if
+      # expired. It's combined with `store_request` so that all of the fhir
+      # request methods don't have to be wrapped twice.
+      # @api private
+      def store_request_and_refresh_token(client, name, &block)
+        store_request('outgoing', name) do
+          perform_refresh(client) if client.need_to_refresh? && client.able_to_refresh?
+          block.call
+        end
+      end
+
+      # @api private
+      def perform_refresh(client)
+        credentials = client.oauth_credentials
+
+        post(
+          credentials.token_url,
+          body: credentials.oauth2_refresh_params,
+          headers: credentials.oauth2_refresh_headers
+        )
+
+        return if request.status != 200
+
+        credentials.update_from_response_body(request)
+
+        if credentials.name.present?
+          Inferno::Repositories::SessionData.new.save(
+            name: credentials.name,
+            value: credentials,
+            type: 'oauth_credentials',
+            test_session_id: test_session_id
+          )
+        end
+      rescue StandardError => e
+        Inferno::Application[:logger].error "Unable to refresh token: #{e.message}"
+      end
+
       module ClassMethods
-        # @private
+        # @api private
         def fhir_client_definitions
           @fhir_client_definitions ||= {}
         end

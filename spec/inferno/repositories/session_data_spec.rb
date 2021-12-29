@@ -8,7 +8,8 @@ RSpec.describe Inferno::Repositories::SessionData do
     repo.save(
       test_session_id: test_session.id,
       name: name,
-      value: value
+      value: value,
+      type: 'text'
     )
   end
 
@@ -26,7 +27,8 @@ RSpec.describe Inferno::Repositories::SessionData do
       repo.save(
         test_session_id: test_session.id,
         name: name,
-        value: new_value
+        value: new_value,
+        type: 'text'
       )
 
       expect(repo.db.count).to eq(1)
@@ -42,7 +44,8 @@ RSpec.describe Inferno::Repositories::SessionData do
       repo.save(
         test_session_id: test_session2.id,
         name: name,
-        value: value
+        value: value,
+        type: 'text'
       )
 
       expect(repo.db.count).to eq(2)
@@ -53,10 +56,45 @@ RSpec.describe Inferno::Repositories::SessionData do
       repo.save(
         test_session_id: test_session.id,
         name: name2,
-        value: value
+        value: value,
+        type: 'text'
       )
 
       expect(repo.db.count).to eq(2)
+    end
+
+    context 'with oauth_credentials' do
+      it 'stores the serialized credentials' do
+        credentials = Inferno::DSL::OAuthCredentials.new(access_token: 'TOKEN', client_id: 'CLIENT_ID')
+        name = 'creds'
+        params = {
+          name: name,
+          value: credentials,
+          type: 'oauth_credentials',
+          test_session_id: test_session.id
+        }
+
+        repo.save(params)
+
+        persisted_value = repo.class.db.where(name: name).first[:value]
+        expect(persisted_value).to eq(credentials.to_s)
+      end
+
+      it 'accepts a json string' do
+        credentials = Inferno::DSL::OAuthCredentials.new(access_token: 'TOKEN', client_id: 'CLIENT_ID')
+        name = 'creds'
+        params = {
+          name: name,
+          value: credentials.to_s,
+          type: 'oauth_credentials',
+          test_session_id: test_session.id
+        }
+
+        repo.save(params)
+
+        persisted_value = repo.class.db.where(name: name).first[:value]
+        expect(JSON.parse(persisted_value)).to include(JSON.parse(credentials.to_s))
+      end
     end
   end
 
@@ -71,6 +109,24 @@ RSpec.describe Inferno::Repositories::SessionData do
       data = repo.load(test_session_id: test_session.id, name: 'abc')
 
       expect(data).to be_nil
+    end
+
+    context 'with oauth_credentials' do
+      it 'returns an OAuthCredentials instance' do
+        raw_value = Inferno::DSL::OAuthCredentials.new(access_token: 'TOKEN', client_id: 'CLIENT_ID').to_s
+        name = 'creds'
+        repo.save(
+          name: name,
+          value: raw_value,
+          type: 'text',
+          test_session_id: test_session.id
+        )
+
+        value = repo.load(test_session_id: test_session.id, name: name, type: 'oauth_credentials')
+
+        expect(value).to be_a(Inferno::DSL::OAuthCredentials)
+        expect(value.to_s).to eq(raw_value)
+      end
     end
   end
 end

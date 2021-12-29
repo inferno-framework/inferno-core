@@ -1,14 +1,31 @@
 class FHIRClientDSLTestClass
   include Inferno::DSL::FHIRClient
+  include Inferno::DSL::HTTPClient
   extend Inferno::DSL::Configurable
 
   def test_session_id
     nil
   end
 
+  fhir_client do
+    url 'http://www.example.com/fhir'
+  end
+
   fhir_client :client_with_bearer_token do
     url 'http://www.example.com/fhir'
     bearer_token 'some_token'
+  end
+
+  fhir_client :client_with_oauth_credentials do
+    url 'http://www.example.com/fhir'
+    oauth_credentials(
+      Inferno::DSL::OAuthCredentials.new(
+        access_token: 'ACCESS_TOKEN',
+        token_url: 'http://example.com/token',
+        refresh_token: 'REFRESH_TOKEN',
+        expires_in: 3600
+      )
+    )
   end
 end
 
@@ -17,19 +34,11 @@ RSpec.describe Inferno::DSL::FHIRClient do
   let(:base_url) { 'http://www.example.com/fhir' }
   let(:resource_id) { '123' }
   let(:resource) { FHIR::CarePlan.new(id: resource_id) }
-  let(:default_client) { FHIR::Client.new(base_url) }
+  let(:default_client) { group.fhir_clients[:default] }
   let(:bundle) { FHIR::Bundle.new(entry: [{ resource: resource }]) }
-
-  def setup_default_client
-    group.instance_variable_set(
-      :@fhir_clients,
-      { default: default_client }
-    )
-  end
+  let(:session_data_repo) { Inferno::Repositories::SessionData.new }
 
   describe '#fhir_client' do
-    before { setup_default_client }
-
     context 'without an argument' do
       it 'returns the default FHIR client' do
         expect(group.fhir_client).to eq(default_client)
@@ -59,7 +68,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
 
     before do
-      setup_default_client
       stub_operation_request
     end
 
@@ -108,6 +116,24 @@ RSpec.describe Inferno::DSL::FHIRClient do
         Inferno::DSL::FHIRClientBuilder.new.build(group, block)
       end
 
+      let(:stub_custom_header_request) do
+        stub_request(:post, "#{base_url}/#{path}")
+          .with(headers: { 'CustomHeader' => 'CustomTest' })
+          .to_return(status: 200, body: resource.to_json)
+      end
+
+      let(:stub_default_header_request) do
+        stub_request(:post, "#{base_url}/#{path}")
+          .with(headers: { 'DefaultHeader' => 'ClientHeader' })
+          .to_return(status: 200, body: resource.to_json)
+      end
+
+      let(:stub_custom_and_default_header_request) do
+        stub_request(:post, "#{base_url}/#{path}")
+          .with(headers: { 'DefaultHeader' => 'ClientHeader', 'CustomHeader' => 'CustomTest' })
+          .to_return(status: 200, body: resource.to_json)
+      end
+
       it 'as custom only, performs a get' do
         operation_request =
           stub_request(:post, "#{base_url}/#{path}")
@@ -143,6 +169,20 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(operation_request).to have_been_made.once
       end
     end
+
+    context 'with oauth_credentials' do
+      it 'performs a refresh if the token is about to expire' do
+        client = group.fhir_client(:client_with_oauth_credentials)
+        allow(client).to receive(:need_to_refresh?).and_return(true)
+        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(group).to receive(:perform_refresh).with(client)
+
+        group.fhir_operation(path, client: :client_with_oauth_credentials)
+
+        expect(stub_operation_request).to have_been_made.once
+        expect(group).to have_received(:perform_refresh)
+      end
+    end
   end
 
   describe '#fhir_get_capability_statement' do
@@ -153,7 +193,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
 
     before do
-      setup_default_client
       stub_capability_request
     end
 
@@ -200,7 +239,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
 
     before do
-      setup_default_client
       stub_read_request
     end
 
@@ -238,24 +276,42 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(stub_read_request).to_not have_been_made
       end
     end
+
+    context 'with oauth_credentials' do
+      it 'performs a refresh if the token is about to expire' do
+        client = group.fhir_client(:client_with_oauth_credentials)
+        allow(client).to receive(:need_to_refresh?).and_return(true)
+        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(group).to receive(:perform_refresh).with(client)
+
+        group.fhir_read(resource.resourceType, resource_id, client: :client_with_oauth_credentials)
+
+        expect(stub_read_request).to have_been_made.once
+        expect(group).to have_received(:perform_refresh)
+      end
+    end
   end
 
   describe '#fhir_search' do
-    context 'when performing a GET search' do
-      let(:stub_search_request) do
-        stub_request(:get, "#{base_url}/#{resource.resourceType}?patient=123")
-          .to_return(status: 200, body: bundle.to_json)
-      end
+    let(:stub_get_search_request) do
+      stub_request(:get, "#{base_url}/#{resource.resourceType}?patient=123")
+        .to_return(status: 200, body: bundle.to_json)
+    end
+    let(:stub_post_search_request) do
+      stub_request(:post, "#{base_url}/#{resource.resourceType}/_search")
+        .with(body: search_params)
+        .to_return(status: 200, body: bundle.to_json)
+    end
 
+    context 'when performing a GET search' do
       before do
-        setup_default_client
-        stub_search_request
+        stub_get_search_request
       end
 
       it 'performs a FHIR search' do
         group.fhir_search(resource.resourceType, params: { patient: 123 })
 
-        expect(stub_search_request).to have_been_made.once
+        expect(stub_get_search_request).to have_been_made.once
       end
 
       it 'returns an Inferno::Entities::Request' do
@@ -283,35 +339,43 @@ RSpec.describe Inferno::DSL::FHIRClient do
           group.fhir_search(resource.resourceType, client: :other_client, params: { patient: 123 })
 
           expect(other_request_stub).to have_been_made
-          expect(stub_search_request).to_not have_been_made
+          expect(stub_get_search_request).to_not have_been_made
         end
       end
     end
 
     context 'when performing a POST search' do
       let(:search_params) { { patient: '123' } }
-      let(:stub_search_request) do
-        stub_request(:post, "#{base_url}/#{resource.resourceType}/_search")
-          .with(body: search_params)
-          .to_return(status: 200, body: bundle.to_json)
-      end
 
       before do
-        setup_default_client
-        stub_search_request
+        stub_post_search_request
       end
 
       it 'performs a FHIR search' do
         group.fhir_search(resource.resourceType, params: search_params, search_method: :post)
 
-        expect(stub_search_request).to have_been_made.once
+        expect(stub_post_search_request).to have_been_made.once
+      end
+    end
+
+    context 'with oauth_credentials' do
+      it 'performs a refresh if the token is about to expire' do
+        stub_get_search_request
+        client = group.fhir_client(:client_with_oauth_credentials)
+        allow(client).to receive(:need_to_refresh?).and_return(true)
+        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(group).to receive(:perform_refresh).with(client)
+
+        group.fhir_search(resource.resourceType, params: { patient: 123 }, client: :client_with_oauth_credentials)
+
+        expect(stub_get_search_request).to have_been_made.once
+        expect(group).to have_received(:perform_refresh)
       end
     end
   end
 
   describe '#requests' do
     it 'returns an array of the requests made' do
-      setup_default_client
       ids = [1, 2, 3]
 
       ids.each do |id|
@@ -329,7 +393,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
   describe '#request' do
     it 'returns the most recent FHIR request' do
-      setup_default_client
       ids = [1, 2, 3]
 
       ids.each do |id|
@@ -386,7 +449,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
-  describe '#fhir_client_with_bearer_token' do
+  describe '#bearer_token' do
     let(:client) { group.fhir_client(:client_with_bearer_token) }
 
     it 'uses the given bearer token in the security header' do
@@ -396,6 +459,86 @@ RSpec.describe Inferno::DSL::FHIRClient do
     it 'has the auth flags set correctly' do
       expect(client.use_basic_auth).to be_truthy
       expect(client.use_oauth2_auth).to be_falsey
+    end
+  end
+
+  describe '#oauth_credentials' do
+    let(:client) { group.fhir_client(:client_with_oauth_credentials) }
+
+    it 'uses the given bearer token in the security header' do
+      expect(client.security_headers).to eq({ 'Authorization' => 'Bearer ACCESS_TOKEN' })
+    end
+
+    it 'has the auth flags set correctly' do
+      expect(client.use_basic_auth).to be_truthy
+      expect(client.use_oauth2_auth).to be_falsey
+    end
+
+    it 'stores the credentials on the client' do
+      expect(client.instance_variable_get(:@oauth_credentials)).to be_a(Inferno::DSL::OAuthCredentials)
+    end
+  end
+
+  describe '#perform_refresh' do
+    let(:client) { group.fhir_client(:client_with_oauth_credentials) }
+    let(:credentials) { client.oauth_credentials }
+    let(:token_url) { client.token_url }
+
+    context 'when the refresh is unsuccessful' do
+      it 'does not update credentials' do
+        original_credentials = credentials.to_hash
+        token_request =
+          stub_request(:post, credentials.token_url)
+            .to_return(status: 400)
+
+        group.perform_refresh(client)
+
+        expect(client.oauth_credentials.to_hash).to eq(original_credentials)
+        expect(token_request).to have_been_made
+      end
+    end
+
+    context 'when the refresh is successful' do
+      let(:token_response_body) do
+        {
+          access_token: 'NEW_ACCESS_TOKEN',
+          token_type: 'bearer',
+          expires_in: 5000,
+          scope: 'NEW_SCOPES',
+          refresh_token: 'NEW_REFRESH_TOKEN'
+        }
+      end
+
+      it 'updates the credentials on the client' do
+        token_request =
+          stub_request(:post, credentials.token_url)
+            .to_return(status: 200, body: JSON.generate(token_response_body))
+
+        group.perform_refresh(client)
+
+        expect(token_request).to have_been_made
+        expect(credentials.access_token).to eq(token_response_body[:access_token])
+        expect(credentials.refresh_token).to eq(token_response_body[:refresh_token])
+      end
+
+      it 'updates the credentials in the database' do
+        session = repo_create(:test_session, test_suite_id: 'demo')
+        allow(group).to receive(:test_session_id).and_return(session.id)
+
+        credentials.name = 'name'
+        token_request =
+          stub_request(:post, credentials.token_url)
+            .to_return(status: 200, body: JSON.generate(token_response_body))
+
+        group.perform_refresh(client)
+
+        expect(token_request).to have_been_made
+
+        persisted_credentials =
+          session_data_repo.load(test_session_id: group.test_session_id, name: 'name', type: 'oauth_credentials')
+
+        expect(persisted_credentials.to_hash).to eq(credentials.to_hash)
+      end
     end
   end
 end
