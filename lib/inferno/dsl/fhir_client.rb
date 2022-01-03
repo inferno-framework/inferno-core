@@ -139,7 +139,7 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_delete(resource_type, id = nil, client: :default, name: nil)
+      def fhir_delete(resource_type, id, client: :default, name: nil)
         store_request('outgoing', name) do
           fhir_client(client).destroy(fhir_class_from_resource_type(resource_type), id)
         end
