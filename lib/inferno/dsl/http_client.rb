@@ -111,8 +111,6 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @option options [Hash] Input headers here - headers are optional and
-      #   must be entered as the last piece of input to this method
       # @return [Inferno::Entities::Request]
       def delete(url = '', client: :default, name: :nil, **options)
         store_request('outgoing', name) do

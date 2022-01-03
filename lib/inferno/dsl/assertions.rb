@@ -26,15 +26,6 @@ module Inferno
         assert Array.wrap(status).include?(response[:status]), bad_response_status_message(status, response[:status])
       end
 
-      # Confirm a response status to be bad or unauthorized.
-      #
-      # @param status [Integer, Array<Integer>] a single integer or an array of
-      #   integer status codes
-      def assert_response_bad_or_unauthorized(status: response[:status])
-        message = "Bad response code: expected 400 or 401, but found #{status}"
-        assert [400, 401].include?(status), message
-      end
-
       # @private
       def bad_resource_type_message(expected, received)
         "Bad resource type received: expected #{expected}, but received #{received}"
