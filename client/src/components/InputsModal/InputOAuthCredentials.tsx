@@ -1,7 +1,7 @@
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { Card, CardContent, InputLabel, List, ListItem, TextField } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
-import { TestInput } from 'models/testSuiteModels';
+import { OAuthCredentials, TestInput } from 'models/testSuiteModels';
 import React, { FC, Fragment } from 'react';
 import useStyles from './styles';
 
@@ -12,22 +12,9 @@ export interface InputOAuthCredentialsProps {
   setInputsMap: (map: Map<string, string>) => void;
 }
 
-// Necessary to prevent "implicit any" errors when indexing objects of type InputOAuthCredentials
-export interface InputOAuthCredentialsType {
-  [key: string]: string;
-}
-
-export interface InputOAuthCredentials extends InputOAuthCredentialsType {
-  access_token: string;
-  refresh_token: string;
-  expires_in: string;
-  client_id: string;
-  client_secret: string;
-  token_url: string;
-}
-
 export interface InputOAuthField {
   name: string;
+  required: boolean;
   label?: string | ReactJSXElement;
 }
 
@@ -38,7 +25,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   setInputsMap,
 }) => {
   const styles = useStyles();
-  const fieldLabelText = `${requirement.title || requirement.name} Bearer Token`;
+  const fieldLabelText = `${requirement.title || requirement.name}`;
   const lockedIcon = requirement.locked ? (
     <LockIcon fontSize="small" className={styles.lockedIcon} />
   ) : null;
@@ -53,7 +40,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   });
   const oAuthCredentials = JSON.parse(
     inputsMap.get(requirement.name) || template
-  ) as InputOAuthCredentials;
+  ) as OAuthCredentials;
   const showRefreshDetails = oAuthCredentials.refresh_token.length > 0;
   const fieldLabel = (
     <Fragment>
@@ -67,6 +54,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     <ListItem disabled={requirement.locked} key={field.name}>
       <TextField
         disabled={requirement.locked}
+        required={field.required}
         id={`requirement${index}_${field.name}`}
         label={field.label || field.name}
         helperText={requirement.description}
@@ -88,15 +76,18 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
 
   const refreshDetails = () => {
     const refreshFields: InputOAuthField[] = [
-      { name: 'token_url', label: 'Token Endpoint' },
-      { name: 'expires_in', label: 'Expires in (seconds)' },
-      { name: 'client_id', label: 'Client ID' },
-      { name: 'client_secret', label: 'Client Secret' },
+      { name: 'token_url', required: showRefreshDetails, label: 'Token Endpoint (required)' },
+      {
+        name: 'expires_in',
+        required: showRefreshDetails,
+        label: 'Expires in (seconds) (required)',
+      },
+      { name: 'client_id', required: showRefreshDetails, label: 'Client ID (required)' },
+      { name: 'client_secret', required: showRefreshDetails, label: 'Client Secret (required)' },
     ];
     return refreshFields.map((field) => oAuthField(field));
   };
 
-  console.log(showRefreshDetails);
   return (
     <ListItem>
       <Card
@@ -112,9 +103,10 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
             {fieldLabel}
           </InputLabel>
           <List>
-            {oAuthField({ name: 'access_token', label: 'Bearer Token' })}
+            {oAuthField({ name: 'access_token', required: true, label: 'Bearer Token (required)' })}
             {oAuthField({
               name: 'refresh_token',
+              required: false,
               label: 'Refresh Token (token will automatically refresh if available)',
             })}
             {showRefreshDetails && refreshDetails()}

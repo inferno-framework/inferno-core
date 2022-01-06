@@ -118,6 +118,20 @@ export interface TestRun {
   test_id?: string;
 }
 
+// Necessary to prevent "implicit any" errors when indexing objects of type OAuthCredentials
+export interface OAuthCredentialsType {
+  [key: string]: string;
+}
+
+export interface OAuthCredentials extends OAuthCredentialsType {
+  access_token: string;
+  refresh_token: string;
+  expires_in: string;
+  client_id: string;
+  client_secret: string;
+  token_url: string;
+}
+
 export function runnableIsTestSuite(runnable: TestSuite | TestGroup | Test): runnable is TestSuite {
   return (runnable as TestGroup).inputs == undefined;
 }
