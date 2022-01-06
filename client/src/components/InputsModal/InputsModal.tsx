@@ -46,7 +46,7 @@ const InputsModal: FC<InputsModalProps> = ({
   const missingRequiredInput = inputs.some((input: TestInput) => {
     let oAuthMissingRequiredInput = false;
     try {
-      // if oauth exists, check if required values are filled
+      // if input has OAuth, check if required values are filled
       const oAuthJSON = JSON.parse(inputsMap.get(input.name) as string) as OAuthCredentials;
       const accessTokenIsEmpty = oAuthJSON.access_token === '';
       const refreshIsEmpty =
@@ -57,7 +57,7 @@ const InputsModal: FC<InputsModalProps> = ({
           oAuthJSON.client_secret === '');
       oAuthMissingRequiredInput = accessTokenIsEmpty || refreshIsEmpty;
     } catch (e) {
-      // if oauth does not exist, then assume field is not oauth and move on
+      // if JSON.parse fails, then assume field is not OAuth and move on
     }
     return !input.optional && (inputsMap.get(input.name)?.length == 0 || oAuthMissingRequiredInput);
   });

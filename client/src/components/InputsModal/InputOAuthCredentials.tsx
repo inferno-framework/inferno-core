@@ -14,8 +14,8 @@ export interface InputOAuthCredentialsProps {
 
 export interface InputOAuthField {
   name: string;
-  required: boolean;
   label?: string | ReactJSXElement;
+  required?: boolean;
 }
 
 const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
@@ -76,24 +76,21 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
 
   const refreshDetails = () => {
     const refreshFields: InputOAuthField[] = [
-      { name: 'token_url', required: showRefreshDetails, label: 'Token Endpoint (required)' },
+      { name: 'token_url', label: 'Token Endpoint (required)', required: showRefreshDetails },
       {
         name: 'expires_in',
-        required: showRefreshDetails,
         label: 'Expires in (seconds) (required)',
+        required: showRefreshDetails,
       },
-      { name: 'client_id', required: showRefreshDetails, label: 'Client ID (required)' },
-      { name: 'client_secret', required: showRefreshDetails, label: 'Client Secret (required)' },
+      { name: 'client_id', label: 'Client ID (required)', required: showRefreshDetails },
+      { name: 'client_secret', label: 'Client Secret (required)', required: showRefreshDetails },
     ];
     return refreshFields.map((field) => oAuthField(field));
   };
 
   return (
     <ListItem>
-      <Card
-        variant="outlined"
-        sx={{ width: '100%', margin: '8px 0', borderColor: 'rgba(0,0,0,0.3)' }}
-      >
+      <Card variant="outlined" className={styles.oauthCard}>
         <CardContent>
           <InputLabel
             required={!requirement.optional && !requirement.locked}
@@ -103,11 +100,11 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
             {fieldLabel}
           </InputLabel>
           <List>
-            {oAuthField({ name: 'access_token', required: true, label: 'Bearer Token (required)' })}
+            {oAuthField({ name: 'access_token', label: 'Bearer Token (required)', required: true })}
             {oAuthField({
               name: 'refresh_token',
+              label: 'Refresh Token (will automatically refresh if available)',
               required: false,
-              label: 'Refresh Token (token will automatically refresh if available)',
             })}
             {showRefreshDetails && refreshDetails()}
           </List>
