@@ -86,7 +86,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
 
   const oAuthField = (field: InputOAuthField) => {
     const fieldLabel = field.required
-      ? `${(field.label || field.name) as string} '(required)`
+      ? `${(field.label || field.name) as string} (required)`
       : field.label || field.name;
     return (
       <ListItem disabled={requirement.locked} key={field.name}>
