@@ -15,7 +15,8 @@ export interface InputOAuthCredentialsProps {
 export interface InputOAuthField {
   name: string;
   label?: string | ReactJSXElement;
-  required?: boolean;
+  required?: boolean; // default behavior should be false
+  hide?: boolean; // default behavior should be false
 }
 
 const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
@@ -25,11 +26,6 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   setInputsMap,
 }) => {
   const styles = useStyles();
-  const fieldLabelText = `${requirement.title || requirement.name}`;
-  const lockedIcon = requirement.locked ? (
-    <LockIcon fontSize="small" className={styles.lockedIcon} />
-  ) : null;
-  const requiredLabel = !requirement.optional && !requirement.locked ? ' (required)' : '';
   const template = JSON.stringify({
     access_token: '',
     refresh_token: '',
@@ -41,7 +37,13 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   const oAuthCredentials = JSON.parse(
     inputsMap.get(requirement.name) || template
   ) as OAuthCredentials;
-  const showRefreshDetails = oAuthCredentials.refresh_token.length > 0;
+  const showRefreshDetails = !!oAuthCredentials.refresh_token;
+
+  const fieldLabelText = `${requirement.title || requirement.name}`;
+  const requiredLabel = !requirement.optional && !requirement.locked ? ' (required)' : '';
+  const lockedIcon = requirement.locked ? (
+    <LockIcon fontSize="small" className={styles.lockedIcon} />
+  ) : null;
   const fieldLabel = (
     <Fragment>
       {fieldLabelText}
@@ -50,42 +52,65 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     </Fragment>
   );
 
-  const oAuthField = (field: InputOAuthField) => (
-    <ListItem disabled={requirement.locked} key={field.name}>
-      <TextField
-        disabled={requirement.locked}
-        required={field.required}
-        id={`requirement${index}_${field.name}`}
-        label={field.label || field.name}
-        helperText={requirement.description}
-        value={oAuthCredentials[field.name]}
-        className={styles.inputField}
-        variant="standard"
-        fullWidth
-        onChange={(event) => {
-          const value = event.target.value;
-          inputsMap.set(requirement.name, value);
-          oAuthCredentials[field.name] = value;
-          inputsMap.set(requirement.name, JSON.stringify(oAuthCredentials));
-          setInputsMap(new Map(inputsMap));
-        }}
-        InputLabelProps={{ shrink: true }}
-      />
-    </ListItem>
-  );
+  const oAuthFields: InputOAuthField[] = [
+    { name: 'access_token', label: 'Bearer Token', required: true },
+    {
+      name: 'refresh_token',
+      label: 'Refresh Token (will automatically refresh if available)',
+    },
+    {
+      name: 'token_url',
+      label: 'Token Endpoint',
+      required: showRefreshDetails,
+      hide: !showRefreshDetails,
+    },
+    {
+      name: 'expires_in',
+      label: 'Expires in (seconds)',
+      required: showRefreshDetails,
+      hide: !showRefreshDetails,
+    },
+    {
+      name: 'client_id',
+      label: 'Client ID',
+      required: showRefreshDetails,
+      hide: !showRefreshDetails,
+    },
+    {
+      name: 'client_secret',
+      label: 'Client Secret',
+      required: showRefreshDetails,
+      hide: !showRefreshDetails,
+    },
+  ];
 
-  const refreshDetails = () => {
-    const refreshFields: InputOAuthField[] = [
-      { name: 'token_url', label: 'Token Endpoint (required)', required: showRefreshDetails },
-      {
-        name: 'expires_in',
-        label: 'Expires in (seconds) (required)',
-        required: showRefreshDetails,
-      },
-      { name: 'client_id', label: 'Client ID (required)', required: showRefreshDetails },
-      { name: 'client_secret', label: 'Client Secret (required)', required: showRefreshDetails },
-    ];
-    return refreshFields.map((field) => oAuthField(field));
+  const oAuthField = (field: InputOAuthField) => {
+    const fieldLabel = field.required
+      ? `${(field.label || field.name) as string} '(required)`
+      : field.label || field.name;
+    return (
+      <ListItem disabled={requirement.locked} key={field.name}>
+        <TextField
+          disabled={requirement.locked}
+          required={field.required}
+          id={`requirement${index}_${field.name}`}
+          label={fieldLabel}
+          helperText={requirement.description}
+          value={oAuthCredentials[field.name]}
+          className={styles.inputField}
+          variant="standard"
+          fullWidth
+          onChange={(event) => {
+            const value = event.target.value;
+            inputsMap.set(requirement.name, value);
+            oAuthCredentials[field.name] = value;
+            inputsMap.set(requirement.name, JSON.stringify(oAuthCredentials));
+            setInputsMap(new Map(inputsMap));
+          }}
+          InputLabelProps={{ shrink: true }}
+        />
+      </ListItem>
+    );
   };
 
   return (
@@ -99,15 +124,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           >
             {fieldLabel}
           </InputLabel>
-          <List>
-            {oAuthField({ name: 'access_token', label: 'Bearer Token (required)', required: true })}
-            {oAuthField({
-              name: 'refresh_token',
-              label: 'Refresh Token (will automatically refresh if available)',
-              required: false,
-            })}
-            {showRefreshDetails && refreshDetails()}
-          </List>
+          <List>{oAuthFields.map((field) => !field.hide && oAuthField(field))}</List>
         </CardContent>
       </Card>
     </ListItem>
