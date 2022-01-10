@@ -1,4 +1,4 @@
-# 0.0.9
+# 0.1.0
 
 * Fix a display bug for url-encoded request bodies
 * Minor UI improvements
