@@ -1,3 +1,13 @@
+# 0.0.9
+
+* Fix a display bug for url-encoded request bodies
+* Minor UI improvements
+* Display a modal when tests are in a wait state
+* Add initial support for PostgreSQL
+* Add support for radio button inputs
+* Add a new `oauth_credentials` input type and the ability to automatically
+  refresh OAuth2 access tokens
+
 # 0.0.8
 
 * Update Material UI to v5
