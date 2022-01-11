@@ -18,6 +18,8 @@ export function getAllContainedInputs(testGroups: TestGroup[]): TestInput[] {
       }
     });
   });
+  console.log(all_inputs);
+  
   return all_inputs;
 }
 

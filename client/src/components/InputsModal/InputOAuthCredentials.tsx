@@ -8,8 +8,8 @@ import useStyles from './styles';
 export interface InputOAuthCredentialsProps {
   requirement: TestInput;
   index: number;
-  inputsMap: Map<string, string>;
-  setInputsMap: (map: Map<string, string>) => void;
+  inputsMap: Map<string, unknown>;
+  setInputsMap: (map: Map<string, unknown>) => void;
 }
 
 export interface InputOAuthField {
@@ -17,6 +17,7 @@ export interface InputOAuthField {
   label?: string | ReactJSXElement;
   required?: boolean; // default behavior should be false
   hide?: boolean; // default behavior should be false
+  locked?: boolean; // default behavior should be false
 }
 
 const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
@@ -26,16 +27,18 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   setInputsMap,
 }) => {
   const styles = useStyles();
-  const template = JSON.stringify({
+  const template = {
     access_token: '',
     refresh_token: '',
     expires_in: '',
     client_id: '',
     client_secret: '',
     token_url: '',
-  });
-  const oAuthCredentials = JSON.parse(
-    inputsMap.get(requirement.name) || template
+  };
+  const oAuthCredentials = (
+    inputsMap.get(requirement.name)
+      ? JSON.parse(inputsMap.get(requirement.name) as string)
+      : template
   ) as OAuthCredentials;
   const showRefreshDetails = !!oAuthCredentials.refresh_token;
 
@@ -89,9 +92,9 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
       ? `${(field.label || field.name) as string} (required)`
       : field.label || field.name;
     return (
-      <ListItem disabled={requirement.locked} key={field.name}>
+      <ListItem disabled={field.locked} key={field.name}>
         <TextField
-          disabled={requirement.locked}
+          disabled={field.locked}
           required={field.required}
           id={`requirement${index}_${field.name}`}
           label={fieldLabel}
@@ -119,6 +122,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
         <CardContent>
           <InputLabel
             required={!requirement.optional && !requirement.locked}
+            disabled={requirement.locked}
             className={styles.inputLabel}
             shrink
           >

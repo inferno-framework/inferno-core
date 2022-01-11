@@ -93,7 +93,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
     <>
       <TableContainer>
         <Table className={styles.table}>
-          <TableBody>{requestListItems} </TableBody>
+          <TableBody>{requestListItems}</TableBody>
         </Table>
       </TableContainer>
       <RequestDetailModal

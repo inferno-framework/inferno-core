@@ -41,7 +41,7 @@ export interface Result {
 export interface TestInput {
   name: string;
   title?: string;
-  value?: string;
+  value?: unknown;
   type?: 'text' | 'textarea' | 'oauth_credentials' | 'radio';
   description?: string;
   default?: string;

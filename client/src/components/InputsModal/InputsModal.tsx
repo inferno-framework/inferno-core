@@ -42,7 +42,7 @@ const InputsModal: FC<InputsModalProps> = ({
   hideModal,
   createTestRun,
 }) => {
-  const [inputsMap, setInputsMap] = React.useState<Map<string, string>>(new Map());
+  const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const missingRequiredInput = inputs.some((input: TestInput) => {
     let oAuthMissingRequiredInput = false;
     try {
@@ -59,7 +59,7 @@ const InputsModal: FC<InputsModalProps> = ({
     } catch (e) {
       // if JSON.parse fails, then assume field is not OAuth and move on
     }
-    return !input.optional && (inputsMap.get(input.name)?.length == 0 || oAuthMissingRequiredInput);
+    return !input.optional && (!inputsMap.get(input.name) || oAuthMissingRequiredInput);
   });
 
   function submitClicked(): void {
