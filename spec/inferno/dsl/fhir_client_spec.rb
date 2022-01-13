@@ -381,7 +381,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
 
     before do
-      setup_default_client
       stub_delete_request
     end
 
