@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
 import { TestGroup, RunnableType, TestSuite } from 'models/testSuiteModels';
-import { Card, List } from '@mui/material';
+import { Card, CircularProgress, List } from '@mui/material';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 
@@ -23,7 +23,11 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
     <Card className={styles.testGroupCard} variant="outlined">
       <div className={styles.testGroupCardHeader}>
         <span className={styles.testGroupCardHeaderResult}>
-          <ResultIcon result={runnable.result} />
+          {testRunInProgress ? (
+            <CircularProgress size={24} />
+          ) : (
+            <ResultIcon result={runnable.result} />
+          )}
         </span>
         <span className={styles.testGroupCardHeaderText}>{runnable.title}</span>
         <TestRunButton

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useLocation } from 'react-router-dom';
 import useStyles from './styles';
-import { Link, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { CircularProgress, Link, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { RunnableType, TestGroup } from 'models/testSuiteModels';
 import FolderIcon from '@mui/icons-material/Folder';
 import ResultIcon from './ResultIcon';
@@ -34,7 +34,13 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         }
         secondary={testGroup.result?.result_message}
       />
-      <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
+      <div className={styles.testIcon}>
+        {testRunInProgress ? (
+          <CircularProgress size={24} />
+        ) : (
+          <ResultIcon result={testGroup.result} />
+        )}
+      </div>
       <TestRunButton
         runnable={testGroup}
         runTests={runTests}

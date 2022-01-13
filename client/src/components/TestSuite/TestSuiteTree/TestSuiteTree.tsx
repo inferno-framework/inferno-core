@@ -13,6 +13,7 @@ export interface TestSuiteTreeProps {
   testSuite: TestSuite;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   selectedRunnable: string;
+  // inProgressTest: string;
   testRunInProgress: boolean;
 }
 
@@ -29,6 +30,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   testSuite,
   selectedRunnable,
   runTests,
+  // inProgressTest,
   testRunInProgress,
 }) => {
   const styles = useStyles();
@@ -51,6 +53,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
         data-testid={`${testGroup.id}-treeitem`}
         testGroup={testGroup}
         runTests={runTests}
+        // inProgressTest={inProgressTest}
         testRunInProgress={testRunInProgress}
       />
     ));
@@ -72,6 +75,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
                 <TreeItemLabel
                   runnable={testSuite}
                   runTests={runTests}
+                  // inProgressTest={inProgressTest}
                   testRunInProgress={testRunInProgress}
                 />
               }

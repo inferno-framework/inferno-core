@@ -96,7 +96,6 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     return refreshFields.map((field) => oAuthField(field));
   };
 
-  console.log(showRefreshDetails);
   return (
     <ListItem>
       <Card

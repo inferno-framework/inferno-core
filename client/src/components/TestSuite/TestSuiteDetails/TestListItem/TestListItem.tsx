@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import useStyles from './styles';
 import {
   Box,
+  CircularProgress,
   Collapse,
   Container,
   Divider,
@@ -14,7 +15,7 @@ import {
   Badge,
   Typography,
 } from '@mui/material';
-import { RunnableType, Test, Request } from 'models/testSuiteModels';
+import { RunnableType, Test, Request, Result } from 'models/testSuiteModels';
 import TabPanel from './TabPanel';
 import MessagesList from './MessagesList';
 import RequestsList from './RequestsList';
@@ -93,13 +94,18 @@ const TestListItem: FC<TestListItemProps> = ({
       'No description'
     );
 
+  const resultIcon = () => {
+    if (testRunInProgress) {
+      return <CircularProgress size={24} />;
+    }
+    return <ResultIcon result={test.result} />;
+  };
+
   return (
     <>
       <Box className={styles.listItem}>
         <ListItem>
-          <div className={styles.testIcon}>
-            <ResultIcon result={test.result} />
-          </div>
+          <div className={styles.testIcon}>{resultIcon()}</div>
           <ListItemText primary={test.title} />
           {messagesBadge}
           {requestsBadge}

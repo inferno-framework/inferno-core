@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { RunnableType, TestGroup, TestSuite } from 'models/testSuiteModels';
-import { Typography, Box } from '@mui/material';
+import { CircularProgress, Typography, Box } from '@mui/material';
 import useStyles from './styles';
 import CondensedResultIcon from './CondensedResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
@@ -13,12 +13,17 @@ export interface TreeItemLabelProps {
 
 const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, runTests, testRunInProgress }) => {
   const styles = useStyles();
+
   return (
     <Box className={styles.labelRoot} data-testid={`tiLabel-${runnable.id}`}>
       <Typography className={styles.labelText} variant="body2">
         {runnable.title}
       </Typography>
-      <CondensedResultIcon result={runnable.result} />
+      {testRunInProgress ? (
+        <CircularProgress size={12} />
+      ) : (
+        <CondensedResultIcon result={runnable.result} />
+      )}
       <TestRunButton
         runnable={runnable}
         runTests={runTests}
