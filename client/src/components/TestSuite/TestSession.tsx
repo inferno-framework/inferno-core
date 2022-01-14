@@ -238,6 +238,17 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       });
   }
 
+  const currentTest = (resultsMap: Map<string, Result>, testRun: TestRun | null) => {
+    let currentTest = null;
+    resultsMap.forEach((result) => {
+      if (result.test_id && result.test_run_id === testRun?.id) {
+        currentTest = result;
+      }
+    });
+
+    return currentTest;
+  };
+
   function testRunNeedsProgressBar(testRun: TestRun | null): boolean {
     return testRun?.status ? ['running', 'queued', 'waiting'].includes(testRun?.status) : false;
   }
@@ -264,6 +275,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           testSuite={test_suite}
           runTests={runTests}
           selectedRunnable={selectedRunnable}
+          currentTest={currentTest(resultsMap, testRun)}
           testRunInProgress={testRunNeedsProgressBar(testRun)}
         />
       </Drawer>
@@ -273,6 +285,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
             runTests={runTests}
             updateRequest={updateRequest}
+            currentTest={currentTest(resultsMap, testRun)}
             testRunInProgresss={testRunNeedsProgressBar(testRun)}
           />
         ) : (

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TestGroup, RunnableType, TestSuite, Request, Test } from 'models/testSuiteModels';
+import { TestGroup, RunnableType, TestSuite, Request, Test, Result } from 'models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
 import DescriptionCard from './DescriptionCard';
@@ -9,6 +9,7 @@ interface TestSuiteDetailsPanelProps {
   runnable: TestSuite | TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
+  currentTest: Result | null;
   testRunInProgresss: boolean;
 }
 
@@ -16,6 +17,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
   runnable,
   runTests,
   updateRequest,
+  currentTest,
   testRunInProgresss,
 }) => {
   let listItems: JSX.Element[] = [];
@@ -26,6 +28,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
           key={`li-${testGroup.id}`}
           testGroup={testGroup}
           runTests={runTests}
+          currentTest={currentTest}
           testRunInProgress={testRunInProgresss}
         />
       );
@@ -38,6 +41,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
           test={test}
           runTests={runTests}
           updateRequest={updateRequest}
+          currentTest={currentTest}
           testRunInProgress={testRunInProgresss}
         />
       );
@@ -51,7 +55,12 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
 
   return (
     <>
-      <TestGroupCard runTests={runTests} runnable={runnable} testRunInProgress={testRunInProgresss}>
+      <TestGroupCard
+        runTests={runTests}
+        runnable={runnable}
+        currentTest={currentTest}
+        testRunInProgress={testRunInProgresss}
+      >
         {listItems}
       </TestGroupCard>
       {descriptionCard}

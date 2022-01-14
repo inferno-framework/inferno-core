@@ -9,6 +9,8 @@ export default makeStyles((theme: Theme) => ({
   testIcon: {
     minWidth: '30px',
     display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   descriptionCardHeader: {
     padding: '16px 24px',
@@ -38,6 +40,7 @@ export default makeStyles((theme: Theme) => ({
   testGroupCardHeaderResult: {
     marginRight: '10px',
     alignItems: 'center',
+    justifyContent: 'center',
     display: 'inline-flex',
     width: '24px',
   },

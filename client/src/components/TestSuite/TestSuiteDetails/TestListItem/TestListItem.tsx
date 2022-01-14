@@ -31,6 +31,7 @@ interface TestListItemProps {
   test: Test;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
+  currentTest: Result | null;
   testRunInProgress: boolean;
 }
 
@@ -38,6 +39,7 @@ const TestListItem: FC<TestListItemProps> = ({
   test,
   runTests,
   updateRequest,
+  currentTest,
   testRunInProgress,
 }) => {
   const styles = useStyles();
@@ -94,18 +96,20 @@ const TestListItem: FC<TestListItemProps> = ({
       'No description'
     );
 
-  const resultIcon = () => {
-    if (testRunInProgress) {
-      return <CircularProgress size={24} />;
+  const getResultIcon = () => {
+    if (testRunInProgress && currentTest && currentTest.test_id === test.id) {
+      return <CircularProgress size={18} />;
+    } else if (test.result?.result && test.result?.test_run_id === currentTest?.test_run_id) {
+      return <ResultIcon result={test.result} />;
     }
-    return <ResultIcon result={test.result} />;
+    return null;
   };
 
   return (
     <>
       <Box className={styles.listItem}>
         <ListItem>
-          <div className={styles.testIcon}>{resultIcon()}</div>
+          <div className={styles.testIcon}>{getResultIcon()}</div>
           <ListItemText primary={test.title} />
           {messagesBadge}
           {requestsBadge}
