@@ -351,7 +351,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
           expect(stub_get_request).to have_been_made.once
         end
 
-        it 'receives and stores a chunk of the response via :block' do
+        it 'receives a chunk of the response via :block' do
           group.stream(block)
 
           expect(streamed).to eq([response_body])
@@ -368,6 +368,13 @@ RSpec.describe Inferno::DSL::HTTPClient do
 
           expect(group.requests).to include(result)
           expect(group.request).to eq(result)
+        end
+
+        it 'stores the streamed chunk in the request response body' do
+          result = group.stream(generic_block)
+
+          expect(group.requests).to include(result)
+          expect(group.request.response_body).to eq(response_body)
         end
       end
 
@@ -471,6 +478,17 @@ RSpec.describe Inferno::DSL::HTTPClient do
 
         group.stream(generic_block, url, headers: { 'Warning' => 'Placeholder warning' })
         expect(stub_get_header_request).to have_been_made.once
+      end
+
+      it 'stores the streamed chunk in the request response body' do
+        url = 'https://example.com/abc'
+        stub_request(:get, url)
+          .to_return(status: 200, body: response_body)
+
+        result = group.stream(block, url)
+
+        expect(group.requests).to include(result)
+        expect(group.request.response_body).to eq(response_body)
       end
     end
   end
