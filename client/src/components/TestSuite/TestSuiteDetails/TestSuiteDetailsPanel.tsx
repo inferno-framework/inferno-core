@@ -42,6 +42,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
           runTests={runTests}
           updateRequest={updateRequest}
           currentTest={currentTest}
+          testGroupId={runnable.id}
           testRunInProgress={testRunInProgresss}
         />
       );

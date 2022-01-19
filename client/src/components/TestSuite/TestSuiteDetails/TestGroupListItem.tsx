@@ -23,18 +23,19 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   const styles = useStyles();
   const location = useLocation();
 
-  console.log(currentTest, testGroup.result);
-
   const getResultIcon = () => {
     if (testRunInProgress && currentTest?.test_id?.includes(testGroup.id)) {
       return <CircularProgress size={18} />;
     } else if (
-      testGroup.result?.result &&
-      currentTest?.test_run_id === testGroup.result.test_run_id
+      testRunInProgress &&
+      currentTest?.test_run_id !== testGroup?.result?.test_run_id &&
+      testGroup?.result?.test_group_id?.includes(currentTest?.test_id as string)
     ) {
-      return <ResultIcon result={testGroup.result} />;
+      // If test is running and result is not from current run but is in the
+      // same group, show nothing
+      return null;
     }
-    return null;
+    return <ResultIcon result={testGroup.result} />;
   };
 
   return (

@@ -21,17 +21,40 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
 }) => {
   const styles = useStyles();
 
+  const checkIfSameGroup = (test: Result | null, testCollection: TestSuite | TestGroup) => {
+    let isSameGroup = false;
+    // Check if testCollection is a TestGroup
+    if ('tests' in testCollection) {
+      isSameGroup = testCollection.tests.some((t) => t.id === test?.test_id);
+    } else {
+      if (testCollection.test_groups) {
+        isSameGroup = testCollection.test_groups.some((group) =>
+          group.tests.some((t) => t.id === test?.test_id)
+        );
+      }
+    }
+    return isSameGroup;
+  };
+
+  const getResultIcon = () => {
+    if (testRunInProgress && currentTest?.test_id?.includes(runnable?.id)) {
+      return <CircularProgress size={18} />;
+    } else if (
+      testRunInProgress &&
+      currentTest?.test_run_id !== runnable?.result?.test_run_id &&
+      checkIfSameGroup(currentTest, runnable)
+    ) {
+      // If test is running and result is not from current run but is in the
+      // same group, show nothing
+      return null;
+    }
+    return <ResultIcon result={runnable.result} />;
+  };
+
   return (
     <Card className={styles.testGroupCard} variant="outlined">
       <div className={styles.testGroupCardHeader}>
-        <span className={styles.testGroupCardHeaderResult}>
-          {testRunInProgress &&
-          currentTest?.test_id?.includes(runnable?.result?.test_group_id as string) ? (
-            <CircularProgress size={18} />
-          ) : (
-            <ResultIcon result={runnable.result} />
-          )}
-        </span>
+        <span className={styles.testGroupCardHeaderResult}>{getResultIcon()}</span>
         <span className={styles.testGroupCardHeaderText}>{runnable.title}</span>
         <TestRunButton
           runnable={runnable}

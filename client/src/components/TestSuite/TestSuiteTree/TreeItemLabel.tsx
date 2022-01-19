@@ -20,16 +20,42 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({
 }) => {
   const styles = useStyles();
 
+  const checkIfSameGroup = (test: Result | null, testCollection: TestSuite | TestGroup) => {
+    let isSameGroup = false;
+    // Check if testCollection is a TestGroup
+    if ('tests' in testCollection) {
+      isSameGroup = testCollection.tests.some((t) => t.id === test?.test_id);
+    } else {
+      if (testCollection.test_groups) {
+        isSameGroup = testCollection.test_groups.some((group) =>
+          group.tests.some((t) => t.id === test?.test_id)
+        );
+      }
+    }
+    return isSameGroup;
+  };
+
+  const getResultIcon = () => {
+    if (testRunInProgress && currentTest?.test_id?.includes(runnable?.id)) {
+      return <CircularProgress size={18} />;
+    } else if (
+      testRunInProgress &&
+      currentTest?.test_run_id !== runnable?.result?.test_run_id &&
+      checkIfSameGroup(currentTest, runnable)
+    ) {
+      // If test is running and result is not from current run but is in the
+      // same group, show nothing
+      return null;
+    }
+    return <CondensedResultIcon result={runnable.result} />;
+  };
+
   return (
     <Box className={styles.labelRoot} data-testid={`tiLabel-${runnable.id}`}>
       <Typography className={styles.labelText} variant="body2">
         {runnable.title}
       </Typography>
-      {testRunInProgress && currentTest && currentTest.test_id?.includes(runnable.id) ? (
-        <CircularProgress size={12} />
-      ) : (
-        <CondensedResultIcon result={runnable.result} />
-      )}
+      {getResultIcon()}
       <TestRunButton
         runnable={runnable}
         runTests={runTests}

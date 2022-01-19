@@ -32,6 +32,7 @@ interface TestListItemProps {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
   currentTest: Result | null;
+  testGroupId: string;
   testRunInProgress: boolean;
 }
 
@@ -40,6 +41,7 @@ const TestListItem: FC<TestListItemProps> = ({
   runTests,
   updateRequest,
   currentTest,
+  testGroupId,
   testRunInProgress,
 }) => {
   const styles = useStyles();
@@ -96,13 +98,22 @@ const TestListItem: FC<TestListItemProps> = ({
       'No description'
     );
 
+  console.log(currentTest, test);
+
   const getResultIcon = () => {
-    if (testRunInProgress && currentTest && currentTest.test_id === test.id) {
+    if (testRunInProgress && currentTest?.test_id === test.id) {
       return <CircularProgress size={18} />;
-    } else if (test.result?.result && test.result?.test_run_id === currentTest?.test_run_id) {
-      return <ResultIcon result={test.result} />;
+    } else if (
+      testRunInProgress &&
+      // TODO: "from current run" portion is failing; test_run_id inaccurate?
+      currentTest?.test_run_id !== test.result?.test_run_id &&
+      testGroupId.includes(currentTest?.test_id as string)
+    ) {
+      // If test is running and result is not from current run but is in the
+      // same group, show nothing
+      return null;
     }
-    return null;
+    return <ResultIcon result={test.result} />;
   };
 
   return (
