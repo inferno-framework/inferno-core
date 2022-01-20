@@ -14,6 +14,18 @@ export default makeStyles((theme: Theme) => ({
     minWidth: '30px',
     display: 'inline-flex',
   },
+  labelText: {
+    display: 'inline',
+  },
+  optionalLabel: {
+    display: 'inline',
+    fontStyle: 'italic',
+    fontSize: '0.9rem',
+    lineHeight: '1.5rem',
+    alignSelf: 'center',
+    color: 'gray',
+    paddingRight: '8px',
+  },
   tabs: {
     minheight: 'auto',
     padding: 0,

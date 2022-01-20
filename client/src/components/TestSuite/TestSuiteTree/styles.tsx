@@ -9,16 +9,28 @@ export default makeStyles((theme: Theme) => ({
   },
   labelRoot: {
     display: 'flex',
+    flex: '1 1 auto',
     alignItems: 'center',
     padding: theme.spacing(0.5, 0),
     '&:hover > $buttonWrapper': {
       visibility: 'visible',
     },
   },
+  labelContainer: {
+    display: 'inline',
+    width: '100%',
+  },
   labelText: {
-    flexGrow: 1,
-    overflow: 'auto',
-    overflowWrap: 'break-word',
+    display: 'inline',
+  },
+  optionalLabel: {
+    display: 'inline',
+    fontStyle: 'italic',
+    fontSize: '0.9rem',
+    lineHeight: '1.5rem',
+    alignSelf: 'center',
+    color: 'gray',
+    paddingLeft: '8px',
   },
   labelRunButton: {
     width: '10px',

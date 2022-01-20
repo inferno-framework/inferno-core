@@ -86,6 +86,13 @@ const TestListItem: FC<TestListItemProps> = ({
     </IconButton>
   );
 
+  const testLabel = (
+    <>
+      {test.optional && <Typography className={styles.optionalLabel}>Optional</Typography>}
+      <Typography className={styles.labelText}>{test.title}</Typography>
+    </>
+  );
+
   const testDescription =
     test.description && test.description.length > 0 ? (
       <ReactMarkdown>{test.description}</ReactMarkdown>
@@ -100,7 +107,7 @@ const TestListItem: FC<TestListItemProps> = ({
           <div className={styles.testIcon}>
             <ResultIcon result={test.result} />
           </div>
-          <ListItemText primary={test.title} />
+          <ListItemText primary={testLabel} />
           {messagesBadge}
           {requestsBadge}
           <TestRunButton
