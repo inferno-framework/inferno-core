@@ -26,8 +26,6 @@ export default makeStyles((theme: Theme) => ({
   optionalLabel: {
     display: 'inline',
     fontStyle: 'italic',
-    fontSize: '0.9rem',
-    lineHeight: '1.5rem',
     alignSelf: 'center',
     color: 'gray',
     paddingLeft: '8px',

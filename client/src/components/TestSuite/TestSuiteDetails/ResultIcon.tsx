@@ -1,7 +1,7 @@
 import React, { FC, Fragment } from 'react';
 import { Result } from 'models/testSuiteModels';
 import { Tooltip } from '@mui/material';
-import { green, red, purple } from '@mui/material/colors';
+import { green, red, purple, grey } from '@mui/material/colors';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -28,7 +28,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
         return (
           <Tooltip title="failed">
             <CancelIcon
-              style={{ color: result.optional ? red[100] : red[500] }}
+              style={{ color: result.optional ? grey[500] : red[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
           </Tooltip>
@@ -36,7 +36,10 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
       case 'skip':
         return (
           <Tooltip title="skipped">
-            <RedoOutlined data-testid={`${result.id}-${result.result}`} />
+            <RedoOutlined
+              style={{ color: result.optional ? grey[500] : 'inherit' }}
+              data-testid={`${result.id}-${result.result}`}
+            />
           </Tooltip>
         );
       case 'omit':
@@ -49,7 +52,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
         return (
           <Tooltip title="error">
             <ErrorIcon
-              style={{ color: result.optional ? purple[100] : purple[500] }}
+              style={{ color: result.optional ? grey[500] : purple[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
           </Tooltip>
