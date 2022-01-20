@@ -47,7 +47,7 @@ module Inferno
         :test_session_id, :result, :result_message, :messages, :requests,
         :input_json, :output_json
       ].freeze
-      RESULT_OPTIONS = ['cancel', 'wait', 'running', 'error', 'fail', 'skip', 'omit', 'pass'].freeze
+      RESULT_OPTIONS = ['cancel', 'wait', 'running', 'error', 'fail', 'skip', 'pass', 'omit'].freeze
 
       include Inferno::Entities::Attributes
 
