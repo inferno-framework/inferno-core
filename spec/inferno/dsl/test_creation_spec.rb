@@ -30,7 +30,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'contains the correct groups' do
-        expect(suite.groups.length).to eq(4)
+        expect(suite.groups.length).to eq(5)
         expect(suite.groups.first).to eq(outer_inline_group)
       end
 
@@ -52,7 +52,7 @@ RSpec.describe InfrastructureTest::Suite do
 
         results = results_repo.current_results_for_test_session(test_session.id)
 
-        expect(results.length).to eq(14)
+        expect(results.length).to eq(16)
 
         required_results = results.reject(&:optional?)
         non_passing_results = required_results.reject { |result| result.result == 'pass' }
@@ -343,6 +343,25 @@ RSpec.describe InfrastructureTest::Suite do
         result = runner.run(external_test)
 
         expect(result.result).to eq('pass')
+      end
+    end
+
+    describe 'mixed_optional_group' do
+      context 'with the original group' do
+        it 'contains two tests' do
+          group = Inferno::Repositories::TestGroups.new.find('mixed_optional_group')
+
+          expect(group.tests.length).to eq(2)
+        end
+      end
+
+      context 'when imported with exclude_optional: true' do
+        it 'only contains the required test' do
+          group = Inferno::Repositories::TestGroups.new.find('infra_test-mixed_optional_group')
+
+          expect(group.tests.length).to eq(1)
+          expect(group.tests.first).to be_required
+        end
       end
     end
   end

@@ -85,7 +85,6 @@ module Inferno
 
         klass.parent = self
 
-        child_metadata[:collection] << klass
         children << klass
 
         configure_child_class(klass, hash_args)
@@ -163,6 +162,8 @@ module Inferno
         klass.instance_variable_set(:@http_client_definitions, new_http_client_definitions)
 
         klass.config(config)
+
+        klass.children.select!(&:required?) if hash_args.delete(:exclude_optional)
 
         hash_args.each do |key, value|
           if value.is_a? Array
