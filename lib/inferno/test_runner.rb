@@ -121,7 +121,9 @@ module Inferno
 
       children = parent.children
       child_results = results_repo.current_results_for_test_session_and_runnables(test_session.id, children)
-      return if children.length != child_results.length
+      required_children = children.select(&:required?)
+      required_results = child_results.select(&:required?)
+      return if required_children.length != required_results.length
 
       old_result = results_repo.current_result_for_test_session(test_session.id, parent.reference_hash)&.result
       new_result = roll_up_result(child_results)
