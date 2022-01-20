@@ -56,7 +56,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   );
 
   const oAuthFields: InputOAuthField[] = [
-    { name: 'access_token', label: 'Bearer Token', required: true },
+    { name: 'access_token', label: 'Access Token', required: true },
     {
       name: 'refresh_token',
       label: 'Refresh Token (will automatically refresh if available)',
