@@ -1,3 +1,4 @@
+require_relative './result_summarizer'
 require_relative './utils/markdown_formatter'
 
 module Inferno
@@ -170,14 +171,7 @@ module Inferno
     end
 
     def roll_up_result(results)
-      result_priority = Entities::Result::RESULT_OPTIONS
-      unique_required_results = results.select(&:required?)
-      all_optional = unique_required_results.empty?
-      unique_results = all_optional ? results : unique_required_results
-      unique_results.map!(&:result).uniq!
-      result_priority.find do |result|
-        unique_results.include? result
-      end
+      ResultSummarizer.new(results).summarize
     end
   end
 end

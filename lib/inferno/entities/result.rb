@@ -64,7 +64,7 @@ module Inferno
       end
 
       def required?
-        runnable.required?
+        !optional?
       end
 
       # @return [Boolean]
