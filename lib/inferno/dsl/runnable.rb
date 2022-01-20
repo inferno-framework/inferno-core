@@ -253,39 +253,38 @@ module Inferno
         end
       end
 
-      # Mark as optional
+      # Mark as optional. Tests are required by default.
       #
+      # @param optional [Boolean]
       # @return [void]
       #
-      # @example
-      #   optional
-      # rubocop:disable Style/OptionalBooleanParameter
-      def optional(optional = true)
+      def optional(optional = true) # rubocop:disable Style/OptionalBooleanParameter
         @optional = optional
       end
-      # rubocop:enable Style/OptionalBooleanParameter
 
       # Mark as required
       #
-      # Tests are required by default. This method is primarily used to make an existing optional test required.
+      # Tests are required by default. This method is provided to make an
+      # existing optional test required.
       #
+      # @param required[Boolean]
       # @return [void]
-      # rubocop:disable Style/OptionalBooleanParameter
-      def required(required = true)
+      def required(required = true) # rubocop:disable Style/OptionalBooleanParameter
         @optional = !required
       end
-      # rubocop:enable Style/OptionalBooleanParameter
 
       # The test or group is optional if true
       #
-      # @return [FalseClass]
+      # @return [Boolean]
       def optional?
         !!@optional
       end
 
       # The test or group is required if true
+      #
+      # @return [Boolean]
       def required?
-        !@optional
+        !optional?
       end
 
       # Define outputs
@@ -443,6 +442,7 @@ module Inferno
         required_inputs.map(&:to_s) - submitted_inputs.map { |input| input[:name] }
       end
 
+      # @private
       def user_runnable?
         @user_runnable ||= parent.nil? ||
                            !parent.respond_to?(:run_as_group?) ||
