@@ -1,7 +1,7 @@
 import React, { FC, Fragment } from 'react';
 import { Result } from 'models/testSuiteModels';
 import { Tooltip } from '@mui/material';
-import { green, red, orange, purple, grey } from '@mui/material/colors';
+import { red, orange, green, purple, grey } from '@mui/material/colors';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -37,7 +37,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
         return (
           <Tooltip title="skipped">
             <BlockIcon
-              style={{ color: result.optional ? grey[500] : orange[300] }}
+              style={{ color: result.optional ? grey[500] : orange[800] }}
               data-testid={`${result.id}-${result.result}`}
             />
           </Tooltip>
