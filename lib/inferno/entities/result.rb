@@ -50,6 +50,7 @@ module Inferno
       RESULT_OPTIONS = ['cancel', 'wait', 'running', 'error', 'fail', 'skip', 'pass', 'omit'].freeze
 
       include Inferno::Entities::Attributes
+      include Inferno::Entities::HasRunnable
 
       def initialize(params)
         super(params, ATTRIBUTES - [:messages, :requests])
@@ -58,9 +59,12 @@ module Inferno
         @requests = (params[:requests] || []).map { |request| Request.new(request) }
       end
 
-      # @return [Inferno::Entities::Test, Inferno::Entities::TestGroup, Inferno::Entities::TestSuite]
-      def runnable
-        test || test_group || test_suite
+      def optional?
+        runnable.optional?
+      end
+
+      def required?
+        !optional?
       end
 
       # @return [Boolean]

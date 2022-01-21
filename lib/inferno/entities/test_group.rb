@@ -32,11 +32,11 @@ module Inferno
         end
 
         def groups
-          @groups ||= []
+          children.select { |child| child < Inferno::Entities::TestGroup }
         end
 
         def tests
-          @tests ||= []
+          children.select { |child| child < Inferno::Entities::Test }
         end
 
         # Methods to configure Inferno::DSL::Runnable
@@ -54,16 +54,14 @@ module Inferno
         def group_metadata
           {
             class: TestGroup,
-            repo: repository,
-            collection: groups
+            repo: repository
           }
         end
 
         def test_metadata
           {
             class: Test,
-            repo: Inferno::Repositories::Tests.new,
-            collection: tests
+            repo: Inferno::Repositories::Tests.new
           }
         end
 

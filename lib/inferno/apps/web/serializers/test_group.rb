@@ -9,6 +9,7 @@ module Inferno
         field :test_count
         field :run_as_group?, name: :run_as_group
         field :user_runnable?, name: :user_runnable
+        field :optional?, name: :optional
 
         association :groups, name: :test_groups, blueprint: TestGroup
         association :tests, blueprint: Test

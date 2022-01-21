@@ -17,12 +17,14 @@ const test1: Test = {
   title: 'FHIR server makes SMART configuration available from well-known endpoint',
   inputs: [],
   outputs: [],
+  optional: false,
 };
 const test2: Test = {
   id: 'test2',
   title: 'Well-known configuration contains required fields',
   inputs: [],
   outputs: [],
+  optional: false,
 };
 const test3: Test = {
   id: 'test3',
@@ -30,6 +32,7 @@ const test3: Test = {
   inputs: [],
   outputs: [],
   user_runnable: true,
+  optional: false,
 };
 const test4: Test = {
   id: 'test4',
@@ -37,6 +40,7 @@ const test4: Test = {
   inputs: [],
   outputs: [],
   user_runnable: true,
+  optional: false,
 };
 
 const testList1 = [test1, test2];
@@ -50,6 +54,7 @@ const sequence1: TestGroup = {
   inputs: [{ name: 'test input' }],
   outputs: [],
   user_runnable: true,
+  optional: false,
 };
 
 const sequence2: TestGroup = {
@@ -60,6 +65,7 @@ const sequence2: TestGroup = {
   inputs: [{ name: 'second input' }],
   outputs: [],
   user_runnable: true,
+  optional: false,
 };
 
 const nestedGroup: TestGroup = {
@@ -70,6 +76,7 @@ const nestedGroup: TestGroup = {
   inputs: [],
   outputs: [],
   user_runnable: true,
+  optional: false,
 };
 
 const parentGroup: TestGroup = {
@@ -80,12 +87,14 @@ const parentGroup: TestGroup = {
   inputs: [],
   outputs: [],
   user_runnable: true,
+  optional: false,
 };
 
 const demoTestSuite: TestSuite = {
   title: 'DemonstrationSuite',
   id: 'example suite',
   test_groups: [sequence1, sequence2, parentGroup],
+  optional: false,
 };
 
 const testSuiteTreeProps: TestSuiteTreeProps = {

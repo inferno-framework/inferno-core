@@ -1,4 +1,6 @@
 require_relative 'external_outer_group'
+require_relative 'passing_optional_group'
+require_relative 'mixed_optional_group'
 
 module InfrastructureTest
   class Suite < Inferno::TestSuite
@@ -70,6 +72,9 @@ module InfrastructureTest
       end
     end
 
+    group from: 'passing_optional_group'
+    group from: 'failing_optional_group'
+    group from: 'mixed_optional_group', exclude_optional: true
     group from: 'external_outer_group'
   end
 end

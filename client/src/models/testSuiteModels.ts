@@ -36,6 +36,7 @@ export interface Result {
   created_at?: string;
   updated_at: string;
   outputs: TestOutput[];
+  optional?: boolean;
 }
 
 export interface TestInput {
@@ -70,6 +71,7 @@ export interface Test {
   outputs: TestOutput[];
   description?: string;
   user_runnable?: boolean;
+  optional?: boolean;
 }
 
 export interface TestGroup {
@@ -84,6 +86,7 @@ export interface TestGroup {
   run_as_group?: boolean;
   user_runnable?: boolean;
   test_count?: number;
+  optional?: boolean;
 }
 
 export interface TestSuite {
@@ -93,6 +96,7 @@ export interface TestSuite {
   result?: Result;
   test_count?: number;
   test_groups?: TestGroup[];
+  optional?: boolean;
 }
 
 export interface TestSession {
