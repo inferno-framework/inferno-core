@@ -373,6 +373,8 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/SessionData"
+      optional:
+        type: "boolean"
   RequestSummary:
     type: "object"
     required:
@@ -510,6 +512,9 @@ definitions:
       user_runnable:
         type: "boolean"
         readOnly: true
+      optional:
+        type: "boolean"
+        readOnly: true
   Test:
     type: "object"
     required:
@@ -527,6 +532,9 @@ definitions:
         items:
           $ref: "#/definitions/Input"
       user_runnable:
+        type: "boolean"
+        readOnly: true
+      optional:
         type: "boolean"
         readOnly: true
   Input:

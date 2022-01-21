@@ -6,7 +6,7 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
     serialized_group = JSON.parse(described_class.render(group))
 
     expected_keys = ['id', 'description', 'inputs', 'outputs', 'title', 'test_count', 'test_groups', 'tests',
-                     'run_as_group', 'user_runnable']
+                     'run_as_group', 'user_runnable', 'optional']
 
     expect(serialized_group.keys).to match_array(expected_keys)
     expect(serialized_group['id']).to eq(group.id.to_s)

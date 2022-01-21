@@ -22,7 +22,7 @@ module Inferno
           return @default_group if @default_group
 
           @default_group = Class.new(TestGroup)
-          groups << @default_group
+          children << @default_group
           @default_group
         end
 
@@ -31,7 +31,7 @@ module Inferno
         end
 
         def groups
-          @groups ||= []
+          children.select { |child| child < Inferno::Entities::TestGroup }
         end
 
         # Methods to configure Inferno::DSL::Runnable
@@ -44,8 +44,7 @@ module Inferno
         def group_metadata
           {
             class: TestGroup,
-            repo: Inferno::Repositories::TestGroups.new,
-            collection: groups
+            repo: Inferno::Repositories::TestGroups.new
           }
         end
 

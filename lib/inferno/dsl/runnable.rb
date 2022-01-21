@@ -85,7 +85,6 @@ module Inferno
 
         klass.parent = self
 
-        child_metadata[:collection] << klass
         children << klass
 
         configure_child_class(klass, hash_args)
@@ -163,6 +162,8 @@ module Inferno
         klass.instance_variable_set(:@http_client_definitions, new_http_client_definitions)
 
         klass.config(config)
+
+        klass.children.select!(&:required?) if hash_args.delete(:exclude_optional)
 
         hash_args.each do |key, value|
           if value.is_a? Array
@@ -250,6 +251,40 @@ module Inferno
           inputs << identifier
           config.add_input(identifier, input_definition)
         end
+      end
+
+      # Mark as optional. Tests are required by default.
+      #
+      # @param optional [Boolean]
+      # @return [void]
+      #
+      def optional(optional = true) # rubocop:disable Style/OptionalBooleanParameter
+        @optional = optional
+      end
+
+      # Mark as required
+      #
+      # Tests are required by default. This method is provided to make an
+      # existing optional test required.
+      #
+      # @param required[Boolean]
+      # @return [void]
+      def required(required = true) # rubocop:disable Style/OptionalBooleanParameter
+        @optional = !required
+      end
+
+      # The test or group is optional if true
+      #
+      # @return [Boolean]
+      def optional?
+        !!@optional
+      end
+
+      # The test or group is required if true
+      #
+      # @return [Boolean]
+      def required?
+        !optional?
       end
 
       # Define outputs
@@ -407,6 +442,7 @@ module Inferno
         required_inputs.map(&:to_s) - submitted_inputs.map { |input| input[:name] }
       end
 
+      # @private
       def user_runnable?
         @user_runnable ||= parent.nil? ||
                            !parent.respond_to?(:run_as_group?) ||
