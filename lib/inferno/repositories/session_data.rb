@@ -54,7 +54,7 @@ module Inferno
         return nil if params[:value].blank?
 
         case params[:type]&.to_s
-        when 'text', 'textarea'
+        when 'text', 'textarea', 'radio'
           params[:value].to_s
         when 'oauth_credentials'
           credentials =
