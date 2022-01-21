@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TestSuite, TestGroup, RunnableType, Result } from 'models/testSuiteModels';
+import { TestSuite, TestGroup, RunnableType } from 'models/testSuiteModels';
 import { CardContent, Box } from '@mui/material';
 import useStyles from './styles';
 import TreeView from '@mui/lab/TreeView';
@@ -13,7 +13,6 @@ export interface TestSuiteTreeProps {
   testSuite: TestSuite;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   selectedRunnable: string;
-  currentTest: Result | null;
   testRunInProgress: boolean;
 }
 
@@ -30,7 +29,6 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   testSuite,
   selectedRunnable,
   runTests,
-  currentTest,
   testRunInProgress,
 }) => {
   const styles = useStyles();
@@ -53,7 +51,6 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
         data-testid={`${testGroup.id}-treeitem`}
         testGroup={testGroup}
         runTests={runTests}
-        currentTest={currentTest}
         testRunInProgress={testRunInProgress}
       />
     ));
@@ -75,7 +72,6 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
                 <TreeItemLabel
                   runnable={testSuite}
                   runTests={runTests}
-                  currentTest={currentTest}
                   testRunInProgress={testRunInProgress}
                 />
               }

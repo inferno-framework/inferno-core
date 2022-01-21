@@ -1,19 +1,17 @@
 import React, { FC } from 'react';
-import { TestGroup, RunnableType, Result } from 'models/testSuiteModels';
+import { TestGroup, RunnableType } from 'models/testSuiteModels';
 import CustomTreeItem from '../../_common/TreeItem';
 import TreeItemLabel from './TreeItemLabel';
 
 export interface TestGroupTreeItemProps {
   testGroup: TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
-  currentTest: Result | null;
   testRunInProgress: boolean;
 }
 
 const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
   testGroup,
   runTests,
-  currentTest,
   testRunInProgress,
 }) => {
   let sublist: JSX.Element[] = [];
@@ -23,7 +21,6 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
         testGroup={subTestGroup}
         runTests={runTests}
         key={`ti-${testGroup.id}-${index}`}
-        currentTest={currentTest}
         testRunInProgress={testRunInProgress}
       />
     ));
@@ -36,7 +33,6 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
         <TreeItemLabel
           runnable={testGroup}
           runTests={runTests}
-          currentTest={currentTest}
           testRunInProgress={testRunInProgress}
         />
       }

@@ -275,7 +275,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           testSuite={test_suite}
           runTests={runTests}
           selectedRunnable={selectedRunnable}
-          currentTest={currentTest(resultsMap, testRun)}
           testRunInProgress={testRunNeedsProgressBar(testRun)}
         />
       </Drawer>

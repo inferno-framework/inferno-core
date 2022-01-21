@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import useStyles from './styles';
 import {
   Box,
@@ -48,6 +48,7 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
+  const [isRunning, setIsRunning] = React.useState(false);
 
   const messagesBadge = test.result?.messages && test.result.messages.length > 0 && (
     <IconButton
@@ -98,22 +99,31 @@ const TestListItem: FC<TestListItemProps> = ({
       'No description'
     );
 
-  console.log(currentTest, test);
+  useEffect(() => {
+    if (!testRunInProgress) setIsRunning(false);
+  }, [testRunInProgress]);
 
   const getResultIcon = () => {
-    if (testRunInProgress && currentTest?.test_id === test.id) {
-      return <CircularProgress size={18} />;
-    } else if (
-      testRunInProgress &&
-      // TODO: "from current run" portion is failing; test_run_id inaccurate?
-      currentTest?.test_run_id !== test.result?.test_run_id &&
-      testGroupId.includes(currentTest?.test_id as string)
+    // if (testRunInProgress && currentTest?.test_id === test.id) {
+    //   return <CircularProgress size={18} />;
+    // } else if (
+    if (
+      // testRunInProgress &&
+      // // TODO: "from current run" portion is failing; test_run_id inaccurate?
+      // currentTest?.test_run_id !== test.result?.test_run_id &&
+      // testGroupId.includes(currentTest?.test_id as string)
+      isRunning &&
+      !currentTest?.result
     ) {
       // If test is running and result is not from current run but is in the
       // same group, show nothing
-      return null;
+      return <CircularProgress size={18} />;
     }
     return <ResultIcon result={test.result} />;
+  };
+
+  const handleSetIsRunning = (val: boolean) => {
+    setIsRunning(val);
   };
 
   return (
@@ -127,6 +137,7 @@ const TestListItem: FC<TestListItemProps> = ({
           <TestRunButton
             runnable={test}
             runTests={runTests}
+            setIsRunning={handleSetIsRunning}
             testRunInProgress={testRunInProgress}
           />
           {expandButton}

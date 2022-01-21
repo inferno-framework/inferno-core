@@ -10,12 +10,18 @@ import {
 } from 'models/testSuiteModels';
 
 export interface TestRunButtonProps {
-  runnable: TestSuite | TestGroup | Test;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
+  setIsRunning: (isRunning: boolean) => void;
+  runnable: TestSuite | TestGroup | Test;
   testRunInProgress: boolean;
 }
 
-const TestRunButton: FC<TestRunButtonProps> = ({ runTests, runnable, testRunInProgress }) => {
+const TestRunButton: FC<TestRunButtonProps> = ({
+  runTests,
+  setIsRunning,
+  runnable,
+  testRunInProgress,
+}) => {
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
   const showRunButton = runnableIsTestSuite(runnable) || (runnable as TestGroup).user_runnable;
   const runButton = showRunButton ? (
@@ -27,6 +33,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({ runTests, runnable, testRunInPr
           edge="end"
           size="small"
           onClick={() => {
+            setIsRunning(true);
             runTests(runnableType, runnable.id);
           }}
           data-testid={`runButton-${runnable.id}`}

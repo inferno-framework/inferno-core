@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import useStyles from './styles';
 import { CircularProgress, Link, ListItem, ListItemIcon, ListItemText } from '@mui/material';
@@ -22,20 +22,40 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
 }) => {
   const styles = useStyles();
   const location = useLocation();
+  const [isRunning, setIsRunning] = React.useState(false);
+
+  useEffect(() => {
+    if (!testRunInProgress) setIsRunning(false);
+  }, [testRunInProgress]);
 
   const getResultIcon = () => {
-    if (testRunInProgress && currentTest?.test_id?.includes(testGroup.id)) {
-      return <CircularProgress size={18} />;
-    } else if (
-      testRunInProgress &&
-      currentTest?.test_run_id !== testGroup?.result?.test_run_id &&
-      testGroup?.result?.test_group_id?.includes(currentTest?.test_id as string)
+    // if (
+    //   testRunInProgress &&
+    //   currentTest?.test_run_id !== testGroup?.result?.test_run_id &&
+    //   testGroup?.result?.test_group_id?.includes(currentTest?.test_id as string)
+    // )
+    //   console.log(currentTest, testGroup);
+    // console.log(currentTest?.test_run_id !== testGroup?.result?.test_run_id);
+
+    // if (testRunInProgress && currentTest?.test_id?.includes(testGroup.id)) {
+    //   return <CircularProgress size={18} />;
+    // } else if (
+    if (
+      // testRunInProgress &&
+      // currentTest?.test_run_id !== testGroup?.result?.test_run_id &&
+      // currentTest?.test_id?.includes(testGroup?.result?.test_group_id as string)
+      isRunning
     ) {
       // If test is running and result is not from current run but is in the
       // same group, show nothing
-      return null;
+      // return null;
+      return <CircularProgress size={18} />;
     }
     return <ResultIcon result={testGroup.result} />;
+  };
+
+  const handleSetIsRunning = (val: boolean) => {
+    setIsRunning(val);
   };
 
   return (
@@ -55,6 +75,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       <TestRunButton
         runnable={testGroup}
         runTests={runTests}
+        setIsRunning={handleSetIsRunning}
         testRunInProgress={testRunInProgress}
       />
     </ListItem>
