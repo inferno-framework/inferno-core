@@ -69,7 +69,7 @@ const TestListItem: FC<TestListItemProps> = ({
       }}
     >
       <Badge badgeContent={test.result.requests.length} color="primary">
-        <Tooltip title={`${test.result.requests.length} messages`}>
+        <Tooltip title={`${test.result.requests.length} requests`}>
           <PublicIcon color="secondary" />
         </Tooltip>
       </Badge>

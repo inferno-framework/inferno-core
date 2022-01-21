@@ -1,13 +1,13 @@
 import React, { FC, Fragment } from 'react';
 import { Result } from 'models/testSuiteModels';
 import { Tooltip } from '@mui/material';
-import { green, red, purple, grey } from '@mui/material/colors';
+import { green, red, orange, purple, grey } from '@mui/material/colors';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ErrorIcon from '@mui/icons-material/Error';
-import { RedoOutlined } from '@mui/icons-material';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import BlockIcon from '@mui/icons-material/Block';
 export interface ResultIconProps {
   result?: Result;
 }
@@ -36,8 +36,8 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
       case 'skip':
         return (
           <Tooltip title="skipped">
-            <RedoOutlined
-              style={{ color: result.optional ? grey[500] : 'inherit' }}
+            <BlockIcon
+              style={{ color: result.optional ? grey[500] : orange[300] }}
               data-testid={`${result.id}-${result.result}`}
             />
           </Tooltip>
@@ -45,7 +45,10 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
       case 'omit':
         return (
           <Tooltip title="omitted">
-            <RadioButtonUncheckedIcon data-testid={`${result.id}-${result.result}`} />
+            <RadioButtonUncheckedIcon
+              style={{ color: grey[500] }}
+              data-testid={`${result.id}-${result.result}`}
+            />
           </Tooltip>
         );
       case 'error':
