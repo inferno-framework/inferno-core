@@ -70,7 +70,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     {
       name: 'expires_in',
       label: 'Expires in (seconds)',
-      required: showRefreshDetails,
+      required: false,
       hide: !showRefreshDetails,
     },
     {
