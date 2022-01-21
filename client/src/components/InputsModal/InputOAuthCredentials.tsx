@@ -56,7 +56,11 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   );
 
   const oAuthFields: InputOAuthField[] = [
-    { name: 'access_token', label: 'Access Token', required: true },
+    {
+      name: 'access_token',
+      label: 'Access Token',
+      required: !requirement.optional && !requirement.locked,
+    },
     {
       name: 'refresh_token',
       label: 'Refresh Token (will automatically refresh if available)',
@@ -64,25 +68,21 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     {
       name: 'token_url',
       label: 'Token Endpoint',
-      required: showRefreshDetails,
       hide: !showRefreshDetails,
     },
     {
       name: 'expires_in',
       label: 'Expires in (seconds)',
-      required: false,
       hide: !showRefreshDetails,
     },
     {
       name: 'client_id',
       label: 'Client ID',
-      required: showRefreshDetails,
       hide: !showRefreshDetails,
     },
     {
       name: 'client_secret',
       label: 'Client Secret',
-      required: showRefreshDetails,
       hide: !showRefreshDetails,
     },
   ];
