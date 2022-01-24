@@ -51,15 +51,12 @@ const InputsModal: FC<InputsModalProps> = ({
       const accessTokenIsEmpty = oAuthJSON.access_token === '';
       const refreshIsEmpty =
         oAuthJSON.refresh_token !== '' &&
-        (oAuthJSON.token_url === '' ||
-          oAuthJSON.expires_in === '' ||
-          oAuthJSON.client_id === '' ||
-          oAuthJSON.client_secret === '');
-      oAuthMissingRequiredInput = accessTokenIsEmpty || refreshIsEmpty;
+        (oAuthJSON.token_url === '' || oAuthJSON.client_id === '');
+      oAuthMissingRequiredInput = (accessTokenIsEmpty && !input.optional) || refreshIsEmpty;
     } catch (e) {
       // if JSON.parse fails, then assume field is not OAuth and move on
     }
-    return !input.optional && (!inputsMap.get(input.name) || oAuthMissingRequiredInput);
+    return (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput;
   });
 
   function submitClicked(): void {
