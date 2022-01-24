@@ -7,8 +7,8 @@ import useStyles from './styles';
 export interface InputTextFieldProps {
   requirement: TestInput;
   index: number;
-  inputsMap: Map<string, string>;
-  setInputsMap: (map: Map<string, string>) => void;
+  inputsMap: Map<string, unknown>;
+  setInputsMap: (map: Map<string, unknown>) => void;
 }
 
 const InputTextField: FC<InputTextFieldProps> = ({

@@ -7,8 +7,8 @@ import useStyles from './styles';
 export interface InputTextAreaProps {
   requirement: TestInput;
   index: number;
-  inputsMap: Map<string, string>;
-  setInputsMap: (map: Map<string, string>) => void;
+  inputsMap: Map<string, unknown>;
+  setInputsMap: (map: Map<string, unknown>) => void;
 }
 
 const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, setInputsMap }) => {
