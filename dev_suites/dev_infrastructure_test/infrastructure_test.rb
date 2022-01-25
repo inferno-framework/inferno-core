@@ -40,6 +40,7 @@ module InfrastructureTest
       group 'Inner inline group', id: 'inner_inline_group' do
         input :inner_group_input
         output :inner_group_output
+        short_title 'Inner inline group short title'
 
         def inner_inline_group_helper
           'INNER_INLINE_GROUP_HELPER'
@@ -52,6 +53,7 @@ module InfrastructureTest
         test 'Inline test 1', id: 'inline_test_1' do
           input :test_input
           output :test_output
+          short_title 'Inline test 1'
           description 'Inline test 1 full description'
           short_description 'Inline test 1 short description'
 

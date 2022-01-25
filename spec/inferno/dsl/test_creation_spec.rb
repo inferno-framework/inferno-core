@@ -125,7 +125,7 @@ RSpec.describe InfrastructureTest::Suite do
 
       it 'contains the correct metadata' do
         expect(inner_inline_group.title).to eq('Inner inline group')
-        expect(inner_inline_group.short_title).to eq('Inner inline group')
+        expect(inner_inline_group.short_title).to eq('Inner inline group short title')
         expect(inner_inline_group.id).to eq("#{suite.id}-outer_inline_group-inner_inline_group")
       end
 

@@ -216,9 +216,8 @@ module Inferno
       # Set/Get a runnable's short title
       #
       # @param new_short_title [String]
-      # @return [String] short title, or title if no short title defined
+      # @return [String] the short title
       def short_title(new_short_title = nil)
-        return @title if new_short_title.nil? && @short_title.nil?
         return @short_title if new_short_title.nil?
 
         @short_title = new_short_title
