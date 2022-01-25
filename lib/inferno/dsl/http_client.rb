@@ -103,6 +103,68 @@ module Inferno
         end
       end
 
+      # Perform an HTTP DELETE request
+      #
+      # @param url [String] if this request is using a defined client, this will
+      #   be appended to the client's url. Must be an absolute url for requests
+      #   made without a defined client
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @return [Inferno::Entities::Request]
+      def delete(url = '', client: :default, name: :nil, **options)
+        store_request('outgoing', name) do
+          client = http_client(client)
+
+          if client
+            client.delete(url, nil, options[:headers])
+          elsif url.match?(%r{\Ahttps?://})
+            Faraday.delete(url, nil, options[:headers])
+          else
+            raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+          end
+        end
+      end
+
+      # Perform an HTTP GET request and stream the response
+      #
+      # @param block [Proc] A Proc object whose input will be the string chunks
+      #   received while streaming response to the get request.
+      # @param url [String] If this request is using a defined client, this will
+      #   be appended to the client's url. Must be an absolute url for requests
+      #   made without a defined client
+      # @param limit [Integer] The number of streamed-in chunks to be stored in
+      #   the response body. This optional input defaults to 100.
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @option options [Hash] Input headers here - headers are optional and
+      #   must be entered as the last piece of input to this method
+      # @return [Inferno::Entities::Request]
+      def stream(block, url = '', limit = 100, client: :default, name: nil, **options)
+        streamed = []
+
+        collector = proc do |chunk, bytes|
+          streamed << chunk if limit.positive?
+          limit -= 1
+          block.call(chunk, bytes)
+        end
+
+        store_request('outgoing', name) do
+          client = http_client(client)
+
+          if client
+            response = client.get(url, nil, options[:headers]) { |req| req.options.on_data = collector }
+          elsif url.match?(%r{\Ahttps?://})
+            response = Faraday.get(url, nil, options[:headers]) { |req| req.options.on_data = collector }
+          else
+            raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+          end
+          response.env.body = streamed.join
+          response
+        end
+      end
+
       module ClassMethods
         # @private
         def http_client_definitions

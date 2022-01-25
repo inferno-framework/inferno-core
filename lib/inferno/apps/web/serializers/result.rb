@@ -16,6 +16,7 @@ module Inferno
         field :result_message, if: :field_present?
         field :created_at
         field :updated_at
+        field :optional?, name: :optional
 
         field :outputs do |result, _options|
           result.output_json.present? ? JSON.parse(result.output_json) : []

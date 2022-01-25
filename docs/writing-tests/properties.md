@@ -65,6 +65,29 @@ end
 [`description` in the API
 docs](/inferno-core/docs/Inferno/DSL/Runnable.html#description-instance_method)
 
+## Optional/Required
+Mark a test/group as optional/required. Tests/Groups are required by default.
+The results of optional tests do not affect the test result of their parent.
+
+```ruby
+group do
+  optional # Makes this group optional
+
+  test do
+    optional # Makes this test optional
+  end
+  
+  test from: :some_optional_test do
+    required # Make an optional test required
+  end
+end
+```
+[`optional` in the API
+docs](/inferno-core/docs/Inferno/DSL/Runnable.html#optional-instance_method)
+
+[`required` in the API
+docs](/inferno-core/docs/Inferno/DSL/Runnable.html#required-instance_method)
+
 ## Run
 (`Test`s only) `run` defines a block of code which is executed when the test is
 run. A test will typically make one or more

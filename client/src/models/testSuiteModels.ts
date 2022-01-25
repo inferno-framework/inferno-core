@@ -36,12 +36,13 @@ export interface Result {
   created_at?: string;
   updated_at: string;
   outputs: TestOutput[];
+  optional?: boolean;
 }
 
 export interface TestInput {
   name: string;
   title?: string;
-  value?: string;
+  value?: unknown;
   type?: 'text' | 'textarea' | 'oauth_credentials' | 'radio';
   description?: string;
   default?: string;
@@ -70,6 +71,7 @@ export interface Test {
   outputs: TestOutput[];
   description?: string;
   user_runnable?: boolean;
+  optional?: boolean;
 }
 
 export interface TestGroup {
@@ -84,6 +86,7 @@ export interface TestGroup {
   run_as_group?: boolean;
   user_runnable?: boolean;
   test_count?: number;
+  optional?: boolean;
 }
 
 export interface TestSuite {
@@ -93,6 +96,7 @@ export interface TestSuite {
   result?: Result;
   test_count?: number;
   test_groups?: TestGroup[];
+  optional?: boolean;
 }
 
 export interface TestSession {
@@ -116,6 +120,20 @@ export interface TestRun {
   test_group_id?: string;
   test_suite_id?: string;
   test_id?: string;
+}
+
+// Necessary to prevent "implicit any" errors when indexing objects of type OAuthCredentials
+export interface OAuthCredentialsType {
+  [key: string]: string;
+}
+
+export interface OAuthCredentials extends OAuthCredentialsType {
+  access_token: string;
+  refresh_token: string;
+  expires_in: string;
+  client_id: string;
+  client_secret: string;
+  token_url: string;
 }
 
 export function runnableIsTestSuite(runnable: TestSuite | TestGroup | Test): runnable is TestSuite {

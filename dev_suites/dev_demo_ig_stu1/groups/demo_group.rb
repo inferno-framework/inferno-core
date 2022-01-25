@@ -50,7 +50,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       run { assert 1 + 1 == 2 }
     end
 
-    test 'warning message test' do
+    test 'warning message/optional test' do
+      optional
       run do
         warning %(
           # blah

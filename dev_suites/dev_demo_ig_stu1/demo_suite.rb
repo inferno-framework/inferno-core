@@ -136,7 +136,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       group from: 'DemoIG_STU1::DemoGroup', id: 'DEF', title: 'Demo Group Instance 2'
       group from: 'DemoIG_STU1::DemoGroup' do
         id 'GHI'
-        title 'Demo Group Instance 3'
+        title 'Optional Demo Group Instance 3'
+        optional
       end
     end
 

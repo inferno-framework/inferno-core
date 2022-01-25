@@ -87,7 +87,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     resultsToMap(previousResults)
   );
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
-  const [sessionData, setSessionData] = React.useState<Map<string, string>>(new Map());
+  const [sessionData, setSessionData] = React.useState<Map<string, unknown>>(new Map());
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
 
   useEffect(() => {

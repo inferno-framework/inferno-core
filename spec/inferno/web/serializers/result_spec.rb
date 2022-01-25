@@ -1,8 +1,6 @@
 RSpec.describe Inferno::Web::Serializers::Result do
   let(:result) do
-    Inferno::Entities::Result.new(
-      output_json: JSON.generate([{ name: 'output', value: 'VALUE', type: 'some_type' }])
-    )
+    repo_create(:result, output_json: JSON.generate([{ name: 'output', value: 'VALUE', type: 'some_type' }]))
   end
 
   it 'includes output types' do
