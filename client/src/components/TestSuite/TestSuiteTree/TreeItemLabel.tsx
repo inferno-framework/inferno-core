@@ -15,9 +15,16 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, runTests, testRunInPr
   const styles = useStyles();
   return (
     <Box className={styles.labelRoot} data-testid={`tiLabel-${runnable.id}`}>
-      <Typography className={styles.labelText} variant="body2">
-        {runnable.title}
-      </Typography>
+      <Box className={styles.labelContainer}>
+        <Typography className={styles.labelText} variant="body2">
+          {runnable.title}
+        </Typography>
+        {runnable.optional && (
+          <Typography className={styles.optionalLabel} variant="body2">
+            Optional
+          </Typography>
+        )}
+      </Box>
       <CondensedResultIcon result={runnable.result} />
       <TestRunButton
         runnable={runnable}

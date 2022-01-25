@@ -14,6 +14,18 @@ export default makeStyles((theme: Theme) => ({
     minWidth: '30px',
     display: 'inline-flex',
   },
+  labelText: {
+    display: 'inline',
+  },
+  optionalLabel: {
+    display: 'inline',
+    fontStyle: 'italic',
+    fontSize: '0.9rem',
+    lineHeight: '1.5rem',
+    alignSelf: 'center',
+    color: 'gray',
+    paddingRight: '8px',
+  },
   tabs: {
     minheight: 'auto',
     padding: 0,
@@ -25,8 +37,14 @@ export default makeStyles((theme: Theme) => ({
     width: '90%',
     padding: '0 !important',
   },
-  testBadge: {
+  badgeIcon: {
     margin: '0 4px',
+  },
+  testBadge: {
+    border: '1px solid #5d89a1',
+    color: '#5d89a1',
+    backgroundColor: 'white',
+    fontWeight: 'bold',
   },
   listItem: {
     borderBottom: '1px solid rgba(0,0,0,.12)',
