@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "Inferno JSON API"
-  version: "0.0.1"
+  version: "0.1.1"
   title: "Inferno JSON API"
   contact:
     email: "inferno@groups.mitre.org"
