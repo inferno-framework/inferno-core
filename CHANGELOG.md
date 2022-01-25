@@ -1,3 +1,13 @@
+# 0.1.1
+
+* Add `input_instructions`, `short_title`, and `short_description` to runnables.
+  UI for these attributes is not yet implemented.
+* Fix an issue where Omit results had higher precedence than Pass results
+* Add support for HTTP delete requests and streaming get requests
+* Minor UI improvements
+* Improve the UI for `oauth_credentials` inputs
+* Allow tests/groups to be marked as optional
+
 # 0.1.0
 
 * Fix a display bug for url-encoded request bodies
