@@ -73,12 +73,6 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
       required: true,
     },
     {
-      name: 'expires_in',
-      label: 'Expires in (seconds)',
-      hide: !showRefreshDetails,
-      required: false,
-    },
-    {
       name: 'client_id',
       label: 'Client ID',
       hide: !showRefreshDetails,
@@ -87,6 +81,12 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     {
       name: 'client_secret',
       label: 'Client Secret',
+      hide: !showRefreshDetails,
+      required: false,
+    },
+    {
+      name: 'expires_in',
+      label: 'Expires in (seconds)',
       hide: !showRefreshDetails,
       required: false,
     },
