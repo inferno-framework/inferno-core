@@ -1,8 +1,9 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { useLocation } from 'react-router-dom';
 import useStyles from './styles';
-import { CircularProgress, Link, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { Result, RunnableType, TestGroup } from 'models/testSuiteModels';
+import { Link, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import PendingIcon from '@mui/icons-material/Pending';
+import { RunnableType, TestGroup, TestRun } from 'models/testSuiteModels';
 import FolderIcon from '@mui/icons-material/Folder';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
@@ -10,54 +11,24 @@ import TestRunButton from '../TestRunButton/TestRunButton';
 interface TestGroupListItemProps {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   testGroup: TestGroup;
-  currentTest: Result | null;
-  parentIsRunning: boolean;
+  testRun: TestRun | null;
   testRunInProgress: boolean;
 }
 
 const TestGroupListItem: FC<TestGroupListItemProps> = ({
   runTests,
   testGroup,
-  currentTest,
-  parentIsRunning,
+  testRun,
   testRunInProgress,
 }) => {
   const styles = useStyles();
   const location = useLocation();
-  const [isRunning, setIsRunning] = React.useState(testRunInProgress);
 
   const getResultIcon = () => {
-    // if (
-    //   testRunInProgress &&
-    //   currentTest?.test_run_id !== testGroup?.result?.test_run_id &&
-    //   testGroup?.result?.test_group_id?.includes(currentTest?.test_id as string)
-    // )
-    //   console.log(currentTest, testGroup);
-    // console.log(currentTest?.test_run_id !== testGroup?.result?.test_run_id);
-
-    // if (testRunInProgress && currentTest?.test_id?.includes(testGroup.id)) {
-    //   return <CircularProgress size={18} />;
-    // } else if (
-
-    console.log(isRunning);
-    
-
-    if (
-      // testRunInProgress &&
-      // currentTest?.test_run_id !== testGroup?.result?.test_run_id &&
-      // currentTest?.test_id?.includes(testGroup?.result?.test_group_id as string)
-      isRunning
-    ) {
-      // If test is running and result is not from current run but is in the
-      // same group, show nothing
-      // return null;
-      return <CircularProgress size={18} />;
+    if (testRunInProgress && testGroup.id.includes(testRun?.test_group_id as string)) {
+      return <PendingIcon color="disabled" />;
     }
     return <ResultIcon result={testGroup.result} />;
-  };
-
-  const handleSetIsRunning = (val: boolean) => {
-    setIsRunning(val);
   };
 
   return (
@@ -75,9 +46,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       />
       <div className={styles.testIcon}>{getResultIcon()}</div>
       <TestRunButton
-        runnable={testGroup}
         runTests={runTests}
-        setIsRunning={handleSetIsRunning}
+        runnable={testGroup}
         testRunInProgress={testRunInProgress}
       />
     </ListItem>

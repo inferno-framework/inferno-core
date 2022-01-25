@@ -1,8 +1,7 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import useStyles from './styles';
 import {
   Box,
-  CircularProgress,
   Collapse,
   Container,
   Divider,
@@ -15,7 +14,8 @@ import {
   Badge,
   Typography,
 } from '@mui/material';
-import { RunnableType, Test, Request, Result } from 'models/testSuiteModels';
+import PendingIcon from '@mui/icons-material/Pending';
+import { RunnableType, Test, Request, TestRun } from 'models/testSuiteModels';
 import TabPanel from './TabPanel';
 import MessagesList from './MessagesList';
 import RequestsList from './RequestsList';
@@ -28,27 +28,24 @@ import ReactMarkdown from 'react-markdown';
 import TestRunButton from '../../TestRunButton/TestRunButton';
 
 interface TestListItemProps {
-  test: Test;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
-  currentTest: Result | null;
-  testGroupId: string;
+  test: Test;
+  testRun: TestRun | null;
   testRunInProgress: boolean;
 }
 
 const TestListItem: FC<TestListItemProps> = ({
-  test,
   runTests,
   updateRequest,
-  currentTest,
-  testGroupId,
+  test,
+  testRun,
   testRunInProgress,
 }) => {
   const styles = useStyles();
 
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
-  const [isRunning, setIsRunning] = React.useState(false);
 
   const messagesBadge = test.result?.messages && test.result.messages.length > 0 && (
     <IconButton
@@ -82,13 +79,9 @@ const TestListItem: FC<TestListItemProps> = ({
     </IconButton>
   );
 
-  const expandButton = open ? (
-    <IconButton onClick={() => setOpen(false)} size="small">
-      <ExpandLessIcon />
-    </IconButton>
-  ) : (
-    <IconButton onClick={() => setOpen(true)} size="small">
-      <ExpandMoreIcon />
+  const expandButton = (
+    <IconButton onClick={() => setOpen(open)} size="small">
+      {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
     </IconButton>
   );
 
@@ -106,31 +99,12 @@ const TestListItem: FC<TestListItemProps> = ({
       'No description'
     );
 
-  useEffect(() => {
-    if (!testRunInProgress) setIsRunning(false);
-  }, [testRunInProgress]);
-
   const getResultIcon = () => {
-    // if (testRunInProgress && currentTest?.test_id === test.id) {
-    //   return <CircularProgress size={18} />;
-    // } else if (
-    if (
-      // testRunInProgress &&
-      // // TODO: "from current run" portion is failing; test_run_id inaccurate?
-      // currentTest?.test_run_id !== test.result?.test_run_id &&
-      // testGroupId.includes(currentTest?.test_id as string)
-      isRunning &&
-      !currentTest?.result
-    ) {
-      // If test is running and result is not from current run but is in the
-      // same group, show nothing
-      return <CircularProgress size={18} />;
+    const testRunResultIds = testRun?.results?.map((r) => r.test_id) || [];
+    if (testRunInProgress && !testRunResultIds.includes(test.id)) {
+      return <PendingIcon color="disabled" />;
     }
     return <ResultIcon result={test.result} />;
-  };
-
-  const handleSetIsRunning = (val: boolean) => {
-    setIsRunning(val);
   };
 
   return (
@@ -142,9 +116,8 @@ const TestListItem: FC<TestListItemProps> = ({
           {messagesBadge}
           {requestsBadge}
           <TestRunButton
-            runnable={test}
             runTests={runTests}
-            setIsRunning={handleSetIsRunning}
+            runnable={test}
             testRunInProgress={testRunInProgress}
           />
           {expandButton}
