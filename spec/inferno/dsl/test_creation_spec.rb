@@ -17,8 +17,11 @@ RSpec.describe InfrastructureTest::Suite do
 
       it 'contains correct metadata' do
         expect(suite.id).to eq('infra_test')
-        expect(suite.title).to eq('Infrastructure Test')
-        expect(suite.description).to start_with('An internal test suite')
+        expect(suite.title).to eq('Infrastructure Test Suite')
+        expect(suite.short_title).to eq('Infrastructure')
+        expect(suite.description).to start_with('An internal test suite to verify that inferno infrastructure works')
+        expect(suite.short_description).to start_with('Internal test suite')
+        expect(suite.input_instructions).to eq('Instructions for inputs')
       end
 
       it 'contains the correct inputs' do
@@ -73,7 +76,10 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'contains the correct metadata' do
-        expect(outer_inline_group.title).to eq('Outer inline group')
+        expect(outer_inline_group.title).to eq('Outer inline group title')
+        expect(outer_inline_group.short_title).to eq('Outer inline group short title')
+        expect(outer_inline_group.description).to eq('Outer inline group for testing description')
+        expect(outer_inline_group.short_description).to eq('Outer inline group short description')
         expect(outer_inline_group.id).to eq("#{suite.id}-outer_inline_group")
       end
 
@@ -119,6 +125,7 @@ RSpec.describe InfrastructureTest::Suite do
 
       it 'contains the correct metadata' do
         expect(inner_inline_group.title).to eq('Inner inline group')
+        expect(inner_inline_group.short_title).to eq('Inner inline group')
         expect(inner_inline_group.id).to eq("#{suite.id}-outer_inline_group-inner_inline_group")
       end
 
@@ -169,6 +176,9 @@ RSpec.describe InfrastructureTest::Suite do
 
       it 'contains the correct metadata' do
         expect(inline_test1.title).to eq('Inline test 1')
+        expect(inline_test1.short_title).to eq('Inline test 1')
+        expect(inline_test1.description).to eq('Inline test 1 full description')
+        expect(inline_test1.short_description).to eq('Inline test 1 short description')
         expect(inline_test1.id).to eq("#{suite.id}-outer_inline_group-inner_inline_group-inline_test_1")
       end
 
