@@ -52,13 +52,13 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const messagesBadge = test.result?.messages && test.result.messages.length > 0 && (
     <IconButton
-      className={styles.testBadge}
+      className={styles.badgeIcon}
       onClick={() => {
         setPanelIndex(1);
         setOpen(true);
       }}
     >
-      <Badge badgeContent={test.result.messages.length} color="primary">
+      <Badge badgeContent={test.result.messages.length} classes={{ badge: styles.testBadge }}>
         <Tooltip title={`${test.result.messages.length} messages`}>
           <MailIcon color="secondary" />
         </Tooltip>
@@ -68,14 +68,14 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
     <IconButton
-      className={styles.testBadge}
+      className={styles.badgeIcon}
       onClick={() => {
         setPanelIndex(2);
         setOpen(true);
       }}
     >
-      <Badge badgeContent={test.result.requests.length} color="primary">
-        <Tooltip title={`${test.result.requests.length} messages`}>
+      <Badge badgeContent={test.result.requests.length} classes={{ badge: styles.testBadge }}>
+        <Tooltip title={`${test.result.requests.length} requests`}>
           <PublicIcon color="secondary" />
         </Tooltip>
       </Badge>
@@ -90,6 +90,13 @@ const TestListItem: FC<TestListItemProps> = ({
     <IconButton onClick={() => setOpen(true)} size="small">
       <ExpandMoreIcon />
     </IconButton>
+  );
+
+  const testLabel = (
+    <>
+      {test.optional && <Typography className={styles.optionalLabel}>Optional</Typography>}
+      <Typography className={styles.labelText}>{test.title}</Typography>
+    </>
   );
 
   const testDescription =
@@ -131,7 +138,7 @@ const TestListItem: FC<TestListItemProps> = ({
       <Box className={styles.listItem}>
         <ListItem>
           <div className={styles.testIcon}>{getResultIcon()}</div>
-          <ListItemText primary={test.title} />
+          <ListItemText primary={testLabel} />
           {messagesBadge}
           {requestsBadge}
           <TestRunButton

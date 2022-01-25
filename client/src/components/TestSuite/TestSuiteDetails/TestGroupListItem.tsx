@@ -8,25 +8,23 @@ import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 
 interface TestGroupListItemProps {
-  testGroup: TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
+  testGroup: TestGroup;
   currentTest: Result | null;
+  parentIsRunning: boolean;
   testRunInProgress: boolean;
 }
 
 const TestGroupListItem: FC<TestGroupListItemProps> = ({
-  testGroup,
   runTests,
+  testGroup,
   currentTest,
+  parentIsRunning,
   testRunInProgress,
 }) => {
   const styles = useStyles();
   const location = useLocation();
-  const [isRunning, setIsRunning] = React.useState(false);
-
-  useEffect(() => {
-    if (!testRunInProgress) setIsRunning(false);
-  }, [testRunInProgress]);
+  const [isRunning, setIsRunning] = React.useState(testRunInProgress);
 
   const getResultIcon = () => {
     // if (
@@ -40,6 +38,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     // if (testRunInProgress && currentTest?.test_id?.includes(testGroup.id)) {
     //   return <CircularProgress size={18} />;
     // } else if (
+
+    console.log(isRunning);
+    
+
     if (
       // testRunInProgress &&
       // currentTest?.test_run_id !== testGroup?.result?.test_run_id &&

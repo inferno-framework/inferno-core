@@ -1,36 +1,68 @@
 import React, { FC, useEffect } from 'react';
 import useStyles from './styles';
-import { TestGroup, RunnableType, TestSuite, Result } from 'models/testSuiteModels';
+import { TestGroup, RunnableType, Test, TestSuite, Request, Result } from 'models/testSuiteModels';
 import { Card, CircularProgress, List } from '@mui/material';
+import PendingIcon from '@mui/icons-material/Pending';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
+import TestGroupListItem from './TestGroupListItem';
+import TestListItem from './TestListItem/TestListItem';
 
 interface TestGroupCardProps {
-  runnable: TestSuite | TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
+  updateRequest: (requestId: string, resultId: string, request: Request) => void;
+  runnable: TestSuite | TestGroup;
   currentTest: Result | null;
   testRunInProgress: boolean;
 }
 
 const TestGroupCard: FC<TestGroupCardProps> = ({
-  runnable,
   runTests,
-  children,
+  updateRequest,
+  runnable,
   currentTest,
   testRunInProgress,
 }) => {
   const styles = useStyles();
-  const [isRunning, setIsRunning] = React.useState(false);
+  const [isRunning, setIsRunning] = React.useState(testRunInProgress);
+
+  let listItems: JSX.Element[] = [];
+  if (runnable?.test_groups && runnable.test_groups.length > 0) {
+    listItems = runnable.test_groups.map((testGroup: TestGroup) => {
+      return (
+        <TestGroupListItem
+          key={`li-${testGroup.id}`}
+          testGroup={testGroup}
+          runTests={runTests}
+          currentTest={currentTest}
+          parentIsRunning={isRunning}
+          testRunInProgress={testRunInProgress}
+        />
+      );
+    });
+  } else if ('tests' in runnable) {
+    listItems = runnable.tests.map((test: Test) => {
+      return (
+        <TestListItem
+          key={`li-${test.id}`}
+          test={test}
+          runTests={runTests}
+          updateRequest={updateRequest}
+          currentTest={currentTest}
+          testGroupId={runnable.id}
+          testRunInProgress={testRunInProgress}
+        />
+      );
+    });
+  }
 
   useEffect(() => {
     if (!testRunInProgress) setIsRunning(false);
   }, [testRunInProgress]);
 
   const getResultIcon = () => {
-    if (isRunning) {
-      // If test is running and result is not from current run but is in the
-      // same group, show nothing
-      return <CircularProgress size={18} />;
+    if (testRunInProgress && isRunning) {
+      return <PendingIcon />;
     }
     return <ResultIcon result={runnable.result} />;
   };
@@ -51,7 +83,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           testRunInProgress={testRunInProgress}
         />
       </div>
-      <List className={styles.testGroupCardList}>{children}</List>
+      <List className={styles.testGroupCardList}>{listItems}</List>
     </Card>
   );
 };

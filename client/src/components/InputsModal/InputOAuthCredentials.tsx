@@ -64,26 +64,31 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     {
       name: 'refresh_token',
       label: 'Refresh Token (will automatically refresh if available)',
+      required: false,
     },
     {
       name: 'token_url',
       label: 'Token Endpoint',
       hide: !showRefreshDetails,
-    },
-    {
-      name: 'expires_in',
-      label: 'Expires in (seconds)',
-      hide: !showRefreshDetails,
+      required: true,
     },
     {
       name: 'client_id',
       label: 'Client ID',
       hide: !showRefreshDetails,
+      required: true,
     },
     {
       name: 'client_secret',
       label: 'Client Secret',
       hide: !showRefreshDetails,
+      required: false,
+    },
+    {
+      name: 'expires_in',
+      label: 'Expires in (seconds)',
+      hide: !showRefreshDetails,
+      required: false,
     },
   ];
 

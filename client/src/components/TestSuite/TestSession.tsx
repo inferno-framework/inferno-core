@@ -285,7 +285,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             runTests={runTests}
             updateRequest={updateRequest}
             currentTest={currentTest(resultsMap, testRun)}
-            testRunInProgresss={testRunNeedsProgressBar(testRun)}
+            testRunInProgress={testRunNeedsProgressBar(testRun)}
           />
         ) : (
           <div>error</div>
