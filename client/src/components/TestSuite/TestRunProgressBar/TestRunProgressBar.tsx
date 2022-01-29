@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { TestRun, Result } from 'models/testSuiteModels';
 import {
   Box,
+  IconButton,
   CircularProgress,
   LinearProgress,
   Snackbar,
@@ -9,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import CancelIcon from '@mui/icons-material/Cancel';
 import DoneIcon from '@mui/icons-material/Done';
 import QueueIcon from '@mui/icons-material/Queue';
 import withStyles from '@mui/styles/withStyles';
@@ -16,6 +18,7 @@ import withStyles from '@mui/styles/withStyles';
 export interface TestRunProgressBarProps {
   showProgressBar: boolean;
   setShowProgressBar: (show: boolean) => void;
+  cancelTestRun: () => void;
   duration: number | null;
   testRun: TestRun | null;
   resultsMap: Map<string, Result>;
@@ -51,6 +54,18 @@ const StatusIndicator = (status: string | null | undefined) => {
           <QueueIcon color="primary" />
         </Tooltip>
       );
+    case 'cancelling':
+      return (
+        <Tooltip title="Cancelling">
+          <CancelIcon color="primary" />
+        </Tooltip>
+      );
+    case 'cancelled':
+      return (
+        <Tooltip title="Cancelled">
+          <CancelIcon color="primary" />
+        </Tooltip>
+      );
     case 'done':
       return (
         <Tooltip title="Done">
@@ -75,6 +90,7 @@ const completedTestCount = (resultsMap: Map<string, Result>, testRun: TestRun | 
 const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
   showProgressBar,
   setShowProgressBar,
+  cancelTestRun,
   duration,
   testRun,
   resultsMap,
@@ -83,6 +99,12 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
   const testCount = testRun?.test_count || 0;
   const completedCount = completedTestCount(resultsMap, testRun);
   const value = testCount !== 0 ? (100 * completedCount) / testCount : 0;
+
+  const cancellable = () => {
+    return (
+      testRun?.status != 'cancelling' && testRun?.status != 'done' && testRun?.status != 'cancelled'
+    );
+  };
 
   return (
     <Snackbar
@@ -110,6 +132,16 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
             {completedCount}/{testCount}
           </Typography>
         </Box>
+        <Tooltip title="Cancel Test Run">
+          <IconButton
+            aria-label="cancel"
+            disabled={!cancellable()}
+            color="secondary"
+            onClick={cancelTestRun}
+          >
+            <CancelIcon />
+          </IconButton>
+        </Tooltip>
       </Box>
     </Snackbar>
   );

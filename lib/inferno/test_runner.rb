@@ -29,12 +29,21 @@ module Inferno
       @session_data_repo ||= Repositories::SessionData.new
     end
 
+    def test_run_current_status
+      # forces db refetch of the test run status in case it has been changed to cancelled
+      test_runs_repo.find(test_run.id).status
+    end
+
     def start
-      test_runs_repo.mark_as_running(test_run.id)
+      test_runs_repo.mark_as_running(test_run.id) unless test_run.status == 'cancelling'
 
       run(test_run.runnable)
 
-      test_runs_repo.mark_as_done(test_run.id) unless run_results.values.any?(&:waiting?)
+      if test_run_current_status == 'cancelling'
+        test_runs_repo.mark_as_cancelled(test_run.id)
+      elsif run_results.values.none?(&:waiting?)
+        test_runs_repo.mark_as_done(test_run.id)
+      end
 
       run_results.values
     end
@@ -60,6 +69,8 @@ module Inferno
       test_instance = test.new(inputs: inputs, test_session_id: test_session.id, scratch: scratch)
 
       result = begin
+        raise Exceptions::CancelException, 'Test cancelled by user' if test_run_current_status == 'cancelling'
+
         test_instance.load_named_requests
         test_instance.instance_eval(&test.block)
         'pass'

@@ -66,6 +66,15 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
             <AccessTimeIcon data-testid={`${result.id}-${result.result}`} />
           </Tooltip>
         );
+      case 'cancel':
+        return (
+          <Tooltip title="cancelled">
+            <CancelIcon
+              style={{ color: result.optional ? grey[500] : red[500] }}
+              data-testid={`${result.id}-${result.result}`}
+            />
+          </Tooltip>
+        );
       default:
         return <Fragment />;
     }

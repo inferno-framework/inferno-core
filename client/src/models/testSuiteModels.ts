@@ -115,7 +115,7 @@ export interface TestRun {
   id: string;
   inputs?: TestInput[] | null;
   results?: Result[] | null;
-  status?: 'queued' | 'running' | 'waiting' | 'done';
+  status?: 'queued' | 'running' | 'waiting' | 'done' | 'cancelling' | 'cancelled';
   test_count?: number;
   test_group_id?: string;
   test_suite_id?: string;
