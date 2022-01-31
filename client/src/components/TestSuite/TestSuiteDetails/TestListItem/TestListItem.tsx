@@ -100,8 +100,10 @@ const TestListItem: FC<TestListItemProps> = ({
     );
 
   const getResultIcon = () => {
-    const testRunResultIds = testRun?.results?.map((r) => r.test_id) || [];
-    if (testRunInProgress && !testRunResultIds.includes(test.id)) {
+    // Default to true to prevent icon display errors
+    const resultIsInRun = test.result ? testRun?.results?.includes(test.result) : true;
+    const isSameSession = testRun?.test_session_id === test.result?.test_session_id;
+    if (testRunInProgress && isSameSession && !resultIsInRun) {
       return <PendingIcon color="disabled" />;
     }
     return <ResultIcon result={test.result} />;

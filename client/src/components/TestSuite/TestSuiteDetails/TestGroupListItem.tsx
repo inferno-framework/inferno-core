@@ -3,8 +3,8 @@ import { useLocation } from 'react-router-dom';
 import useStyles from './styles';
 import { Link, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import PendingIcon from '@mui/icons-material/Pending';
-import { RunnableType, TestGroup, TestRun } from 'models/testSuiteModels';
 import FolderIcon from '@mui/icons-material/Folder';
+import { RunnableType, TestGroup, TestRun } from 'models/testSuiteModels';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 
@@ -25,7 +25,15 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   const location = useLocation();
 
   const getResultIcon = () => {
-    if (testRunInProgress && testGroup.id.includes(testRun?.test_group_id as string)) {
+    const testRunResultIds = testRun?.results?.map((r) => r.test_id) || [];
+    const testGroupResultIds = testGroup?.tests?.map((t) => t.id) || [];
+
+    const groupIsFinished = testGroupResultIds.every((test) => testRunResultIds.includes(test));
+
+    // console.log(testRun?.test_group_id, testGroup.id, groupIsFinished);
+
+    // if (testRunInProgress && testGroup.id.includes(testRun?.test_group_id as string)) {
+    if (testRunInProgress && !groupIsFinished) {
       return <PendingIcon color="disabled" />;
     }
     return <ResultIcon result={testGroup.result} />;

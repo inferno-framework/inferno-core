@@ -118,6 +118,7 @@ export interface TestRun {
   status?: 'queued' | 'running' | 'waiting' | 'done';
   test_count?: number;
   test_group_id?: string;
+  test_session_id?: string;
   test_suite_id?: string;
   test_id?: string;
 }
