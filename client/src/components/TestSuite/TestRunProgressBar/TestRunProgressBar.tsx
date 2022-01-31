@@ -42,6 +42,12 @@ const StatusIndicator = (status: string | null | undefined) => {
           <CircularProgress size={24} />
         </Tooltip>
       );
+    case 'cancelling':
+      return (
+        <Tooltip title="Cancelling">
+          <CircularProgress size={24} />
+        </Tooltip>
+      );
     case 'waiting':
       return (
         <Tooltip title="Waiting">
@@ -52,12 +58,6 @@ const StatusIndicator = (status: string | null | undefined) => {
       return (
         <Tooltip title="Queued">
           <QueueIcon color="primary" />
-        </Tooltip>
-      );
-    case 'cancelling':
-      return (
-        <Tooltip title="Cancelling">
-          <CancelIcon color="primary" />
         </Tooltip>
       );
     case 'done':
@@ -116,8 +116,12 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
         <Box mr={1} mt={0.3}>
           {statusIndicator}
         </Box>
-        <Box minWidth={200} mr={1}>
-          <StyledProgressBar variant="determinate" value={value} />
+        <Box minWidth={200} mr={1} color="background.paper">
+          {testRun?.status == 'cancelling' ? (
+            <Typography variant="body1">Cancelling Test Run...</Typography>
+          ) : (
+            <StyledProgressBar variant="determinate" value={value} />
+          )}
         </Box>
         <Box color="background.paper">
           <Typography variant="body1">
