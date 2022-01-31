@@ -93,7 +93,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   useEffect(() => {
     const allInputs = getAllContainedInputs(test_suite.test_groups as TestGroup[]);
     allInputs.forEach((input: TestInput) => {
-      const defaultValue = input.default ? input.default : '';
+      const defaultValue = input.default || '';
       sessionData.set(input.name, defaultValue);
     });
     initialSessionData?.forEach((initialSessionData: TestOutput) => {
