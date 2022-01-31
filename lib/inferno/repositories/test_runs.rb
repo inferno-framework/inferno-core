@@ -65,6 +65,10 @@ module Inferno
         build_entity(test_run_hash)
       end
 
+      def status_for_test_run(id)
+        self.class::Model.where(id: id).get(:status)
+      end
+
       def mark_as_running(test_run_id)
         update(test_run_id, status: 'running')
       end

@@ -29,9 +29,9 @@ module Inferno
       @session_data_repo ||= Repositories::SessionData.new
     end
 
-    def test_run_current_status
-      # forces db refetch of the test run status in case it has been changed to cancelled
-      test_runs_repo.find(test_run.id).status
+    def test_run_is_cancelling
+      # forces db refetch of the test run status in case it is being cancelled
+      test_runs_repo.status_for_test_run(test_run.id) == 'cancelling'
     end
 
     def start
@@ -65,7 +65,7 @@ module Inferno
       test_instance = test.new(inputs: inputs, test_session_id: test_session.id, scratch: scratch)
 
       result = begin
-        raise Exceptions::CancelException, 'Test cancelled by user' if test_run_current_status == 'cancelling'
+        raise Exceptions::CancelException, 'Test cancelled by user' if test_run_is_cancelling
 
         test_instance.load_named_requests
         test_instance.instance_eval(&test.block)
