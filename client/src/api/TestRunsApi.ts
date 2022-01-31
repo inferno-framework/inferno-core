@@ -48,6 +48,14 @@ export function postTestRun(
     });
 }
 
+export function deleteTestRun(testRunId: string): void {
+  const endpoint = getEndpoint(`/test_runs/${testRunId}`);
+  fetch(endpoint, { method: 'DELETE' }).catch((e) => {
+    console.log(e);
+    return null;
+  });
+}
+
 export function getTestRunWithResults(
   testRunId: string,
   time: string | null | undefined

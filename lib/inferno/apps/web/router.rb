@@ -7,7 +7,7 @@ module Inferno
 
     Router = Hanami::Router.new(namespace: Inferno::Web::Controllers) do
       namespace 'api' do
-        resources 'test_runs', only: [:create, :show] do
+        resources 'test_runs', only: [:create, :show, :destroy] do
           resources 'results', only: [:index]
         end
 

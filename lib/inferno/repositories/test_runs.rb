@@ -65,6 +65,10 @@ module Inferno
         build_entity(test_run_hash)
       end
 
+      def status_for_test_run(id)
+        self.class::Model.where(id: id).get(:status)
+      end
+
       def mark_as_running(test_run_id)
         update(test_run_id, status: 'running')
       end
@@ -89,6 +93,10 @@ module Inferno
           identifier: nil,
           wait_timeout: nil
         )
+      end
+
+      def mark_as_cancelling(test_run_id)
+        update(test_run_id, status: 'cancelling')
       end
 
       class Model < Sequel::Model(db)

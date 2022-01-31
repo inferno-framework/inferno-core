@@ -37,6 +37,19 @@ const CondensedResultIcon: FC<CondensedResultIconProps> = ({ result }) => {
             />
           </Tooltip>
         );
+      case 'cancel':
+        return (
+          <Tooltip title="cancel">
+            <FiberManualRecordIcon
+              style={{
+                color: result.optional ? grey[500] : red[500],
+                width: '0.5em',
+                height: '0.5em',
+              }}
+              data-testid={`${result.id}-${result.result}`}
+            />
+          </Tooltip>
+        );
       case 'skip':
         return (
           <Tooltip title="skipped">

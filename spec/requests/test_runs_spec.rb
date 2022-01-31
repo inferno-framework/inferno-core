@@ -124,6 +124,14 @@ RSpec.describe '/test_runs' do
     end
   end
 
+  describe 'destroy' do
+    it 'returns 204 when deleted' do
+      delete router.path(:api_test_run, id: test_run.id)
+
+      expect(last_response.status).to eq(204)
+    end
+  end
+
   describe '/:id/results' do
     let(:result) { repo_create(:result, message_count: 2) }
     let(:messages) { result.messages }

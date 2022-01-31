@@ -19,7 +19,7 @@ import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
-import { getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
+import { deleteTestRun, getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
 import { Drawer, Toolbar, Box } from '@mui/material';
 
 function mapRunnableRecursive(
@@ -239,7 +239,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }
 
   function testRunNeedsProgressBar(testRun: TestRun | null): boolean {
-    return testRun?.status ? ['running', 'queued', 'waiting'].includes(testRun?.status) : false;
+    return testRun?.status
+      ? ['running', 'queued', 'waiting', 'cancelling'].includes(testRun?.status)
+      : false;
   }
 
   function testRunProgressBar() {
@@ -248,6 +250,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       <TestRunProgressBar
         showProgressBar={showProgressBar}
         setShowProgressBar={setShowProgressBar}
+        cancelTestRun={() => {
+          testRun && deleteTestRun(testRun.id);
+        }}
         duration={duration}
         testRun={testRun}
         resultsMap={resultsMap}
@@ -288,7 +293,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           inputs={inputs}
         />
         <ActionModal
-          cancelTest={() => alert('TODO: CANCEL TEST')}
+          cancelTestRun={() => {
+            testRun && deleteTestRun(testRun.id);
+          }}
           message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
           modalVisible={waitingTestId != null}
         />
