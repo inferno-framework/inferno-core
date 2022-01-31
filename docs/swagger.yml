@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: "Inferno JSON API"
-  version: "0.0.1"
+  version: "0.1.1"
   title: "Inferno JSON API"
   contact:
     email: "inferno@groups.mitre.org"
@@ -468,7 +468,13 @@ definitions:
         type: "string"
       title:
         type: "string"
+      short_title:
+        type: "string"
       description:
+        type: "string"
+      short_description:
+        type: "string"
+      input_instructions:
         type: "string"
       test_groups:
         type: "array"
@@ -490,7 +496,13 @@ definitions:
         type: "string"
       title:
         type: "string"
+      short_title:
+        type: "string"
       description:
+        type: "string"
+      short_description:
+        type: "string"
+      input_instructions:
         type: "string"
       run_as_group:
         type: "boolean"
@@ -525,7 +537,13 @@ definitions:
         type: "string"
       title:
         type: "string"
+      short_title:
+        type: "string"
       description:
+        type: "string"
+      short_description:
+        type: "string"
+      input_instructions:
         type: "string"
       inputs:
         type: "array"

@@ -5,7 +5,10 @@ module Inferno
         identifier :id
 
         field :title
+        field :short_title
         field :description
+        field :short_description
+        field :input_instructions
         field :test_count
         field :run_as_group?, name: :run_as_group
         field :user_runnable?, name: :user_runnable

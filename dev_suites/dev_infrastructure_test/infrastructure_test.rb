@@ -5,8 +5,11 @@ require_relative 'mixed_optional_group'
 module InfrastructureTest
   class Suite < Inferno::TestSuite
     id 'infra_test'
-    title 'Infrastructure Test'
-    description 'An internal test suite to verify that inferno infrastructure is working'
+    title 'Infrastructure Test Suite'
+    short_title 'Infrastructure'
+    description 'An internal test suite to verify that inferno infrastructure works'
+    short_description 'Internal test suite'
+    input_instructions 'Instructions for inputs'
 
     input :suite_input
     output :suite_output
@@ -19,9 +22,12 @@ module InfrastructureTest
       url 'SUITE'
     end
 
-    group 'Outer inline group', id: 'outer_inline_group' do
+    group 'Outer inline group title', id: 'outer_inline_group' do
       input :outer_group_input
       output :outer_group_output
+      short_title 'Outer inline group short title'
+      description 'Outer inline group for testing description'
+      short_description 'Outer inline group short description'
 
       def outer_inline_group_helper
         'OUTER_INLINE_GROUP_HELPER'
@@ -34,6 +40,7 @@ module InfrastructureTest
       group 'Inner inline group', id: 'inner_inline_group' do
         input :inner_group_input
         output :inner_group_output
+        short_title 'Inner inline group short title'
 
         def inner_inline_group_helper
           'INNER_INLINE_GROUP_HELPER'
@@ -46,6 +53,9 @@ module InfrastructureTest
         test 'Inline test 1', id: 'inline_test_1' do
           input :test_input
           output :test_output
+          short_title 'Inline test 1'
+          description 'Inline test 1 full description'
+          short_description 'Inline test 1 short description'
 
           def inline_test1_helper
             'INLINE_TEST1_HELPER'

@@ -5,7 +5,10 @@ module Inferno
         view :summary do
           identifier :id
           field :title
+          field :short_title
           field :description
+          field :short_description
+          field :input_instructions
           field :test_count
         end
 

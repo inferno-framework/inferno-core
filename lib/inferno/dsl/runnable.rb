@@ -213,6 +213,16 @@ module Inferno
         @title = new_title
       end
 
+      # Set/Get a runnable's short title
+      #
+      # @param new_short_title [String]
+      # @return [String] the short title
+      def short_title(new_short_title = nil)
+        return @short_title if new_short_title.nil?
+
+        @short_title = new_short_title
+      end
+
       # Set/Get a runnable's description
       #
       # @param new_description [String]
@@ -221,6 +231,26 @@ module Inferno
         return @description if new_description.nil?
 
         @description = format_markdown(new_description)
+      end
+
+      # Set/Get a runnable's short one-sentence description
+      #
+      # @param new_short_description [String]
+      # @return [String] the one-sentence description
+      def short_description(new_short_description = nil)
+        return @short_description if new_short_description.nil?
+
+        @short_description = format_markdown(new_short_description)
+      end
+
+      # Set/Get a runnable's input instructions
+      #
+      # @param new_input_instructions [String]
+      # @return [String] the input instructions
+      def input_instructions(new_input_instructions = nil)
+        return @input_instructions if new_input_instructions.nil?
+
+        @input_instructions = format_markdown(new_input_instructions)
       end
 
       # Define inputs
