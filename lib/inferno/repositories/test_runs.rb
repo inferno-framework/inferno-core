@@ -95,10 +95,6 @@ module Inferno
         update(test_run_id, status: 'cancelling')
       end
 
-      def mark_as_cancelled(test_run_id)
-        update(test_run_id, status: 'cancelled')
-      end
-
       class Model < Sequel::Model(db)
         include ValidateRunnableReference
 
@@ -127,7 +123,7 @@ module Inferno
       def active_test_run_for_session?(test_session_id)
         self.class::Model
           .where(test_session_id: test_session_id)
-          .exclude(status: ['done', 'cancelled'])
+          .exclude(status: 'done')
           .count.positive?
       end
     end

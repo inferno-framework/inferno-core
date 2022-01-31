@@ -68,7 +68,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
         );
       case 'cancel':
         return (
-          <Tooltip title="cancelled">
+          <Tooltip title="cancel">
             <CancelIcon
               style={{ color: result.optional ? grey[500] : red[500] }}
               data-testid={`${result.id}-${result.result}`}

@@ -11,8 +11,8 @@ module Inferno
           def call(params)
             test_run = test_runs_repo.find(params[:id])
 
-            if test_run.nil? || ['cancelled', 'cancelling'].include?(test_run.status)
-              # If it doesn't exist or it is already cancelled then just restate that
+            if test_run.nil? || ['done', 'cancelling'].include?(test_run.status)
+              # If it doesn't exist, already finished, or currently being cancelled
               self.status = 204
               return
             end

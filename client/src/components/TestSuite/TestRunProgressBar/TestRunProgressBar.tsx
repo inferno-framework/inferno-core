@@ -60,12 +60,6 @@ const StatusIndicator = (status: string | null | undefined) => {
           <CancelIcon color="primary" />
         </Tooltip>
       );
-    case 'cancelled':
-      return (
-        <Tooltip title="Cancelled">
-          <CancelIcon color="primary" />
-        </Tooltip>
-      );
     case 'done':
       return (
         <Tooltip title="Done">
@@ -101,9 +95,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
   const value = testCount !== 0 ? (100 * completedCount) / testCount : 0;
 
   const cancellable = () => {
-    return (
-      testRun?.status != 'cancelling' && testRun?.status != 'done' && testRun?.status != 'cancelled'
-    );
+    return testRun?.status != 'cancelling' && testRun?.status != 'done';
   };
 
   return (

@@ -39,11 +39,7 @@ module Inferno
 
       run(test_run.runnable)
 
-      if test_run_current_status == 'cancelling'
-        test_runs_repo.mark_as_cancelled(test_run.id)
-      elsif run_results.values.none?(&:waiting?)
-        test_runs_repo.mark_as_done(test_run.id)
-      end
+      test_runs_repo.mark_as_done(test_run.id) unless run_results.values.any?(&:waiting?)
 
       run_results.values
     end

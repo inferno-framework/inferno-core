@@ -32,7 +32,7 @@ module Inferno
     #   @return [String, nil] identfier for a waiting `TestRun`
     # @!attribute wait_timeout
     class TestRun < Entity
-      STATUS_OPTIONS = ['queued', 'running', 'waiting', 'done', 'cancelling', 'cancelled'].freeze
+      STATUS_OPTIONS = ['queued', 'running', 'waiting', 'cancelling', 'done'].freeze
       ATTRIBUTES = [
         :id,
         :test_session_id,
