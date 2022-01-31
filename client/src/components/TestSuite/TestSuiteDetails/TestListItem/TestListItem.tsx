@@ -101,6 +101,7 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const getResultIcon = () => {
     // TODO: Fix bug where old result session IDs are automatically set to the current session
+    // TODO: Overwrites wait tests
     // Default to true to prevent icon display errors
     const resultIsInRun = test.result ? testRun?.results?.includes(test.result) : true;
     const isSameSession = testRun?.test_session_id === test.result?.test_session_id;

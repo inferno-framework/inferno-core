@@ -26,10 +26,11 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
 
   const getResultIcon = () => {
     // TODO: Fix bug where old result session IDs are automatically set to the current session
+    // TODO: Broken for top level test group
     const testRunResultIds = testRun?.results?.map((r) => r.test_id) || [];
     const groupIsFinished = testRunResultIds.includes(testGroup.id);
     const isSameSession = testGroup.tests[0]?.result
-      ? testRun?.test_session_id === testGroup.tests[0].result?.test_session_id
+      ? testRun?.test_session_id === testGroup.tests[0]?.result?.test_session_id
       : false;
     if (testRunInProgress && isSameSession && !groupIsFinished) {
       return <PendingIcon color="disabled" />;
