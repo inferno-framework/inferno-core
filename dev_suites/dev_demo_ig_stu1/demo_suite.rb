@@ -177,6 +177,29 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     group do
+      id 'easily_cancelled_test'
+      title 'Tests that should be easily cancelled'
+
+      test do
+        title 'Pass Test'
+        run { pass }
+      end
+
+      test do
+        title 'Pausing test'
+        input :cancel_pause_time, default: '30'
+
+        run { sleep(cancel_pause_time.to_i) }
+      end
+
+      test do
+        title 'Test after pause that would pass'
+
+        run { pass }
+      end
+    end
+
+    group do
       id 'run_as_group_examples'
       title 'Run as Group Examples'
 

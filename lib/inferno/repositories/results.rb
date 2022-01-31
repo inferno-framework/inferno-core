@@ -140,6 +140,10 @@ module Inferno
         update(result_id, result: 'pass', result_message: message)
       end
 
+      def cancel_waiting_result(result_id, message = nil)
+        update(result_id, result: 'cancel', result_message: message)
+      end
+
       def json_serializer_options
         {
           include: {

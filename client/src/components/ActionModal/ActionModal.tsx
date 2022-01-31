@@ -12,10 +12,10 @@ import ReactMarkdown from 'react-markdown';
 export interface ActionModalProps {
   modalVisible: boolean;
   message?: string;
-  cancelTest: () => void;
+  cancelTestRun: () => void;
 }
 
-const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTest }) => {
+const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTestRun }) => {
   return (
     <Dialog open={modalVisible} fullWidth maxWidth="sm">
       <DialogTitle>User Action Required</DialogTitle>
@@ -25,7 +25,7 @@ const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTest }
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={cancelTest} data-testid="cancel-button">
+        <Button color="primary" onClick={cancelTestRun} data-testid="cancel-button">
           Cancel
         </Button>
       </DialogActions>
