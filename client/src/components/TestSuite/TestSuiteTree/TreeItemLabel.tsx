@@ -30,9 +30,6 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, runTests, testRunInPr
       <TestRunButton
         runnable={runnable}
         runTests={runTests}
-        setIsRunning={() => {
-          return;
-        }}
         testRunInProgress={testRunInProgress}
       />
     </Box>
