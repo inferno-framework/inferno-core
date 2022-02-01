@@ -254,7 +254,6 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
             title: 'Radio Group Input Example',
             type: 'radio',
             optional: false,
-            default: 'value1',
             options: {
               list_options: [
                 {
