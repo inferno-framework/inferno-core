@@ -1,3 +1,4 @@
+import React, { FC, Fragment } from 'react';
 import {
   FormControl,
   FormControlLabel,
@@ -8,7 +9,6 @@ import {
 } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import { TestInput } from 'models/testSuiteModels';
-import React, { FC, Fragment } from 'react';
 import useStyles from './styles';
 
 export interface InputRadioGroupProps {
@@ -25,18 +25,21 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   setInputsMap,
 }) => {
   const styles = useStyles();
+  const firstValue =
+    requirement.options?.list_options && requirement.options?.list_options?.length > 0
+      ? requirement.options?.list_options[0]?.value
+      : '';
   const [value, setValue] = React.useState(
-    inputsMap.get(requirement.name) || requirement.default || ''
+    inputsMap.get(requirement.name) || requirement.default || firstValue
   );
+
   const fieldLabelText = requirement.title || requirement.name;
   const lockedIcon = requirement.locked && (
     <LockIcon fontSize="small" className={styles.lockedIcon} />
   );
-  const requiredLabel = !requirement.optional && !requirement.locked ? ' (required)' : '';
   const fieldLabel = (
     <Fragment>
       {fieldLabelText}
-      {requiredLabel}
       {lockedIcon}
     </Fragment>
   );
@@ -53,7 +56,6 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
       <FormControl
         component="fieldset"
         id={`requirement${index}_input`}
-        required={!requirement.optional && !requirement.locked}
         disabled={requirement.locked}
         fullWidth
       >

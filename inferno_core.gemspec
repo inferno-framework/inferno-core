@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'puma', '~> 5.3'
   spec.add_runtime_dependency 'rake', '~> 13.0'
   spec.add_runtime_dependency 'sequel', '~> 5.42'
-  spec.add_runtime_dependency 'sidekiq', '~> 6.2.1'
+  spec.add_runtime_dependency 'sidekiq', '~> 6.4.0'
   spec.add_runtime_dependency 'sqlite3', '~> 1.4'
   spec.add_runtime_dependency 'thor', '~> 1.1.0'
   spec.add_development_dependency 'codecov', '0.5.2'

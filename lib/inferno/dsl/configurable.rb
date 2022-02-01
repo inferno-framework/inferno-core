@@ -13,6 +13,10 @@ module Inferno
         return @config if new_configuration.blank?
 
         @config.apply(new_configuration)
+
+        children.each { |child| child.config(new_configuration) }
+
+        @config
       end
 
       # @private

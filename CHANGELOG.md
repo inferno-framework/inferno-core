@@ -1,3 +1,10 @@
+# 0.1.2
+
+* Add the ability to cancel a test run.
+* When configuration changes are applied to a runnable, they are now applied to
+  all of its children.
+* Update sidekiq.
+
 # 0.1.1
 
 * Add `input_instructions`, `short_title`, and `short_description` to runnables.
