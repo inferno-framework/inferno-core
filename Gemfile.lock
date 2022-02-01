@@ -204,7 +204,7 @@ GEM
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    redis (4.4.0)
+    redis (4.5.1)
     regexp_parser (2.0.3)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
@@ -253,7 +253,7 @@ GEM
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
     sequel (5.42.0)
-    sidekiq (6.2.1)
+    sidekiq (6.4.0)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
@@ -315,7 +315,7 @@ DEPENDENCIES
   rubocop-rspec
   rubocop-sequel
   sequel
-  sidekiq (~> 6.2.1)
+  sidekiq (~> 6.4.0)
   simplecov
   sqlite3
   thor (~> 1.1.0)
