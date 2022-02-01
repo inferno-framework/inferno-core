@@ -1,5 +1,9 @@
 class ConfigurableTestClass
   extend Inferno::DSL::Configurable
+
+  def self.children
+    @children ||= []
+  end
 end
 
 RSpec.describe Inferno::DSL::Configurable do
