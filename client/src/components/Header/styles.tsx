@@ -9,6 +9,9 @@ import makeStyles from '@mui/styles/makeStyles';
 export default makeStyles((theme: Theme) => ({
   appbar: {
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
   },
   logo: {
     objectFit: 'contain',

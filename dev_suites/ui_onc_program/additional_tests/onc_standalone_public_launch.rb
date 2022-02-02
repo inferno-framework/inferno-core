@@ -7,6 +7,8 @@ module ONCProgram
 
     id :onc_standalone_public_launch
 
+    run_as_group
+
     input :onc_public_client_id,
           :onc_public_scopes,
           :onc_sl_oauth_authorize_endpoint,

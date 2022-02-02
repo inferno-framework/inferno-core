@@ -26,6 +26,8 @@ module ONCProgram
 
     id :single_patient_api
 
+    run_as_group
+
     group from: :us_core_capability_statement
     group from: :us_core_patient
     group from: :us_core_allergy_intolerance

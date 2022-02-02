@@ -18,7 +18,7 @@ export interface TestSuiteTreeProps {
 
 function addDefaultExpanded(testGroups: TestGroup[], defaultExpanded: string[]): void {
   testGroups.forEach((testGroup: TestGroup) => {
-    if (testGroup.test_groups.length > 0) {
+    if (testGroup.test_groups.length > 0 && !testGroup.run_as_group) {
       defaultExpanded.push(testGroup.id);
       addDefaultExpanded(testGroup.test_groups, defaultExpanded);
     }

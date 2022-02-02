@@ -35,6 +35,8 @@ module ONCProgram
 
     id :smart_invalid_launch
 
+    run_as_group
+
     test do
       title 'EHR server redirects client browser to Inferno app launch URI'
       description <<~DESCRIPTION

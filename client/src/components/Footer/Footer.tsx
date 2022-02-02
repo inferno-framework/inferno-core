@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { Link } from '@mui/material';
+import { Container, Box, Link, Typography } from '@mui/material';
+import logo from 'images/inferno_logo.png';
 
 interface FooterProps {
   githubLink?: string;
@@ -9,15 +10,65 @@ interface FooterProps {
 
 const Footer: FC<FooterProps> = ({ githubLink, versionNumber }) => {
   const styles = useStyles();
+  const version = versionNumber || 'v ?.?.?';
   return (
-    <nav className={styles.footer}>
-      <div className={styles.footerElement}>
-        <Link href={githubLink} target="_blank" rel="noreferrer" underline="hover">
-          Open Source
+    <Box sx={{ width: '100%', zIndex: '5000', backgroundColor: '#f0ece7' }}>
+      <Container sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Box display="flex" paddingRight="10px">
+          <Typography
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              paddingRight: '5px',
+              fontStyle: 'italic',
+            }}
+          >
+            built using
+          </Typography>
+          <img src={logo as string} alt="inferno logo" className={styles.logo} />
+        </Box>
+        <Typography
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            paddingRight: '5px',
+          }}
+        >
+          |
+        </Typography>
+        <Typography
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            paddingRight: '5px',
+          }}
+        >
+          {version}{' '}
+        </Typography>
+        <Typography
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            paddingRight: '5px',
+          }}
+        >
+          |
+        </Typography>
+        <Link
+          sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+          href={githubLink}
+          target="_blank"
+          rel="noreferrer"
+          underline="hover"
+        >
+          API
         </Link>
-      </div>
-      <div className={styles.footerElement}>Version {versionNumber}</div>
-    </nav>
+      </Container>
+    </Box>
   );
 };
 

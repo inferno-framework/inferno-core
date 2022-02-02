@@ -2,8 +2,9 @@ import React, { FC } from 'react';
 import { Result, TestOutput, TestRun, TestSession } from 'models/testSuiteModels';
 import TestSessionComponent from './TestSession';
 import { useParams } from 'react-router-dom';
-import Alert from '@mui/material/Alert';
-import Backdrop from '@mui/material/Backdrop';
+import { Alert, Backdrop, Box } from '@mui/material';
+import Header from 'components/Header';
+import Footer from 'components/Footer';
 import {
   getCurrentTestSessionResults,
   getLastTestRun,
@@ -76,12 +77,16 @@ const TestSessionWrapper: FC<unknown> = () => {
 
   if (testSession && testResults && sessionData) {
     return (
-      <TestSessionComponent
-        testSession={testSession}
-        previousResults={testResults}
-        initialTestRun={testRun}
-        initialSessionData={sessionData}
-      />
+      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <Header suiteTitle={testSession.test_suite.title} />
+        <TestSessionComponent
+          testSession={testSession}
+          previousResults={testResults}
+          initialTestRun={testRun}
+          initialSessionData={sessionData}
+        />
+        <Footer />
+      </Box>
     );
   } else if (
     attemptedGetSession &&

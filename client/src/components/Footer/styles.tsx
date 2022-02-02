@@ -19,4 +19,8 @@ export default makeStyles((theme: Theme) => ({
     flexGrow: 1,
     textAlign: 'center',
   },
+  logo: {
+    objectFit: 'contain',
+    height: '2.5em',
+  },
 }));

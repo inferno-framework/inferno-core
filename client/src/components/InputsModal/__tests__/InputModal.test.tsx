@@ -26,6 +26,7 @@ test('Input modal not visible if visibility set to false', () => {
     <ThemeProvider>
       <InputsModal
         hideModal={hideModalMock}
+        title="Modal Title"
         createTestRun={createTestRunMock}
         modalVisible={false}
         runnableType={RunnableType.TestGroup}
@@ -43,6 +44,7 @@ test('Modal visible and inputs are shown', () => {
     <ThemeProvider>
       <InputsModal
         hideModal={hideModalMock}
+        title="Modal Title"
         createTestRun={createTestRunMock}
         modalVisible={true}
         runnableType={RunnableType.TestGroup}
@@ -71,6 +73,7 @@ test('Pressing cancel hides the modal', () => {
     <ThemeProvider>
       <InputsModal
         hideModal={hideModalMock}
+        title="Modal Title"
         createTestRun={createTestRunMock}
         modalVisible={true}
         runnableType={RunnableType.TestGroup}

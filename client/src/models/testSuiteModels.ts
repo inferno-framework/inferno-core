@@ -66,10 +66,13 @@ export interface TestOutput {
 export interface Test {
   id: string;
   title: string;
+  short_title?: string;
   result?: Result;
   inputs: TestInput[];
   outputs: TestOutput[];
+  input_instructions?: string;
   description?: string;
+  short_description?: string;
   user_runnable?: boolean;
   optional?: boolean;
 }
@@ -77,12 +80,15 @@ export interface Test {
 export interface TestGroup {
   id: string;
   title: string;
+  short_title?: string;
   test_groups: TestGroup[];
   inputs: TestInput[];
   outputs: TestOutput[];
+  input_instructions?: string;
   tests: Test[];
   result?: Result;
   description?: string | null;
+  short_description?: string;
   run_as_group?: boolean;
   user_runnable?: boolean;
   test_count?: number;
@@ -91,12 +97,16 @@ export interface TestGroup {
 
 export interface TestSuite {
   title: string;
+  short_title?: string;
   id: string;
   description?: string | null;
+  short_descripton?: string;
+  run_as_group?: boolean;
   result?: Result;
   test_count?: number;
   test_groups?: TestGroup[];
   optional?: boolean;
+  input_instructions?: string;
 }
 
 export interface TestSession {
