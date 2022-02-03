@@ -3,7 +3,6 @@ import { RunnableType, TestGroup, TestSuite } from 'models/testSuiteModels';
 import { Typography, Box } from '@mui/material';
 import useStyles from './styles';
 import CondensedResultIcon from './CondensedResultIcon';
-import TestRunButton from '../TestRunButton/TestRunButton';
 
 export interface TreeItemLabelProps {
   runnable: TestSuite | TestGroup;
@@ -26,11 +25,6 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, runTests, testRunInPr
         )}
       </Box>
       <CondensedResultIcon result={runnable.result} />
-      <TestRunButton
-        runnable={runnable}
-        runTests={runTests}
-        testRunInProgress={testRunInProgress}
-      />
     </Box>
   );
 };
