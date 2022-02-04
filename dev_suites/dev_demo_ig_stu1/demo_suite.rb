@@ -256,5 +256,34 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         end
       end
     end
+
+    group do
+      title 'missing_inputs group'
+      description %(
+        This group demonstrates a bug with missing inputs. If the bug is fixed,
+        you should be able to run this group with no problems. If the bug is
+        present, you will get a 422 when attempting to run this group.
+      )
+      input :url1
+
+      test do
+        title 'TEST 1'
+        output :url2
+
+        run do
+          output url2: 'abc'
+        end
+      end
+
+      test do
+        title 'TEST 2'
+        input :url1, name: :url2
+
+        run do
+          info url1
+          pass
+        end
+      end
+    end
   end
 end

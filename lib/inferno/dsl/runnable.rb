@@ -456,12 +456,13 @@ module Inferno
 
       # @private
       def required_inputs(prior_outputs = [])
-        required_inputs = inputs.select do |input|
-          !input_definitions[input][:optional] && !prior_outputs.include?(input)
-        end
-        required_inputs.map! { |input_identifier| input_definitions[input_identifier][:name] }
+        required_inputs =
+          inputs
+            .reject { |input| input_definitions[input][:optional] }
+            .map { |input| config.input_name(input) }
+            .reject { |input| prior_outputs.include?(input) }
         children_required_inputs = children.flat_map { |child| child.required_inputs(prior_outputs) }
-        prior_outputs.concat(outputs)
+        prior_outputs.concat(outputs.map { |output| config.output_name(output) })
         (required_inputs + children_required_inputs).flatten.uniq
       end
 
