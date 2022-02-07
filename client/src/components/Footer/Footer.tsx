@@ -14,9 +14,7 @@ const Footer: FC<FooterProps> = ({ versionNumber }) => {
     <Box className={styles.footer}>
       <Container>
         <Box className={styles.builtUsing}>
-          <Typography>
-            built using
-          </Typography>
+          <Typography>built using</Typography>
           <Link
             sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
             href={'https://inferno-framework.github.io/inferno-core'}

@@ -16,12 +16,7 @@ test('renders Inferno Footer', () => {
 test('should navigate elsewhere when link is clicked', () => {
   render(
     <ThemeProvider>
-      <Footer githubLink="https://github.com/onc-healthit/inferno" />
+      <Footer />
     </ThemeProvider>
-  );
-
-  expect(screen.getByText(/Open Source/i).closest('a')).toHaveAttribute(
-    'href',
-    'https://github.com/onc-healthit/inferno'
   );
 });

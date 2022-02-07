@@ -29,13 +29,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
   return (
     <CustomTreeItem
       nodeId={testGroup.id}
-      label={
-        <TreeItemLabel
-          runnable={testGroup}
-          runTests={runTests}
-          testRunInProgress={testRunInProgress}
-        />
-      }
+      label={<TreeItemLabel runnable={testGroup} />}
       // eslint-disable-next-line max-len
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       ContentProps={{ testId: testGroup.id } as any}

@@ -62,7 +62,7 @@ const lightTheme = createTheme({
       defaultProps: {
         maxWidth: false,
       },
-    }
+    },
   },
 });
 

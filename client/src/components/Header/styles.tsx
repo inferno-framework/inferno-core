@@ -15,14 +15,14 @@ export default makeStyles((theme: Theme) => ({
     '& .MuiContainer-root': {
       display: 'flex',
       justifyContent: 'space-between',
-      flexDirection: 'row', 
+      flexDirection: 'row',
     },
     '& .MuiTypography-root': {
       display: 'flex',
       justifyContent: 'center',
       padding: '5px',
       flexDirection: 'column',
-    }
+    },
   },
   logo: {
     objectFit: 'contain',

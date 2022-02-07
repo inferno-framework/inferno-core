@@ -1,16 +1,14 @@
 import React, { FC } from 'react';
-import { RunnableType, TestGroup, TestSuite } from 'models/testSuiteModels';
+import { TestGroup, TestSuite } from 'models/testSuiteModels';
 import { Typography, Box } from '@mui/material';
 import useStyles from './styles';
 import CondensedResultIcon from './CondensedResultIcon';
 
 export interface TreeItemLabelProps {
   runnable: TestSuite | TestGroup;
-  runTests: (runnableType: RunnableType, runnableId: string) => void;
-  testRunInProgress: boolean;
 }
 
-const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, runTests, testRunInProgress }) => {
+const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable }) => {
   const styles = useStyles();
   return (
     <Box className={styles.labelRoot} data-testid={`tiLabel-${runnable.id}`}>

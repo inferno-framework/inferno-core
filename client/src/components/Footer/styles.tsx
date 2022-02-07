@@ -1,16 +1,14 @@
-import { Theme } from '@mui/material/styles';
-
 import makeStyles from '@mui/styles/makeStyles';
 
-export default makeStyles((theme: Theme) => ({
-  footer: { 
-    width: '100%', 
-    zIndex: '5000', 
+export default makeStyles(() => ({
+  footer: {
+    width: '100%',
+    zIndex: '5000',
     backgroundColor: '#f0ece7',
     '& .MuiContainer-root': {
       display: 'flex',
-      justifyContent: 'center', 
-    }
+      justifyContent: 'center',
+    },
   },
   builtUsing: {
     display: 'flex',
@@ -21,7 +19,7 @@ export default makeStyles((theme: Theme) => ({
       justifyContent: 'center',
       padding: '10px',
       fontStyle: 'italic',
-    }
+    },
   },
   logo: {
     objectFit: 'contain',

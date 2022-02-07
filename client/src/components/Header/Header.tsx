@@ -26,10 +26,7 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
             className={styles.logo}
             onClick={returnHome}
           />
-          <Typography
-            variant="h6"
-            component="div"
-          >
+          <Typography variant="h6" component="div">
             {suiteTitle || 'Inferno'}
           </Typography>
         </Box>

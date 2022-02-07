@@ -68,13 +68,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             <CustomTreeItem
               classes={{ content: styles.treeRoot }}
               nodeId={testSuite.id}
-              label={
-                <TreeItemLabel
-                  runnable={testSuite}
-                  runTests={runTests}
-                  testRunInProgress={testRunInProgress}
-                />
-              }
+              label={<TreeItemLabel runnable={testSuite} />}
               // eslint-disable-next-line max-len
               // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
               ContentProps={{ testId: testSuite.id } as any}
