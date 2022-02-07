@@ -27,7 +27,7 @@ export default makeStyles((theme: Theme) => ({
     display: 'inline',
     fontStyle: 'italic',
     alignSelf: 'center',
-    color: 'gray',
+    color: theme.palette.common.grayLight,
     paddingLeft: '8px',
   },
   labelRunButton: {

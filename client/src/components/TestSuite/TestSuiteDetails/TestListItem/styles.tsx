@@ -23,7 +23,7 @@ export default makeStyles((theme: Theme) => ({
     fontSize: '0.9rem',
     lineHeight: '1.5rem',
     alignSelf: 'center',
-    color: 'gray',
+    color: theme.palette.common.grayLight,
     paddingRight: '8px',
   },
   tabs: {
@@ -42,8 +42,8 @@ export default makeStyles((theme: Theme) => ({
   },
   testBadge: {
     border: '1px solid #5d89a1',
-    color: '#5d89a1',
-    backgroundColor: 'white',
+    color: theme.palette.common.blueLight,
+    backgroundColor: theme.palette.common.white,
     fontWeight: 'bold',
   },
   listItem: {
