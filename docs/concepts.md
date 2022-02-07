@@ -31,7 +31,7 @@ nav_order: 2
   are organized heirarchically.  They may import tests from other Test Kits.  It
   may be the expectation of a Test Suite that a conformant system will pass all
   provided tests, or that the system may fail some tests.  An individual test
-  suite defines how to inpret failures at the test level and in aggregate.
+  suite defines how to interpret failures at the test level and in aggregate.
 - **Inferno Core**: The primary library of inferno, which testers can use to
   build Inferno Test Kits.  It provides the main logic of Inferno.  It provides a
   CLI, a web interface for executing tests, integration with data persistence
