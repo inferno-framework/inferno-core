@@ -2,7 +2,8 @@ Dir.glob(File.join(__dir__, 'ehr_practitioner_app', '*.rb')).each { |path| requi
 
 module ONCProgram
   class EHRPractitionerApp < Inferno::TestGroup
-    title 'EHR Practitioner App'
+    title 'EHR-embedded Practitioner App'
+    short_title 'EHR Practitioner App'
     description <<~DESCRIPTION
       Demonstrate the ability to perform an EHR launch to a [SMART on
       FHIR](http://www.hl7.org/fhir/smart-app-launch/) confidential client
@@ -17,6 +18,8 @@ module ONCProgram
     DESCRIPTION
 
     id :ehr_practitioner_app
+
+    run_as_group
 
     group from: :ehr_smart_discovery
     group from: :ehr_launch

@@ -34,6 +34,8 @@ module ONCProgram
 
     id :onc_visual_inspection
 
+    run_as_group
+
     test do
       title 'Health IT Module demonstrated support for application registration for single patients.'
       description <<~DESCRIPTION

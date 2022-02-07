@@ -16,6 +16,7 @@ export default makeStyles((theme: Theme) => ({
   },
   testSuiteMain: {
     display: 'flex',
+    flexGrow: 1,
   },
   testSuitePanel: {
     flexBasis: '300px',

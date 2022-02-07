@@ -105,6 +105,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
       autoHideDuration={duration}
       onClose={() => setShowProgressBar(false)}
       ClickAwayListenerProps={{ mouseEvent: false }}
+      sx={{ zIndex: 6000 }}
     >
       <Box
         display="flex"

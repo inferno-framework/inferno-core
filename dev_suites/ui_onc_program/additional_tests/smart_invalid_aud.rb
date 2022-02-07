@@ -34,6 +34,8 @@ module ONCProgram
 
     id :smart_invalid_aud
 
+    run_as_group
+
     test do
       title 'Inferno redirects client browser to authorization service and is redirected back to Inferno.'
       description <<~DESCRIPTION

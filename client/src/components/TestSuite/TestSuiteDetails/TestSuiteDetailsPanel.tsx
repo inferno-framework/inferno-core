@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import { TestGroup, RunnableType, TestSuite, Request, Test } from 'models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
-import DescriptionCard from './DescriptionCard';
 import TestGroupCard from './TestGroupCard';
 
 interface TestSuiteDetailsPanelProps {
@@ -44,18 +43,10 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
     });
   }
 
-  const descriptionCard =
-    runnable.description && runnable.description.length > 0 ? (
-      <DescriptionCard description={runnable.description} />
-    ) : null;
-
   return (
-    <>
-      <TestGroupCard runTests={runTests} runnable={runnable} testRunInProgress={testRunInProgresss}>
-        {listItems}
-      </TestGroupCard>
-      {descriptionCard}
-    </>
+    <TestGroupCard runTests={runTests} runnable={runnable} testRunInProgress={testRunInProgresss}>
+      {listItems}
+    </TestGroupCard>
   );
 };
 
