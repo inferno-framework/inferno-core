@@ -159,6 +159,21 @@ RSpec.describe Inferno::DSL::Runnable do
       missing_inputs = example_test_group.missing_inputs([{ name: 'b', value: 'b' }])
       expect(missing_inputs).to eq(['a'])
     end
+
+    it 'handles renamed inputs' do
+      example_test_group = Class.new(Inferno::Entities::TestGroup)
+      example_test_group.input :url1
+      example_test_group.test 'child test' do
+        output :url2
+      end
+      example_test_group.test 'child test with output' do
+        input :url1, name: :url2
+      end
+
+      missing_inputs = example_test_group.missing_inputs([{ name: 'url1', value: 'xyz' }])
+
+      expect(missing_inputs).to eq([])
+    end
   end
 
   describe '.user_runnable?' do

@@ -21,6 +21,8 @@ module Inferno
               return
             end
 
+            # TODO: This test run shouldn't be created until after the inputs
+            # and runnable are validated
             test_run = repo.create(create_params(params).merge(status: 'queued'))
             missing_inputs = test_run.runnable.missing_inputs(params[:inputs])
 
