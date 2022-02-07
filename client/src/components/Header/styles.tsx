@@ -12,6 +12,17 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     flexDirection: 'row',
+    '& .MuiContainer-root': {
+      display: 'flex',
+      justifyContent: 'space-between',
+      flexDirection: 'row', 
+    },
+    '& .MuiTypography-root': {
+      display: 'flex',
+      justifyContent: 'center',
+      padding: '5px',
+      flexDirection: 'column',
+    }
   },
   logo: {
     objectFit: 'contain',

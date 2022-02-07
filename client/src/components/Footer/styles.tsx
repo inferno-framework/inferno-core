@@ -3,24 +3,29 @@ import { Theme } from '@mui/material/styles';
 import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
-  footer: {
-    backgroundColor: theme.palette.common.grayLighter,
-    position: 'fixed',
-    width: '100%',
-    zIndex: 'auto',
-    alignItems: 'center',
-    height: '50px',
-    lineHeight: '50px',
-    bottom: '0',
-    display: 'flex',
-    justifyContent: 'center',
+  footer: { 
+    width: '100%', 
+    zIndex: '5000', 
+    backgroundColor: '#f0ece7',
+    '& .MuiContainer-root': {
+      display: 'flex',
+      justifyContent: 'center', 
+    }
   },
-  footerElement: {
-    flexGrow: 1,
-    textAlign: 'center',
+  builtUsing: {
+    display: 'flex',
+    paddingRight: '10px',
+    '& p': {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      padding: '10px',
+      fontStyle: 'italic',
+    }
   },
   logo: {
     objectFit: 'contain',
     height: '2.5em',
+    marginTop: '-2px',
   },
 }));

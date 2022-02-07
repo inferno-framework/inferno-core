@@ -18,10 +18,7 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
 
   return (
     <AppBar position="sticky" color="default" className={styles.appbar}>
-      <Container
-        maxWidth={false}
-        sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row' }}
-      >
+      <Container>
         <Box display="flex" justifyContent="center">
           <img
             src={icon as string}
@@ -32,8 +29,6 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
           <Typography
             variant="h6"
             component="div"
-            padding="5px"
-            sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
           >
             {suiteTitle || 'Inferno'}
           </Typography>

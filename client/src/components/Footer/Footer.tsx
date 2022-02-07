@@ -4,69 +4,30 @@ import { Container, Box, Link, Typography } from '@mui/material';
 import logo from 'images/inferno_logo.png';
 
 interface FooterProps {
-  githubLink?: string;
   versionNumber?: string;
 }
 
-const Footer: FC<FooterProps> = ({ githubLink, versionNumber }) => {
+const Footer: FC<FooterProps> = ({ versionNumber }) => {
   const styles = useStyles();
-  const version = versionNumber || 'v ?.?.?';
+  const version = versionNumber || '';
   return (
-    <Box sx={{ width: '100%', zIndex: '5000', backgroundColor: '#f0ece7' }}>
-      <Container sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Box display="flex" paddingRight="10px">
-          <Typography
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              paddingRight: '5px',
-              fontStyle: 'italic',
-            }}
-          >
+    <Box className={styles.footer}>
+      <Container>
+        <Box className={styles.builtUsing}>
+          <Typography>
             built using
           </Typography>
-          <img src={logo as string} alt="inferno logo" className={styles.logo} />
+          <Link
+            sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+            href={'https://inferno-framework.github.io/inferno-core'}
+            target="_blank"
+            rel="noreferrer"
+            underline="hover"
+          >
+            <img src={logo as string} alt="inferno logo" className={styles.logo} />
+          </Link>
+          <Typography>{version}</Typography>
         </Box>
-        <Typography
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            paddingRight: '5px',
-          }}
-        >
-          |
-        </Typography>
-        <Typography
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            paddingRight: '5px',
-          }}
-        >
-          {version}{' '}
-        </Typography>
-        <Typography
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            paddingRight: '5px',
-          }}
-        >
-          |
-        </Typography>
-        <Link
-          sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
-          href={githubLink}
-          target="_blank"
-          rel="noreferrer"
-          underline="hover"
-        >
-          API
-        </Link>
       </Container>
     </Box>
   );
