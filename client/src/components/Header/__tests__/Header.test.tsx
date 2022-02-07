@@ -1,9 +1,6 @@
 import React from 'react';
-import { Router } from 'react-router';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import ThemeProvider from 'components/ThemeProvider';
-import { createMemoryHistory } from 'history';
 import Header from '../Header';
 
 test('renders Inferno Header', () => {

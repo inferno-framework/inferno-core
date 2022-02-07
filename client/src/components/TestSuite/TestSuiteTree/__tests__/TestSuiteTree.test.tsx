@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Test, TestGroup, TestSuite, RunnableType } from 'models/testSuiteModels';
+import { Test, TestGroup, TestSuite } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
 import ThemeProvider from 'components/ThemeProvider';
 
