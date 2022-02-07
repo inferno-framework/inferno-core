@@ -3,21 +3,21 @@ import { createTheme } from '@mui/material';
 // https://material-ui.com/customization/palette/#adding-new-colors
 declare module '@mui/material/styles/createPalette' {
   interface CommonColors {
-    blue: string;
-    blueDark: string;
-    blueLighter: string;
+    white: string;
+    offWhite: string;
+    black: string;
     red: string;
-    redDark: string;
+    orange: string;
+    blue: string;
+    blueLight: string;
+    blueLighter: string;
     gray: string;
     grayMedium: string;
     grayBlue: string;
-    grayBlueDark: string;
     grayLight: string;
     grayLighter: string;
-    grayLightest: string;
     grayDark: string;
     grayVeryDark: string;
-    green: string;
     blueGray: string;
   }
 }
@@ -26,6 +26,7 @@ const colors = {
   offWhite: '#f1f8ff',
   black: '#222',
   red: '#d95d77',
+  orange: '#F88B30',
   blue: '#5d89a1',
   blueLight: '#5d89a1',
   blueLighter: '#9ad2f0',
@@ -37,7 +38,6 @@ const colors = {
   grayDark: '#444',
   grayVeryDark: '#3a3a3a',
   green: '#2fa874',
-  orange: '#F88B30',
   blueGray: '#e6ebf2',
 };
 
