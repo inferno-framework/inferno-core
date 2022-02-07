@@ -23,7 +23,6 @@ gem 'sidekiq', '~> 6.4.0'
 gem 'thor', '~> 1.1.0'
 
 group :development, :test do
-  gem "jekyll", "~> 3.6.3"
   gem 'pry'
   gem 'pry-byebug'
   gem 'rubocop', '~> 1.9'
