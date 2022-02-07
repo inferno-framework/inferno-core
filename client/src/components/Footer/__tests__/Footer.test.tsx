@@ -9,14 +9,4 @@ test('renders Inferno Footer', () => {
       <Footer />
     </ThemeProvider>
   );
-  const linkElement = screen.getByText(/Open Source/i);
-  expect(linkElement).toBeInTheDocument();
-});
-
-test('should navigate elsewhere when link is clicked', () => {
-  render(
-    <ThemeProvider>
-      <Footer />
-    </ThemeProvider>
-  );
 });

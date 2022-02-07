@@ -143,21 +143,3 @@ test('Calls setSelectedRunnable when tree item is clicked', () => {
   const testSuiteLabel = screen.getByTestId(`tiLabel-${testSuiteTreeProps.testSuite.id}`);
   userEvent.click(testSuiteLabel);
 });
-
-test('Calls runTests when run button is clicked', () => {
-  render(
-    <ThemeProvider>
-      <TestSuiteTree {...testSuiteTreeProps} />
-    </ThemeProvider>
-  );
-  const suiteRunButton = screen.getByTestId(`runButton-${testSuiteTreeProps.testSuite.id}`);
-  userEvent.click(suiteRunButton);
-  expect(runTestsMock).toHaveBeenCalledWith(
-    RunnableType.TestSuite,
-    testSuiteTreeProps.testSuite.id
-  );
-
-  const groupRunButton = screen.getByTestId(`runButton-${sequence1.id}`);
-  userEvent.click(groupRunButton);
-  expect(runTestsMock).toHaveBeenCalledWith(RunnableType.TestGroup, sequence1.id);
-});

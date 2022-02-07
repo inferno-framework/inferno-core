@@ -54,7 +54,7 @@ test('Modal visible and inputs are shown', () => {
     </ThemeProvider>
   );
 
-  const titleText = screen.getByText('Test Inputs');
+  const titleText = screen.getByText('Modal Title');
   expect(titleText).toBeVisible();
 
   testInputs.forEach((input: TestInput) => {
