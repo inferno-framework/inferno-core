@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import useStyles from './styles';
 import { TestGroup, RunnableType, TestSuite } from 'models/testSuiteModels';
 import { Box, Breadcrumbs, Card, Link, List, Typography } from '@mui/material';
@@ -22,25 +22,29 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
 }) => {
   const styles = useStyles();
   const location = useLocation();
-  const history = useHistory();
 
-  function handleClick(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
-    event.preventDefault();
-    history.goBack();
-    console.info(location, history, runnable);
-  }
-
-  const breadcrumbs = [
-    <Link underline="hover" key="1" color="inherit" href="/" onClick={handleClick}>
-      Landing Page
-    </Link>,
-    <Link underline="hover" key="2" color="inherit" href={location.pathname} onClick={handleClick}>
-      Root
-    </Link>,
-    <Typography key="3" color="text.primary">
-      {runnable.title}
-    </Typography>,
-  ];
+  const populateBreadcrumbs = () => {
+    if ('parent_group' in runnable) {
+      return [
+        <Link
+          underline="hover"
+          key="1"
+          color="inherit"
+          href={`${location.pathname}#${runnable.parent_group?.id as string}`}
+        >
+          {runnable.parent_group?.title || ''}
+        </Link>,
+        <Typography key="2" color="text.primary">
+          {runnable.title}
+        </Typography>,
+      ];
+    }
+    return [
+      <Typography key="1" color="text.primary">
+        {runnable.title}
+      </Typography>,
+    ];
+  };
 
   const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
 
@@ -59,7 +63,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
         </span>
         <span className={styles.testGroupCardHeaderText}>
           <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
-            {breadcrumbs}
+            {populateBreadcrumbs()}
           </Breadcrumbs>
         </span>
         <TestRunButton
