@@ -32,15 +32,15 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           color="inherit"
           href={`${location.pathname}#${runnable.parent_group?.id as string}`}
         >
-          {runnable.parent_group?.title || ''}
+          {runnable.parent_group?.short_title || runnable.parent_group?.title || ''}
         </Link>,
-        <Typography key="2" color="text.primary">
+        <Typography key="2" color="text.primary" className={styles.currentItem}>
           {runnable.title}
         </Typography>,
       ];
     }
     return [
-      <Typography key="1" color="text.primary">
+      <Typography key="1" color="text.primary" className={styles.currentItem}>
         {runnable.title}
       </Typography>,
     ];

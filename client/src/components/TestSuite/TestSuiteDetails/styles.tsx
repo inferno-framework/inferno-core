@@ -24,7 +24,7 @@ export default makeStyles((theme: Theme) => ({
     borderTopLeftRadius: '4px',
     borderTopRightRadius: '4px',
     display: 'flex',
-    lineHeight: '31px',
+    height: '36.5px',
   },
   testGroupCard: {
     marginBottom: '25px',
@@ -48,5 +48,8 @@ export default makeStyles((theme: Theme) => ({
   descriptionPanel: {
     padding: '15px',
     overflow: 'auto',
+  },
+  currentItem: {
+    fontWeight: 600,
   },
 }));
