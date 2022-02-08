@@ -1,8 +1,6 @@
 # Inferno Core
 [![codecov](https://codecov.io/gh/inferno-framework/inferno-core/branch/main/graph/badge.svg?token=6NJTBHF82R)](https://codecov.io/gh/inferno-framework/inferno-core)
 
-**Inferno Core is currently in alpha status**
-
 Inferno Core is an open source tool for testing data exchanges enabled by the [Fast
 Healthcare Interoperability Resources (FHIR)](http://hl7.org/fhir/) standard. 
 
