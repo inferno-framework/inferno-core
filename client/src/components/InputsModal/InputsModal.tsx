@@ -60,6 +60,7 @@ const InputsModal: FC<InputsModalProps> = ({
     } catch (e) {
       // if JSON.parse fails, then assume field is not OAuth and move on
     }
+    if (input.type === 'radio') return false; // radio inputs will always be required and have a default value
     return (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput;
   });
 

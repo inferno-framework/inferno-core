@@ -16,6 +16,9 @@ export default makeStyles((theme: Theme) => ({
     '& label.Mui-focused': {
       color: theme.palette.primary.main,
     },
+    '& label.Mui-disabled': {
+      color: theme.palette.common.grayLight,
+    },
   },
   inputLabel: {
     fontWeight: 600,

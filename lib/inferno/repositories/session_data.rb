@@ -27,7 +27,7 @@ module Inferno
 
         case type.to_s
         when 'oauth_credentials'
-          DSL::OAuthCredentials.new(JSON.parse(raw_value))
+          DSL::OAuthCredentials.new(JSON.parse(raw_value || '{}'))
         else
           raw_value
         end
