@@ -43,6 +43,7 @@ export default makeStyles((theme: Theme) => ({
   },
   testGroupCardHeaderText: {
     flexGrow: 1,
+    alignSelf: 'center',
   },
   descriptionPanel: {
     padding: '15px',
