@@ -17,6 +17,8 @@ import InputOAuthCredentials from './InputOAuthCredentials';
 export interface InputsModalProps {
   runnableType: RunnableType;
   runnableId: string;
+  title: string;
+  inputInstructions?: string;
   inputs: TestInput[];
   modalVisible: boolean;
   hideModal: () => void;
@@ -37,6 +39,8 @@ function runnableTypeReadable(runnableType: RunnableType) {
 const InputsModal: FC<InputsModalProps> = ({
   runnableType,
   runnableId,
+  title,
+  inputInstructions,
   inputs,
   modalVisible,
   hideModal,
@@ -76,6 +80,10 @@ const InputsModal: FC<InputsModalProps> = ({
     });
     setInputsMap(new Map(inputsMap));
   }, [inputs]);
+
+  const instructions =
+    inputInstructions ||
+    `Please fill out required fields in order to run the ${runnableTypeReadable(runnableType)}.`;
 
   const inputFields = inputs.map((requirement: TestInput, index: number) => {
     switch (requirement.type) {
@@ -124,11 +132,9 @@ const InputsModal: FC<InputsModalProps> = ({
 
   return (
     <Dialog open={modalVisible} onClose={hideModal} fullWidth maxWidth="sm">
-      <DialogTitle>Test Inputs</DialogTitle>
+      <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          Please fill out required fields in order to run the {runnableTypeReadable(runnableType)}.
-        </DialogContentText>
+        <DialogContentText>{instructions}</DialogContentText>
         <List>{inputFields}</List>
       </DialogContent>
       <DialogActions>

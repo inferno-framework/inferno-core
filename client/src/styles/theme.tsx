@@ -59,6 +59,13 @@ const lightTheme = createTheme({
       fontFamily: ['Roboto Condensed', 'sans-serif'].join(','),
     },
   },
+  components: {
+    MuiContainer: {
+      defaultProps: {
+        maxWidth: false,
+      },
+    },
+  },
 });
 
 export default lightTheme;

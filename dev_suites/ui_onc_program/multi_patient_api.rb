@@ -23,6 +23,8 @@ module ONCProgram
 
     id :multi_patient_api
 
+    run_as_group
+
     group from: :bulk_data_authorization
     group from: :bulk_data_group_export
     group from: :bulk_data_group_export_validation

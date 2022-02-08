@@ -1,6 +1,6 @@
 module ONCProgram
   class ONCVisualInspection < Inferno::TestGroup
-    title 'Visual Inspection and Attestation'
+    title 'Visual Inspection'
     description <<~DESCRIPTION
       Verify conformance to portions of the test procedure that are not automated.
     DESCRIPTION
@@ -33,6 +33,8 @@ module ONCProgram
           :onc_visual_native_application_notes
 
     id :onc_visual_inspection
+
+    run_as_group
 
     test do
       title 'Health IT Module demonstrated support for application registration for single patients.'

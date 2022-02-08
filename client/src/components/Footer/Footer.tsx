@@ -1,23 +1,33 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { Link } from '@mui/material';
+import { Container, Box, Link, Typography } from '@mui/material';
+import logo from 'images/inferno_logo.png';
 
 interface FooterProps {
-  githubLink?: string;
   versionNumber?: string;
 }
 
-const Footer: FC<FooterProps> = ({ githubLink, versionNumber }) => {
+const Footer: FC<FooterProps> = ({ versionNumber }) => {
   const styles = useStyles();
+  const version = versionNumber || '';
   return (
-    <nav className={styles.footer}>
-      <div className={styles.footerElement}>
-        <Link href={githubLink} target="_blank" rel="noreferrer" underline="hover">
-          Open Source
-        </Link>
-      </div>
-      <div className={styles.footerElement}>Version {versionNumber}</div>
-    </nav>
+    <Box className={styles.footer}>
+      <Container>
+        <Box className={styles.builtUsing}>
+          <Typography>built using</Typography>
+          <Link
+            sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+            href={'https://inferno-framework.github.io/inferno-core'}
+            target="_blank"
+            rel="noreferrer"
+            underline="hover"
+          >
+            <img src={logo as string} alt="inferno logo" className={styles.logo} />
+          </Link>
+          <Typography>{version}</Typography>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

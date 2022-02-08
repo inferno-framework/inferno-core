@@ -289,6 +289,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           modalVisible={inputModalVisible}
           runnableType={runnableType}
           runnableId={runnableId}
+          title={(runnableMap.get(selectedRunnable) as TestSuite | TestGroup | Test).title}
+          inputInstructions={
+            (runnableMap.get(selectedRunnable) as TestSuite | TestGroup | Test).input_instructions
+          }
           inputs={inputs}
         />
         <ActionModal

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Test, TestGroup, TestSuite, RunnableType } from 'models/testSuiteModels';
+import { Test, TestGroup, TestSuite } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
 import ThemeProvider from 'components/ThemeProvider';
 
@@ -142,22 +142,4 @@ test('Calls setSelectedRunnable when tree item is clicked', () => {
   );
   const testSuiteLabel = screen.getByTestId(`tiLabel-${testSuiteTreeProps.testSuite.id}`);
   userEvent.click(testSuiteLabel);
-});
-
-test('Calls runTests when run button is clicked', () => {
-  render(
-    <ThemeProvider>
-      <TestSuiteTree {...testSuiteTreeProps} />
-    </ThemeProvider>
-  );
-  const suiteRunButton = screen.getByTestId(`runButton-${testSuiteTreeProps.testSuite.id}`);
-  userEvent.click(suiteRunButton);
-  expect(runTestsMock).toHaveBeenCalledWith(
-    RunnableType.TestSuite,
-    testSuiteTreeProps.testSuite.id
-  );
-
-  const groupRunButton = screen.getByTestId(`runButton-${sequence1.id}`);
-  userEvent.click(groupRunButton);
-  expect(runTestsMock).toHaveBeenCalledWith(RunnableType.TestGroup, sequence1.id);
 });

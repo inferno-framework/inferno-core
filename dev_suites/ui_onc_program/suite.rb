@@ -3,7 +3,10 @@ Dir.glob(File.join(__dir__, '*.rb')).each { |path| require_relative path.delete_
 module ONCProgram
   class Suite < Inferno::TestSuite
     title '2015 Edition Cures Update -  Standardized API Testing'
-    description 'ONC Standardized API Testing '
+    short_title 'ONC Standardized API'
+    description <<~DESCRIPTION
+      Insert Description of the g10 test kit here.
+    DESCRIPTION
 
     group from: :standalone_patient_app_full_access
     group from: :standalone_patient_app_limited_access

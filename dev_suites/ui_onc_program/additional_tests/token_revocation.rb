@@ -10,6 +10,8 @@ module ONCProgram
     input :onc_sl_url, :onc_sl_token, :onc_sl_refresh_token, :onc_sl_patient_id, :onc_sl_oauth_token_endpoint,
           :onc_visual_token_revocation, :onc_visual_token_revocation_notes
 
+    run_as_group
+
     test do
       title 'Health IT developer demonstrated the ability of the Health IT Module to revoke tokens.'
       description <<~DESCRIPTION
