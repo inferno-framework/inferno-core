@@ -99,7 +99,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     return (
       <ListItem disabled={field.locked} key={field.name}>
         <TextField
-          disabled={requirement.locked || field.locked}
+          disabled={requirement.locked}
           required={field.required}
           id={`requirement${index}_${field.name}`}
           label={fieldLabel}
