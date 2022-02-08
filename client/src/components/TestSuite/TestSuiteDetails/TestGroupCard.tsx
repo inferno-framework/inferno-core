@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { useLocation } from 'react-router-dom';
 import useStyles from './styles';
 import { TestGroup, RunnableType, TestSuite } from 'models/testSuiteModels';
-import { Box, Breadcrumbs, Card, Link, List, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Card, Divider, Link, List, Typography } from '@mui/material';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ReactMarkdown from 'react-markdown';
 import ResultIcon from './ResultIcon';
@@ -73,7 +73,12 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           testRunInProgress={testRunInProgress}
         />
       </div>
-      {description && <Box margin="20px">{description}</Box>}
+      {description && (
+        <>
+          <Box margin="20px">{description}</Box>
+          <Divider />
+        </>
+      )}
       <List className={styles.testGroupCardList}>{children}</List>
     </Card>
   );
