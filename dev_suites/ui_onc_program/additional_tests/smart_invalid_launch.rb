@@ -1,6 +1,7 @@
 module ONCProgram
   class SMARTInvalidLaunch < Inferno::TestGroup
     title 'SMART App Launch Error: Invalid Launch Parameter'
+    short_title 'Invalid SMART Parameter'
     description <<~DESCRIPTION
       # Background
 

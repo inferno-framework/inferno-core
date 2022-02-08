@@ -1,6 +1,6 @@
 module ONCProgram
   class ONCVisualInspection < Inferno::TestGroup
-    title 'Visual Inspection and Attestation'
+    title 'Visual Inspection'
     description <<~DESCRIPTION
       Verify conformance to portions of the test procedure that are not automated.
     DESCRIPTION

@@ -1,6 +1,7 @@
 module ONCProgram
   class ONCStandalonePublicLaunch < Inferno::TestGroup
     title 'Public Client Standalone Launch with OpenID Connect'
+    short_title 'Public Client Launch'
     description <<~DESCRIPTION
       Register Inferno as a public client with patient access and execute standalone launch.
     DESCRIPTION
