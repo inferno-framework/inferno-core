@@ -32,6 +32,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
             variant="contained"
             disabled={testRunInProgress}
             color="secondary"
+            size="small"
             disableElevation
             onClick={() => {
               runTests(runnableType, runnable.id);

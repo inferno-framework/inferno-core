@@ -55,12 +55,18 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
       </div>
     ) : null;
 
+  const resultSpan = runnable.result ? (
+    <span className={styles.testGroupCardHeaderResult}>
+      <ResultIcon result={runnable.result} />
+    </span>
+  ) : (
+    <></>
+  );
+
   return (
     <Card className={styles.testGroupCard} variant="outlined">
       <div className={styles.testGroupCardHeader}>
-        <span className={styles.testGroupCardHeaderResult}>
-          <ResultIcon result={runnable.result} />
-        </span>
+        {resultSpan}
         <span className={styles.testGroupCardHeaderText}>
           <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
             {populateBreadcrumbs()}
