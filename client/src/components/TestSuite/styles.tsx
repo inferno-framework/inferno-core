@@ -12,7 +12,7 @@ export default makeStyles((theme: Theme) => ({
   },
   drawer: {
     flexShrink: 0,
-    width: '400px',
+    width: '300px',
   },
   testSuiteMain: {
     display: 'flex',

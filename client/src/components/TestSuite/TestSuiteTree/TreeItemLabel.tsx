@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import { TestGroup, TestSuite } from 'models/testSuiteModels';
 import { Typography, Box } from '@mui/material';
 import useStyles from './styles';
-import CondensedResultIcon from './CondensedResultIcon';
 
 export interface TreeItemLabelProps {
   runnable: TestSuite | TestGroup;
@@ -22,7 +21,6 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable }) => {
           </Typography>
         )}
       </Box>
-      <CondensedResultIcon result={runnable.result} />
     </Box>
   );
 };

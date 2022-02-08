@@ -81,10 +81,15 @@ const CustomTreeItem = styled((props: TreeItemProps) => (
   <TreeItem ContentComponent={CustomContent} {...props} />
 ))(() => ({
   [`& .${treeItemClasses.selected}`]: {
-    backgroundColor: 'rgba(248, 139, 48, 0.42) !important',
+    backgroundColor: 'rgba(248, 139, 48, 0.1) !important',
   },
   [`& .${treeItemClasses.content}`]: {
     width: 'auto',
+    paddingLeft: '25px',
+  },
+  [`& .${treeItemClasses.group}`]: {
+    marginLeft: '0px',
+    paddingLeft: '10px',
   },
 }));
 

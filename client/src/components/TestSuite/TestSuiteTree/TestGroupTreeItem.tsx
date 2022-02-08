@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { TestGroup, RunnableType } from 'models/testSuiteModels';
 import CustomTreeItem from '../../_common/TreeItem';
 import TreeItemLabel from './TreeItemLabel';
+import CondensedResultIcon from './CondensedResultIcon';
 
 export interface TestGroupTreeItemProps {
   testGroup: TestGroup;
@@ -15,7 +16,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
   testRunInProgress,
 }) => {
   let sublist: JSX.Element[] = [];
-  if (testGroup.test_groups.length > 0) {
+  if (testGroup.test_groups.length > 0 && !testGroup.run_as_group) {
     sublist = testGroup.test_groups.map((subTestGroup, index) => (
       <TestGroupTreeItem
         testGroup={subTestGroup}
@@ -30,6 +31,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
     <CustomTreeItem
       nodeId={testGroup.id}
       label={<TreeItemLabel runnable={testGroup} />}
+      icon={testGroup.run_as_group ? <CondensedResultIcon result={testGroup.result} /> : null}
       // eslint-disable-next-line max-len
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       ContentProps={{ testId: testGroup.id } as any}
