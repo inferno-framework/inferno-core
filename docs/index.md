@@ -13,7 +13,8 @@ nav_order: 1
 {:toc}
 ---
 ## Overview
-Inferno is a tool for testing FHIR server implementations.
+Inferno is framework for creating, executing, and sharing tests for health IT
+systems providing standardized FHIR APIs.
 
 ## Documentation Resources
 - View the [JSON API Documentation](/inferno-core/api-docs) for information on
