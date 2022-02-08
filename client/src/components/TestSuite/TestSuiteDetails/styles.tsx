@@ -24,7 +24,7 @@ export default makeStyles((theme: Theme) => ({
     borderTopLeftRadius: '4px',
     borderTopRightRadius: '4px',
     display: 'flex',
-    height: '36.5px',
+    // height: '36.5px',
   },
   testGroupCard: {
     marginBottom: '25px',
