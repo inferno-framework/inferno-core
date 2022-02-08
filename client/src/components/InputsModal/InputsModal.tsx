@@ -10,6 +10,7 @@ import {
 import { OAuthCredentials, RunnableType, TestInput } from 'models/testSuiteModels';
 import React, { FC, useEffect } from 'react';
 import InputRadioGroup from './InputsRadioGroup';
+import ReactMarkdown from 'react-markdown';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import InputOAuthCredentials from './InputOAuthCredentials';
@@ -134,7 +135,9 @@ const InputsModal: FC<InputsModalProps> = ({
     <Dialog open={modalVisible} onClose={hideModal} fullWidth maxWidth="sm">
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>{instructions}</DialogContentText>
+        <DialogContentText>
+          <ReactMarkdown>{instructions}</ReactMarkdown>
+        </DialogContentText>
         <List>{inputFields}</List>
       </DialogContent>
       <DialogActions>
