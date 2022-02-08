@@ -31,7 +31,7 @@ module Inferno
           instance_variable_set(:"@#{name}", value)
         end
 
-        self.token_retrieval_time = DateTime.now if token_retrieval_time.blank?
+        self.token_retrieval_time = DateTime.now if access_token.present? && token_retrieval_time.blank?
       end
 
       # @api private
