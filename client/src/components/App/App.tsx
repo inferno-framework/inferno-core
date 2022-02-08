@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import { StyledEngineProvider } from '@mui/material/styles';
 import { postTestSessions } from 'api/TestSessionApi';
 import { getTestSuites } from 'api/TestSuitesApi';
-import Header from 'components/Header';
 import LandingPage from 'components/LandingPage';
 import TestSessionWrapper from 'components/TestSuite/TestSessionWrapper';
 import ThemeProvider from 'components/ThemeProvider';
@@ -45,7 +44,6 @@ const App: FC<unknown> = () => {
     <Router>
       <StyledEngineProvider injectFirst>
         <ThemeProvider>
-          <Header />
           <Switch>
             <Route exact path="/">
               {testSuites.length == 1 && testSession ? (

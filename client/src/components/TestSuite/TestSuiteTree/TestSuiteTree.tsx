@@ -1,9 +1,10 @@
 import React, { FC } from 'react';
 import { TestSuite, TestGroup, RunnableType } from 'models/testSuiteModels';
-import { CardContent, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import useStyles from './styles';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CustomTreeItem from '../../_common/TreeItem';
 import TestGroupTreeItem from './TestGroupTreeItem';
@@ -18,7 +19,7 @@ export interface TestSuiteTreeProps {
 
 function addDefaultExpanded(testGroups: TestGroup[], defaultExpanded: string[]): void {
   testGroups.forEach((testGroup: TestGroup) => {
-    if (testGroup.test_groups.length > 0) {
+    if (testGroup.test_groups.length > 0 && !testGroup.run_as_group) {
       defaultExpanded.push(testGroup.id);
       addDefaultExpanded(testGroup.test_groups, defaultExpanded);
     }
@@ -57,32 +58,25 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
 
     return (
       <Box className={styles.testSuiteTreePanel}>
-        <CardContent>
-          <TreeView
-            defaultCollapseIcon={<ExpandMoreIcon />}
-            defaultExpandIcon={<ChevronRightIcon />}
-            onNodeToggle={nodeToggle}
-            expanded={expanded}
-            selected={selectedRunnable}
+        <TreeView
+          defaultCollapseIcon={<ExpandMoreIcon />}
+          defaultExpandIcon={<ChevronRightIcon />}
+          onNodeToggle={nodeToggle}
+          expanded={expanded}
+          selected={selectedRunnable}
+        >
+          <CustomTreeItem
+            classes={{ content: styles.treeRoot }}
+            nodeId={testSuite.id}
+            label={<TreeItemLabel runnable={testSuite} />}
+            icon={<ListAltIcon />}
+            // eslint-disable-next-line max-len
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+            ContentProps={{ testId: testSuite.id } as any}
           >
-            <CustomTreeItem
-              classes={{ content: styles.treeRoot }}
-              nodeId={testSuite.id}
-              label={
-                <TreeItemLabel
-                  runnable={testSuite}
-                  runTests={runTests}
-                  testRunInProgress={testRunInProgress}
-                />
-              }
-              // eslint-disable-next-line max-len
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-              ContentProps={{ testId: testSuite.id } as any}
-            >
-              {testGroupList}
-            </CustomTreeItem>
-          </TreeView>
-        </CardContent>
+            {testGroupList}
+          </CustomTreeItem>
+        </TreeView>
       </Box>
     );
   } else {

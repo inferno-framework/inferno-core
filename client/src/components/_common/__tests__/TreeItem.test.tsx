@@ -9,21 +9,13 @@ import { createMemoryHistory } from 'history';
 import CustomTreeItem from '../TreeItem';
 import { mockedTestSuite } from '../__mocked_data__/mockData';
 
-const runTestsMock = jest.fn();
-
 test('renders custom TreeItem', () => {
   render(
     <ThemeProvider>
       <TreeView>
         <CustomTreeItem
           nodeId={mockedTestSuite.id}
-          label={
-            <TreeItemLabel
-              runnable={mockedTestSuite}
-              runTests={runTestsMock}
-              testRunInProgress={false}
-            />
-          }
+          label={<TreeItemLabel runnable={mockedTestSuite} />}
           ContentProps={{ testId: mockedTestSuite.id } as any}
         />
       </TreeView>
@@ -43,13 +35,7 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
         <TreeView expanded={[mockedTestSuite.id]}>
           <CustomTreeItem
             nodeId={mockedTestSuite.id}
-            label={
-              <TreeItemLabel
-                runnable={mockedTestSuite}
-                runTests={runTestsMock}
-                testRunInProgress={false}
-              />
-            }
+            label={<TreeItemLabel runnable={mockedTestSuite} />}
             ContentProps={{ testId: mockedTestSuite.id } as any}
           >
             <></>
@@ -77,13 +63,7 @@ test('clicking on TreeItem should navigate to group or test instance', () => {
         <TreeView>
           <CustomTreeItem
             nodeId={mockedTestSuite.id}
-            label={
-              <TreeItemLabel
-                runnable={mockedTestSuite}
-                runTests={runTestsMock}
-                testRunInProgress={false}
-              />
-            }
+            label={<TreeItemLabel runnable={mockedTestSuite} />}
             ContentProps={{ testId: mockedTestSuite.id } as any}
           />
         </TreeView>

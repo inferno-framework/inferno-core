@@ -11,7 +11,7 @@ module.exports = (env, argv) => {
       publicPath: '/public/',
     },
     devServer: {
-      contentBase: '/public/',
+      static: '/public/',
       host: '0.0.0.0',
       port: 3000
     },

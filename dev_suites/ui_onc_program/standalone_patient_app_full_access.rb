@@ -3,6 +3,7 @@ Dir.glob(File.join(__dir__, 'standalone_patient_app_full_access', '*.rb')).each 
 module ONCProgram
   class StandalonePatientAppFullAccess < Inferno::TestGroup
     title 'Standalone Patient App - Full Patient Access'
+    short_title 'Standalone Patient App'
     description <<~DESCRIPTION
       This scenario demonstrates the ability of a system to perform a Patient
       Standalone Launch to a [SMART on
@@ -18,6 +19,8 @@ module ONCProgram
     DESCRIPTION
 
     id :standalone_patient_app_full_access
+
+    run_as_group
 
     group from: :standalone_smart_discovery
     group from: :standalone_launch

@@ -1,6 +1,7 @@
 module ONCProgram
   class SMARTInvalidLaunch < Inferno::TestGroup
     title 'SMART App Launch Error: Invalid Launch Parameter'
+    short_title 'Invalid SMART Parameter'
     description <<~DESCRIPTION
       # Background
 
@@ -34,6 +35,8 @@ module ONCProgram
           :redirect_uris
 
     id :smart_invalid_launch
+
+    run_as_group
 
     test do
       title 'EHR server redirects client browser to Inferno app launch URI'

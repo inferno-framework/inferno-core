@@ -3,6 +3,7 @@ Dir.glob(File.join(__dir__, 'standalone_patient_app_limited_access', '*.rb')).ea
 module ONCProgram
   class StandalonePatientAppLimitedAccess < Inferno::TestGroup
     title 'Standalone Patient App - Limited Access'
+    short_title 'Limited Access App'
     description <<~DESCRIPTION
       This scenario demonstrates the ability to perform a Patient Standalone
       Launch to a [SMART on FHIR](http://www.hl7.org/fhir/smart-app-launch/)
@@ -13,6 +14,8 @@ module ONCProgram
     DESCRIPTION
 
     id :standalone_patient_app_limited_access
+
+    run_as_group
 
     group from: :standalone_restricted_launch
     group from: :access_verify_restricted

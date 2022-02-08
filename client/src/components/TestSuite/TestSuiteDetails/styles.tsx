@@ -20,7 +20,7 @@ export default makeStyles((theme: Theme) => ({
     fontWeight: 600,
     fontSize: '16px',
     borderBottom: '1px solid rgba(0,0,0,.12)',
-    backgroundColor: '#f1f8ff',
+    backgroundColor: theme.palette.common.offWhite,
     borderTopLeftRadius: '4px',
     borderTopRightRadius: '4px',
     display: 'flex',

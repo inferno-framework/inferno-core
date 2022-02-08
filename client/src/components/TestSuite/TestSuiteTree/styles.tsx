@@ -27,7 +27,7 @@ export default makeStyles((theme: Theme) => ({
     display: 'inline',
     fontStyle: 'italic',
     alignSelf: 'center',
-    color: 'gray',
+    color: theme.palette.common.grayLight,
     paddingLeft: '8px',
   },
   labelRunButton: {
@@ -36,15 +36,15 @@ export default makeStyles((theme: Theme) => ({
     marginRight: '5px',
   },
   testSuiteTreePanel: {
-    width: '400px',
+    width: '300px',
     overflowX: 'hidden',
+    marginLeft: '-10px',
   },
   treeRoot: {
     '& $labelText': {
-      fontWeight: 600,
+      textTransform: 'uppercase',
+      fontWeight: 'bold',
     },
-    '& .MuiTreeItem-iconContainer': {
-      display: 'none',
-    },
+    paddingLeft: '25px !important',
   },
 }));
