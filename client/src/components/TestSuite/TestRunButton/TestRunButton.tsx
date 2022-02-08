@@ -31,7 +31,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
           <Button
             variant="contained"
             disabled={testRunInProgress}
-            color="primary"
+            color="secondary"
             disableElevation
             onClick={() => {
               runTests(runnableType, runnable.id);
