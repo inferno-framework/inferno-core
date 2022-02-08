@@ -27,11 +27,16 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
     ));
   }
 
+  const itemIcon =
+    testGroup.run_as_group || testGroup.test_groups.length === 0 ? (
+      <CondensedResultIcon result={testGroup.result} />
+    ) : null;
+
   return (
     <CustomTreeItem
       nodeId={testGroup.id}
       label={<TreeItemLabel runnable={testGroup} />}
-      icon={testGroup.run_as_group ? <CondensedResultIcon result={testGroup.result} /> : null}
+      icon={itemIcon}
       // eslint-disable-next-line max-len
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       ContentProps={{ testId: testGroup.id } as any}
