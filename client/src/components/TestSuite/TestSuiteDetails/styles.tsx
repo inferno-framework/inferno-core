@@ -24,7 +24,8 @@ export default makeStyles((theme: Theme) => ({
     borderTopLeftRadius: '4px',
     borderTopRightRadius: '4px',
     display: 'flex',
-    lineHeight: '31px',
+    minHeight: '36.5px',
+    alignItems: 'center',
   },
   testGroupCard: {
     marginBottom: '25px',
@@ -44,8 +45,14 @@ export default makeStyles((theme: Theme) => ({
   testGroupCardHeaderText: {
     flexGrow: 1,
   },
+  testGroupCardHeaderButton: {
+    minWidth: 'fit-content',
+  },
   descriptionPanel: {
     padding: '15px',
     overflow: 'auto',
+  },
+  currentItem: {
+    fontWeight: 600,
   },
 }));

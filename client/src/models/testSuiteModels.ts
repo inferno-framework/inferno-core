@@ -81,6 +81,7 @@ export interface TestGroup {
   id: string;
   title: string;
   short_title?: string;
+  parent_group?: TestGroup | null;
   test_groups: TestGroup[];
   inputs: TestInput[];
   outputs: TestOutput[];

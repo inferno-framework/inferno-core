@@ -40,6 +40,7 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
             sx={{ marginTop: '10px' }}
             variant="outlined"
             disableElevation
+            size="small"
             startIcon={<NoteAddIcon />}
           >
             New Session

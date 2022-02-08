@@ -1,4 +1,4 @@
-import { Result, TestOutput, TestRun, TestSession } from 'models/testSuiteModels';
+import { Result, TestGroup, TestOutput, TestRun, TestSession } from 'models/testSuiteModels';
 import { getEndpoint } from './infernoApiService';
 
 export function getLastTestRun(test_session_id: string): Promise<TestRun | null> {
@@ -19,7 +19,7 @@ export function getTestSession(test_session_id: string): Promise<TestSession | n
   return fetch(testSessionsEndpoint)
     .then((response) => response.json())
     .then((result) => {
-      return result as TestSession;
+      return assignParentGroups(result as TestSession);
     })
     .catch((e) => {
       console.log(e);
@@ -66,4 +66,27 @@ export function getTestSessionData(test_session_id: string): Promise<TestOutput[
       console.log(e);
       return null;
     });
+}
+
+function assignParentGroups(session: TestSession): TestSession {
+  let groups = session.test_suite.test_groups;
+  if (groups) {
+    groups = assignParentGroupsHelper(groups, null);
+  }
+  return session;
+}
+
+function assignParentGroupsHelper(groups: TestGroup[], parent: TestGroup | null): TestGroup[] {
+  groups.forEach((group) => {
+    if (
+      !group.test_groups ||
+      group.test_groups.length === 0 ||
+      group.test_groups.every((tg) => tg.parent_group)
+    ) {
+      group.parent_group = parent;
+    } else {
+      assignParentGroupsHelper(group.test_groups, group);
+    }
+  });
+  return groups;
 }
