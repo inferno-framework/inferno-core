@@ -66,12 +66,14 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
             {populateBreadcrumbs()}
           </Breadcrumbs>
         </span>
-        <TestRunButton
-          buttonText={buttonText}
-          runnable={runnable}
-          runTests={runTests}
-          testRunInProgress={testRunInProgress}
-        />
+        <span className={styles.testGroupCardHeaderButton}>
+          <TestRunButton
+            buttonText={buttonText}
+            runnable={runnable}
+            runTests={runTests}
+            testRunInProgress={testRunInProgress}
+          />
+        </span>
       </div>
       {description && (
         <>
