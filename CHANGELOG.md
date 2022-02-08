@@ -1,3 +1,15 @@
+# 0.1.3
+
+* Fix a bug where `oauth_credentials` inputs were not locked when they should
+  be.
+* Fix a bug causing an error when cancelling tests.
+* Fix a bug with how required inputs are determined.
+* Remove 'required' label from radio buttons, and automatically select the first
+  option if no default is specified.
+* Major UI improvements. Changed location of run buttons and added a button to
+  start a new test session in addition to cosmetic updates.
+* Update ruby and js dependencies to address security vulnerabilities.
+
 # 0.1.2
 
 * Add the ability to cancel a test run.
