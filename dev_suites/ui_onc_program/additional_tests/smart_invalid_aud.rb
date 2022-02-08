@@ -1,6 +1,7 @@
 module ONCProgram
   class SMARTInvalidAUD < Inferno::TestGroup
     title 'SMART App Launch Error: Invalid AUD Parameter'
+    short_title 'Invalid Aud SMART Launch'
     description <<~DESCRIPTION
       # Background
 
