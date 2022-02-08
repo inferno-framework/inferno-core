@@ -28,7 +28,7 @@ nav_order: 2
   integration.
 - **Inferno Test Suite**: An executable set of tests provided within an Inferno
   Test Kit that allows testers to evaluate the conformance of a system.  The tests
-  are organized heirarchically.  They may import tests from other Test Kits.  It
+  are organized hierarchically.  They may import tests from other Test Kits.  It
   may be the expectation of a Test Suite that a conformant system will pass all
   provided tests, or that the system may fail some tests.  An individual test
   suite defines how to interpret failures at the test level and in aggregate.
