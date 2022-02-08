@@ -43,7 +43,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           testRunInProgress={testRunInProgress}
         />
       </div>
-      <Box margin="20px">{description}</Box>
+      {description && <Box margin="20px">{description}</Box>}
       <List className={styles.testGroupCardList}>{children}</List>
     </Card>
   );

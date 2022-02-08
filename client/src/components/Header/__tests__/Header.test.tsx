@@ -6,7 +6,7 @@ import Header from '../Header';
 test('renders Inferno Header', () => {
   render(
     <ThemeProvider>
-      <Header />
+      <Header suiteTitle="Suite Title" />
     </ThemeProvider>
   );
 

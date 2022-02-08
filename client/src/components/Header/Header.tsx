@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
 import icon from 'images/inferno_icon.png';
-import { AppBar, Box, Container, Typography } from '@mui/material';
+import { AppBar, Box, Button, Container, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
 export interface HeaderProps {
   suiteTitle?: string;
@@ -16,7 +17,9 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
     history.push('/');
   };
 
-  return (
+  return !suiteTitle ? (
+    <></>
+  ) : (
     <AppBar position="sticky" color="default" className={styles.appbar}>
       <Container>
         <Box display="flex" justifyContent="center">
@@ -27,8 +30,20 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
             onClick={returnHome}
           />
           <Typography variant="h6" component="div">
-            {suiteTitle || 'Inferno'}
+            {suiteTitle}
           </Typography>
+        </Box>
+        <Box>
+          <Button
+            color="secondary"
+            onClick={returnHome}
+            sx={{ marginTop: '10px' }}
+            variant="outlined"
+            disableElevation
+            startIcon={<NoteAddIcon />}
+          >
+            New Session
+          </Button>
         </Box>
       </Container>
     </AppBar>
