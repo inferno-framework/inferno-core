@@ -48,19 +48,14 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
 
   const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
 
-  const description =
-    runnable.description && runnable.description.length > 0 ? (
-      <div>
-        <ReactMarkdown>{runnable.description}</ReactMarkdown>
-      </div>
-    ) : null;
+  const description = runnable.description && runnable.description.length > 0 && (
+    <ReactMarkdown>{runnable.description}</ReactMarkdown>
+  );
 
-  const resultSpan = runnable.result ? (
+  const resultSpan = runnable.result && (
     <span className={styles.testGroupCardHeaderResult}>
       <ResultIcon result={runnable.result} />
     </span>
-  ) : (
-    <></>
   );
 
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;

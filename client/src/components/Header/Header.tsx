@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
 import icon from 'images/inferno_icon.png';
-import { AppBar, Box, Button, Container, Typography } from '@mui/material';
+import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
@@ -17,19 +17,19 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
     history.push('/');
   };
 
-  return !suiteTitle ? (
-    <></>
-  ) : (
+  return suiteTitle ? (
     <AppBar position="sticky" color="default" className={styles.appbar}>
-      <Container>
+      <Toolbar className={styles.toolbar}>
         <Box display="flex" justifyContent="center">
-          <img
-            src={icon as string}
-            alt="inferno logo"
-            className={styles.logo}
-            onClick={returnHome}
-          />
-          <Typography variant="h6" component="div">
+          <a href="/" onClick={returnHome}>
+            <img
+              src={icon as string}
+              alt="inferno logo"
+              className={styles.logo}
+              onClick={returnHome}
+            />
+          </a>
+          <Typography variant="h5" component="h1" className={styles.title}>
             {suiteTitle}
           </Typography>
         </Box>
@@ -37,7 +37,6 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
           <Button
             color="secondary"
             onClick={returnHome}
-            sx={{ marginTop: '10px' }}
             variant="outlined"
             disableElevation
             size="small"
@@ -46,8 +45,10 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
             New Session
           </Button>
         </Box>
-      </Container>
+      </Toolbar>
     </AppBar>
+  ) : (
+    <></>
   );
 };
 
