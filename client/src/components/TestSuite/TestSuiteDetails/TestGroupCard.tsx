@@ -63,6 +63,8 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
     <></>
   );
 
+  const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
+
   return (
     <Card className={styles.testGroupCard} variant="outlined">
       <div className={styles.testGroupCardHeader}>
@@ -76,6 +78,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           <TestRunButton
             buttonText={buttonText}
             runnable={runnable}
+            runnableType={runnableType}
             runTests={runTests}
             testRunInProgress={testRunInProgress}
           />

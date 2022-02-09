@@ -37,6 +37,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
       <TestRunButton
         runnable={testGroup}
+        runnableType={RunnableType.TestGroup}
         runTests={runTests}
         testRunInProgress={testRunInProgress}
       />
