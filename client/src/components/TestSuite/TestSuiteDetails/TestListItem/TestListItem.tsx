@@ -112,6 +112,7 @@ const TestListItem: FC<TestListItemProps> = ({
           {requestsBadge}
           <TestRunButton
             runnable={test}
+            runnableType={RunnableType.Test}
             runTests={runTests}
             testRunInProgress={testRunInProgress}
           />

@@ -11,6 +11,7 @@ import {
 
 export interface TestRunButtonProps {
   runnable: TestSuite | TestGroup | Test;
+  runnableType: RunnableType;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   testRunInProgress: boolean;
   buttonText?: string;
@@ -19,10 +20,10 @@ export interface TestRunButtonProps {
 const TestRunButton: FC<TestRunButtonProps> = ({
   runTests,
   runnable,
+  runnableType,
   testRunInProgress,
   buttonText,
 }) => {
-  const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
   const showRunButton = runnableIsTestSuite(runnable) || (runnable as TestGroup).user_runnable;
   const runButton = showRunButton ? (
     <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
