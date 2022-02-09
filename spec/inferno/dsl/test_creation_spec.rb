@@ -21,7 +21,7 @@ RSpec.describe InfrastructureTest::Suite do
         expect(suite.short_title).to eq('Infrastructure')
         expect(suite.description).to start_with('An internal test suite to verify that inferno infrastructure works')
         expect(suite.short_description).to start_with('Internal test suite')
-        expect(suite.input_instructions).to eq('Instructions for inputs')
+        expect(suite.input_instructions).to include('Instructions for inputs')
       end
 
       it 'contains the correct inputs' do

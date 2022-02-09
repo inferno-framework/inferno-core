@@ -9,7 +9,12 @@ module InfrastructureTest
     short_title 'Infrastructure'
     description 'An internal test suite to verify that inferno infrastructure works'
     short_description 'Internal test suite'
-    input_instructions 'Instructions for inputs'
+    input_instructions %(
+      Instructions for inputs
+      * Bulletted List
+      * Here
+      `code here`
+    )
 
     input :suite_input
     output :suite_output
