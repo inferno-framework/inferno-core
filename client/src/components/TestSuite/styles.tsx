@@ -14,6 +14,11 @@ export default makeStyles((theme: Theme) => ({
     flexShrink: 0,
     width: '300px',
   },
+  testSessionContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100vh',
+  },
   testSuiteMain: {
     display: 'flex',
     flexGrow: 1,
