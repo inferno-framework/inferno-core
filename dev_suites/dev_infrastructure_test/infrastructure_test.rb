@@ -15,6 +15,7 @@ module InfrastructureTest
       * Here
       `code here`
     )
+    version '42.0'
 
     input :suite_input
     output :suite_output

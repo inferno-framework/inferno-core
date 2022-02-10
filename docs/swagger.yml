@@ -430,18 +430,18 @@ definitions:
         items:
           type: "object"
           properties:
-            name: 
+            name:
               type: "string"
-            value: 
+            value:
               type: "string"
       response_headers:
         type: "array"
         items:
           type: "object"
           properties:
-            name: 
+            name:
               type: "string"
-            value: 
+            value:
               type: "string"
       request_body:
         type: "string"
@@ -487,6 +487,8 @@ definitions:
       test_count:
         type: "number"
         readOnly: true
+      version:
+        type: "string"
   TestGroup:
     type: "object"
     required:
