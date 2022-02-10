@@ -37,6 +37,10 @@ Style/FrozenStringLiteralComment:
 Style/NumericLiterals:
   Enabled: false
 
+Style/OpenStructUse:
+  Exclude:
+    - 'spec/**/*'
+
 Style/SymbolArray:
   Enabled: false
 
@@ -70,7 +74,7 @@ RSpec/AnyInstance:
 
 RSpec/DescribeClass:
   Exclude:
-    - 'spec/requests/**'
+    - 'spec/requests/**/*'
 
 RSpec/ExampleLength:
   Enabled: false
@@ -93,4 +97,7 @@ RSpec/NotToNot:
 
 # Following this rule's suggestions breaks postgres support
 Sequel/ConcurrentIndex:
+  Enabled: false
+
+Gemspec/RequireMFA:
   Enabled: false

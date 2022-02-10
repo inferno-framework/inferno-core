@@ -8,11 +8,10 @@ Gem::Specification.new do |spec|
   spec.version       = Inferno::VERSION
   spec.authors       = ['Stephen MacVicar', 'Robert Scanlon', 'Chase Zhou']
   spec.email         = ['inferno@groups.mitre.org']
-  spec.date          = Time.now.utc.strftime('%Y-%m-%d')
   spec.summary       = 'Inferno Core is an open source tool for testing data exchanges enabled by the FHIR standand'
   spec.description   = 'Inferno Core is an open source tool for testing data exchanges enabled by the FHIR standand'
   spec.homepage      = 'https://github.com/inferno_community/inferno-core'
-  spec.license       = 'Apache 2.0'
+  spec.license       = 'Apache-2.0'
   spec.add_runtime_dependency 'activesupport', '~> 6.1'
   spec.add_runtime_dependency 'blueprinter', '0.25.2'
   spec.add_runtime_dependency 'dotenv', '~> 2.7'
