@@ -1,6 +1,7 @@
 import React, { FC, Fragment } from 'react';
 import { Button, Tooltip, IconButton } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import {
   TestGroup,
   RunnableType,
@@ -53,8 +54,9 @@ const TestRunButton: FC<TestRunButtonProps> = ({
               runTests(runnableType, runnable.id);
             }}
             data-testid={`runButton-${runnable.id}`}
+            sx={{ margin: '0 4px' }}
           >
-            <PlayArrowIcon />
+            <PlayCircleIcon />
           </IconButton>
         )}
       </div>
