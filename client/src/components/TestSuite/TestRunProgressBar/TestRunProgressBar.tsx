@@ -133,7 +133,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
           <IconButton
             aria-label="cancel"
             disabled={!cancellable()}
-            color="secondary"
+            color="primary"
             onClick={cancelTestRun}
           >
             <CancelIcon />

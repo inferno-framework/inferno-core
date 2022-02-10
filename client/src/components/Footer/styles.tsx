@@ -1,29 +1,31 @@
+// Necessary to override default z-index value of appbar
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
+import { Theme } from '@mui/material/styles';
 import makeStyles from '@mui/styles/makeStyles';
 
-export default makeStyles(() => ({
+export default makeStyles((theme: Theme) => ({
   footer: {
     width: '100%',
-    zIndex: '5000',
-    backgroundColor: '#f0ece7',
+    zIndex: `${theme.zIndex.drawer + 1} !important` as any,
+    backgroundColor: theme.palette.common.grayLighter,
     '& .MuiContainer-root': {
       display: 'flex',
       justifyContent: 'center',
     },
   },
-  builtUsing: {
+  builtUsingContainer: {
     display: 'flex',
-    paddingRight: '10px',
-    '& p': {
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      padding: '10px',
-      fontStyle: 'italic',
-    },
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  builtUsing: {
+    padding: '8px',
+    fontStyle: 'italic',
   },
   logo: {
     objectFit: 'contain',
     height: '2.5em',
-    marginTop: '-2px',
   },
 }));
