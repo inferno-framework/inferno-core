@@ -104,14 +104,14 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           id={`requirement${index}_${field.name}`}
           label={fieldLabel}
           helperText={requirement.description}
-          value={oAuthCredentials[field.name]}
+          value={oAuthCredentials[field.name as keyof OAuthCredentials]}
           className={styles.inputField}
           variant="standard"
           fullWidth
           onChange={(event) => {
             const value = event.target.value;
             inputsMap.set(requirement.name, value);
-            oAuthCredentials[field.name] = value;
+            oAuthCredentials[field.name as keyof OAuthCredentials] = value;
             inputsMap.set(requirement.name, JSON.stringify(oAuthCredentials));
             setInputsMap(new Map(inputsMap));
           }}
