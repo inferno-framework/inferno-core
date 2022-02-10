@@ -11,7 +11,22 @@ Inferno::Application.boot(:db) do
     config_path = File.expand_path('database.yml', File.join(Dir.pwd, 'config'))
     config = YAML.load_file(config_path)[ENV['APP_ENV']]
       .merge(logger: Inferno::Application['logger'])
-    connection = Sequel.connect(config)
+    connection_attempts_remaining = ENV.fetch('MAX_DB_CONNECTION_ATTEMPTS', '10').to_i
+    connection_retry_delay = ENV.fetch('DB_CONNECTION_RETRY_DELAY', '5').to_i
+    connection = nil
+      loop do
+        connection = Sequel.connect(config)
+        break
+      rescue StandardError => e
+        connection_attempts_remaining -= 1
+        if connection_attempts_remaining.positive?
+          Inferno::Application['logger'].error("Unable to connect to database: #{e.message}")
+          Inferno::Application['logger'].error("#{connection_attempts_remaining} connection attempts remaining.")
+          sleep connection_retry_delay
+          next
+        end
+        raise
+      end
     connection.sql_log_level = :debug
 
     register('db.config', config)
