@@ -11,8 +11,10 @@ module Inferno
     use :env, inferrer: -> { ENV.fetch('APP_ENV', :development).to_sym }
 
     Application.register('js_host', ENV.fetch('JS_HOST', ''))
+    Application.register('base_path', ENV.fetch('BASE_PATH', ''))
     Application.register('async_jobs', ENV['ASYNC_JOBS'] != 'false')
     Application.register('inferno_host', ENV.fetch('INFERNO_HOST', 'http://localhost:4567'))
+    Application.register('base_url', URI::join(Application['inferno_host'], Application['base_path']).to_s)
 
     configure do |config|
       config.root = File.expand_path('../../..', __dir__)

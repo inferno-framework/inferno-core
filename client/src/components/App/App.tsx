@@ -7,6 +7,7 @@ import LandingPage from 'components/LandingPage';
 import TestSessionWrapper from 'components/TestSuite/TestSessionWrapper';
 import ThemeProvider from 'components/ThemeProvider';
 import { TestSession, TestSuite } from 'models/testSuiteModels';
+import { basePath } from 'api/infernoApiService';
 
 const App: FC<unknown> = () => {
   const [testSuites, setTestSuites] = React.useState<TestSuite[]>();
@@ -41,7 +42,7 @@ const App: FC<unknown> = () => {
   }
 
   return (
-    <Router>
+    <Router basename={basePath}>
       <StyledEngineProvider injectFirst>
         <ThemeProvider>
           <Switch>

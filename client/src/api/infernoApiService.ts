@@ -1,4 +1,5 @@
-const apiEndpoint = '/api';
+export const basePath = document.getElementById('base-path')?.content;
+const apiEndpoint = (basePath === '' ? '/api' : `/${basePath}/api`).replaceAll('//', '/');
 
 type parameter = {
   name: string;
