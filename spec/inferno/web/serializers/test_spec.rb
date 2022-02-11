@@ -4,12 +4,13 @@ RSpec.describe Inferno::Web::Serializers::Test do
   it 'serializes a test' do
     serialized_test = JSON.parse(described_class.render(test))
 
-    expected_keys = ['id', 'description', 'inputs', 'outputs', 'title',
+    expected_keys = ['id', 'tag', 'description', 'inputs', 'outputs', 'title',
                      'user_runnable', 'optional', 'short_description', 'short_title',
                      'input_instructions']
 
     expect(serialized_test.keys).to match_array(expected_keys)
     expect(serialized_test['id']).to eq(test.id.to_s)
+    expect(serialized_test['tag']).to eq(test.tag)
     expect(serialized_test['title']).to eq(test.title)
     expect(serialized_test['short_title']).to eq(test.short_title)
     expect(serialized_test['description']).to eq(test.description)

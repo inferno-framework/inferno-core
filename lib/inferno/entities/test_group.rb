@@ -65,6 +65,24 @@ module Inferno
           }
         end
 
+        def used_tags
+          @@used_tags ||= []
+        end
+
+        def tag(new_tag = nil)
+          @tag = new_tag.to_s unless new_tag.nil?
+          @tag ||= begin
+            tag = title.scan(/\b[A-Z]/)&.join
+            if used_tags.include? tag[0..2]
+              tag = ('A'..'Z').to_a.sample(3).join while used_tags.include? tag
+            else
+              tag = tag[0..2]
+            end
+            used_tags << tag
+            tag
+          end
+        end
+
         def default_id
           return name if name.present?
 

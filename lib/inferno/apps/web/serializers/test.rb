@@ -3,6 +3,7 @@ module Inferno
     module Serializers
       class Test < Serializer
         identifier :id
+        field :tag
         field :title
         field :short_title
         field :input_definitions, name: :inputs, extractor: HashValueExtractor, blueprint: Input

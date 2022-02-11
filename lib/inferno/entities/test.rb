@@ -171,6 +171,20 @@ module Inferno
 
         alias run block
 
+        def num_orphan_tests
+          @@num_orphan_tests = 0 if @@num_orphan_tests.nil?
+          @@num_orphan_tests += 1
+        end
+
+        def tag(new_tag = nil)
+          @tag = new_tag.to_s unless new_tag.nil?
+          @tag ||= begin
+            prefix = parent ? parent.tag : 'UNK'
+            suffix = (parent ? parent.tests.find_index(self) + 1 : num_orphan_tests).to_s.rjust(3, '0')
+            "#{prefix}-#{suffix}"
+          end
+        end
+
         # @private
         def default_id
           return name if name.present?
