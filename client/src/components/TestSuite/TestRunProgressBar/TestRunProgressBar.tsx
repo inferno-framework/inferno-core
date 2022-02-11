@@ -12,7 +12,7 @@ import {
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CancelIcon from '@mui/icons-material/Cancel';
 import DoneIcon from '@mui/icons-material/Done';
-import QueueIcon from '@mui/icons-material/Queue';
+import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import useStyles from './styles';
 
 export interface TestRunProgressBarProps {
@@ -47,7 +47,7 @@ const StatusIndicator = (status: string | null | undefined) => {
     case 'queued':
       return (
         <Tooltip title="Queued">
-          <QueueIcon color="primary" />
+          <FilterNoneIcon color="primary" />
         </Tooltip>
       );
     case 'done':
@@ -104,7 +104,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
         p="0.5em"
         borderRadius="0.5em"
       >
-        <Box mr={1} mt={0.3}>
+        <Box mr={1} mt={0.3} className={styles.statusIndicator}>
           {statusIndicator}
         </Box>
         <Box minWidth={200} mr={1} color="background.paper">
@@ -125,6 +125,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
             disabled={!cancellable()}
             color="primary"
             onClick={cancelTestRun}
+            className={styles.cancelButton}
           >
             <CancelIcon />
           </IconButton>
