@@ -10,6 +10,8 @@ module Inferno
       include DSL
       include Inferno::Utils::MarkdownFormatter
 
+      @@num_orphan_tests = 0
+
       def_delegators 'self.class', :title, :id, :block, :inputs, :outputs
 
       attr_accessor :result_message
@@ -172,7 +174,6 @@ module Inferno
         alias run block
 
         def num_orphan_tests
-          @@num_orphan_tests = 0 if @@num_orphan_tests.nil?
           @@num_orphan_tests += 1
         end
 
@@ -182,7 +183,7 @@ module Inferno
             prefix = parent ? parent.tag : 'UNK'
             suffix = (parent ? parent.tests.find_index(self) + 1 : num_orphan_tests).to_s.rjust(3, '0')
             "#{prefix}-#{suffix}"
-          end
+          end 
         end
 
         # @private

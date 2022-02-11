@@ -64,7 +64,7 @@ module Inferno
             repo: Inferno::Repositories::Tests.new
           }
         end
-
+        
         def used_tags
           @@used_tags ||= []
         end
