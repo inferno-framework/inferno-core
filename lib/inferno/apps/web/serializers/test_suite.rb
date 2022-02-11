@@ -10,6 +10,7 @@ module Inferno
           field :short_description
           field :input_instructions
           field :test_count
+          field :version
         end
 
         view :full do

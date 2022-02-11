@@ -54,6 +54,12 @@ module Inferno
           }
         end
 
+        def version(version = nil)
+          return @version if version.nil?
+
+          @version = version
+        end
+
         def find_validator(validator_name)
           validator = fhir_validators[validator_name]
 
