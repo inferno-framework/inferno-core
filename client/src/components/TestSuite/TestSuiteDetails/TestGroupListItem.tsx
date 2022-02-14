@@ -29,7 +29,11 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       </ListItemIcon>
       <ListItemText
         primary={
-          <Link color="inherit" href={getPath(`${location.pathname}#${testGroup.id}`)} underline="hover">
+          <Link
+            color="inherit"
+            href={getPath(`${location.pathname}#${testGroup.id}`)}
+            underline="hover"
+          >
             {testGroup.title}
           </Link>
         }

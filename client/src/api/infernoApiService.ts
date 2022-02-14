@@ -1,5 +1,4 @@
-export const basePath = document.getElementById('base-path')?.content;
-const apiEndpoint = (basePath === '' ? '/api' : `/${basePath}/api`).replaceAll('//', '/');
+export const basePath = (document.getElementById('base-path') as HTMLMetaElement)?.content;
 
 type parameter = {
   name: string;
@@ -7,6 +6,7 @@ type parameter = {
 };
 
 export function getApiEndpoint(route: string, parameters?: parameter[]): string {
+  const apiEndpoint = getPath('api');
   if (parameters) {
     const parametersString = parameters
       .map((parameter) => `${parameter.name}=${parameter.value}`)
@@ -19,7 +19,7 @@ export function getApiEndpoint(route: string, parameters?: parameter[]): string 
 }
 
 export function getStaticPath(route: string): string {
-  if(process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     return route;
   }
 

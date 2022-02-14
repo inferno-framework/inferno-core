@@ -2,7 +2,9 @@ import { Result, TestGroup, TestOutput, TestRun, TestSession } from 'models/test
 import { getApiEndpoint } from './infernoApiService';
 
 export function getLastTestRun(test_session_id: string): Promise<TestRun | null> {
-  const testSessionsEndpoint = getApiEndpoint('/test_sessions/' + test_session_id + '/last_test_run');
+  const testSessionsEndpoint = getApiEndpoint(
+    '/test_sessions/' + test_session_id + '/last_test_run'
+  );
   return fetch(testSessionsEndpoint)
     .then((response) => response.json())
     .then((result) => {
