@@ -38,6 +38,7 @@ export default makeStyles((theme: Theme) => ({
   testSuiteTreePanel: {
     width: '300px',
     overflowX: 'hidden',
+    paddingBottom: '60px', // Prevent footer from blocking drawer
   },
   treeRoot: {
     '& $labelText': {
