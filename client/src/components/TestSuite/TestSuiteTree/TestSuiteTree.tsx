@@ -56,8 +56,6 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
       />
     ));
 
-    console.log(testSuite);
-
     return (
       <Box className={styles.testSuiteTreePanel}>
         <TreeView
