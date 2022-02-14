@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { TestSuite, TestGroup, RunnableType } from 'models/testSuiteModels';
-import { Box } from '@mui/material';
+import { Box, Divider } from '@mui/material';
 import useStyles from './styles';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -56,6 +56,8 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
       />
     ));
 
+    console.log(testSuite);
+
     return (
       <Box className={styles.testSuiteTreePanel}>
         <TreeView
@@ -73,9 +75,9 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
             ContentProps={{ testId: testSuite.id } as any}
-          >
-            {testGroupList}
-          </CustomTreeItem>
+          />
+          <Divider />
+          {testGroupList}
         </TreeView>
       </Box>
     );

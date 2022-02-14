@@ -38,13 +38,12 @@ export default makeStyles((theme: Theme) => ({
   testSuiteTreePanel: {
     width: '300px',
     overflowX: 'hidden',
-    marginLeft: '-10px',
   },
   treeRoot: {
     '& $labelText': {
       textTransform: 'uppercase',
       fontWeight: 'bold',
     },
-    paddingLeft: '25px !important',
+    padding: '8px 20px !important',
   },
 }));

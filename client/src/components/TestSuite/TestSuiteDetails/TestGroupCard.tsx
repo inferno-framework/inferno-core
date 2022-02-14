@@ -24,13 +24,13 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
   const location = useLocation();
 
   const populateBreadcrumbs = () => {
-    if ('parent_group' in runnable) {
+    if ('parent_group' in runnable && runnable.parent_group) {
       return [
         <Link
           underline="hover"
           key="1"
           color="inherit"
-          href={`${location.pathname}#${runnable.parent_group?.id as string}`}
+          href={`${location.pathname}#${runnable.parent_group.id}`}
         >
           {runnable.parent_group?.short_title || runnable.parent_group?.title || ''}
         </Link>,

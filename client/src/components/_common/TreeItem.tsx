@@ -85,11 +85,7 @@ const CustomTreeItem = styled((props: TreeItemProps) => (
   },
   [`& .${treeItemClasses.content}`]: {
     width: 'auto',
-    paddingLeft: '25px',
-  },
-  [`& .${treeItemClasses.group}`]: {
-    marginLeft: '0px',
-    paddingLeft: '10px',
+    padding: '0 20px',
   },
 }));
 
