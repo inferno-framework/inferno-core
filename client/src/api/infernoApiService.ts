@@ -13,5 +13,18 @@ export function getEndpoint(route: string, parameters?: parameter[]): string {
       .join('&');
     return `${apiEndpoint}${route}?${parametersString}`;
   }
-  return apiEndpoint + route;
+  const separator = route.startsWith('/') ? '' : '/';
+
+  return apiEndpoint + separator + route;
+}
+
+export function getStaticEndpoint(route: string): string {
+  if(process.env.NODE_ENV !== 'production') {
+    return route;
+  }
+
+  const separator = route.startsWith('/') ? '' : '/';
+  const prefix = basePath === '' ? '' : '/';
+
+  return prefix + basePath + separator + route;
 }
