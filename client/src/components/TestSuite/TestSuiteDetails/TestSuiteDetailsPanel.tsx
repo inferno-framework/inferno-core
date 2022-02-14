@@ -8,14 +8,14 @@ interface TestSuiteDetailsPanelProps {
   runnable: TestSuite | TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
-  testRunInProgresss: boolean;
+  testRunInProgress: boolean;
 }
 
 const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
   runnable,
   runTests,
   updateRequest,
-  testRunInProgresss,
+  testRunInProgress,
 }) => {
   let listItems: JSX.Element[] = [];
   if (runnable?.test_groups && runnable.test_groups.length > 0) {
@@ -25,7 +25,8 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
           key={`li-${testGroup.id}`}
           testGroup={testGroup}
           runTests={runTests}
-          testRunInProgress={testRunInProgresss}
+          updateRequest={updateRequest}
+          testRunInProgress={testRunInProgress}
         />
       );
     });
@@ -37,14 +38,14 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
           test={test}
           runTests={runTests}
           updateRequest={updateRequest}
-          testRunInProgress={testRunInProgresss}
+          testRunInProgress={testRunInProgress}
         />
       );
     });
   }
 
   return (
-    <TestGroupCard runTests={runTests} runnable={runnable} testRunInProgress={testRunInProgresss}>
+    <TestGroupCard runTests={runTests} runnable={runnable} testRunInProgress={testRunInProgress}>
       {listItems}
     </TestGroupCard>
   );

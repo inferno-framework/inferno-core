@@ -51,4 +51,10 @@ export default makeStyles((theme: Theme) => ({
   currentItem: {
     fontWeight: 600,
   },
+  accordionDetailContainer: {
+    backgroundColor: theme.palette.common.grayLighter,
+  },
+  accordionDetail: {
+    backgroundColor: theme.palette.common.white,
+  },
 }));

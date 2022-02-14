@@ -5,38 +5,66 @@ import {
   AccordionDetails,
   AccordionSummary,
   Divider,
+  List,
   ListItem,
   ListItemText,
-  Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { RunnableType, TestGroup } from 'models/testSuiteModels';
+import { Request, RunnableType, Test, TestGroup } from 'models/testSuiteModels';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
+import TestListItem from './TestListItem/TestListItem';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
+  updateRequest: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
 }
 
 const TestGroupListItem: FC<TestGroupListItemProps> = ({
   testGroup,
   runTests,
+  updateRequest,
   testRunInProgress,
 }) => {
   const styles = useStyles();
 
+  let listItems: JSX.Element[] = [];
+  if ('tests' in testGroup) {
+    listItems = testGroup.tests.map((test: Test) => {
+      return (
+        <TestListItem
+          key={`li-${test.id}`}
+          test={test}
+          runTests={runTests}
+          updateRequest={updateRequest}
+          testRunInProgress={testRunInProgress}
+        />
+      );
+    });
+  }
+
   return (
     <Accordion disableGutters>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
         aria-controls="panel1a-content"
         id="panel1a-header"
+        // Toggle accordion expansion only on icon click
+        sx={{
+          pointerEvents: 'none',
+        }}
+        expandIcon={
+          <ExpandMoreIcon
+            sx={{
+              pointerEvents: 'auto',
+            }}
+          />
+        }
       >
         <ListItem className={styles.testGroupCardList}>
-          <ListItemText primary={testGroup.title} secondary={testGroup.result?.result_message} />
           <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
+          <ListItemText primary={testGroup.title} secondary={testGroup.result?.result_message} />
           <TestRunButton
             runnable={testGroup}
             runnableType={RunnableType.TestGroup}
@@ -46,8 +74,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         </ListItem>
       </AccordionSummary>
       <Divider />
-      <AccordionDetails>
-        <Typography></Typography>
+      <AccordionDetails className={styles.accordionDetailContainer}>
+        <List className={styles.accordionDetail}>{listItems}</List>
       </AccordionDetails>
     </Accordion>
   );
