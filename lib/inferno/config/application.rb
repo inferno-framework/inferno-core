@@ -20,7 +20,7 @@ module Inferno
     Application.register('public_path', public_path)
     Application.register('async_jobs', ENV['ASYNC_JOBS'] != 'false')
     Application.register('inferno_host', ENV.fetch('INFERNO_HOST', 'http://localhost:4567'))
-    Application.register('base_url', URI::join(Application['inferno_host'], base_path).to_s)
+    Application.register('base_url', URI.join(Application['inferno_host'], base_path).to_s)
 
     configure do |config|
       config.root = File.expand_path('../../..', __dir__)
