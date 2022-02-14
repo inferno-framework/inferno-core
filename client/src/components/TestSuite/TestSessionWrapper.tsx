@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import useStyles from './styles';
 import { Result, TestOutput, TestRun, TestSession } from 'models/testSuiteModels';
 import TestSessionComponent from './TestSession';
 import { useParams } from 'react-router-dom';
@@ -13,6 +14,7 @@ import {
 } from 'api/TestSessionApi';
 
 const TestSessionWrapper: FC<unknown> = () => {
+  const styles = useStyles();
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [testSession, setTestSession] = React.useState<TestSession>();
   const [testResults, setTestResults] = React.useState<Result[]>();
@@ -77,7 +79,7 @@ const TestSessionWrapper: FC<unknown> = () => {
 
   if (testSession && testResults && sessionData) {
     return (
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+      <Box className={styles.testSessionContainer}>
         <Header suiteTitle={testSession.test_suite.title} />
         <TestSessionComponent
           testSession={testSession}

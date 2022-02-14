@@ -12,8 +12,8 @@ import {
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CancelIcon from '@mui/icons-material/Cancel';
 import DoneIcon from '@mui/icons-material/Done';
-import QueueIcon from '@mui/icons-material/Queue';
-import withStyles from '@mui/styles/withStyles';
+import FilterNoneIcon from '@mui/icons-material/FilterNone';
+import useStyles from './styles';
 
 export interface TestRunProgressBarProps {
   showProgressBar: boolean;
@@ -23,16 +23,6 @@ export interface TestRunProgressBarProps {
   testRun: TestRun | null;
   resultsMap: Map<string, Result>;
 }
-
-const StyledProgressBar = withStyles((_theme) => ({
-  root: {
-    height: 8,
-    backgroundColor: 'rgba(0,0,0,0)',
-  },
-  bar: {
-    borderRadius: 4,
-  },
-}))(LinearProgress);
 
 const StatusIndicator = (status: string | null | undefined) => {
   switch (status) {
@@ -57,7 +47,7 @@ const StatusIndicator = (status: string | null | undefined) => {
     case 'queued':
       return (
         <Tooltip title="Queued">
-          <QueueIcon color="primary" />
+          <FilterNoneIcon color="primary" />
         </Tooltip>
       );
     case 'done':
@@ -89,6 +79,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
   testRun,
   resultsMap,
 }) => {
+  const styles = useStyles();
   const statusIndicator = StatusIndicator(testRun?.status);
   const testCount = testRun?.test_count || 0;
   const completedCount = completedTestCount(resultsMap, testRun);
@@ -105,7 +96,6 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
       autoHideDuration={duration}
       onClose={() => setShowProgressBar(false)}
       ClickAwayListenerProps={{ mouseEvent: false }}
-      sx={{ zIndex: 6000 }}
     >
       <Box
         display="flex"
@@ -114,14 +104,14 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
         p="0.5em"
         borderRadius="0.5em"
       >
-        <Box mr={1} mt={0.3}>
+        <Box mr={1} mt={0.3} className={styles.statusIndicator}>
           {statusIndicator}
         </Box>
         <Box minWidth={200} mr={1} color="background.paper">
           {testRun?.status == 'cancelling' ? (
             <Typography variant="body1">Cancelling Test Run...</Typography>
           ) : (
-            <StyledProgressBar variant="determinate" value={value} />
+            <LinearProgress variant="determinate" value={value} className={styles.linearProgress} />
           )}
         </Box>
         <Box color="background.paper">
@@ -133,8 +123,9 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
           <IconButton
             aria-label="cancel"
             disabled={!cancellable()}
-            color="secondary"
+            color="primary"
             onClick={cancelTestRun}
+            className={styles.cancelButton}
           >
             <CancelIcon />
           </IconButton>

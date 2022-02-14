@@ -135,7 +135,7 @@ const InputsModal: FC<InputsModalProps> = ({
     <Dialog open={modalVisible} onClose={hideModal} fullWidth maxWidth="sm">
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <DialogContentText>
+        <DialogContentText component="div">
           <ReactMarkdown>{instructions}</ReactMarkdown>
         </DialogContentText>
         <List>{inputFields}</List>

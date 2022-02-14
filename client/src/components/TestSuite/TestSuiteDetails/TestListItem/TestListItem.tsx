@@ -104,9 +104,11 @@ const TestListItem: FC<TestListItemProps> = ({
     <>
       <Box className={styles.listItem}>
         <ListItem>
-          <div className={styles.testIcon}>
-            <ResultIcon result={test.result} />
-          </div>
+          {test.result && (
+            <div className={styles.testIcon}>
+              <ResultIcon result={test.result} />
+            </div>
+          )}
           <ListItemText primary={testLabel} />
           {messagesBadge}
           {requestsBadge}

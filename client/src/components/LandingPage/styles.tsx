@@ -7,7 +7,7 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.common.white,
   },
   main: {
-    marginTop: '160px',
+    marginTop: '280px',
     padding: '0 60px',
   },
   selectedItem: {

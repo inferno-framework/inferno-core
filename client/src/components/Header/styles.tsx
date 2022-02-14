@@ -3,29 +3,28 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { Theme } from '@mui/material/styles';
-
 import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
   appbar: {
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
-    display: 'flex',
-    justifyContent: 'space-between',
     flexDirection: 'row',
-    '& .MuiContainer-root': {
-      display: 'flex',
-      justifyContent: 'space-between',
-      flexDirection: 'row',
-    },
     '& .MuiTypography-root': {
       display: 'flex',
       justifyContent: 'center',
-      padding: '5px',
       flexDirection: 'column',
     },
   },
+  toolbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
   logo: {
     objectFit: 'contain',
-    height: '3.5em',
+    height: '3em',
+  },
+  title: {
+    padding: '0 16px',
   },
 }));

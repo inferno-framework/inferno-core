@@ -27,10 +27,9 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
     ));
   }
 
-  const itemIcon =
-    testGroup.run_as_group || testGroup.test_groups.length === 0 ? (
-      <CondensedResultIcon result={testGroup.result} />
-    ) : null;
+  const itemIcon = (testGroup.run_as_group || testGroup.test_groups.length === 0) && (
+    <CondensedResultIcon result={testGroup.result} />
+  );
 
   return (
     <CustomTreeItem

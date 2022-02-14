@@ -25,13 +25,13 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
   const location = useLocation();
 
   const populateBreadcrumbs = () => {
-    if ('parent_group' in runnable) {
+    if ('parent_group' in runnable && runnable.parent_group) {
       return [
         <Link
           underline="hover"
           key="1"
           color="inherit"
-          href={getPath(`${location.pathname}#${runnable.parent_group?.id as string}`)}
+          href={getPath(`${location.pathname}#${runnable.parent_group?.id}`)}
         >
           {runnable.parent_group?.short_title || runnable.parent_group?.title || ''}
         </Link>,
@@ -49,19 +49,14 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
 
   const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
 
-  const description =
-    runnable.description && runnable.description.length > 0 ? (
-      <div>
-        <ReactMarkdown>{runnable.description}</ReactMarkdown>
-      </div>
-    ) : null;
+  const description = runnable.description && runnable.description.length > 0 && (
+    <ReactMarkdown>{runnable.description}</ReactMarkdown>
+  );
 
-  const resultSpan = runnable.result ? (
+  const resultSpan = runnable.result && (
     <span className={styles.testGroupCardHeaderResult}>
       <ResultIcon result={runnable.result} />
     </span>
-  ) : (
-    <></>
   );
 
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;

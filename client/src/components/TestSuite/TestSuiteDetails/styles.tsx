@@ -1,5 +1,4 @@
 import { Theme } from '@mui/material/styles';
-
 import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
@@ -20,7 +19,7 @@ export default makeStyles((theme: Theme) => ({
     fontWeight: 600,
     fontSize: '16px',
     borderBottom: '1px solid rgba(0,0,0,.12)',
-    backgroundColor: theme.palette.common.offWhite,
+    backgroundColor: theme.palette.common.blueGrayLightest,
     borderTopLeftRadius: '4px',
     borderTopRightRadius: '4px',
     display: 'flex',
