@@ -80,8 +80,9 @@ module Inferno
         # Provide a block which will verify any configuration needed for this
         # test suite to operate properly.
         #
-        # @return Array<Hash> An array of hashes containing the keys `:type` and
-        # `:message`. Type options are `info`, `warning`, and `error`.
+        # @yieldreturn [Array<Hash>] An array of message hashes containing the
+        #   keys `:type` and `:message`. Type options are `info`, `warning`, and
+        #   `error`.
         def check_configuration(&block)
           @check_configuration_block = block
         end
