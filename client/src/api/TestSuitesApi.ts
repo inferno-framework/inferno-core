@@ -1,9 +1,9 @@
 import { TestSuite } from 'models/testSuiteModels';
-import { getEndpoint } from './infernoApiService';
+import { getApiEndpoint } from './infernoApiService';
 
 export function getTestSuites(): Promise<TestSuite[]> {
   let testSets: TestSuite[] = [];
-  const testSuitesEndpoint = getEndpoint('/test_suites');
+  const testSuitesEndpoint = getApiEndpoint('/test_suites');
   return fetch(testSuitesEndpoint)
     .then((response) => response.json())
     .then((result) => {

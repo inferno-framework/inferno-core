@@ -55,7 +55,7 @@ module Inferno
 
       # @private
       def redirect_route
-        "/test_sessions/#{test_run.test_session_id}##{waiting_group_id}"
+        "#{Application['base_url']}/test_sessions/#{test_run.test_session_id}##{waiting_group_id}"
       end
 
       # @private

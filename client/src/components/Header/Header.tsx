@@ -4,6 +4,7 @@ import icon from 'images/inferno_icon.png';
 import { AppBar, Box, Button, Link, Toolbar, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import { getStaticPath } from 'api/infernoApiService';
 
 export interface HeaderProps {
   suiteTitle?: string;
@@ -22,7 +23,7 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
       <Toolbar className={styles.toolbar}>
         <Box display="flex" justifyContent="center">
           <Link href="/">
-            <img src={icon as string} alt="inferno logo" className={styles.logo} />
+            <img src={getStaticPath(icon as string)} alt="inferno logo" className={styles.logo} />
           </Link>
           <Typography variant="h5" component="h1" className={styles.title}>
             {suiteTitle}

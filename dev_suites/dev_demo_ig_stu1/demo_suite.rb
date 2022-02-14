@@ -118,7 +118,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     config options: {
-      wait_test_url: "#{Inferno::Application['inferno_host']}/custom/demo/resume"
+      wait_test_url: "#{Inferno::Application['base_url']}/custom/demo/resume"
     }
 
     group do

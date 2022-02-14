@@ -84,4 +84,17 @@ RSpec.describe Inferno::Entities::TestSuite do
       expect(suite_class.default_group.tests).to eq([test_class])
     end
   end
+
+  describe '.version' do
+    let!(:example_test_suite_class) { Class.new(described_class) }
+
+    let(:test_suite) do
+      example_test_suite_class.version 'VERSION'
+      example_test_suite_class
+    end
+
+    specify 'it gets/sets the version' do
+      expect(test_suite.version).to eq('VERSION')
+    end
+  end
 end

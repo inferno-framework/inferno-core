@@ -1,21 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <base href="/">
     <meta charset="utf-8" />
-    <link rel="icon" href="/public/favicon.ico" />
+    <link rel="icon" href="<%= Inferno::Application['public_path'] %>/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
+    <meta id="base-path" name="base-path" content="<%= Inferno::Application['base_path'] %>">
     <meta
       name="description"
       content="FHIR Testing"
     />
-    <link rel="apple-touch-icon" href="/public/logo192.png" />
+    <link rel="apple-touch-icon" href="<%= Inferno::Application['public_path'] %>/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="/public/manifest.json" />
+    <link rel="manifest" href="<%= Inferno::Application['public_path'] %>/manifest.json" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -40,6 +40,6 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-    <script src='<%= Inferno::Application['js_host'] %>/public/bundle.js'></script>
+    <script src='<%= Inferno::Application['js_host'] %>/bundle.js'></script>
   </body>
 </html>

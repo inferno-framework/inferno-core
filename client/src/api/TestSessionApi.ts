@@ -1,8 +1,10 @@
 import { Result, TestGroup, TestOutput, TestRun, TestSession } from 'models/testSuiteModels';
-import { getEndpoint } from './infernoApiService';
+import { getApiEndpoint } from './infernoApiService';
 
 export function getLastTestRun(test_session_id: string): Promise<TestRun | null> {
-  const testSessionsEndpoint = getEndpoint('/test_sessions/' + test_session_id + '/last_test_run');
+  const testSessionsEndpoint = getApiEndpoint(
+    '/test_sessions/' + test_session_id + '/last_test_run'
+  );
   return fetch(testSessionsEndpoint)
     .then((response) => response.json())
     .then((result) => {
@@ -15,7 +17,7 @@ export function getLastTestRun(test_session_id: string): Promise<TestRun | null>
 }
 
 export function getTestSession(test_session_id: string): Promise<TestSession | null> {
-  const testSessionsEndpoint = getEndpoint('/test_sessions/' + test_session_id);
+  const testSessionsEndpoint = getApiEndpoint('/test_sessions/' + test_session_id);
   return fetch(testSessionsEndpoint)
     .then((response) => response.json())
     .then((result) => {
@@ -29,7 +31,7 @@ export function getTestSession(test_session_id: string): Promise<TestSession | n
 
 export function postTestSessions(testSuiteID: string): Promise<TestSession | null> {
   const testSuiteIDParameter = { name: 'test_suite_id', value: testSuiteID };
-  const postEndpoint = getEndpoint('/test_sessions', [testSuiteIDParameter]);
+  const postEndpoint = getApiEndpoint('/test_sessions', [testSuiteIDParameter]);
   return fetch(postEndpoint, { method: 'POST' })
     .then((response) => response.json())
     .then((result) => {
@@ -43,7 +45,7 @@ export function postTestSessions(testSuiteID: string): Promise<TestSession | nul
 }
 
 export function getCurrentTestSessionResults(test_session_id: string): Promise<Result[] | null> {
-  const endpoint = getEndpoint(`/test_sessions/${test_session_id}/results`);
+  const endpoint = getApiEndpoint(`/test_sessions/${test_session_id}/results`);
   return fetch(endpoint)
     .then((response) => response.json())
     .then((result) => {
@@ -56,7 +58,7 @@ export function getCurrentTestSessionResults(test_session_id: string): Promise<R
 }
 
 export function getTestSessionData(test_session_id: string): Promise<TestOutput[] | null> {
-  const endpoint = getEndpoint(`/test_sessions/${test_session_id}/session_data`);
+  const endpoint = getApiEndpoint(`/test_sessions/${test_session_id}/session_data`);
   return fetch(endpoint)
     .then((response) => response.json())
     .then((result) => {

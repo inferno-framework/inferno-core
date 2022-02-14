@@ -1,6 +1,8 @@
-require_relative 'lib/inferno/config/application'
+require_relative 'lib/inferno'
 
-use Rack::Static, urls: ['/public'], root: 'lib/inferno'
+use Rack::Static,
+    urls: Inferno::Utils::StaticAssets.static_assets_map,
+    root: Inferno::Utils::StaticAssets.inferno_path
 
 Inferno::Application.finalize!
 
