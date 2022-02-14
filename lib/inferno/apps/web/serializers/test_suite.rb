@@ -16,6 +16,7 @@ module Inferno
         view :full do
           include_view :summary
           association :groups, name: :test_groups, blueprint: TestGroup
+          field :configuration_messages
         end
       end
     end

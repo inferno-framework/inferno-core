@@ -489,6 +489,10 @@ definitions:
         readOnly: true
       version:
         type: "string"
+      configuration_messages:
+        type: "array"
+        items:
+          $ref: "#/definitions/Message"
   TestGroup:
     type: "object"
     required:
