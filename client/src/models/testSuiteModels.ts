@@ -65,7 +65,7 @@ export interface TestOutput {
 
 export interface Test {
   id: string;
-  tag: string;
+  short_id: string;
   title: string;
   short_title?: string;
   result?: Result;
@@ -80,7 +80,7 @@ export interface Test {
 
 export interface TestGroup {
   id: string;
-  tag: string;
+  short_id: string;
   title: string;
   short_title?: string;
   parent_group?: TestGroup | null;

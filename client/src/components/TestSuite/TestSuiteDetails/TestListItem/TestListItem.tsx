@@ -89,7 +89,7 @@ const TestListItem: FC<TestListItemProps> = ({
   const testLabel = (
     <>
       {test.optional && <Typography className={styles.optionalLabel}>Optional</Typography>}
-      <Typography className={styles.labelText}>{(test.tag ? test.tag + ': ' : '') + test.title}</Typography>
+      <Typography className={styles.labelText}>{(test.short_id ? test.short_id + ': ' : '') + test.title}</Typography>
     </>
   );
 

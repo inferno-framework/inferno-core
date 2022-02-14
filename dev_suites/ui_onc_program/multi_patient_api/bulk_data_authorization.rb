@@ -15,7 +15,6 @@ module ONCProgram
     DESCRIPTION
 
     id :bulk_data_authorization
-    tag :this_is_bulk_data
 
     input :bulk_client_id, :bulk_jwks_url_auth, :bulk_encryption_method, :bulk_token_endpoint, :bulk_scope
     output :bulk_access_token
