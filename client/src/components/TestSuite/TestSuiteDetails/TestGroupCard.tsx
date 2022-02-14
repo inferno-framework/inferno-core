@@ -7,6 +7,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import ReactMarkdown from 'react-markdown';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
+import { getPath } from 'api/infernoApiService';
 
 interface TestGroupCardProps {
   runnable: TestSuite | TestGroup;
@@ -30,7 +31,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           underline="hover"
           key="1"
           color="inherit"
-          href={`${location.pathname}#${runnable.parent_group?.id as string}`}
+          href={getPath(`${location.pathname}#${runnable.parent_group?.id as string}`)}
         >
           {runnable.parent_group?.short_title || runnable.parent_group?.title || ''}
         </Link>,

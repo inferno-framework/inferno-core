@@ -6,7 +6,7 @@ type parameter = {
   value: string;
 };
 
-export function getEndpoint(route: string, parameters?: parameter[]): string {
+export function getApiEndpoint(route: string, parameters?: parameter[]): string {
   if (parameters) {
     const parametersString = parameters
       .map((parameter) => `${parameter.name}=${parameter.value}`)
@@ -18,11 +18,15 @@ export function getEndpoint(route: string, parameters?: parameter[]): string {
   return apiEndpoint + separator + route;
 }
 
-export function getStaticEndpoint(route: string): string {
+export function getStaticPath(route: string): string {
   if(process.env.NODE_ENV !== 'production') {
     return route;
   }
 
+  return getPath(route);
+}
+
+export function getPath(route: string): string {
   const separator = route.startsWith('/') ? '' : '/';
   const prefix = basePath === '' ? '' : '/';
 

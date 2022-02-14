@@ -6,6 +6,7 @@ import { RunnableType, TestGroup } from 'models/testSuiteModels';
 import FolderIcon from '@mui/icons-material/Folder';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
+import { getPath } from 'api/infernoApiService';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
@@ -28,7 +29,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       </ListItemIcon>
       <ListItemText
         primary={
-          <Link color="inherit" href={`${location.pathname}#${testGroup.id}`} underline="hover">
+          <Link color="inherit" href={getPath(`${location.pathname}#${testGroup.id}`)} underline="hover">
             {testGroup.title}
           </Link>
         }

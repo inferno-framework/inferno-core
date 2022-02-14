@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import useStyles from './styles';
 import { Container, Box, Link, Typography } from '@mui/material';
 import logo from 'images/inferno_logo.png';
-import { getStaticEndpoint } from 'api/infernoApiService';
+import { getStaticPath } from 'api/infernoApiService';
 
 interface FooterProps {
   versionNumber?: string;
@@ -23,7 +23,7 @@ const Footer: FC<FooterProps> = ({ versionNumber }) => {
             rel="noreferrer"
             underline="hover"
           >
-            <img src={getStaticEndpoint(logo as string)} alt="inferno logo" className={styles.logo} />
+            <img src={getStaticPath(logo as string)} alt="inferno logo" className={styles.logo} />
           </Link>
           <Typography>{version}</Typography>
         </Box>
