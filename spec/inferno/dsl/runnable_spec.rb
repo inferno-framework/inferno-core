@@ -55,7 +55,7 @@ RSpec.describe Inferno::DSL::Runnable do
 
         location_header = last_response.get_header('location')
 
-        expect(location_header).to eq("/test_sessions/#{test_session.id}##{test_group.id}")
+        expect(location_header).to eq("http://localhost:4567/test_sessions/#{test_session.id}##{test_group.id}")
       end
 
       it 'updates the waiting test result' do

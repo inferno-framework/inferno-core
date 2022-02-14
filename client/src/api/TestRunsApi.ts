@@ -1,5 +1,5 @@
 import { RunnableType, TestInput, TestRun } from 'models/testSuiteModels';
-import { getEndpoint } from './infernoApiService';
+import { getApiEndpoint } from './infernoApiService';
 
 interface CreateTestRunBody {
   test_session_id: string;
@@ -15,7 +15,7 @@ export function postTestRun(
   runnableId: string,
   inputs: TestInput[]
 ): Promise<TestRun | null> {
-  const postEndpoint = getEndpoint('/test_runs');
+  const postEndpoint = getApiEndpoint('/test_runs');
   const postBody: CreateTestRunBody = {
     test_session_id: testSessionId,
     inputs: inputs,
@@ -49,7 +49,7 @@ export function postTestRun(
 }
 
 export function deleteTestRun(testRunId: string): void {
-  const endpoint = getEndpoint(`/test_runs/${testRunId}`);
+  const endpoint = getApiEndpoint(`/test_runs/${testRunId}`);
   fetch(endpoint, { method: 'DELETE' }).catch((e) => {
     console.log(e);
     return null;
@@ -60,7 +60,7 @@ export function getTestRunWithResults(
   testRunId: string,
   time: string | null | undefined
 ): Promise<TestRun | null> {
-  let endpoint = getEndpoint(`/test_runs/${testRunId}?include_results=true`);
+  let endpoint = getApiEndpoint(`/test_runs/${testRunId}?include_results=true`);
   if (time) {
     endpoint += `&after=${time}`;
   }
