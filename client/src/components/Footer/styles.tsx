@@ -25,6 +25,7 @@ export default makeStyles((theme: Theme) => ({
     fontStyle: 'italic',
   },
   logo: {
+    paddingTop: '2px',
     objectFit: 'contain',
     height: '2.5em',
   },
