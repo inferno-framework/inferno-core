@@ -29,9 +29,6 @@ export default makeStyles((theme: Theme) => ({
   testGroupCard: {
     marginBottom: '25px',
   },
-  listItem: {
-    borderBottom: '1px solid rgba(0,0,0,.12)',
-  },
   testGroupCardList: {
     padding: 0,
   },

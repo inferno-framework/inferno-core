@@ -1,12 +1,18 @@
 import React, { FC } from 'react';
-import { useLocation } from 'react-router-dom';
 import useStyles from './styles';
-import { Link, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Divider,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { RunnableType, TestGroup } from 'models/testSuiteModels';
-import FolderIcon from '@mui/icons-material/Folder';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
-import { getPath } from 'api/infernoApiService';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
@@ -20,33 +26,30 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   testRunInProgress,
 }) => {
   const styles = useStyles();
-  const location = useLocation();
 
   return (
-    <ListItem className={styles.listItem}>
-      <ListItemIcon>
-        <FolderIcon />
-      </ListItemIcon>
-      <ListItemText
-        primary={
-          <Link
-            color="inherit"
-            href={getPath(`${location.pathname}#${testGroup.id}`)}
-            underline="hover"
-          >
-            {testGroup.title}
-          </Link>
-        }
-        secondary={testGroup.result?.result_message}
-      />
-      <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
-      <TestRunButton
-        runnable={testGroup}
-        runnableType={RunnableType.TestGroup}
-        runTests={runTests}
-        testRunInProgress={testRunInProgress}
-      />
-    </ListItem>
+    <Accordion disableGutters>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
+      >
+        <ListItem className={styles.testGroupCardList}>
+          <ListItemText primary={testGroup.title} secondary={testGroup.result?.result_message} />
+          <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
+          <TestRunButton
+            runnable={testGroup}
+            runnableType={RunnableType.TestGroup}
+            runTests={runTests}
+            testRunInProgress={testRunInProgress}
+          />
+        </ListItem>
+      </AccordionSummary>
+      <Divider />
+      <AccordionDetails>
+        <Typography></Typography>
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
