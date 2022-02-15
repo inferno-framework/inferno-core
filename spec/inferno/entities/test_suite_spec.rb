@@ -86,15 +86,60 @@ RSpec.describe Inferno::Entities::TestSuite do
   end
 
   describe '.version' do
-    let!(:example_test_suite_class) { Class.new(described_class) }
-
     let(:test_suite) do
-      example_test_suite_class.version 'VERSION'
-      example_test_suite_class
+      suite_class.version 'VERSION'
+      suite_class
     end
 
     specify 'it gets/sets the version' do
       expect(test_suite.version).to eq('VERSION')
+    end
+  end
+
+  describe '.check_configuration' do
+    it 'takes and stores a block' do
+      initial_block = suite_class.instance_variable_get(:@check_configuration_block)
+      expect(initial_block).to be_nil
+
+      suite_class.check_configuration { 1 + 1 }
+      new_block = suite_class.instance_variable_get(:@check_configuration_block)
+
+      expect(new_block).to be_a(Proc)
+    end
+  end
+
+  describe '.configuration_messages' do
+    let(:messages) { [{ type: 'info', message: 'message' }] }
+
+    context 'when an argument is provided' do
+      it 'sets the configuration messages and returns the argument' do
+        expect(suite_class.configuration_messages(messages)).to eq(messages)
+        expect(suite_class.instance_variable_get(:@configuration_messages)).to eq(messages)
+      end
+    end
+
+    context 'when no check_configuration_block is present' do
+      it 'returns an empty array' do
+        expect(suite_class.configuration_messages).to eq([])
+      end
+    end
+
+    context 'when check_configuration_block is present' do
+      it 'calls the block if configuration_messages is falsy' do
+        suite_class.check_configuration { messages }
+
+        expect(suite_class.configuration_messages).to eq(messages)
+      end
+
+      it 'returns the existing configuration_messages if they are truthy' do
+        block = proc { messages }
+        allow(block).to receive(:call)
+        suite_class.configuration_messages([])
+        suite_class.check_configuration(&block)
+
+        expect(suite_class.configuration_messages).to eq([])
+        expect(block).to_not have_received(:call)
+      end
     end
   end
 end
