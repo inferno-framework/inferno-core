@@ -31,7 +31,7 @@ export default makeStyles((theme: Theme) => ({
     fontWeight: 'bold',
     color: theme.palette.common.grayDark,
     alignSelf: 'center',
-    paddingRight: '8px'
+    paddingRight: '8px',
   },
   tabs: {
     minheight: 'auto',
