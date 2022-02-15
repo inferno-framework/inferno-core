@@ -1,6 +1,6 @@
 ---
 title: Test Kit Repository Layout and Organization
-nav_order: 4
+nav_order: 5
 ---
 # Test Kit Repository Layout and Organization
 {: .no_toc}
