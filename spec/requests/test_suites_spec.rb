@@ -46,4 +46,33 @@ RSpec.describe '/test_suites' do
       end
     end
   end
+
+  describe 'check_configuration' do
+    context 'when the test_suite exists' do
+      let(:test_suite_id) { 'demo' }
+
+      it 'renders the test_suite json' do
+        put router.path(:check_configuration, id: test_suite_id)
+
+        expect(last_response.status).to eq(200)
+
+        message_keys = ['type', 'message']
+
+        expect(parsed_body).to be_an(Array)
+        parsed_body.each do |message_hash|
+          expect(message_hash.keys).to match_array(message_keys)
+        end
+      end
+    end
+
+    context 'when the test_suite does not exist' do
+      let(:test_suite_id) { SecureRandom.uuid }
+
+      it 'renders a 404' do
+        get router.path(:api_test_suite, id: test_suite_id)
+
+        expect(last_response.status).to eq(404)
+      end
+    end
+  end
 end

@@ -133,12 +133,30 @@ RSpec.describe Inferno::Entities::TestSuite do
 
       it 'returns the existing configuration_messages if they are truthy' do
         block = proc { messages }
-        allow(block).to receive(:call)
+        allow(block).to receive(:call).and_return(messages)
         suite_class.configuration_messages([])
         suite_class.check_configuration(&block)
 
         expect(suite_class.configuration_messages).to eq([])
         expect(block).to_not have_received(:call)
+      end
+    end
+
+    context 'when force_recheck is true' do
+      context 'when no check_configuration_block is present' do
+        it 'returns an empty array' do
+          expect(suite_class.configuration_messages(force_recheck: true)).to eq([])
+        end
+
+        it 'calls the existing configuration block even if messages are already present' do
+          block = proc { [] }
+          allow(block).to receive(:call).and_return([])
+          suite_class.configuration_messages(messages)
+          suite_class.check_configuration(&block)
+
+          expect(suite_class.configuration_messages(force_recheck: true)).to eq([])
+          expect(block).to have_received(:call)
+        end
       end
     end
   end
