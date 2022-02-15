@@ -37,6 +37,13 @@ RSpec.describe InfrastructureTest::Suite do
         expect(suite.groups.first).to eq(outer_inline_group)
       end
 
+      it 'contains groups with correct short_ids' do
+        expected_short_ids = Array(1..suite.groups.length).map(&:to_s)
+        found_short_ids = suite.groups.map(&:short_id)
+
+        expect(found_short_ids).to eq(expected_short_ids)
+      end
+
       it 'contains its own fhir client' do
         expect(suite.fhir_client_definitions.keys).to eq([:suite])
       end
@@ -81,6 +88,7 @@ RSpec.describe InfrastructureTest::Suite do
         expect(outer_inline_group.description).to eq('Outer inline group for testing description')
         expect(outer_inline_group.short_description).to eq('Outer inline group short description')
         expect(outer_inline_group.id).to eq("#{suite.id}-outer_inline_group")
+        expect(outer_inline_group.short_id).to eq('1')
       end
 
       it "contains its own inputs as well as its parents' inputs" do
@@ -93,6 +101,15 @@ RSpec.describe InfrastructureTest::Suite do
 
       it 'contains the correct groups' do
         expect(outer_inline_group.groups).to match_array([inner_inline_group])
+      end
+
+      it 'contains groups with correct short_ids' do
+        expected_short_ids = Array(1..outer_inline_group.groups.length).map do |id|
+          "#{outer_inline_group.short_id}." + id.to_s
+        end
+
+        found_short_ids = outer_inline_group.groups.map(&:short_id)
+        expect(found_short_ids).to eq(expected_short_ids)
       end
 
       it "contains its own fhir clients as well as its parents' fhir clients" do
@@ -127,6 +144,7 @@ RSpec.describe InfrastructureTest::Suite do
         expect(inner_inline_group.title).to eq('Inner inline group')
         expect(inner_inline_group.short_title).to eq('Inner inline group short title')
         expect(inner_inline_group.id).to eq("#{suite.id}-outer_inline_group-inner_inline_group")
+        expect(inner_inline_group.short_id).to eq("#{outer_inline_group.short_id}.1")
       end
 
       it "contains its own inputs as well as its parents' inputs" do
@@ -143,6 +161,15 @@ RSpec.describe InfrastructureTest::Suite do
 
       it 'contains the correct tests' do
         expect(inner_inline_group.tests.length).to eq(4)
+      end
+
+      it 'contains tests with correct short_ids' do
+        expected_short_ids = Array(1..inner_inline_group.tests.length).map do |id|
+          "#{inner_inline_group.short_id}." + id.to_s
+        end
+
+        found_short_ids = inner_inline_group.tests.map(&:short_id)
+        expect(found_short_ids).to eq(expected_short_ids)
       end
 
       it "contains its own fhir clients as well as its parents' fhir clients" do
@@ -180,6 +207,7 @@ RSpec.describe InfrastructureTest::Suite do
         expect(inline_test1.description).to eq('Inline test 1 full description')
         expect(inline_test1.short_description).to eq('Inline test 1 short description')
         expect(inline_test1.id).to eq("#{suite.id}-outer_inline_group-inner_inline_group-inline_test_1")
+        expect(inline_test1.short_id).to eq("#{inner_inline_group.short_id}.1")
       end
 
       it "contains its own inputs as well as its parents' inputs" do
@@ -239,6 +267,19 @@ RSpec.describe InfrastructureTest::Suite do
         expect(external_outer_group.outputs).to match_array([:suite_output, :external_outer_group_output])
       end
 
+      it 'contains the correct short_id' do
+        expect(external_outer_group.short_id).to eq(suite.groups.length.to_s)
+      end
+
+      it 'contains groups with correct short_ids' do
+        expected_short_ids = Array(1..external_outer_group.groups.length).map do |id|
+          "#{external_outer_group.short_id}." + id.to_s
+        end
+
+        found_short_ids = external_outer_group.groups.map(&:short_id)
+        expect(found_short_ids).to eq(expected_short_ids)
+      end
+
       it 'contains an externally defined inner group' do
         expect(external_outer_group.groups.length).to eq(1)
       end
@@ -286,6 +327,11 @@ RSpec.describe InfrastructureTest::Suite do
         expect(external_inner_group.outputs).to match_array(expected_outputs)
       end
 
+      it 'contains the correct short_id' do
+        expect(external_inner_group.short_id)
+          .to eq("#{external_outer_group.short_id}.#{external_outer_group.groups.length}")
+      end
+
       it "contains its own fhir clients as well as its parents' fhir clients" do
         expected_clients = [:suite, :external_outer_group, :external_inner_group]
         expect(external_inner_group.fhir_client_definitions.keys).to match_array(expected_clients)
@@ -293,6 +339,15 @@ RSpec.describe InfrastructureTest::Suite do
 
       it 'contains an externally defined test' do
         expect(external_inner_group.tests.length).to eq(1)
+      end
+
+      it 'contains tests with correct short_ids' do
+        expected_short_ids = Array(1..external_inner_group.tests.length).map do |id|
+          "#{external_inner_group.short_id}." + id.to_s
+        end
+
+        found_short_ids = external_inner_group.tests.map(&:short_id)
+        expect(found_short_ids).to eq(expected_short_ids)
       end
 
       it 'passes' do
@@ -322,6 +377,10 @@ RSpec.describe InfrastructureTest::Suite do
       it 'contains a nested id' do
         expected_id = "#{suite.id}-#{external_outer_group_base.id}-#{external_inner_group_base.id}-external_test1"
         expect(external_test.id).to eq(expected_id)
+      end
+
+      it 'contains the correct short_id' do
+        expect(external_test.short_id).to eq("#{external_inner_group.short_id}.#{external_inner_group.tests.length}")
       end
 
       it "contains its own inputs as well as its parents' inputs" do

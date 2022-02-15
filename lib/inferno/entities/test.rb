@@ -173,12 +173,12 @@ module Inferno
 
         def short_id
           @short_id ||= begin
-            prefix = parent.short_id
-            suffix = (parent.tests.find_index(self) + 1).to_s
-            "#{prefix}.#{suffix}"
-          end 
-        end 
-        
+            prefix = parent.respond_to?(:short_id) ? "#{parent.short_id}." : ''
+            suffix = parent ? (parent.tests.find_index(self) + 1).to_s : 'x'
+            "#{prefix}#{suffix}"
+          end
+        end
+
         # @private
         def default_id
           return name if name.present?

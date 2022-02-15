@@ -26,6 +26,13 @@ export default makeStyles((theme: Theme) => ({
     color: theme.palette.common.grayLight,
     paddingRight: '8px',
   },
+  shortId: {
+    display: 'inline',
+    fontWeight: 'bold',
+    color: theme.palette.common.grayDark,
+    alignSelf: 'center',
+    paddingRight: '8px'
+  },
   tabs: {
     minheight: 'auto',
     padding: 0,
