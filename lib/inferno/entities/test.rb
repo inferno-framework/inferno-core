@@ -174,7 +174,7 @@ module Inferno
         def short_id
           @short_id ||= begin
             prefix = parent.respond_to?(:short_id) ? "#{parent.short_id}." : ''
-            suffix = parent ? (parent.tests.find_index(self) + 1).to_s : 'x'
+            suffix = parent ? (parent.tests.find_index(self) + 1).to_s.rjust(2, '0') : 'x'
             "#{prefix}#{suffix}"
           end
         end
