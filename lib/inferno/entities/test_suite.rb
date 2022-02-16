@@ -70,6 +70,27 @@ module Inferno
           fhir_validators[:default] =
             Inferno::DSL::FHIRValidation::Validator.new { |v| v.url default_validator_url }
         end
+
+        def configuration_messages(new_messages = nil, force_recheck: false)
+          return @configuration_messages = new_messages unless new_messages.nil?
+
+          @configuration_messages =
+            if force_recheck
+              @check_configuration_block ? @check_configuration_block.call : []
+            else
+              @configuration_messages || (@check_configuration_block ? @check_configuration_block.call : [])
+            end
+        end
+
+        # Provide a block which will verify any configuration needed for this
+        # test suite to operate properly.
+        #
+        # @yieldreturn [Array<Hash>] An array of message hashes containing the
+        #   keys `:type` and `:message`. Type options are `info`, `warning`, and
+        #   `error`.
+        def check_configuration(&block)
+          @check_configuration_block = block
+        end
       end
     end
   end

@@ -1,6 +1,6 @@
 export type Message = {
   message: string;
-  type: string;
+  type: 'error' | 'warning' | 'info';
 };
 
 export type RequestHeader = {
@@ -108,6 +108,7 @@ export interface TestSuite {
   test_groups?: TestGroup[];
   optional?: boolean;
   input_instructions?: string;
+  configuration_messages?: Message[];
 }
 
 export interface TestSession {
