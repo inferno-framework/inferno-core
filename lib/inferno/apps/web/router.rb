@@ -26,6 +26,8 @@ module Inferno
               as: :check_configuration
 
           resources 'requests', only: [:show]
+
+          resources 'version', only: [:show]
         end
 
         get '/', to: ->(_env) { [200, {}, [client_page]] }
