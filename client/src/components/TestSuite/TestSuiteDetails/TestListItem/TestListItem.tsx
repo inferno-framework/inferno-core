@@ -40,7 +40,6 @@ const TestListItem: FC<TestListItemProps> = ({
   testRunInProgress,
 }) => {
   const styles = useStyles();
-
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
 
@@ -76,13 +75,9 @@ const TestListItem: FC<TestListItemProps> = ({
     </IconButton>
   );
 
-  const expandButton = open ? (
-    <IconButton onClick={() => setOpen(false)} size="small">
-      <ExpandLessIcon />
-    </IconButton>
-  ) : (
-    <IconButton onClick={() => setOpen(true)} size="small">
-      <ExpandMoreIcon />
+  const expandButton = (
+    <IconButton onClick={() => setOpen(!open)} size="small">
+      {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
     </IconButton>
   );
 
@@ -93,12 +88,11 @@ const TestListItem: FC<TestListItemProps> = ({
     </>
   );
 
-  const testDescription =
-    test.description && test.description.length > 0 ? (
-      <ReactMarkdown>{test.description}</ReactMarkdown>
-    ) : (
-      'No description'
-    );
+  const testDescription = (
+    <ReactMarkdown>
+      {test.description && test.description.length > 0 ? test.description : 'No description'}
+    </ReactMarkdown>
+  );
 
   return (
     <>

@@ -68,4 +68,20 @@ export default makeStyles((theme: Theme) => ({
     margin: '8px 0 0 0',
     borderRadius: '4px',
   },
+  nestedDescription: {
+    padding: '8px 16px 24px 16px',
+  },
+  nestedDescriptionHeader: {
+    fontWeight: 'bolder !important',
+    color: theme.palette.common.orangeDarker,
+  },
+  nestedDescriptionContainer: {
+    backgroundColor: theme.palette.common.grayLighter,
+    padding: '8px 0',
+  },
+  folderIcon: {
+    alignSelf: 'center',
+    padding: '0 8px',
+    color: theme.palette.common.grayLight,
+  },
 }));

@@ -4,12 +4,14 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Divider,
   Link,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FolderIcon from '@mui/icons-material/Folder';
@@ -18,6 +20,7 @@ import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 import TestListItem from './TestListItem/TestListItem';
 import { getPath } from 'api/infernoApiService';
+import ReactMarkdown from 'react-markdown';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
@@ -42,15 +45,18 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   const populateListItems = () => {
     let list: JSX.Element[] = [];
     if ('test_groups' in testGroup) {
-      list = testGroup.test_groups.map((tg: TestGroup) => (
-        <TestGroupListItem
-          key={`li-${tg.id}`}
-          testGroup={tg}
-          runTests={runTests}
-          updateRequest={updateRequest}
-          testRunInProgress={testRunInProgress}
-        />
-      ));
+      list = [
+        ...list,
+        ...testGroup.test_groups.map((tg: TestGroup) => (
+          <TestGroupListItem
+            key={`li-${tg.id}`}
+            testGroup={tg}
+            runTests={runTests}
+            updateRequest={updateRequest}
+            testRunInProgress={testRunInProgress}
+          />
+        )),
+      ];
     }
     if ('tests' in testGroup) {
       list = [
@@ -68,6 +74,34 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     }
     setListItems(list);
   };
+
+  const descriptionItem = (
+    <Box className={styles.nestedDescriptionContainer}>
+      <Accordion disableGutters key={`${testGroup.id}-description`} className={styles.accordion}>
+        <AccordionSummary
+          aria-controls="panel1a-content"
+          id="panel1a-header"
+          expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
+        >
+          <ListItem className={styles.testGroupCardList}>
+            <ListItemText
+              primary={
+                <Typography className={styles.nestedDescriptionHeader}>
+                  About {testGroup.short_title || testGroup.title}
+                </Typography>
+              }
+            />
+          </ListItem>
+        </AccordionSummary>
+        <Divider />
+        <AccordionDetails className={styles.accordionDetailContainer}>
+          <ReactMarkdown className={`${styles.accordionDetail} ${styles.nestedDescription}`}>
+            {testGroup.description as string}
+          </ReactMarkdown>
+        </AccordionDetails>
+      </Accordion>
+    </Box>
+  );
 
   const expandedGroupItem = (
     <Accordion disableGutters className={styles.accordion}>
@@ -101,6 +135,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       </AccordionSummary>
       <Divider />
       <AccordionDetails className={styles.accordionDetailContainer}>
+        {testGroup.description && descriptionItem}
         <List className={styles.accordionDetail}>{listItems}</List>
       </AccordionDetails>
     </Accordion>
@@ -112,18 +147,18 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         {testGroup.result && (
           <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
         )}
-        <ListItemIcon>
-          <FolderIcon />
-        </ListItemIcon>
         <ListItemText
           primary={
-            <Link
-              color="inherit"
-              href={getPath(`${location.pathname}#${testGroup.id}`)}
-              underline="hover"
-            >
-              {testGroup.title}
-            </Link>
+            <Box sx={{ display: 'flex' }}>
+              <FolderIcon className={styles.folderIcon} />
+              <Link
+                color="inherit"
+                href={getPath(`${location.pathname}#${testGroup.id}`)}
+                underline="hover"
+              >
+                {testGroup.title}
+              </Link>
+            </Box>
           }
           secondary={testGroup.result?.result_message}
         />

@@ -53,7 +53,6 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: 'rgba(0,0,0,0.05)',
   },
   descriptionPanel: {
-    padding: '16px',
     overflow: 'auto',
     borderBottom: '1px solid rgba(224, 224, 224, 1)',
   },
