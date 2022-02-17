@@ -46,7 +46,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   }
 
   return (
-    <Accordion disableGutters>
+    <Accordion disableGutters className={styles.accordion}>
       <AccordionSummary
         aria-controls="panel1a-content"
         id="panel1a-header"

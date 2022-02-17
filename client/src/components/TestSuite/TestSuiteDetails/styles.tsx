@@ -51,10 +51,18 @@ export default makeStyles((theme: Theme) => ({
   currentItem: {
     fontWeight: 600,
   },
+  accordion: {
+    borderBottom: `1px solid ${theme.palette.divider}`,
+    '&:before': {
+      display: 'none',
+    },
+  },
   accordionDetailContainer: {
     backgroundColor: theme.palette.common.grayLighter,
   },
   accordionDetail: {
     backgroundColor: theme.palette.common.white,
+    padding: 0,
+    margin: '8px 0',
   },
 }));
