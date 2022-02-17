@@ -6,13 +6,8 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
   testIcon: {
-    minWidth: '30px',
+    padding: '0 8px 0 0',
     display: 'inline-flex',
-  },
-  descriptionCardHeader: {
-    padding: '16px 24px',
-    fontWeight: 600,
-    fontSize: '14px',
   },
   testGroupCardHeader: {
     padding: '8px 16px',
@@ -80,8 +75,7 @@ export default makeStyles((theme: Theme) => ({
     padding: '8px 0',
   },
   folderIcon: {
-    alignSelf: 'center',
-    padding: '0 8px',
+    padding: '0 8px 0 0',
     color: theme.palette.common.grayLight,
   },
 }));

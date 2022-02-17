@@ -9,7 +9,6 @@ import {
   Link,
   List,
   ListItem,
-  ListItemIcon,
   ListItemText,
   Typography,
 } from '@mui/material';
@@ -75,12 +74,12 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     setListItems(list);
   };
 
-  const descriptionItem = (
+  const nestedDescriptionPanel = (
     <Box className={styles.nestedDescriptionContainer}>
       <Accordion disableGutters key={`${testGroup.id}-description`} className={styles.accordion}>
         <AccordionSummary
-          aria-controls="panel1a-content"
-          id="panel1a-header"
+          aria-controls={`${testGroup.title}-description-header`}
+          id={`${testGroup.title}-description-header`}
           expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
         >
           <ListItem className={styles.testGroupCardList}>
@@ -103,11 +102,11 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     </Box>
   );
 
-  const expandedGroupItem = (
+  const expandedGroupListItem = (
     <Accordion disableGutters className={styles.accordion}>
       <AccordionSummary
-        aria-controls="panel1a-content"
-        id="panel1a-header"
+        aria-controls={`${testGroup.title}-header`}
+        id={`${testGroup.title}-header`}
         // Toggle accordion expansion only on icon click
         sx={{
           pointerEvents: 'none',
@@ -122,7 +121,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       >
         <ListItem className={styles.testGroupCardList}>
           {testGroup.result && (
-            <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
+            <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
           )}
           <ListItemText primary={testGroup.title} secondary={testGroup.result?.result_message} />
           <TestRunButton
@@ -135,17 +134,17 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       </AccordionSummary>
       <Divider />
       <AccordionDetails className={styles.accordionDetailContainer}>
-        {testGroup.description && descriptionItem}
+        {testGroup.description && nestedDescriptionPanel}
         <List className={styles.accordionDetail}>{listItems}</List>
       </AccordionDetails>
     </Accordion>
   );
 
-  const folderGroupItem = (
+  const folderGroupListItem = (
     <>
       <ListItem>
         {testGroup.result && (
-          <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
+          <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
         )}
         <ListItemText
           primary={
@@ -173,7 +172,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     </>
   );
 
-  return <>{testGroup.expanded ? expandedGroupItem : folderGroupItem}</>;
+  return <>{testGroup.expanded ? expandedGroupListItem : folderGroupListItem}</>;
 };
 
 export default TestGroupListItem;
