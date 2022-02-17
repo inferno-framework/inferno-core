@@ -15,7 +15,7 @@ export default makeStyles((theme: Theme) => ({
     fontSize: '14px',
   },
   testGroupCardHeader: {
-    padding: '8px 15px',
+    padding: '8px 16px',
     fontWeight: 600,
     fontSize: '16px',
     borderBottom: '1px solid rgba(0,0,0,.12)',
@@ -27,7 +27,7 @@ export default makeStyles((theme: Theme) => ({
     alignItems: 'center',
   },
   testGroupCard: {
-    marginBottom: '25px',
+    marginBottom: '24px',
   },
   testGroupCardList: {
     padding: 0,
@@ -45,16 +45,18 @@ export default makeStyles((theme: Theme) => ({
     minWidth: 'fit-content',
   },
   descriptionPanel: {
-    padding: '15px',
+    padding: '16px',
     overflow: 'auto',
   },
   currentItem: {
     fontWeight: 600,
   },
   accordion: {
-    borderBottom: `1px solid ${theme.palette.divider}`,
     '&:before': {
       display: 'none',
+    },
+    '&:not(last-child)': {
+      borderBottom: `1px solid ${theme.palette.divider}`,
     },
   },
   accordionDetailContainer: {
@@ -63,6 +65,7 @@ export default makeStyles((theme: Theme) => ({
   accordionDetail: {
     backgroundColor: theme.palette.common.white,
     padding: 0,
-    margin: '8px 0',
+    margin: '8px 0 0 0',
+    borderRadius: '4px',
   },
 }));

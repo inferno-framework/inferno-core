@@ -94,6 +94,7 @@ export interface TestGroup {
   user_runnable?: boolean;
   test_count?: number;
   optional?: boolean;
+  expanded?: boolean;
 }
 
 export interface TestSuite {

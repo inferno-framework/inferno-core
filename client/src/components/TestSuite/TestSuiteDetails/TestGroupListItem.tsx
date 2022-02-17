@@ -1,19 +1,23 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import useStyles from './styles';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Divider,
+  Link,
   List,
   ListItem,
+  ListItemIcon,
   ListItemText,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FolderIcon from '@mui/icons-material/Folder';
 import { Request, RunnableType, Test, TestGroup } from 'models/testSuiteModels';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 import TestListItem from './TestListItem/TestListItem';
+import { getPath } from 'api/infernoApiService';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
@@ -29,23 +33,43 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   testRunInProgress,
 }) => {
   const styles = useStyles();
+  const [listItems, setListItems] = React.useState<JSX.Element[]>([]);
 
-  let listItems: JSX.Element[] = [];
-  if ('tests' in testGroup) {
-    listItems = testGroup.tests.map((test: Test) => {
-      return (
-        <TestListItem
-          key={`li-${test.id}`}
-          test={test}
+  useEffect(() => {
+    populateListItems();
+  }, []);
+
+  const populateListItems = () => {
+    let list: JSX.Element[] = [];
+    if ('test_groups' in testGroup) {
+      list = testGroup.test_groups.map((tg: TestGroup) => (
+        <TestGroupListItem
+          key={`li-${tg.id}`}
+          testGroup={tg}
           runTests={runTests}
           updateRequest={updateRequest}
           testRunInProgress={testRunInProgress}
         />
-      );
-    });
-  }
+      ));
+    }
+    if ('tests' in testGroup) {
+      list = [
+        ...list,
+        ...testGroup.tests.map((test: Test) => (
+          <TestListItem
+            key={`li-${test.id}`}
+            test={test}
+            runTests={runTests}
+            updateRequest={updateRequest}
+            testRunInProgress={testRunInProgress}
+          />
+        )),
+      ];
+    }
+    setListItems(list);
+  };
 
-  return (
+  const expandedGroupItem = (
     <Accordion disableGutters className={styles.accordion}>
       <AccordionSummary
         aria-controls="panel1a-content"
@@ -63,7 +87,9 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         }
       >
         <ListItem className={styles.testGroupCardList}>
-          <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
+          {testGroup.result && (
+            <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
+          )}
           <ListItemText primary={testGroup.title} secondary={testGroup.result?.result_message} />
           <TestRunButton
             runnable={testGroup}
@@ -79,6 +105,40 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       </AccordionDetails>
     </Accordion>
   );
+
+  const folderGroupItem = (
+    <>
+      <ListItem>
+        {testGroup.result && (
+          <div className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</div>
+        )}
+        <ListItemIcon>
+          <FolderIcon />
+        </ListItemIcon>
+        <ListItemText
+          primary={
+            <Link
+              color="inherit"
+              href={getPath(`${location.pathname}#${testGroup.id}`)}
+              underline="hover"
+            >
+              {testGroup.title}
+            </Link>
+          }
+          secondary={testGroup.result?.result_message}
+        />
+        <TestRunButton
+          runnable={testGroup}
+          runnableType={RunnableType.TestGroup}
+          runTests={runTests}
+          testRunInProgress={testRunInProgress}
+        />
+      </ListItem>
+      <Divider />
+    </>
+  );
+
+  return <>{testGroup.expanded ? expandedGroupItem : folderGroupItem}</>;
 };
 
 export default TestGroupListItem;
