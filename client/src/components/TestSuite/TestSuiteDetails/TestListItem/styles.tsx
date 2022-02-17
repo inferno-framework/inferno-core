@@ -41,8 +41,8 @@ export default makeStyles((theme: Theme) => ({
     margin: '0 4px',
   },
   testBadge: {
-    border: `1px solid ${theme.palette.common.blueLight}`,
-    color: theme.palette.common.blueLight,
+    border: `1px solid ${theme.palette.secondary.main}`,
+    color: theme.palette.secondary.main,
     backgroundColor: theme.palette.common.white,
     fontWeight: 'bold',
   },

@@ -4,15 +4,14 @@ import { createTheme } from '@mui/material';
 declare module '@mui/material/styles/createPalette' {
   interface CommonColors {
     white: string;
-    offWhite: string;
     black: string;
     red: string;
     orange: string;
     orangeDarker: string;
+    orangeLightest: string;
     green: string;
     blue: string;
     blueLight: string;
-    blueLighter: string;
     blueGray: string;
     blueGrayLightest: string;
     gray: string;
@@ -20,21 +19,21 @@ declare module '@mui/material/styles/createPalette' {
     grayBlue: string;
     grayLight: string;
     grayLighter: string;
+    grayLightest: string;
     grayDark: string;
     grayVeryDark: string;
   }
 }
 const colors = {
   white: '#fff',
-  offWhite: '#fdf6ec',
   black: '#222',
   red: '#d95d77',
   orange: '#F88B30',
   orangeDarker: '#cc7127',
+  orangeLightest: '#fdf6ec',
   green: '#2fa874',
   blue: '#5d89a1',
-  blueLight: '#5d89a1',
-  blueLighter: '#9ad2f0',
+  blueLight: '#9ad2f0',
   blueGray: '#e6ebf2',
   blueGrayLightest: '#f1f8ff',
   gray: '#4a4a4a',
@@ -42,6 +41,7 @@ const colors = {
   grayBlue: '#cbd5df',
   grayLight: '#9e9e9e',
   grayLighter: '#eaeef2',
+  grayLightest: '#f2f2f2',
   grayDark: '#444',
   grayVeryDark: '#3a3a3a',
 };

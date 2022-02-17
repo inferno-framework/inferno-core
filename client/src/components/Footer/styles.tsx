@@ -9,7 +9,7 @@ export default makeStyles((theme: Theme) => ({
   footer: {
     width: '100%',
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
-    backgroundColor: theme.palette.common.offWhite,
+    backgroundColor: theme.palette.common.orangeLightest,
     '& .MuiContainer-root': {
       display: 'flex',
       justifyContent: 'center',
