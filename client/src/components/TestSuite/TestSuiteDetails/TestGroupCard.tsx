@@ -1,13 +1,10 @@
 import React, { FC } from 'react';
-import { useLocation } from 'react-router-dom';
 import useStyles from './styles';
 import { TestGroup, RunnableType, TestSuite } from 'models/testSuiteModels';
-import { Box, Breadcrumbs, Card, Divider, Link, List, Typography } from '@mui/material';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { Box, Card, Divider, List, Typography } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
-import { getPath } from 'api/infernoApiService';
 
 interface TestGroupCardProps {
   runnable: TestSuite | TestGroup;
@@ -22,30 +19,6 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
   testRunInProgress,
 }) => {
   const styles = useStyles();
-  const location = useLocation();
-
-  const populateBreadcrumbs = () => {
-    if ('parent_group' in runnable && runnable.parent_group) {
-      return [
-        <Link
-          underline="hover"
-          key="1"
-          color="inherit"
-          href={getPath(`${location.pathname}#${runnable.parent_group?.id}`)}
-        >
-          {runnable.parent_group?.short_title || runnable.parent_group?.title || ''}
-        </Link>,
-        <Typography key="2" color="text.primary" className={styles.currentItem}>
-          {runnable.title}
-        </Typography>,
-      ];
-    }
-    return [
-      <Typography key="1" color="text.primary" className={styles.currentItem}>
-        {runnable.title}
-      </Typography>,
-    ];
-  };
 
   const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
 
@@ -66,9 +39,9 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
       <div className={styles.testGroupCardHeader}>
         {resultSpan}
         <span className={styles.testGroupCardHeaderText}>
-          <Breadcrumbs separator={<NavigateNextIcon fontSize="small" />} aria-label="breadcrumb">
-            {populateBreadcrumbs()}
-          </Breadcrumbs>
+          <Typography key="1" color="text.primary" className={styles.currentItem}>
+            {runnable.title}
+          </Typography>
         </span>
         <span className={styles.testGroupCardHeaderButton}>
           <TestRunButton
