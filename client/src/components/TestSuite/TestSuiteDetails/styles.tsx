@@ -27,12 +27,6 @@ export default makeStyles((theme: Theme) => ({
   testGroupCardList: {
     padding: 0,
   },
-  testGroupCardHeaderResult: {
-    marginRight: '10px',
-    alignItems: 'center',
-    display: 'inline-flex',
-    width: '24px',
-  },
   testGroupCardHeaderText: {
     flexGrow: 1,
   },

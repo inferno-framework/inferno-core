@@ -27,7 +27,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
   );
 
   const resultSpan = runnable.result && (
-    <span className={styles.testGroupCardHeaderResult}>
+    <span className={styles.testIcon}>
       <ResultIcon result={runnable.result} />
     </span>
   );

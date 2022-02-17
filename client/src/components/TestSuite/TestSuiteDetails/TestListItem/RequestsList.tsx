@@ -65,7 +65,9 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
               </Tooltip>
             </TableCell>
             <TableCell>
-              <Typography variant="subtitle2">{request.status}</Typography>
+              <Typography variant="subtitle2" className={styles.bolderText}>
+                {request.status}
+              </Typography>
             </TableCell>
             <TableCell>
               <Button

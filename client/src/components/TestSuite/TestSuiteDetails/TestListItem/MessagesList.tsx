@@ -17,7 +17,7 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
         return (
           <TableRow key={`msgRow-${index}`}>
             <TableCell>
-              <Typography variant="subtitle2" className={styles.messageType}>
+              <Typography variant="subtitle2" className={styles.bolderText}>
                 {message.type}:
               </Typography>
             </TableCell>

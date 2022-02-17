@@ -136,9 +136,10 @@ const TestListItem: FC<TestListItemProps> = ({
         </Tabs>
         <Divider />
         <TabPanel currentPanelIndex={panelIndex} index={0}>
-          <Container className={styles.descriptionPanel}>
+          <Container>
             <Typography variant="subtitle2">{testDescription}</Typography>
           </Container>
+          <Divider />
         </TabPanel>
         <TabPanel currentPanelIndex={panelIndex} index={1}>
           <MessagesList messages={test.result?.messages || []} />
