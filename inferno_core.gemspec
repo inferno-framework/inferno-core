@@ -8,11 +8,10 @@ Gem::Specification.new do |spec|
   spec.version       = Inferno::VERSION
   spec.authors       = ['Stephen MacVicar', 'Robert Scanlon', 'Chase Zhou']
   spec.email         = ['inferno@groups.mitre.org']
-  spec.date          = Time.now.utc.strftime('%Y-%m-%d')
   spec.summary       = 'Inferno Core is an open source tool for testing data exchanges enabled by the FHIR standand'
   spec.description   = 'Inferno Core is an open source tool for testing data exchanges enabled by the FHIR standand'
   spec.homepage      = 'https://github.com/inferno_community/inferno-core'
-  spec.license       = 'Apache 2.0'
+  spec.license       = 'Apache-2.0'
   spec.add_runtime_dependency 'activesupport', '~> 6.1'
   spec.add_runtime_dependency 'blueprinter', '0.25.2'
   spec.add_runtime_dependency 'dotenv', '~> 2.7'
@@ -23,12 +22,12 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'fhir_models', '~> 4.2.0'
   spec.add_runtime_dependency 'hanami-controller', '~> 1.3'
   spec.add_runtime_dependency 'hanami-router', '~> 1.3'
-  spec.add_runtime_dependency 'oj', '~> 3.11'
+  spec.add_runtime_dependency 'oj', '3.11.0'
   spec.add_runtime_dependency 'pry'
   spec.add_runtime_dependency 'pry-byebug'
   spec.add_runtime_dependency 'puma', '~> 5.3'
   spec.add_runtime_dependency 'rake', '~> 13.0'
-  spec.add_runtime_dependency 'sequel', '~> 5.42'
+  spec.add_runtime_dependency 'sequel', '~> 5.42.0'
   spec.add_runtime_dependency 'sidekiq', '~> 6.4.0'
   spec.add_runtime_dependency 'sqlite3', '~> 1.4'
   spec.add_runtime_dependency 'thor', '~> 1.1.0'

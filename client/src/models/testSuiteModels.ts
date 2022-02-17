@@ -1,6 +1,6 @@
 export type Message = {
   message: string;
-  type: string;
+  type: 'error' | 'warning' | 'info';
 };
 
 export type RequestHeader = {
@@ -109,6 +109,7 @@ export interface TestSuite {
   test_groups?: TestGroup[];
   optional?: boolean;
   input_instructions?: string;
+  configuration_messages?: Message[];
 }
 
 export interface TestSession {
@@ -134,18 +135,13 @@ export interface TestRun {
   test_id?: string;
 }
 
-// Necessary to prevent "implicit any" errors when indexing objects of type OAuthCredentials
-export interface OAuthCredentialsType {
-  [key: string]: string;
-}
-
-export interface OAuthCredentials extends OAuthCredentialsType {
+export interface OAuthCredentials {
   access_token: string;
-  refresh_token: string;
-  expires_in: string;
-  client_id: string;
-  client_secret: string;
-  token_url: string;
+  refresh_token?: string;
+  expires_in?: string;
+  client_id?: string;
+  client_secret?: string;
+  token_url?: string;
 }
 
 export function runnableIsTestSuite(runnable: TestSuite | TestGroup | Test): runnable is TestSuite {

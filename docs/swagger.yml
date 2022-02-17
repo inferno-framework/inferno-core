@@ -59,6 +59,29 @@ paths:
             $ref: "#/definitions/TestSuite"
         "404":
           description: "Test suite not found"
+  /test_suites/{test_suite_id}/check_configuration:
+    put:
+      tags:
+      - "Test Suite"
+      summary: "Check the configuration for a test suite"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_suite_id"
+        description: "ID of the test suite"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Message"
+        "404":
+          description: "Test suite not found"
   /test_sessions:
     post:
       tags:
@@ -489,6 +512,10 @@ definitions:
         readOnly: true
       version:
         type: "string"
+      configuration_messages:
+        type: "array"
+        items:
+          $ref: "#/definitions/Message"
   TestGroup:
     type: "object"
     required:

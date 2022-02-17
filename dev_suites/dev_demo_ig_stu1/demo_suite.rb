@@ -1,3 +1,4 @@
+# require 'g10_certification_test_kit'
 require_relative 'groups/demo_group'
 
 module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
@@ -22,6 +23,19 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
     # This is a little too simplistic, because we want groups to be able to
     # restrict params, map params, etc
+
+    check_configuration do
+      [
+        {
+          type: 'info',
+          message: 'This suite has a configuration info message'
+        },
+        {
+          type: 'warning',
+          message: 'This suite has a configuration warning message'
+        }
+      ]
+    end
 
     validator do
       url ENV.fetch('VALIDATOR_URL')

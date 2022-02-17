@@ -2,25 +2,20 @@ source 'https://rubygems.org'
 
 ruby '2.7.3'
 
-gem 'dry-system', '0.18.1'
+gemspec
 
-gem 'sqlite3'
-gem 'sequel'
-
-gem 'blueprinter'
-gem 'hanami-controller', '~> 1.3'
-gem 'hanami-router', '~> 1.3'
-gem 'oj'
-gem 'puma'
-
-gem 'activesupport'
-gem 'dotenv'
-gem 'fhir_client', '>= 5.0.3'
-gem 'fhir_models', '~> 4.2.0'
-gem 'rake'
-gem 'faraday'
-gem 'sidekiq', '~> 6.4.0'
-gem 'thor', '~> 1.1.0'
+# To use these test kits, uncomment these lines, run `bundle update`, and
+# uncomment the require at the top of
+# `dev_suites/dev_demo_ig_stu1/demo_suite.rb`.
+# gem 'g10_certification_test_kit',
+#     git: 'https://github.com/inferno-framework/g10-certification-test-kit.git',
+#     branch: 'main'
+# gem 'smart_app_launch_test_kit',
+#     git: 'https://github.com/inferno-framework/smart-app-launch-test-kit.git',
+#     branch: 'main'
+# gem 'us_core_test_kit',
+#     git: 'https://github.com/inferno-framework/us-core-test-kit.git',
+#     branch: 'main'
 
 group :development, :test do
   gem 'pry'

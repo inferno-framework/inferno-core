@@ -21,6 +21,9 @@ module Inferno
               as: :last_test_run
 
           resources 'test_suites', only: [:index, :show]
+          put 'test_suites/:id/check_configuration',
+              to: Inferno::Web::Controllers::TestSuites::CheckConfiguration,
+              as: :check_configuration
 
           resources 'requests', only: [:show]
         end

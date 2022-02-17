@@ -107,7 +107,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         # fhir_read 'patient'
 
         info "Performed #{request.request[:verb].to_s.upcase}, " \
-            "received HTTP #{response[:status]} with patient id: #{resource&.id}"
+             "received HTTP #{response[:status]} with patient id: #{resource&.id}"
 
         assert_response_status(200)
         assert_response_status([200, 201])

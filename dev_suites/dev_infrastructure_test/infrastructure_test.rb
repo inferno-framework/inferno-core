@@ -20,6 +20,15 @@ module InfrastructureTest
     input :suite_input
     output :suite_output
 
+    check_configuration do
+      [
+        {
+          type: 'error',
+          message: 'This suite has a configuration error message'
+        }
+      ]
+    end
+
     def suite_helper
       'SUITE_HELPER'
     end
