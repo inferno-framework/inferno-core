@@ -69,7 +69,7 @@ export function getTestSessionData(test_session_id: string): Promise<TestOutput[
     });
 }
 
-/* Populate additional properties for API returns */
+/* Populate additional properties for API results */
 function addProperties(session: TestSession): TestSession {
   let groups = session.test_suite.test_groups;
   if (groups) {
@@ -79,6 +79,7 @@ function addProperties(session: TestSession): TestSession {
   return session;
 }
 
+// Can be safely removed
 function assignParentGroups(groups: TestGroup[], parent: TestGroup | null): TestGroup[] {
   groups.forEach((group) => {
     if (
