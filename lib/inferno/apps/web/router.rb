@@ -23,6 +23,8 @@ module Inferno
           resources 'test_suites', only: [:index, :show]
 
           resources 'requests', only: [:show]
+
+          resources 'version', only: [:show]
         end
 
         get '/', to: ->(_env) { [200, {}, [client_page]] }
