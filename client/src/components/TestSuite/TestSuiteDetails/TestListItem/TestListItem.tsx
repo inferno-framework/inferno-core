@@ -83,6 +83,7 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const testLabel = (
     <>
+      <Typography className={styles.shortId}>{test.short_id}</Typography>
       {test.optional && <Typography className={styles.optionalLabel}>Optional</Typography>}
       <Typography className={styles.labelText}>{test.title}</Typography>
     </>

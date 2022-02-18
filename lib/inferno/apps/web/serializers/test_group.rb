@@ -4,6 +4,7 @@ module Inferno
       class TestGroup < Serializer
         identifier :id
 
+        field :short_id
         field :title
         field :short_title
         field :description
