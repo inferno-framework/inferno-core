@@ -3,6 +3,7 @@ import { TestGroup, RunnableType, TestSuite, Request, Test } from 'models/testSu
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
 import TestGroupCard from './TestGroupCard';
+import TestSuiteMessages from './TestSuiteMessages';
 
 interface TestSuiteDetailsPanelProps {
   runnable: TestSuite | TestGroup;
@@ -43,10 +44,20 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
     });
   }
 
+  const testSuiteMessages =
+    'configuration_messages' in runnable ? (
+      <TestSuiteMessages messages={runnable.configuration_messages || []} />
+    ) : (
+      <div></div>
+    );
+
   return (
-    <TestGroupCard runTests={runTests} runnable={runnable} testRunInProgress={testRunInProgresss}>
-      {listItems}
-    </TestGroupCard>
+    <div>
+      {testSuiteMessages}
+      <TestGroupCard runTests={runTests} runnable={runnable} testRunInProgress={testRunInProgresss}>
+        {listItems}
+      </TestGroupCard>
+    </div>
   );
 };
 
