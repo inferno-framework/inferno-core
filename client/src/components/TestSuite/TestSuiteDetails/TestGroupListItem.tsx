@@ -161,12 +161,6 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           }
           secondary={testGroup.result?.result_message}
         />
-        <TestRunButton
-          runnable={testGroup}
-          runnableType={RunnableType.TestGroup}
-          runTests={runTests}
-          testRunInProgress={testRunInProgress}
-        />
       </ListItem>
       <Divider />
     </>
