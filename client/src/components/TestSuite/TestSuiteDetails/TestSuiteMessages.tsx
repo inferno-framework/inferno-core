@@ -17,9 +17,9 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages }) => {
 
   const sortedMessages = [...errorMessages, ...warningMessages, ...infoMessages];
 
-  const alerts = sortedMessages.map((message) => {
+  const alerts = sortedMessages.map((message, index) => {
     return (
-      <Alert variant="filled" severity={message.type}>
+      <Alert variant="filled" key={index} severity={message.type}>
         {message.message}
       </Alert>
     );

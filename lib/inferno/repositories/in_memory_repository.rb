@@ -7,8 +7,9 @@ module Inferno
 
       def_delegators 'self.class', :all, :all_by_id
 
-      def insert(klass)
-        all << klass
+      def insert(entity)
+        all << entity
+        entity
       end
 
       def find(id)

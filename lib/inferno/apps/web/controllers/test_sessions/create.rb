@@ -6,8 +6,11 @@ module Inferno
           PARAMS = [:test_suite_id].freeze
 
           def call(params)
-            result = repo.create(create_params(params))
-            self.body = serialize(result)
+            session = repo.create(create_params(params))
+
+            repo.apply_preset(session.id, params[:preset_id]) if params[:preset_id].present?
+
+            self.body = serialize(session)
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation => e
             self.body = { errors: e.message }.to_json
             self.status = 422

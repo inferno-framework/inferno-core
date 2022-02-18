@@ -14,7 +14,13 @@ module Inferno
 
           resources 'test_sessions', only: [:create, :show] do
             resources 'results', only: [:index]
-            resources 'session_data', only: [:index]
+            resources 'session_data', only: [:index] do
+              collection do
+                put '/apply_preset',
+                    to: Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset,
+                    as: :apply_preset
+              end
+            end
           end
           get 'test_sessions/:test_session_id/last_test_run',
               to: Inferno::Web::Controllers::TestSessions::LastTestRun,

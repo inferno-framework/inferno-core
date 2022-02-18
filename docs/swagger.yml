@@ -98,6 +98,11 @@ paths:
         name: "test_suite_id"
         description: "ID of the test suite being run in this test session"
         required: true
+      - in: "query"
+        type: "string"
+        name: "preset_id"
+        description: "ID of a preset to use with this test session"
+        required: false
       responses:
         "201":
           description: "Success"
@@ -177,6 +182,28 @@ paths:
               $ref: "#/definitions/SessionData"
         "404":
           description: "Test session not found"
+  /test_sessions/{test_session_id}/session_data/apply_preset:
+    get:
+      tags:
+      - "Session Data"
+      summary: "Apply preset inputs to a test session"
+      description: "Use a set of predefined inputs in a test session."
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_session_id"
+        description: "ID of the test session"
+        required: true
+      - in: "query"
+        type: "string"
+        name: "preset_id"
+        description: "ID of the preset"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+        "404":
+          description: "Test session or preset not found"
   /test_runs:
     post:
       tags:
@@ -496,6 +523,16 @@ definitions:
         enum: [error, warning, info]
       message:
         type: "string"
+  PresetSummary:
+    type: "object"
+    required:
+    - "id"
+    - "title"
+    properties:
+      id:
+        type: "string"
+      title:
+        type: "string"
   TestSuite:
     type: "object"
     required:
@@ -531,6 +568,10 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Message"
+      presets:
+        type: "array"
+        items:
+          $ref: "#/definitions/PresetSummary"
   TestGroup:
     type: "object"
     required:

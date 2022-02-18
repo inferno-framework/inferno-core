@@ -4,7 +4,11 @@ module Inferno
   module Repositories
     # Repository that deals with persistence for the `TestSession` entity.
     class TestSessions < Repository
-      include Import[results_repo: 'repositories.results']
+      include Import[
+                results_repo: 'repositories.results',
+                session_data_repo: 'repositories.session_data',
+                presets_repo: 'repositories.presets'
+              ]
 
       def json_serializer_options
         {
@@ -24,6 +28,13 @@ module Inferno
 
         test_session_hash[:results]
           .map! { |result| results_repo.build_entity(result) }
+      end
+
+      def apply_preset(test_session_id, preset_id)
+        preset = presets_repo.find(preset_id)
+        preset.inputs.each do |input|
+          session_data_repo.save(input.merge(test_session_id: test_session_id))
+        end
       end
 
       class Model < Sequel::Model(db)

@@ -479,6 +479,24 @@ module Inferno
                            !parent.respond_to?(:run_as_group?) ||
                            (parent.user_runnable? && !parent.run_as_group?)
       end
+
+      # @private
+      def available_input_definitions(prior_outputs = [])
+        available_input_definitions =
+          inputs
+            .each_with_object({}) do |input, definitions|
+              definitions[config.input_name(input)] =
+                config.input_config(input)
+            end
+        available_input_definitions.reject! { |input, _| prior_outputs.include? input }
+
+        children_available_input_definitions =
+          children.each_with_object({}) do |child, definitions|
+            definitions.merge!(child.available_input_definitions(prior_outputs))
+          end
+        prior_outputs.concat(outputs.map { |output| config.output_name(output) })
+        children_available_input_definitions.merge(available_input_definitions)
+      end
     end
   end
 end

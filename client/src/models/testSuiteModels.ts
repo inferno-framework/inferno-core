@@ -113,6 +113,7 @@ export interface TestSuite {
   input_instructions?: string;
   configuration_messages?: Message[];
   version?: string;
+  presets?: PresetSummary[];
 }
 
 export interface TestSession {
@@ -145,6 +146,11 @@ export interface OAuthCredentials {
   client_id?: string;
   client_secret?: string;
   token_url?: string;
+}
+
+export interface PresetSummary {
+  id: string;
+  title: string;
 }
 
 export function runnableIsTestSuite(runnable: TestSuite | TestGroup | Test): runnable is TestSuite {
