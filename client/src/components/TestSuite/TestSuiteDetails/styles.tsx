@@ -6,16 +6,11 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
   testIcon: {
-    minWidth: '30px',
+    padding: '0 8px 0 0',
     display: 'inline-flex',
   },
-  descriptionCardHeader: {
-    padding: '16px 24px',
-    fontWeight: 600,
-    fontSize: '14px',
-  },
   testGroupCardHeader: {
-    padding: '8px 15px',
+    padding: '8px 16px',
     fontWeight: 600,
     fontSize: '16px',
     borderBottom: '1px solid rgba(0,0,0,.12)',
@@ -27,19 +22,10 @@ export default makeStyles((theme: Theme) => ({
     alignItems: 'center',
   },
   testGroupCard: {
-    marginBottom: '25px',
-  },
-  listItem: {
-    borderBottom: '1px solid rgba(0,0,0,.12)',
+    marginBottom: '24px',
   },
   testGroupCardList: {
     padding: 0,
-  },
-  testGroupCardHeaderResult: {
-    marginRight: '10px',
-    alignItems: 'center',
-    display: 'inline-flex',
-    width: '24px',
   },
   testGroupCardHeaderText: {
     flexGrow: 1,
@@ -48,10 +34,42 @@ export default makeStyles((theme: Theme) => ({
     minWidth: 'fit-content',
   },
   descriptionPanel: {
-    padding: '15px',
+    padding: '16px',
     overflow: 'auto',
   },
   currentItem: {
     fontWeight: 600,
+  },
+  accordion: {
+    '&:before': {
+      display: 'none',
+    },
+    '&:not(last-child)': {
+      borderBottom: `1px solid ${theme.palette.divider}`,
+    },
+  },
+  accordionDetailContainer: {
+    backgroundColor: theme.palette.common.grayLighter,
+  },
+  accordionDetail: {
+    backgroundColor: theme.palette.common.white,
+    padding: 0,
+    margin: '8px 0 0 0',
+    borderRadius: '4px',
+  },
+  nestedDescription: {
+    padding: '8px 16px 24px 16px',
+  },
+  nestedDescriptionHeader: {
+    fontWeight: 'bolder !important',
+    color: theme.palette.common.orangeDarker,
+  },
+  nestedDescriptionContainer: {
+    backgroundColor: theme.palette.common.grayLighter,
+    padding: '8px 0',
+  },
+  folderIcon: {
+    padding: '0 8px 0 0',
+    color: theme.palette.common.grayLight,
   },
 }));

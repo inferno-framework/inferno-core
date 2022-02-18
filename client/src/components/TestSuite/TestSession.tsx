@@ -278,7 +278,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
             runTests={runTests}
             updateRequest={updateRequest}
-            testRunInProgresss={testRunNeedsProgressBar(testRun)}
+            testRunInProgress={testRunNeedsProgressBar(testRun)}
           />
         ) : (
           <div>error</div>

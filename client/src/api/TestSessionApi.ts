@@ -21,7 +21,7 @@ export function getTestSession(test_session_id: string): Promise<TestSession | n
   return fetch(testSessionsEndpoint)
     .then((response) => response.json())
     .then((result) => {
-      return assignParentGroups(result as TestSession);
+      return addProperties(result as TestSession);
     })
     .catch((e) => {
       console.log(e);
@@ -35,7 +35,6 @@ export function postTestSessions(testSuiteID: string): Promise<TestSession | nul
   return fetch(postEndpoint, { method: 'POST' })
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
       return result as TestSession;
     })
     .catch((e) => {
@@ -70,15 +69,18 @@ export function getTestSessionData(test_session_id: string): Promise<TestOutput[
     });
 }
 
-function assignParentGroups(session: TestSession): TestSession {
+/* Populate additional properties for API results */
+function addProperties(session: TestSession): TestSession {
   let groups = session.test_suite.test_groups;
   if (groups) {
-    groups = assignParentGroupsHelper(groups, null);
+    groups = assignParentGroups(groups, null);
+    groups = expandRunAsGroupChildren(groups, false);
   }
   return session;
 }
 
-function assignParentGroupsHelper(groups: TestGroup[], parent: TestGroup | null): TestGroup[] {
+// Can be safely removed
+function assignParentGroups(groups: TestGroup[], parent: TestGroup | null): TestGroup[] {
   groups.forEach((group) => {
     if (
       !group.test_groups ||
@@ -87,7 +89,21 @@ function assignParentGroupsHelper(groups: TestGroup[], parent: TestGroup | null)
     ) {
       group.parent_group = parent;
     } else {
-      assignParentGroupsHelper(group.test_groups, group);
+      assignParentGroups(group.test_groups, group);
+    }
+  });
+  return groups;
+}
+
+function expandRunAsGroupChildren(groups: TestGroup[], expandChildren: boolean): TestGroup[] {
+  groups.forEach((group) => {
+    group.expanded = expandChildren;
+    if (group.test_groups) {
+      if (group.run_as_group) {
+        expandRunAsGroupChildren(group.test_groups, true);
+      } else {
+        expandRunAsGroupChildren(group.test_groups, expandChildren);
+      }
     }
   });
   return groups;
