@@ -523,6 +523,8 @@ definitions:
     properties:
       id:
         type: "string"
+      short_id:
+        type: "string"
       title:
         type: "string"
       short_title:
@@ -563,6 +565,8 @@ definitions:
     - "name"
     properties:
       id:
+        type: "string"
+      short_id:
         type: "string"
       title:
         type: "string"

@@ -10,6 +10,7 @@ export const mockedTestSession: TestSession = {
       {
         description: null,
         id: 'demo-Group01',
+        short_id: '1',
         inputs: [],
         outputs: [],
         result: {

@@ -65,6 +65,14 @@ module Inferno
           }
         end
 
+        def short_id
+          @short_id ||= begin
+            prefix = parent.respond_to?(:short_id) ? "#{parent.short_id}." : ''
+            suffix = parent ? (parent.groups.find_index(self) + 1).to_s : 'X'
+            "#{prefix}#{suffix}"
+          end
+        end
+
         def default_id
           return name if name.present?
 
