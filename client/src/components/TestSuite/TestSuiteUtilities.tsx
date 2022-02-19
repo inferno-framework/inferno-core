@@ -1,4 +1,4 @@
-import { TestGroup, TestInput } from 'models/testSuiteModels';
+import { TestSuite, TestGroup, Test, TestInput, RunnableType } from 'models/testSuiteModels';
 
 function inputAlreadyExists(existing_inputs: TestInput[], new_input: TestInput): boolean {
   return existing_inputs.some((existing_input: TestInput) => {
@@ -33,3 +33,32 @@ function getInputsRecursive(testGroup: TestGroup, testOutputs: Set<string>): Tes
   testGroup.outputs.forEach((output) => testOutputs.add(output.name));
   return inputs;
 }
+
+// We have to pass in `kind` with `runnable` because Typescript can't look at our runnable
+// union and know the type other than `Object`.  So we pass an instance but also the kind
+// as metadata which is not optimal.  A better thing might be to use a class hierarchy.
+export const setInCurrentTestRun = (
+  runnable: TestSuite | TestGroup | Test,
+  kind: RunnableType
+): void => {
+  switch (kind) {
+    case RunnableType.TestSuite:
+      runnable.isInCurrentTestRun = true;
+      (runnable as TestSuite).test_groups?.forEach((testGroup: TestGroup) => {
+        setInCurrentTestRun(testGroup, RunnableType.TestGroup);
+      });
+      break;
+    case RunnableType.TestGroup:
+      runnable.isInCurrentTestRun = true;
+      (runnable as TestGroup).test_groups?.forEach((testGroup: TestGroup) => {
+        setInCurrentTestRun(testGroup, RunnableType.TestGroup);
+      });
+      (runnable as TestGroup).tests?.forEach((test: Test) => {
+        setInCurrentTestRun(test, RunnableType.Test);
+      });
+      break;
+    case RunnableType.Test:
+      runnable.isInCurrentTestRun = true;
+      break;
+  }
+};

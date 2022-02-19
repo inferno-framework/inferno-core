@@ -29,9 +29,11 @@ export const mockedTestSession: TestSession = {
         tests: [],
         title: 'Group 1',
         user_runnable: true,
+        isInCurrentTestRun: false,
       },
     ],
     title: 'Demonstration Suite',
+    isInCurrentTestRun: false,
   },
   test_suite_id: 'demo',
 };

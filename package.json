@@ -33,6 +33,7 @@
     "sidekiq": "bundle exec sidekiq -r ./worker.rb",
     "dev": "concurrently --kill-others \"npm run start\" \"npm run puma\" \"npm run redis\" \"npm run sidekiq\"",
     "test": "jest ./client/src/**/*",
+    "jest": "jest --watch ./client/src/**/*",
     "eject": "react-scripts eject",
     "lint": "tsc --noEmit && eslint './client/src/**/*.{ts,tsx}'",
     "lint:fix": "tsc --noEmit && eslint './client/src/**/*.{ts,tsx}' --fix"

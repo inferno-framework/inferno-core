@@ -23,6 +23,7 @@ import PublicIcon from '@mui/icons-material/Public';
 import MailIcon from '@mui/icons-material/Mail';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PendingIcon from '@mui/icons-material/Pending';
 import ReactMarkdown from 'react-markdown';
 import TestRunButton from '../../TestRunButton/TestRunButton';
 
@@ -47,6 +48,7 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const messagesBadge = view === 'run' &&
     test.result?.messages &&
+    !test.isInCurrentTestRun &&
     test.result.messages.length > 0 && (
       <IconButton
         className={styles.badgeIcon}
@@ -63,22 +65,24 @@ const TestListItem: FC<TestListItemProps> = ({
       </IconButton>
     );
 
-  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
-    <IconButton
-      disabled={view === 'report'}
-      className={styles.badgeIcon}
-      onClick={() => {
-        setPanelIndex(2);
-        setOpen(true);
-      }}
-    >
-      <Badge badgeContent={test.result.requests.length} classes={{ badge: styles.testBadge }}>
-        <Tooltip title={`${test.result.requests.length} requests`}>
-          <PublicIcon color="secondary" />
-        </Tooltip>
-      </Badge>
-    </IconButton>
-  );
+  const requestsBadge = test.result?.requests &&
+    !test.isInCurrentTestRun &&
+    test.result.requests.length > 0 && (
+      <IconButton
+        disabled={view === 'report'}
+        className={styles.badgeIcon}
+        onClick={() => {
+          setPanelIndex(2);
+          setOpen(true);
+        }}
+      >
+        <Badge badgeContent={test.result.requests.length} classes={{ badge: styles.testBadge }}>
+          <Tooltip title={`${test.result.requests.length} requests`}>
+            <PublicIcon color="secondary" />
+          </Tooltip>
+        </Badge>
+      </IconButton>
+    );
 
   const expandButton = view === 'run' && (
     <IconButton onClick={() => setOpen(!open)} size="small">
@@ -100,15 +104,23 @@ const TestListItem: FC<TestListItemProps> = ({
     </ReactMarkdown>
   );
 
+  const getResultIcon = () => {
+    if (testRunInProgress && test.isInCurrentTestRun) {
+      return <PendingIcon color="disabled" />;
+    } else {
+      if (test.result) {
+        return <ResultIcon result={test.result} />;
+      } else {
+        return <></>;
+      }
+    }
+  };
+
   return (
     <>
       <Box className={styles.listItem}>
         <ListItem>
-          {test.result && (
-            <div className={styles.testIcon}>
-              <ResultIcon result={test.result} />
-            </div>
-          )}
+          <div className={styles.testIcon}>{getResultIcon()}</div>
           <ListItemText primary={testLabel} />
           {messagesBadge}
           {requestsBadge}

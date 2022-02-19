@@ -76,6 +76,7 @@ export interface Test {
   short_description?: string;
   user_runnable?: boolean;
   optional?: boolean;
+  isInCurrentTestRun: boolean;
 }
 
 export interface TestGroup {
@@ -97,6 +98,7 @@ export interface TestGroup {
   test_count?: number;
   optional?: boolean;
   expanded?: boolean;
+  isInCurrentTestRun: boolean;
 }
 
 export interface TestSuite {
@@ -114,6 +116,7 @@ export interface TestSuite {
   configuration_messages?: Message[];
   version?: string;
   presets?: PresetSummary[];
+  isInCurrentTestRun: boolean;
 }
 
 export interface TestSession {

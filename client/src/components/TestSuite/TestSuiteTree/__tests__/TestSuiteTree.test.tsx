@@ -19,6 +19,7 @@ const test1: Test = {
   inputs: [],
   outputs: [],
   optional: false,
+  isInCurrentTestRun: false,
 };
 const test2: Test = {
   id: 'test2',
@@ -27,6 +28,7 @@ const test2: Test = {
   inputs: [],
   outputs: [],
   optional: false,
+  isInCurrentTestRun: false,
 };
 const test3: Test = {
   id: 'test3',
@@ -36,6 +38,7 @@ const test3: Test = {
   outputs: [],
   user_runnable: true,
   optional: false,
+  isInCurrentTestRun: false,
 };
 const test4: Test = {
   id: 'test4',
@@ -45,6 +48,7 @@ const test4: Test = {
   outputs: [],
   user_runnable: true,
   optional: false,
+  isInCurrentTestRun: false,
 };
 
 const testList1 = [test1, test2];
@@ -60,6 +64,7 @@ const sequence1: TestGroup = {
   outputs: [],
   user_runnable: true,
   optional: false,
+  isInCurrentTestRun: false,
 };
 
 const sequence2: TestGroup = {
@@ -72,6 +77,7 @@ const sequence2: TestGroup = {
   outputs: [],
   user_runnable: true,
   optional: false,
+  isInCurrentTestRun: false,
 };
 
 const nestedGroup: TestGroup = {
@@ -84,6 +90,7 @@ const nestedGroup: TestGroup = {
   outputs: [],
   user_runnable: true,
   optional: false,
+  isInCurrentTestRun: false,
 };
 
 const parentGroup: TestGroup = {
@@ -96,6 +103,7 @@ const parentGroup: TestGroup = {
   outputs: [],
   user_runnable: true,
   optional: false,
+  isInCurrentTestRun: false,
 };
 
 const demoTestSuite: TestSuite = {
@@ -103,6 +111,7 @@ const demoTestSuite: TestSuite = {
   id: 'example suite',
   test_groups: [sequence1, sequence2, parentGroup],
   optional: false,
+  isInCurrentTestRun: false,
 };
 
 const testSuiteTreeProps: TestSuiteTreeProps = {

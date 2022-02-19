@@ -18,7 +18,7 @@ import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import TestSuiteReport from './TestSuiteDetails/TestSuiteReport';
-import { getAllContainedInputs } from './TestSuiteUtilities';
+import { getAllContainedInputs, setInCurrentTestRun } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
 import { Drawer, Toolbar, Box } from '@mui/material';
@@ -166,6 +166,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
                 sessionData.set(output.name, output.value);
               }
             });
+
+            if (result.test_id) {
+              const runnable = runnableMap.get(result.test_id);
+              if (runnable) {
+                runnable.isInCurrentTestRun = false;
+              }
+            }
           });
           setSessionData(new Map(sessionData));
           const updatedMap = resultsToMap(testRunResults.results, resultsMap);
@@ -214,6 +221,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         allInputs = test.inputs;
       }
     }
+
+    const goingToRun = runnableMap.get(runnableId);
+    if (goingToRun) {
+      setInCurrentTestRun(goingToRun, runnableType);
+    }
+
     allInputs.forEach((input: TestInput) => {
       input.value = sessionData.get(input.name);
     });
