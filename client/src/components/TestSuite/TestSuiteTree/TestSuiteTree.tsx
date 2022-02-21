@@ -92,7 +92,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
             ContentProps={{ testId: `${testSuite.id}/report`  } as any}
-          ></CustomTreeItem>
+          />
           <Divider />
 
         </TreeView>
