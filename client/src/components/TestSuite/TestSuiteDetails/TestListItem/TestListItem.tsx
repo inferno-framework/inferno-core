@@ -61,7 +61,7 @@ const TestListItem: FC<TestListItemProps> = ({
     </IconButton>
   );
 
-  const requestsBadge = view == 'run' && test.result?.requests && test.result.requests.length > 0 && (
+  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
     <IconButton
       className={styles.badgeIcon}
       onClick={() => {
