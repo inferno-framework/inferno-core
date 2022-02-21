@@ -77,7 +77,7 @@ const TestListItem: FC<TestListItemProps> = ({
     </IconButton>
   );
 
-  const expandButton = view == 'run' && (
+  const expandButton = view === 'run' && (
     <IconButton onClick={() => setOpen(!open)} size="small">
       {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
     </IconButton>
