@@ -104,7 +104,7 @@ export interface TestSuite {
   short_title?: string;
   id: string;
   description?: string | null;
-  short_descripton?: string;
+  short_description?: string;
   run_as_group?: boolean;
   result?: Result;
   test_count?: number;
