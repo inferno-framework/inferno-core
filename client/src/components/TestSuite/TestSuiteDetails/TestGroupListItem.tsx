@@ -129,7 +129,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
             <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
           )}
           <ListItemText primary={testGroup.title} secondary={testGroup.result?.result_message} />
-          { view == 'run' && 
+          { view === 'run' && 
             <TestRunButton
               runnable={testGroup}
               runnableType={RunnableType.TestGroup}
