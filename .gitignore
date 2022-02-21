@@ -1,4 +1,6 @@
 /data/*.db
+/data/pg
+/data/redis
 /db/*.db
 /lib/inferno/public/assets*
 /lib/inferno/public/*.js
