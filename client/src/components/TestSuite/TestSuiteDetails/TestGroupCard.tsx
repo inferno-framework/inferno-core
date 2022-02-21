@@ -24,7 +24,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
 
   const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
 
-  const description = view == 'run' && runnable.description && runnable.description.length > 0 && (
+  const description = view === 'run' && runnable.description && runnable.description.length > 0 && (
     <ReactMarkdown>{runnable.description}</ReactMarkdown>
   );
 
