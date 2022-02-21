@@ -173,7 +173,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     </>
   );
 
-  return <>{testGroup.expanded || view == 'report' ? expandedGroupListItem : folderGroupListItem}</>;
+  return <>{testGroup.expanded || view === 'report' ? expandedGroupListItem : folderGroupListItem}</>;
 };
 
 export default TestGroupListItem;
