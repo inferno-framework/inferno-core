@@ -58,7 +58,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
         runTests={runTests}
         runnable={runnable}
         testRunInProgress={testRunInProgress}
-        view={'run'}>
+        view='run'>
         {listItems}
       </TestGroupCard>
     </>
