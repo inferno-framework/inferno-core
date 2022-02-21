@@ -133,9 +133,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   if (!runnableMap.get(selectedRunnable)) {
     selectedRunnable = testSession.test_suite.id;
   }
+
   if(!['run', 'report'].includes(testView)){
     testView = 'run';
   }
+
+  let view = testView as const;
 
   function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
     setInputs(inputs);
@@ -275,7 +278,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           runTests={runTests}
           selectedRunnable={selectedRunnable}
           testRunInProgress={testRunNeedsProgressBar(testRun)}
-          view={testView}
+          view={view}
         />
       </Drawer>
       <Box className={styles.contentContainer}>
