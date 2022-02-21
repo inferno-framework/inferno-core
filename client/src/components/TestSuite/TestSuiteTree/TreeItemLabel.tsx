@@ -11,7 +11,7 @@ export interface TreeItemLabelProps {
 const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, title }) => {
   const styles = useStyles();
   return (
-    <Box className={styles.labelRoot} data-testid={`tiLabel-${runnable?.id}`}>
+    <Box className={styles.labelRoot} data-testid={`tiLabel-${runnable?.id as string}`}>
       <Box className={styles.labelContainer}>
         <Typography className={styles.labelText} variant="body2">
           {title || runnable?.short_title || runnable?.title}
