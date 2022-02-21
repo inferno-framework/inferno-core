@@ -123,7 +123,7 @@ const TestListItem: FC<TestListItemProps> = ({
           </ReactMarkdown>
         )}
       </Box>
-      {(view == 'run' && 
+      {(view === 'run' && 
       <Collapse in={open} className={styles.collapsible} unmountOnExit>
         <Divider />
         <Tabs
