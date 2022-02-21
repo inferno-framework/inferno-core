@@ -38,7 +38,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   const styles = useStyles();
 
   let selectedNode = selectedRunnable;
-  if(view == 'report'){
+  if (view === 'report') {
     selectedNode = `${selectedNode}/report`
   }
 
