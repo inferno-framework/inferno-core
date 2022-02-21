@@ -5,7 +5,7 @@ import useStyles from './styles';
 
 export interface TreeItemLabelProps {
   runnable?: TestSuite | TestGroup;
-  title?: String;
+  title?: string;
 }
 
 const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, title }) => {
