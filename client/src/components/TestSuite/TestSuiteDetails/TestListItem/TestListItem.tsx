@@ -31,6 +31,7 @@ interface TestListItemProps {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
+  view: 'report' | 'run';
 }
 
 const TestListItem: FC<TestListItemProps> = ({
@@ -38,12 +39,13 @@ const TestListItem: FC<TestListItemProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
+  view,
 }) => {
   const styles = useStyles();
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
 
-  const messagesBadge = test.result?.messages && test.result.messages.length > 0 && (
+  const messagesBadge = view == 'run' && test.result?.messages && test.result.messages.length > 0 && (
     <IconButton
       className={styles.badgeIcon}
       onClick={() => {
@@ -59,7 +61,7 @@ const TestListItem: FC<TestListItemProps> = ({
     </IconButton>
   );
 
-  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
+  const requestsBadge = view == 'run' && test.result?.requests && test.result.requests.length > 0 && (
     <IconButton
       className={styles.badgeIcon}
       onClick={() => {
@@ -75,7 +77,7 @@ const TestListItem: FC<TestListItemProps> = ({
     </IconButton>
   );
 
-  const expandButton = (
+  const expandButton = view == 'run' && (
     <IconButton onClick={() => setOpen(!open)} size="small">
       {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
     </IconButton>
@@ -121,6 +123,7 @@ const TestListItem: FC<TestListItemProps> = ({
           </ReactMarkdown>
         )}
       </Box>
+      {(view == 'run' && 
       <Collapse in={open} className={styles.collapsible} unmountOnExit>
         <Divider />
         <Tabs
@@ -153,6 +156,7 @@ const TestListItem: FC<TestListItemProps> = ({
           />
         </TabPanel>
       </Collapse>
+      )}
     </>
   );
 };
