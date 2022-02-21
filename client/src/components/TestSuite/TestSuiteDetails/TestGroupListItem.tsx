@@ -116,7 +116,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           pointerEvents: 'none',
         }}
         expandIcon={
-          (view == 'run' && 
+          (view === 'run' && 
           <ExpandMoreIcon
             sx={{
               pointerEvents: 'auto',
