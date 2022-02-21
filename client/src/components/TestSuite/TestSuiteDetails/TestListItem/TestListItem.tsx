@@ -45,7 +45,7 @@ const TestListItem: FC<TestListItemProps> = ({
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
 
-  const messagesBadge = view == 'run' && test.result?.messages && test.result.messages.length > 0 && (
+  const messagesBadge = view === 'run' && test.result?.messages && test.result.messages.length > 0 && (
     <IconButton
       className={styles.badgeIcon}
       onClick={() => {
