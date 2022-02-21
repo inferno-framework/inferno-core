@@ -41,7 +41,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
           runTests={runTests}
           updateRequest={updateRequest}
           testRunInProgress={testRunInProgress}
-          view={'run'}
+          view='run'
         />
       );
     });
