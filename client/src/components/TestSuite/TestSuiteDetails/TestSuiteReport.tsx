@@ -11,6 +11,7 @@ import {
   TestSuite,
 } from 'models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
+import TestListItem from './TestListItem/TestListItem';
 import { Button, Card, Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import useStyles from './styles';
@@ -24,23 +25,39 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({
 }) => {
   const styles = useStyles();
 
-  let testChildren = testSuite.test_groups?.map((item) => {
-    let listItems = item.test_groups.map((testGroup: TestGroup) => {
-      return (
-        <TestGroupListItem
-          key={`li-${testGroup.id}`}
-          testGroup={testGroup}
-          runTests={() => {}}
-          updateRequest={() => {}}
-          testRunInProgress={false}
-          view={'report'}
-        />
-      );
-    });
+  let listItems: JSX.Element[] = [];
+  let testChildren = testSuite.test_groups?.map((runnable) => {
+    if (runnable.test_groups.length > 0) {
+      listItems = runnable.test_groups.map((testGroup: TestGroup) => {
+        return (
+          <TestGroupListItem
+            key={`li-${testGroup.id}`}
+            testGroup={testGroup}
+            runTests={() => {}}
+            updateRequest={() => {}}
+            testRunInProgress={false}
+            view={'report'}
+          />
+        );
+      });
+    } else if ('tests' in runnable) {
+      listItems = runnable.tests.map((test: Test) => {
+        return (
+          <TestListItem
+            key={`li-${test.id}`}
+            test={test}
+            runTests={() => {}}
+            updateRequest={() => {}}
+            testRunInProgress={false}
+            view={'report'}
+          />
+        );
+      });
+    }
 
     return (<TestGroupCard
       runTests={() => {}}
-      runnable={item}
+      runnable={runnable}
       testRunInProgress={false}
       view={'report'}>
         {listItems}

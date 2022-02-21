@@ -109,12 +109,12 @@ const TestListItem: FC<TestListItemProps> = ({
           <ListItemText primary={testLabel} />
           {messagesBadge}
           {requestsBadge}
-          <TestRunButton
+          {view == 'run' && <TestRunButton
             runnable={test}
             runnableType={RunnableType.Test}
             runTests={runTests}
             testRunInProgress={testRunInProgress}
-          />
+          />}
           {expandButton}
         </ListItem>
         {test.result?.result_message && (
