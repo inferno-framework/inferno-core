@@ -57,7 +57,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           )}
         </span>
       </div>
-      {view == 'run' && description && (
+      {view === 'run' && description && (
         <>
           <Box margin="20px">{description}</Box>
           <Divider />
