@@ -8,8 +8,9 @@ import TestRunButton from '../TestRunButton/TestRunButton';
 
 interface TestGroupCardProps {
   runnable: TestSuite | TestGroup;
-  runTests: (runnableType: RunnableType, runnableId: string) => void;
+  runTests?: (runnableType: RunnableType, runnableId: string) => void;
   testRunInProgress: boolean;
+  view: 'report' | 'run';
 }
 
 const TestGroupCard: FC<TestGroupCardProps> = ({
@@ -17,12 +18,13 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
   runTests,
   children,
   testRunInProgress,
+  view,
 }) => {
   const styles = useStyles();
 
   const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
 
-  const description = runnable.description && runnable.description.length > 0 && (
+  const description = view === 'run' && runnable.description && runnable.description.length > 0 && (
     <ReactMarkdown>{runnable.description}</ReactMarkdown>
   );
 
@@ -44,16 +46,18 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           </Typography>
         </span>
         <span className={styles.testGroupCardHeaderButton}>
-          <TestRunButton
-            buttonText={buttonText}
-            runnable={runnable}
-            runnableType={runnableType}
-            runTests={runTests}
-            testRunInProgress={testRunInProgress}
-          />
+          {view === 'run' && runTests && (
+            <TestRunButton
+              buttonText={buttonText}
+              runnable={runnable}
+              runnableType={runnableType}
+              runTests={runTests}
+              testRunInProgress={testRunInProgress}
+            />
+          )}
         </span>
       </div>
-      {description && (
+      {view === 'run' && description && (
         <>
           <Box margin="20px">{description}</Box>
           <Divider />

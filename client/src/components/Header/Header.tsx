@@ -19,7 +19,7 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
   };
 
   return suiteTitle ? (
-    <AppBar position="sticky" color="default" className={styles.appbar}>
+    <AppBar color="default" className={styles.appbar}>
       <Toolbar className={styles.toolbar}>
         <Box display="flex" justifyContent="center">
           <Link href="/">

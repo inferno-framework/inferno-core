@@ -23,9 +23,10 @@ import ReactMarkdown from 'react-markdown';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
-  runTests: (runnableType: RunnableType, runnableId: string) => void;
-  updateRequest: (requestId: string, resultId: string, request: Request) => void;
+  runTests?: (runnableType: RunnableType, runnableId: string) => void;
+  updateRequest?: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
+  view: 'report' | 'run';
 }
 
 const TestGroupListItem: FC<TestGroupListItemProps> = ({
@@ -33,6 +34,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
+  view,
 }) => {
   const styles = useStyles();
   const [listItems, setListItems] = React.useState<JSX.Element[]>([]);
@@ -53,6 +55,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
             runTests={runTests}
             updateRequest={updateRequest}
             testRunInProgress={testRunInProgress}
+            view={view}
           />
         )),
       ];
@@ -67,6 +70,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
             runTests={runTests}
             updateRequest={updateRequest}
             testRunInProgress={testRunInProgress}
+            view={view}
           />
         )),
       ];
@@ -76,7 +80,12 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
 
   const nestedDescriptionPanel = (
     <Box className={styles.nestedDescriptionContainer}>
-      <Accordion disableGutters key={`${testGroup.id}-description`} className={styles.accordion}>
+      <Accordion
+        disableGutters
+        key={`${testGroup.id}-description`}
+        className={styles.accordion}
+        TransitionProps={{ unmountOnExit: true }}
+      >
         <AccordionSummary
           aria-controls={`${testGroup.title}-description-header`}
           id={`${testGroup.title}-description-header`}
@@ -103,7 +112,12 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   );
 
   const expandedGroupListItem = (
-    <Accordion disableGutters className={styles.accordion}>
+    <Accordion
+      disableGutters
+      className={styles.accordion}
+      defaultExpanded={testGroup.result?.result == 'fail' || view == 'report' ? true : undefined}
+      TransitionProps={{ unmountOnExit: true }}
+    >
       <AccordionSummary
         aria-controls={`${testGroup.title}-header`}
         id={`${testGroup.title}-header`}
@@ -112,11 +126,13 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           pointerEvents: 'none',
         }}
         expandIcon={
-          <ExpandMoreIcon
-            sx={{
-              pointerEvents: 'auto',
-            }}
-          />
+          view === 'run' && (
+            <ExpandMoreIcon
+              sx={{
+                pointerEvents: 'auto',
+              }}
+            />
+          )
         }
       >
         <ListItem className={styles.testGroupCardList}>
@@ -124,17 +140,19 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
             <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
           )}
           <ListItemText primary={testGroup.title} secondary={testGroup.result?.result_message} />
-          <TestRunButton
-            runnable={testGroup}
-            runnableType={RunnableType.TestGroup}
-            runTests={runTests}
-            testRunInProgress={testRunInProgress}
-          />
+          {view === 'run' && runTests && (
+            <TestRunButton
+              runnable={testGroup}
+              runnableType={RunnableType.TestGroup}
+              runTests={runTests}
+              testRunInProgress={testRunInProgress}
+            />
+          )}
         </ListItem>
       </AccordionSummary>
       <Divider />
       <AccordionDetails className={styles.accordionDetailContainer}>
-        {testGroup.description && nestedDescriptionPanel}
+        {testGroup.description && view == 'run' && nestedDescriptionPanel}
         <List className={styles.accordionDetail}>{listItems}</List>
       </AccordionDetails>
     </Accordion>
@@ -166,7 +184,9 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     </>
   );
 
-  return <>{testGroup.expanded ? expandedGroupListItem : folderGroupListItem}</>;
+  return (
+    <>{testGroup.expanded || view === 'report' ? expandedGroupListItem : folderGroupListItem}</>
+  );
 };
 
 export default TestGroupListItem;

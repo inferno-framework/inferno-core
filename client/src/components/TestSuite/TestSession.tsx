@@ -17,6 +17,7 @@ import useStyles from './styles';
 import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
+import TestSuiteReport from './TestSuiteDetails/TestSuiteReport';
 import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
@@ -127,10 +128,17 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
   const location = useLocation();
-  let selectedRunnable = location.hash.replace('#', '');
+  const locationHashParts = location.hash.replace('#', '').split('/');
+  let [selectedRunnable] = locationHashParts;
+  const [, testView] = locationHashParts;
+
   if (!runnableMap.get(selectedRunnable)) {
     selectedRunnable = testSession.test_suite.id;
   }
+
+  // limit to 'run' and 'report' views
+  // using this somewhat awkward form to satisfy TypeScript
+  const view = testView === 'report' ? 'report' : 'run';
 
   function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
     setInputs(inputs);
@@ -264,25 +272,30 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     <Box className={styles.testSuiteMain}>
       {testRunProgressBar()}
       <Drawer variant="permanent" anchor="left" className={styles.drawer}>
-        <Toolbar />
+        <Toolbar className={styles.spacerToolbar} />
         <TestSuiteTreeComponent
           testSuite={test_suite}
           runTests={runTests}
           selectedRunnable={selectedRunnable}
           testRunInProgress={testRunNeedsProgressBar(testRun)}
+          view={view}
         />
       </Drawer>
       <Box className={styles.contentContainer}>
-        {runnableMap.get(selectedRunnable) ? (
-          <TestSuiteDetailsPanel
-            runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
-            runTests={runTests}
-            updateRequest={updateRequest}
-            testRunInProgress={testRunNeedsProgressBar(testRun)}
-          />
-        ) : (
-          <div>error</div>
-        )}
+        <Toolbar className={styles.spacerToolbar} />
+        {runnableMap.get(selectedRunnable) &&
+          (testView == 'report' ? (
+            // This is a little strange because we are only allowing reports
+            // at the suite level right now for simplicity.
+            <TestSuiteReport testSuite={runnableMap.get(selectedRunnable) as TestSuite} />
+          ) : (
+            <TestSuiteDetailsPanel
+              runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
+              runTests={runTests}
+              updateRequest={updateRequest}
+              testRunInProgress={testRunNeedsProgressBar(testRun)}
+            />
+          ))}
         <InputsModal
           hideModal={() => setInputModalVisible(false)}
           createTestRun={createTestRun}
