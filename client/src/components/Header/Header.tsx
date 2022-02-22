@@ -30,7 +30,7 @@ const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
             {suiteTitle}
           </Typography>
           <Typography variant="subtitle1" className={styles.version}>
-            {suiteVersion ? 'v ' + suiteVersion : ''}
+            {suiteVersion ? `v ${suiteVersion}` : ''}
           </Typography>
         </Box>
         <Box>

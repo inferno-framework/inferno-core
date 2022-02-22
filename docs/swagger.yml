@@ -19,6 +19,8 @@ tags:
   description: "An individual test run"
 - name: "Request"
   description: "Details of HTTP Requests"
+- name: "Version"
+  description: "Inferno version"
 schemes:
 - "http"
 - "https"
@@ -312,6 +314,19 @@ paths:
             $ref: "#/definitions/Request"
         "404":
           description: "HTTP request not found"
+  /version:
+    get: 
+      tags: 
+      - "Version"
+      summary: "Get the version of Inferno currently being queried."
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "success"
+          schema: 
+            $ref: "#/definitions/Version" 
+            
 definitions:
   TestSession:
     type: "object"
@@ -632,4 +647,11 @@ definitions:
       name:
         type: "string"
       value:
+        type: "string"
+  Version:
+    type: "object"
+    required:
+    - "version"
+    properties:
+      version:
         type: "string"
