@@ -41,7 +41,12 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
     }
 
     return (
-      <TestGroupCard runnable={runnable} testRunInProgress={false} view={'report'}>
+      <TestGroupCard
+        key={`g-${runnable.id}`}
+        runnable={runnable}
+        testRunInProgress={false}
+        view={'report'}
+      >
         {listItems}
       </TestGroupCard>
     );
