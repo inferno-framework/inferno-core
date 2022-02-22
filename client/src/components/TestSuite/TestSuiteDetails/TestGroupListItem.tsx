@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import useStyles from './styles';
 import {
   Accordion,
@@ -37,45 +37,31 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   view,
 }) => {
   const styles = useStyles();
-  const [listItems, setListItems] = React.useState<JSX.Element[]>([]);
 
-  useEffect(() => {
-    populateListItems();
-  }, []);
+  const renderGroupListItems = (): JSX.Element[] => {
+    return testGroup.test_groups.map((tg: TestGroup) => (
+      <TestGroupListItem
+        key={`li-${tg.id}`}
+        testGroup={tg}
+        runTests={runTests}
+        updateRequest={updateRequest}
+        testRunInProgress={testRunInProgress}
+        view={view}
+      />
+    ));
+  };
 
-  const populateListItems = () => {
-    let list: JSX.Element[] = [];
-    if ('test_groups' in testGroup) {
-      list = [
-        ...list,
-        ...testGroup.test_groups.map((tg: TestGroup) => (
-          <TestGroupListItem
-            key={`li-${tg.id}`}
-            testGroup={tg}
-            runTests={runTests}
-            updateRequest={updateRequest}
-            testRunInProgress={testRunInProgress}
-            view={view}
-          />
-        )),
-      ];
-    }
-    if ('tests' in testGroup) {
-      list = [
-        ...list,
-        ...testGroup.tests.map((test: Test) => (
-          <TestListItem
-            key={`li-${test.id}`}
-            test={test}
-            runTests={runTests}
-            updateRequest={updateRequest}
-            testRunInProgress={testRunInProgress}
-            view={view}
-          />
-        )),
-      ];
-    }
-    setListItems(list);
+  const renderTestListItems = (): JSX.Element[] => {
+    return testGroup.tests.map((test: Test) => (
+      <TestListItem
+        key={`li-${test.id}`}
+        test={test}
+        runTests={runTests}
+        updateRequest={updateRequest}
+        testRunInProgress={testRunInProgress}
+        view={view}
+      />
+    ));
   };
 
   const nestedDescriptionPanel = (
@@ -153,7 +139,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       <Divider />
       <AccordionDetails className={styles.accordionDetailContainer}>
         {testGroup.description && view == 'run' && nestedDescriptionPanel}
-        <List className={styles.accordionDetail}>{listItems}</List>
+        <List className={styles.accordionDetail}>
+          {'test_groups' in testGroup && renderGroupListItems()}
+          {'tests' in testGroup && renderTestListItems()}
+        </List>
       </AccordionDetails>
     </Accordion>
   );

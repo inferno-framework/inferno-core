@@ -65,6 +65,7 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
     <IconButton
+      disabled={view === 'report'}
       className={styles.badgeIcon}
       onClick={() => {
         setPanelIndex(2);
