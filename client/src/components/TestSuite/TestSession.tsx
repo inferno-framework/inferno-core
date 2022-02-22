@@ -128,17 +128,15 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
   const location = useLocation();
-  let [selectedRunnable, testView = 'run'] = location.hash.replace('#', '').split('/');
+  let [selectedRunnable, testView] = location.hash.replace('#', '').split('/');
 
   if (!runnableMap.get(selectedRunnable)) {
     selectedRunnable = testSession.test_suite.id;
   }
 
-  if(!['run', 'report'].includes(testView)){
-    testView = 'run';
-  }
-
-  let view = testView as const;
+  // limit to 'run' and 'report' views
+  // using this somewhat awkward form to satisfy TypeScript
+  const view = ((testView === 'run') ? 'run' : 'report');
 
   function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
     setInputs(inputs);
