@@ -1,15 +1,17 @@
-import { getApiEndpoint } from "./infernoApiService";
+import { getApiEndpoint } from './infernoApiService';
 
 export function getCoreVersion(): Promise<string> {
-  const versionsEndpoint = getApiEndpoint('/version')
-  return fetch(versionsEndpoint)
+  let version = '';
+  const endpoint = getApiEndpoint('/version');
+  return fetch(endpoint)
     .then((response) => response.json())
     .then((result) => {
-      result as String;
-      return result;
+      version = result.version as string;
+      return version;
+      // return 'version' in result ? (result.version as string) : '';
     })
     .catch((e) => {
-      console.log(e)
-      return [];
+      console.log(e);
+      return '';
     });
 }

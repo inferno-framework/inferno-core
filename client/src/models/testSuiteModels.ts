@@ -108,6 +108,7 @@ export interface TestSuite {
   test_groups?: TestGroup[];
   optional?: boolean;
   input_instructions?: string;
+  version?: string;
 }
 
 export interface TestSession {

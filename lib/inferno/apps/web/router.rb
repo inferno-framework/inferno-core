@@ -24,7 +24,7 @@ module Inferno
 
           resources 'requests', only: [:show]
 
-          resources 'version', only: [:show]
+          get '/version', to: ->(_env) { [200, {}, [{ 'version' => Inferno::VERSION.to_s }.to_json]] }, as: :api_version
         end
 
         get '/', to: ->(_env) { [200, {}, [client_page]] }
