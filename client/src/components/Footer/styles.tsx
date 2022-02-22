@@ -29,4 +29,8 @@ export default makeStyles((theme: Theme) => ({
     objectFit: 'contain',
     height: '2.5em',
   },
+  version: {
+    fontStyle: 'italic',
+    padding: '8px',
+  },
 }));

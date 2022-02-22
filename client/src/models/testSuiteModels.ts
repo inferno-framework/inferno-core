@@ -112,6 +112,7 @@ export interface TestSuite {
   optional?: boolean;
   input_instructions?: string;
   configuration_messages?: Message[];
+  version?: string;
 }
 
 export interface TestSession {

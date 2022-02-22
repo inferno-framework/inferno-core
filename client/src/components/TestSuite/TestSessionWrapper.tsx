@@ -25,17 +25,17 @@ const TestSessionWrapper: FC<unknown> = () => {
   const [attemptedGetResults, setAttemptedGetResults] = React.useState(false);
   const [attemptedGetSessionData, setAttemptedSessionData] = React.useState(false);
   const [attemptingFetchSessionInfo, setAttemptingFetchSessionInfo] = React.useState(false);
-  const [coreVersion, setCoreVersion] = React.useState<string>();
+  const [coreVersion, setCoreVersion] = React.useState<string>('');
 
-  // useEffect(() => {
-  //   getCoreVersion()
-  //     .then((version: string) => {
-  //       setCoreVersion(version);
-  //     })
-  //     .catch((e) => {
-  //       console.log(e)
-  //     });
-  // }, );
+  useEffect(() => {
+    getCoreVersion()
+      .then((version: string) => {
+        setCoreVersion(version);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
 
   function tryGetTestSession(test_session_id: string) {
     getTestSession(test_session_id)
@@ -92,14 +92,17 @@ const TestSessionWrapper: FC<unknown> = () => {
   if (testSession && testResults && sessionData) {
     return (
       <Box className={styles.testSessionContainer}>
-        <Header suiteTitle={testSession.test_suite.title} />
+        <Header
+          suiteTitle={testSession.test_suite.title}
+          suiteVersion={testSession.test_suite.version}
+        />
         <TestSessionComponent
           testSession={testSession}
           previousResults={testResults}
           initialTestRun={testRun}
           initialSessionData={sessionData}
         />
-        <Footer versionNumber={'coreVersion'} />
+        <Footer version={coreVersion} />
       </Box>
     );
   } else if (

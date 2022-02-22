@@ -8,9 +8,10 @@ import { getStaticPath } from 'api/infernoApiService';
 
 export interface HeaderProps {
   suiteTitle?: string;
+  suiteVersion?: string;
 }
 
-const Header: FC<HeaderProps> = ({ suiteTitle }) => {
+const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
   const styles = useStyles();
   const history = useHistory();
 
@@ -27,6 +28,9 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
           </Link>
           <Typography variant="h5" component="h1" className={styles.title}>
             {suiteTitle}
+          </Typography>
+          <Typography variant="subtitle1" className={styles.version}>
+            {suiteVersion ? 'v ' + suiteVersion : ''}
           </Typography>
         </Box>
         <Box>

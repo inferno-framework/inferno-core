@@ -28,6 +28,9 @@ export default makeStyles((theme: Theme) => ({
     height: '3em',
   },
   title: {
-    padding: '0 16px',
+    padding: '0 8px',
+  },
+  version: {
+    fontStyle: 'italic',
   },
 }));
