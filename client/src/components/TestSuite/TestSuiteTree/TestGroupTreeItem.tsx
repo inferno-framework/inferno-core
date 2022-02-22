@@ -15,9 +15,12 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
   runTests,
   testRunInProgress,
 }) => {
-  let sublist: JSX.Element[] = [];
-  if (testGroup.test_groups.length > 0 && !testGroup.run_as_group) {
-    sublist = testGroup.test_groups.map((subTestGroup, index) => (
+  const itemIcon = (testGroup.run_as_group || testGroup.test_groups.length === 0) && (
+    <CondensedResultIcon result={testGroup.result} />
+  );
+
+  const renderSublist = (): JSX.Element[] => {
+    return testGroup.test_groups.map((subTestGroup, index) => (
       <TestGroupTreeItem
         testGroup={subTestGroup}
         runTests={runTests}
@@ -25,11 +28,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
         testRunInProgress={testRunInProgress}
       />
     ));
-  }
-
-  const itemIcon = (testGroup.run_as_group || testGroup.test_groups.length === 0) && (
-    <CondensedResultIcon result={testGroup.result} />
-  );
+  };
 
   return (
     <CustomTreeItem
@@ -40,7 +39,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       ContentProps={{ testId: testGroup.id } as any}
     >
-      {sublist}
+      {testGroup.test_groups.length > 0 && !testGroup.run_as_group && renderSublist()}
     </CustomTreeItem>
   );
 };
