@@ -8,6 +8,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ErrorIcon from '@mui/icons-material/Error';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import BlockIcon from '@mui/icons-material/Block';
+
 export interface ResultIconProps {
   result?: Result;
 }

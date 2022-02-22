@@ -6,6 +6,7 @@ import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import FlagIcon from '@mui/icons-material/Flag';
 import CustomTreeItem from '../../_common/TreeItem';
 import TestGroupTreeItem from './TestGroupTreeItem';
 import TreeItemLabel from './TreeItemLabel';
@@ -15,6 +16,7 @@ export interface TestSuiteTreeProps {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   selectedRunnable: string;
   testRunInProgress: boolean;
+  view: 'run' | 'report';
 }
 
 function addDefaultExpanded(testGroups: TestGroup[], defaultExpanded: string[]): void {
@@ -31,8 +33,14 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   selectedRunnable,
   runTests,
   testRunInProgress,
+  view,
 }) => {
   const styles = useStyles();
+
+  let selectedNode = selectedRunnable;
+  if (view === 'report') {
+    selectedNode = `${selectedNode}/report`;
+  }
 
   const defaultExpanded: string[] = [testSuite.id];
   if (testSuite.test_groups) {
@@ -63,7 +71,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           defaultExpandIcon={<ChevronRightIcon />}
           onNodeToggle={nodeToggle}
           expanded={expanded}
-          selected={selectedRunnable}
+          selected={selectedNode}
         >
           <CustomTreeItem
             classes={{ content: styles.treeRoot }}
@@ -76,6 +84,16 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           />
           <Divider />
           {testGroupList}
+          <Divider />
+          <CustomTreeItem
+            nodeId={`${testSuite.id}/report`}
+            label={<TreeItemLabel title={'Report'} />}
+            icon={<FlagIcon />}
+            // eslint-disable-next-line max-len
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+            ContentProps={{ testId: `${testSuite.id}/report` } as any}
+          />
+          <Divider />
         </TreeView>
       </Box>
     );

@@ -11,7 +11,7 @@ export default makeStyles((theme: Theme) => ({
     padding: '0 60px',
   },
   selectedItem: {
-    backgroundColor: 'rgba(248, 139, 48, 0.42) !important',
+    backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
   },
   getStarted: {
     marginTop: '20px',

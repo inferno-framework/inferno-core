@@ -14,6 +14,7 @@ jest.mock('react-router-dom', () => ({
 
 const test1: Test = {
   id: 'test1',
+  short_id: '1.1',
   title: 'FHIR server makes SMART configuration available from well-known endpoint',
   inputs: [],
   outputs: [],
@@ -21,6 +22,7 @@ const test1: Test = {
 };
 const test2: Test = {
   id: 'test2',
+  short_id: '1.2',
   title: 'Well-known configuration contains required fields',
   inputs: [],
   outputs: [],
@@ -28,6 +30,7 @@ const test2: Test = {
 };
 const test3: Test = {
   id: 'test3',
+  short_id: '2.1',
   title: 'Client registration endpoint secured by transport layer security',
   inputs: [],
   outputs: [],
@@ -36,6 +39,7 @@ const test3: Test = {
 };
 const test4: Test = {
   id: 'test4',
+  short_id: '2.2',
   title: 'Client registration endpoint accepts POST messages',
   inputs: [],
   outputs: [],
@@ -48,6 +52,7 @@ const testList2 = [test3, test4];
 
 const sequence1: TestGroup = {
   tests: testList1,
+  short_id: '1',
   test_groups: [],
   title: 'SMART on FHIR Discovery',
   id: 'group0',
@@ -59,6 +64,7 @@ const sequence1: TestGroup = {
 
 const sequence2: TestGroup = {
   tests: testList2,
+  short_id: '2',
   test_groups: [],
   title: 'Dynamic Registration',
   id: 'group1',
@@ -70,6 +76,7 @@ const sequence2: TestGroup = {
 
 const nestedGroup: TestGroup = {
   tests: [],
+  short_id: '3.1',
   test_groups: [],
   title: 'nested group',
   id: 'group2',
@@ -81,6 +88,7 @@ const nestedGroup: TestGroup = {
 
 const parentGroup: TestGroup = {
   tests: [],
+  short_id: '3',
   test_groups: [nestedGroup],
   title: 'i have a nested group',
   id: 'group3',
@@ -102,6 +110,7 @@ const testSuiteTreeProps: TestSuiteTreeProps = {
   runTests: runTestsMock,
   selectedRunnable: 'example suite',
   testRunInProgress: false,
+  view: 'run',
 };
 
 test('Test tree renders', () => {

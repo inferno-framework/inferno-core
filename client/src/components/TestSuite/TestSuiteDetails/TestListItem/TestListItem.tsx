@@ -28,9 +28,10 @@ import TestRunButton from '../../TestRunButton/TestRunButton';
 
 interface TestListItemProps {
   test: Test;
-  runTests: (runnableType: RunnableType, runnableId: string) => void;
-  updateRequest: (requestId: string, resultId: string, request: Request) => void;
+  runTests?: (runnableType: RunnableType, runnableId: string) => void;
+  updateRequest?: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
+  view: 'report' | 'run';
 }
 
 const TestListItem: FC<TestListItemProps> = ({
@@ -38,27 +39,29 @@ const TestListItem: FC<TestListItemProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
+  view,
 }) => {
   const styles = useStyles();
-
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
 
-  const messagesBadge = test.result?.messages && test.result.messages.length > 0 && (
-    <IconButton
-      className={styles.badgeIcon}
-      onClick={() => {
-        setPanelIndex(1);
-        setOpen(true);
-      }}
-    >
-      <Badge badgeContent={test.result.messages.length} classes={{ badge: styles.testBadge }}>
-        <Tooltip title={`${test.result.messages.length} messages`}>
-          <MailIcon color="secondary" />
-        </Tooltip>
-      </Badge>
-    </IconButton>
-  );
+  const messagesBadge = view === 'run' &&
+    test.result?.messages &&
+    test.result.messages.length > 0 && (
+      <IconButton
+        className={styles.badgeIcon}
+        onClick={() => {
+          setPanelIndex(1);
+          setOpen(true);
+        }}
+      >
+        <Badge badgeContent={test.result.messages.length} classes={{ badge: styles.testBadge }}>
+          <Tooltip title={`${test.result.messages.length} messages`}>
+            <MailIcon color="secondary" />
+          </Tooltip>
+        </Badge>
+      </IconButton>
+    );
 
   const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
     <IconButton
@@ -76,29 +79,25 @@ const TestListItem: FC<TestListItemProps> = ({
     </IconButton>
   );
 
-  const expandButton = open ? (
-    <IconButton onClick={() => setOpen(false)} size="small">
-      <ExpandLessIcon />
-    </IconButton>
-  ) : (
-    <IconButton onClick={() => setOpen(true)} size="small">
-      <ExpandMoreIcon />
+  const expandButton = view === 'run' && (
+    <IconButton onClick={() => setOpen(!open)} size="small">
+      {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
     </IconButton>
   );
 
   const testLabel = (
     <>
+      <Typography className={styles.shortId}>{test.short_id}</Typography>
       {test.optional && <Typography className={styles.optionalLabel}>Optional</Typography>}
       <Typography className={styles.labelText}>{test.title}</Typography>
     </>
   );
 
-  const testDescription =
-    test.description && test.description.length > 0 ? (
-      <ReactMarkdown>{test.description}</ReactMarkdown>
-    ) : (
-      'No description'
-    );
+  const testDescription = (
+    <ReactMarkdown>
+      {test.description && test.description.length > 0 ? test.description : 'No description'}
+    </ReactMarkdown>
+  );
 
   return (
     <>
@@ -112,12 +111,14 @@ const TestListItem: FC<TestListItemProps> = ({
           <ListItemText primary={testLabel} />
           {messagesBadge}
           {requestsBadge}
-          <TestRunButton
-            runnable={test}
-            runnableType={RunnableType.Test}
-            runTests={runTests}
-            testRunInProgress={testRunInProgress}
-          />
+          {view === 'run' && runTests && (
+            <TestRunButton
+              runnable={test}
+              runnableType={RunnableType.Test}
+              runTests={runTests}
+              testRunInProgress={testRunInProgress}
+            />
+          )}
           {expandButton}
         </ListItem>
         {test.result?.result_message && (
@@ -126,37 +127,42 @@ const TestListItem: FC<TestListItemProps> = ({
           </ReactMarkdown>
         )}
       </Box>
-      <Collapse in={open} className={styles.collapsible} unmountOnExit>
-        <Divider />
-        <Tabs
-          value={panelIndex}
-          className={styles.tabs}
-          onChange={(_event, newIndex) => {
-            setPanelIndex(newIndex);
-          }}
-          variant="fullWidth"
-        >
-          <Tab label="About" />
-          <Tab label="Messages" />
-          <Tab label="HTTP Requests" />
-        </Tabs>
-        <Divider />
-        <TabPanel currentPanelIndex={panelIndex} index={0}>
-          <Container className={styles.descriptionPanel}>
-            <Typography variant="subtitle2">{testDescription}</Typography>
-          </Container>
-        </TabPanel>
-        <TabPanel currentPanelIndex={panelIndex} index={1}>
-          <MessagesList messages={test.result?.messages || []} />
-        </TabPanel>
-        <TabPanel currentPanelIndex={panelIndex} index={2}>
-          <RequestsList
-            requests={test.result?.requests || []}
-            resultId={test.result?.id || ''}
-            updateRequest={updateRequest}
-          />
-        </TabPanel>
-      </Collapse>
+      {view === 'run' && (
+        <Collapse in={open} className={styles.collapsible} unmountOnExit>
+          <Divider />
+          <Tabs
+            value={panelIndex}
+            className={styles.tabs}
+            onChange={(_event, newIndex) => {
+              setPanelIndex(newIndex);
+            }}
+            variant="fullWidth"
+          >
+            <Tab label="About" />
+            <Tab label="Messages" />
+            <Tab label="HTTP Requests" />
+          </Tabs>
+          <Divider />
+          <TabPanel currentPanelIndex={panelIndex} index={0}>
+            <Container>
+              <Typography variant="subtitle2">{testDescription}</Typography>
+            </Container>
+            <Divider />
+          </TabPanel>
+          <TabPanel currentPanelIndex={panelIndex} index={1}>
+            <MessagesList messages={test.result?.messages || []} />
+          </TabPanel>
+          <TabPanel currentPanelIndex={panelIndex} index={2}>
+            {updateRequest && (
+              <RequestsList
+                requests={test.result?.requests || []}
+                resultId={test.result?.id || ''}
+                updateRequest={updateRequest}
+              />
+            )}
+          </TabPanel>
+        </Collapse>
+      )}
     </>
   );
 };

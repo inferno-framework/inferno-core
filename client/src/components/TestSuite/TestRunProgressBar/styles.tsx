@@ -7,7 +7,7 @@ import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
   cancelButton: {
-    color: theme.palette.common.blueLighter,
+    color: theme.palette.common.blueLight,
     '&:disabled': {
       color: theme.palette.common.grayLight,
     },

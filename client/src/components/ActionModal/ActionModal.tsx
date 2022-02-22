@@ -20,7 +20,7 @@ const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTestRu
     <Dialog open={modalVisible} fullWidth maxWidth="sm">
       <DialogTitle>User Action Required</DialogTitle>
       <DialogContent>
-        <DialogContentText>
+        <DialogContentText component="div">
           <ReactMarkdown>{message || ''}</ReactMarkdown>
         </DialogContentText>
       </DialogContent>

@@ -1,6 +1,6 @@
 export type Message = {
   message: string;
-  type: string;
+  type: 'error' | 'warning' | 'info';
 };
 
 export type RequestHeader = {
@@ -65,6 +65,7 @@ export interface TestOutput {
 
 export interface Test {
   id: string;
+  short_id: string;
   title: string;
   short_title?: string;
   result?: Result;
@@ -79,6 +80,7 @@ export interface Test {
 
 export interface TestGroup {
   id: string;
+  short_id: string;
   title: string;
   short_title?: string;
   parent_group?: TestGroup | null;
@@ -94,6 +96,7 @@ export interface TestGroup {
   user_runnable?: boolean;
   test_count?: number;
   optional?: boolean;
+  expanded?: boolean;
 }
 
 export interface TestSuite {
@@ -101,13 +104,14 @@ export interface TestSuite {
   short_title?: string;
   id: string;
   description?: string | null;
-  short_descripton?: string;
+  short_description?: string;
   run_as_group?: boolean;
   result?: Result;
   test_count?: number;
   test_groups?: TestGroup[];
   optional?: boolean;
   input_instructions?: string;
+  configuration_messages?: Message[];
   version?: string;
 }
 

@@ -19,6 +19,8 @@ tags:
   description: "An individual test run"
 - name: "Request"
   description: "Details of HTTP Requests"
+- name: "Version"
+  description: "Inferno version"
 schemes:
 - "http"
 - "https"
@@ -57,6 +59,29 @@ paths:
           description: "Success"
           schema:
             $ref: "#/definitions/TestSuite"
+        "404":
+          description: "Test suite not found"
+  /test_suites/{test_suite_id}/check_configuration:
+    put:
+      tags:
+      - "Test Suite"
+      summary: "Check the configuration for a test suite"
+      description: ""
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_suite_id"
+        description: "ID of the test suite"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Message"
         "404":
           description: "Test suite not found"
   /test_sessions:
@@ -289,6 +314,19 @@ paths:
             $ref: "#/definitions/Request"
         "404":
           description: "HTTP request not found"
+  /version:
+    get: 
+      tags: 
+      - "Version"
+      summary: "Get the version of Inferno currently being queried."
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "success"
+          schema: 
+            $ref: "#/definitions/Version" 
+            
 definitions:
   TestSession:
     type: "object"
@@ -489,12 +527,18 @@ definitions:
         readOnly: true
       version:
         type: "string"
+      configuration_messages:
+        type: "array"
+        items:
+          $ref: "#/definitions/Message"
   TestGroup:
     type: "object"
     required:
     - "id"
     properties:
       id:
+        type: "string"
+      short_id:
         type: "string"
       title:
         type: "string"
@@ -536,6 +580,8 @@ definitions:
     - "name"
     properties:
       id:
+        type: "string"
+      short_id:
         type: "string"
       title:
         type: "string"
@@ -601,4 +647,11 @@ definitions:
       name:
         type: "string"
       value:
+        type: "string"
+  Version:
+    type: "object"
+    required:
+    - "version"
+    properties:
+      version:
         type: "string"
