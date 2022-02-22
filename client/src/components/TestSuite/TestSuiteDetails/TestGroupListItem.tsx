@@ -80,7 +80,12 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
 
   const nestedDescriptionPanel = (
     <Box className={styles.nestedDescriptionContainer}>
-      <Accordion disableGutters key={`${testGroup.id}-description`} className={styles.accordion}>
+      <Accordion
+        disableGutters
+        key={`${testGroup.id}-description`}
+        className={styles.accordion}
+        TransitionProps={{ unmountOnExit: true }}
+      >
         <AccordionSummary
           aria-controls={`${testGroup.title}-description-header`}
           id={`${testGroup.title}-description-header`}
@@ -110,7 +115,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     <Accordion
       disableGutters
       className={styles.accordion}
-      expanded={testGroup.result?.result == 'fail' || view == 'report' ? true : undefined}
+      defaultExpanded={testGroup.result?.result == 'fail' || view == 'report' ? true : undefined}
+      TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary
         aria-controls={`${testGroup.title}-header`}
