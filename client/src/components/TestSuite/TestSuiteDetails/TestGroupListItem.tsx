@@ -23,8 +23,8 @@ import ReactMarkdown from 'react-markdown';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
-  runTests: (runnableType: RunnableType, runnableId: string) => void;
-  updateRequest: (requestId: string, resultId: string, request: Request) => void;
+  runTests?: (runnableType: RunnableType, runnableId: string) => void;
+  updateRequest?: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
   view: 'report' | 'run';
 }
@@ -107,7 +107,11 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   );
 
   const expandedGroupListItem = (
-    <Accordion disableGutters className={styles.accordion} expanded={(testGroup.result?.result == 'fail' || view == 'report') ? true : undefined}>
+    <Accordion
+      disableGutters
+      className={styles.accordion}
+      expanded={testGroup.result?.result == 'fail' || view == 'report' ? true : undefined}
+    >
       <AccordionSummary
         aria-controls={`${testGroup.title}-header`}
         id={`${testGroup.title}-header`}
@@ -116,12 +120,13 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           pointerEvents: 'none',
         }}
         expandIcon={
-          (view === 'run' && 
-          <ExpandMoreIcon
-            sx={{
-              pointerEvents: 'auto',
-            }}
-          />)
+          view === 'run' && (
+            <ExpandMoreIcon
+              sx={{
+                pointerEvents: 'auto',
+              }}
+            />
+          )
         }
       >
         <ListItem className={styles.testGroupCardList}>
@@ -129,14 +134,14 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
             <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
           )}
           <ListItemText primary={testGroup.title} secondary={testGroup.result?.result_message} />
-          { view === 'run' && 
+          {view === 'run' && runTests && (
             <TestRunButton
               runnable={testGroup}
               runnableType={RunnableType.TestGroup}
               runTests={runTests}
               testRunInProgress={testRunInProgress}
             />
-          }
+          )}
         </ListItem>
       </AccordionSummary>
       <Divider />
@@ -173,7 +178,9 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     </>
   );
 
-  return <>{testGroup.expanded || view === 'report' ? expandedGroupListItem : folderGroupListItem}</>;
+  return (
+    <>{testGroup.expanded || view === 'report' ? expandedGroupListItem : folderGroupListItem}</>
+  );
 };
 
 export default TestGroupListItem;

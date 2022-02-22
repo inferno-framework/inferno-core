@@ -73,8 +73,8 @@ export default makeStyles((theme: Theme) => ({
     color: theme.palette.common.grayLight,
   },
   printButton: {
-    '@media print' : {
-      display: 'none'
-    }
-  }
+    '@media print': {
+      display: 'none',
+    },
+  },
 }));

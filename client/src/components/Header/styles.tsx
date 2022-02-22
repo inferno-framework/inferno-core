@@ -19,8 +19,8 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     width: '100%',
-    '@media print' : {
-      display: 'none'
+    '@media print': {
+      display: 'none',
     },
   },
   logo: {

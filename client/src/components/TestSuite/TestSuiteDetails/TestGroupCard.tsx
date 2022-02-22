@@ -8,7 +8,7 @@ import TestRunButton from '../TestRunButton/TestRunButton';
 
 interface TestGroupCardProps {
   runnable: TestSuite | TestGroup;
-  runTests: (runnableType: RunnableType, runnableId: string) => void;
+  runTests?: (runnableType: RunnableType, runnableId: string) => void;
   testRunInProgress: boolean;
   view: 'report' | 'run';
 }
@@ -46,14 +46,14 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           </Typography>
         </span>
         <span className={styles.testGroupCardHeaderButton}>
-          {view === 'run' && (
-          <TestRunButton
-            buttonText={buttonText}
-            runnable={runnable}
-            runnableType={runnableType}
-            runTests={runTests}
-            testRunInProgress={testRunInProgress}
-          />
+          {view === 'run' && runTests && (
+            <TestRunButton
+              buttonText={buttonText}
+              runnable={runnable}
+              runnableType={runnableType}
+              runTests={runTests}
+              testRunInProgress={testRunInProgress}
+            />
           )}
         </span>
       </div>

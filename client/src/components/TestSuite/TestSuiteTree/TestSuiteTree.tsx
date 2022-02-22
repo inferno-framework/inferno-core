@@ -39,7 +39,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
 
   let selectedNode = selectedRunnable;
   if (view === 'report') {
-    selectedNode = `${selectedNode}/report`
+    selectedNode = `${selectedNode}/report`;
   }
 
   const defaultExpanded: string[] = [testSuite.id];
@@ -86,15 +86,14 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           {testGroupList}
           <Divider />
           <CustomTreeItem
-            nodeId={`${testSuite.id}/report` }
+            nodeId={`${testSuite.id}/report`}
             label={<TreeItemLabel title={'Report'} />}
-            icon={<FlagIcon/>}
+            icon={<FlagIcon />}
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-            ContentProps={{ testId: `${testSuite.id}/report`  } as any}
+            ContentProps={{ testId: `${testSuite.id}/report` } as any}
           />
           <Divider />
-
         </TreeView>
       </Box>
     );

@@ -128,7 +128,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
   const location = useLocation();
-  let [selectedRunnable, testView] = location.hash.replace('#', '').split('/');
+  const locationHashParts = location.hash.replace('#', '').split('/');
+  let [selectedRunnable] = locationHashParts;
+  const [, testView] = locationHashParts;
 
   if (!runnableMap.get(selectedRunnable)) {
     selectedRunnable = testSession.test_suite.id;
@@ -136,7 +138,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   // limit to 'run' and 'report' views
   // using this somewhat awkward form to satisfy TypeScript
-  const view = ((testView === 'run') ? 'run' : 'report');
+  const view = testView === 'run' ? 'run' : 'report';
 
   function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
     setInputs(inputs);
@@ -270,7 +272,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     <Box className={styles.testSuiteMain}>
       {testRunProgressBar()}
       <Drawer variant="permanent" anchor="left" className={styles.drawer}>
-        <Toolbar className={styles.spacerToolbar}/>
+        <Toolbar className={styles.spacerToolbar} />
         <TestSuiteTreeComponent
           testSuite={test_suite}
           runTests={runTests}
@@ -280,14 +282,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         />
       </Drawer>
       <Box className={styles.contentContainer}>
-        <Toolbar className={styles.spacerToolbar}/>
-        {runnableMap.get(selectedRunnable) ? (
-          (testView == 'report') ? (
+        <Toolbar className={styles.spacerToolbar} />
+        {runnableMap.get(selectedRunnable) &&
+          (testView == 'report' ? (
             // This is a little strange because we are only allowing reports
             // at the suite level right now for simplicity.
-            <TestSuiteReport
-              testSuite={runnableMap.get(selectedRunnable) as TestSuite}
-              />
+            <TestSuiteReport testSuite={runnableMap.get(selectedRunnable) as TestSuite} />
           ) : (
             <TestSuiteDetailsPanel
               runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
@@ -295,10 +295,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
               updateRequest={updateRequest}
               testRunInProgress={testRunNeedsProgressBar(testRun)}
             />
-          )
-        ) : (
-          <div>error</div>
-        )}
+          ))}
         <InputsModal
           hideModal={() => setInputModalVisible(false)}
           createTestRun={createTestRun}

@@ -13,8 +13,8 @@ export default makeStyles((theme: Theme) => ({
   drawer: {
     flexShrink: 0,
     width: '300px',
-    '@media print' : {
-      display: 'none'
+    '@media print': {
+      display: 'none',
     },
   },
   testSessionContainer: {
@@ -43,8 +43,8 @@ export default makeStyles((theme: Theme) => ({
     padding: theme.spacing(0.5, 0),
   },
   spacerToolbar: {
-    '@media print' : {
-      display: 'none'
+    '@media print': {
+      display: 'none',
     },
-  }
+  },
 }));
