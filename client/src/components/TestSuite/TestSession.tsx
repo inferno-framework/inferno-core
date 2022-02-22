@@ -138,7 +138,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   // limit to 'run' and 'report' views
   // using this somewhat awkward form to satisfy TypeScript
-  const view = testView === 'run' ? 'run' : 'report';
+  const view = testView === 'report' ? 'report' : 'run';
 
   function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
     setInputs(inputs);
