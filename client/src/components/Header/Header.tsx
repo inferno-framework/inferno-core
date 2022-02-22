@@ -26,12 +26,16 @@ const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
           <Link href="/">
             <img src={getStaticPath(icon as string)} alt="inferno logo" className={styles.logo} />
           </Link>
-          <Typography variant="h5" component="h1" className={styles.title}>
-            {suiteTitle}
-          </Typography>
-          <Typography variant="subtitle1" className={styles.version}>
-            {suiteVersion ? 'v ' + suiteVersion : ''}
-          </Typography>
+          <Box className={styles.titleContainer}>
+            <Typography variant="h5" component="h1" className={styles.title}>
+              {suiteTitle}
+            </Typography>
+            {suiteVersion && (
+              <Typography variant="overline" className={styles.version}>
+                {`v.${suiteVersion}`}
+              </Typography>
+            )}
+          </Box>
         </Box>
         <Box>
           <Button

@@ -22,7 +22,11 @@ const Footer: FC<FooterProps> = ({ version }) => {
           >
             <img src={getStaticPath(logo as string)} alt="inferno logo" className={styles.logo} />
           </Link>
-          <Typography className={styles.version}>{'v ' + version}</Typography>
+          {version && (
+            <Typography variant="overline" className={styles.version}>
+              {`version ${version}`}
+            </Typography>
+          )}
         </Box>
       </Container>
     </Box>
