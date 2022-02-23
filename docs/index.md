@@ -46,12 +46,12 @@ Inferno exposes a JSON API for automated execution within your CI pipeline.
 GET /api/test_suites
 
 [
-	{
-		"id": "ONCProgram::Suite",
-		"description": "ONC Standardized API Testing ",
-		"test_count": 427,
-		"title": "2015 Edition Cures Update -  Standardized API Testing"
-	}
+  {
+    "id": "ONCProgram::Suite",
+    "description": "ONC Standardized API Testing ",
+    "test_count": 427,
+    "title": "2015 Edition Cures Update -  Standardized API Testing"
+  }
 ]
 ```
 
