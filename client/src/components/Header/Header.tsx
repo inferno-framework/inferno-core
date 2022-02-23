@@ -21,7 +21,7 @@ const Header: FC<HeaderProps> = ({
   suiteVersion,
   presets,
   testSessionId,
-  getSessionData
+  getSessionData,
 }) => {
   const styles = useStyles();
   const history = useHistory();
