@@ -296,12 +296,16 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           (testView == 'report' ? (
             // This is a little strange because we are only allowing reports
             // at the suite level right now for simplicity.
-            <TestSuiteReport testSuite={runnableMap.get(selectedRunnable) as TestSuite} />
+            <TestSuiteReport
+              testSuite={runnableMap.get(selectedRunnable) as TestSuite}
+              testRun={testRun}
+            />
           ) : (
             <TestSuiteDetailsPanel
               runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
               runTests={runTests}
               updateRequest={updateRequest}
+              testRun={testRun}
               testRunInProgress={testRunNeedsProgressBar(testRun)}
             />
           ))}

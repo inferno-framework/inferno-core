@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import TestGroupCard from 'components/TestSuite/TestSuiteDetails/TestGroupCard';
-import { TestGroup, Test, TestSuite } from 'models/testSuiteModels';
+import { TestGroup, Test, TestSuite, TestRun } from 'models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
 import { Button, Card, Typography } from '@mui/material';
@@ -9,9 +9,10 @@ import useStyles from './styles';
 
 interface TestSuiteReportProps {
   testSuite: TestSuite;
+  testRun: TestRun | null;
 }
 
-const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
+const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, testRun }) => {
   const styles = useStyles();
 
   let listItems: JSX.Element[] = [];
@@ -23,6 +24,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
             key={`li-${testGroup.id}`}
             testGroup={testGroup}
             testRunInProgress={false}
+            testRun={testRun}
             view={'report'}
           />
         );

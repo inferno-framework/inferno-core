@@ -14,8 +14,9 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FolderIcon from '@mui/icons-material/Folder';
-import { Request, RunnableType, Test, TestGroup } from 'models/testSuiteModels';
+import { Request, RunnableType, Test, TestGroup, TestRun } from 'models/testSuiteModels';
 import ResultIcon from './ResultIcon';
+import PendingIcon from '@mui/icons-material/Pending';
 import TestRunButton from '../TestRunButton/TestRunButton';
 import TestListItem from './TestListItem/TestListItem';
 import { getPath } from 'api/infernoApiService';
@@ -25,6 +26,7 @@ interface TestGroupListItemProps {
   testGroup: TestGroup;
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
+  testRun: TestRun | null;
   testRunInProgress: boolean;
   view: 'report' | 'run';
 }
@@ -34,6 +36,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
+  testRun,
   view,
 }) => {
   const styles = useStyles();
@@ -46,6 +49,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         runTests={runTests}
         updateRequest={updateRequest}
         testRunInProgress={testRunInProgress}
+        testRun={testRun}
         view={view}
       />
     ));
@@ -147,12 +151,19 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     </Accordion>
   );
 
+  const getResultIcon = () => {
+    const testRunResultIds = testRun?.results?.map((r) => r.test_id) || [];
+    const groupIsFinished = testRunResultIds.includes(testGroup.id);
+    if (testRunInProgress && !groupIsFinished) {
+      return <PendingIcon color="disabled" />;
+    }
+    return <ResultIcon result={testGroup.result} />;
+  };
+
   const folderGroupListItem = (
     <>
       <ListItem>
-        {testGroup.result && (
-          <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
-        )}
+        {testGroup.result && <Box className={styles.testIcon}>{getResultIcon()}</Box>}
         <ListItemText
           primary={
             <Box sx={{ display: 'flex' }}>

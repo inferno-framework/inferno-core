@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TestGroup, RunnableType, TestSuite, Request, Test } from 'models/testSuiteModels';
+import { TestGroup, RunnableType, TestSuite, Request, Test, TestRun } from 'models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
 import TestGroupCard from './TestGroupCard';
@@ -10,6 +10,7 @@ interface TestSuiteDetailsPanelProps {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
+  testRun: TestRun | null;
 }
 
 const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
@@ -17,6 +18,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
+  testRun,
 }) => {
   let listItems: JSX.Element[] = [];
   if (runnable?.test_groups && runnable.test_groups.length > 0) {
@@ -28,6 +30,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
           runTests={runTests}
           updateRequest={updateRequest}
           testRunInProgress={testRunInProgress}
+          testRun={testRun}
           view="run"
         />
       );

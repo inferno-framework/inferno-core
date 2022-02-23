@@ -2,9 +2,7 @@ import React from 'react';
 import { Router } from 'react-router';
 import { render, screen } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
-
 import { mockedTestSession, mockedResultsList } from '../__mocked_data__/mockData';
-
 import ThemeProvider from 'components/ThemeProvider';
 import TestSessionComponent from '../TestSession';
 

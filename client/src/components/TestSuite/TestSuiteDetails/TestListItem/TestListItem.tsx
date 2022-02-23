@@ -110,8 +110,6 @@ const TestListItem: FC<TestListItemProps> = ({
     } else {
       if (test.result) {
         return <ResultIcon result={test.result} />;
-      } else {
-        return <></>;
       }
     }
   };
