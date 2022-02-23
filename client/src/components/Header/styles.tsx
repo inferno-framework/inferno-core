@@ -27,7 +27,15 @@ export default makeStyles((theme: Theme) => ({
     objectFit: 'contain',
     height: '3em',
   },
+  titleContainer: {
+    display: 'flex',
+    alignItems: 'baseline',
+    alignSelf: 'center',
+  },
   title: {
-    padding: '0 16px',
+    padding: '0 8px',
+  },
+  version: {
+    fontStyle: 'italic',
   },
 }));

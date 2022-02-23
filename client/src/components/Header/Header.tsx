@@ -8,9 +8,10 @@ import { getStaticPath } from 'api/infernoApiService';
 
 export interface HeaderProps {
   suiteTitle?: string;
+  suiteVersion?: string;
 }
 
-const Header: FC<HeaderProps> = ({ suiteTitle }) => {
+const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
   const styles = useStyles();
   const history = useHistory();
 
@@ -25,9 +26,16 @@ const Header: FC<HeaderProps> = ({ suiteTitle }) => {
           <Link href="/">
             <img src={getStaticPath(icon as string)} alt="inferno logo" className={styles.logo} />
           </Link>
-          <Typography variant="h5" component="h1" className={styles.title}>
-            {suiteTitle}
-          </Typography>
+          <Box className={styles.titleContainer}>
+            <Typography variant="h5" component="h1" className={styles.title}>
+              {suiteTitle}
+            </Typography>
+            {suiteVersion && (
+              <Typography variant="overline" className={styles.version}>
+                {`v.${suiteVersion}`}
+              </Typography>
+            )}
+          </Box>
         </Box>
         <Box>
           <Button

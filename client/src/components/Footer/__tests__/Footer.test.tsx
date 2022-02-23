@@ -6,7 +6,7 @@ import ThemeProvider from 'components/ThemeProvider';
 test('renders Inferno Footer', () => {
   render(
     <ThemeProvider>
-      <Footer />
+      <Footer version={'dummyVersion'} />
     </ThemeProvider>
   );
 });

@@ -5,12 +5,11 @@ import logo from 'images/inferno_logo.png';
 import { getStaticPath } from 'api/infernoApiService';
 
 interface FooterProps {
-  versionNumber?: string;
+  version: string;
 }
 
-const Footer: FC<FooterProps> = ({ versionNumber }) => {
+const Footer: FC<FooterProps> = ({ version }) => {
   const styles = useStyles();
-  const version = versionNumber || '';
   return (
     <Box className={styles.footer}>
       <Container>
@@ -23,7 +22,11 @@ const Footer: FC<FooterProps> = ({ versionNumber }) => {
           >
             <img src={getStaticPath(logo as string)} alt="inferno logo" className={styles.logo} />
           </Link>
-          <Typography>{version}</Typography>
+          {version && (
+            <Typography variant="overline" className={styles.version}>
+              {`version ${version}`}
+            </Typography>
+          )}
         </Box>
       </Container>
     </Box>

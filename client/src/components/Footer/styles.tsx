@@ -21,12 +21,16 @@ export default makeStyles((theme: Theme) => ({
     flexDirection: 'row',
   },
   builtUsing: {
-    padding: '8px',
+    padding: '8px 12px',
     fontStyle: 'italic',
   },
   logo: {
     paddingTop: '2px',
     objectFit: 'contain',
     height: '2.5em',
+  },
+  version: {
+    fontStyle: 'italic',
+    padding: '10px 8px 8px 8px',
   },
 }));

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import useStyles from './styles';
 import { Result, TestOutput, TestRun, TestSession } from 'models/testSuiteModels';
 import TestSessionComponent from './TestSession';
@@ -12,6 +12,7 @@ import {
   getTestSession,
   getTestSessionData,
 } from 'api/TestSessionApi';
+import { getCoreVersion } from 'api/VersionsApi';
 
 const TestSessionWrapper: FC<unknown> = () => {
   const styles = useStyles();
@@ -24,6 +25,17 @@ const TestSessionWrapper: FC<unknown> = () => {
   const [attemptedGetResults, setAttemptedGetResults] = React.useState(false);
   const [attemptedGetSessionData, setAttemptedSessionData] = React.useState(false);
   const [attemptingFetchSessionInfo, setAttemptingFetchSessionInfo] = React.useState(false);
+  const [coreVersion, setCoreVersion] = React.useState<string>('');
+
+  useEffect(() => {
+    getCoreVersion()
+      .then((version: string) => {
+        setCoreVersion(version);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
 
   function tryGetTestSession(test_session_id: string) {
     getTestSession(test_session_id)
@@ -80,14 +92,17 @@ const TestSessionWrapper: FC<unknown> = () => {
   if (testSession && testResults && sessionData) {
     return (
       <Box className={styles.testSessionContainer}>
-        <Header suiteTitle={testSession.test_suite.title} />
+        <Header
+          suiteTitle={testSession.test_suite.title}
+          suiteVersion={testSession.test_suite.version}
+        />
         <TestSessionComponent
           testSession={testSession}
           previousResults={testResults}
           initialTestRun={testRun}
           initialSessionData={sessionData}
         />
-        <Footer />
+        <Footer version={coreVersion} />
       </Box>
     );
   } else if (
