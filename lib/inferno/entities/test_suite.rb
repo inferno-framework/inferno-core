@@ -91,6 +91,10 @@ module Inferno
         def check_configuration(&block)
           @check_configuration_block = block
         end
+
+        def presets
+          @presets ||= Repositories::Presets.new.presets_for_suite(id)
+        end
       end
     end
   end

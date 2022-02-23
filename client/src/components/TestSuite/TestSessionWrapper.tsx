@@ -19,7 +19,7 @@ const TestSessionWrapper: FC<unknown> = () => {
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [testSession, setTestSession] = React.useState<TestSession>();
   const [testResults, setTestResults] = React.useState<Result[]>();
-  const [sessionData, setSessionData] = React.useState<TestOutput[]>();
+  const [sessionData, setSessionData] = React.useState<Map<string, unknown>>(new Map());
   const [attemptedGetRun, setAttemptedGetRun] = React.useState(false);
   const [attemptedGetSession, setAttemptedGetSession] = React.useState(false);
   const [attemptedGetResults, setAttemptedGetResults] = React.useState(false);
@@ -80,7 +80,12 @@ const TestSessionWrapper: FC<unknown> = () => {
     getTestSessionData(testSessionId)
       .then((session_data) => {
         if (session_data) {
-          setSessionData(session_data);
+          session_data?.forEach((initialSessionData: TestOutput) => {
+            if (initialSessionData.value) {
+              sessionData.set(initialSessionData.name, initialSessionData.value);
+            }
+          });
+          setSessionData(new Map(sessionData));
         } else {
           console.log('failed to load session data');
         }
@@ -95,12 +100,16 @@ const TestSessionWrapper: FC<unknown> = () => {
         <Header
           suiteTitle={testSession.test_suite.title}
           suiteVersion={testSession.test_suite.version}
+          presets={testSession.test_suite.presets}
+          getSessionData={tryGetSessionData}
+          testSessionId={testSession.id}
         />
         <TestSessionComponent
           testSession={testSession}
           previousResults={testResults}
           initialTestRun={testRun}
-          initialSessionData={sessionData}
+          sessionData={sessionData}
+          setSessionData={setSessionData}
         />
         <Footer version={coreVersion} />
       </Box>

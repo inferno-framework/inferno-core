@@ -68,14 +68,16 @@ export interface TestSessionComponentProps {
   testSession: TestSession;
   previousResults: Result[];
   initialTestRun: TestRun | null;
-  initialSessionData: TestOutput[] | undefined;
+  sessionData: Map<string, unknown>;
+  setSessionData: (data: Map<string, unknown>) => void;
 }
 
 const TestSessionComponent: FC<TestSessionComponentProps> = ({
   testSession,
   previousResults,
   initialTestRun,
-  initialSessionData,
+  sessionData,
+  setSessionData,
 }) => {
   const styles = useStyles();
   const { test_suite, id } = testSession;
@@ -88,19 +90,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     resultsToMap(previousResults)
   );
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
-  const [sessionData, setSessionData] = React.useState<Map<string, unknown>>(new Map());
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
 
   useEffect(() => {
     const allInputs = getAllContainedInputs(test_suite.test_groups as TestGroup[]);
     allInputs.forEach((input: TestInput) => {
       const defaultValue = input.default || '';
-      sessionData.set(input.name, defaultValue);
-    });
-    initialSessionData?.forEach((initialSessionData: TestOutput) => {
-      if (initialSessionData.value) {
-        sessionData.set(initialSessionData.name, initialSessionData.value);
-      }
+      sessionData.set(input.name, sessionData.get(input.name) || defaultValue);
     });
     setSessionData(new Map(sessionData));
   }, [testSession]);

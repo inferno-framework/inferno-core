@@ -23,6 +23,19 @@ RSpec.describe '/test_sessions' do
         expect(parsed_body['id']).to be_present
         expect(parsed_body['test_suite_id']).to eq(test_suite_id)
       end
+
+      context 'with a preset id' do
+        it 'applies the preset' do
+          repo = Inferno::Repositories::TestSessions.new
+          allow_any_instance_of(Inferno::Web::Controllers::TestSessions::Create).to receive(:repo).and_return(repo)
+          allow(repo).to receive(:apply_preset)
+
+          post_json create_path, input.merge(preset_id: 'PRESET_ID')
+
+          expect(last_response.status).to eq(200)
+          expect(repo).to have_received(:apply_preset).once
+        end
+      end
     end
 
     context 'with invalid input' do
@@ -108,6 +121,76 @@ RSpec.describe '/test_sessions' do
 
       expect(last_response.status).to eq(200)
       expect(parsed_body['id']).to eq(last_test_run.id)
+    end
+  end
+
+  describe '/:id/session_data/apply_preset' do
+    let(:test_suite_id) { 'demo' }
+
+    context 'when the preset and session exist' do
+      it 'applies the preset' do
+        repo = Inferno::Repositories::TestSessions.new
+        allow_any_instance_of(
+          Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset
+        ).to receive(:test_sessions_repo).and_return(repo)
+        allow(repo).to receive(:apply_preset)
+
+        path =
+          router.path(
+            :apply_preset_api_test_session_session_data,
+            test_session_id: test_session.id,
+            preset_id: 'demo_preset'
+          )
+
+        put path
+
+        expect(last_response.status).to eq(200)
+        expect(repo).to have_received(:apply_preset).once
+      end
+    end
+
+    context 'when the preset does not exist' do
+      it 'returns a 404' do
+        repo = Inferno::Repositories::TestSessions.new
+        allow_any_instance_of(
+          Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset
+        ).to receive(:test_sessions_repo).and_return(repo)
+        allow(repo).to receive(:apply_preset)
+
+        path =
+          router.path(
+            :apply_preset_api_test_session_session_data,
+            test_session_id: test_session.id,
+            preset_id: SecureRandom.uuid
+          )
+
+        put path
+
+        expect(last_response.status).to eq(404)
+        expect(repo).to_not have_received(:apply_preset)
+      end
+    end
+
+    context 'when session does notexist' do
+      it 'returns a 404' do
+        repo = Inferno::Repositories::TestSessions.new
+        allow_any_instance_of(
+          Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset
+        ).to receive(:test_sessions_repo).and_return(repo)
+        allow(repo).to receive(:apply_preset)
+
+        path =
+          router.path(
+            :apply_preset_api_test_session_session_data,
+            test_session_id: SecureRandom.uuid,
+            preset_id: 'demo_preset'
+          )
+
+        put path
+
+        expect(last_response.status).to eq(404)
+        expect(repo).to_not have_received(:apply_preset)
+      end
     end
   end
 end

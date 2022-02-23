@@ -16,7 +16,8 @@ test('Test session renders', () => {
           testSession={mockedTestSession}
           previousResults={mockedResultsList}
           initialTestRun={null}
-          initialSessionData={undefined}
+          sessionData={new Map()}
+          setSessionData={() => {}}
         />
       </ThemeProvider>
     </Router>

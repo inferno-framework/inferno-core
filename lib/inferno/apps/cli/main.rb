@@ -1,5 +1,7 @@
 require_relative 'console'
 require_relative 'migration'
+require_relative 'suite'
+require_relative 'suites'
 
 module Inferno
   module CLI
@@ -13,6 +15,14 @@ module Inferno
       def migrate
         Migration.new.run
       end
+
+      desc 'suites', 'List available test suites'
+      def suites
+        Suites.new.run
+      end
+
+      desc 'suite SUBCOMMAND ...ARGS', 'Perform suite-based operations'
+      subcommand 'suite', Suite
     end
   end
 end

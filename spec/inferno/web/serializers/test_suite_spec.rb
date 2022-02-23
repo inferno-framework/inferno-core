@@ -9,7 +9,8 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
       'short_description',
       'input_instructions',
       'test_count',
-      'version'
+      'version',
+      'presets'
     ]
   end
   let(:full_keys) do
@@ -28,6 +29,7 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
     expect(serialized_suite['input_instructions']).to eq(suite.input_instructions)
     expect(serialized_suite['test_count']).to eq(suite.test_count)
     expect(serialized_suite['version']).to eq(suite.version)
+    expect(serialized_suite['presets']).to eq([])
   end
 
   it 'serializes a full suite view' do
@@ -49,6 +51,16 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
     expect(serialized_suite['test_count']).to eq(suite.test_count)
     expect(serialized_suite['version']).to eq(suite.version)
     expect(serialized_suite['configuration_messages']).to eq(expected_messages)
-    expect(serialized_suite['test_groups'].length).to eq(suite.groups.length)
+    expect(serialized_suite['presets']).to eq([])
+  end
+
+  it 'includes preset summaries' do
+    demo_suite = DemoIG_STU1::DemoSuite
+    serialized_suite = JSON.parse(described_class.render(demo_suite, view: :summary))
+    expect(serialized_suite['presets']).to be_an(Array)
+    expect(serialized_suite['presets']).to be_present
+    expect(serialized_suite['presets'].length).to eq(demo_suite.presets.length)
+    expect(serialized_suite['presets']).to all(have_key('id'))
+    expect(serialized_suite['presets']).to all(have_key('title'))
   end
 end

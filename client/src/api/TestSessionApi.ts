@@ -69,6 +69,20 @@ export function getTestSessionData(test_session_id: string): Promise<TestOutput[
     });
 }
 
+export function applyPreset(test_session_id: string, preset_id: string): Promise<null> {
+  const endpoint = getApiEndpoint(
+    `/test_sessions/${test_session_id}/session_data/apply_preset?preset_id=${preset_id}`
+  );
+
+  return fetch(endpoint, { method: 'PUT' }).then((response) => {
+    if (response.status === 200) {
+      return null;
+    }
+    // TODO: handle failures
+    return null;
+  });
+}
+
 /* Populate additional properties for API results */
 function addProperties(session: TestSession): TestSession {
   let groups = session.test_suite.test_groups;
