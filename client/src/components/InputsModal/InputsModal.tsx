@@ -8,6 +8,9 @@ import {
   DialogContentText,
   DialogTitle,
   List,
+  Tabs, 
+  Tab, 
+  TextField
 } from '@mui/material';
 import { OAuthCredentials, RunnableType, TestInput } from 'models/testSuiteModels';
 import InputRadioGroup from './InputsRadioGroup';
@@ -15,6 +18,7 @@ import ReactMarkdown from 'react-markdown';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import InputOAuthCredentials from './InputOAuthCredentials';
+import { TabPanel, TabContext } from '@mui/lab';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -138,15 +142,33 @@ const InputsModal: FC<InputsModalProps> = ({
     }
   });
 
+  const [value, setValue] = React.useState('0')
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
+
   return (
     <Dialog open={modalVisible} onClose={hideModal} fullWidth maxWidth="sm">
       <DialogTitle>{title}</DialogTitle>
-      <DialogContent>
-        <DialogContentText component="div">
-          <ReactMarkdown>{instructions}</ReactMarkdown>
-        </DialogContentText>
-        <List>{inputFields}</List>
-      </DialogContent>
+      <TabContext value={value}>
+        <Tabs value={value} onChange={handleChange}>
+          <Tab label="INPUT FIELDS" value='0'/>
+          <Tab label="JSON INPUT" value='1'/>
+        </Tabs>
+        <TabPanel value='0'>
+          <DialogContent>
+            <DialogContentText component="div">
+              <ReactMarkdown>{instructions}</ReactMarkdown>
+            </DialogContentText>
+            <List>{inputFields}</List>
+          </DialogContent>
+        </TabPanel>
+        <TabPanel value='1'>
+          <TextField fullWidth size={'medium'}>
+            HERE WE GOOO
+          </TextField>
+        </TabPanel>
+      </TabContext>
       <DialogActions>
         <Button onClick={hideModal} data-testid="cancel-button" className={styles.inputAction}>
           Cancel
