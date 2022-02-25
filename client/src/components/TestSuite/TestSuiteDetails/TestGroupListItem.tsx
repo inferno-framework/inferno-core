@@ -18,7 +18,6 @@ import { Request, RunnableType, Test, TestGroup } from 'models/testSuiteModels';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 import TestListItem from './TestListItem/TestListItem';
-import { getPath } from 'api/infernoApiService';
 import ReactMarkdown from 'react-markdown';
 
 interface TestGroupListItemProps {
@@ -157,11 +156,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           primary={
             <Box sx={{ display: 'flex' }}>
               <FolderIcon className={styles.folderIcon} />
-              <Link
-                color="inherit"
-                href={getPath(`${location.pathname}#${testGroup.id}`)}
-                underline="hover"
-              >
+              <Link color="inherit" href={`${location.pathname}#${testGroup.id}`} underline="hover">
                 {testGroup.title}
               </Link>
             </Box>
