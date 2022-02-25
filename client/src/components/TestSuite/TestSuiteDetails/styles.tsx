@@ -5,6 +5,26 @@ export default makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
   },
+  reportSummaryBox: {
+    padding: '5px',
+  },
+  reportSummaryItemLabel: {
+    textTransform: 'uppercase',
+  },
+  reportSummaryItemValue: {
+    fontSize: '28px',
+  },
+  reportSummaryItems: {
+    padding: '20px;',
+    display: 'flex',
+    justifyContent: 'space-around',
+    textAlign: 'center',
+  },
+  reportSummaryURL: {
+    textAlign: 'right',
+    padding: '0 10px;',
+    fontSize: '12px',
+  },
   testIcon: {
     padding: '0 8px 0 0',
     display: 'inline-flex',
