@@ -3,7 +3,7 @@ import TestGroupCard from 'components/TestSuite/TestSuiteDetails/TestGroupCard';
 import { TestGroup, Test, TestSuite } from 'models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
-import { Button, Card, Typography } from '@mui/material';
+import { Box, Button, Card, Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import useStyles from './styles';
 
@@ -13,6 +13,7 @@ interface TestSuiteReportProps {
 
 const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
   const styles = useStyles();
+  const location = window?.location?.href?.split('#')?.[0];
 
   let listItems: JSX.Element[] = [];
   const testChildren = testSuite.test_groups?.map((runnable) => {
@@ -76,7 +77,35 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
           </Button>
         </span>
       </div>
-      {/* TODO: PUT SUMMARY RESULT, STATS AND VERSION INFO HERE */}
+      <Box className={styles.reportSummaryBox}>
+        <Box className={styles.reportSummaryItems}>
+          <Box>
+            <Typography className={styles.reportSummaryItemValue} textTransform="uppercase">
+              {testSuite.result?.result || 'pending'}
+            </Typography>
+            <Typography className={styles.reportSummaryItemLabel}>Final Result</Typography>
+          </Box>
+          {testSuite.version && (
+            <Box>
+              <Typography className={styles.reportSummaryItemValue}>{testSuite.version}</Typography>
+              <Typography className={styles.reportSummaryItemLabel}>Version</Typography>
+            </Box>
+          )}
+          <Box>
+            <Typography className={styles.reportSummaryItemValue}>
+              {Intl.DateTimeFormat('en', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+              }).format(new Date())}
+            </Typography>
+            <Typography className={styles.reportSummaryItemLabel}>Report Date</Typography>
+          </Box>
+        </Box>
+        {location && <Typography className={styles.reportSummaryURL}>{location}</Typography>}
+      </Box>
     </Card>
   );
 
