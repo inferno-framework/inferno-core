@@ -204,69 +204,6 @@ const TestListItem: FC<TestListItemProps> = ({
           </TabPanel>
         </AccordionDetails>
       </Accordion>
-
-      {/* <Box className={styles.listItem}>
-        <ListItem>
-          {test.result && (
-            <div className={styles.testIcon}>
-              <ResultIcon result={test.result} />
-            </div>
-          )}
-          <ListItemText primary={testLabel} />
-          {messagesBadge}
-          {requestsBadge}
-          {view === 'run' && runTests && (
-            <TestRunButton
-              runnable={test}
-              runnableType={RunnableType.Test}
-              runTests={runTests}
-              testRunInProgress={testRunInProgress}
-            />
-          )}
-          {expandButton}
-        </ListItem>
-        {test.result?.result_message && (
-          <ReactMarkdown className={styles.resultMessageMarkdown}>
-            {test.result.result_message}
-          </ReactMarkdown>
-        )}
-      </Box>
-      {view === 'run' && (
-        <Collapse in={open} className={styles.collapsible} unmountOnExit>
-          <Divider />
-          <Tabs
-            value={panelIndex}
-            className={styles.tabs}
-            onChange={(_event, newIndex) => {
-              setPanelIndex(newIndex);
-            }}
-            variant="fullWidth"
-          >
-            <Tab label="Messages" />
-            <Tab label="HTTP Requests" />
-            <Tab label="About" />
-          </Tabs>
-          <Divider />
-          <TabPanel currentPanelIndex={panelIndex} index={0}>
-            <MessagesList messages={test.result?.messages || []} />
-          </TabPanel>
-          <TabPanel currentPanelIndex={panelIndex} index={1}>
-            {updateRequest && (
-              <RequestsList
-                requests={test.result?.requests || []}
-                resultId={test.result?.id || ''}
-                updateRequest={updateRequest}
-              />
-            )}
-          </TabPanel>
-          <TabPanel currentPanelIndex={panelIndex} index={2}>
-            <Container>
-              <Typography variant="subtitle2">{testDescription}</Typography>
-            </Container>
-            <Divider />
-          </TabPanel>
-        </Collapse>
-      )} */}
     </>
   );
 };
