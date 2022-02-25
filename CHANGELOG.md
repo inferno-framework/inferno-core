@@ -1,3 +1,26 @@
+# 0.2.0.rc1
+
+* **Breaking Change:** Support hosting inferno on a non-root path. To support
+  hosting inferno at a non-root path, it was necessary to change how inferno's
+  static assets are being served. Any test kit upgrading to use version 0.2.0 or
+  later of Inferno Core will need to replace `config.ru` with [the updated
+  `config.ru` in the inferno
+  template](https://raw.githubusercontent.com/inferno-framework/inferno-template/main/config.ru).
+* Fix a bug which prevented individual tests from running.
+* Add `version` field to test suites.
+* Ui improvements.
+* Retry database connections at startup.
+* Support loading external test kits when developing Inferno Core.
+* Add the ability to check test suite configuration. Currently only error
+  messages are displayed in the UI.
+* Add short identifiers to all tests in a test suite.
+* Update the UI so that any groups marked `run_as_group` are displayed with all
+  of their children, rather than requiring navigating into each child
+  separately.
+* Add a report view.
+* Display Inferno Core and test kit versions in the UI.
+* Support preset inputs.
+
 # 0.1.3
 
 * Fix a bug where `oauth_credentials` inputs were not locked when they should
