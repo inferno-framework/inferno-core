@@ -44,7 +44,7 @@ const TestListItem: FC<TestListItemProps> = ({
 }) => {
   const styles = useStyles();
   const openCondition =
-    test.result?.result === 'fail' || test.result?.result === 'error' || view === 'report';
+    (test.result?.result === 'fail' || test.result?.result === 'error') && view !== 'report';
   const [open, setOpen] = React.useState(openCondition);
   const [panelIndex, setPanelIndex] = React.useState(0);
 
@@ -140,6 +140,7 @@ const TestListItem: FC<TestListItemProps> = ({
       <Accordion
         disableGutters
         className={styles.accordion}
+        sx={view === 'report' ? { 'pointer-events': 'none' } : {}}
         expanded={open}
         TransitionProps={{ unmountOnExit: true }}
         onClick={() => setOpen(!open)}

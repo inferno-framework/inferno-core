@@ -36,6 +36,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   view,
 }) => {
   const styles = useStyles();
+  const openCondition =
+    testGroup.result?.result === 'fail' ||
+    testGroup.result?.result === 'error' ||
+    view === 'report';
 
   const renderGroupListItems = (): JSX.Element[] => {
     return testGroup.test_groups.map((tg: TestGroup) => (
@@ -100,7 +104,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     <Accordion
       disableGutters
       className={styles.accordion}
-      defaultExpanded={testGroup.result?.result == 'fail' || view == 'report' ? true : undefined}
+      sx={view === 'report' ? { 'pointer-events': 'none' } : {}}
+      defaultExpanded={openCondition}
       TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary
