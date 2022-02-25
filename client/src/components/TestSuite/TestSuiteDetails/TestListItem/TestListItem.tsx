@@ -2,7 +2,6 @@ import React, { FC, useEffect } from 'react';
 import useStyles from './styles';
 import {
   Box,
-  Collapse,
   Container,
   Divider,
   IconButton,
@@ -24,7 +23,6 @@ import RequestsList from './RequestsList';
 import ResultIcon from '../ResultIcon';
 import PublicIcon from '@mui/icons-material/Public';
 import MailIcon from '@mui/icons-material/Mail';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReactMarkdown from 'react-markdown';
 import TestRunButton from '../../TestRunButton/TestRunButton';
@@ -171,21 +169,14 @@ const TestListItem: FC<TestListItemProps> = ({
             }}
             variant="fullWidth"
           >
-            {/* {test.result?.messages && test.result.messages.length > 0 &&  */}
             <Tab label="Messages" />
-            {/* } */}
-            {/* {test.result?.requests && test.result.requests.length > 0 && ( */}
             <Tab label="HTTP Requests" />
-            {/* )} */}
             <Tab label="About" />
           </Tabs>
           <Divider />
-          {/* {test.result?.messages && test.result.messages.length > 0 && ( */}
           <TabPanel currentPanelIndex={panelIndex} index={0}>
             <MessagesList messages={test.result?.messages || []} />
           </TabPanel>
-          {/* )} */}
-          {/* {test.result?.requests && test.result.requests.length > 0 && ( */}
           <TabPanel currentPanelIndex={panelIndex} index={1}>
             {updateRequest && (
               <RequestsList
@@ -195,7 +186,6 @@ const TestListItem: FC<TestListItemProps> = ({
               />
             )}
           </TabPanel>
-          {/* )} */}
           <TabPanel currentPanelIndex={panelIndex} index={2}>
             <Container>
               <Typography variant="subtitle2">{testDescription}</Typography>
