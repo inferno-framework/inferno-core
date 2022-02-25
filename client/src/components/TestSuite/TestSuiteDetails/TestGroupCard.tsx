@@ -5,6 +5,7 @@ import { Box, Card, Divider, List, Typography } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
+import { shouldShowDescription } from '../TestSuiteUtilities';
 
 interface TestGroupCardProps {
   runnable: TestSuite | TestGroup;
@@ -58,11 +59,9 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           )}
         </span>
       </div>
-      {view === 'run' && description && (
+      {view === 'run' && shouldShowDescription(runnable, description) && (
         <>
-          <Box margin="20px">
-            {runnable.description && runnable.description.length > 0 && description}
-          </Box>
+          <Box margin="20px">{description}</Box>
           <Divider />
         </>
       )}
