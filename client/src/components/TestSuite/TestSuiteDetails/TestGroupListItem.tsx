@@ -106,19 +106,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       <AccordionSummary
         aria-controls={`${testGroup.title}-header`}
         id={`${testGroup.title}-header`}
-        // Toggle accordion expansion only on icon click
-        sx={{
-          pointerEvents: 'none',
-        }}
-        expandIcon={
-          view === 'run' && (
-            <ExpandMoreIcon
-              sx={{
-                pointerEvents: 'auto',
-              }}
-            />
-          )
-        }
+        expandIcon={view === 'run' && <ExpandMoreIcon />}
       >
         <ListItem className={styles.testGroupCardList}>
           {testGroup.result && (

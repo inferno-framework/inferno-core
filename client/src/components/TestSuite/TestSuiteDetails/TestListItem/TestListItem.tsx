@@ -49,9 +49,10 @@ const TestListItem: FC<TestListItemProps> = ({
     test.result?.messages &&
     test.result.messages.length > 0 && (
       <IconButton
+        disabled
         className={styles.badgeIcon}
         onClick={() => {
-          setPanelIndex(1);
+          setPanelIndex(0);
           setOpen(true);
         }}
       >
@@ -65,10 +66,10 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
     <IconButton
-      disabled={view === 'report'}
+      disabled
       className={styles.badgeIcon}
       onClick={() => {
-        setPanelIndex(2);
+        setPanelIndex(1);
         setOpen(true);
       }}
     >
@@ -88,7 +89,7 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const testLabel = (
     <>
-      <Typography className={styles.shortId}>{test.short_id}</Typography>
+      {test.short_id && <Typography className={styles.shortId}>{test.short_id}</Typography>}
       {test.optional && <Typography className={styles.optionalLabel}>Optional</Typography>}
       <Typography className={styles.labelText}>{test.title}</Typography>
     </>
@@ -139,21 +140,15 @@ const TestListItem: FC<TestListItemProps> = ({
             }}
             variant="fullWidth"
           >
-            <Tab label="About" />
             <Tab label="Messages" />
             <Tab label="HTTP Requests" />
+            <Tab label="About" />
           </Tabs>
           <Divider />
           <TabPanel currentPanelIndex={panelIndex} index={0}>
-            <Container>
-              <Typography variant="subtitle2">{testDescription}</Typography>
-            </Container>
-            <Divider />
-          </TabPanel>
-          <TabPanel currentPanelIndex={panelIndex} index={1}>
             <MessagesList messages={test.result?.messages || []} />
           </TabPanel>
-          <TabPanel currentPanelIndex={panelIndex} index={2}>
+          <TabPanel currentPanelIndex={panelIndex} index={1}>
             {updateRequest && (
               <RequestsList
                 requests={test.result?.requests || []}
@@ -161,6 +156,12 @@ const TestListItem: FC<TestListItemProps> = ({
                 updateRequest={updateRequest}
               />
             )}
+          </TabPanel>
+          <TabPanel currentPanelIndex={panelIndex} index={2}>
+            <Container>
+              <Typography variant="subtitle2">{testDescription}</Typography>
+            </Container>
+            <Divider />
           </TabPanel>
         </Collapse>
       )}
