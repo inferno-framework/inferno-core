@@ -58,44 +58,6 @@ const TestListItem: FC<TestListItemProps> = ({
     </Box>
   );
 
-  const messagesBadge = view === 'run' &&
-    test.result?.messages &&
-    test.result.messages.length > 0 && (
-      <IconButton
-        aria-label="open messages"
-        className={styles.badgeIcon}
-        onClick={(e) => {
-          e.stopPropagation();
-          setOpen(true);
-          setPanelIndex(0);
-        }}
-      >
-        <Badge badgeContent={test.result.messages.length} classes={{ badge: styles.testBadge }}>
-          <Tooltip title={`${test.result.messages.length} message(s)`}>
-            <MailIcon color="secondary" />
-          </Tooltip>
-        </Badge>
-      </IconButton>
-    );
-
-  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
-    <IconButton
-      aria-label="open requests"
-      className={styles.badgeIcon}
-      onClick={(e) => {
-        e.stopPropagation();
-        setOpen(true);
-        setPanelIndex(1);
-      }}
-    >
-      <Badge badgeContent={test.result.requests.length} classes={{ badge: styles.testBadge }}>
-        <Tooltip title={`${test.result.requests.length} request(s)`}>
-          <PublicIcon color="secondary" />
-        </Tooltip>
-      </Badge>
-    </IconButton>
-  );
-
   const testLabel = (
     <>
       {test.short_id && <Typography className={styles.shortId}>{test.short_id}</Typography>}
@@ -115,6 +77,45 @@ const TestListItem: FC<TestListItemProps> = ({
         )
       }
     />
+  );
+
+  const messagesBadge = view === 'run' &&
+    test.result?.messages &&
+    test.result.messages.length > 0 && (
+      <IconButton
+        aria-label="open messages"
+        className={styles.badgeIcon}
+        onClick={(e) => {
+          e.stopPropagation();
+          setPanelIndex(0);
+          setOpen(true);
+        }}
+      >
+        <Badge badgeContent={test.result.messages.length} classes={{ badge: styles.testBadge }}>
+          <Tooltip title={`${test.result.messages.length} message(s)`}>
+            <MailIcon color="secondary" />
+          </Tooltip>
+        </Badge>
+      </IconButton>
+    );
+
+  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
+    <IconButton
+      disabled={view === 'report'}
+      aria-label="open requests"
+      className={styles.badgeIcon}
+      onClick={(e) => {
+        e.stopPropagation();
+        setPanelIndex(1);
+        setOpen(true);
+      }}
+    >
+      <Badge badgeContent={test.result.requests.length} classes={{ badge: styles.testBadge }}>
+        <Tooltip title={`${test.result.requests.length} request(s)`}>
+          <PublicIcon color="secondary" />
+        </Tooltip>
+      </Badge>
+    </IconButton>
   );
 
   const testRunButton = view === 'run' && runTests && (
