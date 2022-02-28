@@ -27,7 +27,7 @@ git clone https://github.com/inferno-framework/us-core-test-kit.git
 ./run.sh
 ```
 
-Always check the documentation for an individual test kit since they may differ from this standard approach
+Always check the documentation for an individual Test Kit since they may differ from this standard approach.
 
 ### One or More Test Kits
 There may be times when you wish to offer multiple test kits in a single Inferno instance. If a test kit for this
