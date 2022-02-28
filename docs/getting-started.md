@@ -38,7 +38,7 @@ Inferno Deployment offers a stripped down template for creating and deploying a 
 git clone https://github.com/inferno-framework/inferno-deployment.git
 ```
 
-Test kits you want to include can then be added to `Gemfile`
+Test kits you want to include can then be added to `Gemfile`:
 
 e.g.
 ```ruby
