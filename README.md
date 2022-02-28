@@ -92,7 +92,7 @@ cd docs/
 bundle install
 bundle exec jekyll serve
 ```
-By default the site will be served at `http://127.0.0.1:4000/inferno-core/`
+By default the site will be served at `http://localhost:4000/inferno-core/`
 
 
 ## License
