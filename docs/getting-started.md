@@ -12,7 +12,7 @@ nav_order: 4
 {:toc}
 ---
 ## Getting Started for Inferno Users
-If you're interested in testing a FHIR server against one or more existing test kits
+Start here if you're interested in testing a FHIR server against one or more existing Test Kits.
 
 ### A Single Test Kit
 Most Test Kits are developed using the [Inferno Template 
