@@ -16,8 +16,8 @@ Start here if you're interested in testing a FHIR server against one or more exi
 
 ### A Single Test Kit
 Most Test Kits are developed using the [Inferno Template 
-repository](https://github.com/inferno-framework/inferno-template) which provides shell scripts for rapidly standing up
-an instance of Inferno for that Test Kit
+repository](https://github.com/inferno-framework/inferno-template) which provides scripts for standing up
+an instance of Inferno to run a selected Test Kit.
 
 e.g. the [US Core Test Kit](https://github.com/inferno-framework/us-core-test-kit)
 
