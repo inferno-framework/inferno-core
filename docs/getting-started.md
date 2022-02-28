@@ -58,9 +58,9 @@ require 'us_core_test_kit'
 
 _Note: Test Kits shown can be filtered with a `Inferno::Repositories::TestSuites.all.select!` statement_
 
-Inferno relies on external validation services for profile validation. For test kits that require profile validation,
-such as the US Core Test Kit, the IG package.tgz will need to be placed in the `lib/inferno_deployment/igs/` directory.
-The IG files can be located in the test kits git repository.
+Inferno relies on external validation services for profile validation; by default, Inferno uses the [FHIR Validator Wrapper](https://github.com/inferno-framework/fhir-validator-wrapper). For Test Kits that require profile validation,
+such as the US Core Test Kit, the corresponding Implementation Guide will need to be placed in the `lib/inferno_deployment/igs/` directory as a _.tgz_ file (i.e. _package.tgz_).
+The Implementation Guide files for a Test Kit can be located in that kit's git repository and just copied over directly: 
 
 e.g. for the US Core Test Kit
 ```sh
