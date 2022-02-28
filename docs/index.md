@@ -13,7 +13,8 @@ Everything you need to create, execute and share tests for health IT systems pro
 
 Simple to Read, Simple to Write
 {: .fs-7 .fw-300 }
-Inferno tests are written in a Ruby DSL, with a focus on readability.
+Inferno tests are written in a Ruby DSL, with a focus on readability. 
+Inferno provides tools for easily testing FHIR APIs, including robust support for FHIR Resource validation.
 {: .fs-4 }
 
 ```ruby
@@ -38,22 +39,10 @@ test do
 end
 ```
 
-Continuous Integration Ready
+A Web UI, Out of the Box
 {: .fs-7 .fw-300 }
-Inferno exposes a JSON API for automated execution within your CI pipeline.
-{: .fs-4 .d-flex .flex}
-```http
-GET /api/test_suites
-
-[
-  {
-    "id": "ONCProgram::Suite",
-    "description": "ONC Standardized API Testing ",
-    "test_count": 427,
-    "title": "2015 Edition Cures Update -  Standardized API Testing"
-  }
-]
-```
+Inferno ships with a web based user interface suitable for local use or deploying as a central service.
+![Inferno Web UI](web-ui.png)
 
 Create, Share, Extend
 {: .fs-7 .fw-300 }
