@@ -1,6 +1,14 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { Table, TableBody, TableRow, TableCell, Typography } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+  Typography,
+  TableHead,
+  ListItem,
+} from '@mui/material';
 import { Message } from 'models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 
@@ -11,34 +19,43 @@ interface MessagesListProps {
 const MessagesList: FC<MessagesListProps> = ({ messages }) => {
   const styles = useStyles();
 
-  const messageListItems =
-    messages.length > 0 ? (
-      messages.map((message: Message, index: number) => {
-        return (
-          <TableRow key={`msgRow-${index}`}>
-            <TableCell>
-              <Typography variant="subtitle2" className={styles.bolderText}>
-                {message.type}:
-              </Typography>
-            </TableCell>
-            <TableCell className={styles.messageMessage}>
-              <ReactMarkdown>{message.message}</ReactMarkdown>
-            </TableCell>
-          </TableRow>
-        );
-      })
-    ) : (
-      <TableRow key={`msgRow-none`}>
+  const messageListHeaders = (
+    <TableRow key={`msg-header`}>
+      <TableCell>
+        <Typography variant="subtitle2" component="p" className={styles.bolderText}>
+          Type
+        </Typography>
+      </TableCell>
+      <TableCell className={styles.messageMessage}>Message</TableCell>
+    </TableRow>
+  );
+
+  const messageListItems = messages.map((message: Message, index: number) => {
+    return (
+      <TableRow key={`msgRow-${index}`}>
         <TableCell>
-          <Typography variant="subtitle2">None</Typography>
+          <Typography variant="subtitle2" component="p" className={styles.bolderText}>
+            {message.type}:
+          </Typography>
+        </TableCell>
+        <TableCell className={styles.messageMessage}>
+          <ReactMarkdown>{message.message}</ReactMarkdown>
         </TableCell>
       </TableRow>
     );
+  });
 
-  return (
+  return messages.length > 0 ? (
     <Table>
+      <TableHead>{messageListHeaders}</TableHead>
       <TableBody>{messageListItems}</TableBody>
     </Table>
+  ) : (
+    <ListItem>
+      <Typography variant="subtitle2" component="p">
+        None
+      </Typography>
+    </ListItem>
   );
 };
 

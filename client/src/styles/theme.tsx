@@ -39,7 +39,7 @@ const colors = {
   gray: '#4a4a4a',
   grayMedium: '#bbbdc0',
   grayBlue: '#cbd5df',
-  grayLight: '#9e9e9e',
+  grayLight: 'rgba(0, 0, 0, 0.6)',
   grayLighter: '#eaeef2',
   grayLightest: '#f2f2f2',
   grayDark: '#444',
