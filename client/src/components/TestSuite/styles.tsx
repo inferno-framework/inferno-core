@@ -9,6 +9,9 @@ export default makeStyles((theme: Theme) => ({
   contentContainer: {
     flexGrow: 1,
     margin: '24px 48px',
+    '@media print': {
+      margin: 0,
+    },
   },
   drawer: {
     flexShrink: 0,

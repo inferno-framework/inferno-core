@@ -35,28 +35,28 @@ npm run dev
 ```
 
 Inferno Core can then be accessed by navigating to
-[http://localhost:4567](http://localhost:4567)
+[http://localhost:4567/inferno](http://localhost:4567)
 
 To only run the server (JSON API with no UI): `bundle exec puma`
 
 ## Running tests via JSON API
 With the server running, first retrieve a list of available test suites:
 ```
-GET http://localhost:4567/api/test_suites
+GET http://localhost:4567/inferno/api/test_suites
 ```
 See the details of a test suite:
 ```
-GET http://localhost:4567/api/test_suites/TEST_SUITE_ID
+GET http://localhost:4567/inferno/api/test_suites/TEST_SUITE_ID
 ```
 Then create a test session for the suite you want to use:
 ```
-POST http://localhost:4567/api/test_sessions?test_suite_id=TEST_SUITE_ID
+POST http://localhost:4567/inferno/api/test_sessions?test_suite_id=TEST_SUITE_ID
 ```
 Tests within a suite are organized in groups. Create a test run to run an entire
 suite, a group, or an individual test. Only one of `test_suite_id`,
 `test_group_id`, or `test_id` should be provided.
 ```
-POST http://localhost:4567/api/test_runs
+POST http://localhost:4567/inferno/api/test_runs
 {
   "test_session_id": "TEST_SESSION_ID",
   "test_suite_id": "TEST_SUITE_ID",
@@ -76,9 +76,9 @@ POST http://localhost:4567/api/test_runs
 ```
 Then you can view the results of the test run:
 ```
-GET http://localhost:4567/api/test_runs/TEST_RUN_ID/results
+GET http://localhost:4567/inferno/api/test_runs/TEST_RUN_ID/results
 or
-GET http://localhost:4567/api/test_sessions/TEST_SESSION_ID/results
+GET http://localhost:4567/inferno/api/test_sessions/TEST_SESSION_ID/results
 ```
 
 ## Development

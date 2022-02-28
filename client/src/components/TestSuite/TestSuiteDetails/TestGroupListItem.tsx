@@ -19,7 +19,6 @@ import ResultIcon from './ResultIcon';
 import PendingIcon from '@mui/icons-material/Pending';
 import TestRunButton from '../TestRunButton/TestRunButton';
 import TestListItem from './TestListItem/TestListItem';
-import { getPath } from 'api/infernoApiService';
 import ReactMarkdown from 'react-markdown';
 
 interface TestGroupListItemProps {
@@ -40,6 +39,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   view,
 }) => {
   const styles = useStyles();
+  const openCondition =
+    testGroup.result?.result === 'fail' ||
+    testGroup.result?.result === 'error' ||
+    view === 'report';
 
   const renderGroupListItems = (): JSX.Element[] => {
     return testGroup.test_groups.map((tg: TestGroup) => (
@@ -105,25 +108,14 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     <Accordion
       disableGutters
       className={styles.accordion}
-      defaultExpanded={testGroup.result?.result == 'fail' || view == 'report' ? true : undefined}
+      sx={view === 'report' ? { 'pointer-events': 'none' } : {}}
+      defaultExpanded={openCondition}
       TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary
         aria-controls={`${testGroup.title}-header`}
         id={`${testGroup.title}-header`}
-        // Toggle accordion expansion only on icon click
-        sx={{
-          pointerEvents: 'none',
-        }}
-        expandIcon={
-          view === 'run' && (
-            <ExpandMoreIcon
-              sx={{
-                pointerEvents: 'auto',
-              }}
-            />
-          )
-        }
+        expandIcon={view === 'run' && <ExpandMoreIcon />}
       >
         <ListItem className={styles.testGroupCardList}>
           {testGroup.result && (
@@ -168,11 +160,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           primary={
             <Box sx={{ display: 'flex' }}>
               <FolderIcon className={styles.folderIcon} />
-              <Link
-                color="inherit"
-                href={getPath(`${location.pathname}#${testGroup.id}`)}
-                underline="hover"
-              >
+              <Link color="inherit" href={`${location.pathname}#${testGroup.id}`} underline="hover">
                 {testGroup.title}
               </Link>
             </Box>
