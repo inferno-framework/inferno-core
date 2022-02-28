@@ -68,7 +68,7 @@ git clone https://github.com/inferno-framework/us-core-test-kit.git
 cp -a /us-core-test-kit/lib/us_core/igs/. /inferno_deployment/lib/inferno_deployment/igs/
 ```
 
-Once this is done you can build and run the instance with
+Once this is done you can build and run the instance:
 
 ```sh
 ./setup.sh
