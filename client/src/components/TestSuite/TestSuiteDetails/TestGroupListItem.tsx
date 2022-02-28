@@ -76,8 +76,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         TransitionProps={{ unmountOnExit: true }}
       >
         <AccordionSummary
-          aria-controls={`${testGroup.title}-description-header`}
-          id={`${testGroup.title}-description-header`}
+          aria-controls={`${testGroup.title}-description-panel`}
+          id={`${testGroup.title}-description-panel`}
           expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
         >
           <ListItem className={styles.testGroupCardList}>
@@ -109,8 +109,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary
-        aria-controls={`${testGroup.title}-header`}
-        id={`${testGroup.title}-header`}
+        aria-controls={`${testGroup.title}-panel`}
+        id={`${testGroup.title}-panel`}
         expandIcon={view === 'run' && <ExpandMoreIcon />}
       >
         <ListItem className={styles.testGroupCardList}>
