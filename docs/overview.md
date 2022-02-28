@@ -37,10 +37,7 @@ systems providing standardized FHIR APIs.
   Inferno relies on this service to validate FHIR resources.
 
 ## Inferno Test Kits
-[Get in touch with us](mailto:inferno@groups.mitre.org) if you have written a
-test kit that you would like included here.
-- [International Patient Summary (IPS) IG Test Kit](https://github.com/inferno-framework/ips-test-kit)
-- [SMART Health Cards: Vaccination and Testing IG Test Kit](https://github.com/inferno-framework/shc-vaccination-test-kit)
+[See available Test Kits](/inferno-core/available-test-kits)
 
 ## Contact the Inferno Team
 The fastest way to reach the Inferno team is via the [Inferno Zulip

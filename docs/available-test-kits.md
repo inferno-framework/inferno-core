@@ -22,3 +22,7 @@ nav_order: 7
 {: .my-4 .test-kit-links }
 - **[TLS Test Kit](https://github.com/inferno-framework/tls-test-kit)**: Tests for TLS connections
 {: .my-4 .test-kit-links }
+
+
+[Get in touch with us](mailto:inferno@groups.mitre.org) if you have written a
+test kit that you would like included here.
