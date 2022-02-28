@@ -29,7 +29,7 @@ git clone https://github.com/inferno-framework/us-core-test-kit.git
 
 Always check the documentation for an individual Test Kit since they may differ from this standard approach.
 
-### One or More Test Kits
+### Multiple Test Kits
 There may be times when you wish to offer multiple test kits in a single Inferno instance. There may be times when you wish to run multiple, different Test Kits through a single Inferno instance. You can always load and run two or more separate Test Kits by using [Inferno Deployment](https://github.com/inferno-framework/inferno-deployment).
 
 Inferno Deployment offers a stripped down template for creating and deploying a custom combination of test kits.
