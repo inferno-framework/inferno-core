@@ -40,7 +40,6 @@ git clone https://github.com/inferno-framework/inferno-deployment.git
 
 Test kits you want to include can then be added to `Gemfile`:
 
-e.g.
 ```ruby
 gem 'smart_app_launch_test_kit',
     git: 'https://github.com/inferno-framework/smart-app-launch-test-kit.git',
