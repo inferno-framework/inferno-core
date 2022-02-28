@@ -30,15 +30,15 @@ git clone https://github.com/inferno-framework/us-core-test-kit.git
 Always check the documentation for an individual Test Kit since they may differ from this standard approach.
 
 ### Multiple Test Kits
-There may be times when you wish to offer multiple test kits in a single Inferno instance. There may be times when you wish to run multiple, different Test Kits through a single Inferno instance. You can always load and run two or more separate Test Kits by using [Inferno Deployment](https://github.com/inferno-framework/inferno-deployment).
+There may be times when you wish to offer multiple test kits in a single Inferno instance. There may be times when you wish to run multiple, different Test Kits through a single Inferno instance. You can load and run two or more separate Test Kits by using [Inferno Template](https://github.com/inferno-framework/inferno-template).
 
-Inferno Deployment offers a stripped down template for creating and deploying a custom combination of Test Kits and can be downloaded using the following command:
+To create and deploy a custom combination of Test Kits with the Inferno Template first create a new repository based off the template or clone the template:
 
 ```sh
-git clone https://github.com/inferno-framework/inferno-deployment.git
+git clone https://github.com/inferno-framework/inferno-template.git
 ```
 
-Test kits you want to include can then be added to `Gemfile`:
+Add Test Kits you want to include to the `Gemfile`:
 
 ```ruby
 gem 'smart_app_launch_test_kit',
@@ -49,14 +49,12 @@ gem 'us_core_test_kit',
     branch: 'main'
 ```
 
-To enable the Test Kits, require them in in `lib/inferno_deployment.rb`:
+To enable the Test Kits, require them in in `lib/inferno_template.rb`:
 
 ```ruby
 require 'smart_app_launch_test_kit'
 require 'us_core_test_kit'
 ```
-
-_Note: Test Kits shown can be filtered with a `Inferno::Repositories::TestSuites.all.select!` statement_
 
 Inferno relies on external validation services for profile validation; by default, Inferno uses the [FHIR Validator Wrapper](https://github.com/inferno-framework/fhir-validator-wrapper). For Test Kits that require profile validation,
 such as the US Core Test Kit, the corresponding Implementation Guide will need to be placed in the `lib/inferno_deployment/igs/` directory as a _.tgz_ file (i.e. _package.tgz_).
@@ -65,7 +63,7 @@ The Implementation Guide files for a Test Kit can be located in that kit's git r
 e.g. for the US Core Test Kit
 ```sh
 git clone https://github.com/inferno-framework/us-core-test-kit.git
-cp -a /us-core-test-kit/lib/us_core/igs/. /inferno_deployment/lib/inferno_deployment/igs/
+cp -a /us-core-test-kit/lib/us_core/igs/. /inferno_template/lib/inferno_template/igs/
 ```
 
 Once this is done you can build and run the instance:
@@ -74,6 +72,8 @@ Once this is done you can build and run the instance:
 ./setup.sh
 ./run.sh
 ```
+
+_Note: Example Test Suites, Groups, Tests and IGs in the template can be removed._
 
 ## Getting Started for Inferno Test Writers
 
