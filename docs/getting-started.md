@@ -49,7 +49,7 @@ gem 'us_core_test_kit',
     branch: 'main'
 ```
 
-To enable the test kits, require them in in `lib/inferno_deployment.rb`
+To enable the Test Kits, require them in in `lib/inferno_deployment.rb`:
 
 ```ruby
 require 'smart_app_launch_test_kit'
