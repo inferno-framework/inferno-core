@@ -19,14 +19,18 @@ interface MessagesListProps {
 const MessagesList: FC<MessagesListProps> = ({ messages }) => {
   const styles = useStyles();
 
-  const messageListHeaders = (
+  const messageListHeader = (
     <TableRow key={`msg-header`}>
       <TableCell>
-        <Typography variant="subtitle2" component="p" className={styles.bolderText}>
+        <Typography variant="overline" className={styles.bolderText}>
           Type
         </Typography>
       </TableCell>
-      <TableCell className={styles.messageMessage}>Message</TableCell>
+      <TableCell className={styles.messageMessage}>
+        <Typography variant="overline" className={styles.bolderText}>
+          Message
+        </Typography>
+      </TableCell>
     </TableRow>
   );
 
@@ -47,7 +51,7 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
 
   return messages.length > 0 ? (
     <Table>
-      <TableHead>{messageListHeaders}</TableHead>
+      <TableHead>{messageListHeader}</TableHead>
       <TableBody>{messageListItems}</TableBody>
     </Table>
   ) : (
