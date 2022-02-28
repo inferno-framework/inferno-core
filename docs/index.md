@@ -41,7 +41,7 @@ end
 
 A Web UI, Out of the Box
 {: .fs-7 .fw-300 }
-Inferno ships with a web based user interface suitable for local use or deploying as a central service.
+Inferno ships with a web based user interface suitable for local use or deploying as a shared, central service.
 ![Inferno Web UI](web-ui.png)
 
 Create, Share, Extend
