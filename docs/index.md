@@ -12,7 +12,7 @@ Everything you need to create, execute and share tests for health IT systems pro
 [Get started now](/inferno-core/getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [Read the Docs](/inferno-core/overview){: .btn .btn-green .fs-5 .mb-4 .mb-md-0 .mr-2 } [View it on GitHub](https://github.com/inferno-framework/){: .btn .fs-5 .mb-4 .mb-md-0 }
 
 Simple to Read, Simple to Write
-{: .fs-5 .fw-300 }
+{: .fs-7 .fw-300 }
 Inferno tests are written in a Ruby DSL, with a focus on readability.
 {: .fs-4 }
 
@@ -39,7 +39,7 @@ end
 ```
 
 Continuous Integration Ready
-{: .fs-5 .fw-300 }
+{: .fs-7 .fw-300 }
 Inferno exposes a JSON API for automated execution within your CI pipeline.
 {: .fs-4 .d-flex .flex}
 ```http
@@ -56,7 +56,7 @@ GET /api/test_suites
 ```
 
 Create, Share, Extend
-{: .fs-5 .fw-300 }
+{: .fs-7 .fw-300 }
 Inferno Test Kits can be easily shared and extended so you can focus on your unique tests.
 {: .fs-4 .d-flex .flex}
 ```ruby
