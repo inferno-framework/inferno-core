@@ -8,6 +8,8 @@ import {
   TableContainer,
   TableBody,
   Tooltip,
+  TableHead,
+  ListItem,
 } from '@mui/material';
 import { Request } from 'models/testSuiteModels';
 import RequestDetailModal from 'components/RequestDetailModal/RequestDetailModal';
@@ -46,58 +48,75 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
     }
   }
 
-  const requestListItems =
-    requests.length > 0 ? (
-      requests.map((request: Request, index: number) => {
-        return (
-          <TableRow key={`reqRow-${index}`}>
-            <TableCell>
-              <Typography variant="subtitle2">{request.direction}</Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="subtitle2">{request.verb}</Typography>
-            </TableCell>
-            <TableCell className={styles.requestUrlContainer}>
-              <Tooltip title={request.url} placement="bottom-start">
-                <Typography variant="subtitle2" className={styles.requestUrl}>
-                  {request.url}
-                </Typography>
-              </Tooltip>
-            </TableCell>
-            <TableCell>
-              <Typography variant="subtitle2" className={styles.bolderText}>
-                {request.status}
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Button
-                onClick={() => showDetailsClick(request)}
-                variant="contained"
-                color="secondary"
-                size="small"
-                disableElevation
-              >
-                Details
-              </Button>
-            </TableCell>
-          </TableRow>
-        );
-      })
-    ) : (
-      <TableRow key={`reqRow-none`}>
+  const headerTitles = ['Direction', 'Type', 'URL', 'Status', 'Details'];
+  const requestListHeader = (
+    <TableRow key="req-header">
+      {headerTitles.map((title) => (
         <TableCell>
-          <Typography variant="subtitle2">None</Typography>
+          <Typography variant="overline" className={styles.bolderText}>
+            {title}
+          </Typography>
+        </TableCell>
+      ))}
+    </TableRow>
+  );
+
+  const requestListItems = requests.map((request: Request, index: number) => {
+    return (
+      <TableRow key={`reqRow-${index}`}>
+        <TableCell>
+          <Typography variant="subtitle2" component="p">
+            {request.direction}
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle2" component="p">
+            {request.verb}
+          </Typography>
+        </TableCell>
+        <TableCell className={styles.requestUrlContainer}>
+          <Tooltip title={request.url} placement="bottom-start">
+            <Typography variant="subtitle2" component="p" className={styles.requestUrl}>
+              {request.url}
+            </Typography>
+          </Tooltip>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle2" component="p" className={styles.bolderText}>
+            {request.status}
+          </Typography>
+        </TableCell>
+        <TableCell>
+          <Button
+            onClick={() => showDetailsClick(request)}
+            variant="contained"
+            color="secondary"
+            size="small"
+            disableElevation
+          >
+            Details
+          </Button>
         </TableCell>
       </TableRow>
     );
+  });
 
   return (
     <>
-      <TableContainer>
-        <Table className={styles.table}>
-          <TableBody>{requestListItems}</TableBody>
-        </Table>
-      </TableContainer>
+      {requests.length > 0 ? (
+        <TableContainer>
+          <Table className={styles.table}>
+            <TableHead>{requestListHeader}</TableHead>
+            <TableBody>{requestListItems}</TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <ListItem>
+          <Typography variant="subtitle2" component="p">
+            No Requests
+          </Typography>
+        </ListItem>
+      )}
       <RequestDetailModal
         request={detailedRequest}
         modalVisible={showDetails}

@@ -77,7 +77,6 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       >
         <AccordionSummary
           aria-controls={`${testGroup.title}-description-panel`}
-          id={`${testGroup.title}-description-panel`}
           expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
         >
           <ListItem className={styles.testGroupCardList}>
@@ -91,7 +90,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           </ListItem>
         </AccordionSummary>
         <Divider />
-        <AccordionDetails className={styles.accordionDetailContainer}>
+        <AccordionDetails
+          id={`${testGroup.title}-description-panel`}
+          className={styles.accordionDetailContainer}
+        >
           <ReactMarkdown className={`${styles.accordionDetail} ${styles.nestedDescription}`}>
             {testGroup.description as string}
           </ReactMarkdown>
@@ -110,7 +112,6 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     >
       <AccordionSummary
         aria-controls={`${testGroup.title}-panel`}
-        id={`${testGroup.title}-panel`}
         expandIcon={view === 'run' && <ExpandMoreIcon />}
       >
         <ListItem className={styles.testGroupCardList}>
@@ -129,7 +130,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         </ListItem>
       </AccordionSummary>
       <Divider />
-      <AccordionDetails className={styles.accordionDetailContainer}>
+      <AccordionDetails id={`${testGroup.title}-panel`} className={styles.accordionDetailContainer}>
         {testGroup.description && view == 'run' && nestedDescriptionPanel}
         <List className={styles.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}
