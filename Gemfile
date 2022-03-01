@@ -4,18 +4,13 @@ ruby '2.7.3'
 
 gemspec
 
-# To use these test kits, uncomment these lines, run `bundle update`, and
-# uncomment the require at the top of
+# To test with the g10 test kit (this also adds the US Core, SMART, and TLS test
+# kits):
+# - Uncomment this line:
+# gem 'onc_certification_g10_test_kit'
+# - Run `bundle update`
+# - Uncomment the require at the top of
 # `dev_suites/dev_demo_ig_stu1/demo_suite.rb`.
-# gem 'g10_certification_test_kit',
-#     git: 'https://github.com/inferno-framework/g10-certification-test-kit.git',
-#     branch: 'main'
-# gem 'smart_app_launch_test_kit',
-#     git: 'https://github.com/inferno-framework/smart-app-launch-test-kit.git',
-#     branch: 'main'
-# gem 'us_core_test_kit',
-#     git: 'https://github.com/inferno-framework/us-core-test-kit.git',
-#     branch: 'main'
 
 group :development, :test do
   gem 'pry'
