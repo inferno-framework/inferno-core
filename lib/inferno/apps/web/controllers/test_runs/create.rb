@@ -21,13 +21,13 @@ module Inferno
               return
             end
 
-            # TODO: This test run shouldn't be created until after the inputs
-            # and runnable are validated
-            test_run = repo.create(create_params(params).merge(status: 'queued'))
-            missing_inputs = test_run.runnable.missing_inputs(params[:inputs])
-
+            check_runnable = repo.build_entity(create_params(params)).runnable
+            missing_inputs = check_runnable.missing_inputs(params[:inputs])
+            user_runnable = check_runnable.user_runnable?
             raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs.any?
-            raise Inferno::Exceptions::NotUserRunnableException unless test_run.runnable.user_runnable?
+            raise Inferno::Exceptions::NotUserRunnableException unless user_runnable
+
+            test_run = repo.create(create_params(params).merge(status: 'queued'))
 
             self.body = serialize(test_run)
 
