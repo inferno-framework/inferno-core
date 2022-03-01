@@ -21,6 +21,7 @@ module Inferno
     Application.register('async_jobs', ENV['ASYNC_JOBS'] != 'false')
     Application.register('inferno_host', ENV.fetch('INFERNO_HOST', 'http://localhost:4567'))
     Application.register('base_url', URI.join(Application['inferno_host'], base_path).to_s)
+    Application.register('cache_bust_token', SecureRandom.uuid)
 
     configure do |config|
       config.root = File.expand_path('../../..', __dir__)
