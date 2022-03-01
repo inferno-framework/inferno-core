@@ -47,11 +47,15 @@ const CustomContent = React.forwardRef(function CustomContent(
     preventSelection(event);
   };
 
-  const handleExpansionClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleExpansionAction = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
+  ) => {
     handleExpansion(event);
   };
 
-  const handleSelectionClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleSelectionAction = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
+  ) => {
     handleSelection(event);
     if (testId) history.push(`#${testId}`);
   };
@@ -67,10 +71,21 @@ const CustomContent = React.forwardRef(function CustomContent(
       onMouseDown={handleMouseDown}
       ref={ref as React.Ref<HTMLDivElement>}
     >
-      <div onClick={handleExpansionClick} className={classes.iconContainer}>
+      <div
+        onClick={handleExpansionAction}
+        onKeyPress={handleExpansionAction}
+        className={classes.iconContainer}
+        tabIndex={0}
+      >
         {icon}
       </div>
-      <Typography onClick={handleSelectionClick} component="div" className={classes.label}>
+      <Typography
+        onClick={handleSelectionAction}
+        onKeyPress={handleSelectionAction}
+        component="div"
+        className={classes.label}
+        tabIndex={0}
+      >
         {label}
       </Typography>
     </div>

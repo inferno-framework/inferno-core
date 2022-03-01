@@ -11,18 +11,15 @@ export default makeStyles((theme: Theme) => ({
   reportSummaryItemLabel: {
     textTransform: 'uppercase',
   },
-  reportSummaryItemValue: {
-    fontSize: '28px',
-  },
   reportSummaryItems: {
-    padding: '20px;',
+    padding: '16px;',
     display: 'flex',
     justifyContent: 'space-around',
     textAlign: 'center',
   },
   reportSummaryURL: {
     textAlign: 'right',
-    padding: '0 10px;',
+    padding: '0 8px;',
     fontSize: '12px',
   },
   testIcon: {
