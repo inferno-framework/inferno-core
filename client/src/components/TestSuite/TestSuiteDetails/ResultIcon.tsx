@@ -34,6 +34,15 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
             />
           </Tooltip>
         );
+      case 'cancel':
+        return (
+          <Tooltip title="cancel">
+            <CancelIcon
+              style={{ color: result.optional ? grey[500] : red[500] }}
+              data-testid={`${result.id}-${result.result}`}
+            />
+          </Tooltip>
+        );
       case 'skip':
         return (
           <Tooltip title="skipped">
@@ -67,15 +76,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
             <AccessTimeIcon data-testid={`${result.id}-${result.result}`} />
           </Tooltip>
         );
-      case 'cancel':
-        return (
-          <Tooltip title="cancel">
-            <CancelIcon
-              style={{ color: result.optional ? grey[500] : red[500] }}
-              data-testid={`${result.id}-${result.result}`}
-            />
-          </Tooltip>
-        );
+
       default:
         return <Fragment />;
     }
