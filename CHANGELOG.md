@@ -1,3 +1,8 @@
+# 0.2.0.rc2
+
+* Bust the bundle.js cache.
+* Make entire test list item clickable.
+
 # 0.2.0.rc1
 
 * **Breaking Change:** Support hosting inferno on a non-root path. To support
