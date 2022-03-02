@@ -107,6 +107,7 @@ export interface TestSuite {
   short_description?: string;
   run_as_group?: boolean;
   result?: Result;
+  inputs: TestInput[];
   test_count?: number;
   test_groups?: TestGroup[];
   optional?: boolean;
