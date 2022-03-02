@@ -23,7 +23,7 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
   const messageListHeader = (
     <TableRow key="msg-header">
       {headerTitles.map((title) => (
-        <TableCell className={title === 'Message' ? styles.messageMessage : ''}>
+        <TableCell key={title} className={title === 'Message' ? styles.messageMessage : ''}>
           <Typography variant="overline" className={styles.bolderText}>
             {title}
           </Typography>

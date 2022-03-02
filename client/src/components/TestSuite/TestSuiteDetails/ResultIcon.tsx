@@ -6,14 +6,16 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import ErrorIcon from '@mui/icons-material/Error';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import CircleIcon from '@mui/icons-material/Circle';
 import BlockIcon from '@mui/icons-material/Block';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 export interface ResultIconProps {
   result?: Result;
+  useEmptyIcon?: boolean;
 }
 
-const ResultIcon: FC<ResultIconProps> = ({ result }) => {
+const ResultIcon: FC<ResultIconProps> = ({ result, useEmptyIcon }) => {
   if (result) {
     switch (result.result) {
       case 'pass':
@@ -55,7 +57,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
       case 'omit':
         return (
           <Tooltip title="omitted">
-            <RadioButtonUncheckedIcon
+            <CircleIcon
               style={{ color: grey[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
@@ -81,6 +83,14 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
         return <Fragment />;
     }
   } else {
+    if (useEmptyIcon)
+      return (
+        <RadioButtonUncheckedIcon
+          style={{
+            color: grey[500],
+          }}
+        />
+      );
     return <Fragment />;
   }
 };
