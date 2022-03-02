@@ -11,7 +11,7 @@ Inferno::Application.boot(:db) do
 
     config_path = File.expand_path('database.yml', File.join(Dir.pwd, 'config'))
     config_contents = ERB.new(File.read(config_path)).result
-    config = YAML.load(config_contents)[ENV['APP_ENV']]
+    config = YAML.safe_load(config_contents)[ENV['APP_ENV']]
       .merge(logger: Inferno::Application['logger'])
     connection_attempts_remaining = ENV.fetch('MAX_DB_CONNECTION_ATTEMPTS', '10').to_i
     connection_retry_delay = ENV.fetch('DB_CONNECTION_RETRY_DELAY', '5').to_i
