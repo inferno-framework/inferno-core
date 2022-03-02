@@ -64,14 +64,14 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
         <Divider />
         <DialogContent>
           <div className={styles.section}>
-            <Typography variant="h5" className={styles.sectionHeader}>
+            <Typography variant="h5" component="h3" className={styles.sectionHeader}>
               Request
             </Typography>
             <HeaderTable headers={request.request_headers || []} />
             <CodeBlock body={request.request_body} />
           </div>
           <div className={styles.section}>
-            <Typography variant="h5" className={styles.sectionHeader}>
+            <Typography variant="h5" component="h3" className={styles.sectionHeader}>
               Response
             </Typography>
             <HeaderTable headers={request.response_headers || []} />

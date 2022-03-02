@@ -80,19 +80,21 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
       <Box className={styles.reportSummaryBox}>
         <Box className={styles.reportSummaryItems}>
           <Box>
-            <Typography className={styles.reportSummaryItemValue} textTransform="uppercase">
+            <Typography variant="h4" component="h1" textTransform="uppercase">
               {testSuite.result?.result || 'pending'}
             </Typography>
             <Typography className={styles.reportSummaryItemLabel}>Final Result</Typography>
           </Box>
           {testSuite.version && (
             <Box>
-              <Typography className={styles.reportSummaryItemValue}>{testSuite.version}</Typography>
+              <Typography variant="h4" component="h1">
+                {testSuite.version}
+              </Typography>
               <Typography className={styles.reportSummaryItemLabel}>Version</Typography>
             </Box>
           )}
           <Box>
-            <Typography className={styles.reportSummaryItemValue}>
+            <Typography variant="h4" component="h1">
               {Intl.DateTimeFormat('en', {
                 year: 'numeric',
                 month: 'short',

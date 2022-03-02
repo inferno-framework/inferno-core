@@ -11,18 +11,15 @@ export default makeStyles((theme: Theme) => ({
   reportSummaryItemLabel: {
     textTransform: 'uppercase',
   },
-  reportSummaryItemValue: {
-    fontSize: '28px',
-  },
   reportSummaryItems: {
-    padding: '20px;',
+    padding: '16px;',
     display: 'flex',
     justifyContent: 'space-around',
     textAlign: 'center',
   },
   reportSummaryURL: {
     textAlign: 'right',
-    padding: '0 10px;',
+    padding: '0 8px;',
     fontSize: '12px',
   },
   testIcon: {
@@ -89,7 +86,6 @@ export default makeStyles((theme: Theme) => ({
     padding: '8px 0',
   },
   folderIcon: {
-    padding: '0 8px 0 0',
     color: theme.palette.common.grayLight,
   },
   printButton: {

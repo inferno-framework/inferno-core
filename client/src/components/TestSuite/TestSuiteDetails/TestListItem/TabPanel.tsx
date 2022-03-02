@@ -1,17 +1,18 @@
 import React, { FC } from 'react';
 
 interface TabPanelProps {
+  id: string;
   index: number;
   currentPanelIndex: number;
 }
 
-const TabPanel: FC<TabPanelProps> = ({ index, currentPanelIndex, children }) => {
+const TabPanel: FC<TabPanelProps> = ({ id, index, currentPanelIndex, children }) => {
   return (
     <div
       role="tabpanel"
       hidden={currentPanelIndex !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
+      id={`${id}-tabpanel-${index}`}
+      aria-labelledby={`${id}-tab-${index}`}
     >
       {currentPanelIndex === index && <div>{children}</div>}
     </div>

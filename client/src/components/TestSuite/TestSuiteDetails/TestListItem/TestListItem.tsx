@@ -2,7 +2,6 @@ import React, { FC, useEffect } from 'react';
 import useStyles from './styles';
 import {
   Box,
-  Container,
   Divider,
   IconButton,
   ListItem,
@@ -52,7 +51,7 @@ const TestListItem: FC<TestListItemProps> = ({
     if (openCondition) setOpen(true);
   }, [test.result]);
 
-  const resultIcon = test.result && (
+  const resultIcon = (
     <Box className={styles.testIcon}>
       <ResultIcon result={test.result} />
     </Box>
@@ -129,11 +128,25 @@ const TestListItem: FC<TestListItemProps> = ({
     </Box>
   );
 
-  const testDescription = (
-    <ReactMarkdown>
-      {test.description && test.description.length > 0 ? test.description : 'No description'}
-    </ReactMarkdown>
-  );
+  const testDescription =
+    test.description && test.description.length > 0 ? (
+      <ListItem>
+        <Typography variant="subtitle2" component="p">
+          <ReactMarkdown>{test.description}</ReactMarkdown>
+        </Typography>
+      </ListItem>
+    ) : (
+      <ListItem>
+        <Typography variant="subtitle2" component="p">
+          No Description
+        </Typography>
+      </ListItem>
+    );
+
+  const a11yProps = (index: number) => ({
+    id: `${test.id}-tab-${index}`,
+    'aria-controls': `${test.id}-tabpanel-${index}`,
+  });
 
   return (
     <>
@@ -146,8 +159,7 @@ const TestListItem: FC<TestListItemProps> = ({
         onClick={() => setOpen(!open)}
       >
         <AccordionSummary
-          aria-controls={`${test.title}-header`}
-          id={`${test.title}-header`}
+          aria-controls={`${test.title}-panel`}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
         >
           <ListItem className={styles.testCardList}>
@@ -160,10 +172,12 @@ const TestListItem: FC<TestListItemProps> = ({
         </AccordionSummary>
         <Divider />
         <AccordionDetails
+          id={`${test.title}-panel`}
           className={styles.accordionDetailContainer}
           onClick={(e) => e.stopPropagation()}
         >
           <Tabs
+            aria-label={`${test.title}-tabs`}
             value={panelIndex}
             className={styles.tabs}
             onChange={(e, newIndex) => {
@@ -171,15 +185,15 @@ const TestListItem: FC<TestListItemProps> = ({
             }}
             variant="fullWidth"
           >
-            <Tab label="Messages" />
-            <Tab label="HTTP Requests" />
-            <Tab label="About" />
+            <Tab label="Messages" {...a11yProps(0)} />
+            <Tab label="HTTP Requests" {...a11yProps(1)} />
+            <Tab label="About" {...a11yProps(2)} />
           </Tabs>
           <Divider />
-          <TabPanel currentPanelIndex={panelIndex} index={0}>
+          <TabPanel id={test.id} currentPanelIndex={panelIndex} index={0}>
             <MessagesList messages={test.result?.messages || []} />
           </TabPanel>
-          <TabPanel currentPanelIndex={panelIndex} index={1}>
+          <TabPanel id={test.id} currentPanelIndex={panelIndex} index={1}>
             {updateRequest && (
               <RequestsList
                 requests={test.result?.requests || []}
@@ -188,11 +202,8 @@ const TestListItem: FC<TestListItemProps> = ({
               />
             )}
           </TabPanel>
-          <TabPanel currentPanelIndex={panelIndex} index={2}>
-            <Container>
-              <Typography variant="subtitle2">{testDescription}</Typography>
-            </Container>
-            <Divider />
+          <TabPanel id={test.id} currentPanelIndex={panelIndex} index={2}>
+            {testDescription}
           </TabPanel>
         </AccordionDetails>
       </Accordion>

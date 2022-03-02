@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { TestGroup, RunnableType } from 'models/testSuiteModels';
 import CustomTreeItem from '../../_common/TreeItem';
 import TreeItemLabel from './TreeItemLabel';
-import CondensedResultIcon from './CondensedResultIcon';
+import ResultIcon from '../TestSuiteDetails/ResultIcon';
 
 export interface TestGroupTreeItemProps {
   testGroup: TestGroup;
@@ -16,7 +16,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
   testRunInProgress,
 }) => {
   const itemIcon = (testGroup.run_as_group || testGroup.test_groups.length === 0) && (
-    <CondensedResultIcon result={testGroup.result} />
+    <ResultIcon result={testGroup.result} />
   );
 
   const renderSublist = (): JSX.Element[] => {
