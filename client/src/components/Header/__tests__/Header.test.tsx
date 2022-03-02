@@ -11,7 +11,7 @@ test('renders Inferno Header', () => {
   );
 
   const logoElement = screen.getByRole('img');
-  expect(logoElement).toHaveAttribute('alt', 'inferno logo');
+  expect(logoElement).toHaveAttribute('alt', 'Inferno logo - start new session');
 });
 
 // Commenting out for now
