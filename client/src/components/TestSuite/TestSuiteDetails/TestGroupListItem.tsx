@@ -115,9 +115,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         expandIcon={view === 'run' && <ExpandMoreIcon />}
       >
         <ListItem className={styles.testGroupCardList}>
-          {testGroup.result && (
-            <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
-          )}
+          <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
           <ListItemText primary={testGroup.title} secondary={testGroup.result?.result_message} />
           {view === 'run' && runTests && (
             <TestRunButton
@@ -140,20 +138,21 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     </Accordion>
   );
 
-  const folderGroupListItem = (
+  const navigableGroupListItem = (
     <>
       <ListItem>
-        {testGroup.result && (
-          <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
-        )}
+        <Box className={styles.testIcon}>
+          {testGroup.run_as_group ? (
+            <ResultIcon result={testGroup.result} />
+          ) : (
+            <FolderIcon className={styles.folderIcon} />
+          )}
+        </Box>
         <ListItemText
           primary={
-            <Box sx={{ display: 'flex' }}>
-              <FolderIcon className={styles.folderIcon} />
-              <Link color="inherit" href={`${location.pathname}#${testGroup.id}`} underline="hover">
-                {testGroup.title}
-              </Link>
-            </Box>
+            <Link color="inherit" href={`${location.pathname}#${testGroup.id}`} underline="hover">
+              {testGroup.title}
+            </Link>
           }
           secondary={testGroup.result?.result_message}
         />
@@ -163,7 +162,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   );
 
   return (
-    <>{testGroup.expanded || view === 'report' ? expandedGroupListItem : folderGroupListItem}</>
+    <>{testGroup.expanded || view === 'report' ? expandedGroupListItem : navigableGroupListItem}</>
   );
 };
 

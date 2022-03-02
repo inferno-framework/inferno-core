@@ -51,7 +51,7 @@ const TestListItem: FC<TestListItemProps> = ({
     if (openCondition) setOpen(true);
   }, [test.result]);
 
-  const resultIcon = test.result && (
+  const resultIcon = (
     <Box className={styles.testIcon}>
       <ResultIcon result={test.result} />
     </Box>

@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC } from 'react';
 import { Result } from 'models/testSuiteModels';
 import { Tooltip } from '@mui/material';
 import { red, orange, green, purple, grey } from '@mui/material/colors';
@@ -12,10 +12,9 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 
 export interface ResultIconProps {
   result?: Result;
-  useEmptyIcon?: boolean;
 }
 
-const ResultIcon: FC<ResultIconProps> = ({ result, useEmptyIcon }) => {
+const ResultIcon: FC<ResultIconProps> = ({ result }) => {
   if (result) {
     switch (result.result) {
       case 'pass':
@@ -80,18 +79,22 @@ const ResultIcon: FC<ResultIconProps> = ({ result, useEmptyIcon }) => {
         );
 
       default:
-        return <Fragment />;
+        return (
+          <RadioButtonUncheckedIcon
+            style={{
+              color: grey[500],
+            }}
+          />
+        );
     }
   } else {
-    if (useEmptyIcon)
-      return (
-        <RadioButtonUncheckedIcon
-          style={{
-            color: grey[500],
-          }}
-        />
-      );
-    return <Fragment />;
+    return (
+      <RadioButtonUncheckedIcon
+        style={{
+          color: grey[500],
+        }}
+      />
+    );
   }
 };
 

@@ -86,7 +86,6 @@ export default makeStyles((theme: Theme) => ({
     padding: '8px 0',
   },
   folderIcon: {
-    padding: '0 8px 0 0',
     color: theme.palette.common.grayLight,
   },
   printButton: {
