@@ -51,16 +51,13 @@ module Inferno
 
         subclass.config(config)
 
-        child_types.each do |child_type|
-          new_children = send(child_type).map do |child|
-            Class.new(child).tap do |subclass_child|
-              subclass_child.parent = subclass
-            end
+        new_children = children.map do |child|
+          Class.new(child).tap do |subclass_child|
+            subclass_child.parent = subclass
           end
-
-          subclass.instance_variable_set(:"@#{child_type}", new_children)
-          subclass.children.concat(new_children)
         end
+
+        subclass.instance_variable_set(:@children, new_children)
       end
 
       # @private

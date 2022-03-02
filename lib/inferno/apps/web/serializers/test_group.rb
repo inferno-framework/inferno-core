@@ -17,7 +17,7 @@ module Inferno
 
         association :groups, name: :test_groups, blueprint: TestGroup
         association :tests, blueprint: Test
-        field :input_definitions, name: :inputs, extractor: HashValueExtractor, blueprint: Input
+        field :available_input_definitions, name: :inputs, extractor: HashValueExtractor, blueprint: Input
         field :output_definitions, name: :outputs, extractor: HashValueExtractor
       end
     end
