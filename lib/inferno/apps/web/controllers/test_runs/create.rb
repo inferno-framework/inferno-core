@@ -21,9 +21,9 @@ module Inferno
               return
             end
 
-            check_runnable = repo.build_entity(create_params(params)).runnable
-            missing_inputs = check_runnable.missing_inputs(params[:inputs])
-            user_runnable = check_runnable.user_runnable?
+            runnable = repo.build_entity(create_params(params)).runnable
+            missing_inputs = runnable&.missing_inputs(params[:inputs])
+            user_runnable = runnable&.user_runnable?
             raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs.any?
             raise Inferno::Exceptions::NotUserRunnableException unless user_runnable
 
