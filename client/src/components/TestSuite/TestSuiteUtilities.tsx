@@ -1,4 +1,4 @@
-import { TestGroup, TestInput } from 'models/testSuiteModels';
+import { Test, TestGroup, TestInput, TestSuite } from 'models/testSuiteModels';
 
 function inputAlreadyExists(existing_inputs: TestInput[], new_input: TestInput): boolean {
   return existing_inputs.some((existing_input: TestInput) => {
@@ -33,3 +33,14 @@ function getInputsRecursive(testGroup: TestGroup, testOutputs: Set<string>): Tes
   testGroup.outputs.forEach((output) => testOutputs.add(output.name));
   return inputs;
 }
+
+export const shouldShowDescription = (
+  runnable: Test | TestGroup | TestSuite,
+  description: JSX.Element | undefined
+): boolean => {
+  if (description && runnable.description && runnable.description.length > 0) {
+    return true;
+  } else {
+    return false;
+  }
+};

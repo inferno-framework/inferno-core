@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import useStyles from './styles';
 import {
   Box,
@@ -25,6 +25,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReactMarkdown from 'react-markdown';
 import TestRunButton from '../../TestRunButton/TestRunButton';
+import { shouldShowDescription } from '../../TestSuiteUtilities';
 
 interface TestListItemProps {
   test: Test;
@@ -128,11 +129,15 @@ const TestListItem: FC<TestListItemProps> = ({
     </Box>
   );
 
-  const testDescription =
+  const markdownDescription = useMemo(() => {
+    return test.description ? <ReactMarkdown>{test.description}</ReactMarkdown> : undefined;
+  }, [test.description]);
+
+  const testDescription: JSX.Element =
     test.description && test.description.length > 0 ? (
       <ListItem>
         <Typography variant="subtitle2" component="p">
-          <ReactMarkdown>{test.description}</ReactMarkdown>
+          {markdownDescription}
         </Typography>
       </ListItem>
     ) : (
@@ -203,7 +208,7 @@ const TestListItem: FC<TestListItemProps> = ({
             )}
           </TabPanel>
           <TabPanel id={test.id} currentPanelIndex={panelIndex} index={2}>
-            {testDescription}
+            {shouldShowDescription(test, testDescription) ? testDescription : 'No description'}
           </TabPanel>
         </AccordionDetails>
       </Accordion>
