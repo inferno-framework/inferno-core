@@ -39,15 +39,24 @@ module Inferno
 
       # Class instance variables are used to hold the metadata for Runnable
       # classes. When inheriting from a Runnable class, these class instance
-      # variables need to be copied. Any child Runnable classes will themselves
-      # need to be subclassed so that their parent can be updated.
+      # variables need to be copied. Some instance variables should not be
+      # copied, and will need to be repopulated from scratch on the new class.
+      # Any child Runnable classes will themselves need to be subclassed so that
+      # their parent can be updated.
+      VARIABLES_NOT_TO_COPY = [
+        :@id, # New runnable will have a different id
+        :@parent, # New runnable unlikely to have the same parent
+        :@children, # New subclasses have to be made for each child
+        :@test_count, # Needs to be recalculated
+        :@config, # Needs to be set by calling .config, which does extra work
+        :@available_input_definitions # Needs to be recalculated
+      ].freeze
+
       # @private
       def copy_instance_variables(subclass)
-        instance_variables.each do |variable|
-          next if [:@id, :@groups, :@tests, :@parent, :@children, :@test_count, :@config].include?(variable)
-
-          subclass.instance_variable_set(variable, instance_variable_get(variable).dup)
-        end
+        instance_variables
+          .reject { |variable| VARIABLES_NOT_TO_COPY.include? variable }
+          .each { |variable| subclass.instance_variable_set(variable, instance_variable_get(variable).dup) }
 
         subclass.config(config)
 
@@ -478,21 +487,26 @@ module Inferno
       end
 
       # @private
+      # Goes through this runnable and all of its children, gathering the inputs
+      # they need, and excluding any which are provided by outputs of an earlier
+      # runnable.
       def available_input_definitions(prior_outputs = [])
-        available_input_definitions =
-          inputs
-            .each_with_object({}) do |input, definitions|
-              definitions[config.input_name(input)] =
-                config.input_config(input)
-            end
-        available_input_definitions.reject! { |input, _| prior_outputs.include? input }
+        @available_input_definitions ||=
+          begin
+            available_input_definitions =
+              inputs
+                .each_with_object({}) do |input, definitions|
+                  definitions[config.input_name(input)] = config.input_config(input)
+                end
+            available_input_definitions.reject! { |input, _| prior_outputs.include? input }
 
-        children_available_input_definitions =
-          children.each_with_object({}) do |child, definitions|
-            definitions.merge!(child.available_input_definitions(prior_outputs))
+            children_available_input_definitions =
+              children.each_with_object({}) do |child, definitions|
+                definitions.merge!(child.available_input_definitions(prior_outputs))
+              end
+            prior_outputs.concat(outputs.map { |output| config.output_name(output) })
+            children_available_input_definitions.merge(available_input_definitions)
           end
-        prior_outputs.concat(outputs.map { |output| config.output_name(output) })
-        children_available_input_definitions.merge(available_input_definitions)
       end
     end
   end
