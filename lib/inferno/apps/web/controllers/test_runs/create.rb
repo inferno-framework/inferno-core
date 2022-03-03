@@ -24,7 +24,7 @@ module Inferno
             runnable = repo.build_entity(create_params(params)).runnable
             missing_inputs = runnable&.missing_inputs(params[:inputs])
             user_runnable = runnable&.user_runnable?
-            raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs.any?
+            raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs&.any?
             raise Inferno::Exceptions::NotUserRunnableException unless user_runnable
 
             test_run = repo.create(create_params(params).merge(status: 'queued'))
