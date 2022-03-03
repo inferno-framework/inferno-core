@@ -1,6 +1,7 @@
 require_relative 'configurable'
 require_relative 'resume_test_route'
 require_relative '../utils/markdown_formatter'
+require 'pry-byebug'
 
 module Inferno
   module DSL
@@ -493,13 +494,23 @@ module Inferno
                 .each_with_object({}) do |input, definitions|
                   definitions[config.input_name(input)] = config.input_config(input)
                 end
-            available_input_definitions.reject! { |input, _| prior_outputs.include? input }
 
+            # TODO: fix types getting clobbered
             children_available_input_definitions =
               children.each_with_object({}) do |child, definitions|
-                definitions.merge!(child.available_input_definitions(prior_outputs))
+                new_definitions = child.available_input_definitions(prior_outputs)
+                new_definitions.each_key do |input|
+                  definitions[input] = (definitions[input] || {}).merge(new_definitions[input])
+                end
               end
             prior_outputs.concat(outputs.map { |output| config.output_name(output) })
+            available_input_definitions.each_key do |input|
+              current_definition = available_input_definitions[input]
+              child_definition = children_available_input_definitions[input] || {}
+              new_definition = child_definition.merge(current_definition)
+              available_input_definitions[input] = new_definition
+            end
+            children_available_input_definitions.reject! { |input, _| prior_outputs.include? input }
             children_available_input_definitions.merge(available_input_definitions)
           end
       end
