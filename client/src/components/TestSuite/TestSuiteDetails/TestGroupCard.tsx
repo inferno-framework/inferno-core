@@ -1,10 +1,11 @@
-import React, { FC } from 'react';
+import React, { FC, useMemo } from 'react';
 import useStyles from './styles';
 import { TestGroup, RunnableType, TestSuite } from 'models/testSuiteModels';
 import { Box, Card, Divider, List, Typography } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
+import { shouldShowDescription } from '../TestSuiteUtilities';
 
 interface TestGroupCardProps {
   runnable: TestSuite | TestGroup;
@@ -24,9 +25,10 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
 
   const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
 
-  const description = view === 'run' && runnable.description && runnable.description.length > 0 && (
-    <ReactMarkdown>{runnable.description}</ReactMarkdown>
-  );
+  // render markdown once on mount - it's too slow with re-rendering
+  const description = useMemo(() => {
+    return runnable.description ? <ReactMarkdown>{runnable.description}</ReactMarkdown> : undefined;
+  }, [runnable.description]);
 
   const resultSpan = runnable.result && (
     <span className={styles.testIcon}>
@@ -57,7 +59,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           )}
         </span>
       </div>
-      {view === 'run' && description && (
+      {view === 'run' && shouldShowDescription(runnable, description) && (
         <>
           <Box margin="20px">{description}</Box>
           <Divider />
