@@ -196,10 +196,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   function runTests(runnableType: RunnableType, runnableId: string) {
     const runnable = runnableMap.get(runnableId);
-    runnable.inputs?.forEach((input: TestInput) => {
+    runnable?.inputs?.forEach((input: TestInput) => {
       input.value = sessionData.get(input.name);
     });
-    if (runnable.inputs && runnable.inputs.length > 0) {
+    if (runnable?.inputs && runnable.inputs.length > 0) {
       showInputsModal(runnableType, runnableId, runnable.inputs);
     } else {
       createTestRun(runnableType, runnableId, []);
