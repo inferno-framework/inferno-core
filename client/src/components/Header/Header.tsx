@@ -40,7 +40,7 @@ const Header: FC<HeaderProps> = ({
           <Button
             color="secondary"
             onClick={() => setPresetModalVisible(true)}
-            variant="outlined"
+            variant="contained"
             disableElevation
             size="small"
           >

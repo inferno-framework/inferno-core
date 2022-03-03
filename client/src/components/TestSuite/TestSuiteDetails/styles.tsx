@@ -47,6 +47,13 @@ export default makeStyles((theme: Theme) => ({
   testGroupCardHeaderText: {
     flexGrow: 1,
   },
+  shortId: {
+    display: 'inline',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    paddingRight: '8px',
+    color: theme.palette.common.grayVeryDark,
+  },
   testGroupCardHeaderButton: {
     minWidth: 'fit-content',
   },
@@ -84,9 +91,6 @@ export default makeStyles((theme: Theme) => ({
   nestedDescriptionContainer: {
     backgroundColor: theme.palette.common.grayLighter,
     padding: '8px 0',
-  },
-  folderIcon: {
-    color: theme.palette.common.grayLight,
   },
   printButton: {
     '@media print': {
