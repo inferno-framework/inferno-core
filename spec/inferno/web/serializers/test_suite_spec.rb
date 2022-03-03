@@ -14,7 +14,7 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
     ]
   end
   let(:full_keys) do
-    summary_keys + ['configuration_messages', 'test_groups']
+    summary_keys + ['configuration_messages', 'test_groups', 'inputs']
   end
 
   it 'serializes a suite summary view' do

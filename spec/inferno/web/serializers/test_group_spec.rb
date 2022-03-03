@@ -17,7 +17,7 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
     expect(serialized_group['description']).to eq(group.description)
     expect(serialized_group['short_description']).to eq(group.short_description)
     expect(serialized_group['input_instructions']).to eq(group.input_instructions)
-    expect(serialized_group['inputs'].length).to eq(group.inputs.length)
+    expect(serialized_group['inputs'].length).to eq(group.available_input_definitions.length)
     expect(serialized_group['outputs'].length).to eq(group.outputs.length)
     expect(serialized_group['test_count']).to eq(group.tests.length)
     expect(serialized_group['test_groups']).to be_empty
