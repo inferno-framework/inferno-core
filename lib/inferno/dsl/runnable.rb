@@ -495,23 +495,41 @@ module Inferno
                   definitions[config.input_name(input)] = config.input_config(input)
                 end
 
-            # TODO: fix types getting clobbered
             children_available_input_definitions =
               children.each_with_object({}) do |child, definitions|
                 new_definitions = child.available_input_definitions(prior_outputs)
                 new_definitions.each_key do |input|
-                  definitions[input] = (definitions[input] || {}).merge(new_definitions[input])
+                  current_definition = definitions[input] || {}
+                  new_definition = new_definitions[input]
+
+                  if current_definition.present?
+                    new_definition =
+                      new_definition
+                        .reject { |key, _| key == :locked }
+                        .reject { |key, value| key == :type && value == 'text' }
+                    definitions[input] = definitions[input].merge(new_definition)
+                  elsif prior_outputs.include? input
+                    next
+                  else
+                    definitions[input] = new_definition
+                  end
                 end
               end
             prior_outputs.concat(outputs.map { |output| config.output_name(output) })
             available_input_definitions.each_key do |input|
-              current_definition = available_input_definitions[input]
-              child_definition = children_available_input_definitions[input] || {}
+              current_definition =
+                available_input_definitions[input]
+              child_definition =
+                (children_available_input_definitions[input] || {})
+                  .reject { |key, _| key == :locked }
+              current_definition
+                .reject { |key, value| key == :type && value == 'text' && child_definition.present? }
+
               new_definition = child_definition.merge(current_definition)
               available_input_definitions[input] = new_definition
             end
-            children_available_input_definitions.reject! { |input, _| prior_outputs.include? input }
-            children_available_input_definitions.merge(available_input_definitions)
+            children_available_input_definitions
+              .merge(available_input_definitions)
           end
       end
     end
