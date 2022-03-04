@@ -43,7 +43,10 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
       <div className={styles.testGroupCardHeader}>
         {resultSpan}
         <span className={styles.testGroupCardHeaderText}>
-          <Typography key="1" color="text.primary" className={styles.currentItem}>
+          <Typography color="text.primary" className={styles.currentItem} component="div">
+            {'short_id' in runnable && (
+              <Typography className={styles.shortId}>{runnable.short_id}</Typography>
+            )}
             {runnable.title}
           </Typography>
         </span>

@@ -60,7 +60,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
         fullWidth
       >
         <InputLabel variant="standard" shrink className={styles.inputLabel}>
-          {fieldLabel}
+          <legend>{fieldLabel}</legend>
         </InputLabel>
         <RadioGroup
           row

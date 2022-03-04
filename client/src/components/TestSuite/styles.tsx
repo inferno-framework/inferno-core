@@ -29,22 +29,6 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     flexGrow: 1,
   },
-  testSuitePanel: {
-    flexBasis: '300px',
-    margin: '50px',
-    height: 'fit-content',
-  },
-  testSuiteListPanel: {
-    flexGrow: 1,
-  },
-  testSuiteSecondPanel: {
-    flexGrow: 3,
-  },
-  labelRoot: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(0.5, 0),
-  },
   spacerToolbar: {
     '@media print': {
       display: 'none',

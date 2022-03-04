@@ -19,6 +19,7 @@ import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 import TestListItem from './TestListItem/TestListItem';
 import ReactMarkdown from 'react-markdown';
+import theme from '../../../styles/theme';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
@@ -116,7 +117,17 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       >
         <ListItem className={styles.testGroupCardList}>
           <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
-          <ListItemText primary={testGroup.title} secondary={testGroup.result?.result_message} />
+          <ListItemText
+            primary={
+              <>
+                {testGroup.short_id && (
+                  <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
+                )}
+                {testGroup.title}
+              </>
+            }
+            secondary={testGroup.result?.result_message}
+          />
           {view === 'run' && runTests && (
             <TestRunButton
               runnable={testGroup}
@@ -145,14 +156,19 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           {testGroup.run_as_group ? (
             <ResultIcon result={testGroup.result} />
           ) : (
-            <FolderIcon className={styles.folderIcon} />
+            <FolderIcon sx={{ color: theme.palette.common.grayLight }} />
           )}
         </Box>
         <ListItemText
           primary={
-            <Link color="inherit" href={`${location.pathname}#${testGroup.id}`} underline="hover">
-              {testGroup.title}
-            </Link>
+            <>
+              {testGroup.short_id && (
+                <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
+              )}
+              <Link color="inherit" href={`${location.pathname}#${testGroup.id}`} underline="hover">
+                {testGroup.title}
+              </Link>
+            </>
           }
           secondary={testGroup.result?.result_message}
         />

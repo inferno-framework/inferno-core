@@ -13,6 +13,11 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, title }) => {
   return (
     <Box className={styles.labelRoot} data-testid={`tiLabel-${runnable?.id as string}`}>
       <Box className={styles.labelContainer}>
+        {runnable && 'short_id' in runnable && (
+          <Typography className={styles.shortId} variant="body2">
+            {runnable.short_id}
+          </Typography>
+        )}
         <Typography className={styles.labelText} variant="body2">
           {title || runnable?.short_title || runnable?.title}
         </Typography>
