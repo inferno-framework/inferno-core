@@ -483,10 +483,19 @@ module Inferno
       end
 
       # @private
+      # The outputs for this runnable and all if its children.
+      def all_outputs
+        outputs
+          .map { |output_identifier| config.output_name(output_identifier)}
+          .concat(children.flat_map(&:all_outputs))
+          .uniq
+      end
+
+      # @private
       # Goes through this runnable and all of its children, gathering the inputs
       # they need, and excluding any which are provided by outputs of an earlier
       # runnable.
-      def available_input_definitions(prior_outputs = []) # rubocop:disable Metrics/CyclomaticComplexity
+      def available_input_definitions # rubocop:disable Metrics/CyclomaticComplexity
         @available_input_definitions ||=
           begin
             available_input_definitions =
@@ -495,11 +504,15 @@ module Inferno
                   definitions[config.input_name(input)] = config.input_config(input)
                 end
 
+            child_outputs = []
             children_available_input_definitions =
               children.each_with_object({}) do |child, definitions|
-                new_definitions = child.available_input_definitions(prior_outputs)
+                new_definitions = child.available_input_definitions
+                child_outputs
+                  .concat(child.all_outputs)
+                  .uniq!
                 new_definitions.each_key do |input|
-                  current_definition = definitions[input] || {}
+                  current_definition = definitions[input]
                   new_definition = new_definitions[input]
 
                   if current_definition.present?
@@ -507,15 +520,15 @@ module Inferno
                       new_definition
                         .reject { |key, _| key == :locked }
                         .reject { |key, value| key == :type && value == 'text' }
-                    definitions[input] = definitions[input].merge(new_definition)
-                  elsif prior_outputs.include? input
+                    definitions[input] = current_definition.merge(new_definition)
+                  elsif child_outputs.include? input
                     next
                   else
                     definitions[input] = new_definition
                   end
                 end
               end
-            prior_outputs.concat(outputs.map { |output| config.output_name(output) })
+
             available_input_definitions.each_key do |input|
               current_definition =
                 available_input_definitions[input]
