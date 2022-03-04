@@ -11,18 +11,15 @@ export default makeStyles((theme: Theme) => ({
   reportSummaryItemLabel: {
     textTransform: 'uppercase',
   },
-  reportSummaryItemValue: {
-    fontSize: '28px',
-  },
   reportSummaryItems: {
-    padding: '20px;',
+    padding: '16px;',
     display: 'flex',
     justifyContent: 'space-around',
     textAlign: 'center',
   },
   reportSummaryURL: {
     textAlign: 'right',
-    padding: '0 10px;',
+    padding: '0 8px;',
     fontSize: '12px',
   },
   testIcon: {
@@ -49,6 +46,13 @@ export default makeStyles((theme: Theme) => ({
   },
   testGroupCardHeaderText: {
     flexGrow: 1,
+  },
+  shortId: {
+    display: 'inline',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    paddingRight: '8px',
+    color: theme.palette.common.grayVeryDark,
   },
   testGroupCardHeaderButton: {
     minWidth: 'fit-content',
@@ -87,10 +91,6 @@ export default makeStyles((theme: Theme) => ({
   nestedDescriptionContainer: {
     backgroundColor: theme.palette.common.grayLighter,
     padding: '8px 0',
-  },
-  folderIcon: {
-    padding: '0 8px 0 0',
-    color: theme.palette.common.grayLight,
   },
   printButton: {
     '@media print': {

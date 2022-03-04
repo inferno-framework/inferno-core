@@ -20,7 +20,11 @@ const Footer: FC<FooterProps> = ({ version }) => {
             target="_blank"
             rel="noreferrer"
           >
-            <img src={getStaticPath(logo as string)} alt="inferno logo" className={styles.logo} />
+            <img
+              src={getStaticPath(logo as string)}
+              alt="Inferno logo - documentation"
+              className={styles.logo}
+            />
           </Link>
           {version && (
             <Typography variant="overline" className={styles.version}>

@@ -40,6 +40,9 @@ export default makeStyles((theme: Theme) => ({
   bolderText: {
     fontWeight: 'bolder',
   },
+  testCardList: {
+    padding: 0,
+  },
   messageMessage: {
     width: '90%',
     padding: '0 !important',
@@ -53,18 +56,22 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.common.white,
     fontWeight: 'bold',
   },
-  listItem: {
-    borderBottom: '1px solid rgba(0,0,0,.12)',
+  accordion: {
+    '&:before': {
+      display: 'none',
+    },
+    '&:not(last-child)': {
+      borderBottom: `1px solid ${theme.palette.divider}`,
+    },
   },
-  collapsible: {
+  accordionDetailContainer: {
     backgroundColor: 'rgba(0,0,0,0.05)',
+    padding: 0,
   },
   resultMessageMarkdown: {
     '& > *': {
       margin: 0,
     },
-    margin: '0 48px 16px 48px',
-    color: 'rgba(0,0,0,0.6)',
   },
   requestUrl: {
     overflow: 'hidden',

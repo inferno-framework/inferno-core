@@ -2,11 +2,6 @@ import { Theme } from '@mui/material/styles';
 import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
-  buttonWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    visibility: 'hidden',
-  },
   labelRoot: {
     display: 'flex',
     flex: '1 1 auto',
@@ -30,10 +25,12 @@ export default makeStyles((theme: Theme) => ({
     color: theme.palette.common.grayLight,
     paddingLeft: '8px',
   },
-  labelRunButton: {
-    width: '10px',
-    height: '10px',
-    marginRight: '5px',
+  shortId: {
+    display: 'inline',
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    paddingRight: '4px',
+    color: theme.palette.common.grayVeryDark,
   },
   testSuiteTreePanel: {
     width: '300px',

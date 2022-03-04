@@ -1,0 +1,81 @@
+{
+  "title": "Inferno Reference Server",
+  "id": null,
+  "test_suite_id": "smart",
+  "inputs": [
+    {
+      "name": "url",
+      "type": "text",
+      "value": "https://inferno.healthit.gov/reference-server/r4"
+    },
+    {
+      "name": "standalone_client_id",
+      "type": "text",
+      "value": "SAMPLE_PUBLIC_CLIENT_ID"
+    },
+    {
+      "name": "standalone_requested_scopes",
+      "type": "text",
+      "value": "launch/patient openid fhirUser offline_access patient/*.read"
+    },
+    {
+      "name": "use_pkce",
+      "type": "radio",
+      "title": "Proof Key for Code Exchange (PKCE)",
+      "options": {
+        "list_options": [
+          {
+            "label": "Enabled",
+            "value": "true"
+          },
+          {
+            "label": "Disabled",
+            "value": "false"
+          }
+        ]
+      },
+      "value": "false"
+    },
+    {
+      "name": "pkce_code_challenge_method",
+      "type": "radio",
+      "optional": true,
+      "title": "PKCE Code Challenge Method",
+      "options": {
+        "list_options": [
+          {
+            "label": "S256",
+            "value": "S256"
+          },
+          {
+            "label": "plain",
+            "value": "plain"
+          }
+        ]
+      },
+      "value": "S256"
+    },
+    {
+      "name": "standalone_client_secret",
+      "type": "text",
+      "optional": true,
+      "value": null
+    },
+    {
+      "name": "ehr_client_id",
+      "type": "text",
+      "value": "SAMPLE_PUBLIC_CLIENT_ID"
+    },
+    {
+      "name": "ehr_requested_scopes",
+      "type": "text",
+      "value": "launch openid fhirUser offline_access user/*.read"
+    },
+    {
+      "name": "ehr_client_secret",
+      "type": "text",
+      "optional": true,
+      "value": null
+    }
+  ]
+}

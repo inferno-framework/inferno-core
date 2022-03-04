@@ -165,7 +165,7 @@ RSpec.describe InfrastructureTest::Suite do
 
       it 'contains tests with correct short_ids' do
         expected_short_ids = Array(1..inner_inline_group.tests.length).map do |id|
-          "#{inner_inline_group.short_id}." + id.to_s.rjust(2, '0')
+          "#{inner_inline_group.short_id}-" + id.to_s.rjust(2, '0')
         end
 
         found_short_ids = inner_inline_group.tests.map(&:short_id)
@@ -207,7 +207,7 @@ RSpec.describe InfrastructureTest::Suite do
         expect(inline_test1.description).to eq('Inline test 1 full description')
         expect(inline_test1.short_description).to eq('Inline test 1 short description')
         expect(inline_test1.id).to eq("#{suite.id}-outer_inline_group-inner_inline_group-inline_test_1")
-        expect(inline_test1.short_id).to eq("#{inner_inline_group.short_id}.01")
+        expect(inline_test1.short_id).to eq("#{inner_inline_group.short_id}-01")
       end
 
       it "contains its own inputs as well as its parents' inputs" do
@@ -343,7 +343,7 @@ RSpec.describe InfrastructureTest::Suite do
 
       it 'contains tests with correct short_ids' do
         expected_short_ids = Array(1..external_inner_group.tests.length).map do |id|
-          "#{external_inner_group.short_id}." + id.to_s.rjust(2, '0')
+          "#{external_inner_group.short_id}-" + id.to_s.rjust(2, '0')
         end
 
         found_short_ids = external_inner_group.tests.map(&:short_id)
@@ -381,7 +381,7 @@ RSpec.describe InfrastructureTest::Suite do
 
       it 'contains the correct short_id' do
         expect(external_test.short_id)
-          .to eq("#{external_inner_group.short_id}.#{external_inner_group.tests.length.to_s.rjust(2, '0')}")
+          .to eq("#{external_inner_group.short_id}-#{external_inner_group.tests.length.to_s.rjust(2, '0')}")
       end
 
       it "contains its own inputs as well as its parents' inputs" do

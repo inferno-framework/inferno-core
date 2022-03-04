@@ -40,7 +40,7 @@ const Header: FC<HeaderProps> = ({
           <Button
             color="secondary"
             onClick={() => setPresetModalVisible(true)}
-            variant="outlined"
+            variant="contained"
             disableElevation
             size="small"
           >
@@ -63,7 +63,11 @@ const Header: FC<HeaderProps> = ({
       <Toolbar className={styles.toolbar}>
         <Box display="flex" justifyContent="center">
           <Link href="/">
-            <img src={getStaticPath(icon as string)} alt="inferno logo" className={styles.logo} />
+            <img
+              src={getStaticPath(icon as string)}
+              alt="Inferno logo - start new session"
+              className={styles.logo}
+            />
           </Link>
           <Box className={styles.titleContainer}>
             <Typography variant="h5" component="h1" className={styles.title}>
@@ -79,12 +83,12 @@ const Header: FC<HeaderProps> = ({
         <Stack direction="row" spacing={2}>
           {presetButton()}
           <Button
-            color="secondary"
-            onClick={returnHome}
-            variant="outlined"
             disableElevation
+            color="secondary"
             size="small"
+            variant="contained"
             startIcon={<NoteAddIcon />}
+            onClick={returnHome}
           >
             New Session
           </Button>

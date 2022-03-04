@@ -1,3 +1,16 @@
+# 0.2.0.rc3
+
+* Update the UI to improve accessibility.
+* Update the route users are redirected to after coming back to resume a waiting
+  test.
+* Add presets for US Core, SMART App Launch, and ONC Certification (g)(10) test
+  kits to assist with development.
+
+# 0.2.0.rc2
+
+* Bust the bundle.js cache.
+* Make entire test list item clickable.
+
 # 0.2.0.rc1
 
 * **Breaking Change:** Support hosting inferno on a non-root path. To support

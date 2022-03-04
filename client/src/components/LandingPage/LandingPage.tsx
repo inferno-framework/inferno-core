@@ -39,7 +39,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   return (
     <>
       <Header />
-      <Container maxWidth="lg" className={styles.main}>
+      <Container maxWidth="lg" className={styles.main} role="main">
         <Grid container spacing={10} justifyContent="center">
           <Grid container item xs={6} alignItems="center">
             <Grid item>

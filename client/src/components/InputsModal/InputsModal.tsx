@@ -1,3 +1,5 @@
+import React, { FC, useEffect } from 'react';
+import useStyles from './styles';
 import {
   Button,
   Dialog,
@@ -8,7 +10,6 @@ import {
   List,
 } from '@mui/material';
 import { OAuthCredentials, RunnableType, TestInput } from 'models/testSuiteModels';
-import React, { FC, useEffect } from 'react';
 import InputRadioGroup from './InputsRadioGroup';
 import ReactMarkdown from 'react-markdown';
 import InputTextArea from './InputTextArea';
@@ -47,6 +48,7 @@ const InputsModal: FC<InputsModalProps> = ({
   hideModal,
   createTestRun,
 }) => {
+  const styles = useStyles();
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const missingRequiredInput = inputs.some((input: TestInput) => {
     let oAuthMissingRequiredInput = false;
@@ -141,10 +143,14 @@ const InputsModal: FC<InputsModalProps> = ({
         <List>{inputFields}</List>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={hideModal} data-testid="cancel-button">
+        <Button onClick={hideModal} data-testid="cancel-button" className={styles.inputAction}>
           Cancel
         </Button>
-        <Button color="primary" onClick={submitClicked} disabled={missingRequiredInput}>
+        <Button
+          onClick={submitClicked}
+          disabled={missingRequiredInput}
+          className={styles.inputAction}
+        >
           Submit
         </Button>
       </DialogActions>

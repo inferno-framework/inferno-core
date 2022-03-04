@@ -39,4 +39,7 @@ export default makeStyles((theme: Theme) => ({
   radioGroup: {
     marginTop: '16px',
   },
+  inputAction: {
+    color: theme.palette.primary.dark,
+  },
 }));
