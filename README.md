@@ -84,6 +84,17 @@ GET http://localhost:4567/inferno/api/test_sessions/TEST_SESSION_ID/results
 ## Development
 To get to an interactive console, run `bundle exec bin/inferno console`
 
+## Documentation
+Inferno documentation source code is located in the `docs/` directory. This documentation is rendered using Jekyll, which creates a site that can be built and served with: 
+
+```sh
+cd docs/
+bundle install
+bundle exec jekyll serve
+```
+By default the site will be served at `http://localhost:4000/inferno-core/`
+
+
 ## License
 Copyright 2021 The MITRE Corporation
 
