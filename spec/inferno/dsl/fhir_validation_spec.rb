@@ -22,7 +22,7 @@ RSpec.describe Inferno::DSL::FHIRValidation do
         validator.perform_additional_validation { 1 }
         validator.perform_additional_validation { nil }
 
-        expect(validator.resource_is_valid?(resource, profile_url, runnable)).to eq(true)
+        expect(validator.resource_is_valid?(resource, profile_url, runnable)).to be(true)
         expect(runnable.messages).to eq([])
       end
     end
@@ -35,7 +35,7 @@ RSpec.describe Inferno::DSL::FHIRValidation do
       it 'adds the messages to the runnable' do
         validator.perform_additional_validation { extra_message }
 
-        expect(validator.resource_is_valid?(resource, profile_url, runnable)).to eq(true)
+        expect(validator.resource_is_valid?(resource, profile_url, runnable)).to be(true)
         expect(runnable.messages).to eq([extra_message])
       end
     end
@@ -51,7 +51,7 @@ RSpec.describe Inferno::DSL::FHIRValidation do
       it 'adds the messages to the runnable' do
         validator.perform_additional_validation { extra_messages }
 
-        expect(validator.resource_is_valid?(resource, profile_url, runnable)).to eq(true)
+        expect(validator.resource_is_valid?(resource, profile_url, runnable)).to be(true)
         expect(runnable.messages).to eq(extra_messages)
       end
     end
@@ -67,7 +67,7 @@ RSpec.describe Inferno::DSL::FHIRValidation do
       it 'fails validation' do
         validator.perform_additional_validation { extra_messages }
 
-        expect(validator.resource_is_valid?(resource, profile_url, runnable)).to eq(false)
+        expect(validator.resource_is_valid?(resource, profile_url, runnable)).to be(false)
         expect(runnable.messages).to eq(extra_messages)
       end
     end

@@ -486,7 +486,7 @@ module Inferno
       # Goes through this runnable and all of its children, gathering the inputs
       # they need, and excluding any which are provided by outputs of an earlier
       # runnable.
-      def available_input_definitions(prior_outputs = [])
+      def available_input_definitions(prior_outputs = []) # rubocop:disable Metrics/CyclomaticComplexity
         @available_input_definitions ||=
           begin
             available_input_definitions =
