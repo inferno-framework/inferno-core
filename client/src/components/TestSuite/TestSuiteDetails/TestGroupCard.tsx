@@ -37,7 +37,6 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
   );
 
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
-
   return (
     <Card className={styles.testGroupCard} variant="outlined">
       <div className={styles.testGroupCardHeader}>

@@ -153,7 +153,3 @@ export interface PresetSummary {
   id: string;
   title: string;
 }
-
-export function runnableIsTestSuite(runnable: TestSuite | TestGroup | Test): runnable is TestSuite {
-  return (runnable as TestGroup).inputs == undefined;
-}
