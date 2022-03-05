@@ -1,3 +1,9 @@
+# 0.2.0.rc4
+
+* Allow erb in db config.
+* UI appearance updates and performance improvements.
+* Update documentation.
+
 # 0.2.0.rc3
 
 * Update the UI to improve accessibility.
