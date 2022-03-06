@@ -1,3 +1,5 @@
+# 0.2.0
+
 # 0.2.0.rc4
 
 * Allow erb in db config.
