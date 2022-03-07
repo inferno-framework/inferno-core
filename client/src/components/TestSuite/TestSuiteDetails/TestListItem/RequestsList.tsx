@@ -52,7 +52,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
   const requestListHeader = (
     <TableRow key="req-header">
       {headerTitles.map((title) => (
-        <TableCell>
+        <TableCell key={title}>
           <Typography variant="overline" className={styles.bolderText}>
             {title}
           </Typography>

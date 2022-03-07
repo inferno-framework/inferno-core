@@ -107,7 +107,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     <Accordion
       disableGutters
       className={styles.accordion}
-      sx={view === 'report' ? { 'pointer-events': 'none' } : {}}
+      sx={view === 'report' ? { pointerEvents: 'none' } : {}}
       defaultExpanded={openCondition}
       TransitionProps={{ unmountOnExit: true }}
     >

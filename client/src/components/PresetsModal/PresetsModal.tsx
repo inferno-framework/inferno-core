@@ -1,3 +1,4 @@
+import React, { FC } from 'react';
 import {
   Button,
   Dialog,
@@ -10,7 +11,7 @@ import {
 } from '@mui/material';
 import { applyPreset } from 'api/TestSessionApi';
 import { PresetSummary } from 'models/testSuiteModels';
-import React, { FC } from 'react';
+import theme from '../../styles/theme';
 
 export interface PresetsModalProps {
   modalVisible: boolean;
@@ -48,7 +49,7 @@ const PresetsModal: FC<PresetsModalProps> = ({
   });
 
   return (
-    <Dialog open={modalVisible} fullWidth maxWidth="sm">
+    <Dialog open={modalVisible} fullWidth maxWidth="xs">
       <DialogTitle>Select Preset Inputs</DialogTitle>
       <DialogContent>
         <FormControl>
@@ -59,19 +60,19 @@ const PresetsModal: FC<PresetsModalProps> = ({
       </DialogContent>
       <DialogActions>
         <Button
-          color="primary"
-          onClick={applyPresetToSession}
-          data-testid="preset-apply-button"
-          disabled={selectedPreset === null_preset_id}
-        >
-          Apply
-        </Button>
-        <Button
-          color="primary"
-          onClick={() => setModalVisible(false)}
           data-testid="preset-cancel-button"
+          sx={{ color: theme.palette.primary.dark }}
+          onClick={() => setModalVisible(false)}
         >
           Cancel
+        </Button>
+        <Button
+          data-testid="preset-apply-button"
+          disabled={selectedPreset === null_preset_id}
+          sx={{ color: theme.palette.primary.dark }}
+          onClick={applyPresetToSession}
+        >
+          Apply Preset
         </Button>
       </DialogActions>
     </Dialog>

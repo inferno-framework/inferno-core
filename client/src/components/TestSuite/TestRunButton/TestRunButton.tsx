@@ -26,41 +26,42 @@ const TestRunButton: FC<TestRunButtonProps> = ({
   buttonText,
 }) => {
   const showRunButton = runnableIsTestSuite(runnable) || (runnable as TestGroup).user_runnable;
-  const runButton = showRunButton ? (
-    <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test.' : ''} arrow>
-      {buttonText ? (
-        <Button
-          variant="contained"
-          disabled={testRunInProgress}
-          color="secondary"
-          size="small"
-          disableElevation
-          onClick={() => {
-            runTests(runnableType, runnable.id);
-          }}
-          endIcon={<PlayArrowIcon />}
-          data-testid={`runButton-${runnable.id}`}
-        >
-          {buttonText}
-        </Button>
-      ) : (
-        <IconButton
-          disabled={testRunInProgress}
-          color="secondary"
-          edge="end"
-          size="small"
-          onClick={() => {
-            runTests(runnableType, runnable.id);
-          }}
-          data-testid={`runButton-${runnable.id}`}
-          sx={{ margin: '0 4px' }}
-        >
-          <PlayCircleIcon />
-        </IconButton>
-      )}
+  const runButton = showRunButton && (
+    <Tooltip title={testRunInProgress ? 'Disabled - Ongoing Test' : 'Run Test'} arrow>
+      {/* Necessary to enable tooltip on disabled button */}
+      <span>
+        {buttonText ? (
+          <Button
+            variant="contained"
+            disabled={testRunInProgress}
+            color="secondary"
+            size="small"
+            disableElevation
+            onClick={() => {
+              runTests(runnableType, runnable.id);
+            }}
+            endIcon={<PlayArrowIcon />}
+            data-testid={`runButton-${runnable.id}`}
+          >
+            {buttonText}
+          </Button>
+        ) : (
+          <IconButton
+            disabled={testRunInProgress}
+            color="secondary"
+            edge="end"
+            size="small"
+            onClick={() => {
+              runTests(runnableType, runnable.id);
+            }}
+            data-testid={`runButton-${runnable.id}`}
+            sx={{ margin: '0 4px' }}
+          >
+            <PlayCircleIcon />
+          </IconButton>
+        )}
+      </span>
     </Tooltip>
-  ) : (
-    <Fragment />
   );
 
   return runButton;

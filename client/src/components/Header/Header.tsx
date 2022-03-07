@@ -31,11 +31,9 @@ const Header: FC<HeaderProps> = ({
     history.push('/');
   };
 
-  const presetButton = () => {
-    if (!presets || presets.length < 1 || !testSessionId || !getSessionData) {
-      return <></>;
-    } else {
-      return (
+  const presetButton = (
+    <>
+      {presets && presets.length > 0 && testSessionId && getSessionData && (
         <Box>
           <Button
             color="secondary"
@@ -44,7 +42,7 @@ const Header: FC<HeaderProps> = ({
             disableElevation
             size="small"
           >
-            Use predefined input
+            Use Predefined Input
           </Button>
           <PresetsModal
             modalVisible={presetModalVisible}
@@ -54,15 +52,15 @@ const Header: FC<HeaderProps> = ({
             setModalVisible={setPresetModalVisible}
           />
         </Box>
-      );
-    }
-  };
+      )}
+    </>
+  );
 
   return suiteTitle ? (
     <AppBar color="default" className={styles.appbar}>
       <Toolbar className={styles.toolbar}>
         <Box display="flex" justifyContent="center">
-          <Link href="/">
+          <Link href="/inferno">
             <img
               src={getStaticPath(icon as string)}
               alt="Inferno logo - start new session"
@@ -81,7 +79,7 @@ const Header: FC<HeaderProps> = ({
           </Box>
         </Box>
         <Stack direction="row" spacing={2}>
-          {presetButton()}
+          {presetButton}
           <Button
             disableElevation
             color="secondary"

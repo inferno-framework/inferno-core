@@ -7,9 +7,6 @@ export default makeStyles((theme: Theme) => ({
     flex: '1 1 auto',
     alignItems: 'center',
     padding: theme.spacing(0.5, 0),
-    '&:hover > $buttonWrapper': {
-      visibility: 'visible',
-    },
   },
   labelContainer: {
     display: 'inline',
