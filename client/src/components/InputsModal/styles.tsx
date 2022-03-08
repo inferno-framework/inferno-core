@@ -42,4 +42,15 @@ export default makeStyles((theme: Theme) => ({
   inputAction: {
     color: theme.palette.primary.dark,
   },
+  serialInput: {
+    height: 'max-content',
+  },
+  dialogActions: {
+    display: 'flex',
+  },
+  serialTypeButton: {
+    marginRight: 'auto',
+    color: theme.palette.primary.main,
+    border: 'none',
+  },
 }));
