@@ -20,11 +20,11 @@ RSpec.describe Inferno::Web::Serializers::Test do
     expect(serialized_test['outputs'].length).to eq(test.outputs.length)
 
     test.input_definitions.each do |_identifier, definition|
-      input = serialized_test['inputs'].find { |serialized_input| serialized_input['name'] == definition[:name].to_s }
-      expect(input).to be_present
-      definition.each do |key, value|
-        expect(input[key.to_s]).to eq(value.to_s)
-      end
+      raw_input = serialized_test['inputs'].find { |serialized_input| serialized_input['name'] == definition.name }
+      expect(raw_input).to be_present
+      input = Inferno::DSL::Input.new(raw_input.symbolize_keys)
+
+      expect(input).to eq(definition)
     end
 
     test.output_definitions.each do |_identifier, definition|

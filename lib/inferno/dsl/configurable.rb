@@ -62,10 +62,11 @@ module Inferno
 
         def add_input(identifier, new_config = {})
           existing_config = input(identifier)
-          binding.pry if existing_config.is_a? Hash
+
+          new_input_params = existing_config.present? ? new_config : default_input_params(identifier).merge(new_config)
           inputs[identifier] =
             Input
-              .new(default_input_params(identifier).merge(new_config))
+              .new(new_input_params)
               .merge_with_child(existing_config)
         end
 

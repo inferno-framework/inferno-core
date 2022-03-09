@@ -40,13 +40,13 @@ module Inferno
       def initialize(**params)
         bad_params = params.keys - ATTRIBUTES
 
-        if bad_params.present?
-          raise Exceptions::UnknownAttributeException.new(bad_params, self.class)
-        end
+        raise Exceptions::UnknownAttributeException.new(bad_params, self.class) if bad_params.present?
 
-        params.each do |key, value|
-          send("#{key}=", value)
-        end
+        params
+          .compact
+          .each { |key, value| send("#{key}=", value) }
+
+        self.name = name.to_s if params[:name].present?
       end
 
       def merge_with_child(child_input)
@@ -54,16 +54,16 @@ module Inferno
 
         INHERITABLE_ATTRIBUTES.each do |attribute|
           value = send(attribute)
-          if value.nil?
-            value = child_input.send(attribute)
-          end
+          value = child_input.send(attribute) if value.nil?
+
+          next if value.nil?
 
           send("#{attribute}=", value)
         end
 
         self.type = child_input.type unless child_input.type == 'text'
 
-        return self
+        self
       end
 
       def to_hash
@@ -73,6 +73,12 @@ module Inferno
 
           hash[attribute] = value
         end
+      end
+
+      def ==(other)
+        return false unless other.is_a? Input
+
+        ATTRIBUTES.all? { |attribute| send(attribute) == other.send(attribute) }
       end
     end
   end
