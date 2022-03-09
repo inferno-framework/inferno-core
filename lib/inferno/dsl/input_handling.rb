@@ -78,7 +78,7 @@ module Inferno
 
                 if current_definition.present?
                   definitions[input] = current_definition.merge_with_child(new_definition)
-                elsif !child_outputs.include? input
+                elsif !child_outputs.include? new_definition.name.to_sym
                   definitions[input] = new_definition
                 end
               end
