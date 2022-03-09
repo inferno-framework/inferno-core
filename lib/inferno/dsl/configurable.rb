@@ -1,3 +1,5 @@
+require_relative 'input'
+
 module Inferno
   module DSL
     # This module contains the DSL for managing runnable configuration.
@@ -49,28 +51,31 @@ module Inferno
         end
 
         def add_input(identifier, new_config = {})
-          existing_config = input_config(identifier) || {}
-          inputs[identifier] = default_input_config(identifier).merge(existing_config, new_config)
+          existing_config = input(identifier)
+          inputs[identifier] =
+            Input
+              .new(default_input_params(identifier).merge(new_config))
+              .merge_with_child(existing_config)
         end
 
-        def default_input_config(identifier)
+        def default_input_params(identifier)
           { name: identifier, type: 'text' }
         end
 
-        def input_config_exists?(identifier)
+        def input_exists?(identifier)
           inputs.key? identifier
         end
 
-        def input_config(identifier)
+        def input(identifier)
           inputs[identifier]
         end
 
         def input_name(identifier)
-          inputs.dig(identifier, :name) || identifier
+          inputs[identifier]&.name
         end
 
         def input_type(identifier)
-          inputs.dig(identifier, :type)
+          inputs[identifier]&.type
         end
 
         ### Output Configuration ###

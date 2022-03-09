@@ -42,15 +42,10 @@ module Inferno
       end
 
       # @private
-      def required_inputs(prior_outputs = [])
-        required_inputs =
-          inputs
-            .reject { |input| input_definitions[input][:optional] }
-            .map { |input| config.input_name(input) }
-            .reject { |input| prior_outputs.include?(input) }
-        children_required_inputs = children.flat_map { |child| child.required_inputs(prior_outputs) }
-        prior_outputs.concat(outputs.map { |output| config.output_name(output) })
-        (required_inputs + children_required_inputs).flatten.uniq
+      def required_inputs
+        available_input_definitions
+          .reject { |_, input_definition| input_definition.optional }
+          .map { |_, input_definition| input_definition.name }
       end
 
       # @private
@@ -61,21 +56,50 @@ module Inferno
       end
 
       # @private
-      def available_input_definitions(prior_outputs = [])
-        available_input_definitions =
-          inputs
-            .each_with_object({}) do |input, definitions|
-          definitions[config.input_name(input)] =
-            config.input_config(input)
-        end
-        available_input_definitions.reject! { |input, _| prior_outputs.include? input }
+      def all_outputs
+        outputs
+          .map { |output_identifier| config.output_name(output_identifier) }
+          .concat(children.flat_map(&:all_outputs))
+          .uniq
+      end
 
-        children_available_input_definitions =
-          children.each_with_object({}) do |child, definitions|
-          definitions.merge!(child.available_input_definitions(prior_outputs))
-        end
-        prior_outputs.concat(outputs.map { |output| config.output_name(output) })
-        children_available_input_definitions.merge(available_input_definitions)
+      # @private
+      def children_available_input_definitions
+        @children_available_input_definitions ||=
+          begin
+            child_outputs = []
+            children.each_with_object({}) do |child, definitions|
+              new_definitions = child.available_input_definitions.map(&:dup)
+              child_outputs.concat(child.all_outputs).uniq!
+              new_definitions.each do |input, new_definition|
+                current_definition = definitions[input]
+
+                if current_definition.present?
+                  definitions[input] = current_definition.merge_with_child(new_definition)
+                elsif child_outputs.include? input
+                  next
+                else
+                  definitions[input] = new_definition
+                end
+              end
+            end
+          end
+      end
+
+      # @private
+      def available_input_definitions
+        @available_input_definitions ||=
+          begin
+            available_input_definitions = input_definitions
+
+            available_input_definitions.each do |input, current_definition|
+              child_definition = children_available_input_definitions[input]
+              current_definition.merge_with_child(child_definition)
+            end
+
+            children_available_input_definitions
+              .merge(available_input_definitions)
+          end
       end
     end
   end

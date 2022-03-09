@@ -50,7 +50,7 @@ module Inferno
       end
 
       def merge_with_child(child_input)
-        return if child_input.nil?
+        return self if child_input.nil?
 
         INHERITABLE_ATTRIBUTES.each do |attribute|
           value = send(attribute) || child_input.send(attribute)
@@ -58,6 +58,17 @@ module Inferno
         end
 
         self.type = child_input.type unless child_input.type == 'text'
+
+        return self
+      end
+
+      def to_hash
+        ATTRIBUTES.each_with_object({}) do |attribute, hash|
+          value = send(attribute)
+          next if value.nil?
+
+          hash[attribute] = value
+        end
       end
     end
   end
