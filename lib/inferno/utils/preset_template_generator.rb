@@ -8,7 +8,7 @@ module Inferno
       end
 
       def input_definitions
-        @input_definitions ||= runnable.available_input_definitions
+        @input_definitions ||= runnable.available_input_definitions.transform_values(&:to_hash)
       end
 
       def inputs
