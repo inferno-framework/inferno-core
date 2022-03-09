@@ -64,29 +64,32 @@ module Inferno
       end
 
       # @private
+      # Inputs available for this runnable's children. A running list of outputs
+      # created by the children is used to exclude any inputs which are provided
+      # by an earlier child's output.
       def children_available_input_definitions
         @children_available_input_definitions ||=
           begin
             child_outputs = []
             children.each_with_object({}) do |child, definitions|
               new_definitions = child.available_input_definitions.map(&:dup)
-              child_outputs.concat(child.all_outputs).uniq!
               new_definitions.each do |input, new_definition|
                 current_definition = definitions[input]
 
                 if current_definition.present?
                   definitions[input] = current_definition.merge_with_child(new_definition)
-                elsif child_outputs.include? input
-                  next
-                else
+                elsif !child_outputs.include? input
                   definitions[input] = new_definition
                 end
               end
+
+              child_outputs.concat(child.all_outputs).uniq!
             end
           end
       end
 
       # @private
+      # Inputs available for the user for this runnable and all its children.
       def available_input_definitions
         @available_input_definitions ||=
           begin
