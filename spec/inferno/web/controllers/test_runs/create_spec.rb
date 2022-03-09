@@ -1,6 +1,6 @@
 RSpec.describe Inferno::Web::Controllers::TestRuns::Create do
   let(:create) do
-    Inferno::Web::Controllers::TestRuns::Create.new
+    described_class.new
   end
 
   let(:test_group) do
@@ -15,26 +15,33 @@ RSpec.describe Inferno::Web::Controllers::TestRuns::Create do
     test_group
   end
 
-  describe "#verify_runnable" do
+  describe '#verify_runnable' do
     it 'is a no-op when required inputs are provided and is runnable' do
-      expect { create.verify_runnable(test_group,         [
-        { name: 'foo', value: 'foo', type: 'text' }
-      ]) }.not_to(
+      expect do
+        create.verify_runnable(test_group, [
+                                 { name: 'foo', value: 'foo', type: 'text' }
+                               ])
+      end.to_not(
         raise_error
       )
     end
+
     it 'raises a RequiredInputsNotFound Exception when the runnable is missing required inputs' do
-      expect { create.verify_runnable(test_group,         [
-        { name: 'bar', value: 'bar', type: 'text' }
-      ]) }.to(
-        raise_error(Inferno::Exceptions::RequiredInputsNotFound, "Missing the following required inputs: foo")
+      expect do
+        create.verify_runnable(test_group, [
+                                 { name: 'bar', value: 'bar', type: 'text' }
+                               ])
+      end.to(
+        raise_error(Inferno::Exceptions::RequiredInputsNotFound, 'Missing the following required inputs: foo')
       )
     end
 
     it 'raises a NotUserRunnableException when the runnable is not user runnable and is provided all required inputs' do
-      expect { create.verify_runnable(test_group.groups.first,         [
-        { name: 'foo', value: 'foo', type: 'text' }
-      ]) }.to(
+      expect do
+        create.verify_runnable(test_group.groups.first, [
+                                 { name: 'foo', value: 'foo', type: 'text' }
+                               ])
+      end.to(
         raise_error(Inferno::Exceptions::NotUserRunnableException)
       )
     end
