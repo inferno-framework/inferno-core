@@ -25,7 +25,6 @@ const Header: FC<HeaderProps> = ({
 }) => {
   const styles = useStyles();
   const history = useHistory();
-  const [presetModalVisible, setPresetModalVisible] = React.useState(false);
 
   const returnHome = () => {
     history.push('/');
@@ -35,21 +34,10 @@ const Header: FC<HeaderProps> = ({
     <>
       {presets && presets.length > 0 && testSessionId && getSessionData && (
         <Box>
-          <Button
-            color="secondary"
-            onClick={() => setPresetModalVisible(true)}
-            variant="contained"
-            disableElevation
-            size="small"
-          >
-            Use Predefined Input
-          </Button>
           <PresetsModal
-            modalVisible={presetModalVisible}
             presets={presets}
             testSessionId={testSessionId}
             getSessionData={getSessionData}
-            setModalVisible={setPresetModalVisible}
           />
         </Box>
       )}
