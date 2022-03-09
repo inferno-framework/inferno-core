@@ -37,7 +37,17 @@ module Inferno
               new_configuration
             end
 
-          self.configuration = configuration.deep_merge(config_to_apply)
+          self.configuration = configuration.deep_merge(config_to_apply.reject { |key, _| key == :inputs })
+
+          config_to_apply[:inputs]&.each do |identifier, raw_new_input|
+            new_input =
+              if raw_new_input.is_a? Hash
+                Input.new(raw_new_input)
+              else
+                raw_new_input.dup
+              end
+            inputs[identifier] = new_input.merge_with_child(input(identifier))
+          end
         end
 
         def options
@@ -52,6 +62,7 @@ module Inferno
 
         def add_input(identifier, new_config = {})
           existing_config = input(identifier)
+          binding.pry if existing_config.is_a? Hash
           inputs[identifier] =
             Input
               .new(default_input_params(identifier).merge(new_config))

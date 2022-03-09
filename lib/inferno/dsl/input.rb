@@ -53,7 +53,11 @@ module Inferno
         return self if child_input.nil?
 
         INHERITABLE_ATTRIBUTES.each do |attribute|
-          value = send(attribute) || child_input.send(attribute)
+          value = send(attribute)
+          if value.nil?
+            value = child_input.send(attribute)
+          end
+
           send("#{attribute}=", value)
         end
 

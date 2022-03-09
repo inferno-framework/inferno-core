@@ -41,28 +41,34 @@ module Inferno
 
       # Class instance variables are used to hold the metadata for Runnable
       # classes. When inheriting from a Runnable class, these class instance
-      # variables need to be copied. Any child Runnable classes will themselves
-      # need to be subclassed so that their parent can be updated.
+      # variables need to be copied. Some instance variables should not be
+      # copied, and will need to be repopulated from scratch on the new class.
+      # Any child Runnable classes will themselves need to be subclassed so that
+      # their parent can be updated.
+      VARIABLES_NOT_TO_COPY = [
+        :@id, # New runnable will have a different id
+        :@parent, # New runnable unlikely to have the same parent
+        :@children, # New subclasses have to be made for each child
+        :@test_count, # Needs to be recalculated
+        :@config, # Needs to be set by calling .config, which does extra work
+        :@available_input_definitions # Needs to be recalculated
+      ].freeze
+
       # @private
       def copy_instance_variables(subclass)
-        instance_variables.each do |variable|
-          next if [:@id, :@groups, :@tests, :@parent, :@children, :@test_count, :@config].include?(variable)
-
-          subclass.instance_variable_set(variable, instance_variable_get(variable).dup)
-        end
+        instance_variables
+          .reject { |variable| VARIABLES_NOT_TO_COPY.include? variable }
+          .each { |variable| subclass.instance_variable_set(variable, instance_variable_get(variable).dup) }
 
         subclass.config(config)
 
-        child_types.each do |child_type|
-          new_children = send(child_type).map do |child|
-            Class.new(child).tap do |subclass_child|
-              subclass_child.parent = subclass
-            end
+        new_children = children.map do |child|
+          Class.new(child).tap do |subclass_child|
+            subclass_child.parent = subclass
           end
-
-          subclass.instance_variable_set(:"@#{child_type}", new_children)
-          subclass.children.concat(new_children)
         end
+
+        subclass.instance_variable_set(:@children, new_children)
       end
 
       # @private
