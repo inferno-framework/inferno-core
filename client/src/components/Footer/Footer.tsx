@@ -14,7 +14,9 @@ const Footer: FC<FooterProps> = ({ version }) => {
     <Box className={styles.footer}>
       <Container>
         <Box className={styles.builtUsingContainer}>
-          <Typography className={styles.builtUsing}>built using</Typography>
+          <Typography variant="overline" className={styles.footerText}>
+            built using
+          </Typography>
           <Link
             href="https://inferno-framework.github.io/inferno-core"
             target="_blank"
@@ -27,7 +29,7 @@ const Footer: FC<FooterProps> = ({ version }) => {
             />
           </Link>
           {version && (
-            <Typography variant="overline" className={styles.version}>
+            <Typography variant="overline" className={styles.footerText}>
               {`version ${version}`}
             </Typography>
           )}

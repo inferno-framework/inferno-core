@@ -20,17 +20,13 @@ export default makeStyles((theme: Theme) => ({
     alignItems: 'center',
     flexDirection: 'row',
   },
-  builtUsing: {
-    padding: '8px 12px',
-    fontStyle: 'italic',
-  },
   logo: {
     paddingTop: '2px',
     objectFit: 'contain',
     height: '2.5em',
   },
-  version: {
+  footerText: {
     fontStyle: 'italic',
-    padding: '10px 8px 8px 8px',
+    padding: '13px 12px 8px 8px',
   },
 }));

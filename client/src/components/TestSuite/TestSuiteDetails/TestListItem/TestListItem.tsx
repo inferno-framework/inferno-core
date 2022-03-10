@@ -76,6 +76,7 @@ const TestListItem: FC<TestListItemProps> = ({
           </ReactMarkdown>
         )
       }
+      secondaryTypographyProps={{ component: 'div' }}
     />
   );
 
@@ -129,24 +130,18 @@ const TestListItem: FC<TestListItemProps> = ({
     </Box>
   );
 
-  const markdownDescription = useMemo(() => {
-    return test.description ? <ReactMarkdown>{test.description}</ReactMarkdown> : undefined;
-  }, [test.description]);
-
-  const testDescription: JSX.Element =
-    test.description && test.description.length > 0 ? (
-      <ListItem>
-        <Typography variant="subtitle2" component="p">
-          {markdownDescription}
-        </Typography>
-      </ListItem>
-    ) : (
-      <ListItem>
-        <Typography variant="subtitle2" component="p">
-          No Description
-        </Typography>
-      </ListItem>
-    );
+  const testDescription: JSX.Element = (
+    <ListItem>
+      <Typography variant="subtitle2" component="div">
+        {useMemo(
+          () => (
+            <ReactMarkdown>{test.description || ''}</ReactMarkdown>
+          ),
+          [test.description]
+        )}
+      </Typography>
+    </ListItem>
+  );
 
   const a11yProps = (index: number) => ({
     id: `${test.id}-tab-${index}`,
@@ -158,7 +153,7 @@ const TestListItem: FC<TestListItemProps> = ({
       <Accordion
         disableGutters
         className={styles.accordion}
-        sx={view === 'report' ? { 'pointer-events': 'none' } : {}}
+        sx={view === 'report' ? { pointerEvents: 'none' } : {}}
         expanded={open}
         TransitionProps={{ unmountOnExit: true }}
         onClick={() => setOpen(!open)}
@@ -208,7 +203,15 @@ const TestListItem: FC<TestListItemProps> = ({
             )}
           </TabPanel>
           <TabPanel id={test.id} currentPanelIndex={panelIndex} index={2}>
-            {shouldShowDescription(test, testDescription) ? testDescription : 'No description'}
+            {shouldShowDescription(test, testDescription) ? (
+              testDescription
+            ) : (
+              <ListItem>
+                <Typography variant="subtitle2" component="p">
+                  No Description
+                </Typography>
+              </ListItem>
+            )}
           </TabPanel>
         </AccordionDetails>
       </Accordion>
