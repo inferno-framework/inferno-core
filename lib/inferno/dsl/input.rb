@@ -3,6 +3,7 @@ require_relative '../exceptions'
 
 module Inferno
   module DSL
+    # This class represents an Input for a runnable.
     class Input
       ATTRIBUTES = [
         :name,
@@ -35,7 +36,13 @@ module Inferno
         :type
       ].freeze
 
+      # These are the attributes that can be directly copied when merging a
+      # runnable's input with the input of one of its children.
       INHERITABLE_ATTRIBUTES = (ATTRIBUTES - UNINHERITABLE_ATTRIBUTES).freeze
+
+      # These are the attributes that can be directly copied when merging a
+      # runnable's input with an input configuration.
+      MERGEABLE_ATTRIBUTES = (ATTRIBUTES - [:type]).freeze
 
       def initialize(**params)
         bad_params = params.keys - ATTRIBUTES
@@ -49,44 +56,50 @@ module Inferno
         self.name = name.to_s if params[:name].present?
       end
 
+      # @private
+      # Merge this input with an input belonging to a child. Fields defined on
+      # this input take precedence over those defined on the child input.
       def merge_with_child(child_input)
         return self if child_input.nil?
 
         INHERITABLE_ATTRIBUTES.each do |attribute|
-          value = send(attribute)
-          value = child_input.send(attribute) if value.nil?
-
-          next if value.nil?
-
-          send("#{attribute}=", value)
+          merge_attribute(attribute, primary_source: self, secondary_source: child_input)
         end
 
-        if child_input.type != 'text'
-          self.type ||= child_input.type
-        end
+        self.type ||= child_input.type if child_input.type != 'text'
 
         self
       end
 
+      # @private
+      # Merge this input with an input from a configuration. Fields defined in
+      # the configuration take precedence over those defined on this input.
       def merge(other_input)
         return self if other_input.nil?
 
-        ATTRIBUTES.each do |attribute|
-          next if attribute == :type
-
-          value = other_input.send(attribute)
-          value = send(attribute) if value.nil?
-
-          next if value.nil?
-
-          send("#{attribute}=", value)
+        MERGEABLE_ATTRIBUTES.each do |attribute|
+          merge_attribute(attribute, primary_source: other_input, secondary_source: self)
         end
 
-        if other_input.type != 'text'
-          self.type ||= other_input.type
-        end
+        self.type ||= other_input.type if other_input.type != 'text'
 
         self
+      end
+
+      # @private
+      # Merge an individual attribute. If the primary source contains the
+      # attribute, that value will be used. Otherwise the value from the
+      # secondary source will be used.
+      # @param attribute [Symbol]
+      # @param primary_source [Input]
+      # @param secondary_source [Input]
+      def merge_attribute(attribute, primary_source:, secondary_source:)
+        value = primary_source.send(attribute)
+        value = secondary_source.send(attribute) if value.nil?
+
+        return if value.nil?
+
+        send("#{attribute}=", value)
       end
 
       def to_hash

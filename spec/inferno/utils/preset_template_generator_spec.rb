@@ -31,8 +31,7 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
           description: 'Example of locked, filled input field', locked: true, value: 'Hello Inferno demo user.' },
         { name: 'cancel_pause_time', type: 'text', value: '30' },
         { name: 'url1', type: 'text', value: nil }
-      ]
-    }
+      ] }
   end
 
   describe '#generate' do
