@@ -43,14 +43,26 @@ export default makeStyles((theme: Theme) => ({
     color: theme.palette.primary.dark,
   },
   serialInput: {
-    height: 'max-content',
+    height: '500px',
   },
   dialogActions: {
     display: 'flex',
   },
-  serialTypeButton: {
+  toggleButtonGroup: {
     marginRight: 'auto',
-    color: theme.palette.primary.main,
+  },
+  toggleButton: {
     border: 'none',
+    color: theme.palette.primary.dark,
+    height: '36px',
+    '&&': {
+      color: theme.palette.primary.dark,
+      '&:hover': {
+        backgroundColor: '#fdf6ec',
+      },
+      '&:active': {
+        backgroundColor: '#fdf6ec',
+      },
+    },
   },
 }));

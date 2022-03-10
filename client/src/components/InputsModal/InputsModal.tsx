@@ -8,9 +8,9 @@ import {
   DialogContentText,
   DialogTitle,
   List,
-  Tabs,
-  Tab,
   TextField,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@mui/material';
 import { OAuthCredentials, RunnableType, TestInput } from 'models/testSuiteModels';
 import InputRadioGroup from './InputsRadioGroup';
@@ -141,133 +141,125 @@ const InputsModal: FC<InputsModalProps> = ({
     }
   });
 
-  const [inputType, setInputType] = React.useState<string>('field');
-  const [serialType, setSerialType] = React.useState<string>('JSON');
-  const [invalidSerial, setInvalidSerial] = React.useState<boolean>(false);
-  const [visibleInput, setVisibleInput] = React.useState<string>('');
-  const [visibleInputChange, setVisibleInputChange] = React.useState<string>('');
+  const [inputType, setInputType] = React.useState<string>('Field');
+  const [baseInput, setBaseInput] = React.useState<string>('');
+  const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
 
   useEffect(() => {
-    const serialObject = inputs.map((requirement: TestInput) => {
+    const serialObj = inputs.map((requirement: TestInput) => {
       if (requirement.type == 'oauth_credentials') {
         return {
           ...requirement,
-          value: JSON.parse((inputsMap.get(requirement.name) as string) || '{}'),
+          value:
+            (JSON.parse(inputsMap.get(requirement.name) as string) as OAuthCredentials) || '{}',
         };
       } else if (requirement.type == 'radio') {
-        const firstValue =
+        const firstVal =
           requirement.options?.list_options && requirement.options?.list_options?.length > 0
             ? requirement.options?.list_options[0]?.value
             : '';
         return {
           ...requirement,
-          value: inputsMap.get(requirement.name) || requirement.default || firstValue,
+          value: inputsMap.get(requirement.name) || requirement.default || firstVal,
         };
       } else {
-        return { ...requirement, value: inputsMap.get(requirement.name) };
+        return { ...requirement, value: inputsMap.get(requirement.name) || '' };
       }
     });
-    setVisibleInput(
-      serialType == 'JSON' ? JSON.stringify(serialObject, null, 3) : YAML.dump(serialObject)
-    );
-  }, [inputsMap, inputType]);
+    setBaseInput(inputType == 'JSON' ? JSON.stringify(serialObj, null, 3) : YAML.dump(serialObj));
+  }, [inputType]);
 
-  function validateSerial(serialChange: string, serialType: string) {
-    try {
-      if (serialType == 'JSON') {
-        JSON.parse(serialChange);
-      } else {
-        if (YAML.load(serialChange) == undefined) {
-          throw new TypeError();
-        }
-      }
-      setInvalidSerial(false);
-      return true;
-    } catch (e) {
-      setInvalidSerial(true);
-      return false;
+  const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
+    if (value !== null) {
+      setInputType(value);
     }
-  }
+  };
 
-  function handleSerialChange(serialChange: string): void {
-    if (validateSerial(serialChange, serialType)) {
-      const changes = serialType == 'JSON' ? JSON.parse(serialChange) : YAML.load(serialChange);
-      if (changes.keys == undefined) return;
-      changes.forEach((change: any) => {
-        if (!change.locked) inputsMap.set(change.name, change.value);
+  const handleSerialChanges = (serialChanges: string) => {
+    const parsedChanges = parseSerialChanges(serialChanges);
+    if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
+      parsedChanges.forEach((change: TestInput) => {
+        if (!change.locked && change.value !== undefined)
+          inputsMap.set(change.name, change.value || '');
       });
-      setInputsMap(new Map(inputsMap));
     }
-  }
+    setInputsMap(new Map(inputsMap));
+  };
 
-  function handleSerialTypeChange() {
-    const type = serialType == 'JSON' ? 'YAML' : 'JSON';
-    setSerialType(type);
-    if (visibleInputChange) {
-      validateSerial(visibleInputChange, type);
-    } else {
-      validateSerial(visibleInput, type);
+  function parseSerialChanges(changes: string): TestInput[] | undefined {
+    let parsed: TestInput[];
+    try {
+      if (inputType == 'JSON') {
+        parsed = JSON.parse(changes) as TestInput[];
+      } else {
+        parsed = YAML.load(changes) as TestInput[];
+      }
+      setInvalidInput(false);
+      return parsed;
+    } catch (e) {
+      setInvalidInput(true);
+      return undefined;
     }
-  }
-
-  function hideModalWrapper() {
-    setInputType('field');
-    setInvalidSerial(false);
-    hideModal();
   }
 
   return (
-    <Dialog open={modalVisible} onClose={hideModalWrapper} fullWidth maxWidth="sm">
+    <Dialog open={modalVisible} onClose={hideModal} fullWidth maxWidth="sm">
       <DialogTitle>{title}</DialogTitle>
-      <Tabs
-        value={inputType}
-        onChange={(event, value) => {
-          setInvalidSerial(false);
-          setInputType(value);
-        }}
-      >
-        <Tab value={'field'} label="Input Fields" />
-        <Tab value={'serial'} label="Serial Input" />
-      </Tabs>
       <DialogContent>
         <DialogContentText component="div">
-          <ReactMarkdown>
-            {instructions +
-              (inputType == 'serial'
-                ? ' This serial input accepts field inputs as a valid JSON or YAML entry. All required inputs must have a value and any changes to locked or non-value inputs will not be saved.'
-                : '')}
-          </ReactMarkdown>
+          <ReactMarkdown>{instructions}</ReactMarkdown>
         </DialogContentText>
-        {inputType == 'field' && <List>{inputFields}</List>}
-        {inputType == 'serial' && (
+        {inputType == 'Field' && <List>{inputFields}</List>}
+        {inputType != 'Field' && (
           <TextField
-            className={styles.serialInput}
             fullWidth
             multiline
-            error={invalidSerial}
-            label={invalidSerial ? `ERROR: INVALID ${serialType}.` : ''}
-            defaultValue={visibleInput}
-            onChange={(event) => {
-              event.preventDefault();
-              setVisibleInputChange(event.target.value);
-              handleSerialChange(event.target.value);
+            key={baseInput}
+            error={invalidInput}
+            label={invalidInput ? `ERROR: INVALID ${inputType}` : ''}
+            defaultValue={baseInput}
+            className={styles.serialInput}
+            onChange={(e) => {
+              handleSerialChanges(e.target.value);
             }}
           />
         )}
       </DialogContent>
       <DialogActions className={styles.dialogActions}>
-        {inputType == 'serial' && (
-          <Button className={styles.serialTypeButton} onClick={handleSerialTypeChange}>
-            {serialType}
-          </Button>
-        )}
-        <Button color="primary" onClick={hideModalWrapper} data-testid="cancel-button" className={styles.inputAction}>
+        <ToggleButtonGroup
+          exclusive
+          value={inputType}
+          className={styles.toggleButtonGroup}
+          onChange={handleInputTypeChange}
+        >
+          <ToggleButton
+            value="Field"
+            className={styles.toggleButton}
+            disabled={invalidInput && inputType != 'Field'}
+          >
+            Field
+          </ToggleButton>
+          <ToggleButton
+            value="JSON"
+            className={styles.toggleButton}
+            disabled={invalidInput && inputType != 'JSON'}
+          >
+            JSON
+          </ToggleButton>
+          <ToggleButton
+            value="YAML"
+            className={styles.toggleButton}
+            disabled={invalidInput && inputType != 'YAML'}
+          >
+            YAML
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <Button onClick={hideModal} data-testid="cancel-button" className={styles.inputAction}>
           Cancel
         </Button>
         <Button
-          color="primary"
           onClick={submitClicked}
-          disabled={missingRequiredInput || invalidSerial}
+          disabled={missingRequiredInput || invalidInput}
           className={styles.inputAction}
         >
           Submit
