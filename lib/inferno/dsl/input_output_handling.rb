@@ -1,6 +1,6 @@
 module Inferno
   module DSL
-    module InputHandling
+    module InputOutputHandling
       # Define inputs
       #
       # @param identifier [Symbol] identifier for the input
@@ -31,14 +31,47 @@ module Inferno
         end
       end
 
+      # Define outputs
+      #
+      # @param identifier [Symbol] identifier for the output
+      # @param other_identifiers [Symbol] array of symbols if specifying multiple outputs
+      # @param output_definition [Hash] options for output
+      # @option output_definition [String] :type text | textarea | oauth_credentials
+      # @return [void]
+      # @example
+      #   output :patient_id, :condition_id, :observation_id
+      # @example
+      #   output :oauth_credentials, type: 'oauth_credentials'
+      def output(identifier, *other_identifiers, **output_definition)
+        if other_identifiers.present?
+          [identifier, *other_identifiers].compact.each do |output_identifier|
+            outputs << output_identifier
+            config.add_output(output_identifier)
+          end
+        else
+          outputs << identifier
+          config.add_output(identifier, output_definition)
+        end
+      end
+
       # @private
       def inputs
         @inputs ||= []
       end
 
       # @private
+      def outputs
+        @outputs ||= []
+      end
+
+      # @private
       def input_definitions
         config.inputs.slice(*inputs)
+      end
+
+      # @private
+      def output_definitions
+        config.outputs.slice(*outputs)
       end
 
       # @private

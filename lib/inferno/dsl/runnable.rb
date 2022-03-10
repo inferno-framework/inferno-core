@@ -1,5 +1,5 @@
 require_relative 'configurable'
-require_relative 'input_handling'
+require_relative 'input_output_handling'
 require_relative 'resume_test_route'
 require_relative '../utils/markdown_formatter'
 
@@ -21,7 +21,7 @@ module Inferno
       def self.extended(extending_class)
         super
         extending_class.extend Configurable
-        extending_class.extend InputHandling
+        extending_class.extend InputOutputHandling
 
         extending_class.define_singleton_method(:inherited) do |subclass|
           copy_instance_variables(subclass)
@@ -295,42 +295,9 @@ module Inferno
         !optional?
       end
 
-      # Define outputs
-      #
-      # @param identifier [Symbol] identifier for the output
-      # @param other_identifiers [Symbol] array of symbols if specifying multiple outputs
-      # @param output_definition [Hash] options for output
-      # @option output_definition [String] :type text | textarea | oauth_credentials
-      # @return [void]
-      # @example
-      #   output :patient_id, :condition_id, :observation_id
-      # @example
-      #   output :oauth_credentials, type: 'oauth_credentials'
-      def output(identifier, *other_identifiers, **output_definition)
-        if other_identifiers.present?
-          [identifier, *other_identifiers].compact.each do |output_identifier|
-            outputs << output_identifier
-            config.add_output(output_identifier)
-          end
-        else
-          outputs << identifier
-          config.add_output(identifier, output_definition)
-        end
-      end
-
       # @private
       def default_id
         to_s
-      end
-
-      # @private
-      def output_definitions
-        config.outputs.slice(*outputs)
-      end
-
-      # @private
-      def outputs
-        @outputs ||= []
       end
 
       # @private
