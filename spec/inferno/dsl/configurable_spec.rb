@@ -23,7 +23,7 @@ RSpec.describe Inferno::DSL::Configurable do
     context 'when there is no existing configuration' do
       let(:expected_config) do
         {
-          inputs: { input1: Inferno::DSL::Input.new(name: :input2) }
+          inputs: { input1: Inferno::DSL::Input.new(name: :input2, type: 'text') }
         }
       end
 

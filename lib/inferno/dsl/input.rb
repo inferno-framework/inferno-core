@@ -61,7 +61,30 @@ module Inferno
           send("#{attribute}=", value)
         end
 
-        self.type = child_input.type unless child_input.type == 'text'
+        if child_input.type != 'text'
+          self.type ||= child_input.type
+        end
+
+        self
+      end
+
+      def merge(other_input)
+        return self if other_input.nil?
+
+        ATTRIBUTES.each do |attribute|
+          next if attribute == :type
+
+          value = other_input.send(attribute)
+          value = send(attribute) if value.nil?
+
+          next if value.nil?
+
+          send("#{attribute}=", value)
+        end
+
+        if other_input.type != 'text'
+          self.type ||= other_input.type
+        end
 
         self
       end
