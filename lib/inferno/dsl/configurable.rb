@@ -1,4 +1,4 @@
-require_relative 'input'
+require_relative '../entities/input'
 
 module Inferno
   module DSL
@@ -58,13 +58,13 @@ module Inferno
           existing_config = input(identifier)
 
           if existing_config.nil?
-            return inputs[identifier] = Input.new(default_input_params(identifier).merge(new_config))
+            return inputs[identifier] = Entities::Input.new(default_input_params(identifier).merge(new_config))
           end
 
           inputs[identifier] =
-            Input
+            Entities::Input
               .new(existing_config.to_hash)
-              .merge(Input.new(new_config))
+              .merge(Entities::Input.new(new_config))
         end
 
         def default_input_params(identifier)

@@ -1,8 +1,8 @@
-require_relative '../entities/attributes'
+require_relative 'attributes'
 require_relative '../exceptions'
 
 module Inferno
-  module DSL
+  module Entities
     # This class represents an Input for a runnable.
     class Input
       ATTRIBUTES = [

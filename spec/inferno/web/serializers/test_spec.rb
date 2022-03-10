@@ -22,7 +22,7 @@ RSpec.describe Inferno::Web::Serializers::Test do
     test.input_definitions.each do |_identifier, definition|
       raw_input = serialized_test['inputs'].find { |serialized_input| serialized_input['name'] == definition.name }
       expect(raw_input).to be_present
-      input = Inferno::DSL::Input.new(raw_input.symbolize_keys)
+      input = Inferno::Entities::Input.new(raw_input.symbolize_keys)
 
       expect(input).to eq(definition)
     end
