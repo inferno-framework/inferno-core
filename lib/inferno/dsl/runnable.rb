@@ -51,7 +51,8 @@ module Inferno
         :@children, # New subclasses have to be made for each child
         :@test_count, # Needs to be recalculated
         :@config, # Needs to be set by calling .config, which does extra work
-        :@available_inputs # Needs to be recalculated
+        :@available_inputs, # Needs to be recalculated
+        :@children_available_inputs # Needs to be recalculated
       ].freeze
 
       # @private
