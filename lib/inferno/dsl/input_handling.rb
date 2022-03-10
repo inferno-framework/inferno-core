@@ -43,7 +43,7 @@ module Inferno
 
       # @private
       def required_inputs
-        available_input_definitions
+        available_inputs
           .reject { |_, input_definition| input_definition.optional }
           .map { |_, input_definition| input_definition.name }
       end
@@ -67,12 +67,12 @@ module Inferno
       # Inputs available for this runnable's children. A running list of outputs
       # created by the children is used to exclude any inputs which are provided
       # by an earlier child's output.
-      def children_available_input_definitions
-        @children_available_input_definitions ||=
+      def children_available_inputs
+        @children_available_inputs ||=
           begin
             child_outputs = []
             children.each_with_object({}) do |child, definitions|
-              new_definitions = child.available_input_definitions.map(&:dup)
+              new_definitions = child.available_inputs.map(&:dup)
               new_definitions.each do |input, new_definition|
                 current_definition = definitions[input]
 
@@ -90,18 +90,18 @@ module Inferno
 
       # @private
       # Inputs available for the user for this runnable and all its children.
-      def available_input_definitions
-        @available_input_definitions ||=
+      def available_inputs
+        @available_inputs ||=
           begin
-            available_input_definitions = input_definitions
+            available_inputs = input_definitions
 
-            available_input_definitions.each do |input, current_definition|
-              child_definition = children_available_input_definitions[input]
+            available_inputs.each do |input, current_definition|
+              child_definition = children_available_inputs[input]
               current_definition.merge_with_child(child_definition)
             end
 
-            children_available_input_definitions
-              .merge(available_input_definitions)
+            children_available_inputs
+              .merge(available_inputs)
           end
       end
     end
