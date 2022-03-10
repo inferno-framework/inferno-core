@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import { getStaticPath } from 'api/infernoApiService';
 import { PresetSummary } from 'models/testSuiteModels';
-import PresetsModal from 'components/PresetsModal/PresetsModal';
+import PresetsSelector from 'components/PresetsSelector/PresetsSelector';
 
 export interface HeaderProps {
   suiteTitle?: string;
@@ -34,7 +34,7 @@ const Header: FC<HeaderProps> = ({
     <>
       {presets && presets.length > 0 && testSessionId && getSessionData && (
         <Box>
-          <PresetsModal
+          <PresetsSelector
             presets={presets}
             testSessionId={testSessionId}
             getSessionData={getSessionData}
