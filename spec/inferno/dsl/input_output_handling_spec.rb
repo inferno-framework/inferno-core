@@ -22,4 +22,3 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
     end
   end
 end
-

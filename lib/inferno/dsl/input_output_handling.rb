@@ -107,13 +107,18 @@ module Inferno
             children.each_with_object({}) do |child, definitions|
               new_definitions = child.available_inputs.map(&:dup)
               new_definitions.each do |input, new_definition|
-                current_definition = definitions[input]
+                existing_definition = definitions[input]
 
-                if current_definition.present?
-                  definitions[input] = current_definition.merge_with_child(new_definition)
-                elsif !child_outputs.include? new_definition.name.to_sym
-                  definitions[input] = new_definition
-                end
+                updated_definition =
+                  if existing_definition.present?
+                    existing_definition.merge_with_child(new_definition)
+                  else
+                    new_definition
+                  end
+
+                next if child_outputs.include?(updated_definition.name.to_sym)
+
+                definitions[updated_definition.name.to_sym] = updated_definition
               end
 
               child_outputs.concat(child.all_outputs).uniq!
