@@ -114,8 +114,8 @@ RSpec.describe Inferno::DSL::Runnable do
       example_test_group.test 'test' do
         input :a
       end
-      expect(example_test_group.user_runnable?).to eq(true)
-      expect(example_test_group.tests.first.user_runnable?).to eq(true)
+      expect(example_test_group.user_runnable?).to be(true)
+      expect(example_test_group.tests.first.user_runnable?).to be(true)
     end
 
     it 'sets user_runnable on groups to true if not under groups set to run_as_group' do

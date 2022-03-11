@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import useStyles from './styles';
 import { TestGroup, RunnableType, TestSuite } from 'models/testSuiteModels';
+import InputOutputsList from './TestListItem/InputOutputsList';
 import { Box, Card, Divider, List, Typography } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import ResultIcon from './ResultIcon';
@@ -68,6 +69,15 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           <Divider />
         </>
       )}
+      {view === 'report' &&
+        runnable.run_as_group &&
+        (runnable as TestGroup).user_runnable &&
+        runnable.result && (
+          <Box>
+            <InputOutputsList headerName="Input" inputOutputs={runnable.result?.inputs || []} />
+            <Divider />
+          </Box>
+        )}
       <List className={styles.testGroupCardList}>{children}</List>
     </Card>
   );

@@ -61,7 +61,6 @@ module Inferno
     def run_test(test, scratch)
       inputs = load_inputs(test)
 
-      input_json_string = JSON.generate(inputs)
       test_instance = test.new(inputs: inputs, test_session_id: test_session.id, scratch: scratch)
 
       result = begin
@@ -92,7 +91,7 @@ module Inferno
           requests: test_instance.requests,
           result: result,
           result_message: test_instance.result_message,
-          input_json: input_json_string,
+          input_json: inputs_as_json(test, inputs),
           output_json: output_json_string
         }.merge(test.reference_hash)
       )
@@ -107,6 +106,16 @@ module Inferno
     end
 
     def run_group(group, scratch)
+      group_inputs_with_values = group.available_inputs.map do |_input_identifier, input|
+        {
+          name: input.name,
+          label: input.title,
+          description: input.description,
+          value: session_data_repo.load(test_session_id: test_session.id, name: input.name, type: input.type),
+          type: input.type
+        }
+      end
+
       results = []
       group.children.each do |child|
         result = run(child, scratch)
@@ -116,7 +125,8 @@ module Inferno
 
       results.flatten!
 
-      group_result = persist_result(group.reference_hash.merge(result: roll_up_result(results)))
+      group_result = persist_result(group.reference_hash.merge(result: roll_up_result(results),
+                                                               input_json: JSON.generate(group_inputs_with_values)))
 
       update_parent_result(group.parent)
 
@@ -151,6 +161,17 @@ module Inferno
         input_hash[input_identifier] =
           session_data_repo.load(test_session_id: test_session.id, name: input_alias, type: input_type)
       end
+    end
+
+    def inputs_as_json(runnable, input_values)
+      inputs_array = runnable.inputs.map do |input_identifier|
+        {
+          name: runnable.config.input_name(input_identifier),
+          value: input_values[input_identifier],
+          type: runnable.config.input_type(input_identifier)
+        }
+      end
+      JSON.generate(inputs_array)
     end
 
     def save_outputs(runnable_instance)
