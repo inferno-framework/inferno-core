@@ -107,6 +107,7 @@ export interface TestSuite {
   short_description?: string;
   run_as_group?: boolean;
   result?: Result;
+  inputs?: TestInput[];
   test_count?: number;
   test_groups?: TestGroup[];
   optional?: boolean;
@@ -151,8 +152,4 @@ export interface OAuthCredentials {
 export interface PresetSummary {
   id: string;
   title: string;
-}
-
-export function runnableIsTestSuite(runnable: TestSuite | TestGroup | Test): runnable is TestSuite {
-  return (runnable as TestGroup).inputs == undefined;
 }

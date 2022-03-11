@@ -25,6 +25,7 @@ export interface InputsModalProps {
   modalVisible: boolean;
   hideModal: () => void;
   createTestRun: (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => void;
+  sessionData: Map<string, unknown>;
 }
 
 function runnableTypeReadable(runnableType: RunnableType) {
@@ -47,6 +48,7 @@ const InputsModal: FC<InputsModalProps> = ({
   modalVisible,
   hideModal,
   createTestRun,
+  sessionData
 }) => {
   const styles = useStyles();
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
@@ -79,10 +81,10 @@ const InputsModal: FC<InputsModalProps> = ({
   useEffect(() => {
     inputsMap.clear();
     inputs.forEach((requirement: TestInput) => {
-      inputsMap.set(requirement.name, requirement.value || (requirement.default as string) || '');
+      inputsMap.set(requirement.name, sessionData.get(requirement.name) || (requirement.default as string) || '');
     });
     setInputsMap(new Map(inputsMap));
-  }, [inputs]);
+  }, [inputs, sessionData]);
 
   const instructions =
     inputInstructions ||

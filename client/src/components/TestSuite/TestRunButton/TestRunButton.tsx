@@ -2,13 +2,7 @@ import React, { FC } from 'react';
 import { Button, Tooltip, IconButton } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import {
-  TestGroup,
-  RunnableType,
-  TestSuite,
-  Test,
-  runnableIsTestSuite,
-} from 'models/testSuiteModels';
+import { TestGroup, RunnableType, TestSuite, Test } from 'models/testSuiteModels';
 
 export interface TestRunButtonProps {
   runnable: TestSuite | TestGroup | Test;
@@ -25,7 +19,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
   testRunInProgress,
   buttonText,
 }) => {
-  const showRunButton = runnableIsTestSuite(runnable) || (runnable as TestGroup).user_runnable;
+  const showRunButton = (runnable as TestGroup).user_runnable !== false;
 
   return (
     <>

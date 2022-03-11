@@ -18,7 +18,6 @@ import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import TestSuiteReport from './TestSuiteDetails/TestSuiteReport';
-import { getAllContainedInputs } from './TestSuiteUtilities';
 import { useLocation } from 'react-router-dom';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
 import { Drawer, Toolbar, Box } from '@mui/material';
@@ -93,8 +92,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
 
   useEffect(() => {
-    const allInputs = getAllContainedInputs(test_suite.test_groups as TestGroup[]);
-    allInputs.forEach((input: TestInput) => {
+    test_suite.inputs?.forEach((input: TestInput) => {
       const defaultValue = input.default || '';
       sessionData.set(input.name, sessionData.get(input.name) || defaultValue);
     });
@@ -197,30 +195,14 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   });
 
   function runTests(runnableType: RunnableType, runnableId: string) {
-    let allInputs: TestInput[] = [];
-    if (runnableType == RunnableType.TestSuite) {
-      const testSuite = runnableMap.get(runnableId) as TestSuite;
-      if (testSuite && testSuite.test_groups) {
-        allInputs = getAllContainedInputs(testSuite.test_groups);
-      }
-    } else if (runnableType == RunnableType.TestGroup) {
-      const testGroup = runnableMap.get(runnableId) as TestGroup;
-      if (testGroup) {
-        allInputs = getAllContainedInputs([testGroup]);
-      }
-    } else {
-      const test = runnableMap.get(runnableId) as Test;
-      if (test) {
-        allInputs = test.inputs;
-      }
-    }
-    allInputs.forEach((input: TestInput) => {
+    const runnable = runnableMap.get(runnableId);
+    runnable?.inputs?.forEach((input: TestInput) => {
       input.value = sessionData.get(input.name);
     });
-    if (allInputs.length > 0) {
-      showInputsModal(runnableType, runnableId, allInputs);
+    if (runnable?.inputs && runnable.inputs.length > 0) {
+      showInputsModal(runnableType, runnableId, runnable.inputs);
     } else {
-      createTestRun(runnableType, runnableId, allInputs);
+      createTestRun(runnableType, runnableId, []);
     }
   }
 
@@ -303,6 +285,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             (runnableMap.get(selectedRunnable) as TestSuite | TestGroup | Test).input_instructions
           }
           inputs={inputs}
+          sessionData={sessionData}
         />
         <ActionModal
           cancelTestRun={() => {
