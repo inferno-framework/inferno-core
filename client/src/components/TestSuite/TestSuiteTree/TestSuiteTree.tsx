@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { TestSuite, TestGroup, RunnableType } from 'models/testSuiteModels';
-import { Box, Divider } from '@mui/material';
+import { TestSuite, TestGroup, RunnableType, PresetSummary } from 'models/testSuiteModels';
+import { Box, Divider, ListItem } from '@mui/material';
 import useStyles from './styles';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -10,6 +10,7 @@ import FlagIcon from '@mui/icons-material/Flag';
 import CustomTreeItem from '../../_common/TreeItem';
 import TestGroupTreeItem from './TestGroupTreeItem';
 import TreeItemLabel from './TreeItemLabel';
+import PresetsSelector from 'components/PresetsSelector/PresetsSelector';
 
 export interface TestSuiteTreeProps {
   testSuite: TestSuite;
@@ -17,6 +18,9 @@ export interface TestSuiteTreeProps {
   selectedRunnable: string;
   testRunInProgress: boolean;
   view: 'run' | 'report';
+  presets?: PresetSummary[];
+  testSessionId?: string;
+  getSessionData?: (testSessionId: string) => void;
 }
 
 function addDefaultExpanded(testGroups: TestGroup[], defaultExpanded: string[]): void {
@@ -34,6 +38,9 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   runTests,
   testRunInProgress,
   view,
+  presets,
+  testSessionId,
+  getSessionData,
 }) => {
   const styles = useStyles();
 
@@ -66,6 +73,15 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
 
     return (
       <Box className={styles.testSuiteTreePanel}>
+        {presets && presets.length > 0 && testSessionId && getSessionData && (
+          <ListItem sx={{ margin: '8px 0' }}>
+            <PresetsSelector
+              presets={presets}
+              testSessionId={testSessionId}
+              getSessionData={getSessionData}
+            />
+          </ListItem>
+        )}
         <TreeView
           aria-label="navigation-panel"
           defaultCollapseIcon={<ExpandMoreIcon />}
@@ -74,6 +90,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           expanded={expanded}
           selected={selectedNode}
         >
+          <Divider />
           <CustomTreeItem
             classes={{ content: styles.treeRoot }}
             nodeId={testSuite.id}

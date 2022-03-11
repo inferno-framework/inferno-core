@@ -5,44 +5,19 @@ import { AppBar, Box, Button, Link, Stack, Toolbar, Typography } from '@mui/mate
 import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import { getStaticPath } from 'api/infernoApiService';
-import { PresetSummary } from 'models/testSuiteModels';
-import PresetsSelector from 'components/PresetsSelector/PresetsSelector';
 
 export interface HeaderProps {
   suiteTitle?: string;
   suiteVersion?: string;
-  presets?: PresetSummary[];
-  testSessionId?: string;
-  getSessionData?: (testSessionId: string) => void;
 }
 
-const Header: FC<HeaderProps> = ({
-  suiteTitle,
-  suiteVersion,
-  presets,
-  testSessionId,
-  getSessionData,
-}) => {
+const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
   const styles = useStyles();
   const history = useHistory();
 
   const returnHome = () => {
     history.push('/');
   };
-
-  const presetButton = (
-    <>
-      {presets && presets.length > 0 && testSessionId && getSessionData && (
-        <Box>
-          <PresetsSelector
-            presets={presets}
-            testSessionId={testSessionId}
-            getSessionData={getSessionData}
-          />
-        </Box>
-      )}
-    </>
-  );
 
   return suiteTitle ? (
     <AppBar color="default" className={styles.appbar}>
@@ -67,7 +42,6 @@ const Header: FC<HeaderProps> = ({
           </Box>
         </Box>
         <Stack direction="row" spacing={2}>
-          {presetButton}
           <Button
             disableElevation
             color="secondary"

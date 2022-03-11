@@ -5,10 +5,8 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
-  Select,
-  MenuItem,
-  Typography,
+  Autocomplete,
+  TextField,
 } from '@mui/material';
 import { applyPreset } from 'api/TestSessionApi';
 import { PresetSummary } from 'models/testSuiteModels';
@@ -22,7 +20,11 @@ export interface PresetsModalProps {
 
 const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSessionData }) => {
   const null_preset_id = 'NULL_PRESET';
-  const [selectedPreset, setSelectedPreset] = React.useState(null_preset_id);
+  const presetOptions = [
+    { id: null_preset_id, label: 'None' },
+    ...presets.map((p) => ({ id: p.id, label: p.title })),
+  ];
+  const [selectedPreset, setSelectedPreset] = React.useState(presetOptions[0]);
   const [modalVisible, setModalVisible] = React.useState(false);
 
   const applyPresetToSession = (preset: string) => {
@@ -33,30 +35,23 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
       .catch((e) => console.log(e));
   };
 
-  const presetOptions = [{ id: null_preset_id, title: 'None' }, ...presets].map((preset, index) => {
-    return (
-      <MenuItem value={preset.id} key={index}>
-        {preset.title}
-      </MenuItem>
-    );
-  });
-
   return (
     <>
-      <Typography variant="subtitle">Preset: </Typography>
-      <FormControl>
-        <Select
-          size="small"
-          value={selectedPreset}
-          onChange={(e) => {
-            setSelectedPreset(e.target.value);
-            // applyPresetToSession(e.target.value);
-            setModalVisible(true);
-          }}
-        >
-          {presetOptions}
-        </Select>
-      </FormControl>
+      <Autocomplete
+        disablePortal
+        fullWidth
+        size="small"
+        id="preset-select"
+        value={selectedPreset}
+        options={presetOptions}
+        isOptionEqualToValue={(option1, option2) => option1.id === option2.id}
+        renderInput={(params) => <TextField {...params} label="Preset" />}
+        onChange={(e, newValue) => {
+          if (newValue) setSelectedPreset(newValue);
+          if (newValue && newValue.id !== null_preset_id) setModalVisible(true);
+          // applyPresetToSession(newValue);
+        }}
+      />
       <Dialog open={modalVisible} fullWidth maxWidth="xs">
         <DialogTitle>Are you sure?</DialogTitle>
         <DialogContent>
@@ -75,7 +70,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
             data-testid="preset-apply-button"
             sx={{ color: theme.palette.primary.dark }}
             onClick={() => {
-              applyPresetToSession(selectedPreset);
+              applyPresetToSession(selectedPreset.id);
               setModalVisible(false);
             }}
           >
