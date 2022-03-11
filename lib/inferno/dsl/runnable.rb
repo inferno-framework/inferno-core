@@ -302,14 +302,6 @@ module Inferno
       end
 
       # @private
-      def child_types
-        return [] if ancestors.include? Inferno::Entities::Test
-        return [:groups] if ancestors.include? Inferno::Entities::TestSuite
-
-        [:groups, :tests]
-      end
-
-      # @private
       def children
         @children ||= []
       end
