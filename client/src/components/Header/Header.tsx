@@ -4,7 +4,7 @@ import icon from 'images/inferno_icon.png';
 import { AppBar, Box, Button, Link, Stack, Toolbar, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import { getStaticPath } from 'api/infernoApiService';
+import { basePath, getStaticPath } from 'api/infernoApiService';
 
 export interface HeaderProps {
   suiteTitle?: string;
@@ -16,14 +16,14 @@ const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
   const history = useHistory();
 
   const returnHome = () => {
-    history.push('/');
+    history.push(`/${basePath}`);
   };
 
   return suiteTitle ? (
     <AppBar color="default" className={styles.appbar}>
       <Toolbar className={styles.toolbar}>
         <Box display="flex" justifyContent="center">
-          <Link href="/inferno">
+          <Link href={`/${basePath}`}>
             <img
               src={getStaticPath(icon as string)}
               alt="Inferno logo - start new session"

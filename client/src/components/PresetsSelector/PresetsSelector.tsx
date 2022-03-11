@@ -7,6 +7,8 @@ import {
   DialogTitle,
   Autocomplete,
   TextField,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { applyPreset } from 'api/TestSessionApi';
 import { PresetSummary } from 'models/testSuiteModels';
@@ -26,11 +28,13 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
   ];
   const [selectedPreset, setSelectedPreset] = React.useState(presetOptions[0]);
   const [modalVisible, setModalVisible] = React.useState(false);
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
 
-  const applyPresetToSession = (preset: string) => {
-    applyPreset(testSessionId, preset)
+  const applyPresetToSession = (presetId: string) => {
+    applyPreset(testSessionId, presetId)
       .then(() => {
         getSessionData(testSessionId);
+        console.log(`Preset applied: ${presetId}`);
       })
       .catch((e) => console.log(e));
   };
@@ -47,11 +51,26 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
         isOptionEqualToValue={(option1, option2) => option1.id === option2.id}
         renderInput={(params) => <TextField {...params} label="Preset" />}
         onChange={(e, newValue) => {
-          if (newValue) setSelectedPreset(newValue);
-          if (newValue && newValue.id !== null_preset_id) setModalVisible(true);
-          // applyPresetToSession(newValue);
+          if (newValue) {
+            setSelectedPreset(newValue);
+            // Remove when modal is active
+            applyPresetToSession(newValue.id);
+          }
+          // TODO: Handle clearing old results on preset change
+          // if (newValue && newValue.id !== null_preset_id) setModalVisible(true);
+          if (newValue && newValue.id !== null_preset_id) setSnackbarVisible(true);
         }}
       />
+      <Snackbar
+        open={snackbarVisible}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarVisible(false)}
+        sx={{ marginBottom: '50px' }}
+      >
+        <Alert onClose={() => setSnackbarVisible(false)} severity="success" sx={{ width: '100%' }}>
+          {selectedPreset.label} has been set as preset.
+        </Alert>
+      </Snackbar>
       <Dialog open={modalVisible} fullWidth maxWidth="xs">
         <DialogTitle>Are you sure?</DialogTitle>
         <DialogContent>
