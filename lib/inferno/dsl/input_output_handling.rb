@@ -95,7 +95,7 @@ module Inferno
       #     input_order :input3, :input2, :input1
       #   end
       # @param new_input_order [Array<String,Symbol>]
-      # @return [Array<String, Symbol]
+      # @return [Array<String, Symbol>]
       def input_order(*new_input_order)
         return @input_order = new_input_order if new_input_order.present?
 
