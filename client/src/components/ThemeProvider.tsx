@@ -1,6 +1,10 @@
 import React, { FC, ReactNode } from 'react';
 
-import { ThemeProvider as MuiThemeProvider, Theme, StyledEngineProvider } from '@mui/material';
+import {
+  ThemeProvider as MuiThemeProvider,
+  Theme,
+  StyledEngineProvider,
+} from '@mui/material/styles';
 import lightTheme from 'styles/theme';
 
 declare module '@mui/styles/defaultTheme' {

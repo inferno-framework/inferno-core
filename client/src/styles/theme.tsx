@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 
 // https://material-ui.com/customization/palette/#adding-new-colors
 declare module '@mui/material/styles/createPalette' {
