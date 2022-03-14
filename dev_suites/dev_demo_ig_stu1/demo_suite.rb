@@ -146,6 +146,9 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     # separate groups (so their results don't collide)
     group do
       id :repetitive_group
+
+      input_order :bearer_token, :patient_id, :url
+
       title 'Group 2'
       group from: 'DemoIG_STU1::DemoGroup', id: 'DEF', title: 'Demo Group Instance 2'
       group from: 'DemoIG_STU1::DemoGroup' do
