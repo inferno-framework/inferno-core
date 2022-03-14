@@ -48,7 +48,7 @@ const InputsModal: FC<InputsModalProps> = ({
   modalVisible,
   hideModal,
   createTestRun,
-  sessionData
+  sessionData,
 }) => {
   const styles = useStyles();
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
@@ -81,7 +81,10 @@ const InputsModal: FC<InputsModalProps> = ({
   useEffect(() => {
     inputsMap.clear();
     inputs.forEach((requirement: TestInput) => {
-      inputsMap.set(requirement.name, sessionData.get(requirement.name) || (requirement.default as string) || '');
+      inputsMap.set(
+        requirement.name,
+        sessionData.get(requirement.name) || (requirement.default as string) || ''
+      );
     });
     setInputsMap(new Map(inputsMap));
   }, [inputs, sessionData]);
