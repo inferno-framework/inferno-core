@@ -52,7 +52,6 @@ export default makeStyles((theme: Theme) => ({
     marginRight: 'auto',
   },
   toggleButton: {
-    border: 'none',
     color: theme.palette.primary.dark,
     height: '36px',
     '&&': {
@@ -60,8 +59,8 @@ export default makeStyles((theme: Theme) => ({
       '&:hover': {
         backgroundColor: '#fdf6ec',
       },
-      '&:active': {
-        backgroundColor: '#fdf6ec',
+      '&:disabled': {
+        backgroundColor: theme.palette.common.grayLighter,
       },
     },
   },

@@ -214,6 +214,7 @@ const InputsModal: FC<InputsModalProps> = ({
           <TextField
             fullWidth
             multiline
+            minRows={4}
             key={baseInput}
             error={invalidInput}
             label={invalidInput ? `ERROR: INVALID ${inputType}` : ''}
@@ -232,25 +233,13 @@ const InputsModal: FC<InputsModalProps> = ({
           className={styles.toggleButtonGroup}
           onChange={handleInputTypeChange}
         >
-          <ToggleButton
-            value="Field"
-            className={styles.toggleButton}
-            disabled={invalidInput && inputType != 'Field'}
-          >
+          <ToggleButton value="Field" className={styles.toggleButton} disabled={invalidInput}>
             Field
           </ToggleButton>
-          <ToggleButton
-            value="JSON"
-            className={styles.toggleButton}
-            disabled={invalidInput && inputType != 'JSON'}
-          >
+          <ToggleButton value="JSON" className={styles.toggleButton} disabled={invalidInput}>
             JSON
           </ToggleButton>
-          <ToggleButton
-            value="YAML"
-            className={styles.toggleButton}
-            disabled={invalidInput && inputType != 'YAML'}
-          >
+          <ToggleButton value="YAML" className={styles.toggleButton} disabled={invalidInput}>
             YAML
           </ToggleButton>
         </ToggleButtonGroup>
