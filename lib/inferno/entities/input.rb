@@ -66,7 +66,7 @@ module Inferno
           merge_attribute(attribute, primary_source: self, secondary_source: child_input)
         end
 
-        self.type ||= child_input.type if child_input.type != 'text'
+        self.type = child_input.type if child_input.present? && child_input.type != 'text'
 
         self
       end
@@ -81,7 +81,7 @@ module Inferno
           merge_attribute(attribute, primary_source: other_input, secondary_source: self)
         end
 
-        self.type ||= other_input.type if other_input.type != 'text'
+        self.type = other_input.type if other_input.type.present? && other_input.type != 'text'
 
         self
       end
