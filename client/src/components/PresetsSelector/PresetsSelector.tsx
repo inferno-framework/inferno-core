@@ -26,6 +26,8 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
     { id: null_preset_id, label: 'None' },
     ...presets.map((p) => ({ id: p.id, label: p.title })),
   ];
+  const SHOW_CONFIRMATION_MODAL = false;
+
   const [selectedPreset, setSelectedPreset] = React.useState(presetOptions[0]);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
@@ -34,7 +36,6 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
     applyPreset(testSessionId, presetId)
       .then(() => {
         getSessionData(testSessionId);
-        console.log(`Preset applied: ${presetId}`);
       })
       .catch((e) => console.log(e));
   };
@@ -53,19 +54,27 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
         onChange={(e, newValue) => {
           if (newValue) {
             setSelectedPreset(newValue);
+
             // Remove when modal is active
-            applyPresetToSession(newValue.id);
+            if (!SHOW_CONFIRMATION_MODAL) {
+              applyPresetToSession(newValue.id);
+            }
           }
           // TODO: Handle clearing old results on preset change
-          // if (newValue && newValue.id !== null_preset_id) setModalVisible(true);
-          if (newValue && newValue.id !== null_preset_id) setSnackbarVisible(true);
+          if (newValue && newValue.id !== null_preset_id) {
+            if (SHOW_CONFIRMATION_MODAL) {
+              setModalVisible(true);
+            } else {
+              setSnackbarVisible(true);
+            }
+          }
         }}
       />
       <Snackbar
         open={snackbarVisible}
         autoHideDuration={6000}
-        onClose={() => setSnackbarVisible(false)}
-        sx={{ marginBottom: '50px' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        sx={{ marginBottom: '48px' }}
       >
         <Alert onClose={() => setSnackbarVisible(false)} severity="success" sx={{ width: '100%' }}>
           {selectedPreset.label} has been set as preset.
