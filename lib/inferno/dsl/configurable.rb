@@ -1,3 +1,5 @@
+require_relative '../entities/input'
+
 module Inferno
   module DSL
     # This module contains the DSL for managing runnable configuration.
@@ -35,7 +37,11 @@ module Inferno
               new_configuration
             end
 
-          self.configuration = configuration.deep_merge(config_to_apply)
+          self.configuration = configuration.deep_merge(config_to_apply.reject { |key, _| key == :inputs })
+
+          config_to_apply[:inputs]&.each do |identifier, new_input|
+            add_input(identifier, new_input.to_hash)
+          end
         end
 
         def options
@@ -49,28 +55,36 @@ module Inferno
         end
 
         def add_input(identifier, new_config = {})
-          existing_config = input_config(identifier) || {}
-          inputs[identifier] = default_input_config(identifier).merge(existing_config, new_config)
+          existing_config = input(identifier)
+
+          if existing_config.nil?
+            return inputs[identifier] = Entities::Input.new(default_input_params(identifier).merge(new_config))
+          end
+
+          inputs[identifier] =
+            Entities::Input
+              .new(existing_config.to_hash)
+              .merge(Entities::Input.new(new_config))
         end
 
-        def default_input_config(identifier)
+        def default_input_params(identifier)
           { name: identifier, type: 'text' }
         end
 
-        def input_config_exists?(identifier)
+        def input_exists?(identifier)
           inputs.key? identifier
         end
 
-        def input_config(identifier)
+        def input(identifier)
           inputs[identifier]
         end
 
         def input_name(identifier)
-          inputs.dig(identifier, :name) || identifier
+          inputs[identifier]&.name
         end
 
         def input_type(identifier)
-          inputs.dig(identifier, :type)
+          inputs[identifier]&.type
         end
 
         ### Output Configuration ###

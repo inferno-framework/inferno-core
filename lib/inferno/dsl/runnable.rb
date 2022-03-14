@@ -1,4 +1,5 @@
 require_relative 'configurable'
+require_relative 'input_output_handling'
 require_relative 'resume_test_route'
 require_relative '../utils/markdown_formatter'
 
@@ -20,6 +21,7 @@ module Inferno
       def self.extended(extending_class)
         super
         extending_class.extend Configurable
+        extending_class.extend InputOutputHandling
 
         extending_class.define_singleton_method(:inherited) do |subclass|
           copy_instance_variables(subclass)
@@ -39,28 +41,35 @@ module Inferno
 
       # Class instance variables are used to hold the metadata for Runnable
       # classes. When inheriting from a Runnable class, these class instance
-      # variables need to be copied. Any child Runnable classes will themselves
-      # need to be subclassed so that their parent can be updated.
+      # variables need to be copied. Some instance variables should not be
+      # copied, and will need to be repopulated from scratch on the new class.
+      # Any child Runnable classes will themselves need to be subclassed so that
+      # their parent can be updated.
+      VARIABLES_NOT_TO_COPY = [
+        :@id, # New runnable will have a different id
+        :@parent, # New runnable unlikely to have the same parent
+        :@children, # New subclasses have to be made for each child
+        :@test_count, # Needs to be recalculated
+        :@config, # Needs to be set by calling .config, which does extra work
+        :@available_inputs, # Needs to be recalculated
+        :@children_available_inputs # Needs to be recalculated
+      ].freeze
+
       # @private
       def copy_instance_variables(subclass)
-        instance_variables.each do |variable|
-          next if [:@id, :@groups, :@tests, :@parent, :@children, :@test_count, :@config].include?(variable)
-
-          subclass.instance_variable_set(variable, instance_variable_get(variable).dup)
-        end
+        instance_variables
+          .reject { |variable| VARIABLES_NOT_TO_COPY.include? variable }
+          .each { |variable| subclass.instance_variable_set(variable, instance_variable_get(variable).dup) }
 
         subclass.config(config)
 
-        child_types.each do |child_type|
-          new_children = send(child_type).map do |child|
-            Class.new(child).tap do |subclass_child|
-              subclass_child.parent = subclass
-            end
+        new_children = children.map do |child|
+          Class.new(child).tap do |subclass_child|
+            subclass_child.parent = subclass
           end
-
-          subclass.instance_variable_set(:"@#{child_type}", new_children)
-          subclass.children.concat(new_children)
         end
+
+        subclass.instance_variable_set(:@children, new_children)
       end
 
       # @private
@@ -253,36 +262,6 @@ module Inferno
         @input_instructions = format_markdown(new_input_instructions)
       end
 
-      # Define inputs
-      #
-      # @param identifier [Symbol] identifier for the input
-      # @param other_identifiers [Symbol] array of symbols if specifying multiple inputs
-      # @param input_definition [Hash] options for input such as type, description, or title
-      # @option input_definition [String] :title Human readable title for input
-      # @option input_definition [String] :description Description for the input
-      # @option input_definition [String] :type text | textarea | radio
-      # @option input_definition [String] :default The default value for the input
-      # @option input_definition [Boolean] :optional Set to true to not require input for test execution
-      # @option input_definition [Hash] :options Possible input option formats based on input type
-      # @option options [Array] :list_options Array of options for input formats that require a list of possible values
-      # @return [void]
-      # @example
-      #   input :patient_id, title: 'Patient ID', description: 'The ID of the patient being searched for',
-      #                     default: 'default_patient_id'
-      # @example
-      #   input :textarea, title: 'Textarea Input Example', type: 'textarea', optional: true
-      def input(identifier, *other_identifiers, **input_definition)
-        if other_identifiers.present?
-          [identifier, *other_identifiers].compact.each do |input_identifier|
-            inputs << input_identifier
-            config.add_input(input_identifier)
-          end
-        else
-          inputs << identifier
-          config.add_input(identifier, input_definition)
-        end
-      end
-
       # Mark as optional. Tests are required by default.
       #
       # @param optional [Boolean]
@@ -317,60 +296,9 @@ module Inferno
         !optional?
       end
 
-      # Define outputs
-      #
-      # @param identifier [Symbol] identifier for the output
-      # @param other_identifiers [Symbol] array of symbols if specifying multiple outputs
-      # @param output_definition [Hash] options for output
-      # @option output_definition [String] :type text | textarea | oauth_credentials
-      # @return [void]
-      # @example
-      #   output :patient_id, :condition_id, :observation_id
-      # @example
-      #   output :oauth_credentials, type: 'oauth_credentials'
-      def output(identifier, *other_identifiers, **output_definition)
-        if other_identifiers.present?
-          [identifier, *other_identifiers].compact.each do |output_identifier|
-            outputs << output_identifier
-            config.add_output(output_identifier)
-          end
-        else
-          outputs << identifier
-          config.add_output(identifier, output_definition)
-        end
-      end
-
       # @private
       def default_id
         to_s
-      end
-
-      # @private
-      def inputs
-        @inputs ||= []
-      end
-
-      # @private
-      def input_definitions
-        config.inputs.slice(*inputs)
-      end
-
-      # @private
-      def output_definitions
-        config.outputs.slice(*outputs)
-      end
-
-      # @private
-      def outputs
-        @outputs ||= []
-      end
-
-      # @private
-      def child_types
-        return [] if ancestors.include? Inferno::Entities::Test
-        return [:groups] if ancestors.include? Inferno::Entities::TestSuite
-
-        [:groups, :tests]
       end
 
       # @private
@@ -455,47 +383,10 @@ module Inferno
       end
 
       # @private
-      def required_inputs(prior_outputs = [])
-        required_inputs =
-          inputs
-            .reject { |input| input_definitions[input][:optional] }
-            .map { |input| config.input_name(input) }
-            .reject { |input| prior_outputs.include?(input) }
-        children_required_inputs = children.flat_map { |child| child.required_inputs(prior_outputs) }
-        prior_outputs.concat(outputs.map { |output| config.output_name(output) })
-        (required_inputs + children_required_inputs).flatten.uniq
-      end
-
-      # @private
-      def missing_inputs(submitted_inputs)
-        submitted_inputs = [] if submitted_inputs.nil?
-
-        required_inputs.map(&:to_s) - submitted_inputs.map { |input| input[:name] }
-      end
-
-      # @private
       def user_runnable?
         @user_runnable ||= parent.nil? ||
                            !parent.respond_to?(:run_as_group?) ||
                            (parent.user_runnable? && !parent.run_as_group?)
-      end
-
-      # @private
-      def available_input_definitions(prior_outputs = [])
-        available_input_definitions =
-          inputs
-            .each_with_object({}) do |input, definitions|
-              definitions[config.input_name(input)] =
-                config.input_config(input)
-            end
-        available_input_definitions.reject! { |input, _| prior_outputs.include? input }
-
-        children_available_input_definitions =
-          children.each_with_object({}) do |child, definitions|
-            definitions.merge!(child.available_input_definitions(prior_outputs))
-          end
-        prior_outputs.concat(outputs.map { |output| config.output_name(output) })
-        children_available_input_definitions.merge(available_input_definitions)
       end
     end
   end
