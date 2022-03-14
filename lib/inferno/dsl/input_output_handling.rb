@@ -88,6 +88,44 @@ module Inferno
         required_inputs.map(&:to_s) - submitted_inputs.map { |input| input[:name] }
       end
 
+      # Define a particular order for inputs to be presented in the API/UI
+      # @example
+      #   group do
+      #     input :input1, :input2, :input3
+      #     input_order :input3, :input2, :input1
+      #   end
+      # @param new_input_order [Array<String,Symbol>]
+      # @return [Array<String, Symbol]
+      def input_order(*new_input_order)
+        return @input_order = new_input_order if new_input_order.present?
+
+        @input_order ||= []
+      end
+
+      # @private
+      def order_available_inputs(original_inputs)
+        input_names = original_inputs.map { |_, input| input.name }.join(', ')
+
+        ordered_inputs =
+          input_order.each_with_object({}) do |input_name, inputs|
+            key, input = original_inputs.find { |_, input| input.name == input_name.to_s }
+            if input.nil?
+              Inferno::Application[:logger].error <<~ERROR
+                Error trying to order inputs in #{id}: #{title}:
+                - Unable to find input #{input_name} in available inputs: #{input_names}
+              ERROR
+              next
+            end
+            inputs[key] = original_inputs.delete(key)
+          end
+
+        original_inputs.each do |key, input|
+          ordered_inputs[key] = input
+        end
+
+        ordered_inputs
+      end
+
       # @private
       def all_outputs
         outputs
@@ -138,8 +176,8 @@ module Inferno
               current_definition.merge_with_child(child_definition)
             end
 
-            children_available_inputs
-              .merge(available_inputs)
+            available_inputs = children_available_inputs.merge(available_inputs)
+            order_available_inputs(available_inputs)
           end
       end
     end
