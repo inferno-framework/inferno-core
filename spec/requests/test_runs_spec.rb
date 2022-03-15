@@ -111,6 +111,21 @@ RSpec.describe '/test_runs' do
         expect(last_response.status).to eq(422)
       end
     end
+
+    context 'with missing required inputs' do
+      let(:inputs) do
+        [
+          { name: 'input1', value: 'value1', type: 'text' }
+        ]
+      end
+
+      it 'returns a 422 error when inputs are missing' do
+        Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
+        post_json create_path, test_run_definition.merge(inputs: inputs)
+
+        expect(last_response.status).to eq(422)
+      end
+    end
   end
 
   describe 'show' do
