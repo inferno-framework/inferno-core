@@ -43,7 +43,7 @@ export default makeStyles((theme: Theme) => ({
     color: theme.palette.primary.dark,
   },
   serialInput: {
-    height: '500px',
+    height: 'max-content',
   },
   dialogActions: {
     display: 'flex',
@@ -52,15 +52,16 @@ export default makeStyles((theme: Theme) => ({
     marginRight: 'auto',
   },
   toggleButton: {
-    color: theme.palette.primary.dark,
-    height: '36px',
     '&&': {
       color: theme.palette.primary.dark,
+      height: '36px',
       '&:hover': {
         backgroundColor: '#fdf6ec',
+        borderLeft: '1px solid #cecece',
       },
       '&:disabled': {
-        backgroundColor: theme.palette.common.grayLighter,
+        backgroundColor: '#ebebeb',
+        color: theme.palette.common.gray,
       },
     },
   },

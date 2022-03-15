@@ -203,14 +203,23 @@ const InputsModal: FC<InputsModalProps> = ({
   }
 
   return (
-    <Dialog open={modalVisible} onClose={hideModal} fullWidth maxWidth="sm">
+    <Dialog
+      open={modalVisible}
+      fullWidth
+      maxWidth="sm"
+      onClose={() => {
+        hideModal();
+        setInvalidInput(false);
+      }}
+    >
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText component="div">
           <ReactMarkdown>{instructions}</ReactMarkdown>
         </DialogContentText>
-        {inputType == 'Field' && <List>{inputFields}</List>}
-        {inputType != 'Field' && (
+        {inputType == 'Field' ? (
+          <List>{inputFields}</List>
+        ) : (
           <TextField
             fullWidth
             multiline
@@ -243,7 +252,15 @@ const InputsModal: FC<InputsModalProps> = ({
             YAML
           </ToggleButton>
         </ToggleButtonGroup>
-        <Button onClick={hideModal} data-testid="cancel-button" className={styles.inputAction}>
+        <Button
+          data-testid="cancel-button"
+          className={styles.inputAction}
+          onClick={() => {
+            hideModal();
+            setInvalidInput(false);
+            setInputType('Field');
+          }}
+        >
           Cancel
         </Button>
         <Button
