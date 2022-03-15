@@ -23,3 +23,6 @@
 /docs/docs
 .yardoc
 node_modules
+
+# webpack-bundle-analyzer report
+/report.html
