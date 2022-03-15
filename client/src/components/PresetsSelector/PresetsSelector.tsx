@@ -9,6 +9,7 @@ import {
   TextField,
   Snackbar,
   Alert,
+  AlertColor,
 } from '@mui/material';
 import { applyPreset } from 'api/TestSessionApi';
 import { PresetSummary } from 'models/testSuiteModels';
@@ -31,13 +32,18 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
   const [selectedPreset, setSelectedPreset] = React.useState(presetOptions[0]);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarStatus, setSnackbarStatus] = React.useState('');
+  const [snackbarMessage, setSnackbarMessage] = React.useState('');
 
   const applyPresetToSession = (presetId: string) => {
     applyPreset(testSessionId, presetId)
       .then(() => {
         getSessionData(testSessionId);
       })
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        setSnackbarStatus('error');
+        setSnackbarMessage(`Could not set preset: ${e as string}`);
+      });
   };
 
   return (
@@ -54,7 +60,6 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
         onChange={(e, newValue) => {
           if (newValue) {
             setSelectedPreset(newValue);
-
             // Remove when modal is active
             if (!SHOW_CONFIRMATION_MODAL) {
               applyPresetToSession(newValue.id);
@@ -66,6 +71,8 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
               setModalVisible(true);
             } else {
               setSnackbarVisible(true);
+              setSnackbarStatus('success');
+              setSnackbarMessage(`${newValue.label} has been set as preset.`);
             }
           }
         }}
@@ -76,8 +83,12 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         sx={{ marginBottom: '48px' }}
       >
-        <Alert onClose={() => setSnackbarVisible(false)} severity="success" sx={{ width: '100%' }}>
-          {selectedPreset.label} has been set as preset.
+        <Alert
+          onClose={() => setSnackbarVisible(false)}
+          severity={(snackbarStatus as AlertColor) || 'warning'}
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
         </Alert>
       </Snackbar>
       <Dialog open={modalVisible} fullWidth maxWidth="xs">
