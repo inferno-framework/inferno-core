@@ -19,6 +19,8 @@ const TestRunButton: FC<TestRunButtonProps> = ({
   testRunInProgress,
   buttonText,
 }) => {
+  /* Need to explicitly check against false because undefined needs to be treated
+   * as true. */
   const showRunButton = (runnable as TestGroup).user_runnable !== false;
 
   return (
