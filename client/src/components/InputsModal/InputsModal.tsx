@@ -213,7 +213,7 @@ const InputsModal: FC<InputsModalProps> = ({
             {instructions +
               (inputType === 'Field'
                 ? ''
-                : ' In this view, only changes to the value attribute of an element will be saved. Further, only elements with names that match an input defined for the current suite, group, or test will be saved. The intended use of this views is to provide a template for users to copy/paste in order to avoid filling out individual fields every time.')}
+                : ' In this view, only changes to the value attribute of an element will be saved. Further, only elements with names that match an input defined for the current suite, group, or test will be saved. The intended use of this view is to provide a template for users to copy/paste in order to avoid filling out individual fields every time.')}
           </ReactMarkdown>
         </DialogContentText>
         {inputType == 'Field' ? (

@@ -117,6 +117,7 @@ test('Field Inputs shown in JSON and YAML', () => {
         runnableType={RunnableType.TestGroup}
         runnableId={'test group id'}
         inputs={testInputs}
+        sessionData={new Map()}
       />
     </ThemeProvider>
   );
@@ -150,6 +151,7 @@ test('Values in Field Inputs shown in JSON and YAML', () => {
         runnableType={RunnableType.TestGroup}
         runnableId={'test group id'}
         inputs={testInputsDefaults}
+        sessionData={new Map()}
       />
     </ThemeProvider>
   );
