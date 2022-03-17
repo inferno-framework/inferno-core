@@ -92,4 +92,44 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       expect(missing_inputs).to eq([])
     end
   end
+
+  describe '.input_order' do
+    let(:group) do
+      Class.new(Inferno::Entities::TestGroup) do
+        input :a, name: :aa
+        input :b, name: :bb
+        input :c, name: :cc
+      end
+    end
+
+    context 'when blank' do
+      it 'does no ordering on the inputs' do
+        group.input_order
+
+        ordered_inputs = group.available_inputs.values.map(&:name)
+
+        expect(ordered_inputs).to eq(['aa', 'bb', 'cc'])
+      end
+    end
+
+    context 'when all inputs are present' do
+      it 'orders the inputs' do
+        group.input_order(:bb, :cc, :aa)
+
+        ordered_inputs = group.available_inputs.values.map(&:name)
+
+        expect(ordered_inputs).to eq(['bb', 'cc', 'aa'])
+      end
+    end
+
+    context 'when some inputs are present' do
+      it 'orders those inputs first' do
+        group.input_order(:bb)
+
+        ordered_inputs = group.available_inputs.values.map(&:name)
+
+        expect(ordered_inputs).to eq(['bb', 'aa', 'cc'])
+      end
+    end
+  end
 end

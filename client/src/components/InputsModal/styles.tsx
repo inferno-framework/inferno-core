@@ -42,4 +42,27 @@ export default makeStyles((theme: Theme) => ({
   inputAction: {
     color: theme.palette.primary.dark,
   },
+  serialInput: {
+    height: 'max-content',
+  },
+  dialogActions: {
+    display: 'flex',
+  },
+  toggleButtonGroup: {
+    marginRight: 'auto',
+  },
+  toggleButton: {
+    '&&': {
+      color: theme.palette.primary.dark,
+      height: '36px',
+      '&:hover': {
+        backgroundColor: '#fdf6ec',
+        borderLeft: '1px solid #cecece',
+      },
+      '&:disabled': {
+        backgroundColor: '#ebebeb',
+        color: theme.palette.common.gray,
+      },
+    },
+  },
 }));

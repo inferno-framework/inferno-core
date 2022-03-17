@@ -8,6 +8,9 @@ import {
   DialogContentText,
   DialogTitle,
   List,
+  TextField,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@mui/material';
 import { OAuthCredentials, RunnableType, TestInput } from 'models/testSuiteModels';
 import InputRadioGroup from './InputsRadioGroup';
@@ -15,7 +18,7 @@ import ReactMarkdown from 'react-markdown';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import InputOAuthCredentials from './InputOAuthCredentials';
-
+import YAML from 'js-yaml';
 export interface InputsModalProps {
   runnableType: RunnableType;
   runnableId: string;
@@ -25,6 +28,7 @@ export interface InputsModalProps {
   modalVisible: boolean;
   hideModal: () => void;
   createTestRun: (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => void;
+  sessionData: Map<string, unknown>;
 }
 
 function runnableTypeReadable(runnableType: RunnableType) {
@@ -47,6 +51,7 @@ const InputsModal: FC<InputsModalProps> = ({
   modalVisible,
   hideModal,
   createTestRun,
+  sessionData,
 }) => {
   const styles = useStyles();
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
@@ -79,10 +84,13 @@ const InputsModal: FC<InputsModalProps> = ({
   useEffect(() => {
     inputsMap.clear();
     inputs.forEach((requirement: TestInput) => {
-      inputsMap.set(requirement.name, requirement.value || (requirement.default as string) || '');
+      inputsMap.set(
+        requirement.name,
+        sessionData.get(requirement.name) || (requirement.default as string) || ''
+      );
     });
     setInputsMap(new Map(inputsMap));
-  }, [inputs]);
+  }, [inputs, sessionData]);
 
   const instructions =
     inputInstructions ||
@@ -133,22 +141,143 @@ const InputsModal: FC<InputsModalProps> = ({
     }
   });
 
+  const [inputType, setInputType] = React.useState<string>('Field');
+  const [baseInput, setBaseInput] = React.useState<string>('');
+  const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
+
+  function serializeMap(map: Map<string, unknown>): string {
+    const flatObj = inputs.map((requirement: TestInput) => {
+      if (requirement.type == 'oauth_credentials') {
+        return {
+          ...requirement,
+          value: (JSON.parse(map.get(requirement.name) as string) as OAuthCredentials) || '{}',
+        };
+      } else if (requirement.type == 'radio') {
+        const firstVal =
+          requirement.options?.list_options && requirement.options?.list_options?.length > 0
+            ? requirement.options?.list_options[0]?.value
+            : '';
+        return {
+          ...requirement,
+          value: map.get(requirement.name) || requirement.default || firstVal,
+        };
+      } else {
+        return { ...requirement, value: map.get(requirement.name) || '' };
+      }
+    });
+    return inputType == 'JSON' ? JSON.stringify(flatObj, null, 3) : YAML.dump(flatObj);
+  }
+
+  useEffect(() => {
+    setInvalidInput(false);
+    setBaseInput(serializeMap(inputsMap));
+  }, [inputType, modalVisible]);
+
+  const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
+    if (value !== null) setInputType(value);
+  };
+
+  function parseSerialChanges(changes: string): TestInput[] | undefined {
+    let parsed: TestInput[];
+    try {
+      if (inputType == 'JSON') {
+        parsed = JSON.parse(changes) as TestInput[];
+      } else {
+        parsed = YAML.load(changes) as TestInput[];
+      }
+      setInvalidInput(false);
+      return parsed;
+    } catch (e) {
+      setInvalidInput(true);
+      return undefined;
+    }
+  }
+
+  const handleSerialChanges = (serialChanges: string) => {
+    const parsedChanges = parseSerialChanges(serialChanges);
+    if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
+      parsedChanges.forEach((change: TestInput) => {
+        if (!change.locked && change.value !== undefined)
+          inputsMap.set(change.name, change.value || '');
+      });
+    }
+    setInputsMap(new Map(inputsMap));
+  };
+
   return (
-    <Dialog open={modalVisible} onClose={hideModal} fullWidth maxWidth="sm">
+    <Dialog open={modalVisible} fullWidth maxWidth="sm" onClose={hideModal}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText component="div">
-          <ReactMarkdown>{instructions}</ReactMarkdown>
+          <ReactMarkdown>
+            {instructions +
+              (inputType === 'Field'
+                ? ''
+                : ' In this view, only changes to the value attribute of an element will be saved. Further, only elements with names that match an input defined for the current suite, group, or test will be saved. The intended use of this view is to provide a template for users to copy/paste in order to avoid filling out individual fields every time.')}
+          </ReactMarkdown>
         </DialogContentText>
-        <List>{inputFields}</List>
+        {inputType == 'Field' ? (
+          <List>{inputFields}</List>
+        ) : (
+          <TextField
+            fullWidth
+            multiline
+            minRows={4}
+            role="input"
+            key={baseInput}
+            error={invalidInput}
+            defaultValue={baseInput}
+            data-testid="serial-input"
+            className={styles.serialInput}
+            aria-labelledby={`${runnableId}-textfield`}
+            onChange={(e) => handleSerialChanges(e.target.value)}
+            label={invalidInput ? `ERROR: INVALID ${inputType}` : ''}
+          />
+        )}
       </DialogContent>
-      <DialogActions>
-        <Button onClick={hideModal} data-testid="cancel-button" className={styles.inputAction}>
+      <DialogActions className={styles.dialogActions}>
+        <ToggleButtonGroup
+          exclusive
+          role="group"
+          value={inputType}
+          onChange={handleInputTypeChange}
+          className={styles.toggleButtonGroup}
+          aria-labelledby={`${runnableId}-togglegroup`}
+        >
+          <ToggleButton
+            value="Field"
+            disabled={invalidInput}
+            data-testid="field-button"
+            className={styles.toggleButton}
+            aria-labelledby={`${runnableId}-field-togglebutton`}
+          >
+            Field
+          </ToggleButton>
+          <ToggleButton
+            value="JSON"
+            disabled={invalidInput}
+            data-testid="json-button"
+            className={styles.toggleButton}
+            aria-labelledby={`${runnableId}-json-togglebutton`}
+          >
+            JSON
+          </ToggleButton>
+          <ToggleButton
+            value="YAML"
+            disabled={invalidInput}
+            data-testid="yaml-button"
+            className={styles.toggleButton}
+            aria-labelledby={`${runnableId}-yaml-togglebutton`}
+          >
+            YAML
+          </ToggleButton>
+        </ToggleButtonGroup>
+        <Button data-testid="cancel-button" className={styles.inputAction} onClick={hideModal}>
           Cancel
         </Button>
         <Button
           onClick={submitClicked}
-          disabled={missingRequiredInput}
+          disabled={missingRequiredInput || invalidInput}
           className={styles.inputAction}
         >
           Submit
