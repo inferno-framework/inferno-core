@@ -18,6 +18,29 @@ module Inferno
             raise Inferno::Exceptions::NotUserRunnableException unless user_runnable
           end
 
+          def persist_inputs(params, test_run)
+            params[:inputs]&.each do |input_params|
+              input =
+                test_run.runnable.available_inputs
+                  .find { |_, runnable_input| runnable_input.name == input_params[:name] }
+                  &.last
+
+              if input.nil?
+                Inferno::Application['logger'].warning(
+                  "Unknown input `#{input_params[:name]}` for #{test_run.runnable.id}: #{test_run.runnable.title}"
+                )
+                next
+              end
+
+              session_data_repo.save(
+                test_session_id: test_run.test_session_id,
+                name: input.name,
+                value: input_params[:value],
+                type: input.type
+              )
+            end
+          end
+
           def call(params)
             test_session = test_sessions_repo.find(params[:test_session_id])
 
@@ -34,14 +57,7 @@ module Inferno
 
             self.body = serialize(test_run)
 
-            params[:inputs]&.each do |input|
-              session_data_repo.save(
-                test_session_id: test_session.id,
-                name: input[:name],
-                value: input[:value],
-                type: input[:type]
-              )
-            end
+            persist_inputs(params, test_run)
 
             Jobs.perform(Jobs::ExecuteTestRun, test_run.id)
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation,

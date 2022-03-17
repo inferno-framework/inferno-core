@@ -7,7 +7,7 @@ module Inferno
         field :short_id
         field :title
         field :short_title
-        field :input_definitions, name: :inputs, extractor: HashValueExtractor, blueprint: Input
+        field :available_inputs, name: :inputs, extractor: HashValueExtractor, blueprint: Input
         field :output_definitions, name: :outputs, extractor: HashValueExtractor
         field :description
         field :short_description

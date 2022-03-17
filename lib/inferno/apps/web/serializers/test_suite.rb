@@ -18,6 +18,7 @@ module Inferno
           include_view :summary
           association :groups, name: :test_groups, blueprint: TestGroup
           field :configuration_messages
+          field :available_inputs, name: :inputs, extractor: HashValueExtractor, blueprint: Input
         end
       end
     end

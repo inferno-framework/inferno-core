@@ -32,6 +32,7 @@ test('Input modal not visible if visibility set to false', () => {
         runnableType={RunnableType.TestGroup}
         runnableId={'test group id'}
         inputs={testInputs}
+        sessionData={new Map()}
       />
     </ThemeProvider>
   );
@@ -50,6 +51,7 @@ test('Modal visible and inputs are shown', () => {
         runnableType={RunnableType.TestGroup}
         runnableId={'test group id'}
         inputs={testInputs}
+        sessionData={new Map()}
       />
     </ThemeProvider>
   );
@@ -79,6 +81,7 @@ test('Pressing cancel hides the modal', () => {
         runnableType={RunnableType.TestGroup}
         runnableId={'test group id'}
         inputs={testInputs}
+        sessionData={new Map()}
       />
     </ThemeProvider>
   );
