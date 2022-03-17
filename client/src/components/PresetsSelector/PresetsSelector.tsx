@@ -51,8 +51,11 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
 
   // To be used when the null preset option has no behavior
   const removeNullFromOptions = () => {
-    const nullIndex = presetOptions.indexOf(null_preset);
-    if (nullIndex >= 0) setPresetOptions(presetOptions.splice(nullIndex, 1));
+    const nullIndex = presetOptions.findIndex((option) => option.id === null_preset.id);
+    if (nullIndex >= 0) {
+      presetOptions.splice(nullIndex, 1);
+      setPresetOptions(presetOptions);
+    }
   };
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,7 +67,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
       }
     }
     // TODO: Handle clearing old results on preset change
-    if (e.target.value && presetTitleToIdMap[e.target.value] !== null_preset.id) {
+    if (e.target.value && e.target.value !== null_preset.title) {
       if (SHOW_CONFIRMATION_MODAL) {
         setModalVisible(true);
       } else {
