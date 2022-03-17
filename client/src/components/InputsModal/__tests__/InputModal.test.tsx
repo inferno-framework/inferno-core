@@ -21,6 +21,21 @@ const testInputs: TestInput[] = [
   },
 ];
 
+const testInputsDefaults: TestInput[] = [
+  {
+    name: 'url',
+    default: 'some_url',
+  },
+  {
+    name: 'some other input',
+    optional: true,
+  },
+  {
+    name: 'yet another input',
+    default: 'yet another value',
+  },
+];
+
 test('Input modal not visible if visibility set to false', () => {
   render(
     <ThemeProvider>
@@ -89,4 +104,72 @@ test('Pressing cancel hides the modal', () => {
   const cancelButton = screen.getByTestId('cancel-button');
   userEvent.click(cancelButton);
   expect(hideModalMock).toHaveBeenCalled();
+});
+
+test('Field Inputs shown in JSON and YAML', () => {
+  render(
+    <ThemeProvider>
+      <InputsModal
+        hideModal={hideModalMock}
+        title="Modal Title"
+        createTestRun={createTestRunMock}
+        modalVisible={true}
+        runnableType={RunnableType.TestGroup}
+        runnableId={'test group id'}
+        inputs={testInputs}
+        sessionData={new Map()}
+      />
+    </ThemeProvider>
+  );
+
+  const jsonButton = screen.getByTestId('json-button');
+  const yamlButton = screen.getByTestId('yaml-button');
+
+  userEvent.click(jsonButton);
+  let serial = screen.getByTestId('serial-input').textContent || '';
+
+  testInputs.forEach((input: TestInput) => {
+    expect(serial.includes(input.name));
+  });
+
+  userEvent.click(yamlButton);
+  serial = screen.getByTestId('serial-input').textContent || '';
+
+  testInputs.forEach((input: TestInput) => {
+    expect(serial.includes(input.name));
+  });
+});
+
+test('Values in Field Inputs shown in JSON and YAML', () => {
+  render(
+    <ThemeProvider>
+      <InputsModal
+        hideModal={hideModalMock}
+        title="Modal Title"
+        createTestRun={createTestRunMock}
+        modalVisible={true}
+        runnableType={RunnableType.TestGroup}
+        runnableId={'test group id'}
+        inputs={testInputsDefaults}
+        sessionData={new Map()}
+      />
+    </ThemeProvider>
+  );
+
+  const jsonButton = screen.getByTestId('json-button');
+  const yamlButton = screen.getByTestId('yaml-button');
+
+  userEvent.click(jsonButton);
+  let serial = screen.getByTestId('serial-input').textContent || '';
+
+  testInputsDefaults.forEach((input: TestInput) => {
+    if (input.default) expect(serial.includes(input.default));
+  });
+
+  userEvent.click(yamlButton);
+  serial = screen.getByTestId('serial-input').textContent || '';
+
+  testInputs.forEach((input: TestInput) => {
+    if (input.default) expect(serial.includes(input.default));
+  });
 });
