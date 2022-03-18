@@ -150,7 +150,7 @@ const InputsModal: FC<InputsModalProps> = ({
       if (requirement.type == 'oauth_credentials') {
         return {
           ...requirement,
-          value: (JSON.parse(map.get(requirement.name) as string) as OAuthCredentials) || '{}',
+          value: JSON.parse((map.get(requirement.name) as string) || '{}') as OAuthCredentials,
         };
       } else if (requirement.type == 'radio') {
         const firstVal =
