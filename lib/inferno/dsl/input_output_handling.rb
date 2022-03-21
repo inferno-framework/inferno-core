@@ -169,7 +169,11 @@ module Inferno
       def available_inputs
         @available_inputs ||=
           begin
-            available_inputs = input_definitions
+            available_inputs =
+              input_definitions
+                .each_with_object({}) do |(_, input), inputs|
+                  inputs[input.name.to_sym] = input
+                end
 
             available_inputs.each do |input, current_definition|
               child_definition = children_available_inputs[input]
