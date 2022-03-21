@@ -122,16 +122,16 @@ module Inferno
         #
         # @param name [Symbol] name of the input
         # @param other_names [Symbol] array of symbols if specifying multiple inputs
-        # @param input_definition [Hash] options for input such as type, description, or title
-        # @option input_definition [String] :title Human readable title for input
-        # @option input_definition [String] :description Description for the input
-        # @option input_definition [String] :type 'text' | 'textarea'
+        # @param input_params [Hash] options for input such as type, description, or title
+        # @option input_params [String] :title Human readable title for input
+        # @option input_params [String] :description Description for the input
+        # @option input_params [String] :type 'text' | 'textarea'
         # @return [void]
         # @example
         #   input :patientid, title: 'Patient ID', description: 'The ID of the patient being searched for'
         # @example
         #   input :textarea, title: 'Textarea Input Example', type: 'textarea'
-        def input(name, *other_names, **input_definition)
+        def input(name, *other_names, **input_params)
           super
 
           if other_names.present?

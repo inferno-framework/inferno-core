@@ -28,7 +28,7 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
           input :a, name: :b
 
           test do
-            run {}
+            run { nil }
           end
         end
       end

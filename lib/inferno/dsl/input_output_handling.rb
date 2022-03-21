@@ -5,13 +5,13 @@ module Inferno
       #
       # @param identifier [Symbol] identifier for the input
       # @param other_identifiers [Symbol] array of symbols if specifying multiple inputs
-      # @param input_definition [Hash] options for input such as type, description, or title
-      # @option input_definition [String] :title Human readable title for input
-      # @option input_definition [String] :description Description for the input
-      # @option input_definition [String] :type text | textarea | radio
-      # @option input_definition [String] :default The default value for the input
-      # @option input_definition [Boolean] :optional Set to true to not require input for test execution
-      # @option input_definition [Hash] :options Possible input option formats based on input type
+      # @param input_params [Hash] options for input such as type, description, or title
+      # @option input_params [String] :title Human readable title for input
+      # @option input_params [String] :description Description for the input
+      # @option input_params [String] :type text | textarea | radio
+      # @option input_params [String] :default The default value for the input
+      # @option input_params [Boolean] :optional Set to true to not require input for test execution
+      # @option input_params [Hash] :options Possible input option formats based on input type
       # @option options [Array] :list_options Array of options for input formats that require a list of possible values
       # @return [void]
       # @example
@@ -19,7 +19,7 @@ module Inferno
       #                     default: 'default_patient_id'
       # @example
       #   input :textarea, title: 'Textarea Input Example', type: 'textarea', optional: true
-      def input(identifier, *other_identifiers, **input_definition)
+      def input(identifier, *other_identifiers, **input_params)
         if other_identifiers.present?
           [identifier, *other_identifiers].compact.each do |input_identifier|
             inputs << input_identifier
@@ -27,7 +27,7 @@ module Inferno
           end
         else
           inputs << identifier
-          config.add_input(identifier, input_definition)
+          config.add_input(identifier, input_params)
         end
       end
 
@@ -65,11 +65,6 @@ module Inferno
       end
 
       # @private
-      def input_definitions
-        config.inputs.slice(*inputs)
-      end
-
-      # @private
       def output_definitions
         config.outputs.slice(*outputs)
       end
@@ -77,8 +72,8 @@ module Inferno
       # @private
       def required_inputs
         available_inputs
-          .reject { |_, input_definition| input_definition.optional }
-          .map { |_, input_definition| input_definition.name }
+          .reject { |_, input| input.optional }
+          .map { |_, input| input.name }
       end
 
       # @private
@@ -170,7 +165,8 @@ module Inferno
         @available_inputs ||=
           begin
             available_inputs =
-              input_definitions
+              config.inputs
+                .slice(*inputs)
                 .each_with_object({}) do |(_, input), inputs|
                   inputs[input.name.to_sym] = input
                 end

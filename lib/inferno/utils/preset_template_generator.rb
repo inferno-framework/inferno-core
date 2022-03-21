@@ -7,17 +7,16 @@ module Inferno
         self.runnable = runnable
       end
 
-      def input_definitions
-        @input_definitions ||= runnable.available_inputs.transform_values(&:to_hash)
+      def available_inputs
+        @available_inputs ||= runnable.available_inputs.transform_values(&:to_hash)
       end
 
       def inputs
         # The rubocop rule is disabled because `each_value` returns the hash,
         # while `values.each` will return the array of values. We want the array
         # of values here.
-        input_definitions.values.each do |input_definition| # rubocop:disable Style/HashEachMethods
-          input_definition[:value] =
-            (input_definition.delete(:default) if input_definition.key? :default)
+        available_inputs.values.each do |input| # rubocop:disable Style/HashEachMethods
+          input[:value] = (input.delete(:default) if input.key? :default)
         end
       end
 
