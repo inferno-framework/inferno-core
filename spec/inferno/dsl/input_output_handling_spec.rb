@@ -21,6 +21,24 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       expect(group.available_inputs.length).to eq(2)
       expect(group.available_inputs.values.map(&:name)).to eq(['b', 'c'])
     end
+
+    it 'does not duplicate renamed inputs' do
+      suite = Class.new(Inferno::Entities::TestSuite) do
+        group do
+          input :a, name: :b
+
+          test do
+            run {}
+          end
+        end
+      end
+      group = suite.groups.first
+      test = group.tests.first
+
+      expect(suite.available_inputs.keys).to eq([:b])
+      expect(group.available_inputs.keys).to eq([:b])
+      expect(test.available_inputs.keys).to eq([:b])
+    end
   end
 
   describe '.missing_inputs' do
