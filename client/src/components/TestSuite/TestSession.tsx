@@ -71,6 +71,7 @@ export interface TestSessionComponentProps {
   initialTestRun: TestRun | null;
   sessionData: Map<string, unknown>;
   setSessionData: (data: Map<string, unknown>) => void;
+  getSessionData?: (testSessionId: string) => void;
 }
 
 const TestSessionComponent: FC<TestSessionComponentProps> = ({
@@ -79,6 +80,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   initialTestRun,
   sessionData,
   setSessionData,
+  getSessionData,
 }) => {
   const styles = useStyles();
   const { test_suite, id } = testSession;
@@ -276,6 +278,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           selectedRunnable={selectedRunnable}
           testRunInProgress={testRunNeedsProgressBar(testRun)}
           view={(view as ViewType) || 'run'}
+          presets={testSession.test_suite.presets}
+          getSessionData={getSessionData}
+          testSessionId={id}
         />
         <Toolbar className={styles.spacerToolbar} />
       </Drawer>

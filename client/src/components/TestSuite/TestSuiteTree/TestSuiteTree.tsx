@@ -1,16 +1,23 @@
 import React, { FC } from 'react';
-import { Box, Divider } from '@mui/material';
+import {
+  TestSuite,
+  TestGroup,
+  RunnableType,
+  PresetSummary,
+  ViewType,
+} from 'models/testSuiteModels';
+import { Box, Divider, ListItem } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FlagIcon from '@mui/icons-material/Flag';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { TestSuite, TestGroup, RunnableType, ViewType } from 'models/testSuiteModels';
 import useStyles from './styles';
 import CustomTreeItem from '../../_common/TreeItem';
 import TestGroupTreeItem from './TestGroupTreeItem';
 import TreeItemLabel from './TreeItemLabel';
+import PresetsSelector from 'components/PresetsSelector/PresetsSelector';
 
 export interface TestSuiteTreeProps {
   testSuite: TestSuite;
@@ -18,6 +25,9 @@ export interface TestSuiteTreeProps {
   selectedRunnable: string;
   testRunInProgress: boolean;
   view: ViewType;
+  presets?: PresetSummary[];
+  testSessionId?: string;
+  getSessionData?: (testSessionId: string) => void;
 }
 
 function addDefaultExpanded(testGroups: TestGroup[], defaultExpanded: string[]): void {
@@ -35,6 +45,9 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   runTests,
   testRunInProgress,
   view,
+  presets,
+  testSessionId,
+  getSessionData,
 }) => {
   const styles = useStyles();
 
@@ -90,6 +103,16 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           selected={selectedNode}
           className={styles.testSuiteTree}
         >
+          {presets && presets.length > 0 && testSessionId && getSessionData && (
+            <ListItem sx={{ margin: '8px 0' }}>
+              <PresetsSelector
+                presets={presets}
+                testSessionId={testSessionId}
+                getSessionData={getSessionData}
+              />
+            </ListItem>
+          )}
+          <Divider />
           <CustomTreeItem
             classes={{ content: styles.treeRoot }}
             nodeId={testSuite.id}

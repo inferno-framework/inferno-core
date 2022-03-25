@@ -5,56 +5,19 @@ import { AppBar, Box, Button, Link, Stack, Toolbar, Typography } from '@mui/mate
 import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import { basePath, getStaticPath } from 'api/infernoApiService';
-import { PresetSummary } from 'models/testSuiteModels';
-import PresetsModal from 'components/PresetsModal/PresetsModal';
 
 export interface HeaderProps {
   suiteTitle?: string;
   suiteVersion?: string;
-  presets?: PresetSummary[];
-  testSessionId?: string;
-  getSessionData?: (testSessionId: string) => void;
 }
 
-const Header: FC<HeaderProps> = ({
-  suiteTitle,
-  suiteVersion,
-  presets,
-  testSessionId,
-  getSessionData,
-}) => {
+const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
   const styles = useStyles();
   const history = useHistory();
-  const [presetModalVisible, setPresetModalVisible] = React.useState(false);
 
   const returnHome = () => {
     history.push(`/${basePath}`);
   };
-
-  const presetButton = (
-    <>
-      {presets && presets.length > 0 && testSessionId && getSessionData && (
-        <Box>
-          <Button
-            color="secondary"
-            onClick={() => setPresetModalVisible(true)}
-            variant="contained"
-            disableElevation
-            size="small"
-          >
-            Use Predefined Input
-          </Button>
-          <PresetsModal
-            modalVisible={presetModalVisible}
-            presets={presets}
-            testSessionId={testSessionId}
-            getSessionData={getSessionData}
-            setModalVisible={setPresetModalVisible}
-          />
-        </Box>
-      )}
-    </>
-  );
 
   return suiteTitle ? (
     <AppBar color="default" className={styles.appbar}>
@@ -79,7 +42,6 @@ const Header: FC<HeaderProps> = ({
           </Box>
         </Box>
         <Stack direction="row" spacing={2}>
-          {presetButton}
           <Button
             disableElevation
             color="secondary"
