@@ -100,9 +100,6 @@ const TestSessionWrapper: FC<unknown> = () => {
         <Header
           suiteTitle={testSession.test_suite.title}
           suiteVersion={testSession.test_suite.version}
-          presets={testSession.test_suite.presets}
-          getSessionData={tryGetSessionData}
-          testSessionId={testSession.id}
         />
         <TestSessionComponent
           testSession={testSession}
@@ -110,6 +107,7 @@ const TestSessionWrapper: FC<unknown> = () => {
           initialTestRun={testRun}
           sessionData={sessionData}
           setSessionData={setSessionData}
+          getSessionData={tryGetSessionData}
         />
         <Footer version={coreVersion} />
       </Box>
