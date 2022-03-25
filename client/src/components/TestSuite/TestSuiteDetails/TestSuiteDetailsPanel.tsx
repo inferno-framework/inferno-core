@@ -56,6 +56,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
           return message.type === 'error';
         }) || []
       }
+      view="run"
     />
   );
 

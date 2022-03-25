@@ -1,12 +1,13 @@
 import React, { FC } from 'react';
-import { TestSuite, TestGroup, RunnableType, ViewType } from 'models/testSuiteModels';
 import { Box, Divider } from '@mui/material';
-import useStyles from './styles';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FlagIcon from '@mui/icons-material/Flag';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import { TestSuite, TestGroup, RunnableType, ViewType } from 'models/testSuiteModels';
+import useStyles from './styles';
 import CustomTreeItem from '../../_common/TreeItem';
 import TestGroupTreeItem from './TestGroupTreeItem';
 import TreeItemLabel from './TreeItemLabel';
@@ -40,6 +41,8 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   let selectedNode = selectedRunnable;
   if (view === 'report') {
     selectedNode = `${selectedNode}/report`;
+  } else if (view === 'config') {
+    selectedNode = `${selectedNode}/config`;
   }
 
   const defaultExpanded: string[] = [testSuite.id];
@@ -64,6 +67,18 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
       />
     ));
 
+    const configMessagesTreeItem = (
+      <CustomTreeItem
+        nodeId={`${testSuite.id}/config`}
+        label={<TreeItemLabel title={'Configuration Messages'} />}
+        icon={<NotificationsIcon />}
+        // eslint-disable-next-line max-len
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+        ContentProps={{ testId: `${testSuite.id}/config` } as any}
+        sx={{ width: '100%' }}
+      />
+    );
+
     return (
       <Box className={styles.testSuiteTreePanel}>
         <TreeView
@@ -73,6 +88,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           onNodeToggle={nodeToggle}
           expanded={expanded}
           selected={selectedNode}
+          className={styles.testSuiteTree}
         >
           <CustomTreeItem
             classes={{ content: styles.treeRoot }}
@@ -95,6 +111,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             ContentProps={{ testId: `${testSuite.id}/report` } as any}
           />
           <Divider />
+          <Box className={styles.treeFooter}>{configMessagesTreeItem}</Box>
         </TreeView>
       </Box>
     );

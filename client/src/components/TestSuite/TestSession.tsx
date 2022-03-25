@@ -1,4 +1,6 @@
 import React, { FC, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Box, Drawer, Toolbar } from '@mui/material';
 import {
   TestInput,
   RunnableType,
@@ -12,18 +14,15 @@ import {
   TestOutput,
   ViewType,
 } from 'models/testSuiteModels';
+import { deleteTestRun, getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
 import ActionModal from 'components/ActionModal/ActionModal';
 import InputsModal from 'components/InputsModal/InputsModal';
-import useStyles from './styles';
 import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import TestSuiteReport from './TestSuiteDetails/TestSuiteReport';
-import { useLocation } from 'react-router-dom';
-import { deleteTestRun, getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
-import { Box, Drawer, Toolbar } from '@mui/material';
-import MessagesButton from './MessagesButton';
-import ConfigDetailsPanel from './ConfigDetails/ConfigDetailsPanel';
+import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDetailsPanel';
+import useStyles from './styles';
 
 function mapRunnableRecursive(
   testGroup: TestGroup,
@@ -253,7 +252,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         // at the suite level right now for simplicity.
         return <TestSuiteReport testSuite={runnableMap.get(selectedRunnable) as TestSuite} />;
       case 'config':
-        return <ConfigDetailsPanel runnable={runnableMap.get(selectedRunnable)} />;
+        return <ConfigMessagesDetailsPanel runnable={runnableMap.get(selectedRunnable)} />;
       default:
         return (
           <TestSuiteDetailsPanel
@@ -278,9 +277,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           testRunInProgress={testRunNeedsProgressBar(testRun)}
           view={(view as ViewType) || 'run'}
         />
-        <Box className={styles.growContainer} sx={{ flexDirection: 'flex-end' }}>
-          <MessagesButton />
-        </Box>
         <Toolbar className={styles.spacerToolbar} />
       </Drawer>
       <Box className={styles.contentContainer}>

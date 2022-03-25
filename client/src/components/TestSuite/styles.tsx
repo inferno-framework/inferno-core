@@ -20,10 +20,6 @@ export default makeStyles((theme: Theme) => ({
       display: 'none',
     },
   },
-  growContainer: {
-    display: 'flex',
-    flexGrow: 1,
-  },
   testSessionContainer: {
     display: 'flex',
     flexDirection: 'column',
