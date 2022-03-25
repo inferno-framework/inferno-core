@@ -55,6 +55,9 @@ const InputsModal: FC<InputsModalProps> = ({
 }) => {
   const styles = useStyles();
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
+  const [inputType, setInputType] = React.useState<string>('Field');
+  const [baseInput, setBaseInput] = React.useState<string>('');
+  const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
   const missingRequiredInput = inputs.some((input: TestInput) => {
     let oAuthMissingRequiredInput = false;
     try {
@@ -140,10 +143,6 @@ const InputsModal: FC<InputsModalProps> = ({
         );
     }
   });
-
-  const [inputType, setInputType] = React.useState<string>('Field');
-  const [baseInput, setBaseInput] = React.useState<string>('');
-  const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
 
   function serializeMap(map: Map<string, unknown>): string {
     const flatObj = inputs.map((requirement: TestInput) => {

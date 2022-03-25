@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TestSuite, TestGroup, RunnableType } from 'models/testSuiteModels';
+import { TestSuite, TestGroup, RunnableType, ViewType } from 'models/testSuiteModels';
 import { Box, Divider } from '@mui/material';
 import useStyles from './styles';
 import TreeView from '@mui/lab/TreeView';
@@ -16,7 +16,7 @@ export interface TestSuiteTreeProps {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   selectedRunnable: string;
   testRunInProgress: boolean;
-  view: 'run' | 'report';
+  view: ViewType;
 }
 
 function addDefaultExpanded(testGroups: TestGroup[], defaultExpanded: string[]): void {

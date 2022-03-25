@@ -51,6 +51,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
     // limit to just error messages until more robust UI is in place
     <TestSuiteMessages
       messages={
+        // runnable.configuration_messages
         runnable.configuration_messages?.filter((message) => {
           return message.type === 'error';
         }) || []

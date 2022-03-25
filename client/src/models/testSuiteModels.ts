@@ -3,6 +3,8 @@ export type Message = {
   type: 'error' | 'warning' | 'info';
 };
 
+export type ViewType = 'run' | 'report' | 'config';
+
 export type RequestHeader = {
   name: string;
   value: string;
