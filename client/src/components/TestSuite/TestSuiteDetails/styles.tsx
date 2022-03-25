@@ -97,4 +97,17 @@ export default makeStyles((theme: Theme) => ({
       display: 'none',
     },
   },
+  alert: {
+    marginBottom: '8px',
+    alignItems: 'center',
+    '& :hover': {
+      cursor: 'pointer',
+    },
+    '& .MuiAlert-message': { width: '100%' },
+  },
+  alertMessage: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
 }));

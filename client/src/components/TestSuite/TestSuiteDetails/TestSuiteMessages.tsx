@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
-import { Alert, Box, Card, Collapse, Typography, styled } from '@mui/material';
+import { Alert, Box, Card, Collapse, Typography, styled, CardContent } from '@mui/material';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Message, ViewType } from 'models/testSuiteModels';
+import useStyles from './styles';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -14,6 +15,7 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
   return <IconButton {...other} />;
 })(({ theme, expand }) => ({
   transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+  padding: 0,
   marginLeft: 'auto',
   transition: theme.transitions.create('transform', {
     duration: theme.transitions.duration.shortest,
@@ -26,6 +28,7 @@ interface TestSuiteMessageProps {
 }
 
 const TestSuiteMessage: FC<TestSuiteMessageProps> = ({ message, view }) => {
+  const styles = useStyles();
   const [expanded, setExpanded] = React.useState<boolean>(false);
 
   const trimmedMessageLength = 80;
@@ -39,27 +42,32 @@ const TestSuiteMessage: FC<TestSuiteMessageProps> = ({ message, view }) => {
   };
 
   return (
-    <Box onClick={handleExpandClick}>
+    <Box>
       <Alert
         severity={message.type}
         variant={view === 'config' ? 'standard' : 'filled'}
-        sx={{ marginBottom: '8px' }}
+        onClick={handleExpandClick}
+        className={styles.alert}
       >
-        {shortMessage}
-        {view === 'config' && (
-          <ExpandMore
-            expand={expanded}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"
-          >
-            <ExpandMoreIcon />
-          </ExpandMore>
-        )}
+        <Box className={styles.alertMessage}>
+          {shortMessage}
+          {view === 'config' && (
+            <ExpandMore
+              expand={expanded}
+              onClick={handleExpandClick}
+              aria-expanded={expanded}
+              aria-label="show more"
+            >
+              <ExpandMoreIcon />
+            </ExpandMore>
+          )}
+        </Box>
       </Alert>
-      <Collapse in={expanded} unmountOnExit sx={{ marginBottom: '8px' }}>
+      <Collapse in={expanded} unmountOnExit sx={{ mb: '8px' }}>
         <Card variant="outlined">
-          <Typography>{message.message}</Typography>
+          <CardContent>
+            <Typography variant="body2">{message.message}</Typography>
+          </CardContent>
         </Card>
       </Collapse>
     </Box>
