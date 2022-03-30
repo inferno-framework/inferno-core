@@ -113,7 +113,6 @@ export default makeStyles((theme: Theme) => ({
   alertCursor: {
     '& :hover': {
       cursor: 'pointer',
-      backgoundColor: 'blue',
     },
   },
 }));
