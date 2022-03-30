@@ -37,7 +37,7 @@ const TestSuiteMessage: FC<TestSuiteMessageProps> = ({ message, view }) => {
     if (view === 'config') {
       setExpanded(!expanded);
     } else {
-      history.push(`${history.location.pathname}#${history.location.hash}/config`);
+      history.push(`${history.location.pathname}${history.location.hash}/config`);
     }
   };
 

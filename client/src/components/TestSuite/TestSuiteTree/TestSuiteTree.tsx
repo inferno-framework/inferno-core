@@ -14,6 +14,8 @@ import ListAltIcon from '@mui/icons-material/ListAlt';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FlagIcon from '@mui/icons-material/Flag';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import useStyles from './styles';
 import CustomTreeItem from '../../_common/TreeItem';
 import TestGroupTreeItem from './TestGroupTreeItem';
@@ -83,22 +85,36 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
       />
     ));
 
-    const configMessagesTreeItem = (
-      <CustomTreeItem
-        nodeId={`${testSuite.id}/config`}
-        label={
-          <Typography component="div" alignItems="center" sx={{ display: 'flex' }}>
-            <TreeItemLabel title={'Configuration Messages'} />
-            {configMessages && <NotificationsIcon />}
-          </Typography>
-        }
-        icon={<NotificationsIcon />}
-        // eslint-disable-next-line max-len
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-        ContentProps={{ testId: `${testSuite.id}/config` } as any}
-        sx={{ width: '100%' }}
-      />
-    );
+    const renderConfigMessagesTreeItem = () => {
+      let notificationSeverityIcon = <></>;
+      if (
+        configMessages &&
+        configMessages?.filter((message) => message.type === 'error').length > 0
+      )
+        notificationSeverityIcon = <ErrorOutlineIcon sx={{ color: 'red' }} />;
+      else if (
+        configMessages &&
+        configMessages?.filter((message) => message.type === 'warning').length > 0
+      )
+        notificationSeverityIcon = <WarningAmberIcon color="primary" />;
+
+      return (
+        <CustomTreeItem
+          nodeId={`${testSuite.id}/config`}
+          label={
+            <Typography component="div" alignItems="center" sx={{ display: 'flex' }}>
+              <TreeItemLabel title={'Configuration Messages'} />
+              {notificationSeverityIcon}
+            </Typography>
+          }
+          icon={<NotificationsIcon />}
+          // eslint-disable-next-line max-len
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+          ContentProps={{ testId: `${testSuite.id}/config` } as any}
+          sx={{ width: '100%' }}
+        />
+      );
+    };
 
     return (
       <Box className={styles.testSuiteTreePanel}>
@@ -146,7 +162,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             {/* Necessary to show dividers */}
             <Box sx={{ width: '100%' }}>
               <Divider />
-              {configMessagesTreeItem}
+              {renderConfigMessagesTreeItem()}
               <Divider />
             </Box>
           </Box>

@@ -50,5 +50,6 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     alignItems: 'flex-end',
     flexGrow: 1,
+    marginTop: '64px',
   },
 }));
