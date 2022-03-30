@@ -26,9 +26,10 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 interface TestSuiteMessageProps {
   message: Message;
   view: ViewType;
+  testSuiteId?: string;
 }
 
-const TestSuiteMessage: FC<TestSuiteMessageProps> = ({ message, view }) => {
+const TestSuiteMessage: FC<TestSuiteMessageProps> = ({ message, testSuiteId, view }) => {
   const styles = useStyles();
   const history = useHistory();
   const [expanded, setExpanded] = React.useState<boolean>(false);
@@ -37,7 +38,7 @@ const TestSuiteMessage: FC<TestSuiteMessageProps> = ({ message, view }) => {
     if (view === 'config') {
       setExpanded(!expanded);
     } else {
-      history.push(`${history.location.pathname}${history.location.hash}/config`);
+      history.push(`${history.location.pathname}#${testSuiteId || ''}/config`);
     }
   };
 
@@ -79,9 +80,10 @@ const TestSuiteMessage: FC<TestSuiteMessageProps> = ({ message, view }) => {
 interface TestSuiteMessagesProps {
   messages: Message[];
   view: ViewType;
+  testSuiteId?: string;
 }
 
-const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, view }) => {
+const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, view, testSuiteId }) => {
   const errorMessages = messages.filter((message) => message.type === 'error');
   const warningMessages = messages.filter((message) => message.type === 'warning');
   const infoMessages = messages.filter((message) => message.type === 'info');
@@ -93,7 +95,7 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, view }) => {
     return (
       <>
         {sortedMessages.map((message, index) => (
-          <TestSuiteMessage message={message} view={view} key={index} />
+          <TestSuiteMessage message={message} view={view} testSuiteId={testSuiteId} key={index} />
         ))}
       </>
     );

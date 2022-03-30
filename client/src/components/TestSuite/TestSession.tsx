@@ -284,7 +284,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           presets={testSession.test_suite.presets}
           getSessionData={getSessionData}
           testSessionId={id}
-          configMessages={(runnableMap.get(selectedRunnable) as TestSuite)?.configuration_messages}
         />
         <Divider />
         <Toolbar className={styles.spacerToolbar} />

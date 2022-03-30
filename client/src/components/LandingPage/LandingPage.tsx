@@ -34,8 +34,6 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       .catch((e) => {
         console.log(e);
       });
-    // Using localStorage while global state management does not exist
-    localStorage.setItem('configMessagesSeverity', '');
   }
 
   return (

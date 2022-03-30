@@ -5,7 +5,6 @@ import {
   RunnableType,
   PresetSummary,
   ViewType,
-  Message,
 } from 'models/testSuiteModels';
 import { Box, Divider, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
@@ -31,7 +30,6 @@ export interface TestSuiteTreeProps {
   presets?: PresetSummary[];
   testSessionId?: string;
   getSessionData?: (testSessionId: string) => void;
-  configMessages?: Message[];
 }
 
 function addDefaultExpanded(testGroups: TestGroup[], defaultExpanded: string[]): void {
@@ -52,7 +50,6 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   presets,
   testSessionId,
   getSessionData,
-  configMessages,
 }) => {
   const styles = useStyles();
 
@@ -86,21 +83,17 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
     ));
 
     const renderConfigMessagesTreeItem = () => {
+      const configMessages = testSuite.configuration_messages;
       let configMessagesSeverityIcon = null;
-      // Using localStorage while global state management does not exist
       if (
-        (configMessages &&
-          configMessages?.filter((message) => message.type === 'error').length > 0) ||
-        localStorage.getItem('configMessagesSeverity') === 'error'
+        configMessages &&
+        configMessages?.filter((message) => message.type === 'error').length > 0
       ) {
-        localStorage.setItem('configMessagesSeverity', 'error');
         configMessagesSeverityIcon = <ErrorOutlineIcon sx={{ color: 'red' }} />;
       } else if (
-        (configMessages &&
-          configMessages?.filter((message) => message.type === 'warning').length > 0) ||
-        localStorage.getItem('configMessagesSeverity') === 'warning'
+        configMessages &&
+        configMessages?.filter((message) => message.type === 'warning').length > 0
       ) {
-        localStorage.setItem('configMessagesSeverity', 'warning');
         configMessagesSeverityIcon = <WarningAmberIcon color="primary" />;
       }
 
