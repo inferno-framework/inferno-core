@@ -42,7 +42,7 @@ const TestSuiteMessage: FC<TestSuiteMessageProps> = ({ message, view }) => {
   };
 
   return (
-    <Box>
+    <>
       <Box className={styles.alertCursor}>
         <Alert
           severity={message.type}
@@ -72,7 +72,7 @@ const TestSuiteMessage: FC<TestSuiteMessageProps> = ({ message, view }) => {
           </CardContent>
         </Card>
       </Collapse>
-    </Box>
+    </>
   );
 };
 
@@ -87,13 +87,17 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, view }) => {
   const infoMessages = messages.filter((message) => message.type === 'info');
   const sortedMessages = [...errorMessages, ...warningMessages, ...infoMessages];
 
-  return (
-    <>
-      {sortedMessages.map((message, index) => (
-        <TestSuiteMessage message={message} view={view} key={index} />
-      ))}
-    </>
-  );
+  if (sortedMessages.length < 1) {
+    return <Typography variant="body2">No Messages</Typography>;
+  } else {
+    return (
+      <>
+        {sortedMessages.map((message, index) => (
+          <TestSuiteMessage message={message} view={view} key={index} />
+        ))}
+      </>
+    );
+  }
 };
 
 export default TestSuiteMessages;

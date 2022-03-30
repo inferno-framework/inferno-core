@@ -11,10 +11,6 @@ interface ConfigDetailsPanelProps {
 const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: runnable }) => {
   const styles = useStyles();
 
-  const testSuiteMessages = (
-    <TestSuiteMessages messages={runnable.configuration_messages || []} view="config" />
-  );
-
   return (
     <Card variant="outlined">
       <Box className={styles.configCardHeader}>
@@ -24,7 +20,9 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
           </Typography>
         </span>
       </Box>
-      <Box margin="20px">{testSuiteMessages}</Box>
+      <Box margin="20px">
+        <TestSuiteMessages messages={runnable.configuration_messages || []} view="config" />
+      </Box>
     </Card>
   );
 };

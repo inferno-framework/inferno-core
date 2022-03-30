@@ -14,7 +14,6 @@ export default makeStyles((theme: Theme) => ({
       display: 'flex',
       justifyContent: 'center',
     },
-    maxHeight: '48px',
   },
   builtUsingContainer: {
     display: 'flex',

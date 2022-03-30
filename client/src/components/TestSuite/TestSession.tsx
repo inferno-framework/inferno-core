@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Box, Drawer, Toolbar } from '@mui/material';
+import { Box, Divider, Drawer, Toolbar } from '@mui/material';
 import {
   TestInput,
   RunnableType,
@@ -254,7 +254,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         // at the suite level right now for simplicity.
         return <TestSuiteReport testSuite={runnableMap.get(selectedRunnable) as TestSuite} />;
       case 'config':
-        // Config messages are only defined at the suite level right now.
+        // Config messages are only defined at the suite level.
         return (
           <ConfigMessagesDetailsPanel testSuite={runnableMap.get(selectedRunnable) as TestSuite} />
         );
@@ -286,6 +286,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           testSessionId={id}
           configMessages={(runnableMap.get(selectedRunnable) as TestSuite)?.configuration_messages}
         />
+        <Divider />
         <Toolbar className={styles.spacerToolbar} />
       </Drawer>
       <Box className={styles.contentContainer}>

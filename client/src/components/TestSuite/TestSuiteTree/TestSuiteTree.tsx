@@ -7,7 +7,7 @@ import {
   ViewType,
   Message,
 } from 'models/testSuiteModels';
-import { Box, Divider, ListItem, Typography } from '@mui/material';
+import { Box, Divider, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ListAltIcon from '@mui/icons-material/ListAlt';
@@ -86,17 +86,23 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
     ));
 
     const renderConfigMessagesTreeItem = () => {
-      let notificationSeverityIcon = <></>;
+      let configMessagesSeverityIcon = null;
+      // Using localStorage while global state management does not exist
       if (
-        configMessages &&
-        configMessages?.filter((message) => message.type === 'error').length > 0
-      )
-        notificationSeverityIcon = <ErrorOutlineIcon sx={{ color: 'red' }} />;
-      else if (
-        configMessages &&
-        configMessages?.filter((message) => message.type === 'warning').length > 0
-      )
-        notificationSeverityIcon = <WarningAmberIcon color="primary" />;
+        (configMessages &&
+          configMessages?.filter((message) => message.type === 'error').length > 0) ||
+        localStorage.getItem('configMessagesSeverity') === 'error'
+      ) {
+        localStorage.setItem('configMessagesSeverity', 'error');
+        configMessagesSeverityIcon = <ErrorOutlineIcon sx={{ color: 'red' }} />;
+      } else if (
+        (configMessages &&
+          configMessages?.filter((message) => message.type === 'warning').length > 0) ||
+        localStorage.getItem('configMessagesSeverity') === 'warning'
+      ) {
+        localStorage.setItem('configMessagesSeverity', 'warning');
+        configMessagesSeverityIcon = <WarningAmberIcon color="primary" />;
+      }
 
       return (
         <CustomTreeItem
@@ -104,14 +110,13 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           label={
             <Typography component="div" alignItems="center" sx={{ display: 'flex' }}>
               <TreeItemLabel title={'Configuration Messages'} />
-              {notificationSeverityIcon}
+              {configMessagesSeverityIcon}
             </Typography>
           }
           icon={<NotificationsIcon />}
           // eslint-disable-next-line max-len
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
           ContentProps={{ testId: `${testSuite.id}/config` } as any}
-          sx={{ width: '100%' }}
         />
       );
     };
@@ -128,13 +133,13 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           className={styles.testSuiteTree}
         >
           {presets && presets.length > 0 && testSessionId && getSessionData && (
-            <ListItem sx={{ margin: '8px 0' }}>
+            <Box margin="16px">
               <PresetsSelector
                 presets={presets}
                 testSessionId={testSessionId}
                 getSessionData={getSessionData}
               />
-            </ListItem>
+            </Box>
           )}
           <Divider />
           <CustomTreeItem
@@ -159,7 +164,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           />
           <Divider />
           <Box className={styles.treeFooter}>
-            {/* Necessary to show dividers */}
+            {/* Box is necessary to show dividers */}
             <Box sx={{ width: '100%' }}>
               <Divider />
               {renderConfigMessagesTreeItem()}
