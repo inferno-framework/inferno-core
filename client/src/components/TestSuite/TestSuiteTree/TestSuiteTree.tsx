@@ -5,8 +5,9 @@ import {
   RunnableType,
   PresetSummary,
   ViewType,
+  Message,
 } from 'models/testSuiteModels';
-import { Box, Divider, ListItem } from '@mui/material';
+import { Box, Divider, ListItem, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ListAltIcon from '@mui/icons-material/ListAlt';
@@ -28,6 +29,7 @@ export interface TestSuiteTreeProps {
   presets?: PresetSummary[];
   testSessionId?: string;
   getSessionData?: (testSessionId: string) => void;
+  configMessages?: Message[];
 }
 
 function addDefaultExpanded(testGroups: TestGroup[], defaultExpanded: string[]): void {
@@ -48,6 +50,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   presets,
   testSessionId,
   getSessionData,
+  configMessages,
 }) => {
   const styles = useStyles();
 
@@ -83,7 +86,12 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
     const configMessagesTreeItem = (
       <CustomTreeItem
         nodeId={`${testSuite.id}/config`}
-        label={<TreeItemLabel title={'Configuration Messages'} />}
+        label={
+          <Typography component="div" alignItems="center" sx={{ display: 'flex' }}>
+            <TreeItemLabel title={'Configuration Messages'} />
+            {configMessages && <NotificationsIcon />}
+          </Typography>
+        }
         icon={<NotificationsIcon />}
         // eslint-disable-next-line max-len
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
@@ -134,7 +142,14 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             ContentProps={{ testId: `${testSuite.id}/report` } as any}
           />
           <Divider />
-          <Box className={styles.treeFooter}>{configMessagesTreeItem}</Box>
+          <Box className={styles.treeFooter}>
+            {/* Necessary to show dividers */}
+            <Box sx={{ width: '100%' }}>
+              <Divider />
+              {configMessagesTreeItem}
+              <Divider />
+            </Box>
+          </Box>
         </TreeView>
       </Box>
     );

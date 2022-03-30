@@ -1,17 +1,17 @@
 import React, { FC } from 'react';
 import { Box, Card, Typography } from '@mui/material';
-import { TestGroup, TestSuite } from 'models/testSuiteModels';
+import { TestSuite } from 'models/testSuiteModels';
 import TestSuiteMessages from '../TestSuiteDetails/TestSuiteMessages';
 import useStyles from './styles';
 
 interface ConfigDetailsPanelProps {
-  runnable: TestSuite | TestGroup;
+  testSuite: TestSuite;
 }
 
-const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ runnable }) => {
+const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: runnable }) => {
   const styles = useStyles();
 
-  const testSuiteMessages = 'configuration_messages' in runnable && (
+  const testSuiteMessages = (
     <TestSuiteMessages messages={runnable.configuration_messages || []} view="config" />
   );
 

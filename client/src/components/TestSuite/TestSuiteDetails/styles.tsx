@@ -100,14 +100,20 @@ export default makeStyles((theme: Theme) => ({
   alert: {
     marginBottom: '8px',
     alignItems: 'center',
-    '& :hover': {
-      cursor: 'pointer',
-    },
     '& .MuiAlert-message': { width: '100%' },
   },
   alertMessage: {
-    display: 'flex',
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: '1',
+    overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  alertCursor: {
+    '& :hover': {
+      cursor: 'pointer',
+      backgoundColor: 'blue',
+    },
   },
 }));

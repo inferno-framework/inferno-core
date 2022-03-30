@@ -254,7 +254,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         // at the suite level right now for simplicity.
         return <TestSuiteReport testSuite={runnableMap.get(selectedRunnable) as TestSuite} />;
       case 'config':
-        return <ConfigMessagesDetailsPanel runnable={runnableMap.get(selectedRunnable)} />;
+        // Config messages are only defined at the suite level right now.
+        return (
+          <ConfigMessagesDetailsPanel testSuite={runnableMap.get(selectedRunnable) as TestSuite} />
+        );
       default:
         return (
           <TestSuiteDetailsPanel
@@ -281,6 +284,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           presets={testSession.test_suite.presets}
           getSessionData={getSessionData}
           testSessionId={id}
+          configMessages={(runnableMap.get(selectedRunnable) as TestSuite)?.configuration_messages}
         />
         <Toolbar className={styles.spacerToolbar} />
       </Drawer>
