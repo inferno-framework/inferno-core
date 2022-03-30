@@ -87,7 +87,7 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, view }) => {
   const infoMessages = messages.filter((message) => message.type === 'info');
   const sortedMessages = [...errorMessages, ...warningMessages, ...infoMessages];
 
-  if (sortedMessages.length < 1) {
+  if (sortedMessages.length < 1 && view === 'config') {
     return <Typography variant="body2">No Messages</Typography>;
   } else {
     return (
