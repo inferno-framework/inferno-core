@@ -16,7 +16,7 @@ const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
   const history = useHistory();
 
   const returnHome = () => {
-    history.push(`/${basePath}`);
+    history.push('/');
   };
 
   return suiteTitle ? (
