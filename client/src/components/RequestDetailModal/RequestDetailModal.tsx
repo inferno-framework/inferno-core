@@ -76,20 +76,20 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
         <DialogTitle>{requestDialogTitle}</DialogTitle>
         <Divider />
         <DialogContent>
-          <div className={styles.section}>
-            <Typography variant="h5" component="h3" className={styles.sectionHeader}>
+          <Box pb={3}>
+            <Typography variant="h5" component="h3" pb={2}>
               Request
             </Typography>
             <HeaderTable headers={request.request_headers || []} />
             <CodeBlock body={request.request_body} />
-          </div>
-          <div className={styles.section}>
-            <Typography variant="h5" component="h3" className={styles.sectionHeader}>
+          </Box>
+          <Box pb={3}>
+            <Typography variant="h5" component="h3" pb={2}>
               Response
             </Typography>
             <HeaderTable headers={request.response_headers || []} />
             <CodeBlock body={request.response_body} />
-          </div>
+          </Box>
         </DialogContent>
       </Dialog>
     );

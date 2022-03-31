@@ -15,12 +15,6 @@ export default makeStyles((_theme: Theme) => ({
     WebkitBoxOrient: 'vertical',
     WebkitLineClamp: '1',
   },
-  section: {
-    paddingBottom: '25px',
-  },
-  sectionHeader: {
-    paddingBottom: '15px',
-  },
   headerName: {
     fontWeight: 600,
   },
