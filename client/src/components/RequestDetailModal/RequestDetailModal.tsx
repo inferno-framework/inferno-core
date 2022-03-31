@@ -36,19 +36,32 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
   );
 
   const requestDialogTitle = (
-    <Tooltip
-      title={`${request?.verb.toUpperCase() || ''} ${request?.url || ''} \u2192 ${
-        request?.status || ''
-      }`}
-      placement="bottom-start"
-    >
-      <Box className={styles.modalTitle}>
-        <Box className={styles.modalTitleContainerShrink}>{request?.verb.toUpperCase()}</Box>
-        <Box className={styles.modalTitleURL}>{request?.url}</Box>
-        <Box className={styles.modalTitleContainerNoShrink}>&#8594; {request?.status}</Box>
-        {usedRequest && <Box className={styles.modalTitleIcon}>{usedRequestIcon}</Box>}
-      </Box>
-    </Tooltip>
+    <Box display="flex" className={styles.modalTitle}>
+      <Tooltip
+        title={`${request?.verb.toUpperCase() || ''} ${request?.url || ''} \u2192 ${
+          request?.status || ''
+        }`}
+        placement="bottom-start"
+      >
+        <Box display="flex">
+          <Box display="flex" pr={1}>
+            {request?.verb.toUpperCase()}
+          </Box>
+          <Box pr={1} className={styles.modalTitleURL}>
+            {request?.url}
+          </Box>
+          <Box display="flex" flexShrink={0}>
+            &#8594; {request?.status}
+          </Box>
+        </Box>
+      </Tooltip>
+      <Box display="flex" flexGrow={1} pr={1} />
+      {usedRequest && (
+        <Box display="flex" flexShrink={1} flexDirection="row-reverse" px={2}>
+          {usedRequestIcon}
+        </Box>
+      )}
+    </Box>
   );
 
   if (request) {
