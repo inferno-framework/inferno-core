@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Alert, Box, Card, Collapse, Typography, styled, CardContent } from '@mui/material';
+import { Alert, Box, Card, Collapse, Typography, ListItem, styled } from '@mui/material';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Message, ViewType } from 'models/testSuiteModels';
 import useStyles from './styles';
+import ReactMarkdown from 'react-markdown';
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -68,9 +69,9 @@ const TestSuiteMessage: FC<TestSuiteMessageProps> = ({ message, testSuiteId, vie
       </Box>
       <Collapse in={expanded} unmountOnExit sx={{ mb: '8px' }}>
         <Card variant="outlined">
-          <CardContent>
-            <Typography variant="body2">{message.message}</Typography>
-          </CardContent>
+          <ListItem>
+            <ReactMarkdown>{message.message}</ReactMarkdown>
+          </ListItem>
         </Card>
       </Collapse>
     </>
