@@ -24,19 +24,14 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
             key={`li-${testGroup.id}`}
             testGroup={testGroup}
             testRunInProgress={false}
-            view={'report'}
+            view="report"
           />
         );
       });
     } else if ('tests' in runnable) {
       listItems = runnable.tests.map((test: Test) => {
         return (
-          <TestListItem
-            key={`li-${test.id}`}
-            test={test}
-            testRunInProgress={false}
-            view={'report'}
-          />
+          <TestListItem key={`li-${test.id}`} test={test} testRunInProgress={false} view="report" />
         );
       });
     }
@@ -46,7 +41,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
         key={`g-${runnable.id}`}
         runnable={runnable}
         testRunInProgress={false}
-        view={'report'}
+        view="report"
       >
         {listItems}
       </TestGroupCard>

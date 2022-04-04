@@ -54,7 +54,6 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
         runnable.configuration_messages?.filter((message) => message.type === 'error') || []
       }
       testSuiteId={runnable.id}
-      view="run"
     />
   );
 

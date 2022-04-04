@@ -53,7 +53,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
             data-testid={`runButton-${runnable.id}`}
             sx={{ margin: '0 4px' }}
           >
-            <PlayCircleIcon />
+            <PlayCircleIcon aria-label="run test" />
           </IconButton>
         ))}
     </>
