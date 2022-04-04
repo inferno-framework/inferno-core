@@ -23,7 +23,7 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
     expect(serialized_group['test_groups']).to be_empty
     expect(serialized_group['tests'].length).to eq(group.tests.length)
 
-    group.input_definitions.each do |_identifier, definition|
+    group.available_inputs.each do |_identifier, definition|
       raw_input = serialized_group['inputs'].find { |serialized_input| serialized_input['name'] == definition.name }
       expect(raw_input).to be_present
       input = Inferno::Entities::Input.new(raw_input.symbolize_keys)

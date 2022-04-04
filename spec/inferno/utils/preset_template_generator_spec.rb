@@ -39,8 +39,6 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
       generator = described_class.new(suite)
       template = generator.generate
 
-      # binding.pry
-
       expect(template).to eq(expected_template)
     end
   end
