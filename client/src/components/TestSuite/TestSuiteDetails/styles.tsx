@@ -38,6 +38,9 @@ export default makeStyles((theme: Theme) => ({
     minHeight: '36.5px',
     alignItems: 'center',
   },
+  testGroupCard: {
+    marginBottom: '24px',
+  },
   testGroupCardList: {
     padding: 0,
   },
