@@ -2,6 +2,7 @@ import React, { FC, useEffect } from 'react';
 import {
   TestInput,
   RunnableType,
+  Runnable,
   TestRun,
   Result,
   TestSession,
@@ -22,10 +23,7 @@ import { useLocation } from 'react-router-dom';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
 import { Drawer, Toolbar, Box } from '@mui/material';
 
-function mapRunnableRecursive(
-  testGroup: TestGroup,
-  map: Map<string, TestSuite | TestGroup | Test>
-) {
+function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
   testGroup.test_groups.forEach((subGroup: TestGroup) => {
     mapRunnableRecursive(subGroup, map);
@@ -35,8 +33,8 @@ function mapRunnableRecursive(
   });
 }
 
-function mapRunnableToId(testSuite: TestSuite): Map<string, TestSuite | TestGroup | Test> {
-  const map = new Map<string, TestSuite | TestGroup | Test>();
+function mapRunnableToId(testSuite: TestSuite): Map<string, Runnable> {
+  const map = new Map<string, Runnable>();
   map.set(testSuite.id, testSuite);
   testSuite?.test_groups?.forEach((testGroup: TestGroup) => {
     mapRunnableRecursive(testGroup, map);
@@ -285,10 +283,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           modalVisible={inputModalVisible}
           runnableType={runnableType}
           runnableId={runnableId}
-          title={(runnableMap.get(selectedRunnable) as TestSuite | TestGroup | Test).title}
-          inputInstructions={
-            (runnableMap.get(selectedRunnable) as TestSuite | TestGroup | Test).input_instructions
-          }
+          title={(runnableMap.get(selectedRunnable) as Runnable).title}
+          inputInstructions={(runnableMap.get(selectedRunnable) as Runnable).input_instructions}
           inputs={inputs}
           sessionData={sessionData}
         />
