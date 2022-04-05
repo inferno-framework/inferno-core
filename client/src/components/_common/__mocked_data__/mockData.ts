@@ -4,4 +4,5 @@ export const mockedTestSuite: TestSuite = {
   id: 'demo',
   title: 'Demonstration Suite',
   description: '',
+  inputs: [],
 };
