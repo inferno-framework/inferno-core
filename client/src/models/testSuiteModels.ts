@@ -65,59 +65,44 @@ export interface TestOutput {
   value: string | undefined;
 }
 
-export interface Test {
+export type Runnable = {
   id: string;
-  short_id: string;
   title: string;
   short_title?: string;
+  description?: string | null;
+  short_description?: string;
   result?: Result;
   inputs: TestInput[];
-  outputs: TestOutput[];
-  input_instructions?: string;
-  description?: string;
-  short_description?: string;
-  user_runnable?: boolean;
   optional?: boolean;
-}
+  input_instructions?: string;
+};
 
-export interface TestGroup {
-  id: string;
+export type Test = Runnable & {
   short_id: string;
-  title: string;
-  short_title?: string;
+  outputs: TestOutput[];
+  user_runnable?: boolean;
+};
+
+export type TestGroup = Runnable & {
+  short_id: string;
   parent_group?: TestGroup | null;
   test_groups: TestGroup[];
-  inputs: TestInput[];
   outputs: TestOutput[];
-  input_instructions?: string;
   tests: Test[];
-  result?: Result;
-  description?: string | null;
-  short_description?: string;
   run_as_group?: boolean;
   user_runnable?: boolean;
   test_count?: number;
-  optional?: boolean;
   expanded?: boolean;
-}
+};
 
-export interface TestSuite {
-  title: string;
-  short_title?: string;
-  id: string;
-  description?: string | null;
-  short_description?: string;
+export type TestSuite = Runnable & {
   run_as_group?: boolean;
-  result?: Result;
-  inputs?: TestInput[];
   test_count?: number;
   test_groups?: TestGroup[];
-  optional?: boolean;
-  input_instructions?: string;
   configuration_messages?: Message[];
   version?: string;
   presets?: PresetSummary[];
-}
+};
 
 export interface TestSession {
   id: string;

@@ -2,10 +2,10 @@ import React, { FC } from 'react';
 import { Button, IconButton } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import { TestGroup, RunnableType, TestSuite, Test } from 'models/testSuiteModels';
+import { TestGroup, Runnable, RunnableType } from 'models/testSuiteModels';
 
 export interface TestRunButtonProps {
-  runnable: TestSuite | TestGroup | Test;
+  runnable: Runnable;
   runnableType: RunnableType;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   testRunInProgress: boolean;
