@@ -1,7 +1,7 @@
-import { Test, TestGroup, TestSuite } from 'models/testSuiteModels';
+import { Runnable } from 'models/testSuiteModels';
 
 export const shouldShowDescription = (
-  runnable: Test | TestGroup | TestSuite,
+  runnable: Runnable,
   description: JSX.Element | undefined
 ): boolean => {
   if (description && runnable.description && runnable.description.length > 0) {

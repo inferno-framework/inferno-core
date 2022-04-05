@@ -103,6 +103,7 @@ const demoTestSuite: TestSuite = {
   id: 'example suite',
   test_groups: [sequence1, sequence2, parentGroup],
   optional: false,
+  inputs: [],
 };
 
 const testSuiteTreeProps: TestSuiteTreeProps = {
