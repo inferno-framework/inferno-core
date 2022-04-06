@@ -84,6 +84,9 @@ GET http://localhost:4567/inferno/api/test_sessions/TEST_SESSION_ID/results
 ## Development
 To get to an interactive console, run `bundle exec bin/inferno console`
 
+## Customizable Banner
+Inferno Core allows you to add your own customizable banner. It loads the banner from the `config/banner.html.erb` file and renders it above the application. The size and appearance of the banner can be controlled by using the inline style attribute. 
+
 ## Documentation
 Inferno documentation source code is located in the `docs/` directory. This documentation is rendered using Jekyll, which creates a site that can be built and served with: 
 

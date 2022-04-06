@@ -4,6 +4,7 @@ import { Box, Divider, Drawer, Toolbar } from '@mui/material';
 import {
   TestInput,
   RunnableType,
+  Runnable,
   TestRun,
   Result,
   TestSession,
@@ -24,10 +25,7 @@ import TestSuiteReport from './TestSuiteDetails/TestSuiteReport';
 import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDetailsPanel';
 import useStyles from './styles';
 
-function mapRunnableRecursive(
-  testGroup: TestGroup,
-  map: Map<string, TestSuite | TestGroup | Test>
-) {
+function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
   testGroup.test_groups.forEach((subGroup: TestGroup) => {
     mapRunnableRecursive(subGroup, map);
@@ -37,8 +35,8 @@ function mapRunnableRecursive(
   });
 }
 
-function mapRunnableToId(testSuite: TestSuite): Map<string, TestSuite | TestGroup | Test> {
-  const map = new Map<string, TestSuite | TestGroup | Test>();
+function mapRunnableToId(testSuite: TestSuite): Map<string, Runnable> {
+  const map = new Map<string, Runnable>();
   map.set(testSuite.id, testSuite);
   testSuite?.test_groups?.forEach((testGroup: TestGroup) => {
     mapRunnableRecursive(testGroup, map);
@@ -273,7 +271,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   return (
     <Box className={styles.testSuiteMain}>
       {renderTestRunProgressBar()}
-      <Drawer variant="permanent" anchor="left" className={styles.drawer}>
+      <Drawer
+        variant="permanent"
+        anchor="left"
+        className={styles.drawer}
+        classes={{ paper: styles.drawerPaper }}
+      >
         <Toolbar className={styles.spacerToolbar} />
         <TestSuiteTreeComponent
           testSuite={test_suite}
@@ -297,10 +300,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           modalVisible={inputModalVisible}
           runnableType={runnableType}
           runnableId={runnableId}
-          title={(runnableMap.get(selectedRunnable) as TestSuite | TestGroup | Test).title}
-          inputInstructions={
-            (runnableMap.get(selectedRunnable) as TestSuite | TestGroup | Test).input_instructions
-          }
+          title={(runnableMap.get(selectedRunnable) as Runnable).title}
+          inputInstructions={(runnableMap.get(selectedRunnable) as Runnable).input_instructions}
           inputs={inputs}
           sessionData={sessionData}
         />

@@ -31,6 +31,7 @@ export const mockedTestSession: TestSession = {
         user_runnable: true,
       },
     ],
+    inputs: [],
     title: 'Demonstration Suite',
   },
   test_suite_id: 'demo',
