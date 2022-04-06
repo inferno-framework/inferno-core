@@ -14,6 +14,11 @@ export default makeStyles((theme: Theme) => ({
       display: 'flex',
       justifyContent: 'center',
     },
+    position: 'sticky',
+    bottom: 0,
+    '@media print': {
+      position: 'static',
+    },
   },
   builtUsingContainer: {
     display: 'flex',
