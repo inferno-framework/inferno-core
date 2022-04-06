@@ -14,8 +14,6 @@ export default makeStyles((theme: Theme) => ({
     },
   },
   drawer: {
-    flexShrink: 0,
-    width: '300px',
     '@media print': {
       display: 'none',
     },
@@ -35,6 +33,8 @@ export default makeStyles((theme: Theme) => ({
     },
   },
   drawerPaper: {
+    flexShrink: 0,
+    width: '300px',
     position: 'inherit',
   },
 }));
