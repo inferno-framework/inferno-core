@@ -1,3 +1,5 @@
+require_relative '../ext/fhir_models'
+
 module Inferno
   module DSL
     # This module contains the methods needed to configure a validator to
@@ -168,7 +170,7 @@ module Inferno
         def validate(resource, profile_url)
           RestClient.post(
             "#{url}/validate",
-            resource.to_json,
+            resource.source_contents,
             params: { profile: profile_url }
           ).body
         end
