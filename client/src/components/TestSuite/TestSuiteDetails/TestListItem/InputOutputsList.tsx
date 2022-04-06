@@ -55,18 +55,23 @@ const InputsOutputsList: FC<InputOutputsListProps> = ({
     }
   );
 
-  return inputOutputs.length > 0 ? (
-    <Table>
-      <TableHead>{inputOutputsListHeader}</TableHead>
-      <TableBody>{inputOutputsListItems}</TableBody>
-    </Table>
-  ) : (
-    <ListItem>
-      <Typography variant="subtitle2" component="p">
-        {noValuesMessage || ''}
-      </Typography>
-    </ListItem>
-  );
+  const output =
+    inputOutputs.length > 0 ? (
+      <Table>
+        <TableHead>{inputOutputsListHeader}</TableHead>
+        <TableBody>{inputOutputsListItems}</TableBody>
+      </Table>
+    ) : (
+      noValuesMessage && (
+        <ListItem>
+          <Typography variant="subtitle2" component="p">
+            {noValuesMessage}
+          </Typography>
+        </ListItem>
+      )
+    );
+
+  return output || <></>;
 };
 
 export default InputsOutputsList;
