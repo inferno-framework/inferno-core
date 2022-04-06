@@ -117,7 +117,7 @@ RSpec.describe Inferno::DSL::Assertions do
         validation_request =
           stub_request(:post, validation_url)
             .with(query: { profile: FHIR::Definitions.resource_definition('Patient').url })
-            .with(body: patient_resource.to_json)
+            .with(body: patient_resource.source_contents)
             .to_return(status: 200, body: success_outcome.to_json)
 
         klass.assert_valid_resource(resource: patient_resource)
@@ -132,7 +132,7 @@ RSpec.describe Inferno::DSL::Assertions do
         validation_request =
           stub_request(:post, validation_url)
             .with(query: { profile: FHIR::Definitions.resource_definition('Patient').url })
-            .with(body: patient_resource.to_json)
+            .with(body: patient_resource.source_contents)
             .to_return(status: 200, body: success_outcome.to_json)
 
         klass.assert_valid_resource
@@ -146,7 +146,7 @@ RSpec.describe Inferno::DSL::Assertions do
         validation_request =
           stub_request(:post, validation_url)
             .with(query: { profile: FHIR::Definitions.resource_definition('Patient').url })
-            .with(body: patient_resource.to_json)
+            .with(body: patient_resource.source_contents)
             .to_return(status: 200, body: success_outcome.to_json)
 
         klass.assert_valid_resource(resource: patient_resource)
@@ -160,7 +160,7 @@ RSpec.describe Inferno::DSL::Assertions do
         validation_request =
           stub_request(:post, validation_url)
             .with(query: { profile: profile_url })
-            .with(body: patient_resource.to_json)
+            .with(body: patient_resource.source_contents)
             .to_return(status: 200, body: success_outcome.to_json)
 
         klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url)
@@ -173,7 +173,7 @@ RSpec.describe Inferno::DSL::Assertions do
       it 'raises an exception' do
         stub_request(:post, validation_url)
           .with(query: { profile: profile_url })
-          .with(body: patient_resource.to_json)
+          .with(body: patient_resource.source_contents)
           .to_return(status: 200, body: error_outcome.to_json)
 
         expect { klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url) }.to(
@@ -184,7 +184,7 @@ RSpec.describe Inferno::DSL::Assertions do
       it 'adds an error message' do
         stub_request(:post, validation_url)
           .with(query: { profile: profile_url })
-          .with(body: patient_resource.to_json)
+          .with(body: patient_resource.source_contents)
           .to_return(status: 200, body: error_outcome.to_json)
 
         expect { klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url) }.to(
@@ -202,7 +202,7 @@ RSpec.describe Inferno::DSL::Assertions do
         validation_request =
           stub_request(:post, validation_url)
             .with(query: { profile: profile_url })
-            .with(body: patient_resource.to_json)
+            .with(body: patient_resource.source_contents)
             .to_return(status: 200, body: outcome_with_messages.to_json)
 
         klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url)
@@ -213,7 +213,7 @@ RSpec.describe Inferno::DSL::Assertions do
       it 'adds warning/info messages' do
         stub_request(:post, validation_url)
           .with(query: { profile: profile_url })
-          .with(body: patient_resource.to_json)
+          .with(body: patient_resource.source_contents)
           .to_return(status: 200, body: outcome_with_messages.to_json)
 
         klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url)
@@ -235,7 +235,7 @@ RSpec.describe Inferno::DSL::Assertions do
 
         stub_request(:post, validation_url)
           .with(query: { profile: profile_url })
-          .with(body: patient_resource.to_json)
+          .with(body: patient_resource.source_contents)
           .to_return(status: 200, body: outcome_with_messages.to_json)
 
         klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url)
@@ -272,11 +272,11 @@ RSpec.describe Inferno::DSL::Assertions do
           [
             stub_request(:post, validation_url)
               .with(query: { profile: FHIR::Definitions.resource_definition('Patient').url })
-              .with(body: patient_resource.to_json)
+              .with(body: patient_resource.source_contents)
               .to_return(status: 200, body: success_outcome.to_json),
             stub_request(:post, validation_url)
               .with(query: { profile: FHIR::Definitions.resource_definition('CarePlan').url })
-              .with(body: care_plan_resource.to_json)
+              .with(body: care_plan_resource.source_contents)
               .to_return(status: 200, body: error_outcome.to_json)
           ]
 
@@ -296,11 +296,11 @@ RSpec.describe Inferno::DSL::Assertions do
           [
             stub_request(:post, validation_url)
               .with(query: { profile: FHIR::Definitions.resource_definition('Patient').url })
-              .with(body: patient_resource.to_json)
+              .with(body: patient_resource.source_contents)
               .to_return(status: 200, body: success_outcome.to_json),
             stub_request(:post, validation_url)
               .with(query: { profile: FHIR::Definitions.resource_definition('CarePlan').url })
-              .with(body: care_plan_resource.to_json)
+              .with(body: care_plan_resource.source_contents)
               .to_return(status: 200, body: success_outcome.to_json)
           ]
 
@@ -316,11 +316,11 @@ RSpec.describe Inferno::DSL::Assertions do
           [
             stub_request(:post, validation_url)
               .with(query: { profile: FHIR::Definitions.resource_definition('Patient').url })
-              .with(body: patient_resource.to_json)
+              .with(body: patient_resource.source_contents)
               .to_return(status: 200, body: success_outcome.to_json),
             stub_request(:post, validation_url)
               .with(query: { profile: FHIR::Definitions.resource_definition('CarePlan').url })
-              .with(body: care_plan_resource.to_json)
+              .with(body: care_plan_resource.source_contents)
               .to_return(status: 200, body: success_outcome.to_json)
           ]
 
@@ -335,7 +335,7 @@ RSpec.describe Inferno::DSL::Assertions do
         validation_request =
           stub_request(:post, validation_url)
             .with(query: { profile: FHIR::Definitions.resource_definition('CarePlan').url })
-            .with(body: care_plan_resource.to_json)
+            .with(body: care_plan_resource.source_contents)
             .to_return(status: 200, body: success_outcome.to_json)
 
         klass.assert_valid_bundle_entries(bundle: bundle, resource_types: 'CarePlan')
@@ -349,7 +349,7 @@ RSpec.describe Inferno::DSL::Assertions do
         validation_request =
           stub_request(:post, validation_url)
             .with(query: { profile: FHIR::Definitions.resource_definition('CarePlan').url })
-            .with(body: care_plan_resource.to_json)
+            .with(body: care_plan_resource.source_contents)
             .to_return(status: 200, body: success_outcome.to_json)
 
         klass.assert_valid_bundle_entries(bundle: bundle, resource_types: ['CarePlan'])
@@ -365,11 +365,11 @@ RSpec.describe Inferno::DSL::Assertions do
           [
             stub_request(:post, validation_url)
               .with(query: { profile: patient_profile })
-              .with(body: patient_resource.to_json)
+              .with(body: patient_resource.source_contents)
               .to_return(status: 200, body: success_outcome.to_json),
             stub_request(:post, validation_url)
               .with(query: { profile: FHIR::Definitions.resource_definition('CarePlan').url })
-              .with(body: care_plan_resource.to_json)
+              .with(body: care_plan_resource.source_contents)
               .to_return(status: 200, body: success_outcome.to_json)
           ]
 
