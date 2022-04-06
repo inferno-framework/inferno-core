@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FolderIcon from '@mui/icons-material/Folder';
+import InputOutputsList from './TestListItem/InputOutputsList';
 import { Request, RunnableType, Test, TestGroup } from 'models/testSuiteModels';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
@@ -139,6 +140,11 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         </ListItem>
       </AccordionSummary>
       <Divider />
+      {view === 'report' && testGroup.run_as_group && testGroup.user_runnable && testGroup.result && (
+        <Box>
+          <InputOutputsList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
+        </Box>
+      )}
       <AccordionDetails id={`${testGroup.title}-panel`} className={styles.accordionDetailContainer}>
         {testGroup.description && view == 'run' && nestedDescriptionPanel}
         <List className={styles.accordionDetail}>

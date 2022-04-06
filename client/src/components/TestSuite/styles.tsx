@@ -14,8 +14,6 @@ export default makeStyles((theme: Theme) => ({
     },
   },
   drawer: {
-    flexShrink: 0,
-    width: '300px',
     '@media print': {
       display: 'none',
     },
@@ -23,7 +21,7 @@ export default makeStyles((theme: Theme) => ({
   testSessionContainer: {
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
+    height: '100%',
   },
   testSuiteMain: {
     display: 'flex',
@@ -33,5 +31,10 @@ export default makeStyles((theme: Theme) => ({
     '@media print': {
       display: 'none',
     },
+  },
+  drawerPaper: {
+    flexShrink: 0,
+    width: '300px',
+    position: 'inherit',
   },
 }));
