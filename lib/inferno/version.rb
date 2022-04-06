@@ -1,3 +1,4 @@
 module Inferno
-  VERSION = '0.2.0'.freeze
+  # Standard patterns for gem versions: https://guides.rubygems.org/patterns/
+  VERSION = '0.3.0.rc1'.freeze
 end
