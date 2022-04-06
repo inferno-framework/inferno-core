@@ -60,6 +60,7 @@ module Inferno
 
     def run_test(test, scratch)
       inputs = load_inputs(test)
+      input_json_string = inputs_as_json(test, inputs)
 
       test_instance = test.new(inputs: inputs, test_session_id: test_session.id, scratch: scratch)
 
@@ -91,7 +92,7 @@ module Inferno
           requests: test_instance.requests,
           result: result,
           result_message: test_instance.result_message,
-          input_json: inputs_as_json(test, inputs),
+          input_json: input_json_string,
           output_json: output_json_string
         }.merge(test.reference_hash)
       )
