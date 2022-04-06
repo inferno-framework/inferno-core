@@ -1,3 +1,6 @@
+# 0.3.0.rc1
+* Initial release candidate for 0.3.0
+
 # 0.2.0
 
 # 0.2.0.rc4
