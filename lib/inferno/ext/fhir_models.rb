@@ -12,7 +12,7 @@ module InfernoFHIRModelExtensions
   end
 
   def source_contents
-    @source_text || JSON.generate({ resourceType: resourceType }.merge(@source_hash))
+    @source_text || JSON.generate(@source_hash)
   end
 end
 
