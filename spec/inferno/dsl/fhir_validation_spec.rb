@@ -92,7 +92,7 @@ RSpec.describe Inferno::DSL::FHIRValidation do
         .with(body: resource_string)
         .to_return(status: 200, body: FHIR::OperationOutcome.new.to_json)
 
-      expect(validator.resource_is_valid?(resource, profile_url, runnable)).to eq(true)
+      expect(validator.resource_is_valid?(resource, profile_url, runnable)).to be(true)
     end
   end
 end

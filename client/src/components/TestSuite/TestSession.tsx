@@ -249,8 +249,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   return (
     <Box className={styles.testSuiteMain}>
       {testRunProgressBar()}
-      <Drawer variant="permanent" anchor="left" className={styles.drawer}>
-        <Toolbar className={styles.spacerToolbar} />
+      <Drawer
+        variant="permanent"
+        anchor="left"
+        className={styles.drawer}
+        classes={{ paper: styles.drawerPaper }}
+      >
         <TestSuiteTreeComponent
           testSuite={test_suite}
           runTests={runTests}
