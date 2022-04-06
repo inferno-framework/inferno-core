@@ -18,6 +18,10 @@ module Inferno
         field :updated_at
         field :optional?, name: :optional
 
+        field :inputs do |result, _options|
+          result.input_json.present? ? JSON.parse(result.input_json) : []
+        end
+
         field :outputs do |result, _options|
           result.output_json.present? ? JSON.parse(result.output_json) : []
         end

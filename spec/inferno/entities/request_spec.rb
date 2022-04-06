@@ -23,10 +23,10 @@ RSpec.describe Inferno::Entities::Request do
       expect(entity.response_body).to eq(response_body)
       expect(
         entity.request_headers.one? { |header| header.name == 'accept' && header.value == 'application/json' }
-      ).to eq(true)
+      ).to be(true)
       expect(
         entity.response_headers.one? { |header| header.name == 'content-type' && header.value == 'application/json' }
-      ).to eq(true)
+      ).to be(true)
     end
   end
 
@@ -53,12 +53,12 @@ RSpec.describe Inferno::Entities::Request do
       expect(entity.response_body).to eq(response_body.to_json)
       expect(
         entity.request_headers.one? { |header| header.name == 'accept' && header.value == 'application/fhir+json' }
-      ).to eq(true)
+      ).to be(true)
       expect(
         entity.response_headers.one? do |header|
           header.name == 'content-type' && header.value == 'application/fhir+json'
         end
-      ).to eq(true)
+      ).to be(true)
     end
 
     it 'correctly handles form encoded bodies' do
