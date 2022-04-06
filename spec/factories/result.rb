@@ -15,6 +15,7 @@ FactoryBot.define do
     test_group_id { runnable[:test_group_id] }
     test_id { runnable[:test_id] }
     output_json { '[]' }
+    input_json { '[]' }
 
     result { 'pass' }
 

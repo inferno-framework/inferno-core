@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { RunnableType, Test, Request } from 'models/testSuiteModels';
 import TabPanel from './TabPanel';
+import InputOutputsList from './InputOutputsList';
 import MessagesList from './MessagesList';
 import RequestsList from './RequestsList';
 import ResultIcon from '../ResultIcon';
@@ -183,11 +184,12 @@ const TestListItem: FC<TestListItemProps> = ({
             onChange={(e, newIndex) => {
               setPanelIndex(newIndex);
             }}
-            variant="fullWidth"
           >
             <Tab label="Messages" {...a11yProps(0)} />
             <Tab label="HTTP Requests" {...a11yProps(1)} />
-            <Tab label="About" {...a11yProps(2)} />
+            <Tab label="Inputs" {...a11yProps(2)} />
+            <Tab label="Outputs" {...a11yProps(3)} />
+            <Tab label="About" {...a11yProps(4)} />
           </Tabs>
           <Divider />
           <TabPanel id={test.id} currentPanelIndex={panelIndex} index={0}>
@@ -203,6 +205,20 @@ const TestListItem: FC<TestListItemProps> = ({
             )}
           </TabPanel>
           <TabPanel id={test.id} currentPanelIndex={panelIndex} index={2}>
+            <InputOutputsList
+              inputOutputs={test.result?.inputs || []}
+              noValuesMessage="No Inputs"
+              headerName="Input"
+            />
+          </TabPanel>
+          <TabPanel id={test.id} currentPanelIndex={panelIndex} index={3}>
+            <InputOutputsList
+              inputOutputs={test.result?.outputs || []}
+              noValuesMessage="No Outputs"
+              headerName="Output"
+            />
+          </TabPanel>
+          <TabPanel id={test.id} currentPanelIndex={panelIndex} index={4}>
             {shouldShowDescription(test, testDescription) ? (
               testDescription
             ) : (

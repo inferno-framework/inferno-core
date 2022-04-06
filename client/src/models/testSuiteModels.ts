@@ -32,6 +32,7 @@ export interface Result {
   test_session_id: string;
   messages?: Message[];
   requests?: Request[];
+  inputs?: TestInput[];
   result_message?: string;
   created_at?: string;
   updated_at: string;

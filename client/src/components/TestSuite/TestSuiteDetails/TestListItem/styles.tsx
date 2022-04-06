@@ -47,6 +47,10 @@ export default makeStyles((theme: Theme) => ({
     width: '90%',
     padding: '0 !important',
   },
+  inputOutputsValue: {
+    width: '90%',
+    padding: '0 !important',
+  },
   badgeIcon: {
     margin: '0 4px',
   },
