@@ -15,7 +15,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FolderIcon from '@mui/icons-material/Folder';
 import InputOutputsList from './TestListItem/InputOutputsList';
-import { Request, RunnableType, Test, TestGroup } from 'models/testSuiteModels';
+import { Request, RunnableType, Test, TestGroup, ViewType } from 'models/testSuiteModels';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 import TestListItem from './TestListItem/TestListItem';
@@ -27,7 +27,7 @@ interface TestGroupListItemProps {
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
-  view: 'report' | 'run';
+  view: ViewType;
 }
 
 const TestGroupListItem: FC<TestGroupListItemProps> = ({

@@ -31,8 +31,13 @@ export default makeStyles((theme: Theme) => ({
   },
   testSuiteTreePanel: {
     width: '300px',
+    flexGrow: 1,
     overflowX: 'hidden',
-    paddingBottom: '60px', // Prevent footer from blocking drawer
+  },
+  testSuiteTree: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
   },
   treeRoot: {
     '& $labelText': {
@@ -40,5 +45,11 @@ export default makeStyles((theme: Theme) => ({
       fontWeight: 'bold',
     },
     padding: '8px 20px !important',
+  },
+  treeFooter: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    flexGrow: 1,
+    marginTop: '64px',
   },
 }));

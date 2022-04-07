@@ -15,7 +15,7 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from '@mui/material';
-import { RunnableType, Test, Request } from 'models/testSuiteModels';
+import { RunnableType, Test, Request, ViewType } from 'models/testSuiteModels';
 import TabPanel from './TabPanel';
 import InputOutputsList from './InputOutputsList';
 import MessagesList from './MessagesList';
@@ -33,7 +33,7 @@ interface TestListItemProps {
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
-  view: 'report' | 'run';
+  view: ViewType;
 }
 
 const TestListItem: FC<TestListItemProps> = ({

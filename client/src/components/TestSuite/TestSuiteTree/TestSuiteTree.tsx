@@ -1,12 +1,21 @@
 import React, { FC } from 'react';
-import { TestSuite, TestGroup, RunnableType, PresetSummary } from 'models/testSuiteModels';
-import { Box, Divider, ListItem } from '@mui/material';
-import useStyles from './styles';
+import {
+  TestSuite,
+  TestGroup,
+  RunnableType,
+  PresetSummary,
+  ViewType,
+} from 'models/testSuiteModels';
+import { Box, Divider, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FlagIcon from '@mui/icons-material/Flag';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import useStyles from './styles';
 import CustomTreeItem from '../../_common/TreeItem';
 import TestGroupTreeItem from './TestGroupTreeItem';
 import TreeItemLabel from './TreeItemLabel';
@@ -17,7 +26,7 @@ export interface TestSuiteTreeProps {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   selectedRunnable: string;
   testRunInProgress: boolean;
-  view: 'run' | 'report';
+  view: ViewType;
   presets?: PresetSummary[];
   testSessionId?: string;
   getSessionData?: (testSessionId: string) => void;
@@ -47,6 +56,8 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   let selectedNode = selectedRunnable;
   if (view === 'report') {
     selectedNode = `${selectedNode}/report`;
+  } else if (view === 'config') {
+    selectedNode = `${selectedNode}/config`;
   }
 
   const defaultExpanded: string[] = [testSuite.id];
@@ -71,17 +82,40 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
       />
     ));
 
+    const renderConfigMessagesTreeItem = () => {
+      const configMessages = testSuite.configuration_messages;
+      let configMessagesSeverityIcon = null;
+      if (
+        configMessages &&
+        configMessages?.filter((message) => message.type === 'error').length > 0
+      ) {
+        configMessagesSeverityIcon = <ErrorOutlineIcon sx={{ color: 'red' }} />;
+      } else if (
+        configMessages &&
+        configMessages?.filter((message) => message.type === 'warning').length > 0
+      ) {
+        configMessagesSeverityIcon = <WarningAmberIcon color="primary" />;
+      }
+
+      return (
+        <CustomTreeItem
+          nodeId={`${testSuite.id}/config`}
+          label={
+            <Typography component="div" alignItems="center" sx={{ display: 'flex' }}>
+              <TreeItemLabel title={'Configuration Messages'} />
+              {configMessagesSeverityIcon}
+            </Typography>
+          }
+          icon={<NotificationsIcon />}
+          // eslint-disable-next-line max-len
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+          ContentProps={{ testId: `${testSuite.id}/config` } as any}
+        />
+      );
+    };
+
     return (
       <Box className={styles.testSuiteTreePanel}>
-        {presets && presets.length > 0 && testSessionId && getSessionData && (
-          <ListItem sx={{ margin: '8px 0' }}>
-            <PresetsSelector
-              presets={presets}
-              testSessionId={testSessionId}
-              getSessionData={getSessionData}
-            />
-          </ListItem>
-        )}
         <TreeView
           aria-label="navigation-panel"
           defaultCollapseIcon={<ExpandMoreIcon />}
@@ -89,7 +123,17 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           onNodeToggle={nodeToggle}
           expanded={expanded}
           selected={selectedNode}
+          className={styles.testSuiteTree}
         >
+          {presets && presets.length > 0 && testSessionId && getSessionData && (
+            <Box margin="16px">
+              <PresetsSelector
+                presets={presets}
+                testSessionId={testSessionId}
+                getSessionData={getSessionData}
+              />
+            </Box>
+          )}
           <Divider />
           <CustomTreeItem
             classes={{ content: styles.treeRoot }}
@@ -112,6 +156,14 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             ContentProps={{ testId: `${testSuite.id}/report` } as any}
           />
           <Divider />
+          <Box className={styles.treeFooter}>
+            {/* Box is necessary to show dividers */}
+            <Box sx={{ width: '100%' }}>
+              <Divider />
+              {renderConfigMessagesTreeItem()}
+              <Divider />
+            </Box>
+          </Box>
         </TreeView>
       </Box>
     );

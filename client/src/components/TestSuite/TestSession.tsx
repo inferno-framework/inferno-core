@@ -1,4 +1,6 @@
 import React, { FC, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { Box, Divider, Drawer, Toolbar } from '@mui/material';
 import {
   TestInput,
   RunnableType,
@@ -11,17 +13,17 @@ import {
   TestSuite,
   Request,
   TestOutput,
+  ViewType,
 } from 'models/testSuiteModels';
+import { deleteTestRun, getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
 import ActionModal from 'components/ActionModal/ActionModal';
 import InputsModal from 'components/InputsModal/InputsModal';
-import useStyles from './styles';
 import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import TestSuiteReport from './TestSuiteDetails/TestSuiteReport';
-import { useLocation } from 'react-router-dom';
-import { deleteTestRun, getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
-import { Drawer, Toolbar, Box } from '@mui/material';
+import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDetailsPanel';
+import useStyles from './styles';
 
 function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
@@ -124,15 +126,11 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const location = useLocation();
   const locationHashParts = location.hash.replace('#', '').split('/');
   let [selectedRunnable] = locationHashParts;
-  const [, testView] = locationHashParts;
+  const [, view] = locationHashParts;
 
   if (!runnableMap.get(selectedRunnable)) {
     selectedRunnable = testSession.test_suite.id;
   }
-
-  // limit to 'run' and 'report' views
-  // using this somewhat awkward form to satisfy TypeScript
-  const view = testView === 'report' ? 'report' : 'run';
 
   function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
     setInputs(inputs);
@@ -230,7 +228,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       : false;
   }
 
-  function testRunProgressBar() {
+  function renderTestRunProgressBar() {
     const duration = testRunNeedsProgressBar(testRun) ? null : 2000;
     return (
       <TestRunProgressBar
@@ -246,9 +244,33 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     );
   }
 
+  function renderView(view: ViewType) {
+    if (!runnableMap.get(selectedRunnable)) return null;
+    switch (view) {
+      case 'report':
+        // This is a little strange because we are only allowing reports
+        // at the suite level right now for simplicity.
+        return <TestSuiteReport testSuite={runnableMap.get(selectedRunnable) as TestSuite} />;
+      case 'config':
+        // Config messages are only defined at the suite level.
+        return (
+          <ConfigMessagesDetailsPanel testSuite={runnableMap.get(selectedRunnable) as TestSuite} />
+        );
+      default:
+        return (
+          <TestSuiteDetailsPanel
+            runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
+            runTests={runTests}
+            updateRequest={updateRequest}
+            testRunInProgress={testRunNeedsProgressBar(testRun)}
+          />
+        );
+    }
+  }
+
   return (
     <Box className={styles.testSuiteMain}>
-      {testRunProgressBar()}
+      {renderTestRunProgressBar()}
       <Drawer
         variant="permanent"
         anchor="left"
@@ -260,27 +282,16 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           runTests={runTests}
           selectedRunnable={selectedRunnable}
           testRunInProgress={testRunNeedsProgressBar(testRun)}
-          view={view}
+          view={(view as ViewType) || 'run'}
           presets={testSession.test_suite.presets}
           getSessionData={getSessionData}
           testSessionId={id}
         />
+        <Divider />
+        <Toolbar className={styles.spacerToolbar} />
       </Drawer>
       <Box className={styles.contentContainer}>
-        <Toolbar className={styles.spacerToolbar} />
-        {runnableMap.get(selectedRunnable) &&
-          (testView == 'report' ? (
-            // This is a little strange because we are only allowing reports
-            // at the suite level right now for simplicity.
-            <TestSuiteReport testSuite={runnableMap.get(selectedRunnable) as TestSuite} />
-          ) : (
-            <TestSuiteDetailsPanel
-              runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
-              runTests={runTests}
-              updateRequest={updateRequest}
-              testRunInProgress={testRunNeedsProgressBar(testRun)}
-            />
-          ))}
+        {renderView((view as ViewType) || 'run')}
         <InputsModal
           hideModal={() => setInputModalVisible(false)}
           createTestRun={createTestRun}

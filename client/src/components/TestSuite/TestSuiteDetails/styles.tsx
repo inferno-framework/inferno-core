@@ -97,4 +97,22 @@ export default makeStyles((theme: Theme) => ({
       display: 'none',
     },
   },
+  alert: {
+    marginBottom: '8px',
+    alignItems: 'center',
+    '& .MuiAlert-message': { width: '100%' },
+  },
+  alertMessage: {
+    display: '-webkit-box',
+    WebkitBoxOrient: 'vertical',
+    WebkitLineClamp: '1',
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  alertCursor: {
+    '& :hover': {
+      cursor: 'pointer',
+    },
+  },
 }));

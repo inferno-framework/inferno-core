@@ -26,12 +26,11 @@ export default makeStyles((theme: Theme) => ({
     flexDirection: 'row',
   },
   logo: {
-    paddingTop: '2px',
     objectFit: 'contain',
     height: '2.5em',
   },
   footerText: {
     fontStyle: 'italic',
-    padding: '13px 12px 8px 8px',
+    padding: '11px 12px 8px 8px',
   },
 }));
