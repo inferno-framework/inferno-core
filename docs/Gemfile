@@ -19,7 +19,7 @@ gem 'just-the-docs', '~> 0.3.3'
 
 # If you have any plugins, put them here!
 group :jekyll_plugins do
-  gem 'github-pages', '~> 221'
+  gem 'github-pages', '~> 225'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
