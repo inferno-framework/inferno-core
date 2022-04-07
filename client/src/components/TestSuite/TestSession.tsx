@@ -277,7 +277,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         className={styles.drawer}
         classes={{ paper: styles.drawerPaper }}
       >
-        <Toolbar className={styles.spacerToolbar} />
         <TestSuiteTreeComponent
           testSuite={test_suite}
           runTests={runTests}
@@ -292,7 +291,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         <Toolbar className={styles.spacerToolbar} />
       </Drawer>
       <Box className={styles.contentContainer}>
-        <Toolbar className={styles.spacerToolbar} />
         {renderView((view as ViewType) || 'run')}
         <InputsModal
           hideModal={() => setInputModalVisible(false)}
