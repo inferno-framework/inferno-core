@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['inferno@groups.mitre.org']
   spec.summary       = 'Inferno Core is an open source tool for testing data exchanges enabled by the FHIR standand'
   spec.description   = 'Inferno Core is an open source tool for testing data exchanges enabled by the FHIR standand'
-  spec.homepage      = 'https://github.com/inferno_community/inferno-core'
+  spec.homepage      = 'https://github.com/inferno_framework/inferno-core'
   spec.license       = 'Apache-2.0'
   spec.add_runtime_dependency 'activesupport', '~> 6.1'
   spec.add_runtime_dependency 'blueprinter', '0.25.2'
@@ -45,8 +45,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard', '0.9.26'
   spec.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
   spec.metadata['homepage_uri'] = spec.homepage
-  spec.metadata['source_code_uri'] = 'https://github.com/inferno_community/inferno-core'
-  spec.metadata['changelog_uri'] = 'https://github.com/inferno_community/inferno-core/CHANGELOG.md'
+  spec.metadata['source_code_uri'] = 'https://github.com/inferno_framework/inferno-core'
+  spec.metadata['changelog_uri'] = 'https://github.com/inferno_framework/inferno-core/CHANGELOG.md'
   spec.files = [
     'lib/inferno.rb',
     'LICENSE',
