@@ -43,7 +43,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   const showRefreshDetails = !!oAuthCredentials.refresh_token;
 
   const fieldLabelText = `${requirement.title || requirement.name}`;
-  const requiredLabel = !requirement.optional && !requirement.locked ? ' (required)' : '';
+  const requiredLabel = !requirement.optional ? ' (required)' : '';
   const lockedIcon = requirement.locked ? (
     <LockIcon fontSize="small" className={styles.lockedIcon} />
   ) : null;
