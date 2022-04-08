@@ -23,6 +23,7 @@ export default makeStyles((theme: Theme) => ({
   inputLabel: {
     fontWeight: 600,
     color: 'rgba(0,0,0,0.85)',
+    whiteSpace: 'normal',
   },
   lockedIcon: {
     marginLeft: '5px',
@@ -35,9 +36,6 @@ export default makeStyles((theme: Theme) => ({
     '&:focus-within': {
       borderColor: theme.palette.primary.main,
     },
-  },
-  radioGroup: {
-    marginTop: '16px',
   },
   inputAction: {
     color: theme.palette.primary.dark,

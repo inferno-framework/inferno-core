@@ -34,6 +34,11 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   );
 
   const fieldLabelText = requirement.title || requirement.name;
+  // Number of characters in a line when broken via white-space property
+  // Should be updated when width is expanded
+  const lineLength = 65;
+  const lineCount = Math.ceil(fieldLabelText.length / lineLength);
+
   const lockedIcon = requirement.locked && (
     <LockIcon fontSize="small" className={styles.lockedIcon} />
   );
@@ -66,9 +71,9 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
           row
           aria-label={`${requirement.name}-radio-buttons-group`}
           name={`${requirement.name}-radio-buttons-group`}
-          className={styles.radioGroup}
           value={value}
           onChange={handleChange}
+          sx={{ marginTop: `${lineCount * 16}px` }}
         >
           {requirement.options?.list_options?.map((option, i) => (
             <FormControlLabel
