@@ -59,7 +59,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     {
       name: 'access_token',
       label: 'Access Token',
-      required: !requirement.optional && !requirement.locked,
+      required: !requirement.optional,
     },
     {
       name: 'refresh_token',
@@ -126,7 +126,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
       <Card variant="outlined" className={styles.oauthCard}>
         <CardContent>
           <InputLabel
-            required={!requirement.optional && !requirement.locked}
+            required={!requirement.optional}
             disabled={requirement.locked}
             className={styles.inputLabel}
             shrink
