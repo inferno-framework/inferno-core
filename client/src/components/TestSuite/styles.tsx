@@ -22,13 +22,13 @@ export default makeStyles((theme: Theme) => ({
   },
   testSessionContainer: {
     flexGrow: '1',
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
   },
   testSuiteMain: {
     display: 'flex',
     flexGrow: 1,
-    maxHeight: 'calc(100vh - 64px - 51px)',
     overflow: 'hidden',
   },
   spacerToolbar: {
