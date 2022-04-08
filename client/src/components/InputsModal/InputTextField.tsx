@@ -22,7 +22,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
   const lockedIcon = requirement.locked && (
     <LockIcon fontSize="small" className={styles.lockedIcon} />
   );
-  const requiredLabel = !requirement.optional && !requirement.locked ? ' (required)' : '';
+  const requiredLabel = !requirement.optional ? ' (required)' : '';
   const fieldLabel = (
     <Fragment>
       {fieldLabelText}

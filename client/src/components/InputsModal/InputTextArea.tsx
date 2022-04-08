@@ -17,7 +17,7 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
   const lockedIcon = requirement.locked ? (
     <LockIcon fontSize="small" className={styles.lockedIcon} />
   ) : null;
-  const requiredLabel = !requirement.optional && !requirement.locked ? ' (required)' : '';
+  const requiredLabel = !requirement.optional ? ' (required)' : '';
   const fieldLabel = (
     <Fragment>
       {fieldLabelText}
