@@ -293,7 +293,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           testSessionId={id}
         />
         <Divider />
-        <Toolbar className={styles.spacerToolbar} />
       </Drawer>
       <Box className={styles.contentContainer}>
         {renderView((view as ViewType) || 'run')}

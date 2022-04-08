@@ -161,7 +161,6 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             <Box sx={{ width: '100%' }}>
               <Divider />
               {renderConfigMessagesTreeItem()}
-              <Divider />
             </Box>
           </Box>
         </TreeView>
