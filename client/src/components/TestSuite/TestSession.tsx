@@ -268,8 +268,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   }
 
+  const bannerHeight = document.getElementsByClassName('banner')[0]?.clientHeight;
+
   return (
-    <Box className={styles.testSuiteMain}>
+    <Box
+      className={styles.testSuiteMain}
+      maxHeight={`calc(100vh - 64px - 51px - ${bannerHeight}px)`}
+    >
       {renderTestRunProgressBar()}
       <Drawer
         variant="permanent"

@@ -8,7 +8,9 @@ export default makeStyles((theme: Theme) => ({
   },
   contentContainer: {
     flexGrow: 1,
-    margin: '24px 48px',
+    padding: '24px 48px',
+    overflowX: 'hidden',
+    overflow: 'scroll',
     '@media print': {
       margin: 0,
     },
@@ -19,13 +21,15 @@ export default makeStyles((theme: Theme) => ({
     },
   },
   testSessionContainer: {
+    flexGrow: '1',
+    height: '100%',
     display: 'flex',
     flexDirection: 'column',
-    height: '100%',
   },
   testSuiteMain: {
     display: 'flex',
     flexGrow: 1,
+    overflow: 'hidden',
   },
   spacerToolbar: {
     '@media print': {
@@ -35,6 +39,6 @@ export default makeStyles((theme: Theme) => ({
   drawerPaper: {
     flexShrink: 0,
     width: '300px',
-    position: 'inherit',
+    position: 'static',
   },
 }));
