@@ -1,3 +1,24 @@
+# 0.3.0
+
+* Various minor UI improvements
+* Improve how inputs are handled in the backend so that the UI can display
+  inputs exactly as received from the JSON api rather than needing to determine
+  that itself.
+* Add the ability to specify the order in which inputs appear in the UI.
+* Add the ability to copy/paste JSON/YAML versions of inputs in the UI.
+* Update the preset input selection UI.
+* Add an inputs/outputs to test and report displays in the UI.
+* Add the ability to display a custom banner at the top of the page.
+* Update the UI for suite configuration messages. Info and warning messages will
+  now be displayed in addition to error messages.
+* Update the UI to not omit required indicators from locked inputs.
+* Fix a bug where sometimes in an input would appear twice in the UI.
+* Fix a bug where the *New Session* button was using the wrong url.
+* Fix a bug where primitive extensions were stripped from resources before they
+  were validated.
+* Fix a bug where a test run could be created without all of the required
+  inputs.
+
 # 0.3.0.rc1
 * Initial release candidate for 0.3.0
 
