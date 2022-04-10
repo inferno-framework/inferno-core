@@ -30,7 +30,7 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
     <ListItem disabled={requirement.locked}>
       <TextField
         disabled={requirement.locked}
-        required={!requirement.optional && !requirement.locked}
+        required={!requirement.optional}
         id={`requirement${index}_input`}
         className={styles.inputField}
         variant="standard"

@@ -159,6 +159,44 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     group do
+      id 'locked_group'
+      title 'Locked Inputs Group'
+      optional
+
+      test 'Locked, required, empty input test' do
+        input :locked_required_empty, title: 'Locked and Required (should not be runnable)',
+                                      description: 'Example of locked, empty, required field',
+                                      locked: true
+        run { pass }
+      end
+
+      test 'Locked, required, filled input test' do
+        input :locked_required_filled, title: 'Locked and Required (should be runnable)',
+                                       description: 'Example of locked, filled, required field',
+                                       default: 'example text',
+                                       locked: true
+        run { pass }
+      end
+
+      test 'Locked, optional, empty input test' do
+        input :locked_optional_empty, title: 'Locked and Optional (should be runnable)',
+                                      description: 'Example of locked, empty, optional field',
+                                      locked: true,
+                                      optional: true
+        run { pass }
+      end
+
+      test 'Locked, optional, filled input test' do
+        input :locked_optional_filled, title: 'Locked and Optional (should be runnable)',
+                                       description: 'Example of locked, filled, optional field',
+                                       default: 'example text',
+                                       locked: true,
+                                       optional: true
+        run { pass }
+      end
+    end
+
+    group do
       id 'wait_group'
       title 'Wait Group'
 

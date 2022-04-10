@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Box, Divider, Drawer, Toolbar } from '@mui/material';
+import { Box, Divider, Drawer } from '@mui/material';
 import {
   TestInput,
   RunnableType,
@@ -293,7 +293,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           testSessionId={id}
         />
         <Divider />
-        <Toolbar className={styles.spacerToolbar} />
       </Drawer>
       <Box className={styles.contentContainer}>
         {renderView((view as ViewType) || 'run')}

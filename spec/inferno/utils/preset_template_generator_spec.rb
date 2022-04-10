@@ -29,6 +29,17 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
           locked: true, value: 'https://inferno.healthit.gov/reference-server/r4' },
         { name: 'textarea_locked', type: 'textarea', title: 'Textarea Input',
           description: 'Example of locked, filled input field', locked: true, value: 'Hello Inferno demo user.' },
+        { name: 'locked_required_empty', type: 'text', title: 'Locked and Required (should not be runnable)',
+          description: 'Example of locked, empty, required field', locked: true, value: nil },
+        { name: 'locked_required_filled', type: 'text', title: 'Locked and Required (should be runnable)',
+          description: 'Example of locked, filled, required field', value: 'example text',
+          locked: true },
+        { name: 'locked_optional_empty', type: 'text', title: 'Locked and Optional (should be runnable)',
+          description: 'Example of locked, empty, optional field', locked: true, optional: true,
+          value: nil },
+        { name: 'locked_optional_filled', type: 'text', title: 'Locked and Optional (should be runnable)',
+          description: 'Example of locked, filled, optional field', value: 'example text',
+          locked: true, optional: true },
         { name: 'cancel_pause_time', type: 'text', value: '30' },
         { name: 'url1', type: 'text', value: nil }
       ] }
