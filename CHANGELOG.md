@@ -3,11 +3,11 @@
 * Various minor UI improvements
 * Improve how inputs are handled in the backend so that the UI can display
   inputs exactly as received from the JSON api rather than needing to determine
-  that itself.
+  which inputs to display itself.
 * Add the ability to specify the order in which inputs appear in the UI.
 * Add the ability to copy/paste JSON/YAML versions of inputs in the UI.
 * Update the preset input selection UI.
-* Add an inputs/outputs to test and report displays in the UI.
+* Add inputs/outputs to test and report displays in the UI.
 * Add the ability to display a custom banner at the top of the page.
 * Update the UI for suite configuration messages. Info and warning messages will
   now be displayed in addition to error messages.
