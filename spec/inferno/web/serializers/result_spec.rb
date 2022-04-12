@@ -16,4 +16,12 @@ RSpec.describe Inferno::Web::Serializers::Result do
 
     expect(serialized_result['outputs'].first['type']).to eq('some_other_type')
   end
+
+  context 'when the runnable can not be found' do
+    before { allow(result).to receive(:runnable).and_return(nil) }
+
+    it 'does not raise an error' do
+      expect { described_class.render(result) }.to_not raise_error
+    end
+  end
 end
