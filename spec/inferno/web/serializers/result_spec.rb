@@ -23,5 +23,10 @@ RSpec.describe Inferno::Web::Serializers::Result do
     it 'does not raise an error' do
       expect { described_class.render(result) }.to_not raise_error
     end
+
+    it 'sets optional to true' do
+      serialized_result = JSON.parse(described_class.render(result))
+      expect(serialized_result['optional']).to eq(true)
+    end
   end
 end
