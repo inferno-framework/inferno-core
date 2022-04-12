@@ -115,6 +115,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       <AccordionSummary
         aria-controls={`${testGroup.title}-panel`}
         expandIcon={view === 'run' && <ExpandMoreIcon />}
+        className={styles.accordionSummary}
       >
         <ListItem className={styles.testGroupCardList}>
           <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>

@@ -68,6 +68,14 @@ export default makeStyles((theme: Theme) => ({
       borderBottom: `1px solid ${theme.palette.divider}`,
     },
   },
+  accordionSummary: {
+    '@media print': {
+      minHeight: 'unset',
+    },
+    '& .MuiAccordionSummary-content': {
+      margin: 0,
+    },
+  },
   accordionDetailContainer: {
     backgroundColor: 'rgba(0,0,0,0.05)',
     padding: 0,

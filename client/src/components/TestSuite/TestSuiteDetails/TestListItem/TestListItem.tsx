@@ -162,6 +162,7 @@ const TestListItem: FC<TestListItemProps> = ({
         <AccordionSummary
           aria-controls={`${test.title}-panel`}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
+          className={styles.accordionSummary}
         >
           <ListItem className={styles.testCardList}>
             {resultIcon}

@@ -37,6 +37,9 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     minHeight: '36.5px',
     alignItems: 'center',
+    '@media print': {
+      padding: '0 8px',
+    },
   },
   testGroupCard: {
     marginBottom: '24px',
@@ -71,15 +74,32 @@ export default makeStyles((theme: Theme) => ({
     '&:not(last-child)': {
       borderBottom: `1px solid ${theme.palette.divider}`,
     },
+    '@media print': {
+      borderBottom: 'none !important',
+    },
+  },
+  accordionSummary: {
+    '@media print': {
+      minHeight: 'unset',
+    },
+    '& .MuiAccordionSummary-content': {
+      margin: 0,
+    },
   },
   accordionDetailContainer: {
     backgroundColor: theme.palette.common.grayLighter,
+    '@media print': {
+      padding: '0 0 0 16px',
+    },
   },
   accordionDetail: {
     backgroundColor: theme.palette.common.white,
     padding: 0,
     margin: '8px 0 0 0',
     borderRadius: '4px',
+    '@media print': {
+      margin: 0,
+    },
   },
   nestedDescription: {
     padding: '8px 16px 24px 16px',
