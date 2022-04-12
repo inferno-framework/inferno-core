@@ -1,3 +1,10 @@
+# 0.3.1
+
+* Fix a bug which prevented a session from loading if it had results which
+  referred to a test which had been removed or whose id had changed.
+* Fix an bug which caused only the first page to appear in the print report
+  view.
+
 # 0.3.0
 
 * Various minor UI improvements
