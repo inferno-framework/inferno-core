@@ -279,7 +279,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       <Drawer
         variant="permanent"
         anchor="left"
-        className={styles.drawer}
+        className={styles.hidePrint}
         classes={{ paper: styles.drawerPaper }}
       >
         <TestSuiteTreeComponent

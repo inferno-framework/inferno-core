@@ -13,15 +13,6 @@ export default makeStyles((theme: Theme) => ({
     overflow: 'scroll',
     '@media print': {
       margin: 0,
-      position: 'absolute',
-      left: 0,
-      right: 0,
-      top: '51px', // height of footer
-    },
-  },
-  drawer: {
-    '@media print': {
-      display: 'none',
     },
   },
   testSessionContainer: {
@@ -34,15 +25,18 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     flexGrow: 1,
     overflow: 'hidden',
-  },
-  spacerToolbar: {
     '@media print': {
-      display: 'none',
+      maxHeight: 'unset',
     },
   },
   drawerPaper: {
     flexShrink: 0,
     width: '300px',
     position: 'static',
+  },
+  hidePrint: {
+    '@media print': {
+      display: 'none',
+    },
   },
 }));

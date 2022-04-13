@@ -74,22 +74,27 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
       </div>
       <Box className={styles.reportSummaryBox}>
         <Box className={styles.reportSummaryItems}>
-          <Box>
-            <Typography variant="h4" component="h1" textTransform="uppercase">
+          <Box px={2}>
+            <Typography
+              variant="h5"
+              component="h1"
+              textTransform="uppercase"
+              sx={{ fontWeight: 'bold' }}
+            >
               {testSuite.result?.result || 'pending'}
             </Typography>
-            <Typography className={styles.reportSummaryItemLabel}>Final Result</Typography>
+            <Typography variant="button">Final Result</Typography>
           </Box>
           {testSuite.version && (
-            <Box>
-              <Typography variant="h4" component="h1">
+            <Box px={2}>
+              <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
                 {testSuite.version}
               </Typography>
-              <Typography className={styles.reportSummaryItemLabel}>Version</Typography>
+              <Typography variant="button">Version</Typography>
             </Box>
           )}
-          <Box>
-            <Typography variant="h4" component="h1">
+          <Box px={2}>
+            <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
               {Intl.DateTimeFormat('en', {
                 year: 'numeric',
                 month: 'short',
@@ -98,7 +103,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
                 minute: 'numeric',
               }).format(new Date())}
             </Typography>
-            <Typography className={styles.reportSummaryItemLabel}>Report Date</Typography>
+            <Typography variant="button">Report Date</Typography>
           </Box>
         </Box>
         {location && <Typography className={styles.reportSummaryURL}>{location}</Typography>}

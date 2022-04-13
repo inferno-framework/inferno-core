@@ -17,8 +17,6 @@ export default makeStyles((theme: Theme) => ({
     position: 'sticky',
     bottom: 0,
     '@media print': {
-      position: 'absolute',
-      top: 0,
       bottom: 'unset',
     },
   },

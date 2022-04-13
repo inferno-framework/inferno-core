@@ -8,9 +8,6 @@ export default makeStyles((theme: Theme) => ({
   reportSummaryBox: {
     padding: '5px',
   },
-  reportSummaryItemLabel: {
-    textTransform: 'uppercase',
-  },
   reportSummaryItems: {
     padding: '16px;',
     display: 'flex',
