@@ -29,7 +29,10 @@ const InputsOutputsList: FC<InputOutputsListProps> = ({
   const inputOutputsListHeader = (
     <TableRow key="inputOutputs-header">
       {headerTitles.map((title) => (
-        <TableCell key={title} className={title === 'Value' ? styles.inputOutputsValue : ''}>
+        <TableCell
+          key={title}
+          className={title === 'Value' ? styles.inputOutputsValue : styles.noPrintSpacing || ''}
+        >
           <Typography variant="overline" className={styles.bolderText}>
             {title}
           </Typography>
@@ -42,13 +45,15 @@ const InputsOutputsList: FC<InputOutputsListProps> = ({
     (inputOutputs: TestInput | TestOutput, index: number) => {
       return (
         <TableRow key={`inputOutputsRow-${index}`}>
-          <TableCell>
+          <TableCell className={styles.noPrintSpacing}>
             <Typography variant="subtitle2" component="p" className={styles.bolderText}>
               {inputOutputs.name}
             </Typography>
           </TableCell>
           <TableCell className={styles.inputOutputsValue}>
-            <ReactMarkdown>{(inputOutputs?.value as string) || ''}</ReactMarkdown>
+            <ReactMarkdown className={styles.wordWrap}>
+              {(inputOutputs?.value as string) || ''}
+            </ReactMarkdown>
           </TableCell>
         </TableRow>
       );

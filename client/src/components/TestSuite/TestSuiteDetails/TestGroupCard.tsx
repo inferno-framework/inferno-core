@@ -73,10 +73,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
         runnable.run_as_group &&
         (runnable as TestGroup).user_runnable &&
         runnable.result && (
-          <Box>
-            <InputOutputsList headerName="Input" inputOutputs={runnable.result?.inputs || []} />
-            <Divider />
-          </Box>
+          <InputOutputsList headerName="Input" inputOutputs={runnable.result?.inputs || []} />
         )}
       <List className={styles.testGroupCardList}>{children}</List>
     </Card>

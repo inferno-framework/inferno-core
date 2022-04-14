@@ -49,7 +49,19 @@ export default makeStyles((theme: Theme) => ({
   },
   inputOutputsValue: {
     width: '90%',
-    padding: '0 !important',
+    padding: '0 16px !important',
+  },
+  noPrintSpacing: {
+    '@media print': {
+      marginTop: 0,
+      marginBottom: 0,
+      paddingTop: 0,
+      paddingBottom: 0,
+      minHeight: 'unset',
+    },
+  },
+  wordWrap: {
+    overflowWrap: 'anywhere',
   },
   badgeIcon: {
     margin: '0 4px',
