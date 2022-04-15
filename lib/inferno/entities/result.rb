@@ -60,7 +60,7 @@ module Inferno
       end
 
       def optional?
-        runnable.optional?
+        runnable.nil? || runnable.optional?
       end
 
       def required?

@@ -17,7 +17,9 @@ export default makeStyles((theme: Theme) => ({
     position: 'sticky',
     bottom: 0,
     '@media print': {
-      position: 'static',
+      position: 'absolute',
+      top: 0,
+      bottom: 'unset',
     },
   },
   builtUsingContainer: {
