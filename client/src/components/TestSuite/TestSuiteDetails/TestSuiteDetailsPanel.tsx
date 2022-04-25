@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TestGroup, RunnableType, TestSuite, Request, Test } from 'models/testSuiteModels';
+import { TestGroup, RunnableType, TestSuite, Request, Test, Message } from 'models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
 import TestGroupCard from './TestGroupCard';
@@ -10,6 +10,7 @@ interface TestSuiteDetailsPanelProps {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
+  configMessages?: Message[];
 }
 
 const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
@@ -17,6 +18,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
+  configMessages,
 }) => {
   let listItems: JSX.Element[] = [];
   if (runnable?.test_groups && runnable.test_groups.length > 0) {
@@ -47,12 +49,10 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
     });
   }
 
-  const testSuiteMessages = 'configuration_messages' in runnable && (
+  const testSuiteMessages = configMessages && (
     // limit to just error messages until more robust UI is in place
     <TestSuiteMessages
-      messages={
-        runnable.configuration_messages?.filter((message) => message.type === 'error') || []
-      }
+      messages={configMessages?.filter((message) => message.type === 'error') || []}
       testSuiteId={runnable.id}
     />
   );

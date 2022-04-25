@@ -6,6 +6,7 @@ import TestListItem from './TestListItem/TestListItem';
 import { Box, Button, Card, Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import useStyles from './styles';
+import TestSuiteMessages from './TestSuiteMessages';
 
 interface TestSuiteReportProps {
   testSuite: TestSuite;
@@ -108,6 +109,10 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
 
   return (
     <>
+      <TestSuiteMessages
+        messages={testSuite.configuration_messages || []}
+        testSuiteId={testSuite.id}
+      />
       {header}
       {testChildren}
     </>
