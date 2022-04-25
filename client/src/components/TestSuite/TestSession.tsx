@@ -228,10 +228,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       : false;
   }
 
-  function instanceOfTestSuite(object: Runnable): object is TestSuite {
-    return 'configuration_messages' in object || 'version' in object;
-  }
-
   function renderTestRunProgressBar() {
     const duration = testRunNeedsProgressBar(testRun) ? null : 2000;
     return (
@@ -267,13 +263,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             runTests={runTests}
             updateRequest={updateRequest}
             testRunInProgress={testRunNeedsProgressBar(testRun)}
-            configMessages={Array.from(runnableMap.values())
-              .map((result) => {
-                if (instanceOfTestSuite(result) && result.configuration_messages)
-                  return result.configuration_messages;
-                return [];
-              })
-              .flat()}
+            testSuiteId={test_suite.id}
+            configMessages={test_suite.configuration_messages}
           />
         );
     }

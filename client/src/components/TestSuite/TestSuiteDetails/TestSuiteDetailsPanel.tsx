@@ -10,6 +10,7 @@ interface TestSuiteDetailsPanelProps {
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
+  testSuiteId?: string;
   configMessages?: Message[];
 }
 
@@ -18,6 +19,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
+  testSuiteId,
   configMessages,
 }) => {
   let listItems: JSX.Element[] = [];
@@ -53,7 +55,7 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
     // limit to just error messages until more robust UI is in place
     <TestSuiteMessages
       messages={configMessages?.filter((message) => message.type === 'error') || []}
-      testSuiteId={runnable.id}
+      testSuiteId={testSuiteId}
     />
   );
 
