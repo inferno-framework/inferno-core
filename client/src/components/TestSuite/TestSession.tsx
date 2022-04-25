@@ -14,7 +14,6 @@ import {
   Request,
   TestOutput,
   ViewType,
-  Message,
 } from 'models/testSuiteModels';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
 import ActionModal from 'components/ActionModal/ActionModal';
@@ -230,7 +229,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }
 
   function instanceOfTestSuite(object: Runnable): object is TestSuite {
-    return 'configuration_messages' in object;
+    return 'configuration_messages' in object || 'version' in object;
   }
 
   function renderTestRunProgressBar() {
