@@ -30,7 +30,14 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
 
   const SHOW_CONFIRMATION_MODAL = false;
 
-  const [presetOptions, setPresetOptions] = React.useState([null_preset, ...presets]);
+  const [presetOptions, setPresetOptions] = React.useState([
+    null_preset,
+    ...presets.sort((p1, p2) => {
+      if (p1.title > p2.title) return 1;
+      if (p1.title < p2.title) return -1;
+      return 0;
+    }),
+  ]);
   const [formerPreset, setFormerPreset] = React.useState(null_preset.title);
   const [selectedPreset, setSelectedPreset] = React.useState(null_preset.title);
   const [modalVisible, setModalVisible] = React.useState(false);
