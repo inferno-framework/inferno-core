@@ -87,7 +87,7 @@ RSpec.describe Inferno::DSL::Runnable do
     it 'returns the number of tests in a non-nested group' do
       group = test_groups_repo.find('DemoIG_STU1::DemoGroup')
 
-      expect(group.test_count).to eq(group.children.length)
+      expect(group.test_count).to eq(group.all_children.length)
     end
 
     it 'returns the total number of tests in a nested group' do

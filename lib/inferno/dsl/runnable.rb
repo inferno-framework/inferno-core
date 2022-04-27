@@ -48,7 +48,7 @@ module Inferno
       VARIABLES_NOT_TO_COPY = [
         :@id, # New runnable will have a different id
         :@parent, # New runnable unlikely to have the same parent
-        :@children, # New subclasses have to be made for each child
+        :@all_children, # New subclasses have to be made for each child
         :@test_count, # Needs to be recalculated
         :@config, # Needs to be set by calling .config, which does extra work
         :@available_inputs, # Needs to be recalculated
@@ -63,13 +63,13 @@ module Inferno
 
         subclass.config(config)
 
-        new_children = children.map do |child|
+        new_children = all_children.map do |child|
           Class.new(child).tap do |subclass_child|
             subclass_child.parent = subclass
           end
         end
 
-        subclass.instance_variable_set(:@children, new_children)
+        subclass.instance_variable_set(:@all_children, new_children)
       end
 
       # @private
@@ -94,7 +94,7 @@ module Inferno
 
         klass.parent = self
 
-        children << klass
+        all_children << klass
 
         configure_child_class(klass, hash_args)
 
@@ -172,7 +172,7 @@ module Inferno
 
         klass.config(config)
 
-        klass.children.select!(&:required?) if hash_args.delete(:exclude_optional)
+        klass.all_children.select!(&:required?) if hash_args.delete(:exclude_optional)
 
         hash_args.each do |key, value|
           if value.is_a? Array
@@ -182,7 +182,7 @@ module Inferno
           end
         end
 
-        klass.children.each do |child_class|
+        klass.all_children.each do |child_class|
           klass.configure_child_class(child_class, {})
           child_class.add_self_to_repository
         end
@@ -302,8 +302,8 @@ module Inferno
       end
 
       # @private
-      def children
-        @children ||= []
+      def all_children
+        @all_children ||= []
       end
 
       def validator_url(url = nil)
@@ -379,7 +379,7 @@ module Inferno
 
       # @private
       def test_count
-        @test_count ||= children&.reduce(0) { |sum, child| sum + child.test_count } || 0
+        @test_count ||= all_children&.reduce(0) { |sum, child| sum + child.test_count } || 0
       end
 
       # @private

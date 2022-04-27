@@ -22,7 +22,7 @@ module Inferno
           return @default_group if @default_group
 
           @default_group = Class.new(TestGroup)
-          children << @default_group
+          all_children << @default_group
           @default_group
         end
 
@@ -31,7 +31,7 @@ module Inferno
         end
 
         def groups
-          children.select { |child| child < Inferno::Entities::TestGroup }
+          all_children.select { |child| child < Inferno::Entities::TestGroup }
         end
 
         # Methods to configure Inferno::DSL::Runnable
