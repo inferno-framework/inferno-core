@@ -388,6 +388,10 @@ module Inferno
                            !parent.respond_to?(:run_as_group?) ||
                            (parent.user_runnable? && !parent.run_as_group?)
       end
+
+      def when(suite_options)
+        @suite_options = suite_options
+      end
     end
   end
 end

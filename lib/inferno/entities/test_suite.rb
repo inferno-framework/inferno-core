@@ -95,6 +95,14 @@ module Inferno
         def presets
           @presets ||= Repositories::Presets.new.presets_for_suite(id)
         end
+
+        def suite_option(identifier, **input_params)
+          suite_options[identifier] = input_params
+        end
+
+        def suite_options
+          @suite_options ||= {}
+        end
       end
     end
   end
