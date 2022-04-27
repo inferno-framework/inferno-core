@@ -77,10 +77,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         className={styles.accordion}
         TransitionProps={{ unmountOnExit: true }}
       >
-        <AccordionSummary
-          aria-controls={`${testGroup.id}-description-panel`}
-          expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
-        >
+        <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}>
           <List className={styles.testGroupCardList}>
             <ListItem sx={{ padding: 0 }}>
               <ListItemText
@@ -94,10 +91,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           </List>
         </AccordionSummary>
         <Divider />
-        <AccordionDetails
-          id={`${testGroup.id}-description-panel`}
-          className={styles.accordionDetailContainer}
-        >
+        <AccordionDetails className={styles.accordionDetailContainer}>
           <ReactMarkdown className={`${styles.accordionDetail} ${styles.nestedDescription}`}>
             {testGroup.description as string}
           </ReactMarkdown>
@@ -114,10 +108,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       defaultExpanded={openCondition}
       TransitionProps={{ unmountOnExit: true }}
     >
-      <AccordionSummary
-        aria-controls={`${testGroup.id}-panel`}
-        expandIcon={view === 'run' && <ExpandMoreIcon />}
-      >
+      <AccordionSummary expandIcon={view === 'run' && <ExpandMoreIcon />}>
         <Box display="flex" alignItems="center">
           <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
           <List sx={{ padding: 0 }}>
@@ -151,7 +142,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           <InputOutputsList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
         </Box>
       )}
-      <AccordionDetails id={`${testGroup.id}-panel`} className={styles.accordionDetailContainer}>
+      <AccordionDetails className={styles.accordionDetailContainer}>
         {testGroup.description && view == 'run' && nestedDescriptionPanel}
         <Box className={styles.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}

@@ -295,7 +295,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           />
         </nav>
       </Drawer>
-      <main style={{ overflow: 'scroll' }}>
+      <main style={{ overflow: 'scroll', width: '100%' }}>
         <Box className={styles.contentContainer}>
           {renderView((view as ViewType) || 'run')}
           <InputsModal
