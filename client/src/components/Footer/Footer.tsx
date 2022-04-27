@@ -11,7 +11,7 @@ interface FooterProps {
 const Footer: FC<FooterProps> = ({ version }) => {
   const styles = useStyles();
   return (
-    <Box className={styles.footer}>
+    <footer className={styles.footer}>
       <Container>
         <Box className={styles.builtUsingContainer}>
           <Typography variant="overline" className={styles.footerText}>
@@ -35,7 +35,7 @@ const Footer: FC<FooterProps> = ({ version }) => {
           )}
         </Box>
       </Container>
-    </Box>
+    </footer>
   );
 };
 

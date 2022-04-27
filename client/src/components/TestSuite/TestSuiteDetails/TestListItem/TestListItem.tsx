@@ -162,14 +162,19 @@ const TestListItem: FC<TestListItemProps> = ({
         <AccordionSummary
           aria-controls={`${test.title}-panel`}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              setOpen(!open);
+            }
+          }}
         >
-          <ListItem className={styles.testCardList}>
+          <Box display="flex" alignItems="center">
             {resultIcon}
             {testText}
             {messagesBadge}
             {requestsBadge}
             {testRunButton}
-          </ListItem>
+          </Box>
         </AccordionSummary>
         <Divider />
         <AccordionDetails

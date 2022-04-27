@@ -81,15 +81,17 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           aria-controls={`${testGroup.title}-description-panel`}
           expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
         >
-          <ListItem className={styles.testGroupCardList}>
-            <ListItemText
-              primary={
-                <Typography className={styles.nestedDescriptionHeader}>
-                  About {testGroup.short_title || testGroup.title}
-                </Typography>
-              }
-            />
-          </ListItem>
+          <List className={styles.testGroupCardList}>
+            <ListItem sx={{ padding: 0 }}>
+              <ListItemText
+                primary={
+                  <Typography className={styles.nestedDescriptionHeader}>
+                    About {testGroup.short_title || testGroup.title}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          </List>
         </AccordionSummary>
         <Divider />
         <AccordionDetails
@@ -116,19 +118,23 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         aria-controls={`${testGroup.title}-panel`}
         expandIcon={view === 'run' && <ExpandMoreIcon />}
       >
-        <ListItem className={styles.testGroupCardList}>
+        <Box display="flex" alignItems="center">
           <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
-          <ListItemText
-            primary={
-              <>
-                {testGroup.short_id && (
-                  <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
-                )}
-                {testGroup.title}
-              </>
-            }
-            secondary={testGroup.result?.result_message}
-          />
+          <List sx={{ padding: 0 }}>
+            <ListItem sx={{ padding: 0 }}>
+              <ListItemText
+                primary={
+                  <>
+                    {testGroup.short_id && (
+                      <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
+                    )}
+                    {testGroup.title}
+                  </>
+                }
+                secondary={testGroup.result?.result_message}
+              />
+            </ListItem>
+          </List>
           {view === 'run' && runTests && (
             <TestRunButton
               runnable={testGroup}
@@ -137,7 +143,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
               testRunInProgress={testRunInProgress}
             />
           )}
-        </ListItem>
+        </Box>
       </AccordionSummary>
       <Divider />
       {view === 'report' && testGroup.run_as_group && testGroup.user_runnable && testGroup.result && (
@@ -147,10 +153,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       )}
       <AccordionDetails id={`${testGroup.title}-panel`} className={styles.accordionDetailContainer}>
         {testGroup.description && view == 'run' && nestedDescriptionPanel}
-        <List className={styles.accordionDetail}>
+        <Box className={styles.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}
           {'tests' in testGroup && renderTestListItems()}
-        </List>
+        </Box>
       </AccordionDetails>
     </Accordion>
   );
