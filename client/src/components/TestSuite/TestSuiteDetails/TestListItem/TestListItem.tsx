@@ -160,7 +160,7 @@ const TestListItem: FC<TestListItemProps> = ({
         onClick={() => setOpen(!open)}
       >
         <AccordionSummary
-          aria-controls={`${test.title}-panel`}
+          aria-controls={`${test.id}-panel`}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -178,7 +178,7 @@ const TestListItem: FC<TestListItemProps> = ({
         </AccordionSummary>
         <Divider />
         <AccordionDetails
-          id={`${test.title}-panel`}
+          id={`${test.id}-panel`}
           className={styles.accordionDetailContainer}
           onClick={(e) => e.stopPropagation()}
         >
