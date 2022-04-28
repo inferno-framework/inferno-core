@@ -9,6 +9,7 @@ module Inferno
     # definition framework.
     module Runnable
       attr_accessor :parent
+      attr_reader :suite_option_requirements
 
       include Inferno::Utils::MarkdownFormatter
 
@@ -389,8 +390,19 @@ module Inferno
                            (parent.user_runnable? && !parent.run_as_group?)
       end
 
-      def when(suite_options)
-        @suite_options = suite_options
+      def when(suite_option_requirements)
+        @suite_option_requirements = suite_option_requirements
+      end
+
+      def children(selected_suite_options)
+        return all_children if selected_suite_options.blank?
+
+        all_children.select do |child|
+          requirements = child.suite_option_requirements || {}
+
+          # requirements are a subset of selected options or equal to selected options
+          selected_suite_options >= requirements
+        end
       end
     end
   end

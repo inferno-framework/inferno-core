@@ -1,9 +1,6 @@
 RSpec.describe Inferno::TestRunner do
   let(:runner) { described_class.new(test_session: test_session, test_run: test_run) }
   let(:test_session) { repo_create(:test_session, test_suite_id: 'demo') }
-  let(:test_run) do
-    repo_create(:test_run, runnable: { test_group_id: group.id }, test_session_id: test_session.id)
-  end
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
   let(:results_repo) { Inferno::Repositories::Results.new }
 
@@ -14,6 +11,9 @@ RSpec.describe Inferno::TestRunner do
   end
 
   describe 'when running demo group' do
+    let(:test_run) do
+      repo_create(:test_run, runnable: { test_group_id: group.id }, test_session_id: test_session.id)
+    end
     let(:base_url) { 'http://hapi.fhir.org/baseR4' }
     let(:patient_id) { 1215072 }
     let(:group) { Inferno::Repositories::TestGroups.new.find('demo-simple_group') }
@@ -96,6 +96,9 @@ RSpec.describe Inferno::TestRunner do
   end
 
   describe 'when running wait group' do
+    let(:test_run) do
+      repo_create(:test_run, runnable: { test_group_id: group.id }, test_session_id: test_session.id)
+    end
     let(:group) { Inferno::Repositories::TestGroups.new.find('demo-wait_group') }
 
     it 'gives a wait result' do
@@ -114,6 +117,9 @@ RSpec.describe Inferno::TestRunner do
   end
 
   describe 'when a request can not be loaded' do
+    let(:test_run) do
+      repo_create(:test_run, runnable: { test_group_id: group.id }, test_session_id: test_session.id)
+    end
     let(:group) { DemoIG_STU1::DemoGroup }
 
     it 'generates a skip result' do
@@ -125,6 +131,28 @@ RSpec.describe Inferno::TestRunner do
 
       expect(results.length).to eq(1)
       expect(results.first.result).to eq('skip')
+    end
+  end
+
+  describe 'when suite options are used' do
+    let(:test_run) do
+      repo_create(:test_run, runnable: { test_suite_id: suite.id }, test_session_id: test_session.id)
+    end
+
+    let(:suite) { OptionsSuite::Suite }
+
+    it 'only runs groups which should be included based on options' do
+      test_session.suite_options = { ig_version: '1' }
+
+      runner.run(suite)
+
+      results = results_repo.current_results_for_test_session(test_session.id)
+
+      expect(results.length).to eq(5)
+
+      runnable_ids = results.map(&:runnable).map(&:id)
+
+      expect(runnable_ids).to all(exclude('v2'))
     end
   end
 end

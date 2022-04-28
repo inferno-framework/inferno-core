@@ -118,7 +118,7 @@ module Inferno
       end
 
       results = []
-      group.all_children.each do |child|
+      group.children(test_session.suite_options).each do |child|
         result = run(child, scratch)
         results << result
         break if results.last.waiting?
@@ -137,7 +137,7 @@ module Inferno
     def update_parent_result(parent)
       return if parent.nil?
 
-      children = parent.all_children
+      children = parent.children(test_session.suite_options)
       child_results = results_repo.current_results_for_test_session_and_runnables(test_session.id, children)
       required_children = children.select(&:required?)
       required_results = child_results.select(&:required?)
