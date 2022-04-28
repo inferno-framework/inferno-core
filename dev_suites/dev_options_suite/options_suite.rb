@@ -7,7 +7,9 @@ module OptionsSuite
       title 'V1 Test'
       id :v1_test
 
-      run { pass }
+      run do
+        assert suite_options[:ig_version] == '1'
+      end
     end
   end
 
@@ -19,7 +21,9 @@ module OptionsSuite
       title 'V2 Test'
       id :v2_test
 
-      run { pass }
+      run do
+        assert suite_options[:ig_version] == '2'
+      end
     end
   end
 

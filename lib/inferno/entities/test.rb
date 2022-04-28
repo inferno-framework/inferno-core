@@ -13,14 +13,14 @@ module Inferno
       def_delegators 'self.class', :title, :id, :block, :inputs, :outputs
 
       attr_accessor :result_message
-      attr_reader :test_session_id, :scratch
+      attr_reader :test_session_id, :scratch, :suite_options
 
       # @private
-      # TODO: update to take in suite_options
       def initialize(**params)
         params[:inputs]&.each { |key, value| instance_variable_set("@#{key}", value) }
         @scratch = params[:scratch]
         @test_session_id = params[:test_session_id]
+        @suite_options = params[:suite_options].presence || {}
       end
 
       # @private

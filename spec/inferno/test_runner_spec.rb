@@ -154,5 +154,15 @@ RSpec.describe Inferno::TestRunner do
 
       expect(runnable_ids).to all(exclude('v2'))
     end
+
+    it 'makes suite options available to tests' do
+      test_session.suite_options = { ig_version: '1' }
+
+      runner.run(suite)
+
+      results = results_repo.current_results_for_test_session(test_session.id).map(&:result)
+
+      expect(results).to all(eq('pass'))
+    end
   end
 end
