@@ -197,12 +197,14 @@ module Inferno
         #
         # @param name [Symbol] the name of the validator, only needed if you are
         #   using multiple validators
+        # TODO: update to allow default selection based on suite_options
         def validator(name = :default, &block)
           fhir_validators[name] = Inferno::DSL::FHIRValidation::Validator.new(&block)
         end
 
         # Find a particular validator. Looks through a runnable's parents up to
         # the suite to find a validator with a particular name
+        # TODO: update to allow default selection based on suite_options
         def find_validator(validator_name)
           validator = fhir_validators[validator_name] || parent&.find_validator(validator_name)
 

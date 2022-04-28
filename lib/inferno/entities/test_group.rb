@@ -65,6 +65,7 @@ module Inferno
           }
         end
 
+        # TODO: update to handle suite_options
         def short_id
           @short_id ||= begin
             prefix = parent.respond_to?(:short_id) ? "#{parent.short_id}." : ''

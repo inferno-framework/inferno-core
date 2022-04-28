@@ -62,6 +62,7 @@ module Inferno
       inputs = load_inputs(test)
       input_json_string = inputs_as_json(test, inputs)
 
+      # TODO: update to pass in suite_options
       test_instance = test.new(inputs: inputs, test_session_id: test_session.id, scratch: scratch)
 
       result = begin

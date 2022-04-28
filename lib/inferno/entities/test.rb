@@ -16,6 +16,7 @@ module Inferno
       attr_reader :test_session_id, :scratch
 
       # @private
+      # TODO: update to take in suite_options
       def initialize(**params)
         params[:inputs]&.each { |key, value| instance_variable_set("@#{key}", value) }
         @scratch = params[:scratch]
@@ -171,6 +172,7 @@ module Inferno
 
         alias run block
 
+        # TODO: update to handle suite_options
         def short_id
           @short_id ||= begin
             prefix = parent.respond_to?(:short_id) ? "#{parent.short_id}." : ''

@@ -379,6 +379,7 @@ module Inferno
       end
 
       # @private
+      # TODO: update to handle suite_options
       def test_count
         @test_count ||= all_children&.reduce(0) { |sum, child| sum + child.test_count } || 0
       end
