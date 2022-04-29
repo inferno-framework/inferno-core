@@ -154,7 +154,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
 
   const navigableGroupListItem = (
     <>
-      <ListItem>
+      <Box display="flex" alignItems="center" px={2} py={1}>
         <Box className={styles.testIcon}>
           {testGroup.run_as_group ? (
             <ResultIcon result={testGroup.result} />
@@ -162,20 +162,28 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
             <FolderIcon sx={{ color: theme.palette.common.grayLight }} />
           )}
         </Box>
-        <ListItemText
-          primary={
-            <>
-              {testGroup.short_id && (
-                <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
-              )}
-              <Link color="inherit" href={`${location.pathname}#${testGroup.id}`} underline="hover">
-                {testGroup.title}
-              </Link>
-            </>
-          }
-          secondary={testGroup.result?.result_message}
-        />
-      </ListItem>
+        <List sx={{ padding: 0 }}>
+          <ListItem sx={{ padding: 0 }}>
+            <ListItemText
+              primary={
+                <>
+                  {testGroup.short_id && (
+                    <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
+                  )}
+                  <Link
+                    color="inherit"
+                    href={`${location.pathname}#${testGroup.id}`}
+                    underline="hover"
+                  >
+                    {testGroup.title}
+                  </Link>
+                </>
+              }
+              secondary={testGroup.result?.result_message}
+            />
+          </ListItem>
+        </List>
+      </Box>
       <Divider />
     </>
   );
