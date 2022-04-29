@@ -77,6 +77,7 @@ RSpec.describe Inferno::DSL::Runnable do
     end
   end
 
+  # TODO: add unit tests using suite_options
   describe '.test_count' do
     it 'returns 1 for a test' do
       klass = Class.new(Inferno::Entities::Test)

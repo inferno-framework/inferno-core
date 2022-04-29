@@ -379,9 +379,12 @@ module Inferno
       end
 
       # @private
-      # TODO: update to handle suite_options
-      def test_count
-        @test_count ||= all_children&.reduce(0) { |sum, child| sum + child.test_count } || 0
+      def test_count(selected_suite_options = {})
+        @test_counts ||= {}
+
+        @test_counts[selected_suite_options] ||=
+          children(selected_suite_options)
+            &.reduce(0) { |sum, child| sum + child.test_count(selected_suite_options) } || 0
       end
 
       # @private

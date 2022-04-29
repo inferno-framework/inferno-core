@@ -172,7 +172,6 @@ module Inferno
 
         alias run block
 
-        # TODO: update to handle suite_options
         def short_id
           @short_id ||= begin
             prefix = parent.respond_to?(:short_id) ? "#{parent.short_id}." : ''
@@ -197,7 +196,7 @@ module Inferno
         end
 
         # @private
-        def test_count
+        def test_count(_ = nil)
           1
         end
 
