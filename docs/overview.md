@@ -32,8 +32,8 @@ systems providing standardized FHIR APIs.
   your own set of tests with Inferno.
 - [FHIR Validator
   Wrapper](https://github.com/inferno-framework/fhir-validator-wrapper) - A
-  simple web wrapper around the [official HL6 FHIR validation
-  library](https://github.com/hapifhir/org.hl6.fhir.core/tree/master/org.hl7.fhir.validation).
+  simple web wrapper around the [official HL7 FHIR validation
+  library](https://github.com/hapifhir/org.hl7.fhir.core/tree/master/org.hl7.fhir.validation).
   Inferno relies on this service to validate FHIR resources.
 
 ## Inferno Test Kits
