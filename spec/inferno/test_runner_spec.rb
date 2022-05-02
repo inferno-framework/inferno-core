@@ -1,5 +1,3 @@
-# NOTE: These are basic placeholder specs to make sure we don't break this as we
-#   refactor.
 RSpec.describe Inferno::TestRunner do
   let(:runner) { described_class.new(test_session: test_session, test_run: test_run) }
   let(:test_session) { repo_create(:test_session, test_suite_id: 'demo') }
@@ -112,6 +110,21 @@ RSpec.describe Inferno::TestRunner do
       results = results_repo.current_results_for_test_session(test_session.id)
 
       expect(results.length).to eq(3)
+    end
+  end
+
+  describe 'when a request can not be loaded' do
+    let(:group) { DemoIG_STU1::DemoGroup }
+
+    it 'generates a skip result' do
+      test = DemoIG_STU1::DemoGroup.tests.find { |group_test| group_test.title == 'use named fhir request' }
+
+      runner.run(test)
+
+      results = results_repo.current_results_for_test_session(test_session.id)
+
+      expect(results.length).to eq(1)
+      expect(results.first.result).to eq('skip')
     end
   end
 end
