@@ -47,6 +47,6 @@ nav_order: 3
   data and validate the response using a validator.  Examples: FHIR Profile
   Validator, FHIR Terminology Validator.  Inferno typically performs these
   functions by providing common third party validators (e.g. HL7 FHIR Validator).
-- **Inferno Reference Implementations**: An Inferno Test Kit may may provide one or more Reference
+- **Inferno Reference Implementations**: An Inferno Test Kit may provide one or more Reference
   Implementations, which can be useful to develop tests against or to help interact
   with third party solutions.  Example: G10 Reference API.
