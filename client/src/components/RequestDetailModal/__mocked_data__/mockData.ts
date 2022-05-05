@@ -25,3 +25,30 @@ export const mockedRequest: Request = {
   url: 'https://inferno.healthit.gov/reference-server/r4/Patient/85',
   verb: 'get',
 };
+
+export const codeResponseWithHTML: Request = {
+  direction: 'outgoing',
+  id: 'de793781-5eed-421a-88d3-8029499f4bce',
+  status: 200,
+  timestamp: '2022-04-21T22:22:04.039Z',
+  url: 'NA',
+  verb: 'get',
+  result_id: 'b01dce20-72a8-43e5-b99d-34f3843eddee',
+  response_headers: [{ name: 'content-type', value: 'text/html; charset=UTF-8' }],
+  // eslint-disable-next-line prettier/prettier
+  response_body: '<html>html has newlines already</html>',
+};
+
+export const codeResponseWithJSON: Request = {
+  direction: 'outgoing',
+  id: 'de793781-5eed-421a-88d3-8029499f4bce',
+  status: 200,
+  timestamp: '2022-04-21T22:22:04.039Z',
+  url: 'NA',
+  verb: 'get',
+  result_id: 'b01dce20-72a8-43e5-b99d-34f3843eddee',
+  response_headers: [{ name: 'content-type', value: 'application/fhir+json charset=UTF-8' }],
+  // eslint-disable-next-line prettier/prettier
+  response_body:
+    '{"resourceType": "OperationOutcome", "issue": [ {"severity": "error", "code": "processing", "diagnostics": "Bearer token is invalid or not supplied Supplied Bearer Token: null" } ]}',
+};

@@ -81,14 +81,14 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
               Request
             </Typography>
             <HeaderTable headers={request.request_headers || []} />
-            <CodeBlock body={request.request_body} />
+            <CodeBlock body={request.request_body} headers={request.request_headers} />
           </Box>
           <Box pb={3}>
             <Typography variant="h5" component="h3" pb={2}>
               Response
             </Typography>
             <HeaderTable headers={request.response_headers || []} />
-            <CodeBlock body={request.response_body} />
+            <CodeBlock body={request.response_body} headers={request.response_headers} />
           </Box>
         </DialogContent>
       </Dialog>

@@ -21,9 +21,9 @@ export default makeStyles((theme: Theme) => ({
     },
   },
   inputLabel: {
-    fontWeight: 600,
     color: 'rgba(0,0,0,0.85)',
-    whiteSpace: 'normal',
+    fontWeight: 600,
+    fontSize: '.75rem',
   },
   lockedIcon: {
     marginLeft: '5px',

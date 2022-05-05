@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import useStyles from './styles';
 import { TestGroup, RunnableType, TestSuite } from 'models/testSuiteModels';
 import InputOutputsList from './TestListItem/InputOutputsList';
-import { Box, Card, Divider, List, Typography } from '@mui/material';
+import { Box, Card, Divider, Typography } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
@@ -78,7 +78,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
             <Divider />
           </Box>
         )}
-      <List className={styles.testGroupCardList}>{children}</List>
+      <Box>{children}</Box>
     </Card>
   );
 };

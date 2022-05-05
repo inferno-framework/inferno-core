@@ -211,6 +211,7 @@ end
 The following methods are currently available for making http requests:
 - `get`
 - `post`
+
 For more details on these methods, see the [HTTP Client API
 documentation](/inferno-core/docs/Inferno/DSL/HTTPClient.html). If you need to
 make other types of http requests, [contact the Inferno

@@ -15,7 +15,7 @@ repository. The name of the file should match `spec.name` within the file and
 the name of the main file in `lib`. Using the US Core example from above, this
 file would be named `us_core_test_kit.gempsec` and `spec.name` would be
 `'us_core_test_kit'`. There are [recommended naming conventions for
-gems](https://guides.rubygems.org/name-your-gem/**.
+gems](https://guides.rubygems.org/name-your-gem/).
 
 **Optional:** Once your gemspec file has been updated, you can publish your gem
 on [rubygems, the official ruby gem repository](https://rubygems.org/). If you
