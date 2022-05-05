@@ -43,6 +43,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
           </Button>
         ) : (
           <IconButton
+            title="Run Test"
             disabled={testRunInProgress}
             color="secondary"
             edge="end"

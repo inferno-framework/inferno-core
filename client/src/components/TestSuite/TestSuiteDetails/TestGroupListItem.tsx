@@ -77,25 +77,21 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         className={styles.accordion}
         TransitionProps={{ unmountOnExit: true }}
       >
-        <AccordionSummary
-          aria-controls={`${testGroup.title}-description-panel`}
-          expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
-        >
-          <ListItem className={styles.testGroupCardList}>
-            <ListItemText
-              primary={
-                <Typography className={styles.nestedDescriptionHeader}>
-                  About {testGroup.short_title || testGroup.title}
-                </Typography>
-              }
-            />
-          </ListItem>
+        <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}>
+          <List className={styles.testGroupCardList}>
+            <ListItem sx={{ padding: 0 }}>
+              <ListItemText
+                primary={
+                  <Typography className={styles.nestedDescriptionHeader}>
+                    About {testGroup.short_title || testGroup.title}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          </List>
         </AccordionSummary>
         <Divider />
-        <AccordionDetails
-          id={`${testGroup.title}-description-panel`}
-          className={styles.accordionDetailContainer}
-        >
+        <AccordionDetails className={styles.accordionDetailContainer}>
           <ReactMarkdown className={`${styles.accordionDetail} ${styles.nestedDescription}`}>
             {testGroup.description as string}
           </ReactMarkdown>
@@ -112,23 +108,24 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       defaultExpanded={openCondition}
       TransitionProps={{ unmountOnExit: true }}
     >
-      <AccordionSummary
-        aria-controls={`${testGroup.title}-panel`}
-        expandIcon={view === 'run' && <ExpandMoreIcon />}
-      >
-        <ListItem className={styles.testGroupCardList}>
+      <AccordionSummary expandIcon={view === 'run' && <ExpandMoreIcon />}>
+        <Box display="flex" alignItems="center">
           <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
-          <ListItemText
-            primary={
-              <>
-                {testGroup.short_id && (
-                  <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
-                )}
-                {testGroup.title}
-              </>
-            }
-            secondary={testGroup.result?.result_message}
-          />
+          <List sx={{ padding: 0 }}>
+            <ListItem sx={{ padding: 0 }}>
+              <ListItemText
+                primary={
+                  <>
+                    {testGroup.short_id && (
+                      <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
+                    )}
+                    {testGroup.title}
+                  </>
+                }
+                secondary={testGroup.result?.result_message}
+              />
+            </ListItem>
+          </List>
           {view === 'run' && runTests && (
             <TestRunButton
               runnable={testGroup}
@@ -137,7 +134,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
               testRunInProgress={testRunInProgress}
             />
           )}
-        </ListItem>
+        </Box>
       </AccordionSummary>
       <Divider />
       {view === 'report' && testGroup.run_as_group && testGroup.user_runnable && testGroup.result && (
@@ -145,19 +142,19 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           <InputOutputsList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
         </Box>
       )}
-      <AccordionDetails id={`${testGroup.title}-panel`} className={styles.accordionDetailContainer}>
+      <AccordionDetails className={styles.accordionDetailContainer}>
         {testGroup.description && view == 'run' && nestedDescriptionPanel}
-        <List className={styles.accordionDetail}>
+        <Box className={styles.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}
           {'tests' in testGroup && renderTestListItems()}
-        </List>
+        </Box>
       </AccordionDetails>
     </Accordion>
   );
 
   const navigableGroupListItem = (
     <>
-      <ListItem>
+      <Box display="flex" alignItems="center" px={2} py={1}>
         <Box className={styles.testIcon}>
           {testGroup.run_as_group ? (
             <ResultIcon result={testGroup.result} />
@@ -165,20 +162,28 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
             <FolderIcon sx={{ color: theme.palette.common.grayLight }} />
           )}
         </Box>
-        <ListItemText
-          primary={
-            <>
-              {testGroup.short_id && (
-                <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
-              )}
-              <Link color="inherit" href={`${location.pathname}#${testGroup.id}`} underline="hover">
-                {testGroup.title}
-              </Link>
-            </>
-          }
-          secondary={testGroup.result?.result_message}
-        />
-      </ListItem>
+        <List sx={{ padding: 0 }}>
+          <ListItem sx={{ padding: 0 }}>
+            <ListItemText
+              primary={
+                <>
+                  {testGroup.short_id && (
+                    <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
+                  )}
+                  <Link
+                    color="inherit"
+                    href={`${location.pathname}#${testGroup.id}`}
+                    underline="hover"
+                  >
+                    {testGroup.title}
+                  </Link>
+                </>
+              }
+              secondary={testGroup.result?.result_message}
+            />
+          </ListItem>
+        </List>
+      </Box>
       <Divider />
     </>
   );

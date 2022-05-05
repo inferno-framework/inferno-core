@@ -1,14 +1,6 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import {
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-  Typography,
-  TableHead,
-  ListItem,
-} from '@mui/material';
+import { Table, TableBody, TableRow, TableCell, Typography, TableHead, Box } from '@mui/material';
 import { Message } from 'models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 
@@ -53,11 +45,11 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
       <TableBody>{messageListItems}</TableBody>
     </Table>
   ) : (
-    <ListItem>
+    <Box p={2}>
       <Typography variant="subtitle2" component="p">
         No Messages
       </Typography>
-    </ListItem>
+    </Box>
   );
 };
 

@@ -160,20 +160,23 @@ const TestListItem: FC<TestListItemProps> = ({
         onClick={() => setOpen(!open)}
       >
         <AccordionSummary
-          aria-controls={`${test.title}-panel`}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              setOpen(!open);
+            }
+          }}
         >
-          <ListItem className={styles.testCardList}>
+          <Box display="flex" alignItems="center" width={'100%'}>
             {resultIcon}
             {testText}
             {messagesBadge}
             {requestsBadge}
             {testRunButton}
-          </ListItem>
+          </Box>
         </AccordionSummary>
         <Divider />
         <AccordionDetails
-          id={`${test.title}-panel`}
           className={styles.accordionDetailContainer}
           onClick={(e) => e.stopPropagation()}
         >
@@ -222,11 +225,11 @@ const TestListItem: FC<TestListItemProps> = ({
             {shouldShowDescription(test, testDescription) ? (
               testDescription
             ) : (
-              <ListItem>
+              <Box p={2}>
                 <Typography variant="subtitle2" component="p">
                   No Description
                 </Typography>
-              </ListItem>
+              </Box>
             )}
           </TabPanel>
         </AccordionDetails>

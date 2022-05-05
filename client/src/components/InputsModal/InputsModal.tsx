@@ -11,6 +11,7 @@ import {
   TextField,
   ToggleButtonGroup,
   ToggleButton,
+  Typography,
 } from '@mui/material';
 import { OAuthCredentials, RunnableType, TestInput } from 'models/testSuiteModels';
 import InputRadioGroup from './InputsRadioGroup';
@@ -205,7 +206,12 @@ const InputsModal: FC<InputsModalProps> = ({
 
   return (
     <Dialog open={modalVisible} fullWidth maxWidth="sm" onClose={hideModal}>
-      <DialogTitle>{title}</DialogTitle>
+      {/* a11y workaround until MUI implements component prop in DialogTitle */}
+      <DialogTitle {...({ component: 'div' } as unknown)}>
+        <Typography component="h1" variant="h6">
+          {title}
+        </Typography>
+      </DialogTitle>
       <DialogContent>
         <DialogContentText component="div">
           <ReactMarkdown>
@@ -228,7 +234,6 @@ const InputsModal: FC<InputsModalProps> = ({
             defaultValue={baseInput}
             data-testid="serial-input"
             className={styles.serialInput}
-            aria-labelledby={`${runnableId}-textfield`}
             onChange={(e) => handleSerialChanges(e.target.value)}
             label={invalidInput ? `ERROR: INVALID ${inputType}` : ''}
           />
@@ -241,14 +246,12 @@ const InputsModal: FC<InputsModalProps> = ({
           value={inputType}
           onChange={handleInputTypeChange}
           className={styles.toggleButtonGroup}
-          aria-labelledby={`${runnableId}-togglegroup`}
         >
           <ToggleButton
             value="Field"
             disabled={invalidInput}
             data-testid="field-button"
             className={styles.toggleButton}
-            aria-labelledby={`${runnableId}-field-togglebutton`}
           >
             Field
           </ToggleButton>
@@ -257,7 +260,6 @@ const InputsModal: FC<InputsModalProps> = ({
             disabled={invalidInput}
             data-testid="json-button"
             className={styles.toggleButton}
-            aria-labelledby={`${runnableId}-json-togglebutton`}
           >
             JSON
           </ToggleButton>
@@ -266,7 +268,6 @@ const InputsModal: FC<InputsModalProps> = ({
             disabled={invalidInput}
             data-testid="yaml-button"
             className={styles.toggleButton}
-            aria-labelledby={`${runnableId}-yaml-togglebutton`}
           >
             YAML
           </ToggleButton>

@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Box, Divider, Drawer } from '@mui/material';
+import { Box, Drawer } from '@mui/material';
 import {
   TestInput,
   RunnableType,
@@ -282,39 +282,42 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         className={styles.drawer}
         classes={{ paper: styles.drawerPaper }}
       >
-        <TestSuiteTreeComponent
-          testSuite={test_suite}
-          runTests={runTests}
-          selectedRunnable={selectedRunnable}
-          testRunInProgress={testRunNeedsProgressBar(testRun)}
-          view={(view as ViewType) || 'run'}
-          presets={testSession.test_suite.presets}
-          getSessionData={getSessionData}
-          testSessionId={id}
-        />
-        <Divider />
+        <nav className={styles.drawer}>
+          <TestSuiteTreeComponent
+            testSuite={test_suite}
+            runTests={runTests}
+            selectedRunnable={selectedRunnable}
+            testRunInProgress={testRunNeedsProgressBar(testRun)}
+            view={(view as ViewType) || 'run'}
+            presets={testSession.test_suite.presets}
+            getSessionData={getSessionData}
+            testSessionId={id}
+          />
+        </nav>
       </Drawer>
-      <Box className={styles.contentContainer}>
-        {renderView((view as ViewType) || 'run')}
-        <InputsModal
-          hideModal={() => setInputModalVisible(false)}
-          createTestRun={createTestRun}
-          modalVisible={inputModalVisible}
-          runnableType={runnableType}
-          runnableId={runnableId}
-          title={(runnableMap.get(selectedRunnable) as Runnable).title}
-          inputInstructions={(runnableMap.get(selectedRunnable) as Runnable).input_instructions}
-          inputs={inputs}
-          sessionData={sessionData}
-        />
-        <ActionModal
-          cancelTestRun={() => {
-            testRun && deleteTestRun(testRun.id);
-          }}
-          message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
-          modalVisible={waitingTestId != null}
-        />
-      </Box>
+      <main style={{ overflow: 'scroll', width: '100%' }}>
+        <Box className={styles.contentContainer}>
+          {renderView((view as ViewType) || 'run')}
+          <InputsModal
+            hideModal={() => setInputModalVisible(false)}
+            createTestRun={createTestRun}
+            modalVisible={inputModalVisible}
+            runnableType={runnableType}
+            runnableId={runnableId}
+            title={(runnableMap.get(selectedRunnable) as Runnable).title}
+            inputInstructions={(runnableMap.get(selectedRunnable) as Runnable).input_instructions}
+            inputs={inputs}
+            sessionData={sessionData}
+          />
+          <ActionModal
+            cancelTestRun={() => {
+              testRun && deleteTestRun(testRun.id);
+            }}
+            message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
+            modalVisible={waitingTestId != null}
+          />
+        </Box>
+      </main>
     </Box>
   );
 };

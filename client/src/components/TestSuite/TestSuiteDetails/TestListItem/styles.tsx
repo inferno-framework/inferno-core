@@ -40,9 +40,6 @@ export default makeStyles((theme: Theme) => ({
   bolderText: {
     fontWeight: 'bolder',
   },
-  testCardList: {
-    padding: 0,
-  },
   messageMessage: {
     width: '90%',
     padding: '0 !important',
