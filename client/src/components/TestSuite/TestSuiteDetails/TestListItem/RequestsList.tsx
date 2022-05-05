@@ -9,7 +9,7 @@ import {
   TableBody,
   Tooltip,
   TableHead,
-  ListItem,
+  Box,
 } from '@mui/material';
 import { Request } from 'models/testSuiteModels';
 import RequestDetailModal from 'components/RequestDetailModal/RequestDetailModal';
@@ -111,11 +111,11 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
           </Table>
         </TableContainer>
       ) : (
-        <ListItem>
+        <Box p={2}>
           <Typography variant="subtitle2" component="p">
             No Requests
           </Typography>
-        </ListItem>
+        </Box>
       )}
       <RequestDetailModal
         request={detailedRequest}

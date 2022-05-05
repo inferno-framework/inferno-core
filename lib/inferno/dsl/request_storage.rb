@@ -67,7 +67,9 @@ module Inferno
         self.class.named_requests_used.map do |request_name|
           request_alias = self.class.config.request_name(request_name)
           request = requests_repo.find_named_request(test_session_id, request_alias)
-          raise StandardError, "Unable to find '#{request_alias}' request" if request.nil?
+          if request.nil?
+            raise Exceptions::SkipException, "Request `#{request_alias}` was not made in a previous test as expected."
+          end
 
           requests << request
         end

@@ -1,14 +1,6 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import {
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-  Typography,
-  TableHead,
-  ListItem,
-} from '@mui/material';
+import { Table, TableBody, TableRow, TableCell, Typography, TableHead, Box } from '@mui/material';
 import { TestInput, TestOutput } from 'models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 
@@ -68,11 +60,11 @@ const InputsOutputsList: FC<InputOutputsListProps> = ({
       </Table>
     ) : (
       noValuesMessage && (
-        <ListItem>
+        <Box p={2}>
           <Typography variant="subtitle2" component="p">
             {noValuesMessage}
           </Typography>
-        </ListItem>
+        </Box>
       )
     );
 

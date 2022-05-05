@@ -2,7 +2,7 @@ import React, { FC, Fragment } from 'react';
 import {
   FormControl,
   FormControlLabel,
-  InputLabel,
+  FormLabel,
   ListItem,
   Radio,
   RadioGroup,
@@ -34,14 +34,11 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   );
 
   const fieldLabelText = requirement.title || requirement.name;
-  // Number of characters in a line when broken via white-space property
-  // Should be updated when width is expanded
-  const lineLength = 65;
-  const lineCount = Math.ceil(fieldLabelText.length / lineLength);
 
   const lockedIcon = requirement.locked && (
     <LockIcon fontSize="small" className={styles.lockedIcon} />
   );
+
   const fieldLabel = (
     <Fragment>
       {fieldLabelText}
@@ -64,16 +61,13 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
         disabled={requirement.locked}
         fullWidth
       >
-        <InputLabel variant="standard" shrink className={styles.inputLabel}>
-          <legend>{fieldLabel}</legend>
-        </InputLabel>
+        <FormLabel className={styles.inputLabel}>{fieldLabel}</FormLabel>
         <RadioGroup
           row
           aria-label={`${requirement.name}-radio-buttons-group`}
           name={`${requirement.name}-radio-buttons-group`}
           value={value}
           onChange={handleChange}
-          sx={{ marginTop: `${lineCount * 16}px` }}
         >
           {requirement.options?.list_options?.map((option, i) => (
             <FormControlLabel

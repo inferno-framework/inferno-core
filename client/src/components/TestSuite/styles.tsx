@@ -13,6 +13,17 @@ export default makeStyles((theme: Theme) => ({
     overflow: 'scroll',
     '@media print': {
       margin: 0,
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: '51px', // height of footer
+    },
+  },
+  drawer: {
+    display: 'flex',
+    height: '100%',
+    '@media print': {
+      display: 'none',
     },
   },
   testSessionContainer: {
