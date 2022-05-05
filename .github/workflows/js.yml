@@ -53,7 +53,13 @@ jobs:
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
     - run: npm ci
-    - run: npm test
+    # `npm run coverage` is run tests with coverage flags, rather than repeating them here
+    - run: npm run coverage
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        name: frontend-coverage
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   lint:
     needs: build
