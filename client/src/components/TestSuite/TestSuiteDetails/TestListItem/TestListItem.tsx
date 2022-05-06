@@ -160,6 +160,8 @@ const TestListItem: FC<TestListItemProps> = ({
         onClick={() => setOpen(!open)}
       >
         <AccordionSummary
+          id={`${test.id}-summary`}
+          aria-controls={`${test.id}-detail`}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -181,7 +183,6 @@ const TestListItem: FC<TestListItemProps> = ({
           onClick={(e) => e.stopPropagation()}
         >
           <Tabs
-            aria-label={`${test.title}-tabs`}
             value={panelIndex}
             className={styles.tabs}
             onChange={(e, newIndex) => {

@@ -62,9 +62,8 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
                   {testSuites?.map((testSuite: TestSuite) => {
                     return (
                       /* Use li to resolve a11y error */
-                      <li>
+                      <li key={testSuite.id}>
                         <ListItemButton
-                          key={testSuite.id}
                           data-testid="testing-suite-option"
                           selected={testSuiteChosen === testSuite.id}
                           onClick={() => setTestSuiteChosen(testSuite.id)}
