@@ -1,3 +1,11 @@
+# 0.3.2
+
+* Add IE meta tag.
+* Add accessibility design and features to UI.
+* Update to tests so missing named requests raise a skip instead of error.
+* Update to test view so JSON requests are formatted more readably.
+* Preset options now sorted and presented alphabetically.
+* Various minor UI improvements.
 # 0.3.1
 
 * Fix a bug which prevented a session from loading if it had results which
