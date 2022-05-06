@@ -20,6 +20,8 @@ export default makeStyles((theme: Theme) => ({
     },
   },
   drawer: {
+    display: 'flex',
+    height: '100%',
     '@media print': {
       display: 'none',
     },
