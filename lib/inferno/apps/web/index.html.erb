@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Use the highest supported document mode of Internet Explorer -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
     <meta charset="utf-8" />
     <link rel="icon" href="<%= Inferno::Application['public_path'] %>/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -46,7 +49,7 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div class='wrapper'>
       <% if File.exist? (File.join(Dir.pwd, 'config', 'banner.html.erb')) %>
-        <div class='banner'><%= ERB.new(File.read(File.join(Dir.pwd, 'config', 'banner.html.erb'))).result %></div> 
+        <div class='banner'><%= ERB.new(File.read(File.join(Dir.pwd, 'config', 'banner.html.erb'))).result %></div>
       <% end %>
       <div class='app' id="root"></div>
     </div>
