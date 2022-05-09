@@ -6,6 +6,7 @@
 * Update to test view so JSON requests are formatted more readably.
 * Preset options now sorted and presented alphabetically.
 * Various minor UI improvements.
+
 # 0.3.1
 
 * Fix a bug which prevented a session from loading if it had results which
