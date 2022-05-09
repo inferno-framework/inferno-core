@@ -6,6 +6,7 @@ import TestListItem from './TestListItem/TestListItem';
 import { Box, Button, Card, Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import useStyles from './styles';
+import TestSuiteMessages from './TestSuiteMessages';
 
 interface TestSuiteReportProps {
   testSuite: TestSuite;
@@ -60,13 +61,13 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
           <Button
             variant="contained"
             color="secondary"
-            className={styles.printButton}
             size="small"
             disableElevation
+            className={styles.printButton}
+            startIcon={<PrintIcon />}
             onClick={() => {
               window.print();
             }}
-            startIcon={<PrintIcon />}
           >
             Print
           </Button>
@@ -108,6 +109,12 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
 
   return (
     <>
+      <TestSuiteMessages
+        messages={
+          testSuite.configuration_messages?.filter((message) => message.type === 'error') || []
+        }
+        testSuiteId={testSuite.id}
+      />
       {header}
       {testChildren}
     </>

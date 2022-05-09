@@ -161,6 +161,7 @@ const TestListItem: FC<TestListItemProps> = ({
       >
         <AccordionSummary
           expandIcon={view === 'run' && <ExpandMoreIcon />}
+          sx={{ userSelect: 'auto' }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setOpen(!open);

@@ -100,6 +100,8 @@ export default makeStyles((theme: Theme) => ({
   alert: {
     marginBottom: '8px',
     alignItems: 'center',
+    printColorAdjust: 'exact',
+    WebkitPrintColorAdjust: 'exact',
     '& .MuiAlert-message': { width: '100%' },
   },
   alertMessage: {
