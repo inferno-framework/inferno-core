@@ -44,24 +44,22 @@ module Inferno
         definition = self.class.http_client_definitions[client]
         return nil if definition.nil?
 
-        error_filter do 
+        error_filter do
           http_clients[client] = HTTPClientBuilder.new.build(self, definition)
-        end 
+        end
       end
 
       # @private
       def http_clients
         @http_clients ||= {}
       end
-      
+
       # @private
       def error_filter(&block)
-        begin
-          block.call
-        rescue Faraday::ConnectionFailed => e
-          e.message.include?('Failed to open TCP') ? raise(Exceptions::AssertionException, e.message) : raise(e)
-        end
-      end 
+        block.call
+      rescue Faraday::ConnectionFailed => e
+        e.message.include?('Failed to open TCP') ? raise(Exceptions::AssertionException, e.message) : raise(e)
+      end
 
       # Perform an HTTP GET request
       #

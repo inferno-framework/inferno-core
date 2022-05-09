@@ -50,10 +50,10 @@ module Inferno
       # @return [FHIR::Client]
       # @see Inferno::FHIRClientBuilder
       def fhir_client(client = :default)
-        fhir_error_filter do 
+        fhir_error_filter do
           fhir_clients[client] ||=
             FHIRClientBuilder.new.build(self, self.class.fhir_client_definitions[client])
-        end 
+        end
       end
 
       # @private
@@ -63,12 +63,10 @@ module Inferno
 
       # @private
       def fhir_error_filter(&block)
-        begin
-          block.call
-        rescue SocketError => e
-          e.message.include?('Failed to open TCP') ? raise(Exceptions::AssertionException, e.message) : raise(e)
-        end
-      end 
+        block.call
+      rescue SocketError => e
+        e.message.include?('Failed to open TCP') ? raise(Exceptions::AssertionException, e.message) : raise(e)
+      end
 
       # Perform a FHIR operation
       #
@@ -90,7 +88,7 @@ module Inferno
             operation_headers.merge!(headers) if headers.present?
 
             fhir_client(client).send(:post, path, body, operation_headers)
-          end 
+          end
         end
       end
 
@@ -105,7 +103,7 @@ module Inferno
           store_request_and_refresh_token(fhir_client(client), name) do
             fhir_client(client).conformance_statement
             fhir_client(client).reply
-          end 
+          end
         end
       end
 
@@ -121,7 +119,7 @@ module Inferno
         fhir_error_filter do
           store_request_and_refresh_token(fhir_client(client), name) do
             fhir_client(client).read(fhir_class_from_resource_type(resource_type), id)
-          end 
+          end
         end
       end
 
@@ -146,7 +144,7 @@ module Inferno
           store_request_and_refresh_token(fhir_client(client), name) do
             fhir_client(client)
               .search(fhir_class_from_resource_type(resource_type), { search: search })
-          end 
+          end
         end
       end
 
