@@ -65,14 +65,14 @@ RSpec.describe Inferno::DSL::HTTPClient do
       before do 
         allow(Faraday)
           .to receive(:new)
-          .and_raise(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+          .and_raise(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
       end 
 
       it 'raises a skip' do
         expect {
           block = proc { url 'http://www.example.com' }
           Inferno::DSL::HTTPClientBuilder.new.build(group, block)
-        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
       end 
     end 
 
@@ -136,7 +136,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
         it 'raises a skip' do
           expect {
             group.get 
-          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+          }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
         end 
       end 
 
@@ -256,7 +256,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
         it 'raises a skip' do
           expect {
             group.get 'https://example.com/abc' 
-          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+          }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
         end 
       end 
 
@@ -294,7 +294,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
         it 'raises a skip' do
           expect {
             group.post 
-          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+          }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
         end 
       end 
 
@@ -446,7 +446,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
         it 'raises a skip' do
           expect {
             group.post 'https://example.com/abc'
-          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+          }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
         end 
       end 
 
@@ -531,7 +531,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
         it 'raises a skip' do
           expect {
             group.stream generic_block
-          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+          }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
         end 
       end 
 
@@ -673,7 +673,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
         it 'raises a skip' do
           expect {
             group.stream(generic_block, 'https://example.com/abc')
-          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+          }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
         end 
       end 
 
@@ -737,7 +737,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
         it 'raises a skip' do
           expect {
             group.delete
-          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+          }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
         end 
       end 
 
@@ -857,7 +857,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
         it 'raises a skip' do
           expect {
             group.delete 'https://example.com/abc'
-          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+          }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
         end 
       end 
 

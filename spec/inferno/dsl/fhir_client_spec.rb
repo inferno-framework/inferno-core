@@ -70,7 +70,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
       it 'raises a skip' do
         expect {
           group.fhir_client
-        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
       end 
     end 
 
@@ -223,7 +223,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
       it 'raises a skip' do
         expect {
           group.fhir_operation 'abc'
-        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
       end 
     end 
 
@@ -298,7 +298,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
       it 'raises a skip' do
         expect {
           group.fhir_get_capability_statement
-        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
       end 
     end 
 
@@ -386,7 +386,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
       it 'raises a skip' do
         expect {
           group.fhir_read :patient, '0'
-        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
       end 
     end 
 
@@ -496,7 +496,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
       it 'raises a skip' do
         expect {
           group.fhir_search :patient
-        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
       end 
     end 
 
@@ -570,7 +570,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
       it 'raises a skip' do
         expect {
           group.fhir_delete :patient, '0'
-        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        }.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
       end 
     end 
 

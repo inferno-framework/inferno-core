@@ -66,7 +66,7 @@ module Inferno
         begin
           block.call
         rescue SocketError => e
-          e.message.include?('Failed to open TCP') ? skip(e.message) : raise(e)
+          e.message.include?('Failed to open TCP') ? raise(Exceptions::AssertionException, e.message) : raise(e)
         end
       end 
 
