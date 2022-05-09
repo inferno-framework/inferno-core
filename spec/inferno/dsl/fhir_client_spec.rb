@@ -2,6 +2,7 @@ class FHIRClientDSLTestClass
   include Inferno::DSL::FHIRClient
   include Inferno::DSL::HTTPClient
   extend Inferno::DSL::Configurable
+  include Inferno::DSL::Results
 
   def test_session_id
     nil
@@ -58,6 +59,34 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
       it 'raises an error if the FHIR client is not known'
     end
+
+    context 'with a base url that causes a TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:initialize)
+          .and_raise(SocketError, 'Failed to open TCP')
+      end 
+
+      it 'raises a skip' do
+        expect {
+          group.fhir_client
+        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+      end 
+    end 
+
+    context 'with a base url that causes a non-TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:initialize)
+          .and_raise(SocketError, 'not a TCP error')
+      end 
+
+      it 'raises the error' do
+        expect {
+          group.fhir_client
+        }.to raise_error(SocketError, 'not a TCP error')
+      end 
+    end 
   end
 
   describe '#fhir_operation' do
@@ -183,6 +212,34 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(group).to have_received(:perform_refresh)
       end
     end
+
+    context 'with a base url that causes a TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:post)
+          .and_raise(SocketError, 'Failed to open TCP')
+      end 
+
+      it 'raises a skip' do
+        expect {
+          group.fhir_operation 'abc'
+        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+      end 
+    end 
+
+    context 'with a base url that causes a non-TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:post)
+          .and_raise(SocketError, 'not a TCP error')
+      end 
+
+      it 'raises the error' do
+        expect {
+          group.fhir_operation 'abc'
+        }.to raise_error(SocketError, 'not a TCP error')
+      end 
+    end 
   end
 
   describe '#fhir_get_capability_statement' do
@@ -230,6 +287,34 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(stub_capability_request).to_not have_been_made
       end
     end
+
+    context 'with a base url that causes a TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:conformance_statement)
+          .and_raise(SocketError, 'Failed to open TCP')
+      end 
+
+      it 'raises a skip' do
+        expect {
+          group.fhir_get_capability_statement
+        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+      end 
+    end 
+
+    context 'with a base url that causes a non-TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:conformance_statement)
+          .and_raise(SocketError, 'not a TCP error')
+      end 
+
+      it 'raises the error' do
+        expect {
+          group.fhir_get_capability_statement
+        }.to raise_error(SocketError, 'not a TCP error')
+      end 
+    end 
   end
 
   describe '#fhir_read' do
@@ -290,6 +375,34 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(group).to have_received(:perform_refresh)
       end
     end
+
+    context 'with a base url that causes a TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:read)
+          .and_raise(SocketError, 'Failed to open TCP')
+      end 
+
+      it 'raises a skip' do
+        expect {
+          group.fhir_read :patient, '0'
+        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+      end 
+    end 
+
+    context 'with a base url that causes a non-TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:read)
+          .and_raise(SocketError, 'not a TCP error')
+      end 
+
+      it 'raises the error' do
+        expect {
+          group.fhir_read :patient, '0'
+        }.to raise_error(SocketError, 'not a TCP error')
+      end 
+    end 
   end
 
   describe '#fhir_search' do
@@ -372,6 +485,34 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(group).to have_received(:perform_refresh)
       end
     end
+
+    context 'with a base url that causes a TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:search)
+          .and_raise(SocketError, 'Failed to open TCP')
+      end 
+
+      it 'raises a skip' do
+        expect {
+          group.fhir_search :patient
+        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+      end 
+    end 
+
+    context 'with a base url that causes a non-TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:search)
+          .and_raise(SocketError, 'not a TCP error')
+      end 
+
+      it 'raises the error' do
+        expect {
+          group.fhir_search :patient
+        }.to raise_error(SocketError, 'not a TCP error')
+      end 
+    end 
   end
 
   describe '#fhir_delete' do
@@ -418,6 +559,34 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(stub_delete_request).to_not have_been_made
       end
     end
+
+    context 'with a base url that causes a TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:delete)
+          .and_raise(SocketError, 'Failed to open TCP')
+      end 
+
+      it 'raises a skip' do
+        expect {
+          group.fhir_delete :patient, '0'
+        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+      end 
+    end 
+
+    context 'with a base url that causes a non-TCP error' do 
+      before do 
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:delete)
+          .and_raise(SocketError, 'not a TCP error')
+      end 
+
+      it 'raises the error' do
+        expect {
+          group.fhir_delete :patient, '0'
+        }.to raise_error(SocketError, 'not a TCP error')
+      end 
+    end 
   end
 
   describe '#requests' do

@@ -1,6 +1,7 @@
 class HTTPClientDSLTestClass
   include Inferno::DSL::HTTPClient
   extend Inferno::DSL::Configurable
+  include Inferno::DSL::Results
 
   def test_session_id
     nil
@@ -59,6 +60,36 @@ RSpec.describe Inferno::DSL::HTTPClient do
 
       it 'raises an error if the HTTP client is not known'
     end
+
+    context 'with a base url that causes a TCP error' do 
+      before do 
+        allow(Faraday)
+          .to receive(:new)
+          .and_raise(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+      end 
+
+      it 'raises a skip' do
+        expect {
+          block = proc { url 'http://www.example.com' }
+          Inferno::DSL::HTTPClientBuilder.new.build(group, block)
+        }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+      end 
+    end 
+
+    context 'with a base url that causes a non-TCP error' do 
+      before do 
+        allow(Faraday)
+          .to receive(:new)
+          .and_raise(Faraday::ConnectionFailed, 'not a TCP error')
+      end 
+
+      it 'raises the error' do
+        expect {
+          block = proc { url 'http://www.example.com' }
+          Inferno::DSL::HTTPClientBuilder.new.build(group, block)
+        }.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+      end 
+    end 
   end
 
   describe '#get' do
@@ -94,6 +125,34 @@ RSpec.describe Inferno::DSL::HTTPClient do
           expect(group.request).to eq(result)
         end
       end
+
+      context 'with a url argument that causes a TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:get)
+            .and_raise(Faraday::ConnectionFailed, 'Failed to open TCP')
+        end 
+
+        it 'raises a skip' do
+          expect {
+            group.get 
+          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        end 
+      end 
+
+      context 'with a url argument that causes a non-TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:get)
+            .and_raise(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+
+        it 'raises the error' do
+          expect {
+            group.get 
+          }.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+      end 
 
       context 'with a url argument' do
         it 'performs a GET to the base_url + path' do
@@ -186,6 +245,34 @@ RSpec.describe Inferno::DSL::HTTPClient do
         group.get(url, headers: { 'Warning' => 'Placeholder warning' })
         expect(stub_get_header_request).to have_been_made.once
       end
+
+      context 'with a url argument that causes a TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:get)
+            .and_raise(Faraday::ConnectionFailed, 'Failed to open TCP')
+        end 
+
+        it 'raises a skip' do
+          expect {
+            group.get 'https://example.com/abc' 
+          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        end 
+      end 
+
+      context 'with a url argument that causes a non-TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:get)
+            .and_raise(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+
+        it 'raises the error' do
+          expect {
+            group.get 'https://example.com/abc'
+          }.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+      end 
     end
   end
 
@@ -196,6 +283,34 @@ RSpec.describe Inferno::DSL::HTTPClient do
       before do
         setup_default_client
       end
+
+      context 'with a url argument that causes a TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:post)
+            .and_raise(Faraday::ConnectionFailed, 'Failed to open TCP')
+        end 
+
+        it 'raises a skip' do
+          expect {
+            group.post 
+          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        end 
+      end 
+
+      context 'with a url argument that causes a non-TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:post)
+            .and_raise(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+
+        it 'raises the error' do
+          expect {
+            group.post 
+          }.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+      end 
 
       context 'without a url argument' do
         it "performs a HTTP POST to the default client's base url" do
@@ -320,6 +435,34 @@ RSpec.describe Inferno::DSL::HTTPClient do
 
         expect { group.post(url) }.to raise_error(/absolute url/)
       end
+
+      context 'with a url argument that causes a TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:post)
+            .and_raise(Faraday::ConnectionFailed, 'Failed to open TCP')
+        end 
+
+        it 'raises a skip' do
+          expect {
+            group.post 'https://example.com/abc'
+          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        end 
+      end 
+
+      context 'with a url argument that causes a non-TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:post)
+            .and_raise(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+
+        it 'raises the error' do
+          expect {
+            group.post 'https://example.com/abc'
+          }.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+      end 
     end
   end
 
@@ -377,6 +520,34 @@ RSpec.describe Inferno::DSL::HTTPClient do
           expect(group.request.response_body).to eq(response_body)
         end
       end
+
+      context 'with a url argument that causes a TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:get)
+            .and_raise(Faraday::ConnectionFailed, 'Failed to open TCP')
+        end 
+
+        it 'raises a skip' do
+          expect {
+            group.stream generic_block
+          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        end 
+      end 
+
+      context 'with a url argument that causes a non-TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:get)
+            .and_raise(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+
+        it 'raises the error' do
+          expect {
+            group.stream generic_block
+          }.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+      end 
 
       context 'with a url argument' do
         it 'performs a GET to the base_url + path' do
@@ -490,6 +661,35 @@ RSpec.describe Inferno::DSL::HTTPClient do
         expect(group.requests).to include(result)
         expect(group.request.response_body).to eq(response_body)
       end
+
+
+      context 'with a url argument that causes a TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:get)
+            .and_raise(Faraday::ConnectionFailed, 'Failed to open TCP')
+        end 
+
+        it 'raises a skip' do
+          expect {
+            group.stream(generic_block, 'https://example.com/abc')
+          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        end 
+      end 
+
+      context 'with a url argument that causes a non-TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:get)
+            .and_raise(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+
+        it 'raises the error' do
+          expect {
+            group.stream(generic_block, 'https://example.com/abc')
+          }.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+      end 
     end
   end
 
@@ -526,6 +726,34 @@ RSpec.describe Inferno::DSL::HTTPClient do
           expect(group.request).to eq(result)
         end
       end
+
+      context 'with a url argument that causes a TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:delete)
+            .and_raise(Faraday::ConnectionFailed, 'Failed to open TCP')
+        end 
+
+        it 'raises a skip' do
+          expect {
+            group.delete
+          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        end 
+      end 
+
+      context 'with a url argument that causes a non-TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:delete)
+            .and_raise(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+
+        it 'raises the error' do
+          expect {
+            group.delete 
+          }.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+      end 
 
       context 'with a url argument' do
         it 'performs a DELETE to the base_url + path' do
@@ -618,6 +846,34 @@ RSpec.describe Inferno::DSL::HTTPClient do
         group.delete(url, headers: { 'Warning' => 'Placeholder warning' })
         expect(stub_delete_header_request).to have_been_made.once
       end
+
+      context 'with a url argument that causes a TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:delete)
+            .and_raise(Faraday::ConnectionFailed, 'Failed to open TCP')
+        end 
+
+        it 'raises a skip' do
+          expect {
+            group.delete 'https://example.com/abc'
+          }.to raise_error(Inferno::Exceptions::SkipException, 'Failed to open TCP')
+        end 
+      end 
+
+      context 'with a url argument that causes a non-TCP error' do
+        before do 
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:delete)
+            .and_raise(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+
+        it 'raises the error' do
+          expect {
+            group.delete 'https://example.com/abc'
+          }.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+        end 
+      end 
     end
   end
 

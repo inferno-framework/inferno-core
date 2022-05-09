@@ -44,13 +44,24 @@ module Inferno
         definition = self.class.http_client_definitions[client]
         return nil if definition.nil?
 
-        http_clients[client] = HTTPClientBuilder.new.build(self, definition)
+        error_filter do 
+          http_clients[client] = HTTPClientBuilder.new.build(self, definition)
+        end 
       end
 
       # @private
       def http_clients
         @http_clients ||= {}
       end
+      
+      # @private
+      def error_filter(&block)
+        begin
+          block.call
+        rescue Faraday::ConnectionFailed => e
+          e.message.include?('Failed to open TCP') ? skip(e.message) : raise(e)
+        end
+      end 
 
       # Perform an HTTP GET request
       #
@@ -65,14 +76,16 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def get(url = '', client: :default, name: nil, **options)
         store_request('outgoing', name) do
-          client = http_client(client)
+          error_filter do
+            client = http_client(client)
 
-          if client
-            client.get(url, nil, options[:headers])
-          elsif url.match?(%r{\Ahttps?://})
-            Faraday.get(url, nil, options[:headers])
-          else
-            raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+            if client
+              client.get(url, nil, options[:headers])
+            elsif url.match?(%r{\Ahttps?://})
+              Faraday.get(url, nil, options[:headers])
+            else
+              raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+            end
           end
         end
       end
@@ -91,14 +104,16 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def post(url = '', body: nil, client: :default, name: nil, **options)
         store_request('outgoing', name) do
-          client = http_client(client)
+          error_filter do
+            client = http_client(client)
 
-          if client
-            client.post(url, body, options[:headers])
-          elsif url.match?(%r{\Ahttps?://})
-            Faraday.post(url, body, options[:headers])
-          else
-            raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+            if client
+              client.post(url, body, options[:headers])
+            elsif url.match?(%r{\Ahttps?://})
+              Faraday.post(url, body, options[:headers])
+            else
+              raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+            end
           end
         end
       end
@@ -114,14 +129,16 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def delete(url = '', client: :default, name: :nil, **options)
         store_request('outgoing', name) do
-          client = http_client(client)
+          error_filter do
+            client = http_client(client)
 
-          if client
-            client.delete(url, nil, options[:headers])
-          elsif url.match?(%r{\Ahttps?://})
-            Faraday.delete(url, nil, options[:headers])
-          else
-            raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+            if client
+              client.delete(url, nil, options[:headers])
+            elsif url.match?(%r{\Ahttps?://})
+              Faraday.delete(url, nil, options[:headers])
+            else
+              raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+            end
           end
         end
       end
@@ -151,17 +168,19 @@ module Inferno
         end
 
         store_request('outgoing', name) do
-          client = http_client(client)
+          error_filter do
+            client = http_client(client)
 
-          if client
-            response = client.get(url, nil, options[:headers]) { |req| req.options.on_data = collector }
-          elsif url.match?(%r{\Ahttps?://})
-            response = Faraday.get(url, nil, options[:headers]) { |req| req.options.on_data = collector }
-          else
-            raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+            if client
+              response = client.get(url, nil, options[:headers]) { |req| req.options.on_data = collector }
+            elsif url.match?(%r{\Ahttps?://})
+              response = Faraday.get(url, nil, options[:headers]) { |req| req.options.on_data = collector }
+            else
+              raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+            end
+            response.env.body = streamed.join
+            response
           end
-          response.env.body = streamed.join
-          response
         end
       end
 
