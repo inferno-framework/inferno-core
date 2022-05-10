@@ -263,6 +263,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             runTests={runTests}
             updateRequest={updateRequest}
             testRunInProgress={testRunNeedsProgressBar(testRun)}
+            testSuiteId={test_suite.id}
+            configMessages={test_suite.configuration_messages}
           />
         );
     }

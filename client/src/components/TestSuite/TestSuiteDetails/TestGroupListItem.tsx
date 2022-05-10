@@ -77,7 +77,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         className={styles.accordion}
         TransitionProps={{ unmountOnExit: true }}
       >
-        <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
+          sx={{ userSelect: 'auto' }}
+        >
           <List className={styles.testGroupCardList}>
             <ListItem sx={{ padding: 0 }}>
               <ListItemText
@@ -109,8 +112,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary
-        expandIcon={view === 'run' && <ExpandMoreIcon />}
         className={styles.accordionSummary}
+        expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}
       >
         <Box display="flex" alignItems="center">
           <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
