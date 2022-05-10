@@ -26,7 +26,6 @@ export default makeStyles((theme: Theme) => ({
     display: 'inline',
     fontWeight: 'bold',
     alignSelf: 'center',
-    paddingRight: '4px',
     color: theme.palette.common.grayVeryDark,
   },
   testSuiteTreePanel: {

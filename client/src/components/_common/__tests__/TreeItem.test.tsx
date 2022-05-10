@@ -37,9 +37,7 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
             nodeId={mockedTestSuite.id}
             label={<TreeItemLabel runnable={mockedTestSuite} />}
             ContentProps={{ testId: mockedTestSuite.id } as any}
-          >
-            <></>
-          </CustomTreeItem>
+          />
         </TreeView>
       </ThemeProvider>
     </Router>

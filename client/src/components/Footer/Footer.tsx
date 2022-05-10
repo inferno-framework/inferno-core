@@ -21,6 +21,7 @@ const Footer: FC<FooterProps> = ({ version }) => {
             href="https://inferno-framework.github.io/inferno-core"
             target="_blank"
             rel="noreferrer"
+            aria-label="Inferno"
           >
             <img
               src={getStaticPath(logo as string)}
