@@ -51,7 +51,6 @@ export default makeStyles((theme: Theme) => ({
     display: 'inline',
     fontWeight: 'bold',
     alignSelf: 'center',
-    paddingRight: '8px',
     color: theme.palette.common.grayVeryDark,
   },
   testGroupCardHeaderButton: {

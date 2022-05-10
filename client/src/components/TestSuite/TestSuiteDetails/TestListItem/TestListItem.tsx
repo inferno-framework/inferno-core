@@ -187,11 +187,13 @@ const TestListItem: FC<TestListItemProps> = ({
       >
         <AccordionSummary
           id={`${test.id}-summary`}
+          title={`${test.id}-summary`}
           aria-controls={`${test.id}-detail`}
+          role={view === 'report' ? 'region' : 'button'}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
           sx={{ userSelect: 'auto' }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+            if (view !== 'report' && e.key === 'Enter') {
               setOpen(!open);
             }
           }}
