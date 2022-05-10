@@ -3,7 +3,6 @@ import useStyles from './styles';
 import {
   Box,
   Divider,
-  IconButton,
   ListItem,
   ListItemText,
   Tab,
@@ -61,8 +60,8 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const testLabel = (
     <>
-      {test.short_id && <Typography className={styles.shortId}>{test.short_id}</Typography>}
-      {test.optional && <Typography className={styles.optionalLabel}>Optional</Typography>}
+      {test.short_id && <Typography className={styles.shortId}>{`${test.short_id} `}</Typography>}
+      {test.optional && <Typography className={styles.optionalLabel}>{'Optional '}</Typography>}
       <Typography className={styles.labelText}>{test.title}</Typography>
     </>
   );
@@ -84,40 +83,65 @@ const TestListItem: FC<TestListItemProps> = ({
   const messagesBadge = view === 'run' &&
     test.result?.messages &&
     test.result.messages.length > 0 && (
-      <IconButton
-        aria-label="open messages"
-        className={styles.badgeIcon}
-        onClick={(e) => {
-          e.stopPropagation();
-          setPanelIndex(0);
-          setOpen(true);
-        }}
+      <Badge
+        badgeContent={test.result.messages.length}
+        overlap="circular"
+        classes={{ badge: styles.testBadge }}
       >
-        <Badge badgeContent={test.result.messages.length} classes={{ badge: styles.testBadge }}>
-          <Tooltip title={`${test.result.messages.length} message(s)`}>
-            <MailIcon color="secondary" />
-          </Tooltip>
-        </Badge>
-      </IconButton>
+        <Tooltip describeChild title={`${test.result.messages.length} message(s)`}>
+          <MailIcon
+            aria-label={`View ${test.result.messages.length} message(s)`}
+            aria-hidden={false}
+            tabIndex={0}
+            color="secondary"
+            className={styles.badgeIcon}
+            onClick={(e) => {
+              e.stopPropagation();
+              setPanelIndex(0);
+              setOpen(true);
+            }}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+              if (e.key === 'Enter') {
+                setPanelIndex(0);
+                setOpen(true);
+              }
+            }}
+          />
+        </Tooltip>
+      </Badge>
     );
 
   const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
-    <IconButton
-      disabled={view === 'report'}
-      aria-label="open requests"
-      className={styles.badgeIcon}
-      onClick={(e) => {
-        e.stopPropagation();
-        setPanelIndex(1);
-        setOpen(true);
-      }}
+    <Badge
+      badgeContent={test.result.requests.length}
+      overlap="circular"
+      classes={{ badge: styles.testBadge }}
     >
-      <Badge badgeContent={test.result.requests.length} classes={{ badge: styles.testBadge }}>
-        <Tooltip title={`${test.result.requests.length} request(s)`}>
-          <PublicIcon color="secondary" />
-        </Tooltip>
-      </Badge>
-    </IconButton>
+      <Tooltip describeChild title={`${test.result.requests.length} request(s)`}>
+        <PublicIcon
+          aria-label={`View ${test.result.requests.length} request(s)`}
+          aria-hidden={false}
+          tabIndex={0}
+          color="secondary"
+          className={styles.badgeIcon}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (view !== 'report') {
+              setPanelIndex(0);
+              setOpen(true);
+            }
+          }}
+          onKeyDown={(e) => {
+            e.stopPropagation();
+            if (e.key === 'Enter' && view !== 'report') {
+              setPanelIndex(0);
+              setOpen(true);
+            }
+          }}
+        />
+      </Tooltip>
+    </Badge>
   );
 
   const testRunButton = view === 'run' && runTests && (
