@@ -9,9 +9,11 @@ import ThemeProvider from 'components/ThemeProvider';
 import { TestSession, TestSuite } from 'models/testSuiteModels';
 import { basePath } from 'api/infernoApiService';
 
+import { useAppStore } from '../../store/app';
+
 const App: FC<unknown> = () => {
-  const [testSuites, setTestSuites] = React.useState<TestSuite[]>();
-  const [testSession, setTestSession] = React.useState<TestSession>();
+  const { testSuites, setTestSuites } = useAppStore();
+  const { testSession, setTestSession } = useAppStore();
 
   useEffect(() => {
     getTestSuites()

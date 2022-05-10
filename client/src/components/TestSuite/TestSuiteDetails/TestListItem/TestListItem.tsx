@@ -189,6 +189,7 @@ const TestListItem: FC<TestListItemProps> = ({
           id={`${test.id}-summary`}
           aria-controls={`${test.id}-detail`}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
+          sx={{ userSelect: 'auto' }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               setOpen(!open);

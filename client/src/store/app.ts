@@ -1,0 +1,22 @@
+import create from 'zustand';
+import { devtoolsInDev } from './devtools';
+
+import { TestSuite, TestSession } from '../models/testSuiteModels';
+
+type AppStore = {
+  testSuites: TestSuite[];
+  testSession: TestSession | undefined;
+  setTestSuites: (testSuites: TestSuite[]) => void;
+  setTestSession: (testSession: TestSession | undefined) => void;
+};
+
+// this store is for global state, things at the top level
+// other stores can be attached to child components
+export const useAppStore = create<AppStore>(
+  devtoolsInDev((set, _get) => ({
+    testSuites: [] as TestSuite[],
+    testSession: undefined,
+    setTestSuites: (testSuites: TestSuite[]) => set({ testSuites: testSuites }),
+    setTestSession: (testSession: TestSession | undefined) => set({ testSession: testSession }),
+  }))
+);

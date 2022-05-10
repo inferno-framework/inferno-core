@@ -81,6 +81,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           id={`${testGroup.id}-description-summary`}
           aria-controls={`${testGroup.id}-description-detail`}
           expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
+          sx={{ userSelect: 'auto' }}
         >
           <List className={styles.testGroupCardList}>
             <ListItem sx={{ padding: 0 }}>
@@ -118,7 +119,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       <AccordionSummary
         id={`${testGroup.id}-summary`}
         aria-controls={`${testGroup.id}-detail`}
-        expandIcon={view === 'run' && <ExpandMoreIcon />}
+        expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}
       >
         <Box display="flex" alignItems="center">
           <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
