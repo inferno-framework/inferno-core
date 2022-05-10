@@ -19,10 +19,16 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }
   const alert = (severity: AlertColor, message: string) => (
     <Box className={styles.alertCursor}>
       <Alert
+        tabIndex={0}
         severity={severity}
         variant="filled"
         onClick={() => {
           history.push(`${history.location.pathname}#${testSuiteId || ''}/config`);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            history.push(`${history.location.pathname}#${testSuiteId || ''}/config`);
+          }
         }}
         className={styles.alert}
       >

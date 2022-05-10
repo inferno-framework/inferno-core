@@ -95,7 +95,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           </List>
         </AccordionSummary>
         <Divider />
-        <AccordionDetails className={styles.accordionDetailContainer}>
+        <AccordionDetails
+          title={`${testGroup.id}-description-detail`}
+          className={styles.accordionDetailContainer}
+        >
           <ReactMarkdown className={`${styles.accordionDetail} ${styles.nestedDescription}`}>
             {testGroup.description as string}
           </ReactMarkdown>
@@ -150,7 +153,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           <InputOutputsList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
         </Box>
       )}
-      <AccordionDetails className={styles.accordionDetailContainer}>
+      <AccordionDetails
+        title={`${testGroup.id}-detail`}
+        className={styles.accordionDetailContainer}
+      >
         {testGroup.description && view == 'run' && nestedDescriptionPanel}
         <Box className={styles.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}

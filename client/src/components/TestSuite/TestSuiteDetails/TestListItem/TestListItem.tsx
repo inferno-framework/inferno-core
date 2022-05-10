@@ -80,6 +80,7 @@ const TestListItem: FC<TestListItemProps> = ({
     />
   );
 
+  // Custom icon button to resolve nested interactive control error
   const messagesBadge = view === 'run' &&
     test.result?.messages &&
     test.result.messages.length > 0 && (
@@ -112,6 +113,7 @@ const TestListItem: FC<TestListItemProps> = ({
       </Badge>
     );
 
+  // Custom icon button to resolve nested interactive control error
   const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
     <Badge
       badgeContent={test.result.requests.length}
@@ -203,6 +205,7 @@ const TestListItem: FC<TestListItemProps> = ({
         </AccordionSummary>
         <Divider />
         <AccordionDetails
+          title={`${test.id}-detail`}
           className={styles.accordionDetailContainer}
           onClick={(e) => e.stopPropagation()}
         >
