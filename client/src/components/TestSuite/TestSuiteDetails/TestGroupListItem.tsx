@@ -112,6 +112,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary
+        className={styles.accordionSummary}
         expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}
       >
         <Box display="flex" alignItems="center">

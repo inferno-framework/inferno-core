@@ -53,6 +53,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
       .catch((e) => {
         setSnackbarStatus('error');
         setSnackbarMessage(`Could not set preset: ${e as string}`);
+        setTimeout(() => setSnackbarVisible(false), 4000);
       });
   };
 
@@ -82,6 +83,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
         setSnackbarVisible(true);
         setSnackbarStatus('success');
         setSnackbarMessage(`${e.target.value} has been set as preset.`);
+        setTimeout(() => setSnackbarVisible(false), 4000);
       }
     }
   };
@@ -105,7 +107,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
       </TextField>
       <Snackbar
         open={snackbarVisible}
-        autoHideDuration={6000}
+        autoHideDuration={4000}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         sx={{ marginBottom: '48px' }}
       >
