@@ -45,7 +45,19 @@ export default makeStyles((theme: Theme) => ({
   },
   inputOutputsValue: {
     width: '90%',
-    padding: '0 !important',
+    padding: '0 16px !important',
+  },
+  noPrintSpacing: {
+    '@media print': {
+      marginTop: 0,
+      marginBottom: 0,
+      paddingTop: 0,
+      paddingBottom: 0,
+      minHeight: 'unset',
+    },
+  },
+  wordWrap: {
+    overflowWrap: 'anywhere',
   },
   badgeIcon: {
     margin: '0 8px',
@@ -70,6 +82,15 @@ export default makeStyles((theme: Theme) => ({
     },
     '&:not(last-child)': {
       borderBottom: `1px solid ${theme.palette.divider}`,
+    },
+  },
+  accordionSummary: {
+    userSelect: 'auto',
+    '@media print': {
+      minHeight: 'unset',
+    },
+    '& .MuiAccordionSummary-content': {
+      margin: 0,
     },
   },
   accordionDetailContainer: {

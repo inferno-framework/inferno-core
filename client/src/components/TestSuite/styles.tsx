@@ -36,15 +36,18 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     flexGrow: 1,
     overflow: 'hidden',
-  },
-  spacerToolbar: {
     '@media print': {
-      display: 'none',
+      maxHeight: 'unset',
     },
   },
   drawerPaper: {
     flexShrink: 0,
     width: '300px',
     position: 'static',
+  },
+  hidePrint: {
+    '@media print': {
+      display: 'none',
+    },
   },
 }));

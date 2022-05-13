@@ -191,7 +191,7 @@ const TestListItem: FC<TestListItemProps> = ({
           aria-controls={`${test.id}-detail`}
           role={view === 'report' ? 'region' : 'button'}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
-          sx={{ userSelect: 'auto' }}
+          className={styles.accordionSummary}
           onKeyDown={(e) => {
             if (view !== 'report' && e.key === 'Enter') {
               setOpen(!open);

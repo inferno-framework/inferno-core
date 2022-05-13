@@ -119,6 +119,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       <AccordionSummary
         id={`${testGroup.id}-summary`}
         aria-controls={`${testGroup.id}-detail`}
+        className={styles.accordionSummary}
         expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}
       >
         <Box display="flex" alignItems="center">
