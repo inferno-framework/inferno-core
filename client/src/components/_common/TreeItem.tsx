@@ -75,7 +75,6 @@ const CustomContent = React.forwardRef(function CustomContent(
         onClick={handleExpansionAction}
         onKeyPress={handleExpansionAction}
         className={classes.iconContainer}
-        tabIndex={0}
       >
         {icon}
       </div>

@@ -4,6 +4,7 @@ import { Message, TestSuite } from 'models/testSuiteModels';
 import useStyles from './styles';
 import TabPanel from '../TestSuiteDetails/TestListItem/TabPanel';
 import ReactMarkdown from 'react-markdown';
+import lightTheme from 'styles/theme';
 
 interface ConfigDetailsPanelProps {
   testSuite: TestSuite;
@@ -34,7 +35,10 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
 
   const tabLabel = (label: string, count: number) => (
     <Box display="flex" alignItems="center">
-      <Box px={1}>{label}</Box> {count > 0 && <Chip label={count} size="small" />}
+      <Box px={1} sx={{ color: lightTheme.palette.common.orangeDarker }}>
+        {label}
+      </Box>
+      {count > 0 && <Chip label={count} size="small" />}
     </Box>
   );
 

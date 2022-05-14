@@ -118,8 +118,8 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
       <Box className={styles.testSuiteTreePanel}>
         <TreeView
           aria-label="navigation-panel"
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
+          defaultCollapseIcon={<ExpandMoreIcon aria-hidden={false} tabIndex={0} />}
+          defaultExpandIcon={<ChevronRightIcon aria-hidden={false} tabIndex={0} />}
           onNodeToggle={nodeToggle}
           expanded={expanded}
           selected={selectedNode}

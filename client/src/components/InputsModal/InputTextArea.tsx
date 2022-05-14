@@ -3,6 +3,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import { TestInput } from 'models/testSuiteModels';
 import React, { FC, Fragment } from 'react';
 import useStyles from './styles';
+import lightTheme from 'styles/theme';
 
 export interface InputTextAreaProps {
   requirement: TestInput;
@@ -27,7 +28,7 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
   );
 
   return (
-    <ListItem disabled={requirement.locked}>
+    <ListItem>
       <TextField
         disabled={requirement.locked}
         required={!requirement.optional}
@@ -44,6 +45,9 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
           const value = event.target.value;
           inputsMap.set(requirement.name, value);
           setInputsMap(new Map(inputsMap));
+        }}
+        FormHelperTextProps={{
+          sx: { '&.Mui-disabled': { color: lightTheme.palette.common.grayDark } },
         }}
       />
     </ListItem>

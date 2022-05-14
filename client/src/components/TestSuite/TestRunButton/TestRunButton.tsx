@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
-import { Button, IconButton } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import { TestGroup, Runnable, RunnableType } from 'models/testSuiteModels';
+import lightTheme from 'styles/theme';
 
 export interface TestRunButtonProps {
   runnable: Runnable;
@@ -42,20 +43,42 @@ const TestRunButton: FC<TestRunButtonProps> = ({
             {buttonText}
           </Button>
         ) : (
-          <IconButton
-            title="Run Test"
-            disabled={testRunInProgress}
-            color="secondary"
-            edge="end"
-            size="small"
-            onClick={() => {
-              runTests(runnableType, runnable.id);
-            }}
-            data-testid={`runButton-${runnable.id}`}
-            sx={{ margin: '0 4px' }}
-          >
-            <PlayCircleIcon aria-label="run test" />
-          </IconButton>
+          // Custom icon button to resolve nested interactive control error
+          <Tooltip describeChild title={`Run ${runnable.title}`}>
+            <PlayCircleIcon
+              aria-label={`Run ${runnable.title}${
+                testRunInProgress ? ' Disabled - Test Run in Progress' : ''
+              }`}
+              aria-hidden={false}
+              tabIndex={0}
+              color={testRunInProgress ? 'disabled' : 'secondary'}
+              data-testid={`runButton-${runnable.id}`}
+              onClick={() => {
+                if (!testRunInProgress) runTests(runnableType, runnable.id);
+              }}
+              onKeyDown={(e) => {
+                e.stopPropagation();
+                if (e.key === 'Enter' && !testRunInProgress) {
+                  runTests(runnableType, runnable.id);
+                }
+              }}
+              sx={
+                testRunInProgress
+                  ? {
+                      margin: '0 8px',
+                      padding: '0.25em 0.25em',
+                    }
+                  : {
+                      margin: '0 8px',
+                      padding: '0.25em 0.25em',
+                      ':hover': {
+                        background: lightTheme.palette.common.grayLightest,
+                        borderRadius: '50%',
+                      },
+                    }
+              }
+            />
+          </Tooltip>
         ))}
     </>
   );

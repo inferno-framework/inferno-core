@@ -14,6 +14,7 @@ import {
 import { applyPreset } from 'api/TestSessionApi';
 import { PresetSummary } from 'models/testSuiteModels';
 import theme from '../../styles/theme';
+import lightTheme from '../../styles/theme';
 
 export interface PresetsModalProps {
   presets: PresetSummary[];
@@ -96,6 +97,9 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
         size="small"
         select
         label="Preset"
+        InputLabelProps={{
+          sx: { '&.Mui-focused': { color: lightTheme.palette.common.orangeDarker } },
+        }}
         value={selectedPreset}
         onChange={handleOnChange}
       >

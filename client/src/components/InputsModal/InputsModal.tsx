@@ -20,6 +20,7 @@ import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import InputOAuthCredentials from './InputOAuthCredentials';
 import YAML from 'js-yaml';
+
 export interface InputsModalProps {
   runnableType: RunnableType;
   runnableId: string;
@@ -213,31 +214,33 @@ const InputsModal: FC<InputsModalProps> = ({
         </Typography>
       </DialogTitle>
       <DialogContent>
-        <DialogContentText component="div">
-          <ReactMarkdown>
-            {instructions +
-              (inputType === 'Field'
-                ? ''
-                : ' In this view, only changes to the value attribute of an element will be saved. Further, only elements with names that match an input defined for the current suite, group, or test will be saved. The intended use of this view is to provide a template for users to copy/paste in order to avoid filling out individual fields every time.')}
-          </ReactMarkdown>
-        </DialogContentText>
-        {inputType == 'Field' ? (
-          <List>{inputFields}</List>
-        ) : (
-          <TextField
-            fullWidth
-            multiline
-            minRows={4}
-            role="input"
-            key={baseInput}
-            error={invalidInput}
-            defaultValue={baseInput}
-            data-testid="serial-input"
-            className={styles.serialInput}
-            onChange={(e) => handleSerialChanges(e.target.value)}
-            label={invalidInput ? `ERROR: INVALID ${inputType}` : ''}
-          />
-        )}
+        <main>
+          <DialogContentText component="div">
+            <ReactMarkdown>
+              {instructions +
+                (inputType === 'Field'
+                  ? ''
+                  : ' In this view, only changes to the value attribute of an element will be saved. Further, only elements with names that match an input defined for the current suite, group, or test will be saved. The intended use of this view is to provide a template for users to copy/paste in order to avoid filling out individual fields every time.')}
+            </ReactMarkdown>
+          </DialogContentText>
+          {inputType == 'Field' ? (
+            <List>{inputFields}</List>
+          ) : (
+            <TextField
+              id={`${inputType}-serial-input`}
+              fullWidth
+              multiline
+              minRows={4}
+              key={baseInput}
+              error={invalidInput}
+              defaultValue={baseInput}
+              data-testid="serial-input"
+              className={styles.serialInput}
+              onChange={(e) => handleSerialChanges(e.target.value)}
+              label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
+            />
+          )}
+        </main>
       </DialogContent>
       <DialogActions className={styles.dialogActions}>
         <ToggleButtonGroup

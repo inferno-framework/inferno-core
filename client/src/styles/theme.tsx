@@ -42,7 +42,7 @@ const colors = {
   grayLight: 'rgba(0, 0, 0, 0.6)',
   grayLighter: '#eaeef2',
   grayLightest: '#f2f2f2',
-  grayDark: '#444',
+  grayDark: '#595959',
   grayVeryDark: '#3a3a3a',
 };
 

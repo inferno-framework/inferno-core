@@ -78,6 +78,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         TransitionProps={{ unmountOnExit: true }}
       >
         <AccordionSummary
+          id={`${testGroup.id}-description-summary`}
+          aria-controls={`${testGroup.id}-description-detail`}
           expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
           sx={{ userSelect: 'auto' }}
         >
@@ -94,7 +96,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           </List>
         </AccordionSummary>
         <Divider />
-        <AccordionDetails className={styles.accordionDetailContainer}>
+        <AccordionDetails
+          title={`${testGroup.id}-description-detail`}
+          className={styles.accordionDetailContainer}
+        >
           <ReactMarkdown className={`${styles.accordionDetail} ${styles.nestedDescription}`}>
             {testGroup.description as string}
           </ReactMarkdown>
@@ -112,6 +117,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary
+        id={`${testGroup.id}-summary`}
+        aria-controls={`${testGroup.id}-detail`}
         className={styles.accordionSummary}
         expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}
       >
@@ -148,7 +155,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           <InputOutputsList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
         </Box>
       )}
-      <AccordionDetails className={styles.accordionDetailContainer}>
+      <AccordionDetails
+        title={`${testGroup.id}-detail`}
+        className={styles.accordionDetailContainer}
+      >
         {testGroup.description && view == 'run' && nestedDescriptionPanel}
         <Box className={styles.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}
@@ -174,7 +184,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
               primary={
                 <>
                   {testGroup.short_id && (
-                    <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
+                    <Typography className={styles.shortId}>{`${testGroup.short_id} `}</Typography>
                   )}
                   <Link
                     color="inherit"

@@ -5,9 +5,9 @@ import {
   Button,
   Paper,
   List,
-  ListItem,
   ListItemText,
   Grid,
+  ListItemButton,
 } from '@mui/material';
 import { TestSuite, TestSession } from 'models/testSuiteModels';
 import useStyles from './styles';
@@ -61,16 +61,17 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
                 <List>
                   {testSuites?.map((testSuite: TestSuite) => {
                     return (
-                      <ListItem
-                        key={testSuite.id}
-                        button
-                        data-testid="testing-suite-option"
-                        selected={testSuiteChosen == testSuite.id}
-                        onClick={() => setTestSuiteChosen(testSuite.id)}
-                        classes={{ selected: styles.selectedItem }}
-                      >
-                        <ListItemText primary={testSuite.title} />
-                      </ListItem>
+                      /* Use li to resolve a11y error */
+                      <li key={testSuite.id}>
+                        <ListItemButton
+                          data-testid="testing-suite-option"
+                          selected={testSuiteChosen === testSuite.id}
+                          onClick={() => setTestSuiteChosen(testSuite.id)}
+                          classes={{ selected: styles.selectedItem }}
+                        >
+                          <ListItemText primary={testSuite.title} />
+                        </ListItemButton>
+                      </li>
                     );
                   })}
                 </List>

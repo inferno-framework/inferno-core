@@ -24,14 +24,13 @@ export default makeStyles((theme: Theme) => ({
     lineHeight: '1.5rem',
     alignSelf: 'center',
     color: theme.palette.common.grayLight,
-    paddingRight: '8px',
+    paddingRight: '4px',
   },
   shortId: {
     display: 'inline',
     fontWeight: 'bold',
     color: theme.palette.common.grayDark,
     alignSelf: 'center',
-    paddingRight: '8px',
   },
   tabs: {
     minheight: 'auto',
@@ -61,13 +60,21 @@ export default makeStyles((theme: Theme) => ({
     overflowWrap: 'anywhere',
   },
   badgeIcon: {
-    margin: '0 4px',
+    margin: '0 8px',
+    padding: '0.25em 0.25em', // offset for hover styling
+    '&:hover': {
+      background: theme.palette.common.grayLightest,
+      borderRadius: '50%',
+    },
   },
   testBadge: {
     border: `1px solid ${theme.palette.secondary.main}`,
     color: theme.palette.secondary.main,
     backgroundColor: theme.palette.common.white,
     fontWeight: 'bold',
+    // offset for icon padding
+    right: 12,
+    top: 8,
   },
   accordion: {
     '&:before': {
