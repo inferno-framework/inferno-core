@@ -50,10 +50,8 @@ module Inferno
       # @return [FHIR::Client]
       # @see Inferno::FHIRClientBuilder
       def fhir_client(client = :default)
-        fhir_error_filter do
-          fhir_clients[client] ||=
-            FHIRClientBuilder.new.build(self, self.class.fhir_client_definitions[client])
-        end
+        fhir_clients[client] ||=
+          FHIRClientBuilder.new.build(self, self.class.fhir_client_definitions[client])
       end
 
       # @private

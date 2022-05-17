@@ -60,20 +60,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
       it 'raises an error if the FHIR client is not known'
     end
 
-    context 'with a base url that causes a TCP error' do
-      before do
-        allow_any_instance_of(FHIR::Client)
-          .to receive(:initialize)
-          .and_raise(SocketError, 'Failed to open TCP')
-      end
-
-      it 'raises a skip' do
-        expect do
-          group.fhir_client
-        end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
-      end
-    end
-
     context 'with a base url that causes a non-TCP error' do
       before do
         allow_any_instance_of(FHIR::Client)
