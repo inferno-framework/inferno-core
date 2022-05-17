@@ -79,8 +79,8 @@ module Inferno
       # @param headers [Hash] custom headers for this operation
       # @return [Inferno::Entities::Request]
       def fhir_operation(path, body: nil, client: :default, name: nil, headers: {})
-        fhir_error_filter do
-          store_request_and_refresh_token(fhir_client(client), name) do
+        store_request_and_refresh_token(fhir_client(client), name) do
+          fhir_error_filter do
             operation_headers = fhir_client(client).fhir_headers
             operation_headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
             operation_headers.merge!(headers) if headers.present?
@@ -97,8 +97,8 @@ module Inferno
       #   other tests
       # @return [Inferno::Entities::Request]
       def fhir_get_capability_statement(client: :default, name: nil)
-        fhir_error_filter do
-          store_request_and_refresh_token(fhir_client(client), name) do
+        store_request_and_refresh_token(fhir_client(client), name) do
+          fhir_error_filter do
             fhir_client(client).conformance_statement
             fhir_client(client).reply
           end
@@ -114,8 +114,8 @@ module Inferno
       #   other tests
       # @return [Inferno::Entities::Request]
       def fhir_read(resource_type, id, client: :default, name: nil)
-        fhir_error_filter do
-          store_request_and_refresh_token(fhir_client(client), name) do
+        store_request_and_refresh_token(fhir_client(client), name) do
+          fhir_error_filter do
             fhir_client(client).read(fhir_class_from_resource_type(resource_type), id)
           end
         end
@@ -138,8 +138,8 @@ module Inferno
             { parameters: params }
           end
 
-        fhir_error_filter do
-          store_request_and_refresh_token(fhir_client(client), name) do
+        store_request_and_refresh_token(fhir_client(client), name) do
+          fhir_error_filter do
             fhir_client(client)
               .search(fhir_class_from_resource_type(resource_type), { search: search })
           end
@@ -155,8 +155,8 @@ module Inferno
       #   other tests
       # @return [Inferno::Entities::Request]
       def fhir_delete(resource_type, id, client: :default, name: nil)
-        fhir_error_filter do
-          store_request('outgoing', name) do
+        store_request('outgoing', name) do
+          fhir_error_filter do
             fhir_client(client).destroy(fhir_class_from_resource_type(resource_type), id)
           end
         end
