@@ -33,7 +33,7 @@
         .no-print {
           display: none;
         }
-      };
+      }
       .wrapper {
         height: 100%;
         display: flex;
@@ -54,7 +54,7 @@
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div class='wrapper'>
       <% if File.exist? (File.join(Dir.pwd, 'config', 'banner.html.erb')) %>
-        <div class='banner no-print'><%= ERB.new(File.read(File.join(Dir.pwd, 'config', 'banner.html.erb'))).result %></div> 
+        <div class='banner no-print'><%= ERB.new(File.read(File.join(Dir.pwd, 'config', 'banner.html.erb'))).result %></div>
       <% end %>
       <div class='app' id="root"></div>
     </div>
