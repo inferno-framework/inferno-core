@@ -22,8 +22,11 @@ module Inferno
 
         # A hash of urls => file_paths which will be served with `Rack::Static`
         def static_assets_map
+          puts '-------'
+          puts static_assets_folder
           Dir.glob(File.join(static_assets_folder, '*'))
             .each_with_object({}) do |filename, hash|
+              puts 'found one'
               hash["#{public_path}/#{File.basename(filename)}"] = filename.delete_prefix(inferno_path)
             end
         end
