@@ -36,8 +36,8 @@ module Inferno
           get '/version', to: ->(_env) { [200, {}, [{ 'version' => Inferno::VERSION.to_s }.to_json]] }, as: :api_version
         end
 
-        get '/', to: ->(_env) { [200, {}, [client_page]] }
-        get '/test_sessions/:id', to: ->(_env) { [200, {}, [client_page]] }
+        get '/', to: ->(_env) { [200, {'Content-Type' => 'text/html'}, [client_page]] }
+        get '/test_sessions/:id', to: ->(_env) { [200, {'Content-Type' => 'text/html'}, [client_page]] }
 
         Inferno.routes.each do |route|
           cleaned_id = route[:suite].id.gsub(/[^a-zA-Z\d\-._~]/, '_')
