@@ -40,7 +40,7 @@ export default makeStyles((theme: Theme) => ({
     fontWeight: 'bolder',
   },
   messageMessage: {
-    width: '90%',
+    width: '82%',
     padding: '0 !important',
   },
   inputOutputsValue: {
@@ -112,5 +112,57 @@ export default makeStyles((theme: Theme) => ({
   },
   requestUrlContainer: {
     width: '100%',
+  },
+  messageTypeText: {
+    paddingLeft: '3px',
+    position: 'relative',
+    top: '-8px',
+    fontSize: '13px',
+  },
+  problemBadge: {
+    fontWeight: 'bold',
+    zIndex: '1',
+  },
+
+  // these colors are here for the badges as well as the messages column
+  error: {
+    color: '#F44336',
+  },
+  warning: {
+    color: '#F88B30',
+  },
+  info: {
+    color: theme.palette.info.dark,
+  },
+
+  // common styling for the badge component inside a ProblemBadge
+  badgeBase: {
+    '& .MuiBadge-badge': {
+      backgroundColor: 'white',
+      top: '22%',
+      right: '14px',
+      zIndex: '10',
+    },
+  },
+
+  // each badge component inside a ProblemBadge has its own color
+  // depending on severity
+  errorBadge: {
+    '& .MuiBadge-badge': {
+      color: theme.palette.error.main,
+      border: `1px solid ${theme.palette.error.main}`,
+    },
+  },
+  warningBadge: {
+    '& .MuiBadge-badge': {
+      color: theme.palette.warning.main,
+      border: `1px solid ${theme.palette.warning.main}`,
+    },
+  },
+  infoBadge: {
+    '& .MuiBadge-badge': {
+      color: theme.palette.info.dark,
+      border: `1px solid ${theme.palette.info.dark}`,
+    },
   },
 }));

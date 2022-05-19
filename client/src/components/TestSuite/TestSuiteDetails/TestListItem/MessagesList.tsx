@@ -4,6 +4,9 @@ import { Table, TableBody, TableRow, TableCell, Typography, TableHead, Box } fro
 import { Message } from 'models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 
+import MessageType from './MessageType';
+import { sortByMessageType } from './helper';
+
 interface MessagesListProps {
   messages: Message[];
 }
@@ -24,12 +27,12 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
     </TableRow>
   );
 
-  const messageListItems = messages.map((message: Message, index: number) => {
+  const messageListItems = sortByMessageType(messages).map((message: Message, index: number) => {
     return (
       <TableRow key={`msgRow-${index}`}>
         <TableCell>
           <Typography variant="subtitle2" component="p" className={styles.bolderText}>
-            {message.type}:
+            <MessageType type={message.type} />
           </Typography>
         </TableCell>
         <TableCell className={styles.messageMessage}>
