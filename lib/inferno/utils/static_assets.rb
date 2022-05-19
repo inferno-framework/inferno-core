@@ -26,8 +26,8 @@ module Inferno
           puts static_assets_folder
           Dir.glob(File.join(static_assets_folder, '*'))
             .each_with_object({}) do |filename, hash|
-              puts "#{public_path}/#{File.basename(filename)} : #{filename}"
-              hash["#{public_path}/#{File.basename(filename)}"] = filename.delete_prefix(inferno_path)
+              puts "#{public_path}/#{File.basename(filename.gsub('217.bundle','bundle'))} : #{filename}"
+              hash["#{public_path}/#{File.basename(filename.gsub('217.bundle','bundle'))}"] = filename.delete_prefix(inferno_path)
             end
         end
       end
