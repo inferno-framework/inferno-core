@@ -114,7 +114,7 @@ module Inferno
 
           outcome = FHIR::OperationOutcome.new(JSON.parse(validate(resource, profile_url)))
 
-          message_hashes = outcome.issue&.map { |issue| message_hash_from_issue(issue) } || []
+          message_hashes = outcome.issue&.map { |issue| message_hash_from_issue(issue, resource) } || []
 
           message_hashes.concat(additional_validation_messages(resource, profile_url))
 
@@ -131,10 +131,10 @@ module Inferno
         end
 
         # @private
-        def message_hash_from_issue(issue)
+        def message_hash_from_issue(issue, resource)
           {
             type: issue_severity(issue),
-            message: issue_message(issue)
+            message: issue_message(issue, resource)
           }
         end
 
@@ -151,12 +151,14 @@ module Inferno
         end
 
         # @private
-        def issue_message(issue)
+        def issue_message(issue, resource)
           location = if issue.respond_to?(:expression)
                        issue.expression&.join(', ')
                      else
                        issue.location&.join(', ')
                      end
+
+          location.prepend("#{resource.resourceType}#{"/#{resource.id.to_s}" if resource.id}/")
 
           "#{location}: #{issue&.details&.text}"
         end
