@@ -132,7 +132,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
                     {testGroup.short_id && (
                       <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
                     )}
-                    {testGroup.title}
+                    <Typography className={styles.labelText}>{testGroup.title}</Typography>
                   </>
                 }
                 secondary={testGroup.result?.result_message}

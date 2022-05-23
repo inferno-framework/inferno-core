@@ -23,6 +23,9 @@ export default makeStyles((theme: Theme) => ({
     padding: '0 8px 0 0',
     display: 'inline-flex',
   },
+  labelText: {
+    display: 'inline',
+  },
   testGroupCardHeader: {
     padding: '8px 16px',
     fontWeight: 600,
@@ -52,6 +55,7 @@ export default makeStyles((theme: Theme) => ({
     fontWeight: 'bold',
     alignSelf: 'center',
     color: theme.palette.common.grayVeryDark,
+    padding: '0 4px 0 0', // Padding should not be necessary
   },
   testGroupCardHeaderButton: {
     minWidth: 'fit-content',
