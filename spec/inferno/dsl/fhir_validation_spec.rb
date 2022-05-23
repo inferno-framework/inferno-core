@@ -94,5 +94,13 @@ RSpec.describe Inferno::DSL::FHIRValidation do
 
       expect(validator.resource_is_valid?(resource, profile_url, runnable)).to be(true)
     end
+
+    it 'includes Resource/id in error message' do
+
+    end 
+
+    it 'includes Resource in error message if resource.id is nil' do
+
+    end 
   end
 end
