@@ -122,6 +122,9 @@ export default makeStyles((theme: Theme) => ({
   problemBadge: {
     fontWeight: 'bold',
     zIndex: '1',
+    '&:focus': {
+      outline: 'none',
+    },
   },
 
   // these colors are here for the badges as well as the messages column
