@@ -1,3 +1,8 @@
+# 0.3.3
+
+* UI accessibility improvements.
+* Force sending text/html Content-Type header for app root and session pages.
+
 # 0.3.2
 
 * Add IE meta tag.
