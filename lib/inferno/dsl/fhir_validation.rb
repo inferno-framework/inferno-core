@@ -171,13 +171,11 @@ module Inferno
         # @param profile_url [String]
         # @return [String] the body of the validation response
         def validate(resource, profile_url)
-          tcp_exception_handler do
-            RestClient.post(
-              "#{url}/validate",
-              resource.source_contents,
-              params: { profile: profile_url }
-            )
-          end.body
+          RestClient.post(
+            "#{url}/validate",
+            resource.source_contents,
+            params: { profile: profile_url }
+          ).body
         end
       end
 
