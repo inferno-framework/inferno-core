@@ -1,4 +1,5 @@
 require_relative '../ext/fhir_models'
+require_relative 'tcp_exception_handler'
 
 module Inferno
   module DSL
@@ -43,6 +44,8 @@ module Inferno
       end
 
       class Validator
+        include TCPExceptionHandler
+
         # @private
         def initialize(&block)
           instance_eval(&block)
@@ -168,11 +171,13 @@ module Inferno
         # @param profile_url [String]
         # @return [String] the body of the validation response
         def validate(resource, profile_url)
-          RestClient.post(
-            "#{url}/validate",
-            resource.source_contents,
-            params: { profile: profile_url }
-          ).body
+          tcp_exception_handler do 
+            RestClient.post(
+              "#{url}/validate",
+              resource.source_contents,
+              params: { profile: profile_url }
+            )
+          end.body
         end
       end
 
