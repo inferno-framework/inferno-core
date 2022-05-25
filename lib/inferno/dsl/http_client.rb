@@ -1,4 +1,5 @@
 require_relative 'request_storage'
+require_relative 'tcp_exception_handler'
 
 module Inferno
   module DSL
@@ -31,6 +32,7 @@ module Inferno
       def self.included(klass)
         klass.extend ClassMethods
         klass.include RequestStorage
+        klass.include TCPExceptionHandler
       end
 
       # Return a previously defined HTTP client
@@ -44,7 +46,7 @@ module Inferno
         definition = self.class.http_client_definitions[client]
         return nil if definition.nil?
 
-        error_filter do
+        tcp_exception_handler do
           http_clients[client] = HTTPClientBuilder.new.build(self, definition)
         end
       end
@@ -52,13 +54,6 @@ module Inferno
       # @private
       def http_clients
         @http_clients ||= {}
-      end
-
-      # @private
-      def error_filter(&block)
-        block.call
-      rescue Faraday::ConnectionFailed => e
-        e.message.include?('Failed to open TCP') ? raise(Exceptions::AssertionException, e.message) : raise(e)
       end
 
       # Perform an HTTP GET request
@@ -74,7 +69,7 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def get(url = '', client: :default, name: nil, **options)
         store_request('outgoing', name) do
-          error_filter do
+          tcp_exception_handler do
             client = http_client(client)
 
             if client
@@ -102,7 +97,7 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def post(url = '', body: nil, client: :default, name: nil, **options)
         store_request('outgoing', name) do
-          error_filter do
+          tcp_exception_handler do
             client = http_client(client)
 
             if client
@@ -127,7 +122,7 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def delete(url = '', client: :default, name: :nil, **options)
         store_request('outgoing', name) do
-          error_filter do
+          tcp_exception_handler do
             client = http_client(client)
 
             if client
@@ -166,7 +161,7 @@ module Inferno
         end
 
         store_request('outgoing', name) do
-          error_filter do
+          tcp_exception_handler do
             client = http_client(client)
 
             if client
