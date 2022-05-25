@@ -5,7 +5,7 @@ module Inferno
         block.call
       rescue Faraday::ConnectionFailed, SocketError => e
         e.message.include?('Failed to open TCP') ? raise(Exceptions::AssertionException, e.message) : raise(e)
-      end 
-    end 
+      end
+    end
   end
 end
