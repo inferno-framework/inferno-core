@@ -206,7 +206,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
           .and_raise(SocketError, 'Failed to open TCP')
       end
 
-      it 'raises a skip' do
+      it 'raises a test failure exception' do
         expect do
           group.fhir_operation 'abc'
         end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
@@ -281,7 +281,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
           .and_raise(SocketError, 'Failed to open TCP')
       end
 
-      it 'raises a skip' do
+      it 'raises a test failure exception' do
         expect do
           group.fhir_get_capability_statement
         end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
@@ -369,7 +369,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
           .and_raise(SocketError, 'Failed to open TCP')
       end
 
-      it 'raises a skip' do
+      it 'raises a test failure exception' do
         expect do
           group.fhir_read :patient, '0'
         end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
@@ -479,7 +479,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
           .and_raise(SocketError, 'Failed to open TCP')
       end
 
-      it 'raises a skip' do
+      it 'raises a test failure exception' do
         expect do
           group.fhir_search :patient
         end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
@@ -553,7 +553,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
           .and_raise(SocketError, 'Failed to open TCP')
       end
 
-      it 'raises a skip' do
+      it 'raises a test failure exception' do
         expect do
           group.fhir_delete :patient, '0'
         end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
