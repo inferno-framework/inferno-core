@@ -20,12 +20,17 @@ import InputOutputsList from './InputOutputsList';
 import MessagesList from './MessagesList';
 import RequestsList from './RequestsList';
 import ResultIcon from '../ResultIcon';
+import ProblemBadge from './ProblemBadge';
 import PublicIcon from '@mui/icons-material/Public';
-import MailIcon from '@mui/icons-material/Mail';
+import Cancel from '@mui/icons-material/Cancel';
+import Warning from '@mui/icons-material/Warning';
+import Info from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReactMarkdown from 'react-markdown';
 import TestRunButton from '../../TestRunButton/TestRunButton';
 import { shouldShowDescription } from '../../TestSuiteUtilities';
+import type { MessageCounts } from './helper';
+import { countMessageTypes } from './helper';
 
 interface TestListItemProps {
   test: Test;
@@ -79,39 +84,6 @@ const TestListItem: FC<TestListItemProps> = ({
       secondaryTypographyProps={{ component: 'div' }}
     />
   );
-
-  // Custom icon button to resolve nested interactive control error
-  const messagesBadge = view === 'run' &&
-    test.result?.messages &&
-    test.result.messages.length > 0 && (
-      <Badge
-        badgeContent={test.result.messages.length}
-        overlap="circular"
-        classes={{ badge: styles.testBadge }}
-      >
-        <Tooltip describeChild title={`${test.result.messages.length} message(s)`}>
-          <MailIcon
-            aria-label={`View ${test.result.messages.length} message(s)`}
-            aria-hidden={false}
-            tabIndex={0}
-            color="secondary"
-            className={styles.badgeIcon}
-            onClick={(e) => {
-              e.stopPropagation();
-              setPanelIndex(0);
-              setOpen(true);
-            }}
-            onKeyDown={(e) => {
-              e.stopPropagation();
-              if (e.key === 'Enter') {
-                setPanelIndex(0);
-                setOpen(true);
-              }
-            }}
-          />
-        </Tooltip>
-      </Badge>
-    );
 
   // Custom icon button to resolve nested interactive control error
   const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
@@ -175,6 +147,53 @@ const TestListItem: FC<TestListItemProps> = ({
     'aria-controls': `${test.id}-tabpanel-${index}`,
   });
 
+  const messageTypeCounts: MessageCounts = (() => {
+    if (test.result === undefined || !test.result?.messages)
+      return { errors: 0, warnings: 0, infos: 0 };
+
+    return countMessageTypes(test.result.messages);
+  })();
+
+  const renderProblemBadge = (messageTypeCounts: MessageCounts) => {
+    if (view !== 'run') return null;
+
+    if (messageTypeCounts.errors > 0)
+      return (
+        <ProblemBadge
+          Icon={Cancel}
+          counts={messageTypeCounts.errors}
+          color={styles.error}
+          badgeStyle={styles.errorBadge}
+          setOpen={setOpen}
+          setPanelIndex={setPanelIndex}
+        />
+      );
+
+    if (messageTypeCounts.warnings > 0)
+      return (
+        <ProblemBadge
+          Icon={Warning}
+          counts={messageTypeCounts.warnings}
+          color={styles.warning}
+          badgeStyle={styles.warningBadge}
+          setOpen={setOpen}
+          setPanelIndex={setPanelIndex}
+        />
+      );
+
+    if (messageTypeCounts.infos > 0)
+      return (
+        <ProblemBadge
+          Icon={Info}
+          counts={messageTypeCounts.infos}
+          color={styles.info}
+          badgeStyle={styles.infoBadge}
+          setOpen={setOpen}
+          setPanelIndex={setPanelIndex}
+        />
+      );
+  };
+
   return (
     <>
       <Accordion
@@ -201,7 +220,7 @@ const TestListItem: FC<TestListItemProps> = ({
           <Box display="flex" alignItems="center" width={'100%'}>
             {resultIcon}
             {testText}
-            {messagesBadge}
+            {renderProblemBadge(messageTypeCounts)}
             {requestsBadge}
             {testRunButton}
           </Box>
