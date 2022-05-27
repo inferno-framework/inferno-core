@@ -42,8 +42,6 @@ module Inferno
       end
 
       class Validator
-        include TCPExceptionHandler
-
         # @private
         def initialize(&block)
           instance_eval(&block)
