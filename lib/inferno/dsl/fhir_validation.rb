@@ -1,6 +1,4 @@
 require_relative '../ext/fhir_models'
-require_relative 'tcp_exception_handler'
-
 module Inferno
   module DSL
     # This module contains the methods needed to configure a validator to
