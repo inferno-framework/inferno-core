@@ -158,7 +158,7 @@ module Inferno
                        issue.location&.join(', ')
                      end
 
-          location.prepend("#{resource.resourceType}#{"/#{resource.id.to_s}" if resource.id}/")
+          location.prepend("#{resource.resourceType}#{"/#{resource.id}" if resource.id}/")
 
           "#{location}: #{issue&.details&.text}"
         end
