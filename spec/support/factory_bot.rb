@@ -16,6 +16,12 @@ class CreateStrategy
 
     result
   end
+
+  # breaking change in factory_bot 6.2.1
+  # https://github.com/thoughtbot/factory_bot/issues/1536
+  def to_sym
+    :repo_create
+  end
 end
 
 FactoryBot.register_strategy(:repo_create, CreateStrategy)
