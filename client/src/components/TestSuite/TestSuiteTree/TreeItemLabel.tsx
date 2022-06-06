@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TestGroup, TestSuite } from 'models/testSuiteModels';
+import { TestGroup, TestSuite } from '~/models/testSuiteModels';
 import { Typography, Box } from '@mui/material';
 import useStyles from './styles';
 

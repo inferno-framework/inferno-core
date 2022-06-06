@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Box, Card, Chip, Divider, Tab, Tabs, Typography } from '@mui/material';
-import { Message, TestSuite } from 'models/testSuiteModels';
+import { Message, TestSuite } from '~/models/testSuiteModels';
 import useStyles from './styles';
 import TabPanel from '../TestSuiteDetails/TestListItem/TabPanel';
 import ReactMarkdown from 'react-markdown';

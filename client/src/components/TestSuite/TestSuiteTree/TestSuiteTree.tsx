@@ -5,7 +5,7 @@ import {
   RunnableType,
   PresetSummary,
   ViewType,
-} from 'models/testSuiteModels';
+} from '~/models/testSuiteModels';
 import { Box, Divider, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -16,10 +16,10 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import useStyles from './styles';
-import CustomTreeItem from '../../_common/TreeItem';
 import TestGroupTreeItem from './TestGroupTreeItem';
 import TreeItemLabel from './TreeItemLabel';
-import PresetsSelector from 'components/PresetsSelector/PresetsSelector';
+import CustomTreeItem from '~/components/_common/TreeItem';
+import PresetsSelector from '~/components/PresetsSelector/PresetsSelector';
 
 export interface TestSuiteTreeProps {
   testSuite: TestSuite;

@@ -11,10 +11,10 @@ import {
   AlertColor,
   MenuItem,
 } from '@mui/material';
-import { applyPreset } from 'api/TestSessionApi';
-import { PresetSummary } from 'models/testSuiteModels';
-import theme from '../../styles/theme';
-import lightTheme from '../../styles/theme';
+import { applyPreset } from '~/api/TestSessionApi';
+import { PresetSummary } from '~/models/testSuiteModels';
+import theme from '~/styles/theme';
+import lightTheme from '~/styles/theme';
 
 export interface PresetsModalProps {
   presets: PresetSummary[];

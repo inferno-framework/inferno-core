@@ -11,9 +11,9 @@ import {
   TableHead,
   Box,
 } from '@mui/material';
-import { Request } from 'models/testSuiteModels';
-import RequestDetailModal from 'components/RequestDetailModal/RequestDetailModal';
-import { getRequestDetails } from 'api/RequestsApi';
+import { Request } from '~/models/testSuiteModels';
+import RequestDetailModal from '~/components/RequestDetailModal/RequestDetailModal';
+import { getRequestDetails } from '~/api/RequestsApi';
 import useStyles from './styles';
 
 interface RequestsListProps {

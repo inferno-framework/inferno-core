@@ -15,12 +15,12 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FolderIcon from '@mui/icons-material/Folder';
 import InputOutputsList from './TestListItem/InputOutputsList';
-import { Request, RunnableType, Test, TestGroup, ViewType } from 'models/testSuiteModels';
+import { Request, RunnableType, Test, TestGroup, ViewType } from '~/models/testSuiteModels';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 import TestListItem from './TestListItem/TestListItem';
 import ReactMarkdown from 'react-markdown';
-import theme from '../../../styles/theme';
+import theme from '~/styles/theme';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;

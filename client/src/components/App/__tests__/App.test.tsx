@@ -2,13 +2,15 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 
 import App from '../App';
-import * as testSuitesApi from 'api/TestSuitesApi';
-import * as testSessionApi from 'api/TestSessionApi';
+import * as testSuitesApi from '~/api/TestSuitesApi';
+import * as testSessionApi from '~/api/TestSessionApi';
 import { testSuites, singleTestSuite, testSession } from '../__mocked_data__/mockData';
 
 // mock out a complex child component, react-testing-library advises
 // against this but we are in the App component, so maybe make an exception?
-jest.mock('../../TestSuite/TestSessionWrapper', () => () => <div>Mock TestSessionWrapper</div>);
+jest.mock('~/components/TestSuite/TestSessionWrapper', () => () => (
+  <div>Mock TestSessionWrapper</div>
+));
 
 describe('The App Root Component', () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TestRun, Result } from 'models/testSuiteModels';
+import { TestRun, Result } from '~/models/testSuiteModels';
 import {
   Box,
   IconButton,

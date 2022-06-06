@@ -1,4 +1,4 @@
-import { Runnable } from 'models/testSuiteModels';
+import { Runnable } from '~/models/testSuiteModels';
 
 export const shouldShowDescription = (
   runnable: Runnable,
