@@ -26,7 +26,7 @@ RSpec.describe Inferno::Web::Serializers::Result do
 
     it 'sets optional to true' do
       serialized_result = JSON.parse(described_class.render(result))
-      expect(serialized_result['optional']).to eq(true)
+      expect(serialized_result['optional']).to be(true)
     end
   end
 end

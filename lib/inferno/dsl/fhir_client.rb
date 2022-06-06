@@ -1,4 +1,5 @@
 require_relative 'request_storage'
+require_relative 'tcp_exception_handler'
 
 module Inferno
   module DSL
@@ -40,6 +41,7 @@ module Inferno
         klass.extend ClassMethods
         klass.extend Forwardable
         klass.include RequestStorage
+        klass.include TCPExceptionHandler
 
         klass.def_delegators 'self.class', :profile_url, :validator_url
       end
@@ -73,11 +75,13 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def fhir_operation(path, body: nil, client: :default, name: nil, headers: {})
         store_request_and_refresh_token(fhir_client(client), name) do
-          operation_headers = fhir_client(client).fhir_headers
-          operation_headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
-          operation_headers.merge!(headers) if headers.present?
+          tcp_exception_handler do
+            operation_headers = fhir_client(client).fhir_headers
+            operation_headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
+            operation_headers.merge!(headers) if headers.present?
 
-          fhir_client(client).send(:post, path, body, operation_headers)
+            fhir_client(client).send(:post, path, body, operation_headers)
+          end
         end
       end
 
@@ -89,8 +93,10 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def fhir_get_capability_statement(client: :default, name: nil)
         store_request_and_refresh_token(fhir_client(client), name) do
-          fhir_client(client).conformance_statement
-          fhir_client(client).reply
+          tcp_exception_handler do
+            fhir_client(client).conformance_statement
+            fhir_client(client).reply
+          end
         end
       end
 
@@ -104,7 +110,9 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def fhir_read(resource_type, id, client: :default, name: nil)
         store_request_and_refresh_token(fhir_client(client), name) do
-          fhir_client(client).read(fhir_class_from_resource_type(resource_type), id)
+          tcp_exception_handler do
+            fhir_client(client).read(fhir_class_from_resource_type(resource_type), id)
+          end
         end
       end
 
@@ -126,8 +134,10 @@ module Inferno
           end
 
         store_request_and_refresh_token(fhir_client(client), name) do
-          fhir_client(client)
-            .search(fhir_class_from_resource_type(resource_type), { search: search })
+          tcp_exception_handler do
+            fhir_client(client)
+              .search(fhir_class_from_resource_type(resource_type), { search: search })
+          end
         end
       end
 
@@ -141,7 +151,9 @@ module Inferno
       # @return [Inferno::Entities::Request]
       def fhir_delete(resource_type, id, client: :default, name: nil)
         store_request('outgoing', name) do
-          fhir_client(client).destroy(fhir_class_from_resource_type(resource_type), id)
+          tcp_exception_handler do
+            fhir_client(client).destroy(fhir_class_from_resource_type(resource_type), id)
+          end
         end
       end
 

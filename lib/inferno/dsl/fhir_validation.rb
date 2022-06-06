@@ -1,5 +1,4 @@
 require_relative '../ext/fhir_models'
-
 module Inferno
   module DSL
     # This module contains the methods needed to configure a validator to
