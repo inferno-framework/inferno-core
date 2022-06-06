@@ -130,7 +130,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
                 primary={
                   <>
                     {testGroup.short_id && (
-                      <Typography className={styles.shortId}>{testGroup.short_id}</Typography>
+                      <Typography className={styles.shortId}>{`${testGroup.short_id} `}</Typography>
                     )}
                     <Typography className={styles.labelText}>{testGroup.title}</Typography>
                   </>

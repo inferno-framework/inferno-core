@@ -55,7 +55,6 @@ export default makeStyles((theme: Theme) => ({
     fontWeight: 'bold',
     alignSelf: 'center',
     color: theme.palette.common.grayVeryDark,
-    padding: '0 4px 0 0', // Padding should not be necessary
   },
   testGroupCardHeaderButton: {
     minWidth: 'fit-content',
