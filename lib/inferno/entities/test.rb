@@ -196,6 +196,7 @@ module Inferno
         end
 
         # @private
+        # Has an unused argument to match the method signature of Runnable#test_count
         def test_count(_ = nil)
           1
         end

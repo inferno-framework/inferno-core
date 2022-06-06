@@ -77,7 +77,6 @@ RSpec.describe Inferno::DSL::Runnable do
     end
   end
 
-  # TODO: add unit tests using suite_options
   describe '.test_count' do
     it 'returns 1 for a test' do
       klass = Class.new(Inferno::Entities::Test)
@@ -104,6 +103,21 @@ RSpec.describe Inferno::DSL::Runnable do
       expected_count = suite.groups.reduce(0) { |sum, group| sum + group.test_count }
 
       expect(suite.test_count).to eq(expected_count)
+    end
+
+    context 'with suite options' do
+      let(:suite) { OptionsSuite::Suite }
+      let(:v1_group) { OptionsSuite::V1Group }
+      let(:v2_group) { OptionsSuite::V2Group }
+
+      it 'only counts the included runnables' do
+        total_count = suite.test_count
+        v1_count = v1_group.test_count
+        v2_count = v2_group.test_count
+
+        expect(suite.test_count(ig_version: '1')).to eq(total_count - v2_count)
+        expect(suite.test_count(ig_version: '2')).to eq(total_count - v1_count)
+      end
     end
   end
 

@@ -18,8 +18,17 @@ module OptionsSuite
     id :v2_group
 
     test do
-      title 'V2 Test'
-      id :v2_test
+      title 'V2 Test 1'
+      id :v2_test1
+
+      run do
+        assert suite_options[:ig_version] == '2'
+      end
+    end
+
+    test do
+      title 'V2 Test 2'
+      id :v2_test2
 
       run do
         assert suite_options[:ig_version] == '2'
@@ -32,8 +41,22 @@ module OptionsSuite
     id :all_versions_group
 
     test do
-      title 'All Versions Test'
-      id :all_versions_test
+      title 'All Versions Test 1'
+      id :all_versions_test1
+
+      run { pass }
+    end
+
+    test do
+      title 'All Versions Test 2'
+      id :all_versions_test2
+
+      run { pass }
+    end
+
+    test do
+      title 'All Versions Test 3'
+      id :all_versions_test3
 
       run { pass }
     end
