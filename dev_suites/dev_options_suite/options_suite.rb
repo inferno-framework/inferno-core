@@ -66,6 +66,14 @@ module OptionsSuite
     title 'Options Suite'
     id :options
 
+    validator required_suite_options: { ig_version: '1' } do
+      url 'v1_validator'
+    end
+
+    validator required_suite_options: { ig_version: '2' } do
+      url 'v2_validator'
+    end
+
     suite_option :ig_version,
                  title: 'IG Version',
                  description: 'Which IG Version should be used',
@@ -83,9 +91,9 @@ module OptionsSuite
     group from: :all_versions_group
 
     group from: :v1_group,
-          when: { ig_version: '1' }
+          required_suite_options: { ig_version: '1' }
 
     group from: :v2_group,
-          when: { ig_version: '2' }
+          required_suite_options: { ig_version: '2' }
   end
 end

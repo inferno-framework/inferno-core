@@ -60,17 +60,6 @@ module Inferno
           @version = version
         end
 
-        def find_validator(validator_name)
-          validator = fhir_validators[validator_name]
-
-          return validator if validator
-
-          raise Exceptions::ValidatorNotFoundException, validator_name unless validator_name == :default
-
-          fhir_validators[:default] =
-            Inferno::DSL::FHIRValidation::Validator.new { |v| v.url default_validator_url }
-        end
-
         def configuration_messages(new_messages = nil, force_recheck: false)
           return @configuration_messages = new_messages unless new_messages.nil?
 

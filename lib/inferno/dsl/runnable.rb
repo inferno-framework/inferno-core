@@ -394,7 +394,7 @@ module Inferno
                            (parent.user_runnable? && !parent.run_as_group?)
       end
 
-      def when(suite_option_requirements)
+      def required_suite_options(suite_option_requirements)
         @suite_option_requirements = suite_option_requirements
       end
 

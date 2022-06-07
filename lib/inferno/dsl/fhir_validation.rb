@@ -38,13 +38,16 @@ module Inferno
       # Find a particular validator. Looks through a runnable's parents up to
       # the suite to find a validator with a particular name
       def find_validator(validator_name)
-        self.class.find_validator(validator_name)
+        self.class.find_validator(validator_name, suite_options)
       end
 
       class Validator
+        attr_reader :requirements
+
         # @private
-        def initialize(&block)
+        def initialize(requirements = nil, &block)
           instance_eval(&block)
+          @requirements = requirements
         end
 
         # @private
@@ -197,16 +200,33 @@ module Inferno
         #
         # @param name [Symbol] the name of the validator, only needed if you are
         #   using multiple validators
-        # TODO: update to allow default selection based on suite_options
-        def validator(name = :default, &block)
-          fhir_validators[name] = Inferno::DSL::FHIRValidation::Validator.new(&block)
+        # @param required_suite_options [Hash] suite options that must be
+        #   selected in order to use this validator
+        def validator(name = :default, required_suite_options: nil, &block)
+          current_validators = fhir_validators[name] || []
+
+          new_validator = Inferno::DSL::FHIRValidation::Validator.new(required_suite_options, &block)
+
+          current_validators.reject! { |validator| validator.requirements == required_suite_options }
+          current_validators << new_validator
+
+          fhir_validators[name] = current_validators
         end
 
         # Find a particular validator. Looks through a runnable's parents up to
         # the suite to find a validator with a particular name
-        # TODO: update to allow default selection based on suite_options
-        def find_validator(validator_name)
-          validator = fhir_validators[validator_name] || parent&.find_validator(validator_name)
+        def find_validator(validator_name, selected_suite_options = nil)
+          validators = fhir_validators[validator_name] ||
+                       Array.wrap(parent&.find_validator(validator_name, selected_suite_options))
+
+          validator =
+            if selected_suite_options.present?
+              validators.find do |possible_validator|
+                possible_validator.requirements.nil? || selected_suite_options >= possible_validator.requirements
+              end
+            else
+              validators.first
+            end
 
           raise Exceptions::ValidatorNotFoundException, validator_name if validator.nil?
 
