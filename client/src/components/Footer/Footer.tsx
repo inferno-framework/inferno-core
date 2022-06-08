@@ -10,9 +10,14 @@ interface FooterProps {
 
 const Footer: FC<FooterProps> = ({ version }) => {
   const styles = useStyles();
+  const linkList = [
+    { label: 'Open Source', url: 'https://github.com/inferno-framework/inferno-core' },
+    { label: 'Issues', url: 'https://github.com/inferno-framework/inferno-core/issues' },
+  ];
+
   return (
     <footer className={styles.footer}>
-      <Box display="flex" flexDirection="row" justifyContent="space-between">
+      <Box display="flex" flexDirection="row" justifyContent="space-between" overflow="auto">
         <Box display="flex" alignItems="center" px={2}>
           <Link
             href="https://inferno-framework.github.io/inferno-core"
@@ -38,25 +43,22 @@ const Footer: FC<FooterProps> = ({ version }) => {
           )}
         </Box>
         <Box display="flex" alignItems="center" p={2}>
-          <Link
-            href="https://inferno-framework.github.io/inferno-core"
-            target="_blank"
-            rel="noreferrer"
-            color="secondary"
-            className={styles.linkText}
-          >
-            Open Source
-          </Link>
-          <Divider orientation="vertical" flexItem />
-          <Link
-            href="https://inferno-framework.github.io/inferno-core"
-            target="_blank"
-            rel="noreferrer"
-            color="secondary"
-            className={styles.linkText}
-          >
-            Issues
-          </Link>
+          {linkList.map((link, i) => {
+            return (
+              <>
+                <Link
+                  href={link.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  color="secondary"
+                  className={styles.linkText}
+                >
+                  {link.label}
+                </Link>
+                {i !== linkList.length - 1 && <Divider orientation="vertical" flexItem />}
+              </>
+            );
+          })}
         </Box>
       </Box>
     </footer>
