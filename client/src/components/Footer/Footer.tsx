@@ -50,7 +50,7 @@ const Footer: FC<FooterProps> = ({ version }) => {
                   href={link.url}
                   target="_blank"
                   rel="noreferrer"
-                  color="secondary"
+                  underline="hover"
                   className={styles.linkText}
                 >
                   {link.label}

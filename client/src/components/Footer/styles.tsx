@@ -29,9 +29,6 @@ export default makeStyles((theme: Theme) => ({
     fontWeight: 'bolder',
     fontSize: '1.1rem',
     margin: '0 16px',
-    textDecoration: 'none',
-    '&:hover': {
-      textDecoration: 'underline',
-    },
+    color: theme.palette.common.grayDark,
   },
 }));
