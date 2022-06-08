@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { Container, Box, Link, Typography } from '@mui/material';
+import { Box, Link, Typography, Divider } from '@mui/material';
 import logo from 'images/inferno_logo.png';
 import { getStaticPath } from 'api/infernoApiService';
 
@@ -12,11 +12,8 @@ const Footer: FC<FooterProps> = ({ version }) => {
   const styles = useStyles();
   return (
     <footer className={styles.footer}>
-      <Container>
-        <Box className={styles.builtUsingContainer}>
-          <Typography variant="overline" className={styles.footerText}>
-            built using
-          </Typography>
+      <Box display="flex" flexDirection="row" justifyContent="space-between">
+        <Box display="flex" alignItems="center" px={2}>
           <Link
             href="https://inferno-framework.github.io/inferno-core"
             target="_blank"
@@ -30,12 +27,38 @@ const Footer: FC<FooterProps> = ({ version }) => {
             />
           </Link>
           {version && (
-            <Typography variant="overline" className={styles.footerText}>
-              {`version ${version}`}
-            </Typography>
+            <Box display="flex" flexDirection="column">
+              <Typography className={styles.logoText} style={{ fontSize: '0.7rem' }}>
+                Built with
+              </Typography>
+              <Typography className={styles.logoText} style={{ fontSize: '0.9rem' }}>
+                {`v.${version}`}
+              </Typography>
+            </Box>
           )}
         </Box>
-      </Container>
+        <Box display="flex" alignItems="center" p={2}>
+          <Link
+            href="https://inferno-framework.github.io/inferno-core"
+            target="_blank"
+            rel="noreferrer"
+            color="secondary"
+            className={styles.linkText}
+          >
+            Open Source
+          </Link>
+          <Divider orientation="vertical" flexItem />
+          <Link
+            href="https://inferno-framework.github.io/inferno-core"
+            target="_blank"
+            rel="noreferrer"
+            color="secondary"
+            className={styles.linkText}
+          >
+            Issues
+          </Link>
+        </Box>
+      </Box>
     </footer>
   );
 };

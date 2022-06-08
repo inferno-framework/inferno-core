@@ -12,25 +12,26 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.common.orangeLightest,
     position: 'sticky',
     bottom: 0,
-    '& .MuiContainer-root': {
-      display: 'flex',
-      justifyContent: 'center',
-    },
     '@media print': {
       display: 'none',
     },
   },
-  builtUsingContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
   logo: {
     objectFit: 'contain',
-    height: '2.5em',
+    height: '3em',
+    padding: '4px 8px 4px 0',
   },
-  footerText: {
+  logoText: {
     fontStyle: 'italic',
-    padding: '11px 12px 8px 8px',
+    textTransform: 'uppercase',
+  },
+  linkText: {
+    fontWeight: 'bolder',
+    fontSize: '1.1rem',
+    margin: '0 16px',
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'underline',
+    },
   },
 }));
