@@ -12,6 +12,12 @@ parent: Deployment
 1. TOC
 {:toc}
 ---
+## Database Configuration
+The database configuration lives in `config/database.yml`. Inferno uses the
+[Sequel gem](http://sequel.jeremyevans.net/) to communicate with the database,
+which offers [the following configuration
+options](http://sequel.jeremyevans.net/rdoc/files/doc/opening_databases_rdoc.html#label-General+connection+options).
+
 ## PostgreSQL
 Inferno defaults to using SQLite, which is not suitable for use in a multi-user
 deployment. Multi-user deployments should use PostgreSQL instead.
@@ -32,7 +38,7 @@ Rather than setting up a separate PostgreSQL service, you can run it via
       POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_DB: inferno_production
 ```
-* Add `- inferno_db` to the `depends_on` for `inferno` and `worker` services in
+* Add `inferno_db` to the `depends_on` for `inferno` and `worker` services in
   `docker-compose.yml`. For example:
 ```yaml
   inferno:
