@@ -41,7 +41,7 @@ const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
             )}
           </Box>
         </Box>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} sx={{ minWidth: 'fit-content' }}>
           <Button
             disableElevation
             color="secondary"

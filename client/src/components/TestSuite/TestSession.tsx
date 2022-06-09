@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Box, Drawer } from '@mui/material';
+import { Box, Drawer, SwipeableDrawer, Toolbar } from '@mui/material';
 import {
   TestInput,
   RunnableType,
@@ -92,6 +92,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   );
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  const windowIsSmall = windowWidth < 800;
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     test_suite.inputs?.forEach((input: TestInput) => {
@@ -130,6 +136,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   if (!runnableMap.get(selectedRunnable)) {
     selectedRunnable = testSession.test_suite.id;
+  }
+
+  function handleResize() {
+    setWindowWidth(window.innerWidth);
   }
 
   function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
@@ -244,6 +254,23 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     );
   }
 
+  function renderDrawerContents() {
+    return (
+      <nav className={styles.drawer}>
+        <TestSuiteTreeComponent
+          testSuite={test_suite}
+          runTests={runTests}
+          selectedRunnable={selectedRunnable}
+          testRunInProgress={testRunNeedsProgressBar(testRun)}
+          view={(view as ViewType) || 'run'}
+          presets={testSession.test_suite.presets}
+          getSessionData={getSessionData}
+          testSessionId={id}
+        />
+      </nav>
+    );
+  }
+
   function renderView(view: ViewType) {
     if (!runnableMap.get(selectedRunnable)) return null;
     switch (view) {
@@ -272,31 +299,44 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const bannerHeight = document.getElementsByClassName('banner')[0]?.clientHeight;
 
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const toggleDrawer = (newDrawerOpen: boolean) => () => {
+    setDrawerOpen(newDrawerOpen);
+  };
+
   return (
     <Box
       className={styles.testSuiteMain}
       maxHeight={`calc(100vh - 64px - 51px - ${bannerHeight}px)`}
     >
       {renderTestRunProgressBar()}
-      <Drawer
-        variant="permanent"
-        anchor="left"
-        className={styles.hidePrint}
-        classes={{ paper: styles.drawerPaper }}
-      >
-        <nav className={styles.drawer}>
-          <TestSuiteTreeComponent
-            testSuite={test_suite}
-            runTests={runTests}
-            selectedRunnable={selectedRunnable}
-            testRunInProgress={testRunNeedsProgressBar(testRun)}
-            view={(view as ViewType) || 'run'}
-            presets={testSession.test_suite.presets}
-            getSessionData={getSessionData}
-            testSessionId={id}
-          />
-        </nav>
-      </Drawer>
+      {windowIsSmall ? (
+        <SwipeableDrawer
+          anchor="left"
+          open={drawerOpen}
+          onClose={toggleDrawer(false)}
+          onOpen={toggleDrawer(true)}
+          swipeAreaWidth={56}
+          disableSwipeToOpen={false}
+          ModalProps={{
+            keepMounted: true,
+          }}
+        >
+          <Toolbar sx={{ minHeight: '64px' }} /> {/* Spacer to be updated with header height */}
+          {renderDrawerContents()}
+          <Toolbar sx={{ minHeight: '51px' }} /> {/* Spacer to be updated with footer height */}
+        </SwipeableDrawer>
+      ) : (
+        <Drawer
+          variant="permanent"
+          anchor="left"
+          className={styles.hidePrint}
+          classes={{ paper: styles.drawerPaper }}
+        >
+          {renderDrawerContents()}
+        </Drawer>
+      )}
       <main style={{ overflow: 'scroll', width: '100%' }}>
         <Box className={styles.contentContainer}>
           {renderView((view as ViewType) || 'run')}
