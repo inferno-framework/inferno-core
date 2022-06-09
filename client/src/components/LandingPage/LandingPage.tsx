@@ -13,7 +13,6 @@ import { TestSuite, TestSession } from 'models/testSuiteModels';
 import useStyles from './styles';
 import { useHistory } from 'react-router-dom';
 import { postTestSessions } from 'api/TestSessionApi';
-import Header from 'components/Header';
 
 export interface LandingPageProps {
   testSuites: TestSuite[] | undefined;
@@ -38,7 +37,6 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
 
   return (
     <>
-      <Header />
       <Container maxWidth="lg" className={styles.main} role="main">
         <Grid container spacing={10} justifyContent="center">
           <Grid container item xs={6} alignItems="center">

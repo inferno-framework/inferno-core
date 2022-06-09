@@ -68,8 +68,11 @@ export interface TestSessionComponentProps {
   previousResults: Result[];
   initialTestRun: TestRun | null;
   sessionData: Map<string, unknown>;
+  drawerOpen: boolean;
+  windowIsSmall: boolean;
   setSessionData: (data: Map<string, unknown>) => void;
   getSessionData?: (testSessionId: string) => void;
+  toggleDrawer: (drawerOpen: boolean) => void;
 }
 
 const TestSessionComponent: FC<TestSessionComponentProps> = ({
@@ -77,8 +80,11 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   previousResults,
   initialTestRun,
   sessionData,
+  drawerOpen,
+  windowIsSmall,
   setSessionData,
   getSessionData,
+  toggleDrawer,
 }) => {
   const styles = useStyles();
   const { test_suite, id } = testSession;
@@ -92,12 +98,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   );
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
-  const windowIsSmall = windowWidth < 800;
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
 
   useEffect(() => {
     test_suite.inputs?.forEach((input: TestInput) => {
@@ -136,10 +136,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   if (!runnableMap.get(selectedRunnable)) {
     selectedRunnable = testSession.test_suite.id;
-  }
-
-  function handleResize() {
-    setWindowWidth(window.innerWidth);
   }
 
   function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
@@ -299,12 +295,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const bannerHeight = document.getElementsByClassName('banner')[0]?.clientHeight;
 
-  const [drawerOpen, setDrawerOpen] = React.useState(false);
-
-  const toggleDrawer = (newDrawerOpen: boolean) => () => {
-    setDrawerOpen(newDrawerOpen);
-  };
-
   return (
     <Box
       className={styles.testSuiteMain}
@@ -315,17 +305,19 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         <SwipeableDrawer
           anchor="left"
           open={drawerOpen}
-          onClose={toggleDrawer(false)}
-          onOpen={toggleDrawer(true)}
+          onClose={() => toggleDrawer(false)}
+          onOpen={() => toggleDrawer(true)}
           swipeAreaWidth={56}
           disableSwipeToOpen={false}
           ModalProps={{
             keepMounted: true,
           }}
         >
-          <Toolbar sx={{ minHeight: '64px' }} /> {/* Spacer to be updated with header height */}
+          {/* Spacer to be updated with header height */}
+          <Toolbar sx={{ minHeight: '64px' }} />
           {renderDrawerContents()}
-          <Toolbar sx={{ minHeight: '51px' }} /> {/* Spacer to be updated with footer height */}
+          {/* Spacer to be updated with footer height */}
+          <Toolbar sx={{ minHeight: '51px !important' }} />
         </SwipeableDrawer>
       ) : (
         <Drawer

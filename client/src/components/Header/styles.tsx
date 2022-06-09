@@ -26,7 +26,7 @@ export default makeStyles((theme: Theme) => ({
   },
   logo: {
     objectFit: 'contain',
-    height: '3em',
+    height: '2.75em',
   },
   titleContainer: {
     display: 'flex',
