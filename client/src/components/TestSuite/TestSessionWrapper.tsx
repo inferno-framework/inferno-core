@@ -26,6 +26,13 @@ const TestSessionWrapper: FC<unknown> = () => {
   const [attemptedGetSessionData, setAttemptedSessionData] = React.useState(false);
   const [attemptingFetchSessionInfo, setAttemptingFetchSessionInfo] = React.useState(false);
   const [coreVersion, setCoreVersion] = React.useState<string>('');
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  const windowIsSmall = windowWidth < 800;
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     getCoreVersion()
@@ -36,6 +43,10 @@ const TestSessionWrapper: FC<unknown> = () => {
         console.log(e);
       });
   }, []);
+
+  function handleResize() {
+    setWindowWidth(window.innerWidth);
+  }
 
   function tryGetTestSession(test_session_id: string) {
     getTestSession(test_session_id)
@@ -94,20 +105,30 @@ const TestSessionWrapper: FC<unknown> = () => {
       .finally(() => setAttemptedSessionData(true));
   }
 
+  function toggleDrawer(newDrawerOpen: boolean) {
+    setDrawerOpen(newDrawerOpen);
+  }
+
   if (testSession && testResults && sessionData) {
     return (
       <Box className={styles.testSessionContainer}>
         <Header
           suiteTitle={testSession.test_suite.title}
           suiteVersion={testSession.test_suite.version}
+          drawerOpen={drawerOpen}
+          windowIsSmall={windowIsSmall}
+          toggleDrawer={toggleDrawer}
         />
         <TestSessionComponent
           testSession={testSession}
           previousResults={testResults}
           initialTestRun={testRun}
           sessionData={sessionData}
+          drawerOpen={drawerOpen}
+          windowIsSmall={windowIsSmall}
           setSessionData={setSessionData}
           getSessionData={tryGetSessionData}
+          toggleDrawer={toggleDrawer}
         />
         <Footer version={coreVersion} />
       </Box>
