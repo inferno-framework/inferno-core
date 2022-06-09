@@ -33,7 +33,7 @@ export default makeStyles((theme: Theme) => ({
     alignSelf: 'center',
   },
   tabs: {
-    minheight: 'auto',
+    minHeight: 'auto',
     padding: 0,
   },
   bolderText: {
