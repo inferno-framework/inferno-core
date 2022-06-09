@@ -11,6 +11,7 @@ module Inferno
           field :input_instructions
           field :test_count
           field :version
+          field :suite_options, extractor: HashValueExtractor
           association :presets, view: :summary, blueprint: Preset
         end
 

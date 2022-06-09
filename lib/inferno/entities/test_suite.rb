@@ -86,7 +86,7 @@ module Inferno
         end
 
         def suite_option(identifier, **input_params)
-          suite_options[identifier] = input_params
+          suite_options[identifier] = input_params.merge(id: identifier)
         end
 
         def suite_options

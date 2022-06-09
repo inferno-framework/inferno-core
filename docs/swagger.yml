@@ -572,6 +572,33 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/PresetSummary"
+      suite_options:
+        tye: "array"
+        items:
+          $ref: "#/definitions/SuiteOption"
+  SuiteOption:
+    type: "object"
+    required:
+    - "id"
+    - "list_options"
+    properties:
+      id:
+        type: "string"
+      title:
+        type: "string"
+      description:
+        type: "string"
+      list_options:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            type: "object"
+            properties:
+              label:
+                type: "string"
+              value:
+                type: "string"
   TestGroup:
     type: "object"
     required:
