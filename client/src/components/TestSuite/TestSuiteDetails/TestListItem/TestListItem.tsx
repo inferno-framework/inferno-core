@@ -58,7 +58,7 @@ const TestListItem: FC<TestListItemProps> = ({
   }, [test.result]);
 
   const resultIcon = (
-    <Box className={styles.testIcon}>
+    <Box display="inline-flex">
       <ResultIcon result={test.result} />
     </Box>
   );
@@ -82,6 +82,7 @@ const TestListItem: FC<TestListItemProps> = ({
         )
       }
       secondaryTypographyProps={{ component: 'div' }}
+      sx={{ padding: '0 8px', overflow: 'auto' }}
     />
   );
 
@@ -90,6 +91,7 @@ const TestListItem: FC<TestListItemProps> = ({
     <Badge
       badgeContent={test.result.requests.length}
       overlap="circular"
+      className={styles.badgeBase}
       classes={{ badge: styles.testBadge }}
     >
       <Tooltip describeChild title={`${test.result.requests.length} request(s)`}>

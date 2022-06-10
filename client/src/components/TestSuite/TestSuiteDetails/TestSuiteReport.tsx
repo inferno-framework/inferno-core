@@ -73,7 +73,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
           </Button>
         </span>
       </div>
-      <Box className={styles.reportSummaryBox}>
+      <Box p={1}>
         <Box className={styles.reportSummaryItems}>
           <Box px={2}>
             <Typography

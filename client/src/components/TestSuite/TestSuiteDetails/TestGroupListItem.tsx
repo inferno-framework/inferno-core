@@ -123,8 +123,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}
       >
         <Box display="flex" alignItems="center">
-          <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
-          <List sx={{ padding: 0 }}>
+          <Box display="inline-flex">
+            <ResultIcon result={testGroup.result} />
+          </Box>
+          <List sx={{ padding: '0 8px' }}>
             <ListItem sx={{ padding: 0 }}>
               <ListItemText
                 primary={
@@ -171,14 +173,14 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   const navigableGroupListItem = (
     <>
       <Box display="flex" alignItems="center" px={2} py={1}>
-        <Box className={styles.testIcon}>
+        <Box display="inline-flex">
           {testGroup.run_as_group ? (
             <ResultIcon result={testGroup.result} />
           ) : (
             <FolderIcon sx={{ color: theme.palette.common.grayLight }} />
           )}
         </Box>
-        <List sx={{ padding: 0 }}>
+        <List sx={{ padding: '0 8px' }}>
           <ListItem sx={{ padding: 0 }}>
             <ListItemText
               primary={
