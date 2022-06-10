@@ -56,7 +56,7 @@ const Header: FC<HeaderProps> = ({
             )}
           </Box>
         </Box>
-        <Stack direction="row" spacing={2} sx={{ minWidth: 'fit-content' }}>
+        <Stack direction="row" spacing={2} sx={{ minWidth: windowIsSmall ? '' : 'fit-content' }}>
           <Button
             disableElevation
             color="secondary"
