@@ -13,6 +13,7 @@ const TabPanel: FC<TabPanelProps> = ({ id, index, currentPanelIndex, children })
       hidden={currentPanelIndex !== index}
       id={`${id}-tabpanel-${index}`}
       aria-labelledby={`${id}-tab-${index}`}
+      style={{ overflow: 'scroll' }}
     >
       {currentPanelIndex === index && <div>{children}</div>}
     </div>

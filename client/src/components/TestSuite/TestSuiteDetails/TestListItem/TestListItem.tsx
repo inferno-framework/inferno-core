@@ -233,6 +233,7 @@ const TestListItem: FC<TestListItemProps> = ({
         >
           <Tabs
             value={panelIndex}
+            variant="scrollable"
             className={styles.tabs}
             onChange={(e, newIndex) => {
               setPanelIndex(newIndex);
