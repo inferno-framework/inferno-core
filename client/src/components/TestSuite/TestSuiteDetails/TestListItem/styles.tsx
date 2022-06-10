@@ -41,7 +41,7 @@ export default makeStyles((theme: Theme) => ({
   },
   messageMessage: {
     width: '82%',
-    padding: '0 !important',
+    padding: '0 16px 0 0 !important',
   },
   inputOutputsValue: {
     width: '90%',
