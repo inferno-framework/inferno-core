@@ -11,7 +11,6 @@ export default makeStyles((theme: Theme) => ({
     tableLayout: 'auto',
   },
   testIcon: {
-    padding: '0 8px 0 0',
     display: 'inline-flex',
   },
   labelText: {
@@ -33,6 +32,7 @@ export default makeStyles((theme: Theme) => ({
     alignSelf: 'center',
   },
   tabs: {
+    backgroundColor: theme.palette.common.white,
     minHeight: 'auto',
     padding: 0,
   },
@@ -59,23 +59,6 @@ export default makeStyles((theme: Theme) => ({
   wordWrap: {
     overflowWrap: 'anywhere',
   },
-  badgeIcon: {
-    margin: '0 8px',
-    padding: '0.25em 0.25em', // offset for hover styling
-    '&:hover': {
-      background: theme.palette.common.grayLightest,
-      borderRadius: '50%',
-    },
-  },
-  testBadge: {
-    border: `1px solid ${theme.palette.secondary.main}`,
-    color: theme.palette.secondary.main,
-    backgroundColor: theme.palette.common.white,
-    fontWeight: 'bold',
-    // offset for icon padding
-    right: 12,
-    top: 8,
-  },
   accordion: {
     '&:before': {
       display: 'none',
@@ -91,11 +74,12 @@ export default makeStyles((theme: Theme) => ({
     },
     '& .MuiAccordionSummary-content': {
       margin: 0,
+      overflow: 'auto',
     },
   },
   accordionDetailContainer: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    padding: 0,
+    backgroundColor: theme.palette.common.grayLighter,
+    padding: '16px',
   },
   resultMessageMarkdown: {
     '& > *': {
@@ -113,15 +97,19 @@ export default makeStyles((theme: Theme) => ({
   requestUrlContainer: {
     width: '100%',
   },
-  messageTypeText: {
-    paddingLeft: '3px',
-    position: 'relative',
-    top: '-8px',
-    fontSize: '13px',
+  badgeIcon: {
+    margin: '0 8px',
+    padding: '0.25em 0.25em', // offset for hover styling
+    '&:hover': {
+      background: theme.palette.common.grayLightest,
+      borderRadius: '50%',
+    },
+  },
+  testBadge: {
+    border: `1px solid ${theme.palette.secondary.main}`,
+    color: theme.palette.secondary.main,
   },
   problemBadge: {
-    fontWeight: 'bold',
-    zIndex: '1',
     '&:focus': {
       outline: 'none',
     },
@@ -129,10 +117,10 @@ export default makeStyles((theme: Theme) => ({
 
   // these colors are here for the badges as well as the messages column
   error: {
-    color: '#F44336',
+    color: theme.palette.error.dark,
   },
   warning: {
-    color: '#F88B30',
+    color: theme.palette.common.orangeDarker,
   },
   info: {
     color: theme.palette.info.dark,
@@ -141,10 +129,11 @@ export default makeStyles((theme: Theme) => ({
   // common styling for the badge component inside a ProblemBadge
   badgeBase: {
     '& .MuiBadge-badge': {
-      backgroundColor: 'white',
-      top: '22%',
+      backgroundColor: theme.palette.common.white,
+      fontWeight: 'bold',
+      // offset for icon padding
+      top: '0.65rem',
       right: '14px',
-      zIndex: '10',
     },
   },
 
@@ -152,14 +141,14 @@ export default makeStyles((theme: Theme) => ({
   // depending on severity
   errorBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.error.main,
-      border: `1px solid ${theme.palette.error.main}`,
+      color: theme.palette.error.dark,
+      border: `1px solid ${theme.palette.error.dark}`,
     },
   },
   warningBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.warning.main,
-      border: `1px solid ${theme.palette.warning.main}`,
+      color: theme.palette.common.orangeDarker,
+      border: `1px solid ${theme.palette.common.orangeDarker}`,
     },
   },
   infoBadge: {

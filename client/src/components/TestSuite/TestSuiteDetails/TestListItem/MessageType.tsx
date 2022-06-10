@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import React, { FC } from 'react';
 import clsx from 'clsx';
 import useStyles from './styles';
@@ -25,12 +25,17 @@ const MessageType: FC<MessageTypeProps> = ({ type }) => {
   }
 
   return (
-    <span>
+    <Box display="flex" alignItems="center">
       {icon}
-      <Typography variant="caption" className={clsx([styles.messageTypeText, style])}>
+      <Typography
+        variant="subtitle2"
+        component="p"
+        p={1}
+        className={clsx([styles.bolderText, style])}
+      >
         {type}
       </Typography>
-    </span>
+    </Box>
   );
 };
 

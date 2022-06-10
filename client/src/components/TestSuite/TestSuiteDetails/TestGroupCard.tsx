@@ -31,18 +31,12 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
     return runnable.description ? <ReactMarkdown>{runnable.description}</ReactMarkdown> : undefined;
   }, [runnable.description]);
 
-  const resultSpan = runnable.result && (
-    <span className={styles.testIcon}>
-      <ResultIcon result={runnable.result} />
-    </span>
-  );
-
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
 
   return (
     <Card className={styles.testGroupCard} variant="outlined">
       <div className={styles.testGroupCardHeader}>
-        {resultSpan}
+        {runnable.result && <ResultIcon result={runnable.result} />}
         <span className={styles.testGroupCardHeaderText}>
           <Typography color="text.primary" className={styles.currentItem} component="div">
             {'short_id' in runnable && (
