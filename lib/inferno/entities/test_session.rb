@@ -37,6 +37,20 @@ module Inferno
 
       def initialize(params)
         super(params, ATTRIBUTES)
+
+        if suite_options.is_a? String # rubocop:disable Style/GuardClause
+          self.suite_options = JSON.parse(suite_options)&.deep_symbolize_keys
+        end
+      end
+
+      def to_hash
+        session_hash = (self.class::ATTRIBUTES - [:suite_options]).each_with_object({}) do |attribute, hash|
+          hash[attribute] = send(attribute)
+        end
+
+        session_hash[:suite_options] = JSON.generate(suite_options)
+
+        session_hash.compact
       end
     end
   end
