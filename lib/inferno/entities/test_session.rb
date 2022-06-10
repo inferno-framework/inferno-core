@@ -38,9 +38,9 @@ module Inferno
       def initialize(params)
         super(params, ATTRIBUTES)
 
-        if suite_options.is_a? String # rubocop:disable Style/GuardClause
-          self.suite_options = JSON.parse(suite_options)&.deep_symbolize_keys
-        end
+        self.suite_options = JSON.parse(suite_options)&.deep_symbolize_keys if suite_options.is_a? String
+
+        self.suite_options ||= {}
       end
 
       def to_hash
