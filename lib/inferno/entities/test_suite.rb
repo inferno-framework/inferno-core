@@ -30,8 +30,8 @@ module Inferno
           Inferno::Repositories::TestSuites.new
         end
 
-        def groups
-          all_children.select { |child| child < Inferno::Entities::TestGroup }
+        def groups(options = nil)
+          children(options).select { |child| child < Inferno::Entities::TestGroup }
         end
 
         # Methods to configure Inferno::DSL::Runnable
