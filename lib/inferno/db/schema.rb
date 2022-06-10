@@ -9,6 +9,7 @@ Sequel.migration do
       String :test_suite_id, :size=>255, :null=>false
       DateTime :created_at, :null=>false
       DateTime :updated_at, :null=>false
+      String :suite_options, :text=>true
       
       primary_key [:id]
     end
