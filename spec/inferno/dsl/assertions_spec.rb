@@ -193,7 +193,7 @@ RSpec.describe Inferno::DSL::Assertions do
 
         error_message = klass.messages.find { |message| message[:type] == 'error' }
         expect(error_message).to be_present
-        expect(error_message[:message]).to eq("Patient/#{patient_resource.id}/EXPRESSION: TEXT")
+        expect(error_message[:message]).to eq("Patient/#{patient_resource.id}: EXPRESSION: TEXT")
       end
     end
 
@@ -221,12 +221,12 @@ RSpec.describe Inferno::DSL::Assertions do
         warning_message = klass.messages.find { |message| message[:type] == 'warning' }
 
         expect(warning_message).to be_present
-        expect(warning_message[:message]).to eq("Patient/#{patient_resource.id}/W_EXPRESSION: W_TEXT")
+        expect(warning_message[:message]).to eq("Patient/#{patient_resource.id}: W_EXPRESSION: W_TEXT")
 
         info_message = klass.messages.find { |message| message[:type] == 'info' }
 
         expect(info_message).to be_present
-        expect(info_message[:message]).to eq("Patient/#{patient_resource.id}/I_EXPRESSION: I_TEXT")
+        expect(info_message[:message]).to eq("Patient/#{patient_resource.id}: I_EXPRESSION: I_TEXT")
       end
 
       it 'filters messages based on the exclude_message block' do
@@ -243,7 +243,7 @@ RSpec.describe Inferno::DSL::Assertions do
         warning_message = klass.messages.find { |message| message[:type] == 'warning' }
 
         expect(warning_message).to be_present
-        expect(warning_message[:message]).to eq("Patient/#{patient_resource.id}/W_EXPRESSION: W_TEXT")
+        expect(warning_message[:message]).to eq("Patient/#{patient_resource.id}: W_EXPRESSION: W_TEXT")
 
         info_message = klass.messages.find { |message| message[:type] == 'info' }
 

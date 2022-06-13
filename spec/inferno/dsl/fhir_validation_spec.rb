@@ -118,15 +118,15 @@ RSpec.describe Inferno::DSL::FHIRValidation do
         result = validator.resource_is_valid?(resource, profile_url, runnable)
 
         expect(result).to be(false)
-        expect(runnable.messages.first[:message]).to include("#{resource.resourceType}/#{resource.id}/")
+        expect(runnable.messages.first[:message]).to start_with("#{resource.resourceType}/#{resource.id}:")
       end
 
-      it 'includes resourceType/id in error message if resource.id is nil' do
+      it 'includes resourceType in error message if resource.id is nil' do
         resource.id = nil
         result = validator.resource_is_valid?(resource, profile_url, runnable)
 
         expect(result).to be(false)
-        expect(runnable.messages.first[:message]).to include("#{resource.resourceType}/")
+        expect(runnable.messages.first[:message]).to start_with("#{resource.resourceType}:")
       end
     end
 

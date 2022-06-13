@@ -158,9 +158,9 @@ module Inferno
                        issue.location&.join(', ')
                      end
 
-          location.prepend("#{resource.resourceType}#{"/#{resource.id}" if resource.id}/")
+          location_prefix = resource.id ? "#{resource.resourceType}/#{resource.id}" : resource.resourceType
 
-          "#{location}: #{issue&.details&.text}"
+          "#{location_prefix}: #{location}: #{issue&.details&.text}"
         end
 
         # Post a resource to the validation service for validating.
