@@ -1,6 +1,6 @@
 RSpec.describe Inferno::Web::Serializers::TestSession do
   let(:test_session) { repo_create(:test_session, test_suite_id: 'options', suite_options: suite_options) }
-  let(:suite_options) { { ig_version: { value: '1' } } }
+  let(:suite_options) { { ig_version: '1' } }
 
   it 'serializes a test session' do
     serialized_session = JSON.parse(described_class.render(test_session))
@@ -12,9 +12,17 @@ RSpec.describe Inferno::Web::Serializers::TestSession do
       expect(serialized_session[key]).to eq(test_session.send(key))
     end
 
-    expect(serialized_session['suite_options']).to eq(suite_options.values.map(&:deep_stringify_keys))
+    expect(serialized_session['suite_options']).to eq([{ 'id' => 'ig_version', 'value' => '1' }])
 
-    serialized_suite = JSON.parse(Inferno::Web::Serializers::TestSuite.render(test_session.test_suite, view: :full))
+    serialized_suite = JSON.parse(
+      Inferno::Web::Serializers::TestSuite.render(
+        test_session.test_suite,
+        view: :full,
+        suite_options: test_session.suite_options
+      )
+    )
+
     expect(serialized_session['test_suite']).to eq(serialized_suite)
+    expect(serialized_session['test_suite']['test_groups'].length).to eq(2)
   end
 end

@@ -7,11 +7,18 @@ module Inferno
         identifier :id
 
         field :test_suite_id
-        field :suite_options, extractor: HashValueExtractor
+        field :suite_options do |session, _options|
+          (session.suite_options.presence || {}).each_with_object([]) do |(key, value), formatted_options|
+            formatted_options << {
+              id: key,
+              value: value
+            }
+          end
+        end
 
-        association :test_suite, blueprint: TestSuite, view: :full
-        # association :test_runs, blueprint: TestRun
-        # association :results, blueprint: Result
+        field :test_suite do |session, _options|
+          TestSuite.render_as_hash(session.test_suite, view: :full, suite_options: session.suite_options)
+        end
       end
     end
   end

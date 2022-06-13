@@ -17,7 +17,9 @@ module Inferno
 
         view :full do
           include_view :summary
-          association :groups, name: :test_groups, blueprint: TestGroup
+          field :test_groups do |suite, options|
+            TestGroup.render_as_hash(suite.groups(options[:suite_options]))
+          end
           field :configuration_messages
           field :available_inputs, name: :inputs, extractor: HashValueExtractor, blueprint: Input
         end
