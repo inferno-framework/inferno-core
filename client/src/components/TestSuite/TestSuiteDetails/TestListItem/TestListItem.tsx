@@ -7,8 +7,6 @@ import {
   ListItemText,
   Tab,
   Tabs,
-  Tooltip,
-  Badge,
   Typography,
   Accordion,
   AccordionSummary,
@@ -86,38 +84,17 @@ const TestListItem: FC<TestListItemProps> = ({
     />
   );
 
-  // Custom icon button to resolve nested interactive control error
   const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
-    <Badge
-      badgeContent={test.result.requests.length}
-      overlap="circular"
-      className={styles.badgeBase}
-      classes={{ badge: styles.testBadge }}
-    >
-      <Tooltip describeChild title={`${test.result.requests.length} request(s)`}>
-        <PublicIcon
-          aria-label={`View ${test.result.requests.length} request(s)`}
-          aria-hidden={false}
-          tabIndex={0}
-          color="secondary"
-          className={styles.badgeIcon}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (view !== 'report') {
-              setPanelIndex(0);
-              setOpen(true);
-            }
-          }}
-          onKeyDown={(e) => {
-            e.stopPropagation();
-            if (e.key === 'Enter' && view !== 'report') {
-              setPanelIndex(0);
-              setOpen(true);
-            }
-          }}
-        />
-      </Tooltip>
-    </Badge>
+    <ProblemBadge
+      Icon={PublicIcon}
+      counts={test.result.requests.length}
+      color={styles.request}
+      badgeStyle={styles.requestsBadge}
+      description={`${test.result.requests.length} request(s)`}
+      view={view}
+      setOpen={setOpen}
+      setPanelIndex={setPanelIndex}
+    />
   );
 
   const testRunButton = view === 'run' && runTests && (
@@ -166,6 +143,8 @@ const TestListItem: FC<TestListItemProps> = ({
           counts={messageTypeCounts.errors}
           color={styles.error}
           badgeStyle={styles.errorBadge}
+          description={`${messageTypeCounts.errors} message(s)`}
+          view={view}
           setOpen={setOpen}
           setPanelIndex={setPanelIndex}
         />
@@ -178,6 +157,8 @@ const TestListItem: FC<TestListItemProps> = ({
           counts={messageTypeCounts.warnings}
           color={styles.warning}
           badgeStyle={styles.warningBadge}
+          description={`${messageTypeCounts.warnings} message(s)`}
+          view={view}
           setOpen={setOpen}
           setPanelIndex={setPanelIndex}
         />
@@ -190,6 +171,8 @@ const TestListItem: FC<TestListItemProps> = ({
           counts={messageTypeCounts.infos}
           color={styles.info}
           badgeStyle={styles.infoBadge}
+          description={`${messageTypeCounts.infos} message(s)`}
+          view={view}
           setOpen={setOpen}
           setPanelIndex={setPanelIndex}
         />

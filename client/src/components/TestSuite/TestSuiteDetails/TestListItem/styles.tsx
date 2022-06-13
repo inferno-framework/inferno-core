@@ -105,10 +105,6 @@ export default makeStyles((theme: Theme) => ({
       borderRadius: '50%',
     },
   },
-  testBadge: {
-    border: `1px solid ${theme.palette.secondary.main}`,
-    color: theme.palette.secondary.main,
-  },
   problemBadge: {
     '&:focus': {
       outline: 'none',
@@ -120,10 +116,13 @@ export default makeStyles((theme: Theme) => ({
     color: theme.palette.error.dark,
   },
   warning: {
-    color: theme.palette.common.orange,
+    color: theme.palette.warning.main,
   },
   info: {
     color: theme.palette.info.dark,
+  },
+  request: {
+    color: theme.palette.secondary.main,
   },
 
   // common styling for the badge component inside a ProblemBadge
@@ -147,14 +146,20 @@ export default makeStyles((theme: Theme) => ({
   },
   warningBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.common.orange,
-      border: `1px solid ${theme.palette.common.orange}`,
+      color: theme.palette.warning.main,
+      border: `1px solid ${theme.palette.warning.main}`,
     },
   },
   infoBadge: {
     '& .MuiBadge-badge': {
       color: theme.palette.info.dark,
       border: `1px solid ${theme.palette.info.dark}`,
+    },
+  },
+  requestsBadge: {
+    '& .MuiBadge-badge': {
+      color: theme.palette.secondary.main,
+      border: `1px solid ${theme.palette.secondary.main}`,
     },
   },
 }));
