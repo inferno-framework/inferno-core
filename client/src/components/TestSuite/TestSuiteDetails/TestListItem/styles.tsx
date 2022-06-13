@@ -120,7 +120,7 @@ export default makeStyles((theme: Theme) => ({
     color: theme.palette.error.dark,
   },
   warning: {
-    color: theme.palette.common.orangeDarker,
+    color: theme.palette.common.orange,
   },
   info: {
     color: theme.palette.info.dark,
@@ -147,8 +147,8 @@ export default makeStyles((theme: Theme) => ({
   },
   warningBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.common.orangeDarker,
-      border: `1px solid ${theme.palette.common.orangeDarker}`,
+      color: theme.palette.common.orange,
+      border: `1px solid ${theme.palette.common.orange}`,
     },
   },
   infoBadge: {
