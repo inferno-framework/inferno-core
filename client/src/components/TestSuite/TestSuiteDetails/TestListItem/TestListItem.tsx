@@ -22,7 +22,7 @@ import RequestsList from './RequestsList';
 import ResultIcon from '../ResultIcon';
 import ProblemBadge from './ProblemBadge';
 import PublicIcon from '@mui/icons-material/Public';
-import Cancel from '@mui/icons-material/Cancel';
+import Error from '@mui/icons-material/Error';
 import Warning from '@mui/icons-material/Warning';
 import Info from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -162,7 +162,7 @@ const TestListItem: FC<TestListItemProps> = ({
     if (messageTypeCounts.errors > 0)
       return (
         <ProblemBadge
-          Icon={Cancel}
+          Icon={Error}
           counts={messageTypeCounts.errors}
           color={styles.error}
           badgeStyle={styles.errorBadge}

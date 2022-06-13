@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 import clsx from 'clsx';
 import useStyles from './styles';
 
-import Cancel from '@mui/icons-material/Cancel';
+import Error from '@mui/icons-material/Error';
 import Warning from '@mui/icons-material/Warning';
 import Info from '@mui/icons-material/Info';
 
@@ -17,7 +17,7 @@ const MessageType: FC<MessageTypeProps> = ({ type }) => {
 
   let icon;
   if (type === 'error') {
-    icon = <Cancel className={style} />;
+    icon = <Error className={style} />;
   } else if (type === 'warning') {
     icon = <Warning className={style} />;
   } else if (type === 'info') {
