@@ -105,11 +105,6 @@ export default makeStyles((theme: Theme) => ({
       borderRadius: '50%',
     },
   },
-  problemBadge: {
-    '&:focus': {
-      outline: 'none',
-    },
-  },
 
   // these colors are here for the badges as well as the messages column
   error: {

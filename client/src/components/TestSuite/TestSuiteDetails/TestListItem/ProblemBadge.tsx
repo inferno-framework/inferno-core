@@ -39,7 +39,7 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
           aria-label={`View ${description}`}
           aria-hidden={false}
           tabIndex={0}
-          className={clsx([styles.badgeIcon, styles.problemBadge, color])}
+          className={clsx([styles.badgeIcon, color])}
           onClick={(e) => {
             e.stopPropagation();
             if (view !== 'report') {
