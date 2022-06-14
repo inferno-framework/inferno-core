@@ -35,12 +35,16 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
 
   const tabLabel = (label: string, count: number) => (
     <Box display="flex" alignItems="center">
-      <Box px={1} sx={{ color: lightTheme.palette.common.orangeDarker }}>
-        {label}
-      </Box>
+      <Box px={1}>{label}</Box>
       {count > 0 && <Chip label={count} size="small" />}
     </Box>
   );
+
+  const darkTabText = {
+    '&.Mui-selected': {
+      color: lightTheme.palette.common.orangeDarker,
+    },
+  };
 
   const a11yProps = (id: string, index: number) => ({
     id: `${id}-tab-${index}`,
@@ -64,9 +68,21 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
         }}
         variant="fullWidth"
       >
-        <Tab label={tabLabel('Errors', errorMessages.length)} {...a11yProps('errors', 0)} />
-        <Tab label={tabLabel('Warnings', warningMessages.length)} {...a11yProps('warnings', 1)} />
-        <Tab label={tabLabel('Info', infoMessages.length)} {...a11yProps('info', 2)} />
+        <Tab
+          label={tabLabel('Errors', errorMessages.length)}
+          {...a11yProps('errors', 0)}
+          sx={darkTabText}
+        />
+        <Tab
+          label={tabLabel('Warnings', warningMessages.length)}
+          {...a11yProps('warnings', 1)}
+          sx={darkTabText}
+        />
+        <Tab
+          label={tabLabel('Info', infoMessages.length)}
+          {...a11yProps('info', 2)}
+          sx={darkTabText}
+        />
       </Tabs>
       <Divider />
       <TabPanel id="errors" currentPanelIndex={panelIndex} index={0}>

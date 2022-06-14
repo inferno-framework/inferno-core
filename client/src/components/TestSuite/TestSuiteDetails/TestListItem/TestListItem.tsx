@@ -29,6 +29,7 @@ import TestRunButton from '../../TestRunButton/TestRunButton';
 import { shouldShowDescription } from '../../TestSuiteUtilities';
 import type { MessageCounts } from './helper';
 import { countMessageTypes } from './helper';
+import lightTheme from 'styles/theme';
 
 interface TestListItemProps {
   test: Test;
@@ -84,48 +85,6 @@ const TestListItem: FC<TestListItemProps> = ({
     />
   );
 
-  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
-    <ProblemBadge
-      Icon={PublicIcon}
-      counts={test.result.requests.length}
-      color={styles.request}
-      badgeStyle={styles.requestsBadge}
-      description={`${test.result.requests.length} request(s)`}
-      view={view}
-      setOpen={setOpen}
-      setPanelIndex={setPanelIndex}
-    />
-  );
-
-  const testRunButton = view === 'run' && runTests && (
-    <Box onClick={(e) => e.stopPropagation()}>
-      <TestRunButton
-        runnable={test}
-        runnableType={RunnableType.Test}
-        runTests={runTests}
-        testRunInProgress={testRunInProgress}
-      />
-    </Box>
-  );
-
-  const testDescription: JSX.Element = (
-    <ListItem>
-      <Typography variant="subtitle2" component="div">
-        {useMemo(
-          () => (
-            <ReactMarkdown>{test.description || ''}</ReactMarkdown>
-          ),
-          [test.description]
-        )}
-      </Typography>
-    </ListItem>
-  );
-
-  const a11yProps = (index: number) => ({
-    id: `${test.id}-tab-${index}`,
-    'aria-controls': `${test.id}-tabpanel-${index}`,
-  });
-
   const messageTypeCounts: MessageCounts = (() => {
     if (test.result === undefined || !test.result?.messages)
       return { errors: 0, warnings: 0, infos: 0 };
@@ -179,6 +138,54 @@ const TestListItem: FC<TestListItemProps> = ({
       );
   };
 
+  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
+    <ProblemBadge
+      Icon={PublicIcon}
+      counts={test.result.requests.length}
+      color={styles.request}
+      badgeStyle={styles.requestsBadge}
+      description={`${test.result.requests.length} request(s)`}
+      view={view}
+      setOpen={setOpen}
+      setPanelIndex={setPanelIndex}
+    />
+  );
+
+  const testRunButton = view === 'run' && runTests && (
+    <Box onClick={(e) => e.stopPropagation()}>
+      <TestRunButton
+        runnable={test}
+        runnableType={RunnableType.Test}
+        runTests={runTests}
+        testRunInProgress={testRunInProgress}
+      />
+    </Box>
+  );
+
+  const testDescription: JSX.Element = (
+    <ListItem>
+      <Typography variant="subtitle2" component="div">
+        {useMemo(
+          () => (
+            <ReactMarkdown>{test.description || ''}</ReactMarkdown>
+          ),
+          [test.description]
+        )}
+      </Typography>
+    </ListItem>
+  );
+
+  const darkTabText = {
+    '&.Mui-selected': {
+      color: lightTheme.palette.common.orangeDarker,
+    },
+  };
+
+  const a11yProps = (index: number) => ({
+    id: `${test.id}-tab-${index}`,
+    'aria-controls': `${test.id}-tabpanel-${index}`,
+  });
+
   return (
     <>
       <Accordion
@@ -224,11 +231,11 @@ const TestListItem: FC<TestListItemProps> = ({
               setPanelIndex(newIndex);
             }}
           >
-            <Tab label="Messages" {...a11yProps(0)} />
-            <Tab label="HTTP Requests" {...a11yProps(1)} />
-            <Tab label="Inputs" {...a11yProps(2)} />
-            <Tab label="Outputs" {...a11yProps(3)} />
-            <Tab label="About" {...a11yProps(4)} />
+            <Tab label="Messages" {...a11yProps(0)} sx={darkTabText} />
+            <Tab label="HTTP Requests" {...a11yProps(1)} sx={darkTabText} />
+            <Tab label="Inputs" {...a11yProps(2)} sx={darkTabText} />
+            <Tab label="Outputs" {...a11yProps(3)} sx={darkTabText} />
+            <Tab label="About" {...a11yProps(4)} sx={darkTabText} />
           </Tabs>
           <Divider />
           <TabPanel id={test.id} currentPanelIndex={panelIndex} index={0}>
