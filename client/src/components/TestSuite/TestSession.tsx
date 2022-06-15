@@ -317,7 +317,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           <Toolbar sx={{ minHeight: '64px' }} />
           {renderDrawerContents()}
           {/* Spacer to be updated with footer height */}
-          <Toolbar sx={{ minHeight: '51px !important' }} />
+          <Toolbar />
         </SwipeableDrawer>
       ) : (
         <Drawer

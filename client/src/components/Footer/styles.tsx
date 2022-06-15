@@ -8,6 +8,7 @@ import makeStyles from '@mui/styles/makeStyles';
 export default makeStyles((theme: Theme) => ({
   footer: {
     width: '100%',
+    minHeight: '56px', // For responsive screens
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
     backgroundColor: theme.palette.common.orangeLightest,
     position: 'sticky',
@@ -18,17 +19,19 @@ export default makeStyles((theme: Theme) => ({
   },
   logo: {
     objectFit: 'contain',
-    height: '3em',
-    padding: '4px 8px 4px 0',
+    height: '2.5em',
+    padding: '4px 8px 0 0',
   },
   logoText: {
     fontStyle: 'italic',
     textTransform: 'uppercase',
+    width: 'max-content',
   },
   linkText: {
     fontWeight: 'bolder',
     fontSize: '1.1rem',
     margin: '0 16px',
     color: theme.palette.common.grayDark,
+    width: 'max-content',
   },
 }));
