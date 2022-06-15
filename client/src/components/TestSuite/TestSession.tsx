@@ -298,7 +298,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   return (
     <Box
       className={styles.testSuiteMain}
-      maxHeight={`calc(100vh - 64px - 51px - ${bannerHeight}px)`}
+      maxHeight={`calc(100vh - 64px - 56px - ${bannerHeight}px)`}
     >
       {renderTestRunProgressBar()}
       {windowIsSmall ? (
