@@ -111,7 +111,7 @@ export default makeStyles((theme: Theme) => ({
     color: theme.palette.error.dark,
   },
   warning: {
-    color: theme.palette.warning.main,
+    color: theme.palette.common.orangeDarker,
   },
   info: {
     color: theme.palette.info.dark,
@@ -141,8 +141,8 @@ export default makeStyles((theme: Theme) => ({
   },
   warningBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.warning.main,
-      border: `1px solid ${theme.palette.warning.main}`,
+      color: theme.palette.common.orangeDarker,
+      border: `1px solid ${theme.palette.common.orangeDarker}`,
     },
   },
   infoBadge: {
@@ -151,7 +151,7 @@ export default makeStyles((theme: Theme) => ({
       border: `1px solid ${theme.palette.info.dark}`,
     },
   },
-  requestsBadge: {
+  requestBadge: {
     '& .MuiBadge-badge': {
       color: theme.palette.secondary.main,
       border: `1px solid ${theme.palette.secondary.main}`,

@@ -29,7 +29,7 @@ const colors = {
   black: '#222',
   red: '#d95d77',
   orange: '#F88B30',
-  orangeDarker: '#b85606',
+  orangeDarker: '#C05702',
   orangeLightest: '#fdf6ec',
   green: '#2fa874',
   blue: '#51788D',
