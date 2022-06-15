@@ -81,7 +81,7 @@ const TestListItem: FC<TestListItemProps> = ({
         )
       }
       secondaryTypographyProps={{ component: 'div' }}
-      sx={{ padding: '0 8px', wordBreak: 'break-word', minWidth: '100px' }}
+      className={styles.testText}
     />
   );
 
