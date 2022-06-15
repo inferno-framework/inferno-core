@@ -12,8 +12,10 @@ import { basePath } from 'api/infernoApiService';
 import { useAppStore } from '../../store/app';
 
 const App: FC<unknown> = () => {
-  const { testSuites, setTestSuites } = useAppStore();
-  const { testSession, setTestSession } = useAppStore();
+  const testSuites = useAppStore((state) => state.testSuites);
+  const setTestSuites = useAppStore((state) => state.setTestSuites);
+  const testSession = useAppStore((state) => state.testSession);
+  const setTestSession = useAppStore((state) => state.setTestSession);
 
   useEffect(() => {
     getTestSuites()
