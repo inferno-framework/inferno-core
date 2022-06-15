@@ -68,11 +68,11 @@ export interface TestSessionComponentProps {
   previousResults: Result[];
   initialTestRun: TestRun | null;
   sessionData: Map<string, unknown>;
-  drawerOpen: boolean;
-  windowIsSmall: boolean;
+  drawerOpen?: boolean;
+  windowIsSmall?: boolean;
   setSessionData: (data: Map<string, unknown>) => void;
   getSessionData?: (testSessionId: string) => void;
-  toggleDrawer: (drawerOpen: boolean) => void;
+  toggleDrawer?: (drawerOpen: boolean) => void;
 }
 
 const TestSessionComponent: FC<TestSessionComponentProps> = ({
@@ -304,9 +304,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       {windowIsSmall ? (
         <SwipeableDrawer
           anchor="left"
-          open={drawerOpen}
-          onClose={() => toggleDrawer(false)}
-          onOpen={() => toggleDrawer(true)}
+          open={drawerOpen || true}
+          onClose={() => {
+            if (toggleDrawer) toggleDrawer(false);
+          }}
+          onOpen={() => {
+            if (toggleDrawer) toggleDrawer(true);
+          }}
           swipeAreaWidth={56}
           disableSwipeToOpen={false}
           ModalProps={{
