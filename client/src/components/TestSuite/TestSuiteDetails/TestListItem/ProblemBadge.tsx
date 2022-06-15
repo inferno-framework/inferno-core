@@ -11,6 +11,7 @@ type ProblemBadgeProps = {
   badgeStyle: string;
   description: string;
   view: string;
+  panelIndex: number;
   setPanelIndex: React.Dispatch<React.SetStateAction<number>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -22,6 +23,7 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
   badgeStyle,
   description,
   view,
+  panelIndex,
   setPanelIndex,
   setOpen,
 }) => {
@@ -43,14 +45,14 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
           onClick={(e) => {
             e.stopPropagation();
             if (view !== 'report') {
-              setPanelIndex(0);
+              setPanelIndex(panelIndex);
               setOpen(true);
             }
           }}
           onKeyDown={(e) => {
             e.stopPropagation();
             if (e.key === 'Enter' && view !== 'report') {
-              setPanelIndex(0);
+              setPanelIndex(panelIndex);
               setOpen(true);
             }
           }}

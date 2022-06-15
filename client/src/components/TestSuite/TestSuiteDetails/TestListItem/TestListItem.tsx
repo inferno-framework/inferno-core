@@ -81,7 +81,7 @@ const TestListItem: FC<TestListItemProps> = ({
         )
       }
       secondaryTypographyProps={{ component: 'div' }}
-      sx={{ padding: '0 8px', overflow: 'auto' }}
+      sx={{ padding: '0 8px', wordBreak: 'break-word', minWidth: '100px' }}
     />
   );
 
@@ -104,6 +104,7 @@ const TestListItem: FC<TestListItemProps> = ({
           badgeStyle={styles.errorBadge}
           description={`${messageTypeCounts.errors} message(s)`}
           view={view}
+          panelIndex={0}
           setOpen={setOpen}
           setPanelIndex={setPanelIndex}
         />
@@ -118,6 +119,7 @@ const TestListItem: FC<TestListItemProps> = ({
           badgeStyle={styles.warningBadge}
           description={`${messageTypeCounts.warnings} message(s)`}
           view={view}
+          panelIndex={0}
           setOpen={setOpen}
           setPanelIndex={setPanelIndex}
         />
@@ -132,6 +134,7 @@ const TestListItem: FC<TestListItemProps> = ({
           badgeStyle={styles.infoBadge}
           description={`${messageTypeCounts.infos} message(s)`}
           view={view}
+          panelIndex={0}
           setOpen={setOpen}
           setPanelIndex={setPanelIndex}
         />
@@ -143,9 +146,10 @@ const TestListItem: FC<TestListItemProps> = ({
       Icon={PublicIcon}
       counts={test.result.requests.length}
       color={styles.request}
-      badgeStyle={styles.requestsBadge}
+      badgeStyle={styles.requestBadge}
       description={`${test.result.requests.length} request(s)`}
       view={view}
+      panelIndex={1}
       setOpen={setOpen}
       setPanelIndex={setPanelIndex}
     />

@@ -14,7 +14,7 @@ const TabPanel: FC<TabPanelProps> = ({ id, index, currentPanelIndex, children })
       hidden={currentPanelIndex !== index}
       id={`${id}-tabpanel-${index}`}
       aria-labelledby={`${id}-tab-${index}`}
-      style={{ overflow: 'scroll', backgroundColor: lightTheme.palette.common.white }}
+      style={{ overflow: 'auto', backgroundColor: lightTheme.palette.common.white }}
     >
       {currentPanelIndex === index && <div>{children}</div>}
     </div>
