@@ -31,6 +31,11 @@ export default makeStyles((theme: Theme) => ({
     color: theme.palette.common.grayDark,
     alignSelf: 'center',
   },
+  testText: {
+    padding: '0 8px',
+    wordBreak: 'break-word',
+    minWidth: '100px',
+  },
   tabs: {
     backgroundColor: theme.palette.common.white,
     minHeight: 'auto',

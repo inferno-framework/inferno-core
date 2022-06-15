@@ -15,6 +15,7 @@ export default makeStyles((theme: Theme) => ({
     textAlign: 'right',
     padding: '0 8px;',
     fontSize: '12px',
+    wordBreak: 'break-word',
   },
   labelText: {
     display: 'inline',
