@@ -9,9 +9,9 @@ import { getStaticPath } from '~/api/infernoApiService';
 export interface HeaderProps {
   suiteTitle?: string;
   suiteVersion?: string;
-  drawerOpen: boolean;
-  windowIsSmall: boolean;
-  toggleDrawer: (drawerOpen: boolean) => void;
+  drawerOpen?: boolean;
+  windowIsSmall?: boolean;
+  toggleDrawer?: (drawerOpen: boolean) => void;
 }
 
 const Header: FC<HeaderProps> = ({
@@ -37,7 +37,9 @@ const Header: FC<HeaderProps> = ({
             edge="start"
             aria-label="menu"
             disabled={!windowIsSmall}
-            onClick={() => toggleDrawer(!drawerOpen)}
+            onClick={() => {
+              if (toggleDrawer) toggleDrawer(!drawerOpen);
+            }}
           >
             <img
               src={getStaticPath(icon as string)}
