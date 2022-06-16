@@ -13,13 +13,14 @@ module Inferno
       def_delegators 'self.class', :title, :id, :block, :inputs, :outputs
 
       attr_accessor :result_message
-      attr_reader :test_session_id, :scratch
+      attr_reader :test_session_id, :scratch, :suite_options
 
       # @private
       def initialize(**params)
         params[:inputs]&.each { |key, value| instance_variable_set("@#{key}", value) }
         @scratch = params[:scratch]
         @test_session_id = params[:test_session_id]
+        @suite_options = params[:suite_options].presence || {}
       end
 
       # @private
@@ -195,7 +196,8 @@ module Inferno
         end
 
         # @private
-        def test_count
+        # Has an unused argument to match the method signature of Runnable#test_count
+        def test_count(_ = nil)
           1
         end
 

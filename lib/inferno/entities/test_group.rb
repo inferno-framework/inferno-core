@@ -32,11 +32,11 @@ module Inferno
         end
 
         def groups
-          children.select { |child| child < Inferno::Entities::TestGroup }
+          all_children.select { |child| child < Inferno::Entities::TestGroup }
         end
 
         def tests
-          children.select { |child| child < Inferno::Entities::Test }
+          all_children.select { |child| child < Inferno::Entities::Test }
         end
 
         # Methods to configure Inferno::DSL::Runnable

@@ -231,7 +231,7 @@ RSpec.describe Inferno::DSL::Assertions do
 
       it 'filters messages based on the exclude_message block' do
         filter = proc { |message| message.type == 'info' }
-        allow(klass.class.fhir_validators[:default]).to receive(:exclude_message).and_return(filter)
+        allow(klass.class.find_validator(:default)).to receive(:exclude_message).and_return(filter)
 
         stub_request(:post, validation_url)
           .with(query: { profile: profile_url })
