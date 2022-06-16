@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { Container, Box, Link, Typography } from '@mui/material';
+import { Box, Link, Typography, Divider } from '@mui/material';
 import logo from 'images/inferno_logo.png';
 import { getStaticPath } from 'api/infernoApiService';
 
@@ -10,13 +10,15 @@ interface FooterProps {
 
 const Footer: FC<FooterProps> = ({ version }) => {
   const styles = useStyles();
+  const linkList = [
+    { label: 'Open Source', url: 'https://github.com/inferno-framework/inferno-core' },
+    { label: 'Issues', url: 'https://github.com/inferno-framework/inferno-core/issues' },
+  ];
+
   return (
     <footer className={styles.footer}>
-      <Container>
-        <Box className={styles.builtUsingContainer}>
-          <Typography variant="overline" className={styles.footerText}>
-            built using
-          </Typography>
+      <Box display="flex" flexDirection="row" justifyContent="space-between" overflow="auto">
+        <Box display="flex" alignItems="center" px={2}>
           <Link
             href="https://inferno-framework.github.io/inferno-core"
             target="_blank"
@@ -30,12 +32,35 @@ const Footer: FC<FooterProps> = ({ version }) => {
             />
           </Link>
           {version && (
-            <Typography variant="overline" className={styles.footerText}>
-              {`version ${version}`}
-            </Typography>
+            <Box display="flex" flexDirection="column">
+              <Typography className={styles.logoText} style={{ fontSize: '0.7rem' }}>
+                Built with
+              </Typography>
+              <Typography className={styles.logoText} style={{ fontSize: '0.9rem' }}>
+                {`v.${version}`}
+              </Typography>
+            </Box>
           )}
         </Box>
-      </Container>
+        <Box display="flex" alignItems="center" p={2}>
+          {linkList.map((link, i) => {
+            return (
+              <>
+                <Link
+                  href={link.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  underline="hover"
+                  className={styles.linkText}
+                >
+                  {link.label}
+                </Link>
+                {i !== linkList.length - 1 && <Divider orientation="vertical" flexItem />}
+              </>
+            );
+          })}
+        </Box>
+      </Box>
     </footer>
   );
 };

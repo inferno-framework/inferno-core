@@ -138,4 +138,30 @@ RSpec.describe Inferno::DSL::FHIRValidation do
       expect(validator.resource_is_valid?(resource, profile_url, runnable)).to be(true)
     end
   end
+
+  describe '.find_validator' do
+    it 'finds the correct validator based on suite options' do
+      suite = OptionsSuite::Suite
+
+      v1_validator = suite.find_validator(:default, ig_version: '1')
+      v2_validator = suite.find_validator(:default, ig_version: '2')
+
+      expect(v1_validator.url).to eq('v1_validator')
+      expect(v2_validator.url).to eq('v2_validator')
+    end
+  end
+
+  describe '#find_validator' do
+    it 'finds the correct validator based on suite options' do
+      test_class = OptionsSuite::Suite.groups.first.tests.first
+      v1_test = test_class.new(suite_options: { ig_version: '1' })
+      v2_test = test_class.new(suite_options: { ig_version: '2' })
+
+      v1_validator = v1_test.find_validator(:default)
+      v2_validator = v2_test.find_validator(:default)
+
+      expect(v1_validator.url).to eq('v1_validator')
+      expect(v2_validator.url).to eq('v2_validator')
+    end
+  end
 end

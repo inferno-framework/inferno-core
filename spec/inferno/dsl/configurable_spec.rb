@@ -1,8 +1,8 @@
 class ConfigurableTestClass
   extend Inferno::DSL::Configurable
 
-  def self.children
-    @children ||= []
+  def self.all_children
+    @all_children ||= []
   end
 end
 

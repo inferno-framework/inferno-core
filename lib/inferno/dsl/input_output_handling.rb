@@ -125,7 +125,7 @@ module Inferno
       def all_outputs
         outputs
           .map { |output_identifier| config.output_name(output_identifier) }
-          .concat(children.flat_map(&:all_outputs))
+          .concat(all_children.flat_map(&:all_outputs))
           .uniq
       end
 
@@ -137,7 +137,7 @@ module Inferno
         @children_available_inputs ||=
           begin
             child_outputs = []
-            children.each_with_object({}) do |child, definitions|
+            all_children.each_with_object({}) do |child, definitions|
               new_definitions = child.available_inputs.map(&:dup)
               new_definitions.each do |input, new_definition|
                 existing_definition = definitions[input]
