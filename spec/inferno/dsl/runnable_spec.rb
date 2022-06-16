@@ -87,7 +87,7 @@ RSpec.describe Inferno::DSL::Runnable do
     it 'returns the number of tests in a non-nested group' do
       group = test_groups_repo.find('DemoIG_STU1::DemoGroup')
 
-      expect(group.test_count).to eq(group.children.length)
+      expect(group.test_count).to eq(group.all_children.length)
     end
 
     it 'returns the total number of tests in a nested group' do
@@ -103,6 +103,21 @@ RSpec.describe Inferno::DSL::Runnable do
       expected_count = suite.groups.reduce(0) { |sum, group| sum + group.test_count }
 
       expect(suite.test_count).to eq(expected_count)
+    end
+
+    context 'with suite options' do
+      let(:suite) { OptionsSuite::Suite }
+      let(:v1_group) { OptionsSuite::V1Group }
+      let(:v2_group) { OptionsSuite::V2Group }
+
+      it 'only counts the included runnables' do
+        total_count = suite.test_count
+        v1_count = v1_group.test_count
+        v2_count = v2_group.test_count
+
+        expect(suite.test_count(ig_version: '1')).to eq(total_count - v2_count)
+        expect(suite.test_count(ig_version: '2')).to eq(total_count - v1_count)
+      end
     end
   end
 

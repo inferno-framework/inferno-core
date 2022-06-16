@@ -19,8 +19,19 @@ module Inferno
     # @!attribute results
     #   @return [Array<Inferno::Entities::TestResult>] the `TestResults`
     #   associated with this session
+    # @!attribute suite_options
+    #   @return [Hash] the suite options associated with this session
     class TestSession < Entity
-      ATTRIBUTES = [:id, :created_at, :updated_at, :test_suite_id, :test_suite, :test_runs, :results].freeze
+      ATTRIBUTES = [
+        :id,
+        :created_at,
+        :updated_at,
+        :test_suite_id,
+        :test_suite,
+        :test_runs,
+        :results,
+        :suite_options
+      ].freeze
 
       include Inferno::Entities::Attributes
 

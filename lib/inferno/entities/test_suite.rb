@@ -22,7 +22,7 @@ module Inferno
           return @default_group if @default_group
 
           @default_group = Class.new(TestGroup)
-          children << @default_group
+          all_children << @default_group
           @default_group
         end
 
@@ -31,7 +31,7 @@ module Inferno
         end
 
         def groups
-          children.select { |child| child < Inferno::Entities::TestGroup }
+          all_children.select { |child| child < Inferno::Entities::TestGroup }
         end
 
         # Methods to configure Inferno::DSL::Runnable
@@ -60,17 +60,6 @@ module Inferno
           @version = version
         end
 
-        def find_validator(validator_name)
-          validator = fhir_validators[validator_name]
-
-          return validator if validator
-
-          raise Exceptions::ValidatorNotFoundException, validator_name unless validator_name == :default
-
-          fhir_validators[:default] =
-            Inferno::DSL::FHIRValidation::Validator.new { |v| v.url default_validator_url }
-        end
-
         def configuration_messages(new_messages = nil, force_recheck: false)
           return @configuration_messages = new_messages unless new_messages.nil?
 
@@ -94,6 +83,14 @@ module Inferno
 
         def presets
           @presets ||= Repositories::Presets.new.presets_for_suite(id)
+        end
+
+        def suite_option(identifier, **input_params)
+          suite_options[identifier] = input_params
+        end
+
+        def suite_options
+          @suite_options ||= {}
         end
       end
     end
