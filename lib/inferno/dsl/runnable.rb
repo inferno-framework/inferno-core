@@ -398,7 +398,7 @@ module Inferno
         @suite_option_requirements = suite_option_requirements
       end
 
-      def children(selected_suite_options)
+      def children(selected_suite_options = nil)
         return all_children if selected_suite_options.blank?
 
         all_children.select do |child|
