@@ -13,6 +13,7 @@ import {
   getTestSessionData,
 } from 'api/TestSessionApi';
 import { getCoreVersion } from 'api/VersionsApi';
+import { useAppStore } from '../../store/app';
 
 const TestSessionWrapper: FC<unknown> = () => {
   const styles = useStyles();
@@ -27,8 +28,8 @@ const TestSessionWrapper: FC<unknown> = () => {
   const [attemptingFetchSessionInfo, setAttemptingFetchSessionInfo] = React.useState(false);
   const [coreVersion, setCoreVersion] = React.useState<string>('');
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
-  const windowIsSmall = windowWidth < 800;
+  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const setWindowIsSmall = useAppStore((state) => state.setWindowIsSmall);
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
@@ -45,7 +46,7 @@ const TestSessionWrapper: FC<unknown> = () => {
   }, []);
 
   function handleResize() {
-    setWindowWidth(window.innerWidth);
+    setWindowIsSmall(window.innerWidth < 800);
   }
 
   function tryGetTestSession(test_session_id: string) {

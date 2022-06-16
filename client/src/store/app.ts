@@ -6,8 +6,10 @@ import { TestSuite, TestSession } from '../models/testSuiteModels';
 type AppStore = {
   testSuites: TestSuite[];
   testSession: TestSession | undefined;
+  windowIsSmall: boolean;
   setTestSuites: (testSuites: TestSuite[]) => void;
   setTestSession: (testSession: TestSession | undefined) => void;
+  setWindowIsSmall: (windowIsSmall: boolean) => void;
 };
 
 // this store is for global state, things at the top level
@@ -16,7 +18,9 @@ export const useAppStore = create<AppStore>(
   devtoolsInDev((set, _get) => ({
     testSuites: [] as TestSuite[],
     testSession: undefined,
+    windowIsSmall: window.innerWidth < 800,
     setTestSuites: (testSuites: TestSuite[]) => set({ testSuites: testSuites }),
     setTestSession: (testSession: TestSession | undefined) => set({ testSession: testSession }),
+    setWindowIsSmall: (windowIsSmall: boolean) => set({ windowIsSmall: windowIsSmall }),
   }))
 );
