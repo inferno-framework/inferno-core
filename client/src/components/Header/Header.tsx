@@ -6,23 +6,19 @@ import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import { getStaticPath } from 'api/infernoApiService';
 
+import { useAppStore } from '../../store/app';
+
 export interface HeaderProps {
   suiteTitle?: string;
   suiteVersion?: string;
   drawerOpen?: boolean;
-  windowIsSmall?: boolean;
   toggleDrawer?: (drawerOpen: boolean) => void;
 }
 
-const Header: FC<HeaderProps> = ({
-  suiteTitle,
-  suiteVersion,
-  windowIsSmall,
-  drawerOpen,
-  toggleDrawer,
-}) => {
+const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion, drawerOpen, toggleDrawer }) => {
   const styles = useStyles();
   const history = useHistory();
+  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
   const returnHome = () => {
     history.push('/');

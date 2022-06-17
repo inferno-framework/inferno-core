@@ -16,6 +16,11 @@ const App: FC<unknown> = () => {
   const setTestSuites = useAppStore((state) => state.setTestSuites);
   const testSession = useAppStore((state) => state.testSession);
   const setTestSession = useAppStore((state) => state.setTestSession);
+  const setWindowIsSmall = useAppStore((state) => state.setWindowIsSmall);
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
     getTestSuites()
@@ -40,6 +45,10 @@ const App: FC<unknown> = () => {
         });
     }
   }, [testSuites]);
+
+  function handleResize() {
+    setWindowIsSmall(window.innerWidth < 800);
+  }
 
   if (!testSuites || (testSuites.length == 1 && !testSession)) {
     return <></>;

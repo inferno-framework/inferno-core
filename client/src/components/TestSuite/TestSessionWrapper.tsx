@@ -13,7 +13,6 @@ import {
   getTestSessionData,
 } from 'api/TestSessionApi';
 import { getCoreVersion } from 'api/VersionsApi';
-import { useAppStore } from '../../store/app';
 
 const TestSessionWrapper: FC<unknown> = () => {
   const styles = useStyles();
@@ -28,12 +27,6 @@ const TestSessionWrapper: FC<unknown> = () => {
   const [attemptingFetchSessionInfo, setAttemptingFetchSessionInfo] = React.useState(false);
   const [coreVersion, setCoreVersion] = React.useState<string>('');
   const [drawerOpen, setDrawerOpen] = React.useState(false);
-  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
-  const setWindowIsSmall = useAppStore((state) => state.setWindowIsSmall);
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
 
   useEffect(() => {
     getCoreVersion()
@@ -44,10 +37,6 @@ const TestSessionWrapper: FC<unknown> = () => {
         console.log(e);
       });
   }, []);
-
-  function handleResize() {
-    setWindowIsSmall(window.innerWidth < 800);
-  }
 
   function tryGetTestSession(test_session_id: string) {
     getTestSession(test_session_id)
@@ -117,7 +106,6 @@ const TestSessionWrapper: FC<unknown> = () => {
           suiteTitle={testSession.test_suite.title}
           suiteVersion={testSession.test_suite.version}
           drawerOpen={drawerOpen}
-          windowIsSmall={windowIsSmall}
           toggleDrawer={toggleDrawer}
         />
         <TestSessionComponent
@@ -126,7 +114,6 @@ const TestSessionWrapper: FC<unknown> = () => {
           initialTestRun={testRun}
           sessionData={sessionData}
           drawerOpen={drawerOpen}
-          windowIsSmall={windowIsSmall}
           setSessionData={setSessionData}
           getSessionData={tryGetSessionData}
           toggleDrawer={toggleDrawer}

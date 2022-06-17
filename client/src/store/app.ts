@@ -18,7 +18,7 @@ export const useAppStore = create<AppStore>(
   devtoolsInDev((set, _get) => ({
     testSuites: [] as TestSuite[],
     testSession: undefined,
-    windowIsSmall: window.innerWidth < 800,
+    windowIsSmall: true,
     setTestSuites: (testSuites: TestSuite[]) => set({ testSuites: testSuites }),
     setTestSession: (testSession: TestSession | undefined) => set({ testSession: testSession }),
     setWindowIsSmall: (windowIsSmall: boolean) => set({ windowIsSmall: windowIsSmall }),

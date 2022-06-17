@@ -35,6 +35,7 @@ export default makeStyles((theme: Theme) => ({
   },
   title: {
     padding: '0 8px',
+    width: 'max-content',
   },
   version: {
     fontStyle: 'italic',
