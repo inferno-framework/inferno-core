@@ -8,7 +8,9 @@ import makeStyles from '@mui/styles/makeStyles';
 export default makeStyles((theme: Theme) => ({
   footer: {
     width: '100%',
+    overflow: 'auto',
     minHeight: '56px', // For responsive screens
+    maxHeight: '56px', // For responsive screens
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
     backgroundColor: theme.palette.common.orangeLightest,
     position: 'sticky',

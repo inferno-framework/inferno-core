@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
 import icon from 'images/inferno_icon.png';
-import { AppBar, Box, Button, IconButton, Stack, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import { getStaticPath } from 'api/infernoApiService';
@@ -9,9 +9,9 @@ import { getStaticPath } from 'api/infernoApiService';
 export interface HeaderProps {
   suiteTitle?: string;
   suiteVersion?: string;
-  drawerOpen?: boolean;
-  windowIsSmall?: boolean;
-  toggleDrawer?: (drawerOpen: boolean) => void;
+  drawerOpen: boolean;
+  windowIsSmall: boolean;
+  toggleDrawer: (drawerOpen: boolean) => void;
 }
 
 const Header: FC<HeaderProps> = ({
@@ -37,15 +37,9 @@ const Header: FC<HeaderProps> = ({
             edge="start"
             aria-label="menu"
             disabled={!windowIsSmall}
-            onClick={() => {
-              if (toggleDrawer) toggleDrawer(!drawerOpen);
-            }}
+            onClick={() => toggleDrawer(!drawerOpen)}
           >
-            <img
-              src={getStaticPath(icon as string)}
-              alt="Inferno logo - start new session"
-              className={styles.logo}
-            />
+            <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
           </IconButton>
           <Box className={styles.titleContainer}>
             <Typography variant="h5" component="h1" className={styles.title}>
@@ -58,7 +52,7 @@ const Header: FC<HeaderProps> = ({
             )}
           </Box>
         </Box>
-        <Stack direction="row" spacing={2} sx={{ minWidth: windowIsSmall ? '' : 'fit-content' }}>
+        <Box px={2} sx={{ minWidth: 'fit-content' }}>
           <Button
             disableElevation
             color="secondary"
@@ -69,7 +63,7 @@ const Header: FC<HeaderProps> = ({
           >
             New Session
           </Button>
-        </Stack>
+        </Box>
       </Toolbar>
     </AppBar>
   ) : (
