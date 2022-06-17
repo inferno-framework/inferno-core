@@ -16,7 +16,7 @@ module Inferno
 
         @config.apply(new_configuration)
 
-        children.each { |child| child.config(new_configuration) }
+        all_children.each { |child| child.config(new_configuration) }
 
         @config
       end

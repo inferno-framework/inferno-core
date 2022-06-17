@@ -62,7 +62,13 @@ module Inferno
       inputs = load_inputs(test)
       input_json_string = inputs_as_json(test, inputs)
 
-      test_instance = test.new(inputs: inputs, test_session_id: test_session.id, scratch: scratch)
+      test_instance =
+        test.new(
+          inputs: inputs,
+          test_session_id: test_session.id,
+          scratch: scratch,
+          suite_options: test_session.suite_options
+        )
 
       result = begin
         raise Exceptions::CancelException, 'Test cancelled by user' if test_run_is_cancelling
@@ -118,7 +124,7 @@ module Inferno
       end
 
       results = []
-      group.children.each do |child|
+      group.children(test_session.suite_options).each do |child|
         result = run(child, scratch)
         results << result
         break if results.last.waiting?
@@ -137,7 +143,7 @@ module Inferno
     def update_parent_result(parent)
       return if parent.nil?
 
-      children = parent.children
+      children = parent.children(test_session.suite_options)
       child_results = results_repo.current_results_for_test_session_and_runnables(test_session.id, children)
       required_children = children.select(&:required?)
       required_results = child_results.select(&:required?)

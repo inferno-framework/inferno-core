@@ -38,13 +38,16 @@ module Inferno
       # Find a particular validator. Looks through a runnable's parents up to
       # the suite to find a validator with a particular name
       def find_validator(validator_name)
-        self.class.find_validator(validator_name)
+        self.class.find_validator(validator_name, suite_options)
       end
 
       class Validator
+        attr_reader :requirements
+
         # @private
-        def initialize(&block)
+        def initialize(requirements = nil, &block)
           instance_eval(&block)
+          @requirements = requirements
         end
 
         # @private
@@ -114,7 +117,7 @@ module Inferno
 
           outcome = FHIR::OperationOutcome.new(JSON.parse(validate(resource, profile_url)))
 
-          message_hashes = outcome.issue&.map { |issue| message_hash_from_issue(issue) } || []
+          message_hashes = outcome.issue&.map { |issue| message_hash_from_issue(issue, resource) } || []
 
           message_hashes.concat(additional_validation_messages(resource, profile_url))
 
@@ -131,10 +134,10 @@ module Inferno
         end
 
         # @private
-        def message_hash_from_issue(issue)
+        def message_hash_from_issue(issue, resource)
           {
             type: issue_severity(issue),
-            message: issue_message(issue)
+            message: issue_message(issue, resource)
           }
         end
 
@@ -151,14 +154,16 @@ module Inferno
         end
 
         # @private
-        def issue_message(issue)
+        def issue_message(issue, resource)
           location = if issue.respond_to?(:expression)
                        issue.expression&.join(', ')
                      else
                        issue.location&.join(', ')
                      end
 
-          "#{location}: #{issue&.details&.text}"
+          location_prefix = resource.id ? "#{resource.resourceType}/#{resource.id}" : resource.resourceType
+
+          "#{location_prefix}: #{location}: #{issue&.details&.text}"
         end
 
         # Post a resource to the validation service for validating.
@@ -197,14 +202,33 @@ module Inferno
         #
         # @param name [Symbol] the name of the validator, only needed if you are
         #   using multiple validators
-        def validator(name = :default, &block)
-          fhir_validators[name] = Inferno::DSL::FHIRValidation::Validator.new(&block)
+        # @param required_suite_options [Hash] suite options that must be
+        #   selected in order to use this validator
+        def validator(name = :default, required_suite_options: nil, &block)
+          current_validators = fhir_validators[name] || []
+
+          new_validator = Inferno::DSL::FHIRValidation::Validator.new(required_suite_options, &block)
+
+          current_validators.reject! { |validator| validator.requirements == required_suite_options }
+          current_validators << new_validator
+
+          fhir_validators[name] = current_validators
         end
 
         # Find a particular validator. Looks through a runnable's parents up to
         # the suite to find a validator with a particular name
-        def find_validator(validator_name)
-          validator = fhir_validators[validator_name] || parent&.find_validator(validator_name)
+        def find_validator(validator_name, selected_suite_options = nil)
+          validators = fhir_validators[validator_name] ||
+                       Array.wrap(parent&.find_validator(validator_name, selected_suite_options))
+
+          validator =
+            if selected_suite_options.present?
+              validators.find do |possible_validator|
+                possible_validator.requirements.nil? || selected_suite_options >= possible_validator.requirements
+              end
+            else
+              validators.first
+            end
 
           raise Exceptions::ValidatorNotFoundException, validator_name if validator.nil?
 
