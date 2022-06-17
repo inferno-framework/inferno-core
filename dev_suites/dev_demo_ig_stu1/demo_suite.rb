@@ -1,4 +1,4 @@
-# require 'onc_certification_g10_test_kit'
+require 'onc_certification_g10_test_kit'
 require_relative 'groups/demo_group'
 
 module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
