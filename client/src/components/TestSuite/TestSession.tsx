@@ -71,7 +71,6 @@ export interface TestSessionComponentProps {
   initialTestRun: TestRun | null;
   sessionData: Map<string, unknown>;
   drawerOpen: boolean;
-  windowIsSmall?: boolean;
   setSessionData: (data: Map<string, unknown>) => void;
   getSessionData?: (testSessionId: string) => void;
   toggleDrawer: (drawerOpen: boolean) => void;
