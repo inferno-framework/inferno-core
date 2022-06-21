@@ -48,14 +48,8 @@ const TestListItem: FC<TestListItemProps> = ({
   view,
 }) => {
   const styles = useStyles();
-  const openCondition =
-    (test.result?.result === 'fail' || test.result?.result === 'error') && view !== 'report';
-  const [open, setOpen] = React.useState(openCondition);
+  const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
-
-  useEffect(() => {
-    if (openCondition) setOpen(true);
-  }, [test.result]);
 
   const resultIcon = (
     <Box className={styles.testIcon}>
