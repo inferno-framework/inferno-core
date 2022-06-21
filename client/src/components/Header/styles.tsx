@@ -25,7 +25,6 @@ export default makeStyles((theme: Theme) => ({
   toolbar: {
     display: 'flex',
     justifyContent: 'space-between',
-    width: '100%',
   },
   logo: {
     objectFit: 'contain',
