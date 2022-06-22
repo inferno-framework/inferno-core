@@ -37,10 +37,6 @@ module Inferno
 
       def initialize(params)
         super(params, ATTRIBUTES)
-
-        self.suite_options = JSON.parse(suite_options)&.deep_symbolize_keys if suite_options.is_a? String
-
-        self.suite_options ||= {}
       end
 
       def to_hash
@@ -48,9 +44,15 @@ module Inferno
           hash[attribute] = send(attribute)
         end
 
-        session_hash[:suite_options] = JSON.generate(suite_options)
+        session_hash[:suite_options] = JSON.generate(suite_options&.map(&:to_hash) || [])
 
         session_hash.compact
+      end
+
+      def suite_options_hash
+        (suite_options || []).each_with_object({}) do |option, hash|
+          hash[option.id] = option.value
+        end
       end
     end
   end

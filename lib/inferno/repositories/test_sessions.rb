@@ -37,6 +37,18 @@ module Inferno
         end
       end
 
+      def build_entity(params)
+        suite_options = JSON.parse(params[:suite_options] || '[]').map do |suite_option_hash|
+          suite_option_hash.deep_symbolize_keys!
+          suite_option_hash[:id] = suite_option_hash[:id].to_sym
+          DSL::SuiteOption.new(suite_option_hash)
+        end
+
+        final_params = params.merge(suite_options: suite_options)
+        add_non_db_entities(final_params)
+        entity_class.new(final_params)
+      end
+
       class Model < Sequel::Model(db)
         include Import[test_suites_repo: 'repositories.test_suites']
 

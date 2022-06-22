@@ -1,5 +1,6 @@
 require_relative 'test_group'
 require_relative '../dsl/runnable'
+require_relative '../dsl/suite_option'
 require_relative '../repositories/test_groups'
 require_relative '../repositories/test_suites'
 
@@ -86,11 +87,11 @@ module Inferno
         end
 
         def suite_option(identifier, **input_params)
-          suite_options[identifier] = input_params.merge(id: identifier)
+          suite_options << DSL::SuiteOption.new(input_params.merge(id: identifier))
         end
 
         def suite_options
-          @suite_options ||= {}
+          @suite_options ||= []
         end
       end
     end
