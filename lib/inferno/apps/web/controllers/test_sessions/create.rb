@@ -3,7 +3,7 @@ module Inferno
     module Controllers
       module TestSessions
         class Create < Controller
-          PARAMS = [:test_suite_id].freeze
+          PARAMS = [:test_suite_id, :suite_options].freeze
 
           def call(params)
             session = repo.create(create_params(params))

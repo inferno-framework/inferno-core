@@ -44,7 +44,7 @@ module Inferno
           hash[attribute] = send(attribute)
         end
 
-        session_hash[:suite_options] = JSON.generate(suite_options&.map(&:to_hash) || [])
+        session_hash[:suite_options] = suite_options&.map(&:to_hash) || []
 
         session_hash.compact
       end

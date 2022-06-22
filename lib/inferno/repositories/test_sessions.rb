@@ -19,6 +19,18 @@ module Inferno
         }
       end
 
+      def create(params)
+        raw_suite_options = params[:suite_options]
+        suite_options =
+          if raw_suite_options.blank?
+            '[]'
+          else
+            JSON.generate(raw_suite_options.map(&:to_hash))
+          end
+
+        super(params.merge(suite_options: suite_options))
+      end
+
       def results_for_test_session(test_session_id)
         test_session_hash =
           self.class::Model
