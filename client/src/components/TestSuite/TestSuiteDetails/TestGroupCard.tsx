@@ -1,9 +1,9 @@
 import React, { FC, useMemo } from 'react';
+import { Box, Card, Divider, Typography } from '@mui/material';
 import useStyles from './styles';
+import ReactMarkdown from 'react-markdown';
 import { TestGroup, RunnableType, TestSuite } from 'models/testSuiteModels';
 import InputOutputsList from './TestListItem/InputOutputsList';
-import { Box, Card, Divider, Typography } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 import { shouldShowDescription } from '../TestSuiteUtilities';
@@ -35,7 +35,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
 
   return (
     <Card className={styles.testGroupCard} variant="outlined">
-      <div className={styles.testGroupCardHeader}>
+      <Box className={styles.testGroupCardHeader}>
         {runnable.result && <ResultIcon result={runnable.result} />}
         <span className={styles.testGroupCardHeaderText}>
           <Typography color="text.primary" className={styles.currentItem} component="div">
@@ -56,7 +56,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
             />
           )}
         </span>
-      </div>
+      </Box>
       {view === 'run' && shouldShowDescription(runnable, description) && (
         <>
           <Box margin="20px">{description}</Box>
