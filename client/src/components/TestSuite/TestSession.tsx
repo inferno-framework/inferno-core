@@ -252,7 +252,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }
 
   function renderDrawerContents() {
-    console.log(windowIsSmall);
     return (
       <nav className={styles.drawer}>
         <TestSuiteTreeComponent

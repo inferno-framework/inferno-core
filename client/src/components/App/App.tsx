@@ -19,6 +19,10 @@ const App: FC<unknown> = () => {
   const setWindowIsSmall = useAppStore((state) => state.setWindowIsSmall);
 
   useEffect(() => {
+    handleResize();
+  }, []);
+
+  useEffect(() => {
     window.addEventListener('resize', handleResize);
   });
 

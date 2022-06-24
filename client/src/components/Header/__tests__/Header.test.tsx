@@ -11,7 +11,6 @@ test('renders wide screen Inferno Header', () => {
     <ThemeProvider>
       <Header
         suiteTitle="Suite Title"
-        windowIsSmall={false}
         drawerOpen={drawerOpen}
         toggleDrawer={() => (drawerOpen = !drawerOpen)}
       />
@@ -32,7 +31,6 @@ test('renders narrow screen Inferno Header', () => {
     <ThemeProvider>
       <Header
         suiteTitle="Suite Title"
-        windowIsSmall={true}
         drawerOpen={drawerOpen}
         toggleDrawer={() => (drawerOpen = !drawerOpen)}
       />
