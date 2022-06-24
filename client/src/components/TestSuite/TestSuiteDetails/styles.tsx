@@ -31,6 +31,7 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     minHeight: '36.5px',
     alignItems: 'center',
+    overflow: 'auto',
     '@media print': {
       padding: '0 8px',
     },
