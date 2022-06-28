@@ -173,4 +173,27 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       end
     end
   end
+
+  describe '.output' do
+    it 'adds the output to all children' do
+      group = Class.new(Inferno::TestGroup) do
+        output :a
+
+        test do
+          title 'child test'
+        end
+      end
+
+      group.children.each do |child|
+        expect(child.outputs).to include(:a)
+      end
+
+      group.output(:b, type: :oauth_credentials)
+
+      group.children.each do |child|
+        expect(child.outputs).to include(:b)
+        expect(child.config.outputs[:b][:type]).to eq(:oauth_credentials)
+      end
+    end
+  end
 end
