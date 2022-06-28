@@ -24,10 +24,20 @@ module Inferno
           [identifier, *other_identifiers].compact.each do |input_identifier|
             inputs << input_identifier
             config.add_input(input_identifier)
+            children
+              .reject { |child| child.inputs.include? input_identifier }
+              .each do |child|
+                child.input(input_identifier)
+              end
           end
         else
           inputs << identifier
           config.add_input(identifier, input_params)
+          children
+            .reject { |child| child.inputs.include? identifier }
+            .each do |child|
+              child.input(identifier, **input_params)
+            end
         end
       end
 
