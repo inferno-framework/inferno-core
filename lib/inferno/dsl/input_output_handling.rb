@@ -57,10 +57,20 @@ module Inferno
           [identifier, *other_identifiers].compact.each do |output_identifier|
             outputs << output_identifier
             config.add_output(output_identifier)
+            children
+              .reject { |child| child.outputs.include? output_identifier }
+              .each do |child|
+                child.output(output_identifier)
+              end
           end
         else
           outputs << identifier
           config.add_output(identifier, output_definition)
+          children
+            .reject { |child| child.outputs.include? identifier }
+            .each do |child|
+              child.output(identifier, **output_definition)
+            end
         end
       end
 
