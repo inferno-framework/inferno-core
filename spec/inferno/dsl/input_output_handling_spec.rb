@@ -150,4 +150,27 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       end
     end
   end
+
+  describe '.input' do
+    it 'adds the input to all children' do
+      group = Class.new(Inferno::TestGroup) do
+        input :a
+
+        test do
+          title 'child test'
+        end
+      end
+
+      group.children.each do |child|
+        expect(child.inputs).to include(:a)
+      end
+
+      group.input(:b, description: 'abc')
+
+      group.children.each do |child|
+        expect(child.inputs).to include(:b)
+        expect(child.config.input(:b).description).to eq('abc')
+      end
+    end
+  end
 end
