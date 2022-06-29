@@ -12,11 +12,12 @@ Template Repository](https://github.com/inferno-framework/inferno-template).
 - [Ruby API documentation](https://inferno-framework.github.io/inferno-core/docs)
 - [JSON API documentation](https://inferno-framework.github.io/inferno-core/api-docs)
 
-## Requirements
-Inferno Core requires [Ruby 2.7+](https://www.ruby-lang.org/en/) and [Node.js
-and NPM](https://www.npmjs.com/get-npm).
+## Contributing to Inferno Core
+Developers interested in contributing to the Inferno Core gem must have [Ruby
+2.7+](https://www.ruby-lang.org/en/) and [Node.js and
+NPM](https://www.npmjs.com/get-npm) installed.
 
-## Running Inferno Core
+## Using Inferno Core to author tests
 
 If you are interested in developing tests using Inferno Core, use the [Inferno
 Template Repository](https://github.com/inferno-framework/inferno-template).
