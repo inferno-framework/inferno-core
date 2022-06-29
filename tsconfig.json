@@ -19,10 +19,13 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "baseUrl": "./client/src"
+    "baseUrl": "./client/src",
+    "paths": {
+      "~/*": ["./*"],
+    }
   },
   "include": [
     "client/src",
     "index.d.ts"
-  ]
+  ],
 }

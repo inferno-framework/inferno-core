@@ -1,5 +1,12 @@
 import React, { FC } from 'react';
-import { TestGroup, RunnableType, TestSuite, Request, Test, Message } from 'models/testSuiteModels';
+import {
+  TestGroup,
+  RunnableType,
+  TestSuite,
+  Request,
+  Test,
+  Message,
+} from '~/models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
 import TestGroupCard from './TestGroupCard';

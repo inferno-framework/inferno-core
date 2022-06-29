@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import TestGroupCard from 'components/TestSuite/TestSuiteDetails/TestGroupCard';
-import { TestGroup, Test, TestSuite } from 'models/testSuiteModels';
+import TestGroupCard from '~/components/TestSuite/TestSuiteDetails/TestGroupCard';
+import { TestGroup, Test, TestSuite } from '~/models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
 import { Box, Button, Card, Typography } from '@mui/material';

@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { devtoolsInDev } from './devtools';
 
-import { TestSuite, TestSession } from '../models/testSuiteModels';
+import { TestSuite, TestSession } from '~/models/testSuiteModels';
 
 type AppStore = {
   testSuites: TestSuite[];

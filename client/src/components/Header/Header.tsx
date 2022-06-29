@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import icon from 'images/inferno_icon.png';
+import icon from '~/images/inferno_icon.png';
 import { AppBar, Box, Button, Link, Stack, Toolbar, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import { basePath, getStaticPath } from 'api/infernoApiService';
+import { basePath, getStaticPath } from '~/api/infernoApiService';
 
 export interface HeaderProps {
   suiteTitle?: string;

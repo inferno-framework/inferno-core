@@ -14,10 +14,10 @@ import {
   Request,
   TestOutput,
   ViewType,
-} from 'models/testSuiteModels';
-import { deleteTestRun, getTestRunWithResults, postTestRun } from 'api/TestRunsApi';
-import ActionModal from 'components/ActionModal/ActionModal';
-import InputsModal from 'components/InputsModal/InputsModal';
+} from '~/models/testSuiteModels';
+import { deleteTestRun, getTestRunWithResults, postTestRun } from '~/api/TestRunsApi';
+import ActionModal from '~/components/ActionModal/ActionModal';
+import InputsModal from '~/components/InputsModal/InputsModal';
 import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
 import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';

@@ -1,6 +1,6 @@
 import React, { FC, useMemo } from 'react';
 import useStyles from './styles';
-import { TestGroup, RunnableType, TestSuite } from 'models/testSuiteModels';
+import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
 import InputOutputsList from './TestListItem/InputOutputsList';
 import { Box, Card, Divider, Typography } from '@mui/material';
 import ReactMarkdown from 'react-markdown';

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Result } from 'models/testSuiteModels';
+import { Result } from '~/models/testSuiteModels';
 import { Tooltip } from '@mui/material';
 import { red, orange, green, purple, grey } from '@mui/material/colors';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';

@@ -2,8 +2,8 @@ import React, { FC } from 'react';
 import { Button, Tooltip } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import { TestGroup, Runnable, RunnableType } from 'models/testSuiteModels';
-import lightTheme from 'styles/theme';
+import { TestGroup, Runnable, RunnableType } from '~/models/testSuiteModels';
+import lightTheme from '~/styles/theme';
 
 export interface TestRunButtonProps {
   runnable: Runnable;

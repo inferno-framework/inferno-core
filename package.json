@@ -78,6 +78,7 @@
     "ts-jest": "^26.5.2",
     "ts-loader": "^8.0.18",
     "ts-node": "^9.1.1",
+    "tsconfig-paths-webpack-plugin": "^3.5.2",
     "typescript": "^4.4.4",
     "webpack": "^5.64.4",
     "webpack-bundle-analyzer": "^4.5.0",
@@ -107,7 +108,8 @@
       "./client/src/setupTests.ts"
     ],
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif)$": "<rootDir>/client/src/assetsTransformer.js"
+      "\\.(jpg|jpeg|png|gif)$": "<rootDir>/client/src/assetsTransformer.js",
+      "^~/(.*)$": "<rootDir>/client/src/$1"
     },
     "collectCoverageFrom": [
       "**/*.{ts,tsx}",
