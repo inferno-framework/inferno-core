@@ -18,7 +18,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import useStyles from './styles';
 import TestGroupTreeItem from './TestGroupTreeItem';
 import TreeItemLabel from './TreeItemLabel';
-import CustomTreeItem from '~/components/_common/TreeItem'
+import CustomTreeItem from '~/components/_common/TreeItem';
 import PresetsSelector from '~/components/PresetsSelector/PresetsSelector';
 import lightTheme from '~/styles/theme';
 
