@@ -7,31 +7,34 @@ import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
   appbar: {
+    width: '100%',
+    overflow: 'auto',
+    minHeight: '64px', // For responsive screens
+    maxHeight: '64px', // For responsive screens
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
     position: 'sticky',
-    flexDirection: 'row',
     '& .MuiTypography-root': {
       display: 'flex',
       justifyContent: 'center',
       flexDirection: 'column',
     },
-  },
-  toolbar: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    width: '100%',
     '@media print': {
       display: 'none',
     },
   },
+  toolbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
   logo: {
     objectFit: 'contain',
-    height: '3em',
+    height: '2.75em',
   },
   titleContainer: {
     display: 'flex',
     alignItems: 'baseline',
     alignSelf: 'center',
+    width: 'max-content',
   },
   title: {
     padding: '0 8px',

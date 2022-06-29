@@ -8,6 +8,7 @@ import { mockedTestSession, mockedResultsList } from '../__mocked_data__/mockDat
 
 test('Test session renders', () => {
   const history = createMemoryHistory();
+  let drawerOpen = true;
 
   render(
     <Router history={history}>
@@ -18,6 +19,8 @@ test('Test session renders', () => {
           initialTestRun={null}
           sessionData={new Map()}
           setSessionData={() => {}}
+          drawerOpen={drawerOpen}
+          toggleDrawer={() => (drawerOpen = !drawerOpen)}
         />
       </ThemeProvider>
     </Router>

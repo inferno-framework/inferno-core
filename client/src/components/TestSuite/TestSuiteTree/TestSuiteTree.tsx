@@ -20,6 +20,7 @@ import TestGroupTreeItem from './TestGroupTreeItem';
 import TreeItemLabel from './TreeItemLabel';
 import CustomTreeItem from '~/components/_common/TreeItem';
 import PresetsSelector from '~/components/PresetsSelector/PresetsSelector';
+import lightTheme from '~/styles/theme';
 
 export interface TestSuiteTreeProps {
   testSuite: TestSuite;
@@ -89,12 +90,16 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
         configMessages &&
         configMessages?.filter((message) => message.type === 'error').length > 0
       ) {
-        configMessagesSeverityIcon = <ErrorOutlineIcon sx={{ color: 'red' }} />;
+        configMessagesSeverityIcon = (
+          <ErrorOutlineIcon sx={{ color: lightTheme.palette.common.red }} />
+        );
       } else if (
         configMessages &&
         configMessages?.filter((message) => message.type === 'warning').length > 0
       ) {
-        configMessagesSeverityIcon = <WarningAmberIcon color="primary" />;
+        configMessagesSeverityIcon = (
+          <WarningAmberIcon sx={{ color: lightTheme.palette.common.orange }} />
+        );
       }
 
       return (

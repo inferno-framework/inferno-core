@@ -7,8 +7,6 @@ import {
   ListItemText,
   Tab,
   Tabs,
-  Tooltip,
-  Badge,
   Typography,
   Accordion,
   AccordionSummary,
@@ -22,7 +20,7 @@ import RequestsList from './RequestsList';
 import ResultIcon from '../ResultIcon';
 import ProblemBadge from './ProblemBadge';
 import PublicIcon from '@mui/icons-material/Public';
-import Cancel from '@mui/icons-material/Cancel';
+import Error from '@mui/icons-material/Error';
 import Warning from '@mui/icons-material/Warning';
 import Info from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -31,6 +29,7 @@ import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
 import type { MessageCounts } from './helper';
 import { countMessageTypes } from './helper';
+import lightTheme from 'styles/theme';
 
 interface TestListItemProps {
   test: Test;
@@ -58,7 +57,7 @@ const TestListItem: FC<TestListItemProps> = ({
   }, [test.result]);
 
   const resultIcon = (
-    <Box className={styles.testIcon}>
+    <Box display="inline-flex">
       <ResultIcon result={test.result} />
     </Box>
   );
@@ -82,40 +81,78 @@ const TestListItem: FC<TestListItemProps> = ({
         )
       }
       secondaryTypographyProps={{ component: 'div' }}
+      className={styles.testText}
     />
   );
 
-  // Custom icon button to resolve nested interactive control error
-  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
-    <Badge
-      badgeContent={test.result.requests.length}
-      overlap="circular"
-      classes={{ badge: styles.testBadge }}
-    >
-      <Tooltip describeChild title={`${test.result.requests.length} request(s)`}>
-        <PublicIcon
-          aria-label={`View ${test.result.requests.length} request(s)`}
-          aria-hidden={false}
-          tabIndex={0}
-          color="secondary"
-          className={styles.badgeIcon}
-          onClick={(e) => {
-            e.stopPropagation();
-            if (view !== 'report') {
-              setPanelIndex(0);
-              setOpen(true);
-            }
-          }}
-          onKeyDown={(e) => {
-            e.stopPropagation();
-            if (e.key === 'Enter' && view !== 'report') {
-              setPanelIndex(0);
-              setOpen(true);
-            }
-          }}
+  const messageTypeCounts: MessageCounts = (() => {
+    if (test.result === undefined || !test.result?.messages)
+      return { errors: 0, warnings: 0, infos: 0 };
+
+    return countMessageTypes(test.result.messages);
+  })();
+
+  const renderProblemBadge = (messageTypeCounts: MessageCounts) => {
+    if (view !== 'run') return null;
+
+    if (messageTypeCounts.errors > 0)
+      return (
+        <ProblemBadge
+          Icon={Error}
+          counts={messageTypeCounts.errors}
+          color={styles.error}
+          badgeStyle={styles.errorBadge}
+          description={`${messageTypeCounts.errors} message(s)`}
+          view={view}
+          panelIndex={0}
+          setOpen={setOpen}
+          setPanelIndex={setPanelIndex}
         />
-      </Tooltip>
-    </Badge>
+      );
+
+    if (messageTypeCounts.warnings > 0)
+      return (
+        <ProblemBadge
+          Icon={Warning}
+          counts={messageTypeCounts.warnings}
+          color={styles.warning}
+          badgeStyle={styles.warningBadge}
+          description={`${messageTypeCounts.warnings} message(s)`}
+          view={view}
+          panelIndex={0}
+          setOpen={setOpen}
+          setPanelIndex={setPanelIndex}
+        />
+      );
+
+    if (messageTypeCounts.infos > 0)
+      return (
+        <ProblemBadge
+          Icon={Info}
+          counts={messageTypeCounts.infos}
+          color={styles.info}
+          badgeStyle={styles.infoBadge}
+          description={`${messageTypeCounts.infos} message(s)`}
+          view={view}
+          panelIndex={0}
+          setOpen={setOpen}
+          setPanelIndex={setPanelIndex}
+        />
+      );
+  };
+
+  const requestsBadge = test.result?.requests && test.result.requests.length > 0 && (
+    <ProblemBadge
+      Icon={PublicIcon}
+      counts={test.result.requests.length}
+      color={styles.request}
+      badgeStyle={styles.requestBadge}
+      description={`${test.result.requests.length} request(s)`}
+      view={view}
+      panelIndex={1}
+      setOpen={setOpen}
+      setPanelIndex={setPanelIndex}
+    />
   );
 
   const testRunButton = view === 'run' && runTests && (
@@ -142,57 +179,16 @@ const TestListItem: FC<TestListItemProps> = ({
     </ListItem>
   );
 
+  const darkTabText = {
+    '&.Mui-selected': {
+      color: lightTheme.palette.common.orangeDarker,
+    },
+  };
+
   const a11yProps = (index: number) => ({
     id: `${test.id}-tab-${index}`,
     'aria-controls': `${test.id}-tabpanel-${index}`,
   });
-
-  const messageTypeCounts: MessageCounts = (() => {
-    if (test.result === undefined || !test.result?.messages)
-      return { errors: 0, warnings: 0, infos: 0 };
-
-    return countMessageTypes(test.result.messages);
-  })();
-
-  const renderProblemBadge = (messageTypeCounts: MessageCounts) => {
-    if (view !== 'run') return null;
-
-    if (messageTypeCounts.errors > 0)
-      return (
-        <ProblemBadge
-          Icon={Cancel}
-          counts={messageTypeCounts.errors}
-          color={styles.error}
-          badgeStyle={styles.errorBadge}
-          setOpen={setOpen}
-          setPanelIndex={setPanelIndex}
-        />
-      );
-
-    if (messageTypeCounts.warnings > 0)
-      return (
-        <ProblemBadge
-          Icon={Warning}
-          counts={messageTypeCounts.warnings}
-          color={styles.warning}
-          badgeStyle={styles.warningBadge}
-          setOpen={setOpen}
-          setPanelIndex={setPanelIndex}
-        />
-      );
-
-    if (messageTypeCounts.infos > 0)
-      return (
-        <ProblemBadge
-          Icon={Info}
-          counts={messageTypeCounts.infos}
-          color={styles.info}
-          badgeStyle={styles.infoBadge}
-          setOpen={setOpen}
-          setPanelIndex={setPanelIndex}
-        />
-      );
-  };
 
   return (
     <>
@@ -233,16 +229,17 @@ const TestListItem: FC<TestListItemProps> = ({
         >
           <Tabs
             value={panelIndex}
+            variant="scrollable"
             className={styles.tabs}
             onChange={(e, newIndex) => {
               setPanelIndex(newIndex);
             }}
           >
-            <Tab label="Messages" {...a11yProps(0)} />
-            <Tab label="HTTP Requests" {...a11yProps(1)} />
-            <Tab label="Inputs" {...a11yProps(2)} />
-            <Tab label="Outputs" {...a11yProps(3)} />
-            <Tab label="About" {...a11yProps(4)} />
+            <Tab label="Messages" {...a11yProps(0)} sx={darkTabText} />
+            <Tab label="HTTP Requests" {...a11yProps(1)} sx={darkTabText} />
+            <Tab label="Inputs" {...a11yProps(2)} sx={darkTabText} />
+            <Tab label="Outputs" {...a11yProps(3)} sx={darkTabText} />
+            <Tab label="About" {...a11yProps(4)} sx={darkTabText} />
           </Tabs>
           <Divider />
           <TabPanel id={test.id} currentPanelIndex={panelIndex} index={0}>

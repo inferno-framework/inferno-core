@@ -51,7 +51,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
 
   const header = (
     <Card className={styles.testGroupCard} variant="outlined">
-      <div className={styles.testGroupCardHeader}>
+      <Box className={styles.testGroupCardHeader}>
         <span className={styles.testGroupCardHeaderText}>
           <Typography key="1" color="text.primary" className={styles.currentItem}>
             {testSuite.title} Report
@@ -72,8 +72,8 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
             Print
           </Button>
         </span>
-      </div>
-      <Box className={styles.reportSummaryBox}>
+      </Box>
+      <Box p={1}>
         <Box className={styles.reportSummaryItems}>
           <Box px={2}>
             <Typography
