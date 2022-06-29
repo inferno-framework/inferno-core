@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Alert, AlertColor, Box } from '@mui/material';
-import { Message } from 'models/testSuiteModels';
+import { Message } from '~/models/testSuiteModels';
 import useStyles from './styles';
 
 interface TestSuiteMessagesProps {

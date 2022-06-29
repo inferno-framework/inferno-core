@@ -1,4 +1,4 @@
-import type { Message } from '../../../../../models/testSuiteModels';
+import type { Message } from '~/models/testSuiteModels';
 import { sortByMessageType, countMessageTypes } from '../helper';
 
 describe('TestListItem helpers', () => {

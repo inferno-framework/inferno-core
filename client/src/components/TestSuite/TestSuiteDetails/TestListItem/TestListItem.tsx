@@ -12,7 +12,7 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from '@mui/material';
-import { RunnableType, Test, Request, ViewType } from 'models/testSuiteModels';
+import { RunnableType, Test, Request, ViewType } from '~/models/testSuiteModels';
 import TabPanel from './TabPanel';
 import InputOutputsList from './InputOutputsList';
 import MessagesList from './MessagesList';
@@ -25,8 +25,8 @@ import Warning from '@mui/icons-material/Warning';
 import Info from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReactMarkdown from 'react-markdown';
-import TestRunButton from '../../TestRunButton/TestRunButton';
-import { shouldShowDescription } from '../../TestSuiteUtilities';
+import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
+import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
 import type { MessageCounts } from './helper';
 import { countMessageTypes } from './helper';
 import lightTheme from 'styles/theme';

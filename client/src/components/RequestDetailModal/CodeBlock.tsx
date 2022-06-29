@@ -1,7 +1,7 @@
 import { Container, Paper } from '@mui/material';
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { RequestHeader } from 'models/testSuiteModels';
+import { RequestHeader } from '~/models/testSuiteModels';
 
 import { formatBodyIfJSON } from './helpers';
 

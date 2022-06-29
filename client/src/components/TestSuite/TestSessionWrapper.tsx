@@ -1,18 +1,18 @@
 import React, { FC, useEffect } from 'react';
 import useStyles from './styles';
-import { Result, TestOutput, TestRun, TestSession } from 'models/testSuiteModels';
+import { Result, TestOutput, TestRun, TestSession } from '~/models/testSuiteModels';
 import TestSessionComponent from './TestSession';
 import { useParams } from 'react-router-dom';
 import { Alert, Backdrop, Box } from '@mui/material';
-import Header from 'components/Header';
-import Footer from 'components/Footer';
+import Header from '~/components/Header';
+import Footer from '~/components/Footer';
 import {
   getCurrentTestSessionResults,
   getLastTestRun,
   getTestSession,
   getTestSessionData,
-} from 'api/TestSessionApi';
-import { getCoreVersion } from 'api/VersionsApi';
+} from '~/api/TestSessionApi';
+import { getCoreVersion } from '~/api/VersionsApi';
 
 const TestSessionWrapper: FC<unknown> = () => {
   const styles = useStyles();

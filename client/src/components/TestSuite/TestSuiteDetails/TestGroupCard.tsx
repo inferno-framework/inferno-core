@@ -2,11 +2,11 @@ import React, { FC, useMemo } from 'react';
 import { Box, Card, Divider, Typography } from '@mui/material';
 import useStyles from './styles';
 import ReactMarkdown from 'react-markdown';
-import { TestGroup, RunnableType, TestSuite } from 'models/testSuiteModels';
+import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
 import InputOutputsList from './TestListItem/InputOutputsList';
 import ResultIcon from './ResultIcon';
-import TestRunButton from '../TestRunButton/TestRunButton';
-import { shouldShowDescription } from '../TestSuiteUtilities';
+import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
+import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
 
 interface TestGroupCardProps {
   runnable: TestSuite | TestGroup;

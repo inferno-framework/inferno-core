@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { TestGroup, RunnableType } from 'models/testSuiteModels';
-import CustomTreeItem from '../../_common/TreeItem';
+import { TestGroup, RunnableType } from '~/models/testSuiteModels';
+import CustomTreeItem from '~/components/_common/TreeItem';
 import TreeItemLabel from './TreeItemLabel';
 import ResultIcon from '../TestSuiteDetails/ResultIcon';
 

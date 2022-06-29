@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import icon from 'images/inferno_icon.png';
+import icon from '~/images/inferno_icon.png';
 import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import { getStaticPath } from 'api/infernoApiService';
+import { getStaticPath } from '~/api/infernoApiService';
 
-import { useAppStore } from '../../store/app';
+import { useAppStore } from '~/store/app';
 
 export interface HeaderProps {
   suiteTitle?: string;

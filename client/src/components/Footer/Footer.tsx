@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
 import { Box, Link, Typography, Divider } from '@mui/material';
-import logo from 'images/inferno_logo.png';
-import { getStaticPath } from 'api/infernoApiService';
+import logo from '~/images/inferno_logo.png';
+import { getStaticPath } from '~/api/infernoApiService';
 
 interface FooterProps {
   version: string;
