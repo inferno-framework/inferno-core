@@ -13,7 +13,7 @@ import {
   ToggleButton,
   Typography,
 } from '@mui/material';
-import { OAuthCredentials, RunnableType, TestInput } from 'models/testSuiteModels';
+import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteModels';
 import InputRadioGroup from './InputsRadioGroup';
 import ReactMarkdown from 'react-markdown';
 import InputTextArea from './InputTextArea';

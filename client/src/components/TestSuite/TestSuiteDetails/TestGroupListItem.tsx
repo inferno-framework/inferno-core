@@ -15,12 +15,12 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FolderIcon from '@mui/icons-material/Folder';
 import InputOutputsList from './TestListItem/InputOutputsList';
-import { Request, RunnableType, Test, TestGroup, ViewType } from 'models/testSuiteModels';
+import { Request, RunnableType, Test, TestGroup, ViewType } from '~/models/testSuiteModels';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 import TestListItem from './TestListItem/TestListItem';
 import ReactMarkdown from 'react-markdown';
-import theme from '../../../styles/theme';
+import theme from '~/styles/theme';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
@@ -123,8 +123,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}
       >
         <Box display="flex" alignItems="center">
-          <Box className={styles.testIcon}>{<ResultIcon result={testGroup.result} />}</Box>
-          <List sx={{ padding: 0 }}>
+          <Box display="inline-flex">
+            <ResultIcon result={testGroup.result} />
+          </Box>
+          <List sx={{ padding: '0 8px' }}>
             <ListItem sx={{ padding: 0 }}>
               <ListItemText
                 primary={
@@ -171,14 +173,14 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   const navigableGroupListItem = (
     <>
       <Box display="flex" alignItems="center" px={2} py={1}>
-        <Box className={styles.testIcon}>
+        <Box display="inline-flex">
           {testGroup.run_as_group ? (
             <ResultIcon result={testGroup.result} />
           ) : (
             <FolderIcon sx={{ color: theme.palette.common.grayLight }} />
           )}
         </Box>
-        <List sx={{ padding: 0 }}>
+        <List sx={{ padding: '0 8px' }}>
           <ListItem sx={{ padding: 0 }}>
             <ListItemText
               primary={

@@ -1,17 +1,26 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import icon from 'images/inferno_icon.png';
-import { AppBar, Box, Button, Link, Stack, Toolbar, Typography } from '@mui/material';
+import icon from '~/images/inferno_icon.png';
+import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
-import { basePath, getStaticPath } from 'api/infernoApiService';
+import { getStaticPath } from '~/api/infernoApiService';
 
 export interface HeaderProps {
   suiteTitle?: string;
   suiteVersion?: string;
+  drawerOpen: boolean;
+  windowIsSmall: boolean;
+  toggleDrawer: (drawerOpen: boolean) => void;
 }
 
-const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
+const Header: FC<HeaderProps> = ({
+  suiteTitle,
+  suiteVersion,
+  windowIsSmall,
+  drawerOpen,
+  toggleDrawer,
+}) => {
   const styles = useStyles();
   const history = useHistory();
 
@@ -23,13 +32,15 @@ const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
     <AppBar color="default" className={styles.appbar}>
       <Toolbar className={styles.toolbar}>
         <Box display="flex" justifyContent="center">
-          <Link href={`/${basePath}`}>
-            <img
-              src={getStaticPath(icon as string)}
-              alt="Inferno logo - start new session"
-              className={styles.logo}
-            />
-          </Link>
+          <IconButton
+            size="small"
+            edge="start"
+            aria-label="menu"
+            disabled={!windowIsSmall}
+            onClick={() => toggleDrawer(!drawerOpen)}
+          >
+            <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
+          </IconButton>
           <Box className={styles.titleContainer}>
             <Typography variant="h5" component="h1" className={styles.title}>
               {suiteTitle}
@@ -41,7 +52,7 @@ const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
             )}
           </Box>
         </Box>
-        <Stack direction="row" spacing={2}>
+        <Box px={2} sx={{ minWidth: 'fit-content' }}>
           <Button
             disableElevation
             color="secondary"
@@ -52,7 +63,7 @@ const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion }) => {
           >
             New Session
           </Button>
-        </Stack>
+        </Box>
       </Toolbar>
     </AppBar>
   ) : (

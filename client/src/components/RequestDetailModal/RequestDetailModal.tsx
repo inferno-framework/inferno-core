@@ -7,7 +7,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { Request } from 'models/testSuiteModels';
+import { Request } from '~/models/testSuiteModels';
 import React, { FC } from 'react';
 import CodeBlock from './CodeBlock';
 import HeaderTable from './HeaderTable';

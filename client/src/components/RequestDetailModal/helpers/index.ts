@@ -1,4 +1,4 @@
-import { RequestHeader } from 'models/testSuiteModels';
+import { RequestHeader } from '~/models/testSuiteModels';
 
 export const formatBodyIfJSON = (
   code: string,

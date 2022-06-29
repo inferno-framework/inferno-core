@@ -9,6 +9,9 @@ type ProblemBadgeProps = {
   counts: number;
   color: string;
   badgeStyle: string;
+  description: string;
+  view: string;
+  panelIndex: number;
   setPanelIndex: React.Dispatch<React.SetStateAction<number>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -18,31 +21,38 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
   counts,
   color,
   badgeStyle,
+  description,
+  view,
+  panelIndex,
   setPanelIndex,
   setOpen,
 }) => {
   const styles = useStyles();
+
+  // Custom icon button to resolve nested interactive control error
   return (
     <Badge
       badgeContent={counts}
       overlap="circular"
       className={clsx([color, badgeStyle, styles.badgeBase])}
     >
-      <Tooltip describeChild title={`${counts} message(s)`}>
+      <Tooltip describeChild title={description}>
         <Icon
-          aria-label={`View ${counts} message(s)`}
+          aria-label={`View ${description}`}
           aria-hidden={false}
           tabIndex={0}
-          className={clsx([styles.badgeIcon, styles.problemBadge, color])}
+          className={clsx([styles.badgeIcon, color])}
           onClick={(e) => {
             e.stopPropagation();
-            setPanelIndex(0);
-            setOpen(true);
+            if (view !== 'report') {
+              setPanelIndex(panelIndex);
+              setOpen(true);
+            }
           }}
           onKeyDown={(e) => {
             e.stopPropagation();
-            if (e.key === 'Enter') {
-              setPanelIndex(0);
+            if (e.key === 'Enter' && view !== 'report') {
+              setPanelIndex(panelIndex);
               setOpen(true);
             }
           }}

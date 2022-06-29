@@ -5,9 +5,6 @@ export default makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
   },
-  reportSummaryBox: {
-    padding: '5px',
-  },
   reportSummaryItems: {
     padding: '16px;',
     display: 'flex',
@@ -18,10 +15,7 @@ export default makeStyles((theme: Theme) => ({
     textAlign: 'right',
     padding: '0 8px;',
     fontSize: '12px',
-  },
-  testIcon: {
-    padding: '0 8px 0 0',
-    display: 'inline-flex',
+    wordBreak: 'break-word',
   },
   labelText: {
     display: 'inline',
@@ -37,6 +31,7 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     minHeight: '36.5px',
     alignItems: 'center',
+    overflow: 'auto',
     '@media print': {
       padding: '0 8px',
     },
@@ -49,6 +44,7 @@ export default makeStyles((theme: Theme) => ({
   },
   testGroupCardHeaderText: {
     flexGrow: 1,
+    padding: '0 8px',
   },
   shortId: {
     display: 'inline',

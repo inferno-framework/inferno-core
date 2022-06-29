@@ -1,15 +1,15 @@
 import React, { FC, useEffect } from 'react';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import { StyledEngineProvider } from '@mui/material/styles';
-import { postTestSessions } from 'api/TestSessionApi';
-import { getTestSuites } from 'api/TestSuitesApi';
-import LandingPage from 'components/LandingPage';
-import TestSessionWrapper from 'components/TestSuite/TestSessionWrapper';
-import ThemeProvider from 'components/ThemeProvider';
-import { TestSession, TestSuite } from 'models/testSuiteModels';
-import { basePath } from 'api/infernoApiService';
+import { postTestSessions } from '~/api/TestSessionApi';
+import { getTestSuites } from '~/api/TestSuitesApi';
+import LandingPage from '~/components/LandingPage';
+import TestSessionWrapper from '~/components/TestSuite/TestSessionWrapper';
+import ThemeProvider from '~/components/ThemeProvider';
+import { TestSession, TestSuite } from '~/models/testSuiteModels';
+import { basePath } from '~/api/infernoApiService';
 
-import { useAppStore } from '../../store/app';
+import { useAppStore } from '~/store/app';
 
 const App: FC<unknown> = () => {
   const testSuites = useAppStore((state) => state.testSuites);

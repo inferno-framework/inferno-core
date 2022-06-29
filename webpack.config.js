@@ -1,6 +1,7 @@
 const path = require('path');
-const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const webpack = require('webpack');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const { WebpackManifestPlugin } = require('webpack-manifest-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env, argv) => {
@@ -53,11 +54,8 @@ module.exports = (env, argv) => {
       ],
     },
     resolve: {
-      modules: [path.resolve(__dirname, './client/src'), 'node_modules'],
+      plugins: [new TsconfigPathsPlugin()],
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
-      alias: {
-        components: path.resolve(__dirname, './client/src/components'),
-      },
     },
     plugins: [
       new WebpackManifestPlugin({

@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
 import { Box, Link, Typography, Divider } from '@mui/material';
-import logo from 'images/inferno_logo.png';
-import { getStaticPath } from 'api/infernoApiService';
+import logo from '~/images/inferno_logo.png';
+import { getStaticPath } from '~/api/infernoApiService';
 
 interface FooterProps {
   version: string;
@@ -45,7 +45,7 @@ const Footer: FC<FooterProps> = ({ version }) => {
         <Box display="flex" alignItems="center" p={2}>
           {linkList.map((link, i) => {
             return (
-              <>
+              <React.Fragment key={link.url}>
                 <Link
                   href={link.url}
                   target="_blank"
@@ -56,7 +56,7 @@ const Footer: FC<FooterProps> = ({ version }) => {
                   {link.label}
                 </Link>
                 {i !== linkList.length - 1 && <Divider orientation="vertical" flexItem />}
-              </>
+              </React.Fragment>
             );
           })}
         </Box>

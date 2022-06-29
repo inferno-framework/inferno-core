@@ -1,6 +1,6 @@
 import { ListItem, TextField } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
-import { TestInput } from 'models/testSuiteModels';
+import { TestInput } from '~/models/testSuiteModels';
 import React, { FC, Fragment } from 'react';
 import useStyles from './styles';
 import lightTheme from 'styles/theme';

@@ -1,4 +1,4 @@
-import type { Message } from '../../../../models/testSuiteModels';
+import type { Message } from '~/models/testSuiteModels';
 
 export type MessageCounts = {
   errors: number;

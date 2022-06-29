@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import InputsModal from '../InputsModal';
-import { RunnableType, TestInput } from 'models/testSuiteModels';
+import { RunnableType, TestInput } from '~/models/testSuiteModels';
 import ThemeProvider from 'components/ThemeProvider';
 
 const hideModalMock = jest.fn();

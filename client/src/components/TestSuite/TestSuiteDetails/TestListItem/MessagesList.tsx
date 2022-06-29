@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
 import { Table, TableBody, TableRow, TableCell, Typography, TableHead, Box } from '@mui/material';
-import { Message } from 'models/testSuiteModels';
+import { Message } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 
 import MessageType from './MessageType';
@@ -31,9 +31,7 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
     return (
       <TableRow key={`msgRow-${index}`}>
         <TableCell>
-          <Typography variant="subtitle2" component="p" className={styles.bolderText}>
-            <MessageType type={message.type} />
-          </Typography>
+          <MessageType type={message.type} />
         </TableCell>
         <TableCell className={styles.messageMessage}>
           <ReactMarkdown>{message.message}</ReactMarkdown>

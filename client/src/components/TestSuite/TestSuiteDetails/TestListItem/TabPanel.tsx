@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import lightTheme from 'styles/theme';
 
 interface TabPanelProps {
   id: string;
@@ -13,6 +14,7 @@ const TabPanel: FC<TabPanelProps> = ({ id, index, currentPanelIndex, children })
       hidden={currentPanelIndex !== index}
       id={`${id}-tabpanel-${index}`}
       aria-labelledby={`${id}-tab-${index}`}
+      style={{ overflow: 'auto', backgroundColor: lightTheme.palette.common.white }}
     >
       {currentPanelIndex === index && <div>{children}</div>}
     </div>

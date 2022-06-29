@@ -8,7 +8,7 @@ import {
   RadioGroup,
 } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
-import { TestInput } from 'models/testSuiteModels';
+import { TestInput } from '~/models/testSuiteModels';
 import useStyles from './styles';
 
 export interface InputRadioGroupProps {
