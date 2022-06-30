@@ -4,16 +4,20 @@ import { Box, Link, Typography, Divider } from '@mui/material';
 import logo from '~/images/inferno_logo.png';
 import { getStaticPath } from '~/api/infernoApiService';
 
+// TODO: update linklist to retrieve this from the API as it should be defined by the suite
+// linkList has the shape:
+// [
+//   { label: 'Open Source', url: 'https://github.com/inferno-framework/inferno-core' },
+//   { label: 'Issues', url: 'https://github.com/inferno-framework/inferno-core/issues' },
+// ];
+
 interface FooterProps {
   version: string;
+  linkList?: any[];
 }
 
-const Footer: FC<FooterProps> = ({ version }) => {
+const Footer: FC<FooterProps> = ({ version, linkList }) => {
   const styles = useStyles();
-  const linkList = [
-    { label: 'Open Source', url: 'https://github.com/inferno-framework/inferno-core' },
-    { label: 'Issues', url: 'https://github.com/inferno-framework/inferno-core/issues' },
-  ];
 
   return (
     <footer className={styles.footer}>
@@ -42,8 +46,9 @@ const Footer: FC<FooterProps> = ({ version }) => {
             </Box>
           )}
         </Box>
+        { linkList && (
         <Box display="flex" alignItems="center" p={2}>
-          {linkList.map((link, i) => {
+          {linkList?.map((link, i) => {
             return (
               <React.Fragment key={link.url}>
                 <Link
@@ -60,6 +65,7 @@ const Footer: FC<FooterProps> = ({ version }) => {
             );
           })}
         </Box>
+        )}
       </Box>
     </footer>
   );
