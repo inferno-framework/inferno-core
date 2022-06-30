@@ -20,7 +20,6 @@ import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import InputOAuthCredentials from './InputOAuthCredentials';
 import YAML from 'js-yaml';
-import lightTheme from '~/styles/theme';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
