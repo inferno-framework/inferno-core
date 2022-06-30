@@ -1,3 +1,16 @@
+# 0.3.4
+
+* Incorporate UI changes to improve info, warning, and error test message readability. 
+* Update to support running locally on M1 MacBooks. 
+* Update gem dependencies. 
+* Add deployment documentation - SSRF protection and SSL, database, and path 
+  configuration.
+* Include links to Inferno's github repository and issues page in testing view.
+* Improve frontend storage.
+* Implement backend support for suite options: this allows test writers to specify which 
+  tests in a suite are executed and which validator to use during execution. 
+* Add touchscreen support.
+
 # 0.3.3
 
 * UI accessibility improvements.
