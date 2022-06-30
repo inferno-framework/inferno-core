@@ -9,6 +9,7 @@
 * Improve frontend storage.
 * Implement backend support for suite options: this allows test writers to specify which 
   tests in a suite are executed and which validator to use during execution. 
+* Add touchscreen support.
 
 # 0.3.3
 
