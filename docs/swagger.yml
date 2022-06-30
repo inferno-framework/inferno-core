@@ -589,18 +589,16 @@ definitions:
       description:
         type: "string"
       value:
-        type: "string
+        type: "string"
       list_options:
         type: "array"
         items:
           type: "object"
           properties:
-            type: "object"
-            properties:
-              label:
-                type: "string"
-              value:
-                type: "string"
+            label:
+              type: "string"
+            value:
+              type: "string"
   TestGroup:
     type: "object"
     required:
