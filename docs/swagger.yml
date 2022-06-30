@@ -342,8 +342,8 @@ paths:
         "404":
           description: "HTTP request not found"
   /version:
-    get: 
-      tags: 
+    get:
+      tags:
       - "Version"
       summary: "Get the version of Inferno currently being queried."
       produces:
@@ -351,9 +351,9 @@ paths:
       responses:
         "200":
           description: "success"
-          schema: 
-            $ref: "#/definitions/Version" 
-            
+          schema:
+            $ref: "#/definitions/Version"
+
 definitions:
   TestSession:
     type: "object"
@@ -372,6 +372,10 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Result"
+      suite_options:
+        type: "array"
+        items:
+          $ref: "#/definitions/SuiteOption"
   TestRun:
     type: "object"
     required:
@@ -573,25 +577,26 @@ definitions:
         items:
           $ref: "#/definitions/PresetSummary"
       suite_options:
-        tye: "array"
+        type: "array"
         items:
           $ref: "#/definitions/SuiteOption"
   SuiteOption:
     type: "object"
-    required:
-    - "id"
-    - "list_options"
     properties:
       id:
         type: "string"
+        readOnly: true
       title:
         type: "string"
+        readOnly: true
       description:
         type: "string"
+        readOnly: true
       value:
         type: "string"
       list_options:
         type: "array"
+        readOnly: true
         items:
           type: "object"
           properties:
