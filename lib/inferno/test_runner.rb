@@ -67,7 +67,7 @@ module Inferno
           inputs: inputs,
           test_session_id: test_session.id,
           scratch: scratch,
-          suite_options: test_session.suite_options
+          suite_options: test_session.suite_options_hash
         )
 
       result = begin

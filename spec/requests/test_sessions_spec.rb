@@ -4,6 +4,7 @@ RSpec.describe '/test_sessions' do
   let(:router) { Inferno::Web::Router }
   let(:response_fields) { ['id', 'test_suite_id', 'test_suite'] }
   let(:test_session) { repo_create(:test_session, test_suite_id: test_suite_id) }
+  let(:repo) { Inferno::Repositories::TestSessions.new }
 
   describe 'create' do
     let(:create_path) { router.path(:api_test_sessions) }
@@ -12,7 +13,7 @@ RSpec.describe '/test_sessions' do
     end
 
     context 'with valid input' do
-      let(:test_suite_id) { 'BasicTestSuite::Suite' }
+      let(:test_suite_id) { 'options' }
 
       it 'renders the test_session json' do
         post_json create_path, input
@@ -26,7 +27,6 @@ RSpec.describe '/test_sessions' do
 
       context 'with a preset id' do
         it 'applies the preset' do
-          repo = Inferno::Repositories::TestSessions.new
           allow_any_instance_of(Inferno::Web::Controllers::TestSessions::Create).to receive(:repo).and_return(repo)
           allow(repo).to receive(:apply_preset)
 
@@ -34,6 +34,19 @@ RSpec.describe '/test_sessions' do
 
           expect(last_response.status).to eq(200)
           expect(repo).to have_received(:apply_preset).once
+        end
+      end
+
+      context 'with suite options' do
+        it 'persists the suite options' do
+          option_hash = { id: 'ig_version', value: '1' }
+          post_json create_path, input.merge(suite_options: [option_hash])
+
+          expect(last_response.status).to eq(200)
+          expect(parsed_body['suite_options']).to eq([{ 'id' => 'ig_version', 'value' => '1' }])
+
+          persisted_session = repo.find(parsed_body['id'])
+          expect(persisted_session.suite_options).to eq([Inferno::DSL::SuiteOption.new(option_hash)])
         end
       end
     end
@@ -129,7 +142,6 @@ RSpec.describe '/test_sessions' do
 
     context 'when the preset and session exist' do
       it 'applies the preset' do
-        repo = Inferno::Repositories::TestSessions.new
         allow_any_instance_of(
           Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset
         ).to receive(:test_sessions_repo).and_return(repo)
@@ -151,7 +163,6 @@ RSpec.describe '/test_sessions' do
 
     context 'when the preset does not exist' do
       it 'returns a 404' do
-        repo = Inferno::Repositories::TestSessions.new
         allow_any_instance_of(
           Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset
         ).to receive(:test_sessions_repo).and_return(repo)
@@ -173,7 +184,6 @@ RSpec.describe '/test_sessions' do
 
     context 'when session does notexist' do
       it 'returns a 404' do
-        repo = Inferno::Repositories::TestSessions.new
         allow_any_instance_of(
           Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset
         ).to receive(:test_sessions_repo).and_return(repo)

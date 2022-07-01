@@ -38,6 +38,22 @@ module Inferno
       def initialize(params)
         super(params, ATTRIBUTES)
       end
+
+      def to_hash
+        session_hash = (self.class::ATTRIBUTES - [:suite_options]).each_with_object({}) do |attribute, hash|
+          hash[attribute] = send(attribute)
+        end
+
+        session_hash[:suite_options] = suite_options&.map(&:to_hash) || []
+
+        session_hash.compact
+      end
+
+      def suite_options_hash
+        (suite_options || []).each_with_object({}) do |option, hash|
+          hash[option.id] = option.value
+        end
+      end
     end
   end
 end

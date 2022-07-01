@@ -142,7 +142,7 @@ RSpec.describe Inferno::TestRunner do
     let(:suite) { OptionsSuite::Suite }
 
     it 'only runs groups which should be included based on options' do
-      test_session.suite_options = { ig_version: '1' }
+      test_session.suite_options = [Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')]
 
       runner.run(suite)
 
@@ -156,7 +156,7 @@ RSpec.describe Inferno::TestRunner do
     end
 
     it 'makes suite options available to tests' do
-      test_session.suite_options = { ig_version: '1' }
+      test_session.suite_options = [Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')]
 
       runner.run(suite)
 

@@ -1,5 +1,6 @@
 require_relative 'test_group'
 require_relative '../dsl/runnable'
+require_relative '../dsl/suite_option'
 require_relative '../repositories/test_groups'
 require_relative '../repositories/test_suites'
 
@@ -30,8 +31,8 @@ module Inferno
           Inferno::Repositories::TestSuites.new
         end
 
-        def groups
-          all_children.select { |child| child < Inferno::Entities::TestGroup }
+        def groups(options = nil)
+          children(options).select { |child| child < Inferno::Entities::TestGroup }
         end
 
         # Methods to configure Inferno::DSL::Runnable
@@ -86,11 +87,11 @@ module Inferno
         end
 
         def suite_option(identifier, **input_params)
-          suite_options[identifier] = input_params
+          suite_options << DSL::SuiteOption.new(input_params.merge(id: identifier))
         end
 
         def suite_options
-          @suite_options ||= {}
+          @suite_options ||= []
         end
       end
     end
