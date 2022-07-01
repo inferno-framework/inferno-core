@@ -110,11 +110,16 @@ const TestSessionWrapper: FC<unknown> = () => {
   }
 
   if (testSession && testResults && sessionData) {
+    let suiteOptionChoices = '';
+    if(testSession.suite_options){
+      suiteOptionChoices = testSession.suite_options.map((option) => {option.value}).join(' | ')
+    }
     return (
       <Box className={styles.testSessionContainer}>
         <Header
           suiteTitle={testSession.test_suite.title}
           suiteVersion={testSession.test_suite.version}
+          suiteOptions={suiteOptionChoices}
           drawerOpen={drawerOpen}
           windowIsSmall={windowIsSmall}
           toggleDrawer={toggleDrawer}

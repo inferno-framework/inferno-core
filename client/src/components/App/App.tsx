@@ -4,6 +4,7 @@ import { StyledEngineProvider } from '@mui/material/styles';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { getTestSuites } from '~/api/TestSuitesApi';
 import LandingPage from '~/components/LandingPage';
+import SuiteOptionsPage from '~/components/SuiteOptionsPage'
 import TestSessionWrapper from '~/components/TestSuite/TestSessionWrapper';
 import ThemeProvider from '~/components/ThemeProvider';
 import { TestSession, TestSuite } from '~/models/testSuiteModels';
@@ -29,7 +30,7 @@ const App: FC<unknown> = () => {
 
   useEffect(() => {
     if (testSuites && testSuites.length == 1) {
-      postTestSessions(testSuites[0].id)
+      postTestSessions(testSuites[0].id, null, null)
         .then((testSession: TestSession | null) => {
           if (testSession && testSession.test_suite) {
             setTestSession(testSession);
@@ -59,6 +60,9 @@ const App: FC<unknown> = () => {
             </Route>
             <Route path="/test_sessions/:test_session_id">
               <TestSessionWrapper />
+            </Route>
+            <Route path="/:test_suite_id">
+              {testSuites.length > 1 && <SuiteOptionsPage testSuites={testSuites} />}
             </Route>
           </Switch>
         </ThemeProvider>

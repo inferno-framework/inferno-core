@@ -51,6 +51,11 @@ module Inferno
             send(route[:method], path, to: route[:handler])
           end
         end
+
+        Inferno::Repositories::TestSuites.all.map{ |suite| "/#{suite.id}" }.each do |suite_path|
+          Application['logger'].info("Registering suite route: #{suite_path}")
+          get suite_path, to: ->(_env) { [200, {}, [client_page]] }
+        end
       end
     end
   end
