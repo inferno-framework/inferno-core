@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ThemeProvider from 'components/ThemeProvider';
 import Header from '../Header';
-import userEvent from '@testing-library/user-event';
 
 test('renders wide screen Inferno Header', () => {
   let drawerOpen = true;
