@@ -4,7 +4,7 @@ import { StyledEngineProvider } from '@mui/material/styles';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { getTestSuites } from '~/api/TestSuitesApi';
 import LandingPage from '~/components/LandingPage';
-import SuiteOptionsPage from '~/components/SuiteOptionsPage'
+import SuiteOptionsPage from '~/components/SuiteOptionsPage';
 import TestSessionWrapper from '~/components/TestSuite/TestSessionWrapper';
 import ThemeProvider from '~/components/ThemeProvider';
 import { TestSession, TestSuite } from '~/models/testSuiteModels';

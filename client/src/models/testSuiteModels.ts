@@ -110,7 +110,7 @@ export interface TestSession {
   id: string;
   test_suite: TestSuite;
   test_suite_id: string;
-  suite_options: SuiteOption[];
+  suite_options?: SuiteOption[];
 }
 
 export enum RunnableType {

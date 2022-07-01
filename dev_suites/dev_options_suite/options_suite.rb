@@ -65,10 +65,10 @@ module OptionsSuite
   class Suite < Inferno::TestSuite
     title 'Options Suite'
     id :options
-    description %{
+    description %(
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
       tempor incididunt ut labore et dolore magna aliqua.
-      
+
       Feugiat in ante metus dictum. Dignissim cras tincidunt lobortis feugiat.
       Consequat mauris nunc congue nisi vitae suscipit tellus mauris. Venenatis
       a condimentum vitae sapien pellentesque habitant morbi tristique senectus.
@@ -79,7 +79,7 @@ module OptionsSuite
       fames ac turpis egestas maecenas pharetra convallis posuere morbi.
 
 
-    }
+    )
 
     validator required_suite_options: { ig_version: '1' } do
       url 'v1_validator'

@@ -10,7 +10,7 @@ import {
   List,
   Grid,
   Radio,
-  RadioGroup
+  RadioGroup,
 } from '@mui/material';
 import useStyles from './styles';
 import { useHistory, useParams } from 'react-router-dom';
@@ -29,18 +29,24 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   const { test_suite_id } = useParams<{ test_suite_id: string }>();
 
   const testSuite = testSuites?.find((suite: TestSuite) => suite.id == test_suite_id);
-  const initialSelectedSuiteOptions = (testSuite?.suite_options || []).map( (option) => {
-    return {...option, value: option && option.list_options && option.list_options[0].value}
+
+  // just grab the first to start
+  // perhaps choices should be persisted in the URL to make it easy to share specific
+  // options
+  const initialSelectedSuiteOptions = (testSuite?.suite_options || []).map((option) => {
+    return { id: option.id, value: option && option.list_options && option.list_options[0].value };
   });
 
-  const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(initialSelectedSuiteOptions);
+  const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(
+    initialSelectedSuiteOptions
+  );
 
   function changeSuiteOption(option_id: string, value: string): void {
-    const newOptions: SuiteOption[] = selectedSuiteOptions.map( (option) => {
-      if(option.id == option_id){
-        return {...option, value: value}
+    const newOptions: SuiteOption[] = selectedSuiteOptions.map((option) => {
+      if (option.id == option_id) {
+        return { id: option.id, value: value };
       }
-      return {...option}
+      return { ...option };
     });
     setSelectedSuiteOptions(newOptions);
   }
@@ -63,7 +69,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
         <Grid container item xs={6}>
           <Grid item>
             <Typography variant="h2" component="h1">
-              { testSuite?.title }
+              {testSuite?.title}
             </Typography>
             <Typography variant="h5" component="h2">
               <ReactMarkdown>{testSuite?.description || ''}</ReactMarkdown>
@@ -76,31 +82,41 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
               <Typography variant="h4" component="h2" align="center">
                 Select Options
               </Typography>
-                {testSuite?.suite_options?.map((suiteOption: SuiteOption, i) => (
+              {testSuite?.suite_options?.map((suiteOption: SuiteOption, i) => (
                 <FormControl
                   fullWidth
                   id={`suite-option-input-${i}`}
-                  key={`suite-form-control${i}`}>
+                  key={`suite-form-control${i}`}
+                >
                   <FormLabel>{suiteOption.title}</FormLabel>
                   <RadioGroup
                     row
                     aria-label={`suite-option-group-${suiteOption.id}`}
-                    defaultValue={suiteOption.list_options && suiteOption.list_options.length && suiteOption.list_options[0].value}
-                    name={`suite-option-group-${suiteOption.id}`}>
-                    {suiteOption && suiteOption.list_options && suiteOption.list_options.map((choice, k) => (
-                    <FormControlLabel 
-                      value={choice.value}
-                      control={<Radio size="small" />}
-                      label={choice.label} 
-                      key={`radio-button-${k}`}
-                      onClick = {()=> {changeSuiteOption(suiteOption.id, choice.value)}} />
-                    ))}
+                    defaultValue={
+                      suiteOption.list_options &&
+                      suiteOption.list_options.length &&
+                      suiteOption.list_options[0].value
+                    }
+                    name={`suite-option-group-${suiteOption.id}`}
+                  >
+                    {suiteOption &&
+                      suiteOption.list_options &&
+                      suiteOption.list_options.map((choice, k) => (
+                        <FormControlLabel
+                          value={choice.value}
+                          control={<Radio size="small" />}
+                          label={choice.label}
+                          key={`radio-button-${k}`}
+                          onClick={() => {
+                            changeSuiteOption(suiteOption.id, choice.value);
+                          }}
+                        />
+                      ))}
                   </RadioGroup>
                 </FormControl>
-                ))}
+              ))}
 
-              <List>
-              </List>
+              <List></List>
               <Button
                 variant="contained"
                 size="large"

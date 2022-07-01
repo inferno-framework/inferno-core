@@ -47,11 +47,7 @@ const Header: FC<HeaderProps> = ({
             <Typography variant="h5" component="h1" className={styles.title}>
               {suiteTitle}
             </Typography>
-            {suiteOptions && 
-              <Typography>
-                {suiteOptions}
-              </Typography>
-            }
+            {suiteOptions && <Typography>{suiteOptions}</Typography>}
             {suiteVersion && (
               <Typography variant="overline" className={styles.version}>
                 {`v.${suiteVersion}`}

@@ -52,7 +52,7 @@ module Inferno
           end
         end
 
-        Inferno::Repositories::TestSuites.all.map{ |suite| "/#{suite.id}" }.each do |suite_path|
+        Inferno::Repositories::TestSuites.all.map { |suite| "/#{suite.id}" }.each do |suite_path|
           Application['logger'].info("Registering suite route: #{suite_path}")
           get suite_path, to: ->(_env) { [200, {}, [client_page]] }
         end
