@@ -15,8 +15,12 @@ module Inferno
         field :user_runnable?, name: :user_runnable
         field :optional?, name: :optional
 
-        association :groups, name: :test_groups, blueprint: TestGroup
-        association :tests, blueprint: Test
+        field :test_groups do |group, options|
+          TestGroup.render_as_hash(group.groups(options[:suite_options]))
+        end
+        field :tests do |group, options|
+          Test.render_as_hash(group.tests(options[:suite_options]))
+        end
         field :available_inputs, name: :inputs, extractor: HashValueExtractor, blueprint: Input
         field :output_definitions, name: :outputs, extractor: HashValueExtractor
       end

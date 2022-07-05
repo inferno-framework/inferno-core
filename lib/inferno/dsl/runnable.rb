@@ -379,7 +379,7 @@ module Inferno
       end
 
       # @private
-      def test_count(selected_suite_options = {})
+      def test_count(selected_suite_options = [])
         @test_counts ||= {}
 
         @test_counts[selected_suite_options] ||=
@@ -395,17 +395,23 @@ module Inferno
       end
 
       def required_suite_options(suite_option_requirements)
-        @suite_option_requirements = suite_option_requirements
+        @suite_option_requirements =
+          suite_option_requirements.map do |key, value|
+            DSL::SuiteOption.new(id: key, value: value)
+          end
       end
 
-      def children(selected_suite_options = nil)
+      def children(selected_suite_options = [])
         return all_children if selected_suite_options.blank?
 
         all_children.select do |child|
-          requirements = child.suite_option_requirements || {}
+          requirements = child.suite_option_requirements
 
-          # requirements are a subset of selected options or equal to selected options
-          selected_suite_options >= requirements
+          if requirements.blank?
+            true
+          else
+            requirements.all? { |requirement| selected_suite_options.include? requirement }
+          end
         end
       end
     end

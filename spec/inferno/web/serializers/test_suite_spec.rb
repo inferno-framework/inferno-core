@@ -10,7 +10,8 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
       'input_instructions',
       'test_count',
       'version',
-      'presets'
+      'presets',
+      'suite_options'
     ]
   end
   let(:full_keys) do
