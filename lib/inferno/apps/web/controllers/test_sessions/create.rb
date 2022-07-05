@@ -5,7 +5,11 @@ module Inferno
         class Create < Controller
           PARAMS = [:test_suite_id, :suite_options].freeze
 
-          def call(params)
+          def call(raw_params)
+            query_params = raw_params.to_h
+            body_params = JSON.parse(request.body.string).symbolize_keys
+            params = query_params.merge(body_params)
+
             session = repo.create(create_params(params))
 
             repo.apply_preset(session.id, params[:preset_id]) if params[:preset_id].present?
@@ -21,7 +25,7 @@ module Inferno
           end
 
           def create_params(params)
-            params.to_h.slice(*PARAMS)
+            params.slice(*PARAMS)
           end
         end
       end
