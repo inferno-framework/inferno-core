@@ -74,6 +74,7 @@ export default makeStyles((theme: Theme) => ({
     },
   },
   accordionSummary: {
+    userSelect: 'auto',
     '@media print': {
       minHeight: 'unset',
       '& .MuiAccordionSummary-content': {
