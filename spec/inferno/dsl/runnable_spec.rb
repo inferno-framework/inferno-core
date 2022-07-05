@@ -114,9 +114,11 @@ RSpec.describe Inferno::DSL::Runnable do
         total_count = suite.test_count
         v1_count = v1_group.test_count
         v2_count = v2_group.test_count
+        v1_option = Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')
+        v2_option = Inferno::DSL::SuiteOption.new(id: :ig_version, value: '2')
 
-        expect(suite.test_count(ig_version: '1')).to eq(total_count - v2_count)
-        expect(suite.test_count(ig_version: '2')).to eq(total_count - v1_count)
+        expect(suite.test_count([v1_option])).to eq(total_count - v2_count)
+        expect(suite.test_count([v2_option])).to eq(total_count - v1_count)
       end
     end
   end

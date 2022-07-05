@@ -19,6 +19,18 @@ module Inferno
         }
       end
 
+      def create(params)
+        raw_suite_options = params[:suite_options]
+        suite_options =
+          if raw_suite_options.blank?
+            '[]'
+          else
+            JSON.generate(raw_suite_options.map(&:to_hash))
+          end
+
+        super(params.merge(suite_options: suite_options))
+      end
+
       def results_for_test_session(test_session_id)
         test_session_hash =
           self.class::Model
@@ -35,6 +47,18 @@ module Inferno
         preset.inputs.each do |input|
           session_data_repo.save(input.merge(test_session_id: test_session_id))
         end
+      end
+
+      def build_entity(params)
+        suite_options = JSON.parse(params[:suite_options] || '[]').map do |suite_option_hash|
+          suite_option_hash.deep_symbolize_keys!
+          suite_option_hash[:id] = suite_option_hash[:id].to_sym
+          DSL::SuiteOption.new(suite_option_hash)
+        end
+
+        final_params = params.merge(suite_options: suite_options)
+        add_non_db_entities(final_params)
+        entity_class.new(final_params)
       end
 
       class Model < Sequel::Model(db)

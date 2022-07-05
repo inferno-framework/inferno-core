@@ -31,12 +31,12 @@ module Inferno
           Inferno::Repositories::TestGroups.new
         end
 
-        def groups
-          all_children.select { |child| child < Inferno::Entities::TestGroup }
+        def groups(options = nil)
+          children(options).select { |child| child < Inferno::Entities::TestGroup }
         end
 
-        def tests
-          all_children.select { |child| child < Inferno::Entities::Test }
+        def tests(options = nil)
+          children(options).select { |child| child < Inferno::Entities::Test }
         end
 
         # Methods to configure Inferno::DSL::Runnable

@@ -1,3 +1,4 @@
+require_relative 'suite_option'
 require_relative 'test_suite'
 
 module Inferno
@@ -7,10 +8,11 @@ module Inferno
         identifier :id
 
         field :test_suite_id
+        association :suite_options, blueprint: SuiteOption
 
-        association :test_suite, blueprint: TestSuite, view: :full
-        # association :test_runs, blueprint: TestRun
-        # association :results, blueprint: Result
+        field :test_suite do |session, _options|
+          TestSuite.render_as_hash(session.test_suite, view: :full, suite_options: session.suite_options)
+        end
       end
     end
   end
