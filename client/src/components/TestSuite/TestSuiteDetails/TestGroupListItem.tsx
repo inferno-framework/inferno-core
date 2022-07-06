@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import useStyles from './styles';
 import {
   Accordion,
@@ -38,10 +38,21 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   view,
 }) => {
   const styles = useStyles();
-  const openCondition =
-    testGroup.result?.result === 'fail' ||
-    testGroup.result?.result === 'error' ||
-    view === 'report';
+  const [openCondition, setOpenCondition] = React.useState(
+    testGroup.result?.result === 'cancel' ||
+      testGroup.result?.result === 'fail' ||
+      testGroup.result?.result === 'error' ||
+      view === 'report'
+  );
+
+  useEffect(() => {
+    setOpenCondition(
+      testGroup.result?.result === 'cancel' ||
+        testGroup.result?.result === 'fail' ||
+        testGroup.result?.result === 'error' ||
+        view === 'report'
+    );
+  }, [testGroup]);
 
   const renderGroupListItems = (): JSX.Element[] => {
     return testGroup.test_groups.map((tg: TestGroup) => (
