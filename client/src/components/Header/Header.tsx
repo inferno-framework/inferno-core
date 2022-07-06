@@ -11,11 +11,18 @@ import { useAppStore } from '~/store/app';
 export interface HeaderProps {
   suiteTitle?: string;
   suiteVersion?: string;
+  suiteOptions?: string;
   drawerOpen: boolean;
   toggleDrawer: (drawerOpen: boolean) => void;
 }
 
-const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion, drawerOpen, toggleDrawer }) => {
+const Header: FC<HeaderProps> = ({
+  suiteTitle,
+  suiteVersion,
+  suiteOptions,
+  drawerOpen,
+  toggleDrawer,
+}) => {
   const styles = useStyles();
   const history = useHistory();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
@@ -41,6 +48,7 @@ const Header: FC<HeaderProps> = ({ suiteTitle, suiteVersion, drawerOpen, toggleD
             <Typography variant="h5" component="h1" className={styles.title}>
               {suiteTitle}
             </Typography>
+            {suiteOptions && <Typography>{suiteOptions}</Typography>}
             {suiteVersion && (
               <Typography variant="overline" className={styles.version}>
                 {`v.${suiteVersion}`}

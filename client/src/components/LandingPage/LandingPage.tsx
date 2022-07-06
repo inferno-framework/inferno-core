@@ -25,16 +25,21 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const styles = useStyles();
   const history = useHistory();
 
-  function createTestSession(): void {
-    postTestSessions(testSuiteChosen)
-      .then((testSession: TestSession | null) => {
-        if (testSession && testSession.test_suite) {
-          history.push('test_sessions/' + testSession.id);
-        }
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+  function startTestingClick(): void {
+    const testSuite = testSuites?.find((suite: TestSuite) => suite.id == testSuiteChosen);
+    if (testSuite && testSuite.suite_options && testSuite.suite_options.length > 0) {
+      history.push(`${testSuiteChosen}`);
+    } else {
+      postTestSessions(testSuiteChosen, null, null)
+        .then((testSession: TestSession | null) => {
+          if (testSession && testSession.test_suite) {
+            history.push('test_sessions/' + testSession.id);
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
   }
 
   return (
@@ -83,7 +88,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
               disabled={!testSuiteChosen}
               data-testid="go-button"
               className={styles.startTestingButton}
-              onClick={() => createTestSession()}
+              onClick={() => startTestingClick()}
             >
               Start Testing
             </Button>
