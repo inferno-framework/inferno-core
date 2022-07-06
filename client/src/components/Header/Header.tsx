@@ -9,6 +9,7 @@ import { getStaticPath } from '~/api/infernoApiService';
 export interface HeaderProps {
   suiteTitle?: string;
   suiteVersion?: string;
+  suiteOptions?: string;
   drawerOpen: boolean;
   windowIsSmall: boolean;
   toggleDrawer: (drawerOpen: boolean) => void;
@@ -17,6 +18,7 @@ export interface HeaderProps {
 const Header: FC<HeaderProps> = ({
   suiteTitle,
   suiteVersion,
+  suiteOptions,
   windowIsSmall,
   drawerOpen,
   toggleDrawer,
@@ -45,6 +47,7 @@ const Header: FC<HeaderProps> = ({
             <Typography variant="h5" component="h1" className={styles.title}>
               {suiteTitle}
             </Typography>
+            {suiteOptions && <Typography>{suiteOptions}</Typography>}
             {suiteVersion && (
               <Typography variant="overline" className={styles.version}>
                 {`v.${suiteVersion}`}

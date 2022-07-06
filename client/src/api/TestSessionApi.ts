@@ -1,4 +1,11 @@
-import { Result, TestGroup, TestOutput, TestRun, TestSession } from 'models/testSuiteModels';
+import {
+  Result,
+  TestGroup,
+  TestOutput,
+  TestRun,
+  TestSession,
+  SuiteOption,
+} from 'models/testSuiteModels';
 import { getApiEndpoint } from './infernoApiService';
 
 export function getLastTestRun(test_session_id: string): Promise<TestRun | null> {
@@ -29,10 +36,21 @@ export function getTestSession(test_session_id: string): Promise<TestSession | n
     });
 }
 
-export function postTestSessions(testSuiteID: string): Promise<TestSession | null> {
+export function postTestSessions(
+  testSuiteID: string,
+  presetId: string | null,
+  suiteOptions: SuiteOption[] | null
+): Promise<TestSession | null> {
   const testSuiteIDParameter = { name: 'test_suite_id', value: testSuiteID };
   const postEndpoint = getApiEndpoint('/test_sessions', [testSuiteIDParameter]);
-  return fetch(postEndpoint, { method: 'POST' })
+  const suiteOptionsPost = suiteOptions?.map((option) => {
+    return { id: option.id, value: option.value };
+  });
+  const postBody = {
+    preset_id: presetId,
+    suite_options: suiteOptionsPost,
+  };
+  return fetch(postEndpoint, { method: 'POST', body: JSON.stringify(postBody) })
     .then((response) => response.json())
     .then((result) => {
       return result as TestSession;

@@ -65,6 +65,21 @@ module OptionsSuite
   class Suite < Inferno::TestSuite
     title 'Options Suite'
     id :options
+    description %(
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua.
+
+      Feugiat in ante metus dictum. Dignissim cras tincidunt lobortis feugiat.
+      Consequat mauris nunc congue nisi vitae suscipit tellus mauris. Venenatis
+      a condimentum vitae sapien pellentesque habitant morbi tristique senectus.
+
+      Faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis
+      aliquam. Nulla facilisi nullam vehicula ipsum a. Donec enim diam vulputate
+      ut. Ornare arcu dui vivamus arcu felis bibendum ut tristique et. Malesuada
+      fames ac turpis egestas maecenas pharetra convallis posuere morbi.
+
+
+    )
 
     validator required_suite_options: { ig_version: '1' } do
       url 'v1_validator'
@@ -85,6 +100,24 @@ module OptionsSuite
                    {
                      label: 'v2',
                      value: '2'
+                   }
+                 ]
+
+    suite_option :other_option,
+                 title: 'Another option',
+                 description: 'Another potential thing that could be used',
+                 list_options: [
+                   {
+                     label: 'option 1',
+                     value: '1'
+                   },
+                   {
+                     label: 'option 2',
+                     value: '2'
+                   },
+                   {
+                     label: 'option 3',
+                     value: '3'
                    }
                  ]
 
