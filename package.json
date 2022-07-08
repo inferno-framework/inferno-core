@@ -51,6 +51,7 @@
     "@testing-library/dom": "^8.11.3",
     "@testing-library/jest-dom": "^5.15.1",
     "@testing-library/react": "^11.2.5",
+    "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "^12.1.10",
     "@types/jest": "^26.0.20",
     "@types/js-yaml": "^4.0.5",
