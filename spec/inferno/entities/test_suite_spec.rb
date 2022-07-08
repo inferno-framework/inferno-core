@@ -160,4 +160,23 @@ RSpec.describe Inferno::Entities::TestSuite do
       end
     end
   end
+
+  describe '.links' do
+    let(:links) do
+      [
+        { label: 'One', url: 'http://one.com' },
+        { label: 'Two', url: 'http://two.com' }
+      ]
+    end
+    let(:test_suite) do
+      suite_class.links links
+      suite_class
+    end
+
+    specify 'it can optionally have a list of http links for display' do
+      link = test_suite.links.first
+      expect(link[:label]).to eq('One')
+      expect(link[:url]).to eq('http://one.com')
+    end
+  end
 end

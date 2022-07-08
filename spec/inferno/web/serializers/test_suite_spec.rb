@@ -1,3 +1,5 @@
+require 'active_support/core_ext/hash/indifferent_access'
+
 RSpec.describe Inferno::Web::Serializers::TestSuite do
   let(:suite) { InfrastructureTest::Suite }
   let(:summary_keys) do
@@ -11,7 +13,8 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
       'test_count',
       'version',
       'presets',
-      'suite_options'
+      'suite_options',
+      'links'
     ]
   end
   let(:full_keys) do
@@ -53,6 +56,9 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
     expect(serialized_suite['version']).to eq(suite.version)
     expect(serialized_suite['configuration_messages']).to eq(expected_messages)
     expect(serialized_suite['presets']).to eq([])
+
+    expected_links = suite.links.map(&:with_indifferent_access)
+    expect(serialized_suite['links']).to eq(expected_links)
   end
 
   it 'includes preset summaries' do

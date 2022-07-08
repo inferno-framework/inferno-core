@@ -17,6 +17,16 @@ module InfrastructureTest
       `code here`
     )
     version '42.0'
+    links [
+      {
+        label: 'Open Source',
+        url: 'https://github.com/inferno-framework/inferno-core'
+      },
+      {
+        label: 'Issues',
+        url: 'https://github.com/inferno-framework/inferno-core/issues'
+      }
+    ]
 
     input :suite_input
     output :suite_output
