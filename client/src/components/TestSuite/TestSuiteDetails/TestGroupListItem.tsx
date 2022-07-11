@@ -38,7 +38,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   view,
 }) => {
   const styles = useStyles();
-  const [openCondition, setOpenCondition] = React.useState(
+  const [expanded, setExpanded] = React.useState(
     testGroup.result?.result === 'cancel' ||
       testGroup.result?.result === 'fail' ||
       testGroup.result?.result === 'error' ||
@@ -46,13 +46,13 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   );
 
   useEffect(() => {
-    setOpenCondition(
+    setExpanded(
       testGroup.result?.result === 'cancel' ||
         testGroup.result?.result === 'fail' ||
         testGroup.result?.result === 'error' ||
         view === 'report'
     );
-  }, [testGroup]);
+  }, [testGroup.result]);
 
   const renderGroupListItems = (): JSX.Element[] => {
     return testGroup.test_groups.map((tg: TestGroup) => (
@@ -124,7 +124,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       disableGutters
       className={styles.accordion}
       sx={view === 'report' ? { pointerEvents: 'none' } : {}}
-      defaultExpanded={openCondition}
+      expanded={expanded}
+      onChange={() => setExpanded(!expanded)}
       TransitionProps={{ unmountOnExit: true }}
     >
       <AccordionSummary
