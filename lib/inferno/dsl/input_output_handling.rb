@@ -24,10 +24,20 @@ module Inferno
           [identifier, *other_identifiers].compact.each do |input_identifier|
             inputs << input_identifier
             config.add_input(input_identifier)
+            children
+              .reject { |child| child.inputs.include? input_identifier }
+              .each do |child|
+                child.input(input_identifier)
+              end
           end
         else
           inputs << identifier
           config.add_input(identifier, input_params)
+          children
+            .reject { |child| child.inputs.include? identifier }
+            .each do |child|
+              child.input(identifier, **input_params)
+            end
         end
       end
 
@@ -47,10 +57,20 @@ module Inferno
           [identifier, *other_identifiers].compact.each do |output_identifier|
             outputs << output_identifier
             config.add_output(output_identifier)
+            children
+              .reject { |child| child.outputs.include? output_identifier }
+              .each do |child|
+                child.output(output_identifier)
+              end
           end
         else
           outputs << identifier
           config.add_output(identifier, output_definition)
+          children
+            .reject { |child| child.outputs.include? identifier }
+            .each do |child|
+              child.output(identifier, **output_definition)
+            end
         end
       end
 

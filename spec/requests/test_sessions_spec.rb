@@ -39,14 +39,16 @@ RSpec.describe '/test_sessions' do
 
       context 'with suite options' do
         it 'persists the suite options' do
-          option_hash = { id: 'ig_version', value: '1' }
-          post_json create_path, input.merge(suite_options: [option_hash])
+          options = [{ id: 'ig_version', value: '1' }, { id: 'other_option', value: '2' }]
+          post_json create_path, input.merge(suite_options: options)
 
           expect(last_response.status).to eq(200)
-          expect(parsed_body['suite_options']).to eq([{ 'id' => 'ig_version', 'value' => '1' }])
+          expect(parsed_body['suite_options']).to eq(options.map(&:stringify_keys))
 
           persisted_session = repo.find(parsed_body['id'])
-          expect(persisted_session.suite_options).to eq([Inferno::DSL::SuiteOption.new(option_hash)])
+          expected_options = options.map { |option| Inferno::DSL::SuiteOption.new(option) }
+
+          expect(persisted_session.suite_options).to eq(expected_options)
         end
       end
     end
