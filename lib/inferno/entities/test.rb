@@ -145,10 +145,12 @@ module Inferno
         # Define outputs for this Test
         #
         # @param output_definitions [Symbol]
+        # @param _output_params [Hash] Unused parameter. Just makes method
+        #   signature compatible with `Inferno::DSL::InputOutputHandling.output`
         # @return [void]
         # @example
         #   output :patient_id, :bearer_token
-        def output(*output_definitions)
+        def output(*output_definitions, **_output_params)
           super
 
           output_definitions.each do |output|
