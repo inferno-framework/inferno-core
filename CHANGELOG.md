@@ -1,6 +1,6 @@
 # 0.3.5
 * Add initial UI and JSON API support for suite options.
-* Fix an issue which prevented users from selecting text it group item headers.
+* Fix an issue which prevented users from selecting text in group item headers.
 * Fix an issue where inputs added to a group after creation were not added to
   the group's children.
 * Lock the `dry-container` version to prevent it from being updated to a version
