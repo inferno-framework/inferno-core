@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import useStyles from './styles';
 import {
   Box,
@@ -47,14 +47,8 @@ const TestListItem: FC<TestListItemProps> = ({
   view,
 }) => {
   const styles = useStyles();
-  const openCondition =
-    (test.result?.result === 'fail' || test.result?.result === 'error') && view !== 'report';
-  const [open, setOpen] = React.useState(openCondition);
+  const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
-
-  useEffect(() => {
-    if (openCondition) setOpen(true);
-  }, [test.result]);
 
   const resultIcon = (
     <Box display="inline-flex">

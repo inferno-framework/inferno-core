@@ -16,6 +16,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'blueprinter', '0.25.2'
   spec.add_runtime_dependency 'dotenv', '~> 2.7'
   spec.add_runtime_dependency 'dry-configurable', '0.12.0' # 0.13.0 causes a lot of deprecation warnings
+  spec.add_runtime_dependency 'dry-container', '0.8.0'
   spec.add_runtime_dependency 'dry-system', '0.18.1'
   spec.add_runtime_dependency 'faraday', '~> 1.2'
   spec.add_runtime_dependency 'fhir_client', '>= 5.0.3'
