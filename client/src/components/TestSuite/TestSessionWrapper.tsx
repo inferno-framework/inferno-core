@@ -1,6 +1,14 @@
 import React, { FC, useEffect } from 'react';
 import useStyles from './styles';
-import { Result, TestOutput, TestRun, TestSession } from '~/models/testSuiteModels';
+import {
+  Result,
+  SuiteOption,
+  SuiteOptionChoice,
+  TestOutput,
+  TestRun,
+  TestSession,
+  TestSuite,
+} from '~/models/testSuiteModels';
 import TestSessionComponent from './TestSession';
 import { useParams } from 'react-router-dom';
 import { Alert, Backdrop, Box } from '@mui/material';
@@ -14,8 +22,11 @@ import {
 } from '~/api/TestSessionApi';
 import { getCoreVersion } from '~/api/VersionsApi';
 
+import { useAppStore } from '~/store/app';
+
 const TestSessionWrapper: FC<unknown> = () => {
   const styles = useStyles();
+  const testSuites = useAppStore((state) => state.testSuites);
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [testSession, setTestSession] = React.useState<TestSession>();
   const [testResults, setTestResults] = React.useState<Result[]>();
@@ -110,20 +121,33 @@ const TestSessionWrapper: FC<unknown> = () => {
   }
 
   if (testSession && testResults && sessionData) {
-    let suiteOptionChoices = '';
-    if (testSession.suite_options) {
-      suiteOptionChoices = testSession.suite_options
-        .map((option) => {
-          option.value;
-        })
-        .join(' | ');
-    }
+    // Temporary stopgap to get labels until full choice data is passed to TestSessionWrapper
+    const suiteOptionChoices:
+      | {
+          [key: string]: SuiteOptionChoice[];
+        }
+      | undefined = testSuites
+      ?.find((suite: TestSuite) => suite.id === testSession.test_suite_id)
+      ?.suite_options?.reduce(
+        (acc, option) => ({ ...acc, [option.id]: option.list_options || [] }),
+        {}
+      );
+    const parsedOptions = suiteOptionChoices
+      ? testSession.suite_options
+          ?.map((option: SuiteOption) => {
+            const optionId = suiteOptionChoices[option.id];
+            return optionId.filter((choice: SuiteOptionChoice) => choice.value === option.value);
+          })
+          .flat()
+          .filter((v) => v) // Remove empty values
+      : [];
+
     return (
       <Box className={styles.testSessionContainer}>
         <Header
           suiteTitle={testSession.test_suite.title}
           suiteVersion={testSession.test_suite.version}
-          suiteOptions={suiteOptionChoices}
+          suiteOptions={parsedOptions}
           drawerOpen={drawerOpen}
           windowIsSmall={windowIsSmall}
           toggleDrawer={toggleDrawer}
