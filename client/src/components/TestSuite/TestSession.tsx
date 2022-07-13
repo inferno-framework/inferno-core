@@ -25,6 +25,8 @@ import TestSuiteReport from './TestSuiteDetails/TestSuiteReport';
 import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDetailsPanel';
 import useStyles from './styles';
 
+import { useAppStore } from '../../store/app';
+
 function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
   testGroup.test_groups.forEach((subGroup: TestGroup) => {
@@ -69,7 +71,6 @@ export interface TestSessionComponentProps {
   initialTestRun: TestRun | null;
   sessionData: Map<string, unknown>;
   drawerOpen: boolean;
-  windowIsSmall?: boolean;
   setSessionData: (data: Map<string, unknown>) => void;
   getSessionData?: (testSessionId: string) => void;
   toggleDrawer: (drawerOpen: boolean) => void;
@@ -81,7 +82,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   initialTestRun,
   sessionData,
   drawerOpen,
-  windowIsSmall,
   setSessionData,
   getSessionData,
   toggleDrawer,
@@ -98,6 +98,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   );
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
+  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
   useEffect(() => {
     test_suite.inputs?.forEach((input: TestInput) => {

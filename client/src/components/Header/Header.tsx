@@ -7,12 +7,13 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import { getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice } from '~/models/testSuiteModels';
 
+import { useAppStore } from '~/store/app';
+
 export interface HeaderProps {
   suiteTitle?: string;
   suiteVersion?: string;
   suiteOptions?: SuiteOptionChoice[];
   drawerOpen: boolean;
-  windowIsSmall: boolean;
   toggleDrawer: (drawerOpen: boolean) => void;
 }
 
@@ -20,12 +21,12 @@ const Header: FC<HeaderProps> = ({
   suiteTitle,
   suiteVersion,
   suiteOptions,
-  windowIsSmall,
   drawerOpen,
   toggleDrawer,
 }) => {
   const styles = useStyles();
   const history = useHistory();
+  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
   const returnHome = () => {
     history.push('/');

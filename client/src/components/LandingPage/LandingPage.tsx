@@ -6,13 +6,14 @@ import {
   Paper,
   List,
   ListItemText,
-  Grid,
   ListItemButton,
+  Box,
 } from '@mui/material';
 import { TestSuite, TestSession } from 'models/testSuiteModels';
 import useStyles from './styles';
 import { useHistory } from 'react-router-dom';
 import { postTestSessions } from 'api/TestSessionApi';
+import { useAppStore } from '../../store/app';
 
 export interface LandingPageProps {
   testSuites: TestSuite[] | undefined;
@@ -20,6 +21,7 @@ export interface LandingPageProps {
 
 const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const [testSuiteChosen, setTestSuiteChosen] = React.useState('');
+  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const styles = useStyles();
   const history = useHistory();
 
@@ -43,57 +45,55 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   return (
     <>
       <Container maxWidth="lg" className={styles.main} role="main">
-        <Grid container spacing={10} justifyContent="center">
-          <Grid container item xs={6} alignItems="center">
-            <Grid item>
-              <Typography variant="h2" component="h1">
-                FHIR Testing with Inferno
-              </Typography>
-              <Typography variant="h5" component="h2">
-                Test your server's conformance to authentication, authorization, and FHIR content
-                standards.
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid container item xs={6} alignItems="center" justifyContent="center">
-            <Grid item>
-              <Paper elevation={4} className={styles.getStarted}>
-                <Typography variant="h4" component="h2" align="center">
-                  Select a Test Suite
-                </Typography>
-                <List>
-                  {testSuites?.map((testSuite: TestSuite) => {
-                    return (
-                      /* Use li to resolve a11y error */
-                      <li key={testSuite.id}>
-                        <ListItemButton
-                          data-testid="testing-suite-option"
-                          selected={testSuiteChosen === testSuite.id}
-                          onClick={() => setTestSuiteChosen(testSuite.id)}
-                          classes={{ selected: styles.selectedItem }}
-                        >
-                          <ListItemText primary={testSuite.title} />
-                        </ListItemButton>
-                      </li>
-                    );
-                  })}
-                </List>
-                <Button
-                  variant="contained"
-                  size="large"
-                  color="primary"
-                  fullWidth
-                  disabled={!testSuiteChosen}
-                  data-testid="go-button"
-                  className={styles.startTestingButton}
-                  onClick={() => startTestingClick()}
-                >
-                  Start Testing
-                </Button>
-              </Paper>
-            </Grid>
-          </Grid>
-        </Grid>
+        <Box display="flex" flexDirection="column" m={2} maxWidth="440px">
+          <Typography variant="h2" component="h1">
+            FHIR Testing with Inferno
+          </Typography>
+          <Typography variant="h5" component="h2">
+            Test your server's conformance to authentication, authorization, and FHIR content
+            standards.
+          </Typography>
+        </Box>
+        <Box display="flex" justifyContent="center" height="fit-content">
+          <Paper
+            elevation={4}
+            className={styles.getStarted}
+            sx={{ width: windowIsSmall ? 'auto' : '400px' }}
+          >
+            <Typography variant="h4" component="h2" align="center">
+              Select a Test Suite
+            </Typography>
+            <List>
+              {testSuites?.map((testSuite: TestSuite) => {
+                return (
+                  // Use li to resolve a11y error
+                  <li key={testSuite.id}>
+                    <ListItemButton
+                      data-testid="testing-suite-option"
+                      selected={testSuiteChosen === testSuite.id}
+                      onClick={() => setTestSuiteChosen(testSuite.id)}
+                      classes={{ selected: styles.selectedItem }}
+                    >
+                      <ListItemText primary={testSuite.title} />
+                    </ListItemButton>
+                  </li>
+                );
+              })}
+            </List>
+            <Button
+              variant="contained"
+              size="large"
+              color="primary"
+              fullWidth
+              disabled={!testSuiteChosen}
+              data-testid="go-button"
+              className={styles.startTestingButton}
+              onClick={() => startTestingClick()}
+            >
+              Start Testing
+            </Button>
+          </Paper>
+        </Box>
       </Container>
     </>
   );

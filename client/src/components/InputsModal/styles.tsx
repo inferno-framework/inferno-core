@@ -47,20 +47,11 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
   },
   toggleButtonGroup: {
-    marginRight: 'auto',
+    flexGrow: 1,
   },
   toggleButton: {
-    '&&': {
+    '&.Mui-selected': {
       color: theme.palette.primary.dark,
-      height: '36px',
-      '&:hover': {
-        backgroundColor: '#fdf6ec',
-        borderLeft: '1px solid #cecece',
-      },
-      '&:disabled': {
-        backgroundColor: '#ebebeb',
-        color: theme.palette.common.gray,
-      },
     },
   },
 }));
