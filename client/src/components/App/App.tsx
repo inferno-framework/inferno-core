@@ -17,8 +17,15 @@ const App: FC<unknown> = () => {
   const setTestSuites = useAppStore((state) => state.setTestSuites);
   const testSession = useAppStore((state) => state.testSession);
   const setTestSession = useAppStore((state) => state.setTestSession);
+  const setWindowIsSmall = useAppStore((state) => state.setWindowIsSmall);
+
+  // Update UI on window resize
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
 
   useEffect(() => {
+    handleResize();
     getTestSuites()
       .then((testSuites: TestSuite[]) => {
         setTestSuites(testSuites);
@@ -29,7 +36,7 @@ const App: FC<unknown> = () => {
   }, []);
 
   useEffect(() => {
-    if (testSuites && testSuites.length == 1) {
+    if (testSuites && testSuites.length === 1) {
       postTestSessions(testSuites[0].id, null, null)
         .then((testSession: TestSession | null) => {
           if (testSession && testSession.test_suite) {
@@ -42,7 +49,11 @@ const App: FC<unknown> = () => {
     }
   }, [testSuites]);
 
-  if (!testSuites || (testSuites.length == 1 && !testSession)) {
+  function handleResize() {
+    setWindowIsSmall(window.innerWidth < 800);
+  }
+
+  if (!testSuites || (testSuites.length === 1 && !testSession)) {
     return <></>;
   }
 
@@ -52,7 +63,7 @@ const App: FC<unknown> = () => {
         <ThemeProvider>
           <Switch>
             <Route exact path="/">
-              {testSuites.length == 1 && testSession ? (
+              {testSuites.length === 1 && testSession ? (
                 <Redirect to={`/test_sessions/${testSession.id}`} />
               ) : (
                 <LandingPage testSuites={testSuites} />

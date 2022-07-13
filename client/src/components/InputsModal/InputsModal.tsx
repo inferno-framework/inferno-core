@@ -246,6 +246,8 @@ const InputsModal: FC<InputsModalProps> = ({
         <ToggleButtonGroup
           exclusive
           role="group"
+          color="primary"
+          size="small"
           value={inputType}
           onChange={handleInputTypeChange}
           className={styles.toggleButtonGroup}

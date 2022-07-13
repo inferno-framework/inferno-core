@@ -1,8 +1,21 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import ThemeProvider from 'components/ThemeProvider';
 import Header from '../Header';
-import userEvent from '@testing-library/user-event';
+
+// this testing helper is needed to test react hooks outside of render
+import { renderHook, act } from '@testing-library/react-hooks';
+import { useAppStore } from '~/store/app';
+
+// boilerplate for mocking zustand which uses hooks outside of a component
+beforeEach(() => {
+  const { result } = renderHook(() => useAppStore((state) => state));
+
+  act(() => {
+    result.current.windowIsSmall = true;
+  });
+});
 
 test('renders wide screen Inferno Header', () => {
   let drawerOpen = true;
@@ -11,7 +24,6 @@ test('renders wide screen Inferno Header', () => {
     <ThemeProvider>
       <Header
         suiteTitle="Suite Title"
-        windowIsSmall={false}
         drawerOpen={drawerOpen}
         toggleDrawer={() => (drawerOpen = !drawerOpen)}
       />
@@ -32,7 +44,6 @@ test('renders narrow screen Inferno Header', () => {
     <ThemeProvider>
       <Header
         suiteTitle="Suite Title"
-        windowIsSmall={true}
         drawerOpen={drawerOpen}
         toggleDrawer={() => (drawerOpen = !drawerOpen)}
       />
