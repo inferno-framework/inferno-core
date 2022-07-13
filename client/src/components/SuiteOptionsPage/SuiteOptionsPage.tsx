@@ -63,8 +63,6 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       });
   }
 
-  console.log(testSuite?.suite_options);
-
   return (
     <Container maxWidth="lg" className={styles.main} role="main">
       <Grid container spacing={6}>
