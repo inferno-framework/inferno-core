@@ -93,6 +93,12 @@ module Inferno
         def suite_options
           @suite_options ||= []
         end
+
+        def links(links = nil)
+          return @links if links.nil?
+
+          @links = links
+        end
       end
     end
   end

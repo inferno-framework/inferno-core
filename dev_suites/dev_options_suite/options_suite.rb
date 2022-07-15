@@ -80,6 +80,16 @@ module OptionsSuite
 
 
     )
+    links [
+      {
+        label: 'Open Source',
+        url: 'https://github.com/inferno-framework/inferno-core'
+      },
+      {
+        label: 'Issues',
+        url: 'https://github.com/inferno-framework/inferno-core/issues'
+      }
+    ]
 
     validator required_suite_options: { ig_version: '1' } do
       url 'v1_validator'
