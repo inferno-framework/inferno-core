@@ -148,7 +148,7 @@ RSpec.describe Inferno::TestRunner do
 
       results = results_repo.current_results_for_test_session(test_session.id)
 
-      expect(results.length).to eq(7)
+      expect(results.length).to eq(6)
 
       runnable_ids = results.map(&:runnable).map(&:id)
 
