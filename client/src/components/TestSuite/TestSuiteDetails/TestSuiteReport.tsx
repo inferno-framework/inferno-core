@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import TestGroupCard from '~/components/TestSuite/TestSuiteDetails/TestGroupCard';
-import { TestGroup, Test, TestSuite } from '~/models/testSuiteModels';
+import { TestGroup, Test, TestSuite, SuiteOptionChoice } from '~/models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
 import { Box, Button, Card, Typography } from '@mui/material';
@@ -10,11 +10,16 @@ import TestSuiteMessages from './TestSuiteMessages';
 
 interface TestSuiteReportProps {
   testSuite: TestSuite;
+  suiteOptions?: SuiteOptionChoice[];
 }
 
-const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
+const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions }) => {
   const styles = useStyles();
   const location = window?.location?.href?.split('#')?.[0];
+  const suiteOptionsString =
+    suiteOptions && suiteOptions.length > 0
+      ? ` - ${suiteOptions.map((option) => option.label).join(', ')}`
+      : '';
 
   let listItems: JSX.Element[] = [];
   const testChildren = testSuite.test_groups?.map((runnable) => {
@@ -54,7 +59,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite }) => {
       <Box className={styles.testGroupCardHeader}>
         <span className={styles.testGroupCardHeaderText}>
           <Typography key="1" color="text.primary" className={styles.currentItem}>
-            {testSuite.title} Report
+            {testSuite.title} Report {suiteOptionsString}
           </Typography>
         </span>
         <span className={styles.testGroupCardHeaderButton}>

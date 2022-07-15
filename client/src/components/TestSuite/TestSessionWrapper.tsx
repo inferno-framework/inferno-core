@@ -147,6 +147,7 @@ const TestSessionWrapper: FC<unknown> = () => {
           previousResults={testResults}
           initialTestRun={testRun}
           sessionData={sessionData}
+          suiteOptions={parsedOptions}
           drawerOpen={drawerOpen}
           setSessionData={setSessionData}
           getSessionData={tryGetSessionData}
