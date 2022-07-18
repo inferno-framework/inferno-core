@@ -7,8 +7,6 @@ import {
   Container,
   Button,
   Paper,
-  List,
-  Grid,
   Radio,
   RadioGroup,
   Box,
@@ -114,23 +112,6 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
               </RadioGroup>
             </FormControl>
           ))}
-          {/* <List>
-            {testSuites?.map((testSuite: TestSuite) => {
-              return (
-                // Use li to resolve a11y error
-                <li key={testSuite.id}>
-                  <ListItemButton
-                    data-testid="testing-suite-option"
-                    selected={testSuiteChosen === testSuite.id}
-                    onClick={() => setTestSuiteChosen(testSuite.id)}
-                    classes={{ selected: styles.selectedItem }}
-                  >
-                    <ListItemText primary={testSuite.title} />
-                  </ListItemButton>
-                </li>
-              );
-            })}
-          </List> */}
           <Button
             variant="contained"
             size="large"
@@ -144,52 +125,6 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
           </Button>
         </Paper>
       </Box>
-      {/* <Grid container spacing={6}>
-        <Grid container item xs={6}>
-          <Grid item>
-            <Paper elevation={4} className={styles.startTesting}>
-              <Typography variant="h4" component="h2" align="center">
-                Select Options
-              </Typography>
-              {testSuite?.suite_options?.map((suiteOption: SuiteOption, i) => (
-                <FormControl
-                  fullWidth
-                  id={`suite-option-input-${i}`}
-                  key={`suite-form-control${i}`}
-                >
-                  <FormLabel>{suiteOption.title}</FormLabel>
-                  <RadioGroup
-                    row
-                    aria-label={`suite-option-group-${suiteOption.id}`}
-                    defaultValue={
-                      suiteOption.list_options &&
-                      suiteOption.list_options.length &&
-                      suiteOption.list_options[0].value
-                    }
-                    name={`suite-option-group-${suiteOption.id}`}
-                  >
-                    {suiteOption &&
-                      suiteOption.list_options &&
-                      suiteOption.list_options.map((choice, k) => (
-                        <FormControlLabel
-                          value={choice.value}
-                          control={<Radio size="small" />}
-                          label={choice.label}
-                          key={`radio-button-${k}`}
-                          onClick={() => {
-                            changeSuiteOption(suiteOption.id, choice.value);
-                          }}
-                        />
-                      ))}
-                  </RadioGroup>
-                </FormControl>
-              ))}
-
-              <List></List>
-            </Paper>
-          </Grid>
-        </Grid>
-      </Grid> */}
     </Container>
   );
 };
