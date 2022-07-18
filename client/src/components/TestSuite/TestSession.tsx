@@ -25,7 +25,7 @@ import TestSuiteReport from './TestSuiteDetails/TestSuiteReport';
 import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDetailsPanel';
 import useStyles from './styles';
 
-import { useAppStore } from '../../store/app';
+import { useAppStore } from '~/store/app';
 
 function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
