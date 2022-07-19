@@ -104,6 +104,7 @@ export type TestSuite = Runnable & {
   version?: string;
   presets?: PresetSummary[];
   suite_options?: SuiteOption[];
+  links?: FooterLink[];
 };
 
 export interface TestSession {
@@ -157,3 +158,8 @@ export interface SuiteOptionChoice {
   id: string;
   value: string;
 }
+
+export type FooterLink = {
+  label: string;
+  url: string;
+};

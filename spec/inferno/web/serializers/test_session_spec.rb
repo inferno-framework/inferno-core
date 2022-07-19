@@ -28,5 +28,12 @@ RSpec.describe Inferno::Web::Serializers::TestSession do
 
     expect(serialized_session['test_suite']).to eq(serialized_suite)
     expect(serialized_session['test_suite']['test_groups'].length).to eq(2)
+
+    all_versions_group = serialized_session['test_suite']['test_groups'].first
+    all_versions_test_titles = all_versions_group['tests'].map { |test| test['title'] }
+
+    expect(all_versions_test_titles).to include('All Versions Test 1')
+    expect(all_versions_test_titles).to include('All Versions Test 2')
+    expect(all_versions_test_titles).to_not include('All Versions Test 3')
   end
 end
