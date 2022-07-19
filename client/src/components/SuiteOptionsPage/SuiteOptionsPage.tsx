@@ -96,19 +96,17 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
                 }
                 name={`suite-option-group-${suiteOption.id}`}
               >
-                {suiteOption &&
-                  suiteOption.list_options &&
-                  suiteOption.list_options.map((choice, k) => (
-                    <FormControlLabel
-                      value={choice.value}
-                      control={<Radio size="small" />}
-                      label={choice.label}
-                      key={`radio-button-${k}`}
-                      onClick={() => {
-                        changeSuiteOption(suiteOption.id, choice.value);
-                      }}
-                    />
-                  ))}
+                {suiteOption?.list_options?.map((choice, k) => (
+                  <FormControlLabel
+                    value={choice.value}
+                    control={<Radio size="small" />}
+                    label={choice.label}
+                    key={`radio-button-${k}`}
+                    onClick={() => {
+                      changeSuiteOption(suiteOption.id, choice.value);
+                    }}
+                  />
+                ))}
               </RadioGroup>
             </FormControl>
           ))}
