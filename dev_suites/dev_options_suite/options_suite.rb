@@ -51,12 +51,16 @@ module OptionsSuite
       title 'All Versions Test 2'
       id :all_versions_test2
 
+      required_suite_options ig_version: '1'
+
       run { pass }
     end
 
     test do
       title 'All Versions Test 3'
       id :all_versions_test3
+
+      required_suite_options ig_version: '2'
 
       run { pass }
     end

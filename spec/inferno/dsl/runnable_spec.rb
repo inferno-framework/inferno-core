@@ -112,8 +112,8 @@ RSpec.describe Inferno::DSL::Runnable do
 
       it 'only counts the included runnables' do
         total_count = suite.test_count
-        v1_count = v1_group.test_count
-        v2_count = v2_group.test_count
+        v1_count = v1_group.test_count + 1
+        v2_count = v2_group.test_count + 1
         v1_option = Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')
         v2_option = Inferno::DSL::SuiteOption.new(id: :ig_version, value: '2')
 
