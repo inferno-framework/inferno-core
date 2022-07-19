@@ -152,7 +152,7 @@ const TestSessionWrapper: FC<unknown> = () => {
           getSessionData={tryGetSessionData}
           toggleDrawer={toggleDrawer}
         />
-        <Footer version={coreVersion} />
+        <Footer version={coreVersion} linkList={testSession.test_suite.links} />
       </Box>
     );
   } else if (

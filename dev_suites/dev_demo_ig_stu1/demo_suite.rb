@@ -5,6 +5,16 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
   class DemoSuite < Inferno::TestSuite
     title 'Demonstration Suite'
     id 'demo'
+    links [
+      {
+        label: 'Open Source',
+        url: 'https://github.com/inferno-framework/inferno-core'
+      },
+      {
+        label: 'Issues',
+        url: 'https://github.com/inferno-framework/inferno-core/issues'
+      }
+    ]
 
     # Ideas:
     # * Suite metadata (name, associated ig, version, etc etc)

@@ -11,6 +11,7 @@ module Inferno
           field :input_instructions
           field :test_count
           field :version
+          field :links
           association :suite_options, blueprint: SuiteOption
           association :presets, view: :summary, blueprint: Preset
         end
@@ -18,7 +19,8 @@ module Inferno
         view :full do
           include_view :summary
           field :test_groups do |suite, options|
-            TestGroup.render_as_hash(suite.groups(options[:suite_options]))
+            suite_options = options[:suite_options]
+            TestGroup.render_as_hash(suite.groups(suite_options), suite_options: suite_options)
           end
           field :configuration_messages
           field :available_inputs, name: :inputs, extractor: HashValueExtractor, blueprint: Input

@@ -3,17 +3,15 @@ import useStyles from './styles';
 import { Box, Link, Typography, Divider } from '@mui/material';
 import logo from '~/images/inferno_logo.png';
 import { getStaticPath } from '~/api/infernoApiService';
+import { FooterLink } from '~/models/testSuiteModels';
 
 interface FooterProps {
   version: string;
+  linkList?: FooterLink[];
 }
 
-const Footer: FC<FooterProps> = ({ version }) => {
+const Footer: FC<FooterProps> = ({ version, linkList }) => {
   const styles = useStyles();
-  const linkList = [
-    { label: 'Open Source', url: 'https://github.com/inferno-framework/inferno-core' },
-    { label: 'Issues', url: 'https://github.com/inferno-framework/inferno-core/issues' },
-  ];
 
   return (
     <footer className={styles.footer}>
@@ -42,23 +40,24 @@ const Footer: FC<FooterProps> = ({ version }) => {
             </Box>
           )}
         </Box>
-        <Box display="flex" alignItems="center" p={2}>
-          {linkList.map((link, i) => {
-            return (
-              <React.Fragment key={link.url}>
-                <Link
-                  href={link.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  underline="hover"
-                  className={styles.linkText}
-                >
-                  {link.label}
-                </Link>
-                {i !== linkList.length - 1 && <Divider orientation="vertical" flexItem />}
-              </React.Fragment>
-            );
-          })}
+        <Box display="flex" alignItems="center" p={2} data-testid="footer-links">
+          {linkList &&
+            linkList.map((link, i) => {
+              return (
+                <React.Fragment key={link.url}>
+                  <Link
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    underline="hover"
+                    className={styles.linkText}
+                  >
+                    {link.label}
+                  </Link>
+                  {i !== linkList.length - 1 && <Divider orientation="vertical" flexItem />}
+                </React.Fragment>
+              );
+            })}
         </Box>
       </Box>
     </footer>

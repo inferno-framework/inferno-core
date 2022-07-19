@@ -16,10 +16,12 @@ module Inferno
         field :optional?, name: :optional
 
         field :test_groups do |group, options|
-          TestGroup.render_as_hash(group.groups(options[:suite_options]))
+          suite_options = options[:suite_options]
+          TestGroup.render_as_hash(group.groups(suite_options), suite_options: suite_options)
         end
         field :tests do |group, options|
-          Test.render_as_hash(group.tests(options[:suite_options]))
+          suite_options = options[:suite_options]
+          Test.render_as_hash(group.tests(suite_options), suite_options: suite_options)
         end
         field :available_inputs, name: :inputs, extractor: HashValueExtractor, blueprint: Input
         field :output_definitions, name: :outputs, extractor: HashValueExtractor
