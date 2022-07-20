@@ -4,13 +4,14 @@ import React, { FC } from 'react';
 import clsx from 'clsx';
 import useStyles from './styles';
 
+import { useTestSessionStore } from '~/store/testSession';
+
 type ProblemBadgeProps = {
   Icon: OverridableComponent<SvgIconTypeMap<unknown, 'svg'>>;
   counts: number;
   color: string;
   badgeStyle: string;
   description: string;
-  view: string;
   panelIndex: number;
   setPanelIndex: React.Dispatch<React.SetStateAction<number>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -22,17 +23,18 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
   color,
   badgeStyle,
   description,
-  view,
   panelIndex,
   setPanelIndex,
   setOpen,
 }) => {
   const styles = useStyles();
+  const view = useTestSessionStore((state) => state.view);
 
   // Custom icon button to resolve nested interactive control error
   return (
     <Badge
       badgeContent={counts}
+      max={9}
       overlap="circular"
       className={clsx([color, badgeStyle, styles.badgeBase])}
     >

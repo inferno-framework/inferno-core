@@ -8,11 +8,12 @@ import ResultIcon from './ResultIcon';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
 
+import { useTestSessionStore } from '~/store/testSession';
+
 interface TestGroupCardProps {
   runnable: TestSuite | TestGroup;
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   testRunInProgress: boolean;
-  view: 'report' | 'run';
 }
 
 const TestGroupCard: FC<TestGroupCardProps> = ({
@@ -20,9 +21,9 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
   runTests,
   children,
   testRunInProgress,
-  view,
 }) => {
   const styles = useStyles();
+  const view = useTestSessionStore((state) => state.view);
 
   const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
 

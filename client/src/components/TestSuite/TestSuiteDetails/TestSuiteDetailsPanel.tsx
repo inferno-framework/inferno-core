@@ -39,7 +39,6 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
           runTests={runTests}
           updateRequest={updateRequest}
           testRunInProgress={testRunInProgress}
-          view="run"
         />
       );
     });
@@ -52,7 +51,6 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
           runTests={runTests}
           updateRequest={updateRequest}
           testRunInProgress={testRunInProgress}
-          view="run"
         />
       );
     });
@@ -73,7 +71,6 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
         runTests={runTests}
         runnable={runnable}
         testRunInProgress={testRunInProgress}
-        view="run"
       >
         {listItems}
       </TestGroupCard>

@@ -1,11 +1,5 @@
 import React, { FC } from 'react';
-import {
-  TestSuite,
-  TestGroup,
-  RunnableType,
-  PresetSummary,
-  ViewType,
-} from '~/models/testSuiteModels';
+import { TestSuite, TestGroup, RunnableType, PresetSummary } from '~/models/testSuiteModels';
 import { Box, Divider, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -22,12 +16,13 @@ import CustomTreeItem from '~/components/_common/TreeItem';
 import PresetsSelector from '~/components/PresetsSelector/PresetsSelector';
 import lightTheme from '~/styles/theme';
 
+import { useTestSessionStore } from '~/store/testSession';
+
 export interface TestSuiteTreeProps {
   testSuite: TestSuite;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   selectedRunnable: string;
   testRunInProgress: boolean;
-  view: ViewType;
   presets?: PresetSummary[];
   testSessionId?: string;
   getSessionData?: (testSessionId: string) => void;
@@ -47,18 +42,16 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   selectedRunnable,
   runTests,
   testRunInProgress,
-  view,
   presets,
   testSessionId,
   getSessionData,
 }) => {
   const styles = useStyles();
+  const view = useTestSessionStore((state) => state.view);
 
   let selectedNode = selectedRunnable;
-  if (view === 'report') {
-    selectedNode = `${selectedNode}/report`;
-  } else if (view === 'config') {
-    selectedNode = `${selectedNode}/config`;
+  if (view === 'report' || view === 'config') {
+    selectedNode = `${selectedNode}/${view}`;
   }
 
   const defaultExpanded: string[] = [testSuite.id];

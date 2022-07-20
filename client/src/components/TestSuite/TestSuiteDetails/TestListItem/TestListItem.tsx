@@ -12,7 +12,7 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from '@mui/material';
-import { RunnableType, Test, Request, ViewType } from '~/models/testSuiteModels';
+import { RunnableType, Test, Request } from '~/models/testSuiteModels';
 import TabPanel from './TabPanel';
 import InputOutputsList from './InputOutputsList';
 import MessagesList from './MessagesList';
@@ -31,12 +31,13 @@ import type { MessageCounts } from './helper';
 import { countMessageTypes } from './helper';
 import lightTheme from 'styles/theme';
 
+import { useTestSessionStore } from '~/store/testSession';
+
 interface TestListItemProps {
   test: Test;
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
-  view: ViewType;
 }
 
 const TestListItem: FC<TestListItemProps> = ({
@@ -44,11 +45,11 @@ const TestListItem: FC<TestListItemProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
-  view,
 }) => {
   const styles = useStyles();
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
+  const view = useTestSessionStore((state) => state.view);
 
   const resultIcon = (
     <Box display="inline-flex">
@@ -97,7 +98,6 @@ const TestListItem: FC<TestListItemProps> = ({
           color={styles.error}
           badgeStyle={styles.errorBadge}
           description={`${messageTypeCounts.errors} message(s)`}
-          view={view}
           panelIndex={0}
           setOpen={setOpen}
           setPanelIndex={setPanelIndex}
@@ -112,7 +112,6 @@ const TestListItem: FC<TestListItemProps> = ({
           color={styles.warning}
           badgeStyle={styles.warningBadge}
           description={`${messageTypeCounts.warnings} message(s)`}
-          view={view}
           panelIndex={0}
           setOpen={setOpen}
           setPanelIndex={setPanelIndex}
@@ -127,7 +126,6 @@ const TestListItem: FC<TestListItemProps> = ({
           color={styles.info}
           badgeStyle={styles.infoBadge}
           description={`${messageTypeCounts.infos} message(s)`}
-          view={view}
           panelIndex={0}
           setOpen={setOpen}
           setPanelIndex={setPanelIndex}
@@ -142,7 +140,6 @@ const TestListItem: FC<TestListItemProps> = ({
       color={styles.request}
       badgeStyle={styles.requestBadge}
       description={`${test.result.requests.length} request(s)`}
-      view={view}
       panelIndex={1}
       setOpen={setOpen}
       setPanelIndex={setPanelIndex}

@@ -25,7 +25,8 @@ import TestSuiteReport from './TestSuiteDetails/TestSuiteReport';
 import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDetailsPanel';
 import useStyles from './styles';
 
-import { useAppStore } from '../../store/app';
+import { useAppStore } from '~/store/app';
+import { useTestSessionStore } from '~/store/testSession';
 
 function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
@@ -99,14 +100,21 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const setView = useTestSessionStore((state) => state.setView);
+  const bannerHeight = document.getElementsByClassName('banner')[0]?.clientHeight;
+  const location = useLocation();
+  const locationHashParts = location.hash.replace('#', '').split('/');
+  let [selectedRunnable] = locationHashParts;
+  const [, view] = locationHashParts;
 
-  useEffect(() => {
-    test_suite.inputs?.forEach((input: TestInput) => {
-      const defaultValue = input.default || '';
-      sessionData.set(input.name, sessionData.get(input.name) || defaultValue);
-    });
-    setSessionData(new Map(sessionData));
-  }, [testSession]);
+  const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
+  if (!runnableMap.get(selectedRunnable)) selectedRunnable = testSession.test_suite.id;
+  resultsMap.forEach((result, runnableId) => {
+    const runnable = runnableMap.get(runnableId);
+    if (runnable) {
+      runnable.result = result;
+    }
+  });
 
   if (!testRun && initialTestRun) {
     setTestRun(initialTestRun);
@@ -115,6 +123,14 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       pollTestRunResults(initialTestRun);
     }
   }
+
+  useEffect(() => {
+    test_suite.inputs?.forEach((input: TestInput) => {
+      const defaultValue = input.default || '';
+      sessionData.set(input.name, sessionData.get(input.name) || defaultValue);
+    });
+    setSessionData(new Map(sessionData));
+  }, [testSession]);
 
   useEffect(() => {
     let waitingTestId = null;
@@ -129,15 +145,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     setWaitingTestId(waitingTestId);
   }, [resultsMap]);
 
-  const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
-  const location = useLocation();
-  const locationHashParts = location.hash.replace('#', '').split('/');
-  let [selectedRunnable] = locationHashParts;
-  const [, view] = locationHashParts;
-
-  if (!runnableMap.get(selectedRunnable)) {
-    selectedRunnable = testSession.test_suite.id;
-  }
+  useEffect(() => {
+    setView((view || 'run') as ViewType);
+  }, [view]);
 
   function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
     setInputs(inputs);
@@ -191,13 +201,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       setResultsMap(new Map(resultsMap));
     }
   }
-
-  resultsMap.forEach((result, runnableId) => {
-    const runnable = runnableMap.get(runnableId);
-    if (runnable) {
-      runnable.result = result;
-    }
-  });
 
   function runTests(runnableType: RunnableType, runnableId: string) {
     const runnable = runnableMap.get(runnableId);
@@ -259,7 +262,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           runTests={runTests}
           selectedRunnable={selectedRunnable}
           testRunInProgress={testRunNeedsProgressBar(testRun)}
-          view={(view as ViewType) || 'run'}
           presets={testSession.test_suite.presets}
           getSessionData={getSessionData}
           testSessionId={id}
@@ -293,8 +295,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         );
     }
   }
-
-  const bannerHeight = document.getElementsByClassName('banner')[0]?.clientHeight;
 
   return (
     <Box
@@ -332,7 +332,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       )}
       <main style={{ overflow: 'scroll', width: '100%' }}>
         <Box className={styles.contentContainer}>
-          {renderView((view as ViewType) || 'run')}
+          {renderView((view || 'run') as ViewType)}
           <InputsModal
             hideModal={() => setInputModalVisible(false)}
             createTestRun={createTestRun}

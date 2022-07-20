@@ -15,19 +15,20 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FolderIcon from '@mui/icons-material/Folder';
 import InputOutputsList from './TestListItem/InputOutputsList';
-import { Request, RunnableType, Test, TestGroup, ViewType } from '~/models/testSuiteModels';
+import { Request, RunnableType, Test, TestGroup } from '~/models/testSuiteModels';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '../TestRunButton/TestRunButton';
 import TestListItem from './TestListItem/TestListItem';
 import ReactMarkdown from 'react-markdown';
 import theme from '~/styles/theme';
 
+import { useTestSessionStore } from '~/store/testSession';
+
 interface TestGroupListItemProps {
   testGroup: TestGroup;
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
-  view: ViewType;
 }
 
 const TestGroupListItem: FC<TestGroupListItemProps> = ({
@@ -35,9 +36,9 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
-  view,
 }) => {
   const styles = useStyles();
+  const view = useTestSessionStore((state) => state.view);
   const [expanded, setExpanded] = React.useState(
     testGroup.result?.result === 'cancel' ||
       testGroup.result?.result === 'fail' ||
@@ -62,7 +63,6 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         runTests={runTests}
         updateRequest={updateRequest}
         testRunInProgress={testRunInProgress}
-        view={view}
       />
     ));
   };
@@ -75,7 +75,6 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         runTests={runTests}
         updateRequest={updateRequest}
         testRunInProgress={testRunInProgress}
-        view={view}
       />
     ));
   };
@@ -173,7 +172,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         title={`${testGroup.id}-detail`}
         className={styles.accordionDetailContainer}
       >
-        {testGroup.description && view == 'run' && nestedDescriptionPanel}
+        {testGroup.description && view === 'run' && nestedDescriptionPanel}
         <Box className={styles.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}
           {'tests' in testGroup && renderTestListItems()}
