@@ -59,11 +59,11 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       example_test = Class.new(Inferno::Entities::Test)
       example_test.input :a, :b, :c
       example_test.input :d, optional: true
-      missing_inputs = example_test.missing_inputs([{ name: 'a', value: 'a' }])
+      missing_inputs = example_test.missing_inputs([{ name: 'a', value: 'a' }], nil)
       expect(missing_inputs).to eq(['b', 'c'])
 
       missing_inputs = example_test.missing_inputs([{ name: 'a', value: 'a' }, { name: 'b', value: 'b' },
-                                                    { name: 'c', value: 'c' }])
+                                                    { name: 'c', value: 'c' }], nil)
       expect(missing_inputs).to eq([])
     end
 
@@ -74,12 +74,12 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
         input :a, :b, :c
         input :d, optional: true
       end
-      missing_inputs = example_test_group.missing_inputs([{ name: 'a', value: 'a' }, { name: 'e', value: 'e' }])
+      missing_inputs = example_test_group.missing_inputs([{ name: 'a', value: 'a' }, { name: 'e', value: 'e' }], nil)
       expect(missing_inputs).to eq(['f', 'b', 'c'])
 
       missing_inputs = example_test_group.missing_inputs([{ name: 'a', value: 'a' }, { name: 'b', value: 'b' },
                                                           { name: 'c', value: 'c' }, { name: 'e', value: 'e' },
-                                                          { name: 'f', value: 'f' }])
+                                                          { name: 'f', value: 'f' }], nil)
       expect(missing_inputs).to eq([])
     end
 
@@ -92,7 +92,7 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       example_test_group.test 'child test uses output' do
         input :c, :d
       end
-      missing_inputs = example_test_group.missing_inputs([{ name: 'a', value: 'a' }, { name: 'd', value: 'd' }])
+      missing_inputs = example_test_group.missing_inputs([{ name: 'a', value: 'a' }, { name: 'd', value: 'd' }], nil)
       expect(missing_inputs).to eq(['b'])
     end
 
@@ -104,7 +104,7 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       example_test_group.test 'child test with output' do
         output :a
       end
-      missing_inputs = example_test_group.missing_inputs([{ name: 'b', value: 'b' }])
+      missing_inputs = example_test_group.missing_inputs([{ name: 'b', value: 'b' }], nil)
       expect(missing_inputs).to eq(['a'])
     end
 
@@ -118,9 +118,27 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
         input :url1, name: :url2
       end
 
-      missing_inputs = example_test_group.missing_inputs([{ name: 'url1', value: 'xyz' }])
+      missing_inputs = example_test_group.missing_inputs([{ name: 'url1', value: 'xyz' }], nil)
 
       expect(missing_inputs).to eq([])
+    end
+
+    it 'handles suite options' do
+      suite = OptionsSuite::Suite
+      v1_option = Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')
+      v2_option = Inferno::DSL::SuiteOption.new(id: :ig_version, value: '2')
+
+      missing_inputs = suite.missing_inputs([{ name: 'v1_input', value: 'abc' }], nil)
+      expect(missing_inputs).to eq(['v2_input'])
+
+      missing_inputs = suite.missing_inputs([{ name: 'v1_input', value: 'abc' }], [v1_option])
+      expect(missing_inputs).to be_empty
+
+      missing_inputs = suite.missing_inputs([{ name: 'v1_input', value: 'abc' }], [v2_option])
+      expect(missing_inputs).to eq(['v2_input'])
+
+      missing_inputs = suite.missing_inputs([{ name: 'v2_input', value: 'abc' }], [v1_option])
+      expect(missing_inputs).to eq(['v1_input'])
     end
   end
 

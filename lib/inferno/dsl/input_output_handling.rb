@@ -90,17 +90,17 @@ module Inferno
       end
 
       # @private
-      def required_inputs
-        available_inputs
+      def required_inputs(selected_suite_options)
+        available_inputs(selected_suite_options)
           .reject { |_, input| input.optional }
           .map { |_, input| input.name }
       end
 
       # @private
-      def missing_inputs(submitted_inputs)
+      def missing_inputs(submitted_inputs, selected_suite_options)
         submitted_inputs = [] if submitted_inputs.nil?
 
-        required_inputs.map(&:to_s) - submitted_inputs.map { |input| input[:name] }
+        required_inputs(selected_suite_options).map(&:to_s) - submitted_inputs.map { |input| input[:name] }
       end
 
       # Define a particular order for inputs to be presented in the API/UI
