@@ -3,6 +3,8 @@ module OptionsSuite
     title 'V1 Group'
     id :v1_group
 
+    input :v1_input
+
     test do
       title 'V1 Test'
       id :v1_test
@@ -16,6 +18,8 @@ module OptionsSuite
   class V2Group < Inferno::TestGroup
     title 'V2 Group'
     id :v2_group
+
+    input :v2_input
 
     test do
       title 'V2 Test 1'

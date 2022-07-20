@@ -7,7 +7,10 @@ module Inferno
         field :short_id
         field :title
         field :short_title
-        field :available_inputs, name: :inputs, extractor: HashValueExtractor, blueprint: Input
+        field :inputs do |test, options|
+          suite_options = options[:suite_options]
+          test.available_inputs(suite_options).map { |_name, input| Input.render_as_hash(input) }
+        end
         field :output_definitions, name: :outputs, extractor: HashValueExtractor
         field :description
         field :short_description

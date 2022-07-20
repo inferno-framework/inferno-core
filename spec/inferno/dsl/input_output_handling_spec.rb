@@ -39,6 +39,19 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       expect(group.available_inputs.keys).to eq([:b])
       expect(test.available_inputs.keys).to eq([:b])
     end
+
+    it 'filters inputs based on selected suite_options' do
+      v1_option = Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')
+      v2_option = Inferno::DSL::SuiteOption.new(id: :ig_version, value: '2')
+      v1_inputs = OptionsSuite::Suite.available_inputs([v1_option])
+      v2_inputs = OptionsSuite::Suite.available_inputs([v2_option])
+
+      expect(v1_inputs.length).to eq(1)
+      expect(v2_inputs.length).to eq(1)
+
+      expect(v1_inputs).to include(:v1_input)
+      expect(v2_inputs).to include(:v2_input)
+    end
   end
 
   describe '.missing_inputs' do

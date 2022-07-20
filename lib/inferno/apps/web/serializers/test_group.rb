@@ -23,7 +23,10 @@ module Inferno
           suite_options = options[:suite_options]
           Test.render_as_hash(group.tests(suite_options), suite_options: suite_options)
         end
-        field :available_inputs, name: :inputs, extractor: HashValueExtractor, blueprint: Input
+        field :inputs do |group, options|
+          suite_options = options[:suite_options]
+          Input.render_as_hash(group.available_inputs(suite_options).values)
+        end
         field :output_definitions, name: :outputs, extractor: HashValueExtractor
       end
     end

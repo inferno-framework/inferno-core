@@ -685,13 +685,13 @@ definitions:
         type: "string"
       value:
         type: "string"
-      label:
+      title:
         type: "string"
         readOnly: true
       description:
         type: "string"
         readOnly: true
-      required:
+      optional:
         type: "boolean"
         readOnly: true
       type:

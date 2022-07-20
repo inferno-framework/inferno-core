@@ -153,52 +153,46 @@ module Inferno
       # Inputs available for this runnable's children. A running list of outputs
       # created by the children is used to exclude any inputs which are provided
       # by an earlier child's output.
-      def children_available_inputs
-        @children_available_inputs ||=
-          begin
-            child_outputs = []
-            all_children.each_with_object({}) do |child, definitions|
-              new_definitions = child.available_inputs.map(&:dup)
-              new_definitions.each do |input, new_definition|
-                existing_definition = definitions[input]
+      def children_available_inputs(selected_suite_options = nil)
+        child_outputs = []
+        children(selected_suite_options).each_with_object({}) do |child, definitions|
+          new_definitions = child.available_inputs(selected_suite_options).map(&:dup)
+          new_definitions.each do |input, new_definition|
+            existing_definition = definitions[input]
 
-                updated_definition =
-                  if existing_definition.present?
-                    existing_definition.merge_with_child(new_definition)
-                  else
-                    new_definition
-                  end
-
-                next if child_outputs.include?(updated_definition.name.to_sym)
-
-                definitions[updated_definition.name.to_sym] = updated_definition
+            updated_definition =
+              if existing_definition.present?
+                existing_definition.merge_with_child(new_definition)
+              else
+                new_definition
               end
 
-              child_outputs.concat(child.all_outputs).uniq!
-            end
+            next if child_outputs.include?(updated_definition.name.to_sym)
+
+            definitions[updated_definition.name.to_sym] = updated_definition
           end
+
+          child_outputs.concat(child.all_outputs).uniq!
+        end
       end
 
       # @private
       # Inputs available for the user for this runnable and all its children.
-      def available_inputs
-        @available_inputs ||=
-          begin
-            available_inputs =
-              config.inputs
-                .slice(*inputs)
-                .each_with_object({}) do |(_, input), inputs|
-                  inputs[input.name.to_sym] = input
-                end
-
-            available_inputs.each do |input, current_definition|
-              child_definition = children_available_inputs[input]
-              current_definition.merge_with_child(child_definition)
+      def available_inputs(selected_suite_options = nil)
+        available_inputs =
+          config.inputs
+            .slice(*inputs)
+            .each_with_object({}) do |(_, input), inputs|
+              inputs[input.name.to_sym] = Entities::Input.new(input.to_hash)
             end
 
-            available_inputs = children_available_inputs.merge(available_inputs)
-            order_available_inputs(available_inputs)
-          end
+        available_inputs.each do |input, current_definition|
+          child_definition = children_available_inputs(selected_suite_options)[input]
+          current_definition.merge_with_child(child_definition)
+        end
+
+        available_inputs = children_available_inputs(selected_suite_options).merge(available_inputs)
+        order_available_inputs(available_inputs)
       end
     end
   end
