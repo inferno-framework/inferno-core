@@ -1,34 +1,34 @@
 {
-  "title": "Preset for US Core v3.1.1",
+  "title": "Inferno Reference Server",
   "id": null,
-  "test_suite_id": "us_core_v311",
+  "test_suite_id": "us_core_311",
   "inputs": [
     {
       "name": "url",
+      "type": "text",
       "title": "FHIR Endpoint",
       "description": "URL of the FHIR endpoint",
-      "type": "text",
-      "value": "https://inferno.healthit.gov/reference-server/r4"
+      "value": "<%= ENV.fetch('FHIR_ENDPOINT_URL', 'https://inferno.healthit.gov') %>/reference-server/r4"
     },
     {
       "name": "smart_credentials",
-      "title": "OAuth Credentials",
       "type": "oauth_credentials",
+      "title": "OAuth Credentials",
       "optional": true,
-      "value": "{\"access_token\": \"SAMPLE_TOKEN\"}"
+      "value": "{\"access_token\":\"SAMPLE_TOKEN\"}"
     },
     {
       "name": "patient_ids",
+      "type": "text",
       "title": "Patient IDs",
       "description": "Comma separated list of patient IDs that in sum contain all MUST SUPPORT elements",
-      "type": "text",
       "value": "85,355"
     },
     {
       "name": "implantable_device_codes",
+      "type": "text",
       "title": "Implantable Device Type Code",
       "description": "Enter the code for an Implantable Device type, or multiple codes separated by commas. If blank, Inferno will validate all Device resources against the Implantable Device profile",
-      "type": "text",
       "optional": true,
       "value": null
     }
