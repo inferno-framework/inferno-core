@@ -697,6 +697,9 @@ definitions:
       type:
         type: "string"
         readOnly: true
+      locked:
+        type: "boolean"
+        readOnly: true
       options:
         type: "array"
         readOnly: true

@@ -10,8 +10,9 @@ module Inferno
         field :description, if: :field_present?
         field :type, if: :field_present?
         field :default, if: :field_present?
-        field :options, if: :field_present?
         field :optional, if: :field_present?
+        field :options, if: :field_present?
+        field :locked, if: :field_present?
         field :value, if: :field_present?
       end
     end
