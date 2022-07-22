@@ -9,7 +9,7 @@ module Inferno
         field :short_title
         field :inputs do |test, options|
           suite_options = options[:suite_options]
-          test.available_inputs(suite_options).map { |_name, input| Input.render_as_hash(input) }
+          Input.render_as_hash(test.available_inputs(suite_options).values)
         end
         field :output_definitions, name: :outputs, extractor: HashValueExtractor
         field :description
