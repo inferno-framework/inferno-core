@@ -26,7 +26,7 @@ module Inferno
                   &.last
 
               if input.nil?
-                Inferno::Application['logger'].warning(
+                Inferno::Application['logger'].warn(
                   "Unknown input `#{input_params[:name]}` for #{test_run.runnable.id}: #{test_run.runnable.title}"
                 )
                 next
