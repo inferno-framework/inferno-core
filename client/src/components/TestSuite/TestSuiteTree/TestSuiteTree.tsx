@@ -91,14 +91,14 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
         configMessages?.filter((message) => message.type === 'error').length > 0
       ) {
         configMessagesSeverityIcon = (
-          <ErrorOutlineIcon sx={{ color: lightTheme.palette.common.red }} />
+          <ErrorOutlineIcon sx={{ color: lightTheme.palette.error.main }} />
         );
       } else if (
         configMessages &&
         configMessages?.filter((message) => message.type === 'warning').length > 0
       ) {
         configMessagesSeverityIcon = (
-          <WarningAmberIcon sx={{ color: lightTheme.palette.common.orange }} />
+          <WarningAmberIcon sx={{ color: lightTheme.palette.warning.main }} />
         );
       }
 
