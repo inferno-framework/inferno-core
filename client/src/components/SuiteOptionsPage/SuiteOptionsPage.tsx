@@ -29,7 +29,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
 
   const { test_suite_id } = useParams<{ test_suite_id: string }>();
 
-  const testSuite = testSuites?.find((suite: TestSuite) => suite.id == test_suite_id);
+  const testSuite = testSuites?.find((suite: TestSuite) => suite.id === test_suite_id);
 
   // just grab the first to start
   // perhaps choices should be persisted in the URL to make it easy to share specific
