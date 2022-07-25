@@ -5,13 +5,14 @@ import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/mater
 import { useHistory } from 'react-router-dom';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import { getStaticPath } from '~/api/infernoApiService';
+import { SuiteOptionChoice } from '~/models/testSuiteModels';
 
 import { useAppStore } from '~/store/app';
 
 export interface HeaderProps {
   suiteTitle?: string;
   suiteVersion?: string;
-  suiteOptions?: string;
+  suiteOptions?: SuiteOptionChoice[];
   drawerOpen: boolean;
   toggleDrawer: (drawerOpen: boolean) => void;
 }
@@ -31,6 +32,11 @@ const Header: FC<HeaderProps> = ({
     history.push('/');
   };
 
+  const suiteOptionsString =
+    suiteOptions && suiteOptions.length > 0
+      ? ` - ${suiteOptions.map((option) => option.label).join(', ')}`
+      : '';
+
   return suiteTitle ? (
     <AppBar color="default" className={styles.appbar}>
       <Toolbar className={styles.toolbar}>
@@ -47,8 +53,8 @@ const Header: FC<HeaderProps> = ({
           <Box className={styles.titleContainer}>
             <Typography variant="h5" component="h1" className={styles.title}>
               {suiteTitle}
+              {suiteOptionsString}
             </Typography>
-            {suiteOptions && <Typography>{suiteOptions}</Typography>}
             {suiteVersion && (
               <Typography variant="overline" className={styles.version}>
                 {`v.${suiteVersion}`}
