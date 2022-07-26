@@ -11,8 +11,8 @@ module Inferno
 
           PARAMS = [:test_session_id, :test_suite_id, :test_group_id, :test_id].freeze
 
-          def verify_runnable(runnable, inputs)
-            missing_inputs = runnable&.missing_inputs(inputs)
+          def verify_runnable(runnable, inputs, selected_suite_options)
+            missing_inputs = runnable&.missing_inputs(inputs, selected_suite_options)
             user_runnable = runnable&.user_runnable?
             raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs&.any?
             raise Inferno::Exceptions::NotUserRunnableException unless user_runnable
@@ -26,7 +26,7 @@ module Inferno
                   &.last
 
               if input.nil?
-                Inferno::Application['logger'].warning(
+                Inferno::Application['logger'].warn(
                   "Unknown input `#{input_params[:name]}` for #{test_run.runnable.id}: #{test_run.runnable.title}"
                 )
                 next
@@ -51,7 +51,11 @@ module Inferno
               return
             end
 
-            verify_runnable(repo.build_entity(create_params(params)).runnable, params[:inputs])
+            verify_runnable(
+              repo.build_entity(create_params(params)).runnable,
+              params[:inputs],
+              test_session.suite_options
+            )
 
             test_run = repo.create(create_params(params).merge(status: 'queued'))
 

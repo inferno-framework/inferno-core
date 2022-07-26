@@ -13,7 +13,8 @@ module Inferno
         :default,
         :optional,
         :options,
-        :locked
+        :locked,
+        :value
       ].freeze
       include Entities::Attributes
 
