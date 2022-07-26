@@ -14,6 +14,7 @@ import {
   Request,
   TestOutput,
   ViewType,
+  SuiteOptionChoice,
 } from '~/models/testSuiteModels';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from '~/api/TestRunsApi';
 import ActionModal from '~/components/ActionModal/ActionModal';
@@ -70,6 +71,7 @@ export interface TestSessionComponentProps {
   previousResults: Result[];
   initialTestRun: TestRun | null;
   sessionData: Map<string, unknown>;
+  suiteOptions?: SuiteOptionChoice[];
   drawerOpen: boolean;
   setSessionData: (data: Map<string, unknown>) => void;
   getSessionData?: (testSessionId: string) => void;
@@ -81,6 +83,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   previousResults,
   initialTestRun,
   sessionData,
+  suiteOptions,
   drawerOpen,
   setSessionData,
   getSessionData,
@@ -274,7 +277,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       case 'report':
         // This is a little strange because we are only allowing reports
         // at the suite level right now for simplicity.
-        return <TestSuiteReport testSuite={runnableMap.get(selectedRunnable) as TestSuite} />;
+        return (
+          <TestSuiteReport
+            testSuite={runnableMap.get(selectedRunnable) as TestSuite}
+            suiteOptions={suiteOptions}
+          />
+        );
       case 'config':
         // Config messages are only defined at the suite level.
         return (

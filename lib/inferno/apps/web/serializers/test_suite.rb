@@ -23,7 +23,10 @@ module Inferno
             TestGroup.render_as_hash(suite.groups(suite_options), suite_options: suite_options)
           end
           field :configuration_messages
-          field :available_inputs, name: :inputs, extractor: HashValueExtractor, blueprint: Input
+          field :inputs do |suite, options|
+            suite_options = options[:suite_options]
+            Input.render_as_hash(suite.available_inputs(suite_options).values)
+          end
         end
       end
     end
