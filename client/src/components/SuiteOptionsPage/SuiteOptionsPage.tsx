@@ -44,7 +44,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
 
   function changeSuiteOption(option_id: string, value: string): void {
     const newOptions: SuiteOption[] = selectedSuiteOptions.map((option) => {
-      if (option.id == option_id) {
+      if (option.id === option_id) {
         return { id: option.id, value: value };
       }
       return { ...option };
