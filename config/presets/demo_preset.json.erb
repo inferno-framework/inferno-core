@@ -8,7 +8,7 @@
       "type": "text",
       "title": "URL",
       "description": "Insert url of FHIR server",
-      "value": "<%= ENV.fetch('FHIR_ENDPOINT_URL', 'https://inferno.healthit.gov') %>/reference-server/r4"
+      "value": "<%= ENV.fetch('REFERENCE_SERVER_URL', 'https://inferno.healthit.gov') %>/reference-server/r4"
     },
     {
       "name": "patient_id",
@@ -64,7 +64,7 @@
       "title": "URL",
       "description": "Example of locked, filled input field",
       "locked": true,
-      "value": "<%= ENV.fetch('FHIR_ENDPOINT_URL', 'https://inferno.healthit.gov') %>/reference-server/r4"
+      "value": "<%= ENV.fetch('REFERENCE_SERVER_URL', 'https://inferno.healthit.gov') %>/reference-server/r4"
     },
     {
       "name": "textarea_locked",
