@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Inferno::Web
+  
+    &mdash; Documentation by YARD 0.9.27
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Inferno::Web";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (W)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Inferno.html" title="Inferno (module)">Inferno</a></span></span>
+     &raquo; 
+    <span class="title">Web</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: Inferno::Web
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/inferno/apps/web/router.rb<span class="defines">,<br />
+  lib/inferno/apps/web/application.rb,<br /> lib/inferno/apps/web/serializers/test.rb,<br /> lib/inferno/apps/web/serializers/input.rb,<br /> lib/inferno/apps/web/serializers/header.rb,<br /> lib/inferno/apps/web/serializers/preset.rb,<br /> lib/inferno/apps/web/serializers/result.rb,<br /> lib/inferno/apps/web/serializers/message.rb,<br /> lib/inferno/apps/web/serializers/request.rb,<br /> lib/inferno/apps/web/serializers/test_run.rb,<br /> lib/inferno/apps/web/controllers/controller.rb,<br /> lib/inferno/apps/web/serializers/serializer.rb,<br /> lib/inferno/apps/web/serializers/test_group.rb,<br /> lib/inferno/apps/web/serializers/test_suite.rb,<br /> lib/inferno/apps/web/serializers/session_data.rb,<br /> lib/inferno/apps/web/serializers/suite_option.rb,<br /> lib/inferno/apps/web/serializers/test_session.rb,<br /> lib/inferno/apps/web/controllers/requests/show.rb,<br /> lib/inferno/apps/web/controllers/test_runs/show.rb,<br /> lib/inferno/apps/web/controllers/test_runs/create.rb,<br /> lib/inferno/apps/web/controllers/test_suites/show.rb,<br /> lib/inferno/apps/web/controllers/test_runs/destroy.rb,<br /> lib/inferno/apps/web/controllers/test_suites/index.rb,<br /> lib/inferno/apps/web/controllers/test_sessions/show.rb,<br /> lib/inferno/apps/web/controllers/test_sessions/create.rb,<br /> lib/inferno/apps/web/serializers/hash_value_extractor.rb,<br /> lib/inferno/apps/web/controllers/test_runs/results/index.rb,<br /> lib/inferno/apps/web/controllers/test_sessions/last_test_run.rb,<br /> lib/inferno/apps/web/controllers/test_sessions/results/index.rb,<br /> lib/inferno/apps/web/controllers/test_suites/check_configuration.rb,<br /> lib/inferno/apps/web/controllers/test_sessions/session_data/index.rb,<br /> lib/inferno/apps/web/controllers/test_sessions/session_data/apply_preset.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+<h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Web/Controllers.html" title="Inferno::Web::Controllers (module)">Controllers</a></span>, <span class='object_link'><a href="Web/Serializers.html" title="Inferno::Web::Serializers (module)">Serializers</a></span>
+    
+  
+    
+  
+</p>
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="Router-constant" class="">Router =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'>Hanami</span><span class='op'>::</span><span class='const'>Router</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>namespace:</span> <span class='const'><span class='object_link'><a href="../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'>Web</span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Controllers.html" title="Inferno::Web::Controllers (module)">Controllers</a></span></span><span class='rparen'>)</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_namespace'>namespace</span> <span class='const'><span class='object_link'><a href="Application.html" title="Inferno::Application (class)">Application</a></span></span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>base_path</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_namespace'>namespace</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>api</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_resources'>resources</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>test_runs</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>only:</span> <span class='lbracket'>[</span><span class='symbol'>:create</span><span class='comma'>,</span> <span class='symbol'>:show</span><span class='comma'>,</span> <span class='symbol'>:destroy</span><span class='rbracket'>]</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_resources'>resources</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>results</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>only:</span> <span class='lbracket'>[</span><span class='symbol'>:index</span><span class='rbracket'>]</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_resources'>resources</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>test_sessions</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>only:</span> <span class='lbracket'>[</span><span class='symbol'>:create</span><span class='comma'>,</span> <span class='symbol'>:show</span><span class='rbracket'>]</span> <span class='kw'>do</span>
+        <span class='id identifier rubyid_resources'>resources</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>results</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>only:</span> <span class='lbracket'>[</span><span class='symbol'>:index</span><span class='rbracket'>]</span>
+        <span class='id identifier rubyid_resources'>resources</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>session_data</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>only:</span> <span class='lbracket'>[</span><span class='symbol'>:index</span><span class='rbracket'>]</span> <span class='kw'>do</span>
+          <span class='id identifier rubyid_collection'>collection</span> <span class='kw'>do</span>
+            <span class='id identifier rubyid_put'>put</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/apply_preset</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>to:</span> <span class='const'><span class='object_link'><a href="../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'>Web</span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Controllers.html" title="Inferno::Web::Controllers (module)">Controllers</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Controllers/TestSessions.html" title="Inferno::Web::Controllers::TestSessions (module)">TestSessions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Controllers/TestSessions/SessionData.html" title="Inferno::Web::Controllers::TestSessions::SessionData (module)">SessionData</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Controllers/TestSessions/SessionData/ApplyPreset.html" title="Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset (class)">ApplyPreset</a></span></span><span class='comma'>,</span>
+                <span class='label'>as:</span> <span class='symbol'>:apply_preset</span>
+          <span class='kw'>end</span>
+        <span class='kw'>end</span>
+      <span class='kw'>end</span>
+      <span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>test_sessions/:test_session_id/last_test_run</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+          <span class='label'>to:</span> <span class='const'><span class='object_link'><a href="../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'>Web</span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Controllers.html" title="Inferno::Web::Controllers (module)">Controllers</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Controllers/TestSessions.html" title="Inferno::Web::Controllers::TestSessions (module)">TestSessions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Controllers/TestSessions/LastTestRun.html" title="Inferno::Web::Controllers::TestSessions::LastTestRun (class)">LastTestRun</a></span></span><span class='comma'>,</span>
+          <span class='label'>as:</span> <span class='symbol'>:last_test_run</span>
+
+      <span class='id identifier rubyid_resources'>resources</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>test_suites</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>only:</span> <span class='lbracket'>[</span><span class='symbol'>:index</span><span class='comma'>,</span> <span class='symbol'>:show</span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_put'>put</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>test_suites/:id/check_configuration</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+          <span class='label'>to:</span> <span class='const'><span class='object_link'><a href="../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'>Web</span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Controllers.html" title="Inferno::Web::Controllers (module)">Controllers</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Controllers/TestSuites.html" title="Inferno::Web::Controllers::TestSuites (module)">TestSuites</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Web/Controllers/TestSuites/CheckConfiguration.html" title="Inferno::Web::Controllers::TestSuites::CheckConfiguration (class)">CheckConfiguration</a></span></span><span class='comma'>,</span>
+          <span class='label'>as:</span> <span class='symbol'>:check_configuration</span>
+
+      <span class='id identifier rubyid_resources'>resources</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>requests</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>only:</span> <span class='lbracket'>[</span><span class='symbol'>:show</span><span class='rbracket'>]</span>
+
+      <span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/version</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>to:</span> <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid__env'>_env</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='lbracket'>[</span><span class='int'>200</span><span class='comma'>,</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>version</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='const'><span class='object_link'><a href="../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Inferno.html#VERSION-constant" title="Inferno::VERSION (constant)">VERSION</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='rbracket'>]</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>as:</span> <span class='symbol'>:api_version</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Should not need Content-Type header but GitHub Codespaces will not work without them.
+</span>    <span class='comment'># This could be investigated and likely removed if addressed properly elsewhere.
+</span>    <span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>to:</span> <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid__env'>_env</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='lbracket'>[</span><span class='int'>200</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Content-Type</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>text/html</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='id identifier rubyid_client_page'>client_page</span><span class='rbracket'>]</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_get'>get</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/test_sessions/:id</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>to:</span> <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid__env'>_env</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='lbracket'>[</span><span class='int'>200</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Content-Type</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>text/html</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='id identifier rubyid_client_page'>client_page</span><span class='rbracket'>]</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+
+    <span class='const'><span class='object_link'><a href="../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='period'>.</span><span class='id identifier rubyid_routes'><span class='object_link'><a href="../Inferno.html#routes-class_method" title="Inferno.routes (method)">routes</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_route'>route</span><span class='op'>|</span>
+      <span class='id identifier rubyid_cleaned_id'>cleaned_id</span> <span class='op'>=</span> <span class='id identifier rubyid_route'>route</span><span class='lbracket'>[</span><span class='symbol'>:suite</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[^a-zA-Z\d\-._~]</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>_</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/custom/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_cleaned_id'>cleaned_id</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_route'>route</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='const'><span class='object_link'><a href="Application.html" title="Inferno::Application (class)">Application</a></span></span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>logger</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Registering custom route: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_path'>path</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_route'>route</span><span class='lbracket'>[</span><span class='symbol'>:method</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='symbol'>:all</span>
+        <span class='id identifier rubyid_mount'>mount</span> <span class='id identifier rubyid_route'>route</span><span class='lbracket'>[</span><span class='symbol'>:handler</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>at:</span> <span class='id identifier rubyid_path'>path</span>
+      <span class='kw'>else</span>
+        <span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_route'>route</span><span class='lbracket'>[</span><span class='symbol'>:method</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='id identifier rubyid_route'>route</span><span class='lbracket'>[</span><span class='symbol'>:handler</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+    <span class='const'><span class='object_link'><a href="../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Repositories.html" title="Inferno::Repositories (module)">Repositories</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Repositories/TestSuites.html" title="Inferno::Repositories::TestSuites (class)">TestSuites</a></span></span><span class='period'>.</span><span class='id identifier rubyid_all'><span class='object_link'><a href="Repositories/InMemoryRepository.html#all-class_method" title="Inferno::Repositories::InMemoryRepository.all (method)">all</a></span></span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_suite'>suite</span><span class='op'>|</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_suite'>suite</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_suite_path'>suite_path</span><span class='op'>|</span>
+      <span class='const'><span class='object_link'><a href="Application.html" title="Inferno::Application (class)">Application</a></span></span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>logger</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Registering suite route: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_suite_path'>suite_path</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_get'>get</span> <span class='id identifier rubyid_suite_path'>suite_path</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid__env'>_env</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='lbracket'>[</span><span class='int'>200</span><span class='comma'>,</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='id identifier rubyid_client_page'>client_page</span><span class='rbracket'>]</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#app-class_method" title="app (class method)">.<strong>app</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="app-class_method">
+  
+    .<strong>app</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+5
+6
+7
+8
+9
+10</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/web/application.rb', line 5</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_app'>app</span>
+  <span class='const'>Rack</span><span class='op'>::</span><span class='const'>Builder</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_use'>use</span> <span class='const'>Hanami</span><span class='op'>::</span><span class='const'>Middleware</span><span class='op'>::</span><span class='const'>BodyParser</span><span class='comma'>,</span> <span class='symbol'>:json</span>
+    <span class='id identifier rubyid_run'>run</span> <span class='const'><span class='object_link'><a href="../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Inferno::Web (module)">Web</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="#Router-constant" title="Inferno::Web::Router (constant)">Router</a></span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Wed Jul 27 14:59:50 2022 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.27 (ruby-2.7.3).
+</div>
+
+    </div>
+  </body>
+</html>
