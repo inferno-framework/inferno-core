@@ -46,11 +46,11 @@ RSpec.describe Inferno::Repositories::Presets do
 
     context 'when given an ERB template and an ENV' do
       before do
-        ENV['FHIR_ENDPOINT_URL'] = 'http://example.com'
+        ENV['REFERENCE_SERVER_URL'] = 'http://example.com'
       end
 
       after do
-        ENV.delete('FHIR_ENDPOINT_URL')
+        ENV.delete('REFERENCE_SERVER_URL')
       end
 
       it 'creates and inserts a preset' do
