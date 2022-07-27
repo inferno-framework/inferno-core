@@ -207,7 +207,7 @@ const TestListItem: FC<TestListItemProps> = ({
             }
           }}
         >
-          <Box display="flex" alignItems="center" width={'100%'}>
+          <Box display="flex" alignItems="center" width="100%">
             {resultIcon}
             {testText}
             {renderProblemBadge(messageTypeCounts)}
