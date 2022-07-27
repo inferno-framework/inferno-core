@@ -64,6 +64,8 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
     </Box>
   );
 
+  console.log(request);
+
   if (request) {
     return (
       <Dialog

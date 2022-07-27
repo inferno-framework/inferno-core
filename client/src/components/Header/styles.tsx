@@ -30,12 +30,6 @@ export default makeStyles((theme: Theme) => ({
     objectFit: 'contain',
     height: '2.75em',
   },
-  titleContainer: {
-    display: 'flex',
-    alignItems: 'baseline',
-    alignSelf: 'center',
-    width: 'max-content',
-  },
   title: {
     padding: '0 8px',
     width: 'max-content',

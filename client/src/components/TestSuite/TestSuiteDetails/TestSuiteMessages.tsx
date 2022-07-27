@@ -32,7 +32,7 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }
         }}
         className={styles.alert}
       >
-        <Box sx={{ display: 'flex' }}>
+        <Box display="flex">
           <Box className={styles.alertMessage}>{message}</Box>
         </Box>
       </Alert>

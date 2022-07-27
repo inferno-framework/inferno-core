@@ -1,5 +1,4 @@
 import React, { FC, useEffect } from 'react';
-import useStyles from './styles';
 import {
   Result,
   SuiteOption,
@@ -25,7 +24,6 @@ import { getCoreVersion } from '~/api/VersionsApi';
 import { useAppStore } from '~/store/app';
 
 const TestSessionWrapper: FC<unknown> = () => {
-  const styles = useStyles();
   const testSuites = useAppStore((state) => state.testSuites);
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [testSession, setTestSession] = React.useState<TestSession>();
@@ -134,7 +132,7 @@ const TestSessionWrapper: FC<unknown> = () => {
       : [];
 
     return (
-      <Box className={styles.testSessionContainer}>
+      <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
         <Header
           suiteTitle={testSession.test_suite.title}
           suiteVersion={testSession.test_suite.version}

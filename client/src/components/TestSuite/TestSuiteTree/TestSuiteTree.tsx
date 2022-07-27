@@ -131,7 +131,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           className={styles.testSuiteTree}
         >
           {presets && presets.length > 0 && testSessionId && getSessionData && (
-            <Box margin="16px">
+            <Box m={2}>
               <PresetsSelector
                 presets={presets}
                 testSessionId={testSessionId}
@@ -161,9 +161,9 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             ContentProps={{ testId: `${testSuite.id}/report` } as any}
           />
           <Divider />
-          <Box className={styles.treeFooter}>
+          <Box display="flex" alignItems="flex-end" flexGrow={1} mt={8}>
             {/* Box is necessary to show dividers */}
-            <Box sx={{ width: '100%' }}>
+            <Box width="100%">
               <Divider />
               {renderConfigMessagesTreeItem()}
             </Box>
