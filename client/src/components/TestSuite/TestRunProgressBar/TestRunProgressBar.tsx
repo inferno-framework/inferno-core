@@ -104,7 +104,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
         p="0.5em"
         borderRadius="0.5em"
       >
-        <Box margin={'2px 0 0 4px'}>{statusIndicator}</Box>
+        <Box margin="2px 0 0 4px">{statusIndicator}</Box>
         <Box minWidth={200} mx={1} color="background.paper">
           {testRun?.status === 'cancelling' ? (
             <Typography variant="body1">Cancelling Test Run...</Typography>
