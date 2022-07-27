@@ -173,7 +173,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         title={`${testGroup.id}-detail`}
         className={styles.accordionDetailContainer}
       >
-        {testGroup.description && view == 'run' && nestedDescriptionPanel}
+        {testGroup.description && view === 'run' && nestedDescriptionPanel}
         <Box className={styles.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}
           {'tests' in testGroup && renderTestListItems()}

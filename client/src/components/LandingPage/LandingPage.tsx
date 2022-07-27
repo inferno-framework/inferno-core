@@ -26,7 +26,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const history = useHistory();
 
   function startTestingClick(): void {
-    const testSuite = testSuites?.find((suite: TestSuite) => suite.id == testSuiteChosen);
+    const testSuite = testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen);
     if (testSuite && testSuite.suite_options && testSuite.suite_options.length > 0) {
       history.push(`${testSuiteChosen}`);
     } else {
