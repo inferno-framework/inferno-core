@@ -12,7 +12,7 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, title }) => {
   const styles = useStyles();
   return (
     <Box className={styles.labelRoot} data-testid={`tiLabel-${runnable?.id as string}`}>
-      <Box className={styles.labelContainer}>
+      <Box width="100%">
         {runnable && 'short_id' in runnable && (
           <Typography className={styles.shortId} variant="body2">
             {runnable.short_id}{' '}

@@ -54,7 +54,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   };
 
   return (
-    <ListItem disabled={requirement.locked}>
+    <ListItem>
       <FormControl
         component="fieldset"
         id={`requirement${index}_input`}

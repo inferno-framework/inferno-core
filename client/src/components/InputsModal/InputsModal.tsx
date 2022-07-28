@@ -148,12 +148,12 @@ const InputsModal: FC<InputsModalProps> = ({
 
   function serializeMap(map: Map<string, unknown>): string {
     const flatObj = inputs.map((requirement: TestInput) => {
-      if (requirement.type == 'oauth_credentials') {
+      if (requirement.type === 'oauth_credentials') {
         return {
           ...requirement,
           value: JSON.parse((map.get(requirement.name) as string) || '{}') as OAuthCredentials,
         };
-      } else if (requirement.type == 'radio') {
+      } else if (requirement.type === 'radio') {
         const firstVal =
           requirement.options?.list_options && requirement.options?.list_options?.length > 0
             ? requirement.options?.list_options[0]?.value
@@ -166,7 +166,7 @@ const InputsModal: FC<InputsModalProps> = ({
         return { ...requirement, value: map.get(requirement.name) || '' };
       }
     });
-    return inputType == 'JSON' ? JSON.stringify(flatObj, null, 3) : YAML.dump(flatObj);
+    return inputType === 'JSON' ? JSON.stringify(flatObj, null, 3) : YAML.dump(flatObj);
   }
 
   useEffect(() => {
@@ -181,7 +181,7 @@ const InputsModal: FC<InputsModalProps> = ({
   function parseSerialChanges(changes: string): TestInput[] | undefined {
     let parsed: TestInput[];
     try {
-      if (inputType == 'JSON') {
+      if (inputType === 'JSON') {
         parsed = JSON.parse(changes) as TestInput[];
       } else {
         parsed = YAML.load(changes) as TestInput[];
@@ -223,7 +223,7 @@ const InputsModal: FC<InputsModalProps> = ({
                   : ' In this view, only changes to the value attribute of an element will be saved. Further, only elements with names that match an input defined for the current suite, group, or test will be saved. The intended use of this view is to provide a template for users to copy/paste in order to avoid filling out individual fields every time.')}
             </ReactMarkdown>
           </DialogContentText>
-          {inputType == 'Field' ? (
+          {inputType === 'Field' ? (
             <List>{inputFields}</List>
           ) : (
             <TextField

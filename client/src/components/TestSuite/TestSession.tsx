@@ -49,7 +49,7 @@ function mapRunnableToId(testSuite: TestSuite): Map<string, Runnable> {
 
 function resultsToMap(results: Result[], map?: Map<string, Result>): Map<string, Result> {
   let resultsMap: Map<string, Result>;
-  if (map == undefined) {
+  if (map === undefined) {
     resultsMap = new Map<string, Result>();
   } else {
     resultsMap = map;
@@ -187,9 +187,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }
 
   function updateRequest(requestId: string, resultId: string, request: Request): void {
-    const result = Array.from(resultsMap.values()).find((result) => result.id == resultId);
+    const result = Array.from(resultsMap.values()).find((result) => result.id === resultId);
     if (result && result.requests) {
-      const requestIndex = result.requests.findIndex((request) => request.id == requestId);
+      const requestIndex = result.requests.findIndex((request) => request.id === requestId);
       result.requests[requestIndex] = request;
       setResultsMap(new Map(resultsMap));
     }

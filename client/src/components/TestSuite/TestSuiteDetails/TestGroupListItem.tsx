@@ -164,16 +164,17 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         </Box>
       </AccordionSummary>
       <Divider />
-      {view === 'report' && testGroup.run_as_group && testGroup.user_runnable && testGroup.result && (
-        <Box>
+      {view === 'report' &&
+        testGroup.run_as_group &&
+        testGroup.user_runnable &&
+        testGroup.result && (
           <InputOutputsList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
-        </Box>
-      )}
+        )}
       <AccordionDetails
         title={`${testGroup.id}-detail`}
         className={styles.accordionDetailContainer}
       >
-        {testGroup.description && view == 'run' && nestedDescriptionPanel}
+        {testGroup.description && view === 'run' && nestedDescriptionPanel}
         <Box className={styles.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}
           {'tests' in testGroup && renderTestListItems()}

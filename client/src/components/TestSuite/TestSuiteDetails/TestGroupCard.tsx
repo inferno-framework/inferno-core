@@ -59,7 +59,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
       </Box>
       {view === 'run' && shouldShowDescription(runnable, description) && (
         <>
-          <Box margin="20px">{description}</Box>
+          <Box m={2.5}>{description}</Box>
           <Divider />
         </>
       )}
