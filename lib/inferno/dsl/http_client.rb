@@ -85,6 +85,7 @@ module Inferno
         end
       end
 
+      # @private
       def connection
         Faraday.new do |f|
           f.request :url_encoded
