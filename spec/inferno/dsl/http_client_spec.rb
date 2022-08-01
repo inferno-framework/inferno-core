@@ -273,6 +273,21 @@ RSpec.describe Inferno::DSL::HTTPClient do
           end.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
         end
       end
+
+      it 'follows redirects' do
+        original_url = 'http://example.com'
+        new_url = 'http://example.com/abc'
+        original_request =
+          stub_request(:get, original_url)
+            .to_return(status: 302, headers: { 'Location' => new_url })
+        new_request =
+          stub_request(:get, new_url)
+            .to_return(status: 200, body: 'BODY')
+
+        group.get(original_url)
+        expect(original_request).to have_been_made.once
+        expect(new_request).to have_been_made.once
+      end
     end
   end
 
