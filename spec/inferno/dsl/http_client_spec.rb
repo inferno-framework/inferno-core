@@ -111,6 +111,13 @@ RSpec.describe Inferno::DSL::HTTPClient do
         group.get(original_url)
         expect(original_request).to have_been_made.once
         expect(new_request).to have_been_made.once
+
+        expect(group.requests.length).to eq(1)
+
+        request = group.request
+        expect(request.url).to eq(new_url)
+        expect(request.status).to eq(200)
+        expect(request.response_body).to eq('BODY')
       end
 
       context 'without a url argument' do
@@ -302,6 +309,13 @@ RSpec.describe Inferno::DSL::HTTPClient do
         group.get(original_url)
         expect(original_request).to have_been_made.once
         expect(new_request).to have_been_made.once
+
+        expect(group.requests.length).to eq(1)
+
+        request = group.request
+        expect(request.url).to eq(new_url)
+        expect(request.status).to eq(200)
+        expect(request.response_body).to eq('BODY')
       end
     end
   end
