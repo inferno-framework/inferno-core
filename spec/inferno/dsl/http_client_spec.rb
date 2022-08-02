@@ -98,6 +98,28 @@ RSpec.describe Inferno::DSL::HTTPClient do
         setup_default_client
       end
 
+      it 'follows redirects' do
+        original_url = 'http://example.com'
+        new_url = 'http://example.com/abc'
+        original_request =
+          stub_request(:get, original_url)
+            .to_return(status: 302, headers: { 'Location' => new_url })
+        new_request =
+          stub_request(:get, new_url)
+            .to_return(status: 200, body: 'BODY')
+
+        group.get(original_url)
+        expect(original_request).to have_been_made.once
+        expect(new_request).to have_been_made.once
+
+        expect(group.requests.length).to eq(1)
+
+        request = group.request
+        expect(request.url).to eq(new_url)
+        expect(request.status).to eq(200)
+        expect(request.response_body).to eq('BODY')
+      end
+
       context 'without a url argument' do
         let(:stub_get_request) do
           stub_request(:get, base_url)
@@ -272,6 +294,28 @@ RSpec.describe Inferno::DSL::HTTPClient do
             group.get 'https://example.com/abc'
           end.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
         end
+      end
+
+      it 'follows redirects' do
+        original_url = 'http://example.com'
+        new_url = 'http://example.com/abc'
+        original_request =
+          stub_request(:get, original_url)
+            .to_return(status: 302, headers: { 'Location' => new_url })
+        new_request =
+          stub_request(:get, new_url)
+            .to_return(status: 200, body: 'BODY')
+
+        group.get(original_url)
+        expect(original_request).to have_been_made.once
+        expect(new_request).to have_been_made.once
+
+        expect(group.requests.length).to eq(1)
+
+        request = group.request
+        expect(request.url).to eq(new_url)
+        expect(request.status).to eq(200)
+        expect(request.response_body).to eq('BODY')
       end
     end
   end
