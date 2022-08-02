@@ -9,9 +9,16 @@ module Inferno
           field :description
           field :short_description
           field :input_instructions
-          field :test_count
           field :version
           field :links
+
+          field :test_count do |suite, options|
+            suite_options = options[:suite_options]
+            suite.groups(suite_options).inject(0) do |total_test_count, group|
+              total_test_count + (group.test_count(suite_options))
+            end
+          end
+
           association :suite_options, blueprint: SuiteOption
           association :presets, view: :summary, blueprint: Preset
         end
