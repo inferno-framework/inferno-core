@@ -6,9 +6,8 @@ module Inferno
           PARAMS = [:test_suite_id, :suite_options].freeze
 
           def call(raw_params)
-            query_params = raw_params.to_h
-            body_params = JSON.parse(request.body.string).symbolize_keys
-            params = query_params.merge(body_params)
+            params = raw_params.to_h
+            params.merge!(JSON.parse(request.body.string).symbolize_keys) unless request.body.string.blank?
 
             session = repo.create(create_params(params))
 
