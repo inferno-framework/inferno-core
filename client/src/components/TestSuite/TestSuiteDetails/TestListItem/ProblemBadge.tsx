@@ -33,6 +33,7 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
   return (
     <Badge
       badgeContent={counts}
+      max={9}
       overlap="circular"
       className={clsx([color, badgeStyle, styles.badgeBase])}
     >

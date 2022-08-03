@@ -20,7 +20,4 @@ export default makeStyles((theme: Theme) => ({
   snackbar: {
     zIndex: `${theme.zIndex.drawer + 2} !important` as any,
   },
-  statusIndicator: {
-    padding: '0 4px',
-  },
 }));
