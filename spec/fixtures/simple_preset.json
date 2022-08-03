@@ -1,0 +1,14 @@
+{
+  "title": "Simple JSON Preset",
+  "id": null,
+  "test_suite_id": "simple_json",
+  "inputs": [
+    {
+      "name": "url",
+      "type": "text",
+      "title": "Title",
+      "description": "Description",
+      "value": "https://hardcoded.example.org"
+    }
+  ]
+}

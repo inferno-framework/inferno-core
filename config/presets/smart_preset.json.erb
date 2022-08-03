@@ -6,7 +6,7 @@
     {
       "name": "url",
       "type": "text",
-      "value": "https://inferno.healthit.gov/reference-server/r4"
+      "value": "<%= ENV.fetch('REFERENCE_SERVER_URL', 'https://inferno.healthit.gov') %>/reference-server/r4"
     },
     {
       "name": "standalone_client_id",
