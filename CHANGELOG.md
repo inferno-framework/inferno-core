@@ -1,3 +1,17 @@
+# 0.3.6
+* Improve logic for automatically opening failed tests after test run.
+* Improve accessibility for touch screen users.
+* Add suite-configurable links to the footer.
+* Fix bug where suite options did not properly filter sub-groups.
+* Display selected options in header, if applicable.
+* Display selected options in report, if applicable.
+* Implement input filtered based on selected option.
+* Improve option selection page.
+* Update http client to automatically follow redirects.
+* Visually improve request/message count badges for large numbers.
+* Allow presets to use erb templates to allow environment-specific values.
+* Allow API users to leave session creation request body empty.
+
 # 0.3.5
 * Add initial UI and JSON API support for suite options.
 * Fix an issue which prevented users from selecting text in group item headers.
