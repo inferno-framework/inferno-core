@@ -17,8 +17,8 @@ module Inferno
         field :test_count do |group, options|
           suite_options = options[:suite_options]
           child_test_count = group.tests(suite_options).count
-          group.groups(suite_options).inject(child_test_count) do |total_test_count, group|
-            total_test_count + (group.test_count(suite_options))
+          group.groups(suite_options).inject(child_test_count) do |total_test_count, child_group|
+            total_test_count + child_group.test_count(suite_options)
           end
         end
         field :test_groups do |group, options|

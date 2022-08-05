@@ -2,6 +2,18 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
   let(:group) { InfrastructureTest::SerializerGroup }
   let(:test) { group.tests.first }
 
+  before do
+    options_multi_group = Class.new(OptionsSuite::AllVersionsGroup) do
+      group from: :v1_group,
+            required_suite_options: { ig_version: '1' }
+
+      group from: :v2_group,
+            required_suite_options: { ig_version: '2' }
+    end
+
+    stub_const('OptionsMultiGroup', options_multi_group)
+  end
+
   it 'serializes a group' do
     serialized_group = JSON.parse(described_class.render(group))
 
@@ -47,14 +59,6 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
   end
 
   it 'serializes using selected options to filter groups and tests' do
-    class OptionsMultiGroup < OptionsSuite::AllVersionsGroup
-      group from: :v1_group,
-            required_suite_options: { ig_version: '1' }
-
-      group from: :v2_group,
-            required_suite_options: { ig_version: '2' }
-    end
-
     options = [Inferno::DSL::SuiteOption.new(id: :ig_version, value: '2')]
     serialized_group = JSON.parse(described_class.render(OptionsMultiGroup,
                                                          suite_options: options))

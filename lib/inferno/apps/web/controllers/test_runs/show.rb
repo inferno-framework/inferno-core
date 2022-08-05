@@ -3,7 +3,7 @@ module Inferno
     module Controllers
       module TestRuns
         class Show < Controller
-          include Import[ test_sessions_repo: 'repositories.test_sessions' ]
+          include Import[test_sessions_repo: 'repositories.test_sessions']
 
           def call(params)
             test_run = repo.find(params[:id])
