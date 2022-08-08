@@ -1,3 +1,5 @@
+require 'faraday_middleware'
+
 require_relative 'request_storage'
 require_relative 'tcp_exception_handler'
 
@@ -75,11 +77,19 @@ module Inferno
             if client
               client.get(url, nil, options[:headers])
             elsif url.match?(%r{\Ahttps?://})
-              Faraday.get(url, nil, options[:headers])
+              connection.get(url, nil, options[:headers])
             else
               raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
             end
           end
+        end
+      end
+
+      # @private
+      def connection
+        Faraday.new do |f|
+          f.request :url_encoded
+          f.use FaradayMiddleware::FollowRedirects
         end
       end
 
@@ -103,7 +113,7 @@ module Inferno
             if client
               client.post(url, body, options[:headers])
             elsif url.match?(%r{\Ahttps?://})
-              Faraday.post(url, body, options[:headers])
+              connection.post(url, body, options[:headers])
             else
               raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
             end
@@ -128,7 +138,7 @@ module Inferno
             if client
               client.delete(url, nil, options[:headers])
             elsif url.match?(%r{\Ahttps?://})
-              Faraday.delete(url, nil, options[:headers])
+              connection.delete(url, nil, options[:headers])
             else
               raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
             end
@@ -167,7 +177,7 @@ module Inferno
             if client
               response = client.get(url, nil, options[:headers]) { |req| req.options.on_data = collector }
             elsif url.match?(%r{\Ahttps?://})
-              response = Faraday.get(url, nil, options[:headers]) { |req| req.options.on_data = collector }
+              response = connection.get(url, nil, options[:headers]) { |req| req.options.on_data = collector }
             else
               raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
             end

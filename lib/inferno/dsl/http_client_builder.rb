@@ -1,3 +1,5 @@
+require 'faraday_middleware'
+
 module Inferno
   module DSL
     # This module contains the HTTP DSL available to test writers.
@@ -12,7 +14,10 @@ module Inferno
         params = { url: url }
         params.merge!(headers: headers) if headers
 
-        Faraday.new(params)
+        Faraday.new(params) do |f|
+          f.request :url_encoded
+          f.use FaradayMiddleware::FollowRedirects
+        end
       end
 
       # Define the base url for an HTTP client. A string or symbol can be

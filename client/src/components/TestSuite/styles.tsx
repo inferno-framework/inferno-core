@@ -26,12 +26,6 @@ export default makeStyles((theme: Theme) => ({
       display: 'none',
     },
   },
-  testSessionContainer: {
-    flexGrow: '1',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-  },
   testSuiteMain: {
     display: 'flex',
     flexGrow: 1,

@@ -8,10 +8,6 @@ export default makeStyles((theme: Theme) => ({
     alignItems: 'center',
     padding: theme.spacing(0.5, 0),
   },
-  labelContainer: {
-    display: 'inline',
-    width: '100%',
-  },
   labelText: {
     display: 'inline',
   },
@@ -44,11 +40,5 @@ export default makeStyles((theme: Theme) => ({
       fontWeight: 'bold',
     },
     padding: '8px 20px !important',
-  },
-  treeFooter: {
-    display: 'flex',
-    alignItems: 'flex-end',
-    flexGrow: 1,
-    marginTop: '64px',
   },
 }));

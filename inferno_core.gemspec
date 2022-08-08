@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'dry-container', '0.8.0'
   spec.add_runtime_dependency 'dry-system', '0.18.1'
   spec.add_runtime_dependency 'faraday', '~> 1.2'
+  spec.add_runtime_dependency 'faraday_middleware', '~> 1.2'
   spec.add_runtime_dependency 'fhir_client', '>= 5.0.3'
   spec.add_runtime_dependency 'fhir_models', '~> 4.2.0'
   spec.add_runtime_dependency 'hanami-controller', '~> 1.3'

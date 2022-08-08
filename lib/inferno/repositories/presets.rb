@@ -1,3 +1,5 @@
+require 'erb'
+
 require_relative 'in_memory_repository'
 require_relative '../entities/preset'
 
@@ -6,7 +8,14 @@ module Inferno
     # Repository that deals with persistence for the `Preset` entity.
     class Presets < InMemoryRepository
       def insert_from_file(path)
-        preset_hash = JSON.parse(File.read(path))
+        case path
+        when /\.json$/
+          preset_hash = JSON.parse(File.read(path))
+        when /\.erb$/
+          templated = ERB.new(File.read(path)).result
+          preset_hash = JSON.parse(templated)
+        end
+
         preset_hash.deep_symbolize_keys!
         preset_hash[:id] ||= SecureRandom.uuid
         preset = Entities::Preset.new(preset_hash)
