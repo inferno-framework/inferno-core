@@ -74,32 +74,18 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       maxHeight="100vh"
       role="main"
     >
-      <Box
-        py={6}
-        display="flex"
-        position="sticky"
-        top={0}
-        justifyContent="center"
-        sx={{ backgroundColor: '#FFF6F1' }}
-      >
+      <Box position="sticky" top={0} py={6} sx={{ backgroundColor: '#FFF6F1' }}>
         <Typography variant="h2" component="h1" width="100%">
           {testSuite?.title}
         </Typography>
       </Box>
       <Container maxWidth="lg" className={styles.main}>
-        <Box
-          display="flex"
-          flexDirection="column"
-          height="100%"
-          m={2}
-          maxWidth="440px"
-          overflow="scroll"
-        >
-          <Typography variant="h5" component="h2">
+        <Box height="100%" maxWidth="440px" p={2} overflow="auto">
+          <Typography variant="h6" component="h2">
             <ReactMarkdown>{testSuite?.description || ''}</ReactMarkdown>
           </Typography>
         </Box>
-        <Box display="flex" justifyContent="center" overflow="scroll">
+        <Box display="flex" justifyContent="center" maxHeight="100%" overflow="auto">
           <Paper
             elevation={4}
             className={styles.startTesting}
@@ -135,17 +121,19 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
                 </RadioGroup>
               </FormControl>
             ))}
-            <Button
-              variant="contained"
-              size="large"
-              color="primary"
-              fullWidth
-              data-testid="go-button"
-              className={styles.startTestingButton}
-              onClick={() => createTestSession()}
-            >
-              Start Testing
-            </Button>
+            <Box position="sticky" bottom="0" bgcolor="white">
+              <Button
+                variant="contained"
+                size="large"
+                color="primary"
+                fullWidth
+                data-testid="go-button"
+                className={styles.startTestingButton}
+                onClick={() => createTestSession()}
+              >
+                Start Testing
+              </Button>
+            </Box>
           </Paper>
         </Box>
       </Container>

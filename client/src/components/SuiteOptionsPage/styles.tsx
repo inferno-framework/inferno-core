@@ -11,17 +11,19 @@ export default makeStyles((theme: Theme) => ({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     overflow: 'hidden',
-    marginBottom: '60px',
+    marginBottom: '80px',
   },
   selectedItem: {
     backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
   },
   startTesting: {
     margin: '20px',
-    padding: '20px',
+    padding: '20px 20px 0 20px',
     borderRadius: '16px',
+    overflow: 'auto',
   },
   startTestingButton: {
     fontWeight: 600,
+    margin: '20px 0',
   },
 }));
