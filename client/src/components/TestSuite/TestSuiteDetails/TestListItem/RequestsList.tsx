@@ -28,7 +28,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
   const styles = useStyles();
 
   function showDetailsClick(request: Request) {
-    if (request.request_headers == null) {
+    if (request.request_headers === undefined) {
       getRequestDetails(request.id)
         .then((updatedRequest) => {
           if (updatedRequest) {
