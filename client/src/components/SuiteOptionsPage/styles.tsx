@@ -7,17 +7,18 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.common.white,
   },
   main: {
-    height: '100%',
     display: 'flex',
-    flexWrap: 'wrap',
+    // flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-evenly',
+    overflow: 'hidden',
+    marginBottom: '40px',
   },
   selectedItem: {
     backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
   },
   startTesting: {
-    margin: '20px 0',
+    margin: '20px',
     padding: '20px',
     borderRadius: '16px',
   },

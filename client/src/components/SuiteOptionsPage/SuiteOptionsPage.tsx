@@ -65,65 +65,85 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   }
 
   return (
-    <Container maxWidth="lg" className={styles.main} role="main">
-      <Box display="flex" flexDirection="column" m={2} maxWidth="440px">
-        <Typography variant="h2" component="h1">
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      flexDirection="column"
+      overflow="hidden"
+      height="100%"
+      maxHeight="100vh"
+      role="main"
+    >
+      <Box
+        py={6}
+        display="flex"
+        position="sticky"
+        top={0}
+        justifyContent="center"
+        sx={{ backgroundColor: '#FFF6F1' }}
+      >
+        <Typography variant="h2" component="h1" width="100%">
           {testSuite?.title}
         </Typography>
-        <Typography variant="h5" component="h2">
-          <ReactMarkdown>{testSuite?.description || ''}</ReactMarkdown>
-        </Typography>
       </Box>
-      <Box display="flex" justifyContent="center" height="fit-content">
-        <Paper
-          elevation={4}
-          className={styles.startTesting}
-          sx={{ width: windowIsSmall ? 'auto' : '400px' }}
-        >
-          <Typography variant="h4" component="h2" align="center">
-            Select Options
+      <Container maxWidth="lg" className={styles.main}>
+        <Box display="flex" flexDirection="column" m={2} maxWidth="440px" overflow="scroll">
+          <Typography variant="h5" component="h2">
+            <ReactMarkdown>{testSuite?.description + testSuite?.description || ''}</ReactMarkdown>
           </Typography>
-          {testSuite?.suite_options?.map((suiteOption: SuiteOption, i) => (
-            <FormControl fullWidth id={`suite-option-input-${i}`} key={`suite-form-control${i}`}>
-              <FormLabel>{suiteOption.title}</FormLabel>
-              <RadioGroup
-                row
-                aria-label={`suite-option-group-${suiteOption.id}`}
-                defaultValue={
-                  suiteOption.list_options &&
-                  suiteOption.list_options.length &&
-                  suiteOption.list_options[0].value
-                }
-                name={`suite-option-group-${suiteOption.id}`}
-              >
-                {suiteOption?.list_options?.map((choice, k) => (
-                  <FormControlLabel
-                    value={choice.value}
-                    control={<Radio size="small" />}
-                    label={choice.label}
-                    key={`radio-button-${k}`}
-                    onClick={() => {
-                      changeSuiteOption(suiteOption.id, choice.value);
-                    }}
-                  />
-                ))}
-              </RadioGroup>
-            </FormControl>
-          ))}
-          <Button
-            variant="contained"
-            size="large"
-            color="primary"
-            fullWidth
-            data-testid="go-button"
-            className={styles.startTestingButton}
-            onClick={() => createTestSession()}
+        </Box>
+        <Box display="flex" justifyContent="center" height="fit-content" overflow="scroll">
+          <Paper
+            elevation={4}
+            className={styles.startTesting}
+            sx={{ width: windowIsSmall ? 'auto' : '400px' }}
           >
-            Start Testing
-          </Button>
-        </Paper>
-      </Box>
-    </Container>
+            <Typography variant="h4" component="h2" align="center">
+              Select Options
+            </Typography>
+            {testSuite?.suite_options?.map((suiteOption: SuiteOption, i) => (
+              <FormControl fullWidth id={`suite-option-input-${i}`} key={`suite-form-control${i}`}>
+                <FormLabel>{suiteOption.title}</FormLabel>
+                <RadioGroup
+                  row
+                  aria-label={`suite-option-group-${suiteOption.id}`}
+                  defaultValue={
+                    suiteOption.list_options &&
+                    suiteOption.list_options.length &&
+                    suiteOption.list_options[0].value
+                  }
+                  name={`suite-option-group-${suiteOption.id}`}
+                >
+                  {suiteOption?.list_options?.map((choice, k) => (
+                    <FormControlLabel
+                      value={choice.value}
+                      control={<Radio size="small" />}
+                      label={choice.label}
+                      key={`radio-button-${k}`}
+                      onClick={() => {
+                        changeSuiteOption(suiteOption.id, choice.value);
+                      }}
+                    />
+                  ))}
+                </RadioGroup>
+              </FormControl>
+            ))}
+            <Button
+              variant="contained"
+              size="large"
+              color="primary"
+              fullWidth
+              data-testid="go-button"
+              className={styles.startTestingButton}
+              onClick={() => createTestSession()}
+            >
+              Start Testing
+            </Button>
+          </Paper>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 
