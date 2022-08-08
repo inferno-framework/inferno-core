@@ -27,6 +27,7 @@ import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDe
 import useStyles from './styles';
 
 import { useAppStore } from '~/store/app';
+import lightTheme from '~/styles/theme';
 
 function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
@@ -338,7 +339,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           {renderDrawerContents()}
         </Drawer>
       )}
-      <main style={{ overflow: 'scroll', width: '100%', backgroundColor: '#cfd8dc' }}>
+      <main
+        style={{
+          overflow: 'scroll',
+          width: '100%',
+          backgroundColor: lightTheme.palette.common.grayLight,
+        }}
+      >
         <Box className={styles.contentContainer}>
           {renderView((view as ViewType) || 'run')}
           <InputsModal

@@ -9,7 +9,7 @@ export default makeStyles((theme: Theme) => ({
   cancelButton: {
     color: theme.palette.common.blueLight,
     '&:disabled': {
-      color: theme.palette.common.grayLight,
+      color: theme.palette.common.gray,
     },
   },
   linearProgress: {

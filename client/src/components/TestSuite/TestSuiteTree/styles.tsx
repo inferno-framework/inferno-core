@@ -15,14 +15,14 @@ export default makeStyles((theme: Theme) => ({
     display: 'inline',
     fontStyle: 'italic',
     alignSelf: 'center',
-    color: theme.palette.common.grayLight,
+    color: theme.palette.common.gray,
     paddingLeft: '8px',
   },
   shortId: {
     display: 'inline',
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: theme.palette.common.grayVeryDark,
+    color: theme.palette.common.grayDarkest,
   },
   testSuiteTreePanel: {
     width: '300px',

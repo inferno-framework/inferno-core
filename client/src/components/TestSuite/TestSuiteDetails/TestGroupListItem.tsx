@@ -190,7 +190,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           {testGroup.run_as_group ? (
             <ResultIcon result={testGroup.result} />
           ) : (
-            <FolderIcon sx={{ color: theme.palette.common.grayLight }} />
+            <FolderIcon sx={{ color: theme.palette.common.gray }} />
           )}
         </Box>
         <List sx={{ padding: '0 8px' }}>

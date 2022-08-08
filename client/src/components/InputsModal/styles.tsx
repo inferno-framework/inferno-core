@@ -17,7 +17,7 @@ export default makeStyles((theme: Theme) => ({
       color: theme.palette.primary.main,
     },
     '& label.Mui-disabled': {
-      color: theme.palette.common.grayLight,
+      color: theme.palette.common.gray,
     },
   },
   inputLabel: {
