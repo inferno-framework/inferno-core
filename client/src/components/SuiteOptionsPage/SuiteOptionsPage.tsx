@@ -17,6 +17,7 @@ import { postTestSessions } from '~/api/TestSessionApi';
 import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 import { useAppStore } from '~/store/app';
+import lightTheme from '~/styles/theme';
 
 export interface SuiteOptionsPageProps {
   testSuites: TestSuite[] | undefined;
@@ -34,21 +35,19 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   // just grab the first to start
   // perhaps choices should be persisted in the URL to make it easy to share specific
   // options
-  const initialSelectedSuiteOptions = (testSuite?.suite_options || []).map((option) => {
-    return { id: option.id, value: option && option.list_options && option.list_options[0].value };
-  });
+  const initialSelectedSuiteOptions = testSuite?.suite_options?.map((option) => ({
+    id: option.id,
+    value: option && option.list_options && option.list_options[0].value,
+  }));
 
   const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(
-    initialSelectedSuiteOptions
+    initialSelectedSuiteOptions || []
   );
 
   function changeSuiteOption(option_id: string, value: string): void {
-    const newOptions: SuiteOption[] = selectedSuiteOptions.map((option) => {
-      if (option.id === option_id) {
-        return { id: option.id, value: value };
-      }
-      return { ...option };
-    });
+    const newOptions: SuiteOption[] = selectedSuiteOptions.map((option) =>
+      option.id === option_id ? { id: option.id, value: value } : { ...option }
+    );
     setSelectedSuiteOptions(newOptions);
   }
 
@@ -64,6 +63,37 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       });
   }
 
+  // Given a suiteOption and index i, returns a RadioGroup with a RadioButton per choice
+  const renderOption = (suiteOption: SuiteOption, i: number) => {
+    return (
+      <FormControl fullWidth id={`suite-option-input-${i}`} key={`suite-form-control${i}`}>
+        <FormLabel>{suiteOption.title}</FormLabel>
+        <RadioGroup
+          row
+          aria-label={`suite-option-group-${suiteOption.id}`}
+          defaultValue={
+            suiteOption.list_options &&
+            suiteOption.list_options.length &&
+            suiteOption.list_options[0].value
+          }
+          name={`suite-option-group-${suiteOption.id}`}
+        >
+          {suiteOption?.list_options?.map((choice, k) => (
+            <FormControlLabel
+              value={choice.value}
+              control={<Radio size="small" />}
+              label={choice.label}
+              key={`radio-button-${k}`}
+              onClick={() => {
+                changeSuiteOption(suiteOption.id, choice.value);
+              }}
+            />
+          ))}
+        </RadioGroup>
+      </FormControl>
+    );
+  };
+
   return (
     <Box
       display="flex"
@@ -74,17 +104,30 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       maxHeight="100vh"
       role="main"
     >
-      <Box position="sticky" top={0} py={6} sx={{ backgroundColor: '#FFF6F1' }}>
-        <Typography variant="h2" component="h1" width="100%">
+      {/* Title */}
+      <Box
+        position="sticky"
+        top={0}
+        py={6}
+        sx={{ backgroundColor: lightTheme.palette.common.orangeLightest }}
+      >
+        <Typography
+          variant="h2"
+          component="h1"
+          sx={{ color: lightTheme.palette.common.orangeDarker }}
+        >
           {testSuite?.title}
         </Typography>
       </Box>
+
       <Container maxWidth="lg" className={styles.main}>
-        <Box height="100%" maxWidth="440px" p={2} overflow="auto">
+        {/* Description */}
+        <Box maxHeight="100%" height="100%" maxWidth="440px" p={2} overflow="auto">
           <Typography variant="h6" component="h2">
             <ReactMarkdown>{testSuite?.description || ''}</ReactMarkdown>
           </Typography>
         </Box>
+        {/* Selection panel */}
         <Box display="flex" justifyContent="center" maxHeight="100%" overflow="auto">
           <Paper
             elevation={4}
@@ -94,34 +137,14 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
             <Typography variant="h4" component="h2" align="center">
               Select Options
             </Typography>
-            {testSuite?.suite_options?.map((suiteOption: SuiteOption, i) => (
-              <FormControl fullWidth id={`suite-option-input-${i}`} key={`suite-form-control${i}`}>
-                <FormLabel>{suiteOption.title}</FormLabel>
-                <RadioGroup
-                  row
-                  aria-label={`suite-option-group-${suiteOption.id}`}
-                  defaultValue={
-                    suiteOption.list_options &&
-                    suiteOption.list_options.length &&
-                    suiteOption.list_options[0].value
-                  }
-                  name={`suite-option-group-${suiteOption.id}`}
-                >
-                  {suiteOption?.list_options?.map((choice, k) => (
-                    <FormControlLabel
-                      value={choice.value}
-                      control={<Radio size="small" />}
-                      label={choice.label}
-                      key={`radio-button-${k}`}
-                      onClick={() => {
-                        changeSuiteOption(suiteOption.id, choice.value);
-                      }}
-                    />
-                  ))}
-                </RadioGroup>
-              </FormControl>
-            ))}
-            <Box position="sticky" bottom="0" bgcolor="white">
+            {testSuite?.suite_options ? (
+              testSuite.suite_options.map((suiteOption: SuiteOption, i) =>
+                renderOption(suiteOption, i)
+              )
+            ) : (
+              <Typography sx={{ mt: 2 }}> No options available.</Typography>
+            )}
+            <Box position="sticky" bottom="0" bgcolor={lightTheme.palette.common.white}>
               <Button
                 variant="contained"
                 size="large"

@@ -13,9 +13,6 @@ export default makeStyles((theme: Theme) => ({
     overflow: 'hidden',
     marginBottom: '80px',
   },
-  selectedItem: {
-    backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
-  },
   startTesting: {
     margin: '20px',
     padding: '20px 20px 0 20px',
