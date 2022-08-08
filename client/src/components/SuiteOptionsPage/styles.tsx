@@ -8,11 +8,10 @@ export default makeStyles((theme: Theme) => ({
   },
   main: {
     display: 'flex',
-    // flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     overflow: 'hidden',
-    marginBottom: '40px',
+    marginBottom: '60px',
   },
   selectedItem: {
     backgroundColor: 'rgba(248, 139, 48, 0.2) !important',

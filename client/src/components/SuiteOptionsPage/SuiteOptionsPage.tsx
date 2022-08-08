@@ -70,7 +70,6 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
-      overflow="hidden"
       height="100%"
       maxHeight="100vh"
       role="main"
@@ -88,12 +87,19 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
         </Typography>
       </Box>
       <Container maxWidth="lg" className={styles.main}>
-        <Box display="flex" flexDirection="column" m={2} maxWidth="440px" overflow="scroll">
+        <Box
+          display="flex"
+          flexDirection="column"
+          height="100%"
+          m={2}
+          maxWidth="440px"
+          overflow="scroll"
+        >
           <Typography variant="h5" component="h2">
-            <ReactMarkdown>{testSuite?.description + testSuite?.description || ''}</ReactMarkdown>
+            <ReactMarkdown>{testSuite?.description || ''}</ReactMarkdown>
           </Typography>
         </Box>
-        <Box display="flex" justifyContent="center" height="fit-content" overflow="scroll">
+        <Box display="flex" justifyContent="center" overflow="scroll">
           <Paper
             elevation={4}
             className={styles.startTesting}

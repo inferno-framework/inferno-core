@@ -338,7 +338,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           {renderDrawerContents()}
         </Drawer>
       )}
-      <main style={{ overflow: 'scroll', width: '100%' }}>
+      <main style={{ overflow: 'scroll', width: '100%', backgroundColor: '#cfd8dc' }}>
         <Box className={styles.contentContainer}>
           {renderView((view as ViewType) || 'run')}
           <InputsModal
