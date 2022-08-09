@@ -1,3 +1,6 @@
+# 0.3.7
+* Fix bug displaying request details.
+
 # 0.3.6
 * Improve logic for automatically opening failed tests after test run.
 * Improve accessibility for touch screen users.
