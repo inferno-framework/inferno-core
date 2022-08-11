@@ -105,24 +105,24 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       role="main"
     >
       {/* Title */}
-      <Box
-        position="sticky"
-        top={0}
-        py={6}
-        sx={{ backgroundColor: lightTheme.palette.common.orangeLightest }}
-      >
+      <Box py={6} sx={{ backgroundColor: lightTheme.palette.common.orangeLightest }}>
         <Typography
           variant="h2"
           component="h1"
+          align="center"
           sx={{ color: lightTheme.palette.common.orangeDarker }}
         >
           {testSuite?.title}
         </Typography>
       </Box>
 
-      <Container maxWidth="lg" className={styles.main}>
+      <Container
+        maxWidth="lg"
+        className={styles.main}
+        sx={{ overflow: windowIsSmall ? 'auto' : 'hidden' }}
+      >
         {/* Description */}
-        <Box maxHeight="100%" height="100%" maxWidth="440px" p={2} overflow="auto">
+        <Box maxHeight="100%" height="100%" maxWidth="440px" overflow="auto">
           <Typography variant="h6" component="h2">
             <ReactMarkdown>{testSuite?.description || ''}</ReactMarkdown>
           </Typography>
@@ -131,32 +131,32 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
         <Box display="flex" justifyContent="center" maxHeight="100%" overflow="auto">
           <Paper
             elevation={4}
-            className={styles.startTesting}
+            className={styles.optionsList}
             sx={{ width: windowIsSmall ? 'auto' : '400px' }}
           >
-            <Typography variant="h4" component="h2" align="center">
+            <Typography variant="h4" component="h2" align="center" my={2}>
               Select Options
             </Typography>
-            {testSuite?.suite_options ? (
-              testSuite.suite_options.map((suiteOption: SuiteOption, i) =>
-                renderOption(suiteOption, i)
-              )
-            ) : (
-              <Typography sx={{ mt: 2 }}> No options available.</Typography>
-            )}
-            <Box position="sticky" bottom="0" bgcolor={lightTheme.palette.common.white}>
-              <Button
-                variant="contained"
-                size="large"
-                color="primary"
-                fullWidth
-                data-testid="go-button"
-                className={styles.startTestingButton}
-                onClick={() => createTestSession()}
-              >
-                Start Testing
-              </Button>
+            <Box overflow="scroll">
+              {testSuite?.suite_options ? (
+                testSuite.suite_options.map((suiteOption: SuiteOption, i) =>
+                  renderOption(suiteOption, i)
+                )
+              ) : (
+                <Typography mt={2}> No options available.</Typography>
+              )}
             </Box>
+            <Button
+              variant="contained"
+              size="large"
+              color="primary"
+              fullWidth
+              data-testid="go-button"
+              className={styles.startTestingButton}
+              onClick={() => createTestSession()}
+            >
+              Start Testing
+            </Button>
           </Paper>
         </Box>
       </Container>

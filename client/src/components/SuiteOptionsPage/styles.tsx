@@ -8,19 +8,21 @@ export default makeStyles((theme: Theme) => ({
   },
   main: {
     display: 'flex',
+    flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    overflow: 'hidden',
     marginBottom: '80px',
   },
-  startTesting: {
+  optionsList: {
+    display: 'flex',
+    flexDirection: 'column',
     margin: '20px',
-    padding: '20px 20px 0 20px',
+    padding: '0 20px',
     borderRadius: '16px',
     overflow: 'auto',
   },
   startTestingButton: {
     fontWeight: 600,
-    margin: '20px 0',
+    margin: '16px 0',
   },
 }));

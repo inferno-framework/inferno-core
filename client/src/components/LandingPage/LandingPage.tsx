@@ -14,6 +14,7 @@ import useStyles from './styles';
 import { useHistory } from 'react-router-dom';
 import { postTestSessions } from 'api/TestSessionApi';
 import { useAppStore } from '~/store/app';
+import lightTheme from '~/styles/theme';
 
 export interface LandingPageProps {
   testSuites: TestSuite[] | undefined;
@@ -42,42 +43,83 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     }
   }
 
+  const renderOption = (testSuite: TestSuite) => {
+    return (
+      // Use li to resolve a11y error
+      <li key={testSuite.id}>
+        <ListItemButton
+          data-testid="testing-suite-option"
+          selected={testSuiteChosen === testSuite.id}
+          onClick={() => setTestSuiteChosen(testSuite.id)}
+          classes={{ selected: styles.selectedItem }}
+        >
+          <ListItemText primary={testSuite.title} />
+        </ListItemButton>
+      </li>
+    );
+  };
+
   return (
     <Container maxWidth="lg" className={styles.main} role="main">
-      <Box display="flex" flexDirection="column" m={2} maxWidth="440px">
-        <Typography variant="h2" component="h1">
-          FHIR Testing with Inferno
-        </Typography>
-        <Typography variant="h5" component="h2">
-          Test your server's conformance to authentication, authorization, and FHIR content
-          standards.
-        </Typography>
-      </Box>
-      <Box display="flex" justifyContent="center" height="fit-content">
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        height="fit-content"
+        pb={windowIsSmall ? 0 : 10}
+      >
+        <Box my={2} alignItems="center" maxWidth="800px">
+          <Typography
+            variant="h2"
+            component="h1"
+            align="center"
+            sx={{ color: lightTheme.palette.common.orangeDarker }}
+          >
+            FHIR Testing with Inferno
+          </Typography>
+        </Box>
+        <Box mb={2} alignItems="center" maxWidth="600px">
+          <Typography variant="h5" component="h2" align="center">
+            Test your server's conformance to authentication, authorization, and FHIR content
+            standards.
+          </Typography>
+        </Box>
+
         <Paper
           elevation={4}
-          className={styles.getStarted}
+          className={styles.optionsList}
           sx={{ width: windowIsSmall ? 'auto' : '400px' }}
         >
           <Typography variant="h4" component="h2" align="center">
             Select a Test Suite
           </Typography>
           <List>
-            {testSuites?.map((testSuite: TestSuite) => {
-              return (
-                // Use li to resolve a11y error
-                <li key={testSuite.id}>
-                  <ListItemButton
-                    data-testid="testing-suite-option"
-                    selected={testSuiteChosen === testSuite.id}
-                    onClick={() => setTestSuiteChosen(testSuite.id)}
-                    classes={{ selected: styles.selectedItem }}
-                  >
-                    <ListItemText primary={testSuite.title} />
-                  </ListItemButton>
-                </li>
-              );
-            })}
+            {testSuites ? (
+              testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
+            ) : (
+              <Typography sx={{ my: 2 }}> No suites available.</Typography>
+            )}
+            {testSuites ? (
+              testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
+            ) : (
+              <Typography sx={{ my: 2 }}> No suites available.</Typography>
+            )}
+            {testSuites ? (
+              testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
+            ) : (
+              <Typography sx={{ my: 2 }}> No suites available.</Typography>
+            )}
+            {testSuites ? (
+              testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
+            ) : (
+              <Typography sx={{ my: 2 }}> No suites available.</Typography>
+            )}
+            {testSuites ? (
+              testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
+            ) : (
+              <Typography sx={{ my: 2 }}> No suites available.</Typography>
+            )}
           </List>
           <Button
             variant="contained"
@@ -86,7 +128,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             fullWidth
             disabled={!testSuiteChosen}
             data-testid="go-button"
-            className={styles.startTestingButton}
+            className={styles.getStartedButton}
             onClick={() => startTestingClick()}
           >
             Start Testing

@@ -16,12 +16,14 @@ export default makeStyles((theme: Theme) => ({
   selectedItem: {
     backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
   },
-  getStarted: {
-    margin: '20px 0',
-    padding: '20px',
+  optionsList: {
+    margin: '20px',
+    padding: '20px 20px 0 20px',
     borderRadius: '16px',
+    overflow: 'auto',
   },
-  startTestingButton: {
+  getStartedButton: {
     fontWeight: 600,
+    marginBottom: '20px',
   },
 }));
