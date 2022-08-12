@@ -152,7 +152,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
             <Box display="flex" alignItems="center" justifyContent="space-between" mx={1}>
               {renderBackButton()}
               <Typography variant="h4" component="h2" align="center">
-                Select Options
+                Options
               </Typography>
               {/* Spacer to center title with button */}
               <Box minWidth="45px" />
@@ -178,7 +178,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
                 sx={{ fontWeight: 600 }}
                 onClick={() => createTestSession()}
               >
-                Start Testing
+                Select Options
               </Button>
             </Box>
           </Paper>

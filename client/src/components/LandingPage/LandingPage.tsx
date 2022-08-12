@@ -100,7 +100,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           sx={{ width: windowIsSmall ? 'auto' : '400px' }}
         >
           <Typography variant="h4" component="h2" align="center">
-            Select a Test Suite
+            Test Suites
           </Typography>
           <Box overflow="scroll">
             <List>
@@ -121,7 +121,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             sx={{ fontWeight: 600 }}
             onClick={() => startTestingClick()}
           >
-            Start Testing
+            Select Suite
           </Button>
         </Paper>
       </Box>
