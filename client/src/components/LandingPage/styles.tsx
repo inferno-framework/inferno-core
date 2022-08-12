@@ -20,12 +20,8 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     margin: '20px',
-    padding: '0 20px',
+    padding: '16px',
     borderRadius: '16px',
     overflow: 'auto',
-  },
-  getStartedButton: {
-    fontWeight: 600,
-    marginBottom: '16px',
   },
 }));

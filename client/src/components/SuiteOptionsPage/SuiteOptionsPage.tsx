@@ -10,7 +10,10 @@ import {
   Radio,
   RadioGroup,
   Box,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import useStyles from './styles';
 import { useHistory, useParams } from 'react-router-dom';
 import { postTestSessions } from '~/api/TestSessionApi';
@@ -63,6 +66,19 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       });
   }
 
+  const renderBackButton = () => {
+    const returnHome = () => {
+      history.push('');
+    };
+    return (
+      <Tooltip title="Back to Suites">
+        <IconButton size="small" onClick={returnHome}>
+          <ArrowBackIcon fontSize="large" />
+        </IconButton>
+      </Tooltip>
+    );
+  };
+
   // Given a suiteOption and index i, returns a RadioGroup with a RadioButton per choice
   const renderOption = (suiteOption: SuiteOption, i: number) => {
     return (
@@ -105,16 +121,15 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       role="main"
     >
       {/* Title */}
-      <Box py={6} sx={{ backgroundColor: lightTheme.palette.common.orangeLightest }}>
-        <Typography
-          variant="h2"
-          component="h1"
-          align="center"
-          sx={{ color: lightTheme.palette.common.orangeDarker }}
-        >
-          {testSuite?.title}
-        </Typography>
-      </Box>
+      <Typography
+        variant="h2"
+        component="h1"
+        align="center"
+        py={6}
+        sx={{ color: lightTheme.palette.common.orangeDarker }}
+      >
+        {testSuite?.title}
+      </Typography>
 
       <Container
         maxWidth="lg"
@@ -134,10 +149,16 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
             className={styles.optionsList}
             sx={{ width: windowIsSmall ? 'auto' : '400px' }}
           >
-            <Typography variant="h4" component="h2" align="center" mt={2}>
-              Select Options
-            </Typography>
-            <Box overflow="scroll">
+            <Box display="flex" alignItems="center" justifyContent="space-between" mx={1}>
+              {renderBackButton()}
+              <Typography variant="h4" component="h2" align="center">
+                Select Options
+              </Typography>
+              {/* Spacer to center title with button */}
+              <Box minWidth="45px" />
+            </Box>
+
+            <Box overflow="scroll" px={4} py={2}>
               {testSuite?.suite_options ? (
                 testSuite.suite_options.map((suiteOption: SuiteOption, i) =>
                   renderOption(suiteOption, i)
@@ -146,17 +167,20 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
                 <Typography mt={2}> No options available.</Typography>
               )}
             </Box>
-            <Button
-              variant="contained"
-              size="large"
-              color="primary"
-              fullWidth
-              data-testid="go-button"
-              className={styles.startTestingButton}
-              onClick={() => createTestSession()}
-            >
-              Start Testing
-            </Button>
+
+            <Box px={2}>
+              <Button
+                variant="contained"
+                size="large"
+                color="primary"
+                fullWidth
+                data-testid="go-button"
+                sx={{ fontWeight: 600 }}
+                onClick={() => createTestSession()}
+              >
+                Start Testing
+              </Button>
+            </Box>
           </Paper>
         </Box>
       </Container>

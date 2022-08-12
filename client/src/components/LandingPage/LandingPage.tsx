@@ -99,7 +99,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           className={styles.optionsList}
           sx={{ width: windowIsSmall ? 'auto' : '400px' }}
         >
-          <Typography variant="h4" component="h2" align="center" mt={2}>
+          <Typography variant="h4" component="h2" align="center">
             Select a Test Suite
           </Typography>
           <Box overflow="scroll">
@@ -118,7 +118,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             fullWidth
             disabled={!testSuiteChosen}
             data-testid="go-button"
-            className={styles.getStartedButton}
+            sx={{ fontWeight: 600 }}
             onClick={() => startTestingClick()}
           >
             Start Testing

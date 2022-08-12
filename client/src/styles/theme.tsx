@@ -30,7 +30,7 @@ const colors = {
   red: '#d95d77',
   orange: '#F88B30',
   orangeDarker: '#C05702',
-  orangeLightest: '#fdf6ec',
+  orangeLightest: '#FDF6EC',
   green: '#2fa874',
   blue: '#51788D',
   blueLight: '#9ad2f0',

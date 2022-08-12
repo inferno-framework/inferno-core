@@ -17,12 +17,8 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     margin: '20px',
-    padding: '0 20px',
+    padding: '16px 0',
     borderRadius: '16px',
     overflow: 'auto',
-  },
-  startTestingButton: {
-    fontWeight: 600,
-    margin: '16px 0',
   },
 }));
