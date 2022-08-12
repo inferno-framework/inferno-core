@@ -60,13 +60,22 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   };
 
   return (
-    <Container maxWidth="lg" className={styles.main} role="main">
+    <Container
+      maxWidth="lg"
+      role="main"
+      className={styles.main}
+      sx={{
+        maxHeight: windowIsSmall ? 'none' : '100vh',
+        py: windowIsSmall ? 0 : 10,
+      }}
+    >
       <Box
         display="flex"
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        height="fit-content"
+        overflow="auto"
+        height="100%"
         pb={windowIsSmall ? 0 : 10}
       >
         <Box my={2} alignItems="center" maxWidth="800px">
@@ -85,42 +94,23 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             standards.
           </Typography>
         </Box>
-
         <Paper
           elevation={4}
           className={styles.optionsList}
           sx={{ width: windowIsSmall ? 'auto' : '400px' }}
         >
-          <Typography variant="h4" component="h2" align="center">
+          <Typography variant="h4" component="h2" align="center" mt={2}>
             Select a Test Suite
           </Typography>
-          <List>
-            {testSuites ? (
-              testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
-            ) : (
-              <Typography sx={{ my: 2 }}> No suites available.</Typography>
-            )}
-            {testSuites ? (
-              testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
-            ) : (
-              <Typography sx={{ my: 2 }}> No suites available.</Typography>
-            )}
-            {testSuites ? (
-              testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
-            ) : (
-              <Typography sx={{ my: 2 }}> No suites available.</Typography>
-            )}
-            {testSuites ? (
-              testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
-            ) : (
-              <Typography sx={{ my: 2 }}> No suites available.</Typography>
-            )}
-            {testSuites ? (
-              testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
-            ) : (
-              <Typography sx={{ my: 2 }}> No suites available.</Typography>
-            )}
-          </List>
+          <Box overflow="scroll">
+            <List>
+              {testSuites ? (
+                testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
+              ) : (
+                <Typography my={2}> No suites available.</Typography>
+              )}
+            </List>
+          </Box>
           <Button
             variant="contained"
             size="large"

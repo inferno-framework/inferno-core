@@ -134,7 +134,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
             className={styles.optionsList}
             sx={{ width: windowIsSmall ? 'auto' : '400px' }}
           >
-            <Typography variant="h4" component="h2" align="center" my={2}>
+            <Typography variant="h4" component="h2" align="center" mt={2}>
               Select Options
             </Typography>
             <Box overflow="scroll">

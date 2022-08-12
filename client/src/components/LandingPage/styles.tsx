@@ -7,23 +7,25 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.common.white,
   },
   main: {
-    height: '100%',
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-evenly',
+    height: '100%',
   },
   selectedItem: {
     backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
   },
   optionsList: {
+    display: 'flex',
+    flexDirection: 'column',
     margin: '20px',
-    padding: '20px 20px 0 20px',
+    padding: '0 20px',
     borderRadius: '16px',
     overflow: 'auto',
   },
   getStartedButton: {
     fontWeight: 600,
-    marginBottom: '20px',
+    marginBottom: '16px',
   },
 }));
