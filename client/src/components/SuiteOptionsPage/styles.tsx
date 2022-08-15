@@ -11,12 +11,10 @@ export default makeStyles((theme: Theme) => ({
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    marginBottom: '80px',
   },
   optionsList: {
     display: 'flex',
     flexDirection: 'column',
-    margin: '20px',
     padding: '16px 0',
     borderRadius: '16px',
     overflow: 'auto',

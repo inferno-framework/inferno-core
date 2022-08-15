@@ -50,7 +50,7 @@ const App: FC<unknown> = () => {
   }, [testSuites]);
 
   function handleResize() {
-    setWindowIsSmall(window.innerWidth < 800);
+    setWindowIsSmall(window.innerWidth < 1000);
   }
 
   if (!testSuites || (testSuites.length === 1 && !testSession)) {

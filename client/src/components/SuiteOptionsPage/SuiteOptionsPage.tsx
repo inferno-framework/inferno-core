@@ -4,7 +4,6 @@ import {
   FormControlLabel,
   FormLabel,
   Typography,
-  Container,
   Button,
   Paper,
   Radio,
@@ -121,29 +120,41 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       role="main"
     >
       {/* Title */}
-      <Typography
-        variant="h2"
-        component="h1"
-        align="center"
-        py={6}
-        sx={{ color: lightTheme.palette.common.orangeDarker }}
-      >
-        {testSuite?.title}
-      </Typography>
+      <Box mt={6} alignItems="center" maxWidth="800px">
+        <Typography
+          variant="h2"
+          component="h1"
+          align="center"
+          sx={{ color: lightTheme.palette.common.orangeDarker }}
+        >
+          {testSuite?.title}
+        </Typography>
+      </Box>
 
-      <Container
-        maxWidth="lg"
-        className={styles.main}
-        sx={{ overflow: windowIsSmall ? 'auto' : 'hidden' }}
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        alignItems="center"
+        justifyContent="space-evenly"
+        width="100%"
+        sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4, mb: 8, overflow: 'hidden' }}
       >
         {/* Description */}
-        <Box maxHeight="100%" height="100%" maxWidth="440px" overflow="auto">
-          <Typography variant="h6" component="h2">
+        {/* TODO: Update to scale with width and stop using hardcoded values */}
+        <Box maxHeight="100%" overflow="auto" sx={{ maxWidth: windowIsSmall ? 'none' : '568px' }}>
+          <Typography
+            variant="h6"
+            component="h2"
+            px={2}
+            sx={{
+              wordBreak: 'break-word',
+            }}
+          >
             <ReactMarkdown>{testSuite?.description || ''}</ReactMarkdown>
           </Typography>
         </Box>
         {/* Selection panel */}
-        <Box display="flex" justifyContent="center" maxHeight="100%" overflow="auto">
+        <Box display="flex" justifyContent="center" maxHeight="100%" overflow="auto" p={2}>
           <Paper
             elevation={4}
             className={styles.optionsList}
@@ -183,7 +194,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
             </Box>
           </Paper>
         </Box>
-      </Container>
+      </Box>
     </Box>
   );
 };
