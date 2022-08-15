@@ -102,7 +102,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           <Typography variant="h4" component="h2" align="center">
             Test Suites
           </Typography>
-          <Box overflow="scroll">
+          <Box overflow="auto">
             <List>
               {testSuites ? (
                 testSuites.map((testSuite: TestSuite) => renderOption(testSuite))

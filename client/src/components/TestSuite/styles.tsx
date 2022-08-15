@@ -10,7 +10,7 @@ export default makeStyles((theme: Theme) => ({
     flexGrow: 1,
     padding: '24px 48px',
     overflowX: 'hidden',
-    overflow: 'scroll',
+    overflow: 'auto',
     '@media print': {
       margin: 0,
       position: 'absolute',
