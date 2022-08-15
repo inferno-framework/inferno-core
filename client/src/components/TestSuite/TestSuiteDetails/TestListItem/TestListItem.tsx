@@ -35,6 +35,7 @@ import Warning from '@mui/icons-material/Warning';
 import Info from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
 import type { MessageCounts } from './helper';
@@ -200,7 +201,7 @@ const TestListItem: FC<TestListItemProps> = ({
       <Typography variant="subtitle2" component="div">
         {useMemo(
           () => (
-            <ReactMarkdown>{test.description || ''}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{test.description || ''}</ReactMarkdown>
           ),
           [test.description]
         )}
