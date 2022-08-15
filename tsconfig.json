@@ -28,5 +28,8 @@
     "client/src",
     "index.d.ts"
   ],
-  "types": ["vitest/globals"]
+  "types": ["vitest/globals"],
+  "exclude": [
+    "node_modules",
+  ]
 }
