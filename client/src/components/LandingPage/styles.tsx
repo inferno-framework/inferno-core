@@ -7,21 +7,21 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.common.white,
   },
   main: {
-    height: '100%',
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-evenly',
+    height: '100%',
   },
   selectedItem: {
     backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
   },
-  getStarted: {
-    margin: '20px 0',
-    padding: '20px',
+  optionsList: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '20px',
+    padding: '16px',
     borderRadius: '16px',
-  },
-  startTestingButton: {
-    fontWeight: 600,
+    overflow: 'auto',
   },
 }));

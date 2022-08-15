@@ -22,7 +22,7 @@ export default makeStyles((theme: Theme) => ({
     fontSize: '0.9rem',
     lineHeight: '1.5rem',
     alignSelf: 'center',
-    color: theme.palette.common.grayLight,
+    color: theme.palette.common.gray,
     paddingRight: '4px',
   },
   shortId: {

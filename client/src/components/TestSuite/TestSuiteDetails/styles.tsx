@@ -50,7 +50,7 @@ export default makeStyles((theme: Theme) => ({
     display: 'inline',
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: theme.palette.common.grayVeryDark,
+    color: theme.palette.common.grayDarkest,
   },
   testGroupCardHeaderButton: {
     minWidth: 'fit-content',
