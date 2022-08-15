@@ -341,7 +341,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       )}
       <main
         style={{
-          overflow: 'scroll',
+          overflow: 'auto',
           width: '100%',
           backgroundColor: lightTheme.palette.common.grayLight,
         }}

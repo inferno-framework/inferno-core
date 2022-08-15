@@ -158,7 +158,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
               <Box minWidth="45px" />
             </Box>
 
-            <Box overflow="scroll" px={4} py={2}>
+            <Box overflow="auto" px={4} py={2}>
               {testSuite?.suite_options ? (
                 testSuite.suite_options.map((suiteOption: SuiteOption, i) =>
                   renderOption(suiteOption, i)
