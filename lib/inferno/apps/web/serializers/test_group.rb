@@ -15,11 +15,7 @@ module Inferno
         field :optional?, name: :optional
 
         field :test_count do |group, options|
-          suite_options = options[:suite_options]
-          child_test_count = group.tests(suite_options).count
-          group.groups(suite_options).inject(child_test_count) do |total_test_count, child_group|
-            total_test_count + child_group.test_count(suite_options)
-          end
+          group.test_count(options[:suite_options])
         end
         field :test_groups do |group, options|
           suite_options = options[:suite_options]

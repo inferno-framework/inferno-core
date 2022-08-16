@@ -13,10 +13,7 @@ module Inferno
           field :links
 
           field :test_count do |suite, options|
-            suite_options = options[:suite_options]
-            suite.groups(suite_options).inject(0) do |total_test_count, group|
-              total_test_count + group.test_count(suite_options)
-            end
+            suite.test_count(options[:suite_options])
           end
 
           association :suite_options, blueprint: SuiteOption
