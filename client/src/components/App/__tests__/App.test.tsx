@@ -6,19 +6,23 @@ import * as testSuitesApi from '~/api/TestSuitesApi';
 import * as testSessionApi from '~/api/TestSessionApi';
 import { testSuites, singleTestSuite, testSession } from '../__mocked_data__/mockData';
 
-// mock out a complex child component, react-testing-library advises
+import { vi } from 'vitest';
+
+// Mock out a complex child component, react-testing-library advises
 // against this but we are in the App component, so maybe make an exception?
-jest.mock('~/components/TestSuite/TestSessionWrapper', () => () => (
-  <div>Mock TestSessionWrapper</div>
-));
+vi.mock('~/components/TestSuite/TestSessionWrapper', () => ({
+  default: vi.fn(() => {
+    return <div>mock</div>;
+  }),
+}));
 
 describe('The App Root Component', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('sets Test Suite state on mount', async () => {
-    const mock = jest.spyOn(testSuitesApi, 'getTestSuites');
+    const mock = vi.spyOn(testSuitesApi, 'getTestSuites');
     mock.mockResolvedValue(testSuites);
 
     render(<App />);
@@ -32,10 +36,10 @@ describe('The App Root Component', () => {
   });
 
   it('sets the Test Session if there is a single Test Suite', async () => {
-    const getTestSuites = jest.spyOn(testSuitesApi, 'getTestSuites');
+    const getTestSuites = vi.spyOn(testSuitesApi, 'getTestSuites');
     getTestSuites.mockResolvedValue(singleTestSuite);
 
-    const postTestSessions = jest.spyOn(testSessionApi, 'postTestSessions');
+    const postTestSessions = vi.spyOn(testSessionApi, 'postTestSessions');
     postTestSessions.mockResolvedValue(testSession);
 
     render(<App />);

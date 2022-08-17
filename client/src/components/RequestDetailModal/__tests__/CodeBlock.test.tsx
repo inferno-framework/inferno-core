@@ -4,9 +4,11 @@ import ThemeProvider from 'components/ThemeProvider';
 import CodeBlock from '../CodeBlock';
 import { codeResponseWithHTML, codeResponseWithJSON } from '../__mocked_data__/mockData';
 
+import { vi } from 'vitest';
+
 describe('CodeBlock', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('displays the code body as given if HTML', () => {

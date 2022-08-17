@@ -28,4 +28,5 @@
     "client/src",
     "index.d.ts"
   ],
+  "types": ["vitest/globals"]
 }
