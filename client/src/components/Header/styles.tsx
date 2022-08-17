@@ -33,6 +33,8 @@ export default makeStyles((theme: Theme) => ({
   title: {
     padding: '0 8px',
     width: 'max-content',
+    fontWeight: 600,
+    color: theme.palette.common.orangeDarker,
   },
   version: {
     fontStyle: 'italic',
