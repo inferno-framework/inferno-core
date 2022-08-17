@@ -70,4 +70,18 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
     expect(serialized_suite['presets']).to all(have_key('id'))
     expect(serialized_suite['presets']).to all(have_key('title'))
   end
+
+  it 'serializes using selected options to filter groups' do
+    options_suite = OptionsSuite::Suite
+    options = [Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')]
+    serialized_suite = JSON.parse(described_class.render(options_suite,
+                                                         view: :full,
+                                                         suite_options: options))
+
+    expected_groups = options_suite.groups(options).map(&:id)
+    received_groups = serialized_suite['test_groups'].collect { |group| group['id'] }
+
+    expect(received_groups).to eq(expected_groups)
+    expect(serialized_suite['test_count']).to eq(3)
+  end
 end

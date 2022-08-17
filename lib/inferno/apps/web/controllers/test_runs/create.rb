@@ -59,7 +59,7 @@ module Inferno
 
             test_run = repo.create(create_params(params).merge(status: 'queued'))
 
-            self.body = serialize(test_run)
+            self.body = serialize(test_run, suite_options: test_session.suite_options)
 
             persist_inputs(params, test_run)
 
