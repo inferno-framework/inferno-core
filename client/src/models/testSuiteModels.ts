@@ -105,6 +105,7 @@ export type TestSuite = Runnable & {
   presets?: PresetSummary[];
   suite_options?: SuiteOption[];
   links?: FooterLink[];
+  suite_summary?: string;
 };
 
 export interface TestSession {
