@@ -15,7 +15,7 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
       'presets',
       'suite_options',
       'links',
-      'suite_summary',
+      'suite_summary'
     ]
   end
   let(:full_keys) do
