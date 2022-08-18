@@ -99,6 +99,12 @@ module Inferno
 
           @links = links
         end
+
+        def suite_summary(suite_summary = nil)
+          return @suite_summary if suite_summary.nil?
+
+          @suite_summary = format_markdown(suite_summary)
+        end
       end
     end
   end

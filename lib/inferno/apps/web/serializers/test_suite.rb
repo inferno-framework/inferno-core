@@ -12,6 +12,7 @@ module Inferno
           field :test_count
           field :version
           field :links
+          field :suite_summary
           association :suite_options, blueprint: SuiteOption
           association :presets, view: :summary, blueprint: Preset
         end
