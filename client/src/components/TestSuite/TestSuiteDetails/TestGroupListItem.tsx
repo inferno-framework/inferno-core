@@ -95,7 +95,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           sx={{ userSelect: 'auto' }}
         >
           <List className={styles.testGroupCardList}>
-            <ListItem sx={{ padding: 0 }}>
+            <ListItem sx={{ p: 0 }}>
               <ListItemText
                 primary={
                   <Typography className={styles.nestedDescriptionHeader}>

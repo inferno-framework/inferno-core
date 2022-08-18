@@ -580,6 +580,8 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/SuiteOption"
+      suite_summary:
+        type: "string"
   SuiteOption:
     type: "object"
     properties:

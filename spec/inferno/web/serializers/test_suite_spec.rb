@@ -14,7 +14,8 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
       'version',
       'presets',
       'suite_options',
-      'links'
+      'links',
+      'suite_summary'
     ]
   end
   let(:full_keys) do
@@ -34,6 +35,7 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
     expect(serialized_suite['test_count']).to eq(suite.test_count)
     expect(serialized_suite['version']).to eq(suite.version)
     expect(serialized_suite['presets']).to eq([])
+    expect(serialized_suite['suite_summary']).to eq(suite.suite_summary)
   end
 
   it 'serializes a full suite view' do
@@ -56,6 +58,7 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
     expect(serialized_suite['version']).to eq(suite.version)
     expect(serialized_suite['configuration_messages']).to eq(expected_messages)
     expect(serialized_suite['presets']).to eq([])
+    expect(serialized_suite['suite_summary']).to eq(suite.suite_summary)
 
     expected_links = suite.links.map(&:with_indifferent_access)
     expect(serialized_suite['links']).to eq(expected_links)

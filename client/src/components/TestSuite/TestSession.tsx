@@ -27,7 +27,6 @@ import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDe
 import useStyles from './styles';
 
 import { useAppStore } from '~/store/app';
-import lightTheme from '~/styles/theme';
 
 function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
@@ -343,7 +342,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         style={{
           overflow: 'auto',
           width: '100%',
-          backgroundColor: lightTheme.palette.common.grayLight,
         }}
       >
         <Box className={styles.contentContainer}>

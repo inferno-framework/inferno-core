@@ -34,11 +34,11 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
 
   return (
-    <Card className={styles.testGroupCard} variant="outlined">
+    <Card variant="outlined" sx={{ mb: 3 }}>
       <Box className={styles.testGroupCardHeader}>
         {runnable.result && <ResultIcon result={runnable.result} />}
         <span className={styles.testGroupCardHeaderText}>
-          <Typography color="text.primary" className={styles.currentItem} component="div">
+          <Typography className={styles.currentItem} component="div">
             {'short_id' in runnable && (
               <Typography className={styles.shortId}>{`${runnable.short_id} `}</Typography>
             )}
@@ -57,6 +57,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           )}
         </span>
       </Box>
+      <Divider />
       {view === 'run' && shouldShowDescription(runnable, description) && (
         <>
           <Box m={2.5}>{description}</Box>

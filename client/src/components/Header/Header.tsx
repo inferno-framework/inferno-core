@@ -50,7 +50,7 @@ const Header: FC<HeaderProps> = ({
           >
             <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
           </IconButton>
-          <Box display="flex" alignItems="baseline" alignSelf="center" width="max-content">
+          <Box display="flex" alignItems="baseline" alignSelf="center" width="max-content" pt={0.5}>
             <Typography variant="h5" component="h1" className={styles.title}>
               {suiteTitle}
               {suiteOptionsString}

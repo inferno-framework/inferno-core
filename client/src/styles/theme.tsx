@@ -30,7 +30,7 @@ const colors = {
   red: '#d95d77',
   orange: '#F88B30',
   orangeDarker: '#C05702',
-  orangeLightest: '#FDF6EC',
+  orangeLightest: '#fff8f2',
   green: '#2fa874',
   blue: '#51788D',
   blueLight: '#9ad2f0',
@@ -38,12 +38,12 @@ const colors = {
   blueGrayLighter: '#e6ebf2',
   blueGrayLightest: '#f1f8ff',
   gray: 'rgba(0, 0, 0, 0.6)',
-  grayLight: '#cfd8dc',
-  grayLighter: '#eaeef2',
-  grayLightest: '#f2f2f2',
-  grayMedium: '#bbbdc0',
-  grayDark: '#595959',
-  grayDarkest: '#3a3a3a',
+  grayLight: '#bdbdbd',
+  grayLighter: '#e0e0e0',
+  grayLightest: '#eeeeee',
+  grayMedium: '#757575',
+  grayDark: '#616161',
+  grayDarkest: '#424242',
 };
 
 const paletteBase = {

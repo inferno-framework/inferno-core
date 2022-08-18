@@ -11,6 +11,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Card,
 } from '@mui/material';
 import { RunnableType, Test, Request, ViewType } from '~/models/testSuiteModels';
 import TabPanel from './TabPanel';
@@ -221,58 +222,60 @@ const TestListItem: FC<TestListItemProps> = ({
           className={styles.accordionDetailContainer}
           onClick={(e) => e.stopPropagation()}
         >
-          <Tabs
-            value={panelIndex}
-            variant="scrollable"
-            className={styles.tabs}
-            onChange={(e, newIndex) => {
-              setPanelIndex(newIndex);
-            }}
-          >
-            <Tab label="Messages" {...a11yProps(0)} sx={darkTabText} />
-            <Tab label="HTTP Requests" {...a11yProps(1)} sx={darkTabText} />
-            <Tab label="Inputs" {...a11yProps(2)} sx={darkTabText} />
-            <Tab label="Outputs" {...a11yProps(3)} sx={darkTabText} />
-            <Tab label="About" {...a11yProps(4)} sx={darkTabText} />
-          </Tabs>
-          <Divider />
-          <TabPanel id={test.id} currentPanelIndex={panelIndex} index={0}>
-            <MessagesList messages={test.result?.messages || []} />
-          </TabPanel>
-          <TabPanel id={test.id} currentPanelIndex={panelIndex} index={1}>
-            {updateRequest && (
-              <RequestsList
-                requests={test.result?.requests || []}
-                resultId={test.result?.id || ''}
-                updateRequest={updateRequest}
+          <Card>
+            <Tabs
+              value={panelIndex}
+              variant="scrollable"
+              className={styles.tabs}
+              onChange={(e, newIndex) => {
+                setPanelIndex(newIndex);
+              }}
+            >
+              <Tab label="Messages" {...a11yProps(0)} sx={darkTabText} />
+              <Tab label="HTTP Requests" {...a11yProps(1)} sx={darkTabText} />
+              <Tab label="Inputs" {...a11yProps(2)} sx={darkTabText} />
+              <Tab label="Outputs" {...a11yProps(3)} sx={darkTabText} />
+              <Tab label="About" {...a11yProps(4)} sx={darkTabText} />
+            </Tabs>
+            <Divider />
+            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={0}>
+              <MessagesList messages={test.result?.messages || []} />
+            </TabPanel>
+            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={1}>
+              {updateRequest && (
+                <RequestsList
+                  requests={test.result?.requests || []}
+                  resultId={test.result?.id || ''}
+                  updateRequest={updateRequest}
+                />
+              )}
+            </TabPanel>
+            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={2}>
+              <InputOutputsList
+                inputOutputs={test.result?.inputs || []}
+                noValuesMessage="No Inputs"
+                headerName="Input"
               />
-            )}
-          </TabPanel>
-          <TabPanel id={test.id} currentPanelIndex={panelIndex} index={2}>
-            <InputOutputsList
-              inputOutputs={test.result?.inputs || []}
-              noValuesMessage="No Inputs"
-              headerName="Input"
-            />
-          </TabPanel>
-          <TabPanel id={test.id} currentPanelIndex={panelIndex} index={3}>
-            <InputOutputsList
-              inputOutputs={test.result?.outputs || []}
-              noValuesMessage="No Outputs"
-              headerName="Output"
-            />
-          </TabPanel>
-          <TabPanel id={test.id} currentPanelIndex={panelIndex} index={4}>
-            {shouldShowDescription(test, testDescription) ? (
-              testDescription
-            ) : (
-              <Box p={2}>
-                <Typography variant="subtitle2" component="p">
-                  No Description
-                </Typography>
-              </Box>
-            )}
-          </TabPanel>
+            </TabPanel>
+            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={3}>
+              <InputOutputsList
+                inputOutputs={test.result?.outputs || []}
+                noValuesMessage="No Outputs"
+                headerName="Output"
+              />
+            </TabPanel>
+            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={4}>
+              {shouldShowDescription(test, testDescription) ? (
+                testDescription
+              ) : (
+                <Box p={2}>
+                  <Typography variant="subtitle2" component="p">
+                    No Description
+                  </Typography>
+                </Box>
+              )}
+            </TabPanel>
+          </Card>
         </AccordionDetails>
       </Accordion>
     </>

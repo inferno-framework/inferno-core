@@ -74,6 +74,8 @@ module OptionsSuite
     title 'Options Suite'
     id :options
     description %(
+      Suite description should go here
+
       Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
       tempor incididunt ut labore et dolore magna aliqua.
 
@@ -85,8 +87,21 @@ module OptionsSuite
       aliquam. Nulla facilisi nullam vehicula ipsum a. Donec enim diam vulputate
       ut. Ornare arcu dui vivamus arcu felis bibendum ut tristique et. Malesuada
       fames ac turpis egestas maecenas pharetra convallis posuere morbi.
+    )
+    suite_summary %(
+      Suite options summary should go here
 
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua.
 
+      Feugiat in ante metus dictum. Dignissim cras tincidunt lobortis feugiat.
+      Consequat mauris nunc congue nisi vitae suscipit tellus mauris. Venenatis
+      a condimentum vitae sapien pellentesque habitant morbi tristique senectus.
+
+      Faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis
+      aliquam. Nulla facilisi nullam vehicula ipsum a. Donec enim diam vulputate
+      ut. Ornare arcu dui vivamus arcu felis bibendum ut tristique et. Malesuada
+      fames ac turpis egestas maecenas pharetra convallis posuere morbi.
     )
     links [
       {

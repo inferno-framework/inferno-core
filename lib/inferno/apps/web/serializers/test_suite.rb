@@ -11,6 +11,7 @@ module Inferno
           field :input_instructions
           field :version
           field :links
+          field :suite_summary
 
           field :test_count do |suite, options|
             suite.test_count(options[:suite_options])

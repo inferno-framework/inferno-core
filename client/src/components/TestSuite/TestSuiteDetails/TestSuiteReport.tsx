@@ -55,7 +55,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions }) 
   });
 
   const header = (
-    <Card className={styles.testGroupCard} variant="outlined">
+    <Card variant="outlined" sx={{ mb: 3 }}>
       <Box className={styles.testGroupCardHeader}>
         <span className={styles.testGroupCardHeaderText}>
           <Typography key="1" color="text.primary" className={styles.currentItem}>

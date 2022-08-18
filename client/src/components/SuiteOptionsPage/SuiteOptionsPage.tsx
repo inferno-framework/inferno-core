@@ -13,6 +13,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import useStyles from './styles';
 import { useHistory, useParams } from 'react-router-dom';
 import { postTestSessions } from '~/api/TestSessionApi';
@@ -82,7 +83,15 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   const renderOption = (suiteOption: SuiteOption, i: number) => {
     return (
       <FormControl fullWidth id={`suite-option-input-${i}`} key={`suite-form-control${i}`}>
-        <FormLabel>{suiteOption.title}</FormLabel>
+        <FormLabel sx={{ display: 'flex', alignItems: 'center' }}>
+          {suiteOption.title}
+          {suiteOption.description && (
+            <Tooltip title={suiteOption.description}>
+              <HelpOutlineOutlinedIcon fontSize="small" color="secondary" sx={{ px: 0.5 }} />
+            </Tooltip>
+          )}
+        </FormLabel>
+
         <RadioGroup
           row
           aria-label={`suite-option-group-${suiteOption.id}`}
@@ -150,7 +159,9 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
               wordBreak: 'break-word',
             }}
           >
-            <ReactMarkdown>{testSuite?.description || ''}</ReactMarkdown>
+            <ReactMarkdown>
+              {testSuite?.suite_summary || testSuite?.description || ''}
+            </ReactMarkdown>
           </Typography>
         </Box>
         {/* Selection panel */}

@@ -21,23 +21,15 @@ export default makeStyles((theme: Theme) => ({
     display: 'inline',
   },
   testGroupCardHeader: {
-    padding: '8px 16px',
-    fontWeight: 600,
-    fontSize: '16px',
-    borderBottom: '1px solid rgba(0,0,0,.12)',
-    backgroundColor: theme.palette.common.blueGrayLightest,
-    borderTopLeftRadius: '4px',
-    borderTopRightRadius: '4px',
     display: 'flex',
-    minHeight: '36.5px',
-    alignItems: 'center',
     overflow: 'auto',
+    alignItems: 'center',
+    minHeight: '36.5px',
+    padding: '8px 16px',
+    backgroundColor: theme.palette.common.blueGrayLightest,
     '@media print': {
       padding: '0 8px',
     },
-  },
-  testGroupCard: {
-    marginBottom: '24px',
   },
   testGroupCardList: {
     padding: 0,
