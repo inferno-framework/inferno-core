@@ -9,10 +9,14 @@ module Inferno
           field :description
           field :short_description
           field :input_instructions
-          field :test_count
           field :version
           field :links
           field :suite_summary
+
+          field :test_count do |suite, options|
+            suite.test_count(options[:suite_options])
+          end
+
           association :suite_options, blueprint: SuiteOption
           association :presets, view: :summary, blueprint: Preset
         end

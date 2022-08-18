@@ -10,11 +10,13 @@ module Inferno
         field :description
         field :short_description
         field :input_instructions
-        field :test_count
         field :run_as_group?, name: :run_as_group
         field :user_runnable?, name: :user_runnable
         field :optional?, name: :optional
 
+        field :test_count do |group, options|
+          group.test_count(options[:suite_options])
+        end
         field :test_groups do |group, options|
           suite_options = options[:suite_options]
           TestGroup.render_as_hash(group.groups(suite_options), suite_options: suite_options)

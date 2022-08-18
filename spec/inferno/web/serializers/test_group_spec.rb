@@ -2,6 +2,18 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
   let(:group) { InfrastructureTest::SerializerGroup }
   let(:test) { group.tests.first }
 
+  before do
+    options_multi_group = Class.new(OptionsSuite::AllVersionsGroup) do
+      group from: :v1_group,
+            required_suite_options: { ig_version: '1' }
+
+      group from: :v2_group,
+            required_suite_options: { ig_version: '2' }
+    end
+
+    stub_const('OptionsMultiGroup', options_multi_group)
+  end
+
   it 'serializes a group' do
     serialized_group = JSON.parse(described_class.render(group))
 
@@ -44,5 +56,20 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
         expect(output[key.to_s]).to eq(value.to_s)
       end
     end
+  end
+
+  it 'serializes using selected options to filter groups and tests' do
+    options = [Inferno::DSL::SuiteOption.new(id: :ig_version, value: '2')]
+    serialized_group = JSON.parse(described_class.render(OptionsMultiGroup,
+                                                         suite_options: options))
+
+    expected_tests = OptionsMultiGroup.tests(options).map(&:id)
+    expected_groups = OptionsMultiGroup.groups(options).map(&:id)
+    received_tests = serialized_group['tests'].collect { |test| test['id'] }
+    recieved_groups = serialized_group['test_groups'].collect { |group| group['id'] }
+
+    expect(received_tests).to eq(expected_tests)
+    expect(recieved_groups).to eq(expected_groups)
+    expect(serialized_group['test_count']).to eq(4)
   end
 end

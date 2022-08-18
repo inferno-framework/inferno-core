@@ -1,3 +1,7 @@
+# 0.3.8
+* Improve options selection UI.
+* Fix bug where test count was not taking suite options into account.
+
 # 0.3.7
 * Fix bug displaying request details.
 

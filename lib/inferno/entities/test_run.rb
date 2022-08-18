@@ -68,8 +68,8 @@ module Inferno
         super.merge(test_session: test_session).compact
       end
 
-      def test_count
-        @test_count ||= runnable.test_count
+      def test_count(selected_suite_options = [])
+        @test_count ||= runnable.test_count(selected_suite_options)
       end
     end
   end

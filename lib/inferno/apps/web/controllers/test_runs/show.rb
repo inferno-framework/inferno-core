@@ -3,6 +3,8 @@ module Inferno
     module Controllers
       module TestRuns
         class Show < Controller
+          include Import[test_sessions_repo: 'repositories.test_sessions']
+
           def call(params)
             test_run = repo.find(params[:id])
             halt 404 if test_run.nil?
@@ -17,7 +19,8 @@ module Inferno
                 end
             end
 
-            self.body = serialize(test_run)
+            test_session = test_sessions_repo.find(test_run.test_session_id)
+            self.body = serialize(test_run, suite_options: test_session.suite_options)
           end
         end
       end
