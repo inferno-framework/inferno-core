@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import useStyles from './styles';
 import {
   Box,
@@ -12,8 +12,17 @@ import {
   AccordionSummary,
   AccordionDetails,
   Card,
+  Tooltip,
 } from '@mui/material';
-import { RunnableType, Test, Request, ViewType } from '~/models/testSuiteModels';
+import {
+  RunnableType,
+  Test,
+  Request,
+  ViewType,
+  Message,
+  TestInput,
+  TestOutput,
+} from '~/models/testSuiteModels';
 import TabPanel from './TabPanel';
 import InputOutputsList from './InputOutputsList';
 import MessagesList from './MessagesList';
@@ -40,6 +49,11 @@ interface TestListItemProps {
   view: ViewType;
 }
 
+interface TabProps {
+  label: string;
+  value: Message[] | Request[] | TestInput[] | TestOutput[] | string | null | undefined;
+}
+
 const TestListItem: FC<TestListItemProps> = ({
   test,
   runTests,
@@ -50,6 +64,26 @@ const TestListItem: FC<TestListItemProps> = ({
   const styles = useStyles();
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
+  const tabs: TabProps[] = [
+    { label: 'Messages', value: test.result?.messages },
+    { label: 'Requests', value: test.result?.requests },
+    { label: 'Inputs', value: test.result?.inputs },
+    { label: 'Outputs', value: test.result?.outputs },
+    { label: 'About', value: test.description },
+  ];
+
+  useEffect(() => {
+    // Set active tab to first tab with data
+    // If no tabs have data, set to About
+    let panelIndex = 0;
+    const disableableTabs = tabs.filter((tab) => tab.label !== 'About');
+    for (let i = 0; i < disableableTabs.length; i++) {
+      const content = disableableTabs[i].value;
+      if (!content || content?.length === 0) panelIndex++;
+      else break;
+    }
+    setPanelIndex(panelIndex);
+  }, [test.result]);
 
   const resultIcon = (
     <Box display="inline-flex">
@@ -174,10 +208,33 @@ const TestListItem: FC<TestListItemProps> = ({
     </ListItem>
   );
 
-  const darkTabText = {
-    '&.Mui-selected': {
-      color: lightTheme.palette.common.orangeDarker,
-    },
+  const renderTab = (tab: TabProps, index: number) => {
+    const darkTabText = {
+      '&.Mui-selected': {
+        color: lightTheme.palette.common.orangeDarker,
+      },
+    };
+
+    if ((!tab.value || tab.value.length === 0) && tab.label !== 'About') {
+      return (
+        <Tab
+          key={`${tab.label}-${index}`}
+          label={
+            <Tooltip title={`No ${tab.label.toLowerCase()} available`}>
+              <span>{tab.label}</span>
+            </Tooltip>
+          }
+          {...a11yProps(index)}
+          disabled
+          sx={darkTabText}
+          style={{ pointerEvents: 'auto' }}
+        />
+      );
+    }
+
+    return (
+      <Tab key={`${tab.label}-${index}`} label={tab.label} {...a11yProps(index)} sx={darkTabText} />
+    );
   };
 
   const a11yProps = (index: number) => ({
@@ -231,11 +288,7 @@ const TestListItem: FC<TestListItemProps> = ({
                 setPanelIndex(newIndex);
               }}
             >
-              <Tab label="Messages" {...a11yProps(0)} sx={darkTabText} />
-              <Tab label="HTTP Requests" {...a11yProps(1)} sx={darkTabText} />
-              <Tab label="Inputs" {...a11yProps(2)} sx={darkTabText} />
-              <Tab label="Outputs" {...a11yProps(3)} sx={darkTabText} />
-              <Tab label="About" {...a11yProps(4)} sx={darkTabText} />
+              {tabs.map((tab, i) => renderTab(tab, i))}
             </Tabs>
             <Divider />
             <TabPanel id={test.id} currentPanelIndex={panelIndex} index={0}>
