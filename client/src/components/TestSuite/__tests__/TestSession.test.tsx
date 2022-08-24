@@ -29,7 +29,7 @@ test('Test session renders', () => {
   const testSessionTitleComponentList = screen.getAllByRole('link');
   testSessionTitleComponentList.forEach((testSessionTitleComponent, i) => {
     const testGroups = mockedTestSession.test_suite.test_groups || [];
-    const testGroupTitle = testGroups[i].title || null;
+    const testGroupTitle = testGroups[i].title || undefined;
     expect(testSessionTitleComponent).toHaveAccessibleName(testGroupTitle);
   });
 });

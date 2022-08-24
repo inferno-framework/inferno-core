@@ -5,10 +5,12 @@ import { Test, TestGroup, TestSuite } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
 import ThemeProvider from 'components/ThemeProvider';
 
-const runTestsMock = jest.fn();
-jest.mock('react-router-dom', () => ({
+import { vi } from 'vitest';
+
+const runTestsMock = vi.fn();
+vi.mock('react-router-dom', () => ({
   useHistory: () => ({
-    push: jest.fn(),
+    push: vi.fn(),
   }),
 }));
 

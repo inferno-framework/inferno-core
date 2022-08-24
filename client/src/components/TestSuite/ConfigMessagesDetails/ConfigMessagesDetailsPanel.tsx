@@ -63,7 +63,7 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
       <Tabs
         aria-label="config-messages-tabs"
         value={panelIndex}
-        onChange={(e, newIndex) => {
+        onChange={(e, newIndex: number) => {
           setPanelIndex(newIndex);
         }}
         variant="fullWidth"

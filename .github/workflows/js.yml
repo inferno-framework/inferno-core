@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['10.x']
+        node-version: ['16.x']
 
     steps:
     - uses: actions/checkout@v2
     - name: Set up Node
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
     - name: Cache Node.js modules
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['10.x']
+        node-version: ['16.x']
 
     steps:
     - uses: actions/checkout@v2
@@ -56,7 +56,7 @@ jobs:
     # `npm run coverage` is run tests with coverage flags, rather than repeating them here
     - run: npm run coverage
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
       with:
         name: frontend-coverage
         token: ${{ secrets.CODECOV_TOKEN }}
@@ -66,12 +66,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['10.x']
+        node-version: ['16.x']
 
     steps:
     - uses: actions/checkout@v2
     - name: Set up Node
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
     - name: Cache Node.js modules
