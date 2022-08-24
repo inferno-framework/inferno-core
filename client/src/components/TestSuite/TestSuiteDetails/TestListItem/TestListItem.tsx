@@ -221,7 +221,7 @@ const TestListItem: FC<TestListItemProps> = ({
           key={`${tab.label}-${index}`}
           label={
             <Tooltip title={`No ${tab.label.toLowerCase()} available`}>
-              <span>{tab.label}</span>
+              <>{tab.label}</>
             </Tooltip>
           }
           {...a11yProps(index)}
