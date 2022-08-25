@@ -4,7 +4,9 @@ import ThemeProvider from 'components/ThemeProvider';
 import RequestDetailModal from '../RequestDetailModal';
 import { mockedRequest } from '../__mocked_data__/mockData';
 
-const hideModalMock = jest.fn();
+import { vi } from 'vitest';
+
+const hideModalMock = vi.fn();
 
 test('renders Request List Detail Modal', () => {
   render(

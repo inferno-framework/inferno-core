@@ -5,8 +5,10 @@ import InputsModal from '../InputsModal';
 import { RunnableType, TestInput } from '~/models/testSuiteModels';
 import ThemeProvider from 'components/ThemeProvider';
 
-const hideModalMock = jest.fn();
-const createTestRunMock = jest.fn();
+import { vi } from 'vitest';
+
+const hideModalMock = vi.fn();
+const createTestRunMock = vi.fn();
 
 const testInputs: TestInput[] = [
   {
