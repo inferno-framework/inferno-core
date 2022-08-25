@@ -29,6 +29,13 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
 }) => {
   const styles = useStyles();
 
+  const openPanel = () => {
+    if (view !== 'report') {
+      setPanelIndex(panelIndex);
+      setOpen(true);
+    }
+  };
+
   // Custom icon button to resolve nested interactive control error
   return (
     <Badge
@@ -36,6 +43,16 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
       max={9}
       overlap="circular"
       className={clsx([color, badgeStyle, styles.badgeBase])}
+      onClick={(e) => {
+        e.stopPropagation();
+        openPanel();
+      }}
+      onKeyDown={(e) => {
+        e.stopPropagation();
+        if (e.key === 'Enter') {
+          openPanel();
+        }
+      }}
     >
       <Tooltip describeChild title={description}>
         <Icon
@@ -45,16 +62,12 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
           className={clsx([styles.badgeIcon, color])}
           onClick={(e) => {
             e.stopPropagation();
-            if (view !== 'report') {
-              setPanelIndex(panelIndex);
-              setOpen(true);
-            }
+            openPanel();
           }}
           onKeyDown={(e) => {
             e.stopPropagation();
-            if (e.key === 'Enter' && view !== 'report') {
-              setPanelIndex(panelIndex);
-              setOpen(true);
+            if (e.key === 'Enter') {
+              openPanel();
             }
           }}
         />

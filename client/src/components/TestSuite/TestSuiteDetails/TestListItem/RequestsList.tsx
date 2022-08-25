@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import {
-  Button,
   Typography,
   TableRow,
   TableCell,
@@ -10,7 +9,9 @@ import {
   Tooltip,
   TableHead,
   Box,
+  Button,
 } from '@mui/material';
+import InputIcon from '@mui/icons-material/Input';
 import { Request } from '~/models/testSuiteModels';
 import RequestDetailModal from '~/components/RequestDetailModal/RequestDetailModal';
 import { getRequestDetails } from '~/api/RequestsApi';
@@ -25,9 +26,10 @@ interface RequestsListProps {
 const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest }) => {
   const [showDetails, setShowDetails] = React.useState(false);
   const [detailedRequest, setDetailedRequest] = React.useState<Request>();
+  const headerTitles = ['Direction', 'Type', 'URL', 'Status', ''];
   const styles = useStyles();
 
-  function showDetailsClick(request: Request) {
+  const showDetailsClick = (request: Request) => {
     if (request.request_headers === undefined) {
       getRequestDetails(request.id)
         .then((updatedRequest) => {
@@ -46,9 +48,32 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
       setDetailedRequest(request);
       setShowDetails(true);
     }
-  }
+  };
 
-  const headerTitles = ['Direction', 'Type', 'URL', 'Status', 'Details'];
+  const renderReferenceIcon = (request: Request) => {
+    if (request.result_id !== resultId) {
+      return (
+        <Tooltip title="This request was performed in another test and the result is used by this test">
+          <InputIcon fontSize="small" sx={{ pr: 1 }} />
+        </Tooltip>
+      );
+    }
+  };
+
+  const renderDetailsButton = (request: Request) => {
+    return (
+      <Button
+        onClick={() => showDetailsClick(request)}
+        color="secondary"
+        variant="contained"
+        size="small"
+        disableElevation
+      >
+        Details
+      </Button>
+    );
+  };
+
   const requestListHeader = (
     <TableRow key="req-header">
       {headerTitles.map((title) => (
@@ -61,45 +86,36 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
     </TableRow>
   );
 
-  const requestListItems = requests.map((request: Request, index: number) => {
-    return (
-      <TableRow key={`reqRow-${index}`}>
-        <TableCell>
-          <Typography variant="subtitle2" component="p">
-            {request.direction}
-          </Typography>
-        </TableCell>
-        <TableCell>
+  const requestListItems = requests.map((request: Request, index: number) => (
+    <TableRow key={`reqRow-${index}`}>
+      <TableCell>
+        <Typography variant="subtitle2" component="p">
+          {request.direction}
+        </Typography>
+      </TableCell>
+      <TableCell>
+        <Box display="flex">
+          {renderReferenceIcon(request)}
           <Typography variant="subtitle2" component="p">
             {request.verb}
           </Typography>
-        </TableCell>
-        <TableCell className={styles.requestUrlContainer}>
-          <Tooltip title={request.url} placement="bottom-start">
-            <Typography variant="subtitle2" component="p" className={styles.requestUrl}>
-              {request.url}
-            </Typography>
-          </Tooltip>
-        </TableCell>
-        <TableCell>
-          <Typography variant="subtitle2" component="p" className={styles.bolderText}>
-            {request.status}
+        </Box>
+      </TableCell>
+      <TableCell className={styles.requestUrlContainer}>
+        <Tooltip title={request.url} placement="bottom-start">
+          <Typography variant="subtitle2" component="p" className={styles.requestUrl}>
+            {request.url}
           </Typography>
-        </TableCell>
-        <TableCell>
-          <Button
-            onClick={() => showDetailsClick(request)}
-            variant="contained"
-            color="secondary"
-            size="small"
-            disableElevation
-          >
-            Details
-          </Button>
-        </TableCell>
-      </TableRow>
-    );
-  });
+        </Tooltip>
+      </TableCell>
+      <TableCell>
+        <Typography variant="subtitle2" component="p" className={styles.bolderText}>
+          {request.status}
+        </Typography>
+      </TableCell>
+      <TableCell>{renderDetailsButton(request)}</TableCell>
+    </TableRow>
+  ));
 
   return (
     <>
