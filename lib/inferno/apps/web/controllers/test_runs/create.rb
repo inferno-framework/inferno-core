@@ -19,9 +19,10 @@ module Inferno
           end
 
           def persist_inputs(params, test_run)
+            available_inputs = test_run.runnable.available_inputs
             params[:inputs]&.each do |input_params|
               input =
-                test_run.runnable.available_inputs
+                available_inputs
                   .find { |_, runnable_input| runnable_input.name == input_params[:name] }
                   &.last
 
