@@ -7,24 +7,21 @@ import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
   appbar: {
-    width: '100%',
-    overflow: 'auto',
     minHeight: '64px', // For responsive screens
     maxHeight: '64px', // For responsive screens
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
     position: 'sticky',
-    '& .MuiTypography-root': {
-      display: 'flex',
-      justifyContent: 'center',
-      flexDirection: 'column',
-    },
     '@media print': {
       display: 'none',
     },
   },
   toolbar: {
     display: 'flex',
+    height: '100%',
+    maxWidth: '100vw',
+    overflow: 'hidden',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   logo: {
     objectFit: 'contain',
@@ -32,7 +29,7 @@ export default makeStyles((theme: Theme) => ({
   },
   title: {
     padding: '0 8px',
-    width: 'max-content',
+    whiteSpace: 'nowrap',
     fontWeight: 600,
     color: theme.palette.common.orangeDarker,
   },

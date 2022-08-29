@@ -40,7 +40,7 @@ const Header: FC<HeaderProps> = ({
   return suiteTitle ? (
     <AppBar color="default" className={styles.appbar}>
       <Toolbar className={styles.toolbar}>
-        <Box display="flex" justifyContent="center">
+        <Box display="flex" overflow="hidden">
           <IconButton
             size="small"
             edge="start"
@@ -50,7 +50,14 @@ const Header: FC<HeaderProps> = ({
           >
             <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
           </IconButton>
-          <Box display="flex" alignItems="baseline" alignSelf="center" width="max-content" pt={0.5}>
+          <Box
+            display="flex"
+            alignItems="baseline"
+            alignSelf="center"
+            overflow="auto"
+            pt={0.5}
+            tabIndex={0}
+          >
             <Typography variant="h5" component="h1" className={styles.title}>
               {suiteTitle}
               {suiteOptionsString}
@@ -62,7 +69,7 @@ const Header: FC<HeaderProps> = ({
             )}
           </Box>
         </Box>
-        <Box px={2} sx={{ minWidth: 'fit-content' }}>
+        <Box display="flex" minWidth="fit-content" pl={2}>
           <Button
             disableElevation
             color="secondary"
