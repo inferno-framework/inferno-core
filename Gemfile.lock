@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    inferno_core (0.3.9)
+    inferno_core (0.3.10)
       activesupport (~> 6.1)
       blueprinter (= 0.25.2)
       dotenv (~> 2.7)
@@ -94,7 +94,7 @@ GEM
       dry-logic (~> 1.0, >= 1.0.2)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
-    faraday (1.10.1)
+    faraday (1.10.2)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
       faraday-excon (~> 1.1)
@@ -165,7 +165,7 @@ GEM
     i18n (1.10.0)
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
-    jwt (2.4.1)
+    jwt (2.5.0)
     method_source (1.0.0)
     mime-types (3.4.1)
       mime-types-data (~> 3.2015)
@@ -199,7 +199,7 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.13.0)
     public_suffix (4.0.7)
-    puma (5.6.4)
+    puma (5.6.5)
       nio4r (~> 2.0)
     racc (1.6.0)
     rack (2.2.3.1)
@@ -207,7 +207,10 @@ GEM
       rack (>= 1.0, < 3)
     rainbow (3.1.1)
     rake (13.0.6)
-    redis (4.7.1)
+    redis (5.0.1)
+      redis-client (~> 0.7)
+    redis-client (0.7.1)
+      connection_pool
     regexp_parser (2.2.0)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
