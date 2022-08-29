@@ -1,3 +1,7 @@
+# 0.3.10
+* Fix a performance issue when creating a test run for a large test suites.
+* Improve the test details UI.
+
 # 0.3.9
 * Improve options selection UI background color when a banner is used.
 * Add suite_summary field that is displayed on suite options/landing page.
