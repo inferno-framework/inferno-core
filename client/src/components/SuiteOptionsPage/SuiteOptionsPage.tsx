@@ -168,7 +168,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
           id="description-container"
           display={!windowIsSmall && descriptionIsTall ? 'flex' : ''}
           flex={!windowIsSmall && descriptionIsTall ? '1 1 0' : ''}
-          maxWidth={`${minDescriptionWidth}px`}
+          maxWidth={!descriptionIsTall ? `${minDescriptionWidth}px` : 'unset'}
           maxHeight="100%"
           overflow="auto"
           ml={3}
