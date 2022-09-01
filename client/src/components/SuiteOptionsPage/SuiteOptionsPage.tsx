@@ -41,7 +41,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(
     initialSelectedSuiteOptions || []
   );
-  const [descriptionWidth, setDescriptionWidth] = React.useState<number>(400);
+  const [descriptionIsTall, setDescriptionIsTall] = React.useState<boolean>(false);
+  const [minDescriptionWidth, setMinDescriptionWidth] = React.useState<number>(0);
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
@@ -55,17 +56,10 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   const handleResize = () => {
     const description = document.getElementById('description-container');
     const selectionPanel = document.getElementById('selection-panel');
-    if (description && selectionPanel) {
-      const descriptionHasScrollBar = description.scrollHeight > description.clientHeight;
-      if (descriptionHasScrollBar && !windowIsSmall) {
-        const descriptionMargin =
-          parseFloat(window.getComputedStyle(description).marginLeft) +
-          parseFloat(window.getComputedStyle(description).marginRight);
-        setDescriptionWidth(window.innerWidth - selectionPanel.clientWidth - descriptionMargin);
-      } else if (!windowIsSmall) {
-        // Minimum width if !windowIsSmall (minimum window width is 1000)
-        setDescriptionWidth(1000 - selectionPanel.clientWidth);
-      }
+    if (!windowIsSmall && description) {
+      setDescriptionIsTall(description.scrollHeight > description.clientHeight);
+      // Minimum width if !windowIsSmall (minimum window width is 1000)
+      setMinDescriptionWidth(1000 - (selectionPanel?.clientWidth || 0));
     }
   };
 
@@ -171,12 +165,14 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       >
         {/* Description */}
         <Box
+          id="description-container"
+          display={!windowIsSmall && descriptionIsTall ? 'flex' : ''}
+          flex={!windowIsSmall && descriptionIsTall ? '1 1 0' : ''}
+          maxWidth={`${minDescriptionWidth}px`}
           maxHeight="100%"
           overflow="auto"
-          id="description-container"
           ml={3}
           my={3}
-          sx={{ maxWidth: windowIsSmall ? 'none' : descriptionWidth }}
         >
           <Typography
             variant="h6"
