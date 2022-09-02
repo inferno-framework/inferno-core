@@ -3,7 +3,7 @@ import TestGroupCard from '~/components/TestSuite/TestSuiteDetails/TestGroupCard
 import { TestGroup, Test, TestSuite, SuiteOptionChoice } from '~/models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
-import { Box, Button, Card, Typography } from '@mui/material';
+import { Box, Button, Card, FormControlLabel, FormGroup, Switch, Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import useStyles from './styles';
 import TestSuiteMessages from './TestSuiteMessages';
@@ -63,12 +63,16 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions }) 
           </Typography>
         </span>
         <span className={styles.testGroupCardHeaderButton}>
+          <FormGroup>
+            <FormControlLabel control={<Switch color="secondary" />} label="Show details" />
+          </FormGroup>
+        </span>
+        <span className={styles.testGroupCardHeaderButton}>
           <Button
             variant="contained"
             color="secondary"
             size="small"
             disableElevation
-            className={styles.printButton}
             startIcon={<PrintIcon />}
             onClick={() => {
               window.print();
