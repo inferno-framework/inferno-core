@@ -281,6 +281,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           <TestSuiteReport
             testSuite={runnableMap.get(selectedRunnable) as TestSuite}
             suiteOptions={suiteOptions}
+            updateRequest={updateRequest}
           />
         );
       case 'config':
