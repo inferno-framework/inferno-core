@@ -21,9 +21,10 @@ interface RequestsListProps {
   resultId: string;
   requests: Request[];
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
+  view: 'report' | 'run';
 }
 
-const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest }) => {
+const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest, view }) => {
   const [showDetails, setShowDetails] = React.useState(false);
   const [detailedRequest, setDetailedRequest] = React.useState<Request>();
   const headerTitles = ['Direction', 'Type', 'URL', 'Status', ''];
@@ -113,7 +114,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
           {request.status}
         </Typography>
       </TableCell>
-      <TableCell>{renderDetailsButton(request)}</TableCell>
+      {view === 'run' && <TableCell>{renderDetailsButton(request)}</TableCell>}
     </TableRow>
   ));
 

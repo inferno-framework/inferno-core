@@ -273,6 +273,7 @@ const TestListItem: FC<TestListItemProps> = ({
             requests={test.result?.requests || []}
             resultId={test.result?.id || ''}
             updateRequest={updateRequest}
+            view="run"
           />
         )}
       </TabPanel>
@@ -304,26 +305,25 @@ const TestListItem: FC<TestListItemProps> = ({
     </Card>
   );
 
-  const renderReportDetails = () => {
-    return (
-      <>
-        {messagesExist && (
-          <Card sx={requestsExist ? { mb: 2 } : {}}>
-            <MessagesList messages={test.result?.messages || []} />
-          </Card>
-        )}
-        {updateRequest && messagesExist && (
-          <Card>
-            <RequestsList
-              requests={test.result?.requests || []}
-              resultId={test.result?.id || ''}
-              updateRequest={updateRequest}
-            />
-          </Card>
-        )}
-      </>
-    );
-  };
+  const reportDetails = (
+    <>
+      {messagesExist && (
+        <Card sx={requestsExist ? { mb: 2 } : {}}>
+          <MessagesList messages={test.result?.messages || []} />
+        </Card>
+      )}
+      {updateRequest && requestsExist && (
+        <Card>
+          <RequestsList
+            requests={test.result?.requests || []}
+            resultId={test.result?.id || ''}
+            updateRequest={updateRequest}
+            view="report"
+          />
+        </Card>
+      )}
+    </>
+  );
 
   return (
     <>
@@ -363,7 +363,7 @@ const TestListItem: FC<TestListItemProps> = ({
           onClick={(e) => e.stopPropagation()}
         >
           {view === 'run' && runDetails}
-          {view === 'report' && showReportDetails && renderReportDetails()}
+          {view === 'report' && showReportDetails && reportDetails}
         </AccordionDetails>
       </Accordion>
     </>
