@@ -1,3 +1,11 @@
+# 0.3.11
+* Update fhir_models to address an issue where models were being instantiated
+  slightly differently depending on whether they were instantiated from a string
+  or a hash.
+* Update the UI to sort the list of suites alphabetically.
+* Fix an issue which prevented markdown tables from rendering in messages.
+* Update the header's scrolling behavior.
+
 # 0.3.10
 * Fix a performance issue when creating a test run for a large test suites.
 * Improve the test details UI.
