@@ -105,7 +105,11 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           <Box overflow="auto">
             <List>
               {testSuites ? (
-                testSuites.map((testSuite: TestSuite) => renderOption(testSuite))
+                testSuites
+                  .sort((testSuite1: TestSuite, testSuite2: TestSuite): number =>
+                    testSuite1.title.localeCompare(testSuite2.title)
+                  )
+                  .map((testSuite: TestSuite) => renderOption(testSuite))
               ) : (
                 <Typography my={2}> No suites available.</Typography>
               )}

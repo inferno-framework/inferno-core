@@ -47,6 +47,7 @@ interface TestListItemProps {
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
+  showReportDetails?: boolean;
   view: ViewType;
 }
 
@@ -60,9 +61,12 @@ const TestListItem: FC<TestListItemProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
+  showReportDetails = false,
   view,
 }) => {
   const styles = useStyles();
+  const messagesExist = !!test.result?.messages && test.result?.messages.length > 0;
+  const requestsExist = !!test.result?.requests && test.result?.requests.length > 0;
   const [open, setOpen] = React.useState(false);
   const [panelIndex, setPanelIndex] = React.useState(0);
   const tabs: TabProps[] = [
@@ -85,6 +89,10 @@ const TestListItem: FC<TestListItemProps> = ({
     }
     setPanelIndex(panelIndex);
   }, [test.result]);
+
+  useEffect(() => {
+    setOpen(view === 'report' && showReportDetails && (messagesExist || requestsExist));
+  }, [showReportDetails]);
 
   const resultIcon = (
     <Box display="inline-flex">
@@ -243,6 +251,80 @@ const TestListItem: FC<TestListItemProps> = ({
     'aria-controls': `${test.id}-tabpanel-${index}`,
   });
 
+  const runDetails = (
+    <Card>
+      <Tabs
+        value={panelIndex}
+        variant="scrollable"
+        className={styles.tabs}
+        onChange={(e, newIndex: number) => {
+          setPanelIndex(newIndex);
+        }}
+      >
+        {tabs.map((tab, i) => renderTab(tab, i))}
+      </Tabs>
+      <Divider />
+      <TabPanel id={test.id} currentPanelIndex={panelIndex} index={0}>
+        <MessagesList messages={test.result?.messages || []} />
+      </TabPanel>
+      <TabPanel id={test.id} currentPanelIndex={panelIndex} index={1}>
+        {updateRequest && (
+          <RequestsList
+            requests={test.result?.requests || []}
+            resultId={test.result?.id || ''}
+            updateRequest={updateRequest}
+          />
+        )}
+      </TabPanel>
+      <TabPanel id={test.id} currentPanelIndex={panelIndex} index={2}>
+        <InputOutputsList
+          inputOutputs={test.result?.inputs || []}
+          noValuesMessage="No Inputs"
+          headerName="Input"
+        />
+      </TabPanel>
+      <TabPanel id={test.id} currentPanelIndex={panelIndex} index={3}>
+        <InputOutputsList
+          inputOutputs={test.result?.outputs || []}
+          noValuesMessage="No Outputs"
+          headerName="Output"
+        />
+      </TabPanel>
+      <TabPanel id={test.id} currentPanelIndex={panelIndex} index={4}>
+        {shouldShowDescription(test, testDescription) ? (
+          testDescription
+        ) : (
+          <Box p={2}>
+            <Typography variant="subtitle2" component="p">
+              No Description
+            </Typography>
+          </Box>
+        )}
+      </TabPanel>
+    </Card>
+  );
+
+  const renderReportDetails = () => {
+    return (
+      <>
+        {messagesExist && (
+          <Card sx={requestsExist ? { mb: 2 } : {}}>
+            <MessagesList messages={test.result?.messages || []} />
+          </Card>
+        )}
+        {updateRequest && messagesExist && (
+          <Card>
+            <RequestsList
+              requests={test.result?.requests || []}
+              resultId={test.result?.id || ''}
+              updateRequest={updateRequest}
+            />
+          </Card>
+        )}
+      </>
+    );
+  };
+
   return (
     <>
       <Accordion
@@ -280,56 +362,8 @@ const TestListItem: FC<TestListItemProps> = ({
           className={styles.accordionDetailContainer}
           onClick={(e) => e.stopPropagation()}
         >
-          <Card>
-            <Tabs
-              value={panelIndex}
-              variant="scrollable"
-              className={styles.tabs}
-              onChange={(e, newIndex: number) => {
-                setPanelIndex(newIndex);
-              }}
-            >
-              {tabs.map((tab, i) => renderTab(tab, i))}
-            </Tabs>
-            <Divider />
-            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={0}>
-              <MessagesList messages={test.result?.messages || []} />
-            </TabPanel>
-            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={1}>
-              {updateRequest && (
-                <RequestsList
-                  requests={test.result?.requests || []}
-                  resultId={test.result?.id || ''}
-                  updateRequest={updateRequest}
-                />
-              )}
-            </TabPanel>
-            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={2}>
-              <InputOutputsList
-                inputOutputs={test.result?.inputs || []}
-                noValuesMessage="No Inputs"
-                headerName="Input"
-              />
-            </TabPanel>
-            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={3}>
-              <InputOutputsList
-                inputOutputs={test.result?.outputs || []}
-                noValuesMessage="No Outputs"
-                headerName="Output"
-              />
-            </TabPanel>
-            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={4}>
-              {shouldShowDescription(test, testDescription) ? (
-                testDescription
-              ) : (
-                <Box p={2}>
-                  <Typography variant="subtitle2" component="p">
-                    No Description
-                  </Typography>
-                </Box>
-              )}
-            </TabPanel>
-          </Card>
+          {view === 'run' && runDetails}
+          {view === 'report' && showReportDetails && renderReportDetails()}
         </AccordionDetails>
       </Accordion>
     </>

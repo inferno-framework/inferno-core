@@ -27,6 +27,7 @@ interface TestGroupListItemProps {
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
+  showReportDetails?: boolean;
   view: ViewType;
 }
 
@@ -35,6 +36,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
+  showReportDetails,
   view,
 }) => {
   const styles = useStyles();
@@ -62,6 +64,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         runTests={runTests}
         updateRequest={updateRequest}
         testRunInProgress={testRunInProgress}
+        showReportDetails={showReportDetails}
         view={view}
       />
     ));
@@ -75,6 +78,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         runTests={runTests}
         updateRequest={updateRequest}
         testRunInProgress={testRunInProgress}
+        showReportDetails={showReportDetails}
         view={view}
       />
     ));
@@ -138,7 +142,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           <Box display="inline-flex">
             <ResultIcon result={testGroup.result} />
           </Box>
-          <List sx={{ padding: '0 8px' }}>
+          <List sx={{ px: 1 }}>
             <ListItem sx={{ padding: 0 }}>
               <ListItemText
                 primary={
@@ -219,9 +223,11 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     </>
   );
 
-  return (
-    <>{testGroup.expanded || view === 'report' ? expandedGroupListItem : navigableGroupListItem}</>
-  );
+  if (testGroup.expanded || view === 'report') {
+    return expandedGroupListItem;
+  } else {
+    return navigableGroupListItem;
+  }
 };
 
 export default TestGroupListItem;

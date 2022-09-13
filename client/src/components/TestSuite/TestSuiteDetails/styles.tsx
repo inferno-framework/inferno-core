@@ -72,9 +72,9 @@ export default makeStyles((theme: Theme) => ({
     userSelect: 'auto',
     '@media print': {
       minHeight: 'unset',
-      '& .MuiAccordionSummary-content': {
-        margin: 0,
-      },
+    },
+    '& .MuiAccordionSummary-content': {
+      margin: 0,
     },
   },
   accordionDetailContainer: {

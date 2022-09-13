@@ -1,21 +1,12 @@
 import React, { FC } from 'react';
 import TestGroupCard from '~/components/TestSuite/TestSuiteDetails/TestGroupCard';
-import {
-  TestGroup,
-  Test,
-  TestSuite,
-  SuiteOptionChoice,
-  Request,
-  Message,
-} from '~/models/testSuiteModels';
+import { TestGroup, Test, TestSuite, SuiteOptionChoice, Request } from '~/models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
 import { Box, Button, Card, FormControlLabel, FormGroup, Switch, Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import useStyles from './styles';
 import TestSuiteMessages from './TestSuiteMessages';
-import RequestsList from './TestListItem/RequestsList';
-import MessagesList from './TestListItem/MessagesList';
 
 interface TestSuiteReportProps {
   testSuite: TestSuite;
@@ -111,91 +102,33 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
     </Card>
   );
 
-  const renderTestGroupDetails = (testGroup: TestGroup) => {
-    // List of elements for each detail component
-    const details: JSX.Element[] = [];
-
-    if (testGroup.tests && updateRequest && showDetails) {
-      // Pull out and flatten requests
-      const requests: Request[] = testGroup.tests
-        .reduce((requests: Request[], test) => {
-          if (test.result && test.result.requests) {
-            requests.push(...test.result.requests);
-          }
-          return requests;
-        }, [])
-        .flat();
-
-      if (requests && requests.length > 0)
-        details.push(
-          <RequestsList
-            requests={requests || []}
-            resultId={testGroup.result?.id || ''}
+  const renderTestGroupChildren = (testGroup: TestGroup) => {
+    if (testGroup.test_groups.length > 0) {
+      return testGroup.test_groups.map((testGroup: TestGroup) => {
+        return (
+          <TestGroupListItem
+            key={`li-${testGroup.id}`}
+            testGroup={testGroup}
             updateRequest={updateRequest}
+            testRunInProgress={false}
+            showReportDetails={showDetails}
+            view="report"
           />
         );
+      });
+    } else if (testGroup.tests.length > 0) {
+      return testGroup.tests.map((test: Test) => {
+        return (
+          <TestListItem
+            key={`li-${test.id}`}
+            test={test}
+            testRunInProgress={false}
+            showReportDetails={showDetails}
+            view="report"
+          />
+        );
+      });
     }
-
-    if (testGroup.tests && showDetails) {
-      // Pull out and flatten requests
-      const messages: Message[] = testGroup.tests
-        .reduce((messages: Message[], test) => {
-          if (test.result && test.result.messages) {
-            messages.push(...test.result.messages);
-          }
-          return messages;
-        }, [])
-        .flat();
-
-      if (messages && messages.length > 0) {
-        details.push(<MessagesList messages={messages} />);
-      }
-    }
-
-    return details;
-  };
-
-  const renderTestChildren = () => {
-    let listItems: JSX.Element[] = [];
-
-    return testSuite.test_groups?.map((runnable) => {
-      if (runnable.test_groups.length > 0) {
-        listItems = runnable.test_groups.map((testGroup: TestGroup) => {
-          return (
-            <Box key={`li-${testGroup.id}`}>
-              <TestGroupListItem testGroup={testGroup} testRunInProgress={false} view="report" />
-              {updateRequest && renderTestGroupDetails(testGroup)}
-            </Box>
-          );
-        });
-      } else if ('tests' in runnable) {
-        listItems = runnable.tests.map((test: Test) => {
-          return (
-            <Box key={`li-${test.id}`}>
-              <TestListItem test={test} testRunInProgress={false} view="report" />
-              {updateRequest && (
-                <RequestsList
-                  requests={test.result?.requests || []}
-                  resultId={test.result?.id || ''}
-                  updateRequest={updateRequest}
-                />
-              )}
-            </Box>
-          );
-        });
-      }
-
-      return (
-        <TestGroupCard
-          key={`g-${runnable.id}`}
-          runnable={runnable}
-          testRunInProgress={false}
-          view="report"
-        >
-          {listItems}
-        </TestGroupCard>
-      );
-    });
   };
 
   return (
@@ -207,7 +140,16 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
         testSuiteId={testSuite.id}
       />
       {header}
-      {renderTestChildren()}
+      {testSuite.test_groups?.map((testGroup) => (
+        <TestGroupCard
+          key={`g-${testGroup.id}`}
+          runnable={testGroup}
+          testRunInProgress={false}
+          view="report"
+        >
+          {renderTestGroupChildren(testGroup)}
+        </TestGroupCard>
+      ))}
     </>
   );
 };
