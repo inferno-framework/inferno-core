@@ -41,7 +41,7 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
   });
 
   return messages.length > 0 ? (
-    <Table>
+    <Table size="small">
       <TableHead>{messageListHeader}</TableHead>
       <TableBody>{messageListItems}</TableBody>
     </Table>

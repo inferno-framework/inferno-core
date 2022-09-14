@@ -122,7 +122,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
     <>
       {requests.length > 0 ? (
         <TableContainer>
-          <Table className={styles.table}>
+          <Table size="small" className={styles.table}>
             <TableHead>{requestListHeader}</TableHead>
             <TableBody>{requestListItems}</TableBody>
           </Table>
