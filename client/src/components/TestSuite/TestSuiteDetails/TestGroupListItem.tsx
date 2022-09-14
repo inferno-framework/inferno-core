@@ -134,6 +134,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     >
       <AccordionSummary
         id={`${testGroup.id}-summary`}
+        title={`${testGroup.id}-summary`}
         aria-controls={`${testGroup.id}-detail`}
         className={styles.accordionSummary}
         expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}

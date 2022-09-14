@@ -27,7 +27,10 @@ interface RequestsListProps {
 const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest, view }) => {
   const [showDetails, setShowDetails] = React.useState(false);
   const [detailedRequest, setDetailedRequest] = React.useState<Request>();
-  const headerTitles = ['Direction', 'Type', 'URL', 'Status', ''];
+  const headerTitles =
+    view === 'run'
+      ? ['Direction', 'Type', 'URL', 'Status', 'Details']
+      : ['Direction', 'Type', 'URL', 'Status'];
   const styles = useStyles();
 
   const showDetailsClick = (request: Request) => {
