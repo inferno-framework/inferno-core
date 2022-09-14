@@ -195,6 +195,7 @@ const TestListItem: FC<TestListItemProps> = ({
       >
         <AccordionSummary
           id={`${test.id}-summary`}
+          data-testid={`${test.id}-summary`}
           aria-controls={`${test.id}-detail`}
           role={view === 'report' ? 'region' : 'button'}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
