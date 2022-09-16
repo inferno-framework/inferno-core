@@ -6,7 +6,7 @@ import RequestsList from '../RequestsList';
 import {
   mockedRequest,
   codeResponseWithHTML,
-} from '../../../../RequestDetailModal/__mocked_data__/mockData';
+} from '~/components/RequestDetailModal/__mocked_data__/mockData';
 
 describe('The RequestsList component', () => {
   test('it orders requests based on their index', () => {
