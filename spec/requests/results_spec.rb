@@ -9,8 +9,15 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
   let(:test_session) { test_run.test_session }
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
   let!(:result) do
-    repo_create(:result, message_count: 1, test_run_id: test_run.id, test_session_id: test_session.id)
+    repo_create(
+      :result,
+      message_count: 1,
+      request_count: 2,
+      test_run_id: test_run.id,
+      test_session_id: test_session.id
+    )
   end
+  let(:requests) { result.requests }
 
   describe '/test_runs/:test_run_id/results' do
     it 'renders the results json for a test_run' do
@@ -34,6 +41,18 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
 
       expect(message['message']).to eq(persisted_message.message)
       expect(message['type']).to eq(persisted_message.type)
+    end
+
+    it 'includes the indices for request summaries' do
+      get router.path(:api_test_run_results, test_run_id: test_run.id)
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_body.length).to eq(1)
+
+      serialized_requests = parsed_body.first['requests']
+
+      expect(serialized_requests).to all(include('index'))
+      expect(serialized_requests.first['index']).to be_an(Integer)
     end
   end
 
