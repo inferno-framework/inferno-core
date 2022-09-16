@@ -13,6 +13,7 @@ export type RequestHeader = {
 export type Request = {
   direction: string;
   id: string;
+  index: number;
   status: number;
   timestamp: string;
   url: string;
