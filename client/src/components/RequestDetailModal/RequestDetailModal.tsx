@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  IconButton,
   Tooltip,
   Typography,
 } from '@mui/material';
@@ -13,6 +14,7 @@ import CodeBlock from './CodeBlock';
 import HeaderTable from './HeaderTable';
 import useStyles from './styles';
 import InputIcon from '@mui/icons-material/Input';
+import { ContentCopy } from '@mui/icons-material';
 
 export interface RequestDetailModalProps {
   request?: Request;
@@ -50,6 +52,18 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
           <Box pr={1} className={styles.modalTitleURL}>
             {request?.url}
           </Box>
+          {request?.url && (
+            <Box pr={1}>
+              <IconButton
+                color="secondary"
+                onClick={() => {
+                  void navigator.clipboard.writeText(request.url);
+                }}
+              >
+                <ContentCopy fontSize="inherit" />
+              </IconButton>
+            </Box>
+          )}
           <Box display="flex" flexShrink={0}>
             &#8594; {request?.status}
           </Box>
