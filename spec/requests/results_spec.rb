@@ -54,6 +54,17 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
       expect(serialized_requests).to all(include('index'))
       expect(serialized_requests.first['index']).to be_an(Integer)
     end
+
+    it 'sorts the request summaries' do
+      get router.path(:api_test_run_results, test_run_id: test_run.id)
+
+      expect(last_response.status).to eq(200)
+      expect(parsed_body.length).to eq(1)
+
+      serialized_requests = parsed_body.first['requests']
+
+      expect(serialized_requests.first['index']).to be < serialized_requests.last['index']
+    end
   end
 
   describe '/test_sessions/:test_session_id/results' do
