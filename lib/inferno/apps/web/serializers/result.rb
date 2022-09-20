@@ -1,4 +1,5 @@
 require 'json'
+require_relative 'request'
 
 module Inferno
   module Web
@@ -27,7 +28,9 @@ module Inferno
         end
 
         association :messages, blueprint: Message, if: :field_present?
-        association :requests, blueprint: Request, view: :summary, if: :field_present?
+        field :requests do |result, _options|
+          Request.render_as_hash(result.requests.sort_by(&:index), view: :summary)
+        end
       end
     end
   end
