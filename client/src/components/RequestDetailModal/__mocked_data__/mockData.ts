@@ -3,6 +3,7 @@ import { Request } from 'models/testSuiteModels';
 export const mockedRequest: Request = {
   direction: 'outgoing',
   id: '20a3709a-eebf-42a7-9035-a58b00c8f104',
+  index: 1,
   request_body: null,
   request_headers: [
     { name: 'user-agent', value: 'Ruby FHIR Client' },
@@ -29,6 +30,7 @@ export const mockedRequest: Request = {
 export const codeResponseWithHTML: Request = {
   direction: 'outgoing',
   id: 'de793781-5eed-421a-88d3-8029499f4bce',
+  index: 2,
   status: 200,
   timestamp: '2022-04-21T22:22:04.039Z',
   url: 'NA',
@@ -42,6 +44,7 @@ export const codeResponseWithHTML: Request = {
 export const codeResponseWithJSON: Request = {
   direction: 'outgoing',
   id: 'de793781-5eed-421a-88d3-8029499f4bce',
+  index: 3,
   status: 200,
   timestamp: '2022-04-21T22:22:04.039Z',
   url: 'NA',

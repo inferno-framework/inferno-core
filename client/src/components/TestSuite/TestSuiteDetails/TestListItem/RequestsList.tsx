@@ -99,50 +99,52 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
     </TableRow>
   );
 
-  const requestListItems = requests.map((request: Request, index: number) => (
-    <TableRow key={`reqRow-${index}`}>
-      <TableCell>
-        <Typography variant="subtitle2" component="p">
-          {request.direction}
-        </Typography>
-      </TableCell>
-      <TableCell>
-        <Box display="flex">
-          {renderReferenceIcon(request)}
+  const requestListItems = [...requests]
+    .sort((request1, request2) => request1.index - request2.index)
+    .map((request: Request, index: number) => (
+      <TableRow key={`reqRow-${index}`}>
+        <TableCell>
           <Typography variant="subtitle2" component="p">
-            {request.verb}
+            {request.direction}
           </Typography>
-        </Box>
-      </TableCell>
-      <TableCell className={styles.requestUrlContainer}>
-        <Box display="flex" alignItems="center">
-          <Tooltip title={request.url} placement="bottom-start">
-            <Typography variant="subtitle2" component="p" className={styles.requestUrl}>
-              {request.url}
+        </TableCell>
+        <TableCell>
+          <Box display="flex">
+            {renderReferenceIcon(request)}
+            <Typography variant="subtitle2" component="p">
+              {request.verb}
             </Typography>
-          </Tooltip>
-          <Tooltip
-            open={copySuccess[request.url as keyof typeof copySuccess] || false}
-            title="Text copied!"
-          >
-            <IconButton
-              size="small"
-              color="secondary"
-              onClick={() => void copyTextClick(request.url)}
+          </Box>
+        </TableCell>
+        <TableCell className={styles.requestUrlContainer}>
+          <Box display="flex" alignItems="center">
+            <Tooltip title={request.url} placement="bottom-start">
+              <Typography variant="subtitle2" component="p" className={styles.requestUrl}>
+                {request.url}
+              </Typography>
+            </Tooltip>
+            <Tooltip
+              open={copySuccess[request.url as keyof typeof copySuccess] || false}
+              title="Text copied!"
             >
-              <ContentCopy fontSize="inherit" />
-            </IconButton>
-          </Tooltip>
-        </Box>
-      </TableCell>
-      <TableCell>
-        <Typography variant="subtitle2" component="p" className={styles.bolderText}>
-          {request.status}
-        </Typography>
-      </TableCell>
-      <TableCell>{renderDetailsButton(request)}</TableCell>
-    </TableRow>
-  ));
+              <IconButton
+                size="small"
+                color="secondary"
+                onClick={() => void copyTextClick(request.url)}
+              >
+                <ContentCopy fontSize="inherit" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </TableCell>
+        <TableCell>
+          <Typography variant="subtitle2" component="p" className={styles.bolderText}>
+            {request.status}
+          </Typography>
+        </TableCell>
+        <TableCell>{renderDetailsButton(request)}</TableCell>
+      </TableRow>
+    ));
 
   return (
     <>
