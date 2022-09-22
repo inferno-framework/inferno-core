@@ -27,7 +27,7 @@ interface RequestsListProps {
 
 const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest }) => {
   const [showDetails, setShowDetails] = React.useState(false);
-  const [copySuccess, setCopySuccess] = React.useState(false);
+  const [copySuccess, setCopySuccess] = React.useState({});
   const [detailedRequest, setDetailedRequest] = React.useState<Request>();
   const headerTitles = ['Direction', 'Type', 'URL', 'Status', ''];
   const styles = useStyles();
@@ -55,7 +55,11 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
 
   const copyTextClick = async (text: string) => {
     await navigator.clipboard.writeText(text).then(() => {
-      setCopySuccess(true);
+      setCopySuccess({ ...copySuccess, [text]: true });
+      setTimeout(() => {
+        // Reset map instead of setting false to avoid async bug
+        setCopySuccess({});
+      }, 2000); // 2 second delay
     });
   };
 
@@ -117,7 +121,10 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
               {request.url}
             </Typography>
           </Tooltip>
-          <Tooltip open={copySuccess} title="Text copied!">
+          <Tooltip
+            open={copySuccess[request.url as keyof typeof copySuccess] || false}
+            title="Text copied!"
+          >
             <IconButton
               size="small"
               color="secondary"

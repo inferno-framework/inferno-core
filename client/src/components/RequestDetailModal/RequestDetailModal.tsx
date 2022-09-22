@@ -29,7 +29,17 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
   modalVisible,
   usedRequest,
 }) => {
+  const [copySuccess, setCopySuccess] = React.useState(false);
   const styles = useStyles();
+
+  const copyTextClick = async (text: string) => {
+    await navigator.clipboard.writeText(text).then(() => {
+      setCopySuccess(true);
+      setTimeout(() => {
+        setCopySuccess(false);
+      }, 2000); // 2 second delay
+    });
+  };
 
   const usedRequestIcon = (
     <Tooltip title="This request was performed in another test and the result is used by this test">
@@ -53,16 +63,13 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
             {request?.url}
           </Box>
           {request?.url && (
-            <Box pr={1}>
-              <IconButton
-                color="secondary"
-                onClick={() => {
-                  void navigator.clipboard.writeText(request.url);
-                }}
-              >
-                <ContentCopy fontSize="inherit" />
-              </IconButton>
-            </Box>
+            <Tooltip open={copySuccess} title="Text copied!">
+              <Box pr={1}>
+                <IconButton color="secondary" onClick={() => void copyTextClick(request.url)}>
+                  <ContentCopy fontSize="inherit" />
+                </IconButton>
+              </Box>
+            </Tooltip>
           )}
           <Box display="flex" flexShrink={0}>
             &#8594; {request?.status}
