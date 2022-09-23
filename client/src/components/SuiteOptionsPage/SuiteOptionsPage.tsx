@@ -129,12 +129,15 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       role="main"
     >
       {/* Title */}
-      <Box mt={6} alignItems="center" maxWidth="800px">
+      <Box alignItems="center" maxWidth="800px" sx={windowIsSmall ? { m: 2 } : { mt: 6 }}>
         <Typography
           variant="h2"
           component="h1"
           align="center"
-          sx={{ color: lightTheme.palette.common.orangeDarker }}
+          sx={{
+            color: lightTheme.palette.common.orangeDarker,
+            fontSize: windowIsSmall ? '2rem' : 'auto',
+          }}
         >
           {testSuite?.title}
         </Typography>
@@ -151,14 +154,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
         {/* Description */}
         {/* TODO: Update to scale with width and stop using hardcoded values */}
         <Box maxHeight="100%" overflow="auto" sx={{ maxWidth: windowIsSmall ? 'none' : '568px' }}>
-          <Typography
-            variant="h6"
-            component="h2"
-            px={2}
-            sx={{
-              wordBreak: 'break-word',
-            }}
-          >
+          <Typography variant="h6" component="h2" px={2} sx={{ wordBreak: 'break-word' }}>
             <ReactMarkdown>
               {testSuite?.suite_summary || testSuite?.description || ''}
             </ReactMarkdown>
@@ -169,11 +165,18 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
           <Paper
             elevation={4}
             className={styles.optionsList}
-            sx={{ width: windowIsSmall ? 'auto' : '400px' }}
+            sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
           >
             <Box display="flex" alignItems="center" justifyContent="space-between" mx={1}>
               {renderBackButton()}
-              <Typography variant="h4" component="h2" align="center">
+              <Typography
+                variant="h4"
+                component="h2"
+                align="center"
+                sx={{
+                  fontSize: windowIsSmall ? '1.8rem' : 'auto',
+                }}
+              >
                 Options
               </Typography>
               {/* Spacer to center title with button */}

@@ -1,5 +1,4 @@
 import { Theme } from '@mui/material/styles';
-
 import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
@@ -11,7 +10,6 @@ export default makeStyles((theme: Theme) => ({
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-evenly',
-    height: '100%',
   },
   selectedItem: {
     backgroundColor: 'rgba(248, 139, 48, 0.2) !important',

@@ -1,13 +1,12 @@
 import React, { FC } from 'react';
-import useStyles from './styles';
-import icon from '~/images/inferno_icon.png';
 import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
-import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import { Menu, NoteAdd } from '@mui/icons-material';
 import { getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice } from '~/models/testSuiteModels';
-
 import { useAppStore } from '~/store/app';
+import useStyles from './styles';
+import icon from '~/images/inferno_icon.png';
 
 export interface HeaderProps {
   suiteTitle?: string;
@@ -40,16 +39,20 @@ const Header: FC<HeaderProps> = ({
   return suiteTitle ? (
     <AppBar color="default" className={styles.appbar}>
       <Toolbar className={styles.toolbar}>
-        <Box display="flex" overflow="hidden">
+        {windowIsSmall ? (
           <IconButton
-            size="small"
+            size="large"
             edge="start"
+            color="secondary"
             aria-label="menu"
-            disabled={!windowIsSmall}
             onClick={() => toggleDrawer(!drawerOpen)}
           >
-            <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
+            <Menu fontSize="inherit" />
           </IconButton>
+        ) : (
+          <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
+        )}
+        <Box display="flex" flexGrow="1" overflow="hidden">
           <Box
             display="flex"
             alignItems="baseline"
@@ -69,13 +72,14 @@ const Header: FC<HeaderProps> = ({
             )}
           </Box>
         </Box>
+
         <Box display="flex" minWidth="fit-content" pl={2}>
           <Button
             disableElevation
             color="secondary"
             size="small"
             variant="contained"
-            startIcon={<NoteAddIcon />}
+            startIcon={<NoteAdd />}
             onClick={returnHome}
           >
             New Session

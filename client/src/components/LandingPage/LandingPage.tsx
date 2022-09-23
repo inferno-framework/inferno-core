@@ -64,10 +64,15 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       maxWidth="lg"
       role="main"
       className={styles.main}
-      sx={{
-        maxHeight: windowIsSmall ? 'none' : '100vh',
-        py: windowIsSmall ? 0 : 10,
-      }}
+      sx={
+        !windowIsSmall
+          ? {
+              height: '100%',
+              maxHeight: '100vh',
+              py: 10,
+            }
+          : {}
+      }
     >
       <Box
         display="flex"
@@ -83,13 +88,23 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             variant="h2"
             component="h1"
             align="center"
-            sx={{ color: lightTheme.palette.common.orangeDarker }}
+            sx={{
+              color: lightTheme.palette.common.orangeDarker,
+              fontSize: windowIsSmall ? '2rem' : 'auto',
+            }}
           >
             FHIR Testing with Inferno
           </Typography>
         </Box>
         <Box mb={2} alignItems="center" maxWidth="600px">
-          <Typography variant="h5" component="h2" align="center">
+          <Typography
+            variant="h5"
+            component="h2"
+            align="center"
+            sx={{
+              fontSize: windowIsSmall ? '1.2rem' : 'auto',
+            }}
+          >
             Test your server's conformance to authentication, authorization, and FHIR content
             standards.
           </Typography>
@@ -97,9 +112,14 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         <Paper
           elevation={4}
           className={styles.optionsList}
-          sx={{ width: windowIsSmall ? 'auto' : '400px' }}
+          sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
         >
-          <Typography variant="h4" component="h2" align="center">
+          <Typography
+            variant="h4"
+            component="h2"
+            align="center"
+            sx={{ fontSize: windowIsSmall ? '1.8rem' : 'auto' }}
+          >
             Test Suites
           </Typography>
           <Box overflow="auto">
