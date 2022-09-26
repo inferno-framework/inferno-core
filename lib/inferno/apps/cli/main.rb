@@ -1,5 +1,6 @@
 require_relative 'console'
 require_relative 'migration'
+require_relative 'services'
 require_relative 'suite'
 require_relative 'suites'
 
@@ -16,10 +17,18 @@ module Inferno
         Migration.new.run
       end
 
+      desc 'start', 'Start Inferno'
+      def start
+        system 'foreman start --env=/dev/null'
+      end
+
       desc 'suites', 'List available test suites'
       def suites
         Suites.new.run
       end
+
+      desc 'services stop/start', 'Start or stop background services'
+      subcommand 'services', Services
 
       desc 'suite SUBCOMMAND ...ARGS', 'Perform suite-based operations'
       subcommand 'suite', Suite
