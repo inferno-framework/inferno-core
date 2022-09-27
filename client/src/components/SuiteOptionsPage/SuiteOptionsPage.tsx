@@ -153,7 +153,11 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       >
         {/* Description */}
         {/* TODO: Update to scale with width and stop using hardcoded values */}
-        <Box maxHeight="100%" overflow="auto" sx={{ maxWidth: windowIsSmall ? 'none' : '568px' }}>
+        <Box
+          maxHeight={windowIsSmall ? 'none' : '100%'}
+          maxWidth={windowIsSmall ? 'none' : '568px'}
+          overflow="auto"
+        >
           <Typography variant="h6" component="h2" px={2} sx={{ wordBreak: 'break-word' }}>
             <ReactMarkdown>
               {testSuite?.suite_summary || testSuite?.description || ''}

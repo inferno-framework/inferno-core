@@ -302,20 +302,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   }
 
-  const bannerHeight = () => {
-    const bannerElementHeight = document.getElementsByClassName('banner')[0]?.clientHeight;
-    if (bannerElementHeight === undefined || bannerElementHeight === null) {
-      return 0;
-    }
-
-    return bannerElementHeight;
-  };
-
   return (
-    <Box
-      className={styles.testSuiteMain}
-      maxHeight={`calc(100vh - 64px - 56px - ${bannerHeight()}px)`}
-    >
+    <Box className={styles.testSuiteMain}>
       {renderTestRunProgressBar()}
       {windowIsSmall ? (
         <SwipeableDrawer
@@ -327,7 +315,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           disableSwipeToOpen={false}
           ModalProps={{
             keepMounted: true,
+            BackdropProps: { classes: { root: styles.swipeableDrawerHeight } },
           }}
+          PaperProps={{ elevation: 0 }}
+          classes={{ paper: styles.swipeableDrawerHeight }}
         >
           {/* Spacer to be updated with header height */}
           <Toolbar sx={{ minHeight: '64px' }} />
