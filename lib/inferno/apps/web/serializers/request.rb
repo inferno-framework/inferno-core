@@ -3,7 +3,8 @@ module Inferno
     module Serializers
       class Request < Serializer
         view :summary do
-          field :id
+          identifier :id
+          field :index
           field :created_at, name: :timestamp
           field :verb
           field :url

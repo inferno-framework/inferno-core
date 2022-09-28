@@ -382,7 +382,11 @@ module Inferno
       def test_count(selected_suite_options = [])
         @test_counts ||= {}
 
-        @test_counts[selected_suite_options] ||=
+        options_json = selected_suite_options.to_json
+
+        return @test_counts[options_json] if @test_counts[options_json]
+
+        @test_counts[options_json] =
           children(selected_suite_options)
             &.reduce(0) { |sum, child| sum + child.test_count(selected_suite_options) } || 0
       end

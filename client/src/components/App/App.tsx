@@ -49,9 +49,9 @@ const App: FC<unknown> = () => {
     }
   }, [testSuites]);
 
-  function handleResize() {
+  const handleResize = () => {
     setWindowIsSmall(window.innerWidth < 1000);
-  }
+  };
 
   if (!testSuites || (testSuites.length === 1 && !testSession)) {
     return <></>;

@@ -448,6 +448,7 @@ definitions:
     type: "object"
     required:
     - "id"
+    - "index"
     - "created_at"
     - "verb"
     - "url"
@@ -456,6 +457,8 @@ definitions:
     properties:
       id:
         type: "string"
+      index:
+        type: "integer"
       created_at:
         type: "string"
       verb:
@@ -473,6 +476,7 @@ definitions:
     type: "object"
     required:
     - "id"
+    - "index"
     - "created_at"
     - "verb"
     - "url"
@@ -481,6 +485,8 @@ definitions:
     properties:
       id:
         type: "string"
+      index:
+        type: "integer"
       created_at:
         type: "string"
       verb:

@@ -303,12 +303,19 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   }
 
-  const bannerHeight = document.getElementsByClassName('banner')[0]?.clientHeight;
+  const bannerHeight = () => {
+    const bannerElementHeight = document.getElementsByClassName('banner')[0]?.clientHeight;
+    if (bannerElementHeight === undefined || bannerElementHeight === null) {
+      return 0;
+    }
+
+    return bannerElementHeight;
+  };
 
   return (
     <Box
       className={styles.testSuiteMain}
-      maxHeight={`calc(100vh - 64px - 56px - ${bannerHeight}px)`}
+      maxHeight={`calc(100vh - 64px - 56px - ${bannerHeight()}px)`}
     >
       {renderTestRunProgressBar()}
       {windowIsSmall ? (
