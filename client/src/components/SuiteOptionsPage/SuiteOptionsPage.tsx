@@ -63,6 +63,12 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
     }
   };
 
+  const getDescriptionWidth = () => {
+    if (windowIsSmall) return '100%';
+    else if (descriptionIsTall) return 'unset';
+    else return `${minDescriptionWidth}px`;
+  };
+
   function changeSuiteOption(option_id: string, value: string): void {
     const newOptions: SuiteOption[] = selectedSuiteOptions.map((option) =>
       option.id === option_id ? { id: option.id, value: value } : { ...option }
@@ -171,7 +177,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
           id="description-container"
           display={!windowIsSmall && descriptionIsTall ? 'flex' : ''}
           flex={!windowIsSmall && descriptionIsTall ? '1 1 0' : ''}
-          maxWidth={!descriptionIsTall ? `${minDescriptionWidth}px` : 'unset'}
+          maxWidth={getDescriptionWidth()}
           maxHeight={windowIsSmall ? 'none' : '100%'}
           overflow="auto"
           ml={3}
