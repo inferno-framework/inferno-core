@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   FormControl,
   FormControlLabel,
@@ -30,22 +30,38 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const styles = useStyles();
   const history = useHistory();
-
   const { test_suite_id } = useParams<{ test_suite_id: string }>();
-
   const testSuite = testSuites?.find((suite: TestSuite) => suite.id === test_suite_id);
-
-  // just grab the first to start
-  // perhaps choices should be persisted in the URL to make it easy to share specific
-  // options
   const initialSelectedSuiteOptions = testSuite?.suite_options?.map((option) => ({
+    // just grab the first to start
+    // perhaps choices should be persisted in the URL to make it easy to share specific options
     id: option.id,
     value: option && option.list_options && option.list_options[0].value,
   }));
-
   const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(
     initialSelectedSuiteOptions || []
   );
+  const [descriptionIsTall, setDescriptionIsTall] = React.useState<boolean>(false);
+  const [minDescriptionWidth, setMinDescriptionWidth] = React.useState<number>(0);
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+  });
+
+  useEffect(() => {
+    handleResize();
+  }, []);
+
+  // Update description width on window resize
+  const handleResize = () => {
+    const description = document.getElementById('description-container');
+    const selectionPanel = document.getElementById('selection-panel');
+    if (!windowIsSmall && description) {
+      setDescriptionIsTall(description.scrollHeight > description.clientHeight);
+      // Minimum width if !windowIsSmall (minimum window width is 1000)
+      setMinDescriptionWidth(1000 - (selectionPanel?.clientWidth || 0));
+    }
+  };
 
   function changeSuiteOption(option_id: string, value: string): void {
     const newOptions: SuiteOption[] = selectedSuiteOptions.map((option) =>
@@ -93,7 +109,6 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
         </FormLabel>
 
         <RadioGroup
-          row
           aria-label={`suite-option-group-${suiteOption.id}`}
           defaultValue={
             suiteOption.list_options &&
@@ -149,8 +164,16 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
         sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4, mb: 8, overflow: 'hidden' }}
       >
         {/* Description */}
-        {/* TODO: Update to scale with width and stop using hardcoded values */}
-        <Box maxHeight="100%" overflow="auto" sx={{ maxWidth: windowIsSmall ? 'none' : '568px' }}>
+        <Box
+          id="description-container"
+          display={!windowIsSmall && descriptionIsTall ? 'flex' : ''}
+          flex={!windowIsSmall && descriptionIsTall ? '1 1 0' : ''}
+          maxWidth={!descriptionIsTall ? `${minDescriptionWidth}px` : 'unset'}
+          maxHeight="100%"
+          overflow="auto"
+          ml={3}
+          my={3}
+        >
           <Typography
             variant="h6"
             component="h2"
@@ -165,7 +188,14 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
           </Typography>
         </Box>
         {/* Selection panel */}
-        <Box display="flex" justifyContent="center" maxHeight="100%" overflow="auto" p={2}>
+        <Box
+          display="flex"
+          justifyContent="center"
+          maxHeight="100%"
+          overflow="auto"
+          id="selection-panel"
+          p={3}
+        >
           <Paper
             elevation={4}
             className={styles.optionsList}
