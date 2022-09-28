@@ -23,7 +23,7 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
     <Box margin={2}>
       {messages.length > 0 ? (
         messages.map((message, index) => (
-          <Card key={index} variant="outlined" sx={{ padding: '0 16px', margin: '16px 0' }}>
+          <Card key={index} variant="outlined" sx={{ px: 2, my: 2, overflow: 'auto' }}>
             <ReactMarkdown>{message.message}</ReactMarkdown>
           </Card>
         ))

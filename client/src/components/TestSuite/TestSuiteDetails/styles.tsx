@@ -91,6 +91,7 @@ export default makeStyles((theme: Theme) => ({
   },
   nestedDescription: {
     padding: '8px 16px 24px 16px',
+    overflow: 'auto',
   },
   nestedDescriptionHeader: {
     fontWeight: 'bolder !important',
