@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import ThemeProvider from 'components/ThemeProvider';
 import Header from '../Header';
 
@@ -12,12 +13,12 @@ beforeEach(() => {
   const { result } = renderHook(() => useAppStore((state) => state));
 
   act(() => {
-    result.current.windowIsSmall = false;
+    result.current.windowIsSmall = true;
   });
 });
 
-test('renders wide screen Inferno Header', () => {
-  let drawerOpen = true;
+test('renders narrow screen Inferno Header', () => {
+  let drawerOpen = false;
 
   render(
     <ThemeProvider>
@@ -29,9 +30,11 @@ test('renders wide screen Inferno Header', () => {
     </ThemeProvider>
   );
 
-  const logoElement = screen.getByRole('img');
-  expect(logoElement).toHaveAttribute('alt', 'Inferno logo');
+  const buttonElement = screen.getAllByRole('button')[0];
+  expect(buttonElement).toHaveAttribute('aria-label', 'menu');
 
-  const titleElement = screen.getByRole('heading');
-  expect(titleElement).toHaveTextContent('Suite Title');
+  // test icon drawer control
+  expect(drawerOpen).toBe(false);
+  userEvent.click(buttonElement);
+  expect(drawerOpen).toBe(true);
 });
