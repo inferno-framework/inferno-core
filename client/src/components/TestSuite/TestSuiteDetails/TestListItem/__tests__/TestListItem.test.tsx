@@ -31,7 +31,7 @@ describe('The TestListItem component', () => {
       </ThemeProvider>
     );
 
-    const accordion = screen.getByTitle('test_id-summary');
+    const accordion = screen.getByTestId('test_id-summary');
     fireEvent.click(accordion);
 
     const aboutTab = screen.getByRole('tab', { name: 'About' });

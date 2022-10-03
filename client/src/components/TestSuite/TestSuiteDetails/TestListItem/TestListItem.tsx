@@ -1,30 +1,16 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useEffect } from 'react';
 import useStyles from './styles';
 import {
   Box,
   Divider,
-  ListItem,
   ListItemText,
-  Tab,
-  Tabs,
   Typography,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Card,
-  Tooltip,
 } from '@mui/material';
-import {
-  RunnableType,
-  Test,
-  Request,
-  ViewType,
-  Message,
-  TestInput,
-  TestOutput,
-} from '~/models/testSuiteModels';
-import TabPanel from './TabPanel';
-import InputOutputsList from './InputOutputsList';
+import { RunnableType, Test, Request, ViewType } from '~/models/testSuiteModels';
 import MessagesList from './MessagesList';
 import RequestsList from './RequestsList';
 import ResultIcon from '../ResultIcon';
@@ -35,24 +21,18 @@ import Warning from '@mui/icons-material/Warning';
 import Info from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
-import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
 import type { MessageCounts } from './helper';
 import { countMessageTypes } from './helper';
-import lightTheme from 'styles/theme';
+import TestRunDetail from './TestRunDetail';
 
 interface TestListItemProps {
   test: Test;
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
   testRunInProgress: boolean;
+  showReportDetails?: boolean;
   view: ViewType;
-}
-
-interface TabProps {
-  label: string;
-  value: Message[] | Request[] | TestInput[] | TestOutput[] | string | null | undefined;
 }
 
 const TestListItem: FC<TestListItemProps> = ({
@@ -60,31 +40,18 @@ const TestListItem: FC<TestListItemProps> = ({
   runTests,
   updateRequest,
   testRunInProgress,
+  showReportDetails = false,
   view,
 }) => {
   const styles = useStyles();
+  const messagesExist = !!test.result?.messages && test.result?.messages.length > 0;
+  const requestsExist = !!test.result?.requests && test.result?.requests.length > 0;
   const [open, setOpen] = React.useState(false);
-  const [panelIndex, setPanelIndex] = React.useState(0);
-  const tabs: TabProps[] = [
-    { label: 'Messages', value: test.result?.messages },
-    { label: 'Requests', value: test.result?.requests },
-    { label: 'Inputs', value: test.result?.inputs },
-    { label: 'Outputs', value: test.result?.outputs },
-    { label: 'About', value: test.description },
-  ];
+  const [tabIndex, setTabIndex] = React.useState(0);
 
   useEffect(() => {
-    // Set active tab to first tab with data
-    // If no tabs have data, set to About
-    let panelIndex = 0;
-    const disableableTabs = tabs.filter((tab) => tab.label !== 'About');
-    for (let i = 0; i < disableableTabs.length; i++) {
-      const content = disableableTabs[i].value;
-      if (!content || content?.length === 0) panelIndex++;
-      else break;
-    }
-    setPanelIndex(panelIndex);
-  }, [test.result]);
+    setOpen(view === 'report' && showReportDetails && (messagesExist || requestsExist));
+  }, [showReportDetails]);
 
   const resultIcon = (
     <Box display="inline-flex">
@@ -136,7 +103,7 @@ const TestListItem: FC<TestListItemProps> = ({
           view={view}
           panelIndex={0}
           setOpen={setOpen}
-          setPanelIndex={setPanelIndex}
+          setPanelIndex={setTabIndex}
         />
       );
 
@@ -151,7 +118,7 @@ const TestListItem: FC<TestListItemProps> = ({
           view={view}
           panelIndex={0}
           setOpen={setOpen}
-          setPanelIndex={setPanelIndex}
+          setPanelIndex={setTabIndex}
         />
       );
 
@@ -166,7 +133,7 @@ const TestListItem: FC<TestListItemProps> = ({
           view={view}
           panelIndex={0}
           setOpen={setOpen}
-          setPanelIndex={setPanelIndex}
+          setPanelIndex={setTabIndex}
         />
       );
   };
@@ -181,7 +148,7 @@ const TestListItem: FC<TestListItemProps> = ({
       view={view}
       panelIndex={1}
       setOpen={setOpen}
-      setPanelIndex={setPanelIndex}
+      setPanelIndex={setTabIndex}
     />
   );
 
@@ -196,52 +163,25 @@ const TestListItem: FC<TestListItemProps> = ({
     </Box>
   );
 
-  const testDescription: JSX.Element = (
-    <ListItem>
-      <Typography variant="subtitle2" component="div">
-        {useMemo(
-          () => (
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{test.description || ''}</ReactMarkdown>
-          ),
-          [test.description]
-        )}
-      </Typography>
-    </ListItem>
+  const reportDetails = (
+    <>
+      {messagesExist && (
+        <Card sx={requestsExist ? { mb: 2 } : {}}>
+          <MessagesList messages={test.result?.messages || []} />
+        </Card>
+      )}
+      {updateRequest && requestsExist && (
+        <Card>
+          <RequestsList
+            requests={test.result?.requests || []}
+            resultId={test.result?.id || ''}
+            updateRequest={updateRequest}
+            view="report"
+          />
+        </Card>
+      )}
+    </>
   );
-
-  const renderTab = (tab: TabProps, index: number) => {
-    const darkTabText = {
-      '&.Mui-selected': {
-        color: lightTheme.palette.common.orangeDarker,
-      },
-    };
-
-    if ((!tab.value || tab.value.length === 0) && tab.label !== 'About') {
-      return (
-        <Tab
-          key={`${tab.label}-${index}`}
-          label={
-            <Tooltip title={`No ${tab.label.toLowerCase()} available`}>
-              <Typography>{tab.label}</Typography>
-            </Tooltip>
-          }
-          {...a11yProps(index)}
-          disabled
-          sx={darkTabText}
-          style={{ pointerEvents: 'auto' }}
-        />
-      );
-    }
-
-    return (
-      <Tab key={`${tab.label}-${index}`} label={tab.label} {...a11yProps(index)} sx={darkTabText} />
-    );
-  };
-
-  const a11yProps = (index: number) => ({
-    id: `${test.id}-tab-${index}`,
-    'aria-controls': `${test.id}-tabpanel-${index}`,
-  });
 
   return (
     <>
@@ -255,7 +195,7 @@ const TestListItem: FC<TestListItemProps> = ({
       >
         <AccordionSummary
           id={`${test.id}-summary`}
-          title={`${test.id}-summary`}
+          data-testid={`${test.id}-summary`}
           aria-controls={`${test.id}-detail`}
           role={view === 'report' ? 'region' : 'button'}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
@@ -280,56 +220,10 @@ const TestListItem: FC<TestListItemProps> = ({
           className={styles.accordionDetailContainer}
           onClick={(e) => e.stopPropagation()}
         >
-          <Card>
-            <Tabs
-              value={panelIndex}
-              variant="scrollable"
-              className={styles.tabs}
-              onChange={(e, newIndex: number) => {
-                setPanelIndex(newIndex);
-              }}
-            >
-              {tabs.map((tab, i) => renderTab(tab, i))}
-            </Tabs>
-            <Divider />
-            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={0}>
-              <MessagesList messages={test.result?.messages || []} />
-            </TabPanel>
-            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={1}>
-              {updateRequest && (
-                <RequestsList
-                  requests={test.result?.requests || []}
-                  resultId={test.result?.id || ''}
-                  updateRequest={updateRequest}
-                />
-              )}
-            </TabPanel>
-            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={2}>
-              <InputOutputsList
-                inputOutputs={test.result?.inputs || []}
-                noValuesMessage="No Inputs"
-                headerName="Input"
-              />
-            </TabPanel>
-            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={3}>
-              <InputOutputsList
-                inputOutputs={test.result?.outputs || []}
-                noValuesMessage="No Outputs"
-                headerName="Output"
-              />
-            </TabPanel>
-            <TabPanel id={test.id} currentPanelIndex={panelIndex} index={4}>
-              {shouldShowDescription(test, testDescription) ? (
-                testDescription
-              ) : (
-                <Box p={2}>
-                  <Typography variant="subtitle2" component="p">
-                    No Description
-                  </Typography>
-                </Box>
-              )}
-            </TabPanel>
-          </Card>
+          {view === 'run' && (
+            <TestRunDetail test={test} currentTabIndex={tabIndex} updateRequest={updateRequest} />
+          )}
+          {view === 'report' && showReportDetails && reportDetails}
         </AccordionDetails>
       </Accordion>
     </>

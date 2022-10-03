@@ -85,6 +85,9 @@ export default makeStyles((theme: Theme) => ({
   accordionDetailContainer: {
     backgroundColor: theme.palette.common.grayLighter,
     padding: '16px',
+    '@media print': {
+      padding: '0 16px',
+    },
   },
   resultMessageMarkdown: {
     '& > *': {

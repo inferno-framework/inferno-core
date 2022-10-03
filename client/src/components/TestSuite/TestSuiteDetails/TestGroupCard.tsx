@@ -33,8 +33,8 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
 
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
 
-  return (
-    <Card variant="outlined" sx={{ mb: 3 }}>
+  const renderHeader = () => {
+    return (
       <Box className={styles.testGroupCardHeader}>
         {runnable.result && <ResultIcon result={runnable.result} />}
         <span className={styles.testGroupCardHeaderText}>
@@ -57,19 +57,32 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
           )}
         </span>
       </Box>
-      <Divider />
-      {view === 'run' && shouldShowDescription(runnable, description) && (
+    );
+  };
+
+  const renderDescription = () => {
+    if (shouldShowDescription(runnable, description)) {
+      return (
         <>
           <Box m={2.5}>{description}</Box>
           <Divider />
         </>
-      )}
-      {view === 'report' &&
-        runnable.run_as_group &&
-        (runnable as TestGroup).user_runnable &&
-        runnable.result && (
-          <InputOutputsList headerName="Input" inputOutputs={runnable.result?.inputs || []} />
-        )}
+      );
+    }
+  };
+
+  const renderInputOutputs = () => {
+    if ((runnable as TestGroup).user_runnable && runnable.result && runnable.run_as_group) {
+      return <InputOutputsList headerName="Input" inputOutputs={runnable.result?.inputs || []} />;
+    }
+  };
+
+  return (
+    <Card variant="outlined" sx={{ mb: 3 }}>
+      {renderHeader()}
+      <Divider />
+      {view === 'run' && renderDescription()}
+      {view === 'report' && renderInputOutputs()}
       <Box>{children}</Box>
     </Card>
   );
