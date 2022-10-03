@@ -46,6 +46,9 @@ export default makeStyles((theme: Theme) => ({
   },
   testGroupCardHeaderButton: {
     minWidth: 'fit-content',
+    '@media print': {
+      display: 'none',
+    },
   },
   descriptionPanel: {
     padding: '16px',
@@ -69,9 +72,9 @@ export default makeStyles((theme: Theme) => ({
     userSelect: 'auto',
     '@media print': {
       minHeight: 'unset',
-      '& .MuiAccordionSummary-content': {
-        margin: 0,
-      },
+    },
+    '& .MuiAccordionSummary-content': {
+      margin: 0,
     },
   },
   accordionDetailContainer: {
@@ -99,11 +102,6 @@ export default makeStyles((theme: Theme) => ({
   nestedDescriptionContainer: {
     backgroundColor: theme.palette.common.grayLighter,
     padding: '8px 0',
-  },
-  printButton: {
-    '@media print': {
-      display: 'none',
-    },
   },
   alert: {
     marginBottom: '8px',

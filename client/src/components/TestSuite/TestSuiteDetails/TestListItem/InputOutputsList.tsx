@@ -54,7 +54,7 @@ const InputsOutputsList: FC<InputOutputsListProps> = ({
 
   const output =
     inputOutputs.length > 0 ? (
-      <Table>
+      <Table size="small">
         <TableHead>{inputOutputsListHeader}</TableHead>
         <TableBody>{inputOutputsListItems}</TableBody>
       </Table>
