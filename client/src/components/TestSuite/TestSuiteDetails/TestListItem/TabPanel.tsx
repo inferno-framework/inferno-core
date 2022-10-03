@@ -4,19 +4,19 @@ import lightTheme from 'styles/theme';
 interface TabPanelProps {
   id: string;
   index: number;
-  currentPanelIndex: number;
+  currentTabIndex: number;
 }
 
-const TabPanel: FC<TabPanelProps> = ({ id, index, currentPanelIndex, children }) => {
+const TabPanel: FC<TabPanelProps> = ({ id, index, currentTabIndex, children }) => {
   return (
     <div
       role="tabpanel"
-      hidden={currentPanelIndex !== index}
+      hidden={currentTabIndex !== index}
       id={`${id}-tabpanel-${index}`}
       aria-labelledby={`${id}-tab-${index}`}
       style={{ overflow: 'auto', backgroundColor: lightTheme.palette.common.white }}
     >
-      {currentPanelIndex === index && <div>{children}</div>}
+      {currentTabIndex === index && <div>{children}</div>}
     </div>
   );
 };

@@ -12,7 +12,7 @@ interface ConfigDetailsPanelProps {
 
 const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: runnable }) => {
   const styles = useStyles();
-  const [panelIndex, setPanelIndex] = React.useState(0);
+  const [tabIndex, setTabIndex] = React.useState(0);
 
   const messages = runnable.configuration_messages || [];
   const errorMessages = messages.filter((message) => message.type === 'error');
@@ -62,9 +62,9 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
       </Box>
       <Tabs
         aria-label="config-messages-tabs"
-        value={panelIndex}
+        value={tabIndex}
         onChange={(e, newIndex: number) => {
-          setPanelIndex(newIndex);
+          setTabIndex(newIndex);
         }}
         variant="fullWidth"
       >
@@ -85,13 +85,13 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
         />
       </Tabs>
       <Divider />
-      <TabPanel id="errors" currentPanelIndex={panelIndex} index={0}>
+      <TabPanel id="errors" currentTabIndex={tabIndex} index={0}>
         {tabContent(errorMessages)}
       </TabPanel>
-      <TabPanel id="warnings" currentPanelIndex={panelIndex} index={1}>
+      <TabPanel id="warnings" currentTabIndex={tabIndex} index={1}>
         {tabContent(warningMessages)}
       </TabPanel>
-      <TabPanel id="info" currentPanelIndex={panelIndex} index={2}>
+      <TabPanel id="info" currentTabIndex={tabIndex} index={2}>
         {tabContent(infoMessages)}
       </TabPanel>
     </Card>

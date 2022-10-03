@@ -14,7 +14,7 @@ describe('The RequestsList component', () => {
 
     render(
       <ThemeProvider>
-        <RequestsList requests={requests} resultId="abc" updateRequest={() => {}} />
+        <RequestsList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
       </ThemeProvider>
     );
 

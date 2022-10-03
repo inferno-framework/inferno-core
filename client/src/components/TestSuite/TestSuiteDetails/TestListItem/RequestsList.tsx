@@ -21,12 +21,16 @@ interface RequestsListProps {
   resultId: string;
   requests: Request[];
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
+  view: 'report' | 'run';
 }
 
-const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest }) => {
+const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest, view }) => {
   const [showDetails, setShowDetails] = React.useState(false);
   const [detailedRequest, setDetailedRequest] = React.useState<Request>();
-  const headerTitles = ['Direction', 'Type', 'URL', 'Status', ''];
+  const headerTitles =
+    view === 'run'
+      ? ['Direction', 'Type', 'URL', 'Status', 'Details']
+      : ['Direction', 'Type', 'URL', 'Status'];
   const styles = useStyles();
 
   const showDetailsClick = (request: Request) => {
@@ -115,7 +119,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
             {request.status}
           </Typography>
         </TableCell>
-        <TableCell>{renderDetailsButton(request)}</TableCell>
+        {view === 'run' && <TableCell>{renderDetailsButton(request)}</TableCell>}
       </TableRow>
     ));
 
@@ -123,7 +127,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
     <>
       {requests.length > 0 ? (
         <TableContainer>
-          <Table className={styles.table}>
+          <Table size="small" className={styles.table}>
             <TableHead>{requestListHeader}</TableHead>
             <TableBody>{requestListItems}</TableBody>
           </Table>
