@@ -45,12 +45,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   const [minDescriptionWidth, setMinDescriptionWidth] = React.useState<number>(0);
 
   useEffect(() => {
-    window.addEventListener('resize', handleResize);
-  });
-
-  useEffect(() => {
     handleResize();
-  }, []);
+  });
 
   // Update description width on window resize
   const handleResize = () => {

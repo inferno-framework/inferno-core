@@ -8,6 +8,7 @@ import { getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice } from '~/models/testSuiteModels';
 
 import { useAppStore } from '~/store/app';
+import lightTheme from '~/styles/theme';
 
 export interface HeaderProps {
   suiteTitle?: string;
@@ -34,7 +35,7 @@ const Header: FC<HeaderProps> = ({
 
   const suiteOptionsString =
     suiteOptions && suiteOptions.length > 0
-      ? ` - ${suiteOptions.map((option) => option.label).join(', ')}`
+      ? `${suiteOptions.map((option) => option.label).join(', ')}`
       : '';
 
   return suiteTitle ? (
@@ -50,23 +51,30 @@ const Header: FC<HeaderProps> = ({
           >
             <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
           </IconButton>
-          <Box
-            display="flex"
-            alignItems="baseline"
-            alignSelf="center"
-            overflow="auto"
-            pt={0.5}
-            tabIndex={0}
-          >
-            <Typography variant="h5" component="h1" className={styles.title}>
-              {suiteTitle}
+          <Box alignSelf="center" overflow="auto" py={0.5} tabIndex={0}>
+            <Box display="flex" flexDirection="row" alignItems="baseline">
+              <Typography
+                variant="h5"
+                component="h1"
+                className={styles.title}
+                color={lightTheme.palette.common.orangeDarker}
+              >
+                {suiteTitle}
+              </Typography>
+              {suiteVersion && (
+                <Typography variant="overline" className={styles.version}>
+                  {`v.${suiteVersion}`}
+                </Typography>
+              )}
+            </Box>
+            <Typography
+              variant="subtitle2"
+              component="h2"
+              className={styles.title}
+              color={lightTheme.palette.common.gray}
+            >
               {suiteOptionsString}
             </Typography>
-            {suiteVersion && (
-              <Typography variant="overline" className={styles.version}>
-                {`v.${suiteVersion}`}
-              </Typography>
-            )}
           </Box>
         </Box>
         <Box display="flex" minWidth="fit-content" pl={2}>
