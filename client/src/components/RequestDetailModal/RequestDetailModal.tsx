@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  IconButton,
   Tooltip,
   Typography,
 } from '@mui/material';
@@ -13,6 +14,7 @@ import CodeBlock from './CodeBlock';
 import HeaderTable from './HeaderTable';
 import useStyles from './styles';
 import InputIcon from '@mui/icons-material/Input';
+import { ContentCopy } from '@mui/icons-material';
 
 export interface RequestDetailModalProps {
   request?: Request;
@@ -27,7 +29,17 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
   modalVisible,
   usedRequest,
 }) => {
+  const [copySuccess, setCopySuccess] = React.useState(false);
   const styles = useStyles();
+
+  const copyTextClick = async (text: string) => {
+    await navigator.clipboard.writeText(text).then(() => {
+      setCopySuccess(true);
+      setTimeout(() => {
+        setCopySuccess(false);
+      }, 2000); // 2 second delay
+    });
+  };
 
   const usedRequestIcon = (
     <Tooltip title="This request was performed in another test and the result is used by this test">
@@ -50,6 +62,15 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
           <Box pr={1} className={styles.modalTitleURL}>
             {request?.url}
           </Box>
+          {request?.url && (
+            <Tooltip open={copySuccess} title="Text copied!">
+              <Box pr={1}>
+                <IconButton color="secondary" onClick={() => void copyTextClick(request.url)}>
+                  <ContentCopy fontSize="inherit" />
+                </IconButton>
+              </Box>
+            </Tooltip>
+          )}
           <Box display="flex" flexShrink={0}>
             &#8594; {request?.status}
           </Box>

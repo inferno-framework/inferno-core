@@ -23,16 +23,23 @@ If you are interested in developing tests using Inferno Core, use the [Inferno
 Template Repository](https://github.com/inferno-framework/inferno-template).
 These instructions are for developers working on Inferno Core itself.
 
+## Running Inferno Core
 ```
 # Install dependencies
 npm install
 bundle install
+gem install foreman
 
 # Set up database
 bundle exec bin/inferno migrate
 
-# Start Inferno Core server and UI
-npm run dev
+# Start Inferno background services (validator, redis, nginx)
+bin/inferno services start
+# Start web server, worker, and webpack
+bin/inferno start
+
+# When you're done, stop the background services
+bin/inferno services stop
 ```
 
 Inferno Core can then be accessed by navigating to

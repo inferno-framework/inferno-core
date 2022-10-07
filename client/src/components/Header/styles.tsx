@@ -32,7 +32,6 @@ export default makeStyles((theme: Theme) => ({
     padding: '0 8px',
     whiteSpace: 'nowrap',
     fontWeight: 600,
-    color: theme.palette.common.orangeDarker,
   },
   version: {
     fontStyle: 'italic',

@@ -1,5 +1,8 @@
 import React, { FC } from 'react';
 import {
+  Box,
+  Button,
+  IconButton,
   Typography,
   TableRow,
   TableCell,
@@ -8,14 +11,13 @@ import {
   TableBody,
   Tooltip,
   TableHead,
-  Box,
-  Button,
 } from '@mui/material';
 import InputIcon from '@mui/icons-material/Input';
 import { Request } from '~/models/testSuiteModels';
 import RequestDetailModal from '~/components/RequestDetailModal/RequestDetailModal';
 import { getRequestDetails } from '~/api/RequestsApi';
 import useStyles from './styles';
+import { ContentCopy } from '@mui/icons-material';
 
 interface RequestsListProps {
   resultId: string;
@@ -26,6 +28,7 @@ interface RequestsListProps {
 
 const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest, view }) => {
   const [showDetails, setShowDetails] = React.useState(false);
+  const [copySuccess, setCopySuccess] = React.useState({});
   const [detailedRequest, setDetailedRequest] = React.useState<Request>();
   const headerTitles =
     view === 'run'
@@ -52,6 +55,16 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
       setDetailedRequest(request);
       setShowDetails(true);
     }
+  };
+
+  const copyTextClick = async (text: string) => {
+    await navigator.clipboard.writeText(text).then(() => {
+      setCopySuccess({ ...copySuccess, [text]: true });
+      setTimeout(() => {
+        // Reset map instead of setting false to avoid async bug
+        setCopySuccess({});
+      }, 2000); // 2 second delay
+    });
   };
 
   const renderReferenceIcon = (request: Request) => {
@@ -108,11 +121,25 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
           </Box>
         </TableCell>
         <TableCell className={styles.requestUrlContainer}>
-          <Tooltip title={request.url} placement="bottom-start">
-            <Typography variant="subtitle2" component="p" className={styles.requestUrl}>
-              {request.url}
-            </Typography>
-          </Tooltip>
+          <Box display="flex" alignItems="center">
+            <Tooltip title={request.url} placement="bottom-start">
+              <Typography variant="subtitle2" component="p" className={styles.requestUrl}>
+                {request.url}
+              </Typography>
+            </Tooltip>
+            <Tooltip
+              open={copySuccess[request.url as keyof typeof copySuccess] || false}
+              title="Text copied!"
+            >
+              <IconButton
+                size="small"
+                color="secondary"
+                onClick={() => void copyTextClick(request.url)}
+              >
+                <ContentCopy fontSize="inherit" />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </TableCell>
         <TableCell>
           <Typography variant="subtitle2" component="p" className={styles.bolderText}>
