@@ -33,7 +33,7 @@ test('renders wide screen Inferno Header', () => {
   const logoElement = screen.getByRole('img');
   expect(logoElement).toHaveAttribute('alt', 'Inferno logo');
 
-  const titleElement = screen.getByRole('heading');
+  const titleElement = screen.getAllByRole('heading')[0];
   expect(titleElement).toHaveTextContent('Suite Title');
 });
 
