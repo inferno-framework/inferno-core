@@ -37,7 +37,7 @@ module Inferno
       #     test_session_id,
       #     test_id: 'test_id'
       #   )
-      def current_result_for_test_session(test_session_id, **params)
+      def current_result_for_test_session(test_session_id, params)
         self.class::Model
           .where({ test_session_id: test_session_id }.merge(params))
           .order(Sequel.desc(:updated_at))
