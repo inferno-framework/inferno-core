@@ -44,7 +44,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov', '0.21.2'
   spec.add_development_dependency 'webmock', '~> 3.11'
   spec.add_development_dependency 'yard', '0.9.26'
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
+  spec.required_ruby_version = Gem::Requirement.new('~> 3.0.4')
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/inferno-framework/inferno-core'
   spec.metadata['changelog_uri'] = 'https://github.com/inferno-framework/inferno-core/blob/main/CHANGELOG.md'

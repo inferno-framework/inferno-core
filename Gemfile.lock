@@ -309,7 +309,7 @@ DEPENDENCIES
   yard-junk
 
 RUBY VERSION
-   ruby 2.7.3p183
+   ruby 3.0.4p208
 
 BUNDLED WITH
-   2.3.14
+   2.3.23

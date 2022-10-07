@@ -37,7 +37,7 @@ module Inferno
               new_configuration
             end
 
-          self.configuration = configuration.deep_merge(config_to_apply.reject { |key, _| key == :inputs })
+          self.configuration = configuration.deep_merge(config_to_apply.except(:inputs))
 
           config_to_apply[:inputs]&.each do |identifier, new_input|
             add_input(identifier, new_input.to_hash)
