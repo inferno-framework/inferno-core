@@ -25,13 +25,17 @@ module Inferno
 
     configure do |config|
       config.root = File.expand_path('../../..', __dir__)
-      config.default_namespace = 'inferno'
+      # config.default_namespace = 'inferno'
       config.system_dir = File.join('lib', 'inferno', 'config')
       config.bootable_dirs = [File.join('lib', 'inferno', 'config', 'boot')]
 
-      config.auto_register = 'lib'
+      # config.auto_register = 'lib'
+      # config.component_dirs.add File.join('lib', 'inferno', 'apps', 'web') do |dir|
+      #   dir.default_namespace = 'inferno.web'
+      # end
+      config.component_dirs.add 'lib'
     end
 
-    load_paths!('lib')
+    # load_paths!('lib')
   end
 end
