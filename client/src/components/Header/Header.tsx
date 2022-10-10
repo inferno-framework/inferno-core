@@ -1,13 +1,12 @@
 import React, { FC } from 'react';
-import useStyles from './styles';
-import icon from '~/images/inferno_icon.png';
 import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
-import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import { Menu, NoteAdd } from '@mui/icons-material';
 import { getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice } from '~/models/testSuiteModels';
-
 import { useAppStore } from '~/store/app';
+import useStyles from './styles';
+import icon from '~/images/inferno_icon.png';
 import lightTheme from '~/styles/theme';
 
 export interface HeaderProps {
@@ -41,49 +40,60 @@ const Header: FC<HeaderProps> = ({
   return suiteTitle ? (
     <AppBar color="default" className={styles.appbar}>
       <Toolbar className={styles.toolbar}>
-        <Box display="flex" overflow="hidden">
+        {windowIsSmall ? (
           <IconButton
-            size="small"
+            size="large"
             edge="start"
+            color="secondary"
             aria-label="menu"
-            disabled={!windowIsSmall}
             onClick={() => toggleDrawer(!drawerOpen)}
           >
-            <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
+            <Menu fontSize="inherit" />
           </IconButton>
-          <Box alignSelf="center" overflow="auto" py={0.5} tabIndex={0}>
-            <Box display="flex" flexDirection="row" alignItems="baseline">
-              <Typography
-                variant="h5"
-                component="h1"
-                className={styles.title}
-                color={lightTheme.palette.common.orangeDarker}
-              >
-                {suiteTitle}
-              </Typography>
-              {suiteVersion && (
-                <Typography variant="overline" className={styles.version}>
-                  {`v.${suiteVersion}`}
-                </Typography>
-              )}
-            </Box>
+        ) : (
+          <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
+        )}
+        <Box
+          display="flex"
+          flexDirection="column"
+          flexGrow="1"
+          alignSelf="center"
+          overflow="auto"
+          py={0.5}
+          tabIndex={0}
+        >
+          <Box display="flex" flexDirection="row" alignItems="baseline">
             <Typography
-              variant="subtitle2"
-              component="h2"
+              variant="h5"
+              component="h1"
               className={styles.title}
-              color={lightTheme.palette.common.gray}
+              color={lightTheme.palette.common.orangeDarker}
             >
-              {suiteOptionsString}
+              {suiteTitle}
             </Typography>
+            {suiteVersion && (
+              <Typography variant="overline" className={styles.version}>
+                {`v.${suiteVersion}`}
+              </Typography>
+            )}
           </Box>
+          <Typography
+            variant="subtitle2"
+            component="h2"
+            className={styles.title}
+            color={lightTheme.palette.common.gray}
+          >
+            {suiteOptionsString}
+          </Typography>
         </Box>
+
         <Box display="flex" minWidth="fit-content" pl={2}>
           <Button
             disableElevation
             color="secondary"
             size="small"
             variant="contained"
-            startIcon={<NoteAddIcon />}
+            startIcon={<NoteAdd />}
             onClick={returnHome}
           >
             New Session

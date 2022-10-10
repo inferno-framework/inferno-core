@@ -64,7 +64,9 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
     if (shouldShowDescription(runnable, description)) {
       return (
         <>
-          <Box m={2.5}>{description}</Box>
+          <Box mx={2.5} overflow="auto">
+            {description}
+          </Box>
           <Divider />
         </>
       );

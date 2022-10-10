@@ -26,6 +26,7 @@ export default makeStyles((theme: Theme) => ({
   logo: {
     objectFit: 'contain',
     height: '2.75em',
+    paddingRight: '8px',
   },
   title: {
     padding: '0 8px',

@@ -59,6 +59,12 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
     }
   };
 
+  const getDescriptionWidth = () => {
+    if (windowIsSmall) return '100%';
+    else if (descriptionIsTall) return 'unset';
+    else return `${minDescriptionWidth}px`;
+  };
+
   function changeSuiteOption(option_id: string, value: string): void {
     const newOptions: SuiteOption[] = selectedSuiteOptions.map((option) =>
       option.id === option_id ? { id: option.id, value: value } : { ...option }
@@ -140,12 +146,15 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       role="main"
     >
       {/* Title */}
-      <Box mt={6} alignItems="center" maxWidth="800px">
+      <Box alignItems="center" maxWidth="800px" sx={windowIsSmall ? { m: 2 } : { mt: 6 }}>
         <Typography
           variant="h2"
           component="h1"
           align="center"
-          sx={{ color: lightTheme.palette.common.orangeDarker }}
+          sx={{
+            color: lightTheme.palette.common.orangeDarker,
+            fontSize: windowIsSmall ? '2rem' : 'auto',
+          }}
         >
           {testSuite?.title}
         </Typography>
@@ -164,8 +173,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
           id="description-container"
           display={!windowIsSmall && descriptionIsTall ? 'flex' : ''}
           flex={!windowIsSmall && descriptionIsTall ? '1 1 0' : ''}
-          maxWidth={!descriptionIsTall ? `${minDescriptionWidth}px` : 'unset'}
-          maxHeight="100%"
+          maxWidth={getDescriptionWidth()}
+          maxHeight={windowIsSmall ? 'none' : '100%'}
           overflow="auto"
           ml={3}
           my={3}
@@ -195,11 +204,18 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
           <Paper
             elevation={4}
             className={styles.optionsList}
-            sx={{ width: windowIsSmall ? 'auto' : '400px' }}
+            sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
           >
             <Box display="flex" alignItems="center" justifyContent="space-between" mx={1}>
               {renderBackButton()}
-              <Typography variant="h4" component="h2" align="center">
+              <Typography
+                variant="h4"
+                component="h2"
+                align="center"
+                sx={{
+                  fontSize: windowIsSmall ? '1.8rem' : 'auto',
+                }}
+              >
                 Options
               </Typography>
               {/* Spacer to center title with button */}
