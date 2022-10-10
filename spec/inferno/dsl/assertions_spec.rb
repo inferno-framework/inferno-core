@@ -163,7 +163,7 @@ RSpec.describe Inferno::DSL::Assertions do
             .with(body: patient_resource.source_contents)
             .to_return(status: 200, body: success_outcome.to_json)
 
-        klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url)
+        klass.assert_valid_resource(resource: patient_resource, profile_url:)
 
         expect(validation_request).to have_been_made.once
       end
@@ -176,7 +176,7 @@ RSpec.describe Inferno::DSL::Assertions do
           .with(body: patient_resource.source_contents)
           .to_return(status: 200, body: error_outcome.to_json)
 
-        expect { klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url) }.to(
+        expect { klass.assert_valid_resource(resource: patient_resource, profile_url:) }.to(
           raise_error(assertion_exception, klass.invalid_resource_message(profile_url))
         )
       end
@@ -187,7 +187,7 @@ RSpec.describe Inferno::DSL::Assertions do
           .with(body: patient_resource.source_contents)
           .to_return(status: 200, body: error_outcome.to_json)
 
-        expect { klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url) }.to(
+        expect { klass.assert_valid_resource(resource: patient_resource, profile_url:) }.to(
           raise_error(assertion_exception, klass.invalid_resource_message(profile_url))
         )
 
@@ -205,7 +205,7 @@ RSpec.describe Inferno::DSL::Assertions do
             .with(body: patient_resource.source_contents)
             .to_return(status: 200, body: outcome_with_messages.to_json)
 
-        klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url)
+        klass.assert_valid_resource(resource: patient_resource, profile_url:)
 
         expect(validation_request).to have_been_made.once
       end
@@ -216,7 +216,7 @@ RSpec.describe Inferno::DSL::Assertions do
           .with(body: patient_resource.source_contents)
           .to_return(status: 200, body: outcome_with_messages.to_json)
 
-        klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url)
+        klass.assert_valid_resource(resource: patient_resource, profile_url:)
 
         warning_message = klass.messages.find { |message| message[:type] == 'warning' }
 
@@ -238,7 +238,7 @@ RSpec.describe Inferno::DSL::Assertions do
           .with(body: patient_resource.source_contents)
           .to_return(status: 200, body: outcome_with_messages.to_json)
 
-        klass.assert_valid_resource(resource: patient_resource, profile_url: profile_url)
+        klass.assert_valid_resource(resource: patient_resource, profile_url:)
 
         warning_message = klass.messages.find { |message| message[:type] == 'warning' }
 
@@ -280,7 +280,7 @@ RSpec.describe Inferno::DSL::Assertions do
               .to_return(status: 200, body: error_outcome.to_json)
           ]
 
-        expect { klass.assert_valid_bundle_entries(bundle: bundle) }.to(
+        expect { klass.assert_valid_bundle_entries(bundle:) }.to(
           raise_error(assertion_exception, klass.invalid_bundle_entries_message([care_plan_resource]))
         )
 
@@ -324,7 +324,7 @@ RSpec.describe Inferno::DSL::Assertions do
               .to_return(status: 200, body: success_outcome.to_json)
           ]
 
-        klass.assert_valid_bundle_entries(bundle: bundle)
+        klass.assert_valid_bundle_entries(bundle:)
 
         expect(validation_requests).to all(have_been_made.once)
       end
@@ -338,7 +338,7 @@ RSpec.describe Inferno::DSL::Assertions do
             .with(body: care_plan_resource.source_contents)
             .to_return(status: 200, body: success_outcome.to_json)
 
-        klass.assert_valid_bundle_entries(bundle: bundle, resource_types: 'CarePlan')
+        klass.assert_valid_bundle_entries(bundle:, resource_types: 'CarePlan')
 
         expect(validation_request).to have_been_made.once
       end
@@ -352,7 +352,7 @@ RSpec.describe Inferno::DSL::Assertions do
             .with(body: care_plan_resource.source_contents)
             .to_return(status: 200, body: success_outcome.to_json)
 
-        klass.assert_valid_bundle_entries(bundle: bundle, resource_types: ['CarePlan'])
+        klass.assert_valid_bundle_entries(bundle:, resource_types: ['CarePlan'])
 
         expect(validation_request).to have_been_made.once
       end
@@ -374,7 +374,7 @@ RSpec.describe Inferno::DSL::Assertions do
           ]
 
         klass.assert_valid_bundle_entries(
-          bundle: bundle,
+          bundle:,
           resource_types: { patient: patient_profile, care_plan: nil }
         )
 
@@ -386,21 +386,21 @@ RSpec.describe Inferno::DSL::Assertions do
   describe '#assert_response_content_type' do
     it 'raises an exception when no Content-Type header is present' do
       request = repo_create(:request)
-      expect { klass.assert_response_content_type('abc', request: request) }.to(
+      expect { klass.assert_response_content_type('abc', request:) }.to(
         raise_error(assertion_exception, klass.no_content_type_message)
       )
     end
 
     it 'raises an exception when the Content-Type header does not match' do
       request = repo_create(:request, headers: [{ type: 'response', name: 'Content-Type', value: 'xyz' }])
-      expect { klass.assert_response_content_type('abc', request: request) }.to(
+      expect { klass.assert_response_content_type('abc', request:) }.to(
         raise_error(assertion_exception, klass.bad_content_type_message('abc', 'xyz'))
       )
     end
 
     it 'does not raise an exception when the Content-Type headers starts with the supplied value' do
       request = repo_create(:request, headers: [{ type: 'response', name: 'Content-Type', value: 'abcdef' }])
-      expect { klass.assert_response_content_type('abc', request: request) }.to_not raise_error
+      expect { klass.assert_response_content_type('abc', request:) }.to_not raise_error
     end
   end
 end

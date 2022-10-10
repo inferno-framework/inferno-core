@@ -29,7 +29,7 @@ module Inferno
           include_view :summary
           field :test_groups do |suite, options|
             suite_options = options[:suite_options]
-            TestGroup.render_as_hash(suite.groups(suite_options), suite_options: suite_options)
+            TestGroup.render_as_hash(suite.groups(suite_options), suite_options:)
           end
           field :configuration_messages
           field :inputs do |suite, options|

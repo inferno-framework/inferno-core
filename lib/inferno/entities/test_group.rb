@@ -13,10 +13,10 @@ module Inferno
 
       def_delegators 'self.class', :title, :id, :groups, :inputs, :outputs, :tests
 
-      def method_missing(name, *args, &block)
+      def method_missing(name, *args, &)
         parent_instance = self.class.parent&.new
         if parent_instance.respond_to?(name)
-          parent_instance.send(name, *args, &block)
+          parent_instance.send(name, *args, &)
         else
           super
         end

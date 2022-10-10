@@ -7,14 +7,14 @@ RSpec.describe '/test_runs' do
   let(:test_suite) { BasicTestSuite::Suite }
   let(:test_group_id) { test_suite.groups.first.id }
   let(:test_session) { test_run.test_session }
-  let(:test_run) { repo_create(:test_run, runnable: { test_group_id: test_group_id }) }
+  let(:test_run) { repo_create(:test_run, runnable: { test_group_id: }) }
 
   describe 'create' do
     let(:create_path) { router.path(:api_test_runs_create) }
     let(:test_run_definition) do
       {
         test_session_id: test_session.id,
-        test_group_id: test_group_id
+        test_group_id:
       }
     end
 
@@ -28,7 +28,7 @@ RSpec.describe '/test_runs' do
 
       it 'renders the test_run json' do
         Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
-        post_json create_path, test_run_definition.merge(inputs: inputs)
+        post_json create_path, test_run_definition.merge(inputs:)
 
         expect(last_response.status).to eq(200)
 
@@ -40,7 +40,7 @@ RSpec.describe '/test_runs' do
       it 'persists inputs to the session data table' do
         Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
         session_data_repo = Inferno::Repositories::SessionData.new
-        test_run_params = test_run_definition.merge(inputs: inputs)
+        test_run_params = test_run_definition.merge(inputs:)
 
         post_json create_path, test_run_params
 
@@ -122,7 +122,7 @@ RSpec.describe '/test_runs' do
 
       it 'returns a 422 error when inputs are missing' do
         Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
-        post_json create_path, test_run_definition.merge(inputs: inputs)
+        post_json create_path, test_run_definition.merge(inputs:)
 
         expect(last_response.status).to eq(422)
       end

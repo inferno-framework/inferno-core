@@ -26,12 +26,12 @@ module Inferno
 
       def to_hash
         {
-          id: id,
-          name: name,
-          value: value,
-          test_session_id: test_session_id,
-          created_at: created_at,
-          updated_at: updated_at
+          id:,
+          name:,
+          value:,
+          test_session_id:,
+          created_at:,
+          updated_at:
         }
       end
     end

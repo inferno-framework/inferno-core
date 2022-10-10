@@ -64,9 +64,9 @@ module Inferno
 
       test_instance =
         test.new(
-          inputs: inputs,
+          inputs:,
           test_session_id: test_session.id,
-          scratch: scratch,
+          scratch:,
           suite_options: test_session.suite_options_hash
         )
 
@@ -96,7 +96,7 @@ module Inferno
         {
           messages: test_instance.messages,
           requests: test_instance.requests,
-          result: result,
+          result:,
           result_message: test_instance.result_message,
           input_json: input_json_string,
           output_json: output_json_string

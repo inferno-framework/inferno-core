@@ -6,13 +6,13 @@ require_relative '../../lib/inferno/apps/web/controllers/test_sessions/session_d
 RSpec.describe '/test_sessions' do
   let(:router) { Inferno::Web::Router }
   let(:response_fields) { ['id', 'test_suite_id', 'test_suite'] }
-  let(:test_session) { repo_create(:test_session, test_suite_id: test_suite_id) }
+  let(:test_session) { repo_create(:test_session, test_suite_id:) }
   let(:repo) { Inferno::Repositories::TestSessions.new }
 
   describe 'create' do
     let(:create_path) { router.path(:api_test_sessions_create) }
     let(:input) do
-      { test_suite_id: test_suite_id }
+      { test_suite_id: }
     end
 
     context 'with valid input' do

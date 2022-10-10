@@ -4,9 +4,9 @@ RSpec.describe '/requests/:id' do
   let(:router) { Inferno::Web::Router }
   let(:response_fields) { ['id', 'inputs', 'results', 'status', 'test_group_id'] }
   let(:test_group_id) { BasicTestSuite::Suite.groups.first.id }
-  let(:test_run) { repo_create(:test_run, runnable: { test_group_id: test_group_id }) }
-  let(:result) { repo_create(:result, test_run: test_run) }
-  let(:request) { repo_create(:request, result: result) }
+  let(:test_run) { repo_create(:test_run, runnable: { test_group_id: }) }
+  let(:result) { repo_create(:result, test_run:) }
+  let(:request) { repo_create(:request, result:) }
 
   describe '/requests/:id' do
     it 'renders the full json for a request' do

@@ -88,7 +88,7 @@ module Inferno
       # alias the method name they wish to use to define child entities to this
       # method.
       # @private
-      def define_child(*args, &block)
+      def define_child(*args, &)
         hash_args = process_args(args)
 
         klass = create_child_class(hash_args)
@@ -99,7 +99,7 @@ module Inferno
 
         configure_child_class(klass, hash_args)
 
-        handle_child_definition_block(klass, &block)
+        handle_child_definition_block(klass, &)
 
         klass.add_self_to_repository
 
@@ -190,8 +190,8 @@ module Inferno
       end
 
       # @private
-      def handle_child_definition_block(klass, &block)
-        klass.class_eval(&block) if block_given?
+      def handle_child_definition_block(klass, &)
+        klass.class_eval(&) if block_given?
       end
 
       # Set/Get a runnable's id
@@ -374,7 +374,7 @@ module Inferno
       #   app](http://sinatrarb.com/)) as described in the [Hanami Router
       #   documentation.](https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#mount-rack-applications)
       def route(method, path, handler)
-        Inferno.routes << { method: method, path: path, handler: handler, suite: suite }
+        Inferno.routes << { method:, path:, handler:, suite: }
       end
 
       # @private
@@ -400,7 +400,7 @@ module Inferno
       def required_suite_options(suite_option_requirements)
         @suite_option_requirements =
           suite_option_requirements.map do |key, value|
-            DSL::SuiteOption.new(id: key, value: value)
+            DSL::SuiteOption.new(id: key, value:)
           end
       end
 

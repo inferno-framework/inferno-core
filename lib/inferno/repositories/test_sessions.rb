@@ -28,7 +28,7 @@ module Inferno
             JSON.generate(raw_suite_options.map(&:to_hash))
           end
 
-        super(params.merge(suite_options: suite_options))
+        super(params.merge(suite_options:))
       end
 
       def results_for_test_session(test_session_id)
@@ -45,7 +45,7 @@ module Inferno
       def apply_preset(test_session_id, preset_id)
         preset = presets_repo.find(preset_id)
         preset.inputs.each do |input|
-          session_data_repo.save(input.merge(test_session_id: test_session_id))
+          session_data_repo.save(input.merge(test_session_id:))
         end
       end
 
@@ -56,7 +56,7 @@ module Inferno
           DSL::SuiteOption.new(suite_option_hash)
         end
 
-        final_params = params.merge(suite_options: suite_options)
+        final_params = params.merge(suite_options:)
         add_non_db_entities(final_params)
         entity_class.new(final_params)
       end

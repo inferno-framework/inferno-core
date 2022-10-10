@@ -73,7 +73,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
               token_url: 'https://example.com'
             }.to_json
 
-            output creds: creds
+            output creds:
           end
         end
       end
@@ -117,7 +117,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
               token_url: 'https://example.com'
             }.to_json
 
-            output creds: creds
+            output creds:
           end
         end
       end

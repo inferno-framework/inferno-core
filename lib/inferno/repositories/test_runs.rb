@@ -36,7 +36,7 @@ module Inferno
         test_run_hash =
           self.class::Model
             .where(status: 'waiting')
-            .where(identifier: identifier)
+            .where(identifier:)
             .where { wait_timeout >= Time.now }
             .order(Sequel.desc(:updated_at))
             .limit(1)
@@ -52,7 +52,7 @@ module Inferno
       def last_test_run(test_session_id)
         test_run_hash =
           self.class::Model
-            .where(test_session_id: test_session_id)
+            .where(test_session_id:)
             .order(Sequel.desc(:updated_at))
             .limit(1)
             .to_a
@@ -66,7 +66,7 @@ module Inferno
       end
 
       def status_for_test_run(id)
-        self.class::Model.where(id: id).get(:status)
+        self.class::Model.where(id:).get(:status)
       end
 
       def mark_as_running(test_run_id)
@@ -81,7 +81,7 @@ module Inferno
         update(
           test_run_id,
           status: 'waiting',
-          identifier: identifier,
+          identifier:,
           wait_timeout: Time.now + timeout.seconds
         )
       end
@@ -126,7 +126,7 @@ module Inferno
 
       def active_test_run_for_session?(test_session_id)
         self.class::Model
-          .where(test_session_id: test_session_id)
+          .where(test_session_id:)
           .exclude(status: 'done')
           .count.positive?
       end

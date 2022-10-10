@@ -45,8 +45,8 @@ module Inferno
         attr_reader :requirements
 
         # @private
-        def initialize(requirements = nil, &block)
-          instance_eval(&block)
+        def initialize(requirements = nil, &)
+          instance_eval(&)
           @requirements = requirements
         end
 

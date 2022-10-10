@@ -8,7 +8,7 @@ RSpec.describe Inferno::Repositories::TestRuns do
     let(:test_run_definition) do
       {
         test_session_id: test_session.id,
-        test_group_id: test_group_id
+        test_group_id:
       }
     end
 

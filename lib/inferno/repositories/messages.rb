@@ -4,7 +4,7 @@ module Inferno
       def messages_for_result(result_id)
         self.class::Model
           .order(:index)
-          .where(result_id: result_id)
+          .where(result_id:)
           .to_a
           .map!(&:to_json_data)
           .each(&:deep_symbolize_keys!)
