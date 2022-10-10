@@ -19,6 +19,10 @@ module Inferno
 
       desc 'start', 'Start Inferno'
       def start
+        if `gem list -i foreman`.chomp == 'false'
+          puts "You must install foreman with 'gem install foreman' prior to running inferno."
+        end
+
         system 'foreman start --env=/dev/null'
       end
 
