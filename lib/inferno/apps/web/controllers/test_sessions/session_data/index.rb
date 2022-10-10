@@ -1,3 +1,5 @@
+require_relative '../../../serializers/session_data'
+
 module Inferno
   module Web
     module Controllers

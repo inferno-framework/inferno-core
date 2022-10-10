@@ -7,7 +7,10 @@ module Inferno
     client_page = ERB.new(File.read(File.join(Inferno::Application.root, 'lib', 'inferno', 'apps', 'web',
                                               'index.html.erb'))).result
 
-    Router = Hanami::Router.new(prefix: Application['base_path']) do
+    base_path = Application['base_path']
+    base_path = "/#{base_path.delete_prefix('/')}" if base_path.present?
+
+    Router = Hanami::Router.new(prefix: base_path) do
       scope 'api' do
         scope 'test_runs' do
           post '/', to: Inferno::Web::Controllers::TestRuns::Create, as: :create
