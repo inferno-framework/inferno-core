@@ -2,7 +2,7 @@ RSpec.describe Inferno::Repositories::TestSessions do
   let(:repo) { described_class.new }
 
   describe '#create' do
-    let(:test_suite_id) { 'BasicTestSuite::Suite' }
+    let(:test_suite_id) { 'basic' }
 
     context 'with valid params' do
       it 'persists the test session' do

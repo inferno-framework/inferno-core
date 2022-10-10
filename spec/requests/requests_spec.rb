@@ -10,7 +10,7 @@ RSpec.describe '/requests/:id' do
 
   describe '/requests/:id' do
     it 'renders the full json for a request' do
-      get router.path(:api_request, id: request.id)
+      get router.path(:api_requests_show, id: request.id)
 
       expect(last_response.status).to eq(200)
 

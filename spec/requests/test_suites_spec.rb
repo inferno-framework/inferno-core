@@ -8,7 +8,7 @@ RSpec.describe '/test_suites' do
   let(:all_fields) { summary_fields.concat(full_fields) }
 
   describe 'index' do
-    let(:index_path) { router.path(:api_test_suites) }
+    let(:index_path) { router.path(:api_test_suites_index) }
 
     it 'renders json of test_suite summaries' do
       get index_path
@@ -28,7 +28,7 @@ RSpec.describe '/test_suites' do
       let(:test_suite_id) { repo.all.first.id }
 
       it 'renders the test_suite json' do
-        get router.path(:api_test_suite, id: test_suite_id)
+        get router.path(:api_test_suites_show, id: test_suite_id)
 
         expect(last_response.status).to eq(200)
         expect(parsed_body['id']).to eq(test_suite_id)
@@ -40,7 +40,7 @@ RSpec.describe '/test_suites' do
       let(:test_suite_id) { SecureRandom.uuid }
 
       it 'renders a 404' do
-        get router.path(:api_test_suite, id: test_suite_id)
+        get router.path(:api_test_suites_show, id: test_suite_id)
 
         expect(last_response.status).to eq(404)
       end
@@ -52,7 +52,7 @@ RSpec.describe '/test_suites' do
       let(:test_suite_id) { 'demo' }
 
       it 'renders the test_suite json' do
-        put router.path(:check_configuration, id: test_suite_id)
+        put router.path(:api_test_suites_check_configuration, id: test_suite_id)
 
         expect(last_response.status).to eq(200)
 
@@ -69,7 +69,7 @@ RSpec.describe '/test_suites' do
       let(:test_suite_id) { SecureRandom.uuid }
 
       it 'renders a 404' do
-        get router.path(:api_test_suite, id: test_suite_id)
+        put router.path(:api_test_suites_check_configuration, id: test_suite_id)
 
         expect(last_response.status).to eq(404)
       end

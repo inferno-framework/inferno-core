@@ -21,7 +21,7 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
 
   describe '/test_runs/:test_run_id/results' do
     it 'renders the results json for a test_run' do
-      get router.path(:api_test_run_results, test_run_id: test_run.id)
+      get router.path(:api_test_runs_results, test_run_id: test_run.id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body.length).to eq(1)
@@ -44,7 +44,7 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
     end
 
     it 'includes the indices for request summaries' do
-      get router.path(:api_test_run_results, test_run_id: test_run.id)
+      get router.path(:api_test_runs_results, test_run_id: test_run.id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body.length).to eq(1)
@@ -56,7 +56,7 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
     end
 
     it 'sorts the request summaries' do
-      get router.path(:api_test_run_results, test_run_id: test_run.id)
+      get router.path(:api_test_runs_results, test_run_id: test_run.id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body.length).to eq(1)
@@ -69,7 +69,7 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
 
   describe '/test_sessions/:test_session_id/results' do
     it 'renders the results json for a test_session' do
-      get router.path(:api_test_session_results, test_session_id: test_session.id)
+      get router.path(:api_test_sessions_results, test_session_id: test_session.id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body.length).to eq(1)
