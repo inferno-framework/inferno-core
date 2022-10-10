@@ -136,22 +136,22 @@ module Inferno
 
       class << self
         # @private
-        def from_rack_env(env, name: nil)
-          rack_request = env['router.request'].rack_request
-          url = "#{rack_request.base_url}#{rack_request.path}"
-          url += "?#{rack_request.query_string}" if rack_request.query_string.present?
+        def from_hanami_request(request, name: nil)
+          # rack_request = env['router.request'].rack_request
+          url = "#{request.base_url}#{request.path}"
+          url += "?#{request.query_string}" if request.query_string.present?
           request_headers =
-            env
+            request.params.env
               .select { |key, _| key.start_with? 'HTTP_' }
               .transform_keys { |key| key.delete_prefix('HTTP_').tr('_', '-').downcase }
               .map { |header_name, value| Header.new(name: header_name, value: value, type: 'request') }
 
           new(
-            verb: rack_request.request_method.downcase,
+            verb: request.request_method.downcase,
             url: url,
             direction: 'incoming',
             name: name,
-            request_body: rack_request.body.string,
+            request_body: request.body.string,
             headers: request_headers
           )
         end

@@ -10,8 +10,8 @@ module Inferno
               'SessionData'
             end
 
-            def call(params)
-              self.body = serialize(session_data_repo.get_all_from_session(params[:test_session_id]))
+            def handle(req, res)
+              res.body = serialize(session_data_repo.get_all_from_session(req.params[:test_session_id]))
             end
           end
         end

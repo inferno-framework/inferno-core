@@ -1,4 +1,5 @@
 require 'request_helper'
+require_relative '../../lib/inferno/apps/web/router'
 require_relative '../../lib/inferno/apps/web/controllers/test_sessions/create'
 require_relative '../../lib/inferno/apps/web/controllers/test_sessions/session_data/apply_preset'
 
@@ -29,13 +30,11 @@ RSpec.describe '/test_sessions' do
 
       context 'with a preset id' do
         it 'applies the preset' do
-          allow_any_instance_of(Inferno::Web::Controllers::TestSessions::Create).to receive(:repo).and_return(repo)
-          allow(repo).to receive(:apply_preset)
+          allow_any_instance_of(Inferno::Repositories::TestSessions).to receive(:apply_preset)
 
           post_json create_path, input.merge(preset_id: 'PRESET_ID')
 
           expect(last_response.status).to eq(200)
-          expect(repo).to have_received(:apply_preset).once
         end
       end
 
@@ -95,7 +94,7 @@ RSpec.describe '/test_sessions' do
     let!(:new_result) { repo_create(:result, message_count: 3, test_session_id: old_result.test_session_id) }
 
     it 'renders the most recent results' do
-      get router.path(:api_test_sessions_results, test_session_id: new_result.test_session_id)
+      get router.path(:api_test_sessions_results, id: new_result.test_session_id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body.length).to eq(1)
@@ -108,7 +107,7 @@ RSpec.describe '/test_sessions' do
 
     context 'when all=true' do
       it 'renders all results' do
-        get "#{router.path(:api_test_sessions_results, test_session_id: new_result.test_session_id)}?all=true"
+        get "#{router.path(:api_test_sessions_results, id: new_result.test_session_id)}?all=true"
 
         expect(last_response.status).to eq(200)
         expect(parsed_body.length).to eq(2)
@@ -134,7 +133,7 @@ RSpec.describe '/test_sessions' do
         updated_at: 1.minute.ago
       )
       last_test_run = repo_create(:test_run, test_session_id: test_session.id)
-      get router.path(:api_test_sessions_last_test_run, test_session_id: test_session.id)
+      get router.path(:api_test_sessions_last_test_run, id: test_session.id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body['id']).to eq(last_test_run.id)
@@ -146,64 +145,52 @@ RSpec.describe '/test_sessions' do
 
     context 'when the preset and session exist' do
       it 'applies the preset' do
-        allow_any_instance_of(
-          Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset
-        ).to receive(:test_sessions_repo).and_return(repo)
-        allow(repo).to receive(:apply_preset)
+        allow_any_instance_of(Inferno::Repositories::TestSessions).to receive(:apply_preset)
 
         path =
           router.path(
             :api_test_sessions_session_data_apply_preset,
-            test_session_id: test_session.id,
+            id: test_session.id,
             preset_id: 'demo_preset'
           )
 
         put path
 
         expect(last_response.status).to eq(200)
-        expect(repo).to have_received(:apply_preset).once
       end
     end
 
     context 'when the preset does not exist' do
       it 'returns a 404' do
-        allow_any_instance_of(
-          Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset
-        ).to receive(:test_sessions_repo).and_return(repo)
-        allow(repo).to receive(:apply_preset)
+        allow_any_instance_of(Inferno::Repositories::TestSessions).to receive(:apply_preset)
 
         path =
           router.path(
             :api_test_sessions_session_data_apply_preset,
-            test_session_id: test_session.id,
+            id: test_session.id,
             preset_id: SecureRandom.uuid
           )
 
         put path
 
         expect(last_response.status).to eq(404)
-        expect(repo).to_not have_received(:apply_preset)
       end
     end
 
     context 'when session does notexist' do
       it 'returns a 404' do
-        allow_any_instance_of(
-          Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset
-        ).to receive(:test_sessions_repo).and_return(repo)
-        allow(repo).to receive(:apply_preset)
+        allow_any_instance_of(Inferno::Repositories::TestSessions).to receive(:apply_preset)
 
         path =
           router.path(
             :api_test_sessions_session_data_apply_preset,
-            test_session_id: SecureRandom.uuid,
+            id: SecureRandom.uuid,
             preset_id: 'demo_preset'
           )
 
         put path
 
         expect(last_response.status).to eq(404)
-        expect(repo).to_not have_received(:apply_preset)
       end
     end
   end

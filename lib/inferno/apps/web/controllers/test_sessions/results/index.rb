@@ -6,12 +6,12 @@ module Inferno
           class Index < Controller
             include Import[test_sessions_repo: 'inferno.repositories.test_sessions']
 
-            def call(params)
-              self.body =
-                if params[:all] == 'true'
-                  serialize(test_sessions_repo.results_for_test_session(params[:test_session_id]))
+            def handle(req, res)
+              res.body =
+                if req.params[:all] == 'true'
+                  serialize(test_sessions_repo.results_for_test_session(req.params[:id]))
                 else
-                  serialize(repo.current_results_for_test_session(params[:test_session_id]))
+                  serialize(repo.current_results_for_test_session(req.params[:id]))
                 end
             end
           end

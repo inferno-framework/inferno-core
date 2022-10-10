@@ -1,4 +1,4 @@
-require_relative '../../../lib/inferno/dsl/http_client_builder.rb'
+require_relative '../../../lib/inferno/dsl/http_client_builder'
 
 class HTTPClientDSLTestClass
   include Inferno::DSL::HTTPClient

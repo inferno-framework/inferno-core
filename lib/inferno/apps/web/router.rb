@@ -1,4 +1,5 @@
 require 'erb'
+
 Dir.glob(File.join(__dir__, 'controllers', '**', '*.rb')).each { |path| require_relative path }
 
 module Inferno
@@ -18,21 +19,24 @@ module Inferno
 
         scope 'test_sessions' do
           post '/', to: Inferno::Web::Controllers::TestSessions::Create, as: :create
+          # BAD
           get '/:id', to: Inferno::Web::Controllers::TestSessions::Show, as: :show
 
-          get '/:test_session_id/last_test_run',
+          # BAD
+          get '/:id/last_test_run',
               to: Inferno::Web::Controllers::TestSessions::LastTestRun,
               as: :last_test_run
-          get '/results',
+
+          # BAD
+          get '/:id/results',
               to: Inferno::Web::Controllers::TestSessions::Results::Index,
               as: :results
 
-          scope 'session_data' do
-            get '/', to: Inferno::Web::Controllers::TestSessions::SessionData::Index
-            put '/apply_preset',
-                to: Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset,
-                as: :apply_preset
-          end
+          get '/:id/session_data',
+              to: Inferno::Web::Controllers::TestSessions::SessionData::Index
+          put '/:id/apply_preset',
+              to: Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset,
+              as: :session_data_apply_preset
         end
 
         scope 'test_suites' do

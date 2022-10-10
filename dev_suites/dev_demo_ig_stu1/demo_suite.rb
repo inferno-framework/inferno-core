@@ -210,7 +210,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       id 'wait_group'
       title 'Wait Group'
 
-      resume_test_route :get, '/resume' do
+      resume_test_route :get, '/resume' do |request|
         request.query_parameters['xyz']
       end
 

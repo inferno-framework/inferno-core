@@ -55,7 +55,7 @@ module Inferno
     end
 
     def existing_test_result(runnable)
-      results_repo.result_for_test_run(runnable.reference_hash.merge(test_run_id: test_run.id))
+      results_repo.result_for_test_run(**runnable.reference_hash.merge(test_run_id: test_run.id))
     end
 
     def run_test(test, scratch)

@@ -353,9 +353,8 @@ module Inferno
       #   {Inferno::Entities::Request} object with the information for the
       #   incoming request.
       def resume_test_route(method, path, &block)
-        route_class = Class.new(ResumeTestRoute) do
-          define_method(:test_run_identifier, &block)
-          define_method(:request_name, -> { options[:name] })
+        route_class = Class.new(ResumeTestRoute) do |klass|
+          klass.singleton_class.instance_variable_set(:@test_run_identifier_block, block)
         end
 
         route(method, path, route_class)
