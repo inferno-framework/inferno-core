@@ -1,4 +1,5 @@
 require 'json'
+require_relative 'message'
 require_relative 'request'
 
 module Inferno

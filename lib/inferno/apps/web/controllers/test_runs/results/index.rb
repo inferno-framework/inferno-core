@@ -4,7 +4,7 @@ module Inferno
       module TestRuns
         module Results
           class Index < Controller
-            include Import[test_runs_repo: 'repositories.test_runs']
+            include Import[test_runs_repo: 'inferno.repositories.test_runs']
 
             def call(params)
               results = test_runs_repo.results_for_test_run(params[:test_run_id])

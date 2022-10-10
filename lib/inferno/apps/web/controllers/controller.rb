@@ -14,7 +14,7 @@ module Inferno
           # subclass rather than superclass.
           subclass.include Hanami::Action
 
-          subclass.include Import[repo: "repositories.#{subclass.resource_name}"]
+          subclass.include Import[repo: "inferno.repositories.#{subclass.resource_name}"]
 
           subclass.define_method(:serialize) do |*args|
             Inferno::Web::Serializers.const_get(self.class.resource_class).render(*args)

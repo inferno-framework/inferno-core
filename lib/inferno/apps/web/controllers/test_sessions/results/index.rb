@@ -4,7 +4,7 @@ module Inferno
       module TestSessions
         module Results
           class Index < Controller
-            include Import[test_sessions_repo: 'repositories.test_sessions']
+            include Import[test_sessions_repo: 'inferno.repositories.test_sessions']
 
             def call(params)
               self.body =

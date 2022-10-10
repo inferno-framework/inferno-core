@@ -9,10 +9,10 @@ module Inferno
     class ResumeTestRoute
       include Hanami::Action
       include Import[
-                requests_repo: 'repositories.requests',
-                results_repo: 'repositories.results',
-                test_runs_repo: 'repositories.test_runs',
-                tests_repo: 'repositories.tests'
+                requests_repo: 'inferno.repositories.requests',
+                results_repo: 'inferno.repositories.results',
+                test_runs_repo: 'inferno.repositories.test_runs',
+                tests_repo: 'inferno.repositories.tests'
               ]
 
       def self.call(params)

@@ -4,9 +4,9 @@ module Inferno
       module TestRuns
         class Create < Controller
           include Import[
-                    test_sessions_repo: 'repositories.test_sessions',
-                    session_data_repo: 'repositories.session_data',
-                    test_runs_repo: 'repositories.test_runs'
+                    test_sessions_repo: 'inferno.repositories.test_sessions',
+                    session_data_repo: 'inferno.repositories.session_data',
+                    test_runs_repo: 'inferno.repositories.test_runs'
                   ]
 
           PARAMS = [:test_session_id, :test_suite_id, :test_group_id, :test_id].freeze

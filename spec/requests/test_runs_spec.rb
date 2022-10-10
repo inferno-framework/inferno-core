@@ -1,4 +1,5 @@
 require 'request_helper'
+require_relative '../../lib/inferno/apps/web/router'
 
 RSpec.describe '/test_runs' do
   let(:router) { Inferno::Web::Router }

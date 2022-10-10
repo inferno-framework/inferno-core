@@ -4,11 +4,11 @@ module Inferno
   module Repositories
     class Results < Repository
       include Import[
-                messages_repo: 'repositories.messages',
-                requests_repo: 'repositories.requests',
-                tests_repo: 'repositories.tests',
-                groups_repo: 'repositories.test_groups',
-                suites_repo: 'repositories.test_suites'
+                messages_repo: 'inferno.repositories.messages',
+                requests_repo: 'inferno.repositories.requests',
+                tests_repo: 'inferno.repositories.tests',
+                groups_repo: 'inferno.repositories.test_groups',
+                suites_repo: 'inferno.repositories.test_suites'
               ]
 
       def create(params)

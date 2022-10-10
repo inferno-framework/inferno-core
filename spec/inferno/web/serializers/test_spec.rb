@@ -1,3 +1,5 @@
+require_relative '../../../../lib/inferno/apps/web/serializers/test'
+
 RSpec.describe Inferno::Web::Serializers::Test do
   let(:test) { InfrastructureTest::SerializerTest }
 

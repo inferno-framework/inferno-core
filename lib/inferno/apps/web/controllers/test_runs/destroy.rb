@@ -4,8 +4,8 @@ module Inferno
       module TestRuns
         class Destroy < Controller
           include Import[
-                    test_runs_repo: 'repositories.test_runs',
-                    results_repo: 'repositories.results'
+                    test_runs_repo: 'inferno.repositories.test_runs',
+                    results_repo: 'inferno.repositories.results'
                   ]
 
           def call(params)

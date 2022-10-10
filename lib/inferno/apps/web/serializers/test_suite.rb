@@ -1,3 +1,7 @@
+require_relative 'preset'
+require_relative 'suite_option'
+require_relative 'test_group'
+
 module Inferno
   module Web
     module Serializers

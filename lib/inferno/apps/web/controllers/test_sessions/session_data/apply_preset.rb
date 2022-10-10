@@ -1,3 +1,5 @@
+require_relative '../../controller'
+
 module Inferno
   module Web
     module Controllers
@@ -5,8 +7,8 @@ module Inferno
         module SessionData
           class ApplyPreset < Controller
             include Import[
-                      test_sessions_repo: 'repositories.test_sessions',
-                      presets_repo: 'repositories.presets'
+                      test_sessions_repo: 'inferno.repositories.test_sessions',
+                      presets_repo: 'inferno.repositories.presets'
                     ]
 
             def self.resource_class

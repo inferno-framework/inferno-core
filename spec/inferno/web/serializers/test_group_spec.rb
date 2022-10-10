@@ -1,3 +1,5 @@
+require_relative '../../../../lib/inferno/apps/web/serializers/test_group'
+
 RSpec.describe Inferno::Web::Serializers::TestGroup do
   let(:group) { InfrastructureTest::SerializerGroup }
   let(:test) { group.tests.first }

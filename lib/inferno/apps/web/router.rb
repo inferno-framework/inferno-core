@@ -1,4 +1,7 @@
 require 'erb'
+require_relative './controllers/test_sessions/session_data/apply_preset'
+require_relative './controllers/test_sessions/last_test_run'
+require_relative './controllers/test_suites/check_configuration'
 
 module Inferno
   module Web

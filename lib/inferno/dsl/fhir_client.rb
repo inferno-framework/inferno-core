@@ -1,3 +1,4 @@
+require_relative 'fhir_client_builder'
 require_relative 'request_storage'
 require_relative 'tcp_exception_handler'
 

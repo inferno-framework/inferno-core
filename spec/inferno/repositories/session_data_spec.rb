@@ -1,3 +1,5 @@
+require_relative '../../../lib/inferno/repositories/session_data'
+
 RSpec.describe Inferno::Repositories::SessionData do
   let(:repo) { described_class.new }
   let(:test_session) { repo_create(:test_session) }

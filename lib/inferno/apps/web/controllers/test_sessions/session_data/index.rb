@@ -4,7 +4,7 @@ module Inferno
       module TestSessions
         module SessionData
           class Index < Controller
-            include Import[session_data_repo: 'repositories.session_data']
+            include Import[session_data_repo: 'inferno.repositories.session_data']
 
             def self.resource_class
               'SessionData'

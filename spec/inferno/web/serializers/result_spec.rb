@@ -1,3 +1,5 @@
+require_relative '../../../../lib/inferno/apps/web/serializers/result'
+
 RSpec.describe Inferno::Web::Serializers::Result do
   let(:result) do
     repo_create(:result,

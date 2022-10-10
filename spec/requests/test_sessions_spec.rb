@@ -1,4 +1,6 @@
 require 'request_helper'
+require_relative '../../lib/inferno/apps/web/controllers/test_sessions/create'
+require_relative '../../lib/inferno/apps/web/controllers/test_sessions/session_data/apply_preset'
 
 RSpec.describe '/test_sessions' do
   let(:router) { Inferno::Web::Router }

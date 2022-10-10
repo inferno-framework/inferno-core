@@ -5,9 +5,9 @@ module Inferno
     # Repository that deals with persistence for the `TestSession` entity.
     class TestSessions < Repository
       include Import[
-                results_repo: 'repositories.results',
-                session_data_repo: 'repositories.session_data',
-                presets_repo: 'repositories.presets'
+                results_repo: 'inferno.repositories.results',
+                session_data_repo: 'inferno.repositories.session_data',
+                presets_repo: 'inferno.repositories.presets'
               ]
 
       def json_serializer_options
@@ -62,7 +62,7 @@ module Inferno
       end
 
       class Model < Sequel::Model(db)
-        include Import[test_suites_repo: 'repositories.test_suites']
+        include Import[test_suites_repo: 'inferno.repositories.test_suites']
 
         one_to_many :results,
                     eager: [:messages, :requests],

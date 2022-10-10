@@ -1,3 +1,5 @@
+require_relative 'test'
+
 module Inferno
   module Web
     module Serializers

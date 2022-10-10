@@ -1,3 +1,5 @@
+require_relative 'header'
+
 module Inferno
   module Web
     module Serializers

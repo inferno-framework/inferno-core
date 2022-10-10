@@ -3,7 +3,7 @@ require_relative 'validate_runnable_reference'
 module Inferno
   module Repositories
     class TestRuns < Repository
-      include Import[results_repo: 'repositories.results']
+      include Import[results_repo: 'inferno.repositories.results']
 
       def json_serializer_options
         {

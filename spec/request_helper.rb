@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'rack/test'
+require_relative '../lib/inferno/apps/web/application'
 
 module RequestHelpers
   def app

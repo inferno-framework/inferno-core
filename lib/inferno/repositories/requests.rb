@@ -1,7 +1,7 @@
 module Inferno
   module Repositories
     class Requests < Repository
-      include Import[headers_repo: 'repositories.headers']
+      include Import[headers_repo: 'inferno.repositories.headers']
 
       def create(params)
         request = self.class::Model.create(db_params(params))
