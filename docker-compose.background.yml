@@ -1,7 +1,7 @@
 version: '3'
 services:
   validator_service:
-    image: validator
+    image: infernocommunity/fhir-validator-service
     # Update this path to match your directory structure
     volumes:
       - ./igs:/home/igs
