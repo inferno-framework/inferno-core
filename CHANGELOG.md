@@ -1,3 +1,14 @@
+# 0.3.12
+* Fix the ordering of requests in the UI.
+* Fix a memory leak.
+* Fix the order in which `.env*` files are loaded.
+* Add the ability to copy request urls from the Inferno UI.
+* Add a toggle to the report view to show/hide messages and requests.
+* Reduce the size of report pdfs.
+* Add commands to the CLI to start inferno and required background services.
+* Improve the Inferno UI for mobile devices.
+* Various other UI improvements.
+
 # 0.3.11
 * Update fhir_models to address an issue where models were being instantiated
   slightly differently depending on whether they were instantiated from a string
