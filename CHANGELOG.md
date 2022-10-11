@@ -2,7 +2,7 @@
 * Fix the ordering of requests in the UI.
 * Fix a memory leak.
 * Fix the order in which `.env*` files are loaded.
-* Add the ability to copy request urls to the UI.
+* Add the ability to copy request urls from the Inferno UI.
 * Add a toggle to the report view to show/hide messages and requests.
 * Reduce the size of report pdfs.
 * Add commands to the CLI to start inferno and required background services.
