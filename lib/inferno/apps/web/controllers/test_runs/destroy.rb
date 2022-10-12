@@ -13,8 +13,6 @@ module Inferno
 
             if test_run.nil? || ['done', 'cancelling'].include?(test_run.status)
               # If it doesn't exist, already finished, or currently being cancelled
-              # self.status = 204
-              # return
               halt 204
             end
 
@@ -30,8 +28,6 @@ module Inferno
             res.status = 204
           rescue StandardError => e
             Application['logger'].error(e.full_message)
-            # self.body = { errors: e.message }.to_json
-            # self.status = 500
             halt 500, { errors: e.message }.to_json
           end
         end

@@ -137,7 +137,6 @@ module Inferno
       class << self
         # @private
         def from_hanami_request(request, name: nil)
-          # rack_request = env['router.request'].rack_request
           url = "#{request.base_url}#{request.path}"
           url += "?#{request.query_string}" if request.query_string.present?
           request_headers =

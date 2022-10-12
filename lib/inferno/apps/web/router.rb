@@ -22,19 +22,14 @@ module Inferno
 
         scope 'test_sessions' do
           post '/', to: Inferno::Web::Controllers::TestSessions::Create, as: :create
-          # BAD
           get '/:id', to: Inferno::Web::Controllers::TestSessions::Show, as: :show
 
-          # BAD
           get '/:id/last_test_run',
               to: Inferno::Web::Controllers::TestSessions::LastTestRun,
               as: :last_test_run
-
-          # BAD
           get '/:id/results',
               to: Inferno::Web::Controllers::TestSessions::Results::Index,
               as: :results
-
           get '/:id/session_data',
               to: Inferno::Web::Controllers::TestSessions::SessionData::Index
           put '/:id/apply_preset',

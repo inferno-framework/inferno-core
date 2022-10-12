@@ -18,13 +18,9 @@ module Inferno
 
             res.body = serialize(session)
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation => e
-            # self.body = { errors: e.message }.to_json
-            # self.status = 422
             halt 422, { errors: e.message }.to_json
           rescue StandardError => e
             Application['logger'].error(e.full_message)
-            # self.body = { errors: e.message }.to_json
-            # self.status = 500
             halt 500, { errors: e.message }.to_json
           end
 

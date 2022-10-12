@@ -48,9 +48,6 @@ module Inferno
             # if testsession.nil?
             if test_runs_repo.active_test_run_for_session?(test_session.id)
               halt 409, { error: 'Cannot run new test while another test run is in progress' }.to_json
-              # res.status = 409
-              # res.body = { error: 'Cannot run new test while another test run is in progress' }.to_json
-              # return
             end
 
             verify_runnable(
@@ -69,13 +66,9 @@ module Inferno
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation,
                  Inferno::Exceptions::RequiredInputsNotFound,
                  Inferno::Exceptions::NotUserRunnableException => e
-            # res.body = { errors: e.message }.to_json
-            # res.status = 422
             halt 422, { errors: e.message }.to_json
           rescue StandardError => e
             Application['logger'].error(e.full_message)
-            # res.body = { errors: e.message }.to_json
-            # res.status = 500
             halt 500, { errors: e.message }.to_json
           end
 

@@ -21,8 +21,6 @@ module Inferno
 
               if test_session.nil?
                 Application[:logger].error("Unknown test session #{test_session_id}")
-                # self.status = 404
-                # return
                 halt 404
               end
 
@@ -31,8 +29,6 @@ module Inferno
 
               if preset.nil?
                 Application[:logger].error("Unknown preset #{preset_id}")
-                # self.status = 404
-                # return
                 halt 404
               end
 
