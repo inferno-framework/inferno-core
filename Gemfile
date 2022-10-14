@@ -15,6 +15,7 @@ gemspec
 group :development, :test do
   gem 'pry'
   gem 'pry-byebug'
+  gem 'pry-remote'
   gem 'rubocop', '~> 1.9'
   gem 'rubocop-rake', require: false
   gem 'rubocop-rspec', require: false
