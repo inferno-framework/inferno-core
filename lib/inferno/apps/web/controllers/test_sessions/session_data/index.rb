@@ -13,7 +13,7 @@ module Inferno
             end
 
             def handle(req, res)
-              res.body = serialize(session_data_repo.get_all_from_session(req.params[:test_session_id]))
+              res.body = serialize(session_data_repo.get_all_from_session(req.params[:id]))
             end
           end
         end

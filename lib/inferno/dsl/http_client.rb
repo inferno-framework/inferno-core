@@ -106,15 +106,15 @@ module Inferno
       # @option options [Hash] Input headers here - headers are optional and
       #   must be entered as the last piece of input to this method
       # @return [Inferno::Entities::Request]
-      def post(url = '', body: nil, client: :default, name: nil, **options)
+      def post(url = '', body: nil, client: :default, name: nil, headers: nil)
         store_request('outgoing', name) do
           tcp_exception_handler do
             client = http_client(client)
 
             if client
-              client.post(url, body, options[:headers])
+              client.post(url, body, headers)
             elsif url.match?(%r{\Ahttps?://})
-              connection.post(url, body, options[:headers])
+              connection.post(url, body, headers)
             else
               raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
             end

@@ -32,7 +32,7 @@ module Inferno
               as: :results
           get '/:id/session_data',
               to: Inferno::Web::Controllers::TestSessions::SessionData::Index
-          put '/:id/apply_preset',
+          put '/:id/session_data/apply_preset',
               to: Inferno::Web::Controllers::TestSessions::SessionData::ApplyPreset,
               as: :session_data_apply_preset
         end
