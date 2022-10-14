@@ -77,15 +77,6 @@ const InputsModal: FC<InputsModalProps> = ({
     return (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput;
   });
 
-  function submitClicked(): void {
-    const inputs_with_values: TestInput[] = [];
-    inputsMap.forEach((input_value, input_name) => {
-      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
-    });
-    createTestRun(runnableType, runnableId, inputs_with_values);
-    hideModal();
-  }
-
   useEffect(() => {
     inputsMap.clear();
     inputs.forEach((requirement: TestInput) => {
@@ -96,6 +87,32 @@ const InputsModal: FC<InputsModalProps> = ({
     });
     setInputsMap(new Map(inputsMap));
   }, [inputs, sessionData]);
+
+  useEffect(() => {
+    setInvalidInput(false);
+    setBaseInput(serializeMap(inputsMap));
+  }, [inputType, modalVisible]);
+
+  const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (
+      modalVisible &&
+      e.key === 'Enter' &&
+      (e.metaKey || e.ctrlKey) &&
+      !missingRequiredInput &&
+      !invalidInput
+    ) {
+      submitClicked();
+    }
+  };
+
+  const submitClicked = () => {
+    const inputs_with_values: TestInput[] = [];
+    inputsMap.forEach((input_value, input_name) => {
+      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
+    });
+    createTestRun(runnableType, runnableId, inputs_with_values);
+    hideModal();
+  };
 
   const instructions =
     inputInstructions ||
@@ -146,7 +163,7 @@ const InputsModal: FC<InputsModalProps> = ({
     }
   });
 
-  function serializeMap(map: Map<string, unknown>): string {
+  const serializeMap = (map: Map<string, unknown>): string => {
     const flatObj = inputs.map((requirement: TestInput) => {
       if (requirement.type === 'oauth_credentials') {
         return {
@@ -167,18 +184,13 @@ const InputsModal: FC<InputsModalProps> = ({
       }
     });
     return inputType === 'JSON' ? JSON.stringify(flatObj, null, 3) : YAML.dump(flatObj);
-  }
-
-  useEffect(() => {
-    setInvalidInput(false);
-    setBaseInput(serializeMap(inputsMap));
-  }, [inputType, modalVisible]);
+  };
 
   const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
     if (value !== null) setInputType(value);
   };
 
-  function parseSerialChanges(changes: string): TestInput[] | undefined {
+  const parseSerialChanges = (changes: string): TestInput[] | undefined => {
     let parsed: TestInput[];
     try {
       if (inputType === 'JSON') {
@@ -192,7 +204,7 @@ const InputsModal: FC<InputsModalProps> = ({
       setInvalidInput(true);
       return undefined;
     }
-  }
+  };
 
   const handleSerialChanges = (serialChanges: string) => {
     const parsedChanges = parseSerialChanges(serialChanges);
@@ -206,7 +218,13 @@ const InputsModal: FC<InputsModalProps> = ({
   };
 
   return (
-    <Dialog open={modalVisible} fullWidth maxWidth="sm" onClose={hideModal}>
+    <Dialog
+      open={modalVisible}
+      fullWidth
+      maxWidth="sm"
+      onKeyDown={handleSubmitKeydown}
+      onClose={hideModal}
+    >
       {/* a11y workaround until MUI implements component prop in DialogTitle */}
       <DialogTitle {...({ component: 'div' } as unknown)}>
         <Typography component="h1" variant="h6">
