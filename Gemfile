@@ -7,14 +7,18 @@ gemspec
 # To test with the g10 test kit (this also adds the US Core, SMART, and TLS test
 # kits):
 # - Uncomment this line:
-gem 'onc_certification_g10_test_kit',
-    path: '../onc-certification-g10-test-kit'
-gem 'smart_app_launch_test_kit',
-    path: '../smart-app-launch-test-kit'
-gem 'us_core_test_kit',
-    path: '../us-core-test-kit'
-gem 'tls_test_kit',
-    path: '../tls-test-kit'
+# gem 'onc_certification_g10_test_kit',
+#     git: 'https://github.com/onc-healthit/onc-certification-g10-test-kit.git',
+#     ref: 'ruby-3-update'
+# gem 'smart_app_launch_test_kit',
+#     git: 'https://github.com/inferno-framework/smart-app-launch-test-kit.git',
+#     ref: 'ruby-3-update'
+# gem 'us_core_test_kit',
+#     git: 'https://github.com/inferno-framework/us-core-test-kit.git',
+#     ref: 'ruby-3-update'
+# gem 'tls_test_kit',
+#     git: 'https://github.com/inferno-framework/tls-test-kit.git',
+#     ref: 'ruby-3-update'
 
 # - Run `bundle update`
 # - Uncomment the require at the top of
@@ -22,7 +26,6 @@ gem 'tls_test_kit',
 
 group :development, :test do
   gem 'pry'
-  gem 'pry-remote'
   gem 'pry-byebug'
   gem 'rubocop', '~> 1.9'
   gem 'rubocop-rake', require: false

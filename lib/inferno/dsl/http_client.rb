@@ -67,18 +67,17 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @option options [Hash] Input headers here - headers are optional and
-      #   must be entered as the last piece of input to this method
+      # @param headers [Hash] Input headers here
       # @return [Inferno::Entities::Request]
-      def get(url = '', client: :default, name: nil, **options)
+      def get(url = '', client: :default, name: nil, headers: nil)
         store_request('outgoing', name) do
           tcp_exception_handler do
             client = http_client(client)
 
             if client
-              client.get(url, nil, options[:headers])
+              client.get(url, nil, headers)
             elsif url.match?(%r{\Ahttps?://})
-              connection.get(url, nil, options[:headers])
+              connection.get(url, nil, headers)
             else
               raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
             end
@@ -103,8 +102,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @option options [Hash] Input headers here - headers are optional and
-      #   must be entered as the last piece of input to this method
+      # @param headers [Hash] Input headers here
       # @return [Inferno::Entities::Request]
       def post(url = '', body: nil, client: :default, name: nil, headers: nil)
         store_request('outgoing', name) do
@@ -130,16 +128,17 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
+      # @param headers [Hash] Input headers here
       # @return [Inferno::Entities::Request]
-      def delete(url = '', client: :default, name: :nil, **options)
+      def delete(url = '', client: :default, name: :nil, headers: nil)
         store_request('outgoing', name) do
           tcp_exception_handler do
             client = http_client(client)
 
             if client
-              client.delete(url, nil, options[:headers])
+              client.delete(url, nil, headers)
             elsif url.match?(%r{\Ahttps?://})
-              connection.delete(url, nil, options[:headers])
+              connection.delete(url, nil, headers)
             else
               raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
             end
@@ -159,10 +158,9 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
-      # @option options [Hash] Input headers here - headers are optional and
-      #   must be entered as the last piece of input to this method
+      # @param headers [Hash] Input headers here
       # @return [Inferno::Entities::Request]
-      def stream(block, url = '', limit = 100, client: :default, name: nil, **options)
+      def stream(block, url = '', limit = 100, client: :default, name: nil, headers: nil)
         streamed = []
 
         collector = proc do |chunk, bytes|
@@ -176,9 +174,9 @@ module Inferno
             client = http_client(client)
 
             if client
-              response = client.get(url, nil, options[:headers]) { |req| req.options.on_data = collector }
+              response = client.get(url, nil, headers) { |req| req.options.on_data = collector }
             elsif url.match?(%r{\Ahttps?://})
-              response = connection.get(url, nil, options[:headers]) { |req| req.options.on_data = collector }
+              response = connection.get(url, nil, headers) { |req| req.options.on_data = collector }
             else
               raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
             end
