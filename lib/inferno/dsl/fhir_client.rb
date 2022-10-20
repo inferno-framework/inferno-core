@@ -43,8 +43,6 @@ module Inferno
         klass.extend Forwardable
         klass.include RequestStorage
         klass.include TCPExceptionHandler
-
-        klass.def_delegators 'self.class', :profile_url, :validator_url
       end
 
       # Return a previously defined FHIR client

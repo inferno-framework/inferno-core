@@ -20,6 +20,7 @@ module Inferno
       include Entities::Attributes
 
       attr_accessor :client
+
       # @!attribute [rw] access_token
       # @!attribute [rw] refresh_token
       # @!attribute [rw] token_url

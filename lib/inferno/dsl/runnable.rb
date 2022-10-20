@@ -46,6 +46,7 @@ module Inferno
       # copied, and will need to be repopulated from scratch on the new class.
       # Any child Runnable classes will themselves need to be subclassed so that
       # their parent can be updated.
+      # @private
       VARIABLES_NOT_TO_COPY = [
         :@id, # New runnable will have a different id
         :@parent, # New runnable unlikely to have the same parent
@@ -307,12 +308,6 @@ module Inferno
         @all_children ||= []
       end
 
-      def validator_url(url = nil)
-        return @validator_url ||= parent&.validator_url if url.nil?
-
-        @validator_url = url
-      end
-
       # @private
       def suite
         return self if ancestors.include? Inferno::Entities::TestSuite
@@ -397,6 +392,9 @@ module Inferno
                            (parent.user_runnable? && !parent.run_as_group?)
       end
 
+      # Set/get suite options required for this runnable to be executed.
+      #
+      # @param suite_option_requirements [Hash]
       def required_suite_options(suite_option_requirements)
         @suite_option_requirements =
           suite_option_requirements.map do |key, value|
@@ -404,6 +402,7 @@ module Inferno
           end
       end
 
+      # @private
       def children(selected_suite_options = [])
         return all_children if selected_suite_options.blank?
 

@@ -217,7 +217,6 @@ module Inferno
 
         ### Request Configuration ###
 
-
         # The request configuration for this runnable.
         #
         # @return [Hash]
