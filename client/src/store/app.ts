@@ -6,6 +6,7 @@ import { TestSuite, TestSession } from '~/models/testSuiteModels';
 type AppStore = {
   testSuites: TestSuite[];
   testSession: TestSession | undefined;
+  smallWindowThreshold: number;
   windowIsSmall: boolean | undefined;
   setTestSuites: (testSuites: TestSuite[]) => void;
   setTestSession: (testSession: TestSession | undefined) => void;
@@ -18,6 +19,7 @@ export const useAppStore = create<AppStore>(
   devtoolsInDev((set, _get) => ({
     testSuites: [] as TestSuite[],
     testSession: undefined,
+    smallWindowThreshold: 1000,
     windowIsSmall: undefined,
     setTestSuites: (testSuites: TestSuite[]) => set({ testSuites: testSuites }),
     setTestSession: (testSession: TestSession | undefined) => set({ testSession: testSession }),
