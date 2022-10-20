@@ -13,6 +13,7 @@ module Inferno
 
       def_delegators 'self.class', :title, :id, :groups, :inputs, :outputs, :tests
 
+      # @private
       def method_missing(name, *args, &)
         parent_instance = self.class.parent&.new
         if parent_instance.respond_to?(name)
@@ -22,6 +23,7 @@ module Inferno
         end
       end
 
+      # @private
       def respond_to_missing?(name, _include_private = false)
         self.class.parent&.new&.respond_to?(name)
       end
@@ -51,6 +53,7 @@ module Inferno
           define_child(...)
         end
 
+        # @private
         def group_metadata
           {
             class: TestGroup,
@@ -58,6 +61,7 @@ module Inferno
           }
         end
 
+        # @private
         def test_metadata
           {
             class: Test,
@@ -73,6 +77,7 @@ module Inferno
           end
         end
 
+        # @private
         def default_id
           return name if name.present?
 
@@ -80,6 +85,7 @@ module Inferno
           "Group#{suffix}"
         end
 
+        # @private
         def reference_hash
           {
             test_group_id: id
