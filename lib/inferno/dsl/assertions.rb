@@ -2,6 +2,10 @@ require_relative '../exceptions'
 
 module Inferno
   module DSL
+    # This module contains the assertions used within tests to verify the
+    # behavior of the systems under test. Failing an assertion causes a test to
+    # immediately stop execution and receive a `fail` result. Additional
+    # assertions added to this module will be available in all tests.
     module Assertions
       # Make an assertion
       #
@@ -159,6 +163,10 @@ module Inferno
         assert uri =~ /\A#{URI::DEFAULT_PARSER.make_regexp(['http', 'https'])}\z/, error_message
       end
 
+      # Check the Content-Type header of a response
+      #
+      # @param type [String]
+      # @param request [Inferno::Entities::Request]
       def assert_response_content_type(type, request: self.request)
         header = request.response_header('Content-Type')
         assert header.present?, no_content_type_message
@@ -166,10 +174,12 @@ module Inferno
         assert header.value.start_with?(type), bad_content_type_message(type, header.value)
       end
 
+      # @private
       def no_content_type_message
         'Response did not contain a `Content-Type` header.'
       end
 
+      # @private
       def bad_content_type_message(expected, received)
         "Expected `Content-Type` to be `#{expected}`, but found `#{received}`"
       end
