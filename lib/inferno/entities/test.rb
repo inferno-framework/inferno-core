@@ -47,7 +47,7 @@ module Inferno
         end
       end
 
-      # @api private
+      # @private
       # A hash containing outputs that have been set during execution and need
       # to be persisted. A test may not always update all outputs, so this is
       # used to prevent overwriting an output with nil when it wasn't updated.
