@@ -34,7 +34,7 @@ module Inferno
     #       end
     #     end
     #   end
-    # @see Inferno::FHIRClientBuilder Documentation for the client
+    # @see Inferno::DSL::FHIRClientBuilder Documentation for the client
     #   configuration DSL
     module FHIRClient
       # @private
@@ -51,7 +51,7 @@ module Inferno
       #
       # @param client [Symbol] the name of the client
       # @return [FHIR::Client]
-      # @see Inferno::FHIRClientBuilder
+      # @see Inferno::DSL::FHIRClientBuilder
       def fhir_client(client = :default)
         fhir_clients[client] ||=
           FHIRClientBuilder.new.build(self, self.class.fhir_client_definitions[client])
@@ -160,7 +160,7 @@ module Inferno
 
       # @todo Make this a FHIR class method? Something like
       #   FHIR.class_for(resource_type)
-      # @api private
+      # @private
       def fhir_class_from_resource_type(resource_type)
         FHIR.const_get(resource_type.to_s.camelize)
       end
@@ -168,7 +168,7 @@ module Inferno
       # This method wraps a request to automatically refresh its access token if
       # expired. It's combined with `store_request` so that all of the fhir
       # request methods don't have to be wrapped twice.
-      # @api private
+      # @private
       def store_request_and_refresh_token(client, name, &block)
         store_request('outgoing', name) do
           perform_refresh(client) if client.need_to_refresh? && client.able_to_refresh?
@@ -176,7 +176,7 @@ module Inferno
         end
       end
 
-      # @api private
+      # @private
       def perform_refresh(client)
         credentials = client.oauth_credentials
 
@@ -203,7 +203,7 @@ module Inferno
       end
 
       module ClassMethods
-        # @api private
+        # @private
         def fhir_client_definitions
           @fhir_client_definitions ||= {}
         end
