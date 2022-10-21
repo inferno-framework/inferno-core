@@ -395,6 +395,25 @@ module Inferno
       # Set/get suite options required for this runnable to be executed.
       #
       # @param suite_option_requirements [Hash]
+      # @example
+      #   suite_option :ig_version,
+      #               list_options: [
+      #                 {
+      #                   label: 'IG v1',
+      #                   value: 'ig_v1'
+      #                 },
+      #                 {
+      #                   label: 'IG v2',
+      #                   value: 'ig_v2'
+      #                 }
+      #               ]
+      #
+      #   group from: :ig_v1_group,
+      #         required_suite_options: { ig_version: 'ig_v1' }
+      #
+      #   group from: :ig_v2_group do
+      #     required_suite_options ig_version: 'ig_v2'
+      #   end
       def required_suite_options(suite_option_requirements)
         @suite_option_requirements =
           suite_option_requirements.map do |key, value|

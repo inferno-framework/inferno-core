@@ -131,8 +131,9 @@ module Inferno
         #   group from: :ig_v1_group,
         #         required_suite_options: { ig_version: 'ig_v1' }
         #
-        #   group from: :ig_v2_group,
-        #         required_suite_options: { ig_version: 'ig_v2' }
+        #   group from: :ig_v2_group do
+        #     required_suite_options ig_version: 'ig_v2'
+        #   end
         def suite_option(identifier, **option_params)
           suite_options << DSL::SuiteOption.new(option_params.merge(id: identifier))
         end
