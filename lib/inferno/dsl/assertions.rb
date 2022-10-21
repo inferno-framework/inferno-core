@@ -58,7 +58,7 @@ module Inferno
       # @param profile_url [String] url of the profile to validate against,
       #   defaults to validating against the base FHIR resource
       def assert_valid_resource(resource: self.resource, profile_url: nil)
-        assert resource_is_valid?(resource: resource, profile_url: profile_url),
+        assert resource_is_valid?(resource:, profile_url:),
                invalid_resource_message(profile_url)
       end
 
@@ -100,7 +100,7 @@ module Inferno
             .map(&:resource)
             .select { |resource| types_to_check.empty? || types_to_check.include?(resource.resourceType) }
             .reject do |resource|
-              validation_params = { resource: resource }
+              validation_params = { resource: }
               profile = types_to_check[resource.resourceType]
               validation_params[:profile_url] = profile if profile
 

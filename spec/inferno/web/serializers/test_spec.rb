@@ -1,3 +1,5 @@
+require_relative '../../../../lib/inferno/apps/web/serializers/test'
+
 RSpec.describe Inferno::Web::Serializers::Test do
   let(:test) { InfrastructureTest::SerializerTest }
 
@@ -26,7 +28,7 @@ RSpec.describe Inferno::Web::Serializers::Test do
 
       expect(raw_input).to be_present
 
-      input = Inferno::Entities::Input.new(raw_input)
+      input = Inferno::Entities::Input.new(**raw_input)
 
       expect(input).to eq(definition)
     end

@@ -1,11 +1,12 @@
 require 'request_helper'
+require_relative '../../lib/inferno/apps/web/router'
 
 RSpec.describe '/(test_sessions/test_runs)/:id/results' do
   let(:router) { Inferno::Web::Router }
   let(:response_fields) { ['id', 'inputs', 'results', 'status', 'test_group_id'] }
   let(:test_suite) { BasicTestSuite::Suite }
   let(:test_group_id) { test_suite.groups.first.id }
-  let(:test_run) { repo_create(:test_run, runnable: { test_group_id: test_group_id }) }
+  let(:test_run) { repo_create(:test_run, runnable: { test_group_id: }) }
   let(:test_session) { test_run.test_session }
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
   let!(:result) do
@@ -21,7 +22,7 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
 
   describe '/test_runs/:test_run_id/results' do
     it 'renders the results json for a test_run' do
-      get router.path(:api_test_run_results, test_run_id: test_run.id)
+      get router.path(:api_test_runs_results, test_run_id: test_run.id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body.length).to eq(1)
@@ -44,7 +45,7 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
     end
 
     it 'includes the indices for request summaries' do
-      get router.path(:api_test_run_results, test_run_id: test_run.id)
+      get router.path(:api_test_runs_results, test_run_id: test_run.id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body.length).to eq(1)
@@ -56,7 +57,7 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
     end
 
     it 'sorts the request summaries' do
-      get router.path(:api_test_run_results, test_run_id: test_run.id)
+      get router.path(:api_test_runs_results, test_run_id: test_run.id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body.length).to eq(1)
@@ -69,7 +70,7 @@ RSpec.describe '/(test_sessions/test_runs)/:id/results' do
 
   describe '/test_sessions/:test_session_id/results' do
     it 'renders the results json for a test_session' do
-      get router.path(:api_test_session_results, test_session_id: test_session.id)
+      get router.path(:api_test_sessions_results, id: test_session.id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body.length).to eq(1)

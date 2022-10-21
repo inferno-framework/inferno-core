@@ -1,17 +1,19 @@
+require_relative '../../../serializers/session_data'
+
 module Inferno
   module Web
     module Controllers
       module TestSessions
         module SessionData
           class Index < Controller
-            include Import[session_data_repo: 'repositories.session_data']
+            include Import[session_data_repo: 'inferno.repositories.session_data']
 
             def self.resource_class
               'SessionData'
             end
 
-            def call(params)
-              self.body = serialize(session_data_repo.get_all_from_session(params[:test_session_id]))
+            def handle(req, res)
+              res.body = serialize(session_data_repo.get_all_from_session(req.params[:id]))
             end
           end
         end

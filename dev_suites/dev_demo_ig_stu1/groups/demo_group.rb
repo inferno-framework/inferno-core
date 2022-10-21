@@ -90,7 +90,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         # immediately or risk an exception causing it to not be returned
         observation_id = 5000
         assert false
-        output observation_id: observation_id # will not be reached
+        output observation_id: # will not be reached
       end
     end
 

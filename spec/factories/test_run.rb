@@ -4,7 +4,7 @@ FactoryBot.define do
     test_session_id { test_session.id }
 
     transient do
-      runnable { { test_suite_id: 'BasicTestSuite::Suite' } }
+      runnable { { test_suite_id: 'basic' } }
     end
 
     test_suite_id { runnable[:test_suite_id] }

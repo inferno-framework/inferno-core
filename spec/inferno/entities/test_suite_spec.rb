@@ -31,8 +31,8 @@ RSpec.describe Inferno::Entities::TestSuite do
     context 'with a hash argument' do
       it 'adds a group with the metadata defined in the hash' do
         metadata = {
-          title: title,
-          id: id
+          title:,
+          id:
         }
 
         suite_class.group metadata
@@ -46,7 +46,7 @@ RSpec.describe Inferno::Entities::TestSuite do
 
     context 'with string and hash arguments' do
       it 'adds a group with a title from the string and other metadata from the hash' do
-        metadata = { id: id }
+        metadata = { id: }
 
         suite_class.group title, metadata
 

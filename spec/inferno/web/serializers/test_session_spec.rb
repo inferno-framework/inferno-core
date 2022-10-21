@@ -1,5 +1,7 @@
+require_relative '../../../../lib/inferno/apps/web/serializers/test_session'
+
 RSpec.describe Inferno::Web::Serializers::TestSession do
-  let(:test_session) { repo_create(:test_session, test_suite_id: 'options', suite_options: suite_options) }
+  let(:test_session) { repo_create(:test_session, test_suite_id: 'options', suite_options:) }
   let(:suite_options) { [Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')] }
 
   it 'serializes a test session' do

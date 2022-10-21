@@ -1,3 +1,5 @@
+require_relative 'serializer'
+
 module Inferno
   module Web
     module Serializers

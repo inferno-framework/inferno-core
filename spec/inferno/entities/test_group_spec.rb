@@ -30,8 +30,8 @@ RSpec.describe Inferno::Entities::TestGroup do
     context 'with a hash argument' do
       it 'adds a group with the metadata defined in the hash' do
         metadata = {
-          title: title,
-          id: id
+          title:,
+          id:
         }
 
         group_class.group metadata
@@ -45,7 +45,7 @@ RSpec.describe Inferno::Entities::TestGroup do
 
     context 'with string and hash arguments' do
       it 'adds a group with a title from the string and other metadata from the hash' do
-        metadata = { id: id }
+        metadata = { id: }
 
         group_class.group title, metadata
 
@@ -101,8 +101,8 @@ RSpec.describe Inferno::Entities::TestGroup do
     context 'with a hash argument' do
       it 'adds a test with the metadata defined in the hash' do
         metadata = {
-          title: title,
-          id: id
+          title:,
+          id:
         }
 
         group_class.test metadata
@@ -116,7 +116,7 @@ RSpec.describe Inferno::Entities::TestGroup do
 
     context 'with string and hash arguments' do
       it 'adds a test with a title from the string and other metadata from the hash' do
-        metadata = { id: id }
+        metadata = { id: }
 
         group_class.test title, metadata
 

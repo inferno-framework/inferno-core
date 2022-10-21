@@ -1,3 +1,4 @@
+require_relative 'fhir_client_builder'
 require_relative 'request_storage'
 require_relative 'tcp_exception_handler'
 
@@ -136,7 +137,7 @@ module Inferno
         store_request_and_refresh_token(fhir_client(client), name) do
           tcp_exception_handler do
             fhir_client(client)
-              .search(fhir_class_from_resource_type(resource_type), { search: search })
+              .search(fhir_class_from_resource_type(resource_type), { search: })
           end
         end
       end
@@ -194,7 +195,7 @@ module Inferno
             name: credentials.name,
             value: credentials,
             type: 'oauth_credentials',
-            test_session_id: test_session_id
+            test_session_id:
           )
         end
       rescue StandardError => e

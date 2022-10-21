@@ -1,3 +1,5 @@
+require_relative 'test'
+
 module Inferno
   module Web
     module Serializers
@@ -19,11 +21,11 @@ module Inferno
         end
         field :test_groups do |group, options|
           suite_options = options[:suite_options]
-          TestGroup.render_as_hash(group.groups(suite_options), suite_options: suite_options)
+          TestGroup.render_as_hash(group.groups(suite_options), suite_options:)
         end
         field :tests do |group, options|
           suite_options = options[:suite_options]
-          Test.render_as_hash(group.tests(suite_options), suite_options: suite_options)
+          Test.render_as_hash(group.tests(suite_options), suite_options:)
         end
         field :inputs do |group, options|
           suite_options = options[:suite_options]

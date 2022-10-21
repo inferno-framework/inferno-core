@@ -4,11 +4,11 @@ module Inferno
   module Repositories
     class Results < Repository
       include Import[
-                messages_repo: 'repositories.messages',
-                requests_repo: 'repositories.requests',
-                tests_repo: 'repositories.tests',
-                groups_repo: 'repositories.test_groups',
-                suites_repo: 'repositories.test_suites'
+                messages_repo: 'inferno.repositories.messages',
+                requests_repo: 'inferno.repositories.requests',
+                tests_repo: 'inferno.repositories.tests',
+                groups_repo: 'inferno.repositories.test_groups',
+                suites_repo: 'inferno.repositories.test_suites'
               ]
 
       def create(params)
@@ -37,9 +37,9 @@ module Inferno
       #     test_session_id,
       #     test_id: 'test_id'
       #   )
-      def current_result_for_test_session(test_session_id, **params)
+      def current_result_for_test_session(test_session_id, params)
         self.class::Model
-          .where({ test_session_id: test_session_id }.merge(params))
+          .where({ test_session_id: }.merge(params))
           .order(Sequel.desc(:updated_at))
           .limit(1)
           .all
@@ -66,10 +66,10 @@ module Inferno
         entity_class.new(params.merge(runnable))
       end
 
-      def result_for_test_run(test_run_id:, **params)
+      def result_for_test_run(params)
         result_hash =
           self.class::Model
-            .find({ test_run_id: test_run_id }.merge(params))
+            .find(params)
             &.to_hash
 
         return nil if result_hash.nil?
@@ -79,7 +79,7 @@ module Inferno
 
       def test_run_results_after(test_run_id:, after:)
         Model
-          .where(test_run_id: test_run_id)
+          .where(test_run_id:)
           .where { updated_at >= after }
           .to_a
           .map! do |result_hash|
@@ -94,7 +94,7 @@ module Inferno
       def find_waiting_result(test_run_id:)
         result_hash =
           Model
-            .where(test_run_id: test_run_id, result: 'wait')
+            .where(test_run_id:, result: 'wait')
             .where { test_id !~ nil }
             .limit(1)
             .to_a
@@ -202,7 +202,7 @@ module Inferno
         end
 
         def self.current_results_for_test_session(test_session_id)
-          fetch(current_results_sql, test_session_id: test_session_id)
+          fetch(current_results_sql, test_session_id:)
         end
 
         def self.current_results_for_test_session_and_runnables(test_session_id, runnables)
@@ -212,10 +212,10 @@ module Inferno
 
           fetch(
             current_results_sql(with_runnables_filter: true),
-            test_session_id: test_session_id,
-            test_ids: test_ids,
-            test_group_ids: test_group_ids,
-            test_suite_ids: test_suite_ids
+            test_session_id:,
+            test_ids:,
+            test_group_ids:,
+            test_suite_ids:
           )
         end
       end

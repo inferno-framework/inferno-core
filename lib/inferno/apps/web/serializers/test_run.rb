@@ -1,3 +1,6 @@
+require_relative 'input'
+require_relative 'result'
+
 module Inferno
   module Web
     module Serializers

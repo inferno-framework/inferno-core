@@ -65,7 +65,7 @@ module Inferno
       end
 
       def to_hash
-        super.merge(test_session: test_session).compact
+        super.merge(test_session:).compact
       end
 
       def test_count(selected_suite_options = [])

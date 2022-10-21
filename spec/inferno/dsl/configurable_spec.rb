@@ -72,7 +72,7 @@ RSpec.describe Inferno::DSL::Configurable do
         it 'adds an input with a default config' do
           identifier = :input1
           config.add_input(identifier)
-          expected_input = Inferno::Entities::Input.new(config.default_input_params(identifier))
+          expected_input = Inferno::Entities::Input.new(**config.default_input_params(identifier))
 
           expect(config.input(identifier)).to eq(expected_input)
         end
@@ -81,7 +81,7 @@ RSpec.describe Inferno::DSL::Configurable do
           identifier = :input1
           input = { type: 'textarea' }
           config.add_input(identifier, input)
-          expected_input = Inferno::Entities::Input.new({ name: :input1 }.merge(input))
+          expected_input = Inferno::Entities::Input.new(**{ name: :input1 }.merge(input))
 
           expect(config.input(identifier)).to eq(expected_input)
         end
@@ -89,7 +89,7 @@ RSpec.describe Inferno::DSL::Configurable do
 
       context 'with an existing input' do
         it 'leaves the config unchanged if no new config is provided' do
-          existing_input = Inferno::Entities::Input.new({ name: :input2, type: 'textarea' })
+          existing_input = Inferno::Entities::Input.new(name: :input2, type: 'textarea')
           identifier = :input1
           config.add_input(identifier, existing_input.to_hash)
           config.add_input(identifier)
@@ -104,7 +104,7 @@ RSpec.describe Inferno::DSL::Configurable do
           config.add_input(identifier, existing_config)
           config.add_input(identifier, new_config)
 
-          expect(config.input(identifier)).to eq(Inferno::Entities::Input.new(existing_config.merge(new_config)))
+          expect(config.input(identifier)).to eq(Inferno::Entities::Input.new(**existing_config.merge(new_config)))
         end
       end
     end

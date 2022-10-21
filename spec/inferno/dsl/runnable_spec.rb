@@ -1,4 +1,5 @@
 require 'request_helper'
+require_relative '../../../lib/inferno/apps/web/router'
 
 RSpec.describe Inferno::DSL::Runnable do
   include Rack::Test::Methods

@@ -25,43 +25,6 @@
       "value": "launch/patient openid fhirUser offline_access patient/Medication.read patient/AllergyIntolerance.read patient/CarePlan.read patient/CareTeam.read patient/Condition.read patient/Device.read patient/DiagnosticReport.read patient/DocumentReference.read patient/Encounter.read patient/Goal.read patient/Immunization.read patient/Location.read patient/MedicationRequest.read patient/Observation.read patient/Organization.read patient/Patient.read patient/Practitioner.read patient/Procedure.read patient/Provenance.read patient/PractitionerRole.read"
     },
     {
-      "name": "use_pkce",
-      "type": "radio",
-      "title": "Proof Key for Code Exchange (PKCE)",
-      "options": {
-        "list_options": [
-          {
-            "label": "Enabled",
-            "value": "true"
-          },
-          {
-            "label": "Disabled",
-            "value": "false"
-          }
-        ]
-      },
-      "value": "false"
-    },
-    {
-      "name": "pkce_code_challenge_method",
-      "type": "radio",
-      "optional": true,
-      "title": "PKCE Code Challenge Method",
-      "options": {
-        "list_options": [
-          {
-            "label": "S256",
-            "value": "S256"
-          },
-          {
-            "label": "plain",
-            "value": "plain"
-          }
-        ]
-      },
-      "value": "S256"
-    },
-    {
       "name": "standalone_client_secret",
       "type": "text",
       "title": "Standalone Client Secret",
@@ -72,13 +35,6 @@
       "name": "expected_resources",
       "type": "text",
       "value": null
-    },
-    {
-      "name": "limited_requested_scopes",
-      "type": "textarea",
-      "title": "Standalone Scope",
-      "description": "OAuth 2.0 scope provided by system to enable all required functionality",
-      "value": "launch/patient openid fhirUser offline_access patient/Medication.read patient/AllergyIntolerance.read patient/CarePlan.read patient/CareTeam.read patient/Condition.read patient/Device.read patient/DiagnosticReport.read patient/DocumentReference.read patient/Encounter.read patient/Goal.read patient/Immunization.read patient/Location.read patient/MedicationRequest.read patient/Observation.read patient/Organization.read patient/Patient.read patient/Practitioner.read patient/Procedure.read patient/Provenance.read patient/PractitionerRole.read"
     },
     {
       "name": "ehr_client_id",
@@ -100,9 +56,7 @@
       "name": "additional_patient_ids",
       "type": "text",
       "title": "Additional Patient IDs",
-      "description": "Comma separated list of Patient IDs that together with the Patient\nID from the SMART App Launch contain all MUST SUPPORT elements.\n",
-      "type": "text",
-      "optional": true,
+      "description": "Comma separated list of Patient IDs that together with the Patient ID from the SMART App Launch contain all MUST SUPPORT elements.",
       "value": "85,355"
     },
     {
@@ -118,14 +72,14 @@
       "type": "text",
       "title": "Backend Services Token Endpoint",
       "description": "The OAuth 2.0 Token Endpoint used by the Backend Services specification\n                        to provide bearer tokens.",
-      "value": "<%= ENV.fetch('REFERENCE_SERVER_URL', 'https://inferno.healthit.gov') %>/bulk-data-server/auth/token"
+      "value": "https://inferno.healthit.gov/reference-server/oauth/bulk-token"
     },
     {
       "name": "bulk_client_id",
       "type": "text",
       "title": "Bulk Data Client ID",
       "description": "Client ID provided at registration to the Inferno application.",
-      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJlZ2lzdHJhdGlvbi10b2tlbiJ9.eyJqd2tzX3VybCI6Imh0dHBzOi8vaW5mZXJuby5oZWFsdGhpdC5nb3YvaW5mZXJuby8ud2VsbC1rbm93bi9qd2tzLmpzb24iLCJhY2Nlc3NUb2tlbnNFeHBpcmVJbiI6MTUsImlhdCI6MTU5OTE1NzgyMX0.-wulnE05BlY_Zcm5iP77Meqxr6iNiYxBsOADB5CGE8I"
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJlZ2lzdHJhdGlvbi10b2tlbiJ9.eyJqd2tzX3VybCI6Imh0dHA6Ly8xMC4xNS4yNTIuNzMvaW5mZXJuby8ud2VsbC1rbm93bi9qd2tzLmpzb24iLCJhY2Nlc3NUb2tlbnNFeHBpcmVJbiI6MTUsImlhdCI6MTU5NzQxMzE5NX0.q4v4Msc74kN506KTZ0q_minyapJw0gwlT6M_uiL73S4"
     },
     {
       "name": "bulk_scope",
@@ -158,14 +112,14 @@
       "type": "text",
       "title": "Bulk Data FHIR URL",
       "description": "The URL of the Bulk FHIR server.",
-      "value": "<%= ENV.fetch('REFERENCE_SERVER_URL', 'https://inferno.healthit.gov') %>/bulk-data-server/eyJlcnIiOiIiLCJwYWdlIjoxMDAwMCwiZHVyIjoxMCwidGx0IjoxNSwibSI6MSwic3R1Ijo0fQ/fhir"
+      "value": "https://inferno.healthit.gov/reference-server/r4"
     },
     {
       "name": "group_id",
       "type": "text",
       "title": "Group ID",
       "description": "The Group ID associated with the group of patients to be exported.",
-      "value": "1"
+      "value": "1a"
     },
     {
       "name": "bulk_timeout",
@@ -187,7 +141,7 @@
       "type": "text",
       "title": "Patient IDs in exported Group",
       "description": "Comma separated list of every Patient ID that is in the specified Group. This information is\n          provided by the system under test to verify that data returned matches expectations. Leave blank to not\n          verify Group inclusion.",
-      "value": "d831ec91-c7a3-4a61-9312-7ff0c4a32134, e91975f5-9445-c11f-cabf-c3c6dae161f2"
+      "value": "85, 355"
     },
     {
       "name": "bulk_device_types_in_group",
@@ -221,6 +175,20 @@
       "value": null
     },
     {
+      "name": "ehr_patient_client_id",
+      "type": "text",
+      "title": "EHR Launch Client ID",
+      "description": "Client ID provided during registration of Inferno as an EHR launch application",
+      "value": "SAMPLE_CONFIDENTIAL_CLIENT_ID"
+    },
+    {
+      "name": "ehr_patient_client_secret",
+      "type": "text",
+      "title": "EHR Launch Client Secret",
+      "description": "Client Secret provided during registration of Inferno as an EHR launch application",
+      "value": "SAMPLE_CONFIDENTIAL_CLIENT_SECRET"
+    },
+    {
       "name": "token_revocation_attestation",
       "type": "radio",
       "title": "Prior to executing test, Health IT developer demonstrated revoking tokens provided during patient standalone launch.",
@@ -244,21 +212,6 @@
       "title": "Notes, if applicable:",
       "optional": true,
       "value": null
-    },
-    {
-      "name": "ehr_patient_client_id",
-      "description": "Client ID provided during registration of Inferno as an EHR launch application",
-      "title": "EHR Launch Client ID",
-      "type": "text",
-      "value": "SAMPLE_CONFIDENTIAL_CLIENT_ID"
-    },
-    {
-      "name": "ehr_patient_client_secret",
-      "description": "Client Secret provided during registration of Inferno as an EHR launch application",
-      "optional": true,
-      "title": "EHR Launch Client Secret",
-      "type": "text",
-      "value": "SAMPLE_CONFIDENTIAL_CLIENT_SECRET"
     },
     {
       "name": "single_patient_registration_supported",
