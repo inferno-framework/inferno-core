@@ -81,6 +81,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         alignItems="center"
         overflow="auto"
         height="100%"
+        minHeight="400px"
         pb={windowIsSmall ? 0 : 10}
       >
         <Box my={2} alignItems="center" maxWidth="800px">
