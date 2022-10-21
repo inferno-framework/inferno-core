@@ -3,7 +3,7 @@
 RSpec.describe InfrastructureTest::Suite do
   let(:suite) { described_class }
   let(:test_run) { Inferno::Entities::TestRun.new(id: SecureRandom.uuid) }
-  let(:runner) { Inferno::TestRunner.new(test_session: test_session, test_run: test_run) }
+  let(:runner) { Inferno::TestRunner.new(test_session:, test_run:) }
   let(:test_session) { repo_create(:test_session, test_suite_id: suite.id) }
   let(:results_repo) { Inferno::Repositories::Results.new }
 
@@ -78,7 +78,7 @@ RSpec.describe InfrastructureTest::Suite do
         repo_create(
           :test_run,
           runnable: { test_group_id: outer_inline_group.id },
-          test_session: test_session
+          test_session:
         )
       end
 
@@ -136,7 +136,7 @@ RSpec.describe InfrastructureTest::Suite do
         repo_create(
           :test_run,
           runnable: { test_group_id: inner_inline_group.id },
-          test_session: test_session
+          test_session:
         )
       end
 
@@ -197,7 +197,7 @@ RSpec.describe InfrastructureTest::Suite do
         repo_create(
           :test_run,
           runnable: { test_id: inline_test1.id },
-          test_session: test_session
+          test_session:
         )
       end
 
@@ -251,7 +251,7 @@ RSpec.describe InfrastructureTest::Suite do
         repo_create(
           :test_run,
           runnable: { test_group_id: external_outer_group.id },
-          test_session: test_session
+          test_session:
         )
       end
 
@@ -308,7 +308,7 @@ RSpec.describe InfrastructureTest::Suite do
         repo_create(
           :test_run,
           runnable: { test_group_id: external_inner_group.id },
-          test_session: test_session
+          test_session:
         )
       end
 
@@ -370,7 +370,7 @@ RSpec.describe InfrastructureTest::Suite do
         repo_create(
           :test_run,
           runnable: { test_id: external_test.id },
-          test_session: test_session
+          test_session:
         )
       end
 

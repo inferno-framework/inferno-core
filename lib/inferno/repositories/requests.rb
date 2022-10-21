@@ -1,7 +1,7 @@
 module Inferno
   module Repositories
     class Requests < Repository
-      include Import[headers_repo: 'repositories.headers']
+      include Import[headers_repo: 'inferno.repositories.headers']
 
       def create(params)
         request = self.class::Model.create(db_params(params))
@@ -17,7 +17,7 @@ module Inferno
 
         build_entity(
           request.to_hash
-            .merge(headers: headers)
+            .merge(headers:)
             .merge(non_db_params(params))
         )
       end
@@ -25,7 +25,7 @@ module Inferno
       def find(id)
         result =
           self.class::Model
-            .where(id: id)
+            .where(id:)
             .select(*entity_class::SUMMARY_FIELDS)
             .to_a
         return nil if result.blank?
@@ -36,7 +36,7 @@ module Inferno
       def find_full_request(id)
         result =
           self.class::Model
-            .find(id: id)
+            .find(id:)
             .to_json_data(json_serializer_options)
             .deep_symbolize_keys!
 
@@ -46,7 +46,7 @@ module Inferno
       def find_named_request(test_session_id, name)
         results =
           self.class::Model
-            .where(test_session_id: test_session_id, name: name.to_s)
+            .where(test_session_id:, name: name.to_s)
             .map { |model| model.to_json_data(json_serializer_options) }
         return nil if results.blank?
 
@@ -59,7 +59,7 @@ module Inferno
       def requests_for_result(result_id)
         self.class::Model
           .order(:index)
-          .where(result_id: result_id)
+          .where(result_id:)
           .select(*entity_class::SUMMARY_FIELDS)
           .to_a
           .map(&:to_hash)

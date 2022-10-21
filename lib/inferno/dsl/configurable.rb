@@ -37,7 +37,7 @@ module Inferno
               new_configuration
             end
 
-          self.configuration = configuration.deep_merge(config_to_apply.reject { |key, _| key == :inputs })
+          self.configuration = configuration.deep_merge(config_to_apply.except(:inputs))
 
           config_to_apply[:inputs]&.each do |identifier, new_input|
             add_input(identifier, new_input.to_hash)
@@ -58,13 +58,13 @@ module Inferno
           existing_config = input(identifier)
 
           if existing_config.nil?
-            return inputs[identifier] = Entities::Input.new(default_input_params(identifier).merge(new_config))
+            return inputs[identifier] = Entities::Input.new(**default_input_params(identifier).merge(new_config))
           end
 
           inputs[identifier] =
             Entities::Input
-              .new(existing_config.to_hash)
-              .merge(Entities::Input.new(new_config))
+              .new(**existing_config.to_hash)
+              .merge(Entities::Input.new(**new_config))
         end
 
         def default_input_params(identifier)

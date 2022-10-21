@@ -49,11 +49,11 @@ module Inferno
         request =
           if response.is_a? FHIR::ClientReply
             Entities::Request.from_fhir_client_reply(
-              response, direction: direction, name: name, test_session_id: test_session_id
+              response, direction:, name:, test_session_id:
             )
           else
             Entities::Request.from_http_response(
-              response, direction: direction, name: name, test_session_id: test_session_id
+              response, direction:, name:, test_session_id:
             )
           end
 

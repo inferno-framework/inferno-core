@@ -1,3 +1,5 @@
+require_relative '../../../lib/inferno/dsl/http_client_builder'
+
 class HTTPClientDSLTestClass
   include Inferno::DSL::HTTPClient
   extend Inferno::DSL::Configurable

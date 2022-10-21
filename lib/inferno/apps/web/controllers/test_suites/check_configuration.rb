@@ -3,11 +3,11 @@ module Inferno
     module Controllers
       module TestSuites
         class CheckConfiguration < Controller
-          def call(params)
-            test_suite = repo.find(params[:id])
+          def handle(req, res)
+            test_suite = repo.find(req.params[:id])
             halt 404 if test_suite.nil?
 
-            self.body =
+            res.body =
               Inferno::Web::Serializers::Message.render(test_suite.configuration_messages(force_recheck: true))
           end
         end

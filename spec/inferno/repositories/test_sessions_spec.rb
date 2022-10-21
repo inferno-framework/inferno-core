@@ -2,11 +2,11 @@ RSpec.describe Inferno::Repositories::TestSessions do
   let(:repo) { described_class.new }
 
   describe '#create' do
-    let(:test_suite_id) { 'BasicTestSuite::Suite' }
+    let(:test_suite_id) { 'basic' }
 
     context 'with valid params' do
       it 'persists the test session' do
-        test_session = repo.create(test_suite_id: test_suite_id)
+        test_session = repo.create(test_suite_id:)
         expect(test_session).to be_a(Inferno::Entities::TestSession)
         expect(test_session.test_suite.ancestors).to include(Inferno::Entities::TestSuite)
       end
@@ -42,7 +42,7 @@ RSpec.describe Inferno::Repositories::TestSessions do
   describe '#results_for_test_session' do
     let(:test_run) { repo_create(:test_run) }
     let(:test_session) { test_run.test_session }
-    let!(:result) { repo_create(:result, test_run: test_run, message_count: 2, request_count: 2) }
+    let!(:result) { repo_create(:result, test_run:, message_count: 2, request_count: 2) }
     let(:messages) { result.messages }
     let(:requests) { result.requests }
 

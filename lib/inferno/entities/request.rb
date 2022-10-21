@@ -89,8 +89,8 @@ module Inferno
       # @return [Hash]
       def request
         {
-          verb: verb,
-          url: url,
+          verb:,
+          url:,
           headers: request_headers,
           body: request_body
         }
@@ -101,7 +101,7 @@ module Inferno
       # @return [Hash]
       def response
         {
-          status: status,
+          status:,
           headers: response_headers,
           body: response_body
         }
@@ -110,20 +110,20 @@ module Inferno
       # @private
       def to_hash
         {
-          id: id,
-          verb: verb,
-          url: url,
-          direction: direction,
-          status: status,
-          name: name,
-          request_body: request_body,
-          response_body: response_body,
-          result_id: result_id,
-          test_session_id: test_session_id,
+          id:,
+          verb:,
+          url:,
+          direction:,
+          status:,
+          name:,
+          request_body:,
+          response_body:,
+          result_id:,
+          test_session_id:,
           request_headers: request_headers.map(&:to_hash),
           response_headers: response_headers.map(&:to_hash),
-          created_at: created_at,
-          updated_at: updated_at
+          created_at:,
+          updated_at:
         }.compact
       end
 
@@ -136,22 +136,21 @@ module Inferno
 
       class << self
         # @private
-        def from_rack_env(env, name: nil)
-          rack_request = env['router.request'].rack_request
-          url = "#{rack_request.base_url}#{rack_request.path}"
-          url += "?#{rack_request.query_string}" if rack_request.query_string.present?
+        def from_hanami_request(request, name: nil)
+          url = "#{request.base_url}#{request.path}"
+          url += "?#{request.query_string}" if request.query_string.present?
           request_headers =
-            env
+            request.params.env
               .select { |key, _| key.start_with? 'HTTP_' }
               .transform_keys { |key| key.delete_prefix('HTTP_').tr('_', '-').downcase }
-              .map { |header_name, value| Header.new(name: header_name, value: value, type: 'request') }
+              .map { |header_name, value| Header.new(name: header_name, value:, type: 'request') }
 
           new(
-            verb: rack_request.request_method.downcase,
-            url: url,
+            verb: request.request_method.downcase,
+            url:,
             direction: 'incoming',
-            name: name,
-            request_body: rack_request.body.string,
+            name:,
+            request_body: request.body.string,
             headers: request_headers
           )
         end
@@ -160,20 +159,20 @@ module Inferno
         def from_http_response(response, test_session_id:, direction: 'outgoing', name: nil)
           request_headers =
             response.env.request_headers
-              .map { |header_name, value| Header.new(name: header_name.downcase, value: value, type: 'request') }
+              .map { |header_name, value| Header.new(name: header_name.downcase, value:, type: 'request') }
           response_headers =
             response.headers
-              .map { |header_name, value| Header.new(name: header_name.downcase, value: value, type: 'response') }
+              .map { |header_name, value| Header.new(name: header_name.downcase, value:, type: 'response') }
 
           new(
             verb: response.env.method,
             url: response.env.url.to_s,
-            direction: direction,
-            name: name,
+            direction:,
+            name:,
             status: response.status,
             request_body: response.env.request_body,
             response_body: response.body,
-            test_session_id: test_session_id,
+            test_session_id:,
             headers: request_headers + response_headers
           )
         end
@@ -183,9 +182,9 @@ module Inferno
           request = reply.request
           response = reply.response
           request_headers = request[:headers]
-            .map { |header_name, value| Header.new(name: header_name.downcase, value: value, type: 'request') }
+            .map { |header_name, value| Header.new(name: header_name.downcase, value:, type: 'request') }
           response_headers = response[:headers]
-            .map { |header_name, value| Header.new(name: header_name.downcase, value: value, type: 'response') }
+            .map { |header_name, value| Header.new(name: header_name.downcase, value:, type: 'response') }
           request_body =
             if request.dig(:headers, 'Content-Type')&.include?('application/x-www-form-urlencoded')
               URI.encode_www_form(request[:payload])
@@ -196,12 +195,12 @@ module Inferno
           new(
             verb: request[:method],
             url: request[:url],
-            direction: direction,
-            name: name,
+            direction:,
+            name:,
             status: response[:code].to_i,
-            request_body: request_body,
+            request_body:,
             response_body: response[:body],
-            test_session_id: test_session_id,
+            test_session_id:,
             headers: request_headers + response_headers
           )
         end

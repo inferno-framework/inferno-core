@@ -3,7 +3,7 @@ require_relative '../../../lib/inferno/repositories/requests'
 RSpec.describe Inferno::Repositories::Requests do
   let(:repo) { described_class.new }
   let(:test_run) { repo_create(:test_run) }
-  let(:result) { repo_create(:result, test_run: test_run) }
+  let(:result) { repo_create(:result, test_run:) }
   let(:test_session) { test_run.test_session }
 
   describe '#create' do
@@ -118,7 +118,7 @@ RSpec.describe Inferno::Repositories::Requests do
     it 'returns the most recent request with the given name for the test session' do
       5.times do |i|
         url = "http://example.com/#{i}"
-        repo_create(:request, url: url, result_id: result.id, test_session_id: test_session.id, name: 'NAME')
+        repo_create(:request, url:, result_id: result.id, test_session_id: test_session.id, name: 'NAME')
       end
 
       request = repo.find_named_request(test_session.id, :NAME)

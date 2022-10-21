@@ -1,5 +1,5 @@
 RSpec.describe Inferno::TestRunner do
-  let(:runner) { described_class.new(test_session: test_session, test_run: test_run) }
+  let(:runner) { described_class.new(test_session:, test_run:) }
   let(:test_session) { repo_create(:test_session, test_suite_id: 'demo') }
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
   let(:results_repo) { Inferno::Repositories::Results.new }
@@ -39,11 +39,11 @@ RSpec.describe Inferno::TestRunner do
         .to_return(status: 200, body: FHIR::OperationOutcome.new.to_json)
       stub_request(:get, 'http://example.com')
         .to_return(status: 200)
-      { url: base_url, patient_id: patient_id }.each do |name, value|
+      { url: base_url, patient_id: }.each do |name, value|
         session_data_repo.save(
           test_session_id: test_session.id,
-          name: name,
-          value: value,
+          name:,
+          value:,
           type: 'text'
         )
         stub_request(:get, base_url)

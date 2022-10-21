@@ -3,11 +3,11 @@ module Inferno
     module Controllers
       module TestSessions
         class Show < Controller
-          def call(params)
-            test_session = repo.find(params[:id])
+          def handle(req, res)
+            test_session = repo.find(req.params[:id])
             halt 404 if test_session.nil?
 
-            self.body = serialize(test_session)
+            res.body = serialize(test_session)
           end
         end
       end

@@ -48,7 +48,7 @@ module Inferno
       # @return [Inferno::Entities] an instance of the class returned by
       #   `#entity_class`
       def find(id)
-        result = self.class::Model.find(id: id)
+        result = self.class::Model.find(id:)
         return result if result.nil?
 
         build_entity(result.to_hash)

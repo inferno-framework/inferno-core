@@ -3,11 +3,11 @@ module Inferno
     module Controllers
       module Requests
         class Show < Controller
-          def call(params)
-            request = repo.find_full_request(params[:id])
+          def handle(req, res)
+            request = repo.find_full_request(req.params[:id])
             halt 404 if request.nil?
 
-            self.body = serialize(request, view: :full)
+            res.body = serialize(request, view: :full)
           end
         end
       end

@@ -4,9 +4,9 @@ module Inferno
       module TestRuns
         class Create < Controller
           include Import[
-                    test_sessions_repo: 'repositories.test_sessions',
-                    session_data_repo: 'repositories.session_data',
-                    test_runs_repo: 'repositories.test_runs'
+                    test_sessions_repo: 'inferno.repositories.test_sessions',
+                    session_data_repo: 'inferno.repositories.session_data',
+                    test_runs_repo: 'inferno.repositories.test_runs'
                   ]
 
           PARAMS = [:test_session_id, :test_suite_id, :test_group_id, :test_id].freeze
@@ -42,38 +42,34 @@ module Inferno
             end
           end
 
-          def call(params)
-            test_session = test_sessions_repo.find(params[:test_session_id])
+          def handle(req, res)
+            test_session = test_sessions_repo.find(req.params[:test_session_id])
 
             # if testsession.nil?
             if test_runs_repo.active_test_run_for_session?(test_session.id)
-              self.status = 409
-              self.body = { error: 'Cannot run new test while another test run is in progress' }.to_json
-              return
+              halt 409, { error: 'Cannot run new test while another test run is in progress' }.to_json
             end
 
             verify_runnable(
-              repo.build_entity(create_params(params)).runnable,
-              params[:inputs],
+              repo.build_entity(create_params(req.params)).runnable,
+              req.params[:inputs],
               test_session.suite_options
             )
 
-            test_run = repo.create(create_params(params).merge(status: 'queued'))
+            test_run = repo.create(create_params(req.params).merge(status: 'queued'))
 
-            self.body = serialize(test_run, suite_options: test_session.suite_options)
+            res.body = serialize(test_run, suite_options: test_session.suite_options)
 
-            persist_inputs(params, test_run)
+            persist_inputs(req.params, test_run)
 
             Jobs.perform(Jobs::ExecuteTestRun, test_run.id)
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation,
                  Inferno::Exceptions::RequiredInputsNotFound,
                  Inferno::Exceptions::NotUserRunnableException => e
-            self.body = { errors: e.message }.to_json
-            self.status = 422
+            halt 422, { errors: e.message }.to_json
           rescue StandardError => e
             Application['logger'].error(e.full_message)
-            self.body = { errors: e.message }.to_json
-            self.status = 500
+            halt 500, { errors: e.message }.to_json
           end
 
           def create_params(params)

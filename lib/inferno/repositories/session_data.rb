@@ -10,19 +10,19 @@ module Inferno
         db
           .insert_conflict(
             target: :id,
-            update: { value: value }
+            update: { value: }
           ).insert(
             id: "#{test_session_id}_#{name}",
-            name: name,
-            value: value,
-            test_session_id: test_session_id
+            name:,
+            value:,
+            test_session_id:
           )
       end
 
       def load(test_session_id:, name:, type: 'text')
         raw_value =
           self.class::Model
-            .find(test_session_id: test_session_id, name: name.to_s.downcase)
+            .find(test_session_id:, name: name.to_s.downcase)
             &.value
 
         case type.to_s
@@ -35,7 +35,7 @@ module Inferno
 
       def get_all_from_session(test_session_id)
         self.class::Model
-          .where(test_session_id: test_session_id)
+          .where(test_session_id:)
           .all
           .map! do |session_data_hash|
             build_entity(

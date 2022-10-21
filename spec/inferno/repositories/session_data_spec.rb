@@ -1,3 +1,5 @@
+require_relative '../../../lib/inferno/repositories/session_data'
+
 RSpec.describe Inferno::Repositories::SessionData do
   let(:repo) { described_class.new }
   let(:test_session) { repo_create(:test_session) }
@@ -7,8 +9,8 @@ RSpec.describe Inferno::Repositories::SessionData do
   before do
     repo.save(
       test_session_id: test_session.id,
-      name: name,
-      value: value,
+      name:,
+      value:,
       type: 'text'
     )
   end
@@ -26,7 +28,7 @@ RSpec.describe Inferno::Repositories::SessionData do
     it 'overwrites existing data for a test session and name' do
       repo.save(
         test_session_id: test_session.id,
-        name: name,
+        name:,
         value: new_value,
         type: 'text'
       )
@@ -43,8 +45,8 @@ RSpec.describe Inferno::Repositories::SessionData do
       test_session2 = repo_create(:test_session)
       repo.save(
         test_session_id: test_session2.id,
-        name: name,
-        value: value,
+        name:,
+        value:,
         type: 'text'
       )
 
@@ -56,7 +58,7 @@ RSpec.describe Inferno::Repositories::SessionData do
       repo.save(
         test_session_id: test_session.id,
         name: name2,
-        value: value,
+        value:,
         type: 'text'
       )
 
@@ -68,7 +70,7 @@ RSpec.describe Inferno::Repositories::SessionData do
         credentials = Inferno::DSL::OAuthCredentials.new(access_token: 'TOKEN', client_id: 'CLIENT_ID')
         name = 'creds'
         params = {
-          name: name,
+          name:,
           value: credentials,
           type: 'oauth_credentials',
           test_session_id: test_session.id
@@ -76,7 +78,7 @@ RSpec.describe Inferno::Repositories::SessionData do
 
         repo.save(params)
 
-        persisted_value = repo.class.db.where(name: name).first[:value]
+        persisted_value = repo.class.db.where(name:).first[:value]
         expect(persisted_value).to eq(credentials.to_s)
       end
 
@@ -84,7 +86,7 @@ RSpec.describe Inferno::Repositories::SessionData do
         credentials = Inferno::DSL::OAuthCredentials.new(access_token: 'TOKEN', client_id: 'CLIENT_ID')
         name = 'creds'
         params = {
-          name: name,
+          name:,
           value: credentials.to_s,
           type: 'oauth_credentials',
           test_session_id: test_session.id
@@ -92,7 +94,7 @@ RSpec.describe Inferno::Repositories::SessionData do
 
         repo.save(params)
 
-        persisted_value = repo.class.db.where(name: name).first[:value]
+        persisted_value = repo.class.db.where(name:).first[:value]
         expect(JSON.parse(persisted_value)).to include(JSON.parse(credentials.to_s))
       end
     end
@@ -100,7 +102,7 @@ RSpec.describe Inferno::Repositories::SessionData do
 
   describe '#load' do
     it 'returns the value for an piece of data' do
-      data = repo.load(test_session_id: test_session.id, name: name)
+      data = repo.load(test_session_id: test_session.id, name:)
 
       expect(data).to eq(value)
     end
@@ -116,13 +118,13 @@ RSpec.describe Inferno::Repositories::SessionData do
         raw_value = Inferno::DSL::OAuthCredentials.new(access_token: 'TOKEN', client_id: 'CLIENT_ID').to_s
         name = 'creds'
         repo.save(
-          name: name,
+          name:,
           value: raw_value,
           type: 'text',
           test_session_id: test_session.id
         )
 
-        value = repo.load(test_session_id: test_session.id, name: name, type: 'oauth_credentials')
+        value = repo.load(test_session_id: test_session.id, name:, type: 'oauth_credentials')
 
         expect(value).to be_a(Inferno::DSL::OAuthCredentials)
         expect(value.to_s).to eq(raw_value)

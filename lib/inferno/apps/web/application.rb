@@ -1,4 +1,5 @@
 require 'hanami/middleware/body_parser'
+require_relative 'router'
 
 module Inferno
   module Web

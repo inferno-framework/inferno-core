@@ -14,15 +14,15 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'activesupport', '~> 6.1'
   spec.add_runtime_dependency 'blueprinter', '0.25.2'
   spec.add_runtime_dependency 'dotenv', '~> 2.7'
-  spec.add_runtime_dependency 'dry-configurable', '0.12.0' # 0.13.0 causes a lot of deprecation warnings
-  spec.add_runtime_dependency 'dry-container', '0.8.0'
-  spec.add_runtime_dependency 'dry-system', '0.18.1'
+  spec.add_runtime_dependency 'dry-configurable', '0.13.0'
+  spec.add_runtime_dependency 'dry-container', '0.9.0'
+  spec.add_runtime_dependency 'dry-system', '0.20.0'
   spec.add_runtime_dependency 'faraday', '~> 1.2'
   spec.add_runtime_dependency 'faraday_middleware', '~> 1.2'
   spec.add_runtime_dependency 'fhir_client', '>= 5.0.3'
   spec.add_runtime_dependency 'fhir_models', '>= 4.2.2'
-  spec.add_runtime_dependency 'hanami-controller', '~> 1.3'
-  spec.add_runtime_dependency 'hanami-router', '~> 1.3'
+  spec.add_runtime_dependency 'hanami-controller', '2.0.0.beta1'
+  spec.add_runtime_dependency 'hanami-router', '2.0.0.beta2'
   spec.add_runtime_dependency 'oj', '3.11.0'
   spec.add_runtime_dependency 'pry'
   spec.add_runtime_dependency 'pry-byebug'
@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'sequel', '~> 5.42.0'
   spec.add_runtime_dependency 'sidekiq', '~> 6.5.6'
   spec.add_runtime_dependency 'sqlite3', '~> 1.4'
-  spec.add_runtime_dependency 'thor', '~> 1.1.0'
+  spec.add_runtime_dependency 'thor', '~> 1.2.1'
   spec.add_development_dependency 'codecov', '0.5.2'
   spec.add_development_dependency 'database_cleaner-sequel', '~> 1.8'
   spec.add_development_dependency 'factory_bot', '~> 6.1'
@@ -44,7 +44,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov', '0.21.2'
   spec.add_development_dependency 'webmock', '~> 3.11'
   spec.add_development_dependency 'yard', '0.9.26'
-  spec.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
+  spec.required_ruby_version = Gem::Requirement.new('~> 3.1.2')
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/inferno-framework/inferno-core'
   spec.metadata['changelog_uri'] = 'https://github.com/inferno-framework/inferno-core/blob/main/CHANGELOG.md'

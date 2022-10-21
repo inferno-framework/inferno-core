@@ -73,8 +73,8 @@ module Inferno
       end
 
       # @private
-      def method_missing(name, *args, &block)
-        return runnable.call(name, *args, &block) if runnable.respond_to? name
+      def method_missing(name, *args, &)
+        return runnable.call(name, *args, &) if runnable.respond_to? name
 
         super
       end

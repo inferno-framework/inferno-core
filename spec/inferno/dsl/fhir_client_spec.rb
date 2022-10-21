@@ -36,7 +36,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
   let(:resource_id) { '123' }
   let(:resource) { FHIR::CarePlan.new(id: resource_id) }
   let(:default_client) { group.fhir_clients[:default] }
-  let(:bundle) { FHIR::Bundle.new(entry: [{ resource: resource }]) }
+  let(:bundle) { FHIR::Bundle.new(entry: [{ resource: }]) }
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
 
   describe '#fhir_client' do
@@ -581,7 +581,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
       ids.each do |id|
         stub_request(:get, "#{base_url}/Patient/#{id}")
-          .to_return(status: 200, body: FHIR::Patient.new(id: id).to_json)
+          .to_return(status: 200, body: FHIR::Patient.new(id:).to_json)
 
         group.fhir_read('Patient', id)
 
@@ -598,7 +598,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
       ids.each do |id|
         stub_request(:get, "#{base_url}/Patient/#{id}")
-          .to_return(status: 200, body: FHIR::Patient.new(id: id).to_json)
+          .to_return(status: 200, body: FHIR::Patient.new(id:).to_json)
       end
 
       requests = ids.map { |id| group.fhir_read('Patient', id) }
@@ -612,7 +612,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
     it 'returns the response from the most recent request' do
       response = 'RESPONSE'
 
-      allow(group).to receive(:request).and_return(OpenStruct.new(response: response))
+      allow(group).to receive(:request).and_return(OpenStruct.new(response:))
 
       expect(group.response).to eq(response)
     end
@@ -622,7 +622,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
     it 'returns the resource from the most recent request' do
       resource = 'RESOURCE'
 
-      allow(group).to receive(:request).and_return(OpenStruct.new(resource: resource))
+      allow(group).to receive(:request).and_return(OpenStruct.new(resource:))
 
       expect(group.resource).to eq(resource)
     end

@@ -10,7 +10,7 @@ RSpec.describe Inferno::Entities::Request do
       stub_request(:post, url)
         .to_return(status: 200, body: response_body, headers: response_headers)
 
-      response = Faraday.new(url: url).post('', request_body, request_headers)
+      response = Faraday.new(url:).post('', request_body, request_headers)
 
       entity = described_class.from_http_response(response, name: 'NAME', test_session_id: nil)
 

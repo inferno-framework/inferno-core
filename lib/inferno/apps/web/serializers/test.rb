@@ -1,3 +1,6 @@
+require_relative 'hash_value_extractor'
+require_relative 'input'
+
 module Inferno
   module Web
     module Serializers

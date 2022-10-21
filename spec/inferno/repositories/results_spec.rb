@@ -47,7 +47,7 @@ RSpec.describe Inferno::Repositories::Results do
     end
 
     it 'persists messages if present' do
-      result = repo.create(result_params.merge(messages: messages))
+      result = repo.create(result_params.merge(messages:))
 
       persisted_messages = Inferno::Repositories::Messages.new.messages_for_result(result.id)
       expect(persisted_messages.length).to eq(messages.length)

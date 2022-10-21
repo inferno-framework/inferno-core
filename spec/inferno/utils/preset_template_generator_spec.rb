@@ -1,3 +1,5 @@
+require_relative '../../../lib/inferno/utils/preset_template_generator'
+
 RSpec.describe Inferno::Utils::PresetTemplateGenerator do
   let(:suite) { DemoIG_STU1::DemoSuite }
   let(:expected_template) do

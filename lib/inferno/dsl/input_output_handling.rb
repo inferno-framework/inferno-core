@@ -183,7 +183,7 @@ module Inferno
           config.inputs
             .slice(*inputs)
             .each_with_object({}) do |(_, input), inputs|
-              inputs[input.name.to_sym] = Entities::Input.new(input.to_hash)
+              inputs[input.name.to_sym] = Entities::Input.new(**input.to_hash)
             end
 
         available_inputs.each do |input, current_definition|

@@ -1,3 +1,4 @@
+require_relative '../../../../lib/inferno/apps/web/serializers/test_suite'
 require 'active_support/core_ext/hash/indifferent_access'
 
 RSpec.describe Inferno::Web::Serializers::TestSuite do

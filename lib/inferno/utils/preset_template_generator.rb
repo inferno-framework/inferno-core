@@ -29,7 +29,7 @@ module Inferno
 
       def generate
         metadata.merge(
-          inputs: inputs
+          inputs:
         )
       end
     end
