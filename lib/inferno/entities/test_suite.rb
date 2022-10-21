@@ -19,6 +19,7 @@ module Inferno
 
         def_delegator :default_group, :test
 
+        # @private
         def default_group
           return @default_group if @default_group
 
@@ -31,17 +32,24 @@ module Inferno
           Inferno::Repositories::TestSuites.new
         end
 
+        # Get this suite's child groups, filtered by suite options, if provided.
+        #
+        # @param options [Array<Inferno::DSL::SuiteOption>]
+        #
+        # @return [Array<Inferno::Entities::TestGroup>]
         def groups(options = nil)
           children(options).select { |child| child < Inferno::Entities::TestGroup }
         end
 
         # Methods to configure Inferno::DSL::Runnable
 
+        # Add a child group
         def group(...)
           child_metadata(group_metadata)
           define_child(...)
         end
 
+        # @private
         def group_metadata
           {
             class: TestGroup,
@@ -49,18 +57,25 @@ module Inferno
           }
         end
 
+        # @private
         def reference_hash
           {
             test_suite_id: id
           }
         end
 
+        # Set/get the version of this test suite.
+        #
+        # @param version [String]
+        #
+        # @return [String, nil]
         def version(version = nil)
           return @version if version.nil?
 
           @version = version
         end
 
+        # @private
         def configuration_messages(new_messages = nil, force_recheck: false)
           return @configuration_messages = new_messages unless new_messages.nil?
 
@@ -82,24 +97,82 @@ module Inferno
           @check_configuration_block = block
         end
 
+        # @private
         def presets
           @presets ||= Repositories::Presets.new.presets_for_suite(id)
         end
 
-        def suite_option(identifier, **input_params)
-          suite_options << DSL::SuiteOption.new(input_params.merge(id: identifier))
+        # Define an option for this suite. Options are used to define suite-wide
+        # configuration which is selected by a user at the start of a test
+        # session. These options can be used to change what tests/groups are run
+        # or behavior within particular tests.
+        #
+        # @param identifier [Symbol, String] The identifier which will be used
+        #   to refer to this option
+        # @option option_params [String] :title Title which will be displayed in
+        #   the UI
+        # @option option_params [Array<Hash>] :list_options The list of possible
+        #   values for this option. Each hash needs to have a `label:` and a
+        #   `value:` entry which are Strings.
+        #
+        # @example
+        #   suite_option :ig_version,
+        #               list_options: [
+        #                 {
+        #                   label: 'IG v1',
+        #                   value: 'ig_v1'
+        #                 },
+        #                 {
+        #                   label: 'IG v2',
+        #                   value: 'ig_v2'
+        #                 }
+        #               ]
+        #
+        #   group from: :ig_v1_group,
+        #         required_suite_options: { ig_version: 'ig_v1' }
+        #
+        #   group from: :ig_v2_group,
+        #         required_suite_options: { ig_version: 'ig_v2' }
+        def suite_option(identifier, **option_params)
+          suite_options << DSL::SuiteOption.new(option_params.merge(id: identifier))
         end
 
+        # @return [Array<Inferno::DSL::SuiteOption>] The options defined for
+        #   this suite
         def suite_options
           @suite_options ||= []
         end
 
+        # Set/get a list of links which are displayed in the footer of the UI.
+        #
+        # @param links [Array<Hash>] A list of Hashes for the links to be
+        #   displayed. Each hash needs a `label:` and `url:` entry.
+        #
+        # @return [Array<Hash>, nil]
+        #
+        # @example
+        #   links [
+        #     {
+        #       label: 'Report Issue',
+        #       url: 'https://github.com/onc-healthit/onc-certification-g10-test-kit/issues/'
+        #     },
+        #     {
+        #       label: 'Open Source',
+        #       url: 'https://github.com/onc-healthit/onc-certification-g10-test-kit/'
+        #     }
+        #   ]
         def links(links = nil)
           return @links if links.nil?
 
           @links = links
         end
 
+        # Set/get a description which for this test suite which will be
+        # displayed in the UI.
+        #
+        # @param suite_summary [String]
+        #
+        # @return [String, nil]
         def suite_summary(suite_summary = nil)
           return @suite_summary if suite_summary.nil?
 
