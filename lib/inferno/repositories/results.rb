@@ -66,7 +66,7 @@ module Inferno
         entity_class.new(params.merge(runnable))
       end
 
-      def result_for_test_run(**params)
+      def result_for_test_run(params)
         result_hash =
           self.class::Model
             .find(params)
