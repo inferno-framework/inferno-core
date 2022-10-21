@@ -3,8 +3,8 @@ module Inferno
     module Controllers
       module TestSuites
         class Index < Controller
-          def call(_params)
-            self.body = serialize(repo.all, view: :summary)
+          def handle(_req, res)
+            res.body = serialize(repo.all, view: :summary)
           end
         end
       end

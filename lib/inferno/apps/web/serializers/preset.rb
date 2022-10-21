@@ -1,3 +1,5 @@
+require_relative 'serializer'
+
 module Inferno
   module Web
     module Serializers
@@ -6,11 +8,6 @@ module Inferno
           identifier :id
           field :title
         end
-
-        # view :full do
-        #   include_view :summary
-        #   field :inputs, blueprint: Input
-        # end
       end
     end
   end

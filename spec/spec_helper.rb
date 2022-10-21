@@ -141,7 +141,7 @@ Inferno::Application.finalize!
 require_relative 'support/factory_bot'
 
 RSpec::Matchers.define_negated_matcher :exclude, :include
-
+require 'fhir_client'
 FHIR.logger = Inferno::Application['logger']
 
 DatabaseCleaner[:sequel].strategy = :truncation

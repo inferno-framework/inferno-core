@@ -1,3 +1,6 @@
+require_relative '../../../lib/inferno/dsl/oauth_credentials'
+require_relative '../../../lib/inferno/ext/fhir_client'
+
 RSpec.describe Inferno::DSL::OAuthCredentials do
   let(:full_params) do
     {

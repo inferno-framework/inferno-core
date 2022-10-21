@@ -50,7 +50,7 @@ RSpec.describe Inferno::Repositories::Messages do
 
   describe '#messages_for_result' do
     let(:message_count) { 2 }
-    let(:result) { repo_create(:result, message_count: message_count) }
+    let(:result) { repo_create(:result, message_count:) }
 
     it 'returns the messages for a result' do
       messages = repo.messages_for_result(result.id)

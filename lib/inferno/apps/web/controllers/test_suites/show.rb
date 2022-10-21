@@ -3,11 +3,11 @@ module Inferno
     module Controllers
       module TestSuites
         class Show < Controller
-          def call(params)
-            test_suite = repo.find(params[:id])
+          def handle(req, res)
+            test_suite = repo.find(req.params[:id])
             halt 404 if test_suite.nil?
 
-            self.body = serialize(test_suite, view: :full)
+            res.body = serialize(test_suite, view: :full)
           end
         end
       end

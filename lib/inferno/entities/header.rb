@@ -35,13 +35,13 @@ module Inferno
 
       def to_hash
         {
-          id: id,
-          request_id: request_id,
-          type: type,
-          name: name,
-          value: value,
-          created_at: created_at,
-          updated_at: updated_at
+          id:,
+          request_id:,
+          type:,
+          name:,
+          value:,
+          created_at:,
+          updated_at:
         }.compact
       end
     end

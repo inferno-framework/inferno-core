@@ -45,8 +45,8 @@ module Inferno
         attr_reader :requirements
 
         # @private
-        def initialize(requirements = nil, &block)
-          instance_eval(&block)
+        def initialize(requirements = nil, &)
+          instance_eval(&)
           @requirements = requirements
         end
 
@@ -172,11 +172,10 @@ module Inferno
         # @param profile_url [String]
         # @return [String] the body of the validation response
         def validate(resource, profile_url)
-          RestClient.post(
-            "#{url}/validate",
-            resource.source_contents,
+          Faraday.new(
+            url,
             params: { profile: profile_url }
-          ).body
+          ).post('validate', resource.source_contents).body
         end
       end
 

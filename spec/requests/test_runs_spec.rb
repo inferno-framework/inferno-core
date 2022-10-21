@@ -1,4 +1,5 @@
 require 'request_helper'
+require_relative '../../lib/inferno/apps/web/router'
 
 RSpec.describe '/test_runs' do
   let(:router) { Inferno::Web::Router }
@@ -6,14 +7,14 @@ RSpec.describe '/test_runs' do
   let(:test_suite) { BasicTestSuite::Suite }
   let(:test_group_id) { test_suite.groups.first.id }
   let(:test_session) { test_run.test_session }
-  let(:test_run) { repo_create(:test_run, runnable: { test_group_id: test_group_id }) }
+  let(:test_run) { repo_create(:test_run, runnable: { test_group_id: }) }
 
   describe 'create' do
-    let(:create_path) { router.path(:api_test_runs) }
+    let(:create_path) { router.path(:api_test_runs_create) }
     let(:test_run_definition) do
       {
         test_session_id: test_session.id,
-        test_group_id: test_group_id
+        test_group_id:
       }
     end
 
@@ -27,7 +28,7 @@ RSpec.describe '/test_runs' do
 
       it 'renders the test_run json' do
         Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
-        post_json create_path, test_run_definition.merge(inputs: inputs)
+        post_json create_path, test_run_definition.merge(inputs:)
 
         expect(last_response.status).to eq(200)
 
@@ -39,7 +40,7 @@ RSpec.describe '/test_runs' do
       it 'persists inputs to the session data table' do
         Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
         session_data_repo = Inferno::Repositories::SessionData.new
-        test_run_params = test_run_definition.merge(inputs: inputs)
+        test_run_params = test_run_definition.merge(inputs:)
 
         post_json create_path, test_run_params
 
@@ -121,7 +122,7 @@ RSpec.describe '/test_runs' do
 
       it 'returns a 422 error when inputs are missing' do
         Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
-        post_json create_path, test_run_definition.merge(inputs: inputs)
+        post_json create_path, test_run_definition.merge(inputs:)
 
         expect(last_response.status).to eq(422)
       end
@@ -130,7 +131,7 @@ RSpec.describe '/test_runs' do
 
   describe 'show' do
     it 'renders the test_run json' do
-      get router.path(:api_test_run, id: test_run.id)
+      get router.path(:api_test_runs_show, id: test_run.id)
 
       expect(last_response.status).to eq(200)
 
@@ -141,7 +142,7 @@ RSpec.describe '/test_runs' do
 
   describe 'destroy' do
     it 'returns 204 when deleted' do
-      delete router.path(:api_test_run, id: test_run.id)
+      delete router.path(:api_test_runs_destroy, id: test_run.id)
 
       expect(last_response.status).to eq(204)
     end
@@ -152,7 +153,7 @@ RSpec.describe '/test_runs' do
     let(:messages) { result.messages }
 
     it 'renders the results json' do
-      get router.path(:api_test_run_results, test_run_id: result.test_run_id)
+      get router.path(:api_test_runs_results, test_run_id: result.test_run_id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body).to all(include('id', 'result', 'test_run_id', 'test_session_id', 'messages'))

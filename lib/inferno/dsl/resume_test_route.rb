@@ -1,4 +1,4 @@
-require 'hanami-controller'
+require 'hanami/controller'
 
 module Inferno
   module DSL
@@ -6,44 +6,40 @@ module Inferno
     # an incoming request.
     # @private
     # @see Inferno::DSL::Runnable#resume_test_route
-    class ResumeTestRoute
-      include Hanami::Action
+    class ResumeTestRoute < Hanami::Action
       include Import[
-                requests_repo: 'repositories.requests',
-                results_repo: 'repositories.results',
-                test_runs_repo: 'repositories.test_runs',
-                tests_repo: 'repositories.tests'
+                requests_repo: 'inferno.repositories.requests',
+                results_repo: 'inferno.repositories.results',
+                test_runs_repo: 'inferno.repositories.test_runs',
+                tests_repo: 'inferno.repositories.tests'
               ]
 
-      def self.call(params)
-        new.call(params)
-      end
-
-      # The incoming request
-      #
-      # @return [Inferno::Entities::Request]
-      def request
-        @request ||= Inferno::Entities::Request.from_rack_env(@params.env)
+      def self.call(...)
+        new.call(...)
       end
 
       # @private
-      def test_run
-        @test_run ||=
-          test_runs_repo.find_latest_waiting_by_identifier(test_run_identifier)
+      def test_run_identifier_block
+        self.class.singleton_class.instance_variable_get(:@test_run_identifier_block)
       end
 
       # @private
-      def waiting_result
-        @waiting_result ||= results_repo.find_waiting_result(test_run_id: test_run.id)
+      def find_test_run(test_run_identifier)
+        test_runs_repo.find_latest_waiting_by_identifier(test_run_identifier)
       end
 
       # @private
-      def update_result
+      def find_waiting_result(test_run)
+        results_repo.find_waiting_result(test_run_id: test_run.id)
+      end
+
+      # @private
+      def update_result(waiting_result)
         results_repo.pass_waiting_result(waiting_result.id)
       end
 
       # @private
-      def persist_request
+      def persist_request(request, test_run, waiting_result, test)
         requests_repo.create(
           request.to_hash.merge(
             test_session_id: test_run.test_session_id,
@@ -54,35 +50,41 @@ module Inferno
       end
 
       # @private
-      def redirect_route
-        "#{Application['base_url']}/test_sessions/#{test_run.test_session_id}##{resume_ui_at_id}"
+      def redirect_route(test_run, test)
+        "#{Application['base_url']}/test_sessions/#{test_run.test_session_id}##{resume_ui_at_id(test_run, test)}"
       end
 
       # @private
-      def test
-        @test ||= tests_repo.find(waiting_result.test_id)
+      def find_test(waiting_result)
+        tests_repo.find(waiting_result.test_id)
       end
 
       # @private
-      def resume_ui_at_id
+      def resume_ui_at_id(test_run, test)
         test_run.test_suite_id || test_run.test_group_id || test.parent.id
       end
 
       # @private
-      def call(_params)
-        if test_run.nil?
-          status(500, "Unable to find test run with identifier '#{test_run_identifier}'.")
-          return
-        end
+      def handle(req, res)
+        request = Inferno::Entities::Request.from_hanami_request(req)
+
+        test_run_identifier = instance_exec(request, &test_run_identifier_block)
+
+        test_run = find_test_run(test_run_identifier)
+
+        halt 500, "Unable to find test run with identifier '#{test_run_identifier}'." if test_run.nil?
 
         test_runs_repo.mark_as_no_longer_waiting(test_run.id)
 
-        update_result
-        persist_request
+        waiting_result = find_waiting_result(test_run)
+        test = find_test(waiting_result)
+
+        update_result(waiting_result)
+        persist_request(request, test_run, waiting_result, test)
 
         Jobs.perform(Jobs::ResumeTestRun, test_run.id)
 
-        redirect_to redirect_route
+        res.redirect_to redirect_route(test_run, test)
       end
     end
   end
