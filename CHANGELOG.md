@@ -1,5 +1,6 @@
 # 0.4.0
 * **Breaking Change:** Inferno has been updated to use Ruby 3.1.
+* Add the ability to use CTRL/CMD+Enter to submit inputs and start a test run.
 
 # 0.3.12
 * Fix the ordering of requests in the UI.
