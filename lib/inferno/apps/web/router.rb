@@ -73,7 +73,7 @@ module Inferno
       end
     end
 
-    Router =
+    Router = # rubocop:disable Naming/ConstantName
       if base_path.present?
         Hanami::Router.new(prefix: base_path, &route_block)
       else
