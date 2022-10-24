@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import {
   FormControl,
   FormControlLabel,
@@ -28,6 +28,7 @@ export interface SuiteOptionsPageProps {
 
 const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const styles = useStyles();
   const history = useHistory();
   const { test_suite_id } = useParams<{ test_suite_id: string }>();
@@ -41,28 +42,20 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(
     initialSelectedSuiteOptions || []
   );
-  const [descriptionIsTall, setDescriptionIsTall] = React.useState<boolean>(false);
-  const [minDescriptionWidth, setMinDescriptionWidth] = React.useState<number>(0);
+  const [descriptionWidth, setDescriptionWidth] = React.useState<string>('');
+  const selectionPanel = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    handleResize();
-  });
-
-  // Update description width on window resize
-  const handleResize = () => {
-    const description = document.getElementById('description-container');
-    const selectionPanel = document.getElementById('selection-panel');
-    if (!windowIsSmall && description) {
-      setDescriptionIsTall(description.scrollHeight > description.clientHeight);
-      // Minimum width if !windowIsSmall (minimum window width is 1000)
-      setMinDescriptionWidth(1000 - (selectionPanel?.clientWidth || 0));
-    }
-  };
+    getDescriptionWidth();
+  }, [windowIsSmall]);
 
   const getDescriptionWidth = () => {
-    if (windowIsSmall) return '100%';
-    else if (descriptionIsTall) return 'unset';
-    else return `${minDescriptionWidth}px`;
+    if (windowIsSmall) {
+      setDescriptionWidth('100%');
+    } else if (selectionPanel.current) {
+      console.log(selectionPanel.current.clientWidth);
+      setDescriptionWidth(`${smallWindowThreshold - (selectionPanel.current.clientWidth || 0)}px`);
+    }
   };
 
   function changeSuiteOption(option_id: string, value: string): void {
@@ -166,23 +159,20 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
         alignItems="center"
         justifyContent="space-evenly"
         width="100%"
-        sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4, mb: 8, overflow: 'hidden' }}
+        sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4, pb: 8, overflow: 'hidden' }}
       >
         {/* Description */}
         <Box
-          id="description-container"
-          display={!windowIsSmall && descriptionIsTall ? 'flex' : ''}
-          flex={!windowIsSmall && descriptionIsTall ? '1 1 0' : ''}
-          maxWidth={getDescriptionWidth()}
+          maxWidth={descriptionWidth}
           maxHeight={windowIsSmall ? 'none' : '100%'}
           overflow="auto"
-          ml={3}
           my={3}
         >
           <Typography
             variant="h6"
             component="h2"
-            px={2}
+            pr={2}
+            pl={5}
             sx={{
               wordBreak: 'break-word',
             }}
@@ -198,7 +188,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
           justifyContent="center"
           maxHeight="100%"
           overflow="auto"
-          id="selection-panel"
+          ref={selectionPanel}
           p={3}
         >
           <Paper
@@ -222,7 +212,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
               <Box minWidth="45px" />
             </Box>
 
-            <Box overflow="auto" px={4} py={2}>
+            <Box overflow="auto" px={4} pt={2}>
               {testSuite?.suite_options ? (
                 testSuite.suite_options.map((suiteOption: SuiteOption, i) =>
                   renderOption(suiteOption, i)
@@ -232,7 +222,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
               )}
             </Box>
 
-            <Box px={2}>
+            <Box px={2} pt={2}>
               <Button
                 variant="contained"
                 size="large"
