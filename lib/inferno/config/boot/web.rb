@@ -8,5 +8,8 @@ Inferno::Application.boot(:web) do |_app|
     Blueprinter.configure do |config|
       config.generator = Oj
     end
+
+    require 'inferno/utils/middleware/request_logger'
+    require 'inferno/apps/web/application'
   end
 end

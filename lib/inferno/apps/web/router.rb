@@ -10,7 +10,7 @@ module Inferno
     base_path = Application['base_path']
     base_path = "/#{base_path.delete_prefix('/')}" if base_path.present?
 
-    Router = Hanami::Router.new(prefix: base_path) do
+    route_block = proc do
       scope 'api' do
         scope 'test_runs' do
           post '/', to: Inferno::Web::Controllers::TestRuns::Create, as: :create
@@ -72,5 +72,12 @@ module Inferno
         get suite_path, to: ->(_env) { [200, {}, [client_page]] }
       end
     end
+
+    Router =
+      if base_path.present?
+        Hanami::Router.new(prefix: base_path, &route_block)
+      else
+        Hanami::Router.new(&route_block)
+      end
   end
 end
