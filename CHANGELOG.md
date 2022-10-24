@@ -1,5 +1,5 @@
 # 0.4.0
-* **Breaking Change:** Inferno has been updated to use ruby 3.1.
+* **Breaking Change:** Inferno has been updated to use Ruby 3.1.
 
 # 0.3.12
 * Fix the ordering of requests in the UI.
