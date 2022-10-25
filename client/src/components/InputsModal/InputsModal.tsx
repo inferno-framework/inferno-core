@@ -27,7 +27,6 @@ export interface InputsModalProps {
   title: string;
   inputInstructions?: string;
   inputs: TestInput[];
-  modalVisible: boolean;
   hideModal: () => void;
   createTestRun: (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => void;
   sessionData: Map<string, unknown>;
@@ -50,12 +49,12 @@ const InputsModal: FC<InputsModalProps> = ({
   title,
   inputInstructions,
   inputs,
-  modalVisible,
   hideModal,
   createTestRun,
   sessionData,
 }) => {
   const styles = useStyles();
+  const [open, setOpen] = React.useState<boolean>(true);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
   const [baseInput, setBaseInput] = React.useState<string>('');
@@ -91,11 +90,11 @@ const InputsModal: FC<InputsModalProps> = ({
   useEffect(() => {
     setInvalidInput(false);
     setBaseInput(serializeMap(inputsMap));
-  }, [inputType, modalVisible]);
+  }, [inputType, open]);
 
   const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (
-      modalVisible &&
+      open &&
       e.key === 'Enter' &&
       (e.metaKey || e.ctrlKey) &&
       !missingRequiredInput &&
@@ -111,7 +110,7 @@ const InputsModal: FC<InputsModalProps> = ({
       inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
     });
     createTestRun(runnableType, runnableId, inputs_with_values);
-    hideModal();
+    closeModal();
   };
 
   const instructions =
@@ -217,13 +216,18 @@ const InputsModal: FC<InputsModalProps> = ({
     setInputsMap(new Map(inputsMap));
   };
 
+  const closeModal = () => {
+    setOpen(false);
+    hideModal();
+  };
+
   return (
     <Dialog
-      open={modalVisible}
+      open={open}
       fullWidth
       maxWidth="sm"
       onKeyDown={handleSubmitKeydown}
-      onClose={hideModal}
+      onClose={closeModal}
     >
       {/* a11y workaround until MUI implements component prop in DialogTitle */}
       <DialogTitle {...({ component: 'div' } as unknown)}>
@@ -295,7 +299,7 @@ const InputsModal: FC<InputsModalProps> = ({
             YAML
           </ToggleButton>
         </ToggleButtonGroup>
-        <Button data-testid="cancel-button" className={styles.inputAction} onClick={hideModal}>
+        <Button data-testid="cancel-button" className={styles.inputAction} onClick={closeModal}>
           Cancel
         </Button>
         <Button
