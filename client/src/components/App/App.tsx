@@ -17,6 +17,7 @@ const App: FC<unknown> = () => {
   const setTestSuites = useAppStore((state) => state.setTestSuites);
   const testSession = useAppStore((state) => state.testSession);
   const setTestSession = useAppStore((state) => state.setTestSession);
+  const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const setWindowIsSmall = useAppStore((state) => state.setWindowIsSmall);
 
   // Update UI on window resize
@@ -50,7 +51,7 @@ const App: FC<unknown> = () => {
   }, [testSuites]);
 
   const handleResize = () => {
-    setWindowIsSmall(window.innerWidth < 1000);
+    setWindowIsSmall(window.innerWidth < smallWindowThreshold);
   };
 
   if (!testSuites || (testSuites.length === 1 && !testSession)) {
