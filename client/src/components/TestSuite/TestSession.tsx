@@ -345,17 +345,18 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       >
         <Box className={styles.contentContainer}>
           {renderView((view as ViewType) || 'run')}
-          <InputsModal
-            hideModal={() => setInputModalVisible(false)}
-            createTestRun={createTestRun}
-            modalVisible={inputModalVisible}
-            runnableType={runnableType}
-            runnableId={runnableId}
-            title={(runnableMap.get(selectedRunnable) as Runnable).title}
-            inputInstructions={(runnableMap.get(selectedRunnable) as Runnable).input_instructions}
-            inputs={inputs}
-            sessionData={sessionData}
-          />
+          {inputModalVisible && (
+            <InputsModal
+              createTestRun={createTestRun}
+              runnableType={runnableType}
+              runnableId={runnableId}
+              title={(runnableMap.get(selectedRunnable) as Runnable).title}
+              inputInstructions={(runnableMap.get(selectedRunnable) as Runnable).input_instructions}
+              inputs={inputs}
+              sessionData={sessionData}
+              hideModal={() => setInputModalVisible(false)}
+            />
+          )}
           <ActionModal
             cancelTestRun={() => {
               testRun && deleteTestRun(testRun.id);
