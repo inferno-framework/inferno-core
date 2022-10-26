@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo } from 'react';
+import React, { FC, useMemo } from 'react';
 import { Box, Card, Divider, ListItem, Tab, Tabs, Tooltip, Typography } from '@mui/material';
 import { Message, Request, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
@@ -15,36 +15,17 @@ interface TestRunDetailProps {
   test: Test;
   currentTabIndex: number;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
+  tabs: TabProps[];
 }
 
-interface TabProps {
+export interface TabProps {
   label: string;
   value: Message[] | Request[] | TestInput[] | TestOutput[] | string | null | undefined;
 }
 
-const TestRunDetail: FC<TestRunDetailProps> = ({ test, currentTabIndex, updateRequest }) => {
+const TestRunDetail: FC<TestRunDetailProps> = ({ test, currentTabIndex, tabs, updateRequest }) => {
   const styles = useStyles();
   const [tabIndex, setTabIndex] = React.useState(currentTabIndex);
-  const tabs: TabProps[] = [
-    { label: 'Messages', value: test.result?.messages },
-    { label: 'Requests', value: test.result?.requests },
-    { label: 'Inputs', value: test.result?.inputs },
-    { label: 'Outputs', value: test.result?.outputs },
-    { label: 'About', value: test.description },
-  ];
-
-  useEffect(() => {
-    // Set active tab to first tab with data
-    // If no tabs have data, set to About
-    let tabIndex = 0;
-    const disableableTabs = tabs.filter((tab) => tab.label !== 'About');
-    for (let i = 0; i < disableableTabs.length; i++) {
-      const content = disableableTabs[i].value;
-      if (!content || content?.length === 0) tabIndex++;
-      else break;
-    }
-    setTabIndex(tabIndex);
-  }, [test.result]);
 
   const testDescription: JSX.Element = (
     <ListItem>
@@ -94,7 +75,7 @@ const TestRunDetail: FC<TestRunDetailProps> = ({ test, currentTabIndex, updateRe
   };
 
   return (
-    <Card>
+    <Card data-testid="test-run-detail">
       <Tabs
         value={tabIndex}
         variant="scrollable"
