@@ -7,10 +7,9 @@ module Inferno
     client_page = ERB.new(File.read(File.join(Inferno::Application.root, 'lib', 'inferno', 'apps', 'web',
                                               'index.html.erb'))).result
 
-    base_path = Application['base_path']
-    base_path = "/#{base_path.delete_prefix('/')}" if base_path.present?
+    base_path = Application['base_path']&.delete_prefix('/')
 
-    Router = Hanami::Router.new(prefix: base_path) do
+    route_block = proc do
       scope 'api' do
         scope 'test_runs' do
           post '/', to: Inferno::Web::Controllers::TestRuns::Create, as: :create
@@ -72,5 +71,17 @@ module Inferno
         get suite_path, to: ->(_env) { [200, {}, [client_page]] }
       end
     end
+
+    Router = # rubocop:disable Naming/ConstantName
+      if base_path.present?
+        Hanami::Router.new do
+          scope("#{base_path}/") do
+            get '/', to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
+          end
+          scope(base_path, &route_block)
+        end
+      else
+        Hanami::Router.new(&route_block)
+      end
   end
 end

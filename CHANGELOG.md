@@ -1,3 +1,8 @@
+# 0.4.1
+* Fix a routing issue which made Inferno unavailable on the root of a domain in
+  test kits.
+* Fix a bug which could cause flashing on the suite selection screen.
+
 # 0.4.0
 * **Breaking Change:** Inferno has been updated to use Ruby 3.1.
 * Add the ability to use CTRL/CMD+Enter to submit inputs and start a test run.

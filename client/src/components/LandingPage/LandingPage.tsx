@@ -67,6 +67,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       sx={
         !windowIsSmall
           ? {
+              minHeight: '400px',
               height: '100%',
               maxHeight: '100vh',
               py: 10,
