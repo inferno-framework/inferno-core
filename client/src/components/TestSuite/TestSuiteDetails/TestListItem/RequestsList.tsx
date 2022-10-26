@@ -153,14 +153,14 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
   return (
     <>
       {requests.length > 0 ? (
-        <TableContainer>
+        <TableContainer data-testid="requests-list">
           <Table size="small" className={styles.table}>
             <TableHead>{requestListHeader}</TableHead>
             <TableBody>{requestListItems}</TableBody>
           </Table>
         </TableContainer>
       ) : (
-        <Box p={2}>
+        <Box p={2} data-testid="requests-list">
           <Typography variant="subtitle2" component="p">
             No Requests
           </Typography>
@@ -171,6 +171,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
         modalVisible={showDetails}
         hideModal={() => setShowDetails(false)}
         usedRequest={detailedRequest?.result_id !== resultId}
+        data-testid="requests-detail-modal"
       />
     </>
   );

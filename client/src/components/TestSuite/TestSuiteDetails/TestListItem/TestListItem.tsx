@@ -25,6 +25,7 @@ import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import type { MessageCounts } from './helper';
 import { countMessageTypes } from './helper';
 import TestRunDetail from './TestRunDetail';
+import type { TabProps } from './TestRunDetail';
 
 interface TestListItemProps {
   test: Test;
@@ -183,6 +184,33 @@ const TestListItem: FC<TestListItemProps> = ({
     </>
   );
 
+  // Find first tab with data.  If no tabs have data, return the About tab index.
+  const findPopulatedTabIndex = (): number => {
+    const firstTab = tabs.findIndex(
+      (tab) => tab.label !== 'About' && tab.value && tab.value?.length > 0
+    );
+
+    if (firstTab === -1) {
+      return tabs.findIndex((tab) => tab.label === 'About');
+    } else {
+      return firstTab;
+    }
+  };
+
+  const handleAccordionClick = () => {
+    const firstTab = findPopulatedTabIndex();
+    setTabIndex(firstTab);
+    setOpen(!open);
+  };
+
+  const tabs: TabProps[] = [
+    { label: 'Messages', value: test.result?.messages },
+    { label: 'Requests', value: test.result?.requests },
+    { label: 'Inputs', value: test.result?.inputs },
+    { label: 'Outputs', value: test.result?.outputs },
+    { label: 'About', value: test.description },
+  ];
+
   return (
     <>
       <Accordion
@@ -191,7 +219,7 @@ const TestListItem: FC<TestListItemProps> = ({
         sx={view === 'report' ? { pointerEvents: 'none' } : {}}
         expanded={open}
         TransitionProps={{ unmountOnExit: true }}
-        onClick={() => setOpen(!open)}
+        onClick={handleAccordionClick}
       >
         <AccordionSummary
           id={`${test.id}-summary`}
@@ -217,11 +245,17 @@ const TestListItem: FC<TestListItemProps> = ({
         <Divider />
         <AccordionDetails
           title={`${test.id}-detail`}
+          data-testid={`${test.id}-detail`}
           className={styles.accordionDetailContainer}
           onClick={(e) => e.stopPropagation()}
         >
           {view === 'run' && (
-            <TestRunDetail test={test} currentTabIndex={tabIndex} updateRequest={updateRequest} />
+            <TestRunDetail
+              test={test}
+              tabs={tabs}
+              currentTabIndex={tabIndex}
+              updateRequest={updateRequest}
+            />
           )}
           {view === 'report' && showReportDetails && reportDetails}
         </AccordionDetails>
