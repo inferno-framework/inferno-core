@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    inferno_core (0.4.1.pre2)
+    inferno_core (0.4.1)
       activesupport (~> 6.1)
       blueprinter (= 0.25.2)
       dotenv (~> 2.7)
