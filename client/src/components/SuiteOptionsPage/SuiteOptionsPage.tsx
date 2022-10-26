@@ -134,6 +134,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
+      minHeight="600px"
       height="100%"
       maxHeight="100vh"
       role="main"
