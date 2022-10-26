@@ -123,13 +123,38 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
         <TableCell className={styles.requestUrlContainer}>
           <Box display="flex" alignItems="center">
             <Tooltip title={request.url} placement="bottom-start">
-              <Typography variant="subtitle2" component="p" className={styles.requestUrl}>
+              <Typography
+                variant="subtitle2"
+                component="p"
+                sx={
+                  view === 'run'
+                    ? {
+                        overflow: 'hidden',
+                        maxHeight: '1.5em',
+                        wordBreak: 'break-all',
+                        display: '-webkit-box',
+                        WebkitBoxOrient: 'vertical',
+                        WebkitLineClamp: '1',
+                      }
+                    : {}
+                }
+              >
                 {request.url}
               </Typography>
             </Tooltip>
             <Tooltip
               open={copySuccess[request.url as keyof typeof copySuccess] || false}
               title="Text copied!"
+              sx={
+                view === 'report'
+                  ? {
+                      display: 'none',
+                      '@media print': {
+                        display: 'none',
+                      },
+                    }
+                  : {}
+              }
             >
               <IconButton
                 size="small"

@@ -94,14 +94,6 @@ export default makeStyles((theme: Theme) => ({
       margin: 0,
     },
   },
-  requestUrl: {
-    overflow: 'hidden',
-    maxHeight: '1.5em',
-    wordBreak: 'break-all',
-    display: '-webkit-box',
-    WebkitBoxOrient: 'vertical',
-    WebkitLineClamp: '1',
-  },
   requestUrlContainer: {
     width: '100%',
   },
