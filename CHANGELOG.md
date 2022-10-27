@@ -1,3 +1,7 @@
+# 0.4.2
+* Add a missing require to the session data repository.
+* Fix UI bugs.
+
 # 0.4.1
 * Fix a routing issue which made Inferno unavailable on the root of a domain in
   test kits.
