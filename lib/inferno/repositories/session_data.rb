@@ -1,3 +1,5 @@
+require_relative '../dsl/oauth_credentials'
+
 module Inferno
   module Repositories
     class SessionData < Repository
