@@ -49,6 +49,13 @@ const TestListItem: FC<TestListItemProps> = ({
   const requestsExist = !!test.result?.requests && test.result?.requests.length > 0;
   const [open, setOpen] = React.useState(false);
   const [tabIndex, setTabIndex] = React.useState(0);
+  const tabs: TabProps[] = [
+    { label: 'Messages', value: test.result?.messages },
+    { label: 'Requests', value: test.result?.requests },
+    { label: 'Inputs', value: test.result?.inputs },
+    { label: 'Outputs', value: test.result?.outputs },
+    { label: 'About', value: test.description },
+  ];
 
   useEffect(() => {
     setOpen(view === 'report' && showReportDetails && (messagesExist || requestsExist));
@@ -202,14 +209,6 @@ const TestListItem: FC<TestListItemProps> = ({
     setTabIndex(firstTab);
     setOpen(!open);
   };
-
-  const tabs: TabProps[] = [
-    { label: 'Messages', value: test.result?.messages },
-    { label: 'Requests', value: test.result?.requests },
-    { label: 'Inputs', value: test.result?.inputs },
-    { label: 'Outputs', value: test.result?.outputs },
-    { label: 'About', value: test.description },
-  ];
 
   return (
     <>

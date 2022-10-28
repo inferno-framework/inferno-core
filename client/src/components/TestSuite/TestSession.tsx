@@ -27,6 +27,7 @@ import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDe
 import useStyles from './styles';
 
 import { useAppStore } from '~/store/app';
+import { useTestSessionStore } from '~/store/testSession';
 
 function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
@@ -90,6 +91,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   toggleDrawer,
 }) => {
   const styles = useStyles();
+  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const setTestRunId = useTestSessionStore((state) => state.setTestRunId);
+  const setTestRunInProgress = useTestSessionStore((state) => state.setTestRunInProgress);
+
   const { test_suite, id } = testSession;
   const [inputModalVisible, setInputModalVisible] = React.useState(false);
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
@@ -101,7 +106,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   );
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
-  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
   useEffect(() => {
     test_suite.inputs?.forEach((input: TestInput) => {
@@ -232,10 +236,20 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       });
   }
 
-  function testRunNeedsProgressBar(testRun: TestRun | null): boolean {
-    return testRun?.status
+  useEffect(() => {
+    const inProgress = testRun?.status
       ? ['running', 'queued', 'waiting', 'cancelling'].includes(testRun?.status)
       : false;
+
+    setTestRunId(testRun?.id);
+    setTestRunInProgress(inProgress);
+  }, [testRun]);
+
+  function testRunNeedsProgressBar(testRun: TestRun | null): boolean {
+    const inProgress = testRun?.status
+      ? ['running', 'queued', 'waiting', 'cancelling'].includes(testRun?.status)
+      : false;
+    return inProgress;
   }
 
   function renderTestRunProgressBar() {

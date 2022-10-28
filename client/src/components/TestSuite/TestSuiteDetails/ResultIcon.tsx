@@ -2,25 +2,41 @@ import React, { FC } from 'react';
 import { Result } from '~/models/testSuiteModels';
 import { Tooltip } from '@mui/material';
 import { red, orange, green, purple, grey } from '@mui/material/colors';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
-import ErrorIcon from '@mui/icons-material/Error';
-import CircleIcon from '@mui/icons-material/Circle';
-import BlockIcon from '@mui/icons-material/Block';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import {
+  AccessTime,
+  Block,
+  Cancel,
+  CheckCircle,
+  Circle,
+  Error,
+  Pending,
+  RadioButtonUnchecked,
+} from '@mui/icons-material';
+
+import { useTestSessionStore } from '~/store/testSession';
 
 export interface ResultIconProps {
   result?: Result;
 }
 
 const ResultIcon: FC<ResultIconProps> = ({ result }) => {
-  if (result) {
+  const testRunId = useTestSessionStore((state) => state.testRunId);
+  const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
+
+  if (result?.test_run_id === testRunId && testRunInProgress) {
+    console.log('same test run and in progress');
+
+    return (
+      <Tooltip title="pending">
+        <Pending style={{ color: grey[500] }} /* data-testid={`${result.id}-${result.result}`} */ />
+      </Tooltip>
+    );
+  } else if (result) {
     switch (result.result) {
       case 'pass':
         return (
           <Tooltip title="passed">
-            <CheckCircleIcon
+            <CheckCircle
               style={{ color: result.optional ? green[100] : green[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
@@ -29,7 +45,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
       case 'fail':
         return (
           <Tooltip title="failed">
-            <CancelIcon
+            <Cancel
               style={{ color: result.optional ? grey[500] : red[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
@@ -38,7 +54,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
       case 'cancel':
         return (
           <Tooltip title="cancel">
-            <CancelIcon
+            <Cancel
               style={{ color: result.optional ? grey[500] : red[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
@@ -47,7 +63,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
       case 'skip':
         return (
           <Tooltip title="skipped">
-            <BlockIcon
+            <Block
               style={{ color: result.optional ? grey[500] : orange[800] }}
               data-testid={`${result.id}-${result.result}`}
             />
@@ -56,16 +72,13 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
       case 'omit':
         return (
           <Tooltip title="omitted">
-            <CircleIcon
-              style={{ color: grey[500] }}
-              data-testid={`${result.id}-${result.result}`}
-            />
+            <Circle style={{ color: grey[500] }} data-testid={`${result.id}-${result.result}`} />
           </Tooltip>
         );
       case 'error':
         return (
           <Tooltip title="error">
-            <ErrorIcon
+            <Error
               style={{ color: result.optional ? grey[500] : purple[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
@@ -74,13 +87,13 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
       case 'wait':
         return (
           <Tooltip title="wait">
-            <AccessTimeIcon data-testid={`${result.id}-${result.result}`} />
+            <AccessTime data-testid={`${result.id}-${result.result}`} />
           </Tooltip>
         );
 
       default:
         return (
-          <RadioButtonUncheckedIcon
+          <RadioButtonUnchecked
             style={{
               color: grey[500],
             }}
@@ -89,7 +102,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result }) => {
     }
   } else {
     return (
-      <RadioButtonUncheckedIcon
+      <RadioButtonUnchecked
         style={{
           color: grey[500],
         }}
