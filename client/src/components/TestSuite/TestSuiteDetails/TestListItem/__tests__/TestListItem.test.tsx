@@ -27,7 +27,7 @@ describe('The TestListItem component', () => {
 
     render(
       <ThemeProvider>
-        <TestListItem test={test} testRunInProgress={false} view="run" />
+        <TestListItem test={test} view="run" />
       </ThemeProvider>
     );
 
@@ -68,7 +68,7 @@ describe('The TestListItem component', () => {
 
       render(
         <ThemeProvider>
-          <TestListItem test={test} testRunInProgress={false} view="run" />
+          <TestListItem test={test} view="run" />
         </ThemeProvider>
       );
 
@@ -120,7 +120,7 @@ describe('The TestListItem component', () => {
 
       render(
         <ThemeProvider>
-          <TestListItem test={test} testRunInProgress={false} view="run" />
+          <TestListItem test={test} view="run" />
         </ThemeProvider>
       );
 
@@ -173,7 +173,7 @@ describe('The TestListItem component', () => {
 
       render(
         <ThemeProvider>
-          <TestListItem test={test} testRunInProgress={false} view="run" />
+          <TestListItem test={test} view="run" />
         </ThemeProvider>
       );
 

@@ -11,17 +11,10 @@ import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities
 interface TestGroupCardProps {
   runnable: TestSuite | TestGroup;
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
-  testRunInProgress: boolean;
   view: 'report' | 'run';
 }
 
-const TestGroupCard: FC<TestGroupCardProps> = ({
-  runnable,
-  runTests,
-  children,
-  testRunInProgress,
-  view,
-}) => {
+const TestGroupCard: FC<TestGroupCardProps> = ({ runnable, runTests, children, view }) => {
   const styles = useStyles();
 
   const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
@@ -36,7 +29,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
   const renderHeader = () => {
     return (
       <Box className={styles.testGroupCardHeader}>
-        {runnable.result && <ResultIcon result={runnable.result} />}
+        {runnable.result && <ResultIcon result={runnable.result} isRunning={runnable.is_running} />}
         <span className={styles.testGroupCardHeaderText}>
           <Typography className={styles.currentItem} component="div">
             {'short_id' in runnable && (
@@ -52,7 +45,6 @@ const TestGroupCard: FC<TestGroupCardProps> = ({
               runnable={runnable}
               runnableType={runnableType}
               runTests={runTests}
-              testRunInProgress={testRunInProgress}
             />
           )}
         </span>

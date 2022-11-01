@@ -108,20 +108,22 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
 
   useEffect(() => {
+    if (!testRun && initialTestRun) {
+      setTestRun(initialTestRun);
+      if (testRunNeedsProgressBar(initialTestRun)) {
+        setShowProgressBar(true);
+        pollTestRunResults(initialTestRun);
+      }
+    }
+  });
+
+  useEffect(() => {
     test_suite.inputs?.forEach((input: TestInput) => {
       const defaultValue = input.default || '';
       sessionData.set(input.name, sessionData.get(input.name) || defaultValue);
     });
     setSessionData(new Map(sessionData));
   }, [testSession]);
-
-  if (!testRun && initialTestRun) {
-    setTestRun(initialTestRun);
-    if (testRunNeedsProgressBar(initialTestRun)) {
-      setShowProgressBar(true);
-      pollTestRunResults(initialTestRun);
-    }
-  }
 
   useEffect(() => {
     let waitingTestId = null;
@@ -206,6 +208,19 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   });
 
+  // Recursive function to set the `is_running` field for all children of a runnable
+  const setIsRunning = (runnableType: RunnableType, runnable: Runnable, value: boolean) => {
+    if (runnable) {
+      runnable.is_running = value;
+      if (runnableType === RunnableType.TestGroup) {
+        runnable.tests.forEach((test: Test) => (test.is_running = value));
+        runnable.test_groups.forEach((testGroup: TestGroup) =>
+          setIsRunning(RunnableType.TestGroup, testGroup, value)
+        );
+      }
+    }
+  };
+
   function runTests(runnableType: RunnableType, runnableId: string) {
     const runnable = runnableMap.get(runnableId);
     runnable?.inputs?.forEach((input: TestInput) => {
@@ -226,6 +241,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     postTestRun(id, runnableType, runnableId, inputs)
       .then((testRun: TestRun | null) => {
         if (testRun) {
+          const runnable = runnableMap.get(runnableId);
+          if (runnable) setIsRunning(runnableType, runnable, true);
           setTestRun(testRun);
           setShowProgressBar(true);
           pollTestRunResults(testRun);
@@ -243,14 +260,20 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
     setTestRunId(testRun?.id);
     setTestRunInProgress(inProgress);
+
+    const runnable = runnableMap.get(selectedRunnable);
+    if (!inProgress && runnable) {
+      setIsRunning(runnableType, runnable, false);
+    }
   }, [testRun]);
 
-  function testRunNeedsProgressBar(testRun: TestRun | null): boolean {
+  const testRunNeedsProgressBar = (testRun: TestRun | null): boolean => {
     const inProgress = testRun?.status
       ? ['running', 'queued', 'waiting', 'cancelling'].includes(testRun?.status)
       : false;
+
     return inProgress;
-  }
+  };
 
   function renderTestRunProgressBar() {
     const duration = testRunNeedsProgressBar(testRun) ? null : 2000;
@@ -287,6 +310,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   function renderView(view: ViewType) {
     if (!runnableMap.get(selectedRunnable)) return null;
+    console.log(runnableMap.get(selectedRunnable));
+
     switch (view) {
       case 'report':
         // This is a little strange because we are only allowing reports
@@ -309,7 +334,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
             runTests={runTests}
             updateRequest={updateRequest}
-            testRunInProgress={testRunNeedsProgressBar(testRun)}
             testSuiteId={test_suite.id}
             configMessages={test_suite.configuration_messages}
           />

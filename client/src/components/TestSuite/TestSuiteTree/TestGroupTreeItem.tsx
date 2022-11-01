@@ -16,7 +16,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
   testRunInProgress,
 }) => {
   const itemIcon = (testGroup.run_as_group || testGroup.test_groups.length === 0) && (
-    <ResultIcon result={testGroup.result} />
+    <ResultIcon result={testGroup.result} isRunning={testGroup.is_running} />
   );
 
   const renderSublist = (): JSX.Element[] => {

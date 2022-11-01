@@ -31,7 +31,6 @@ interface TestListItemProps {
   test: Test;
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
-  testRunInProgress: boolean;
   showReportDetails?: boolean;
   view: ViewType;
 }
@@ -40,7 +39,6 @@ const TestListItem: FC<TestListItemProps> = ({
   test,
   runTests,
   updateRequest,
-  testRunInProgress,
   showReportDetails = false,
   view,
 }) => {
@@ -63,7 +61,7 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const resultIcon = (
     <Box display="inline-flex">
-      <ResultIcon result={test.result} />
+      <ResultIcon result={test.result} isRunning={test.is_running} />
     </Box>
   );
 
@@ -162,12 +160,7 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const testRunButton = view === 'run' && runTests && (
     <Box onClick={(e) => e.stopPropagation()}>
-      <TestRunButton
-        runnable={test}
-        runnableType={RunnableType.Test}
-        runTests={runTests}
-        testRunInProgress={testRunInProgress}
-      />
+      <TestRunButton runnable={test} runnableType={RunnableType.Test} runTests={runTests} />
     </Box>
   );
 

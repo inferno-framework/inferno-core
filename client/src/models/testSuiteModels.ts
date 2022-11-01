@@ -77,6 +77,7 @@ export type Runnable = {
   inputs: TestInput[];
   optional?: boolean;
   input_instructions?: string;
+  is_running?: boolean;
 };
 
 export type Test = Runnable & {
