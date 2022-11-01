@@ -92,7 +92,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 }) => {
   const styles = useStyles();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
-  const setTestRunId = useTestSessionStore((state) => state.setTestRunId);
+  const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
   const setTestRunInProgress = useTestSessionStore((state) => state.setTestRunInProgress);
 
   const { test_suite, id } = testSession;
@@ -110,7 +110,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   useEffect(() => {
     if (!testRun && initialTestRun) {
       setTestRun(initialTestRun);
-      if (testRunNeedsProgressBar(initialTestRun)) {
+      if (testRunIsInProgress(initialTestRun)) {
         setShowProgressBar(true);
         pollTestRunResults(initialTestRun);
       }
@@ -183,7 +183,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           const updatedMap = resultsToMap(testRunResults.results, resultsMap);
           setResultsMap(updatedMap);
         }
-        if (testRunResults && testRunNeedsProgressBar(testRunResults)) {
+        if (testRunResults && testRunIsInProgress(testRunResults)) {
           setTimeout(() => pollTestRunResults(testRunResults), 500);
         }
       })
@@ -254,20 +254,21 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }
 
   useEffect(() => {
-    const inProgress = testRun?.status
-      ? ['running', 'queued', 'waiting', 'cancelling'].includes(testRun?.status)
-      : false;
+    const inProgress = testRunIsInProgress(testRun);
 
-    setTestRunId(testRun?.id);
     setTestRunInProgress(inProgress);
 
-    const runnable = runnableMap.get(selectedRunnable);
-    if (!inProgress && runnable) {
-      setIsRunning(runnableType, runnable, false);
+    // Wipe both currently running runnable and selected (currently rendered) runnable
+    if (!inProgress) {
+      const runnableFromSelected = runnableMap.get(selectedRunnable);
+      if (runnableFromSelected) setIsRunning(runnableType, runnableFromSelected, false);
+
+      const runnableFromId = runnableMap.get(runnableId);
+      if (runnableFromId) setIsRunning(runnableType, runnableFromId, false);
     }
   }, [testRun]);
 
-  const testRunNeedsProgressBar = (testRun: TestRun | null): boolean => {
+  const testRunIsInProgress = (testRun: TestRun | null): boolean => {
     const inProgress = testRun?.status
       ? ['running', 'queued', 'waiting', 'cancelling'].includes(testRun?.status)
       : false;
@@ -275,8 +276,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     return inProgress;
   };
 
-  function renderTestRunProgressBar() {
-    const duration = testRunNeedsProgressBar(testRun) ? null : 2000;
+  const renderTestRunProgressBar = () => {
+    const duration = testRunInProgress ? null : 2000;
     return (
       <TestRunProgressBar
         showProgressBar={showProgressBar}
@@ -289,16 +290,15 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         resultsMap={resultsMap}
       />
     );
-  }
+  };
 
-  function renderDrawerContents() {
+  const renderDrawerContents = () => {
     return (
       <nav className={styles.drawer}>
         <TestSuiteTreeComponent
           testSuite={test_suite}
           runTests={runTests}
           selectedRunnable={selectedRunnable}
-          testRunInProgress={testRunNeedsProgressBar(testRun)}
           view={(view as ViewType) || 'run'}
           presets={testSession.test_suite.presets}
           getSessionData={getSessionData}
@@ -306,12 +306,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         />
       </nav>
     );
-  }
+  };
 
-  function renderView(view: ViewType) {
+  const renderView = (view: ViewType) => {
     if (!runnableMap.get(selectedRunnable)) return null;
-    console.log(runnableMap.get(selectedRunnable));
-
     switch (view) {
       case 'report':
         // This is a little strange because we are only allowing reports
@@ -339,7 +337,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           />
         );
     }
-  }
+  };
 
   return (
     <Box className={styles.testSuiteMain}>

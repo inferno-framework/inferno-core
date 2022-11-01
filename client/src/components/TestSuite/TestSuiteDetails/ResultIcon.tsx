@@ -19,7 +19,7 @@ export interface ResultIconProps {
 }
 
 const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
-  console.log(isRunning);
+  // console.log(isRunning);
 
   if (isRunning) {
     return (
