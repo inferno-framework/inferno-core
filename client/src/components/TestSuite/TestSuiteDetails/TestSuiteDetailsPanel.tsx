@@ -42,8 +42,6 @@ const TestSuiteDetailsPanel: FC<TestSuiteDetailsPanelProps> = ({
       );
     });
   } else if ('tests' in runnable) {
-    console.log(runnable);
-
     listItems = runnable.tests.map((test: Test) => {
       return (
         <TestListItem

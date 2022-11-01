@@ -95,7 +95,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
   const setTestRunInProgress = useTestSessionStore((state) => state.setTestRunInProgress);
 
-  const { test_suite, id } = testSession;
   const [inputModalVisible, setInputModalVisible] = React.useState(false);
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
   const [inputs, setInputs] = React.useState<TestInput[]>([]);
@@ -107,6 +106,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
 
+  const { test_suite, id } = testSession;
+  const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
+  const locationHashParts = useLocation().hash.replace('#', '').split('/');
+  let [selectedRunnable] = locationHashParts;
+  const [, view] = locationHashParts;
+
   useEffect(() => {
     if (!testRun && initialTestRun) {
       setTestRun(initialTestRun);
@@ -115,7 +120,34 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         pollTestRunResults(initialTestRun);
       }
     }
+
+    if (!runnableMap.get(selectedRunnable)) {
+      selectedRunnable = testSession.test_suite.id;
+    }
+
+    resultsMap.forEach((result, runnableId) => {
+      const runnable = runnableMap.get(runnableId);
+      if (runnable) {
+        runnable.result = result;
+      }
+    });
   });
+
+  // Set testRunIsInProgress and is_running status when testRun changes
+  useEffect(() => {
+    const inProgress = testRunIsInProgress(testRun);
+
+    setTestRunInProgress(inProgress);
+
+    // Wipe both currently running runnable and selected (currently rendered) runnable
+    if (!inProgress) {
+      const runnableFromSelected = runnableMap.get(selectedRunnable);
+      if (runnableFromSelected) setIsRunning(runnableType, runnableFromSelected, false);
+
+      const runnableFromId = runnableMap.get(runnableId);
+      if (runnableFromId) setIsRunning(runnableType, runnableFromId, false);
+    }
+  }, [testRun]);
 
   useEffect(() => {
     test_suite.inputs?.forEach((input: TestInput) => {
@@ -138,24 +170,14 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     setWaitingTestId(waitingTestId);
   }, [resultsMap]);
 
-  const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
-  const location = useLocation();
-  const locationHashParts = location.hash.replace('#', '').split('/');
-  let [selectedRunnable] = locationHashParts;
-  const [, view] = locationHashParts;
-
-  if (!runnableMap.get(selectedRunnable)) {
-    selectedRunnable = testSession.test_suite.id;
-  }
-
-  function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
+  const showInputsModal = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
     setInputs(inputs);
     setRunnableType(runnableType);
     setRunnableId(runnableId);
     setInputModalVisible(true);
-  }
+  };
 
-  function latestResult(results: Result[] | null | undefined): Result | null {
+  const latestResult = (results: Result[] | null | undefined): Result | null => {
     if (!results) {
       return null;
     }
@@ -164,9 +186,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         ? result
         : lastResult;
     }, results[0]);
-  }
+  };
 
-  function pollTestRunResults(testRun: TestRun): void {
+  const pollTestRunResults = (testRun: TestRun): void => {
     getTestRunWithResults(testRun.id, latestResult(testRun.results)?.updated_at)
       .then((testRunResults: TestRun | null) => {
         setTestRun(testRunResults);
@@ -190,23 +212,16 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       .catch((e) => {
         console.log(e);
       });
-  }
+  };
 
-  function updateRequest(requestId: string, resultId: string, request: Request): void {
+  const updateRequest = (requestId: string, resultId: string, request: Request): void => {
     const result = Array.from(resultsMap.values()).find((result) => result.id === resultId);
     if (result && result.requests) {
       const requestIndex = result.requests.findIndex((request) => request.id === requestId);
       result.requests[requestIndex] = request;
       setResultsMap(new Map(resultsMap));
     }
-  }
-
-  resultsMap.forEach((result, runnableId) => {
-    const runnable = runnableMap.get(runnableId);
-    if (runnable) {
-      runnable.result = result;
-    }
-  });
+  };
 
   // Recursive function to set the `is_running` field for all children of a runnable
   const setIsRunning = (runnableType: RunnableType, runnable: Runnable, value: boolean) => {
@@ -221,7 +236,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   };
 
-  function runTests(runnableType: RunnableType, runnableId: string) {
+  const runTests = (runnableType: RunnableType, runnableId: string) => {
     const runnable = runnableMap.get(runnableId);
     runnable?.inputs?.forEach((input: TestInput) => {
       input.value = sessionData.get(input.name);
@@ -231,9 +246,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     } else {
       createTestRun(runnableType, runnableId, []);
     }
-  }
+  };
 
-  function createTestRun(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
+  const createTestRun = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
     inputs.forEach((input: TestInput) => {
       sessionData.set(input.name, input.value as string);
     });
@@ -251,22 +266,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       .catch((e) => {
         console.log(e);
       });
-  }
-
-  useEffect(() => {
-    const inProgress = testRunIsInProgress(testRun);
-
-    setTestRunInProgress(inProgress);
-
-    // Wipe both currently running runnable and selected (currently rendered) runnable
-    if (!inProgress) {
-      const runnableFromSelected = runnableMap.get(selectedRunnable);
-      if (runnableFromSelected) setIsRunning(runnableType, runnableFromSelected, false);
-
-      const runnableFromId = runnableMap.get(runnableId);
-      if (runnableFromId) setIsRunning(runnableType, runnableFromId, false);
-    }
-  }, [testRun]);
+  };
 
   const testRunIsInProgress = (testRun: TestRun | null): boolean => {
     const inProgress = testRun?.status
