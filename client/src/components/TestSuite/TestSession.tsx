@@ -107,6 +107,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
 
   const { test_suite, id } = testSession;
+
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
   const [suiteName, view] = useLocation().hash.replace('#', '').split('/');
   const selectedRunnable = runnableMap.get(suiteName) ? suiteName : testSession.test_suite.id;
@@ -131,7 +132,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   // Set testRunIsInProgress and is_running status when testRun changes
   useEffect(() => {
     const inProgress = testRunIsInProgress(testRun);
-
     setTestRunInProgress(inProgress);
 
     // Wipe both currently running runnable and selected (currently rendered) runnable
@@ -224,6 +224,11 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       runnable.is_running = value;
       if (runnableType === RunnableType.TestGroup) {
         runnable.tests.forEach((test: Test) => (test.is_running = value));
+        runnable.test_groups.forEach((testGroup: TestGroup) =>
+          setIsRunning(RunnableType.TestGroup, testGroup, value)
+        );
+      }
+      if (runnableType === RunnableType.TestSuite) {
         runnable.test_groups.forEach((testGroup: TestGroup) =>
           setIsRunning(RunnableType.TestGroup, testGroup, value)
         );
