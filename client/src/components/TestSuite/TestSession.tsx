@@ -108,9 +108,15 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const { test_suite, id } = testSession;
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
-  const locationHashParts = useLocation().hash.replace('#', '').split('/');
-  let [selectedRunnable] = locationHashParts;
-  const [, view] = locationHashParts;
+  const [suiteName, view] = useLocation().hash.replace('#', '').split('/');
+  const selectedRunnable = runnableMap.get(suiteName) ? suiteName : testSession.test_suite.id;
+
+  resultsMap.forEach((result, runnableId) => {
+    const runnable = runnableMap.get(runnableId);
+    if (runnable) {
+      runnable.result = result;
+    }
+  });
 
   useEffect(() => {
     if (!testRun && initialTestRun) {
@@ -120,17 +126,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         pollTestRunResults(initialTestRun);
       }
     }
-
-    if (!runnableMap.get(selectedRunnable)) {
-      selectedRunnable = testSession.test_suite.id;
-    }
-
-    resultsMap.forEach((result, runnableId) => {
-      const runnable = runnableMap.get(runnableId);
-      if (runnable) {
-        runnable.result = result;
-      }
-    });
   });
 
   // Set testRunIsInProgress and is_running status when testRun changes
