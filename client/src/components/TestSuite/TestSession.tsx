@@ -15,6 +15,8 @@ import {
   TestOutput,
   ViewType,
   SuiteOptionChoice,
+  isTestGroup,
+  isTestSuite,
 } from '~/models/testSuiteModels';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from '~/api/TestRunsApi';
 import ActionModal from '~/components/ActionModal/ActionModal';
@@ -137,10 +139,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     // Wipe both currently running runnable and selected (currently rendered) runnable
     if (!inProgress) {
       const runnableFromSelected = runnableMap.get(selectedRunnable);
-      if (runnableFromSelected) setIsRunning(runnableType, runnableFromSelected, false);
+      if (runnableFromSelected) setIsRunning(runnableFromSelected, false);
 
       const runnableFromId = runnableMap.get(runnableId);
-      if (runnableFromId) setIsRunning(runnableType, runnableFromId, false);
+      if (runnableFromId) setIsRunning(runnableFromId, false);
     }
   }, [testRun]);
 
@@ -219,19 +221,15 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   };
 
   // Recursive function to set the `is_running` field for all children of a runnable
-  const setIsRunning = (runnableType: RunnableType, runnable: Runnable, value: boolean) => {
+  const setIsRunning = (runnable: Runnable, value: boolean) => {
     if (runnable) {
       runnable.is_running = value;
-      if (runnableType === RunnableType.TestGroup) {
-        runnable.tests.forEach((test: Test) => (test.is_running = value));
-        runnable.test_groups.forEach((testGroup: TestGroup) =>
-          setIsRunning(RunnableType.TestGroup, testGroup, value)
-        );
+      if (isTestGroup(runnable)) {
+        runnable.tests?.forEach((test: Test) => (test.is_running = value));
+        runnable.test_groups?.forEach((testGroup: TestGroup) => setIsRunning(testGroup, value));
       }
-      if (runnableType === RunnableType.TestSuite) {
-        runnable.test_groups.forEach((testGroup: TestGroup) =>
-          setIsRunning(RunnableType.TestGroup, testGroup, value)
-        );
+      if (isTestSuite(runnable)) {
+        runnable.test_groups?.forEach((testGroup: TestGroup) => setIsRunning(testGroup, value));
       }
     }
   };
@@ -257,7 +255,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       .then((testRun: TestRun | null) => {
         if (testRun) {
           const runnable = runnableMap.get(runnableId);
-          if (runnable) setIsRunning(runnableType, runnable, true);
+          if (runnable) setIsRunning(runnable, true);
           setTestRun(testRun);
           setShowProgressBar(true);
           pollTestRunResults(testRun);

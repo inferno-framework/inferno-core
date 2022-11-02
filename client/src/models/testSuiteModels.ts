@@ -166,3 +166,12 @@ export type FooterLink = {
   label: string;
   url: string;
 };
+
+// Custom type guards to determine type of Runnable
+export const isTestSuite = (object: Runnable): object is TestSuite => {
+  return 'test_groups' in object && !('tests' in object);
+};
+
+export const isTestGroup = (object: Runnable): object is TestGroup => {
+  return 'test_groups' in object && 'tests' in object;
+};
