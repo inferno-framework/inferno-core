@@ -13,13 +13,19 @@ import {
   RadioButtonUnchecked,
 } from '@mui/icons-material';
 
+import { useTestSessionStore } from '~/store/testSession';
+
 export interface ResultIconProps {
   result?: Result;
   isRunning?: boolean;
 }
 
 const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
-  if (isRunning) {
+  const testRunId = useTestSessionStore((state) => state.testRunId);
+
+  // Pending is true if the runnable is in the current test
+  // run and result is not for other test runs
+  if (isRunning && result?.test_run_id !== testRunId) {
     return (
       <Tooltip title="pending">
         <Pending style={{ color: grey[500] }} /* data-testid={`${result.id}-${result.result}`} */ />

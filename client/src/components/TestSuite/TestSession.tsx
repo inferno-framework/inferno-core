@@ -95,6 +95,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const styles = useStyles();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
+  const setTestRunId = useTestSessionStore((state) => state.setTestRunId);
   const setTestRunInProgress = useTestSessionStore((state) => state.setTestRunInProgress);
 
   const [inputModalVisible, setInputModalVisible] = React.useState(false);
@@ -257,6 +258,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           const runnable = runnableMap.get(runnableId);
           if (runnable) setIsRunning(runnable, true);
           setTestRun(testRun);
+          setTestRunId(testRun.id);
           setShowProgressBar(true);
           pollTestRunResults(testRun);
         }
