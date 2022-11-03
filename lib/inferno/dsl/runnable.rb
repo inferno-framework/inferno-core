@@ -417,6 +417,16 @@ module Inferno
           end
         end
       end
+
+      def inspect
+        non_dynamic_ancestor = ancestors.find { |ancestor| !ancestor.to_s.start_with? '#' }
+        "#<#{non_dynamic_ancestor}".tap do |inspect_string|
+          inspect_string.concat(" @id=#{id.inspect},")
+          inspect_string.concat(" @short_id=#{short_id.inspect},") if respond_to? :short_id
+          inspect_string.concat(" @title=#{title.inspect}")
+          inspect_string.concat('>')
+        end
+      end
     end
   end
 end
