@@ -2,6 +2,9 @@ require_relative '../entities/attributes'
 
 module Inferno
   module DSL
+    # OAuthCredentials provide a user with a single input which allows a fhir
+    # client to use a bearer token and automatically refresh the token when it
+    # expires.
     class OAuthCredentials
       ATTRIBUTES = [
         :access_token,
@@ -18,6 +21,16 @@ module Inferno
 
       attr_accessor :client
 
+      # @!attribute [rw] access_token
+      # @!attribute [rw] refresh_token
+      # @!attribute [rw] token_url
+      # @!attribute [rw] client_id
+      # @!attribute [rw] client_secret
+      # @!attribute [rw] token_retrieval_time
+      # @!attribute [rw] expires_in
+      # @!attribute [rw] name
+
+      # @private
       def initialize(raw_attributes_hash)
         attributes_hash = raw_attributes_hash.symbolize_keys
 
@@ -34,7 +47,7 @@ module Inferno
         self.token_retrieval_time = DateTime.now if access_token.present? && token_retrieval_time.blank?
       end
 
-      # @api private
+      # @private
       def to_hash
         self.class::ATTRIBUTES.each_with_object({}) do |attribute, hash|
           value = send(attribute)
@@ -46,12 +59,12 @@ module Inferno
         end
       end
 
-      # @api private
+      # @private
       def to_s
         JSON.generate(to_hash)
       end
 
-      # @api private
+      # @private
       def add_to_client(client)
         client.oauth_credentials = self
         self.client = client
@@ -61,7 +74,7 @@ module Inferno
         client.set_bearer_token(access_token)
       end
 
-      # @api private
+      # @private
       def need_to_refresh?
         return false if access_token.blank? || refresh_token.blank?
 
@@ -70,17 +83,17 @@ module Inferno
         token_retrieval_time.to_i + expires_in - DateTime.now.to_i < 60
       end
 
-      # @api private
+      # @private
       def able_to_refresh?
         refresh_token.present? && token_url.present?
       end
 
-      # @api private
+      # @private
       def confidential_client?
         client_id.present? && client_secret.present?
       end
 
-      # @api private
+      # @private
       def oauth2_refresh_params
         {
           'grant_type' => 'refresh_token',
@@ -88,7 +101,7 @@ module Inferno
         }
       end
 
-      # @api private
+      # @private
       def oauth2_refresh_headers
         base_headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
 
@@ -101,6 +114,7 @@ module Inferno
         )
       end
 
+      # @private
       def update_from_response_body(request)
         token_response_body = JSON.parse(request.response_body)
 

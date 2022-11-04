@@ -16,7 +16,7 @@ module Inferno
 
       # Returns the most recent FHIR/HTTP request
       #
-      # @return [Inferno::Entities::Request]
+      # @return [Inferno::Entities::Request, nil]
       def request
         requests.last
       end
@@ -36,7 +36,7 @@ module Inferno
         request&.resource
       end
 
-      # TODO: do a check in the test runner
+      # @private
       def named_request(name)
         requests.find { |request| request.name == self.class.config.request_name(name.to_sym) }
       end

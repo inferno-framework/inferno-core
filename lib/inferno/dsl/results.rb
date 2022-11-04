@@ -82,10 +82,12 @@ module Inferno
         raise Exceptions::WaitException, message
       end
 
+      # @private
       def identifier(identifier = nil)
         @identifier ||= identifier
       end
 
+      # @private
       def wait_timeout(timeout = nil)
         @wait_timeout ||= timeout
       end
