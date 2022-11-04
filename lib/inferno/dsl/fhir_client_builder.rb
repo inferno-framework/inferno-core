@@ -4,6 +4,22 @@ require_relative '../ext/fhir_client'
 module Inferno
   module DSL
     # DSL for configuring FHIR clients
+    #
+    # @example
+    #   input :url
+    #   input :fhir_credentials, type: :oauth_credentials
+    #   input :access_token
+    #
+    #   fhir_client do
+    #     url :url
+    #     headers 'My-Custom_header' => 'CUSTOM_HEADER_VALUE'
+    #     oauth_credentials :fhir_credentials
+    #   end
+    #
+    #   fhir_client :with_bearer_token do
+    #     url :url
+    #     bearer_token :access_token
+    #   end
     class FHIRClientBuilder
       attr_accessor :runnable
 

@@ -13,6 +13,7 @@ module Inferno
 
       def_delegators 'self.class', :title, :id, :groups, :inputs, :outputs, :tests
 
+      # @private
       def method_missing(name, *args, &)
         parent_instance = self.class.parent&.new
         if parent_instance.respond_to?(name)
@@ -22,6 +23,7 @@ module Inferno
         end
       end
 
+      # @private
       def respond_to_missing?(name, _include_private = false)
         self.class.parent&.new&.respond_to?(name)
       end
@@ -31,26 +33,39 @@ module Inferno
           Inferno::Repositories::TestGroups.new
         end
 
+        # Get this group's child groups, filtered by suite options, if provided.
+        #
+        # @param options [Array<Inferno::DSL::SuiteOption>]
+        #
+        # @return [Array<Inferno::Entities::TestGroup>]
         def groups(options = nil)
           children(options).select { |child| child < Inferno::Entities::TestGroup }
         end
 
+        # Get this group's child tests, filtered by suite options, if provided.
+        #
+        # @param options [Array<Inferno::DSL::SuiteOption>]
+        #
+        # @return [Array<Inferno::Entities::Test>]
         def tests(options = nil)
           children(options).select { |child| child < Inferno::Entities::Test }
         end
 
         # Methods to configure Inferno::DSL::Runnable
 
+        # Add a child group
         def group(...)
           child_metadata(group_metadata)
           define_child(...)
         end
 
+        # Add a test
         def test(...)
           child_metadata(test_metadata)
           define_child(...)
         end
 
+        # @private
         def group_metadata
           {
             class: TestGroup,
@@ -58,6 +73,7 @@ module Inferno
           }
         end
 
+        # @private
         def test_metadata
           {
             class: Test,
@@ -65,6 +81,7 @@ module Inferno
           }
         end
 
+        # @return [String] A short numeric id which is displayed in the UI
         def short_id
           @short_id ||= begin
             prefix = parent.respond_to?(:short_id) ? "#{parent.short_id}." : ''
@@ -73,6 +90,7 @@ module Inferno
           end
         end
 
+        # @private
         def default_id
           return name if name.present?
 
@@ -80,16 +98,22 @@ module Inferno
           "Group#{suffix}"
         end
 
+        # @private
         def reference_hash
           {
             test_group_id: id
           }
         end
 
+        # When true, this group's children can not be run individually in the
+        # UI, and this group must be run as a group.
+        #
+        # @param value [Boolean]
         def run_as_group(value = true) # rubocop:disable Style/OptionalBooleanParameter
           @run_as_group = value
         end
 
+        # @return [Boolean]
         def run_as_group?
           @run_as_group || false
         end
