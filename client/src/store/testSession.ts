@@ -1,4 +1,6 @@
 import create from 'zustand';
+import { persist } from 'zustand/middleware';
+
 import { devtoolsInDev } from './devtools';
 
 type TestSessionStore = {
@@ -9,11 +11,19 @@ type TestSessionStore = {
 };
 
 export const useTestSessionStore = create<TestSessionStore>(
-  devtoolsInDev((set, _get) => ({
-    testRunId: undefined,
-    testRunInProgress: false,
-    setTestRunId: (testRunId: string | undefined) => set({ testRunId: testRunId }),
-    setTestRunInProgress: (testRunInProgress: boolean) =>
-      set({ testRunInProgress: testRunInProgress }),
-  }))
+  persist(
+    devtoolsInDev(
+      (set, _get) =>
+        ({
+          testRunId: undefined,
+          testRunInProgress: false,
+          setTestRunId: (testRunId: string | undefined) => set({ testRunId: testRunId }),
+          setTestRunInProgress: (testRunInProgress: boolean) =>
+            set({ testRunInProgress: testRunInProgress }),
+        } as TestSessionStore)
+    ),
+    {
+      name: 'test-session',
+    }
+  )
 );
