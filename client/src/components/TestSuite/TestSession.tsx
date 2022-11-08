@@ -104,7 +104,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
   const [inputs, setInputs] = React.useState<TestInput[]>([]);
   const [runnableType, setRunnableType] = React.useState<RunnableType>(RunnableType.TestSuite);
-  // const [runnableId, setRunnableId] = React.useState<string>('');
   const [resultsMap, setResultsMap] = React.useState<Map<string, Result>>(
     resultsToMap(previousResults)
   );
