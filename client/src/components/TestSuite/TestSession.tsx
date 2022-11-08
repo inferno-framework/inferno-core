@@ -94,7 +94,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 }) => {
   const styles = useStyles();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const runnableId = useTestSessionStore((state) => state.runnableId);
   const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
+  const setRunnableId = useTestSessionStore((state) => state.setRunnableId);
   const setTestRunId = useTestSessionStore((state) => state.setTestRunId);
   const setTestRunInProgress = useTestSessionStore((state) => state.setTestRunInProgress);
 
@@ -102,7 +104,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
   const [inputs, setInputs] = React.useState<TestInput[]>([]);
   const [runnableType, setRunnableType] = React.useState<RunnableType>(RunnableType.TestSuite);
-  const [runnableId, setRunnableId] = React.useState<string>('');
+  // const [runnableId, setRunnableId] = React.useState<string>('');
   const [resultsMap, setResultsMap] = React.useState<Map<string, Result>>(
     resultsToMap(previousResults)
   );
@@ -129,6 +131,11 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         setShowProgressBar(true);
         pollTestRunResults(initialTestRun);
       }
+    }
+
+    if (testRunIsInProgress(testRun)) {
+      const runnable = runnableMap.get(runnableId);
+      if (runnable) setIsRunning(runnable, true);
     }
   });
 
