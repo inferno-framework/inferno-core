@@ -51,6 +51,14 @@ const TestListItem: FC<TestListItemProps> = ({
   const [tabIndex, setTabIndex] = React.useState(0);
 
   useEffect(() => {
+    // Auto-open some results
+    const openResults = ['error', 'fail', 'skip'];
+    const resultString = test?.result?.result || '';
+    setTabIndex(findPopulatedTabIndex());
+    setOpen(openResults.includes(resultString));
+  }, [test.result]);
+
+  useEffect(() => {
     setOpen(view === 'report' && showReportDetails && (messagesExist || requestsExist));
   }, [showReportDetails]);
 
@@ -192,14 +200,12 @@ const TestListItem: FC<TestListItemProps> = ({
 
     if (firstTab === -1) {
       return tabs.findIndex((tab) => tab.label === 'About');
-    } else {
-      return firstTab;
     }
+    return firstTab;
   };
 
   const handleAccordionClick = () => {
-    const firstTab = findPopulatedTabIndex();
-    setTabIndex(firstTab);
+    setTabIndex(findPopulatedTabIndex());
     setOpen(!open);
   };
 
