@@ -1,5 +1,6 @@
 module Inferno
   module DSL
+    # @private
     module TCPExceptionHandler
       def tcp_exception_handler(&block)
         block.call
