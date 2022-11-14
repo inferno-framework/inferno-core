@@ -47,8 +47,8 @@ const TestListItem: FC<TestListItemProps> = ({
   const styles = useStyles();
   const messagesExist = !!test.result?.messages && test.result?.messages.length > 0;
   const requestsExist = !!test.result?.requests && test.result?.requests.length > 0;
-  const [open, setOpen] = React.useState(false);
-  const [tabIndex, setTabIndex] = React.useState(0);
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [tabIndex, setTabIndex] = React.useState<number>(0);
 
   useEffect(() => {
     // Auto-open some results
