@@ -42,6 +42,7 @@ module Inferno
 
       include Attributes
 
+      # @private
       def initialize(params)
         super(params, ATTRIBUTES - [:headers, :name])
 
@@ -86,7 +87,8 @@ module Inferno
 
       # Return a hash of the request parameters
       #
-      # @return [Hash]
+      # @return [Hash] A Hash with `:verb`, `:url`, `:headers`, and `:body`
+      #   fields
       def request
         {
           verb:,
@@ -98,7 +100,7 @@ module Inferno
 
       # Return a hash of the response parameters
       #
-      # @return [Hash]
+      # @return [Hash] A Hash with `:status`, `:headers`, and `:body` fields
       def response
         {
           status:,

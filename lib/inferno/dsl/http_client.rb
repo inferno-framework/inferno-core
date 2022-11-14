@@ -28,7 +28,7 @@ module Inferno
     #       end
     #     end
     #   end
-    # @see Inferno::FHIRClientBuilder Documentation for the client
+    # @see Inferno::DSL::HTTPClientBuilder Documentation for the client
     #   configuration DSL
     module HTTPClient
       # @private

@@ -46,6 +46,7 @@ module Inferno
       # copied, and will need to be repopulated from scratch on the new class.
       # Any child Runnable classes will themselves need to be subclassed so that
       # their parent can be updated.
+      # @private
       VARIABLES_NOT_TO_COPY = [
         :@id, # New runnable will have a different id
         :@parent, # New runnable unlikely to have the same parent
@@ -307,12 +308,6 @@ module Inferno
         @all_children ||= []
       end
 
-      def validator_url(url = nil)
-        return @validator_url ||= parent&.validator_url if url.nil?
-
-        @validator_url = url
-      end
-
       # @private
       def suite
         return self if ancestors.include? Inferno::Entities::TestSuite
@@ -397,6 +392,28 @@ module Inferno
                            (parent.user_runnable? && !parent.run_as_group?)
       end
 
+      # Set/get suite options required for this runnable to be executed.
+      #
+      # @param suite_option_requirements [Hash]
+      # @example
+      #   suite_option :ig_version,
+      #               list_options: [
+      #                 {
+      #                   label: 'IG v1',
+      #                   value: 'ig_v1'
+      #                 },
+      #                 {
+      #                   label: 'IG v2',
+      #                   value: 'ig_v2'
+      #                 }
+      #               ]
+      #
+      #   group from: :ig_v1_group,
+      #         required_suite_options: { ig_version: 'ig_v1' }
+      #
+      #   group from: :ig_v2_group do
+      #     required_suite_options ig_version: 'ig_v2'
+      #   end
       def required_suite_options(suite_option_requirements)
         @suite_option_requirements =
           suite_option_requirements.map do |key, value|
@@ -404,6 +421,7 @@ module Inferno
           end
       end
 
+      # @private
       def children(selected_suite_options = [])
         return all_children if selected_suite_options.blank?
 
@@ -415,6 +433,16 @@ module Inferno
           else
             requirements.all? { |requirement| selected_suite_options.include? requirement }
           end
+        end
+      end
+
+      def inspect
+        non_dynamic_ancestor = ancestors.find { |ancestor| !ancestor.to_s.start_with? '#' }
+        "#<#{non_dynamic_ancestor}".tap do |inspect_string|
+          inspect_string.concat(" @id=#{id.inspect},")
+          inspect_string.concat(" @short_id=#{short_id.inspect},") if respond_to? :short_id
+          inspect_string.concat(" @title=#{title.inspect}")
+          inspect_string.concat('>')
         end
       end
     end
