@@ -97,8 +97,20 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
           </Typography>
         </TableCell>
       ))}
-      <TableCell key={'Direction'} /> {/* Empty header text */}
-      {view === 'run' && <TableCell key={'Details'} />} {/* Empty header text */}
+      <TableCell
+        key={'Direction'}
+        role="none"
+        aria-hidden="true"
+        aria-label="header-request-direction"
+      ></TableCell>
+      {view === 'run' && (
+        <TableCell
+          key={'Details'}
+          role="none"
+          aria-hidden="true"
+          aria-label="header-request-details"
+        />
+      )}
     </TableRow>
   );
 
