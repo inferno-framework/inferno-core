@@ -110,7 +110,6 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
             key={`li-${testGroup.id}`}
             testGroup={testGroup}
             updateRequest={updateRequest}
-            testRunInProgress={false}
             showReportDetails={showDetails}
             view="report"
           />
@@ -122,7 +121,6 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
           <TestListItem
             key={`li-${test.id}`}
             test={test}
-            testRunInProgress={false}
             showReportDetails={showDetails}
             view="report"
           />
@@ -141,12 +139,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
       />
       {header}
       {testSuite.test_groups?.map((testGroup) => (
-        <TestGroupCard
-          key={`g-${testGroup.id}`}
-          runnable={testGroup}
-          testRunInProgress={false}
-          view="report"
-        >
+        <TestGroupCard key={`g-${testGroup.id}`} runnable={testGroup} view="report">
           {renderTestGroupChildren(testGroup)}
         </TestGroupCard>
       ))}

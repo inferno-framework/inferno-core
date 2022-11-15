@@ -26,7 +26,6 @@ export interface TestSuiteTreeProps {
   testSuite: TestSuite;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
   selectedRunnable: string;
-  testRunInProgress: boolean;
   view: ViewType;
   presets?: PresetSummary[];
   testSessionId?: string;
@@ -46,7 +45,6 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   testSuite,
   selectedRunnable,
   runTests,
-  testRunInProgress,
   view,
   presets,
   testSessionId,
@@ -79,7 +77,6 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
         data-testid={`${testGroup.id}-treeitem`}
         testGroup={testGroup}
         runTests={runTests}
-        testRunInProgress={testRunInProgress}
       />
     ));
 

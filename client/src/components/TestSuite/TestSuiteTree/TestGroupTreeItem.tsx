@@ -7,16 +7,11 @@ import ResultIcon from '../TestSuiteDetails/ResultIcon';
 export interface TestGroupTreeItemProps {
   testGroup: TestGroup;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
-  testRunInProgress: boolean;
 }
 
-const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
-  testGroup,
-  runTests,
-  testRunInProgress,
-}) => {
+const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({ testGroup, runTests }) => {
   const itemIcon = (testGroup.run_as_group || testGroup.test_groups.length === 0) && (
-    <ResultIcon result={testGroup.result} />
+    <ResultIcon result={testGroup.result} isRunning={testGroup.is_running} />
   );
 
   const renderSublist = (): JSX.Element[] => {
@@ -25,7 +20,6 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({
         testGroup={subTestGroup}
         runTests={runTests}
         key={`ti-${testGroup.id}-${index}`}
-        testRunInProgress={testRunInProgress}
       />
     ));
   };

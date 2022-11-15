@@ -53,7 +53,6 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
     if (windowIsSmall) {
       setDescriptionWidth('100%');
     } else if (selectionPanel.current) {
-      console.log(selectionPanel.current.clientWidth);
       setDescriptionWidth(`${smallWindowThreshold - (selectionPanel.current.clientWidth || 0)}px`);
     }
   };
