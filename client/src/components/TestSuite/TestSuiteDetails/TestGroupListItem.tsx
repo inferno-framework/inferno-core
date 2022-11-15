@@ -26,7 +26,6 @@ interface TestGroupListItemProps {
   testGroup: TestGroup;
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
-  testRunInProgress: boolean;
   showReportDetails?: boolean;
   view: ViewType;
 }
@@ -35,7 +34,6 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   testGroup,
   runTests,
   updateRequest,
-  testRunInProgress,
   showReportDetails,
   view,
 }) => {
@@ -63,7 +61,6 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         testGroup={tg}
         runTests={runTests}
         updateRequest={updateRequest}
-        testRunInProgress={testRunInProgress}
         showReportDetails={showReportDetails}
         view={view}
       />
@@ -77,7 +74,6 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         test={test}
         runTests={runTests}
         updateRequest={updateRequest}
-        testRunInProgress={testRunInProgress}
         showReportDetails={showReportDetails}
         view={view}
       />
@@ -140,7 +136,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       >
         <Box display="flex" alignItems="center">
           <Box display="inline-flex">
-            <ResultIcon result={testGroup.result} />
+            <ResultIcon result={testGroup.result} isRunning={testGroup.is_running} />
           </Box>
           <List sx={{ px: 1 }}>
             <ListItem sx={{ padding: 0 }}>
@@ -162,7 +158,6 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
               runnable={testGroup}
               runnableType={RunnableType.TestGroup}
               runTests={runTests}
-              testRunInProgress={testRunInProgress}
             />
           )}
         </Box>
@@ -192,7 +187,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       <Box display="flex" alignItems="center" px={2} py={1}>
         <Box display="inline-flex">
           {testGroup.run_as_group ? (
-            <ResultIcon result={testGroup.result} />
+            <ResultIcon result={testGroup.result} isRunning={testGroup.is_running} />
           ) : (
             <FolderIcon sx={{ color: theme.palette.common.gray }} />
           )}

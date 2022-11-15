@@ -15,6 +15,8 @@ import {
   TestOutput,
   ViewType,
   SuiteOptionChoice,
+  isTestGroup,
+  isTestSuite,
 } from '~/models/testSuiteModels';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from '~/api/TestRunsApi';
 import ActionModal from '~/components/ActionModal/ActionModal';
@@ -27,6 +29,7 @@ import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDe
 import useStyles from './styles';
 
 import { useAppStore } from '~/store/app';
+import { useTestSessionStore } from '~/store/testSession';
 
 function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
@@ -90,18 +93,65 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   toggleDrawer,
 }) => {
   const styles = useStyles();
-  const { test_suite, id } = testSession;
+  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const runnableId = useTestSessionStore((state) => state.runnableId);
+  const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
+  const setRunnableId = useTestSessionStore((state) => state.setRunnableId);
+  const setTestRunId = useTestSessionStore((state) => state.setTestRunId);
+  const setTestRunInProgress = useTestSessionStore((state) => state.setTestRunInProgress);
+
   const [inputModalVisible, setInputModalVisible] = React.useState(false);
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
   const [inputs, setInputs] = React.useState<TestInput[]>([]);
   const [runnableType, setRunnableType] = React.useState<RunnableType>(RunnableType.TestSuite);
-  const [runnableId, setRunnableId] = React.useState<string>('');
   const [resultsMap, setResultsMap] = React.useState<Map<string, Result>>(
     resultsToMap(previousResults)
   );
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
-  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+
+  const { test_suite, id } = testSession;
+
+  const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
+  const [suiteName, view] = useLocation().hash.replace('#', '').split('/');
+  const selectedRunnable = runnableMap.get(suiteName) ? suiteName : testSession.test_suite.id;
+
+  resultsMap.forEach((result, runnableId) => {
+    const runnable = runnableMap.get(runnableId);
+    if (runnable) {
+      runnable.result = result;
+    }
+  });
+
+  useEffect(() => {
+    if (!testRun && initialTestRun) {
+      setTestRun(initialTestRun);
+      if (testRunIsInProgress(initialTestRun)) {
+        setShowProgressBar(true);
+        pollTestRunResults(initialTestRun);
+      }
+    }
+
+    if (testRunIsInProgress(testRun)) {
+      const runnable = runnableMap.get(runnableId);
+      if (runnable) setIsRunning(runnable, true);
+    }
+  });
+
+  // Set testRunIsInProgress and is_running status when testRun changes
+  useEffect(() => {
+    const inProgress = testRunIsInProgress(testRun);
+    setTestRunInProgress(inProgress);
+
+    // Wipe both currently running runnable and selected (currently rendered) runnable
+    if (!inProgress) {
+      const runnableFromSelected = runnableMap.get(selectedRunnable);
+      if (runnableFromSelected) setIsRunning(runnableFromSelected, false);
+
+      const runnableFromId = runnableMap.get(runnableId);
+      if (runnableFromId) setIsRunning(runnableFromId, false);
+    }
+  }, [testRun]);
 
   useEffect(() => {
     test_suite.inputs?.forEach((input: TestInput) => {
@@ -110,14 +160,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     });
     setSessionData(new Map(sessionData));
   }, [testSession]);
-
-  if (!testRun && initialTestRun) {
-    setTestRun(initialTestRun);
-    if (testRunNeedsProgressBar(initialTestRun)) {
-      setShowProgressBar(true);
-      pollTestRunResults(initialTestRun);
-    }
-  }
 
   useEffect(() => {
     let waitingTestId = null;
@@ -132,24 +174,14 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     setWaitingTestId(waitingTestId);
   }, [resultsMap]);
 
-  const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
-  const location = useLocation();
-  const locationHashParts = location.hash.replace('#', '').split('/');
-  let [selectedRunnable] = locationHashParts;
-  const [, view] = locationHashParts;
-
-  if (!runnableMap.get(selectedRunnable)) {
-    selectedRunnable = testSession.test_suite.id;
-  }
-
-  function showInputsModal(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
+  const showInputsModal = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
     setInputs(inputs);
     setRunnableType(runnableType);
     setRunnableId(runnableId);
     setInputModalVisible(true);
-  }
+  };
 
-  function latestResult(results: Result[] | null | undefined): Result | null {
+  const latestResult = (results: Result[] | null | undefined): Result | null => {
     if (!results) {
       return null;
     }
@@ -158,9 +190,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         ? result
         : lastResult;
     }, results[0]);
-  }
+  };
 
-  function pollTestRunResults(testRun: TestRun): void {
+  const pollTestRunResults = (testRun: TestRun): void => {
     getTestRunWithResults(testRun.id, latestResult(testRun.results)?.updated_at)
       .then((testRunResults: TestRun | null) => {
         setTestRun(testRunResults);
@@ -177,32 +209,39 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           const updatedMap = resultsToMap(testRunResults.results, resultsMap);
           setResultsMap(updatedMap);
         }
-        if (testRunResults && testRunNeedsProgressBar(testRunResults)) {
+        if (testRunResults && testRunIsInProgress(testRunResults)) {
           setTimeout(() => pollTestRunResults(testRunResults), 500);
         }
       })
       .catch((e) => {
         console.log(e);
       });
-  }
+  };
 
-  function updateRequest(requestId: string, resultId: string, request: Request): void {
+  const updateRequest = (requestId: string, resultId: string, request: Request): void => {
     const result = Array.from(resultsMap.values()).find((result) => result.id === resultId);
     if (result && result.requests) {
       const requestIndex = result.requests.findIndex((request) => request.id === requestId);
       result.requests[requestIndex] = request;
       setResultsMap(new Map(resultsMap));
     }
-  }
+  };
 
-  resultsMap.forEach((result, runnableId) => {
-    const runnable = runnableMap.get(runnableId);
+  // Recursive function to set the `is_running` field for all children of a runnable
+  const setIsRunning = (runnable: Runnable, value: boolean) => {
     if (runnable) {
-      runnable.result = result;
+      runnable.is_running = value;
+      if (isTestGroup(runnable)) {
+        runnable.tests?.forEach((test: Test) => (test.is_running = value));
+        runnable.test_groups?.forEach((testGroup: TestGroup) => setIsRunning(testGroup, value));
+      }
+      if (isTestSuite(runnable)) {
+        runnable.test_groups?.forEach((testGroup: TestGroup) => setIsRunning(testGroup, value));
+      }
     }
-  });
+  };
 
-  function runTests(runnableType: RunnableType, runnableId: string) {
+  const runTests = (runnableType: RunnableType, runnableId: string) => {
     const runnable = runnableMap.get(runnableId);
     runnable?.inputs?.forEach((input: TestInput) => {
       input.value = sessionData.get(input.name);
@@ -212,9 +251,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     } else {
       createTestRun(runnableType, runnableId, []);
     }
-  }
+  };
 
-  function createTestRun(runnableType: RunnableType, runnableId: string, inputs: TestInput[]) {
+  const createTestRun = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
     inputs.forEach((input: TestInput) => {
       sessionData.set(input.name, input.value as string);
     });
@@ -222,7 +261,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     postTestRun(id, runnableType, runnableId, inputs)
       .then((testRun: TestRun | null) => {
         if (testRun) {
+          const runnable = runnableMap.get(runnableId);
+          if (runnable) setIsRunning(runnable, true);
           setTestRun(testRun);
+          setTestRunId(testRun.id);
           setShowProgressBar(true);
           pollTestRunResults(testRun);
         }
@@ -230,16 +272,18 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       .catch((e) => {
         console.log(e);
       });
-  }
+  };
 
-  function testRunNeedsProgressBar(testRun: TestRun | null): boolean {
-    return testRun?.status
+  const testRunIsInProgress = (testRun: TestRun | null): boolean => {
+    const inProgress = testRun?.status
       ? ['running', 'queued', 'waiting', 'cancelling'].includes(testRun?.status)
       : false;
-  }
 
-  function renderTestRunProgressBar() {
-    const duration = testRunNeedsProgressBar(testRun) ? null : 2000;
+    return inProgress;
+  };
+
+  const renderTestRunProgressBar = () => {
+    const duration = testRunInProgress ? null : 2000;
     return (
       <TestRunProgressBar
         showProgressBar={showProgressBar}
@@ -252,16 +296,15 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         resultsMap={resultsMap}
       />
     );
-  }
+  };
 
-  function renderDrawerContents() {
+  const renderDrawerContents = () => {
     return (
       <nav className={styles.drawer}>
         <TestSuiteTreeComponent
           testSuite={test_suite}
           runTests={runTests}
           selectedRunnable={selectedRunnable}
-          testRunInProgress={testRunNeedsProgressBar(testRun)}
           view={(view as ViewType) || 'run'}
           presets={testSession.test_suite.presets}
           getSessionData={getSessionData}
@@ -269,9 +312,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         />
       </nav>
     );
-  }
+  };
 
-  function renderView(view: ViewType) {
+  const renderView = (view: ViewType) => {
     if (!runnableMap.get(selectedRunnable)) return null;
     switch (view) {
       case 'report':
@@ -295,13 +338,12 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
             runTests={runTests}
             updateRequest={updateRequest}
-            testRunInProgress={testRunNeedsProgressBar(testRun)}
             testSuiteId={test_suite.id}
             configMessages={test_suite.configuration_messages}
           />
         );
     }
-  }
+  };
 
   return (
     <Box className={styles.testSuiteMain}>
