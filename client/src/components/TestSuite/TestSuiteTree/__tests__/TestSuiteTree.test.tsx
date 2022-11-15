@@ -112,7 +112,6 @@ const testSuiteTreeProps: TestSuiteTreeProps = {
   testSuite: demoTestSuite,
   runTests: runTestsMock,
   selectedRunnable: 'example suite',
-  testRunInProgress: false,
   view: 'run',
 };
 

@@ -5,11 +5,12 @@ import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import { TestGroup, Runnable, RunnableType } from '~/models/testSuiteModels';
 import lightTheme from '~/styles/theme';
 
+import { useTestSessionStore } from '~/store/testSession';
+
 export interface TestRunButtonProps {
   runnable: Runnable;
   runnableType: RunnableType;
   runTests: (runnableType: RunnableType, runnableId: string) => void;
-  testRunInProgress: boolean;
   buttonText?: string;
 }
 
@@ -17,9 +18,9 @@ const TestRunButton: FC<TestRunButtonProps> = ({
   runTests,
   runnable,
   runnableType,
-  testRunInProgress,
   buttonText,
 }) => {
+  const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
   /* Need to explicitly check against false because undefined needs to be treated
    * as true. */
   const showRunButton = (runnable as TestGroup).user_runnable !== false;

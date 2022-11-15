@@ -103,6 +103,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
         bgcolor="text.secondary"
         p="0.5em"
         borderRadius="0.5em"
+        role="aside"
       >
         <Box margin="2px 0 0 4px">{statusIndicator}</Box>
         <Box minWidth={200} mx={1} color="background.paper">
