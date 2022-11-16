@@ -14,12 +14,8 @@ module Inferno
     #   @return [String]
     # @!attribute message
     #   @return [String]
-    # @!attribute created_at
-    #   @return [Time]
-    # @!attribute updated_at
-    #   @return [Time]
     class Message < Entity
-      ATTRIBUTES = [:id, :index, :message, :result_id, :result, :type, :created_at, :updated_at].freeze
+      ATTRIBUTES = [:id, :index, :message, :result_id, :result, :type].freeze
       TYPES = ['error', 'warning', 'info'].freeze
 
       include Inferno::Entities::Attributes
