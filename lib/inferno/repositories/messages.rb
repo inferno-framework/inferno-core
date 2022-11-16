@@ -16,9 +16,6 @@ module Inferno
 
         def before_create
           self.id = SecureRandom.uuid
-          time = Time.now
-          self.created_at ||= time
-          self.updated_at ||= time
           super
         end
 
