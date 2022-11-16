@@ -17,7 +17,7 @@ import { Request } from '~/models/testSuiteModels';
 import RequestDetailModal from '~/components/RequestDetailModal/RequestDetailModal';
 import { getRequestDetails } from '~/api/RequestsApi';
 import useStyles from './styles';
-import { ContentCopy } from '@mui/icons-material';
+import { ContentCopy, SaveAlt } from '@mui/icons-material';
 
 interface RequestsListProps {
   resultId: string;
@@ -30,10 +30,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
   const [showDetails, setShowDetails] = React.useState(false);
   const [copySuccess, setCopySuccess] = React.useState({});
   const [detailedRequest, setDetailedRequest] = React.useState<Request>();
-  const headerTitles =
-    view === 'run'
-      ? ['Direction', 'Type', 'URL', 'Status', 'Details']
-      : ['Direction', 'Type', 'URL', 'Status'];
+  const headerTitles = ['Type', 'URL', 'Status'];
   const styles = useStyles();
 
   const showDetailsClick = (request: Request) => {
@@ -100,6 +97,20 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
           </Typography>
         </TableCell>
       ))}
+      <TableCell
+        key={'Direction'}
+        role="none"
+        aria-hidden="true"
+        aria-label="header-request-direction"
+      ></TableCell>
+      {view === 'run' && (
+        <TableCell
+          key={'Details'}
+          role="none"
+          aria-hidden="true"
+          aria-label="header-request-details"
+        />
+      )}
     </TableRow>
   );
 
@@ -107,11 +118,6 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
     .sort((request1, request2) => request1.index - request2.index)
     .map((request: Request, index: number) => (
       <TableRow key={`reqRow-${index}`}>
-        <TableCell>
-          <Typography variant="subtitle2" component="p">
-            {request.direction}
-          </Typography>
-        </TableCell>
         <TableCell>
           <Box display="flex">
             {renderReferenceIcon(request)}
@@ -170,6 +176,13 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
           <Typography variant="subtitle2" component="p" className={styles.bolderText}>
             {request.status}
           </Typography>
+        </TableCell>
+        <TableCell>
+          {request.direction === 'incoming' && (
+            <Tooltip title="Direction: incoming">
+              <SaveAlt />
+            </Tooltip>
+          )}
         </TableCell>
         {view === 'run' && <TableCell>{renderDetailsButton(request)}</TableCell>}
       </TableRow>
