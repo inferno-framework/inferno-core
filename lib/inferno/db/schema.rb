@@ -77,8 +77,6 @@ Sequel.migration do
       foreign_key :result_id, :results, :type=>String, :size=>36, :null=>false, :key=>[:id]
       String :type, :size=>255, :null=>false
       String :message, :text=>true, :null=>false
-      DateTime :created_at, :null=>false
-      DateTime :updated_at, :null=>false
       
       index [:id]
       index [:result_id]
@@ -111,8 +109,6 @@ Sequel.migration do
       String :type, :size=>255, :null=>false
       String :name, :size=>255, :null=>false
       String :value, :text=>true
-      DateTime :created_at, :null=>false
-      DateTime :updated_at, :null=>false
       
       index [:id]
       index [:request_id]
