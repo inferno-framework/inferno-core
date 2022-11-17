@@ -56,14 +56,6 @@ const TestListItem: FC<TestListItemProps> = ({
   ];
 
   useEffect(() => {
-    // Auto-open some results
-    const openResults = ['error', 'fail', 'skip'];
-    const resultString = test?.result?.result || '';
-    setTabIndex(findPopulatedTabIndex());
-    setOpen(openResults.includes(resultString));
-  }, [test.result]);
-
-  useEffect(() => {
     setOpen(view === 'report' && showReportDetails && (messagesExist || requestsExist));
   }, [showReportDetails]);
 

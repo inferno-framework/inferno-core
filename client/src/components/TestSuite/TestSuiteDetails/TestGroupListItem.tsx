@@ -42,6 +42,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     testGroup.result?.result === 'cancel' ||
       testGroup.result?.result === 'fail' ||
       testGroup.result?.result === 'error' ||
+      testGroup.result?.result === 'skip' ||
       view === 'report'
   );
 
@@ -50,6 +51,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       testGroup.result?.result === 'cancel' ||
         testGroup.result?.result === 'fail' ||
         testGroup.result?.result === 'error' ||
+        testGroup.result?.result === 'skip' ||
         view === 'report'
     );
   }, [testGroup.result]);
