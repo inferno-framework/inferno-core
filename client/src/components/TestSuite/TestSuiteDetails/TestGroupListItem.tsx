@@ -38,6 +38,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   view,
 }) => {
   const styles = useStyles();
+  const [descriptionMouseHover, setDescriptionMouseHover] = React.useState(false);
+  const [groupMouseHover, setGroupMouseHover] = React.useState(false);
   const [expanded, setExpanded] = React.useState(
     testGroup.result?.result === 'cancel' ||
       testGroup.result?.result === 'fail' ||
@@ -87,9 +89,11 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         key={`${testGroup.id}-description`}
         className={styles.accordion}
         TransitionProps={{ unmountOnExit: true }}
+        onMouseEnter={() => setDescriptionMouseHover(true)}
+        onMouseLeave={() => setDescriptionMouseHover(false)}
       >
         <AccordionSummary
-          id={`${testGroup.id}-description-summary`}
+          id={descriptionMouseHover ? '' : `${testGroup.id}-description-summary`}
           aria-controls={`${testGroup.id}-description-detail`}
           expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
           sx={{ userSelect: 'auto' }}
@@ -108,7 +112,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         </AccordionSummary>
         <Divider />
         <AccordionDetails
-          title={`${testGroup.id}-description-detail`}
+          title={descriptionMouseHover ? '' : `${testGroup.id}-description-detail`}
           className={styles.accordionDetailContainer}
         >
           <ReactMarkdown className={`${styles.accordionDetail} ${styles.nestedDescription}`}>
@@ -127,9 +131,11 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       expanded={expanded}
       onChange={() => setExpanded(!expanded)}
       TransitionProps={{ unmountOnExit: true }}
+      onMouseEnter={() => setGroupMouseHover(true)}
+      onMouseLeave={() => setGroupMouseHover(false)}
     >
       <AccordionSummary
-        id={`${testGroup.id}-summary`}
+        id={groupMouseHover ? '' : `${testGroup.id}-summary`}
         aria-controls={`${testGroup.id}-detail`}
         className={styles.accordionSummary}
         expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}
@@ -170,7 +176,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           <InputOutputsList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
         )}
       <AccordionDetails
-        title={`${testGroup.id}-detail`}
+        title={groupMouseHover ? '' : `${testGroup.id}-detail`}
         className={styles.accordionDetailContainer}
       >
         {testGroup.description && view === 'run' && nestedDescriptionPanel}

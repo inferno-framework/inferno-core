@@ -46,6 +46,7 @@ const TestListItem: FC<TestListItemProps> = ({
   const messagesExist = !!test.result?.messages && test.result?.messages.length > 0;
   const requestsExist = !!test.result?.requests && test.result?.requests.length > 0;
   const [open, setOpen] = React.useState(false);
+  const [itemMouseHover, setItemMouseHover] = React.useState(false);
   const [tabIndex, setTabIndex] = React.useState(0);
   const tabs: TabProps[] = [
     { label: 'Messages', value: test.result?.messages },
@@ -212,9 +213,11 @@ const TestListItem: FC<TestListItemProps> = ({
         expanded={open}
         TransitionProps={{ unmountOnExit: true }}
         onClick={handleAccordionClick}
+        onMouseEnter={() => setItemMouseHover(true)}
+        onMouseLeave={() => setItemMouseHover(false)}
       >
         <AccordionSummary
-          id={`${test.id}-summary`}
+          id={itemMouseHover ? '' : `${test.id}-summary`}
           data-testid={`${test.id}-summary`}
           aria-controls={`${test.id}-detail`}
           role={view === 'report' ? 'region' : 'button'}
@@ -235,8 +238,9 @@ const TestListItem: FC<TestListItemProps> = ({
           </Box>
         </AccordionSummary>
         <Divider />
+        {/* Remove default tooltip on hover */}
         <AccordionDetails
-          title={`${test.id}-detail`}
+          title={itemMouseHover ? '' : `${test.id}-detail`}
           data-testid={`${test.id}-detail`}
           className={styles.accordionDetailContainer}
           onClick={(e) => e.stopPropagation()}
