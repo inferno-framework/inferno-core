@@ -14,7 +14,7 @@ PATH
       fhir_client (>= 5.0.3)
       fhir_models (>= 4.2.2)
       hanami-controller (= 2.0.0.beta1)
-      hanami-router (= 2.0.0.beta2)
+      hanami-router (= 2.0.0)
       oj (= 3.11.0)
       pry
       pry-byebug
@@ -149,7 +149,7 @@ GEM
       dry-configurable (~> 0.13, >= 0.13.0)
       hanami-utils (~> 2.0.beta)
       rack (~> 2.0)
-    hanami-router (2.0.0.beta2)
+    hanami-router (2.0.0)
       mustermann (~> 1.0)
       mustermann-contrib (~> 1.0)
       rack (~> 2.0)
