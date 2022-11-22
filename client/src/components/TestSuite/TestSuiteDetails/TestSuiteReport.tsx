@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import TestGroupCard from '~/components/TestSuite/TestSuiteDetails/TestGroupCard';
 import { TestGroup, Test, TestSuite, SuiteOptionChoice, Request } from '~/models/testSuiteModels';
-import TestGroupListItem from './TestGroupListItem';
+import TestGroupListItem from './TestGroupListItem/TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
 import { Box, Button, Card, FormControlLabel, FormGroup, Switch, Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';

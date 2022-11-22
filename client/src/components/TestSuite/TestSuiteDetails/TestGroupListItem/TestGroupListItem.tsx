@@ -6,21 +6,19 @@ import {
   AccordionSummary,
   Box,
   Divider,
-  Link,
   List,
   ListItem,
   ListItemText,
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import FolderIcon from '@mui/icons-material/Folder';
-import InputOutputsList from './TestListItem/InputOutputsList';
+import InputOutputsList from '../TestListItem/InputOutputsList';
 import { Request, RunnableType, Test, TestGroup, ViewType } from '~/models/testSuiteModels';
-import ResultIcon from './ResultIcon';
-import TestRunButton from '../TestRunButton/TestRunButton';
-import TestListItem from './TestListItem/TestListItem';
-import ReactMarkdown from 'react-markdown';
-import theme from '~/styles/theme';
+import ResultIcon from '../ResultIcon';
+import TestRunButton from '../../TestRunButton/TestRunButton';
+import TestListItem from '../TestListItem/TestListItem';
+import NavigableGroupListItem from './NavigableGroupListItem';
+import NestedDescriptionPanel from './NestedDescriptionPanel';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
@@ -80,45 +78,6 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     ));
   };
 
-  const nestedDescriptionPanel = (
-    <Box className={styles.nestedDescriptionContainer}>
-      <Accordion
-        disableGutters
-        key={`${testGroup.id}-description`}
-        className={styles.accordion}
-        TransitionProps={{ unmountOnExit: true }}
-      >
-        <AccordionSummary
-          id={`${testGroup.id}-description-summary`}
-          aria-controls={`${testGroup.id}-description-detail`}
-          expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
-          sx={{ userSelect: 'auto' }}
-        >
-          <List className={styles.testGroupCardList}>
-            <ListItem sx={{ p: 0 }}>
-              <ListItemText
-                primary={
-                  <Typography className={styles.nestedDescriptionHeader}>
-                    About {testGroup.short_title || testGroup.title}
-                  </Typography>
-                }
-              />
-            </ListItem>
-          </List>
-        </AccordionSummary>
-        <Divider />
-        <AccordionDetails
-          title={`${testGroup.id}-description-detail`}
-          className={styles.accordionDetailContainer}
-        >
-          <ReactMarkdown className={`${styles.accordionDetail} ${styles.nestedDescription}`}>
-            {testGroup.description as string}
-          </ReactMarkdown>
-        </AccordionDetails>
-      </Accordion>
-    </Box>
-  );
-
   const expandedGroupListItem = (
     <Accordion
       disableGutters
@@ -173,7 +132,9 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         title={`${testGroup.id}-detail`}
         className={styles.accordionDetailContainer}
       >
-        {testGroup.description && view === 'run' && nestedDescriptionPanel}
+        {testGroup.description && view === 'run' && (
+          <NestedDescriptionPanel testGroup={testGroup} />
+        )}
         <Box className={styles.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}
           {'tests' in testGroup && renderTestListItems()}
@@ -182,46 +143,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     </Accordion>
   );
 
-  const navigableGroupListItem = (
-    <>
-      <Box display="flex" alignItems="center" px={2} py={1}>
-        <Box display="inline-flex">
-          {testGroup.run_as_group ? (
-            <ResultIcon result={testGroup.result} isRunning={testGroup.is_running} />
-          ) : (
-            <FolderIcon sx={{ color: theme.palette.common.gray }} />
-          )}
-        </Box>
-        <List sx={{ padding: '0 8px' }}>
-          <ListItem sx={{ padding: 0 }}>
-            <ListItemText
-              primary={
-                <>
-                  {testGroup.short_id && (
-                    <Typography className={styles.shortId}>{`${testGroup.short_id} `}</Typography>
-                  )}
-                  <Link
-                    color="inherit"
-                    href={`${location.pathname}#${testGroup.id}`}
-                    underline="hover"
-                  >
-                    {testGroup.title}
-                  </Link>
-                </>
-              }
-              secondary={testGroup.result?.result_message}
-            />
-          </ListItem>
-        </List>
-      </Box>
-      <Divider />
-    </>
-  );
-
   if (testGroup.expanded || view === 'report') {
     return expandedGroupListItem;
   } else {
-    return navigableGroupListItem;
+    return <NavigableGroupListItem testGroup={testGroup} />;
   }
 };
 
