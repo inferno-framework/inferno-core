@@ -1,3 +1,7 @@
+# 0.4.4
+* Update hanami-router to fix a bug which prevented Inferno from handling inputs
+  containing `%` characters.
+
 # 0.4.3
 * Remove timestamps from headers and messages.
 
