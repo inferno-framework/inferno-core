@@ -89,6 +89,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     >
       <AccordionSummary
         id={`${testGroup.id}-summary`}
+        data-testid={`${testGroup.id}-summary`}
         aria-controls={`${testGroup.id}-detail`}
         className={styles.accordionSummary}
         expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}
@@ -130,6 +131,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         )}
       <AccordionDetails
         title={`${testGroup.id}-detail`}
+        data-testid={`${testGroup.id}-detail`}
         className={styles.accordionDetailContainer}
       >
         {testGroup.description && view === 'run' && (
