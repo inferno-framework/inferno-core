@@ -7,7 +7,7 @@ import {
   Test,
   Message,
 } from '~/models/testSuiteModels';
-import TestGroupListItem from './TestGroupListItem';
+import TestGroupListItem from './TestGroupListItem/TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
 import TestGroupCard from './TestGroupCard';
 import TestSuiteMessages from './TestSuiteMessages';
