@@ -20,6 +20,7 @@ interface NestedDescriptionPanelProps {
 }
 
 const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) => {
+  const [descriptionMouseHover, setDescriptionMouseHover] = React.useState(false);
   const styles = useStyles();
 
   return (
@@ -29,9 +30,11 @@ const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) 
         key={`${testGroup.id}-description`}
         className={styles.accordion}
         TransitionProps={{ unmountOnExit: true }}
+        onMouseEnter={() => setDescriptionMouseHover(true)}
+        onMouseLeave={() => setDescriptionMouseHover(false)}
       >
         <AccordionSummary
-          id={`${testGroup.id}-description-summary`}
+          id={descriptionMouseHover ? '' : `${testGroup.id}-description-summary`}
           aria-controls={`${testGroup.id}-description-detail`}
           expandIcon={<ExpandMoreIcon sx={{ padding: '0 5px' }} />}
           sx={{ userSelect: 'auto' }}
@@ -50,7 +53,7 @@ const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) 
         </AccordionSummary>
         <Divider />
         <AccordionDetails
-          title={`${testGroup.id}-description-detail`}
+          title={descriptionMouseHover ? '' : `${testGroup.id}-description-detail`}
           className={styles.accordionDetailContainer}
         >
           <ReactMarkdown className={`${styles.accordionDetail} ${styles.nestedDescription}`}>

@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'fhir_client', '>= 5.0.3'
   spec.add_runtime_dependency 'fhir_models', '>= 4.2.2'
   spec.add_runtime_dependency 'hanami-controller', '2.0.0.beta1'
-  spec.add_runtime_dependency 'hanami-router', '2.0.0.beta2'
+  spec.add_runtime_dependency 'hanami-router', '2.0.0'
   spec.add_runtime_dependency 'oj', '3.11.0'
   spec.add_runtime_dependency 'pry'
   spec.add_runtime_dependency 'pry-byebug'

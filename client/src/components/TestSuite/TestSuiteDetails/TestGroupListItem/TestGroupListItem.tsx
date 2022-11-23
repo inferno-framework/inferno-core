@@ -36,6 +36,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   view,
 }) => {
   const styles = useStyles();
+  const [groupMouseHover, setGroupMouseHover] = React.useState(false);
   const [expanded, setExpanded] = React.useState(
     testGroup.result?.result === 'cancel' ||
       testGroup.result?.result === 'fail' ||
@@ -86,9 +87,11 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       expanded={expanded}
       onChange={() => setExpanded(!expanded)}
       TransitionProps={{ unmountOnExit: true }}
+      onMouseEnter={() => setGroupMouseHover(true)}
+      onMouseLeave={() => setGroupMouseHover(false)}
     >
       <AccordionSummary
-        id={`${testGroup.id}-summary`}
+        id={groupMouseHover ? '' : `${testGroup.id}-summary`}
         data-testid={`${testGroup.id}-summary`}
         aria-controls={`${testGroup.id}-detail`}
         className={styles.accordionSummary}
@@ -130,7 +133,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           <InputOutputsList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
         )}
       <AccordionDetails
-        title={`${testGroup.id}-detail`}
+        title={groupMouseHover ? '' : `${testGroup.id}-detail`}
         data-testid={`${testGroup.id}-detail`}
         className={styles.accordionDetailContainer}
       >
