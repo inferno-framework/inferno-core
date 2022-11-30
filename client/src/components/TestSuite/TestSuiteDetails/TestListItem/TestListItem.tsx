@@ -45,9 +45,9 @@ const TestListItem: FC<TestListItemProps> = ({
   const styles = useStyles();
   const messagesExist = !!test.result?.messages && test.result?.messages.length > 0;
   const requestsExist = !!test.result?.requests && test.result?.requests.length > 0;
-  const [open, setOpen] = React.useState(false);
   const [itemMouseHover, setItemMouseHover] = React.useState(false);
-  const [tabIndex, setTabIndex] = React.useState(0);
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [tabIndex, setTabIndex] = React.useState<number>(0);
   const tabs: TabProps[] = [
     { label: 'Messages', value: test.result?.messages },
     { label: 'Requests', value: test.result?.requests },
@@ -193,14 +193,12 @@ const TestListItem: FC<TestListItemProps> = ({
 
     if (firstTab === -1) {
       return tabs.findIndex((tab) => tab.label === 'About');
-    } else {
-      return firstTab;
     }
+    return firstTab;
   };
 
   const handleAccordionClick = () => {
-    const firstTab = findPopulatedTabIndex();
-    setTabIndex(firstTab);
+    setTabIndex(findPopulatedTabIndex());
     setOpen(!open);
   };
 
