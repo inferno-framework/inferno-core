@@ -1,5 +1,5 @@
 import React, { FC, useMemo } from 'react';
-import { Box, Card, Divider, ListItem, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import { Box, Card, Divider, Tab, Tabs, Tooltip, Typography } from '@mui/material';
 import { Message, Request, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
 import TabPanel from '~/components/TestSuite/TestSuiteDetails/TestListItem/TabPanel';
@@ -28,7 +28,7 @@ const TestRunDetail: FC<TestRunDetailProps> = ({ test, currentTabIndex, tabs, up
   const [tabIndex, setTabIndex] = React.useState(currentTabIndex);
 
   const testDescription: JSX.Element = (
-    <ListItem>
+    <Box mx={2}>
       <Typography variant="subtitle2" component="div">
         {useMemo(
           () => (
@@ -37,7 +37,7 @@ const TestRunDetail: FC<TestRunDetailProps> = ({ test, currentTabIndex, tabs, up
           [test.description]
         )}
       </Typography>
-    </ListItem>
+    </Box>
   );
 
   const a11yProps = (index: number) => ({

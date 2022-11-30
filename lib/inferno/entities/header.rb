@@ -12,12 +12,8 @@ module Inferno
     #   @return [String] header value
     # @!attribute type
     #   @return [String] request/response
-    # @!attribute created_at
-    #   @return [Time]
-    # @!attribute updated_at
-    #   @return [Time]
     class Header < Entity
-      ATTRIBUTES = [:id, :request_id, :name, :type, :value, :created_at, :updated_at].freeze
+      ATTRIBUTES = [:id, :request_id, :name, :type, :value].freeze
 
       include Inferno::Entities::Attributes
 
@@ -39,9 +35,7 @@ module Inferno
           request_id:,
           type:,
           name:,
-          value:,
-          created_at:,
-          updated_at:
+          value:
         }.compact
       end
     end
