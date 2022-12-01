@@ -1,3 +1,13 @@
+# 0.4.5
+* Remove the copy button and url truncation from print view.
+* Improve the display for runnables in the ruby console.
+* Display in-progress icons for running tests.
+* Indicate incoming requests with an icon rather than incoming/outgoing labels.
+* Remove timestamps from headers and messages tables.
+* Remove id/title tooltips.
+* Automatically open groups with a skip result.
+* Add DSL support for the FHIR create interaction.
+
 # 0.4.4
 * Update hanami-router to fix a bug which prevented Inferno from handling inputs
   containing `%` characters.
