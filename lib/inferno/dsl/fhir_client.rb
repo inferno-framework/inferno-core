@@ -99,6 +99,21 @@ module Inferno
         end
       end
 
+      # Perform a FHIR create interaction.
+      #
+      # @param resource [FHIR::Model]
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @return [Inferno::Entities::Request]
+      def fhir_create(resource, client: :default, name: nil)
+        store_request_and_refresh_token(fhir_client(client), name) do
+          tcp_exception_handler do
+            fhir_client(client).create(resource)
+          end
+        end
+      end
+
       # Perform a FHIR read interaction.
       #
       # @param resource_type [String, Symbol, Class]

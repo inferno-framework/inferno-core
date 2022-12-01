@@ -391,6 +391,24 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
+  describe '#fhir_create' do
+    let(:stub_create_request) do
+      stub_request(:post, "#{base_url}/#{resource.resourceType}")
+        .with(body: resource.to_json)
+        .to_return(status: 201, headers: { 'Location' => "#{base_url}/#{resource.resourceType}/#{resource.id}" })
+    end
+
+    before do
+      stub_create_request
+    end
+
+    it 'performs a FHIR create' do
+      group.fhir_create(resource)
+
+      expect(stub_create_request).to have_been_made.once
+    end
+  end
+
   describe '#fhir_search' do
     let(:stub_get_search_request) do
       stub_request(:get, "#{base_url}/#{resource.resourceType}?patient=123")
