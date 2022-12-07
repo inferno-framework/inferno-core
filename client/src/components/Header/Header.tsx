@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Menu, NoteAdd } from '@mui/icons-material';
 import { getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice } from '~/models/testSuiteModels';
@@ -51,7 +51,9 @@ const Header: FC<HeaderProps> = ({
             <Menu fontSize="inherit" />
           </IconButton>
         ) : (
-          <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
+          <Link to="/" aria-label="Inferno Home">
+            <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
+          </Link>
         )}
         <Box
           display="flex"
@@ -63,13 +65,10 @@ const Header: FC<HeaderProps> = ({
           tabIndex={0}
         >
           <Box display="flex" flexDirection="row" alignItems="baseline">
-            <Typography
-              variant="h5"
-              component="h1"
-              className={styles.title}
-              color={lightTheme.palette.common.orangeDarker}
-            >
-              {suiteTitle}
+            <Typography variant="h5" component="h1" className={styles.title}>
+              <Link to="/" aria-label="Inferno Home" className={styles.homeLink}>
+                {suiteTitle}
+              </Link>
             </Typography>
             {suiteVersion && (
               <Typography variant="overline" className={styles.version}>

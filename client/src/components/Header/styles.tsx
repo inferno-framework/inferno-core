@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { Theme } from '@mui/material/styles';
+import lightTheme from '~/styles/theme';
 import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
@@ -35,5 +36,9 @@ export default makeStyles((theme: Theme) => ({
   },
   version: {
     fontStyle: 'italic',
+  },
+  homeLink: {
+    color: lightTheme.palette.common.orangeDarker,
+    textDecoration: 'none',
   },
 }));

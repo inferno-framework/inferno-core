@@ -109,6 +109,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   );
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
+  const [testSessionPolling, setTestSessionPolling] = React.useState(true);
 
   const { test_suite, id } = testSession;
 
@@ -174,6 +175,15 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     setWaitingTestId(waitingTestId);
   }, [resultsMap]);
 
+  // when on TestSession, we want to poll for job status and cancel polling when nav'ing away
+  useEffect(() => {
+    setTestSessionPolling(true);
+
+    return () => {
+      setTestSessionPolling(false);
+    };
+  }, []);
+
   const showInputsModal = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
     setInputs(inputs);
     setRunnableType(runnableType);
@@ -209,7 +219,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           const updatedMap = resultsToMap(testRunResults.results, resultsMap);
           setResultsMap(updatedMap);
         }
-        if (testRunResults && testRunIsInProgress(testRunResults)) {
+        if (testRunResults && testRunIsInProgress(testRunResults) && testSessionPolling) {
           setTimeout(() => pollTestRunResults(testRunResults), 500);
         }
       })
