@@ -409,6 +409,46 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
+  describe '#fhir_transaction' do
+    let(:stub_transaction_request) do
+      stub_request(:post, "#{base_url}/")
+        .with(body: resource.to_json)
+        .to_return(status: 200)
+    end
+    let(:resource) do
+      FHIR::Bundle.new(
+        type: 'transaction',
+        entry: [
+          {
+            resource: FHIR::Patient.new(id: '123'),
+            request: {
+              method: 'POST',
+              url: 'Patient'
+            }
+          }
+        ]
+      )
+    end
+
+    before do
+      stub_transaction_request
+    end
+
+    it 'performs a FHIR transaction' do
+      group.fhir_transaction(resource)
+
+      expect(stub_transaction_request).to have_been_made.once
+    end
+
+    it 'allows a transaction bundle to be built from scratch' do
+      group.fhir_client.begin_transaction
+      group.fhir_client.add_transaction_request('POST', nil, resource.entry.first.resource)
+      group.fhir_transaction
+
+      expect(stub_transaction_request).to have_been_made.once
+    end
+  end
+
   describe '#fhir_search' do
     let(:stub_get_search_request) do
       stub_request(:get, "#{base_url}/#{resource.resourceType}?patient=123")
