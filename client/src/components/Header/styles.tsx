@@ -30,7 +30,7 @@ export default makeStyles((theme: Theme) => ({
     paddingRight: '8px',
   },
   title: {
-    padding: '0 8px',
+    padding: '0 8px 0 20px',
     whiteSpace: 'nowrap',
     fontWeight: 600,
   },
