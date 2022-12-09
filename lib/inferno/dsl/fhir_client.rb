@@ -171,6 +171,22 @@ module Inferno
         end
       end
 
+      # Perform a FHIR batch/transaction interaction.
+      #
+      # @param bundle [FHIR::Bundle] the FHIR batch/transaction Bundle
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @return [Inferno::Entities::Request]
+      def fhir_transaction(bundle = nil, client: :default, name: nil)
+        store_request('outgoing', name) do
+          tcp_exception_handler do
+            fhir_client(client).transaction_bundle = bundle if bundle.present?
+            fhir_client(client).end_transaction
+          end
+        end
+      end
+
       # @todo Make this a FHIR class method? Something like
       #   FHIR.class_for(resource_type)
       # @private
