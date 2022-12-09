@@ -1,9 +1,11 @@
 import React, { FC } from 'react';
 import useStyles from './styles';
-import { Box, Link, Typography, Divider } from '@mui/material';
+import { Box, Link, Typography, Divider, IconButton, MenuItem, Menu } from '@mui/material';
 import logo from '~/images/inferno_logo.png';
 import { getStaticPath } from '~/api/infernoApiService';
 import { FooterLink } from '~/models/testSuiteModels';
+import { useAppStore } from '~/store/app';
+import { Help } from '@mui/icons-material';
 
 interface FooterProps {
   version: string;
@@ -11,7 +13,82 @@ interface FooterProps {
 }
 
 const Footer: FC<FooterProps> = ({ version, linkList }) => {
+  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [showMenu, setShowMenu] = React.useState<boolean>(false);
   const styles = useStyles();
+
+  if (windowIsSmall) {
+    return (
+      <footer className={styles.mobileFooter}>
+        <Box display="flex" flexDirection="row" justifyContent="space-between" overflow="auto">
+          <Box display="flex" alignItems="center" px={2}>
+            <Link
+              href="https://inferno-framework.github.io/inferno-core"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Inferno"
+            >
+              <img
+                src={getStaticPath(logo as string)}
+                alt="Inferno logo - documentation"
+                className={styles.mobileLogo}
+              />
+            </Link>
+            {version && (
+              <Typography className={styles.logoText} style={{ fontSize: '0.7rem' }}>
+                {`v.${version}`}
+              </Typography>
+            )}
+          </Box>
+          <Box display="flex" alignItems="center" data-testid="footer-links">
+            <IconButton
+              aria-label="links"
+              size="small"
+              color="secondary"
+              onClick={(e) => {
+                setAnchorEl(!anchorEl ? e.currentTarget : null);
+                setShowMenu(!showMenu);
+              }}
+            >
+              <Help fontSize="inherit" />
+            </IconButton>
+
+            {linkList && showMenu && (
+              <Menu
+                anchorEl={anchorEl}
+                open={showMenu}
+                MenuListProps={{ dense: true }}
+                onClose={() => {
+                  setShowMenu(false);
+                  setAnchorEl(null);
+                }}
+              >
+                {linkList.map((link) => {
+                  return (
+                    <MenuItem key={link.url}>
+                      <Link
+                        href={link.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        underline="hover"
+                        className={styles.linkText}
+                        style={{
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        {link.label}
+                      </Link>
+                    </MenuItem>
+                  );
+                })}
+              </Menu>
+            )}
+          </Box>
+        </Box>
+      </footer>
+    );
+  }
 
   return (
     <footer className={styles.footer}>
@@ -51,6 +128,10 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                     rel="noreferrer"
                     underline="hover"
                     className={styles.linkText}
+                    style={{
+                      fontSize: '1.1rem',
+                      margin: '0 16px',
+                    }}
                   >
                     {link.label}
                   </Link>

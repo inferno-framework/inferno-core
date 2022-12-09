@@ -39,7 +39,7 @@ export default makeStyles((theme: Theme) => ({
     display: 'flex',
     flexGrow: 1,
     overflow: 'hidden',
-    maxHeight: `calc(100vh - 64px - 56px - ${bannerHeight()}px)`,
+    maxHeight: `calc(100vh - ${bannerHeight()}px)`,
     '@media print': {
       maxHeight: 'unset',
     },

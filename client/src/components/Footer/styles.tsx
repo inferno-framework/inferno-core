@@ -14,7 +14,19 @@ export default makeStyles((theme: Theme) => ({
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
     backgroundColor: theme.palette.common.orangeLightest,
     borderTop: `1px ${theme.palette.common.grayLighter} solid`,
-    position: 'sticky',
+    bottom: 0,
+    '@media print': {
+      display: 'none',
+    },
+  },
+  mobileFooter: {
+    width: '100%',
+    overflow: 'auto',
+    minHeight: '36px', // For responsive screens
+    maxHeight: '36px', // For responsive screens
+    zIndex: `${theme.zIndex.drawer + 1} !important` as any,
+    backgroundColor: theme.palette.common.orangeLightest,
+    borderTop: `1px ${theme.palette.common.grayLighter} solid`,
     bottom: 0,
     '@media print': {
       display: 'none',
@@ -23,6 +35,11 @@ export default makeStyles((theme: Theme) => ({
   logo: {
     objectFit: 'contain',
     height: '2.5em',
+    padding: '0 8px 0 0',
+  },
+  mobileLogo: {
+    objectFit: 'contain',
+    height: '1.7em',
     padding: '4px 8px 0 0',
   },
   logoText: {
@@ -32,8 +49,6 @@ export default makeStyles((theme: Theme) => ({
   },
   linkText: {
     fontWeight: 'bolder',
-    fontSize: '1.1rem',
-    margin: '0 16px',
     color: theme.palette.common.grayDark,
     width: 'max-content',
   },
