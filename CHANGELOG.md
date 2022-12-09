@@ -1,3 +1,6 @@
+# 0.4.6
+* Add DSL support for the FHIR batch/transaction interaction.
+
 # 0.4.5
 * Remove the copy button and url truncation from print view.
 * Improve the display for runnables in the ruby console.
