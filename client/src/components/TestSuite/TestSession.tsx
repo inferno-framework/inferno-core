@@ -30,6 +30,7 @@ import useStyles from './styles';
 
 import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
+import { useTimeout } from '~/hooks/useTimeout';
 
 function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
@@ -110,6 +111,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
   const [testSessionPolling, setTestSessionPolling] = React.useState(true);
+  const poller = useTimeout();
 
   const { test_suite, id } = testSession;
 
@@ -175,10 +177,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     setWaitingTestId(waitingTestId);
   }, [resultsMap]);
 
-  // when on TestSession, we want to poll for job status and cancel polling when nav'ing away
+  // when leaving the TestSession, we want to cancel the poller
   useEffect(() => {
-    setTestSessionPolling(true);
-
     return () => {
       setTestSessionPolling(false);
     };
@@ -220,7 +220,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           setResultsMap(updatedMap);
         }
         if (testRunResults && testRunIsInProgress(testRunResults) && testSessionPolling) {
-          setTimeout(() => pollTestRunResults(testRunResults), 500);
+          poller.current = setTimeout(() => pollTestRunResults(testRunResults), 500);
         }
       })
       .catch((e) => {
