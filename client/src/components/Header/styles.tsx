@@ -7,8 +7,6 @@ import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
   appbar: {
-    minHeight: '64px', // For responsive screens
-    maxHeight: '64px', // For responsive screens
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
     position: 'sticky',
     '@media print': {

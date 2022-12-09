@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { AppBar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
+import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import { Menu, NoteAdd } from '@mui/icons-material';
 import { getStaticPath } from '~/api/infernoApiService';
@@ -26,6 +26,7 @@ const Header: FC<HeaderProps> = ({
 }) => {
   const styles = useStyles();
   const history = useHistory();
+  const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
   const returnHome = () => {
@@ -38,7 +39,14 @@ const Header: FC<HeaderProps> = ({
       : '';
 
   return suiteTitle ? (
-    <AppBar color="default" className={styles.appbar}>
+    <AppBar
+      color="default"
+      className={styles.appbar}
+      style={{
+        minHeight: `${headerHeight}px`, // For responsive screens
+        maxHeight: `${headerHeight}px`, // For responsive screens
+      }}
+    >
       <Toolbar className={styles.toolbar}>
         {windowIsSmall ? (
           <IconButton
@@ -90,16 +98,24 @@ const Header: FC<HeaderProps> = ({
         </Box>
 
         <Box display="flex" minWidth="fit-content" pl={2}>
-          <Button
-            disableElevation
-            color="secondary"
-            size="small"
-            variant="contained"
-            startIcon={<NoteAdd />}
-            onClick={returnHome}
-          >
-            New Session
-          </Button>
+          {windowIsSmall ? (
+            <IconButton color="secondary" onClick={returnHome}>
+              <Avatar sx={{ width: 32, height: 32, bgcolor: lightTheme.palette.secondary.main }}>
+                <NoteAdd fontSize="small" />
+              </Avatar>
+            </IconButton>
+          ) : (
+            <Button
+              disableElevation
+              color="secondary"
+              size="small"
+              variant="contained"
+              startIcon={<NoteAdd />}
+              onClick={returnHome}
+            >
+              New Session
+            </Button>
+          )}
         </Box>
       </Toolbar>
     </AppBar>

@@ -4,6 +4,8 @@ import { devtoolsInDev } from './devtools';
 import { TestSuite, TestSession } from '~/models/testSuiteModels';
 
 type AppStore = {
+  footerHeight: number;
+  headerHeight: number;
   testSuites: TestSuite[];
   testSession: TestSession | undefined;
   smallWindowThreshold: number;
@@ -17,6 +19,8 @@ type AppStore = {
 // other stores can be attached to child components
 export const useAppStore = create<AppStore>(
   devtoolsInDev((set, _get) => ({
+    footerHeight: 36,
+    headerHeight: 64,
     testSuites: [] as TestSuite[],
     testSession: undefined,
     smallWindowThreshold: 1000,

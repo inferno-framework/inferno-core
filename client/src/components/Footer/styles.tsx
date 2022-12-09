@@ -9,21 +9,6 @@ export default makeStyles((theme: Theme) => ({
   footer: {
     width: '100%',
     overflow: 'auto',
-    minHeight: '56px', // For responsive screens
-    maxHeight: '56px', // For responsive screens
-    zIndex: `${theme.zIndex.drawer + 1} !important` as any,
-    backgroundColor: theme.palette.common.orangeLightest,
-    borderTop: `1px ${theme.palette.common.grayLighter} solid`,
-    bottom: 0,
-    '@media print': {
-      display: 'none',
-    },
-  },
-  mobileFooter: {
-    width: '100%',
-    overflow: 'auto',
-    minHeight: '36px', // For responsive screens
-    maxHeight: '36px', // For responsive screens
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
     backgroundColor: theme.palette.common.orangeLightest,
     borderTop: `1px ${theme.palette.common.grayLighter} solid`,

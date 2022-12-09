@@ -18,105 +18,75 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
   const [showMenu, setShowMenu] = React.useState<boolean>(false);
   const styles = useStyles();
 
-  if (windowIsSmall) {
+  const renderLogoText = () => {
+    if (!version) return <></>;
     return (
-      <footer className={styles.mobileFooter}>
-        <Box display="flex" flexDirection="row" justifyContent="space-between" overflow="auto">
-          <Box display="flex" alignItems="center" px={2}>
-            <Link
-              href="https://inferno-framework.github.io/inferno-core"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Inferno"
-            >
-              <img
-                src={getStaticPath(logo as string)}
-                alt="Inferno logo - documentation"
-                className={styles.mobileLogo}
-              />
-            </Link>
-            {version && (
-              <Typography className={styles.logoText} style={{ fontSize: '0.7rem' }}>
-                {`v.${version}`}
-              </Typography>
-            )}
-          </Box>
-          <Box display="flex" alignItems="center" data-testid="footer-links">
-            <IconButton
-              aria-label="links"
-              size="small"
-              color="secondary"
-              onClick={(e) => {
-                setAnchorEl(!anchorEl ? e.currentTarget : null);
-                setShowMenu(!showMenu);
+      <Box display="flex" flexDirection="column">
+        {!windowIsSmall && (
+          <Typography className={styles.logoText} style={{ fontSize: '0.7rem' }}>
+            Built with
+          </Typography>
+        )}
+        <Typography
+          className={styles.logoText}
+          style={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
+        >
+          {`v.${version}`}
+        </Typography>
+      </Box>
+    );
+  };
+
+  const renderLinks = () => {
+    if (windowIsSmall) {
+      return (
+        <Box display="flex" alignItems="center" data-testid="footer-links">
+          <IconButton
+            aria-label="links"
+            size="small"
+            color="secondary"
+            onClick={(e) => {
+              setAnchorEl(!anchorEl ? e.currentTarget : null);
+              setShowMenu(!showMenu);
+            }}
+          >
+            <Help fontSize="inherit" />
+          </IconButton>
+
+          {linkList && showMenu && (
+            <Menu
+              anchorEl={anchorEl}
+              open={showMenu}
+              MenuListProps={{ dense: true }}
+              onClose={() => {
+                setShowMenu(false);
+                setAnchorEl(null);
               }}
             >
-              <Help fontSize="inherit" />
-            </IconButton>
-
-            {linkList && showMenu && (
-              <Menu
-                anchorEl={anchorEl}
-                open={showMenu}
-                MenuListProps={{ dense: true }}
-                onClose={() => {
-                  setShowMenu(false);
-                  setAnchorEl(null);
-                }}
-              >
-                {linkList.map((link) => {
-                  return (
-                    <MenuItem key={link.url}>
-                      <Link
-                        href={link.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        underline="hover"
-                        className={styles.linkText}
-                        style={{
-                          fontSize: '0.8rem',
-                        }}
-                      >
-                        {link.label}
-                      </Link>
-                    </MenuItem>
-                  );
-                })}
-              </Menu>
-            )}
-          </Box>
-        </Box>
-      </footer>
-    );
-  }
-
-  return (
-    <footer className={styles.footer}>
-      <Box display="flex" flexDirection="row" justifyContent="space-between" overflow="auto">
-        <Box display="flex" alignItems="center" px={2}>
-          <Link
-            href="https://inferno-framework.github.io/inferno-core"
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Inferno"
-          >
-            <img
-              src={getStaticPath(logo as string)}
-              alt="Inferno logo - documentation"
-              className={styles.logo}
-            />
-          </Link>
-          {version && (
-            <Box display="flex" flexDirection="column">
-              <Typography className={styles.logoText} style={{ fontSize: '0.7rem' }}>
-                Built with
-              </Typography>
-              <Typography className={styles.logoText} style={{ fontSize: '0.9rem' }}>
-                {`v.${version}`}
-              </Typography>
-            </Box>
+              {linkList.map((link) => {
+                return (
+                  <MenuItem key={link.url}>
+                    <Link
+                      href={link.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      underline="hover"
+                      className={styles.linkText}
+                      style={{
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      {link.label}
+                    </Link>
+                  </MenuItem>
+                );
+              })}
+            </Menu>
           )}
         </Box>
+      );
+    } else {
+      return (
         <Box display="flex" alignItems="center" p={2} data-testid="footer-links">
           {linkList &&
             linkList.map((link, i) => {
@@ -140,6 +110,39 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
               );
             })}
         </Box>
+      );
+    }
+  };
+
+  return (
+    <footer
+      className={styles.footer}
+      style={
+        windowIsSmall
+          ? {
+              minHeight: '36px',
+              maxHeight: '36px',
+            }
+          : {}
+      }
+    >
+      <Box display="flex" flexDirection="row" justifyContent="space-between" overflow="auto">
+        <Box display="flex" alignItems="center" px={2}>
+          <Link
+            href="https://inferno-framework.github.io/inferno-core"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Inferno"
+          >
+            <img
+              src={getStaticPath(logo as string)}
+              alt="Inferno logo - documentation"
+              className={windowIsSmall ? styles.mobileLogo : styles.logo}
+            />
+          </Link>
+          {renderLogoText()}
+        </Box>
+        {renderLinks()}
       </Box>
     </footer>
   );
