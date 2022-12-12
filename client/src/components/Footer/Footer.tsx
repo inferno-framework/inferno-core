@@ -13,6 +13,7 @@ interface FooterProps {
 }
 
 const Footer: FC<FooterProps> = ({ version, linkList }) => {
+  const footerHeight = useAppStore((state) => state.footerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [showMenu, setShowMenu] = React.useState<boolean>(false);
@@ -37,61 +38,34 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
     );
   };
 
-  const renderLinks = () => {
-    if (windowIsSmall) {
-      return (
-        <Box display="flex" alignItems="center" data-testid="footer-links">
-          <IconButton
-            aria-label="links"
-            size="small"
-            color="secondary"
-            onClick={(e) => {
-              setAnchorEl(!anchorEl ? e.currentTarget : null);
-              setShowMenu(!showMenu);
+  const renderLinksMenu = () => {
+    return (
+      <Box display="flex" alignItems="center" data-testid="footer-links">
+        <IconButton
+          aria-label="links"
+          size="small"
+          color="secondary"
+          onClick={(e) => {
+            setAnchorEl(!anchorEl ? e.currentTarget : null);
+            setShowMenu(!showMenu);
+          }}
+        >
+          <Help fontSize="inherit" />
+        </IconButton>
+
+        {linkList && showMenu && (
+          <Menu
+            anchorEl={anchorEl}
+            open={showMenu}
+            MenuListProps={{ dense: true }}
+            onClose={() => {
+              setShowMenu(false);
+              setAnchorEl(null);
             }}
           >
-            <Help fontSize="inherit" />
-          </IconButton>
-
-          {linkList && showMenu && (
-            <Menu
-              anchorEl={anchorEl}
-              open={showMenu}
-              MenuListProps={{ dense: true }}
-              onClose={() => {
-                setShowMenu(false);
-                setAnchorEl(null);
-              }}
-            >
-              {linkList.map((link) => {
-                return (
-                  <MenuItem key={link.url}>
-                    <Link
-                      href={link.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      underline="hover"
-                      className={styles.linkText}
-                      style={{
-                        fontSize: '0.8rem',
-                      }}
-                    >
-                      {link.label}
-                    </Link>
-                  </MenuItem>
-                );
-              })}
-            </Menu>
-          )}
-        </Box>
-      );
-    } else {
-      return (
-        <Box display="flex" alignItems="center" p={2} data-testid="footer-links">
-          {linkList &&
-            linkList.map((link, i) => {
+            {linkList.map((link) => {
               return (
-                <React.Fragment key={link.url}>
+                <MenuItem key={link.url}>
                   <Link
                     href={link.url}
                     target="_blank"
@@ -99,32 +73,52 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                     underline="hover"
                     className={styles.linkText}
                     style={{
-                      fontSize: '1.1rem',
-                      margin: '0 16px',
+                      fontSize: '0.8rem',
                     }}
                   >
                     {link.label}
                   </Link>
-                  {i !== linkList.length - 1 && <Divider orientation="vertical" flexItem />}
-                </React.Fragment>
+                </MenuItem>
               );
             })}
-        </Box>
-      );
-    }
+          </Menu>
+        )}
+      </Box>
+    );
+  };
+
+  const renderLinks = () => {
+    return (
+      <Box display="flex" alignItems="center" p={2} data-testid="footer-links">
+        {linkList &&
+          linkList.map((link, i) => {
+            return (
+              <React.Fragment key={link.url}>
+                <Link
+                  href={link.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  underline="hover"
+                  className={styles.linkText}
+                  style={{
+                    fontSize: '1.1rem',
+                    margin: '0 16px',
+                  }}
+                >
+                  {link.label}
+                </Link>
+                {i !== linkList.length - 1 && <Divider orientation="vertical" flexItem />}
+              </React.Fragment>
+            );
+          })}
+      </Box>
+    );
   };
 
   return (
     <footer
       className={styles.footer}
-      style={
-        windowIsSmall
-          ? {
-              minHeight: '36px',
-              maxHeight: '36px',
-            }
-          : {}
-      }
+      style={{ minHeight: `${footerHeight}px`, maxHeight: `${footerHeight}px` }}
     >
       <Box display="flex" flexDirection="row" justifyContent="space-between" overflow="auto">
         <Box display="flex" alignItems="center" px={2}>
@@ -142,7 +136,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
           </Link>
           {renderLogoText()}
         </Box>
-        {renderLinks()}
+        {windowIsSmall ? renderLinksMenu() : renderLinks()}
       </Box>
     </footer>
   );
