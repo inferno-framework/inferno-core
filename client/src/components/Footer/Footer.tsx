@@ -118,7 +118,10 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
   return (
     <footer
       className={styles.footer}
-      style={{ minHeight: `${footerHeight}px`, maxHeight: `${footerHeight}px` }}
+      style={{
+        minHeight: `${footerHeight}px`,
+        maxHeight: `${footerHeight}px`,
+      }}
     >
       <Box display="flex" flexDirection="row" justifyContent="space-between" overflow="auto">
         <Box display="flex" alignItems="center" px={2}>

@@ -99,7 +99,7 @@ const Header: FC<HeaderProps> = ({
 
         <Box display="flex" minWidth="fit-content" pl={2}>
           {windowIsSmall ? (
-            <IconButton color="secondary" onClick={returnHome}>
+            <IconButton color="secondary" aria-label="New Session" onClick={returnHome}>
               <Avatar sx={{ width: 32, height: 32, bgcolor: lightTheme.palette.secondary.main }}>
                 <NoteAdd fontSize="small" />
               </Avatar>
