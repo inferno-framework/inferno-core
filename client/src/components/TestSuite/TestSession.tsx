@@ -30,6 +30,7 @@ import useStyles from './styles';
 
 import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
+import { useTimeout } from '~/hooks/useTimeout';
 
 function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
   map.set(testGroup.id, testGroup);
@@ -109,6 +110,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   );
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
+  const [testSessionPolling, setTestSessionPolling] = React.useState(true);
+  const poller = useTimeout();
 
   const { test_suite, id } = testSession;
 
@@ -174,6 +177,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     setWaitingTestId(waitingTestId);
   }, [resultsMap]);
 
+  // when leaving the TestSession, we want to cancel the poller
+  useEffect(() => {
+    return () => {
+      setTestSessionPolling(false);
+    };
+  }, []);
+
   const showInputsModal = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
     setInputs(inputs);
     setRunnableType(runnableType);
@@ -209,8 +219,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           const updatedMap = resultsToMap(testRunResults.results, resultsMap);
           setResultsMap(updatedMap);
         }
-        if (testRunResults && testRunIsInProgress(testRunResults)) {
-          setTimeout(() => pollTestRunResults(testRunResults), 500);
+        if (testRunResults && testRunIsInProgress(testRunResults) && testSessionPolling) {
+          poller.current = setTimeout(() => pollTestRunResults(testRunResults), 500);
         }
       })
       .catch((e) => {

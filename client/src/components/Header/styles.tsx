@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { Theme } from '@mui/material/styles';
+import lightTheme from '~/styles/theme';
 import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
@@ -29,11 +30,15 @@ export default makeStyles((theme: Theme) => ({
     paddingRight: '8px',
   },
   title: {
-    padding: '0 8px',
+    padding: '0 8px 0 20px',
     whiteSpace: 'nowrap',
     fontWeight: 600,
   },
   version: {
     fontStyle: 'italic',
+  },
+  homeLink: {
+    color: lightTheme.palette.common.orangeDarker,
+    textDecoration: 'none',
   },
 }));

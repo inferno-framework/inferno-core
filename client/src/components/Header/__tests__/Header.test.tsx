@@ -1,10 +1,11 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ThemeProvider from 'components/ThemeProvider';
+import React from 'react';
 import Header from '../Header';
 
 // this testing helper is needed to test react hooks outside of render
-import { renderHook, act } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
+import { MemoryRouter } from 'react-router-dom';
 import { useAppStore } from '~/store/app';
 
 // boilerplate for mocking zustand which uses hooks outside of a component
@@ -20,13 +21,15 @@ test('renders wide screen Inferno Header', () => {
   let drawerOpen = true;
 
   render(
-    <ThemeProvider>
-      <Header
-        suiteTitle="Suite Title"
-        drawerOpen={drawerOpen}
-        toggleDrawer={() => (drawerOpen = !drawerOpen)}
-      />
-    </ThemeProvider>
+    <MemoryRouter>
+      <ThemeProvider>
+        <Header
+          suiteTitle="Suite Title"
+          drawerOpen={drawerOpen}
+          toggleDrawer={() => (drawerOpen = !drawerOpen)}
+        />
+      </ThemeProvider>
+    </MemoryRouter>
   );
 
   const logoElement = screen.getByRole('img');
