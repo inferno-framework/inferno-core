@@ -96,7 +96,12 @@ const Header: FC<HeaderProps> = ({
           )}
         </Box>
 
-        <Box display="flex" minWidth="fit-content" pl={2}>
+        <Box
+          display="flex"
+          minWidth="fit-content"
+          pl={1}
+          style={windowIsSmall ? { marginRight: '-16px' } : {}}
+        >
           {windowIsSmall ? (
             <IconButton color="secondary" aria-label="New Session" onClick={returnHome}>
               <Avatar sx={{ width: 32, height: 32, bgcolor: lightTheme.palette.secondary.main }}>
