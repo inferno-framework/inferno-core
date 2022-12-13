@@ -48,6 +48,7 @@ const Header: FC<HeaderProps> = ({
       }}
     >
       <Toolbar className={styles.toolbar}>
+        {/* Home button */}
         {windowIsSmall ? (
           <IconButton
             size="large"
@@ -63,6 +64,8 @@ const Header: FC<HeaderProps> = ({
             <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
           </Link>
         )}
+
+        {/* Header Text */}
         <Box
           display="flex"
           flexDirection="column"
@@ -96,6 +99,7 @@ const Header: FC<HeaderProps> = ({
           )}
         </Box>
 
+        {/* New Session button */}
         <Box
           display="flex"
           minWidth="fit-content"
