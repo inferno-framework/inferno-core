@@ -16,8 +16,6 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
   contentContainer: {
-    flexGrow: 1,
-    padding: '24px 48px',
     overflowX: 'hidden',
     overflow: 'auto',
     '@media print': {

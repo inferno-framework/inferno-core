@@ -397,7 +397,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           width: '100%',
         }}
       >
-        <Box className={styles.contentContainer}>
+        <Box className={styles.contentContainer} p={windowIsSmall ? 1 : 4}>
           {renderView((view as ViewType) || 'run')}
           {inputModalVisible && (
             <InputsModal
