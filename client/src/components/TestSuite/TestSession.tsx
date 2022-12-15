@@ -94,6 +94,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   toggleDrawer,
 }) => {
   const styles = useStyles();
+  const footerHeight = useAppStore((state) => state.footerHeight);
+  const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const runnableId = useTestSessionStore((state) => state.runnableId);
   const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
@@ -374,10 +376,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           classes={{ paper: styles.swipeableDrawerHeight }}
         >
           {/* Spacer to be updated with header height */}
-          <Toolbar sx={{ minHeight: '64px' }} />
+          <Toolbar sx={{ minHeight: `${headerHeight}px` }} />
           {renderDrawerContents()}
           {/* Spacer to be updated with footer height */}
-          <Toolbar />
+          <Toolbar sx={{ minHeight: `${footerHeight}px` }} />
         </SwipeableDrawer>
       ) : (
         <Drawer
@@ -395,7 +397,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           width: '100%',
         }}
       >
-        <Box className={styles.contentContainer}>
+        <Box className={styles.contentContainer} p={windowIsSmall ? 1 : 4}>
           {renderView((view as ViewType) || 'run')}
           {inputModalVisible && (
             <InputsModal

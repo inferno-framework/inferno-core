@@ -13,6 +13,7 @@ import { basePath } from '~/api/infernoApiService';
 import { useAppStore } from '~/store/app';
 
 const App: FC<unknown> = () => {
+  const setFooterHeight = useAppStore((state) => state.setFooterHeight);
   const testSuites = useAppStore((state) => state.testSuites);
   const setTestSuites = useAppStore((state) => state.setTestSuites);
   const testSession = useAppStore((state) => state.testSession);
@@ -51,7 +52,13 @@ const App: FC<unknown> = () => {
   }, [testSuites]);
 
   const handleResize = () => {
-    setWindowIsSmall(window.innerWidth < smallWindowThreshold);
+    if (window.innerWidth < smallWindowThreshold) {
+      setWindowIsSmall(true);
+      setFooterHeight(36);
+    } else {
+      setWindowIsSmall(false);
+      setFooterHeight(56);
+    }
   };
 
   if (!testSuites || (testSuites.length === 1 && !testSession)) {

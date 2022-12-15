@@ -3,10 +3,22 @@ import TestGroupCard from '~/components/TestSuite/TestSuiteDetails/TestGroupCard
 import { TestGroup, Test, TestSuite, SuiteOptionChoice, Request } from '~/models/testSuiteModels';
 import TestGroupListItem from './TestGroupListItem/TestGroupListItem';
 import TestListItem from './TestListItem/TestListItem';
-import { Box, Button, Card, FormControlLabel, FormGroup, Switch, Typography } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  FormControlLabel,
+  FormGroup,
+  IconButton,
+  Switch,
+  Typography,
+} from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import useStyles from './styles';
 import TestSuiteMessages from './TestSuiteMessages';
+import { useAppStore } from '~/store/app';
+import lightTheme from '~/styles/theme';
 
 interface TestSuiteReportProps {
   testSuite: TestSuite;
@@ -15,13 +27,14 @@ interface TestSuiteReportProps {
 }
 
 const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, updateRequest }) => {
-  const styles = useStyles();
+  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const [showDetails, setShowDetails] = React.useState(false);
   const location = window?.location?.href?.split('#')?.[0];
   const suiteOptionsString =
     suiteOptions && suiteOptions.length > 0
       ? ` - ${suiteOptions.map((option) => option.label).join(', ')}`
       : '';
+  const styles = useStyles();
 
   const header = (
     <Card variant="outlined" sx={{ mb: 3 }}>
@@ -49,18 +62,24 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
           </FormGroup>
         </span>
         <span className={styles.testGroupCardHeaderButton}>
-          <Button
-            variant="contained"
-            color="secondary"
-            size="small"
-            disableElevation
-            startIcon={<PrintIcon />}
-            onClick={() => {
-              window.print();
-            }}
-          >
-            Print
-          </Button>
+          {windowIsSmall ? (
+            <IconButton color="secondary" aria-label="Print Report" onClick={() => window.print()}>
+              <Avatar sx={{ width: 32, height: 32, bgcolor: lightTheme.palette.secondary.main }}>
+                <PrintIcon fontSize="small" />
+              </Avatar>
+            </IconButton>
+          ) : (
+            <Button
+              variant="contained"
+              color="secondary"
+              size="small"
+              disableElevation
+              startIcon={<PrintIcon />}
+              onClick={() => window.print()}
+            >
+              Print
+            </Button>
+          )}
         </span>
       </Box>
       <Box p={1}>

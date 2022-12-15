@@ -8,8 +8,6 @@ import makeStyles from '@mui/styles/makeStyles';
 
 export default makeStyles((theme: Theme) => ({
   appbar: {
-    minHeight: '64px', // For responsive screens
-    maxHeight: '64px', // For responsive screens
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
     position: 'sticky',
     '@media print': {
@@ -30,7 +28,7 @@ export default makeStyles((theme: Theme) => ({
     paddingRight: '8px',
   },
   title: {
-    padding: '0 8px 0 20px',
+    padding: '0 8px',
     whiteSpace: 'nowrap',
     fontWeight: 600,
   },
