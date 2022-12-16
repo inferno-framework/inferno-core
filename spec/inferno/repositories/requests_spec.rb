@@ -43,6 +43,20 @@ RSpec.describe Inferno::Repositories::Requests do
       expect(response_header.name).to eq('RESPONSE_HEADER_NAME')
       expect(response_header.value).to eq('RESPONSE_HEADER_VALUE')
     end
+
+    it 'does not create duplicate headers' do
+      repo.create(request_params)
+      repo.create(request_params)
+
+      expect(described_class.new.db.count).to eq(2)
+      expect(Inferno::Repositories::Headers.new.db.count).to eq(3)
+
+      persisted_header_values = Inferno::Repositories::Headers.new.db.all.map do |hash|
+        hash[:value]
+      end
+
+      expect(persisted_header_values).to match_array(['REQUEST_HEADER_VALUE', 'RESPONSE_HEADER_VALUE'])
+    end
   end
 
   describe '#find' do
