@@ -7,33 +7,10 @@ module Inferno
         request = self.class::Model.create(db_params(params))
 
         request_headers = (params[:request_headers] || []).map do |header_hash|
-          header_hash.merge!(type: 'request')
-          header = Headers::Model
-                     .where(type: header_hash[:type], name: header_hash[:name], value: header_hash[:value])
-                     .first
-          if header.blank?
-            header = Headers::Model.create(header_hash)
-          end
-          # binding.pry
-          Inferno::Application['db.connection'][:requests_unique_headers].insert(
-            unique_headers_id: header.id,
-            requests_id: request.index
-          )
-          header
+          request.add_header(header_hash.merge(type: 'request'))
         end
         response_headers = (params[:response_headers] || []).map do |header_hash|
-          header_hash.merge!(type: 'response')
-          header = Headers::Model
-                     .where(type: header_hash[:type], name: header_hash[:name], value: header_hash[:value])
-                     .first
-          if header.blank?
-            header = Headers::Model.create(header_hash)
-          end
-          Inferno::Application['db.connection'][:requests_unique_headers].insert(
-            unique_headers_id: header.id,
-            requests_id: request.index
-          )
-          header
+          request.add_header(header_hash.merge(type: 'response'))
         end
 
         headers = (request_headers + response_headers).map { |header| headers_repo.build_entity(header.to_hash) }
@@ -105,7 +82,8 @@ module Inferno
                      class: 'Inferno::Repositories::Headers::Model',
                      join_table: :requests_unique_headers,
                      left_key: :requests_id,
-                     right_key: :unique_headers_id
+                     right_key: :unique_headers_id,
+                     adder: :add_header
 
         def before_create
           self.id = SecureRandom.uuid
@@ -113,6 +91,19 @@ module Inferno
           self.created_at ||= time
           self.updated_at ||= time
           super
+        end
+
+        def add_header(header_hash)
+          Headers::Model.find_or_create(
+            type: header_hash[:type],
+            name: header_hash[:name],
+            value: header_hash[:value]
+          ).tap do |header|
+            Inferno::Application['db.connection'][:requests_unique_headers].insert(
+              unique_headers_id: header.id,
+              requests_id: index
+            )
+          end
         end
       end
     end
