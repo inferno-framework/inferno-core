@@ -49,7 +49,7 @@ RSpec.describe Inferno::Repositories::Requests do
       repo.create(request_params)
 
       expect(described_class.new.db.count).to eq(2)
-      expect(Inferno::Repositories::Headers.new.db.count).to eq(3)
+      expect(Inferno::Repositories::Headers.new.db.count).to eq(2)
 
       persisted_header_values = Inferno::Repositories::Headers.new.db.all.map do |hash|
         hash[:value]
