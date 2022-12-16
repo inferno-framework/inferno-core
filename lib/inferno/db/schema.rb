@@ -14,6 +14,17 @@ Sequel.migration do
       primary_key [:id]
     end
     
+    create_table(:unique_headers, :ignore_index_errors=>true) do
+      String :id, :size=>36, :null=>false
+      String :type, :size=>10
+      String :name, :size=>255
+      String :value, :text=>true
+      
+      primary_key [:id]
+      
+      index [:type, :name, :value], :unique=>true
+    end
+    
     create_table(:session_data, :ignore_index_errors=>true) do
       String :id, :size=>255, :null=>false
       foreign_key :test_session_id, :test_sessions, :type=>String, :size=>36, :null=>false, :key=>[:id]
@@ -103,23 +114,21 @@ Sequel.migration do
       index [:test_session_id, :name]
     end
     
-    create_table(:headers, :ignore_index_errors=>true) do
-      String :id, :size=>36, :null=>false
-      foreign_key :request_id, :requests, :null=>false, :key=>[:index]
-      String :type, :size=>255, :null=>false
-      String :name, :size=>255, :null=>false
-      String :value, :text=>true
-      
-      index [:id]
-      index [:request_id]
-    end
-    
     create_table(:requests_results, :ignore_index_errors=>true) do
       foreign_key :results_id, :results, :type=>String, :size=>36, :null=>false, :key=>[:id]
       foreign_key :requests_id, :requests, :null=>false, :key=>[:index]
       
       index [:requests_id]
       index [:results_id]
+    end
+    
+    create_table(:requests_unique_headers, :ignore_index_errors=>true) do
+      foreign_key :unique_headers_id, :unique_headers, :type=>String, :size=>36, :null=>false, :key=>[:id]
+      foreign_key :requests_id, :requests, :null=>false, :key=>[:index]
+      
+      index [:requests_id]
+      index [:requests_id, :unique_headers_id], :unique=>true
+      index [:unique_headers_id]
     end
   end
 end
