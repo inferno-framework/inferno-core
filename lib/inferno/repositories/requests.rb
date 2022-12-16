@@ -6,11 +6,34 @@ module Inferno
       def create(params)
         request = self.class::Model.create(db_params(params))
 
-        request_headers = (params[:request_headers] || []).map do |header|
-          request.add_header(header.merge(request_id: request.index, type: 'request'))
+        request_headers = (params[:request_headers] || []).map do |header_hash|
+          header_hash.merge!(type: 'request')
+          header = Headers::Model
+                     .where(type: header_hash[:type], name: header_hash[:name], value: header_hash[:value])
+                     .first
+          if header.blank?
+            header = Headers::Model.create(header_hash)
+          end
+          # binding.pry
+          Inferno::Application['db.connection'][:requests_unique_headers].insert(
+            unique_headers_id: header.id,
+            requests_id: request.index
+          )
+          header
         end
-        response_headers = (params[:response_headers] || []).map do |header|
-          request.add_header(header.merge(request_id: request.index, type: 'response'))
+        response_headers = (params[:response_headers] || []).map do |header_hash|
+          header_hash.merge!(type: 'response')
+          header = Headers::Model
+                     .where(type: header_hash[:type], name: header_hash[:name], value: header_hash[:value])
+                     .first
+          if header.blank?
+            header = Headers::Model.create(header_hash)
+          end
+          Inferno::Application['db.connection'][:requests_unique_headers].insert(
+            unique_headers_id: header.id,
+            requests_id: request.index
+          )
+          header
         end
 
         headers = (request_headers + response_headers).map { |header| headers_repo.build_entity(header.to_hash) }
@@ -73,9 +96,16 @@ module Inferno
       end
 
       class Model < Sequel::Model(db)
-        many_to_many :result, class: 'Inferno::Repositories::Results::Model', join_table: :requests_results,
-                              left_key: :request_id, right_key: :result_id
-        one_to_many :headers, class: 'Inferno::Repositories::Headers::Model', key: :request_id
+        many_to_many :result,
+                     class: 'Inferno::Repositories::Results::Model',
+                     join_table: :requests_results,
+                     left_key: :requests_id,
+                     right_key: :results_id
+        many_to_many :headers,
+                     class: 'Inferno::Repositories::Headers::Model',
+                     join_table: :requests_unique_headers,
+                     left_key: :requests_id,
+                     right_key: :unique_headers_id
 
         def before_create
           self.id = SecureRandom.uuid
