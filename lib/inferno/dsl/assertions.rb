@@ -18,7 +18,7 @@ module Inferno
 
       # @private
       def bad_response_status_message(expected, received)
-        "Bad response status: expected #{Array.wrap(expected).join(', ')}, but received #{received}"
+        "Unexpected response status: expected #{Array.wrap(expected).join(', ')}, but received #{received}"
       end
 
       # Check an response's status
@@ -32,7 +32,7 @@ module Inferno
 
       # @private
       def bad_resource_type_message(expected, received)
-        "Bad resource type received: expected #{expected}, but received #{received}"
+        "Unexpected resource type: expected #{expected}, but received #{received}"
       end
 
       # Check a FHIR resource's type
