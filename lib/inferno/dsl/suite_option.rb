@@ -49,6 +49,11 @@ module Inferno
           hash[attribute] = send(attribute)
         end.compact
       end
+
+      def possible_values
+        @possible_values ||=
+          list_options.map { |option| option[:value] }
+      end
     end
   end
 end

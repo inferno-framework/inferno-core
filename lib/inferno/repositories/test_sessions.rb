@@ -1,4 +1,5 @@
 require_relative 'repository'
+require_relative '../utils/preset_processor'
 
 module Inferno
   module Repositories
@@ -44,7 +45,7 @@ module Inferno
 
       def apply_preset(test_session, preset_id)
         preset = presets_repo.find(preset_id)
-        preset.inputs.each do |input|
+        Utils::PresetProcessor.new(preset, test_session).inputs_to_persist.each do |input|
           session_data_repo.save(input.merge(test_session_id: test_session.id))
         end
       end
