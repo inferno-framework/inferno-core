@@ -25,6 +25,7 @@ gemspec
 # `dev_suites/dev_demo_ig_stu1/demo_suite.rb`.
 
 group :development, :test do
+  gem 'debug'
   gem 'pry'
   gem 'pry-byebug'
   gem 'rubocop', '~> 1.9'
