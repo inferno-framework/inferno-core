@@ -21,6 +21,8 @@ module Inferno
           .map { |input| input_for_options(input) }
       end
 
+      private
+
       def input_for_options(input)
         {
           name: input[:name],

@@ -1,0 +1,12 @@
+{
+  "title": "Simple JSON Preset",
+  "id": null,
+  "test_suite_id": "simple_options",
+  "inputs": [
+    {
+      "name": "all_versions_input",
+      "type": "text",
+      "value": "V1_INPUT"
+    }
+  ]
+}
