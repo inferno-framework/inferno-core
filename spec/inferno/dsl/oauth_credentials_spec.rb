@@ -15,6 +15,7 @@ RSpec.describe Inferno::DSL::OAuthCredentials do
     }
   end
   let(:credentials) { described_class.new(full_params) }
+  let(:client) { FHIR::Client.new('http://example.com') }
 
   describe '.new' do
     it 'raises an error if an invalid key is provided' do
@@ -27,8 +28,6 @@ RSpec.describe Inferno::DSL::OAuthCredentials do
   end
 
   describe '#add_to_client' do
-    let(:client) { FHIR::Client.new('http://example.com') }
-
     it 'sets the oauth credentials on the client' do
       credentials.add_to_client(client)
 
@@ -134,6 +133,35 @@ RSpec.describe Inferno::DSL::OAuthCredentials do
         credentials.client_secret = nil
         expect(credentials.oauth2_refresh_headers).to eq('Content-Type' => 'application/x-www-form-urlencoded')
       end
+    end
+  end
+
+  describe '#update_from_response_body' do
+    before { credentials.add_to_client(client) }
+
+    it 'updates the refresh token if a new one is received' do
+      response_body = {
+        access_token: 'NEW_ACCESS_TOKEN',
+        refresh_token: 'NEW_REFRESH_TOKEN',
+        expires_in: 3600
+      }
+      request = OpenStruct.new(response_body: response_body.to_json)
+
+      credentials.update_from_response_body(request)
+
+      expect(credentials.refresh_token).to eq('NEW_REFRESH_TOKEN')
+    end
+
+    it 'does not update the refresh token if none is received' do
+      response_body = {
+        access_token: 'NEW_ACCESS_TOKEN',
+        expires_in: 3600
+      }
+      request = OpenStruct.new(response_body: response_body.to_json)
+
+      credentials.update_from_response_body(request)
+
+      expect(credentials.refresh_token).to eq('REFRESH_TOKEN')
     end
   end
 end
