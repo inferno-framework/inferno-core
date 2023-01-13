@@ -8,9 +8,7 @@ Inferno::Application.boot(:db) do
     require 'yaml'
 
     Sequel::Model.plugin :json_serializer
-  end
 
-  start do
     config_path = File.expand_path('database.yml', File.join(Dir.pwd, 'config'))
     config_contents = ERB.new(File.read(config_path)).result
     config = YAML.safe_load(config_contents)[ENV.fetch('APP_ENV', nil)]
@@ -35,7 +33,9 @@ Inferno::Application.boot(:db) do
 
     register('db.config', config)
     register('db.connection', connection)
+  end
 
+  start do
     Sequel.extension :migration
   end
 end
