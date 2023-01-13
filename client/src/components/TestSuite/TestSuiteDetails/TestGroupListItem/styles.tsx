@@ -64,4 +64,45 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.common.grayLighter,
     padding: '8px 0',
   },
+
+  // these colors are here for the badges as well as the messages column
+  error: {
+    color: theme.palette.error.dark,
+  },
+  warning: {
+    color: theme.palette.common.orangeDarker,
+  },
+  info: {
+    color: theme.palette.info.dark,
+  },
+  request: {
+    color: theme.palette.secondary.main,
+  },
+
+  // each badge component inside a ProblemBadge has its own color
+  // depending on severity
+  errorBadge: {
+    '& .MuiBadge-badge': {
+      color: theme.palette.error.dark,
+      border: `1px solid ${theme.palette.error.dark}`,
+    },
+  },
+  warningBadge: {
+    '& .MuiBadge-badge': {
+      color: theme.palette.common.orangeDarker,
+      border: `1px solid ${theme.palette.common.orangeDarker}`,
+    },
+  },
+  infoBadge: {
+    '& .MuiBadge-badge': {
+      color: theme.palette.info.dark,
+      border: `1px solid ${theme.palette.info.dark}`,
+    },
+  },
+  requestBadge: {
+    '& .MuiBadge-badge': {
+      color: theme.palette.secondary.main,
+      border: `1px solid ${theme.palette.secondary.main}`,
+    },
+  },
 }));

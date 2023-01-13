@@ -11,9 +11,9 @@ type ProblemBadgeProps = {
   badgeStyle: string;
   description: string;
   view: string;
-  panelIndex: number;
-  setPanelIndex: React.Dispatch<React.SetStateAction<number>>;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  panelIndex?: number;
+  setPanelIndex?: React.Dispatch<React.SetStateAction<number>>;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ProblemBadge: FC<ProblemBadgeProps> = ({
@@ -30,7 +30,7 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
   const styles = useStyles();
 
   const openPanel = () => {
-    if (view !== 'report') {
+    if (view !== 'report' && setPanelIndex && panelIndex && setOpen) {
       setPanelIndex(panelIndex);
       setOpen(true);
     }
@@ -45,12 +45,12 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
       className={clsx([color, badgeStyle, styles.badgeBase])}
       onClick={(e) => {
         e.stopPropagation();
-        openPanel();
+        if (openPanel) openPanel();
       }}
       onKeyDown={(e) => {
         e.stopPropagation();
         if (e.key === 'Enter') {
-          openPanel();
+          if (openPanel) openPanel();
         }
       }}
     >
@@ -62,12 +62,12 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
           className={clsx([styles.badgeIcon, color])}
           onClick={(e) => {
             e.stopPropagation();
-            openPanel();
+            if (openPanel) openPanel();
           }}
           onKeyDown={(e) => {
             e.stopPropagation();
             if (e.key === 'Enter') {
-              openPanel();
+              if (openPanel) openPanel();
             }
           }}
         />

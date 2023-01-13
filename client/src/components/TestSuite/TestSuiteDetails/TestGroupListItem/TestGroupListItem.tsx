@@ -12,6 +12,7 @@ import {
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Error, Warning } from '@mui/icons-material';
 import InputOutputsList from '../TestListItem/InputOutputsList';
 import { Request, RunnableType, Test, TestGroup, ViewType } from '~/models/testSuiteModels';
 import ResultIcon from '../ResultIcon';
@@ -19,6 +20,7 @@ import TestRunButton from '../../TestRunButton/TestRunButton';
 import TestListItem from '../TestListItem/TestListItem';
 import NavigableGroupListItem from './NavigableGroupListItem';
 import NestedDescriptionPanel from './NestedDescriptionPanel';
+import ProblemBadge from '../TestListItem/ProblemBadge';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
@@ -36,6 +38,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   view,
 }) => {
   const styles = useStyles();
+  const [warningCount, setWarningCount] = React.useState(0);
+  const [errorCount, setErrorCount] = React.useState(0);
   const [groupMouseHover, setGroupMouseHover] = React.useState(false);
   const [expanded, setExpanded] = React.useState(
     testGroup.result?.result === 'cancel' ||
@@ -53,7 +57,26 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         testGroup.result?.result === 'skip' ||
         view === 'report'
     );
+    setWarningCount(getProblemCount(testGroup, 'warning'));
+    setErrorCount(getProblemCount(testGroup, 'error'));
   }, [testGroup.result]);
+
+  const getProblemCount = (testGroup: TestGroup, problemType: string): number => {
+    // Number of problems of problemType nested inside internal TestGroups
+    const nestedProblemCount = testGroup.test_groups
+      .map((tg) => getProblemCount(tg, problemType))
+      .reduce((sum, val) => sum + val, 0);
+
+    // Number of problems of problemType inside Tests
+    const testProblemCount = testGroup.tests
+      .map(
+        (test) =>
+          test.result?.messages?.filter((message) => message.type === problemType).length || 0
+      )
+      .reduce((sum, val) => sum + val, 0);
+
+    return testProblemCount + nestedProblemCount;
+  };
 
   const renderGroupListItems = (): JSX.Element[] => {
     return testGroup.test_groups.map((tg: TestGroup) => (
@@ -99,11 +122,11 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         className={styles.accordionSummary}
         expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}
       >
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" width="100%">
           <Box display="inline-flex">
             <ResultIcon result={testGroup.result} isRunning={testGroup.is_running} />
           </Box>
-          <List sx={{ px: 1 }}>
+          <List sx={{ px: 1, width: '100%' }}>
             <ListItem sx={{ padding: 0 }}>
               <ListItemText
                 primary={
@@ -118,6 +141,28 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
               />
             </ListItem>
           </List>
+          <Box display="flex" justifyContent="flex-end" width="100%">
+            {warningCount > 0 && (
+              <ProblemBadge
+                Icon={Warning}
+                counts={warningCount}
+                color={styles.warning}
+                badgeStyle={styles.warningBadge}
+                description={`${warningCount} message(s)`}
+                view={view}
+              />
+            )}
+            {errorCount > 0 && (
+              <ProblemBadge
+                Icon={Error}
+                counts={errorCount}
+                color={styles.error}
+                badgeStyle={styles.errorBadge}
+                description={`${errorCount} message(s)`}
+                view={view}
+              />
+            )}
+          </Box>
           {view === 'run' && runTests && (
             <TestRunButton
               runnable={testGroup}
