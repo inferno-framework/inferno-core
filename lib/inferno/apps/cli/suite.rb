@@ -14,6 +14,7 @@ module Inferno
       LONGDESC
       option :filename, banner: '<filename>', aliases: [:f]
       def input_template(suite_id)
+        ENV['NO_DB'] = 'true'
         SuiteInputTemplate.new.run(suite_id, options)
       end
 
@@ -22,6 +23,7 @@ module Inferno
         Display a suite's description and available options.
       LONGDESC
       def describe(suite_id)
+        ENV['NO_DB'] = 'true'
         Inferno::Application.start(:suites)
 
         suite = Inferno::Repositories::TestSuites.new.find(suite_id)

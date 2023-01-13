@@ -2,6 +2,8 @@ module Inferno
   module CLI
     class Suites
       def run
+        ENV['NO_DB'] = 'true'
+
         require_relative '../../../inferno'
 
         Inferno::Application.start(:suites)
