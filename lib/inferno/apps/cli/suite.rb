@@ -37,10 +37,10 @@ module Inferno
 
         description = ''
         description += "# #{suite.title}\n"
-        description += suite.description
-        description += "\n***\n\n"
+        description += "#{suite.description}\n" if suite.description
 
         if suite.suite_options.present?
+          description += "***\n\n"
           description += "# Suite Options\n\n"
           suite.suite_options.each do |option|
             description += "* `#{option.id}`: #{option.title}\n"
