@@ -30,9 +30,9 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
   const styles = useStyles();
 
   const openPanel = () => {
-    if (view !== 'report' && setPanelIndex && panelIndex && setOpen) {
-      setPanelIndex(panelIndex);
-      setOpen(true);
+    if (view !== 'report') {
+      if (setPanelIndex && panelIndex) setPanelIndex(panelIndex);
+      if (setOpen) setOpen(true);
     }
   };
 

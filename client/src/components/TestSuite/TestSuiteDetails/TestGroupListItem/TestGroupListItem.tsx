@@ -150,6 +150,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
                 badgeStyle={styles.warningBadge}
                 description={`${warningCount} message(s)`}
                 view={view}
+                setOpen={setExpanded}
               />
             )}
             {errorCount > 0 && (
@@ -160,6 +161,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
                 badgeStyle={styles.errorBadge}
                 description={`${errorCount} message(s)`}
                 view={view}
+                setOpen={setExpanded}
               />
             )}
           </Box>
