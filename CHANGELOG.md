@@ -1,3 +1,8 @@
+# 0.4.7
+* Add a home link to logo and suite title in header.
+* Update the header to make to minimize size on mobile devices.
+* Update the error message in response status and resource type assertions.
+
 # 0.4.6
 * Add DSL support for the FHIR batch/transaction interaction.
 

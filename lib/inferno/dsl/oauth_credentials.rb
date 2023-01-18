@@ -121,7 +121,7 @@ module Inferno
         expires_in = token_response_body['expires_in'].is_a?(Numeric) ? token_response_body['expires_in'] : nil
 
         self.access_token = token_response_body['access_token']
-        self.refresh_token = token_response_body['refresh_token']
+        self.refresh_token = token_response_body['refresh_token'] if token_response_body['refresh_token'].present?
         self.expires_in = expires_in
         self.token_retrieval_time = DateTime.now
 
