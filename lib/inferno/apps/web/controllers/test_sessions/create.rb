@@ -14,7 +14,7 @@ module Inferno
 
             session = repo.create(create_params(params))
 
-            repo.apply_preset(session.id, params[:preset_id]) if params[:preset_id].present?
+            repo.apply_preset(session, params[:preset_id]) if params[:preset_id].present?
 
             res.body = serialize(session)
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation => e

@@ -1,0 +1,53 @@
+{
+  "title": "Preset for Options Suite",
+  "id": "options",
+  "test_suite_id": "options",
+  "inputs": [
+    {
+      "name": "all_versions_input",
+      "_type": "text",
+      "value": "ig version 1 not selected",
+      "value_for_options": [
+        {
+          "options": [
+            {
+              "name": "ig_version",
+              "value": "1"
+            },
+            {
+              "name": "other_option",
+              "value": "1"
+            }
+          ],
+          "value": "v1 & other option 1 selected"
+        },
+        {
+          "options": [
+            {
+              "name": "ig_version",
+              "value": "1"
+            },
+            {
+              "name": "other_option",
+              "value": "2"
+            }
+          ],
+          "value": "v1 & other option 2 selected"
+        },
+        {
+          "options": [
+            {
+              "name": "ig_version",
+              "value": "1"
+            },
+            {
+              "name": "other_option",
+              "value": "3"
+            }
+          ],
+          "value": "v1 & other option 3 selected"
+        }
+      ]
+    }
+  ]
+}

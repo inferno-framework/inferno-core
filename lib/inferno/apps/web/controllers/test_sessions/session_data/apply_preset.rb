@@ -32,7 +32,7 @@ module Inferno
                 halt 404
               end
 
-              test_sessions_repo.apply_preset(test_session_id, preset_id)
+              test_sessions_repo.apply_preset(test_session, preset_id)
               res.status = 200
             end
           end
