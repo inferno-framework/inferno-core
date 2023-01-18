@@ -37,6 +37,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
 }) => {
   const styles = useStyles();
   const [groupMouseHover, setGroupMouseHover] = React.useState(false);
+  const [manualExpand, setManualExpand] = React.useState(false);
   const [expanded, setExpanded] = React.useState(
     testGroup.result?.result === 'cancel' ||
       testGroup.result?.result === 'fail' ||
@@ -46,13 +47,15 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   );
 
   useEffect(() => {
-    setExpanded(
-      testGroup.result?.result === 'cancel' ||
-        testGroup.result?.result === 'fail' ||
-        testGroup.result?.result === 'error' ||
-        testGroup.result?.result === 'skip' ||
-        view === 'report'
-    );
+    if (!manualExpand) {
+      setExpanded(
+        testGroup.result?.result === 'cancel' ||
+          testGroup.result?.result === 'fail' ||
+          testGroup.result?.result === 'error' ||
+          testGroup.result?.result === 'skip' ||
+          view === 'report'
+      );
+    }
   }, [testGroup.result]);
 
   const renderGroupListItems = (): JSX.Element[] => {
@@ -87,7 +90,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       className={styles.accordion}
       sx={view === 'report' ? { pointerEvents: 'none' } : {}}
       expanded={expanded}
-      onChange={() => setExpanded(!expanded)}
+      onChange={() => {
+        setExpanded(!expanded);
+        setManualExpand(!expanded);
+      }}
       TransitionProps={{ unmountOnExit: true }}
       onMouseEnter={() => setGroupMouseHover(true)}
       onMouseLeave={() => setGroupMouseHover(false)}
