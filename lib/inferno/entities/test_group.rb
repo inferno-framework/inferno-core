@@ -1,6 +1,5 @@
 require_relative '../dsl'
 require_relative '../repositories/test_groups'
-require_relative '../repositories/test_sessions'
 
 module Inferno
   module Entities
