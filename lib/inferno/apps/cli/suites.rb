@@ -1,7 +1,11 @@
+require 'tty-markdown'
+
 module Inferno
   module CLI
     class Suites
       def run
+        ENV['NO_DB'] = 'true'
+
         require_relative '../../../inferno'
 
         Inferno::Application.start(:suites)
@@ -9,14 +13,18 @@ module Inferno
         suites = Inferno::Repositories::TestSuites.new.all
         suite_hash = suites.each_with_object({}) { |suite, hash| hash[suite.id] = suite.title }
 
-        id_column_length = suite_hash.keys.map(&:length).max + 1
-        title_column_length = suite_hash.values.map(&:length).max
+        id_column_length = suite_hash.keys.map(&:length).max + 2
+        title_column_length = suite_hash.values.map(&:length).max + 1
 
-        puts "#{'ID'.ljust(id_column_length)}| Title"
-        puts "#{'-' * id_column_length}+-#{'-' * title_column_length}"
+        output = ''
+        output += "| #{'Title'.ljust(title_column_length)}| #{'ID'.ljust(id_column_length)}|\n"
+        output += "|-#{'-' * title_column_length}|-#{'-' * id_column_length}|\n"
+
         suite_hash.each do |id, title|
-          puts "#{id.ljust(id_column_length)}| #{title}"
+          output += "| #{title.ljust(title_column_length)}| #{id.ljust(id_column_length)}|\n"
         end
+
+        puts TTY::Markdown.parse(output)
       end
     end
   end
