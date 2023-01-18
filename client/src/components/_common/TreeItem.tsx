@@ -72,8 +72,14 @@ const CustomContent = React.forwardRef(function CustomContent(
       ref={ref as React.Ref<HTMLDivElement>}
     >
       <div
-        onClick={handleExpansionAction}
-        onKeyPress={handleExpansionAction}
+        onClick={(e) => {
+          handleExpansionAction(e);
+          handleSelectionAction(e);
+        }}
+        onKeyPress={(e) => {
+          handleExpansionAction(e);
+          handleSelectionAction(e);
+        }}
         className={classes.iconContainer}
       >
         {icon}
