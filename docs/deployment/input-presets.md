@@ -97,7 +97,7 @@ environment variable. In order to use ERB in a preset:
 }
 ```
 
-In the example above, if the `REFERENCE_SERVER_HOST` environmont variable were
+In the example above, if the `REFERENCE_SERVER_HOST` environment variable were
 set to `http://example.com`, then that input would have a value of
 `"http://example.com/reference-server/r4"`.
 
