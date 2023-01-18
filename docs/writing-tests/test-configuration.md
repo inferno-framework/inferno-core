@@ -13,6 +13,7 @@ parent: Writing Tests
 {:toc}
 ---
 ## Configuration and Options
+
 Inferno provides two mechanisms for altering test behavior.
 
 ### Configuration
@@ -36,16 +37,20 @@ Inferno provides two mechanisms for altering test behavior.
 
 ## Configuration
 
-Configuration provides a way for test authors to avoid naming conflicts when
-reusing tests and set boot-time options. For example, a suite may want to run a
-particular group twice with distinct inputs and outputs. Those groups can be
-configured so that their inputs and outputs are distinct from each other without
-having to alter the group itself. Additionally, configuration can change input
-properties such as whether a particular input is locked or required.
+[Configuration](https://inferno-framework.github.io/inferno-core/docs/Inferno/DSL/Configurable.html)
+provides a way for test authors to avoid naming conflicts when reusing tests and
+set boot-time options. For example, a suite may want to run a particular group
+twice with distinct inputs and outputs. Those groups can be configured so that
+their inputs and outputs are distinct from each other without having to alter
+the group itself. Additionally, configuration can change input properties such
+as whether a particular input is locked or required.
 
 When a runnable defines some configuration, that configuration also applies to
 all of that runnable's children. Configuration defined by a parent runnable
 overrides any child runnable's configuration.
+
+[`Configurable` in the API
+docs](https://inferno-framework.github.io/inferno-core/docs/Inferno/DSL/Configurable.html)
 
 ### Renaming Inputs/Outputs/Requests
 
@@ -191,16 +196,21 @@ test from: :tls_version_test,
 
 ## Suite Options
 
-Suite options provide a way for users to select high level options that alter
-which tests/groups are executed during a session. For example, a test suite may
+[Suite
+options](ttps://inferno-framework.github.io/inferno-core/docs/Inferno/Entities/TestSuite.html#suite_option-class_method)
+provide a way for users to select high level options that alter which
+tests/groups are executed during a session. For example, a test suite may
 support testing against different versions of an implementation guide, and based
 on which version the user selects when starting their session, the tests for the
 other versions can be hidden.
 
-### Defining Suite Options
+[`suite_option` in the API
+docs](https://inferno-framework.github.io/inferno-core/docs/Inferno/Entities/TestSuite.html#suite_option-class_method)
 
-Suite options must be defined within a test suite and have the following
-properties:
+### Defining Suite Options
+[Suite
+options](https://inferno-framework.github.io/inferno-core/docs/Inferno/Entities/TestSuite.html#suite_option-class_method)
+must be defined within a test suite and have the following properties:
 * `identifier` - a Symbol which is used to identify this option
 * `title` - the title which is displayed to users
 * `list_options` - the possible values for this option. Each list option
@@ -227,10 +237,11 @@ end
 ### Hiding Tests Based on Suite Options
 
 Tests/groups can be hidden from the user and prevented from executing based on
-the selected suite options by defining `required_suite_options`. In the
-following example (using the suite option definition from above), the user will
-only see the SMART App Launch group for the version which they selected when
-starting their session.
+the selected suite options by defining
+[`required_suite_options`](https://inferno-framework.github.io/inferno-core/docs/Inferno/DSL/Runnable.html#required_suite_options-instance_method).
+In the following example (using the suite option definition from above), the
+user will only see the SMART App Launch group for the version which they
+selected when starting their session.
 
 ```ruby
 class MyTestSuite < Inferno::TestSuite
