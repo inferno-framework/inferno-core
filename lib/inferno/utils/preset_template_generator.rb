@@ -15,8 +15,12 @@ module Inferno
         # The rubocop rule is disabled because `each_value` returns the hash,
         # while `values.each` will return the array of values. We want the array
         # of values here.
-        available_inputs.values.each do |input| # rubocop:disable Style/HashEachMethods
-          input[:value] = (input.delete(:default) if input.key? :default)
+        available_inputs.values.map do |original_input|
+          {}.tap do |input|
+            input[:name] = original_input.delete(:name)
+            input[:value] = (original_input.delete(:default) if original_input.key? :default)
+            original_input.each { |key, value| input["_#{key}".to_sym] = value }
+          end
         end
       end
 

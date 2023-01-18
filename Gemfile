@@ -7,24 +7,14 @@ gemspec
 # To test with the g10 test kit (this also adds the US Core, SMART, and TLS test
 # kits):
 # - Uncomment this line:
-# gem 'onc_certification_g10_test_kit',
-#     git: 'https://github.com/onc-healthit/onc-certification-g10-test-kit.git',
-#     ref: 'ruby-3-update'
-# gem 'smart_app_launch_test_kit',
-#     git: 'https://github.com/inferno-framework/smart-app-launch-test-kit.git',
-#     ref: 'ruby-3-update'
-# gem 'us_core_test_kit',
-#     git: 'https://github.com/inferno-framework/us-core-test-kit.git',
-#     ref: 'ruby-3-update'
-# gem 'tls_test_kit',
-#     git: 'https://github.com/inferno-framework/tls-test-kit.git',
-#     ref: 'ruby-3-update'
+# gem 'onc_certification_g10_test_kit'
 
-# - Run `bundle update`
+# - Run `bundle`
 # - Uncomment the require at the top of
 # `dev_suites/dev_demo_ig_stu1/demo_suite.rb`.
 
 group :development, :test do
+  gem 'debug'
   gem 'pry'
   gem 'pry-byebug'
   gem 'rubocop', '~> 1.9'
