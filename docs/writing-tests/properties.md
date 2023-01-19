@@ -146,7 +146,9 @@ end
 docs](/inferno-core/docs/Inferno/DSL/Runnable.html#input_instructions-instance_method)
 
 ## Run as Group
-(`Group`s only) `run_as_group` makes a group run as a single unit. When true, users will not be able to run any of the group's children individually. They will only be able to run the whole group at once.
+(`Group`s only) `run_as_group` makes a group run as a single unit. When true,
+users will not be able to run any of the group's children individually. They
+will only be able to run the whole group at once.
 ```ruby
 group do
   run_as_group
@@ -251,7 +253,6 @@ docs](/inferno-core/docs/Inferno/Entities/TestSuite.html#suite_summary-class_met
 ## Config
 Configure a runnable and its dsecendents. For more information, see
 [Configuration](/inferno-core/writing-tests/test-configuration.html#configuration-1).
-```ruby
-```
+
 [`config` in the API
 docs](/inferno-core/docs/Inferno/DSL/Configurable.html#config-instance_method)
