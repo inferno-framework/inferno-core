@@ -33,7 +33,7 @@ const App: FC<unknown> = () => {
         setTestSuites(testSuites);
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       });
   }, []);
 
@@ -46,7 +46,7 @@ const App: FC<unknown> = () => {
           }
         })
         .catch((e) => {
-          console.log(e);
+          console.error(e);
         });
     }
   }, [testSuites]);
@@ -81,7 +81,11 @@ const App: FC<unknown> = () => {
               <TestSessionWrapper />
             </Route>
             <Route path="/:test_suite_id">
-              {testSuites.length > 1 && <SuiteOptionsPage testSuites={testSuites} />}
+              {testSuites.length > 0 ? (
+                <SuiteOptionsPage testSuites={testSuites} />
+              ) : (
+                <LandingPage testSuites={testSuites} />
+              )}
             </Route>
           </Switch>
         </ThemeProvider>

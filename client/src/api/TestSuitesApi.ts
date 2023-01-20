@@ -11,7 +11,7 @@ export function getTestSuites(): Promise<TestSuite[]> {
       return testSets;
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
       return [];
     });
 }

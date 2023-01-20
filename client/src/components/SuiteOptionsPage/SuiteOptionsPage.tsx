@@ -46,6 +46,21 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   const selectionPanel = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    // If no options, then just start a test session
+    if (testSuite && (!testSuite.suite_options || testSuite.suite_options.length === 0)) {
+      postTestSessions(testSuite.id, null, null)
+        .then((testSession: TestSession | null) => {
+          if (testSession && testSession.test_suite) {
+            history.push('test_sessions/' + testSession.id);
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+  }, []);
+
+  useEffect(() => {
     getDescriptionWidth();
   }, [windowIsSmall]);
 
@@ -72,7 +87,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
         }
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       });
   }
 
