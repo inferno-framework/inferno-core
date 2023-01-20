@@ -44,7 +44,13 @@ const CustomContent = React.forwardRef(function CustomContent(
   const icon = iconProp || expansionIcon || displayIcon;
 
   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    preventSelection(event);
+    preventSelection(event); // Disable default selection behavior
+    const e = event.target as HTMLInputElement;
+    const iconTestName = e.getAttribute('data-testid');
+    // Do not select if clicking on expansion icon
+    if (iconTestName !== 'ChevronRightIcon' && iconTestName !== 'ExpandMoreIcon') {
+      handleSelectionAction(event);
+    }
   };
 
   const handleExpansionAction = (
@@ -72,25 +78,13 @@ const CustomContent = React.forwardRef(function CustomContent(
       ref={ref as React.Ref<HTMLDivElement>}
     >
       <div
-        onClick={(e) => {
-          handleExpansionAction(e);
-          handleSelectionAction(e);
-        }}
-        onKeyPress={(e) => {
-          handleExpansionAction(e);
-          handleSelectionAction(e);
-        }}
+        onClick={handleExpansionAction}
+        onKeyPress={handleExpansionAction}
         className={classes.iconContainer}
       >
         {icon}
       </div>
-      <Typography
-        onClick={handleSelectionAction}
-        onKeyPress={handleSelectionAction}
-        component="div"
-        className={classes.label}
-        tabIndex={0}
-      >
+      <Typography component="div" className={classes.label} tabIndex={0}>
         {label}
       </Typography>
     </div>
