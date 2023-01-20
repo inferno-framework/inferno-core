@@ -44,6 +44,8 @@ module OptionsSuite
     title 'All Versions Group'
     id :all_versions_group
 
+    input :all_versions_input
+
     test do
       title 'All Versions Test 1'
       id :all_versions_test1

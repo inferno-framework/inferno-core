@@ -41,6 +41,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   const [warningCount, setWarningCount] = React.useState(0);
   const [errorCount, setErrorCount] = React.useState(0);
   const [groupMouseHover, setGroupMouseHover] = React.useState(false);
+  const [manualExpand, setManualExpand] = React.useState(false);
   const [expanded, setExpanded] = React.useState(
     testGroup.result?.result === 'cancel' ||
       testGroup.result?.result === 'fail' ||
@@ -50,13 +51,15 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   );
 
   useEffect(() => {
-    setExpanded(
-      testGroup.result?.result === 'cancel' ||
-        testGroup.result?.result === 'fail' ||
-        testGroup.result?.result === 'error' ||
-        testGroup.result?.result === 'skip' ||
-        view === 'report'
-    );
+    if (!manualExpand) {
+      setExpanded(
+        testGroup.result?.result === 'cancel' ||
+          testGroup.result?.result === 'fail' ||
+          testGroup.result?.result === 'error' ||
+          testGroup.result?.result === 'skip' ||
+          view === 'report'
+      );
+    }
     setWarningCount(getProblemCount(testGroup, 'warning'));
     setErrorCount(getProblemCount(testGroup, 'error'));
   }, [testGroup.result]);
@@ -110,7 +113,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       className={styles.accordion}
       sx={view === 'report' ? { pointerEvents: 'none' } : {}}
       expanded={expanded}
-      onChange={() => setExpanded(!expanded)}
+      onChange={() => {
+        setExpanded(!expanded);
+        setManualExpand(!expanded);
+      }}
       TransitionProps={{ unmountOnExit: true }}
       onMouseEnter={() => setGroupMouseHover(true)}
       onMouseLeave={() => setGroupMouseHover(false)}
