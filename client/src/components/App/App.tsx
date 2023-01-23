@@ -11,6 +11,7 @@ import { TestSession, TestSuite } from '~/models/testSuiteModels';
 import { basePath } from '~/api/infernoApiService';
 
 import { useAppStore } from '~/store/app';
+import Page from './Page';
 
 const App: FC<unknown> = () => {
   const setFooterHeight = useAppStore((state) => state.setFooterHeight);
@@ -74,15 +75,35 @@ const App: FC<unknown> = () => {
               {testSuites.length === 1 && testSession ? (
                 <Redirect to={`/test_sessions/${testSession.id}`} />
               ) : (
-                <LandingPage testSuites={testSuites} />
+                <Page title={`Inferno Test Suites`}>
+                  <LandingPage testSuites={testSuites} />
+                </Page>
               )}
             </Route>
+            {/* 
+              Title for TestSessionWrapper is set in the component 
+              because testSession is not set at the time of render 
+            */}
             <Route path="/test_sessions/:test_session_id">
               <TestSessionWrapper />
             </Route>
-            <Route path="/:test_suite_id">
-              {testSuites.length > 1 && <SuiteOptionsPage testSuites={testSuites} />}
-            </Route>
+            <Route
+              path="/:test_suite_id"
+              render={(props) => {
+                const suiteId = props.match.params.test_suite_id;
+                const suite = testSuites.find((suite) => suite.id === suiteId);
+                const suiteName = suite?.short_title || suite?.title;
+                const titlePrepend = suiteName ? `${suiteName}` : 'Suite';
+
+                return (
+                  testSuites.length > 1 && (
+                    <Page title={`${titlePrepend} Options`}>
+                      <SuiteOptionsPage {...props} testSuites={testSuites} />
+                    </Page>
+                  )
+                );
+              }}
+            ></Route>
           </Switch>
         </ThemeProvider>
       </StyledEngineProvider>
