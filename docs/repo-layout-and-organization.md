@@ -23,6 +23,7 @@ looks something like this:
 │   └── redis
 │       └── ...
 ├── docker-compose.yml
+├── docker-compose.background.yml
 ├── inferno_template.gemspec
 ├── lib
 │   ├── inferno_template
@@ -41,6 +42,8 @@ looks something like this:
 - `data` - Database and redis snapshots live here.
 - `docker-compose.yml` - This coordinates and runs all of the serivces inferno
   needs.
+- `docker-compose.background.yml` - This coordinates and runs the background
+  services needed for running Inferno.
 - `inferno_template.gemspec` - This file controls how your tests can be packaged
   up as a distributable ruby gem. This is also where you can add additional ruby
   gems if you need them.
