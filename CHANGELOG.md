@@ -1,3 +1,14 @@
+# 0.4.8
+* Fix a bug which removed the refresh token during automatic refreshes if the
+  token refresh response did not contain a new refresh token.
+* Add the ability for presets to contain values which depend on the selected
+  suite options.
+* Prevent manually expanded groups from automatically closing when tests run.
+* Display warning and error message indicators at the group level.
+* Expand the clickable area for groups in the navigation tree.
+* Update page titles.
+* Update vulnerable dependencies.
+
 # 0.4.7
 * Add a home link to logo and suite title in header.
 * Update the header to make to minimize size on mobile devices.
