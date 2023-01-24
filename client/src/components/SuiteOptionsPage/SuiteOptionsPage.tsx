@@ -37,7 +37,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
     // just grab the first to start
     // perhaps choices should be persisted in the URL to make it easy to share specific options
     id: option.id,
-    value: option && option.list_options && option.list_options[0].value,
+    value: option && option.list_options ? option.list_options[0].value : '',
   }));
   const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(
     initialSelectedSuiteOptions || []
@@ -46,7 +46,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   const selectionPanel = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    // If no options, then just start a test session
+    // If no options, then start a test session
     if (testSuite && (!testSuite.suite_options || testSuite.suite_options.length === 0)) {
       postTestSessions(testSuite.id, null, null)
         .then((testSession: TestSession | null) => {
