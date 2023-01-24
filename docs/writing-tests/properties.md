@@ -251,7 +251,7 @@ end
 docs](/inferno-core/docs/Inferno/Entities/TestSuite.html#suite_summary-class_method)
 
 ## Config
-Configure a runnable and its dsecendents. For more information, see
+Configure a runnable and its descendants. For more information, see
 [Configuration](/inferno-core/writing-tests/test-configuration.html#configuration-1).
 
 [`config` in the API
