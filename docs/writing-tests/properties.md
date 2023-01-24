@@ -22,6 +22,16 @@ end
 [`title` in the API
 docs](/inferno-core/docs/Inferno/DSL/Runnable.html#title-instance_method)
 
+## Short Title
+A short title which is displayed in the left side of the UI:
+```ruby
+group do
+  short_title 'Patient Tests'
+end
+```
+[`short_title` in the API
+docs](/inferno-core/docs/Inferno/DSL/Runnable.html#short_title-instance_method)
+
 ## Id
 A unique identifier for a test/group/suite. Inferno will automatically create
 ids if they are not specified. It is important to create ids yourself if you
@@ -102,3 +112,147 @@ end
 ```
 [`run` in the API
 docs](/inferno-core/docs/Inferno/Entities/Test.html#block-class_method)
+
+## Version
+(`TestSuite`s only) Define the suite's version, which is displayed in the UI.
+```ruby
+class MySuite < Inferno::TestSuite
+  version '1.2.3'
+end
+```
+[`version` in the API
+docs](/inferno-core/docs/Inferno/Entities/TestSuite.html#version-class_method)
+
+## Input Instructions
+Define additional instructions which will be displayed above a runnable's
+inputs. These instructions only appear when running this particular runnable.
+They will not appear if you run a parent or child of this runnable.
+[Markdown](https://commonmark.org/help/) is supported.
+```ruby
+group do
+  input_instructions %(
+    Register Inferno as a standalone application using the following information:
+
+    * Redirect URI: `#{SMARTAppLaunch::AppRedirectTest.config.options[:redirect_uri]}`
+
+    Enter in the appropriate scope to enable patient-level access to all
+    relevant resources. If using SMART v2, v2-style scopes must be used. In
+    addition, support for the OpenID Connect (openid fhirUser), refresh tokens
+    (offline_access), and patient context (launch/patient) are required.
+  )
+end
+```
+[`input_instructions` in the API
+docs](/inferno-core/docs/Inferno/DSL/Runnable.html#input_instructions-instance_method)
+
+## Run as Group
+(`Group`s only) `run_as_group` makes a group run as a single unit. When true,
+users will not be able to run any of the group's children individually. They
+will only be able to run the whole group at once.
+```ruby
+group do
+  run_as_group
+
+  # These tests can not be run individually
+  test do
+    # ...
+  end
+
+  test do
+    # ...
+  end
+end
+```
+[`run_as_group` in the API
+docs](/inferno-core/docs/Inferno/Entities/TestGroup.html#run_as_group-class_method)
+
+## Suite Option
+(`TestSuite`s only) Define a user-selectable option for a suite. See [Suite
+Options
+documentation](/inferno-core/writing-tests/test-configuration.html#suite-options-1).
+```ruby
+class MyTestSuite < Inferno::TestSuite
+  suite_option :smart_app_launch_version,
+               title: 'SMART App Launch Version',
+               list_options: [
+                 {
+                   label: 'SMART App Launch 1.0.0',
+                   value: 'smart_app_launch_1'
+                 },
+                 {
+                   label: 'SMART App Launch 2.0.0',
+                   value: 'smart_app_launch_2'
+                 }
+               ]
+end
+```
+[`suite_option` in the API
+docs](/inferno-core/docs/Inferno/Entities/TestSuite.html#suite_option-class_method)
+
+## Required Suite Options
+(`Test`s/`Group`s only) Define the suite options which must have been selected
+in order for a runnable to be included in the current session. See [Hiding Tests
+Based on Suite
+Options](/inferno-core/writing-tests/test-configuration.html#hiding-tests-based-on-suite-options).
+```ruby
+class MyTestSuite < Inferno::TestSuite
+  # suite_option :smart_app_launch_version,
+  # ...
+
+  # Suite option requirements can be defined inline
+  group from: :smart_app_launch_v1,
+        required_suite_options: {
+          smart_app_launch_version: 'smart_app_launch_1'
+        }
+
+  # Suite option requirements can be defined within a test/group definition
+  group from: :smart_app_launch_v2 do
+    required_suite_options smart_app_launch_version: 'smart_app_launch_2'
+  end
+end
+```
+[`required_suite_options` in the API
+docs](/inferno-core/docs/Inferno/DSL/Runnable.html#required_suite_options-instance_method)
+
+## Links
+(`TestSuite`s only) Define a list of links which are displayed in the footer of
+the UI.
+```ruby
+class MyTestSuite < Inferno::TestSuite
+  links [
+    {
+      label: 'Report Issue',
+      url: 'https://github.com/onc-healthit/onc-certification-g10-test-kit/issues/'
+    },
+    {
+      label: 'Open Source',
+      url: 'https://github.com/onc-healthit/onc-certification-g10-test-kit/'
+    }
+  ]
+end
+```
+[`links` in the API
+docs](/inferno-core/docs/Inferno/Entities/TestSuite.html#links-class_method)
+
+## Suite Summary
+(`TestSuite`s only) Define a summary which is displayed on the suite options
+selection page. If the suite has no options, the summary is not used. If no
+suite summary is defined, the description will be displayed on the options
+selection page.
+```ruby
+class MyTestSuite < Inferno::TestSuite
+  suite_summary %(
+    This is a brief description of the suite which will be displayed on the
+    suite options selection page.
+  )
+end
+```
+[`suite_summary` in the API
+docs](/inferno-core/docs/Inferno/Entities/TestSuite.html#suite_summary-class_method)
+
+## Config
+Configure a runnable and its descendants. For more information, see
+[Configuration](/inferno-core/writing-tests/test-configuration.html#configuration-1).
+
+[`config` in the API
+docs](/inferno-core/docs/Inferno/DSL/Configurable.html#config-instance_method)

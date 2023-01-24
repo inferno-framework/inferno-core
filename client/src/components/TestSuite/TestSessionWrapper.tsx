@@ -104,17 +104,22 @@ const TestSessionWrapper: FC<unknown> = () => {
       .finally(() => setAttemptedSessionData(true));
   }
 
-  function toggleDrawer(newDrawerOpen: boolean) {
+  const toggleDrawer = (newDrawerOpen: boolean) => {
     setDrawerOpen(newDrawerOpen);
-  }
+  };
+
+  /*
+   * Set the page title when testSession data is loaded
+   */
+  const setTitle = (session: TestSession) => {
+    const suiteName = session?.test_suite.short_title || session?.test_suite.title;
+    const titlePrepend = suiteName ? `${suiteName} ` : '';
+    document.title = `${titlePrepend}Test Session`;
+  };
 
   if (testSession && testResults && sessionData) {
     // Temporary stopgap to get labels until full choice data is passed to TestSessionWrapper
-    const suiteOptionChoices:
-      | {
-          [key: string]: SuiteOptionChoice[];
-        }
-      | undefined = testSuites
+    const suiteOptionChoices: { [key: string]: SuiteOptionChoice[] } | undefined = testSuites
       ?.find((suite: TestSuite) => suite.id === testSession.test_suite_id)
       ?.suite_options?.reduce(
         (acc, option) => ({ ...acc, [option.id]: option.list_options || [] }),
@@ -130,6 +135,8 @@ const TestSessionWrapper: FC<unknown> = () => {
           .flat()
           .filter((v) => v) // Remove empty values
       : [];
+
+    setTitle(testSession);
 
     return (
       <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
@@ -176,6 +183,7 @@ const TestSessionWrapper: FC<unknown> = () => {
       tryGetTestResults(test_session_id);
       tryGetSessionData(test_session_id);
     }
+
     return <Backdrop open={true}></Backdrop>;
   }
 };

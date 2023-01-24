@@ -31,10 +31,17 @@ only the identifier is required:
   - `'text'` - (**default**) a regular input field.
   - `'textarea'` - for a text area input field.
   - `'radio'` - for a radio button singular selection field.
+  - `'oauth_credentials'` - a complex type for storing OAuth2 credentials. When
+    used by a FHIR client, the access token will automatically refresh if
+    possible.
 - `default:` - default value for the input.
 - `optional:` - (**default: false**) whether the input is optional.
 - `options:` - possible input option formats based on input type.
-  - `list_options:` - options for input formats that require a list of possible values.
+  - `list_options:` - options for input formats that require a list of possible
+    values.
+- `locked:` - (**default: false**) whether the user can alter the input's value.
+  Locking an input can force it to use a value from a previous test's output, or
+  the default value.
 
 ```ruby
 test do
@@ -59,6 +66,42 @@ any of the additional properties listed above.
 test do
   input :input1, :input2, :input3, :input4
   ...
+end
+```
+
+### Ordering Inputs
+When a group or suite displays all of its descendants' inputs, they may be in an
+unintuitive order. They can be reordered using `input_order`.
+```ruby
+group do
+  input_order :input_2, :input_1
+  
+  test do
+    input :input_1
+  end
+  
+  test do
+    input :input_2
+  end
+end
+```
+
+### Additional Input Instructions
+If a runnable needs extra input instructions, it can define `input_instructions`
+which will be displayed above the inputs.
+
+```ruby
+group do
+  input_instructions %(
+    Register Inferno as a standalone application using the following information:
+
+    * Redirect URI: `#{SMARTAppLaunch::AppRedirectTest.config.options[:redirect_uri]}`
+
+    Enter in the appropriate scope to enable patient-level access to all
+    relevant resources. If using SMART v2, v2-style scopes must be used. In
+    addition, support for the OpenID Connect (openid fhirUser), refresh tokens
+    (offline_access), and patient context (launch/patient) are required.
+  )
 end
 ```
 

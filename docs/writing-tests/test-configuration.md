@@ -220,17 +220,17 @@ must be defined within a test suite and have the following properties:
 ```ruby
 class MyTestSuite < Inferno::TestSuite
   suite_option :smart_app_launch_version,
-                title: 'SMART App Launch Version',
-                list_options: [
-                  {
-                    label: 'SMART App Launch 1.0.0',
-                    value: 'smart_app_launch_1'
-                  },
-                  {
-                    label: 'SMART App Launch 2.0.0',
-                    value: 'smart_app_launch_2'
-                  }
-                ]
+               title: 'SMART App Launch Version',
+               list_options: [
+                 {
+                   label: 'SMART App Launch 1.0.0',
+                   value: 'smart_app_launch_1'
+                 },
+                 {
+                   label: 'SMART App Launch 2.0.0',
+                   value: 'smart_app_launch_2'
+                 }
+               ]
 end
 ```
 
