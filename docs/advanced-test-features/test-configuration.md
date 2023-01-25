@@ -1,7 +1,7 @@
 ---
 title: Suite/Group/Test Configuration
-nav_order: 6
-parent: Writing Tests
+nav_order: 1
+parent: Advanced Features
 ---
 # Suite/Group/Test Configuration
 {: .no_toc}

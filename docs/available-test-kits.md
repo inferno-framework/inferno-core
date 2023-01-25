@@ -1,6 +1,6 @@
 ---
 title: Available Test Kits
-nav_order: 7
+nav_order: 9
 ---
 # Available Test Kits
 {: .no_toc}
