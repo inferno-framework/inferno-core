@@ -2,6 +2,10 @@ Inferno::Application.boot(:suites) do
   init do
     use :logging
 
+    require 'inferno/entities/test'
+    require 'inferno/entities/test_group'
+    require 'inferno/entities/test_suite'
+
     files_to_load = Dir.glob(File.join(Dir.pwd, 'lib', '*.rb'))
 
     if ENV['LOAD_DEV_SUITES'].present?
