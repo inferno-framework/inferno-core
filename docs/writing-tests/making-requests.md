@@ -132,13 +132,13 @@ end
 ```
 
 If you need direct access to the FHIR client in a test, it is available via
-`client`. The client is reinstantiated in each test, so changes made to a client
-within a test do not carry over into other tests.
+`fhir_client`. The client is reinstantiated in each test, so changes made to a
+client within a test do not carry over into other tests.
 
 ```ruby
 test do
   run do
-    client # this returns the FHIR client
+    fhir_client # this returns the FHIR client
   end
 end
 ```
@@ -174,6 +174,36 @@ group do
       fhir_read(:patient, '123', client: :client_a)
       
       fhir_read(:patient, '456', client: :client_b)
+    end
+  end
+end
+```
+
+### OAuth Credentials
+When making requests to FHIR servers using OAuth2-based (such as the SMART App
+Launch workflow) authorization, OAuth credentials support an access token and
+optionally a refresh token as well as all of the information needed to perform a
+token refresh (refresh token, token endpoint, client ID, client secret). If all
+of this information is available, the FHIR client will automatically refresh the
+access token if it will expire in under a minute. If no information on the
+access token duration is available, the token will be refreshed prior to each
+FHIR request.
+
+```ruby
+group do
+  input :credentials, type: :oauth_credentials
+  
+  fhir_client do
+    url 'https://example.com/fhir'
+    oauth_credentials :credentials
+  end
+  
+  test do
+    run do
+      sleep 3600
+      
+      # The access token will automatically refresh if it has expired
+      fhir_read(:patient, '123') 
     end
   end
 end
