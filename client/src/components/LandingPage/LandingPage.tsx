@@ -38,7 +38,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           }
         })
         .catch((e) => {
-          console.log(e);
+          console.error(e);
         });
     }
   }

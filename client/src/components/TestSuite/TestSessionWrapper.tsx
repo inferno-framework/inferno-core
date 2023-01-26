@@ -43,7 +43,7 @@ const TestSessionWrapper: FC<unknown> = () => {
         setCoreVersion(version);
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       });
   }, []);
 
@@ -53,10 +53,10 @@ const TestSessionWrapper: FC<unknown> = () => {
         if (retrievedTestSession) {
           setTestSession(retrievedTestSession);
         } else {
-          console.log('failed to load test session');
+          console.error('Failed to load test session');
         }
       })
-      .catch((e) => console.log(e))
+      .catch((e) => console.error(e))
       .finally(() => setAttemptedGetSession(true));
   }
 
@@ -69,7 +69,7 @@ const TestSessionWrapper: FC<unknown> = () => {
           setTestRun(null);
         }
       })
-      .catch((e) => console.log(e))
+      .catch((e) => console.error(e))
       .finally(() => setAttemptedGetRun(true));
   }
 
@@ -79,10 +79,10 @@ const TestSessionWrapper: FC<unknown> = () => {
         if (results) {
           setTestResults(results);
         } else {
-          console.log('failed to load test session results');
+          console.error('failed to load test session results');
         }
       })
-      .catch((e) => console.log(e))
+      .catch((e) => console.error(e))
       .finally(() => setAttemptedGetResults(true));
   }
 
@@ -97,10 +97,10 @@ const TestSessionWrapper: FC<unknown> = () => {
           });
           setSessionData(new Map(sessionData));
         } else {
-          console.log('failed to load session data');
+          console.error('failed to load session data');
         }
       })
-      .catch((e) => console.log(e))
+      .catch((e) => console.error(e))
       .finally(() => setAttemptedSessionData(true));
   }
 

@@ -37,13 +37,28 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
     // just grab the first to start
     // perhaps choices should be persisted in the URL to make it easy to share specific options
     id: option.id,
-    value: option && option.list_options && option.list_options[0].value,
+    value: option && option.list_options ? option.list_options[0].value : '',
   }));
   const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(
     initialSelectedSuiteOptions || []
   );
   const [descriptionWidth, setDescriptionWidth] = React.useState<string>('');
   const selectionPanel = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    // If no options, then start a test session
+    if (testSuite && (!testSuite.suite_options || testSuite.suite_options.length === 0)) {
+      postTestSessions(testSuite.id, null, null)
+        .then((testSession: TestSession | null) => {
+          if (testSession && testSession.test_suite) {
+            history.push('test_sessions/' + testSession.id);
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+  }, []);
 
   useEffect(() => {
     getDescriptionWidth();
@@ -72,7 +87,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
         }
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       });
   }
 

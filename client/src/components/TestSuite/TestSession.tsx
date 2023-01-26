@@ -226,7 +226,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         }
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       });
   };
 
@@ -282,7 +282,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         }
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       });
   };
 

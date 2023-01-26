@@ -43,7 +43,7 @@ export function postTestRun(
       return result as TestRun;
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
       return null;
     });
 }
@@ -51,7 +51,7 @@ export function postTestRun(
 export function deleteTestRun(testRunId: string): void {
   const endpoint = getApiEndpoint(`/test_runs/${testRunId}`);
   fetch(endpoint, { method: 'DELETE' }).catch((e) => {
-    console.log(e);
+    console.error(e);
     return null;
   });
 }
@@ -70,7 +70,7 @@ export function getTestRunWithResults(
       return testRun as TestRun;
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
       return null;
     });
 }

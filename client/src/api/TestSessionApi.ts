@@ -18,7 +18,7 @@ export function getLastTestRun(test_session_id: string): Promise<TestRun | null>
       return result as TestRun;
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
       return null;
     });
 }
@@ -31,7 +31,7 @@ export function getTestSession(test_session_id: string): Promise<TestSession | n
       return addProperties(result as TestSession);
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
       return null;
     });
 }
@@ -56,7 +56,7 @@ export function postTestSessions(
       return result as TestSession;
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
       return null;
     });
 }
@@ -69,7 +69,7 @@ export function getCurrentTestSessionResults(test_session_id: string): Promise<R
       return result as Result[];
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
       return null;
     });
 }
@@ -82,7 +82,7 @@ export function getTestSessionData(test_session_id: string): Promise<TestOutput[
       return result as TestOutput[];
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
       return null;
     });
 }

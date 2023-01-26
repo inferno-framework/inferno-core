@@ -34,7 +34,7 @@ const App: FC<unknown> = () => {
         setTestSuites(testSuites);
       })
       .catch((e) => {
-        console.log(e);
+        console.error(e);
       });
   }, []);
 
@@ -47,7 +47,7 @@ const App: FC<unknown> = () => {
           }
         })
         .catch((e) => {
-          console.log(e);
+          console.error(e);
         });
     }
   }, [testSuites]);
@@ -95,12 +95,14 @@ const App: FC<unknown> = () => {
                 const suiteName = suite?.short_title || suite?.title;
                 const titlePrepend = suiteName ? `${suiteName}` : 'Suite';
 
-                return (
-                  testSuites.length > 1 && (
-                    <Page title={`${titlePrepend} Options`}>
-                      <SuiteOptionsPage {...props} testSuites={testSuites} />
-                    </Page>
-                  )
+                return testSuites.length > 0 ? (
+                  <Page title={`${titlePrepend} Options`}>
+                    <SuiteOptionsPage {...props} testSuites={testSuites} />
+                  </Page>
+                ) : (
+                  <Page title={`Inferno Test Suites`}>
+                    <LandingPage testSuites={testSuites} />
+                  </Page>
                 );
               }}
             ></Route>

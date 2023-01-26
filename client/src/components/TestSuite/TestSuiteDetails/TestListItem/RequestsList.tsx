@@ -42,11 +42,11 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
             setDetailedRequest(updatedRequest);
             setShowDetails(true);
           } else {
-            console.log('failed to update request');
+            console.error('Failed to update request');
           }
         })
         .catch((e) => {
-          console.log(e);
+          console.error(e);
         });
     } else {
       setDetailedRequest(request);
