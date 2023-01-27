@@ -6,15 +6,13 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-  Snackbar,
-  Alert,
-  AlertColor,
   MenuItem,
 } from '@mui/material';
 import { applyPreset } from '~/api/TestSessionApi';
 import { PresetSummary } from '~/models/testSuiteModels';
 import theme from '~/styles/theme';
 import lightTheme from '~/styles/theme';
+import { useSnackbar } from 'notistack';
 
 export interface PresetsModalProps {
   presets: PresetSummary[];
@@ -23,6 +21,7 @@ export interface PresetsModalProps {
 }
 
 const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSessionData }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const null_preset = { id: 'NULL_PRESET', title: 'None' };
   const presetTitleToIdMap: { [key: string]: string } = presets.reduce(
     (reducedObj, preset) => ({ ...reducedObj, [preset.title]: preset.id }),
@@ -42,9 +41,6 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
   const [formerPreset, setFormerPreset] = React.useState(null_preset.title);
   const [selectedPreset, setSelectedPreset] = React.useState(null_preset.title);
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarStatus, setSnackbarStatus] = React.useState('');
-  const [snackbarMessage, setSnackbarMessage] = React.useState('');
 
   const applyPresetToSession = (presetId: string) => {
     applyPreset(testSessionId, presetId)
@@ -52,9 +48,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
         getSessionData(testSessionId);
       })
       .catch((e) => {
-        setSnackbarStatus('error');
-        setSnackbarMessage(`Could not set preset: ${e as string}`);
-        setTimeout(() => setSnackbarVisible(false), 4000);
+        enqueueSnackbar(`Could not set preset: ${e as string}`, { variant: 'error' });
       });
   };
 
@@ -81,10 +75,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
         setModalVisible(true);
       } else {
         removeNullFromOptions(); // If null preset behavior is added, remove this
-        setSnackbarVisible(true);
-        setSnackbarStatus('success');
-        setSnackbarMessage(`${e.target.value} has been set as preset.`);
-        setTimeout(() => setSnackbarVisible(false), 4000);
+        enqueueSnackbar(`${e.target.value} has been set as preset.`, { variant: 'success' });
       }
     }
   };
@@ -109,19 +100,6 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
           </MenuItem>
         ))}
       </TextField>
-      <Snackbar
-        open={snackbarVisible}
-        autoHideDuration={4000}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-        sx={{ marginBottom: '48px' }}
-      >
-        <Alert
-          onClose={() => setSnackbarVisible(false)}
-          severity={(snackbarStatus as AlertColor) || 'warning'}
-        >
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
       <Dialog open={modalVisible} fullWidth maxWidth="xs">
         <DialogTitle>Are you sure?</DialogTitle>
         <DialogContent>
