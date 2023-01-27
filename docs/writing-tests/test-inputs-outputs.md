@@ -60,7 +60,8 @@ docs](/inferno-core/docs/Inferno/DSL/Runnable.html#input-instance_method)
 
 ### Defining Multiple Inputs
 It is possible to define multiple inputs in a single `input` call, but not with
-any of the additional properties listed above.
+any of the additional properties listed above. This can be useful when a test
+uses inputs which have been more completely defined in a parent or sibling.
 
 ```ruby
 test do
@@ -107,8 +108,8 @@ end
 
 ## Defining Outputs
 The `output` method defines an output. It is used in a test's definition block
-to define which outputs a test uses, and within a test's `run` block to assign a
-value to an output. Multiple outputs can be defined/assigned at once.
+to define which outputs a test provides, and within a test's `run` block to
+assign a value to an output. Multiple outputs can be defined/assigned at once.
 
 ```ruby
 test do

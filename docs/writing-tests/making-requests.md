@@ -54,7 +54,7 @@ test do
     
     ...
     
-    assert_response_status(200, responce: some_other_response)
+    assert_response_status(200, response: some_other_response)
     assert_resource_type(:patient, resource: some_other_resource)
     assert_valid_resource(resource: some_other_resource)
   end
@@ -146,10 +146,13 @@ end
 
 ### Available FHIR Request Methods
 The following methods are currently available for making FHIR requests:
+- `fhir_create`
+- `fhir_delete`
 - `fhir_get_capability_statement`
+- `fhir_operation`
 - `fhir_read`
 - `fhir_search`
-- `fhir_operation`
+- `fhir_transaction`
 For more details on these methods, see the [FHIR Client API
 documentation](/inferno-core/docs/Inferno/DSL/FHIRClient.html). If you need to
 make other types of FHIR requests, [contact the Inferno
@@ -241,6 +244,8 @@ end
 The following methods are currently available for making http requests:
 - `get`
 - `post`
+- `delete`
+- `stream` - used to stream the response from a GET request
 
 For more details on these methods, see the [HTTP Client API
 documentation](/inferno-core/docs/Inferno/DSL/HTTPClient.html). If you need to

@@ -31,7 +31,7 @@ test do
   end
 end
 ```
-Inferno also implements more specific assertion to handle common cases, such as:
+Inferno also implements more specific assertions to handle common cases, such as:
 - Verifying the http status code of a response.
 - Verifying that a string is valid JSON.
 - Validating a FHIR Resource.
@@ -58,7 +58,8 @@ Tests can have the following results in Inferno:
   This indicates a problem in a test kit or in Inferno itself. You should
   contact the test kit author or the Inferno team.
 - `wait` - A test is waiting to receive an incoming request, and will resume
-  once it is received.
+  once it is received (see [Waiting for an Incoming
+  Request](/inferno-core/advanced-test-features/waiting-for-requests.html)).
 - `cancel` (not yet implemented)
 
 ### Assigning specific results

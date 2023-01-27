@@ -203,7 +203,7 @@ module USCoreTestKit
 end
 ```
 
-When importang a group, its optional children can be omitted:
+When importing a group, its optional children can be omitted:
 ```ruby
 group from: :us_core_patient, exclude_optional: true
 ```
