@@ -47,8 +47,8 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
       .then(() => {
         getSessionData(testSessionId);
       })
-      .catch((e) => {
-        enqueueSnackbar(`Could not set preset: ${e as string}`, { variant: 'error' });
+      .catch((e: Error) => {
+        enqueueSnackbar(`Could not set preset: ${e.message}`, { variant: 'error' });
       });
   };
 

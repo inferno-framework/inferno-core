@@ -21,12 +21,14 @@ import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
+import { useSnackbar } from 'notistack';
 
 export interface SuiteOptionsPageProps {
   testSuites: TestSuite[] | undefined;
 }
 
 const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const styles = useStyles();
@@ -48,15 +50,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   useEffect(() => {
     // If no options, then start a test session
     if (testSuite && (!testSuite.suite_options || testSuite.suite_options.length === 0)) {
-      postTestSessions(testSuite.id, null, null)
-        .then((testSession: TestSession | null) => {
-          if (testSession && testSession.test_suite) {
-            history.push('test_sessions/' + testSession.id);
-          }
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+      createTestSession([]);
     }
   }, []);
 
@@ -79,15 +73,15 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
     setSelectedSuiteOptions(newOptions);
   }
 
-  function createTestSession(): void {
-    postTestSessions(test_suite_id, null, selectedSuiteOptions)
+  function createTestSession(options: SuiteOption[]): void {
+    postTestSessions(test_suite_id, null, options)
       .then((testSession: TestSession | null) => {
         if (testSession && testSession.test_suite) {
           history.push('test_sessions/' + testSession.id);
         }
       })
-      .catch((e) => {
-        console.error(e);
+      .catch((e: Error) => {
+        enqueueSnackbar(`Error while creating test session: ${e.message}`, { variant: 'error' });
       });
   }
 
@@ -245,7 +239,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
                 fullWidth
                 data-testid="go-button"
                 sx={{ fontWeight: 600 }}
-                onClick={() => createTestSession()}
+                onClick={() => createTestSession(selectedSuiteOptions)}
               >
                 Select Options
               </Button>
