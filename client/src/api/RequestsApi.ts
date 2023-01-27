@@ -9,7 +9,7 @@ export function getRequestDetails(requestId: string): Promise<Request | null> {
       return result as Request;
     })
     .catch((e) => {
-      console.log(e);
+      console.error(e);
       return null;
     });
 }
