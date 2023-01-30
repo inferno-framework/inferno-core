@@ -141,6 +141,7 @@ const TestSessionWrapper: FC<unknown> = () => {
     return (
       <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
         <Header
+          suiteId={testSession.test_suite.id}
           suiteTitle={testSession.test_suite.title}
           suiteVersion={testSession.test_suite.version}
           suiteOptions={parsedOptions}

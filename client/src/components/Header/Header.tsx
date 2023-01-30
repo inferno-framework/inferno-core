@@ -10,6 +10,7 @@ import icon from '~/images/inferno_icon.png';
 import lightTheme from '~/styles/theme';
 
 export interface HeaderProps {
+  suiteId?: string;
   suiteTitle?: string;
   suiteVersion?: string;
   suiteOptions?: SuiteOptionChoice[];
@@ -18,6 +19,7 @@ export interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({
+  suiteId,
   suiteTitle,
   suiteVersion,
   suiteOptions,
@@ -77,7 +79,7 @@ const Header: FC<HeaderProps> = ({
         >
           <Box display="flex" flexDirection="row" alignItems="baseline">
             <Typography variant="h5" component="h1" className={styles.title}>
-              <Link to="/" aria-label="Inferno Home" className={styles.homeLink}>
+              <Link to={`/${suiteId || ''}`} aria-label="Inferno Home" className={styles.homeLink}>
                 {suiteTitle}
               </Link>
             </Typography>
