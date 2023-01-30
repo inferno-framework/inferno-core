@@ -12,6 +12,7 @@ module Inferno
       # @param test a value whose truthiness will determine whether the
       #   assertion passes or fails
       # @param message [String] failure message
+      # @return [void]
       def assert(test, message = '')
         raise Exceptions::AssertionException, message unless test
       end
@@ -26,6 +27,7 @@ module Inferno
       # @param status [Integer, Array<Integer>] a single integer or an array of
       #   integer status codes
       # @param response [Hash]
+      # @return [void]
       def assert_response_status(status, response: self.response)
         assert Array.wrap(status).include?(response[:status]), bad_response_status_message(status, response[:status])
       end
@@ -44,6 +46,7 @@ module Inferno
       #   assert_resource_type(:capability_statement)
       #   assert_resource_type('CapabilityStatement')
       #   assert_resource_type(FHIR::CapabilityStatement)
+      # @return [void]
       def assert_resource_type(resource_type, resource: self.resource)
         resource_type_name = normalize_resource_type(resource_type)
 
@@ -95,6 +98,7 @@ module Inferno
       #       'Condition': nil
       #     }
       #   )
+      # @return [void]
       def assert_valid_bundle_entries(bundle: resource, resource_types: {})
         assert_resource_type('Bundle', resource: bundle)
 
@@ -150,6 +154,7 @@ module Inferno
       #
       # @param maybe_json_string [String]
       # @param message [String] extra failure message
+      # @return [void]
       def assert_valid_json(maybe_json_string, message = '')
         assert JSON.parse(maybe_json_string)
       rescue JSON::ParserError
@@ -160,6 +165,7 @@ module Inferno
       #
       # @param uri [String]
       # @param message [String] custom failure message
+      # @return [void]
       def assert_valid_http_uri(uri, message = '')
         error_message = message.presence || "\"#{uri}\" is not a valid URI"
         assert uri =~ /\A#{URI::DEFAULT_PARSER.make_regexp(['http', 'https'])}\z/, error_message
@@ -169,6 +175,7 @@ module Inferno
       #
       # @param type [String]
       # @param request [Inferno::Entities::Request]
+      # @return [void]
       def assert_response_content_type(type, request: self.request)
         header = request.response_header('Content-Type')
         assert header.present?, no_content_type_message

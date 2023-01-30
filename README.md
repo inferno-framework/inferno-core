@@ -14,7 +14,7 @@ Template Repository](https://github.com/inferno-framework/inferno-template).
 
 ## Contributing to Inferno Core
 Developers interested in contributing to the Inferno Core gem must have [Ruby
-2.7+](https://www.ruby-lang.org/en/) and [Node.js and
+3.1+](https://www.ruby-lang.org/en/) and [Node.js and
 NPM](https://www.npmjs.com/get-npm) installed.
 
 ## Using Inferno Core to author tests
@@ -31,7 +31,7 @@ bundle install
 gem install foreman
 
 # Set up database
-bundle exec bin/inferno migrate
+bin/inferno migrate
 
 # Start Inferno background services (validator, redis, nginx)
 bin/inferno services start
@@ -93,10 +93,15 @@ GET http://localhost:4567/inferno/api/test_sessions/TEST_SESSION_ID/results
 To get to an interactive console, run `bundle exec bin/inferno console`
 
 ## Customizable Banner
-Inferno Core allows you to add your own customizable banner. It loads the banner from the `config/banner.html.erb` file and renders it above the application. The size and appearance of the banner can be controlled by using the inline style attribute. 
+Inferno Core allows you to add your own customizable banner. It loads the banner
+from the `config/banner.html.erb` file and renders it above the application. The
+size and appearance of the banner can be controlled by using the inline style
+attribute.
 
 ## Documentation
-Inferno documentation source code is located in the `docs/` directory. This documentation is rendered using Jekyll, which creates a site that can be built and served with: 
+Inferno documentation source code is located in the `docs/` directory. This
+documentation is rendered using Jekyll, which creates a site that can be built
+and served with:
 
 ```sh
 cd docs/
@@ -107,7 +112,7 @@ By default the site will be served at `http://localhost:4000/inferno-core/`
 
 
 ## License
-Copyright 2022 The MITRE Corporation
+Copyright 2023 The MITRE Corporation
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the

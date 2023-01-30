@@ -28,6 +28,7 @@ module Inferno
       end
 
       class << self
+        # @private
         def repository
           Inferno::Repositories::TestGroups.new
         end
@@ -53,12 +54,14 @@ module Inferno
         # Methods to configure Inferno::DSL::Runnable
 
         # Add a child group
+        # @return [void]
         def group(...)
           child_metadata(group_metadata)
           define_child(...)
         end
 
         # Add a test
+        # @return [void]
         def test(...)
           child_metadata(test_metadata)
           define_child(...)
@@ -108,6 +111,7 @@ module Inferno
         # UI, and this group must be run as a group.
         #
         # @param value [Boolean]
+        # @return [void]
         def run_as_group(value = true) # rubocop:disable Style/OptionalBooleanParameter
           @run_as_group = value
         end
