@@ -80,13 +80,6 @@ const App: FC<unknown> = () => {
                 </Page>
               )}
             </Route>
-            {/* 
-              Title for TestSessionWrapper is set in the component 
-              because testSession is not set at the time of render 
-            */}
-            <Route path="/test_sessions/:test_session_id">
-              <TestSessionWrapper />
-            </Route>
             <Route
               path="/:test_suite_id"
               render={(props) => {
@@ -105,7 +98,14 @@ const App: FC<unknown> = () => {
                   </Page>
                 );
               }}
-            ></Route>
+            />
+            {/* 
+              Title for TestSessionWrapper is set in the component 
+              because testSession is not set at the time of render 
+            */}
+            <Route path="/test_sessions/:test_session_id">
+              <TestSessionWrapper />
+            </Route>
           </Switch>
         </ThemeProvider>
       </StyledEngineProvider>
