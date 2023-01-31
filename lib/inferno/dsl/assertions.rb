@@ -61,8 +61,10 @@ module Inferno
       # @param resource [FHIR::Model]
       # @param profile_url [String] url of the profile to validate against,
       #   defaults to validating against the base FHIR resource
-      def assert_valid_resource(resource: self.resource, profile_url: nil)
-        assert resource_is_valid?(resource:, profile_url:),
+      # @param validator [Symbol] the name of the validator to use
+      # @return [void]
+      def assert_valid_resource(resource: self.resource, profile_url: nil, validator: :default)
+        assert resource_is_valid?(resource:, profile_url:, validator:),
                invalid_resource_message(profile_url)
       end
 
