@@ -12,6 +12,13 @@ parent: Deployment
 1. TOC
 {:toc}
 ---
+## Overview
+Inferno needs to know the URL where it is being hosted, and it determines this
+based on environment variables. These environment variables need to be set in
+both the web and worker processes. Some tests need to generate links to Inferno,
+so the worker process needs to know where Inferno is hosted even though it isn't
+serving those urls itself.
+
 ## Hostname Configuration
 Set the `INFERNO_HOST` environment variable in `.env` to tell Inferno what its
 host and scheme are. This allows Inferno to correctly construct things like
