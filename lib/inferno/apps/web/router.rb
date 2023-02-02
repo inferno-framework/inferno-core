@@ -53,7 +53,8 @@ module Inferno
       # Should not need Content-Type header but GitHub Codespaces will not work without them.
       # This could be investigated and likely removed if addressed properly elsewhere.
       get '/', to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
-      get '/test_sessions/:id', to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
+      get '/test_sessions/:test_suite_id/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow
+      get '/test_sessions/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow
 
       Inferno.routes.each do |route|
         cleaned_id = route[:suite].id.gsub(/[^a-zA-Z\d\-._~]/, '_')
@@ -70,6 +71,7 @@ module Inferno
         Application['logger'].info("Registering suite route: #{suite_path}")
         get suite_path, to: ->(_env) { [200, {}, [client_page]] }
       end
+      Inferno::Application['logger'].info("*** Registering updated client routes ***")
     end
 
     Router = # rubocop:disable Naming/ConstantName

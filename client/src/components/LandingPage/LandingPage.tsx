@@ -36,7 +36,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       postTestSessions(testSuiteChosen, null, null)
         .then((testSession: TestSession | null) => {
           if (testSession && testSession.test_suite) {
-            history.push('test_sessions/' + testSession.id);
+            history.push('test_sessions/' + testSession.test_suite_id + '/' + testSession.id);
           }
         })
         .catch((e: Error) => {
