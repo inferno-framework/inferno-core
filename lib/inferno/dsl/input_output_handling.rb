@@ -47,7 +47,7 @@ module Inferno
       # @param identifier [Symbol] identifier for the output
       # @param other_identifiers [Symbol] array of symbols if specifying multiple outputs
       # @param output_definition [Hash] options for output
-      # @option output_definition [String] :type text | textarea | oauth_credentials
+      # @option output_definition [String] :type text, textarea, or oauth_credentials
       # @return [void]
       # @example
       #   output :patient_id, :condition_id, :observation_id

@@ -99,7 +99,8 @@ module Inferno
             .select { |message| message.is_a? Hash }
         end
 
-        # Filter out unwanted validation messages
+        # Filter out unwanted validation messages. Any messages for which the
+        # block evalutates to a truthy value will be excluded.
         #
         # @example
         #   validator do

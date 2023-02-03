@@ -28,6 +28,11 @@ module Inferno
         @messages ||= []
       end
 
+      # Add a message to the result.
+      #
+      # @param type [String] error, warning, or info
+      # @param message [String]
+      # @return [void]
       def add_message(type, message)
         messages << { type: type.to_s, message: format_markdown(message) }
       end
@@ -40,7 +45,6 @@ module Inferno
       # @example
       #   output(patient_id: '5', bearer_token: 'ABC')
       def output(outputs)
-        # TODO: update to track outputs that need to be updated
         outputs.each do |key, value|
           send("#{key}=", value)
           outputs_to_persist[key] = value
@@ -158,6 +162,7 @@ module Inferno
           end
         end
 
+        # @private
         def repository
           Inferno::Repositories::Tests.new
         end

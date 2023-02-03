@@ -89,6 +89,7 @@ module Inferno
         # Specify the named requests made by a test
         #
         # @param identifiers [Symbol] one or more request identifiers
+        # @return [void]
         def makes_request(*identifiers)
           named_requests_made.concat(identifiers).uniq!
           identifiers.each do |identifier|
@@ -99,6 +100,7 @@ module Inferno
         # Specify the name for a request received by a test
         #
         # @param identifier [Symbol]
+        # @return [void]
         def receives_request(identifier)
           config.add_request(identifier)
           @incoming_request_name = identifier
@@ -112,6 +114,7 @@ module Inferno
         # Specify the named requests used by a test
         #
         # @param identifiers [Symbol] one or more request identifiers
+        # @return [void]
         def uses_request(*identifiers)
           named_requests_used.concat(identifiers).uniq!
           identifiers.each do |identifier|

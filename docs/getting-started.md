@@ -103,6 +103,8 @@ The advantages of using a local ruby installation are
   docker images. This must be done every time tests change.
 * It is possible to set breakpoints and access an interactive debugger inside of
   running tests, which makes test development much easier.
+* The Inferno Command Line Interface can be used. Run `inferno help` for
+  information.
 
 ### Development with Ruby
 
@@ -136,7 +138,7 @@ The advantages of using a local ruby installation are
 
 #### Interactive consoles
 A local ruby installation also allows you to use [pry](https://pry.github.io/),
-a powerful interactive console to explore and experiment with your tests with
+a powerful interactive console, to explore and experiment with your tests with
 `inferno console`:
 ```ruby
 ᐅ bundle exec inferno console
