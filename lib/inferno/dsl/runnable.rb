@@ -268,7 +268,6 @@ module Inferno
       #
       # @param optional [Boolean]
       # @return [void]
-      #
       def optional(optional = true) # rubocop:disable Style/OptionalBooleanParameter
         @optional = optional
       end
@@ -347,6 +346,7 @@ module Inferno
       #   route. The block has access to the `request` method which returns a
       #   {Inferno::Entities::Request} object with the information for the
       #   incoming request.
+      # @return [void]
       def resume_test_route(method, path, &block)
         route_class = Class.new(ResumeTestRoute) do |klass|
           klass.singleton_class.instance_variable_set(:@test_run_identifier_block, block)
@@ -368,6 +368,7 @@ module Inferno
       #   compatible object (e.g. a `Proc` object, a [Sinatra
       #   app](http://sinatrarb.com/)) as described in the [Hanami Router
       #   documentation.](https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#mount-rack-applications)
+      # @return [void]
       def route(method, path, handler)
         Inferno.routes << { method:, path:, handler:, suite: }
       end
@@ -414,6 +415,7 @@ module Inferno
       #   group from: :ig_v2_group do
       #     required_suite_options ig_version: 'ig_v2'
       #   end
+      # @return [void]
       def required_suite_options(suite_option_requirements)
         @suite_option_requirements =
           suite_option_requirements.map do |key, value|
@@ -436,6 +438,7 @@ module Inferno
         end
       end
 
+      # @private
       def inspect
         non_dynamic_ancestor = ancestors.find { |ancestor| !ancestor.to_s.start_with? '#' }
         "#<#{non_dynamic_ancestor}".tap do |inspect_string|

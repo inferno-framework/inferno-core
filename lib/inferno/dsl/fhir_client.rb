@@ -243,6 +243,7 @@ module Inferno
         # @param block a block to configure the client
         # @see Inferno::FHIRClientBuilder Documentation for the client
         #   configuration DSL
+        # @return [void]
         def fhir_client(name = :default, &block)
           fhir_client_definitions[name] = block
         end

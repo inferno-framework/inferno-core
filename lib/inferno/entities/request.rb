@@ -58,29 +58,29 @@ module Inferno
       # Find a response header
       #
       # @param name [String] the header name
-      # @return [Inferno::Entities::RequestHeader, nil]
+      # @return [Inferno::Entities::Header, nil]
       def response_header(name)
         response_headers.find { |header| header.name.casecmp(name).zero? }
       end
 
       # Find a request header
       #
-      # @param name [String] the header name
-      # @return [Inferno::Entities::RequestHeader, nil]
+      # @param name [String] the header name.
+      # @return [Inferno::Entities::Header, nil]
       def request_header(name)
         request_headers.find { |header| header.name.casecmp(name).zero? }
       end
 
       # All of the request headers
       #
-      # @return [Array<Inferno::Entities::RequestHeader>]
+      # @return [Array<Inferno::Entities::Header>]
       def request_headers
         headers.select(&:request?)
       end
 
       # All of the response headers
       #
-      # @return [Array<Inferno::Entities::RequestHeader>]
+      # @return [Array<Inferno::Entities::Header>]
       def response_headers
         headers.select(&:response?)
       end
@@ -131,7 +131,7 @@ module Inferno
 
       # Return the FHIR resource from the response body.
       #
-      # @return [FHIR::Model]
+      # @return [FHIR::Model, nil]
       def resource
         FHIR.from_contents(response_body)
       end

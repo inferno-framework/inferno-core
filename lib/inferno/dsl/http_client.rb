@@ -198,6 +198,7 @@ module Inferno
         # @param block a block to configure the client
         # @see Inferno::HTTPClientBuilder Documentation for the client
         #   configuration DSL
+        # @return [void]
         def http_client(name = :default, &block)
           http_client_definitions[name] = block
         end

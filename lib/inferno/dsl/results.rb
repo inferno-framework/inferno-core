@@ -5,6 +5,7 @@ module Inferno
       # Halt execution of the current test and mark it as passed.
       #
       # @param message [String]
+      # @return [void]
       def pass(message = '')
         raise Exceptions::PassException, message
       end
@@ -14,6 +15,7 @@ module Inferno
       #
       # @param test [Boolean]
       # @param message [String]
+      # @return [void]
       def pass_if(test, message = '')
         raise Exceptions::PassException, message if test
       end
@@ -21,6 +23,7 @@ module Inferno
       # Halt execution of the current test and mark it as skipped.
       #
       # @param message [String]
+      # @return [void]
       def skip(message = '')
         raise Exceptions::SkipException, message
       end
@@ -30,6 +33,7 @@ module Inferno
       #
       # @param test [Boolean]
       # @param message [String]
+      # @return [void]
       def skip_if(test, message = '')
         raise Exceptions::SkipException, message if test
       end
@@ -37,6 +41,7 @@ module Inferno
       # Halt execution of the current test and mark it as omitted.
       #
       # @param message [String]
+      # @return [void]
       def omit(message = '')
         raise Exceptions::OmitException, message
       end
@@ -46,6 +51,7 @@ module Inferno
       #
       # @param test [Boolean]
       # @param message [String]
+      # @return [void]
       def omit_if(test, message = '')
         raise Exceptions::OmitException, message if test
       end
@@ -75,6 +81,7 @@ module Inferno
       # @param message [String]
       # @param timeout [Integer] Number of seconds to wait for an incoming
       #   request
+      # @return [void]
       def wait(identifier:, message: '', timeout: 300)
         identifier(identifier)
         wait_timeout(timeout)
