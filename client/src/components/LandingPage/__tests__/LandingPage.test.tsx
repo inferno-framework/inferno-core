@@ -2,6 +2,7 @@ import React from 'react';
 import { Router } from 'react-router';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 import { createMemoryHistory } from 'history';
 import LandingPage from '../LandingPage';
@@ -12,7 +13,9 @@ test('renders Inferno Landing Page', () => {
 
   render(
     <ThemeProvider>
-      <LandingPage testSuites={testSuites} />
+      <SnackbarProvider>
+        <LandingPage testSuites={testSuites} />
+      </SnackbarProvider>
     </ThemeProvider>
   );
 
@@ -25,7 +28,9 @@ test('Start Testing button should be disabled when test suite is not selected', 
 
   render(
     <ThemeProvider>
-      <LandingPage testSuites={testSuites} />
+      <SnackbarProvider>
+        <LandingPage testSuites={testSuites} />
+      </SnackbarProvider>
     </ThemeProvider>
   );
 
@@ -40,7 +45,9 @@ test('should enable Start Testing when test suite is selected', () => {
   render(
     <Router history={history}>
       <ThemeProvider>
-        <LandingPage testSuites={testSuites} />
+        <SnackbarProvider>
+          <LandingPage testSuites={testSuites} />
+        </SnackbarProvider>
       </ThemeProvider>
     </Router>
   );

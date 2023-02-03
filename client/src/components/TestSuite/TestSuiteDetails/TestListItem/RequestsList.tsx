@@ -18,6 +18,7 @@ import RequestDetailModal from '~/components/RequestDetailModal/RequestDetailMod
 import { getRequestDetails } from '~/api/RequestsApi';
 import useStyles from './styles';
 import { ContentCopy, SaveAlt } from '@mui/icons-material';
+import { useSnackbar } from 'notistack';
 
 interface RequestsListProps {
   resultId: string;
@@ -27,6 +28,7 @@ interface RequestsListProps {
 }
 
 const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest, view }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [showDetails, setShowDetails] = React.useState(false);
   const [copySuccess, setCopySuccess] = React.useState({});
   const [detailedRequest, setDetailedRequest] = React.useState<Request>();
@@ -42,11 +44,11 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
             setDetailedRequest(updatedRequest);
             setShowDetails(true);
           } else {
-            console.error('Failed to update request');
+            enqueueSnackbar('Failed to update request', { variant: 'error' });
           }
         })
-        .catch((e) => {
-          console.error(e);
+        .catch((e: Error) => {
+          enqueueSnackbar(`Error getting request details: ${e.message}`, { variant: 'error' });
         });
     } else {
       setDetailedRequest(request);

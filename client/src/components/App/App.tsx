@@ -3,17 +3,19 @@ import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-d
 import { StyledEngineProvider } from '@mui/material/styles';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { getTestSuites } from '~/api/TestSuitesApi';
+import Page from './Page';
 import LandingPage from '~/components/LandingPage';
 import SuiteOptionsPage from '~/components/SuiteOptionsPage';
 import TestSessionWrapper from '~/components/TestSuite/TestSessionWrapper';
 import ThemeProvider from '~/components/ThemeProvider';
 import { TestSession, TestSuite } from '~/models/testSuiteModels';
 import { basePath } from '~/api/infernoApiService';
+import { useSnackbar } from 'notistack';
 
 import { useAppStore } from '~/store/app';
-import Page from './Page';
 
 const App: FC<unknown> = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const setFooterHeight = useAppStore((state) => state.setFooterHeight);
   const testSuites = useAppStore((state) => state.testSuites);
   const setTestSuites = useAppStore((state) => state.setTestSuites);
@@ -33,8 +35,8 @@ const App: FC<unknown> = () => {
       .then((testSuites: TestSuite[]) => {
         setTestSuites(testSuites);
       })
-      .catch((e) => {
-        console.error(e);
+      .catch(() => {
+        setTestSuites([]);
       });
   }, []);
 
@@ -46,8 +48,8 @@ const App: FC<unknown> = () => {
             setTestSession(testSession);
           }
         })
-        .catch((e) => {
-          console.error(e);
+        .catch((e: Error) => {
+          enqueueSnackbar(`Error while creating test session: ${e.message}`, { variant: 'error' });
         });
     }
   }, [testSuites]);

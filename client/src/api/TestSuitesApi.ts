@@ -10,8 +10,7 @@ export function getTestSuites(): Promise<TestSuite[]> {
       testSets = result as TestSuite[];
       return testSets;
     })
-    .catch((e) => {
-      console.error(e);
+    .catch(() => {
       return [];
     });
 }
