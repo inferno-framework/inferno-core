@@ -70,8 +70,8 @@ module Inferno
         get suite_path, to: ->(_env) { [200, {}, [client_page]] }
       end
 
-      get '/test_sessions/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow
-      get '/:test_suite_id/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow
+      get '/test_sessions/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow, as: :client_session_show
+      get '/:test_suite_id/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow, as: :client_suite_session_show
     end
 
     Router = # rubocop:disable Naming/ConstantName

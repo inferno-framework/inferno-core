@@ -2,11 +2,6 @@ require 'request_helper'
 
 RSpec.describe 'client requests' do
   let(:router) { Inferno::Web::Router }
-  # let(:response_fields) { ['id', 'inputs', 'results', 'status', 'test_group_id'] }
-  # let(:test_group_id) { BasicTestSuite::Suite.groups.first.id }
-  # let(:test_run) { repo_create(:test_run, runnable: { test_group_id: }) }
-  # let(:result) { repo_create(:result, test_run:) }
-  # let(:request) { repo_create(:request, result:) }
 
   describe 'GET /test_sessions/:id' do
     it 'returns a 404 if no session is found' do
@@ -35,7 +30,11 @@ RSpec.describe 'client requests' do
     end
 
     it 'returns a 404 if no suite is found' do
-      get router.path(:client_suite_session_show, id: SecureRandom.uuid, test_suite_id: 'bad_suite')
+      session = repo_create(:test_session)
+
+      allow_any_instance_of(Inferno::Entities::TestSession).to receive(:test_suite_id).and_return('bad_suite')
+
+      get router.path(:client_suite_session_show, id: session.id, test_suite_id: 'bad_suite')
 
       expect(last_response.status).to eq(404)
     end
