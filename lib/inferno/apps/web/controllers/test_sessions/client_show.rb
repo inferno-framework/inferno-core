@@ -24,7 +24,7 @@ module Inferno
             if test_suite_id.blank? || test_suite_id != test_session.test_suite_id
               test_suite_id = test_session.test_suite_id
 
-              res.redirect_to "#{Inferno::Application['base_url']}/test_sessions/#{test_suite_id}/#{test_session_id}"
+              res.redirect_to "#{Inferno::Application['base_url']}/#{test_suite_id}/#{test_session_id}"
             end
 
             test_suite = Inferno::Repositories::TestSuites.new.find(test_suite_id)
