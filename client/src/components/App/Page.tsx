@@ -1,4 +1,5 @@
 import { FC, useEffect } from 'react';
+import { useLoaderData } from 'react-router-dom';
 
 export interface PageProps {
   children: JSX.Element;
@@ -12,6 +13,8 @@ const Page: FC<PageProps> = ({ children, title }) => {
   useEffect(() => {
     document.title = title || '';
   }, [title]);
+
+  console.log(useLoaderData());
 
   return children;
 };

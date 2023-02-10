@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { TestSuite, TestSession } from 'models/testSuiteModels';
 import useStyles from './styles';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { postTestSessions } from 'api/TestSessionApi';
 import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
@@ -24,17 +24,17 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const [testSuiteChosen, setTestSuiteChosen] = React.useState('');
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const styles = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   function startTestingClick(): void {
     const testSuite = testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen);
     if (testSuite && testSuite.suite_options && testSuite.suite_options.length > 0) {
-      history.push(`${testSuiteChosen}`);
+      navigate(`${testSuiteChosen}`);
     } else {
       postTestSessions(testSuiteChosen, null, null)
         .then((testSession: TestSession | null) => {
           if (testSession && testSession.test_suite) {
-            history.push('test_sessions/' + testSession.id);
+            navigate('test_sessions/' + testSession.id);
           }
         })
         .catch((e) => {

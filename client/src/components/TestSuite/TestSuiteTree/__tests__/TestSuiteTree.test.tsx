@@ -9,9 +9,7 @@ import { vi } from 'vitest';
 
 const runTestsMock = vi.fn();
 vi.mock('react-router-dom', () => ({
-  useHistory: () => ({
-    push: vi.fn(),
-  }),
+  useNavigate: () => {},
 }));
 
 const test1: Test = {

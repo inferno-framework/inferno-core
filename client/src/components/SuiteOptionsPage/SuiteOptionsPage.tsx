@@ -15,22 +15,19 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import useStyles from './styles';
-import { useHistory, useParams } from 'react-router-dom';
+import { useLoaderData, useNavigate, useParams } from 'react-router-dom';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
 
-export interface SuiteOptionsPageProps {
-  testSuite: TestSuite;
-}
-
-const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
+const SuiteOptionsPage: FC<Record<string, never>> = () => {
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const styles = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const testSuite: TestSuite = useLoaderData();
   const { test_suite_id } = useParams<{ test_suite_id: string }>();
   const initialSelectedSuiteOptions = testSuite.suite_options?.map((option) => ({
     // just grab the first to start
@@ -77,7 +74,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
     postTestSessions(id, null, options)
       .then((testSession: TestSession | null) => {
         if (testSession && testSession.test_suite) {
-          history.push('test_sessions/' + testSession.id);
+          navigate('/test_sessions/' + testSession.id);
         }
       })
       .catch((e) => {
@@ -87,7 +84,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
 
   const renderBackButton = () => {
     const returnHome = () => {
-      history.push('');
+      navigate('/');
     };
     return (
       <Tooltip title="Back to Suites">
