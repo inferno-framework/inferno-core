@@ -1,9 +1,8 @@
 import React from 'react';
-import { Router } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ThemeProvider from 'components/ThemeProvider';
-import { createMemoryHistory } from 'history';
 import LandingPage from '../LandingPage';
 import { mockedTestSuitesReturnValue } from '../__mocked_data__/mockData';
 
@@ -11,9 +10,11 @@ test('renders Inferno Landing Page', () => {
   const testSuites = mockedTestSuitesReturnValue;
 
   render(
-    <ThemeProvider>
-      <LandingPage testSuites={testSuites} />
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider>
+        <LandingPage testSuites={testSuites} />
+      </ThemeProvider>
+    </BrowserRouter>
   );
 
   const headerElements = screen.getAllByRole('heading');
@@ -24,9 +25,11 @@ test('Start Testing button should be disabled when test suite is not selected', 
   const testSuites = mockedTestSuitesReturnValue;
 
   render(
-    <ThemeProvider>
-      <LandingPage testSuites={testSuites} />
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider>
+        <LandingPage testSuites={testSuites} />
+      </ThemeProvider>
+    </BrowserRouter>
   );
 
   const buttonElement = screen.getByTestId('go-button');
@@ -34,15 +37,14 @@ test('Start Testing button should be disabled when test suite is not selected', 
 });
 
 test('should enable Start Testing when test suite is selected', () => {
-  const history = createMemoryHistory();
   const testSuites = mockedTestSuitesReturnValue;
 
   render(
-    <Router history={history}>
+    <BrowserRouter>
       <ThemeProvider>
         <LandingPage testSuites={testSuites} />
       </ThemeProvider>
-    </Router>
+    </BrowserRouter>
   );
 
   const testSuiteElement = screen.getAllByTestId('testing-suite-option')[0];

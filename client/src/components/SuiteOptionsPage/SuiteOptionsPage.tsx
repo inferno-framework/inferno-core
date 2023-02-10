@@ -15,7 +15,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import useStyles from './styles';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
@@ -31,7 +31,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const styles = useStyles();
   const navigate = useNavigate();
-  const { test_suite_id } = useParams<{ test_suite_id: string }>();
+  const suiteId = testSuite.id;
   const initialSelectedSuiteOptions = testSuite.suite_options?.map((option) => ({
     // just grab the first to start
     // perhaps choices should be persisted in the URL to make it easy to share specific options
@@ -237,7 +237,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
                 fullWidth
                 data-testid="go-button"
                 sx={{ fontWeight: 600 }}
-                onClick={() => createTestSession(test_suite_id, selectedSuiteOptions)}
+                onClick={() => createTestSession(suiteId, selectedSuiteOptions)}
               >
                 Start Testing
               </Button>

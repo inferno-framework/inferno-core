@@ -1,17 +1,15 @@
 import React from 'react';
-import { Router } from 'react-router';
+import { BrowserRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
-import { createMemoryHistory } from 'history';
 import ThemeProvider from 'components/ThemeProvider';
 import TestSessionComponent from '../TestSession';
 import { mockedTestSession, mockedResultsList } from '../__mocked_data__/mockData';
 
 test('Test session renders', () => {
-  const history = createMemoryHistory();
   let drawerOpen = true;
 
   render(
-    <Router history={history}>
+    <BrowserRouter>
       <ThemeProvider>
         <TestSessionComponent
           testSession={mockedTestSession}
@@ -23,7 +21,7 @@ test('Test session renders', () => {
           toggleDrawer={() => (drawerOpen = !drawerOpen)}
         />
       </ThemeProvider>
-    </Router>
+    </BrowserRouter>
   );
 
   const testSessionTitleComponentList = screen.getAllByRole('link');

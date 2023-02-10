@@ -15,6 +15,7 @@ const Page: FC<PageProps> = ({ children, title }) => {
   const loadedChildren = useLoaderData() as JSX.Element;
   const params = useParams();
 
+  // Handle options-specific title population
   if (title.toLowerCase() === 'options') {
     const suiteId: string = params.test_suite_id || '';
     const suite = testSuites.find((suite) => suite.id === suiteId);
