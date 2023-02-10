@@ -1,14 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import {
-  createBrowserRouter,
-  RouterProvider,
-  BrowserRouter,
-  Redirect,
-  Route,
-  Routes,
-  RouteObject,
-  Navigate,
-} from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { StyledEngineProvider } from '@mui/material/styles';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { getTestSuites } from '~/api/TestSuitesApi';
@@ -88,30 +79,14 @@ const App: FC<unknown> = () => {
       },
       {
         path: ':test_suite_id',
-        element: (
-          // <Page title={`${titlePrepend} Options`}>
-          <SuiteOptionsPage />
-          // </Page>
-        ),
-        loader: async ({ request, params }) => {
-          const suiteId = params.test_suite_id || '';
+        element: <Page title="Options" />,
+        loader: ({ params }) => {
+          // eslint-disable-next-line max-len
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          const suiteId: string = params.test_suite_id || '';
           const suite = testSuites.find((suite) => suite.id === suiteId);
-          // const suiteName = suite?.short_title || suite?.title;
-          // const titlePrepend = suiteName ? `${suiteName}` : 'Suite';
-          return suite;
+          return suite ? <SuiteOptionsPage testSuite={suite} /> : <Navigate to="/" />;
         },
-
-        //     // return suite ? (
-        //     //   <Page title={`${titlePrepend} Options`}>
-        //     //     <SuiteOptionsPage {...props} testSuite={suite} />
-        //     //   </Page>
-        //     // ) : (
-        //     //   <Page title={`Inferno Test Suites`}>
-        //     //     <LandingPage testSuites={testSuites} />
-        //     //   </Page>
-        //     // );
-        //   }
-        // },
       },
       {
         // Title for TestSessionWrapper is set in the component
@@ -137,39 +112,3 @@ const App: FC<unknown> = () => {
 };
 
 export default App;
-
-{
-  /* <Routes>
-  
-  <Route
-    path="/:test_suite_id"
-    loader={({ params }) => {
-      const suiteId = params.test_suite_id || '';
-      const suite = testSuites.find((suite) => suite.id === suiteId);
-      const suiteName = suite?.short_title || suite?.title;
-      const titlePrepend = suiteName ? `${suiteName}` : 'Suite';
-      return titlePrepend;
-
-      // return suite ? (
-      //   <Page title={`${titlePrepend} Options`}>
-      //     <SuiteOptionsPage {...props} testSuite={suite} />
-      //   </Page>
-      // ) : (
-      //   <Page title={`Inferno Test Suites`}>
-      //     <LandingPage testSuites={testSuites} />
-      //   </Page>
-      // );
-    }}
-    // element={
-    //   <Page title={`${titlePrepend} Options`}>
-    //     <SuiteOptionsPage {...props} testSuite={suite} />
-    //   </Page>
-    // }
-    element={
-      <Page title={`${1} Options`}>
-        <SuiteOptionsPage {...props} testSuite={suite} />
-      </Page>
-    }
-  />
-</Routes>; */
-}

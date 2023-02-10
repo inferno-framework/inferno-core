@@ -15,19 +15,22 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import useStyles from './styles';
-import { useLoaderData, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
 
-const SuiteOptionsPage: FC<Record<string, never>> = () => {
+export interface SuiteOptionsPageProps {
+  testSuite: TestSuite;
+}
+
+const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const styles = useStyles();
   const navigate = useNavigate();
-  const testSuite: TestSuite = useLoaderData();
   const { test_suite_id } = useParams<{ test_suite_id: string }>();
   const initialSelectedSuiteOptions = testSuite.suite_options?.map((option) => ({
     // just grab the first to start
