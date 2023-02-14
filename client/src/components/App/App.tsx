@@ -81,7 +81,7 @@ const App: FC<unknown> = () => {
         loader: ({ params }) => {
           const suiteId: string = params.test_suite_id || '';
           const suite = testSuites.find((suite) => suite.id === suiteId);
-          return suite ? <SuiteOptionsPage testSuite={suite} /> : <Navigate to="/" />;
+          return <SuiteOptionsPage testSuite={suite} />;
         },
       },
       {
