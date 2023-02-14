@@ -27,6 +27,7 @@ import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
 import TestSuiteReport from './TestSuiteDetails/TestSuiteReport';
 import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDetailsPanel';
 import useStyles from './styles';
+import { useSnackbar } from 'notistack';
 
 import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
@@ -94,6 +95,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   toggleDrawer,
 }) => {
   const styles = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const footerHeight = useAppStore((state) => state.footerHeight);
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
@@ -225,8 +227,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           poller.current = setTimeout(() => pollTestRunResults(testRunResults), 500);
         }
       })
-      .catch((e) => {
-        console.error(e);
+      .catch((e: Error) => {
+        enqueueSnackbar(`Error while getting test run: ${e.message}`, {
+          variant: 'error',
+        });
       });
   };
 
@@ -281,8 +285,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           pollTestRunResults(testRun);
         }
       })
-      .catch((e) => {
-        console.error(e);
+      .catch((e: Error) => {
+        enqueueSnackbar(`Error while running test(s): ${e.message}`, { variant: 'error' });
       });
   };
 
@@ -301,7 +305,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         showProgressBar={showProgressBar}
         setShowProgressBar={setShowProgressBar}
         cancelTestRun={() => {
-          testRun && deleteTestRun(testRun.id);
+          if (testRun) {
+            deleteTestRun(testRun.id).catch((e: Error) =>
+              enqueueSnackbar(`Error while cancelling test run: ${e.message}`, {
+                variant: 'error',
+              })
+            );
+          }
         }}
         duration={duration}
         testRun={testRun}
@@ -413,7 +423,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           )}
           <ActionModal
             cancelTestRun={() => {
-              testRun && deleteTestRun(testRun.id);
+              if (testRun) {
+                deleteTestRun(testRun.id).catch((e: Error) =>
+                  enqueueSnackbar(`Error while cancelling test run: ${e.message}`, {
+                    variant: 'error',
+                  })
+                );
+              }
             }}
             message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
             modalVisible={waitingTestId != null}

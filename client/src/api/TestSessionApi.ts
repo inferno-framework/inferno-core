@@ -16,10 +16,6 @@ export function getLastTestRun(test_session_id: string): Promise<TestRun | null>
     .then((response) => response.json())
     .then((result) => {
       return result as TestRun;
-    })
-    .catch((e) => {
-      console.error(e);
-      return null;
     });
 }
 
@@ -29,10 +25,6 @@ export function getTestSession(test_session_id: string): Promise<TestSession | n
     .then((response) => response.json())
     .then((result) => {
       return addProperties(result as TestSession);
-    })
-    .catch((e) => {
-      console.error(e);
-      return null;
     });
 }
 
@@ -54,10 +46,6 @@ export function postTestSessions(
     .then((response) => response.json())
     .then((result) => {
       return result as TestSession;
-    })
-    .catch((e) => {
-      console.error(e);
-      return null;
     });
 }
 
@@ -67,10 +55,6 @@ export function getCurrentTestSessionResults(test_session_id: string): Promise<R
     .then((response) => response.json())
     .then((result) => {
       return result as Result[];
-    })
-    .catch((e) => {
-      console.error(e);
-      return null;
     });
 }
 
@@ -80,10 +64,6 @@ export function getTestSessionData(test_session_id: string): Promise<TestOutput[
     .then((response) => response.json())
     .then((result) => {
       return result as TestOutput[];
-    })
-    .catch((e) => {
-      console.error(e);
-      return null;
     });
 }
 

@@ -6,6 +6,7 @@ module Inferno
     # configuration provides a way to modify test behavior at boot time.
     #
     # The main features enabled by configuration are:
+    #
     # - Modifying the properties of a runnable's inputs. This could include
     #   locking a particular input, making a particular input optional/required,
     #   or changing an input's value.
@@ -81,6 +82,7 @@ module Inferno
       # will be applied to the runnable and all of its children.
       #
       # @param new_configuration [Hash]
+      # @return [Inferno::DSL::Configurable::Configuration]
       def config(new_configuration = {})
         @config ||= Configuration.new
 

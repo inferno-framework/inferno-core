@@ -28,6 +28,7 @@ module Inferno
           @default_group
         end
 
+        # @private
         def repository
           Inferno::Repositories::TestSuites.new
         end
@@ -44,6 +45,7 @@ module Inferno
         # Methods to configure Inferno::DSL::Runnable
 
         # Add a child group
+        # @return [void]
         def group(...)
           child_metadata(group_metadata)
           define_child(...)
@@ -93,6 +95,7 @@ module Inferno
         # @yieldreturn [Array<Hash>] An array of message hashes containing the
         #   keys `:type` and `:message`. Type options are `info`, `warning`, and
         #   `error`.
+        # @return [void]
         def check_configuration(&block)
           @check_configuration_block = block
         end
@@ -134,6 +137,7 @@ module Inferno
         #   group from: :ig_v2_group do
         #     required_suite_options ig_version: 'ig_v2'
         #   end
+        # @return [void]
         def suite_option(identifier, **option_params)
           suite_options << DSL::SuiteOption.new(option_params.merge(id: identifier))
         end

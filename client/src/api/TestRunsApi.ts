@@ -41,19 +41,12 @@ export function postTestRun(
     .then((response) => response.json())
     .then((result) => {
       return result as TestRun;
-    })
-    .catch((e) => {
-      console.error(e);
-      return null;
     });
 }
 
-export function deleteTestRun(testRunId: string): void {
+export function deleteTestRun(testRunId: string): Promise<Response> {
   const endpoint = getApiEndpoint(`/test_runs/${testRunId}`);
-  fetch(endpoint, { method: 'DELETE' }).catch((e) => {
-    console.error(e);
-    return null;
-  });
+  return fetch(endpoint, { method: 'DELETE' });
 }
 
 export function getTestRunWithResults(
@@ -68,9 +61,5 @@ export function getTestRunWithResults(
     .then((response) => response.json())
     .then((testRun) => {
       return testRun as TestRun;
-    })
-    .catch((e) => {
-      console.error(e);
-      return null;
     });
 }

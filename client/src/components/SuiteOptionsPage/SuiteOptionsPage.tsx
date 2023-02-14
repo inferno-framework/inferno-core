@@ -21,12 +21,14 @@ import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
+import { useSnackbar } from 'notistack';
 
 export interface SuiteOptionsPageProps {
   testSuite: TestSuite;
 }
 
 const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const styles = useStyles();
@@ -80,8 +82,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
           history.push('test_sessions/' + testSession.id);
         }
       })
-      .catch((e) => {
-        console.error(e);
+      .catch((e: Error) => {
+        enqueueSnackbar(`Error while creating test session: ${e.message}`, { variant: 'error' });
       });
   };
 
