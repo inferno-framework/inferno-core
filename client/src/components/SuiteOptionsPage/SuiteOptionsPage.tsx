@@ -33,7 +33,6 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const styles = useStyles();
   const history = useHistory();
-  const { test_suite_id } = useParams<{ test_suite_id: string }>();
   const initialSelectedSuiteOptions = testSuite.suite_options?.map((option) => ({
     // just grab the first to start
     // perhaps choices should be persisted in the URL to make it easy to share specific options
@@ -239,7 +238,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
                 fullWidth
                 data-testid="go-button"
                 sx={{ fontWeight: 600 }}
-                onClick={() => createTestSession(test_suite_id, selectedSuiteOptions)}
+                onClick={() => createTestSession(testSuite.id, selectedSuiteOptions)}
               >
                 Start Testing
               </Button>
