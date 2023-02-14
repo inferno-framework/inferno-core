@@ -3,7 +3,6 @@ import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { StyledEngineProvider } from '@mui/material/styles';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { getTestSuites } from '~/api/TestSuitesApi';
-import Page from './Page';
 import LandingPage from '~/components/LandingPage';
 import SuiteOptionsPage from '~/components/SuiteOptionsPage';
 import TestSessionWrapper from '~/components/TestSuite/TestSessionWrapper';
@@ -13,6 +12,7 @@ import { basePath } from '~/api/infernoApiService';
 import { useSnackbar } from 'notistack';
 
 import { useAppStore } from '~/store/app';
+import Page from './Page';
 
 const App: FC<unknown> = () => {
   const { enqueueSnackbar } = useSnackbar();

@@ -69,12 +69,12 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
     }
   };
 
-  function changeSuiteOption(option_id: string, value: string): void {
+  const changeSuiteOption = (option_id: string, value: string): void => {
     const newOptions: SuiteOption[] = selectedSuiteOptions.map((option) =>
       option.id === option_id ? { id: option.id, value: value } : { ...option }
     );
     setSelectedSuiteOptions(newOptions);
-  }
+  };
 
   const createTestSession = (options: SuiteOption[] | null = null): void => {
     if (!test_suite_id) return;
