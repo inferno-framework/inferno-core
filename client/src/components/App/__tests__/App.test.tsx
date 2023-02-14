@@ -1,10 +1,6 @@
 import React from 'react';
-<<<<<<< HEAD
 import { render } from '@testing-library/react';
-=======
-import { render, screen } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
->>>>>>> 2cc2304ee920c8a8ed9bd9a4c4f191ef67a74e91
 
 import App from '../App';
 import * as testSuitesApi from '~/api/TestSuitesApi';
