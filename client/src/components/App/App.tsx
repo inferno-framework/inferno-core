@@ -62,8 +62,6 @@ const App: FC<unknown> = () => {
     }
   };
 
-  // eslint-disable-next-line max-len
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const router = createBrowserRouter(
     [
       {
@@ -81,8 +79,6 @@ const App: FC<unknown> = () => {
         path: ':test_suite_id',
         element: <Page title="Options" />,
         loader: ({ params }) => {
-          // eslint-disable-next-line max-len
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           const suiteId: string = params.test_suite_id || '';
           const suite = testSuites.find((suite) => suite.id === suiteId);
           return suite ? <SuiteOptionsPage testSuite={suite} /> : <Navigate to="/" />;
