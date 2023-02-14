@@ -15,7 +15,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import useStyles from './styles';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
