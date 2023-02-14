@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
+import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 import TestSessionComponent from '../TestSession';
 import { mockedTestSession, mockedResultsList } from '../__mocked_data__/mockData';
@@ -11,15 +12,17 @@ test('Test session renders', () => {
   render(
     <BrowserRouter>
       <ThemeProvider>
-        <TestSessionComponent
-          testSession={mockedTestSession}
-          previousResults={mockedResultsList}
-          initialTestRun={null}
-          sessionData={new Map()}
-          setSessionData={() => {}}
-          drawerOpen={drawerOpen}
-          toggleDrawer={() => (drawerOpen = !drawerOpen)}
-        />
+        <SnackbarProvider>
+          <TestSessionComponent
+            testSession={mockedTestSession}
+            previousResults={mockedResultsList}
+            initialTestRun={null}
+            sessionData={new Map()}
+            setSessionData={() => {}}
+            drawerOpen={drawerOpen}
+            toggleDrawer={() => (drawerOpen = !drawerOpen)}
+          />
+        </SnackbarProvider>
       </ThemeProvider>
     </BrowserRouter>
   );

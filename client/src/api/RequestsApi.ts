@@ -7,9 +7,5 @@ export function getRequestDetails(requestId: string): Promise<Request | null> {
     .then((response) => response.json())
     .then((result) => {
       return result as Request;
-    })
-    .catch((e) => {
-      console.error(e);
-      return null;
     });
 }

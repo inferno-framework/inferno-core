@@ -1,5 +1,10 @@
 import React from 'react';
+<<<<<<< HEAD
 import { render } from '@testing-library/react';
+=======
+import { render, screen } from '@testing-library/react';
+import { SnackbarProvider } from 'notistack';
+>>>>>>> 2cc2304ee920c8a8ed9bd9a4c4f191ef67a74e91
 
 import App from '../App';
 import * as testSuitesApi from '~/api/TestSuitesApi';
@@ -25,7 +30,11 @@ describe('The App Root Component', () => {
     const mock = vi.spyOn(testSuitesApi, 'getTestSuites');
     mock.mockResolvedValue(testSuites);
 
-    render(<App />);
+    render(
+      <SnackbarProvider>
+        <App />
+      </SnackbarProvider>
+    );
 
     // We have to wait for something to load so we don't get act()
     // warnings.  The only thing rendered by App is children components.
@@ -43,8 +52,11 @@ describe('The App Root Component', () => {
 
     const postTestSessions = vi.spyOn(testSessionApi, 'postTestSessions');
     postTestSessions.mockResolvedValue(testSession);
-
-    render(<App />);
+    render(
+      <SnackbarProvider>
+        <App />
+      </SnackbarProvider>
+    );
 
     // We have to wait for something to load so we don't get act()
     // warnings.  The only thing rendered by App is children components.

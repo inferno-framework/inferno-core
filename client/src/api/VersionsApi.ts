@@ -7,8 +7,7 @@ export function getCoreVersion(): Promise<string> {
     .then((result) => {
       return 'version' in result ? (result.version as string) : ''; // eslint-disable-line
     })
-    .catch((e) => {
-      console.error(e);
+    .catch(() => {
       return '';
     });
 }

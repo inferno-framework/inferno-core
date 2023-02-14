@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 
 import RequestsList from '../RequestsList';
@@ -14,7 +15,9 @@ describe('The RequestsList component', () => {
 
     render(
       <ThemeProvider>
-        <RequestsList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
+        <SnackbarProvider>
+          <RequestsList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
+        </SnackbarProvider>
       </ThemeProvider>
     );
 

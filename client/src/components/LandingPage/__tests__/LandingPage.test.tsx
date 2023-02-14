@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 import LandingPage from '../LandingPage';
 import { mockedTestSuitesReturnValue } from '../__mocked_data__/mockData';
@@ -42,7 +43,9 @@ test('should enable Start Testing when test suite is selected', () => {
   render(
     <BrowserRouter>
       <ThemeProvider>
-        <LandingPage testSuites={testSuites} />
+        <SnackbarProvider>
+          <LandingPage testSuites={testSuites} />
+        </SnackbarProvider>
       </ThemeProvider>
     </BrowserRouter>
   );

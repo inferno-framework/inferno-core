@@ -1,3 +1,12 @@
+# 0.4.9
+* Fix a bug which prevented `inferno suite describe` from working.
+* Update documentation.
+* Fix a bug which showed an empty options selection screen when navigating to a
+  test suite with no options.
+* Fix a nil-safety bug when a FHIR request does not return a FHIR resource.
+* Display front end errors in the UI rather than just logging them in the
+  console.
+
 # 0.4.8
 * Fix a bug which removed the refresh token during automatic refreshes if the
   token refresh response did not contain a new refresh token.

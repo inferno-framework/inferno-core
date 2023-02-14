@@ -15,12 +15,14 @@ import { useNavigate } from 'react-router-dom';
 import { postTestSessions } from 'api/TestSessionApi';
 import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
+import { useSnackbar } from 'notistack';
 
 export interface LandingPageProps {
   testSuites: TestSuite[] | undefined;
 }
 
 const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
+  const { enqueueSnackbar } = useSnackbar();
   const [testSuiteChosen, setTestSuiteChosen] = React.useState('');
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const styles = useStyles();
@@ -37,8 +39,8 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             navigate('test_sessions/' + testSession.id);
           }
         })
-        .catch((e) => {
-          console.error(e);
+        .catch((e: Error) => {
+          enqueueSnackbar(`Error while creating test session: ${e.message}`, { variant: 'error' });
         });
     }
   }

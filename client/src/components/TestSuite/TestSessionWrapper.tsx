@@ -20,10 +20,12 @@ import {
   getTestSessionData,
 } from '~/api/TestSessionApi';
 import { getCoreVersion } from '~/api/VersionsApi';
+import { useSnackbar } from 'notistack';
 
 import { useAppStore } from '~/store/app';
 
 const TestSessionWrapper: FC<unknown> = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const testSuites = useAppStore((state) => state.testSuites);
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [testSession, setTestSession] = React.useState<TestSession>();
@@ -42,8 +44,8 @@ const TestSessionWrapper: FC<unknown> = () => {
       .then((version: string) => {
         setCoreVersion(version);
       })
-      .catch((e) => {
-        console.error(e);
+      .catch(() => {
+        setCoreVersion('');
       });
   }, []);
 
@@ -53,10 +55,12 @@ const TestSessionWrapper: FC<unknown> = () => {
         if (retrievedTestSession) {
           setTestSession(retrievedTestSession);
         } else {
-          console.error('Failed to load test session');
+          enqueueSnackbar('Failed to load test session', { variant: 'error' });
         }
       })
-      .catch((e) => console.error(e))
+      .catch((e: Error) => {
+        enqueueSnackbar(`Error while getting test session: ${e.message}`, { variant: 'error' });
+      })
       .finally(() => setAttemptedGetSession(true));
   }
 
@@ -69,7 +73,9 @@ const TestSessionWrapper: FC<unknown> = () => {
           setTestRun(null);
         }
       })
-      .catch((e) => console.error(e))
+      .catch(() => {
+        // Assume no prior test run exists, do nothing
+      })
       .finally(() => setAttemptedGetRun(true));
   }
 
@@ -79,10 +85,12 @@ const TestSessionWrapper: FC<unknown> = () => {
         if (results) {
           setTestResults(results);
         } else {
-          console.error('failed to load test session results');
+          enqueueSnackbar('Failed to load test session results', { variant: 'error' });
         }
       })
-      .catch((e) => console.error(e))
+      .catch((e: Error) => {
+        enqueueSnackbar(`Error while getting test results: ${e.message}`, { variant: 'error' });
+      })
       .finally(() => setAttemptedGetResults(true));
   }
 
@@ -97,10 +105,12 @@ const TestSessionWrapper: FC<unknown> = () => {
           });
           setSessionData(new Map(sessionData));
         } else {
-          console.error('failed to load session data');
+          enqueueSnackbar('Failed to load session data', { variant: 'error' });
         }
       })
-      .catch((e) => console.error(e))
+      .catch((e: Error) => {
+        enqueueSnackbar(`Error getting session data: ${e.message}`, { variant: 'error' });
+      })
       .finally(() => setAttemptedSessionData(true));
   }
 
