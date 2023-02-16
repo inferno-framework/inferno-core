@@ -13,7 +13,9 @@ test('renders Inferno Landing Page', () => {
   render(
     <BrowserRouter>
       <ThemeProvider>
-        <LandingPage testSuites={testSuites} />
+        <SnackbarProvider>
+          <LandingPage testSuites={testSuites} />
+        </SnackbarProvider>
       </ThemeProvider>
     </BrowserRouter>
   );
@@ -28,7 +30,9 @@ test('Start Testing button should be disabled when test suite is not selected', 
   render(
     <BrowserRouter>
       <ThemeProvider>
-        <LandingPage testSuites={testSuites} />
+        <SnackbarProvider>
+          <LandingPage testSuites={testSuites} />
+        </SnackbarProvider>
       </ThemeProvider>
     </BrowserRouter>
   );

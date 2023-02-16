@@ -1,18 +1,13 @@
 import React, { FC, useEffect } from 'react';
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import { StyledEngineProvider } from '@mui/material/styles';
+import { useSnackbar } from 'notistack';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { getTestSuites } from '~/api/TestSuitesApi';
-import LandingPage from '~/components/LandingPage';
-import SuiteOptionsPage from '~/components/SuiteOptionsPage';
-import TestSessionWrapper from '~/components/TestSuite/TestSessionWrapper';
+import { router } from '~/components/App/Router';
 import ThemeProvider from '~/components/ThemeProvider';
 import { TestSession, TestSuite } from '~/models/testSuiteModels';
-import { basePath } from '~/api/infernoApiService';
-import { useSnackbar } from 'notistack';
-
 import { useAppStore } from '~/store/app';
-import Page from './Page';
 
 const App: FC<unknown> = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -64,38 +59,6 @@ const App: FC<unknown> = () => {
     }
   };
 
-  const router = createBrowserRouter(
-    [
-      {
-        path: '/',
-        element:
-          testSuites.length === 1 && testSession ? (
-            <Navigate to={`/test_sessions/${testSession.id}`} />
-          ) : (
-            <Page title={`Inferno Test Suites`}>
-              <LandingPage testSuites={testSuites} />
-            </Page>
-          ),
-      },
-      {
-        path: ':test_suite_id',
-        element: <Page title="Options" />,
-        loader: ({ params }) => {
-          const suiteId: string = params.test_suite_id || '';
-          const suite = testSuites.find((suite) => suite.id === suiteId);
-          return <SuiteOptionsPage testSuite={suite} />;
-        },
-      },
-      {
-        // Title for TestSessionWrapper is set in the component
-        // because testSession is not set at the time of render
-        path: 'test_sessions/:test_session_id',
-        element: <TestSessionWrapper />,
-      },
-    ],
-    { basename: `/${basePath}` }
-  );
-
   if (!testSuites || (testSuites.length === 1 && !testSession)) {
     return <></>;
   }
@@ -103,7 +66,7 @@ const App: FC<unknown> = () => {
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider>
-        <RouterProvider router={router} />
+        <RouterProvider router={router(testSuites, testSession)} />
       </ThemeProvider>
     </StyledEngineProvider>
   );

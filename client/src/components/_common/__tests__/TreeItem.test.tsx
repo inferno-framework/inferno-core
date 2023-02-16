@@ -1,8 +1,9 @@
 import React from 'react';
-import { BrowserRouter, MemoryRouter } from 'react-router-dom';
-import TreeView from '@mui/lab/TreeView';
+import { Router, BrowserRouter } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import TreeView from '@mui/lab/TreeView';
 import TreeItemLabel from 'components/TestSuite/TestSuiteTree/TreeItemLabel';
 import ThemeProvider from 'components/ThemeProvider';
 import CustomTreeItem from '../TreeItem';
@@ -54,8 +55,11 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
 });
 
 test('clicking on TreeItem should navigate to group or test instance', () => {
+  const history = createMemoryHistory();
+  history.push('/test_sessions/:test_session_id');
+
   render(
-    <MemoryRouter initialEntries={['/test_sessions/:test_session_id']}>
+    <Router location={history.location} navigator={history}>
       <ThemeProvider>
         <TreeView>
           <CustomTreeItem
@@ -65,13 +69,12 @@ test('clicking on TreeItem should navigate to group or test instance', () => {
           />
         </TreeView>
       </ThemeProvider>
-    </MemoryRouter>
+    </Router>
   );
 
   const labelElement = screen.getAllByTestId('tiLabel', { exact: false })[0];
   expect(labelElement).toBeInTheDocument();
 
   userEvent.click(labelElement);
-  // TODO: Find alternative for history
-  // expect(history.location.hash).toBe(`#${mockedTestSuite.id}`);
+  expect(history.location.hash).toBe(`#${mockedTestSuite.id}`);
 });
