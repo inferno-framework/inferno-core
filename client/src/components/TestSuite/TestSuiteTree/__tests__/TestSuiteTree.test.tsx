@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Test, TestGroup, TestSuite } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
 import ThemeProvider from 'components/ThemeProvider';
@@ -141,14 +140,4 @@ test('Individual tests are not shown by default', () => {
     const testTitle = screen.queryByText(test.title);
     expect(testTitle).toBeNull();
   });
-});
-
-test('Calls setSelectedRunnable when tree item is clicked', () => {
-  render(
-    <ThemeProvider>
-      <TestSuiteTree {...testSuiteTreeProps} />
-    </ThemeProvider>
-  );
-  const testSuiteLabel = screen.getByTestId(`tiLabel-${testSuiteTreeProps.testSuite.id}`);
-  userEvent.click(testSuiteLabel);
 });

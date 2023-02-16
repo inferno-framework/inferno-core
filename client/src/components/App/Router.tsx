@@ -37,6 +37,6 @@ export const router = (testSuites: TestSuite[], testSession?: TestSession) => {
         element: <TestSessionWrapper />,
       },
     ],
-    { basename: `/${basePath}` }
+    { basename: `/${basePath || ''}` }
   );
 };
