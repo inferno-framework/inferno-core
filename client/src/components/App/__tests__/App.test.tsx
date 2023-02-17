@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 
 import App from '../App';
@@ -35,12 +35,13 @@ describe('The App Root Component', () => {
     expect(getTestSuites).toBeCalledTimes(1);
   });
 
-  it('sets the Test Session if there is a single Test Suite', () => {
+  it('sets the Test Session if there is a single Test Suite', async () => {
     const getTestSuites = vi.spyOn(testSuitesApi, 'getTestSuites');
     getTestSuites.mockResolvedValue(singleTestSuite);
 
     const postTestSessions = vi.spyOn(testSessionApi, 'postTestSessions');
     postTestSessions.mockResolvedValue(testSession);
+    postTestSessions.mockRejectedValue(new Error('Error while creating test session'));
 
     render(
       <SnackbarProvider>
@@ -48,9 +49,10 @@ describe('The App Root Component', () => {
       </SnackbarProvider>
     );
 
-    console.log('test');
-
-    expect(getTestSuites).toBeCalledTimes(1);
-    // expect(postTestSessions).toBeCalledTimes(1);
+    // We have to wait for something to load so we don't get act()
+    // warnings.  The only thing rendered by App is children components.
+    // So await for those to be done with side effects (hooks).
+    await screen.findByText('Suite One');
+    expect(postTestSessions).toBeCalledTimes(1);
   });
 });
