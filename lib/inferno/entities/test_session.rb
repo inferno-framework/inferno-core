@@ -40,7 +40,7 @@ module Inferno
 
         self.suite_options ||= []
 
-        test_suite.suite_options&.each do |option|
+        test_suite&.suite_options&.each do |option|
           if suite_options.none? { |selected_option| selected_option.id == option.id }
             suite_options << DSL::SuiteOption.new(id: option.id, value: option.list_options.first[:value])
           end

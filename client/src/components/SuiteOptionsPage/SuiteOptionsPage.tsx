@@ -81,7 +81,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
     postTestSessions(test_suite_id, null, options)
       .then((testSession: TestSession | null) => {
         if (testSession && testSession.test_suite) {
-          navigate('/test_sessions/' + testSession.id);
+          navigate(testSession.test_suite_id + '/' + testSession.id);
         }
       })
       .catch((e: Error) => {

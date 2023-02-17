@@ -33,7 +33,7 @@ export const router = (testSuites: TestSuite[], testSession?: TestSession) => {
       {
         // Title for TestSessionWrapper is set in the component
         // because testSession is not set at the time of render
-        path: 'test_sessions/:test_session_id',
+        path: ':test_suite_id/:test_session_id',
         element: <TestSessionWrapper />,
       },
     ],
