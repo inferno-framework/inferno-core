@@ -97,9 +97,9 @@ const App: FC<unknown> = () => {
                 const suiteName = suite?.short_title || suite?.title;
                 const titlePrepend = suiteName ? `${suiteName}` : 'Suite';
 
-                return testSuites.length > 0 ? (
+                return suite ? (
                   <Page title={`${titlePrepend} Options`}>
-                    <SuiteOptionsPage {...props} testSuites={testSuites} />
+                    <SuiteOptionsPage {...props} testSuite={suite} />
                   </Page>
                 ) : (
                   <Page title={`Inferno Test Suites`}>
@@ -107,7 +107,7 @@ const App: FC<unknown> = () => {
                   </Page>
                 );
               }}
-            ></Route>
+            />
           </Switch>
         </ThemeProvider>
       </StyledEngineProvider>

@@ -15,7 +15,7 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import useStyles from './styles';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
@@ -24,18 +24,16 @@ import lightTheme from '~/styles/theme';
 import { useSnackbar } from 'notistack';
 
 export interface SuiteOptionsPageProps {
-  testSuites: TestSuite[] | undefined;
+  testSuite: TestSuite;
 }
 
-const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
+const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
   const { enqueueSnackbar } = useSnackbar();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const styles = useStyles();
   const history = useHistory();
-  const { test_suite_id } = useParams<{ test_suite_id: string }>();
-  const testSuite = testSuites?.find((suite: TestSuite) => suite.id === test_suite_id);
-  const initialSelectedSuiteOptions = testSuite?.suite_options?.map((option) => ({
+  const initialSelectedSuiteOptions = testSuite.suite_options?.map((option) => ({
     // just grab the first to start
     // perhaps choices should be persisted in the URL to make it easy to share specific options
     id: option.id,
@@ -48,9 +46,12 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
   const selectionPanel = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    // If no options, then start a test session
-    if (testSuite && (!testSuite.suite_options || testSuite.suite_options.length === 0)) {
-      createTestSession([]);
+    // If no options and no description, then start a test session
+    if (
+      !testSuite.suite_summary &&
+      (!testSuite.suite_options || testSuite.suite_options.length === 0)
+    ) {
+      createTestSession(testSuite.id, null);
     }
   }, []);
 
@@ -73,8 +74,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
     setSelectedSuiteOptions(newOptions);
   }
 
-  function createTestSession(options: SuiteOption[]): void {
-    postTestSessions(test_suite_id, null, options)
+  const createTestSession = (id: string, options: SuiteOption[] | null = null): void => {
+    postTestSessions(id, null, options)
       .then((testSession: TestSession | null) => {
         if (testSession && testSession.test_suite) {
           history.push('test_sessions/' + testSession.id);
@@ -83,7 +84,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
       .catch((e: Error) => {
         enqueueSnackbar(`Error while creating test session: ${e.message}`, { variant: 'error' });
       });
-  }
+  };
 
   const renderBackButton = () => {
     const returnHome = () => {
@@ -158,7 +159,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
             fontSize: windowIsSmall ? '2rem' : 'auto',
           }}
         >
-          {testSuite?.title}
+          {testSuite.title}
         </Typography>
       </Box>
 
@@ -186,9 +187,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
               wordBreak: 'break-word',
             }}
           >
-            <ReactMarkdown>
-              {testSuite?.suite_summary || testSuite?.description || ''}
-            </ReactMarkdown>
+            <ReactMarkdown>{testSuite.suite_summary || testSuite.description || ''}</ReactMarkdown>
           </Typography>
         </Box>
         {/* Selection panel */}
@@ -222,7 +221,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
             </Box>
 
             <Box overflow="auto" px={4} pt={2}>
-              {testSuite?.suite_options ? (
+              {testSuite.suite_options ? (
                 testSuite.suite_options.map((suiteOption: SuiteOption, i) =>
                   renderOption(suiteOption, i)
                 )
@@ -239,9 +238,9 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuites }) => {
                 fullWidth
                 data-testid="go-button"
                 sx={{ fontWeight: 600 }}
-                onClick={() => createTestSession(selectedSuiteOptions)}
+                onClick={() => createTestSession(testSuite.id, selectedSuiteOptions)}
               >
-                Select Options
+                Start Testing
               </Button>
             </Box>
           </Paper>
