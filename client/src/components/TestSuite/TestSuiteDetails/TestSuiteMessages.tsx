@@ -24,11 +24,11 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }
         severity={severity}
         variant="filled"
         onClick={() => {
-          navigate(`${window.location.pathname}#${testSuiteId || ''}/config`);
+          navigate(`#${testSuiteId || ''}/config`);
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            navigate(`${window.location.pathname}#${testSuiteId || ''}/config`);
+            navigate(`#${testSuiteId || ''}/config`);
           }
         }}
         className={styles.alert}
