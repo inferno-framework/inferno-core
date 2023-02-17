@@ -3,11 +3,12 @@ import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@m
 import { Link, useHistory } from 'react-router-dom';
 import { Menu, NoteAdd } from '@mui/icons-material';
 import { getStaticPath } from '~/api/infernoApiService';
-import { SuiteOptionChoice } from '~/models/testSuiteModels';
+import { SuiteOptionChoice, TestSession } from '~/models/testSuiteModels';
 import { useAppStore } from '~/store/app';
 import useStyles from './styles';
 import icon from '~/images/inferno_icon.png';
 import lightTheme from '~/styles/theme';
+import { postTestSessions } from '~/api/TestSessionApi';
 
 export interface HeaderProps {
   suiteId?: string;
@@ -30,9 +31,29 @@ const Header: FC<HeaderProps> = ({
   const history = useHistory();
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const setTestSession = useAppStore((state) => state.setTestSession);
 
+<<<<<<< Updated upstream
   const returnHome = () => {
     history.push('/');
+=======
+  const startNewSession = () => {
+    if (!suiteId) {
+      navigate('/');
+    } else {
+      postTestSessions(suiteId, null, null)
+        .then((testSession: TestSession | null) => {
+          navigate('/');
+
+          if (testSession && testSession.test_suite) {
+            setTestSession(testSession);
+          }
+        })
+        .catch(() => {
+          navigate('/');
+        });
+    }
+>>>>>>> Stashed changes
   };
 
   const suiteOptionsString =
@@ -62,7 +83,7 @@ const Header: FC<HeaderProps> = ({
             <Menu fontSize="inherit" />
           </IconButton>
         ) : (
-          <Link to="/" aria-label="Inferno Home">
+          <Link to="/" aria-label="Inferno Home" onClick={() => setTestSession(undefined)}>
             <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
           </Link>
         )}
@@ -109,7 +130,7 @@ const Header: FC<HeaderProps> = ({
           style={windowIsSmall ? { marginRight: '-16px' } : {}}
         >
           {windowIsSmall ? (
-            <IconButton color="secondary" aria-label="New Session" onClick={returnHome}>
+            <IconButton color="secondary" aria-label="New Session" onClick={startNewSession}>
               <Avatar sx={{ width: 32, height: 32, bgcolor: lightTheme.palette.secondary.main }}>
                 <NoteAdd fontSize="small" />
               </Avatar>
@@ -121,7 +142,7 @@ const Header: FC<HeaderProps> = ({
               size="small"
               variant="contained"
               startIcon={<NoteAdd />}
-              onClick={returnHome}
+              onClick={startNewSession}
             >
               New Session
             </Button>
