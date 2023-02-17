@@ -8,7 +8,7 @@ export function getTestSuites(): Promise<TestSuite[]> {
     .then((response) => response.json())
     .then((result) => {
       testSets = result as TestSuite[];
-      return [testSets[0]] || [];
+      return [testSets[2]] || [];
     })
     .catch(() => {
       return [];

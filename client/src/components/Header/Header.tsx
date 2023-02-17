@@ -39,7 +39,7 @@ const Header: FC<HeaderProps> = ({
     } else {
       postTestSessions(suiteId, null, null)
         .then((testSession: TestSession | null) => {
-          navigate('/');
+          // navigate('/');
 
           if (testSession && testSession.test_suite) {
             setTestSession(testSession);
