@@ -36,7 +36,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       postTestSessions(testSuiteChosen, null, null)
         .then((testSession: TestSession | null) => {
           if (testSession && testSession.test_suite) {
-            navigate(testSession.test_suite_id + '/' + testSession.id);
+            navigate(`/${testSession.test_suite_id}/${testSession.id}`);
           }
         })
         .catch((e: Error) => {
