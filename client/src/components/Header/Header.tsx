@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Menu, NoteAdd } from '@mui/icons-material';
 import { getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice, TestSession } from '~/models/testSuiteModels';
@@ -28,15 +28,11 @@ const Header: FC<HeaderProps> = ({
   toggleDrawer,
 }) => {
   const styles = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const setTestSession = useAppStore((state) => state.setTestSession);
 
-<<<<<<< Updated upstream
-  const returnHome = () => {
-    history.push('/');
-=======
   const startNewSession = () => {
     if (!suiteId) {
       navigate('/');
@@ -53,7 +49,6 @@ const Header: FC<HeaderProps> = ({
           navigate('/');
         });
     }
->>>>>>> Stashed changes
   };
 
   const suiteOptionsString =

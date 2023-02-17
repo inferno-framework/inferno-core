@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Alert, AlertColor, Box } from '@mui/material';
 import { Message } from '~/models/testSuiteModels';
 import useStyles from './styles';
@@ -11,7 +11,8 @@ interface TestSuiteMessagesProps {
 
 const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }) => {
   const styles = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
+
   const errorMessages = messages.filter((message) => message.type === 'error');
   const warningMessages = messages.filter((message) => message.type === 'warning');
   const infoMessages = messages.filter((message) => message.type === 'info');
@@ -23,11 +24,11 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }
         severity={severity}
         variant="filled"
         onClick={() => {
-          history.push(`${history.location.pathname}#${testSuiteId || ''}/config`);
+          navigate(`${window.location.pathname}#${testSuiteId || ''}/config`);
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            history.push(`${history.location.pathname}#${testSuiteId || ''}/config`);
+            navigate(`${window.location.pathname}#${testSuiteId || ''}/config`);
           }
         }}
         className={styles.alert}

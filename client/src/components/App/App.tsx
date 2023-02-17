@@ -1,17 +1,12 @@
 import React, { FC, useEffect } from 'react';
-import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import { StyledEngineProvider } from '@mui/material/styles';
+import { useSnackbar } from 'notistack';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { getTestSuites } from '~/api/TestSuitesApi';
-import Page from './Page';
-import LandingPage from '~/components/LandingPage';
-import SuiteOptionsPage from '~/components/SuiteOptionsPage';
-import TestSessionWrapper from '~/components/TestSuite/TestSessionWrapper';
+import { router } from '~/components/App/Router';
 import ThemeProvider from '~/components/ThemeProvider';
 import { TestSession, TestSuite } from '~/models/testSuiteModels';
-import { basePath } from '~/api/infernoApiService';
-import { useSnackbar } from 'notistack';
-
 import { useAppStore } from '~/store/app';
 
 const App: FC<unknown> = () => {
@@ -69,49 +64,11 @@ const App: FC<unknown> = () => {
   }
 
   return (
-    <Router basename={basePath}>
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider>
-          <Switch>
-            <Route exact path="/">
-              {testSuites.length === 1 && testSession ? (
-                <Redirect to={`/test_sessions/${testSession.id}`} />
-              ) : (
-                <Page title={`Inferno Test Suites`}>
-                  <LandingPage testSuites={testSuites} />
-                </Page>
-              )}
-            </Route>
-            {/* 
-              Title for TestSessionWrapper is set in the component 
-              because testSession is not set at the time of render 
-            */}
-            <Route path="/:test_suite_id/:test_session_id">
-              <TestSessionWrapper />
-            </Route>
-            <Route
-              path="/:test_suite_id"
-              render={(props) => {
-                const suiteId = props.match.params.test_suite_id;
-                const suite = testSuites.find((suite) => suite.id === suiteId);
-                const suiteName = suite?.short_title || suite?.title;
-                const titlePrepend = suiteName ? `${suiteName}` : 'Suite';
-
-                return suite ? (
-                  <Page title={`${titlePrepend} Options`}>
-                    <SuiteOptionsPage {...props} testSuite={suite} />
-                  </Page>
-                ) : (
-                  <Page title={`Inferno Test Suites`}>
-                    <LandingPage testSuites={testSuites} />
-                  </Page>
-                );
-              }}
-            />
-          </Switch>
-        </ThemeProvider>
-      </StyledEngineProvider>
-    </Router>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider>
+        <RouterProvider router={router(testSuites, testSession)} />
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 };
 
