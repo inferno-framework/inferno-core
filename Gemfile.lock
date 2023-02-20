@@ -3,6 +3,7 @@ PATH
   specs:
     inferno_core (0.4.9)
       activesupport (~> 6.1)
+      base62-rb (= 0.3.1)
       blueprinter (= 0.25.2)
       dotenv (~> 2.7)
       dry-configurable (= 0.13.0)
@@ -39,6 +40,7 @@ GEM
       public_suffix (>= 2.0.2, < 5.0)
     ast (2.4.2)
     backports (3.23.0)
+    base62-rb (0.3.1)
     bcp47 (0.3.3)
       i18n
     blueprinter (0.25.2)

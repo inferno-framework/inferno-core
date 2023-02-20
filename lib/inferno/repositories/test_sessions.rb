@@ -1,3 +1,4 @@
+require 'base62-rb'
 require_relative 'repository'
 require_relative '../utils/preset_processor'
 
@@ -72,7 +73,7 @@ module Inferno
         one_to_many :test_runs, class: 'Inferno::Repositories::TestRuns::Model', key: :test_session_id
 
         def before_create
-          self.id = SecureRandom.uuid
+          self.id = Base62.encode(SecureRandom.random_number(2**64))
           time = Time.now
           self.created_at ||= time
           self.updated_at ||= time
