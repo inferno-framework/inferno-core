@@ -56,7 +56,7 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
 
 test('clicking on TreeItem should navigate to group or test instance', () => {
   const history = createMemoryHistory();
-  history.push('/test_sessions/:test_session_id');
+  history.push(`/${mockedTestSuite.id}/:test_session_id`);
 
   render(
     <Router location={history.location} navigator={history}>
