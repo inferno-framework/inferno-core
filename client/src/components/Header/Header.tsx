@@ -39,10 +39,9 @@ const Header: FC<HeaderProps> = ({
     } else {
       postTestSessions(suiteId, null, null)
         .then((testSession: TestSession | null) => {
-          // navigate('/');
-
           if (testSession && testSession.test_suite) {
             setTestSession(testSession);
+            navigate(`/${suiteId}/${testSession.id}`);
           }
         })
         .catch(() => {
@@ -78,7 +77,7 @@ const Header: FC<HeaderProps> = ({
             <Menu fontSize="inherit" />
           </IconButton>
         ) : (
-          <Link to="/" aria-label="Inferno Home" onClick={() => setTestSession(undefined)}>
+          <Link to="/" aria-label="Inferno Home">
             <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
           </Link>
         )}

@@ -14,7 +14,7 @@ export const router = (testSuites: TestSuite[], testSession?: TestSession) => {
         path: '/',
         element:
           testSuites.length === 1 && testSession ? (
-            <Navigate to={`/test_sessions/${testSession.id}`} />
+            <Navigate to={`/${testSuites[0].id}/${testSession.id}`} />
           ) : (
             <Page title={`Inferno Test Suites`}>
               <LandingPage testSuites={testSuites} />
