@@ -49,9 +49,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
   useEffect(() => {
     if (
       // If no suite or no options and no description, then start a test session
-      !testSuite ||
-      (!testSuite.suite_summary &&
-        (!testSuite.suite_options || testSuite.suite_options.length === 0))
+      !testSuite?.suite_summary &&
+      (!testSuite?.suite_options || testSuite?.suite_options.length === 0)
     ) {
       createTestSession(null);
     }

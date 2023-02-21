@@ -12,6 +12,7 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/inferno-framework/inferno-core'
   spec.license       = 'Apache-2.0'
   spec.add_runtime_dependency 'activesupport', '~> 6.1'
+  spec.add_runtime_dependency 'base62-rb', '0.3.1'
   spec.add_runtime_dependency 'blueprinter', '0.25.2'
   spec.add_runtime_dependency 'dotenv', '~> 2.7'
   spec.add_runtime_dependency 'dry-configurable', '0.13.0'
