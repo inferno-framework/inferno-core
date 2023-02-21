@@ -3,12 +3,11 @@ import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@m
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, NoteAdd } from '@mui/icons-material';
 import { getStaticPath } from '~/api/infernoApiService';
-import { SuiteOptionChoice, TestSession } from '~/models/testSuiteModels';
+import { SuiteOptionChoice } from '~/models/testSuiteModels';
 import { useAppStore } from '~/store/app';
 import useStyles from './styles';
 import icon from '~/images/inferno_icon.png';
 import lightTheme from '~/styles/theme';
-import { postTestSessions } from '~/api/TestSessionApi';
 
 export interface HeaderProps {
   suiteId?: string;
@@ -31,23 +30,9 @@ const Header: FC<HeaderProps> = ({
   const navigate = useNavigate();
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
-  const setTestSession = useAppStore((state) => state.setTestSession);
 
   const startNewSession = () => {
-    if (!suiteId) {
-      navigate('/');
-    } else {
-      postTestSessions(suiteId, null, null)
-        .then((testSession: TestSession | null) => {
-          if (testSession && testSession.test_suite) {
-            navigate(`/${suiteId}/${testSession.id}`);
-            setTestSession(testSession);
-          }
-        })
-        .catch(() => {
-          navigate('/');
-        });
-    }
+    navigate('/');
   };
 
   const suiteOptionsString =

@@ -29,6 +29,7 @@ export interface SuiteOptionsPageProps {
 
 const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const testSuites = useAppStore((state) => state.testSuites);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const styles = useStyles();
@@ -208,8 +209,13 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
             className={styles.optionsList}
             sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
           >
-            <Box display="flex" alignItems="center" justifyContent="space-between" mx={1}>
-              {renderBackButton()}
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent={testSuites.length > 1 ? 'space-between' : 'center'}
+              mx={1}
+            >
+              {testSuites.length > 1 && renderBackButton()}
               <Typography
                 variant="h4"
                 component="h2"
@@ -221,7 +227,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
                 Options
               </Typography>
               {/* Spacer to center title with button */}
-              <Box minWidth="45px" />
+              {testSuites.length > 1 && <Box minWidth="45px" />}
             </Box>
 
             <Box overflow="auto" px={4} pt={2}>
