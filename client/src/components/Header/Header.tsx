@@ -40,8 +40,8 @@ const Header: FC<HeaderProps> = ({
       postTestSessions(suiteId, null, null)
         .then((testSession: TestSession | null) => {
           if (testSession && testSession.test_suite) {
-            setTestSession(testSession);
             navigate(`/${suiteId}/${testSession.id}`);
+            setTestSession(testSession);
           }
         })
         .catch(() => {
