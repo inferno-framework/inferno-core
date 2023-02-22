@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { Box, Card, Divider, Tab, Tabs, Tooltip, Typography } from '@mui/material';
 import { Message, Request, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
@@ -26,6 +26,10 @@ export interface TabProps {
 const TestRunDetail: FC<TestRunDetailProps> = ({ test, currentTabIndex, tabs, updateRequest }) => {
   const styles = useStyles();
   const [tabIndex, setTabIndex] = React.useState(currentTabIndex);
+
+  useEffect(() => {
+    setTabIndex(currentTabIndex);
+  }, [currentTabIndex]);
 
   const testDescription: JSX.Element = (
     <Box mx={2}>
