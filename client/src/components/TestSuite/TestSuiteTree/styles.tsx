@@ -25,14 +25,17 @@ export default makeStyles((theme: Theme) => ({
     color: theme.palette.common.grayDarkest,
   },
   testSuiteTreePanel: {
+    display: 'flex',
+    flexDirection: 'column',
     width: '300px',
     flexGrow: 1,
-    overflowX: 'hidden',
+    overflow: 'hidden',
   },
   testSuiteTree: {
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    overflowY: 'auto',
   },
   treeRoot: {
     '& $labelText': {
@@ -40,5 +43,11 @@ export default makeStyles((theme: Theme) => ({
       fontWeight: 'bold',
     },
     padding: '8px 20px !important',
+  },
+  treeItemTopBorder: {
+    borderTop: `1px solid ${theme.palette.common.grayLighter}`,
+  },
+  treeItemBottomBorder: {
+    borderBottom: `1px solid ${theme.palette.common.grayLighter}`,
   },
 }));

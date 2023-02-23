@@ -31,7 +31,10 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
 
   const openPanel = () => {
     if (view !== 'report') {
-      if (setPanelIndex && panelIndex) setPanelIndex(panelIndex);
+      // panelIndex can be 0, which is falsy, so explicitly check against undefined
+      if (setPanelIndex && panelIndex !== undefined) {
+        setPanelIndex(panelIndex);
+      }
       if (setOpen) setOpen(true);
     }
   };
@@ -45,12 +48,12 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
       className={clsx([color, badgeStyle, styles.badgeBase])}
       onClick={(e) => {
         e.stopPropagation();
-        if (openPanel) openPanel();
+        openPanel();
       }}
       onKeyDown={(e) => {
         e.stopPropagation();
         if (e.key === 'Enter') {
-          if (openPanel) openPanel();
+          openPanel();
         }
       }}
     >
@@ -62,12 +65,12 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
           className={clsx([styles.badgeIcon, color])}
           onClick={(e) => {
             e.stopPropagation();
-            if (openPanel) openPanel();
+            openPanel();
           }}
           onKeyDown={(e) => {
             e.stopPropagation();
             if (e.key === 'Enter') {
-              if (openPanel) openPanel();
+              openPanel();
             }
           }}
         />
