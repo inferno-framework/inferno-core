@@ -14,6 +14,7 @@ import remarkGfm from 'remark-gfm';
 interface TestRunDetailProps {
   test: Test;
   currentTabIndex: number;
+  setTabIndex: React.Dispatch<React.SetStateAction<number>>;
   updateRequest?: (requestId: string, resultId: string, request: Request) => void;
   tabs: TabProps[];
 }
@@ -23,9 +24,14 @@ export interface TabProps {
   value: Message[] | Request[] | TestInput[] | TestOutput[] | string | null | undefined;
 }
 
-const TestRunDetail: FC<TestRunDetailProps> = ({ test, currentTabIndex, tabs, updateRequest }) => {
+const TestRunDetail: FC<TestRunDetailProps> = ({
+  test,
+  currentTabIndex,
+  setTabIndex,
+  updateRequest,
+  tabs,
+}) => {
   const styles = useStyles();
-  const [tabIndex, setTabIndex] = React.useState(currentTabIndex);
 
   useEffect(() => {
     setTabIndex(currentTabIndex);
@@ -81,7 +87,7 @@ const TestRunDetail: FC<TestRunDetailProps> = ({ test, currentTabIndex, tabs, up
   return (
     <Card data-testid="test-run-detail">
       <Tabs
-        value={tabIndex}
+        value={currentTabIndex}
         variant="scrollable"
         className={styles.tabs}
         onChange={(e, newIndex: number) => {
@@ -91,10 +97,10 @@ const TestRunDetail: FC<TestRunDetailProps> = ({ test, currentTabIndex, tabs, up
         {tabs.map((tab, i) => renderTab(tab, i))}
       </Tabs>
       <Divider />
-      <TabPanel id={test.id} currentTabIndex={tabIndex} index={0}>
+      <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={0}>
         <MessagesList messages={test.result?.messages || []} />
       </TabPanel>
-      <TabPanel id={test.id} currentTabIndex={tabIndex} index={1}>
+      <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={1}>
         {updateRequest && (
           <RequestsList
             requests={test.result?.requests || []}
@@ -104,21 +110,21 @@ const TestRunDetail: FC<TestRunDetailProps> = ({ test, currentTabIndex, tabs, up
           />
         )}
       </TabPanel>
-      <TabPanel id={test.id} currentTabIndex={tabIndex} index={2}>
+      <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={2}>
         <InputOutputsList
           inputOutputs={test.result?.inputs || []}
           noValuesMessage="No Inputs"
           headerName="Input"
         />
       </TabPanel>
-      <TabPanel id={test.id} currentTabIndex={tabIndex} index={3}>
+      <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={3}>
         <InputOutputsList
           inputOutputs={test.result?.outputs || []}
           noValuesMessage="No Outputs"
           headerName="Output"
         />
       </TabPanel>
-      <TabPanel id={test.id} currentTabIndex={tabIndex} index={4}>
+      <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={4}>
         {shouldShowDescription(test, testDescription) ? (
           testDescription
         ) : (
