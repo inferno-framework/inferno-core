@@ -248,6 +248,7 @@ const TestListItem: FC<TestListItemProps> = ({
               test={test}
               tabs={tabs}
               currentTabIndex={tabIndex}
+              setTabIndex={setTabIndex}
               updateRequest={updateRequest}
             />
           )}
