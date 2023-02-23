@@ -386,10 +386,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           classes={{ paper: styles.swipeableDrawerHeight }}
         >
           {/* Spacer to be updated with header height */}
-          <Toolbar sx={{ minHeight: `${headerHeight}px` }} />
+          <Toolbar sx={{ minHeight: `${headerHeight}px !important` }} />
           {renderDrawerContents()}
           {/* Spacer to be updated with footer height */}
-          <Toolbar sx={{ minHeight: `${footerHeight}px` }} />
+          <Toolbar sx={{ minHeight: `${footerHeight}px !important` }} />
         </SwipeableDrawer>
       ) : (
         <Drawer

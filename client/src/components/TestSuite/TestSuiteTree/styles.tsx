@@ -29,7 +29,7 @@ export default makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     width: '300px',
     flexGrow: 1,
-    overflowY: 'hidden',
+    overflow: 'hidden',
   },
   testSuiteTree: {
     height: '100%',
