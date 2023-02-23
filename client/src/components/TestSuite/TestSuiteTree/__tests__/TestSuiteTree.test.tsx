@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Test, TestGroup, TestSuite } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
 import ThemeProvider from 'components/ThemeProvider';
@@ -9,9 +8,7 @@ import { vi } from 'vitest';
 
 const runTestsMock = vi.fn();
 vi.mock('react-router-dom', () => ({
-  useHistory: () => ({
-    push: vi.fn(),
-  }),
+  useNavigate: () => {},
 }));
 
 const test1: Test = {
@@ -143,14 +140,4 @@ test('Individual tests are not shown by default', () => {
     const testTitle = screen.queryByText(test.title);
     expect(testTitle).toBeNull();
   });
-});
-
-test('Calls setSelectedRunnable when tree item is clicked', () => {
-  render(
-    <ThemeProvider>
-      <TestSuiteTree {...testSuiteTreeProps} />
-    </ThemeProvider>
-  );
-  const testSuiteLabel = screen.getByTestId(`tiLabel-${testSuiteTreeProps.testSuite.id}`);
-  userEvent.click(testSuiteLabel);
 });

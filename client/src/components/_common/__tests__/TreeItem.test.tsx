@@ -1,25 +1,27 @@
 import React from 'react';
-import { Router } from 'react-router';
-import TreeView from '@mui/lab/TreeView';
+import { Router, BrowserRouter } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import TreeView from '@mui/lab/TreeView';
 import TreeItemLabel from 'components/TestSuite/TestSuiteTree/TreeItemLabel';
 import ThemeProvider from 'components/ThemeProvider';
-import { createMemoryHistory } from 'history';
 import CustomTreeItem from '../TreeItem';
 import { mockedTestSuite } from '../__mocked_data__/mockData';
 
 test('renders custom TreeItem', () => {
   render(
-    <ThemeProvider>
-      <TreeView>
-        <CustomTreeItem
-          nodeId={mockedTestSuite.id}
-          label={<TreeItemLabel runnable={mockedTestSuite} />}
-          ContentProps={{ testId: mockedTestSuite.id } as any}
-        />
-      </TreeView>
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider>
+        <TreeView>
+          <CustomTreeItem
+            nodeId={mockedTestSuite.id}
+            label={<TreeItemLabel runnable={mockedTestSuite} />}
+            ContentProps={{ testId: mockedTestSuite.id } as any}
+          />
+        </TreeView>
+      </ThemeProvider>
+    </BrowserRouter>
   );
 
   const treeItemElement = screen.getByRole('treeitem');
@@ -27,10 +29,8 @@ test('renders custom TreeItem', () => {
 });
 
 test('TreeItem expansion should not be toggled when label is clicked', () => {
-  const history = createMemoryHistory();
-
   render(
-    <Router history={history}>
+    <BrowserRouter>
       <ThemeProvider>
         <TreeView expanded={[mockedTestSuite.id]}>
           <CustomTreeItem
@@ -42,7 +42,7 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
           </CustomTreeItem>
         </TreeView>
       </ThemeProvider>
-    </Router>
+    </BrowserRouter>
   );
 
   const labelElement = screen.getAllByTestId('tiLabel', { exact: false })[0];
@@ -55,10 +55,11 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
 });
 
 test('clicking on TreeItem should navigate to group or test instance', () => {
-  const history = createMemoryHistory({ initialEntries: ['/test_sessions/:test_session_id'] });
+  const history = createMemoryHistory();
+  history.push(`/${mockedTestSuite.id}/:test_session_id`);
 
   render(
-    <Router history={history}>
+    <Router location={history.location} navigator={history}>
       <ThemeProvider>
         <TreeView>
           <CustomTreeItem

@@ -8,7 +8,7 @@ import TreeItem, {
 import clsx from 'clsx';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 interface CustomTreeItemContentProps extends TreeItemContentProps {
   testId?: string;
@@ -39,7 +39,7 @@ const CustomContent = React.forwardRef(function CustomContent(
     preventSelection,
   } = useTreeItem(nodeId);
 
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const icon = iconProp || expansionIcon || displayIcon;
 
@@ -63,7 +63,7 @@ const CustomContent = React.forwardRef(function CustomContent(
     event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
   ) => {
     handleSelection(event);
-    if (testId) history.push(`#${testId}`);
+    if (testId) navigate(`#${testId}`);
   };
 
   return (
