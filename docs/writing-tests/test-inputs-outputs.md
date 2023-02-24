@@ -38,7 +38,7 @@ only the identifier is required:
 - `optional:` - (**default: false**) whether the input is optional.
 - `options:` - possible input option formats based on input type.
   - `list_options:` - options for input formats that require a list of possible
-    values.
+    values. An array of hashes with `label` and `value` keys.
 - `locked:` - (**default: false**) whether the user can alter the input's value.
   Locking an input can force it to use a value from a previous test's output, or
   the default value.
@@ -67,6 +67,42 @@ uses inputs which have been more completely defined in a parent or sibling.
 test do
   input :input1, :input2, :input3, :input4
   ...
+end
+```
+
+### Inputs with List Options
+For the `radio` input type, a list of options must be provided. The `label` is
+displayed to the user, and the `value` is the actual value that is stored when
+the user selects that option.
+
+```ruby
+test do
+  input :radio_input_example,
+        title: 'Example Radio Input',
+        options: {
+          list_options: [
+            {
+              label: 'Radio Option 1'
+              value: 'option_1'
+            },
+            {
+              label: 'Radio Option 2'
+              value: 'option_2'
+            }
+          ]
+        }
+
+  run do
+    if radio_input_example == 'option_1'
+      # ...
+    end
+
+    # ...
+
+    if radio_input_example == 'option_2'
+      # ...
+    end
+  end
 end
 ```
 
