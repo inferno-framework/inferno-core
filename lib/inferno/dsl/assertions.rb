@@ -26,9 +26,11 @@ module Inferno
       #
       # @param status [Integer, Array<Integer>] a single integer or an array of
       #   integer status codes
+      # @param request [Inferno::Entities::Request]
       # @param response [Hash]
       # @return [void]
-      def assert_response_status(status, response: self.response)
+      def assert_response_status(status, request: self.request, response: nil)
+        response ||= request&.response
         assert Array.wrap(status).include?(response[:status]), bad_response_status_message(status, response[:status])
       end
 
