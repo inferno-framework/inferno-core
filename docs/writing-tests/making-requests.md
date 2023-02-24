@@ -158,6 +158,59 @@ documentation](/inferno-core/docs/Inferno/DSL/FHIRClient.html). If you need to
 make other types of FHIR requests, [contact the Inferno
 team](/inferno-core/#contact-the-inferno-team) so we can prioritize adding them.
 
+#### FHIR Request Examples
+
+```ruby
+test do
+  # Create a resource on a server
+  new_patient = FHIR::Patient.new(name: [{ given: ['Jane'], family: 'Doe'}])
+  fhir_create(new_patient)
+  
+  # Delete a resource on a server
+  fhir_delete(:patient, 'resource_to_delete_id_1')
+  fhir_delete('Patient', 'resource_to_delete_id_2')
+  
+  # Fetch a server's CapabilityStatement
+  fhir_get_capability_statement
+  
+  # Perform a FHIR Operation
+  parameters = FHIR::Parameters.new(
+    parameter: [
+      {
+        name: 'code',
+        valueCode: '85354-9'
+      },
+      {
+        name: 'system'
+        valueUri: 'http://loinc.org'
+      }
+    ]
+  )
+  fhir_operation("/CodeSystem/$lookup", body: parameters)
+  
+  # Read a FHIR resource
+  fhir_read(:patient, 'resource_to_read_id')
+  fhir_read('Patient', 'resource_to_read_id')
+  
+  # Perform a FHIR search w/GET
+  fhir_search(:patient, params: { family: 'Smith' })
+  fhir_search('Patient', params: { family: 'Smith' })
+  
+  # Perform a FHIR search w/POST
+  fhir_search(:patient, params: { family: 'Smith' }, search_method: :post)
+  fhir_search('Patient', params: { family: 'Smith' }, search_method: :post)
+  
+  # Perform a FHIR transaction
+  transaction_bundle = FHIR::Bundle.new(
+    type: 'transaction',
+    entry: [
+      # a list of transaction entries
+    ]
+  )
+  fhir_transaction(transaction_bundle)
+end
+```
+
 ### Making Requests to Multiple Servers
 If you need to make requests to multiple fhir servers, this can be accomplished
 by creating multiple named fhir clients.
