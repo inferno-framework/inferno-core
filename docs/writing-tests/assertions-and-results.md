@@ -55,7 +55,7 @@ test do
   assert_valid_resource
 
   # These assertions are all made against the first request
-  assert_response_status(200, response: first_request.response)
+  assert_response_status(200, request: first_request)
   assert_response_content_type('application/fhir+json', request: first_request)
   assert_valid_json(first_request.response_body)
   assert_resource_type(:patient, resource: first_request.resource)

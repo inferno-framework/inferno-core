@@ -54,7 +54,7 @@ test do
     
     ...
     
-    assert_response_status(200, response: some_other_response)
+    assert_response_status(200, request: some_other_request)
     assert_resource_type(:patient, resource: some_other_resource)
     assert_valid_resource(resource: some_other_resource)
   end
