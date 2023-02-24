@@ -109,6 +109,7 @@ The advantages of using a local ruby installation are
 ### Development with Ruby
 
 #### Installation
+1. Install [Docker](https://www.docker.com/get-started).
 1. Install Ruby. It is highly recommended that you install ruby via a [ruby
    version
    manager](https://www.ruby-lang.org/en/documentation/installation/#managers).
