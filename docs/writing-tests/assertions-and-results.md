@@ -67,6 +67,8 @@ test do
   fhir_search(:medication_request, params: { patient: '123', _include: 'MedicationRequest:medication'_ })
 
   # Bundle entry validation
+  # Validate all entries from the most recent request
+  assert_valid_bundle_entries
   # Only validate MedicationRequest bundle entries
   assert_valid_bundle_entries(resource_types: 'MedicationRequest')
   # Only validate MedicationRequest and Medication bundle entries

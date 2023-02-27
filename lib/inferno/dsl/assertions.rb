@@ -22,7 +22,7 @@ module Inferno
         "Unexpected response status: expected #{Array.wrap(expected).join(', ')}, but received #{received}"
       end
 
-      # Check an response's status
+      # Check a response's status
       #
       # @param status [Integer, Array<Integer>] a single integer or an array of
       #   integer status codes
@@ -173,7 +173,8 @@ module Inferno
         assert uri =~ /\A#{URI::DEFAULT_PARSER.make_regexp(['http', 'https'])}\z/, error_message
       end
 
-      # Check the Content-Type header of a response
+      # Check the Content-Type header of a response. This assertion will fail if
+      # the response's content type does not begin with the provided type.
       #
       # @param type [String]
       # @param request [Inferno::Entities::Request]
