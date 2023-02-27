@@ -32,7 +32,9 @@ it only persists through a single test run (i.e., a single click of the _Run
 Tests_ button).
 
 ## Example
-`scratch` is just a plain Hash which is passed to each test.
+`scratch` is just a plain Hash which is passed to each test. It persists
+throughout a single test run, and changes made it in one test will be visible to
+any subsequent tests in that run.
 
 ```ruby
 class MyGroup < Inferno::TestGroup
@@ -46,6 +48,7 @@ class MyGroup < Inferno::TestGroup
       # retrieve a large number of FHIR resources
       # ...
       
+      # store resources in scratch
       scratch[:observations] = a_large_number_of_fhir_observations
       scratch[:conditions] =  a_large_number_of_fhir_conditions
     end
@@ -53,12 +56,14 @@ class MyGroup < Inferno::TestGroup
   
   test do
     run do
+      # read resources from scratch
       perform_some_operation_on(scratch[:observations])
     end
   end
   
   test do
     run do
+      # read resources from scratch
       perform_some_operation_on(scratch[:conditions])
     end
   end
