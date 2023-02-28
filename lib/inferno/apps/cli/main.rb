@@ -26,6 +26,18 @@ module Inferno
         system 'foreman start --env=/dev/null'
       end
 
+      desc 'watch', 'Start Inferno and watch for file changes'
+      def watch
+        if `gem list -i foreman`.chomp == 'false'
+          puts "You must install foreman with 'gem install foreman' prior to running inferno."
+        end
+        if `gem list -i rerun`.chomp == 'false'
+          puts "You must install rerun with 'gem install rerun' prior to running inferno while watching for file changes."
+        end
+
+        system 'rerun "foreman start --env=/dev/null"'
+      end
+
       desc 'suites', 'List available test suites'
       def suites
         Suites.new.run
