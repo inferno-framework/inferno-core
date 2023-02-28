@@ -37,8 +37,53 @@ Inferno also implements more specific assertions to handle common cases, such as
 - Validating a FHIR Resource.
 
 Check out the [assertions API
-documentation](/inferno-core/docs/Inferno/DSL/Assertions.html) for all available
-assertions.
+documentation](/inferno-core/docs/Inferno/DSL/Assertions.html) for detailed
+information on all available assertions.
+
+### Assertion Examples
+
+```ruby
+test do
+  first_request = fhir_read(:patient, '123')
+  second_request = fhir_read(:patient, '456')
+
+  # These assertions are all made against the second request
+  assert_response_status(200)
+  assert_response_content_type('application/fhir+json')
+  assert_valid_json(request.response_body)
+  assert_resource_type(:patient)
+  assert_valid_resource
+
+  # These assertions are all made against the first request
+  assert_response_status(200, request: first_request)
+  assert_response_content_type('application/fhir+json', request: first_request)
+  assert_valid_json(first_request.response_body)
+  assert_resource_type(:patient, resource: first_request.resource)
+  assert_valid_resource(resource: first_request.resource)
+
+  # Validate against a specific profile
+  assert_valid_resource(profile_url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient')
+
+  fhir_search(:medication_request, params: { patient: '123', _include: 'MedicationRequest:medication'_ })
+
+  # Bundle entry validation
+  # Validate all entries from the most recent request
+  assert_valid_bundle_entries
+  # Only validate MedicationRequest bundle entries
+  assert_valid_bundle_entries(resource_types: 'MedicationRequest')
+  # Only validate MedicationRequest and Medication bundle entries
+  assert_valid_bundle_entries(resource_types: ['MedicationRequest', 'Medication'])
+  # Only validate MedicationRequest and Medication bundle entries. Validate
+  # MedicationRequest resources against the given profile, and Medication
+  # resources against the base FHIR Medication resource.
+  assert_valid_bundle_entries(
+    resource_types: {
+      'MedicationRequest': 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest',
+      'Medication': nil
+    }
+  )
+end
+```
 
 ## Results
 Tests can have the following results in Inferno:

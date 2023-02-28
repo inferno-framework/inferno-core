@@ -71,10 +71,29 @@ RSpec.describe Inferno::DSL::Assertions do
       end
     end
 
+    context 'when a request is provided' do
+      it 'uses that request' do
+        def klass.request
+          OpenStruct.new(
+            response: { status: 201 }
+          )
+        end
+
+        request_arg = OpenStruct.new(response: { status: 200 })
+
+        error_message = klass.bad_response_status_message(201, 200)
+        expect { klass.assert_response_status(201, request: request_arg) }.to(
+          raise_error(assertion_exception, error_message)
+        )
+      end
+    end
+
     context 'when no response is provided' do
-      it 'uses its own response' do
-        def klass.response
-          { status: 200 }
+      it "uses the response from the test's request" do
+        def klass.request
+          OpenStruct.new(
+            response: { status: 200 }
+          )
         end
 
         error_message = klass.bad_response_status_message(201, 200)

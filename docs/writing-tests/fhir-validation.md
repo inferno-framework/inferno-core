@@ -13,7 +13,8 @@ parent: Writing Tests
 {:toc}
 ---
 ## Overview
-FHIR resource validation is performed by the [FHIR Validator Wrapper
+[FHIR resource validation](https://www.hl7.org/fhir/validation.html) is
+performed by the [FHIR Validator Wrapper
 service](https://github.com/inferno-framework/fhir-validator-wrapper). When
 creating a test kit based on the template:
 

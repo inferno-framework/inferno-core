@@ -82,7 +82,7 @@ repository and just copied over directly:
 e.g., for the US Core Test Kit:
 ```sh
 git clone https://github.com/inferno-framework/us-core-test-kit.git
-cp -a /us-core-test-kit/lib/us_core/igs/. /inferno_template/lib/inferno_template/igs/
+cp -a us-core-test-kit/lib/us_core_test_kit/igs/. inferno-template/lib/inferno_template/igs/
 ```
 
 Once this is done you can build and run the instance:
@@ -109,6 +109,7 @@ The advantages of using a local ruby installation are
 ### Development with Ruby
 
 #### Installation
+1. Install [Docker](https://www.docker.com/get-started).
 1. Install Ruby. It is highly recommended that you install ruby via a [ruby
    version
    manager](https://www.ruby-lang.org/en/documentation/installation/#managers).
