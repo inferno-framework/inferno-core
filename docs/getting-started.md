@@ -122,6 +122,8 @@ The advantages of using a local ruby installation are
 1. Run `gem install inferno_core` to install inferno.
 1. Run `gem install foreman` to install foreman, which will be used to run the
    Inferno web and worker processes.
+1. Run `gem install rerun` to install rerun, which will be used to enable
+   `watch` functionality to reload Inferno when a test has been updated.
 1. Run `bundle exec inferno migrate` to set up the database.
 
 #### Running Inferno
@@ -129,8 +131,9 @@ The advantages of using a local ruby installation are
    default, these include nginx, redis, the FHIR validator service, and the FHIR
    validator UI. Background services can be added/removed/edited in
    `docker-compose.background.yml`.
-1. Run `inferno start` to start Inferno. You will need to stop and re-run this
-   whenever you make changes to your tests.
+1. Run `inferno start --watch` to start Inferno and to reload any time a file
+   changes.  Remove the `watch` flag if you would prefer to manually restart
+   Inferno.
 1. Navigate to `http://localhost:4567` to access Inferno, where your test suite
    will be available. To access the FHIR resource validator, navigate to
    `http://localhost/validator`.
