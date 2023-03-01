@@ -19,11 +19,10 @@ module Inferno
 
       desc 'start', 'Start Inferno'
       option :watch,
-              default: false,
-              type: :boolean,
-              desc: 'Automatically restart Inferno when a file is changed.'
+             default: false,
+             type: :boolean,
+             desc: 'Automatically restart Inferno when a file is changed.'
       def start
-
         command = 'foreman start --env=/dev/null'
         if `gem list -i foreman`.chomp == 'false'
           puts "You must install foreman with 'gem install foreman' prior to running Inferno."
