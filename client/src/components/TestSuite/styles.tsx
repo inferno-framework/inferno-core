@@ -29,6 +29,7 @@ export default makeStyles((theme: Theme) => ({
   drawer: {
     display: 'flex',
     flexGrow: 1,
+    overflow: 'hidden',
     '@media print': {
       display: 'none',
     },

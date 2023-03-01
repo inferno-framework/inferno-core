@@ -31,7 +31,7 @@ const Header: FC<HeaderProps> = ({
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
-  const returnHome = () => {
+  const startNewSession = () => {
     navigate('/');
   };
 
@@ -109,7 +109,7 @@ const Header: FC<HeaderProps> = ({
           style={windowIsSmall ? { marginRight: '-16px' } : {}}
         >
           {windowIsSmall ? (
-            <IconButton color="secondary" aria-label="New Session" onClick={returnHome}>
+            <IconButton color="secondary" aria-label="New Session" onClick={startNewSession}>
               <Avatar sx={{ width: 32, height: 32, bgcolor: lightTheme.palette.secondary.main }}>
                 <NoteAdd fontSize="small" />
               </Avatar>
@@ -121,7 +121,7 @@ const Header: FC<HeaderProps> = ({
               size="small"
               variant="contained"
               startIcon={<NoteAdd />}
-              onClick={returnHome}
+              onClick={startNewSession}
             >
               New Session
             </Button>

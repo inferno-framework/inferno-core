@@ -3,23 +3,16 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from 'components/App';
 import reportWebVitals from './reportWebVitals';
-import { SnackbarProvider } from 'notistack';
-import SnackbarCloseButton from 'components/_common/SnackbarCloseButton';
+import { StyledEngineProvider } from '@mui/material/styles';
+import ThemeProvider from '~/components/ThemeProvider';
 
 ReactDOM.render(
   <React.StrictMode>
-    <SnackbarProvider
-      dense
-      maxSnack={3}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'right',
-      }}
-      action={(id) => <SnackbarCloseButton id={id} />}
-      style={{ marginBottom: '52px' }}
-    >
-      <App />
-    </SnackbarProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
+    </StyledEngineProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );

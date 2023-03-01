@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   Typography,
   Container,
@@ -28,12 +28,18 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const styles = useStyles();
   const navigate = useNavigate();
 
-  function startTestingClick(): void {
-    const testSuite = testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen);
-    if (testSuite && testSuite.suite_options && testSuite.suite_options.length > 0) {
-      navigate(`${testSuiteChosen}`);
-    } else {
-      postTestSessions(testSuiteChosen, null, null)
+  useEffect(() => {
+    if (testSuites?.length === 1) {
+      setTestSuiteChosen(testSuites[0].id);
+      startTestingClick(testSuites[0]);
+    }
+  }, []);
+
+  const startTestingClick = (suite?: TestSuite) => {
+    if (suite && suite.suite_options && suite.suite_options.length > 0) {
+      navigate(`${suite.id}`);
+    } else if ((suite && suite?.id) || testSuiteChosen) {
+      postTestSessions(suite?.id || testSuiteChosen, null, null)
         .then((testSession: TestSession | null) => {
           if (testSession && testSession.test_suite) {
             navigate(`/${testSession.test_suite_id}/${testSession.id}`);
@@ -42,8 +48,10 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         .catch((e: Error) => {
           enqueueSnackbar(`Error while creating test session: ${e.message}`, { variant: 'error' });
         });
+    } else {
+      enqueueSnackbar(`No test suite selected.`, { variant: 'error' });
     }
-  }
+  };
 
   const renderOption = (testSuite: TestSuite) => {
     return (
@@ -147,7 +155,11 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             disabled={!testSuiteChosen}
             data-testid="go-button"
             sx={{ fontWeight: 600 }}
-            onClick={() => startTestingClick()}
+            onClick={() =>
+              startTestingClick(
+                testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen)
+              )
+            }
           >
             Select Suite
           </Button>

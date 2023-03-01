@@ -109,6 +109,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             </Typography>
           }
           icon={<NotificationsIcon />}
+          className={styles.treeItemTopBorder}
           // eslint-disable-next-line max-len
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
           ContentProps={{ testId: `${testSuite.id}/config` } as any}
@@ -118,6 +119,16 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
 
     return (
       <Box className={styles.testSuiteTreePanel}>
+        {presets && presets.length > 0 && testSessionId && getSessionData && (
+          <Box m={2}>
+            <PresetsSelector
+              presets={presets}
+              testSessionId={testSessionId}
+              getSessionData={getSessionData}
+            />
+          </Box>
+        )}
+        <Divider />
         <TreeView
           aria-label="navigation-panel"
           defaultCollapseIcon={<ExpandMoreIcon aria-hidden={false} tabIndex={0} />}
@@ -127,43 +138,28 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           selected={selectedNode}
           className={styles.testSuiteTree}
         >
-          {presets && presets.length > 0 && testSessionId && getSessionData && (
-            <Box m={2}>
-              <PresetsSelector
-                presets={presets}
-                testSessionId={testSessionId}
-                getSessionData={getSessionData}
-              />
-            </Box>
-          )}
-          <Divider />
           <CustomTreeItem
             classes={{ content: styles.treeRoot }}
             nodeId={testSuite.id}
             label={<TreeItemLabel runnable={testSuite} />}
             icon={<ListAltIcon />}
+            className={styles.treeItemBottomBorder}
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
             ContentProps={{ testId: testSuite.id } as any}
           />
-          <Divider />
           {testGroupList}
-          <Divider />
           <CustomTreeItem
             nodeId={`${testSuite.id}/report`}
             label={<TreeItemLabel title={'Report'} />}
             icon={<FlagIcon />}
+            className={`${styles.treeItemTopBorder} ${styles.treeItemBottomBorder}`}
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
             ContentProps={{ testId: `${testSuite.id}/report` } as any}
           />
-          <Divider />
           <Box display="flex" alignItems="flex-end" flexGrow={1} mt={8}>
-            {/* Box is necessary to show dividers */}
-            <Box width="100%">
-              <Divider />
-              {renderConfigMessagesTreeItem()}
-            </Box>
+            <Box width="100%">{renderConfigMessagesTreeItem()}</Box>
           </Box>
         </TreeView>
       </Box>

@@ -1,25 +1,22 @@
 import React from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import LandingPage from '~/components/LandingPage';
 import SuiteOptionsPage from '~/components/SuiteOptionsPage';
 import TestSessionWrapper from '~/components/TestSuite/TestSessionWrapper';
 import { basePath } from '~/api/infernoApiService';
 import Page from '~/components/App/Page';
-import { TestSession, TestSuite } from '~/models/testSuiteModels';
+import { TestSuite } from '~/models/testSuiteModels';
 
-export const router = (testSuites: TestSuite[], testSession?: TestSession) => {
+export const router = (testSuites: TestSuite[]) => {
   return createBrowserRouter(
     [
       {
         path: '/',
-        element:
-          testSuites.length === 1 && testSession ? (
-            <Navigate to={`/${testSuites[0].id}/${testSession.id}`} />
-          ) : (
-            <Page title={`Inferno Test Suites`}>
-              <LandingPage testSuites={testSuites} />
-            </Page>
-          ),
+        element: (
+          <Page title={`Inferno Test Suites`}>
+            <LandingPage testSuites={testSuites} />
+          </Page>
+        ),
       },
       {
         path: ':test_suite_id',

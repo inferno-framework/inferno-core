@@ -14,10 +14,13 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import DoneIcon from '@mui/icons-material/Done';
 import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import useStyles from './styles';
+import lightTheme from '~/styles/theme';
+import { useAppStore } from '~/store/app';
 
 export interface TestRunProgressBarProps {
   showProgressBar: boolean;
   setShowProgressBar: (show: boolean) => void;
+  cancelled: boolean;
   cancelTestRun: () => void;
   duration: number | null;
   testRun: TestRun | null;
@@ -74,28 +77,35 @@ const completedTestCount = (resultsMap: Map<string, Result>, testRun: TestRun | 
 const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
   showProgressBar,
   setShowProgressBar,
+  cancelled,
   cancelTestRun,
   duration,
   testRun,
   resultsMap,
 }) => {
+  const footerHeight = useAppStore((state) => state.footerHeight);
   const styles = useStyles();
+  const cancellable = testRun?.status != 'cancelling' && testRun?.status != 'done';
   const statusIndicator = StatusIndicator(testRun?.status);
   const testCount = testRun?.test_count || 0;
   const completedCount = completedTestCount(resultsMap, testRun);
   const value = testCount !== 0 ? (100 * completedCount) / testCount : 0;
-
-  const cancellable = () => {
-    return testRun?.status != 'cancelling' && testRun?.status != 'done';
-  };
 
   return (
     <Snackbar
       open={showProgressBar}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       autoHideDuration={duration}
-      onClose={() => setShowProgressBar(false)}
+      onClose={() => {
+        if (completedCount === testCount || cancelled) {
+          setShowProgressBar(false);
+        }
+      }}
       ClickAwayListenerProps={{ mouseEvent: false }}
+      style={{
+        marginBottom: `${footerHeight}px`,
+        zIndex: lightTheme.zIndex.snackbar,
+      }}
     >
       <Box
         display="flex"
@@ -121,7 +131,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
         <Tooltip title="Cancel Test Run">
           <IconButton
             aria-label="cancel"
-            disabled={!cancellable()}
+            disabled={!cancellable}
             color="primary"
             onClick={cancelTestRun}
             className={styles.cancelButton}

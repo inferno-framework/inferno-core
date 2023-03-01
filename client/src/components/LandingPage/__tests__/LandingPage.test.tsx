@@ -2,10 +2,13 @@ import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SnackbarProvider } from 'notistack';
-import ThemeProvider from 'components/ThemeProvider';
-import LandingPage from '../LandingPage';
+import * as testSessionApi from '~/api/TestSessionApi';
+import ThemeProvider from '~/components/ThemeProvider';
+import LandingPage from '~/components/LandingPage/LandingPage';
 import { mockedTestSuitesReturnValue } from '../__mocked_data__/mockData';
+import { singleTestSuite, testSession } from '~/components/App/__mocked_data__/mockData';
 
 test('renders Inferno Landing Page', () => {
   const testSuites = mockedTestSuitesReturnValue;
@@ -60,4 +63,20 @@ test('should enable Start Testing when test suite is selected', () => {
   userEvent.click(testSuiteElement);
   expect(testSuiteElement).toHaveFocus();
   expect(buttonElement).toBeEnabled();
+});
+
+test('sets the Test Session if there is a single Test Suite', () => {
+  const postTestSessions = vi.spyOn(testSessionApi, 'postTestSessions');
+  postTestSessions.mockResolvedValue(testSession);
+
+  render(
+    <BrowserRouter>
+      <ThemeProvider>
+        <SnackbarProvider>
+          <LandingPage testSuites={singleTestSuite} />
+        </SnackbarProvider>
+      </ThemeProvider>
+    </BrowserRouter>
+  );
+  expect(postTestSessions).toBeCalledTimes(1);
 });
