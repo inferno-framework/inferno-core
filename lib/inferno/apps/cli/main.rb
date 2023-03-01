@@ -33,7 +33,7 @@ module Inferno
             puts "You must install 'rerun' with 'gem install rerun' to restart on file changes."
           end
 
-          command = "rerun \"#{command}\""
+          command = "rerun \"#{command}\" --background"
         end
 
         system command
