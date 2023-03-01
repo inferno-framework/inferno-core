@@ -18,24 +18,26 @@ module Inferno
       end
 
       desc 'start', 'Start Inferno'
+      option :watch,
+              default: false,
+              type: :boolean,
+              desc: 'Automatically restart Inferno when a file is changed.'
       def start
+
+        command = 'foreman start --env=/dev/null'
         if `gem list -i foreman`.chomp == 'false'
-          puts "You must install foreman with 'gem install foreman' prior to running inferno."
+          puts "You must install foreman with 'gem install foreman' prior to running Inferno."
         end
 
-        system 'foreman start --env=/dev/null'
-      end
+        if options[:watch]
+          if `gem list -i rerun`.chomp == 'false'
+            puts "You must install 'rerun' with 'gem install rerun' to restart on file changes."
+          end
 
-      desc 'watch', 'Start Inferno and watch for file changes'
-      def watch
-        if `gem list -i foreman`.chomp == 'false'
-          puts "You must install foreman with 'gem install foreman' prior to running inferno."
-        end
-        if `gem list -i rerun`.chomp == 'false'
-          puts "You must install rerun with 'gem install rerun' prior to running inferno while watching for file changes."
+          command = "rerun \"#{command}\""
         end
 
-        system 'rerun "foreman start --env=/dev/null"'
+        system command
       end
 
       desc 'suites', 'List available test suites'
