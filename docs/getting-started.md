@@ -82,7 +82,7 @@ repository and just copied over directly:
 e.g., for the US Core Test Kit:
 ```sh
 git clone https://github.com/inferno-framework/us-core-test-kit.git
-cp -a /us-core-test-kit/lib/us_core/igs/. /inferno_template/lib/inferno_template/igs/
+cp -a us-core-test-kit/lib/us_core_test_kit/igs/. inferno-template/lib/inferno_template/igs/
 ```
 
 Once this is done you can build and run the instance:
@@ -109,6 +109,7 @@ The advantages of using a local ruby installation are
 ### Development with Ruby
 
 #### Installation
+1. Install [Docker](https://www.docker.com/get-started).
 1. Install Ruby. It is highly recommended that you install ruby via a [ruby
    version
    manager](https://www.ruby-lang.org/en/documentation/installation/#managers).
@@ -121,6 +122,8 @@ The advantages of using a local ruby installation are
 1. Run `gem install inferno_core` to install inferno.
 1. Run `gem install foreman` to install foreman, which will be used to run the
    Inferno web and worker processes.
+1. Run `gem install rerun` to install rerun, which will be used to enable
+   `watch` functionality to reload Inferno when a test has been updated.
 1. Run `bundle exec inferno migrate` to set up the database.
 
 #### Running Inferno
@@ -128,8 +131,9 @@ The advantages of using a local ruby installation are
    default, these include nginx, redis, the FHIR validator service, and the FHIR
    validator UI. Background services can be added/removed/edited in
    `docker-compose.background.yml`.
-1. Run `inferno start` to start Inferno. You will need to stop and re-run this
-   whenever you make changes to your tests.
+1. Run `inferno start --watch` to start Inferno and to reload any time a file
+   changes.  Remove the `watch` flag if you would prefer to manually restart
+   Inferno.
 1. Navigate to `http://localhost:4567` to access Inferno, where your test suite
    will be available. To access the FHIR resource validator, navigate to
    `http://localhost/validator`.
