@@ -113,6 +113,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     resultsToMap(previousResults)
   );
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
+  const [testRunCancelled, setTestRunCancelled] = React.useState<boolean>(false);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
   const [testSessionPolling, setTestSessionPolling] = React.useState(true);
   const poller = useTimeout();
@@ -281,6 +282,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           if (runnable) setIsRunning(runnable, true);
           setTestRun(testRun);
           setTestRunId(testRun.id);
+          setTestRunCancelled(false);
           setShowProgressBar(true);
           pollTestRunResults(testRun);
         }
@@ -288,6 +290,18 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       .catch((e: Error) => {
         enqueueSnackbar(`Error while running test(s): ${e.message}`, { variant: 'error' });
       });
+  };
+
+  const cancelTestRun = () => {
+    if (testRun) {
+      deleteTestRun(testRun.id)
+        .then(() => setTestRunCancelled(true))
+        .catch((e: Error) =>
+          enqueueSnackbar(`Error while cancelling test run: ${e.message}`, {
+            variant: 'error',
+          })
+        );
+    }
   };
 
   const testRunIsInProgress = (testRun: TestRun | null): boolean => {
@@ -304,15 +318,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       <TestRunProgressBar
         showProgressBar={showProgressBar}
         setShowProgressBar={setShowProgressBar}
-        cancelTestRun={() => {
-          if (testRun) {
-            deleteTestRun(testRun.id).catch((e: Error) =>
-              enqueueSnackbar(`Error while cancelling test run: ${e.message}`, {
-                variant: 'error',
-              })
-            );
-          }
-        }}
+        cancelled={testRunCancelled}
+        cancelTestRun={cancelTestRun}
         duration={duration}
         testRun={testRun}
         resultsMap={resultsMap}
@@ -422,15 +429,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             />
           )}
           <ActionModal
-            cancelTestRun={() => {
-              if (testRun) {
-                deleteTestRun(testRun.id).catch((e: Error) =>
-                  enqueueSnackbar(`Error while cancelling test run: ${e.message}`, {
-                    variant: 'error',
-                  })
-                );
-              }
-            }}
+            cancelTestRun={cancelTestRun}
             message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
             modalVisible={waitingTestId != null}
           />

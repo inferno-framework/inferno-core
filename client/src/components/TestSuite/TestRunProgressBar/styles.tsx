@@ -17,7 +17,4 @@ export default makeStyles((theme: Theme) => ({
     backgroundColor: 'rgba(0,0,0,.2)',
     borderRadius: 2,
   },
-  snackbar: {
-    zIndex: `${theme.zIndex.drawer + 2} !important` as any,
-  },
 }));

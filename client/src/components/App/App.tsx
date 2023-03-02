@@ -1,18 +1,22 @@
+import { SnackbarProvider } from 'notistack';
 import React, { FC, useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
-import { StyledEngineProvider } from '@mui/material/styles';
 import { getTestSuites } from '~/api/TestSuitesApi';
 import { router } from '~/components/App/Router';
-import ThemeProvider from '~/components/ThemeProvider';
 import { TestSuite } from '~/models/testSuiteModels';
 import { useAppStore } from '~/store/app';
+import { useTestSessionStore } from '~/store/testSession';
+import SnackbarCloseButton from 'components/_common/SnackbarCloseButton';
+import lightTheme from '~/styles/theme';
 
 const App: FC<unknown> = () => {
+  const footerHeight = useAppStore((state) => state.footerHeight);
   const setFooterHeight = useAppStore((state) => state.setFooterHeight);
   const testSuites = useAppStore((state) => state.testSuites);
   const setTestSuites = useAppStore((state) => state.setTestSuites);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const setWindowIsSmall = useAppStore((state) => state.setWindowIsSmall);
+  const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
 
   // Update UI on window resize
   useEffect(() => {
@@ -45,11 +49,21 @@ const App: FC<unknown> = () => {
   }
 
   return (
-    <StyledEngineProvider injectFirst>
-      <ThemeProvider>
-        <RouterProvider router={router(testSuites)} />
-      </ThemeProvider>
-    </StyledEngineProvider>
+    <SnackbarProvider
+      dense
+      maxSnack={3}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'right',
+      }}
+      action={(id) => <SnackbarCloseButton id={id} />}
+      style={{
+        marginBottom: testRunInProgress ? `${72 + footerHeight}px` : `${footerHeight}px`,
+        zIndex: lightTheme.zIndex.snackbar,
+      }}
+    >
+      <RouterProvider router={router(testSuites)} />
+    </SnackbarProvider>
   );
 };
 

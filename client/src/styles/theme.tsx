@@ -64,6 +64,9 @@ const lightTheme = createTheme({
       fontFamily: ['Roboto Condensed', 'sans-serif'].join(','),
     },
   },
+  zIndex: {
+    snackbar: 10,
+  },
 });
 
 export default lightTheme;
