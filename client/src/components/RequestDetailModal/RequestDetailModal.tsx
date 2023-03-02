@@ -31,6 +31,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
 }) => {
   const [copySuccess, setCopySuccess] = React.useState(false);
   const styles = useStyles();
+  const timestamp = request?.timestamp ? new Date(request?.timestamp) : null;
 
   const copyTextClick = async (text: string) => {
     await navigator.clipboard.writeText(text).then(() => {
@@ -98,9 +99,10 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
         <Divider />
         <DialogContent>
           <Box pb={3}>
-            <Typography variant="h5" component="h3" pb={2}>
+            <Typography variant="h5" component="h3" pb={timestamp ? 0 : 2}>
               Request
             </Typography>
+            {timestamp && <Typography variant="overline">{timestamp.toLocaleString()}</Typography>}
             <HeaderTable headers={request.request_headers || []} />
             <CodeBlock body={request.request_body} headers={request.request_headers} />
           </Box>
