@@ -10,6 +10,7 @@
 * Fix a bug which prevented the New Session button from starting a new session
   when only a single test suite is loaded.
 * Fix a bug which caused snackbar notifications to appear above other modals.
+* Display a timestamp with request details.
 * Update documentation.
 
 # 0.4.9
