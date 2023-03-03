@@ -121,6 +121,21 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const { test_suite, id } = testSession;
 
   const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
+  console.log(useLocation());
+  const runnableToShortId = () => {
+    const runnableArray = Array.from(runnableMap);
+    return runnableArray.filter(([key, value]) => {
+      (isTestSuite(value) || isTestGroup(value)) && value.short_id && value.short_id === '1.1';
+    });
+    // return Object.values(runnableObject);
+
+    // .filter((runnable) => !!runnable.short_id)
+    // .map((runnable) => {
+    //   Object.values(runnable).map((r) => r.short_id);
+    // });
+  };
+  console.log(runnableToShortId());
+
   const [suiteName, view] = useLocation().hash.replace('#', '').split('/');
   const selectedRunnable = runnableMap.get(suiteName) ? suiteName : testSession.test_suite.id;
 
