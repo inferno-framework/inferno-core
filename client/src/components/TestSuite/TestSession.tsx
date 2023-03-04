@@ -17,6 +17,7 @@ import {
   SuiteOptionChoice,
   isTestGroup,
   isTestSuite,
+  isTest,
 } from '~/models/testSuiteModels';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from '~/api/TestRunsApi';
 import ActionModal from '~/components/ActionModal/ActionModal';
@@ -118,25 +119,22 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [testSessionPolling, setTestSessionPolling] = React.useState(true);
   const poller = useTimeout();
 
-  const { test_suite, id } = testSession;
+  const runnableMap = React.useMemo(
+    () => mapRunnableToId(testSession.test_suite),
+    [testSession.test_suite]
+  );
 
-  const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
-  console.log(useLocation());
-  const runnableToShortId = () => {
-    const runnableArray = Array.from(runnableMap);
-    return runnableArray.filter(([key, value]) => {
-      (isTestSuite(value) || isTestGroup(value)) && value.short_id && value.short_id === '1.1';
+  const splitLocation = useLocation().hash.replace('#', '').split('/');
+  let suiteName = splitLocation[0];
+  const view = splitLocation[1];
+  if (!runnableMap.get(suiteName)) {
+    // Array.from(runnableMap) should be [key, value]
+    Array.from(runnableMap).forEach(([key, value]) => {
+      if ((isTest(value) || isTestGroup(value)) && value.short_id === suiteName) {
+        suiteName = key;
+      }
     });
-    // return Object.values(runnableObject);
-
-    // .filter((runnable) => !!runnable.short_id)
-    // .map((runnable) => {
-    //   Object.values(runnable).map((r) => r.short_id);
-    // });
-  };
-  console.log(runnableToShortId());
-
-  const [suiteName, view] = useLocation().hash.replace('#', '').split('/');
+  }
   const selectedRunnable = runnableMap.get(suiteName) ? suiteName : testSession.test_suite.id;
 
   resultsMap.forEach((result, runnableId) => {
@@ -177,7 +175,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }, [testRun]);
 
   useEffect(() => {
-    test_suite.inputs?.forEach((input: TestInput) => {
+    testSession.test_suite.inputs?.forEach((input: TestInput) => {
       const defaultValue = input.default || '';
       sessionData.set(input.name, sessionData.get(input.name) || defaultValue);
     });
@@ -290,7 +288,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       sessionData.set(input.name, input.value as string);
     });
     setSessionData(new Map(sessionData));
-    postTestRun(id, runnableType, runnableId, inputs)
+    postTestRun(testSession.id, runnableType, runnableId, inputs)
       .then((testRun: TestRun | null) => {
         if (testRun) {
           const runnable = runnableMap.get(runnableId);
@@ -346,13 +344,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     return (
       <nav className={styles.drawer}>
         <TestSuiteTreeComponent
-          testSuite={test_suite}
+          testSuite={testSession.test_suite}
           runTests={runTests}
           selectedRunnable={selectedRunnable}
           view={(view as ViewType) || 'run'}
           presets={testSession.test_suite.presets}
           getSessionData={getSessionData}
-          testSessionId={id}
+          testSessionId={testSession.id}
         />
       </nav>
     );
@@ -382,8 +380,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
             runTests={runTests}
             updateRequest={updateRequest}
-            testSuiteId={test_suite.id}
-            configMessages={test_suite.configuration_messages}
+            testSuiteId={testSession.test_suite.id}
+            configMessages={testSession.test_suite.configuration_messages}
           />
         );
     }
