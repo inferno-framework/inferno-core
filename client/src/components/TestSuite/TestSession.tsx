@@ -9,14 +9,12 @@ import {
   Result,
   TestSession,
   TestGroup,
-  Test,
   TestSuite,
   Request,
   TestOutput,
   ViewType,
   SuiteOptionChoice,
   isTestGroup,
-  isTestSuite,
   isTest,
 } from '~/models/testSuiteModels';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from '~/api/TestRunsApi';
@@ -33,7 +31,7 @@ import { useSnackbar } from 'notistack';
 import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
 import { useTimeout } from '~/hooks/useTimeout';
-import { mapRunnableToId, resultsToMap } from './TestSuiteUtilities';
+import { mapRunnableToId, resultsToMap, setIsRunning } from './TestSuiteUtilities';
 
 export interface TestSessionComponentProps {
   testSession: TestSession;
@@ -218,20 +216,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   };
 
-  // Recursive function to set the `is_running` field for all children of a runnable
-  const setIsRunning = (runnable: Runnable, value: boolean) => {
-    if (runnable) {
-      runnable.is_running = value;
-      if (isTestGroup(runnable)) {
-        runnable.tests?.forEach((test: Test) => (test.is_running = value));
-        runnable.test_groups?.forEach((testGroup: TestGroup) => setIsRunning(testGroup, value));
-      }
-      if (isTestSuite(runnable)) {
-        runnable.test_groups?.forEach((testGroup: TestGroup) => setIsRunning(testGroup, value));
-      }
-    }
-  };
-
   const runTests = (runnableType: RunnableType, runnableId: string) => {
     const runnable = runnableMap.get(runnableId);
     runnable?.inputs?.forEach((input: TestInput) => {
@@ -278,13 +262,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   };
 
-  const testRunIsInProgress = (testRun: TestRun | null): boolean => {
-    const inProgress = testRun?.status
+  const testRunIsInProgress = (testRun: TestRun | null): boolean =>
+    testRun?.status
       ? ['running', 'queued', 'waiting', 'cancelling'].includes(testRun?.status)
       : false;
-
-    return inProgress;
-  };
 
   const renderTestRunProgressBar = () => {
     const duration = testRunInProgress ? null : 2000;
@@ -318,27 +299,26 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   };
 
   const renderView = (view: ViewType) => {
-    if (!runnableMap.get(selectedRunnable)) return null;
+    const runnable = runnableMap.get(selectedRunnable);
+    if (!runnable) return null;
     switch (view) {
       case 'report':
         // This is a little strange because we are only allowing reports
         // at the suite level right now for simplicity.
         return (
           <TestSuiteReport
-            testSuite={runnableMap.get(selectedRunnable) as TestSuite}
+            testSuite={runnable as TestSuite}
             suiteOptions={suiteOptions}
             updateRequest={updateRequest}
           />
         );
       case 'config':
         // Config messages are only defined at the suite level.
-        return (
-          <ConfigMessagesDetailsPanel testSuite={runnableMap.get(selectedRunnable) as TestSuite} />
-        );
+        return <ConfigMessagesDetailsPanel testSuite={runnable as TestSuite} />;
       default:
         return (
           <TestSuiteDetailsPanel
-            runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
+            runnable={runnable as TestSuite | TestGroup}
             runTests={runTests}
             updateRequest={updateRequest}
             testSuiteId={testSession.test_suite.id}

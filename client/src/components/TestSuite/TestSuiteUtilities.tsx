@@ -1,4 +1,12 @@
-import { Result, Runnable, Test, TestGroup, TestSuite } from '~/models/testSuiteModels';
+import {
+  isTestGroup,
+  isTestSuite,
+  Result,
+  Runnable,
+  Test,
+  TestGroup,
+  TestSuite,
+} from '~/models/testSuiteModels';
 
 const mapRunnableRecursive = (testGroup: TestGroup, map: Map<string, Runnable>) => {
   map.set(testGroup.id, testGroup);
@@ -36,6 +44,20 @@ export const resultsToMap = (results: Result[], map?: Map<string, Result>): Map<
     }
   });
   return new Map(resultsMap);
+};
+
+// Recursive function to set the `is_running` field for all children of a runnable
+export const setIsRunning = (runnable: Runnable, value: boolean) => {
+  if (runnable) {
+    runnable.is_running = value;
+    if (isTestGroup(runnable)) {
+      runnable.tests?.forEach((test: Test) => (test.is_running = value));
+      runnable.test_groups?.forEach((testGroup: TestGroup) => setIsRunning(testGroup, value));
+    }
+    if (isTestSuite(runnable)) {
+      runnable.test_groups?.forEach((testGroup: TestGroup) => setIsRunning(testGroup, value));
+    }
+  }
 };
 
 export const shouldShowDescription = (
