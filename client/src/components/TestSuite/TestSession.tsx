@@ -33,44 +33,7 @@ import { useSnackbar } from 'notistack';
 import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
 import { useTimeout } from '~/hooks/useTimeout';
-
-function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
-  map.set(testGroup.id, testGroup);
-  testGroup.test_groups.forEach((subGroup: TestGroup) => {
-    mapRunnableRecursive(subGroup, map);
-  });
-  testGroup.tests.forEach((test: Test) => {
-    map.set(test.id, test);
-  });
-}
-
-function mapRunnableToId(testSuite: TestSuite): Map<string, Runnable> {
-  const map = new Map<string, Runnable>();
-  map.set(testSuite.id, testSuite);
-  testSuite?.test_groups?.forEach((testGroup: TestGroup) => {
-    mapRunnableRecursive(testGroup, map);
-  });
-  return map;
-}
-
-function resultsToMap(results: Result[], map?: Map<string, Result>): Map<string, Result> {
-  let resultsMap: Map<string, Result>;
-  if (map === undefined) {
-    resultsMap = new Map<string, Result>();
-  } else {
-    resultsMap = map;
-  }
-  results.forEach((result: Result) => {
-    if (result.test_suite_id) {
-      resultsMap.set(result.test_suite_id, result);
-    } else if (result.test_group_id) {
-      resultsMap.set(result.test_group_id, result);
-    } else if (result.test_id) {
-      resultsMap.set(result.test_id, result);
-    }
-  });
-  return new Map(resultsMap);
-}
+import { mapRunnableToId, resultsToMap } from './TestSuiteUtilities';
 
 export interface TestSessionComponentProps {
   testSession: TestSession;
@@ -117,18 +80,16 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [testRunCancelled, setTestRunCancelled] = React.useState<boolean>(false);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
   const [testSessionPolling, setTestSessionPolling] = React.useState(true);
-  const poller = useTimeout();
 
+  const poller = useTimeout();
   const runnableMap = React.useMemo(
     () => mapRunnableToId(testSession.test_suite),
     [testSession.test_suite]
   );
-
   const splitLocation = useLocation().hash.replace('#', '').split('/');
   let suiteName = splitLocation[0];
-  const view = splitLocation[1];
+  const view = splitLocation[1] as ViewType;
   if (!runnableMap.get(suiteName)) {
-    // Array.from(runnableMap) should be [key, value]
     Array.from(runnableMap).forEach(([key, value]) => {
       if ((isTest(value) || isTestGroup(value)) && value.short_id === suiteName) {
         suiteName = key;
@@ -347,7 +308,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           testSuite={testSession.test_suite}
           runTests={runTests}
           selectedRunnable={selectedRunnable}
-          view={(view as ViewType) || 'run'}
+          view={view || 'run'}
           presets={testSession.test_suite.presets}
           getSessionData={getSessionData}
           testSessionId={testSession.id}
@@ -428,7 +389,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         }}
       >
         <Box className={styles.contentContainer} p={windowIsSmall ? 1 : 4}>
-          {renderView((view as ViewType) || 'run')}
+          {renderView(view || 'run')}
           {inputModalVisible && (
             <InputsModal
               createTestRun={createTestRun}
