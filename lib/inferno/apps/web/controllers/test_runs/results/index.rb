@@ -7,7 +7,7 @@ module Inferno
             include Import[test_runs_repo: 'inferno.repositories.test_runs']
 
             def handle(req, res)
-              results = test_runs_repo.results_for_test_run(req.params[:test_run_id])
+              results = test_runs_repo.results_for_test_run(req.params[:id])
               res.body = serialize(results)
             end
           end
