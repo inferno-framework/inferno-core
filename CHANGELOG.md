@@ -1,3 +1,21 @@
+# 0.4.11
+* Fix the `test_runs/:test_run_id/results` route.
+
+# 0.4.10
+* Add the `--watch` option to `inferno start` to automatically restart Inferno
+  when files change.
+* Update test sessions routes to look like `/:test_suite_id/:test_session_id`
+  instead of `/test_sessions/:test_session_id`
+* Shorted new test session ids.
+* Update UI to show suite options page when a suite has a description.
+* Fix a bug where clicking on the request/message icons would not change which
+  details tab was displayed.
+* Fix a bug which prevented the New Session button from starting a new session
+  when only a single test suite is loaded.
+* Fix a bug which caused snackbar notifications to appear above other modals.
+* Display a timestamp with request details.
+* Update documentation.
+
 # 0.4.9
 * Fix a bug which prevented `inferno suite describe` from working.
 * Update documentation.
