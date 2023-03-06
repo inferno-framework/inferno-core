@@ -1,3 +1,6 @@
+# 0.4.11
+* Fix the `test_runs/:test_run_id/results` route.
+
 # 0.4.10
 * Add the `--watch` option to `inferno start` to automatically restart Inferno
   when files change.
