@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteModels';
-import InputRadioGroup from './InputsRadioGroup';
+import InputRadioGroup from './InputRadioGroup';
 import ReactMarkdown from 'react-markdown';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
