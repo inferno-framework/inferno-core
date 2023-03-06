@@ -153,7 +153,7 @@ RSpec.describe '/test_runs' do
     let(:messages) { result.messages }
 
     it 'renders the results json' do
-      get router.path(:api_test_runs_results, test_run_id: result.test_run_id)
+      get router.path(:api_test_runs_results, id: result.test_run_id)
 
       expect(last_response.status).to eq(200)
       expect(parsed_body).to all(include('id', 'result', 'test_run_id', 'test_session_id', 'messages'))
