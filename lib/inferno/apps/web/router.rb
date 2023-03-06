@@ -16,7 +16,7 @@ module Inferno
           get '/:id', to: Inferno::Web::Controllers::TestRuns::Show, as: :show
           delete '/:id', to: Inferno::Web::Controllers::TestRuns::Destroy, as: :destroy
 
-          get '/results', to: Inferno::Web::Controllers::TestRuns::Results::Index, as: :results
+          get ':id/results', to: Inferno::Web::Controllers::TestRuns::Results::Index, as: :results
         end
 
         scope 'test_sessions' do
