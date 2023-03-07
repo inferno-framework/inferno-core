@@ -20,6 +20,7 @@ import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import InputOAuthCredentials from './InputOAuthCredentials';
 import YAML from 'js-yaml';
+import InputCheckboxGroup from './InputCheckboxGroup';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -129,9 +130,9 @@ const InputsModal: FC<InputsModalProps> = ({
             key={`input-${index}`}
           />
         );
-      case 'textarea':
+      case 'checkbox':
         return (
-          <InputTextArea
+          <InputCheckboxGroup
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
@@ -142,6 +143,16 @@ const InputsModal: FC<InputsModalProps> = ({
       case 'radio':
         return (
           <InputRadioGroup
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={setInputsMap}
+            key={`input-${index}`}
+          />
+        );
+      case 'textarea':
+        return (
+          <InputTextArea
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}

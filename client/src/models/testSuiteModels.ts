@@ -47,7 +47,7 @@ export interface TestInput {
   name: string;
   title?: string;
   value?: unknown;
-  type?: 'text' | 'textarea' | 'oauth_credentials' | 'radio';
+  type?: 'oauth_credentials' | 'checkbox' | 'radio' | 'text' | 'textarea';
   description?: string;
   default?: string;
   optional?: boolean;
