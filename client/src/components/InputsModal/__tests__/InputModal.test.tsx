@@ -34,7 +34,7 @@ const testInputsDefaults: TestInput[] = [
   },
   {
     name: 'yet another input',
-    default: 'yet another value',
+    default: { value: true },
   },
 ];
 
@@ -160,13 +160,25 @@ test('Values in Field Inputs shown in JSON and YAML', () => {
   let serial = screen.getByTestId('serial-input').textContent || '';
 
   testInputsDefaults.forEach((input: TestInput) => {
-    if (input.default) expect(serial.includes(input.default));
+    if (input.default) {
+      if (typeof input.default === 'string') expect(serial.includes(input.default));
+      if (typeof input.default === 'object') {
+        Object.keys(input.default).forEach((key) => expect(serial.includes(key)));
+        Object.values(input.default).forEach((value) => expect(serial.includes(value.toString())));
+      }
+    }
   });
 
   userEvent.click(yamlButton);
   serial = screen.getByTestId('serial-input').textContent || '';
 
   testInputs.forEach((input: TestInput) => {
-    if (input.default) expect(serial.includes(input.default));
+    if (input.default) {
+      if (typeof input.default === 'string') expect(serial.includes(input.default));
+      if (typeof input.default === 'object') {
+        Object.keys(input.default).forEach((key) => expect(serial.includes(key)));
+        Object.values(input.default).forEach((value) => expect(serial.includes(value.toString())));
+      }
+    }
   });
 });

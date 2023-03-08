@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 
+import ThemeProvider from 'components/ThemeProvider';
 import App from '../App';
 import * as testSuitesApi from '~/api/TestSuitesApi';
 import { testSuites } from '../__mocked_data__/mockData';
@@ -26,9 +27,11 @@ describe('The App Root Component', () => {
     getTestSuites.mockResolvedValue(testSuites);
 
     render(
-      <SnackbarProvider>
-        <App />
-      </SnackbarProvider>
+      <ThemeProvider>
+        <SnackbarProvider>
+          <App />
+        </SnackbarProvider>
+      </ThemeProvider>
     );
 
     expect(getTestSuites).toBeCalledTimes(1);
