@@ -3,14 +3,16 @@ import LockIcon from '@mui/icons-material/Lock';
 import { TestInput } from '~/models/testSuiteModels';
 import useStyles from './styles';
 
-export interface InputFieldLabelProps {
+export interface FieldLabelProps {
   requirement: TestInput;
 }
 
-const InputFieldLabel: FC<InputFieldLabelProps> = ({ requirement }) => {
+const FieldLabel: FC<FieldLabelProps> = ({ requirement }) => {
   const styles = useStyles();
 
   const fieldLabelText = requirement.title || requirement.name;
+
+  const requiredLabel = !requirement.optional ? ' (required)' : '';
 
   const lockedIcon = requirement.locked && (
     <LockIcon fontSize="small" className={styles.lockedIcon} />
@@ -19,9 +21,10 @@ const InputFieldLabel: FC<InputFieldLabelProps> = ({ requirement }) => {
   return (
     <>
       {fieldLabelText}
+      {requiredLabel}
       {lockedIcon}
     </>
   );
 };
 
-export default InputFieldLabel;
+export default FieldLabel;

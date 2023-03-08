@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC } from 'react';
 import {
   FormControl,
   FormControlLabel,
@@ -7,8 +7,8 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import LockIcon from '@mui/icons-material/Lock';
 import { TestInput } from '~/models/testSuiteModels';
+import FieldLabel from './FieldLabel';
 import useStyles from './styles';
 
 export interface InputRadioGroupProps {
@@ -33,19 +33,6 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
     inputsMap.get(requirement.name) || requirement.default || firstValue
   );
 
-  const fieldLabelText = requirement.title || requirement.name;
-
-  const lockedIcon = requirement.locked && (
-    <LockIcon fontSize="small" className={styles.lockedIcon} />
-  );
-
-  const fieldLabel = (
-    <Fragment>
-      {fieldLabelText}
-      {lockedIcon}
-    </Fragment>
-  );
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setValue(value);
@@ -61,7 +48,9 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
         disabled={requirement.locked}
         fullWidth
       >
-        <FormLabel className={styles.inputLabel}>{fieldLabel}</FormLabel>
+        <FormLabel className={styles.inputLabel}>
+          <FieldLabel requirement={requirement} />
+        </FormLabel>
         <RadioGroup
           row
           aria-label={`${requirement.name}-radio-buttons-group`}

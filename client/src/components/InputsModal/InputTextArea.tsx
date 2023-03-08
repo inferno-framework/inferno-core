@@ -1,7 +1,7 @@
+import React, { FC } from 'react';
 import { ListItem, TextField } from '@mui/material';
-import LockIcon from '@mui/icons-material/Lock';
 import { TestInput } from '~/models/testSuiteModels';
-import React, { FC, Fragment } from 'react';
+import FieldLabel from './FieldLabel';
 import useStyles from './styles';
 import lightTheme from 'styles/theme';
 
@@ -14,18 +14,6 @@ export interface InputTextAreaProps {
 
 const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, setInputsMap }) => {
   const styles = useStyles();
-  const fieldLabelText = requirement.title || requirement.name;
-  const lockedIcon = requirement.locked ? (
-    <LockIcon fontSize="small" className={styles.lockedIcon} />
-  ) : null;
-  const requiredLabel = !requirement.optional ? ' (required)' : '';
-  const fieldLabel = (
-    <Fragment>
-      {fieldLabelText}
-      {requiredLabel}
-      {lockedIcon}
-    </Fragment>
-  );
 
   return (
     <ListItem>
@@ -36,7 +24,7 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
         className={styles.inputField}
         variant="standard"
         fullWidth
-        label={fieldLabel}
+        label={<FieldLabel requirement={requirement} />}
         helperText={requirement.description}
         value={inputsMap.get(requirement.name)}
         multiline

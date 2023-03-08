@@ -8,8 +8,8 @@ import {
   ListItem,
 } from '@mui/material';
 import { CheckboxValues, TestInput } from '~/models/testSuiteModels';
+import FieldLabel from './FieldLabel';
 import useStyles from './styles';
-import InputFieldLabel from './InputFieldLabel';
 
 export interface InputCheckboxGroupProps {
   requirement: TestInput;
@@ -65,7 +65,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
         fullWidth
       >
         <FormLabel className={styles.inputLabel}>
-          <InputFieldLabel requirement={requirement} />
+          <FieldLabel requirement={requirement} />
         </FormLabel>
         <FormGroup aria-label={`${requirement.name}-checkboxes-group`}>
           {requirement.options?.list_options?.map((option, i) => (
