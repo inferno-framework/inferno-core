@@ -27,6 +27,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
   const styles = useStyles();
 
   const [values, setValues] = React.useState<CheckboxValues>(() => {
+    // Default values should be in form { value: true/false }
     let startingValues = inputsMap.get(requirement.name) || requirement.default;
     if (!startingValues) {
       // Instantiate with { ..., [option.value]: false } for all option values
