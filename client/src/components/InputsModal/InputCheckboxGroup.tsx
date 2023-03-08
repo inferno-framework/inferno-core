@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   Checkbox,
   FormControl,
@@ -7,19 +7,15 @@ import {
   FormLabel,
   ListItem,
 } from '@mui/material';
-import LockIcon from '@mui/icons-material/Lock';
-import { TestInput } from '~/models/testSuiteModels';
+import { CheckboxValues, TestInput } from '~/models/testSuiteModels';
 import useStyles from './styles';
+import InputFieldLabel from './InputFieldLabel';
 
 export interface InputCheckboxGroupProps {
   requirement: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>) => void;
-}
-
-export interface CheckboxValuesProps {
-  [key: string]: boolean;
 }
 
 const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
@@ -30,22 +26,26 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
 }) => {
   const styles = useStyles();
 
-  const [values, setValues] = React.useState<CheckboxValuesProps>(
-    (inputsMap.get(requirement.name) || requirement.default || {}) as CheckboxValuesProps
-  );
+  const [values, setValues] = React.useState<CheckboxValues>(() => {
+    let startingValues = inputsMap.get(requirement.name) || requirement.default;
+    if (!startingValues) {
+      // Instantiate with { ..., [option.value]: false } for all option values
+      const options = requirement.options?.list_options;
+      if (options && options.length > 0) {
+        startingValues = options.reduce(
+          (acc, option) => ((acc[option.value] = false), acc),
+          {} as CheckboxValues
+        );
+      }
+    }
+    return startingValues as CheckboxValues;
+  });
 
-  const fieldLabelText = requirement.title || requirement.name;
-
-  const lockedIcon = requirement.locked && (
-    <LockIcon fontSize="small" className={styles.lockedIcon} />
-  );
-
-  const fieldLabel = (
-    <Fragment>
-      {fieldLabelText}
-      {lockedIcon}
-    </Fragment>
-  );
+  useEffect(() => {
+    // Make sure starting values get set in inputsMap
+    inputsMap.set(requirement.name, values);
+    setInputsMap(new Map(inputsMap));
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues({
@@ -64,7 +64,9 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
         disabled={requirement.locked}
         fullWidth
       >
-        <FormLabel className={styles.inputLabel}>{fieldLabel}</FormLabel>
+        <FormLabel className={styles.inputLabel}>
+          <InputFieldLabel requirement={requirement} />
+        </FormLabel>
         <FormGroup aria-label={`${requirement.name}-checkboxes-group`}>
           {requirement.options?.list_options?.map((option, i) => (
             <FormControlLabel
@@ -72,7 +74,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
                 <Checkbox
                   size="small"
                   name={option.value}
-                  checked={values[option.value as keyof CheckboxValuesProps] || false}
+                  checked={values[option.value as keyof CheckboxValues] || false}
                   onChange={handleChange}
                 />
               }

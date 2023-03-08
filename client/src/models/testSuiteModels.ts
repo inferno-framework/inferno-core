@@ -49,7 +49,7 @@ export interface TestInput {
   value?: unknown;
   type?: 'oauth_credentials' | 'checkbox' | 'radio' | 'text' | 'textarea';
   description?: string;
-  default?: string;
+  default?: string | CheckboxValues;
   optional?: boolean;
   locked?: boolean;
   options?: {
@@ -166,6 +166,10 @@ export type FooterLink = {
   label: string;
   url: string;
 };
+
+export interface CheckboxValues {
+  [key: string]: boolean;
+}
 
 // Custom type guards to determine type of Runnable
 export const isTestSuite = (object: Runnable): object is TestSuite => {
