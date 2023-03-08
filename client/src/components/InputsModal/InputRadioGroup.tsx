@@ -48,7 +48,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
         disabled={requirement.locked}
         fullWidth
       >
-        <FormLabel className={styles.inputLabel}>
+        <FormLabel required={!requirement.optional} className={styles.inputLabel}>
           <FieldLabel requirement={requirement} />
         </FormLabel>
         <RadioGroup

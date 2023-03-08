@@ -65,7 +65,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
         disabled={requirement.locked}
         fullWidth
       >
-        <FormLabel className={styles.inputLabel}>
+        <FormLabel required={!requirement.optional} className={styles.inputLabel}>
           <FieldLabel requirement={requirement} />
         </FormLabel>
         <FormGroup aria-label={`${requirement.name}-checkboxes-group`}>
