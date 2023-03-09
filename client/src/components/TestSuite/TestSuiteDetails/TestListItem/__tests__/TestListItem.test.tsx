@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ThemeProvider from 'components/ThemeProvider';
 
@@ -26,9 +27,11 @@ describe('The TestListItem component', () => {
     };
 
     render(
-      <ThemeProvider>
-        <TestListItem test={test} view="run" />
-      </ThemeProvider>
+      <BrowserRouter>
+        <ThemeProvider>
+          <TestListItem test={test} view="run" />
+        </ThemeProvider>
+      </BrowserRouter>
     );
 
     const accordion = screen.getByTestId('test_id-summary');
@@ -67,9 +70,11 @@ describe('The TestListItem component', () => {
       };
 
       render(
-        <ThemeProvider>
-          <TestListItem test={test} view="run" />
-        </ThemeProvider>
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>
       );
 
       const target = screen.getByTestId('test_id-summary');
@@ -119,9 +124,11 @@ describe('The TestListItem component', () => {
       };
 
       render(
-        <ThemeProvider>
-          <TestListItem test={test} view="run" />
-        </ThemeProvider>
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>
       );
 
       const target = screen.getByLabelText('View 1 request(s)');
@@ -172,9 +179,11 @@ describe('The TestListItem component', () => {
       };
 
       render(
-        <ThemeProvider>
-          <TestListItem test={test} view="run" />
-        </ThemeProvider>
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>
       );
 
       const target = screen.getByLabelText('View 1 message(s)');
