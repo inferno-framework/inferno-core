@@ -89,8 +89,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const view = splitLocation[1] as ViewType;
   if (!runnableMap.get(suiteName)) {
     Array.from(runnableMap).forEach(([key, value]) => {
-      if ((isTest(value) || isTestGroup(value)) && value.short_id === suiteName) {
+      if (isTestGroup(value) && value.short_id === suiteName) {
         suiteName = key;
+      } else if (isTest(value) && value.short_id === suiteName) {
+        suiteName = key.substring(0, key.lastIndexOf('-'));
       }
     });
   }
