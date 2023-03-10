@@ -19,21 +19,42 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
   const [showMenu, setShowMenu] = React.useState<boolean>(false);
   const styles = useStyles();
 
+  const apiLink = (
+    <Box display="flex">
+      <Link
+        href="https://inferno-framework.github.io/inferno-core/api-docs/"
+        target="_blank"
+        rel="noreferrer"
+        underline="hover"
+        className={styles.logoLink}
+        sx={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
+      >
+        API
+      </Link>
+    </Box>
+  );
+
   const renderLogoText = () => {
-    if (!version) return <></>;
+    if (!version) return apiLink;
     return (
       <Box display="flex" flexDirection="column">
         {!windowIsSmall && (
-          <Typography className={styles.logoText} style={{ fontSize: '0.7rem' }}>
+          <Typography className={styles.logoText} sx={{ fontSize: '0.7rem' }}>
             Built with
           </Typography>
         )}
-        <Typography
-          className={styles.logoText}
-          style={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
-        >
-          {`v.${version}`}
-        </Typography>
+        <Box display="flex" flexDirection="row" alignItems="center">
+          <Box>
+            <Typography
+              className={styles.logoText}
+              sx={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
+            >
+              {`v.${version}`}
+            </Typography>
+          </Box>
+          <Divider flexItem orientation="vertical" sx={{ margin: '4px 8px' }} />
+          {apiLink}
+        </Box>
       </Box>
     );
   };
