@@ -26,7 +26,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
         target="_blank"
         rel="noreferrer"
         underline="hover"
-        className={styles.logoLink}
+        className={`${styles.link} ${styles.logoLink}`}
         sx={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
       >
         API
@@ -92,7 +92,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                     target="_blank"
                     rel="noreferrer"
                     underline="hover"
-                    className={styles.linkText}
+                    className={`${styles.link} ${styles.linkText}`}
                     style={{
                       fontSize: '0.8rem',
                     }}
@@ -120,7 +120,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                   target="_blank"
                   rel="noreferrer"
                   underline="hover"
-                  className={styles.linkText}
+                  className={`${styles.link} ${styles.linkText}`}
                   style={{
                     fontSize: '1.1rem',
                     margin: '0 16px',
