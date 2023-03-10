@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import useStyles from './styles';
+import { useLocation } from 'react-router-dom';
 import {
   Box,
   Divider,
@@ -11,10 +11,6 @@ import {
   Card,
 } from '@mui/material';
 import { RunnableType, Test, Request, ViewType } from '~/models/testSuiteModels';
-import MessagesList from './MessagesList';
-import RequestsList from './RequestsList';
-import ResultIcon from '../ResultIcon';
-import ProblemBadge from './ProblemBadge';
 import PublicIcon from '@mui/icons-material/Public';
 import Error from '@mui/icons-material/Error';
 import Warning from '@mui/icons-material/Warning';
@@ -22,10 +18,14 @@ import Info from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReactMarkdown from 'react-markdown';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
-import type { MessageCounts } from './helper';
-import { countMessageTypes } from './helper';
+import MessagesList from './MessagesList';
+import RequestsList from './RequestsList';
+import ResultIcon from '../ResultIcon';
+import ProblemBadge from './ProblemBadge';
 import TestRunDetail from './TestRunDetail';
 import type { TabProps } from './TestRunDetail';
+import { MessageCounts, countMessageTypes } from './helper';
+import useStyles from './styles';
 
 interface TestListItemProps {
   test: Test;
@@ -43,6 +43,7 @@ const TestListItem: FC<TestListItemProps> = ({
   view,
 }) => {
   const styles = useStyles();
+  const location = useLocation().hash.replace('#', '').split('/')[0];
   const messagesExist = !!test.result?.messages && test.result?.messages.length > 0;
   const requestsExist = !!test.result?.requests && test.result?.requests.length > 0;
   const [itemMouseHover, setItemMouseHover] = React.useState(false);
@@ -57,7 +58,10 @@ const TestListItem: FC<TestListItemProps> = ({
   ];
 
   useEffect(() => {
-    setOpen(view === 'report' && showReportDetails && (messagesExist || requestsExist));
+    setOpen(
+      (view === 'report' && showReportDetails && (messagesExist || requestsExist)) ||
+        location === test.short_id
+    );
   }, [showReportDetails]);
 
   const resultIcon = (

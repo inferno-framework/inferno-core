@@ -1,5 +1,4 @@
 import React, { FC, useEffect } from 'react';
-import useStyles from './styles';
 import {
   Accordion,
   AccordionDetails,
@@ -21,6 +20,7 @@ import TestListItem from '../TestListItem/TestListItem';
 import NavigableGroupListItem from './NavigableGroupListItem';
 import NestedDescriptionPanel from './NestedDescriptionPanel';
 import ProblemBadge from '../TestListItem/ProblemBadge';
+import useStyles from './styles';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;

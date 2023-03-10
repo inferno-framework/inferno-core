@@ -85,26 +85,9 @@ export function applyPreset(test_session_id: string, preset_id: string): Promise
 function addProperties(session: TestSession): TestSession {
   let groups = session.test_suite.test_groups;
   if (groups) {
-    groups = assignParentGroups(groups, null);
     groups = expandRunAsGroupChildren(groups, false);
   }
   return session;
-}
-
-// Can be safely removed
-function assignParentGroups(groups: TestGroup[], parent: TestGroup | null): TestGroup[] {
-  groups.forEach((group) => {
-    if (
-      !group.test_groups ||
-      group.test_groups.length === 0 ||
-      group.test_groups.every((tg) => tg.parent_group)
-    ) {
-      group.parent_group = parent;
-    } else {
-      assignParentGroups(group.test_groups, group);
-    }
-  });
-  return groups;
 }
 
 function expandRunAsGroupChildren(groups: TestGroup[], expandChildren: boolean): TestGroup[] {
