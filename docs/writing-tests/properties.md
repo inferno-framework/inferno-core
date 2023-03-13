@@ -37,6 +37,11 @@ A unique identifier for a test/group/suite. Inferno will automatically create
 ids if they are not specified. It is important to create ids yourself if you
 need to refer to a test/group elsewhere, such as to include one in another
 group.
+
+TestSuite ids appear in Inferno's urls, so consideration should be given to
+choosing a suite id that will make sense to users as a url path. Links to a test
+suite take the form of `INFERNO_BASE_PATH/TEST_SUITE_ID`, and individual test
+session urls look like `INFERNO_BASE_PATH/TEST_SUITE_ID/TEST_SESSION_ID`.
 ```ruby
 test do
   id :us_core_patient_read
