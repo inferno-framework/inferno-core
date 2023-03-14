@@ -1,12 +1,12 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
+import { act } from 'react-dom/test-utils';
 import { SnackbarProvider } from 'notistack';
 
 import App from '../App';
 import * as testSuitesApi from '~/api/TestSuitesApi';
 import { testSuites } from '../__mocked_data__/mockData';
-
-import { vi } from 'vitest';
 
 // Mock out a complex child component, react-testing-library advises
 // against this but we are in the App component, so maybe make an exception?
@@ -25,11 +25,13 @@ describe('The App Root Component', () => {
     const getTestSuites = vi.spyOn(testSuitesApi, 'getTestSuites');
     getTestSuites.mockResolvedValue(testSuites);
 
-    render(
-      <SnackbarProvider>
-        <App />
-      </SnackbarProvider>
-    );
+    act(() => {
+      render(
+        <SnackbarProvider>
+          <App />
+        </SnackbarProvider>
+      );
+    });
 
     expect(getTestSuites).toBeCalledTimes(1);
   });

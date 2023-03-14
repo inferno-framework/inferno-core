@@ -1,11 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { act } from 'react-dom/test-utils';
+import { render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ThemeProvider from 'components/ThemeProvider';
-import React from 'react';
 import Header from '../Header';
 
-// this testing helper is needed to test react hooks outside of render
-import { act, renderHook } from '@testing-library/react-hooks';
 import { MemoryRouter } from 'react-router-dom';
 import { useAppStore } from '~/store/app';
 
