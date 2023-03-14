@@ -27,6 +27,7 @@ interface TestSuiteReportProps {
 }
 
 const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, updateRequest }) => {
+  const { classes } = useStyles();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const [showDetails, setShowDetails] = React.useState(false);
   const location = window?.location?.href?.split('#')?.[0];
@@ -34,17 +35,16 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
     suiteOptions && suiteOptions.length > 0
       ? ` - ${suiteOptions.map((option) => option.label).join(', ')}`
       : '';
-  const styles = useStyles();
 
   const header = (
     <Card variant="outlined" sx={{ mb: 3 }}>
-      <Box className={styles.testGroupCardHeader}>
-        <span className={styles.testGroupCardHeaderText}>
-          <Typography key="1" color="text.primary" className={styles.currentItem}>
+      <Box className={classes.testGroupCardHeader}>
+        <span className={classes.testGroupCardHeaderText}>
+          <Typography key="1" color="text.primary" className={classes.currentItem}>
             {testSuite.title} Report {suiteOptionsString}
           </Typography>
         </span>
-        <span className={styles.testGroupCardHeaderButton}>
+        <span className={classes.testGroupCardHeaderButton}>
           <FormGroup>
             <FormControlLabel
               control={
@@ -61,7 +61,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
             />
           </FormGroup>
         </span>
-        <span className={styles.testGroupCardHeaderButton}>
+        <span className={classes.testGroupCardHeaderButton}>
           {windowIsSmall ? (
             <IconButton color="secondary" aria-label="Print Report" onClick={() => window.print()}>
               <Avatar sx={{ width: 32, height: 32, bgcolor: lightTheme.palette.secondary.main }}>
@@ -83,7 +83,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
         </span>
       </Box>
       <Box p={1}>
-        <Box className={styles.reportSummaryItems}>
+        <Box className={classes.reportSummaryItems}>
           <Box px={2}>
             <Typography
               variant="h5"
@@ -116,7 +116,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
             <Typography variant="button">Report Date</Typography>
           </Box>
         </Box>
-        {location && <Typography className={styles.reportSummaryURL}>{location}</Typography>}
+        {location && <Typography className={classes.reportSummaryURL}>{location}</Typography>}
       </Box>
     </Card>
   );

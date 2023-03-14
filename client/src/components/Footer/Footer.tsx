@@ -13,23 +13,23 @@ interface FooterProps {
 }
 
 const Footer: FC<FooterProps> = ({ version, linkList }) => {
+  const { classes } = useStyles();
   const footerHeight = useAppStore((state) => state.footerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [showMenu, setShowMenu] = React.useState<boolean>(false);
-  const styles = useStyles();
 
   const renderLogoText = () => {
     if (!version) return <></>;
     return (
       <Box display="flex" flexDirection="column">
         {!windowIsSmall && (
-          <Typography className={styles.logoText} style={{ fontSize: '0.7rem' }}>
+          <Typography className={classes.logoText} style={{ fontSize: '0.7rem' }}>
             Built with
           </Typography>
         )}
         <Typography
-          className={styles.logoText}
+          className={classes.logoText}
           style={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
         >
           {`v.${version}`}
@@ -71,7 +71,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                     target="_blank"
                     rel="noreferrer"
                     underline="hover"
-                    className={styles.linkText}
+                    className={classes.linkText}
                     style={{
                       fontSize: '0.8rem',
                     }}
@@ -99,7 +99,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                   target="_blank"
                   rel="noreferrer"
                   underline="hover"
-                  className={styles.linkText}
+                  className={classes.linkText}
                   style={{
                     fontSize: '1.1rem',
                     margin: '0 16px',
@@ -117,7 +117,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
 
   return (
     <footer
-      className={styles.footer}
+      className={classes.footer}
       style={{
         minHeight: `${footerHeight}px`,
         maxHeight: `${footerHeight}px`,
@@ -134,7 +134,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
             <img
               src={getStaticPath(logo as string)}
               alt="Inferno logo - documentation"
-              className={windowIsSmall ? styles.mobileLogo : styles.logo}
+              className={windowIsSmall ? classes.mobileLogo : classes.logo}
             />
           </Link>
           {renderLogoText()}

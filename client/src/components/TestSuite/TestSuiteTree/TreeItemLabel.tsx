@@ -9,20 +9,21 @@ export interface TreeItemLabelProps {
 }
 
 const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, title }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
+
   return (
-    <Box className={styles.labelRoot} data-testid={`tiLabel-${runnable?.id as string}`}>
+    <Box className={classes.labelRoot} data-testid={`tiLabel-${runnable?.id as string}`}>
       <Box width="100%">
         {runnable && 'short_id' in runnable && (
-          <Typography className={styles.shortId} variant="body2">
+          <Typography className={classes.shortId} variant="body2">
             {runnable.short_id}{' '}
           </Typography>
         )}
-        <Typography className={styles.labelText} variant="body2">
+        <Typography className={classes.labelText} variant="body2">
           {title || runnable?.short_title || runnable?.title}
         </Typography>
         {runnable?.optional && (
-          <Typography className={styles.optionalLabel} variant="body2">
+          <Typography className={classes.optionalLabel} variant="body2">
             Optional
           </Typography>
         )}

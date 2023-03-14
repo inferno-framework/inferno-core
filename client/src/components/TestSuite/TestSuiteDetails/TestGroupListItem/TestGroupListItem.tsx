@@ -37,7 +37,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   showReportDetails,
   view,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
   const [warningCount, setWarningCount] = React.useState(0);
   const [errorCount, setErrorCount] = React.useState(0);
   const [groupMouseHover, setGroupMouseHover] = React.useState(false);
@@ -110,7 +110,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   const expandedGroupListItem = (
     <Accordion
       disableGutters
-      className={styles.accordion}
+      className={classes.accordion}
       sx={view === 'report' ? { pointerEvents: 'none' } : {}}
       expanded={expanded}
       onChange={() => {
@@ -125,7 +125,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         id={groupMouseHover ? '' : `${testGroup.id}-summary`}
         data-testid={`${testGroup.id}-summary`}
         aria-controls={`${testGroup.id}-detail`}
-        className={styles.accordionSummary}
+        className={classes.accordionSummary}
         expandIcon={view === 'run' && <ExpandMoreIcon sx={{ userSelect: 'auto' }} />}
       >
         <Box display="flex" alignItems="center" width="100%">
@@ -138,9 +138,11 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
                 primary={
                   <>
                     {testGroup.short_id && (
-                      <Typography className={styles.shortId}>{`${testGroup.short_id} `}</Typography>
+                      <Typography
+                        className={classes.shortId}
+                      >{`${testGroup.short_id} `}</Typography>
                     )}
-                    <Typography className={styles.labelText}>{testGroup.title}</Typography>
+                    <Typography className={classes.labelText}>{testGroup.title}</Typography>
                   </>
                 }
                 secondary={testGroup.result?.result_message}
@@ -152,8 +154,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
               <ProblemBadge
                 Icon={Warning}
                 counts={warningCount}
-                color={styles.warning}
-                badgeStyle={styles.warningBadge}
+                color={classes.warning}
+                badgeStyle={classes.warningBadge}
                 description={`${warningCount} message(s)`}
                 view={view}
                 setOpen={setExpanded}
@@ -163,8 +165,8 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
               <ProblemBadge
                 Icon={Error}
                 counts={errorCount}
-                color={styles.error}
-                badgeStyle={styles.errorBadge}
+                color={classes.error}
+                badgeStyle={classes.errorBadge}
                 description={`${errorCount} message(s)`}
                 view={view}
                 setOpen={setExpanded}
@@ -190,12 +192,12 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       <AccordionDetails
         title={groupMouseHover ? '' : `${testGroup.id}-detail`}
         data-testid={`${testGroup.id}-detail`}
-        className={styles.accordionDetailContainer}
+        className={classes.accordionDetailContainer}
       >
         {testGroup.description && view === 'run' && (
           <NestedDescriptionPanel testGroup={testGroup} />
         )}
-        <Box className={styles.accordionDetail}>
+        <Box className={classes.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}
           {'tests' in testGroup && renderTestListItems()}
         </Box>

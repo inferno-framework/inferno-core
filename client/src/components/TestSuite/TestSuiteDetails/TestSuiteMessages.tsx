@@ -10,15 +10,15 @@ interface TestSuiteMessagesProps {
 }
 
 const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }) => {
-  const styles = useStyles();
   const navigate = useNavigate();
+  const { classes } = useStyles();
 
   const errorMessages = messages.filter((message) => message.type === 'error');
   const warningMessages = messages.filter((message) => message.type === 'warning');
   const infoMessages = messages.filter((message) => message.type === 'info');
 
   const alert = (severity: AlertColor, message: string) => (
-    <Box className={styles.alertCursor}>
+    <Box className={classes.alertCursor}>
       <Alert
         tabIndex={0}
         severity={severity}
@@ -31,10 +31,10 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }
             navigate(`#${testSuiteId || ''}/config`);
           }
         }}
-        className={styles.alert}
+        className={classes.alert}
       >
         <Box display="flex">
-          <Box className={styles.alertMessage}>{message}</Box>
+          <Box className={classes.alertMessage}>{message}</Box>
         </Box>
       </Alert>
     </Box>

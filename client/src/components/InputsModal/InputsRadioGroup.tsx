@@ -24,7 +24,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   inputsMap,
   setInputsMap,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
   const firstValue =
     requirement.options?.list_options && requirement.options?.list_options?.length > 0
       ? requirement.options?.list_options[0]?.value
@@ -36,7 +36,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   const fieldLabelText = requirement.title || requirement.name;
 
   const lockedIcon = requirement.locked && (
-    <LockIcon fontSize="small" className={styles.lockedIcon} />
+    <LockIcon fontSize="small" className={classes.lockedIcon} />
   );
 
   const fieldLabel = (
@@ -61,7 +61,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
         disabled={requirement.locked}
         fullWidth
       >
-        <FormLabel className={styles.inputLabel}>{fieldLabel}</FormLabel>
+        <FormLabel className={classes.inputLabel}>{fieldLabel}</FormLabel>
         <RadioGroup
           row
           aria-label={`${requirement.name}-radio-buttons-group`}

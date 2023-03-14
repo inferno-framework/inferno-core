@@ -31,7 +31,7 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
   updateRequest,
   tabs,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
 
   useEffect(() => {
     setTabIndex(currentTabIndex);
@@ -89,7 +89,7 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
       <Tabs
         value={currentTabIndex}
         variant="scrollable"
-        className={styles.tabs}
+        className={classes.tabs}
         onChange={(e, newIndex: number) => {
           setTabIndex(newIndex);
         }}
