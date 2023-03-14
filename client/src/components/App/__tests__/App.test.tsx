@@ -1,7 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { vi } from 'vitest';
-import { act } from 'react-dom/test-utils';
 import { SnackbarProvider } from 'notistack';
 
 import App from '../App';
@@ -25,13 +24,11 @@ describe('The App Root Component', () => {
     const getTestSuites = vi.spyOn(testSuitesApi, 'getTestSuites');
     getTestSuites.mockResolvedValue(testSuites);
 
-    act(() => {
-      render(
-        <SnackbarProvider>
-          <App />
-        </SnackbarProvider>
-      );
-    });
+    render(
+      <SnackbarProvider>
+        <App />
+      </SnackbarProvider>
+    );
 
     expect(getTestSuites).toBeCalledTimes(1);
   });
