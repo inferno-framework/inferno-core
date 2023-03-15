@@ -1,5 +1,4 @@
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import { render } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
@@ -14,15 +13,13 @@ describe('The RequestsList component', () => {
   test('it orders requests based on their index', () => {
     const requests = [codeResponseWithHTML, mockedRequest];
 
-    act(() => {
-      render(
-        <ThemeProvider>
-          <SnackbarProvider>
-            <RequestsList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
-          </SnackbarProvider>
-        </ThemeProvider>
-      );
-    });
+    render(
+      <ThemeProvider>
+        <SnackbarProvider>
+          <RequestsList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
+        </SnackbarProvider>
+      </ThemeProvider>
+    );
 
     const renderedRequests = document.querySelectorAll('tbody > tr');
 
