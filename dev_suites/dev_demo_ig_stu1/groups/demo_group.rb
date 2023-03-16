@@ -253,6 +253,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       input :radio,
             title: 'Radio Group Input Example',
             type: 'radio',
+            description: 'Radio description',
             optional: false,
             options: {
               list_options: [
@@ -273,6 +274,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       input :checkbox,
             title: 'Checkbox Group Input Example',
             type: 'checkbox',
+            description: 'Checkbox description',
+            default: [ 'value2' ],
             optional: false,
             options: {
               list_options: [

@@ -28,23 +28,32 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
 
   const [values, setValues] = React.useState<CheckboxValues>(() => {
     // Default values should be in form { value: true/false }
-    let startingValues = inputsMap.get(requirement.name) || requirement.default;
-    if (!startingValues) {
-      // Instantiate with { ..., [option.value]: false } for all option values
-      const options = requirement.options?.list_options;
-      if (options && options.length > 0) {
-        startingValues = options.reduce(
-          (acc, option) => ((acc[option.value] = false), acc),
-          {} as CheckboxValues
-        );
-      }
+    const inputMapValues = Array.isArray(inputsMap.get(requirement.name))
+      ? inputsMap.get(requirement.name)
+      : [inputsMap.get(requirement.name)]; // expecting string
+    const defaultValues = inputMapValues || requirement.default || [];
+    const options = requirement.options?.list_options;
+
+    let startingValues = {};
+    // Convert array of checked values to map from item name to checked status
+    if (options && options.length > 0) {
+      startingValues = options.reduce(
+        (acc, option) => (
+          (acc[option.value] = Array.isArray(defaultValues)
+            ? defaultValues.includes(option.value)
+            : false), // default to false if defaultValues is not an array of checked values
+          acc
+        ),
+        {} as CheckboxValues
+      );
     }
+
     return startingValues as CheckboxValues;
   });
 
   useEffect(() => {
     // Make sure starting values get set in inputsMap
-    inputsMap.set(requirement.name, values);
+    inputsMap.set(requirement.name, transformValuesToArray(values));
     setInputsMap(new Map(inputsMap));
   }, []);
 
@@ -53,8 +62,15 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
       ...values,
       [event.target.name]: event.target.checked,
     });
-    inputsMap.set(requirement.name, values);
+    inputsMap.set(requirement.name, transformValuesToArray(values));
     setInputsMap(new Map(inputsMap));
+  };
+
+  // Convert map from item name to checked status back to array of checked values
+  const transformValuesToArray = (values: CheckboxValues): string[] => {
+    return Object.entries(values)
+      .filter(([, value]) => value === true)
+      .map(([key]) => key);
   };
 
   return (

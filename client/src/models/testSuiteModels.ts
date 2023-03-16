@@ -49,7 +49,7 @@ export interface TestInput {
   value?: unknown;
   type?: 'oauth_credentials' | 'checkbox' | 'radio' | 'text' | 'textarea';
   description?: string;
-  default?: string | CheckboxValues;
+  default?: string | string[];
   optional?: boolean;
   locked?: boolean;
   options?: {

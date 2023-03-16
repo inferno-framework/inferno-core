@@ -13,14 +13,14 @@ import {
   ToggleButton,
   Typography,
 } from '@mui/material';
-import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteModels';
-import InputRadioGroup from './InputRadioGroup';
 import ReactMarkdown from 'react-markdown';
+import YAML from 'js-yaml';
+import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteModels';
+import InputOAuthCredentials from './InputOAuthCredentials';
+import InputCheckboxGroup from './InputCheckboxGroup';
+import InputRadioGroup from './InputRadioGroup';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
-import InputOAuthCredentials from './InputOAuthCredentials';
-import YAML from 'js-yaml';
-import InputCheckboxGroup from './InputCheckboxGroup';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
