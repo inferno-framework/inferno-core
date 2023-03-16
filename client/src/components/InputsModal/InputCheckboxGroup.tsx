@@ -27,10 +27,10 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
   const styles = useStyles();
 
   const [values, setValues] = React.useState<CheckboxValues>(() => {
-    // Default values should be in form { value: true/false }
+    // Default values should be in form ['value'] where all values are checked
     const inputMapValues = Array.isArray(inputsMap.get(requirement.name))
       ? inputsMap.get(requirement.name)
-      : [inputsMap.get(requirement.name)]; // expecting string
+      : [inputsMap.get(requirement.name)]; // expecting single value
     const defaultValues = inputMapValues || requirement.default || [];
     const options = requirement.options?.list_options;
 
@@ -58,12 +58,13 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setValues({
+    const newValues = {
       ...values,
       [event.target.name]: event.target.checked,
-    });
-    inputsMap.set(requirement.name, transformValuesToArray(values));
+    };
+    inputsMap.set(requirement.name, transformValuesToArray(newValues));
     setInputsMap(new Map(inputsMap));
+    setValues(newValues);
   };
 
   // Convert map from item name to checked status back to array of checked values
