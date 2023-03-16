@@ -59,7 +59,7 @@ module Inferno
         when 'text', 'textarea', 'radio'
           params[:value].to_s
         when 'checkbox'
-          # TODO: Currently returning the first value; this should be handled as a map of shape { [string]: boolean }
+          # TODO: Currently returning the first value; this should be handled as an array of checked values
           params[:value].first.to_s
         when 'oauth_credentials'
           credentials =
