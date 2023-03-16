@@ -9,14 +9,13 @@ import {
   Result,
   TestSession,
   TestGroup,
-  Test,
   TestSuite,
   Request,
   TestOutput,
   ViewType,
   SuiteOptionChoice,
   isTestGroup,
-  isTestSuite,
+  isTest,
 } from '~/models/testSuiteModels';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from '~/api/TestRunsApi';
 import ActionModal from '~/components/ActionModal/ActionModal';
@@ -32,44 +31,7 @@ import { useSnackbar } from 'notistack';
 import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
 import { useTimeout } from '~/hooks/useTimeout';
-
-function mapRunnableRecursive(testGroup: TestGroup, map: Map<string, Runnable>) {
-  map.set(testGroup.id, testGroup);
-  testGroup.test_groups.forEach((subGroup: TestGroup) => {
-    mapRunnableRecursive(subGroup, map);
-  });
-  testGroup.tests.forEach((test: Test) => {
-    map.set(test.id, test);
-  });
-}
-
-function mapRunnableToId(testSuite: TestSuite): Map<string, Runnable> {
-  const map = new Map<string, Runnable>();
-  map.set(testSuite.id, testSuite);
-  testSuite?.test_groups?.forEach((testGroup: TestGroup) => {
-    mapRunnableRecursive(testGroup, map);
-  });
-  return map;
-}
-
-function resultsToMap(results: Result[], map?: Map<string, Result>): Map<string, Result> {
-  let resultsMap: Map<string, Result>;
-  if (map === undefined) {
-    resultsMap = new Map<string, Result>();
-  } else {
-    resultsMap = map;
-  }
-  results.forEach((result: Result) => {
-    if (result.test_suite_id) {
-      resultsMap.set(result.test_suite_id, result);
-    } else if (result.test_group_id) {
-      resultsMap.set(result.test_group_id, result);
-    } else if (result.test_id) {
-      resultsMap.set(result.test_id, result);
-    }
-  });
-  return new Map(resultsMap);
-}
+import { mapRunnableToId, resultsToMap, setIsRunning } from './TestSuiteUtilities';
 
 export interface TestSessionComponentProps {
   testSession: TestSession;
@@ -116,12 +78,24 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [testRunCancelled, setTestRunCancelled] = React.useState<boolean>(false);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
   const [testSessionPolling, setTestSessionPolling] = React.useState(true);
+
   const poller = useTimeout();
-
-  const { test_suite, id } = testSession;
-
-  const runnableMap = React.useMemo(() => mapRunnableToId(test_suite), [test_suite]);
-  const [suiteName, view] = useLocation().hash.replace('#', '').split('/');
+  const runnableMap = React.useMemo(
+    () => mapRunnableToId(testSession.test_suite),
+    [testSession.test_suite]
+  );
+  const splitLocation = useLocation().hash.replace('#', '').split('/');
+  let suiteName = splitLocation[0];
+  const view = splitLocation[1] as ViewType;
+  if (!runnableMap.get(suiteName)) {
+    Array.from(runnableMap).forEach(([key, value]) => {
+      if (isTestGroup(value) && value.short_id === suiteName) {
+        suiteName = key;
+      } else if (isTest(value) && value.short_id === suiteName) {
+        suiteName = key.substring(0, key.lastIndexOf('-'));
+      }
+    });
+  }
   const selectedRunnable = runnableMap.get(suiteName) ? suiteName : testSession.test_suite.id;
 
   resultsMap.forEach((result, runnableId) => {
@@ -162,7 +136,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }, [testRun]);
 
   useEffect(() => {
-    test_suite.inputs?.forEach((input: TestInput) => {
+    testSession.test_suite.inputs?.forEach((input: TestInput) => {
       const defaultValue = input.default || '';
       sessionData.set(input.name, sessionData.get(input.name) || defaultValue);
     });
@@ -244,20 +218,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   };
 
-  // Recursive function to set the `is_running` field for all children of a runnable
-  const setIsRunning = (runnable: Runnable, value: boolean) => {
-    if (runnable) {
-      runnable.is_running = value;
-      if (isTestGroup(runnable)) {
-        runnable.tests?.forEach((test: Test) => (test.is_running = value));
-        runnable.test_groups?.forEach((testGroup: TestGroup) => setIsRunning(testGroup, value));
-      }
-      if (isTestSuite(runnable)) {
-        runnable.test_groups?.forEach((testGroup: TestGroup) => setIsRunning(testGroup, value));
-      }
-    }
-  };
-
   const runTests = (runnableType: RunnableType, runnableId: string) => {
     const runnable = runnableMap.get(runnableId);
     runnable?.inputs?.forEach((input: TestInput) => {
@@ -275,7 +235,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       sessionData.set(input.name, input.value as string);
     });
     setSessionData(new Map(sessionData));
-    postTestRun(id, runnableType, runnableId, inputs)
+    postTestRun(testSession.id, runnableType, runnableId, inputs)
       .then((testRun: TestRun | null) => {
         if (testRun) {
           const runnable = runnableMap.get(runnableId);
@@ -304,13 +264,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   };
 
-  const testRunIsInProgress = (testRun: TestRun | null): boolean => {
-    const inProgress = testRun?.status
+  const testRunIsInProgress = (testRun: TestRun | null): boolean =>
+    testRun?.status
       ? ['running', 'queued', 'waiting', 'cancelling'].includes(testRun?.status)
       : false;
-
-    return inProgress;
-  };
 
   const renderTestRunProgressBar = () => {
     const duration = testRunInProgress ? null : 2000;
@@ -331,44 +288,43 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     return (
       <nav className={styles.drawer}>
         <TestSuiteTreeComponent
-          testSuite={test_suite}
+          testSuite={testSession.test_suite}
           runTests={runTests}
           selectedRunnable={selectedRunnable}
-          view={(view as ViewType) || 'run'}
+          view={view || 'run'}
           presets={testSession.test_suite.presets}
           getSessionData={getSessionData}
-          testSessionId={id}
+          testSessionId={testSession.id}
         />
       </nav>
     );
   };
 
   const renderView = (view: ViewType) => {
-    if (!runnableMap.get(selectedRunnable)) return null;
+    const runnable = runnableMap.get(selectedRunnable);
+    if (!runnable) return null;
     switch (view) {
       case 'report':
         // This is a little strange because we are only allowing reports
         // at the suite level right now for simplicity.
         return (
           <TestSuiteReport
-            testSuite={runnableMap.get(selectedRunnable) as TestSuite}
+            testSuite={runnable as TestSuite}
             suiteOptions={suiteOptions}
             updateRequest={updateRequest}
           />
         );
       case 'config':
         // Config messages are only defined at the suite level.
-        return (
-          <ConfigMessagesDetailsPanel testSuite={runnableMap.get(selectedRunnable) as TestSuite} />
-        );
+        return <ConfigMessagesDetailsPanel testSuite={runnable as TestSuite} />;
       default:
         return (
           <TestSuiteDetailsPanel
-            runnable={runnableMap.get(selectedRunnable) as TestSuite | TestGroup}
+            runnable={runnable as TestSuite | TestGroup}
             runTests={runTests}
             updateRequest={updateRequest}
-            testSuiteId={test_suite.id}
-            configMessages={test_suite.configuration_messages}
+            testSuiteId={testSession.test_suite.id}
+            configMessages={testSession.test_suite.configuration_messages}
           />
         );
     }
@@ -415,7 +371,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         }}
       >
         <Box className={styles.contentContainer} p={windowIsSmall ? 1 : 4}>
-          {renderView((view as ViewType) || 'run')}
+          {renderView(view || 'run')}
           {inputModalVisible && (
             <InputsModal
               createTestRun={createTestRun}

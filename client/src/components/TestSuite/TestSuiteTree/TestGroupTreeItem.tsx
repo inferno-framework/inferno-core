@@ -19,7 +19,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({ testGroup, runTests }) 
       <TestGroupTreeItem
         testGroup={subTestGroup}
         runTests={runTests}
-        key={`ti-${testGroup.id}-${index}`}
+        key={`ti-${testGroup.short_id}-${index}`}
       />
     ));
   };
@@ -31,7 +31,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({ testGroup, runTests }) 
       icon={itemIcon}
       // eslint-disable-next-line max-len
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-      ContentProps={{ testId: testGroup.id } as any}
+      ContentProps={{ testId: testGroup.short_id } as any}
     >
       {testGroup.test_groups.length > 0 && !testGroup.run_as_group && renderSublist()}
     </CustomTreeItem>

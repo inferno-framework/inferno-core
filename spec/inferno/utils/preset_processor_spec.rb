@@ -22,6 +22,17 @@ RSpec.describe Inferno::Utils::PresetProcessor do
       end
     end
 
+    context 'with an unknown input' do
+      it 'skips the unknown input' do
+        bad_input = { name: 'bad_input', value: 'bad_value' }
+        base_preset.inputs << bad_input
+
+        processed_inputs = described_class.new(base_preset, session).processed_inputs
+
+        expect(processed_inputs.length).to eq(base_preset.inputs.length - 1)
+      end
+    end
+
     context 'with options' do
       let(:preset_with_options) do
         base_preset.tap do |preset|

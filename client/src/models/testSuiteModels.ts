@@ -1,14 +1,35 @@
+export interface CheckboxValues {
+  [key: string]: boolean;
+}
+
+export type FooterLink = {
+  label: string;
+  url: string;
+};
+
+export interface InputOption {
+  label: string;
+  value: string;
+}
+
 export type Message = {
   message: string;
   type: 'error' | 'warning' | 'info';
 };
 
-export type ViewType = 'run' | 'report' | 'config';
+export interface OAuthCredentials {
+  access_token: string;
+  refresh_token?: string;
+  expires_in?: string;
+  client_id?: string;
+  client_secret?: string;
+  token_url?: string;
+}
 
-export type RequestHeader = {
-  name: string;
-  value: string;
-};
+export interface PresetSummary {
+  id: string;
+  title: string;
+}
 
 export type Request = {
   direction: string;
@@ -23,6 +44,11 @@ export type Request = {
   request_body?: string | null;
   response_body?: string | null;
   result_id: string;
+};
+
+export type RequestHeader = {
+  name: string;
+  value: string;
 };
 
 export interface Result {
@@ -43,6 +69,20 @@ export interface Result {
   optional?: boolean;
 }
 
+export interface SuiteOption {
+  id: string;
+  title?: string;
+  description?: string;
+  list_options?: SuiteOptionChoice[];
+  value?: string;
+}
+
+export interface SuiteOptionChoice {
+  label: string;
+  id: string;
+  value: string;
+}
+
 export interface TestInput {
   name: string;
   title?: string;
@@ -57,14 +97,39 @@ export interface TestInput {
   };
 }
 
-export interface InputOption {
-  label: string;
-  value: string;
-}
-
 export interface TestOutput {
   name: string;
   value: string | undefined;
+}
+
+export interface TestRun {
+  id: string;
+  inputs?: TestInput[] | null;
+  results?: Result[] | null;
+  status?: 'queued' | 'running' | 'waiting' | 'cancelling' | 'done';
+  test_count?: number;
+  test_group_id?: string;
+  test_suite_id?: string;
+  test_id?: string;
+}
+
+export interface TestSession {
+  id: string;
+  test_suite: TestSuite;
+  test_suite_id: string;
+  suite_options?: SuiteOption[];
+}
+
+export type ViewType = 'run' | 'report' | 'config';
+
+// ==========================================
+// RUNNABLES
+// ==========================================
+
+export enum RunnableType {
+  TestSuite,
+  TestGroup,
+  Test,
 }
 
 export type Runnable = {
@@ -110,72 +175,15 @@ export type TestSuite = Runnable & {
   suite_summary?: string;
 };
 
-export interface TestSession {
-  id: string;
-  test_suite: TestSuite;
-  test_suite_id: string;
-  suite_options?: SuiteOption[];
-}
-
-export enum RunnableType {
-  TestSuite,
-  TestGroup,
-  Test,
-}
-
-export interface TestRun {
-  id: string;
-  inputs?: TestInput[] | null;
-  results?: Result[] | null;
-  status?: 'queued' | 'running' | 'waiting' | 'cancelling' | 'done';
-  test_count?: number;
-  test_group_id?: string;
-  test_suite_id?: string;
-  test_id?: string;
-}
-
-export interface OAuthCredentials {
-  access_token: string;
-  refresh_token?: string;
-  expires_in?: string;
-  client_id?: string;
-  client_secret?: string;
-  token_url?: string;
-}
-
-export interface PresetSummary {
-  id: string;
-  title: string;
-}
-
-export interface SuiteOption {
-  id: string;
-  title?: string;
-  description?: string;
-  list_options?: SuiteOptionChoice[];
-  value?: string;
-}
-
-export interface SuiteOptionChoice {
-  label: string;
-  id: string;
-  value: string;
-}
-
-export type FooterLink = {
-  label: string;
-  url: string;
-};
-
-export interface CheckboxValues {
-  [key: string]: boolean;
-}
-
 // Custom type guards to determine type of Runnable
-export const isTestSuite = (object: Runnable): object is TestSuite => {
-  return 'test_groups' in object && !('tests' in object);
+export const isTest = (object: Runnable): object is Test => {
+  return !('test_groups' in object);
 };
 
 export const isTestGroup = (object: Runnable): object is TestGroup => {
   return 'test_groups' in object && 'tests' in object;
+};
+
+export const isTestSuite = (object: Runnable): object is TestSuite => {
+  return 'test_groups' in object && !('tests' in object);
 };
