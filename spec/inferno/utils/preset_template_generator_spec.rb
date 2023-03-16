@@ -30,7 +30,7 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
           _type: 'checkbox',
           _title: 'Checkbox Group Input Example',
           _description: 'Checkbox description',
-          _default: [ 'value2' ],
+          _default: ['value2'],
           _optional: false,
           _options: { list_options: [{ label: 'Label 1', value: 'value1' },
                                      { label: 'Label 2', value: 'value2' }] },

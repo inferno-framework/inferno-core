@@ -275,7 +275,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
             title: 'Checkbox Group Input Example',
             type: 'checkbox',
             description: 'Checkbox description',
-            default: [ 'value2' ],
+            default: ['value2'],
             optional: false,
             options: {
               list_options: [
