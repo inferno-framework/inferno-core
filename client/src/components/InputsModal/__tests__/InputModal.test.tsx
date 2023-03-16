@@ -34,7 +34,7 @@ const testInputsDefaults: TestInput[] = [
   },
   {
     name: 'yet another input',
-    default: { value: true },
+    default: ['value'],
   },
 ];
 
