@@ -56,11 +56,8 @@ module Inferno
         return nil if params[:value].blank?
 
         case params[:type]&.to_s
-        when 'text', 'textarea', 'radio'
+        when 'text', 'textarea', 'radio', 'checkbox'
           params[:value].to_s
-        when 'checkbox'
-          # TODO: Currently returning the first value; this should be handled as an array of checked values
-          params[:value].first.to_s
         when 'oauth_credentials'
           credentials =
             if params[:value].is_a? String
