@@ -4,6 +4,7 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
+  FormHelperText,
   FormLabel,
   ListItem,
 } from '@mui/material';
@@ -85,6 +86,9 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
         <FormLabel required={!requirement.optional} className={styles.inputLabel}>
           <FieldLabel requirement={requirement} />
         </FormLabel>
+        {requirement.description && (
+          <FormHelperText sx={{ mx: 0 }}>{requirement.description}</FormHelperText>
+        )}
         <FormGroup aria-label={`${requirement.name}-checkboxes-group`}>
           {requirement.options?.list_options?.map((option, i) => (
             <FormControlLabel
