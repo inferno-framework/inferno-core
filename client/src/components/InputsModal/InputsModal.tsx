@@ -229,8 +229,7 @@ const InputsModal: FC<InputsModalProps> = ({
       onKeyDown={handleSubmitKeydown}
       onClose={closeModal}
     >
-      {/* a11y workaround until MUI implements component prop in DialogTitle */}
-      <DialogTitle {...({ component: 'div' } as unknown)}>
+      <DialogTitle component="div">
         <Typography component="h1" variant="h6">
           {title}
         </Typography>
