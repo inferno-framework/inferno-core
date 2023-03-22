@@ -98,6 +98,40 @@ RSpec.describe Inferno::Repositories::SessionData do
         expect(JSON.parse(persisted_value)).to include(JSON.parse(credentials.to_s))
       end
     end
+
+    context 'with checkboxes' do
+      it 'stores the serialized input' do
+        value = ['abc', 'def']
+        name = 'checkbox'
+        params = {
+          name:,
+          value:,
+          type: 'checkbox',
+          test_session_id: test_session.id
+        }
+
+        repo.save(params)
+
+        persisted_value = repo.class.db.where(name:).first[:value]
+        expect(persisted_value).to eq(value.to_json)
+      end
+
+      it 'stores a json string' do
+        value = ['abc', 'def'].to_json
+        name = 'checkbox'
+        params = {
+          name:,
+          value:,
+          type: 'checkbox',
+          test_session_id: test_session.id
+        }
+
+        repo.save(params)
+
+        persisted_value = repo.class.db.where(name:).first[:value]
+        expect(persisted_value).to eq(value)
+      end
+    end
   end
 
   describe '#load' do
@@ -128,6 +162,24 @@ RSpec.describe Inferno::Repositories::SessionData do
 
         expect(value).to be_a(Inferno::DSL::OAuthCredentials)
         expect(value.to_s).to eq(raw_value)
+      end
+    end
+
+    context 'with checkboxes' do
+      it 'returns an array' do
+        raw_value = ['abc', 'def']
+        name = 'checkbox'
+        repo.save(
+          name:,
+          value: raw_value,
+          type: 'checkbox',
+          test_session_id: test_session.id
+        )
+
+        value = repo.load(test_session_id: test_session.id, name:, type: 'checkbox')
+
+        expect(value).to be_an(Array)
+        expect(value).to eq(raw_value)
       end
     end
   end

@@ -77,8 +77,8 @@ module Inferno
     end
 
     class BadSessionDataType < RuntimeError
-      def initialize(name, expected_class, actual_class)
-        super("Expected '#{name}' to be a #{expected_class.name}, but found a #{actual_class.name}.")
+      def initialize(name, expected_class_names, actual_class)
+        super("Expected '#{name}' to be a #{expected_class_names}, but found a #{actual_class.name}.")
       end
     end
   end

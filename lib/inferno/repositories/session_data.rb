@@ -30,6 +30,8 @@ module Inferno
         case type.to_s
         when 'oauth_credentials'
           DSL::OAuthCredentials.new(JSON.parse(raw_value || '{}'))
+        when 'checkbox'
+          JSON.parse(raw_value || '[]')
         else
           raw_value
         end
@@ -59,23 +61,46 @@ module Inferno
         when 'text', 'textarea', 'radio'
           params[:value].to_s
         when 'checkbox'
-          # TODO: Currently returning the first value; this should be handled as an array of checked values
-          params[:value].first.to_s
+          serialize_checkbox_input(params)
         when 'oauth_credentials'
-          credentials =
-            if params[:value].is_a? String
-              DSL::OAuthCredentials.new(JSON.parse(params[:value]))
-            elsif !params[:value].is_a? DSL::OAuthCredentials
-              raise Exceptions::BadSessionDataType.new(params[:name], DSL::OAuthCredentials, params[:value].class)
-            else
-              params[:value]
-            end
-
-          credentials.name = params[:name]
-          credentials.to_s
+          serialize_oauth_credentials_input(params)
         else
           raise Exceptions::UnknownSessionDataType, params
         end
+      end
+
+      def serialize_checkbox_input(params)
+        if params[:value].is_a?(String)
+          params[:value]
+        elsif params[:value].nil?
+          '[]'
+        elsif params[:value].is_a?(Array)
+          params[:value].to_json
+        else
+          raise Exceptions::BadSessionDataType.new(
+            params[:name],
+            'JSON String or Array',
+            params[:value].class
+          )
+        end
+      end
+
+      def serialize_oauth_credentials_input(params)
+        credentials =
+          if params[:value].is_a? String
+            DSL::OAuthCredentials.new(JSON.parse(params[:value]))
+          elsif !params[:value].is_a? DSL::OAuthCredentials
+            raise Exceptions::BadSessionDataType.new(
+              params[:name],
+              DSL::OAuthCredentials.name,
+              params[:value].class
+            )
+          else
+            params[:value]
+          end
+
+        credentials.name = params[:name]
+        credentials.to_s
       end
 
       class Model < Sequel::Model(db)
