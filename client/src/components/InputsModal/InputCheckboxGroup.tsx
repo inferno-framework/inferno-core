@@ -28,9 +28,19 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
 
   const [values, setValues] = React.useState<CheckboxValues>(() => {
     // Default values should be in form ['value'] where all values are checked
-    const inputMapValues = Array.isArray(inputsMap.get(requirement.name))
-      ? inputsMap.get(requirement.name)
-      : [inputsMap.get(requirement.name)]; // expecting single value
+    let inputMapValues: string[] = [];
+    try {
+      // Parse JSON string of values
+      inputMapValues = JSON.parse(inputsMap.get(requirement.name) as string) as string[];
+    } catch (e) {
+      // If not JSON string, then either array or single value
+      if (Array.isArray(inputsMap.get(requirement.name))) {
+        inputMapValues = inputsMap.get(requirement.name) as string[];
+      } else {
+        inputMapValues = [inputsMap.get(requirement.name) as string]; // expecting single value
+      }
+    }
+
     const defaultValues = inputMapValues || requirement.default || [];
     const options = requirement.options?.list_options;
 
