@@ -61,9 +61,11 @@ const InputsModal: FC<InputsModalProps> = ({
   const [baseInput, setBaseInput] = React.useState<string>('');
   const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
   const missingRequiredInput = inputs.some((input: TestInput) => {
+    const inputValue = inputsMap.get(input.name);
+
+    // if input has OAuth, check if required values are filled
     let oAuthMissingRequiredInput = false;
     try {
-      // if input has OAuth, check if required values are filled
       const oAuthJSON = JSON.parse(inputsMap.get(input.name) as string) as OAuthCredentials;
       const accessTokenIsEmpty = oAuthJSON.access_token === '';
       const refreshIsEmpty =
@@ -73,8 +75,17 @@ const InputsModal: FC<InputsModalProps> = ({
     } catch (e) {
       // if JSON.parse fails, then assume field is not OAuth and move on
     }
-    if (input.type === 'radio') return false; // radio inputs will always be required and have a default value
-    return (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput;
+
+    // radio inputs will always be required and have a default value
+    if (input.type === 'radio') return false;
+
+    // if required, checkbox inputs must have at least one checked value
+    if (input.type === 'checkbox') {
+      // expect an array of checked values, else assume invalid input
+      return Array.isArray(inputValue) ? inputValue.length === 0 : true;
+    }
+
+    return (!input.optional && !inputValue) || oAuthMissingRequiredInput;
   });
 
   useEffect(() => {
