@@ -30,6 +30,7 @@ import { useSnackbar } from 'notistack';
 
 import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
+import { useEffectOnce } from '~/hooks/useEffectOnce';
 import { useTimeout } from '~/hooks/useTimeout';
 import { mapRunnableToId, resultsToMap, setIsRunning } from './TestSuiteUtilities';
 
@@ -157,11 +158,11 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }, [resultsMap]);
 
   // when leaving the TestSession, we want to cancel the poller
-  useEffect(() => {
+  useEffectOnce(() => {
     return () => {
       setTestSessionPolling(false);
     };
-  }, []);
+  });
 
   const showInputsModal = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
     setInputs(inputs);
