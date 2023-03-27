@@ -26,7 +26,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
         target="_blank"
         rel="noreferrer"
         underline="hover"
-        className={`${styles.link} ${styles.logoLink}`}
+        className={`${classes.link} ${classes.logoLink}`}
         sx={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
       >
         API
