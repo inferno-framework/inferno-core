@@ -1,5 +1,4 @@
 import React, { FC, useEffect } from 'react';
-import useStyles from './styles';
 import {
   Button,
   Dialog,
@@ -21,6 +20,7 @@ import InputCheckboxGroup from './InputCheckboxGroup';
 import InputRadioGroup from './InputRadioGroup';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
+import useStyles from './styles';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -80,12 +80,15 @@ const InputsModal: FC<InputsModalProps> = ({
     if (input.type === 'radio') return false;
 
     // if required, checkbox inputs must have at least one checked value
+    let checkboxMissingRequiredInput = false;
     if (input.type === 'checkbox') {
       // expect an array of checked values, else assume invalid input
-      return Array.isArray(inputValue) ? inputValue.length === 0 : true;
+      checkboxMissingRequiredInput = Array.isArray(inputValue) ? inputValue.length === 0 : true;
     }
 
-    return (!input.optional && !inputValue) || oAuthMissingRequiredInput;
+    return (
+      (!input.optional && !inputValue) || oAuthMissingRequiredInput || checkboxMissingRequiredInput
+    );
   });
 
   useEffect(() => {

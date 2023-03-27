@@ -24,7 +24,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
   inputsMap,
   setInputsMap,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
 
   const [values, setValues] = React.useState<CheckboxValues>(() => {
     // Default values should be in form ['value'] where all values are checked
@@ -92,7 +92,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
         disabled={requirement.locked}
         fullWidth
       >
-        <FormLabel required={!requirement.optional} className={styles.inputLabel}>
+        <FormLabel required={!requirement.optional} className={classes.inputLabel}>
           <FieldLabel requirement={requirement} />
         </FormLabel>
         <FormGroup aria-label={`${requirement.name}-checkboxes-group`}>

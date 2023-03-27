@@ -48,13 +48,9 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
         disabled={requirement.locked}
         fullWidth
       >
-<<<<<<< HEAD:client/src/components/InputsModal/InputRadioGroup.tsx
-        <FormLabel required={!requirement.optional} className={styles.inputLabel}>
+        <FormLabel required={!requirement.optional} className={classes.inputLabel}>
           <FieldLabel requirement={requirement} />
         </FormLabel>
-=======
-        <FormLabel className={classes.inputLabel}>{fieldLabel}</FormLabel>
->>>>>>> 5807074f2bfc21dafbb31a41e385e34d713f3563:client/src/components/InputsModal/InputsRadioGroup.tsx
         <RadioGroup
           row
           aria-label={`${requirement.name}-radio-buttons-group`}
