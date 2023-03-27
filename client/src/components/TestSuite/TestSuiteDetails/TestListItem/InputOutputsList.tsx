@@ -15,7 +15,7 @@ const InputsOutputsList: FC<InputOutputsListProps> = ({
   noValuesMessage,
   headerName,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
 
   const headerTitles = [headerName, 'Value'];
   const inputOutputsListHeader = (
@@ -23,9 +23,9 @@ const InputsOutputsList: FC<InputOutputsListProps> = ({
       {headerTitles.map((title) => (
         <TableCell
           key={title}
-          className={title === 'Value' ? styles.inputOutputsValue : styles.noPrintSpacing || ''}
+          className={title === 'Value' ? classes.inputOutputsValue : classes.noPrintSpacing || ''}
         >
-          <Typography variant="overline" className={styles.bolderText}>
+          <Typography variant="overline" className={classes.bolderText}>
             {title}
           </Typography>
         </TableCell>
@@ -37,13 +37,13 @@ const InputsOutputsList: FC<InputOutputsListProps> = ({
     (inputOutputs: TestInput | TestOutput, index: number) => {
       return (
         <TableRow key={`inputOutputsRow-${index}`}>
-          <TableCell className={styles.noPrintSpacing}>
-            <Typography variant="subtitle2" component="p" className={styles.bolderText}>
+          <TableCell className={classes.noPrintSpacing}>
+            <Typography variant="subtitle2" component="p" className={classes.bolderText}>
               {inputOutputs.name}
             </Typography>
           </TableCell>
-          <TableCell className={styles.inputOutputsValue}>
-            <ReactMarkdown className={styles.wordWrap}>
+          <TableCell className={classes.inputOutputsValue}>
+            <ReactMarkdown className={classes.wordWrap}>
               {(inputOutputs?.value as string) || ''}
             </ReactMarkdown>
           </TableCell>

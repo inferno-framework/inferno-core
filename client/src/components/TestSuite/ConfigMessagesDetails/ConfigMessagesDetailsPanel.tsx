@@ -11,7 +11,7 @@ interface ConfigDetailsPanelProps {
 }
 
 const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: runnable }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
   const [tabIndex, setTabIndex] = React.useState(0);
 
   const messages = runnable.configuration_messages || [];
@@ -53,9 +53,9 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
 
   return (
     <Card variant="outlined">
-      <Box className={styles.configCardHeader}>
-        <span className={styles.configCardHeaderText}>
-          <Typography color="text.primary" className={styles.currentItem} component="div">
+      <Box className={classes.configCardHeader}>
+        <span className={classes.configCardHeaderText}>
+          <Typography color="text.primary" className={classes.currentItem} component="div">
             Configuration Messages
           </Typography>
         </span>

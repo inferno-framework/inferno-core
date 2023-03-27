@@ -15,7 +15,7 @@ interface TestGroupCardProps {
 }
 
 const TestGroupCard: FC<TestGroupCardProps> = ({ runnable, runTests, children, view }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
 
   const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
 
@@ -28,17 +28,17 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ runnable, runTests, children, v
 
   const renderHeader = () => {
     return (
-      <Box className={styles.testGroupCardHeader}>
+      <Box className={classes.testGroupCardHeader}>
         {runnable.result && <ResultIcon result={runnable.result} isRunning={runnable.is_running} />}
-        <span className={styles.testGroupCardHeaderText}>
-          <Typography className={styles.currentItem} component="div">
+        <span className={classes.testGroupCardHeaderText}>
+          <Typography className={classes.currentItem} component="div">
             {'short_id' in runnable && (
-              <Typography className={styles.shortId}>{`${runnable.short_id} `}</Typography>
+              <Typography className={classes.shortId}>{`${runnable.short_id} `}</Typography>
             )}
             {runnable.title}
           </Typography>
         </span>
-        <span className={styles.testGroupCardHeaderButton}>
+        <span className={classes.testGroupCardHeaderButton}>
           {view === 'run' && runTests && (
             <TestRunButton
               buttonText={buttonText}

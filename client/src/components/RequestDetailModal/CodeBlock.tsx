@@ -11,14 +11,14 @@ export interface CodeBlockProps {
 }
 
 const CodeBlock: FC<CodeBlockProps> = ({ body, headers }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
 
   if (body && body.length > 0) {
     return (
       <Container
         component={Paper}
         variant="outlined"
-        className={styles.codeblock}
+        className={classes.codeblock}
         data-testid="code-block"
       >
         <pre data-testid="pre">

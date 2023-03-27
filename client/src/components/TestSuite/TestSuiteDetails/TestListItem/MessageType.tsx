@@ -12,8 +12,8 @@ type MessageTypeProps = {
 };
 
 const MessageType: FC<MessageTypeProps> = ({ type }) => {
-  const styles = useStyles();
-  const style = styles[type];
+  const { classes } = useStyles();
+  const style = classes[type];
 
   let icon;
   if (type === 'error') {
@@ -31,7 +31,7 @@ const MessageType: FC<MessageTypeProps> = ({ type }) => {
         variant="subtitle2"
         component="p"
         p={1}
-        className={clsx([styles.bolderText, style])}
+        className={clsx([classes.bolderText, style])}
       >
         {type}
       </Typography>

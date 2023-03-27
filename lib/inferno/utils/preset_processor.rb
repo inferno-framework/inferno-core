@@ -19,11 +19,17 @@ module Inferno
       def processed_inputs
         preset.inputs
           .map { |input| input_for_options(input) }
+          .compact
       end
 
       private
 
       def input_for_options(input)
+        if suite_inputs[input[:name].to_sym].nil?
+          Inferno::Application['logger'].warn("Unknown input #{input[:name]} in preset #{preset.id}")
+          return
+        end
+
         {
           name: input[:name],
           value: value(input),
