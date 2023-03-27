@@ -58,7 +58,7 @@ module Inferno
         return nil if params[:value].blank?
 
         case params[:type]&.to_s
-        when 'text', 'textarea', 'radio', 'checkbox'
+        when 'text', 'textarea', 'radio'
           params[:value].to_s
         when 'checkbox'
           serialize_checkbox_input(params)
