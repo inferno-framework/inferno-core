@@ -1,8 +1,7 @@
 import { Theme } from '@mui/material/styles';
+import { makeStyles } from 'tss-react/mui';
 
-import makeStyles from '@mui/styles/makeStyles';
-
-export default makeStyles((_theme: Theme) => ({
+export default makeStyles()((_theme: Theme) => ({
   modalTitle: {
     fontWeight: 600,
     fontSize: '1.5rem',

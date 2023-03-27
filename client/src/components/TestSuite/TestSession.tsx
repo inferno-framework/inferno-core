@@ -30,6 +30,7 @@ import { useSnackbar } from 'notistack';
 
 import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
+import { useEffectOnce } from '~/hooks/useEffectOnce';
 import { useTimeout } from '~/hooks/useTimeout';
 import { mapRunnableToId, resultsToMap, setIsRunning } from './TestSuiteUtilities';
 
@@ -56,7 +57,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   getSessionData,
   toggleDrawer,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const footerHeight = useAppStore((state) => state.footerHeight);
   const headerHeight = useAppStore((state) => state.headerHeight);
@@ -157,11 +158,11 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }, [resultsMap]);
 
   // when leaving the TestSession, we want to cancel the poller
-  useEffect(() => {
+  useEffectOnce(() => {
     return () => {
       setTestSessionPolling(false);
     };
-  }, []);
+  });
 
   const showInputsModal = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
     setInputs(inputs);
@@ -286,7 +287,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const renderDrawerContents = () => {
     return (
-      <nav className={styles.drawer}>
+      <nav className={classes.drawer}>
         <TestSuiteTreeComponent
           testSuite={testSession.test_suite}
           runTests={runTests}
@@ -331,7 +332,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   };
 
   return (
-    <Box className={styles.testSuiteMain}>
+    <Box className={classes.testSuiteMain}>
       {renderTestRunProgressBar()}
       {windowIsSmall ? (
         <SwipeableDrawer
@@ -343,10 +344,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           disableSwipeToOpen={false}
           ModalProps={{
             keepMounted: true,
-            BackdropProps: { classes: { root: styles.swipeableDrawerHeight } },
+            BackdropProps: { classes: { root: classes.swipeableDrawerHeight } },
           }}
           PaperProps={{ elevation: 0 }}
-          classes={{ paper: styles.swipeableDrawerHeight }}
+          classes={{ paper: classes.swipeableDrawerHeight }}
         >
           {/* Spacer to be updated with header height */}
           <Toolbar sx={{ minHeight: `${headerHeight}px !important` }} />
@@ -358,8 +359,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         <Drawer
           variant="permanent"
           anchor="left"
-          className={styles.hidePrint}
-          classes={{ paper: styles.drawerPaper }}
+          className={classes.hidePrint}
+          classes={{ paper: classes.drawerPaper }}
         >
           {renderDrawerContents()}
         </Drawer>
@@ -370,7 +371,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           width: '100%',
         }}
       >
-        <Box className={styles.contentContainer} p={windowIsSmall ? 1 : 4}>
+        <Box className={classes.contentContainer} p={windowIsSmall ? 1 : 4}>
           {renderView(view || 'run')}
           {inputModalVisible && (
             <InputsModal

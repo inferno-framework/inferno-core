@@ -1,8 +1,7 @@
 import { Theme } from '@mui/material/styles';
+import { makeStyles } from 'tss-react/mui';
 
-import makeStyles from '@mui/styles/makeStyles';
-
-export default makeStyles((theme: Theme) => ({
+export default makeStyles()((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.paper,
   },

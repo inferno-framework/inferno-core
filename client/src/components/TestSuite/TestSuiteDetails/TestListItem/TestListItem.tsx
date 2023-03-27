@@ -42,7 +42,7 @@ const TestListItem: FC<TestListItemProps> = ({
   showReportDetails = false,
   view,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
   const location = useLocation().hash.replace('#', '').split('/')[0];
   const messagesExist = !!test.result?.messages && test.result?.messages.length > 0;
   const requestsExist = !!test.result?.requests && test.result?.requests.length > 0;
@@ -72,9 +72,9 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const testLabel = (
     <>
-      {test.short_id && <Typography className={styles.shortId}>{`${test.short_id} `}</Typography>}
-      {test.optional && <Typography className={styles.optionalLabel}>{'Optional '}</Typography>}
-      <Typography className={styles.labelText}>{test.title}</Typography>
+      {test.short_id && <Typography className={classes.shortId}>{`${test.short_id} `}</Typography>}
+      {test.optional && <Typography className={classes.optionalLabel}>{'Optional '}</Typography>}
+      <Typography className={classes.labelText}>{test.title}</Typography>
     </>
   );
 
@@ -83,13 +83,13 @@ const TestListItem: FC<TestListItemProps> = ({
       primary={testLabel}
       secondary={
         test.result?.result_message && (
-          <ReactMarkdown className={styles.resultMessageMarkdown}>
+          <ReactMarkdown className={classes.resultMessageMarkdown}>
             {test.result.result_message}
           </ReactMarkdown>
         )
       }
       secondaryTypographyProps={{ component: 'div' }}
-      className={styles.testText}
+      className={classes.testText}
     />
   );
 
@@ -108,8 +108,8 @@ const TestListItem: FC<TestListItemProps> = ({
         <ProblemBadge
           Icon={Error}
           counts={messageTypeCounts.errors}
-          color={styles.error}
-          badgeStyle={styles.errorBadge}
+          color={classes.error}
+          badgeStyle={classes.errorBadge}
           description={`${messageTypeCounts.errors} message(s)`}
           view={view}
           panelIndex={0}
@@ -123,8 +123,8 @@ const TestListItem: FC<TestListItemProps> = ({
         <ProblemBadge
           Icon={Warning}
           counts={messageTypeCounts.warnings}
-          color={styles.warning}
-          badgeStyle={styles.warningBadge}
+          color={classes.warning}
+          badgeStyle={classes.warningBadge}
           description={`${messageTypeCounts.warnings} message(s)`}
           view={view}
           panelIndex={0}
@@ -138,8 +138,8 @@ const TestListItem: FC<TestListItemProps> = ({
         <ProblemBadge
           Icon={Info}
           counts={messageTypeCounts.infos}
-          color={styles.info}
-          badgeStyle={styles.infoBadge}
+          color={classes.info}
+          badgeStyle={classes.infoBadge}
           description={`${messageTypeCounts.infos} message(s)`}
           view={view}
           panelIndex={0}
@@ -153,8 +153,8 @@ const TestListItem: FC<TestListItemProps> = ({
     <ProblemBadge
       Icon={PublicIcon}
       counts={test.result.requests.length}
-      color={styles.request}
-      badgeStyle={styles.requestBadge}
+      color={classes.request}
+      badgeStyle={classes.requestBadge}
       description={`${test.result.requests.length} request(s)`}
       view={view}
       panelIndex={1}
@@ -210,7 +210,7 @@ const TestListItem: FC<TestListItemProps> = ({
     <>
       <Accordion
         disableGutters
-        className={styles.accordion}
+        className={classes.accordion}
         sx={view === 'report' ? { pointerEvents: 'none' } : {}}
         expanded={open}
         TransitionProps={{ unmountOnExit: true }}
@@ -224,7 +224,7 @@ const TestListItem: FC<TestListItemProps> = ({
           aria-controls={`${test.id}-detail`}
           role={view === 'report' ? 'region' : 'button'}
           expandIcon={view === 'run' && <ExpandMoreIcon />}
-          className={styles.accordionSummary}
+          className={classes.accordionSummary}
           onKeyDown={(e) => {
             if (view !== 'report' && e.key === 'Enter') {
               setOpen(!open);
@@ -244,7 +244,7 @@ const TestListItem: FC<TestListItemProps> = ({
         <AccordionDetails
           title={itemMouseHover ? '' : `${test.id}-detail`}
           data-testid={`${test.id}-detail`}
-          className={styles.accordionDetailContainer}
+          className={classes.accordionDetailContainer}
           onClick={(e) => e.stopPropagation()}
         >
           {view === 'run' && (

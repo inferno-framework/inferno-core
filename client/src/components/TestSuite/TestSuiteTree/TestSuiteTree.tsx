@@ -50,7 +50,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   testSessionId,
   getSessionData,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
 
   let selectedNode = selectedRunnable;
   if (view === 'report') {
@@ -109,7 +109,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             </Typography>
           }
           icon={<NotificationsIcon />}
-          className={styles.treeItemTopBorder}
+          className={classes.treeItemTopBorder}
           // eslint-disable-next-line max-len
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
           ContentProps={{ testId: `${testSuite.id}/config` } as any}
@@ -118,7 +118,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
     };
 
     return (
-      <Box className={styles.testSuiteTreePanel}>
+      <Box className={classes.testSuiteTreePanel}>
         {presets && presets.length > 0 && testSessionId && getSessionData && (
           <Box m={2}>
             <PresetsSelector
@@ -136,14 +136,14 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           onNodeToggle={nodeToggle}
           expanded={expanded}
           selected={selectedNode}
-          className={styles.testSuiteTree}
+          className={classes.testSuiteTree}
         >
           <CustomTreeItem
-            classes={{ content: styles.treeRoot }}
+            classes={{ content: classes.treeRoot }}
             nodeId={testSuite.id}
             label={<TreeItemLabel runnable={testSuite} />}
             icon={<ListAltIcon />}
-            className={styles.treeItemBottomBorder}
+            className={classes.treeItemBottomBorder}
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
             ContentProps={{ testId: testSuite.id } as any}
@@ -153,7 +153,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             nodeId={`${testSuite.id}/report`}
             label={<TreeItemLabel title={'Report'} />}
             icon={<FlagIcon />}
-            className={`${styles.treeItemTopBorder} ${styles.treeItemBottomBorder}`}
+            className={`${classes.treeItemTopBorder} ${classes.treeItemBottomBorder}`}
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
             ContentProps={{ testId: `${testSuite.id}/report` } as any}

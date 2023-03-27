@@ -26,7 +26,7 @@ const Header: FC<HeaderProps> = ({
   drawerOpen,
   toggleDrawer,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
   const navigate = useNavigate();
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
@@ -43,13 +43,13 @@ const Header: FC<HeaderProps> = ({
   return suiteTitle ? (
     <AppBar
       color="default"
-      className={styles.appbar}
+      className={classes.appbar}
       style={{
         minHeight: `${headerHeight}px`, // For responsive screens
         maxHeight: `${headerHeight}px`, // For responsive screens
       }}
     >
-      <Toolbar className={styles.toolbar}>
+      <Toolbar className={classes.toolbar}>
         {/* Home button */}
         {windowIsSmall ? (
           <IconButton
@@ -63,7 +63,7 @@ const Header: FC<HeaderProps> = ({
           </IconButton>
         ) : (
           <Link to="/" aria-label="Inferno Home">
-            <img src={getStaticPath(icon as string)} alt="Inferno logo" className={styles.logo} />
+            <img src={getStaticPath(icon as string)} alt="Inferno logo" className={classes.logo} />
           </Link>
         )}
 
@@ -78,13 +78,13 @@ const Header: FC<HeaderProps> = ({
           tabIndex={0}
         >
           <Box display="flex" flexDirection="row" alignItems="baseline">
-            <Typography variant="h5" component="h1" className={styles.title}>
-              <Link to={`/${suiteId || ''}`} aria-label="Inferno Home" className={styles.homeLink}>
+            <Typography variant="h5" component="h1" className={classes.title}>
+              <Link to={`/${suiteId || ''}`} aria-label="Inferno Home" className={classes.homeLink}>
                 {suiteTitle}
               </Link>
             </Typography>
             {suiteVersion && (
-              <Typography variant="overline" className={styles.version}>
+              <Typography variant="overline" className={classes.version}>
                 {`v.${suiteVersion}`}
               </Typography>
             )}
@@ -93,7 +93,7 @@ const Header: FC<HeaderProps> = ({
             <Typography
               variant="subtitle2"
               component="h2"
-              className={styles.title}
+              className={classes.title}
               color={lightTheme.palette.common.gray}
             >
               {suiteOptionsString}

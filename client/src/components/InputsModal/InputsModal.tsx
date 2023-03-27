@@ -54,7 +54,7 @@ const InputsModal: FC<InputsModalProps> = ({
   createTestRun,
   sessionData,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
   const [open, setOpen] = React.useState<boolean>(true);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
@@ -251,8 +251,7 @@ const InputsModal: FC<InputsModalProps> = ({
       onKeyDown={handleSubmitKeydown}
       onClose={closeModal}
     >
-      {/* a11y workaround until MUI implements component prop in DialogTitle */}
-      <DialogTitle {...({ component: 'div' } as unknown)}>
+      <DialogTitle component="div">
         <Typography component="h1" variant="h6">
           {title}
         </Typography>
@@ -279,14 +278,14 @@ const InputsModal: FC<InputsModalProps> = ({
               error={invalidInput}
               defaultValue={baseInput}
               data-testid="serial-input"
-              className={styles.serialInput}
+              className={classes.serialInput}
               onChange={(e) => handleSerialChanges(e.target.value)}
               label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
             />
           )}
         </main>
       </DialogContent>
-      <DialogActions className={styles.dialogActions}>
+      <DialogActions className={classes.dialogActions}>
         <ToggleButtonGroup
           exclusive
           role="group"
@@ -294,13 +293,13 @@ const InputsModal: FC<InputsModalProps> = ({
           size="small"
           value={inputType}
           onChange={handleInputTypeChange}
-          className={styles.toggleButtonGroup}
+          className={classes.toggleButtonGroup}
         >
           <ToggleButton
             value="Field"
             disabled={invalidInput}
             data-testid="field-button"
-            className={styles.toggleButton}
+            className={classes.toggleButton}
           >
             Field
           </ToggleButton>
@@ -308,7 +307,7 @@ const InputsModal: FC<InputsModalProps> = ({
             value="JSON"
             disabled={invalidInput}
             data-testid="json-button"
-            className={styles.toggleButton}
+            className={classes.toggleButton}
           >
             JSON
           </ToggleButton>
@@ -316,18 +315,18 @@ const InputsModal: FC<InputsModalProps> = ({
             value="YAML"
             disabled={invalidInput}
             data-testid="yaml-button"
-            className={styles.toggleButton}
+            className={classes.toggleButton}
           >
             YAML
           </ToggleButton>
         </ToggleButtonGroup>
-        <Button data-testid="cancel-button" className={styles.inputAction} onClick={closeModal}>
+        <Button data-testid="cancel-button" className={classes.inputAction} onClick={closeModal}>
           Cancel
         </Button>
         <Button
           onClick={submitClicked}
           disabled={missingRequiredInput || invalidInput}
-          className={styles.inputAction}
+          className={classes.inputAction}
         >
           Submit
         </Button>

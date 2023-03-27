@@ -22,11 +22,11 @@ export interface LandingPageProps {
 }
 
 const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
+  const navigate = useNavigate();
+  const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [testSuiteChosen, setTestSuiteChosen] = React.useState('');
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
-  const styles = useStyles();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (testSuites?.length === 1) {
@@ -61,7 +61,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           data-testid="testing-suite-option"
           selected={testSuiteChosen === testSuite.id}
           onClick={() => setTestSuiteChosen(testSuite.id)}
-          classes={{ selected: styles.selectedItem }}
+          classes={{ selected: classes.selectedItem }}
         >
           <ListItemText primary={testSuite.title} />
         </ListItemButton>
@@ -73,7 +73,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     <Container
       maxWidth="lg"
       role="main"
-      className={styles.main}
+      className={classes.main}
       sx={
         !windowIsSmall
           ? {
@@ -123,7 +123,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         </Box>
         <Paper
           elevation={4}
-          className={styles.optionsList}
+          className={classes.optionsList}
           sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
         >
           <Typography
