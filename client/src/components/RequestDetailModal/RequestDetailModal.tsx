@@ -30,7 +30,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
   usedRequest,
 }) => {
   const [copySuccess, setCopySuccess] = React.useState(false);
-  const styles = useStyles();
+  const { classes } = useStyles();
   const timestamp = request?.timestamp ? new Date(request?.timestamp) : null;
 
   const copyTextClick = async (text: string) => {
@@ -44,12 +44,12 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
 
   const usedRequestIcon = (
     <Tooltip title="This request was performed in another test and the result is used by this test">
-      <InputIcon className={styles.inputIcon} />
+      <InputIcon className={classes.inputIcon} />
     </Tooltip>
   );
 
   const requestDialogTitle = (
-    <Box display="flex" className={styles.modalTitle}>
+    <Box display="flex" className={classes.modalTitle}>
       <Tooltip
         title={`${request?.verb.toUpperCase() || ''} ${request?.url || ''} \u2192 ${
           request?.status || ''
@@ -60,7 +60,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
           <Box display="flex" pr={1}>
             {request?.verb.toUpperCase()}
           </Box>
-          <Box pr={1} className={styles.modalTitleURL}>
+          <Box pr={1} className={classes.modalTitleURL}>
             {request?.url}
           </Box>
           {request?.url && (

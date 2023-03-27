@@ -27,7 +27,7 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
   setPanelIndex,
   setOpen,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
 
   const openPanel = () => {
     if (view !== 'report') {
@@ -45,7 +45,7 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
       badgeContent={counts}
       max={9}
       overlap="circular"
-      className={clsx([color, badgeStyle, styles.badgeBase])}
+      className={clsx([color, badgeStyle, classes.badgeBase])}
       onClick={(e) => {
         e.stopPropagation();
         openPanel();
@@ -62,7 +62,7 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
           aria-label={`View ${description}`}
           aria-hidden={false}
           tabIndex={0}
-          className={clsx([styles.badgeIcon, color])}
+          className={clsx([classes.badgeIcon, color])}
           onClick={(e) => {
             e.stopPropagation();
             openPanel();

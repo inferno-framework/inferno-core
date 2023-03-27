@@ -83,8 +83,8 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
   testRun,
   resultsMap,
 }) => {
+  const { classes } = useStyles();
   const footerHeight = useAppStore((state) => state.footerHeight);
-  const styles = useStyles();
   const cancellable = testRun?.status != 'cancelling' && testRun?.status != 'done';
   const statusIndicator = StatusIndicator(testRun?.status);
   const testCount = testRun?.test_count || 0;
@@ -120,7 +120,11 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
           {testRun?.status === 'cancelling' ? (
             <Typography variant="body1">Cancelling Test Run...</Typography>
           ) : (
-            <LinearProgress variant="determinate" value={value} className={styles.linearProgress} />
+            <LinearProgress
+              variant="determinate"
+              value={value}
+              className={classes.linearProgress}
+            />
           )}
         </Box>
         <Box color="background.paper">
@@ -134,7 +138,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
             disabled={!cancellable}
             color="primary"
             onClick={cancelTestRun}
-            className={styles.cancelButton}
+            className={classes.cancelButton}
           >
             <CancelIcon />
           </IconButton>

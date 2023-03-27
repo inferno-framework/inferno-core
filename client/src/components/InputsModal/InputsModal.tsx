@@ -1,5 +1,4 @@
 import React, { FC, useEffect } from 'react';
-import useStyles from './styles';
 import {
   Button,
   Dialog,
@@ -21,6 +20,7 @@ import InputCheckboxGroup from './InputCheckboxGroup';
 import InputRadioGroup from './InputRadioGroup';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
+import useStyles from './styles';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -54,16 +54,18 @@ const InputsModal: FC<InputsModalProps> = ({
   createTestRun,
   sessionData,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
   const [open, setOpen] = React.useState<boolean>(true);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
   const [baseInput, setBaseInput] = React.useState<string>('');
   const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
   const missingRequiredInput = inputs.some((input: TestInput) => {
+    const inputValue = inputsMap.get(input.name);
+
+    // if input has OAuth, check if required values are filled
     let oAuthMissingRequiredInput = false;
     try {
-      // if input has OAuth, check if required values are filled
       const oAuthJSON = JSON.parse(inputsMap.get(input.name) as string) as OAuthCredentials;
       const accessTokenIsEmpty = oAuthJSON.access_token === '';
       const refreshIsEmpty =
@@ -73,8 +75,17 @@ const InputsModal: FC<InputsModalProps> = ({
     } catch (e) {
       // if JSON.parse fails, then assume field is not OAuth and move on
     }
-    if (input.type === 'radio') return false; // radio inputs will always be required and have a default value
-    return (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput;
+
+    // radio inputs will always be required and have a default value
+    if (input.type === 'radio') return false;
+
+    // if required, checkbox inputs must have at least one checked value
+    if (input.type === 'checkbox') {
+      // expect an array of checked values, else assume invalid input
+      return !input.optional && (Array.isArray(inputValue) ? inputValue.length === 0 : true);
+    }
+
+    return (!input.optional && !inputValue) || oAuthMissingRequiredInput;
   });
 
   useEffect(() => {
@@ -240,8 +251,7 @@ const InputsModal: FC<InputsModalProps> = ({
       onKeyDown={handleSubmitKeydown}
       onClose={closeModal}
     >
-      {/* a11y workaround until MUI implements component prop in DialogTitle */}
-      <DialogTitle {...({ component: 'div' } as unknown)}>
+      <DialogTitle component="div">
         <Typography component="h1" variant="h6">
           {title}
         </Typography>
@@ -268,14 +278,14 @@ const InputsModal: FC<InputsModalProps> = ({
               error={invalidInput}
               defaultValue={baseInput}
               data-testid="serial-input"
-              className={styles.serialInput}
+              className={classes.serialInput}
               onChange={(e) => handleSerialChanges(e.target.value)}
               label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
             />
           )}
         </main>
       </DialogContent>
-      <DialogActions className={styles.dialogActions}>
+      <DialogActions className={classes.dialogActions}>
         <ToggleButtonGroup
           exclusive
           role="group"
@@ -283,13 +293,13 @@ const InputsModal: FC<InputsModalProps> = ({
           size="small"
           value={inputType}
           onChange={handleInputTypeChange}
-          className={styles.toggleButtonGroup}
+          className={classes.toggleButtonGroup}
         >
           <ToggleButton
             value="Field"
             disabled={invalidInput}
             data-testid="field-button"
-            className={styles.toggleButton}
+            className={classes.toggleButton}
           >
             Field
           </ToggleButton>
@@ -297,7 +307,7 @@ const InputsModal: FC<InputsModalProps> = ({
             value="JSON"
             disabled={invalidInput}
             data-testid="json-button"
-            className={styles.toggleButton}
+            className={classes.toggleButton}
           >
             JSON
           </ToggleButton>
@@ -305,18 +315,18 @@ const InputsModal: FC<InputsModalProps> = ({
             value="YAML"
             disabled={invalidInput}
             data-testid="yaml-button"
-            className={styles.toggleButton}
+            className={classes.toggleButton}
           >
             YAML
           </ToggleButton>
         </ToggleButtonGroup>
-        <Button data-testid="cancel-button" className={styles.inputAction} onClick={closeModal}>
+        <Button data-testid="cancel-button" className={classes.inputAction} onClick={closeModal}>
           Cancel
         </Button>
         <Button
           onClick={submitClicked}
           disabled={missingRequiredInput || invalidInput}
-          className={styles.inputAction}
+          className={classes.inputAction}
         >
           Submit
         </Button>

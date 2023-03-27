@@ -25,7 +25,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   inputsMap,
   setInputsMap,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
   const firstValue =
     requirement.options?.list_options && requirement.options?.list_options?.length > 0
       ? requirement.options?.list_options[0]?.value
@@ -49,7 +49,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
         disabled={requirement.locked}
         fullWidth
       >
-        <FormLabel required={!requirement.optional} className={styles.inputLabel}>
+        <FormLabel required={!requirement.optional} className={classes.inputLabel}>
           <FieldLabel requirement={requirement} />
         </FormLabel>
         {requirement.description && (

@@ -18,7 +18,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
   inputsMap,
   setInputsMap,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
 
   return (
     <ListItem>
@@ -26,7 +26,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
         disabled={requirement.locked}
         required={!requirement.optional}
         id={`requirement${index}_input`}
-        className={styles.inputField}
+        className={classes.inputField}
         variant="standard"
         fullWidth
         label={<FieldLabel requirement={requirement} />}

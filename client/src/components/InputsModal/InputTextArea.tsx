@@ -13,7 +13,7 @@ export interface InputTextAreaProps {
 }
 
 const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, setInputsMap }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
 
   return (
     <ListItem>
@@ -21,7 +21,7 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
         disabled={requirement.locked}
         required={!requirement.optional}
         id={`requirement${index}_input`}
-        className={styles.inputField}
+        className={classes.inputField}
         variant="standard"
         fullWidth
         label={<FieldLabel requirement={requirement} />}

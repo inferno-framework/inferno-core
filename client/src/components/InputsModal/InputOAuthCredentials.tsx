@@ -34,7 +34,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   inputsMap,
   setInputsMap,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
   const template = {
     access_token: '',
     refresh_token: '',
@@ -100,7 +100,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           label={fieldLabel}
           helperText={requirement.description}
           value={oAuthCredentials[field.name as keyof OAuthCredentials]}
-          className={styles.inputField}
+          className={classes.inputField}
           variant="standard"
           fullWidth
           onChange={(event) => {
@@ -118,12 +118,12 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
 
   return (
     <ListItem>
-      <Card variant="outlined" className={styles.oauthCard}>
+      <Card variant="outlined" className={classes.oauthCard}>
         <CardContent>
           <InputLabel
             required={!requirement.optional}
             disabled={requirement.locked}
-            className={styles.inputLabel}
+            className={classes.inputLabel}
             shrink
           >
             <FieldLabel requirement={requirement} />

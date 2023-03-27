@@ -11,7 +11,8 @@ interface NavigableGroupListItemProps {
 }
 
 const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
+
   return (
     <>
       <Box display="flex" alignItems="center" px={2} py={1}>
@@ -28,7 +29,7 @@ const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) 
               primary={
                 <>
                   {testGroup.short_id && (
-                    <Typography className={styles.shortId}>{`${testGroup.short_id} `}</Typography>
+                    <Typography className={classes.shortId}>{`${testGroup.short_id} `}</Typography>
                   )}
                   <Link
                     color="inherit"
