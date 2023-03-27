@@ -8,14 +8,14 @@ export interface FieldLabelProps {
 }
 
 const FieldLabel: FC<FieldLabelProps> = ({ requirement }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
 
   const fieldLabelText = requirement.title || requirement.name;
 
   const requiredLabel = !requirement.optional ? ' (required)' : '';
 
   const lockedIcon = requirement.locked && (
-    <LockIcon fontSize="small" className={styles.lockedIcon} />
+    <LockIcon fontSize="small" className={classes.lockedIcon} />
   );
 
   return (
