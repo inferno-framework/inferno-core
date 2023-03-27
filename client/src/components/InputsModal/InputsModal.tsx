@@ -80,15 +80,12 @@ const InputsModal: FC<InputsModalProps> = ({
     if (input.type === 'radio') return false;
 
     // if required, checkbox inputs must have at least one checked value
-    let checkboxMissingRequiredInput = false;
     if (input.type === 'checkbox') {
       // expect an array of checked values, else assume invalid input
-      checkboxMissingRequiredInput = Array.isArray(inputValue) ? inputValue.length === 0 : true;
+      return !input.optional && (Array.isArray(inputValue) ? inputValue.length === 0 : true);
     }
 
-    return (
-      (!input.optional && !inputValue) || oAuthMissingRequiredInput || checkboxMissingRequiredInput
-    );
+    return (!input.optional && !inputValue) || oAuthMissingRequiredInput;
   });
 
   useEffect(() => {
