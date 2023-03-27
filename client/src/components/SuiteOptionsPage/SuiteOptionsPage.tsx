@@ -28,12 +28,12 @@ export interface SuiteOptionsPageProps {
 }
 
 const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
+  const navigate = useNavigate();
+  const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const testSuites = useAppStore((state) => state.testSuites);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
-  const styles = useStyles();
-  const navigate = useNavigate();
   const { test_suite_id } = useParams<{ test_suite_id: string }>();
   const initialSelectedSuiteOptions = testSuite?.suite_options?.map((option) => ({
     // just grab the first to start
@@ -206,7 +206,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         >
           <Paper
             elevation={4}
-            className={styles.optionsList}
+            className={classes.optionsList}
             sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
           >
             <Box

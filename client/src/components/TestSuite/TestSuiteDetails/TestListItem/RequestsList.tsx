@@ -28,12 +28,12 @@ interface RequestsListProps {
 }
 
 const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest, view }) => {
+  const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [showDetails, setShowDetails] = React.useState(false);
   const [copySuccess, setCopySuccess] = React.useState({});
   const [detailedRequest, setDetailedRequest] = React.useState<Request>();
   const headerTitles = ['Type', 'URL', 'Status'];
-  const styles = useStyles();
 
   const showDetailsClick = (request: Request) => {
     if (request.request_headers === undefined) {
@@ -94,7 +94,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
     <TableRow key="req-header">
       {headerTitles.map((title) => (
         <TableCell key={title}>
-          <Typography variant="overline" className={styles.bolderText}>
+          <Typography variant="overline" className={classes.bolderText}>
             {title}
           </Typography>
         </TableCell>
@@ -128,7 +128,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
             </Typography>
           </Box>
         </TableCell>
-        <TableCell className={styles.requestUrlContainer}>
+        <TableCell className={classes.requestUrlContainer}>
           <Box display="flex" alignItems="center">
             <Tooltip title={request.url} placement="bottom-start">
               <Typography
@@ -175,7 +175,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
           </Box>
         </TableCell>
         <TableCell>
-          <Typography variant="subtitle2" component="p" className={styles.bolderText}>
+          <Typography variant="subtitle2" component="p" className={classes.bolderText}>
             {request.status}
           </Typography>
         </TableCell>
@@ -194,7 +194,7 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
     <>
       {requests.length > 0 ? (
         <TableContainer data-testid="requests-list">
-          <Table size="small" className={styles.table}>
+          <Table size="small" className={classes.table}>
             <TableHead>{requestListHeader}</TableHead>
             <TableBody>{requestListItems}</TableBody>
           </Table>

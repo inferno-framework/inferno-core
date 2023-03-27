@@ -1,7 +1,7 @@
 import { Theme } from '@mui/material/styles';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 
-export default makeStyles((theme: Theme) => ({
+export default makeStyles()((theme: Theme) => ({
   labelRoot: {
     display: 'flex',
     flex: '1 1 auto',

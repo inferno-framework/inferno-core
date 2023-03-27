@@ -12,14 +12,14 @@ interface MessagesListProps {
 }
 
 const MessagesList: FC<MessagesListProps> = ({ messages }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
 
   const headerTitles = ['Type', 'Message'];
   const messageListHeader = (
     <TableRow key="msg-header">
       {headerTitles.map((title) => (
-        <TableCell key={title} className={title === 'Message' ? styles.messageMessage : ''}>
-          <Typography variant="overline" className={styles.bolderText}>
+        <TableCell key={title} className={title === 'Message' ? classes.messageMessage : ''}>
+          <Typography variant="overline" className={classes.bolderText}>
             {title}
           </Typography>
         </TableCell>
@@ -33,7 +33,7 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
         <TableCell>
           <MessageType type={message.type} />
         </TableCell>
-        <TableCell className={styles.messageMessage}>
+        <TableCell className={classes.messageMessage}>
           <ReactMarkdown>{message.message}</ReactMarkdown>
         </TableCell>
       </TableRow>

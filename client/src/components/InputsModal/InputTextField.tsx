@@ -18,10 +18,10 @@ const InputTextField: FC<InputTextFieldProps> = ({
   inputsMap,
   setInputsMap,
 }) => {
-  const styles = useStyles();
+  const { classes } = useStyles();
   const fieldLabelText = requirement.title || requirement.name;
   const lockedIcon = requirement.locked && (
-    <LockIcon fontSize="small" className={styles.lockedIcon} />
+    <LockIcon fontSize="small" className={classes.lockedIcon} />
   );
   const requiredLabel = !requirement.optional ? ' (required)' : '';
   const fieldLabel = (
@@ -38,7 +38,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
         disabled={requirement.locked}
         required={!requirement.optional}
         id={`requirement${index}_input`}
-        className={styles.inputField}
+        className={classes.inputField}
         variant="standard"
         fullWidth
         label={fieldLabel}
