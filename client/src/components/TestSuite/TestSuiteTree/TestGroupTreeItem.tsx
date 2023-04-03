@@ -1,26 +1,21 @@
 import React, { FC } from 'react';
-import { TestGroup, RunnableType } from '~/models/testSuiteModels';
+import { TestGroup } from '~/models/testSuiteModels';
 import CustomTreeItem from '~/components/_common/TreeItem';
 import TreeItemLabel from './TreeItemLabel';
 import ResultIcon from '../TestSuiteDetails/ResultIcon';
 
 export interface TestGroupTreeItemProps {
   testGroup: TestGroup;
-  runTests: (runnableType: RunnableType, runnableId: string) => void;
 }
 
-const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({ testGroup, runTests }) => {
+const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({ testGroup }) => {
   const itemIcon = (testGroup.run_as_group || testGroup.test_groups.length === 0) && (
     <ResultIcon result={testGroup.result} isRunning={testGroup.is_running} />
   );
 
   const renderSublist = (): JSX.Element[] => {
     return testGroup.test_groups.map((subTestGroup, index) => (
-      <TestGroupTreeItem
-        testGroup={subTestGroup}
-        runTests={runTests}
-        key={`ti-${testGroup.short_id}-${index}`}
-      />
+      <TestGroupTreeItem testGroup={subTestGroup} key={`ti-${testGroup.short_id}-${index}`} />
     ));
   };
 
