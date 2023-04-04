@@ -57,13 +57,12 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
         {} as CheckboxValues
       );
     }
-
     return startingValues as CheckboxValues;
   });
 
   useEffect(() => {
     // Make sure starting values get set in inputsMap
-    inputsMap.set(requirement.name, transformValuesToArray(values));
+    inputsMap.set(requirement.name, transformValuesToJSONArray(values));
     setInputsMap(new Map(inputsMap));
   }, []);
 
@@ -72,16 +71,19 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
       ...values,
       [event.target.name]: event.target.checked,
     };
-    inputsMap.set(requirement.name, transformValuesToArray(newValues));
+    inputsMap.set(requirement.name, transformValuesToJSONArray(newValues));
     setInputsMap(new Map(inputsMap));
     setValues(newValues);
   };
 
   // Convert map from item name to checked status back to array of checked values
-  const transformValuesToArray = (values: CheckboxValues): string[] => {
-    return Object.entries(values)
+  const transformValuesToJSONArray = (values: CheckboxValues): string => {
+    const checkedValues = Object.entries(values)
       .filter(([, value]) => value === true)
       .map(([key]) => key);
+
+    // Stringify array before setting input map to prevent empty inputs setting default inputs
+    return JSON.stringify(checkedValues);
   };
 
   return (

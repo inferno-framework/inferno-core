@@ -290,7 +290,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       <nav className={classes.drawer}>
         <TestSuiteTreeComponent
           testSuite={testSession.test_suite}
-          runTests={runTests}
           selectedRunnable={selectedRunnable}
           view={view || 'run'}
           presets={testSession.test_suite.presets}
