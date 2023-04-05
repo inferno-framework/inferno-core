@@ -1,6 +1,14 @@
 import React, { FC } from 'react';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
-import { Card, CardContent, InputLabel, List, ListItem, TextField } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  FormHelperText,
+  InputLabel,
+  List,
+  ListItem,
+  TextField,
+} from '@mui/material';
 import { OAuthCredentials, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
 import useStyles from './styles';
@@ -120,6 +128,9 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           >
             <FieldLabel requirement={requirement} />
           </InputLabel>
+          {requirement.description && (
+            <FormHelperText sx={{ mx: 0 }}>{requirement.description}</FormHelperText>
+          )}
           <List>{oAuthFields.map((field) => !field.hide && oAuthField(field))}</List>
         </CardContent>
       </Card>

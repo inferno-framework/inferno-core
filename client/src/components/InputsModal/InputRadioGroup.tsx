@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import {
   FormControl,
   FormControlLabel,
+  FormHelperText,
   FormLabel,
   ListItem,
   Radio,
@@ -51,6 +52,9 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
         <FormLabel required={!requirement.optional} className={classes.inputLabel}>
           <FieldLabel requirement={requirement} />
         </FormLabel>
+        {requirement.description && (
+          <FormHelperText sx={{ mx: 0 }}>{requirement.description}</FormHelperText>
+        )}
         <RadioGroup
           row
           aria-label={`${requirement.name}-radio-buttons-group`}
