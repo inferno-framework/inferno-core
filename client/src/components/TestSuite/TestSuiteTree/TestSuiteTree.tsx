@@ -1,11 +1,5 @@
 import React, { FC } from 'react';
-import {
-  TestSuite,
-  TestGroup,
-  RunnableType,
-  PresetSummary,
-  ViewType,
-} from '~/models/testSuiteModels';
+import { TestSuite, TestGroup, PresetSummary, ViewType } from '~/models/testSuiteModels';
 import { Box, Divider, Typography } from '@mui/material';
 import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -24,7 +18,6 @@ import lightTheme from '~/styles/theme';
 
 export interface TestSuiteTreeProps {
   testSuite: TestSuite;
-  runTests: (runnableType: RunnableType, runnableId: string) => void;
   selectedRunnable: string;
   view: ViewType;
   presets?: PresetSummary[];
@@ -44,7 +37,6 @@ function addDefaultExpanded(testGroups: TestGroup[], defaultExpanded: string[]):
 const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   testSuite,
   selectedRunnable,
-  runTests,
   view,
   presets,
   testSessionId,
@@ -76,7 +68,6 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
         key={testGroup.id}
         data-testid={`${testGroup.id}-treeitem`}
         testGroup={testGroup}
-        runTests={runTests}
       />
     ));
 
