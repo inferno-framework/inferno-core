@@ -31,6 +31,8 @@ only the identifier is required:
   - `'text'` - (**default**) a regular input field.
   - `'textarea'` - for a text area input field.
   - `'radio'` - for a radio button singular selection field.
+  - `'checkbox` - for a checkbox field. In tests, a checkbox input is
+    represented as an array of the selected values.
   - `'oauth_credentials'` - a complex type for storing OAuth2 credentials. When
     used by a FHIR client, the access token will automatically refresh if
     possible.
@@ -38,7 +40,8 @@ only the identifier is required:
 - `optional:` - (**default: false**) whether the input is optional.
 - `options:` - possible input option formats based on input type.
   - `list_options:` - options for input formats that require a list of possible
-    values. An array of hashes with `label` and `value` keys.
+    values (radio and checkbox). An array of hashes with `label` and `value`
+    keys.
 - `locked:` - (**default: false**) whether the user can alter the input's value.
   Locking an input can force it to use a value from a previous test's output, or
   the default value.
@@ -71,9 +74,9 @@ end
 ```
 
 ### Inputs with List Options
-For the `radio` input type, a list of options must be provided. The `label` is
-displayed to the user, and the `value` is the actual value that is stored when
-the user selects that option.
+For the `radio` or `checkbox` input types, a list of options must be provided.
+The `label` is displayed to the user, and the `value` is the actual value that
+is stored when the user selects that option.
 
 ```ruby
 test do
@@ -92,6 +95,21 @@ test do
           ]
         }
 
+  input :checkbox_input_example,
+        title: 'Example Checkbox Input',
+        options: {
+          list_options: [
+            {
+              label: 'Checkbox Option 1'
+              value: 'option_1'
+            },
+            {
+              label: 'Checkbox Option 2'
+              value: 'option_2'
+            }
+          ]
+        }
+
   run do
     if radio_input_example == 'option_1'
       # ...
@@ -100,6 +118,14 @@ test do
     # ...
 
     if radio_input_example == 'option_2'
+      # ...
+    end
+
+    if checkbox_input_example.include? 'option_1'
+      # ...
+    end
+
+    if checkbox_input_example.include? 'option_2'
       # ...
     end
   end

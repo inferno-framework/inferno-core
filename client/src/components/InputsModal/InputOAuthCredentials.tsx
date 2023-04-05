@@ -1,8 +1,8 @@
+import React, { FC } from 'react';
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { Card, CardContent, InputLabel, List, ListItem, TextField } from '@mui/material';
-import LockIcon from '@mui/icons-material/Lock';
 import { OAuthCredentials, TestInput } from '~/models/testSuiteModels';
-import React, { FC, Fragment } from 'react';
+import FieldLabel from './FieldLabel';
 import useStyles from './styles';
 
 export interface InputOAuthCredentialsProps {
@@ -41,19 +41,6 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
       : template
   ) as OAuthCredentials;
   const showRefreshDetails = !!oAuthCredentials.refresh_token;
-
-  const fieldLabelText = `${requirement.title || requirement.name}`;
-  const requiredLabel = !requirement.optional ? ' (required)' : '';
-  const lockedIcon = requirement.locked ? (
-    <LockIcon fontSize="small" className={classes.lockedIcon} />
-  ) : null;
-  const fieldLabel = (
-    <Fragment>
-      {fieldLabelText}
-      {requiredLabel}
-      {lockedIcon}
-    </Fragment>
-  );
 
   const oAuthFields: InputOAuthField[] = [
     {
@@ -131,7 +118,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
             className={classes.inputLabel}
             shrink
           >
-            {fieldLabel}
+            <FieldLabel requirement={requirement} />
           </InputLabel>
           <List>{oAuthFields.map((field) => !field.hide && oAuthField(field))}</List>
         </CardContent>

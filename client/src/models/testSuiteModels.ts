@@ -1,3 +1,7 @@
+export interface CheckboxValues {
+  [key: string]: boolean;
+}
+
 export type FooterLink = {
   label: string;
   url: string;
@@ -83,9 +87,9 @@ export interface TestInput {
   name: string;
   title?: string;
   value?: unknown;
-  type?: 'text' | 'textarea' | 'oauth_credentials' | 'radio';
+  type?: 'oauth_credentials' | 'checkbox' | 'radio' | 'text' | 'textarea';
   description?: string;
-  default?: string;
+  default?: string | string[];
   optional?: boolean;
   locked?: boolean;
   options?: {
