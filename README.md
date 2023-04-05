@@ -1,29 +1,62 @@
 # Inferno Core
 [![codecov](https://codecov.io/gh/inferno-framework/inferno-core/branch/main/graph/badge.svg?token=6NJTBHF82R)](https://codecov.io/gh/inferno-framework/inferno-core)
 
-Inferno Core is an open source tool for testing data exchanges enabled by the [Fast
-Healthcare Interoperability Resources (FHIR)](http://hl7.org/fhir/) standard. 
+Inferno Core is the central component of the [Inferno
+Framework](https://inferno-framework.github.io) that allows you to write,
+execute, and distribute executable API conformance tests for the [Fast Healthcare
+Interoperability Resources (FHIR)](http://hl7.org/fhir/) standard. 
 
-If you are interested in developing tests using Inferno Core, use the [Inferno
-Template Repository](https://github.com/inferno-framework/inferno-template).
+To learn how to use the Inferno Framework and Inferno Core to develop your own
+FHIR API tests, visit [Inferno Framework
+Documentation: Getting Started for Inferno Test Writers](https://inferno-framework.github.io/inferno-core/getting-started.html#getting-started-for-inferno-test-writers).
+If you'd like to get started right away, clone the [Inferno Test Kit Template
+repository](https://github.com/inferno-framework/inferno-template) which
+provides a pre-configured project with Inferno Core that you can use to
+start creating tests.
 
-## Documentation
-- [Inferno documentation](https://inferno-framework.github.io/inferno-core/)
-- [Ruby API documentation](https://inferno-framework.github.io/inferno-core/docs)
-- [JSON API documentation](https://inferno-framework.github.io/inferno-core/api-docs)
+## About Inferno Core
+Inferno Core is a [Ruby](https://ruby-lang.org/) library used to create
+Ruby-based test applications (called Inferno Test Kits) and provides features
+useful for writing and executing FHIR API tests:
+
+* **Inferno DSL**: A domain specific language for authoring FHIR API tests that
+  includes a FHIR client, native Ruby classes for FHIR, and FHIR instance validators
+* **API, Web and CLI Interfaces**: Multiple interfaces for executing tests and
+  retrieving results
+* **Test Reuse**: Methods for reusing tests within a project or from other projects
+
+Because tests are written as Ruby scripts, test writers are able to leverage a
+fully-featured programming language and a rich ecosystem of open source
+third-party libraries to write their tests if needed.  This makes Inferno
+well-suited for testing data exchanges that:
+
+* include the use of additional standards beyond FHIR,
+* have large specifications that could benefit from Ruby's meta-programming
+  capabilities to ease maintenance burden,
+* or require complex logic to thoroughly validate API responses.
+
+Inferno Core provides common utilities for FHIR-based testing, but tests are not
+limited to what is provided by Inferno Core.  Inferno Core's goal is to expand on
+the set of common utilities it provides for the benefit of the community.
+
+To learn more about Inferno Framework and Inferno Core, please visit:
+- [Inferno Framework documentation](https://inferno-framework.github.io/inferno-core/)
+- [Inferno Core Ruby API documentation](https://inferno-framework.github.io/inferno-core/docs)
+- [Inferno Core JSON API documentation](https://inferno-framework.github.io/inferno-core/api-docs)
 
 ## Contributing to Inferno Core
-Developers interested in contributing to the Inferno Core gem must have [Ruby
+
+Inferno Core contains functionality that should be broadly useful for testing
+any FHIR-based data exchange, and the team welcomes contributions.  Developers
+interested in contributing to the Inferno Core gem must have [Ruby
 3.1+](https://www.ruby-lang.org/en/) and [Node.js and
 NPM](https://www.npmjs.com/get-npm) installed.
-
-## Using Inferno Core to author tests
 
 If you are interested in developing tests using Inferno Core, use the [Inferno
 Template Repository](https://github.com/inferno-framework/inferno-template).
 These instructions are for developers working on Inferno Core itself.
 
-## Running Inferno Core
+## Running Inferno Core for Development Purposes
 ```
 # Install dependencies
 npm install
@@ -43,7 +76,7 @@ bin/inferno services stop
 ```
 
 Inferno Core can then be accessed by navigating to
-[http://localhost:4567/inferno](http://localhost:4567)
+[http://localhost:4567/inferno](http://localhost:4567/inferno)
 
 To only run the server (JSON API with no UI): `bundle exec puma`
 
@@ -89,7 +122,7 @@ or
 GET http://localhost:4567/inferno/api/test_sessions/TEST_SESSION_ID/results
 ```
 
-## Development
+## Development in a Ruby console
 To get to an interactive console, run `bundle exec bin/inferno console`
 
 ## Customizable Banner
