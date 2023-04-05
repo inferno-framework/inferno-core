@@ -32,9 +32,15 @@ export default makeStyles()((theme: Theme) => ({
     textTransform: 'uppercase',
     width: 'max-content',
   },
-  linkText: {
+  link: {
     fontWeight: 'bolder',
-    color: theme.palette.common.grayDark,
     width: 'max-content',
+  },
+  logoLink: {
+    fontStyle: 'normal',
+    color: theme.palette.common.orangeDarkest,
+  },
+  linkText: {
+    color: theme.palette.common.grayDark,
   },
 }));
