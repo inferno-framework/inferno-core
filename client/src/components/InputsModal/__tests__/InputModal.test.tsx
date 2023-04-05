@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event';
 import InputsModal from '../InputsModal';
 import { RunnableType, TestInput } from '~/models/testSuiteModels';
 import ThemeProvider from 'components/ThemeProvider';
+import { SnackbarProvider } from 'notistack';
 
 import { vi } from 'vitest';
 
@@ -34,22 +35,24 @@ const testInputsDefaults: TestInput[] = [
   },
   {
     name: 'yet another input',
-    default: 'yet another value',
+    default: ['value'],
   },
 ];
 
 test('Input modal not visible if visibility set to false', () => {
   render(
     <ThemeProvider>
-      <InputsModal
-        hideModal={hideModalMock}
-        title="Modal Title"
-        createTestRun={createTestRunMock}
-        runnableType={RunnableType.TestGroup}
-        runnableId={'test group id'}
-        inputs={testInputs}
-        sessionData={new Map()}
-      />
+      <SnackbarProvider>
+        <InputsModal
+          hideModal={hideModalMock}
+          title="Modal Title"
+          createTestRun={createTestRunMock}
+          runnableType={RunnableType.TestGroup}
+          runnableId={'test group id'}
+          inputs={testInputs}
+          sessionData={new Map()}
+        />
+      </SnackbarProvider>
     </ThemeProvider>
   );
   const titleText = screen.queryByText('Test Inputs');
@@ -59,15 +62,17 @@ test('Input modal not visible if visibility set to false', () => {
 test('Modal visible and inputs are shown', () => {
   render(
     <ThemeProvider>
-      <InputsModal
-        hideModal={hideModalMock}
-        title="Modal Title"
-        createTestRun={createTestRunMock}
-        runnableType={RunnableType.TestGroup}
-        runnableId={'test group id'}
-        inputs={testInputs}
-        sessionData={new Map()}
-      />
+      <SnackbarProvider>
+        <InputsModal
+          hideModal={hideModalMock}
+          title="Modal Title"
+          createTestRun={createTestRunMock}
+          runnableType={RunnableType.TestGroup}
+          runnableId={'test group id'}
+          inputs={testInputs}
+          sessionData={new Map()}
+        />
+      </SnackbarProvider>
     </ThemeProvider>
   );
 
@@ -88,15 +93,17 @@ test('Modal visible and inputs are shown', () => {
 test('Pressing cancel hides the modal', () => {
   render(
     <ThemeProvider>
-      <InputsModal
-        hideModal={hideModalMock}
-        title="Modal Title"
-        createTestRun={createTestRunMock}
-        runnableType={RunnableType.TestGroup}
-        runnableId={'test group id'}
-        inputs={testInputs}
-        sessionData={new Map()}
-      />
+      <SnackbarProvider>
+        <InputsModal
+          hideModal={hideModalMock}
+          title="Modal Title"
+          createTestRun={createTestRunMock}
+          runnableType={RunnableType.TestGroup}
+          runnableId={'test group id'}
+          inputs={testInputs}
+          sessionData={new Map()}
+        />
+      </SnackbarProvider>
     </ThemeProvider>
   );
 
@@ -108,15 +115,17 @@ test('Pressing cancel hides the modal', () => {
 test('Field Inputs shown in JSON and YAML', () => {
   render(
     <ThemeProvider>
-      <InputsModal
-        hideModal={hideModalMock}
-        title="Modal Title"
-        createTestRun={createTestRunMock}
-        runnableType={RunnableType.TestGroup}
-        runnableId={'test group id'}
-        inputs={testInputs}
-        sessionData={new Map()}
-      />
+      <SnackbarProvider>
+        <InputsModal
+          hideModal={hideModalMock}
+          title="Modal Title"
+          createTestRun={createTestRunMock}
+          runnableType={RunnableType.TestGroup}
+          runnableId={'test group id'}
+          inputs={testInputs}
+          sessionData={new Map()}
+        />
+      </SnackbarProvider>
     </ThemeProvider>
   );
 
@@ -141,15 +150,17 @@ test('Field Inputs shown in JSON and YAML', () => {
 test('Values in Field Inputs shown in JSON and YAML', () => {
   render(
     <ThemeProvider>
-      <InputsModal
-        hideModal={hideModalMock}
-        title="Modal Title"
-        createTestRun={createTestRunMock}
-        runnableType={RunnableType.TestGroup}
-        runnableId={'test group id'}
-        inputs={testInputsDefaults}
-        sessionData={new Map()}
-      />
+      <SnackbarProvider>
+        <InputsModal
+          hideModal={hideModalMock}
+          title="Modal Title"
+          createTestRun={createTestRunMock}
+          runnableType={RunnableType.TestGroup}
+          runnableId={'test group id'}
+          inputs={testInputsDefaults}
+          sessionData={new Map()}
+        />
+      </SnackbarProvider>
     </ThemeProvider>
   );
 
@@ -160,13 +171,25 @@ test('Values in Field Inputs shown in JSON and YAML', () => {
   let serial = screen.getByTestId('serial-input').textContent || '';
 
   testInputsDefaults.forEach((input: TestInput) => {
-    if (input.default) expect(serial.includes(input.default));
+    if (input.default) {
+      if (typeof input.default === 'string') expect(serial.includes(input.default));
+      if (typeof input.default === 'object') {
+        Object.keys(input.default).forEach((key) => expect(serial.includes(key)));
+        Object.values(input.default).forEach((value) => expect(serial.includes(value.toString())));
+      }
+    }
   });
 
   userEvent.click(yamlButton);
   serial = screen.getByTestId('serial-input').textContent || '';
 
   testInputs.forEach((input: TestInput) => {
-    if (input.default) expect(serial.includes(input.default));
+    if (input.default) {
+      if (typeof input.default === 'string') expect(serial.includes(input.default));
+      if (typeof input.default === 'object') {
+        Object.keys(input.default).forEach((key) => expect(serial.includes(key)));
+        Object.values(input.default).forEach((value) => expect(serial.includes(value.toString())));
+      }
+    }
   });
 });

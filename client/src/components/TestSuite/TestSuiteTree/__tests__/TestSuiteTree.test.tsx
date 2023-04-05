@@ -6,7 +6,6 @@ import ThemeProvider from 'components/ThemeProvider';
 
 import { vi } from 'vitest';
 
-const runTestsMock = vi.fn();
 vi.mock('react-router-dom', () => ({
   useNavigate: () => {},
 }));
@@ -107,7 +106,6 @@ const demoTestSuite: TestSuite = {
 
 const testSuiteTreeProps: TestSuiteTreeProps = {
   testSuite: demoTestSuite,
-  runTests: runTestsMock,
   selectedRunnable: 'example suite',
   view: 'run',
 };

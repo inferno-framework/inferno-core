@@ -1,5 +1,4 @@
 import React, { FC, useEffect } from 'react';
-import useStyles from './styles';
 import {
   Button,
   Dialog,
@@ -13,13 +12,16 @@ import {
   ToggleButton,
   Typography,
 } from '@mui/material';
-import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteModels';
-import InputRadioGroup from './InputsRadioGroup';
 import ReactMarkdown from 'react-markdown';
+import YAML from 'js-yaml';
+import { useSnackbar } from 'notistack';
+import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteModels';
+import InputOAuthCredentials from './InputOAuthCredentials';
+import InputCheckboxGroup from './InputCheckboxGroup';
+import InputRadioGroup from './InputRadioGroup';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
-import InputOAuthCredentials from './InputOAuthCredentials';
-import YAML from 'js-yaml';
+import useStyles from './styles';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -54,25 +56,50 @@ const InputsModal: FC<InputsModalProps> = ({
   sessionData,
 }) => {
   const { classes } = useStyles();
+  const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = React.useState<boolean>(true);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
   const [baseInput, setBaseInput] = React.useState<string>('');
   const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
+
   const missingRequiredInput = inputs.some((input: TestInput) => {
-    let oAuthMissingRequiredInput = false;
-    try {
-      // if input has OAuth, check if required values are filled
-      const oAuthJSON = JSON.parse(inputsMap.get(input.name) as string) as OAuthCredentials;
-      const accessTokenIsEmpty = oAuthJSON.access_token === '';
-      const refreshIsEmpty =
-        oAuthJSON.refresh_token !== '' &&
-        (oAuthJSON.token_url === '' || oAuthJSON.client_id === '');
-      oAuthMissingRequiredInput = (accessTokenIsEmpty && !input.optional) || refreshIsEmpty;
-    } catch (e) {
-      // if JSON.parse fails, then assume field is not OAuth and move on
+    // radio inputs will always be required and have a default value
+    if (input.type === 'radio') return false;
+
+    // if required, checkbox inputs must have at least one checked value
+    if (input.type === 'checkbox') {
+      try {
+        const checkboxValues = JSON.parse(inputsMap.get(input.name) as string) as string[];
+        return (
+          !input.optional && (Array.isArray(checkboxValues) ? checkboxValues.length === 0 : true)
+        );
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        enqueueSnackbar(`Checkbox input incorrectly formatted: ${errorMessage}`, {
+          variant: 'error',
+        });
+      }
     }
-    if (input.type === 'radio') return false; // radio inputs will always be required and have a default value
+
+    // if input has OAuth, check if required values are filled
+    let oAuthMissingRequiredInput = false;
+    if (input.type === 'oauth_credentials') {
+      try {
+        const oAuthJSON = JSON.parse(inputsMap.get(input.name) as string) as OAuthCredentials;
+        const accessTokenIsEmpty = oAuthJSON.access_token === '';
+        const refreshIsEmpty =
+          oAuthJSON.refresh_token !== '' &&
+          (oAuthJSON.token_url === '' || oAuthJSON.client_id === '');
+        oAuthMissingRequiredInput = (accessTokenIsEmpty && !input.optional) || refreshIsEmpty;
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        enqueueSnackbar(`OAuth credentials incorrectly formatted: ${errorMessage}`, {
+          variant: 'error',
+        });
+      }
+    }
+
     return (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput;
   });
 
@@ -129,9 +156,9 @@ const InputsModal: FC<InputsModalProps> = ({
             key={`input-${index}`}
           />
         );
-      case 'textarea':
+      case 'checkbox':
         return (
-          <InputTextArea
+          <InputCheckboxGroup
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
@@ -142,6 +169,16 @@ const InputsModal: FC<InputsModalProps> = ({
       case 'radio':
         return (
           <InputRadioGroup
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={setInputsMap}
+            key={`input-${index}`}
+          />
+        );
+      case 'textarea':
+        return (
+          <InputTextArea
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}

@@ -8,12 +8,13 @@ module Inferno
       # @param input_params [Hash] options for input such as type, description, or title
       # @option input_params [String] :title Human readable title for input
       # @option input_params [String] :description Description for the input
-      # @option input_params [String] :type text | textarea | radio | oauth_credentials
+      # @option input_params [String] :type text | textarea | radio | checkbox | oauth_credentials
       # @option input_params [String] :default The default value for the input
       # @option input_params [Boolean] :optional Set to true to not require input for test execution
       # @option input_params [Boolean] :locked If true, the user can not alter the value
       # @option input_params [Hash] :options Possible input option formats based on input type
-      # @option options [Array] :list_options Array of options for input formats that require a list of possible values
+      # @option options [Array] :list_options Array of options for input formats
+      #   that require a list of possible values (radio and checkbox)
       # @return [void]
       # @example
       #   input :patient_id, title: 'Patient ID', description: 'The ID of the patient being searched for',
