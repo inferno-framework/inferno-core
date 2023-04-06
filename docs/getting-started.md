@@ -105,6 +105,12 @@ The advantages of using a local ruby installation are
   running tests, which makes test development much easier.
 * The Inferno Command Line Interface can be used. Run `inferno help` for
   information.
+  
+### FHIR Validation Setup
+Put the `package.tgz` for the IG you're writing tests for in
+`lib/your_test_kit_name/igs` and update this path in
+`docker-compose.background.yml`. This will ensure that the validator has access
+to the resources needed to validate resources against your IG.
 
 ### Development with Ruby
 
