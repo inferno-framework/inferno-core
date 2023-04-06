@@ -15,13 +15,19 @@ nav_order: 2
 Inferno is framework for creating, executing, and sharing tests for health IT
 systems providing standardized FHIR APIs.  You use Inferno to create
 **Inferno Test Kits** which are standalone, portable test applications that
-are tailored to test specific FHIR-enabled data exchange use cases as described in [FHIR Implementation Guides](http://fhir.org/guides/registry/).
+are tailored to test specific FHIR-enabled data exchange use cases as described
+in [FHIR Implementation Guides](http://fhir.org/guides/registry/).
 
 Examples of test applications (Test Kits) built using Inferno include:
-* The [US Core Test Kit](https://github.com/inferno-framework/us-core-test-kit) provides tests for servers implementing [US Core Implementation Guide](http://hl7.org/fhir/us/core/).
-* The [SMART App Launch Test Kit](https://github.com/inferno-framework/smart-app-launch-test-kit) provides tests for systems that support the [SMART App Launch Framework](http://hl7.org/fhir/smart-app-launch/index.html).
-* The [ONC Certification (g)(10) Standardized API Test Kit](https://github.com/onc-healthit/onc-certification-g10-test-kit) provides tests for systems
-that seek conformance to [ONC's Standardized API certification criterion](https://www.healthit.gov/test-method/standardized-api-patient-and-population-services).
+* The [US Core Test Kit](https://github.com/inferno-framework/us-core-test-kit)
+  provides tests for servers implementing [US Core Implementation
+  Guide](http://hl7.org/fhir/us/core/).
+* The [SMART App Launch Test Kit](https://github.com/inferno-framework/smart-app-launch-test-kit)
+  provides tests for systems that support the
+  [SMART App Launch Framework](http://hl7.org/fhir/smart-app-launch/index.html).
+* The [ONC Certification (g)(10) Standardized API Test Kit](https://github.com/onc-healthit/onc-certification-g10-test-kit)
+  provides tests for systems that seek conformance to
+  [ONC's Standardized API certification criterion](https://www.healthit.gov/test-method/standardized-api-patient-and-population-services).
 
 Each of these Test Kits is a standalone application that can be run on an end
 user's machine, on a shared private host behind a firewall, or on a shared
