@@ -1,3 +1,10 @@
+# 0.4.12
+* Add a checkbox input type.
+* Update the UI to display input descriptions for radio button inputs.
+* Add a link to the JSON API docs to the footer.
+* Display a warning when a preset contains an unknown input.
+* Add the ability to link to a test/group via its short id.
+
 # 0.4.11
 * Fix the `test_runs/:test_run_id/results` route.
 
