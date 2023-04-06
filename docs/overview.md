@@ -46,7 +46,7 @@ within FHIR itself.  There are no limits to what these rules may include, and
 may even require the use of other standards, such as
 [OAuth](https://www.hl7.org/fhir/smart-app-launch/) or [QR Codes for Vaccination
 Credentials](https://build.fhir.org/ig/HL7/fhir-shc-vaccination-ig/), as part of
-its conformance criteria.
+their conformance criteria.
 
 Creating a test system that is flexible enough to test any arbitrary
 conformance criteria introduced in Implementation Guides is challenging.
