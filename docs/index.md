@@ -3,7 +3,7 @@ layout: home
 title: Home
 nav_order: 1
 ---
-# Inferno
+# Inferno Framework
 {: .fs-9 }
 
 Everything you need to create, execute and share tests for health IT systems providing standardized FHIR APIs.

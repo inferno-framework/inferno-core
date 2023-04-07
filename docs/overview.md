@@ -11,8 +11,8 @@ nav_order: 2
 1. TOC 
 {:toc}
 ---
-## Overview
-Inferno is framework for creating, executing, and sharing tests for health IT
+## Introduction
+Inferno is a framework for creating, executing, and sharing tests for health IT
 systems providing standardized FHIR APIs.  You use Inferno to create
 **Inferno Test Kits** which are standalone, portable test applications that
 are tailored to test specific FHIR-enabled data exchange use cases as described
