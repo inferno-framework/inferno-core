@@ -73,7 +73,7 @@
           dom_id: '#swagger-ui',
           deepLinking: true,
           onComplete: () => {
-            window.ui.setHost(host);
+            if (host) window.ui.setHost(host);
           },
           presets: [
             SwaggerUIBundle.presets.apis,
