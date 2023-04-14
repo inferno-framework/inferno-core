@@ -19,8 +19,6 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [showMenu, setShowMenu] = React.useState<boolean>(false);
 
-  console.log(window.location);
-
   const apiLink = () => {
     const hostname = window.location.host;
     const fullHost = `${hostname}/${basePath}`;
