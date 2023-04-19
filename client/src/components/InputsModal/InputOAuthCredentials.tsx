@@ -105,7 +105,6 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           fullWidth
           onChange={(event) => {
             const value = event.target.value;
-            inputsMap.set(requirement.name, value);
             oAuthCredentials[field.name as keyof OAuthCredentials] = value;
             inputsMap.set(requirement.name, JSON.stringify(oAuthCredentials));
             setInputsMap(new Map(inputsMap));
