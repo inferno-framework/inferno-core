@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    inferno_core (0.4.12)
+    inferno_core (0.4.13)
       activesupport (~> 6.1)
       base62-rb (= 0.3.1)
       blueprinter (= 0.25.2)
@@ -192,11 +192,11 @@ GEM
       mustermann (= 1.1.2)
     netrc (0.11.0)
     nio4r (2.5.9)
-    nokogiri (1.14.2-arm64-darwin)
+    nokogiri (1.14.3-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.14.2-x86_64-darwin)
+    nokogiri (1.14.3-x86_64-darwin)
       racc (~> 1.4)
-    nokogiri (1.14.2-x86_64-linux)
+    nokogiri (1.14.3-x86_64-linux)
       racc (~> 1.4)
     oauth2 (1.4.11)
       faraday (>= 0.17.3, < 3.0)
