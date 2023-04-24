@@ -1,3 +1,7 @@
+# 0.4.13
+* Fix a bug which caused an error to appear in the UI while entering inputs into
+  an input dialog which contains an oauth_credentials input.
+
 # 0.4.12
 * Add a checkbox input type.
 * Update the UI to display input descriptions for radio button inputs.

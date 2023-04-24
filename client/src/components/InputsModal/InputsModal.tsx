@@ -86,7 +86,9 @@ const InputsModal: FC<InputsModalProps> = ({
     let oAuthMissingRequiredInput = false;
     if (input.type === 'oauth_credentials') {
       try {
-        const oAuthJSON = JSON.parse(inputsMap.get(input.name) as string) as OAuthCredentials;
+        const oAuthJSON = JSON.parse(
+          (inputsMap.get(input.name) as string) || '{}'
+        ) as OAuthCredentials;
         const accessTokenIsEmpty = oAuthJSON.access_token === '';
         const refreshIsEmpty =
           oAuthJSON.refresh_token !== '' &&
