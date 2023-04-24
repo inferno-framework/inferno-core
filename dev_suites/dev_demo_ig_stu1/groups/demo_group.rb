@@ -292,6 +292,16 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       run { info "Received the following 'checkbox' variable: '#{checkbox}'" }
     end
 
+    test 'OAuth Credentials group input' do
+      input :credentials,
+            title: 'OAuth Credentials Group Input Example',
+            type: 'oauth_credentials',
+            description: 'OAuth Credentials description',
+            optional: true
+
+      run { info "Received the following 'credentials' variable: '#{credentials}'" }
+    end
+
     test 'locked input' do
       input :patient_name, title: 'Patient Name', description: 'Example of locked, empty input field',
                            locked: true, optional: true
