@@ -172,6 +172,17 @@ RSpec.describe Inferno::DSL::Assertions do
 
         expect(validation_request).to have_been_made.once
       end
+
+      it 'uses an appropriate error message' do
+        stub_request(:post, validation_url)
+          .with(query: { profile: FHIR::Definitions.resource_definition('Patient').url })
+          .with(body: patient_resource.source_contents)
+          .to_return(status: 200, body: error_outcome.to_json)
+
+        expect { klass.assert_valid_resource(resource: patient_resource) }.to(
+          raise_error(assertion_exception, 'Resource does not conform to the base Patient profile.')
+        )
+      end
     end
 
     context 'when a profile_url is provided' do
@@ -196,7 +207,7 @@ RSpec.describe Inferno::DSL::Assertions do
           .to_return(status: 200, body: error_outcome.to_json)
 
         expect { klass.assert_valid_resource(resource: patient_resource, profile_url:) }.to(
-          raise_error(assertion_exception, klass.invalid_resource_message(profile_url))
+          raise_error(assertion_exception, klass.invalid_resource_message(patient_resource, profile_url))
         )
       end
 
@@ -207,7 +218,7 @@ RSpec.describe Inferno::DSL::Assertions do
           .to_return(status: 200, body: error_outcome.to_json)
 
         expect { klass.assert_valid_resource(resource: patient_resource, profile_url:) }.to(
-          raise_error(assertion_exception, klass.invalid_resource_message(profile_url))
+          raise_error(assertion_exception, klass.invalid_resource_message(patient_resource, profile_url))
         )
 
         error_message = klass.messages.find { |message| message[:type] == 'error' }
