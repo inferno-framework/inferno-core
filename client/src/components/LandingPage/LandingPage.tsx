@@ -90,7 +90,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        overflow="auto"
+        overflow="initial"
         height="100%"
         minHeight="400px"
         pb={windowIsSmall ? 0 : 10}
@@ -134,7 +134,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           >
             Test Suites
           </Typography>
-          <Box overflow="auto">
+          <Box>
             <List>
               {testSuites ? (
                 testSuites
