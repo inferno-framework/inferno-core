@@ -174,6 +174,27 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         width="100%"
         sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4, pb: 8, overflow: 'hidden' }}
       >
+        {/* Description */}
+        <Box
+          maxWidth={descriptionWidth}
+          maxHeight={windowIsSmall ? 'none' : '100%'}
+          overflow="auto"
+          my={3}
+        >
+          <Typography
+            variant="h6"
+            component="h2"
+            pr={2}
+            pl={5}
+            sx={{
+              wordBreak: 'break-word',
+            }}
+          >
+            <ReactMarkdown>
+              {testSuite?.suite_summary || testSuite?.description || ''}
+            </ReactMarkdown>
+          </Typography>
+        </Box>
         {/* Selection panel */}
         <Box display="flex" justifyContent="center" maxHeight="100%" ref={selectionPanel} p={3}>
           <Paper
@@ -226,27 +247,6 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
               </Button>
             </Box>
           </Paper>
-        </Box>
-        {/* Description */}
-        <Box
-          maxWidth={descriptionWidth}
-          maxHeight={windowIsSmall ? 'none' : '100%'}
-          overflow="auto"
-          my={3}
-        >
-          <Typography
-            variant="h6"
-            component="h2"
-            pr={2}
-            pl={5}
-            sx={{
-              wordBreak: 'break-word',
-            }}
-          >
-            <ReactMarkdown>
-              {testSuite?.suite_summary || testSuite?.description || ''}
-            </ReactMarkdown>
-          </Typography>
         </Box>
       </Box>
     </Box>
