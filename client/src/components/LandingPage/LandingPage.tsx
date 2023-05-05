@@ -1,20 +1,13 @@
 import React, { FC, useEffect } from 'react';
-import {
-  Typography,
-  Container,
-  Button,
-  Paper,
-  List,
-  ListItemText,
-  ListItemButton,
-  Box,
-} from '@mui/material';
+import { Typography, Button, Paper, List, ListItemText, ListItemButton, Box } from '@mui/material';
 import { TestSuite, TestSession } from 'models/testSuiteModels';
 import useStyles from './styles';
 import { useNavigate } from 'react-router-dom';
 import { postTestSessions } from 'api/TestSessionApi';
 import { useAppStore } from '~/store/app';
+import { getStaticPath } from '~/api/infernoApiService';
 import lightTheme from '~/styles/theme';
+import infernoLogo from '~/images/inferno_logo.png';
 import { useSnackbar } from 'notistack';
 
 export interface LandingPageProps {
@@ -64,14 +57,14 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           classes={{ selected: classes.selectedItem }}
         >
           <ListItemText primary={testSuite.title} />
+          {/* {testSuiteChosen === testSuite.id && <></>} */}
         </ListItemButton>
       </li>
     );
   };
 
   return (
-    <Container
-      maxWidth="lg"
+    <Box
       role="main"
       className={classes.main}
       sx={
@@ -90,7 +83,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        overflow="auto"
+        overflow="initial"
         height="100%"
         minHeight="400px"
         pb={windowIsSmall ? 0 : 10}
@@ -105,8 +98,13 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
               fontSize: windowIsSmall ? '2rem' : 'auto',
             }}
           >
-            FHIR Testing with Inferno
+            FHIR Testing
           </Typography>
+          <img
+            src={getStaticPath(infernoLogo as string)}
+            alt="Inferno Logo"
+            style={{ height: '8em' }}
+          />
         </Box>
         <Box mb={2} alignItems="center" maxWidth="600px">
           <Typography
@@ -134,7 +132,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           >
             Test Suites
           </Typography>
-          <Box overflow="auto">
+          <Box>
             <List>
               {testSuites ? (
                 testSuites
@@ -165,7 +163,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           </Button>
         </Paper>
       </Box>
-    </Container>
+    </Box>
   );
 };
 

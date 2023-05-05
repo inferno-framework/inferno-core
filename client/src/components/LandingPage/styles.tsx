@@ -2,14 +2,12 @@ import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
 
 export default makeStyles()((theme: Theme) => ({
-  container: {
-    backgroundColor: theme.palette.common.white,
-  },
   main: {
     display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-evenly',
+    backgroundColor: theme.palette.common.white,
   },
   selectedItem: {
     backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
