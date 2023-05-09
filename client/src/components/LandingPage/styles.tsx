@@ -7,7 +7,9 @@ export default makeStyles()((theme: Theme) => ({
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-evenly',
+    height: '100%',
     backgroundColor: theme.palette.common.white,
+    padding: '0 !important',
   },
   selectedItem: {
     backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
@@ -18,6 +20,5 @@ export default makeStyles()((theme: Theme) => ({
     margin: '20px',
     padding: '16px',
     borderRadius: '16px',
-    overflow: 'auto',
   },
 }));

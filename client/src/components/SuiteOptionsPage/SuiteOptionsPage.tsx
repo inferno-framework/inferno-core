@@ -89,6 +89,24 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
       });
   };
 
+  const renderTitle = () => {
+    return (
+      <Typography
+        variant="h3"
+        component="h1"
+        align="center"
+        sx={{
+          color: lightTheme.palette.common.grayDarkest,
+          fontSize: windowIsSmall ? '2rem' : 'auto',
+          fontWeight: 'bolder',
+          letterSpacing: 2,
+        }}
+      >
+        {testSuite?.title.toUpperCase()}
+      </Typography>
+    );
+  };
+
   const renderBackButton = () => {
     const returnHome = () => {
       navigate('/');
@@ -140,32 +158,88 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
     );
   };
 
+  const renderSelectionPanel = () => {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        maxHeight="100%"
+        overflow="auto"
+        ref={selectionPanel}
+        p={3}
+      >
+        <Paper
+          elevation={4}
+          className={classes.optionsList}
+          sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
+        >
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent={testSuites.length > 1 ? 'space-between' : 'center'}
+            mx={1}
+          >
+            {testSuites.length > 1 && renderBackButton()}
+            <Typography
+              variant="h4"
+              component="h2"
+              align="center"
+              sx={{
+                fontSize: windowIsSmall ? '1.8rem' : 'auto',
+              }}
+            >
+              Options
+            </Typography>
+            {/* Spacer to center title with button */}
+            {testSuites.length > 1 && <Box minWidth="45px" />}
+          </Box>
+
+          <Box overflow="auto" px={4} pt={2}>
+            {testSuite?.suite_options ? (
+              testSuite?.suite_options.map((suiteOption: SuiteOption, i) =>
+                renderOption(suiteOption, i)
+              )
+            ) : (
+              <Typography mt={2}> No options available.</Typography>
+            )}
+          </Box>
+
+          <Box px={2} pt={2}>
+            <Button
+              variant="contained"
+              size="large"
+              color="primary"
+              fullWidth
+              data-testid="go-button"
+              sx={{ fontWeight: 600 }}
+              onClick={() => createTestSession(selectedSuiteOptions)}
+            >
+              Start Testing
+            </Button>
+          </Box>
+        </Paper>
+      </Box>
+    );
+  };
+
   return (
     <Box
       display="flex"
       alignItems="center"
       justifyContent="center"
-      flexDirection="column"
+      flexDirection={windowIsSmall ? 'column' : 'row'}
       minHeight="600px"
       height="100%"
       maxHeight="100vh"
       role="main"
+      sx={{ backgroundColor: lightTheme.palette.common.white }}
     >
       {/* Title */}
-      <Box alignItems="center" maxWidth="800px" sx={windowIsSmall ? { m: 2 } : { mt: 6 }}>
-        <Typography
-          variant="h2"
-          component="h1"
-          align="center"
-          sx={{
-            color: lightTheme.palette.common.orangeDarker,
-            fontSize: windowIsSmall ? '2rem' : 'auto',
-          }}
-        >
-          {testSuite?.title}
-        </Typography>
-      </Box>
-
+      {windowIsSmall && (
+        <Box alignItems="center" maxWidth="800px" sx={{ m: 2 }}>
+          {renderTitle()}
+        </Box>
+      )}
       <Box
         display="flex"
         flexWrap="wrap"
@@ -174,66 +248,19 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         width="100%"
         sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4, pb: 8, overflow: 'hidden' }}
       >
-        {/* Selection panel */}
-        <Box display="flex" justifyContent="center" maxHeight="100%" ref={selectionPanel} p={3}>
-          <Paper
-            elevation={4}
-            className={classes.optionsList}
-            sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
-          >
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent={testSuites.length > 1 ? 'space-between' : 'center'}
-              mx={1}
-            >
-              {testSuites.length > 1 && renderBackButton()}
-              <Typography
-                variant="h4"
-                component="h2"
-                align="center"
-                sx={{
-                  fontSize: windowIsSmall ? '1.8rem' : 'auto',
-                }}
-              >
-                Options
-              </Typography>
-              {/* Spacer to center title with button */}
-              {testSuites.length > 1 && <Box minWidth="45px" />}
-            </Box>
-
-            <Box px={4} pt={2}>
-              {testSuite?.suite_options ? (
-                testSuite?.suite_options.map((suiteOption: SuiteOption, i) =>
-                  renderOption(suiteOption, i)
-                )
-              ) : (
-                <Typography mt={2}> No options available.</Typography>
-              )}
-            </Box>
-
-            <Box px={2} pt={2}>
-              <Button
-                variant="contained"
-                size="large"
-                color="primary"
-                fullWidth
-                data-testid="go-button"
-                sx={{ fontWeight: 600 }}
-                onClick={() => createTestSession(selectedSuiteOptions)}
-              >
-                Start Testing
-              </Button>
-            </Box>
-          </Paper>
-        </Box>
-        {/* Description */}
         <Box
           maxWidth={descriptionWidth}
           maxHeight={windowIsSmall ? 'none' : '100%'}
           overflow="auto"
           my={3}
         >
+          {/* Title */}
+          {!windowIsSmall && (
+            <Box alignItems="center" maxWidth="800px" sx={{ m: 4 }}>
+              {renderTitle()}
+            </Box>
+          )}
+          {/* Description */}
           <Typography
             variant="h6"
             component="h2"
@@ -248,6 +275,14 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
             </ReactMarkdown>
           </Typography>
         </Box>
+      </Box>
+      <Box
+        display="flex"
+        height="100%"
+        alignItems="center"
+        sx={{ backgroundColor: lightTheme.palette.common.gray }}
+      >
+        {renderSelectionPanel()}
       </Box>
     </Box>
   );

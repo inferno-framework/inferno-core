@@ -1,5 +1,14 @@
 import React, { FC, useEffect } from 'react';
-import { Typography, Button, Paper, List, ListItemText, ListItemButton, Box } from '@mui/material';
+import {
+  Typography,
+  Container,
+  Button,
+  Paper,
+  List,
+  ListItemText,
+  ListItemButton,
+  Box,
+} from '@mui/material';
 import { TestSuite, TestSession } from 'models/testSuiteModels';
 import useStyles from './styles';
 import { useNavigate } from 'react-router-dom';
@@ -64,14 +73,14 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   };
 
   return (
-    <Box
+    <Container
+      maxWidth={false}
       role="main"
       className={classes.main}
       sx={
         !windowIsSmall
           ? {
               minHeight: '400px',
-              height: '100%',
               maxHeight: '100vh',
               py: 10,
             }
@@ -81,30 +90,34 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       <Box
         display="flex"
         flexDirection="column"
-        justifyContent="center"
+        justifyContent={windowIsSmall ? 'center' : 'flex-end'}
         alignItems="center"
         overflow="initial"
-        height="100%"
-        minHeight="400px"
-        pb={windowIsSmall ? 0 : 10}
+        height="45%"
+        minHeight="200px"
+        pb={windowIsSmall ? 0 : 2}
+        px={2}
       >
         <Box my={2} alignItems="center" maxWidth="800px">
+          <Box display="flex" alignItems="center" justifyContent="center">
+            <img
+              src={getStaticPath(infernoLogo as string)}
+              alt="Inferno Logo"
+              style={{ height: windowIsSmall ? '5em' : '8em' }}
+            />
+          </Box>
           <Typography
-            variant="h2"
+            variant="h4"
             component="h1"
             align="center"
             sx={{
-              color: lightTheme.palette.common.orangeDarker,
+              color: lightTheme.palette.common.grayDark,
               fontSize: windowIsSmall ? '2rem' : 'auto',
+              fontWeight: 'bolder',
             }}
           >
-            FHIR Testing
+            FHIR Testing with Inferno
           </Typography>
-          <img
-            src={getStaticPath(infernoLogo as string)}
-            alt="Inferno Logo"
-            style={{ height: '8em' }}
-          />
         </Box>
         <Box mb={2} alignItems="center" maxWidth="600px">
           <Typography
@@ -119,6 +132,62 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             standards.
           </Typography>
         </Box>
+        {/* <Paper
+          elevation={4}
+          className={classes.optionsList}
+          sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
+        >
+          <Typography
+            variant="h4"
+            component="h2"
+            align="center"
+            sx={{ fontSize: windowIsSmall ? '1.8rem' : 'auto' }}
+          >
+            Test Suites
+          </Typography>
+          <Box>
+            <List>
+              {testSuites ? (
+                testSuites
+                  .sort((testSuite1: TestSuite, testSuite2: TestSuite): number =>
+                    testSuite1.title.localeCompare(testSuite2.title)
+                  )
+                  .map((testSuite: TestSuite) => renderOption(testSuite))
+              ) : (
+                <Typography my={2}> No suites available.</Typography>
+              )}
+            </List>
+          </Box>
+          <Button
+            variant="contained"
+            size="large"
+            color="primary"
+            fullWidth
+            disabled={!testSuiteChosen}
+            data-testid="go-button"
+            sx={{ fontWeight: 600 }}
+            onClick={() =>
+              startTestingClick(
+                testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen)
+              )
+            }
+          >
+            Select Suite
+          </Button>
+        </Paper> */}
+      </Box>
+      <Box
+        display="flex"
+        flexDirection="column"
+        justifyContent="flex-start"
+        alignItems="center"
+        overflow="initial"
+        height="55%"
+        width="100%"
+        minHeight="200px"
+        py={2}
+        sx={{ backgroundColor: lightTheme.palette.common.gray }}
+      >
         <Paper
           elevation={4}
           className={classes.optionsList}
@@ -163,7 +232,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           </Button>
         </Paper>
       </Box>
-    </Box>
+    </Container>
   );
 };
 
