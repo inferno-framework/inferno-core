@@ -196,14 +196,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
           </Typography>
         </Box>
         {/* Selection panel */}
-        <Box
-          display="flex"
-          justifyContent="center"
-          maxHeight="100%"
-          overflow="auto"
-          ref={selectionPanel}
-          p={3}
-        >
+        <Box display="flex" justifyContent="center" maxHeight="100%" ref={selectionPanel} p={3}>
           <Paper
             elevation={4}
             className={classes.optionsList}
@@ -230,7 +223,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
               {testSuites.length > 1 && <Box minWidth="45px" />}
             </Box>
 
-            <Box overflow="auto" px={4} pt={2}>
+            <Box px={4} pt={2}>
               {testSuite?.suite_options ? (
                 testSuite?.suite_options.map((suiteOption: SuiteOption, i) =>
                   renderOption(suiteOption, i)
