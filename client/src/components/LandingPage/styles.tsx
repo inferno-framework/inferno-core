@@ -1,14 +1,12 @@
-import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
 
-export default makeStyles()((theme: Theme) => ({
+export default makeStyles()(() => ({
   main: {
     display: 'flex',
     flexWrap: 'wrap',
-    alignItems: 'center',
+    alignItems: 'initial',
     justifyContent: 'space-evenly',
     height: '100%',
-    backgroundColor: theme.palette.common.white,
     padding: '0 !important',
   },
   selectedItem: {

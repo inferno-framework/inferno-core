@@ -1,23 +1,20 @@
 import React, { FC, useEffect } from 'react';
-import {
-  Typography,
-  Container,
-  Button,
-  Paper,
-  List,
-  ListItemText,
-  ListItemButton,
-  Box,
-} from '@mui/material';
-import { TestSuite, TestSession } from 'models/testSuiteModels';
-import useStyles from './styles';
 import { useNavigate } from 'react-router-dom';
-import { postTestSessions } from 'api/TestSessionApi';
-import { useAppStore } from '~/store/app';
-import { getStaticPath } from '~/api/infernoApiService';
-import lightTheme from '~/styles/theme';
-import infernoLogo from '~/images/inferno_logo.png';
+import { Typography, Container, Box } from '@mui/material';
 import { useSnackbar } from 'notistack';
+import { TestSuite, TestSession } from '~/models/testSuiteModels';
+import {
+  ListOptionSelection,
+  RadioOptionSelection,
+  isListOptionSelection,
+} from '~/models/selectionModels';
+import { postTestSessions } from '~/api/TestSessionApi';
+import { getStaticPath } from '~/api/infernoApiService';
+import { useAppStore } from '~/store/app';
+import infernoLogo from '~/images/inferno_logo.png';
+import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
+import lightTheme from '~/styles/theme';
+import useStyles from './styles';
 
 export interface LandingPageProps {
   testSuites: TestSuite[] | undefined;
@@ -27,7 +24,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const navigate = useNavigate();
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const [testSuiteChosen, setTestSuiteChosen] = React.useState('');
+  const [testSuiteChosen, setTestSuiteChosen] = React.useState<ListOptionSelection>('');
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
   useEffect(() => {
@@ -36,6 +33,11 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       startTestingClick(testSuites[0]);
     }
   }, []);
+
+  const setSelected = (selection: ListOptionSelection | RadioOptionSelection[]) => {
+    // Check if list option to avoid type errors
+    if (isListOptionSelection(selection)) setTestSuiteChosen(selection);
+  };
 
   const startTestingClick = (suite?: TestSuite) => {
     if (suite && suite.suite_options && suite.suite_options.length > 0) {
@@ -53,23 +55,6 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     } else {
       enqueueSnackbar(`No test suite selected.`, { variant: 'error' });
     }
-  };
-
-  const renderOption = (testSuite: TestSuite) => {
-    return (
-      // Use li to resolve a11y error
-      <li key={testSuite.id}>
-        <ListItemButton
-          data-testid="testing-suite-option"
-          selected={testSuiteChosen === testSuite.id}
-          onClick={() => setTestSuiteChosen(testSuite.id)}
-          classes={{ selected: classes.selectedItem }}
-        >
-          <ListItemText primary={testSuite.title} />
-          {/* {testSuiteChosen === testSuite.id && <></>} */}
-        </ListItemButton>
-      </li>
-    );
   };
 
   return (
@@ -132,49 +117,6 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             standards.
           </Typography>
         </Box>
-        {/* <Paper
-          elevation={4}
-          className={classes.optionsList}
-          sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
-        >
-          <Typography
-            variant="h4"
-            component="h2"
-            align="center"
-            sx={{ fontSize: windowIsSmall ? '1.8rem' : 'auto' }}
-          >
-            Test Suites
-          </Typography>
-          <Box>
-            <List>
-              {testSuites ? (
-                testSuites
-                  .sort((testSuite1: TestSuite, testSuite2: TestSuite): number =>
-                    testSuite1.title.localeCompare(testSuite2.title)
-                  )
-                  .map((testSuite: TestSuite) => renderOption(testSuite))
-              ) : (
-                <Typography my={2}> No suites available.</Typography>
-              )}
-            </List>
-          </Box>
-          <Button
-            variant="contained"
-            size="large"
-            color="primary"
-            fullWidth
-            disabled={!testSuiteChosen}
-            data-testid="go-button"
-            sx={{ fontWeight: 600 }}
-            onClick={() =>
-              startTestingClick(
-                testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen)
-              )
-            }
-          >
-            Select Suite
-          </Button>
-        </Paper> */}
       </Box>
       <Box
         display="flex"
@@ -182,55 +124,22 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         justifyContent="flex-start"
         alignItems="center"
         overflow="initial"
-        height="55%"
         width="100%"
         minHeight="200px"
         py={2}
         sx={{ backgroundColor: lightTheme.palette.common.gray }}
       >
-        <Paper
-          elevation={4}
-          className={classes.optionsList}
-          sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
-        >
-          <Typography
-            variant="h4"
-            component="h2"
-            align="center"
-            sx={{ fontSize: windowIsSmall ? '1.8rem' : 'auto' }}
-          >
-            Test Suites
-          </Typography>
-          <Box>
-            <List>
-              {testSuites ? (
-                testSuites
-                  .sort((testSuite1: TestSuite, testSuite2: TestSuite): number =>
-                    testSuite1.title.localeCompare(testSuite2.title)
-                  )
-                  .map((testSuite: TestSuite) => renderOption(testSuite))
-              ) : (
-                <Typography my={2}> No suites available.</Typography>
-              )}
-            </List>
-          </Box>
-          <Button
-            variant="contained"
-            size="large"
-            color="primary"
-            fullWidth
-            disabled={!testSuiteChosen}
-            data-testid="go-button"
-            sx={{ fontWeight: 600 }}
-            onClick={() =>
-              startTestingClick(
-                testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen)
-              )
-            }
-          >
-            Select Suite
-          </Button>
-        </Paper>
+        <SelectionPanel
+          title="Test Suites"
+          options={(testSuites || []).sort((testSuite1: TestSuite, testSuite2: TestSuite): number =>
+            testSuite1.title.localeCompare(testSuite2.title)
+          )}
+          setSelection={setSelected}
+          submitAction={() =>
+            startTestingClick(testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen))
+          }
+          submitText="Select Suite"
+        />
       </Box>
     </Container>
   );

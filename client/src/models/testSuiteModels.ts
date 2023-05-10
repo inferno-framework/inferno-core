@@ -1,3 +1,5 @@
+import { Option } from './selectionModels';
+
 export interface CheckboxValues {
   [key: string]: boolean;
 }
@@ -69,7 +71,7 @@ export interface Result {
   optional?: boolean;
 }
 
-export interface SuiteOption {
+export interface SuiteOption extends Option {
   id: string;
   title?: string;
   description?: string;
