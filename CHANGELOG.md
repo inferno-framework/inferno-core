@@ -1,3 +1,11 @@
+# 0.4.15
+* Fix the appearance of the suite options screen for smaller displays.
+
+# 0.4.14
+* Fix a misleading error message when validating resources against a base
+  resource profile.
+* Fix the appearance of the suite selection screen for smaller displays.
+
 # 0.4.13
 * Fix a bug which caused an error to appear in the UI while entering inputs into
   an input dialog which contains an oauth_credentials input.
