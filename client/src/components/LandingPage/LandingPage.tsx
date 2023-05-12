@@ -78,8 +78,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         justifyContent={windowIsSmall ? 'center' : 'flex-end'}
         alignItems="center"
         overflow="initial"
-        height="45%"
-        minHeight="200px"
+        minHeight="300px"
         pb={windowIsSmall ? 0 : 2}
         px={2}
       >

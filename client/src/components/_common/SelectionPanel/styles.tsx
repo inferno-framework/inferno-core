@@ -4,6 +4,7 @@ export default makeStyles()(() => ({
   optionsList: {
     display: 'flex',
     flexDirection: 'column',
+    margin: '0 16px',
     padding: '16px 0',
     borderRadius: '16px',
     overflow: 'auto',
