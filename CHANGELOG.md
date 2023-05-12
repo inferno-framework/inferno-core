@@ -1,3 +1,6 @@
+# 0.4.15
+* Fix the appearance of the suite options screen for smaller displays.
+
 # 0.4.14
 * Fix a misleading error message when validating resources against a base
   resource profile.
