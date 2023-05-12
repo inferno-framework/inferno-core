@@ -157,7 +157,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         alignItems="center"
         justifyContent="space-evenly"
         width="100%"
-        sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4, pb: 8 }}
+        sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4 }}
       >
         <Box
           maxWidth={descriptionWidth}
