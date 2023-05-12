@@ -107,39 +107,32 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
     >
       {/* Title */}
       {windowIsSmall && (
-        <Box display="flex" alignItems="center" maxWidth="800px" sx={{ m: 2 }}>
+        <Box display="flex" alignItems="center" maxWidth="800px" sx={{ mt: 4, mb: 2 }}>
           {renderTitle()}
         </Box>
       )}
       <Box
         display="flex"
-        flexWrap="wrap"
+        flexDirection="column"
         alignItems="center"
-        justifyContent="space-evenly"
+        justifyContent="center"
+        height="100%"
         width="100%"
-        sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4, pb: 8, overflow: 'hidden' }}
       >
         {/* Title */}
         {!windowIsSmall && (
           <Box
             display="flex"
+            alignItems="center"
+            sx={{ m: 4 }}
             maxWidth={descriptionWidth}
             maxHeight={windowIsSmall ? 'none' : '100%'}
-            overflow="auto"
-            mt={3}
           >
-            <Box alignItems="center" maxWidth="800px" sx={{ m: 4 }}>
-              {renderTitle()}
-            </Box>
+            {renderTitle()}
           </Box>
         )}
         {/* Description */}
-        <Box
-          maxWidth={descriptionWidth}
-          maxHeight={windowIsSmall ? 'none' : '100%'}
-          overflow="auto"
-          mb={3}
-        >
+        <Box maxWidth={descriptionWidth} maxHeight={windowIsSmall ? 'none' : '100%'} mb={3}>
           <Typography
             variant="h6"
             component="h2"
