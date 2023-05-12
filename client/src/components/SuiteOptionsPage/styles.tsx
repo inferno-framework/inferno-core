@@ -16,5 +16,6 @@ export default makeStyles()((theme: Theme) => ({
     flexDirection: 'column',
     padding: '16px 0',
     borderRadius: '16px',
+    height: '100%',
   },
 }));
