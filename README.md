@@ -3,8 +3,8 @@
 
 Inferno Core is the central component of the [Inferno
 Framework](https://inferno-framework.github.io) that allows you to write,
-execute, and distribute executable API conformance tests for the [Fast Healthcare
-Interoperability Resources (FHIR)](http://hl7.org/fhir/) standard. 
+execute, and distribute executable API conformance tests for the [HL7® FHIR®
+standard](http://hl7.org/fhir/) standard.
 
 To learn how to use the Inferno Framework and Inferno Core to develop your own
 FHIR API tests, visit [Inferno Framework
@@ -143,6 +143,8 @@ bundle exec jekyll serve
 ```
 By default the site will be served at `http://localhost:4000/inferno-core/`
 
+HL7, FHIR and the FHIR [FLAME DESIGN] are the registered trademarks of Health
+Level Seven International and their use does not constitute endorsement by HL7.
 
 ## License
 Copyright 2023 The MITRE Corporation
@@ -157,3 +159,8 @@ Unless required by applicable law or agreed to in writing, software distributed
 under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
+
+## Trademark Notice
+
+HL7, FHIR and the FHIR [FLAME DESIGN] are the registered trademarks of Health
+Level Seven International and their use does not constitute endorsement by HL7.
