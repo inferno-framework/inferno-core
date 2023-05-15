@@ -63,13 +63,13 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       role="main"
       className={classes.main}
       sx={
-        !windowIsSmall
-          ? {
+        windowIsSmall
+          ? {}
+          : {
               minHeight: '400px',
               maxHeight: '100vh',
               py: 10,
             }
-          : {}
       }
     >
       <Box

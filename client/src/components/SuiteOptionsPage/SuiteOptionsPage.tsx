@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Typography, Box } from '@mui/material';
+import { Typography, Box, Container } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import { useSnackbar } from 'notistack';
 import { postTestSessions } from '~/api/TestSessionApi';
@@ -13,6 +13,7 @@ import {
 import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
 import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
+import useStyles from './styles';
 
 export interface SuiteOptionsPageProps {
   testSuite?: TestSuite;
@@ -20,6 +21,7 @@ export interface SuiteOptionsPageProps {
 
 const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
   const navigate = useNavigate();
+  const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
@@ -95,49 +97,55 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
   };
 
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      flexDirection={windowIsSmall ? 'column' : 'row'}
-      minHeight="600px"
-      height="100%"
-      // maxHeight="100vh"
+    <Container
+      maxWidth={false}
       role="main"
+      className={classes.main}
+      sx={
+        windowIsSmall
+          ? {}
+          : {
+              flexDirection: 'column',
+              minHeight: '400px',
+              maxHeight: '100vh',
+              py: 10,
+            }
+      }
     >
-      {/* Title */}
-      {windowIsSmall && (
-        <Box display="flex" alignItems="center" maxWidth="800px" sx={{ mt: 4, mb: 2 }}>
-          {renderTitle()}
-        </Box>
-      )}
       <Box
         display="flex"
         flexDirection="column"
-        alignItems="center"
         justifyContent="center"
-        height="100%"
-        width="100%"
+        alignItems="center"
+        maxWidth={windowIsSmall ? '100%' : '50%'}
+        maxHeight={windowIsSmall ? 'none' : '100%'}
+        minHeight="100%"
+        overflow="auto"
+        px={windowIsSmall ? 0 : 8}
+        my={3}
       >
         {/* Title */}
-        {!windowIsSmall && (
-          <Box
-            display="flex"
-            alignItems="center"
-            sx={{ m: 4 }}
-            maxWidth={descriptionWidth}
-            maxHeight={windowIsSmall ? 'none' : '100%'}
-          >
-            {renderTitle()}
-          </Box>
-        )}
+        <Box
+          display="flex"
+          alignItems="center"
+          sx={windowIsSmall ? { mx: 2 } : { m: 4 }}
+          maxWidth={descriptionWidth}
+          maxHeight={windowIsSmall ? 'none' : '100%'}
+        >
+          {renderTitle()}
+        </Box>
         {/* Description */}
-        <Box maxWidth={descriptionWidth} maxHeight={windowIsSmall ? 'none' : '100%'} mb={3}>
+        <Box
+          display="flex"
+          maxWidth={descriptionWidth}
+          justifyContent="center"
+          overflow="auto"
+          px={2}
+          mb={3}
+        >
           <Typography
             variant="h6"
             component="h2"
-            pr={4}
-            pl={5}
             sx={{
               wordBreak: 'break-word',
             }}
@@ -151,12 +159,12 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
       <Box
         display="flex"
         height="100%"
-        width="100%"
+        maxWidth={windowIsSmall ? '100%' : '50%'}
         justifyContent="center"
         alignItems="center"
         sx={{ backgroundColor: lightTheme.palette.common.gray }}
       >
-        <Box ref={selectionPanel} justifyContent="center" maxHeight="100%" overflow="auto" p={3}>
+        <Box display="flex" ref={selectionPanel} justifyContent="center" maxHeight="100%" m={3}>
           <SelectionPanel
             title="Options"
             options={testSuite?.suite_options || []}
@@ -168,7 +176,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
           />
         </Box>
       </Box>
-    </Box>
+    </Container>
   );
 };
 
