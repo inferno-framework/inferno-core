@@ -29,7 +29,7 @@ export interface SelectionPanelProps {
 const SelectionPanel: FC<SelectionPanelProps> = ({
   title,
   options,
-  setSelection,
+  setSelection: setParentSelection,
   showBackButton = false,
   backTooltipText = '',
   backDestination = '/',
@@ -38,13 +38,21 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
 }) => {
   const { classes } = useStyles();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const [selection, setSelection] = React.useState<
+    ListOptionSelection | RadioOptionSelection[] | null
+  >(null);
 
   const renderSelection = () => {
     if (options.every((o) => isRadioOption(o))) {
-      return <RadioSelection options={options as RadioOption[]} setSelections={setSelection} />;
+      return <RadioSelection options={options as RadioOption[]} setSelections={selectionHandler} />;
     } else if (options.every((o) => isListOption(o))) {
-      return <ListSelection options={options} setSelection={setSelection} />;
+      return <ListSelection options={options} setSelection={selectionHandler} />;
     }
+  };
+
+  const selectionHandler = (selected: ListOptionSelection | RadioOptionSelection[]) => {
+    setSelection(selected);
+    setParentSelection(selected);
   };
 
   return (
@@ -88,6 +96,7 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
             color="primary"
             fullWidth
             data-testid="go-button"
+            disabled={!selection}
             sx={{ fontWeight: 600 }}
             onClick={() => submitAction()}
           >
