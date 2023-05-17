@@ -3,10 +3,11 @@ layout: home
 title: Home
 nav_order: 1
 ---
-# Inferno
+# Inferno Framework
 {: .fs-9 }
 
-Everything you need to create, execute and share tests for health IT systems providing standardized FHIR APIs.
+Everything you need to create, execute and share tests for health IT systems
+providing HL7® FHIR® standard APIs.
 {: .fs-6 .fw-300}
 
 [Get started now](/inferno-core/getting-started){: .btn .btn-primary .fs-5 .mb-4 .mb-md-0 .mr-2 } [Read the Docs](/inferno-core/overview){: .btn .fs-5 .mb-4 .mb-md-0 .mr-2 } [View it on GitHub](https://github.com/inferno-framework/){: .btn .fs-5 .mb-4 .mb-md-0 .mr-2 }
@@ -57,3 +58,7 @@ module MyTestKit
   end
 end
 ```
+
+HL7, FHIR and the FHIR [FLAME DESIGN] are the registered trademarks of Health
+Level Seven International and their use does not constitute endorsement by HL7.
+{: .fs-2}
