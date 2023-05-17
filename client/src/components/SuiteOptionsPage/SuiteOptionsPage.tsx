@@ -151,36 +151,36 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
       maxHeight="100vh"
       role="main"
     >
-      {/* Title */}
-      <Box alignItems="center" maxWidth="800px" sx={windowIsSmall ? { m: 2 } : { mt: 6 }}>
-        <Typography
-          variant="h2"
-          component="h1"
-          align="center"
-          sx={{
-            color: lightTheme.palette.common.orangeDarker,
-            fontSize: windowIsSmall ? '2rem' : 'auto',
-          }}
-        >
-          {testSuite?.title}
-        </Typography>
-      </Box>
-
       <Box
         display="flex"
         flexWrap="wrap"
         alignItems="center"
         justifyContent="space-evenly"
         width="100%"
-        sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4, pb: 8, overflow: 'hidden' }}
+        sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4 }}
       >
-        {/* Description */}
         <Box
           maxWidth={descriptionWidth}
           maxHeight={windowIsSmall ? 'none' : '100%'}
           overflow="auto"
           my={3}
         >
+          {/* Title */}
+          <Box alignItems="center" maxWidth="800px" sx={windowIsSmall ? { m: 2 } : { mt: 6 }}>
+            <Typography
+              variant="h3"
+              component="h1"
+              align="center"
+              sx={{
+                color: lightTheme.palette.common.orangeDarker,
+                fontSize: windowIsSmall ? '2rem' : 'auto',
+                fontWeight: 'bolder',
+              }}
+            >
+              {testSuite?.title}
+            </Typography>
+          </Box>
+          {/* Description */}
           <Typography
             variant="h6"
             component="h2"
@@ -196,14 +196,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
           </Typography>
         </Box>
         {/* Selection panel */}
-        <Box
-          display="flex"
-          justifyContent="center"
-          maxHeight="100%"
-          overflow="auto"
-          ref={selectionPanel}
-          p={3}
-        >
+        <Box display="flex" justifyContent="center" maxHeight="100%" ref={selectionPanel} p={3}>
           <Paper
             elevation={4}
             className={classes.optionsList}
@@ -230,7 +223,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
               {testSuites.length > 1 && <Box minWidth="45px" />}
             </Box>
 
-            <Box overflow="auto" px={4} pt={2}>
+            <Box px={4} pt={2}>
               {testSuite?.suite_options ? (
                 testSuite?.suite_options.map((suiteOption: SuiteOption, i) =>
                   renderOption(suiteOption, i)

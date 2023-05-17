@@ -20,6 +20,5 @@ export default makeStyles()((theme: Theme) => ({
     margin: '20px',
     padding: '16px',
     borderRadius: '16px',
-    overflow: 'auto',
   },
 }));

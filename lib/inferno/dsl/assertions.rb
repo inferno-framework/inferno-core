@@ -57,8 +57,10 @@ module Inferno
       end
 
       # @private
-      def invalid_resource_message(profile_url)
-        "Resource does not conform to the profile: #{profile_url}"
+      def invalid_resource_message(resource, profile_url)
+        return "Resource does not conform to the profile: #{profile_url}" if profile_url.present?
+
+        "Resource does not conform to the base #{resource&.resourceType} profile."
       end
 
       # Validate a FHIR resource
@@ -70,7 +72,7 @@ module Inferno
       # @return [void]
       def assert_valid_resource(resource: self.resource, profile_url: nil, validator: :default)
         assert resource_is_valid?(resource:, profile_url:, validator:),
-               invalid_resource_message(profile_url)
+               invalid_resource_message(resource, profile_url)
       end
 
       # Validate each entry of a Bundle
