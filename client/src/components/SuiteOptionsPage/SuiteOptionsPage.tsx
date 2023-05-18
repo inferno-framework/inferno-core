@@ -119,7 +119,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         alignItems="center"
         maxWidth={windowIsSmall ? '100%' : '50%'}
         maxHeight={windowIsSmall ? 'none' : '100%'}
-        minHeight="100%"
+        minHeight={windowIsSmall ? 'none' : '100%'}
         overflow="auto"
         px={windowIsSmall ? 0 : 8}
         my={3}
@@ -158,7 +158,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
       </Box>
       <Box
         display="flex"
-        height="100%"
+        height={windowIsSmall ? 'none' : '100%'}
+        width={windowIsSmall ? '100%' : 'none'}
         maxWidth={windowIsSmall ? '100%' : '50%'}
         justifyContent="center"
         alignItems="center"
