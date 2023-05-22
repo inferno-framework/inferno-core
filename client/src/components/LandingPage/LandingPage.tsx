@@ -66,6 +66,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         windowIsSmall
           ? {}
           : {
+              flexDirection: 'column',
               minHeight: '400px',
               maxHeight: '100vh',
               py: 10,
@@ -75,12 +76,14 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       <Box
         display="flex"
         flexDirection="column"
-        justifyContent={windowIsSmall ? 'center' : 'flex-end'}
+        justifyContent="center"
         alignItems="center"
-        overflow="initial"
-        minHeight="300px"
-        pb={windowIsSmall ? 0 : 2}
-        px={2}
+        maxWidth={windowIsSmall ? '100%' : '50%'}
+        maxHeight={windowIsSmall ? 'none' : '100%'}
+        minHeight={windowIsSmall ? 'none' : '100%'}
+        overflow="auto"
+        px={windowIsSmall ? 0 : 8}
+        my={3}
       >
         <Box my={2} alignItems="center" maxWidth="800px">
           <Box display="flex" alignItems="center" justifyContent="center">
@@ -103,7 +106,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             FHIR Testing with Inferno
           </Typography>
         </Box>
-        <Box mb={2} alignItems="center" maxWidth="600px">
+        <Box mb={2} alignItems="center" maxWidth="400px">
           <Typography
             variant="h5"
             component="h2"
@@ -119,26 +122,29 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       </Box>
       <Box
         display="flex"
-        flexDirection="column"
-        justifyContent="flex-start"
+        height={windowIsSmall ? 'none' : '100%'}
+        width={windowIsSmall ? '100%' : 'none'}
+        maxWidth={windowIsSmall ? '100%' : '50%'}
+        justifyContent="center"
         alignItems="center"
-        overflow="initial"
-        width="100%"
-        minHeight="200px"
-        py={2}
         sx={{ backgroundColor: lightTheme.palette.common.gray }}
       >
-        <SelectionPanel
-          title="Test Suites"
-          options={(testSuites || []).sort((testSuite1: TestSuite, testSuite2: TestSuite): number =>
-            testSuite1.title.localeCompare(testSuite2.title)
-          )}
-          setSelection={setSelected}
-          submitAction={() =>
-            startTestingClick(testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen))
-          }
-          submitText="Select Suite"
-        />
+        <Box display="flex" justifyContent="center" maxHeight="100%" m={3}>
+          <SelectionPanel
+            title="Test Suites"
+            options={(testSuites || []).sort(
+              (testSuite1: TestSuite, testSuite2: TestSuite): number =>
+                testSuite1.title.localeCompare(testSuite2.title)
+            )}
+            setSelection={setSelected}
+            submitAction={() =>
+              startTestingClick(
+                testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen)
+              )
+            }
+            submitText="Select Suite"
+          />
+        </Box>
       </Box>
     </Container>
   );
