@@ -16,7 +16,7 @@ module Inferno
     #     # create a named client for a group
     #     fhir_client :with_custom_header do
     #       url 'https://example.com/fhir'
-    #       headers { 'X-my-custom-header': 'ABC123' }
+    #       headers 'X-my-custom-header': 'ABC123'
     #     end
     #
     #     test :some_test do
