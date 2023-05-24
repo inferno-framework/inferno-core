@@ -55,6 +55,10 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
     setParentSelection(selected);
   };
 
+  const backClickHandler = () => {
+    console.log('back');
+  };
+
   return (
     <Box display="flex">
       <Paper
@@ -69,7 +73,7 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
           mx={1}
         >
           {showBackButton && (
-            <BackButton tooltipText={backTooltipText} destination={backDestination} />
+            <BackButton tooltipText={backTooltipText} clickHandler={backClickHandler} />
           )}
           <Typography
             variant="h4"

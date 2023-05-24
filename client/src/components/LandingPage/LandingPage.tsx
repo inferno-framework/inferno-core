@@ -2,11 +2,12 @@ import React, { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Typography, Container, Box } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { TestSuite, TestSession } from '~/models/testSuiteModels';
+import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
 import {
   ListOptionSelection,
   RadioOptionSelection,
   isListOptionSelection,
+  isRadioOptionSelection,
 } from '~/models/selectionModels';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { getStaticPath } from '~/api/infernoApiService';
@@ -15,6 +16,7 @@ import infernoLogo from '~/images/inferno_logo.png';
 import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
 import lightTheme from '~/styles/theme';
 import useStyles from './styles';
+import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 
 export interface LandingPageProps {
   testSuites: TestSuite[] | undefined;
@@ -24,7 +26,18 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const navigate = useNavigate();
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  // const { test_suite_id } = useParams<{ test_suite_id: string }>();
   const [testSuiteChosen, setTestSuiteChosen] = React.useState<ListOptionSelection>('');
+  const selectedTestSuite = testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen);
+  const initialSelectedSuiteOptions = selectedTestSuite?.suite_options?.map((option) => ({
+    // just grab the first to start
+    // perhaps choices should be persisted in the URL to make it easy to share specific options
+    id: option.id,
+    value: option && option.list_options ? option.list_options[0].value : '',
+  }));
+  const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(
+    initialSelectedSuiteOptions || []
+  );
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
   useEffect(() => {
@@ -34,9 +47,14 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     }
   }, []);
 
-  const setSelected = (selection: ListOptionSelection | RadioOptionSelection[]) => {
+  const setSuiteSelected = (selection: ListOptionSelection | RadioOptionSelection[]) => {
     // Check if list option to avoid type errors
     if (isListOptionSelection(selection)) setTestSuiteChosen(selection);
+  };
+
+  const setOptionsSelected = (selection: ListOptionSelection | RadioOptionSelection[]) => {
+    // Check if radio option to avoid type errors
+    if (isRadioOptionSelection(selection)) setSelectedSuiteOptions(selection);
   };
 
   const startTestingClick = (suite?: TestSuite) => {
@@ -55,6 +73,19 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     } else {
       enqueueSnackbar(`No test suite selected.`, { variant: 'error' });
     }
+  };
+
+  const createTestSession = (options: SuiteOption[] | null = null): void => {
+    if (!testSuiteChosen) return;
+    postTestSessions(testSuiteChosen, null, options)
+      .then((testSession: TestSession | null) => {
+        if (testSession && testSession.test_suite) {
+          navigate(`/${testSession.test_suite_id}/${testSession.id}`);
+        }
+      })
+      .catch((e: Error) => {
+        enqueueSnackbar(`Error while creating test session: ${e.message}`, { variant: 'error' });
+      });
   };
 
   return (
@@ -119,6 +150,19 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             standards.
           </Typography>
         </Box>
+        <Box mb={2} alignItems="center" maxWidth="400px">
+          <Typography
+            variant="h6"
+            component="h2"
+            sx={{
+              wordBreak: 'break-word',
+            }}
+          >
+            <ReactMarkdown>
+              {selectedTestSuite?.suite_summary || selectedTestSuite?.description || ''}
+            </ReactMarkdown>
+          </Typography>
+        </Box>
       </Box>
       <Box
         display="flex"
@@ -136,13 +180,22 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
               (testSuite1: TestSuite, testSuite2: TestSuite): number =>
                 testSuite1.title.localeCompare(testSuite2.title)
             )}
-            setSelection={setSelected}
+            setSelection={setSuiteSelected}
             submitAction={() =>
               startTestingClick(
                 testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen)
               )
             }
             submitText="Select Suite"
+          />
+          <SelectionPanel
+            title="Options"
+            options={selectedTestSuite?.suite_options || []}
+            setSelection={setOptionsSelected}
+            showBackButton={true}
+            backTooltipText="Back to Suites"
+            submitAction={() => createTestSession(selectedSuiteOptions)}
+            submitText="Start Testing"
           />
         </Box>
       </Box>
