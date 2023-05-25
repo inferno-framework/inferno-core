@@ -64,7 +64,8 @@
 
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
-      const host = urlParams.get('host')
+      const scheme = urlParams.get('scheme').replaceAll(':', '');
+      const host = urlParams.get('host');
 
       window.onload = () => {
         // Begin Swagger UI call region
@@ -74,6 +75,7 @@
           deepLinking: true,
           onComplete: () => {
             if (host) window.ui.setHost(host);
+            if (scheme) window.ui.setScheme(scheme);
           },
           presets: [
             SwaggerUIBundle.presets.apis,
@@ -88,6 +90,8 @@
         // End Swagger UI call region
 
         window.ui = ui;
+
+
       };
     </script>
   </body>

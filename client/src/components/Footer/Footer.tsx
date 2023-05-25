@@ -20,12 +20,17 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
   const [showMenu, setShowMenu] = React.useState<boolean>(false);
 
   const apiLink = () => {
+    // To test locally, set apiBase to 'http://127.0.0.1:4000/inferno-core/api-docs/'
+    const apiBase = 'https://inferno-framework.github.io/inferno-core/api-docs/';
     const hostname = window.location.host;
+    console.log(window.location);
     const fullHost = `${hostname}/${basePath}`;
+    const scheme = window.location.protocol;
+
     return (
       <Box display="flex">
         <Link
-          href={`http://127.0.0.1:4000/inferno-core/api-docs/?host=${fullHost}`}
+          href={`${apiBase}?scheme=${scheme}&host=${fullHost}`}
           target="_blank"
           rel="noreferrer"
           underline="hover"
