@@ -9,12 +9,13 @@ import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
 
 interface TestGroupCardProps {
+  children: React.ReactNode;
   runnable: TestSuite | TestGroup;
   runTests?: (runnableType: RunnableType, runnableId: string) => void;
   view: 'report' | 'run';
 }
 
-const TestGroupCard: FC<TestGroupCardProps> = ({ runnable, runTests, children, view }) => {
+const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, view }) => {
   const { classes } = useStyles();
 
   const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
