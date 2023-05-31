@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
-import useStyles from './styles';
 import { Box, Link, Typography, Divider, IconButton, MenuItem, Menu } from '@mui/material';
+import { Help } from '@mui/icons-material';
 import logo from '~/images/inferno_logo.png';
-import { getStaticPath } from '~/api/infernoApiService';
+import { basePath, getStaticPath } from '~/api/infernoApiService';
 import { FooterLink } from '~/models/testSuiteModels';
 import { useAppStore } from '~/store/app';
-import { Help } from '@mui/icons-material';
+import useStyles from './styles';
 
 interface FooterProps {
   version: string;
@@ -19,23 +19,32 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [showMenu, setShowMenu] = React.useState<boolean>(false);
 
-  const apiLink = (
-    <Box display="flex">
-      <Link
-        href="https://inferno-framework.github.io/inferno-core/api-docs/"
-        target="_blank"
-        rel="noreferrer"
-        underline="hover"
-        className={`${classes.link} ${classes.logoLink}`}
-        sx={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
-      >
-        API
-      </Link>
-    </Box>
-  );
+  const apiLink = () => {
+    // To test locally, set apiBase to 'http://127.0.0.1:4000/inferno-core/api-docs/'
+    const apiBase = 'https://inferno-framework.github.io/inferno-core/api-docs/';
+    const hostname = window.location.host;
+    console.log(window.location);
+    const fullHost = `${hostname}/${basePath}`;
+    const scheme = window.location.protocol;
+
+    return (
+      <Box display="flex">
+        <Link
+          href={`${apiBase}?scheme=${scheme}&host=${fullHost}`}
+          target="_blank"
+          rel="noreferrer"
+          underline="hover"
+          className={`${classes.link} ${classes.logoLink}`}
+          sx={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
+        >
+          API
+        </Link>
+      </Box>
+    );
+  };
 
   const renderLogoText = () => {
-    if (!version) return apiLink;
+    if (!version) return apiLink();
     return (
       <Box display="flex" flexDirection="column">
         {!windowIsSmall && (
@@ -53,7 +62,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
             </Typography>
           </Box>
           <Divider flexItem orientation="vertical" sx={{ margin: '4px 8px' }} />
-          {apiLink}
+          {apiLink()}
         </Box>
       </Box>
     );

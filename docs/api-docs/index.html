@@ -36,25 +36,63 @@
     <script src="./swagger-ui-bundle.js" charset="UTF-8"> </script>
     <script src="./swagger-ui-standalone-preset.js" charset="UTF-8"> </script>
     <script>
-    window.onload = function() {
-      // Begin Swagger UI call region
-      const ui = SwaggerUIBundle({
-        url: "/inferno-core/swagger.yml",
-        dom_id: '#swagger-ui',
-        deepLinking: true,
-        presets: [
-          SwaggerUIBundle.presets.apis,
-          SwaggerUIStandalonePreset
-        ],
-        plugins: [
-          SwaggerUIBundle.plugins.DownloadUrl
-        ],
-        layout: "StandaloneLayout"
-      });
-      // End Swagger UI call region
+      // Referencing this open issue: https://github.com/swagger-api/swagger-ui/issues/5981
+      // This solution may be subject to change dependent on Swagger issue status - awang@, 4/14/23
+      const UrlMutatorPlugin = (system) => ({
+        rootInjects: {
+          setScheme: (scheme) => {
+            const jsonSpec = system.getState().toJSON().spec.json;
+            const schemes = Array.isArray(scheme) ? scheme : [scheme];
+            const newJsonSpec = Object.assign({}, jsonSpec, { schemes });
 
-      window.ui = ui;
-    };
-  </script>
+            return system.specActions.updateJsonSpec(newJsonSpec);
+          },
+          setHost: (host) => {
+            const jsonSpec = system.getState().toJSON().spec.json;
+            const newJsonSpec = Object.assign({}, jsonSpec, { host });
+
+            return system.specActions.updateJsonSpec(newJsonSpec);
+          },
+          setBasePath: (basePath) => {
+            const jsonSpec = system.getState().toJSON().spec.json;
+            const newJsonSpec = Object.assign({}, jsonSpec, { basePath });
+
+            return system.specActions.updateJsonSpec(newJsonSpec);
+          }
+        }
+      });
+
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const scheme = urlParams.get('scheme').replaceAll(':', '');
+      const host = urlParams.get('host');
+
+      window.onload = () => {
+        // Begin Swagger UI call region
+        const ui = SwaggerUIBundle({
+          url: "/inferno-core/swagger.yml",
+          dom_id: '#swagger-ui',
+          deepLinking: true,
+          onComplete: () => {
+            if (host) window.ui.setHost(host);
+            if (scheme) window.ui.setScheme(scheme);
+          },
+          presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIStandalonePreset
+          ],
+          plugins: [
+            SwaggerUIBundle.plugins.DownloadUrl,
+            UrlMutatorPlugin,
+          ],
+          layout: "StandaloneLayout"
+        });
+        // End Swagger UI call region
+
+        window.ui = ui;
+
+
+      };
+    </script>
   </body>
 </html>
