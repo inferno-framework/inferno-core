@@ -18,10 +18,10 @@ export interface SelectionPanelProps {
   title: string;
   options: ListOption[] | RadioOption[];
   optionType?: string;
-  setSelection: (selected: ListOptionSelection | RadioOptionSelection[]) => void;
+  setSelection: (selected: ListOptionSelection | RadioOptionSelection[] | null) => void;
   showBackButton?: boolean;
   backTooltipText?: string;
-  backDestination?: string;
+  backClickHandler?: () => void;
   submitAction: () => void;
   submitText: string;
 }
@@ -32,7 +32,7 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
   setSelection: setParentSelection,
   showBackButton = false,
   backTooltipText = '',
-  backDestination = '/',
+  backClickHandler,
   submitAction,
   submitText,
 }) => {
@@ -50,13 +50,9 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
     }
   };
 
-  const selectionHandler = (selected: ListOptionSelection | RadioOptionSelection[]) => {
+  const selectionHandler = (selected: ListOptionSelection | RadioOptionSelection[] | null) => {
     setSelection(selected);
     setParentSelection(selected);
-  };
-
-  const backClickHandler = () => {
-    console.log('back');
   };
 
   return (
@@ -72,7 +68,7 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
           justifyContent={showBackButton ? 'space-between' : 'center'}
           mx={1}
         >
-          {showBackButton && (
+          {showBackButton && backClickHandler && (
             <BackButton tooltipText={backTooltipText} clickHandler={backClickHandler} />
           )}
           <Typography
