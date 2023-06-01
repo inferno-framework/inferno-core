@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Typography, Container, Box } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
@@ -23,11 +23,14 @@ export interface LandingPageProps {
 }
 
 const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
+  const location = useLocation();
   const navigate = useNavigate();
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  // const { test_suite_id } = useParams<{ test_suite_id: string }>();
-  const [selectedTestSuiteId, setSelectedTestSuiteId] = React.useState<ListOptionSelection>('');
+  const { test_suite_id } = useParams<{ test_suite_id: string }>();
+  const [selectedTestSuiteId, setSelectedTestSuiteId] = React.useState<ListOptionSelection>(
+    test_suite_id || ''
+  );
   const selectedTestSuite = testSuites?.find(
     (suite: TestSuite) => suite.id === selectedTestSuiteId
   );
@@ -41,6 +44,8 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     initialSelectedSuiteOptions || []
   );
   const [showSuites, setShowSuites] = React.useState<boolean>(true);
+
+  /* CSS variables */
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const [descriptionWidth, setDescriptionWidth] = React.useState<string>('');
@@ -52,6 +57,11 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       startTestingClick(testSuites[0]);
     }
   }, []);
+
+  useEffect(() => {
+    // setSuiteSelected(selectedTestSuiteId);
+    console.log(location);
+  }, [location]);
 
   useEffect(() => {
     getDescriptionWidth();
@@ -66,8 +76,11 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   };
 
   const setSuiteSelected = (selection: ListOptionSelection | RadioOptionSelection[] | null) => {
-    // Check if list option to avoid type errors
-    if (selection && isListOptionSelection(selection)) setSelectedTestSuiteId(selection);
+    // Check if list option to avoid type errors, allow empty string
+    if (selection !== null && selection !== undefined && isListOptionSelection(selection)) {
+      setSelectedTestSuiteId(selection);
+      navigate(`/${selection}`);
+    }
   };
 
   const setOptionsSelected = (selection: ListOptionSelection | RadioOptionSelection[] | null) => {
@@ -77,18 +90,9 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
 
   const startTestingClick = (suite?: TestSuite) => {
     if (suite && suite.suite_options && suite.suite_options.length > 0) {
-      // navigate(`${suite.id}`);
       setShowSuites(false);
     } else if ((suite && suite?.id) || selectedTestSuiteId) {
-      postTestSessions(suite?.id || selectedTestSuiteId, null, null)
-        .then((testSession: TestSession | null) => {
-          if (testSession && testSession.test_suite) {
-            navigate(`/${testSession.test_suite_id}/${testSession.id}`);
-          }
-        })
-        .catch((e: Error) => {
-          enqueueSnackbar(`Error while creating test session: ${e.message}`, { variant: 'error' });
-        });
+      createTestSession(null);
     } else {
       enqueueSnackbar(`No test suite selected.`, { variant: 'error' });
     }
@@ -212,6 +216,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
                 (testSuite1: TestSuite, testSuite2: TestSuite): number =>
                   testSuite1.title.localeCompare(testSuite2.title)
               )}
+              selection={selectedTestSuiteId}
               setSelection={setSuiteSelected}
               submitAction={() =>
                 startTestingClick(
@@ -229,7 +234,6 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
               backTooltipText="Back to Suites"
               backClickHandler={() => {
                 setShowSuites(true);
-                setSelectedTestSuiteId('');
               }}
               submitAction={() => createTestSession(selectedSuiteOptions)}
               submitText="Start Testing"

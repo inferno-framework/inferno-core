@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Typography, Button, Paper, Box } from '@mui/material';
 import BackButton from '~/components/_common/BackButton';
 import ListSelection from '~/components/_common/SelectionPanel/ListSelection';
@@ -11,6 +11,7 @@ import {
   RadioOption,
   RadioOptionSelection,
   isListOption,
+  isListOptionSelection,
   isRadioOption,
 } from '~/models/selectionModels';
 
@@ -18,6 +19,7 @@ export interface SelectionPanelProps {
   title: string;
   options: ListOption[] | RadioOption[];
   optionType?: string;
+  selection?: ListOptionSelection | RadioOptionSelection[];
   setSelection: (selected: ListOptionSelection | RadioOptionSelection[] | null) => void;
   showBackButton?: boolean;
   backTooltipText?: string;
@@ -29,6 +31,7 @@ export interface SelectionPanelProps {
 const SelectionPanel: FC<SelectionPanelProps> = ({
   title,
   options,
+  selection: parentSelection,
   setSelection: setParentSelection,
   showBackButton = false,
   backTooltipText = '',
@@ -39,14 +42,24 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
   const { classes } = useStyles();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const [selection, setSelection] = React.useState<
-    ListOptionSelection | RadioOptionSelection[] | null
-  >(null);
+    ListOptionSelection | RadioOptionSelection[] | null | undefined
+  >(parentSelection || null);
+
+  useEffect(() => {
+    setSelection(parentSelection);
+  }, [parentSelection]);
 
   const renderSelection = () => {
     if (options.every((o) => isRadioOption(o))) {
       return <RadioSelection options={options as RadioOption[]} setSelections={selectionHandler} />;
     } else if (options.every((o) => isListOption(o))) {
-      return <ListSelection options={options} setSelection={selectionHandler} />;
+      return (
+        <ListSelection
+          options={options}
+          selection={selection && isListOptionSelection(selection) ? selection : ''}
+          setSelection={selectionHandler}
+        />
+      );
     }
   };
 

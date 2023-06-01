@@ -1,18 +1,29 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Box, ListItemButton, ListItemText } from '@mui/material';
 import useStyles from '~/components/_common/SelectionPanel/styles';
 import { ListOption, ListOptionSelection } from '~/models/selectionModels';
 
 export interface ListSelectionProps {
   options: ListOption[];
+  selection?: ListOptionSelection;
   setSelection: (option: ListOptionSelection) => void;
 }
 
-const ListSelection: FC<ListSelectionProps> = ({ options, setSelection: setParentSelection }) => {
+const ListSelection: FC<ListSelectionProps> = ({
+  options,
+  selection,
+  setSelection: setParentSelection,
+}) => {
   const { classes } = useStyles();
   const [selectedListOption, setSelectedListOption] = React.useState('');
 
-  const selectOption = (id: string) => {
+  useEffect(() => {
+    if (selection) {
+      setSelectedListOption(selection);
+    }
+  }, [selection]);
+
+  const itemClickHandler = (id: string) => {
     setSelectedListOption(id);
     setParentSelection(id);
   };
@@ -23,7 +34,7 @@ const ListSelection: FC<ListSelectionProps> = ({ options, setSelection: setParen
         <ListItemButton
           data-testid="testing-suite-option"
           selected={selectedListOption === option.id}
-          onClick={() => selectOption(option.id)}
+          onClick={() => itemClickHandler(option.id)}
           classes={{ selected: classes.selectedItem }}
           key={option.id}
         >
