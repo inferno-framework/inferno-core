@@ -169,30 +169,27 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             </Typography>
           </Box>
         </Box>
-        <Box className={classes.flexContainer} maxWidth={descriptionWidth} mb={2} px={2}>
-          <Typography
-            variant="h5"
-            component="h2"
-            align="center"
-            sx={{ fontSize: windowIsSmall ? '1.2rem' : 'auto' }}
-          >
-            Test your server's conformance to authentication, authorization, and FHIR content
-            standards.
-          </Typography>
-        </Box>
-        <Box
-          className={classes.flexContainer}
-          maxWidth={descriptionWidth}
-          overflow="auto"
-          mb={2}
-          px={2}
-        >
-          <Typography variant="h6" component="h2" sx={{ wordBreak: 'break-word' }}>
-            <ReactMarkdown>
-              {selectedTestSuite?.suite_summary || selectedTestSuite?.description || ''}
-            </ReactMarkdown>
-          </Typography>
-        </Box>
+        {selectedTestSuite?.suite_summary || selectedTestSuite?.description ? (
+          <Box maxWidth={descriptionWidth} overflow="auto" mb={2} px={2}>
+            <Typography variant="h6" component="h2" sx={{ wordBreak: 'break-word' }}>
+              <ReactMarkdown>
+                {selectedTestSuite?.suite_summary || selectedTestSuite?.description || ''}
+              </ReactMarkdown>
+            </Typography>
+          </Box>
+        ) : (
+          <Box className={classes.flexContainer} maxWidth={descriptionWidth} mb={2} px={2}>
+            <Typography
+              variant="h5"
+              component="h2"
+              align="center"
+              sx={{ fontSize: windowIsSmall ? '1.2rem' : 'revert' }}
+            >
+              Test your server's conformance to authentication, authorization, and FHIR content
+              standards.
+            </Typography>
+          </Box>
+        )}
       </Box>
       <Box
         className={classes.flexContainer}
