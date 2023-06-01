@@ -1,6 +1,7 @@
+import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
 
-export default makeStyles()(() => ({
+export default makeStyles()((theme: Theme) => ({
   main: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -8,5 +9,15 @@ export default makeStyles()(() => ({
     justifyContent: 'space-evenly',
     height: '100%',
     padding: '0 !important',
+  },
+  title: {
+    color: theme.palette.common.grayDark,
+    fontWeight: 'bolder',
+  },
+  flexContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 }));

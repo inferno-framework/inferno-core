@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Typography, Container, Box } from '@mui/material';
+import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 import { useSnackbar } from 'notistack';
 import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
 import {
@@ -16,7 +17,6 @@ import infernoLogo from '~/images/inferno_logo.png';
 import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
 import lightTheme from '~/styles/theme';
 import useStyles from './styles';
-import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 
 export interface LandingPageProps {
   testSuites: TestSuite[] | undefined;
@@ -52,15 +52,23 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const selectionPanel = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    if (testSuites?.length === 1) {
+    if (
+      // If no options and no description, then start a test session
+      !selectedTestSuite?.suite_summary &&
+      !selectedTestSuite?.description &&
+      (!selectedTestSuite?.suite_options || selectedTestSuite?.suite_options.length === 0)
+    ) {
+      createTestSession(null);
+    } else if (testSuites?.length === 1) {
+      // If only one suite, then default to that suite
       setSelectedTestSuiteId(testSuites[0].id);
       startTestingClick(testSuites[0]);
     }
   }, []);
 
   useEffect(() => {
-    // setSuiteSelected(selectedTestSuiteId);
-    console.log(location);
+    // Handle browser back and forward button behavior
+    setSelectedTestSuiteId(test_suite_id || '');
   }, [location]);
 
   useEffect(() => {
@@ -75,6 +83,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     }
   };
 
+  // Set selected suite ID and update URL
   const setSuiteSelected = (selection: ListOptionSelection | RadioOptionSelection[] | null) => {
     // Check if list option to avoid type errors, allow empty string
     if (selection !== null && selection !== undefined && isListOptionSelection(selection)) {
@@ -83,11 +92,13 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     }
   };
 
+  // Set options radio selections
   const setOptionsSelected = (selection: ListOptionSelection | RadioOptionSelection[] | null) => {
     // Check if radio option to avoid type errors
     if (selection && isRadioOptionSelection(selection)) setSelectedSuiteOptions(selection);
   };
 
+  // Either show options or start test session
   const startTestingClick = (suite?: TestSuite) => {
     if (suite && suite.suite_options && suite.suite_options.length > 0) {
       setShowSuites(false);
@@ -98,6 +109,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     }
   };
 
+  // Start test session
   const createTestSession = (options: SuiteOption[] | null = null): void => {
     if (!selectedTestSuiteId) return;
     postTestSessions(selectedTestSuiteId, null, options)
@@ -127,24 +139,20 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       }
     >
       <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
+        className={classes.flexContainer}
         maxWidth={windowIsSmall ? '100%' : '50%'}
         maxHeight={windowIsSmall ? 'none' : '100%'}
-        minHeight={windowIsSmall ? 'none' : '100%'}
+        minHeight={windowIsSmall ? 'unset' : '100%'}
         overflow="auto"
         my={3}
       >
         <Box
-          display="flex"
-          alignItems="center"
+          className={classes.flexContainer}
           maxWidth={descriptionWidth}
           maxHeight={windowIsSmall ? 'none' : '100%'}
           my={2}
         >
-          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+          <Box className={classes.flexContainer}>
             <img
               src={getStaticPath(infernoLogo as string)}
               alt="Inferno Logo"
@@ -154,44 +162,32 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
               variant="h4"
               component="h1"
               align="center"
-              sx={{
-                color: lightTheme.palette.common.grayDark,
-                fontSize: windowIsSmall ? '2rem' : 'auto',
-                fontWeight: 'bolder',
-              }}
+              className={classes.title}
+              sx={{ fontSize: windowIsSmall ? '2rem' : 'auto' }}
             >
               FHIR Testing with Inferno
             </Typography>
           </Box>
         </Box>
-        <Box display="flex" alignItems="center" maxWidth={descriptionWidth} mb={2} px={2}>
+        <Box className={classes.flexContainer} maxWidth={descriptionWidth} mb={2} px={2}>
           <Typography
             variant="h5"
             component="h2"
             align="center"
-            sx={{
-              fontSize: windowIsSmall ? '1.2rem' : 'auto',
-            }}
+            sx={{ fontSize: windowIsSmall ? '1.2rem' : 'auto' }}
           >
             Test your server's conformance to authentication, authorization, and FHIR content
             standards.
           </Typography>
         </Box>
         <Box
-          display="flex"
-          justifyContent="center"
+          className={classes.flexContainer}
           maxWidth={descriptionWidth}
           overflow="auto"
           mb={2}
           px={2}
         >
-          <Typography
-            variant="h6"
-            component="h2"
-            sx={{
-              wordBreak: 'break-word',
-            }}
-          >
+          <Typography variant="h6" component="h2" sx={{ wordBreak: 'break-word' }}>
             <ReactMarkdown>
               {selectedTestSuite?.suite_summary || selectedTestSuite?.description || ''}
             </ReactMarkdown>
@@ -199,17 +195,16 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         </Box>
       </Box>
       <Box
-        display="flex"
+        className={classes.flexContainer}
         height={windowIsSmall ? 'unset' : '100%'}
         width={windowIsSmall ? '100%' : 'unset'}
         maxWidth={windowIsSmall ? '100%' : '50%'}
-        justifyContent="center"
-        alignItems="center"
         sx={{ backgroundColor: lightTheme.palette.common.gray }}
         ref={selectionPanel}
       >
         <Box display="flex" justifyContent="center" maxHeight={'calc(100% - 24px)'} mx={3}>
           {showSuites ? (
+            // Suite selection
             <SelectionPanel
               title="Test Suites"
               options={(testSuites || []).sort(
@@ -226,6 +221,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
               submitText="Select Suite"
             />
           ) : (
+            // Options selection
             <SelectionPanel
               title="Options"
               options={selectedTestSuite?.suite_options || []}
