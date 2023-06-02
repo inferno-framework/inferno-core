@@ -28,22 +28,25 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const { test_suite_id } = useParams<{ test_suite_id: string }>();
+
+  /* Selections and state */
   const [selectedTestSuiteId, setSelectedTestSuiteId] = React.useState<ListOptionSelection>(
     test_suite_id || ''
   );
   const selectedTestSuite = testSuites?.find(
     (suite: TestSuite) => suite.id === selectedTestSuiteId
   );
-  const initialSelectedSuiteOptions = selectedTestSuite?.suite_options?.map((option) => ({
+  const defaultSuiteOptions = selectedTestSuite?.suite_options?.map((option) => ({
     // just grab the first to start
     // perhaps choices should be persisted in the URL to make it easy to share specific options
     id: option.id,
     value: option && option.list_options ? option.list_options[0].value : '',
   }));
   const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(
-    initialSelectedSuiteOptions || []
+    defaultSuiteOptions || []
   );
-  const [showSuites, setShowSuites] = React.useState<boolean>(true);
+  const [showLandingPage, setShowLandingPage] = React.useState<boolean>(true);
+  const [showSuiteSelection, setShowSuiteSelection] = React.useState<boolean>(true);
 
   /* CSS variables */
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
@@ -53,12 +56,21 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
 
   useEffect(() => {
     if (
-      // If no options and no description, then start a test session
+      // If no options and no description and suite is selected on load, start a test session
+      selectedTestSuite &&
       !selectedTestSuite?.suite_summary &&
       !selectedTestSuite?.description &&
       (!selectedTestSuite?.suite_options || selectedTestSuite?.suite_options.length === 0)
     ) {
+      setShowLandingPage(false);
       createTestSession(null);
+    } else if (
+      selectedTestSuite &&
+      selectedTestSuite?.suite_options &&
+      selectedTestSuite?.suite_options.length !== 0
+    ) {
+      // If options exist and suite is selected on load, set selection panel to show options
+      setShowSuiteSelection(false);
     } else if (testSuites?.length === 1) {
       // If only one suite, then default to that suite
       setSelectedTestSuiteId(testSuites[0].id);
@@ -101,8 +113,9 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   // Either show options or start test session
   const startTestingClick = (suite?: TestSuite) => {
     if (suite && suite.suite_options && suite.suite_options.length > 0) {
-      setShowSuites(false);
+      setShowSuiteSelection(false);
     } else if ((suite && suite?.id) || selectedTestSuiteId) {
+      setShowLandingPage(false);
       createTestSession(null);
     } else {
       enqueueSnackbar(`No test suite selected.`, { variant: 'error' });
@@ -114,6 +127,8 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     if (!selectedTestSuiteId) return;
     postTestSessions(selectedTestSuiteId, null, options)
       .then((testSession: TestSession | null) => {
+        console.log(testSession);
+
         if (testSession && testSession.test_suite) {
           navigate(`/${testSession.test_suite_id}/${testSession.id}`);
         }
@@ -123,6 +138,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       });
   };
 
+  if (!showLandingPage) return <></>;
   return (
     <Container
       maxWidth={false}
@@ -200,7 +216,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         ref={selectionPanel}
       >
         <Box display="flex" justifyContent="center" maxHeight={'calc(100% - 24px)'} mx={3}>
-          {showSuites ? (
+          {showSuiteSelection ? (
             // Suite selection
             <SelectionPanel
               title="Test Suites"
@@ -226,7 +242,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
               showBackButton={true}
               backTooltipText="Back to Suites"
               backClickHandler={() => {
-                setShowSuites(true);
+                setShowSuiteSelection(true);
               }}
               submitAction={() => createTestSession(selectedSuiteOptions)}
               submitText="Start Testing"
