@@ -125,6 +125,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       .then((testSession: TestSession | null) => {
         if (testSession && testSession.test_suite) {
           navigate(`/${testSession.test_suite_id}/${testSession.id}`);
+          console.log(location);
         }
       })
       .catch((e: Error) => {
@@ -149,18 +150,18 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       }
     >
       <Box
-        className={classes.flexContainer}
         maxWidth={windowIsSmall ? '100%' : '50%'}
         maxHeight={windowIsSmall ? 'none' : '100%'}
         minHeight={windowIsSmall ? 'unset' : '100%'}
         overflow="auto"
         my={3}
+        className={classes.flexContainer}
       >
         <Box
-          className={classes.flexContainer}
           maxWidth={descriptionWidth}
           maxHeight={windowIsSmall ? 'none' : '100%'}
           my={2}
+          className={classes.flexContainer}
         >
           <Box className={classes.flexContainer}>
             <img
@@ -168,19 +169,30 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
               alt="Inferno Logo"
               style={{ height: windowIsSmall ? '5em' : '8em' }}
             />
-            <Typography
-              variant="h4"
-              component="h1"
-              align="center"
-              className={classes.title}
-              sx={{ fontSize: windowIsSmall ? '2rem' : 'auto' }}
-            >
-              FHIR Testing with Inferno
-            </Typography>
+            {!selectedTestSuite?.suite_summary && !selectedTestSuite?.description && (
+              <Typography
+                variant="h4"
+                component="h1"
+                align="center"
+                className={classes.title}
+                sx={{ fontSize: windowIsSmall ? '2rem' : 'auto' }}
+              >
+                FHIR Testing with Inferno
+              </Typography>
+            )}
           </Box>
         </Box>
         {selectedTestSuite?.suite_summary || selectedTestSuite?.description ? (
-          <Box maxWidth={descriptionWidth} overflow="auto" mb={2} px={2}>
+          <Box
+            maxWidth={descriptionWidth}
+            overflow="auto"
+            mb={2}
+            px={2}
+            className={classes.leftBorder}
+          >
+            <Typography variant="h5" component="h2" className={classes.title}>
+              About {selectedTestSuite.title}
+            </Typography>
             <Typography variant="h6" component="h2" sx={{ wordBreak: 'break-word' }}>
               <ReactMarkdown>
                 {selectedTestSuite?.suite_summary || selectedTestSuite?.description || ''}
@@ -188,7 +200,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             </Typography>
           </Box>
         ) : (
-          <Box className={classes.flexContainer} maxWidth={descriptionWidth} mb={2} px={2}>
+          <Box maxWidth={descriptionWidth} mb={2} px={2} className={classes.flexContainer}>
             <Typography
               variant="h5"
               component="h2"
@@ -202,10 +214,10 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         )}
       </Box>
       <Box
-        className={classes.flexContainer}
         height={windowIsSmall ? 'unset' : '100%'}
         width={windowIsSmall ? '100%' : 'unset'}
         maxWidth={windowIsSmall ? '100%' : '50%'}
+        className={classes.flexContainer}
         sx={{ backgroundColor: lightTheme.palette.common.gray }}
       >
         <Box display="flex" justifyContent="center" maxHeight={'calc(100% - 24px)'} mx={3}>

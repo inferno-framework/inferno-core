@@ -20,4 +20,8 @@ export default makeStyles()((theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  leftBorder: {
+    borderLeft: '4px solid',
+    borderColor: theme.palette.common.grayLighter,
+  },
 }));
