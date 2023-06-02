@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Typography, Container, Box } from '@mui/material';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
@@ -45,14 +45,13 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(
     defaultSuiteOptions || []
   );
-  const [showLandingPage, setShowLandingPage] = React.useState<boolean>(true);
+  const [showLandingPage, setShowLandingPage] = React.useState<boolean>(false);
   const [showSuiteSelection, setShowSuiteSelection] = React.useState<boolean>(true);
 
   /* CSS variables */
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const [descriptionWidth, setDescriptionWidth] = React.useState<string>('');
-  const selectionPanel = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (
@@ -62,7 +61,6 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       !selectedTestSuite?.description &&
       (!selectedTestSuite?.suite_options || selectedTestSuite?.suite_options.length === 0)
     ) {
-      setShowLandingPage(false);
       createTestSession(null);
     } else if (
       selectedTestSuite &&
@@ -71,10 +69,13 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     ) {
       // If options exist and suite is selected on load, set selection panel to show options
       setShowSuiteSelection(false);
+      setShowLandingPage(true);
     } else if (testSuites?.length === 1) {
       // If only one suite, then default to that suite
       setSelectedTestSuiteId(testSuites[0].id);
       startTestingClick(testSuites[0]);
+    } else {
+      setShowLandingPage(true);
     }
   }, []);
 
@@ -88,11 +89,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   }, [windowIsSmall]);
 
   const getDescriptionWidth = () => {
-    if (windowIsSmall) {
-      setDescriptionWidth('100%');
-    } else if (selectionPanel.current) {
-      setDescriptionWidth(`${smallWindowThreshold - (selectionPanel.current.clientWidth || 0)}px`);
-    }
+    setDescriptionWidth(windowIsSmall ? '100%' : `${smallWindowThreshold / 2}px`);
   };
 
   // Set selected suite ID and update URL
@@ -114,8 +111,8 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const startTestingClick = (suite?: TestSuite) => {
     if (suite && suite.suite_options && suite.suite_options.length > 0) {
       setShowSuiteSelection(false);
+      setShowLandingPage(true);
     } else if ((suite && suite?.id) || selectedTestSuiteId) {
-      setShowLandingPage(false);
       createTestSession(null);
     } else {
       enqueueSnackbar(`No test suite selected.`, { variant: 'error' });
@@ -127,8 +124,6 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     if (!selectedTestSuiteId) return;
     postTestSessions(selectedTestSuiteId, null, options)
       .then((testSession: TestSession | null) => {
-        console.log(testSession);
-
         if (testSession && testSession.test_suite) {
           navigate(`/${testSession.test_suite_id}/${testSession.id}`);
         }
@@ -213,7 +208,6 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         width={windowIsSmall ? '100%' : 'unset'}
         maxWidth={windowIsSmall ? '100%' : '50%'}
         sx={{ backgroundColor: lightTheme.palette.common.gray }}
-        ref={selectionPanel}
       >
         <Box display="flex" justifyContent="center" maxHeight={'calc(100% - 24px)'} mx={3}>
           {showSuiteSelection ? (
