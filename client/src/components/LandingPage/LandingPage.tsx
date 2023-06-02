@@ -12,6 +12,7 @@ import {
 } from '~/models/selectionModels';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { getStaticPath } from '~/api/infernoApiService';
+import { useEffectOnce } from '~/hooks/useEffectOnce';
 import { useAppStore } from '~/store/app';
 import infernoLogo from '~/images/inferno_logo.png';
 import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
@@ -53,30 +54,31 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const [descriptionWidth, setDescriptionWidth] = React.useState<string>('');
 
-  useEffect(() => {
+  // Only let this trigger once due to async createTestSession
+  useEffectOnce(() => {
     if (testSuites?.length === 1) {
       // If only one suite, then default to that suite
       setSelectedTestSuiteId(testSuites[0].id);
       startTestingClick(testSuites[0]);
-    }
-
-    // Handle options and descriptions displays
-    const suiteDescriptionExists =
-      selectedTestSuite?.suite_summary || selectedTestSuite?.description;
-    const suiteOptionsExists =
-      selectedTestSuite?.suite_options && selectedTestSuite?.suite_options.length > 0;
-
-    if (selectedTestSuite && !suiteDescriptionExists && !suiteOptionsExists) {
-      // If no description and no options, start a test session
-      startTestingClick(selectedTestSuite);
-    } else if (selectedTestSuite && suiteOptionsExists) {
-      // If options, set selection panel to show options
-      setShowSuiteSelection(false);
-      setShowLandingPage(true);
     } else {
-      setShowLandingPage(true);
+      // Handle options and descriptions displays
+      const suiteDescriptionExists =
+        selectedTestSuite?.suite_summary || selectedTestSuite?.description;
+      const suiteOptionsExists =
+        selectedTestSuite?.suite_options && selectedTestSuite?.suite_options.length > 0;
+
+      if (selectedTestSuite && !suiteDescriptionExists && !suiteOptionsExists) {
+        // If no description and no options, start a test session
+        startTestingClick(selectedTestSuite);
+      } else if (selectedTestSuite && suiteOptionsExists) {
+        // If options, set selection panel to show options
+        setShowSuiteSelection(false);
+        setShowLandingPage(true);
+      } else {
+        setShowLandingPage(true);
+      }
     }
-  }, []);
+  });
 
   useEffect(() => {
     // Handle browser back and forward button behavior
@@ -125,7 +127,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
       .then((testSession: TestSession | null) => {
         if (testSession && testSession.test_suite) {
           navigate(`/${testSession.test_suite_id}/${testSession.id}`);
-          console.log(location);
+          navigate(0); // Refresh page to prevent React Router bug where rerendering fails
         }
       })
       .catch((e: Error) => {
