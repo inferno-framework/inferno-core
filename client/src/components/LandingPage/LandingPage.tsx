@@ -192,7 +192,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             px={2}
             className={classes.leftBorder}
           >
-            <Typography variant="h5" component="h2" className={classes.title}>
+            <Typography variant="h5" component="h1" className={classes.title}>
               About {selectedTestSuite.title}
             </Typography>
             <Typography variant="h6" component="h2" sx={{ wordBreak: 'break-word' }}>
