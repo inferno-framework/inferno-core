@@ -54,26 +54,25 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
   const [descriptionWidth, setDescriptionWidth] = React.useState<string>('');
 
   useEffect(() => {
-    if (
-      // If no options and no description and suite is selected on load, start a test session
-      selectedTestSuite &&
-      !selectedTestSuite?.suite_summary &&
-      !selectedTestSuite?.description &&
-      (!selectedTestSuite?.suite_options || selectedTestSuite?.suite_options.length === 0)
-    ) {
-      createTestSession(null);
-    } else if (
-      selectedTestSuite &&
-      selectedTestSuite?.suite_options &&
-      selectedTestSuite?.suite_options.length !== 0
-    ) {
-      // If options exist and suite is selected on load, set selection panel to show options
-      setShowSuiteSelection(false);
-      setShowLandingPage(true);
-    } else if (testSuites?.length === 1) {
+    if (testSuites?.length === 1) {
       // If only one suite, then default to that suite
       setSelectedTestSuiteId(testSuites[0].id);
       startTestingClick(testSuites[0]);
+    }
+
+    // Handle options and descriptions displays
+    const suiteDescriptionExists =
+      selectedTestSuite?.suite_summary || selectedTestSuite?.description;
+    const suiteOptionsExists =
+      selectedTestSuite?.suite_options && selectedTestSuite?.suite_options.length > 0;
+
+    if (selectedTestSuite && !suiteDescriptionExists && !suiteOptionsExists) {
+      // If no description and no options, start a test session
+      startTestingClick(selectedTestSuite);
+    } else if (selectedTestSuite && suiteOptionsExists) {
+      // If options, set selection panel to show options
+      setShowSuiteSelection(false);
+      setShowLandingPage(true);
     } else {
       setShowLandingPage(true);
     }
