@@ -1,3 +1,6 @@
+# 0.4.16
+* Dynamically determine the Inferno base url in swagger docs.
+
 # 0.4.15
 * Fix the appearance of the suite options screen for smaller displays.
 
