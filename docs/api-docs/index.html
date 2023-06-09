@@ -64,7 +64,7 @@
 
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
-      const scheme = urlParams.get('scheme').replaceAll(':', '');
+      const scheme = urlParams.get('scheme')?.replaceAll(':', '');
       const host = urlParams.get('host');
 
       window.onload = () => {
