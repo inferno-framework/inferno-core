@@ -1,16 +1,23 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { render, renderHook, screen } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 import TestSessionComponent from '../TestSession';
 import { mockedTestSession, mockedResultsList } from '../__mocked_data__/mockData';
+import { useAppStore } from '~/store/app';
 
-test('renders TestSession', () => {
-  let drawerOpen = true;
+// boilerplate for mocking zustand which uses hooks outside of a component
+beforeEach(() => {
+  const { result } = renderHook(() => useAppStore((state) => state));
+  result.current.windowIsSmall = true;
+});
+
+test('renders narrow screen TestSession', () => {
+  let drawerOpen = false;
 
   render(
-    <BrowserRouter>
+    <MemoryRouter>
       <ThemeProvider>
         <SnackbarProvider>
           <TestSessionComponent
@@ -24,7 +31,7 @@ test('renders TestSession', () => {
           />
         </SnackbarProvider>
       </ThemeProvider>
-    </BrowserRouter>
+    </MemoryRouter>
   );
 
   const testSessionTitleComponentList = screen.getAllByRole('link');
