@@ -2,12 +2,13 @@ import React, { FC } from 'react';
 import lightTheme from 'styles/theme';
 
 interface TabPanelProps {
+  children: React.ReactNode;
   id: string;
   index: number;
   currentTabIndex: number;
 }
 
-const TabPanel: FC<TabPanelProps> = ({ id, index, currentTabIndex, children }) => {
+const TabPanel: FC<TabPanelProps> = ({ children, id, index, currentTabIndex }) => {
   return (
     <div
       role="tabpanel"
