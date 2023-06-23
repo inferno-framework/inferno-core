@@ -1,24 +1,12 @@
-import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
 
-export default makeStyles()((theme: Theme) => ({
-  container: {
-    backgroundColor: theme.palette.common.white,
-  },
+export default makeStyles()(() => ({
   main: {
     display: 'flex',
     flexWrap: 'wrap',
-    alignItems: 'center',
+    alignItems: 'initial',
     justifyContent: 'space-evenly',
-  },
-  selectedItem: {
-    backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
-  },
-  optionsList: {
-    display: 'flex',
-    flexDirection: 'column',
-    margin: '20px',
-    padding: '16px',
-    borderRadius: '16px',
+    height: '100%',
+    padding: '0 !important',
   },
 }));

@@ -1,27 +1,19 @@
 import React, { FC, useEffect, useRef } from 'react';
-import {
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Typography,
-  Button,
-  Paper,
-  Radio,
-  RadioGroup,
-  Box,
-  IconButton,
-  Tooltip,
-} from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
-import useStyles from './styles';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Typography, Box, Container } from '@mui/material';
+import ReactMarkdown from 'react-markdown';
+import { useSnackbar } from 'notistack';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
-import ReactMarkdown from 'react-markdown';
+import {
+  ListOptionSelection,
+  RadioOptionSelection,
+  isRadioOptionSelection,
+} from '~/models/selectionModels';
 import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
-import { useSnackbar } from 'notistack';
+import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
+import useStyles from './styles';
 
 export interface SuiteOptionsPageProps {
   testSuite?: TestSuite;
@@ -31,7 +23,6 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
   const navigate = useNavigate();
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const testSuites = useAppStore((state) => state.testSuites);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const { test_suite_id } = useParams<{ test_suite_id: string }>();
@@ -69,11 +60,9 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
     }
   };
 
-  const changeSuiteOption = (option_id: string, value: string): void => {
-    const newOptions: SuiteOption[] = selectedSuiteOptions.map((option) =>
-      option.id === option_id ? { id: option.id, value: value } : { ...option }
-    );
-    setSelectedSuiteOptions(newOptions);
+  const setSelected = (selection: ListOptionSelection | RadioOptionSelection[]) => {
+    // Check if radio option to avoid type errors
+    if (isRadioOptionSelection(selection)) setSelectedSuiteOptions(selection);
   };
 
   const createTestSession = (options: SuiteOption[] | null = null): void => {
@@ -89,103 +78,74 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
       });
   };
 
-  const renderBackButton = () => {
-    const returnHome = () => {
-      navigate('/');
-    };
+  const renderTitle = () => {
     return (
-      <Tooltip title="Back to Suites">
-        <IconButton size="small" onClick={returnHome}>
-          <ArrowBackIcon fontSize="large" />
-        </IconButton>
-      </Tooltip>
-    );
-  };
-
-  // Given a suiteOption and index i, returns a RadioGroup with a RadioButton per choice
-  const renderOption = (suiteOption: SuiteOption, i: number) => {
-    return (
-      <FormControl fullWidth id={`suite-option-input-${i}`} key={`suite-form-control${i}`}>
-        <FormLabel sx={{ display: 'flex', alignItems: 'center' }}>
-          {suiteOption.title}
-          {suiteOption.description && (
-            <Tooltip title={suiteOption.description}>
-              <HelpOutlineOutlinedIcon fontSize="small" color="secondary" sx={{ px: 0.5 }} />
-            </Tooltip>
-          )}
-        </FormLabel>
-
-        <RadioGroup
-          aria-label={`suite-option-group-${suiteOption.id}`}
-          defaultValue={
-            suiteOption.list_options &&
-            suiteOption.list_options.length &&
-            suiteOption.list_options[0].value
-          }
-          name={`suite-option-group-${suiteOption.id}`}
-        >
-          {suiteOption?.list_options?.map((choice, k) => (
-            <FormControlLabel
-              value={choice.value}
-              control={<Radio size="small" />}
-              label={choice.label}
-              key={`radio-button-${k}`}
-              onClick={() => {
-                changeSuiteOption(suiteOption.id, choice.value);
-              }}
-            />
-          ))}
-        </RadioGroup>
-      </FormControl>
+      <Typography
+        variant="h3"
+        component="h1"
+        align="center"
+        sx={{
+          color: lightTheme.palette.common.grayDarkest,
+          fontSize: windowIsSmall ? '2rem' : 'auto',
+          fontWeight: 'bolder',
+          letterSpacing: 2,
+        }}
+      >
+        {testSuite?.title.toUpperCase()}
+      </Typography>
     );
   };
 
   return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="column"
-      minHeight="600px"
-      height="100%"
-      maxHeight="100vh"
+    <Container
+      maxWidth={false}
       role="main"
+      className={classes.main}
+      sx={
+        windowIsSmall
+          ? {}
+          : {
+              flexDirection: 'column',
+              minHeight: '400px',
+              maxHeight: '100vh',
+              py: 10,
+            }
+      }
     >
       <Box
         display="flex"
-        flexWrap="wrap"
+        flexDirection="column"
+        justifyContent="center"
         alignItems="center"
-        justifyContent="space-evenly"
-        width="100%"
-        sx={windowIsSmall ? { overflow: 'auto' } : { mt: 4 }}
+        maxWidth={windowIsSmall ? '100%' : '50%'}
+        maxHeight={windowIsSmall ? 'none' : '100%'}
+        minHeight={windowIsSmall ? 'none' : '100%'}
+        overflow="auto"
+        px={windowIsSmall ? 0 : 8}
+        my={3}
       >
+        {/* Title */}
         <Box
+          display="flex"
+          alignItems="center"
+          sx={windowIsSmall ? { mx: 2 } : { m: 4 }}
           maxWidth={descriptionWidth}
           maxHeight={windowIsSmall ? 'none' : '100%'}
-          overflow="auto"
-          my={3}
         >
-          {/* Title */}
-          <Box alignItems="center" maxWidth="800px" sx={windowIsSmall ? { m: 2 } : { mt: 6 }}>
-            <Typography
-              variant="h3"
-              component="h1"
-              align="center"
-              sx={{
-                color: lightTheme.palette.common.orangeDarker,
-                fontSize: windowIsSmall ? '2rem' : 'auto',
-                fontWeight: 'bolder',
-              }}
-            >
-              {testSuite?.title}
-            </Typography>
-          </Box>
-          {/* Description */}
+          {renderTitle()}
+        </Box>
+        {/* Description */}
+        <Box
+          display="flex"
+          maxWidth={descriptionWidth}
+          justifyContent="center"
+          overflow="auto"
+          px={2}
+          mb={3}
+        >
           <Typography
             variant="h6"
             component="h2"
-            pr={2}
-            pl={5}
             sx={{
               wordBreak: 'break-word',
             }}
@@ -195,61 +155,29 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
             </ReactMarkdown>
           </Typography>
         </Box>
-        {/* Selection panel */}
-        <Box display="flex" justifyContent="center" maxHeight="100%" ref={selectionPanel} p={3}>
-          <Paper
-            elevation={4}
-            className={classes.optionsList}
-            sx={{ width: windowIsSmall ? 'auto' : '400px', maxWidth: '400px' }}
-          >
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent={testSuites.length > 1 ? 'space-between' : 'center'}
-              mx={1}
-            >
-              {testSuites.length > 1 && renderBackButton()}
-              <Typography
-                variant="h4"
-                component="h2"
-                align="center"
-                sx={{
-                  fontSize: windowIsSmall ? '1.8rem' : 'auto',
-                }}
-              >
-                Options
-              </Typography>
-              {/* Spacer to center title with button */}
-              {testSuites.length > 1 && <Box minWidth="45px" />}
-            </Box>
-
-            <Box px={4} pt={2}>
-              {testSuite?.suite_options ? (
-                testSuite?.suite_options.map((suiteOption: SuiteOption, i) =>
-                  renderOption(suiteOption, i)
-                )
-              ) : (
-                <Typography mt={2}> No options available.</Typography>
-              )}
-            </Box>
-
-            <Box px={2} pt={2}>
-              <Button
-                variant="contained"
-                size="large"
-                color="primary"
-                fullWidth
-                data-testid="go-button"
-                sx={{ fontWeight: 600 }}
-                onClick={() => createTestSession(selectedSuiteOptions)}
-              >
-                Start Testing
-              </Button>
-            </Box>
-          </Paper>
+      </Box>
+      <Box
+        display="flex"
+        height={windowIsSmall ? 'none' : '100%'}
+        width={windowIsSmall ? '100%' : 'none'}
+        maxWidth={windowIsSmall ? '100%' : '50%'}
+        justifyContent="center"
+        alignItems="center"
+        sx={{ backgroundColor: lightTheme.palette.common.grayLightest }}
+      >
+        <Box display="flex" ref={selectionPanel} justifyContent="center" maxHeight="100%" m={3}>
+          <SelectionPanel
+            title="Options"
+            options={testSuite?.suite_options || []}
+            setSelection={setSelected}
+            showBackButton={true}
+            backTooltipText="Back to Suites"
+            submitAction={() => createTestSession(selectedSuiteOptions)}
+            submitText="Start Testing"
+          />
         </Box>
       </Box>
-    </Box>
+    </Container>
   );
 };
 
