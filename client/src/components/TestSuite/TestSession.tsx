@@ -33,6 +33,7 @@ import { useTestSessionStore } from '~/store/testSession';
 import { useEffectOnce } from '~/hooks/useEffectOnce';
 import { useTimeout } from '~/hooks/useTimeout';
 import { mapRunnableToId, resultsToMap, setIsRunning } from './TestSuiteUtilities';
+import lightTheme from '~/styles/theme';
 
 export interface TestSessionComponentProps {
   testSession: TestSession;
@@ -368,6 +369,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         style={{
           overflow: 'auto',
           width: '100%',
+          backgroundColor: lightTheme.palette.common.grayLightest,
         }}
       >
         <Box className={classes.contentContainer} p={windowIsSmall ? 1 : 4}>
