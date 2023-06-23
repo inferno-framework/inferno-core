@@ -91,4 +91,45 @@ describe('The TestRunButton Component', () => {
     userEvent.click(buttonElement);
     expect(runTests).toBeCalledTimes(1);
   });
+
+  it('renders TestRunButton for test suites', () => {
+    render(
+      <BrowserRouter>
+        <ThemeProvider>
+          <SnackbarProvider>
+            <TestRunButton
+              runnable={mockedTestRunButtonData.testSuite}
+              runnableType={RunnableType.TestSuite}
+              runTests={mockedTestRunButtonData.runTests}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    );
+
+    const buttonElement = screen.getByTestId('runButton-mock-test-suite-id');
+    expect(buttonElement).toBeInTheDocument();
+  });
+
+  it('runs test suite on button click', () => {
+    const runTests = vi.spyOn(mockedTestRunButtonData, 'runTests');
+
+    render(
+      <BrowserRouter>
+        <ThemeProvider>
+          <SnackbarProvider>
+            <TestRunButton
+              runnable={mockedTestRunButtonData.testSuite}
+              runnableType={RunnableType.TestSuite}
+              runTests={mockedTestRunButtonData.runTests}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    );
+
+    const buttonElement = screen.getByTestId('runButton-mock-test-suite-id');
+    userEvent.click(buttonElement);
+    expect(runTests).toBeCalledTimes(1);
+  });
 });
