@@ -106,6 +106,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
         marginBottom: `${footerHeight}px`,
         zIndex: lightTheme.zIndex.snackbar,
       }}
+      data-testid="progress-bar"
     >
       <Box
         display="flex"

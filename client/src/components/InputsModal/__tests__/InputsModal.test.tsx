@@ -39,26 +39,6 @@ const testInputsDefaults: TestInput[] = [
   },
 ];
 
-test('Input modal not visible if visibility set to false', () => {
-  render(
-    <ThemeProvider>
-      <SnackbarProvider>
-        <InputsModal
-          hideModal={hideModalMock}
-          title="Modal Title"
-          createTestRun={createTestRunMock}
-          runnableType={RunnableType.TestGroup}
-          runnableId={'test group id'}
-          inputs={testInputs}
-          sessionData={new Map()}
-        />
-      </SnackbarProvider>
-    </ThemeProvider>
-  );
-  const titleText = screen.queryByText('Test Inputs');
-  expect(titleText).toBeNull();
-});
-
 test('Modal visible and inputs are shown', () => {
   render(
     <ThemeProvider>
@@ -109,6 +89,28 @@ test('Pressing cancel hides the modal', () => {
 
   const cancelButton = screen.getByTestId('cancel-button');
   userEvent.click(cancelButton);
+  expect(hideModalMock).toHaveBeenCalled();
+});
+
+test('Pressing submit hides the modal', () => {
+  render(
+    <ThemeProvider>
+      <SnackbarProvider>
+        <InputsModal
+          hideModal={hideModalMock}
+          title="Modal Title"
+          createTestRun={createTestRunMock}
+          runnableType={RunnableType.TestGroup}
+          runnableId={'test group id'}
+          inputs={testInputs}
+          sessionData={new Map()}
+        />
+      </SnackbarProvider>
+    </ThemeProvider>
+  );
+
+  const submitButton = screen.getByText('Submit');
+  userEvent.click(submitButton);
   expect(hideModalMock).toHaveBeenCalled();
 });
 

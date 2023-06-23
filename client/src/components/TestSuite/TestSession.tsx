@@ -18,7 +18,7 @@ import {
   isTest,
 } from '~/models/testSuiteModels';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from '~/api/TestRunsApi';
-import ActionModal from '~/components/ActionModal/ActionModal';
+import ActionModal from '~/components/_common/ActionModal';
 import InputsModal from '~/components/InputsModal/InputsModal';
 import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
 import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
@@ -389,7 +389,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           <ActionModal
             cancelTestRun={cancelTestRun}
             message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
-            modalVisible={waitingTestId != null}
+            modalVisible={waitingTestId !== null}
           />
         </Box>
       </main>

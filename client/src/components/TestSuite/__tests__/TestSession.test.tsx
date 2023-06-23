@@ -27,7 +27,7 @@ test('renders TestSession', () => {
     </BrowserRouter>
   );
 
-  const testSessionTitleComponentList = screen.getAllByRole('link');
+  const testSessionTitleComponentList = screen.getAllByTestId('navigable-group-item');
   testSessionTitleComponentList.forEach((testSessionTitleComponent, i) => {
     const testGroups = mockedTestSession.test_suite.test_groups || [];
     const testGroupTitle = testGroups[i].title || undefined;
