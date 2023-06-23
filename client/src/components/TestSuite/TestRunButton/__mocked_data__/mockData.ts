@@ -1,3 +1,8 @@
+import {
+  mockedTest,
+  mockedTestGroup,
+  mockedTestSuite,
+} from '~/components/_common/__mocked_data__/mockData';
 import { RunnableType } from '~/models/testSuiteModels';
 
 export const mockedRunTests = (runnableType: RunnableType, runnableId: string) => {
@@ -5,13 +10,8 @@ export const mockedRunTests = (runnableType: RunnableType, runnableId: string) =
 };
 
 export const mockedTestRunButtonData = {
-  mockedTest: {
-    id: 'mock-test-id',
-    title: 'Mock Test',
-    inputs: [],
-    short_id: 'test',
-    outputs: [],
-    user_runnable: true,
-  },
-  mockedRunTests,
+  test: mockedTest,
+  testGroup: mockedTestGroup,
+  testSuite: mockedTestSuite,
+  runTests: mockedRunTests,
 };

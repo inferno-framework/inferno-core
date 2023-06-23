@@ -9,16 +9,16 @@ import TestRunButton from '../TestRunButton';
 import { mockedTestRunButtonData } from '../__mocked_data__/mockData';
 import userEvent from '@testing-library/user-event';
 
-describe('The App Root Component', () => {
+describe('The TestRunButton Component', () => {
   it('renders TestRunButton for tests', () => {
     render(
       <BrowserRouter>
         <ThemeProvider>
           <SnackbarProvider>
             <TestRunButton
-              runnable={mockedTestRunButtonData.mockedTest}
+              runnable={mockedTestRunButtonData.test}
               runnableType={RunnableType.Test}
-              runTests={mockedTestRunButtonData.mockedRunTests}
+              runTests={mockedTestRunButtonData.runTests}
             />
           </SnackbarProvider>
         </ThemeProvider>
@@ -30,16 +30,16 @@ describe('The App Root Component', () => {
   });
 
   it('runs tests on button click', () => {
-    const runTests = vi.spyOn(mockedTestRunButtonData, 'mockedRunTests');
+    const runTests = vi.spyOn(mockedTestRunButtonData, 'runTests');
 
     render(
       <BrowserRouter>
         <ThemeProvider>
           <SnackbarProvider>
             <TestRunButton
-              runnable={mockedTestRunButtonData.mockedTest}
+              runnable={mockedTestRunButtonData.test}
               runnableType={RunnableType.Test}
-              runTests={mockedTestRunButtonData.mockedRunTests}
+              runTests={mockedTestRunButtonData.runTests}
             />
           </SnackbarProvider>
         </ThemeProvider>
@@ -47,6 +47,47 @@ describe('The App Root Component', () => {
     );
 
     const buttonElement = screen.getByTestId('runButton-mock-test-id');
+    userEvent.click(buttonElement);
+    expect(runTests).toBeCalledTimes(1);
+  });
+
+  it('renders TestRunButton for test groups', () => {
+    render(
+      <BrowserRouter>
+        <ThemeProvider>
+          <SnackbarProvider>
+            <TestRunButton
+              runnable={mockedTestRunButtonData.testGroup}
+              runnableType={RunnableType.TestGroup}
+              runTests={mockedTestRunButtonData.runTests}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    );
+
+    const buttonElement = screen.getByTestId('runButton-mock-test-group-id');
+    expect(buttonElement).toBeInTheDocument();
+  });
+
+  it('runs test group on button click', () => {
+    const runTests = vi.spyOn(mockedTestRunButtonData, 'runTests');
+
+    render(
+      <BrowserRouter>
+        <ThemeProvider>
+          <SnackbarProvider>
+            <TestRunButton
+              runnable={mockedTestRunButtonData.testGroup}
+              runnableType={RunnableType.TestGroup}
+              runTests={mockedTestRunButtonData.runTests}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    );
+
+    const buttonElement = screen.getByTestId('runButton-mock-test-group-id');
     userEvent.click(buttonElement);
     expect(runTests).toBeCalledTimes(1);
   });
