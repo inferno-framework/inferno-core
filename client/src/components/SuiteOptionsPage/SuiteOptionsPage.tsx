@@ -163,7 +163,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         maxWidth={windowIsSmall ? '100%' : '50%'}
         justifyContent="center"
         alignItems="center"
-        sx={{ backgroundColor: lightTheme.palette.common.grayLighter }}
+        sx={{ backgroundColor: lightTheme.palette.common.grayLightest }}
       >
         <Box display="flex" ref={selectionPanel} justifyContent="center" maxHeight="100%" m={3}>
           <SelectionPanel
