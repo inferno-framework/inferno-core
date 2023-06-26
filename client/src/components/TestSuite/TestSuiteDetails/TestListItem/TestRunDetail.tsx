@@ -3,9 +3,9 @@ import { Box, Card, Divider, Tab, Tabs, Tooltip, Typography } from '@mui/materia
 import { Message, Request, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
 import TabPanel from '~/components/TestSuite/TestSuiteDetails/TestListItem/TabPanel';
-import MessagesList from '~/components/TestSuite/TestSuiteDetails/TestListItem/MessagesList';
-import RequestsList from '~/components/TestSuite/TestSuiteDetails/TestListItem/RequestsList';
-import InputOutputsList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputsList';
+import MessageList from '~/components/TestSuite/TestSuiteDetails/TestListItem/MessageList';
+import RequestList from '~/components/TestSuite/TestSuiteDetails/TestListItem/RequestList';
+import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
 import lightTheme from '~/styles/theme';
 import useStyles from './styles';
 import ReactMarkdown from 'react-markdown';
@@ -98,11 +98,11 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
       </Tabs>
       <Divider />
       <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={0}>
-        <MessagesList messages={test.result?.messages || []} />
+        <MessageList messages={test.result?.messages || []} />
       </TabPanel>
       <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={1}>
         {updateRequest && (
-          <RequestsList
+          <RequestList
             requests={test.result?.requests || []}
             resultId={test.result?.id || ''}
             updateRequest={updateRequest}
@@ -111,14 +111,14 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
         )}
       </TabPanel>
       <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={2}>
-        <InputOutputsList
+        <InputOutputList
           inputOutputs={test.result?.inputs || []}
           noValuesMessage="No Inputs"
           headerName="Input"
         />
       </TabPanel>
       <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={3}>
-        <InputOutputsList
+        <InputOutputList
           inputOutputs={test.result?.outputs || []}
           noValuesMessage="No Outputs"
           headerName="Output"

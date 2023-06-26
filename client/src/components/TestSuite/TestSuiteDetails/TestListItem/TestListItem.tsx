@@ -18,8 +18,8 @@ import Info from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReactMarkdown from 'react-markdown';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
-import MessagesList from './MessagesList';
-import RequestsList from './RequestsList';
+import MessageList from './MessageList';
+import RequestList from './RequestList';
 import ResultIcon from '../ResultIcon';
 import ProblemBadge from './ProblemBadge';
 import TestRunDetail from './TestRunDetail';
@@ -173,12 +173,12 @@ const TestListItem: FC<TestListItemProps> = ({
     <>
       {messagesExist && (
         <Card sx={requestsExist ? { mb: 2 } : {}}>
-          <MessagesList messages={test.result?.messages || []} />
+          <MessageList messages={test.result?.messages || []} />
         </Card>
       )}
       {updateRequest && requestsExist && (
         <Card>
-          <RequestsList
+          <RequestList
             requests={test.result?.requests || []}
             resultId={test.result?.id || ''}
             updateRequest={updateRequest}

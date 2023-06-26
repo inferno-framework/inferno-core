@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 
-import RequestsList from '../RequestsList';
+import RequestList from '../RequestList';
 import {
   mockedRequest,
   codeResponseWithHTML,
@@ -16,7 +16,7 @@ describe('The RequestsList component', () => {
     render(
       <ThemeProvider>
         <SnackbarProvider>
-          <RequestsList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
+          <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
         </SnackbarProvider>
       </ThemeProvider>
     );
