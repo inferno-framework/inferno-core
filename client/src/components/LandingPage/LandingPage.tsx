@@ -221,7 +221,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         maxWidth={windowIsSmall ? '100%' : '50%'}
         className={classes.flexContainer}
         py={windowIsSmall ? 3 : 0}
-        sx={{ backgroundColor: lightTheme.palette.common.gray }}
+        sx={{ backgroundColor: lightTheme.palette.common.grayLightest }}
       >
         <Box display="flex" justifyContent="center" maxHeight="100%" mx={3}>
           {showSuiteSelection ? (
