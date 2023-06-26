@@ -60,9 +60,9 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
     }
   };
 
-  const setSelected = (selection: ListOptionSelection | RadioOptionSelection[]) => {
+  const setSelected = (selection: ListOptionSelection | RadioOptionSelection[] | null) => {
     // Check if radio option to avoid type errors
-    if (isRadioOptionSelection(selection)) setSelectedSuiteOptions(selection);
+    if (selection && isRadioOptionSelection(selection)) setSelectedSuiteOptions(selection);
   };
 
   const createTestSession = (options: SuiteOption[] | null = null): void => {
