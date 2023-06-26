@@ -6,7 +6,8 @@ import {
 import { RunnableType } from '~/models/testSuiteModels';
 
 export const mockedRunTests = (runnableType: RunnableType, runnableId: string) => {
-  console.log(runnableType, runnableId);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const data = [runnableType, runnableId];
 };
 
 export const mockedTestRunButtonData = {

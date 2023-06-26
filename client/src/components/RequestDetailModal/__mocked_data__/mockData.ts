@@ -55,3 +55,12 @@ export const codeResponseWithJSON: Request = {
   response_body:
     '{"resourceType": "OperationOutcome", "issue": [ {"severity": "error", "code": "processing", "diagnostics": "Bearer token is invalid or not supplied Supplied Bearer Token: null" } ]}',
 };
+
+export const mockedUpdateRequest = (requestId: string, resultId: string, request: Request) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const data = [requestId, resultId, request];
+};
+
+export const mockedRequestFunctions = {
+  updateRequest: mockedUpdateRequest,
+};

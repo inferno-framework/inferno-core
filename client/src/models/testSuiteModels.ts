@@ -73,7 +73,7 @@ export interface Result {
 
 export interface SuiteOption extends Option {
   id: string;
-  title?: string;
+  title: string;
   description?: string;
   list_options?: SuiteOptionChoice[];
   value?: string;

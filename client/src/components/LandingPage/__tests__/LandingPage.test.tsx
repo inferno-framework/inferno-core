@@ -57,7 +57,7 @@ test('should enable Start Testing when test suite is selected', () => {
     </BrowserRouter>
   );
 
-  const testSuiteElement = screen.getAllByTestId('testing-suite-option')[0];
+  const testSuiteElement = screen.getAllByTestId('list-option')[0];
   const buttonElement = screen.getByTestId('go-button');
 
   userEvent.click(testSuiteElement);

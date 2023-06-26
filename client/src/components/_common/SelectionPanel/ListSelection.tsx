@@ -21,7 +21,7 @@ const ListSelection: FC<ListSelectionProps> = ({ options, setSelection: setParen
     <Box px={2} py={1}>
       {options.map((option) => (
         <ListItemButton
-          data-testid="testing-suite-option"
+          data-testid="list-option"
           selected={selectedListOption === option.id}
           onClick={() => selectOption(option.id)}
           classes={{ selected: classes.selectedItem }}
