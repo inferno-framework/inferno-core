@@ -23,7 +23,6 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
     // To test locally, set apiBase to 'http://127.0.0.1:4000/inferno-core/api-docs/'
     const apiBase = 'https://inferno-framework.github.io/inferno-core/api-docs/';
     const hostname = window.location.host;
-    console.log(window.location);
     const fullHost = `${hostname}/${basePath}`;
     const scheme = window.location.protocol;
 

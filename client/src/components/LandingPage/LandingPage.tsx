@@ -113,17 +113,16 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
     if (suite && suite.suite_options && suite.suite_options.length > 0) {
       setShowSuiteSelection(false);
       setShowLandingPage(true);
-    } else if ((suite && suite?.id) || selectedTestSuiteId) {
-      createTestSession(null);
+    } else if (suite && suite.id) {
+      createTestSession(suite.id, null);
     } else {
       enqueueSnackbar(`No test suite selected.`, { variant: 'error' });
     }
   };
 
   // Start test session
-  const createTestSession = (options: SuiteOption[] | null = null): void => {
-    if (!selectedTestSuiteId) return;
-    postTestSessions(selectedTestSuiteId, null, options)
+  const createTestSession = (id: string, options: SuiteOption[] | null = null): void => {
+    postTestSessions(id, null, options)
       .then((testSession: TestSession | null) => {
         if (testSession && testSession.test_suite) {
           navigate(`/${testSession.test_suite_id}/${testSession.id}`);
@@ -252,7 +251,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
               backClickHandler={() => {
                 setShowSuiteSelection(true);
               }}
-              submitAction={() => createTestSession(selectedSuiteOptions)}
+              submitAction={() => createTestSession(selectedTestSuiteId, selectedSuiteOptions)}
               submitText="Start Testing"
             />
           )}
