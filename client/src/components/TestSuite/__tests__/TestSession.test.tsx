@@ -1,10 +1,29 @@
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
+import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import * as versionsApi from '~/api/VersionsApi';
 import ThemeProvider from 'components/ThemeProvider';
 import TestSessionComponent from '../TestSession';
+import TestSessionWrapper from '../TestSessionWrapper';
 import { mockedTestSession, mockedResultsList } from '../__mocked_data__/mockData';
+
+test('renders TestSessionWrapper', () => {
+  const getCoreVersion = vi.spyOn(versionsApi, 'getCoreVersion');
+
+  render(
+    <BrowserRouter>
+      <ThemeProvider>
+        <SnackbarProvider>
+          <TestSessionWrapper />
+        </SnackbarProvider>
+      </ThemeProvider>
+    </BrowserRouter>
+  );
+
+  expect(getCoreVersion).toBeCalledTimes(1);
+});
 
 test('renders TestSession', () => {
   let drawerOpen = true;
