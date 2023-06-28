@@ -2,7 +2,7 @@ import { SuiteOptionChoice } from './testSuiteModels';
 
 export type Option = {
   id: string;
-  title: string;
+  title?: string;
 };
 
 export type ListOption = Option;
