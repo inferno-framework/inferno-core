@@ -22,6 +22,7 @@ describe('The Page Component', () => {
     const router = createMemoryRouter(routes, { initialEntries: ['/'] });
     render(<RouterProvider router={router} />);
 
-    await waitFor(() => expect(document.title).toEqual(pageTitle));
+    // adding '' to handle empty title in actions
+    await waitFor(() => expect(document.title).toEqual(pageTitle || ''));
   });
 });
