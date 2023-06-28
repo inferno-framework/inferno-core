@@ -9,8 +9,8 @@ import InputOutputList from '../InputOutputList';
 describe('The InputOutputsList component', () => {
   test('it renders all inputs', () => {
     const inputs: TestInput[] = [
-      { name: 'one', value: 1 },
-      { name: 'two', value: 2 },
+      { name: 'one', value: '1' },
+      { name: 'two', value: '2' },
     ];
 
     render(
