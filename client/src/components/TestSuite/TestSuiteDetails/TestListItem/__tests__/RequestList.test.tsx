@@ -1,5 +1,7 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
+import { render, screen, waitFor } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 
@@ -26,5 +28,58 @@ describe('The RequestsList component', () => {
     expect(renderedRequests.length).toEqual(requests.length);
     expect(renderedRequests[0]).toHaveTextContent(mockedRequest.url);
     expect(renderedRequests[1]).toHaveTextContent(codeResponseWithHTML.url);
+  });
+
+  test('copies url when button is clicked', async () => {
+    const requests = [codeResponseWithHTML, mockedRequest];
+    // Keep a copy to restore original clipboard
+    const originalClipboard = navigator.clipboard;
+    const mockedWriteText = vi.fn();
+    mockedWriteText.mockResolvedValue(true);
+
+    Object.assign(navigator, {
+      clipboard: {
+        writeText: mockedWriteText,
+      },
+    });
+
+    render(
+      <ThemeProvider>
+        <SnackbarProvider>
+          <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
+        </SnackbarProvider>
+      </ThemeProvider>
+    );
+
+    const buttons = screen.getAllByRole('button');
+    const copyButton = buttons[0];
+    userEvent.click(copyButton);
+
+    await waitFor(() => expect(mockedWriteText).toHaveBeenCalledTimes(1));
+
+    // Restore the original clipboard
+    Object.assign(navigator, {
+      clipboard: originalClipboard,
+    });
+    vi.resetAllMocks();
+  });
+
+  test('shows details when button is clicked', () => {
+    const requests = [codeResponseWithHTML, mockedRequest];
+
+    render(
+      <ThemeProvider>
+        <SnackbarProvider>
+          <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
+        </SnackbarProvider>
+      </ThemeProvider>
+    );
+
+    const buttons = screen.getAllByRole('button');
+    const showDetailsButton = buttons[1];
+
+    userEvent.click(showDetailsButton);
+    const modal = screen.getByRole('dialog');
+    expect(modal).toBeInTheDocument();
   });
 });
