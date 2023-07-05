@@ -97,7 +97,16 @@ module Inferno
         #   `error`.
         # @return [void]
         def check_configuration(&block)
-          @check_configuration_block = block
+          @check_configuration_block = lambda do
+            block.call&.each do |configuration_message|
+              case configuration_message[:type]
+              when 'warning'
+                Application[:logger].warn(configuration_message[:message])
+              when 'error'
+                Application[:logger].error(configuration_message[:message])
+              end
+            end
+          end
         end
 
         # @private
