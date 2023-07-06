@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Error, Warning } from '@mui/icons-material';
-import InputOutputsList from '../TestListItem/InputOutputsList';
+import InputOutputList from '../TestListItem/InputOutputList';
 import { Request, RunnableType, Test, TestGroup, ViewType } from '~/models/testSuiteModels';
 import ResultIcon from '../ResultIcon';
 import TestRunButton from '../../TestRunButton/TestRunButton';
@@ -187,7 +187,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         testGroup.run_as_group &&
         testGroup.user_runnable &&
         testGroup.result && (
-          <InputOutputsList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
+          <InputOutputList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
         )}
       <AccordionDetails
         title={groupMouseHover ? '' : `${testGroup.id}-detail`}

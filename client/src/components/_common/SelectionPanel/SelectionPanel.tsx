@@ -99,7 +99,11 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
         </Box>
 
         <Box overflow="auto">
-          {options ? renderSelection() : <Typography mt={2}> No options available.</Typography>}
+          {options && options.length > 0 ? (
+            renderSelection()
+          ) : (
+            <Typography mt={2}> No options available.</Typography>
+          )}
         </Box>
 
         <Box px={2}>
