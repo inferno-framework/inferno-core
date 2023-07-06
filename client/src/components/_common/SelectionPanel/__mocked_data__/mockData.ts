@@ -32,8 +32,10 @@ export const mockedRadioOptions: RadioOption[] = [
   },
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const mockedSetSelected = (selected: ListOptionSelection | RadioOptionSelection[]) => {};
+export const mockedSetSelected = (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  selected: ListOptionSelection | RadioOptionSelection[] | null
+) => {};
 
 export const mockedSubmit = () => {};
 
