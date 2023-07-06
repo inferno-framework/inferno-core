@@ -3,7 +3,7 @@ import { Box, Card, Divider, Typography } from '@mui/material';
 import useStyles from './styles';
 import ReactMarkdown from 'react-markdown';
 import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
-import InputOutputsList from './TestListItem/InputOutputsList';
+import InputOutputList from './TestListItem/InputOutputList';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
@@ -68,7 +68,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
 
   const renderInputOutputs = () => {
     if ((runnable as TestGroup).user_runnable && runnable.result && runnable.run_as_group) {
-      return <InputOutputsList headerName="Input" inputOutputs={runnable.result?.inputs || []} />;
+      return <InputOutputList headerName="Input" inputOutputs={runnable.result?.inputs || []} />;
     }
   };
 

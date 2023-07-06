@@ -7,11 +7,11 @@ import ReactMarkdown from 'react-markdown';
 import MessageType from './MessageType';
 import { sortByMessageType } from './helper';
 
-interface MessagesListProps {
+interface MessageListProps {
   messages: Message[];
 }
 
-const MessagesList: FC<MessagesListProps> = ({ messages }) => {
+const MessageList: FC<MessageListProps> = ({ messages }) => {
   const { classes } = useStyles();
 
   const headerTitles = ['Type', 'Message'];
@@ -54,4 +54,4 @@ const MessagesList: FC<MessagesListProps> = ({ messages }) => {
   );
 };
 
-export default MessagesList;
+export default MessageList;

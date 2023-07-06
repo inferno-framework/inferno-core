@@ -195,7 +195,7 @@ const TestSessionWrapper: FC<unknown> = () => {
       tryGetSessionData(test_session_id);
     }
 
-    return <Backdrop open={true}></Backdrop>;
+    return <Backdrop open={true} />;
   }
 };
 

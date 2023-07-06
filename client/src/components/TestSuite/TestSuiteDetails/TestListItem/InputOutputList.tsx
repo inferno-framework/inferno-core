@@ -4,13 +4,13 @@ import { Table, TableBody, TableRow, TableCell, Typography, TableHead, Box } fro
 import { TestInput, TestOutput } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
 
-interface InputOutputsListProps {
+interface InputOutputListProps {
   inputOutputs: TestInput[] | TestOutput[];
   noValuesMessage?: string;
   headerName: string;
 }
 
-const InputsOutputsList: FC<InputOutputsListProps> = ({
+const InputOutputList: FC<InputOutputListProps> = ({
   inputOutputs,
   noValuesMessage,
   headerName,
@@ -71,4 +71,4 @@ const InputsOutputsList: FC<InputOutputsListProps> = ({
   return output || <></>;
 };
 
-export default InputsOutputsList;
+export default InputOutputList;

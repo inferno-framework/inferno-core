@@ -62,11 +62,12 @@ const RadioSelection: FC<RadioSelectionProps> = ({
               option.list_options && option.list_options.length && option.list_options[0].value
             }
             name={`radio-group-${option.id}`}
+            data-testid="radio-option-group"
           >
             {option?.list_options?.map((choice, k) => (
               <FormControlLabel
                 value={choice.value}
-                control={<Radio size="small" />}
+                control={<Radio size="small" data-testid="radio-option-button" />}
                 label={choice.label}
                 key={`radio-button-${k}`}
                 onClick={() => {

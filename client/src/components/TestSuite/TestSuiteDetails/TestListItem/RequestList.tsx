@@ -20,14 +20,14 @@ import useStyles from './styles';
 import { ContentCopy, SaveAlt } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 
-interface RequestsListProps {
+interface RequestListProps {
   resultId: string;
   requests: Request[];
   updateRequest: (requestId: string, resultId: string, request: Request) => void;
   view: 'report' | 'run';
 }
 
-const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest, view }) => {
+const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, view }) => {
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [showDetails, setShowDetails] = React.useState(false);
@@ -217,4 +217,4 @@ const RequestsList: FC<RequestsListProps> = ({ requests, resultId, updateRequest
   );
 };
 
-export default RequestsList;
+export default RequestList;
