@@ -154,7 +154,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         }
       });
     }
-
     setWaitingTestId(waitingTestId);
   }, [resultsMap]);
 
@@ -197,7 +196,15 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             });
           });
           setSessionData(new Map(sessionData));
+
           const updatedMap = resultsToMap(testRunResults.results, resultsMap);
+          // If wait test is causing race condition rendering bugs, poll again
+          if (
+            testRunResults?.status === 'done' &&
+            Array.from(updatedMap.values()).some((value) => value.result === 'wait')
+          ) {
+            pollTestRunResults(testRun);
+          }
           setResultsMap(updatedMap);
         }
         if (testRunResults && testRunIsInProgress(testRunResults) && testSessionPolling) {

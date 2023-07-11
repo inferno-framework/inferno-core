@@ -85,11 +85,10 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
 }) => {
   const { classes } = useStyles();
   const footerHeight = useAppStore((state) => state.footerHeight);
-  const cancellable = testRun?.status != 'cancelling' && testRun?.status != 'done';
+  const cancellable = testRun?.status !== 'cancelling' && testRun?.status !== 'done';
   const statusIndicator = StatusIndicator(testRun?.status);
   const testCount = testRun?.test_count || 0;
   const completedCount = completedTestCount(resultsMap, testRun);
-  const value = testCount !== 0 ? (100 * completedCount) / testCount : 0;
 
   return (
     <Snackbar
@@ -123,7 +122,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
           ) : (
             <LinearProgress
               variant="determinate"
-              value={value}
+              value={(100 * completedCount) / testCount || 0}
               className={classes.linearProgress}
             />
           )}
