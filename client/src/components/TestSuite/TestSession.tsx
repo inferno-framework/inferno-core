@@ -18,6 +18,7 @@ import {
   isTest,
 } from '~/models/testSuiteModels';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from '~/api/TestRunsApi';
+import { getCurrentTestSessionResults } from '~/api/TestSessionApi';
 import ActionModal from '~/components/_common/ActionModal';
 import InputsModal from '~/components/InputsModal/InputsModal';
 import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
@@ -197,15 +198,29 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           });
           setSessionData(new Map(sessionData));
 
-          const updatedMap = resultsToMap(testRunResults.results, resultsMap);
-          // If wait test is causing race condition rendering bugs, poll again
+          let updatedMap = resultsToMap(testRunResults.results, resultsMap);
+          // If wait test is causing race condition rendering bugs, fetch full results again
           if (
             testRunResults?.status === 'done' &&
             Array.from(updatedMap.values()).some((value) => value.result === 'wait')
           ) {
-            pollTestRunResults(testRun);
+            getCurrentTestSessionResults(testSession.id)
+              .then((results) => {
+                if (results) {
+                  updatedMap = resultsToMap(results, resultsMap);
+                  setResultsMap(updatedMap);
+                } else {
+                  enqueueSnackbar('Failed to load results', { variant: 'error' });
+                }
+              })
+              .catch((e: Error) => {
+                enqueueSnackbar(`Error while getting test results: ${e.message}`, {
+                  variant: 'error',
+                });
+              });
+          } else {
+            setResultsMap(updatedMap);
           }
-          setResultsMap(updatedMap);
         }
         if (testRunResults && testRunIsInProgress(testRunResults) && testSessionPolling) {
           poller.current = setTimeout(() => pollTestRunResults(testRunResults), 500);
