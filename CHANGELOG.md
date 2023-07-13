@@ -1,3 +1,9 @@
+# 0.4.17
+* Fix a bug which prevented the swagger documentation from loading when no query
+  parameters were provided.
+* Update styling for suite and option selection pages.
+* Log error and warning suite configurationt messages.
+
 # 0.4.16
 * Dynamically determine the Inferno base url in swagger docs.
 
