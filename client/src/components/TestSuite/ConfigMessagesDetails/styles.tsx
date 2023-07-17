@@ -9,7 +9,7 @@ export default makeStyles()((theme: Theme) => ({
     padding: '8px 16px',
     fontWeight: 600,
     fontSize: '16px',
-    borderBottom: '1px solid rgba(0,0,0,.12)',
+    borderBottom: `1px solid ${theme.palette.common.grayLighter}`,
     backgroundColor: theme.palette.common.blueGrayLightest,
     borderTopLeftRadius: '4px',
     borderTopRightRadius: '4px',

@@ -10,7 +10,7 @@ export default makeStyles()((theme: Theme) => ({
   inputField: {
     '& > label.MuiInputLabel-shrink': {
       fontWeight: 600,
-      color: 'rgba(0,0,0,0.85)',
+      color: theme.palette.common.grayDarkest,
     },
     '& label.Mui-focused': {
       color: theme.palette.primary.main,
@@ -20,7 +20,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   inputLabel: {
-    color: 'rgba(0,0,0,0.85)',
+    color: theme.palette.common.grayDarkest,
     fontWeight: 600,
     fontSize: '.75rem',
   },
@@ -31,7 +31,7 @@ export default makeStyles()((theme: Theme) => ({
   oauthCard: {
     width: '100%',
     margin: '8px 0',
-    borderColor: 'rgba(0,0,0,0.3)',
+    borderColor: theme.palette.common.grayLight,
     '&:focus-within': {
       borderColor: theme.palette.primary.main,
     },

@@ -14,7 +14,7 @@ export default makeStyles()((theme: Theme) => ({
   },
   linearProgress: {
     height: 8,
-    backgroundColor: 'rgba(0,0,0,.2)',
+    backgroundColor: theme.palette.common.grayDarker,
     borderRadius: 2,
   },
 }));
