@@ -288,16 +288,20 @@ const InputsModal: FC<InputsModalProps> = ({
           ) : (
             <TextField
               id={`${inputType}-serial-input`}
-              fullWidth
-              multiline
               minRows={4}
               key={baseInput}
               error={invalidInput}
               defaultValue={baseInput}
-              data-testid="serial-input"
-              className={classes.serialInput}
-              onChange={(e) => handleSerialChanges(e.target.value)}
               label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
+              InputProps={{
+                classes: {
+                  input: classes.serialInput,
+                },
+              }}
+              fullWidth
+              multiline
+              data-testid="serial-input"
+              onChange={(e) => handleSerialChanges(e.target.value)}
             />
           )}
         </main>

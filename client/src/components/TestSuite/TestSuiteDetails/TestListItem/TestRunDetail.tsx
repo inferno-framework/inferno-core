@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import { Box, Card, Divider, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import { Box, Card, Divider, Tab, Tabs, Typography } from '@mui/material';
 import { Message, Request, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
+import CustomTooltip from '~/components/_common/CustomTooltip';
 import TabPanel from '~/components/TestSuite/TestSuiteDetails/TestListItem/TabPanel';
 import MessageList from '~/components/TestSuite/TestSuiteDetails/TestListItem/MessageList';
 import RequestList from '~/components/TestSuite/TestSuiteDetails/TestListItem/RequestList';
@@ -67,9 +68,9 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
         <Tab
           key={`${tab.label}-${index}`}
           label={
-            <Tooltip title={`No ${tab.label.toLowerCase()} available`}>
+            <CustomTooltip title={`No ${tab.label.toLowerCase()} available`}>
               <Typography variant="button">{tab.label}</Typography>
-            </Tooltip>
+            </CustomTooltip>
           }
           {...a11yProps(index)}
           disabled

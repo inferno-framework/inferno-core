@@ -1,15 +1,8 @@
 import React, { FC, useEffect } from 'react';
-import {
-  Box,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  Tooltip,
-} from '@mui/material';
+import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import { RadioOption, RadioOptionSelection } from '~/models/selectionModels';
+import CustomTooltip from '~/components/_common/CustomTooltip';
 
 export interface RadioSelectionProps {
   options: RadioOption[];
@@ -50,9 +43,9 @@ const RadioSelection: FC<RadioSelectionProps> = ({
           <FormLabel sx={{ display: 'flex', alignItems: 'center' }}>
             {option.title || option.id}
             {option.description && (
-              <Tooltip title={option.description}>
+              <CustomTooltip title={option.description}>
                 <HelpOutlineOutlinedIcon fontSize="small" color="secondary" sx={{ px: 0.5 }} />
-              </Tooltip>
+              </CustomTooltip>
             )}
           </FormLabel>
 

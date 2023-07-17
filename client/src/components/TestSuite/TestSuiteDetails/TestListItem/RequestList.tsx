@@ -9,16 +9,15 @@ import {
   Table,
   TableContainer,
   TableBody,
-  Tooltip,
   TableHead,
 } from '@mui/material';
-import InputIcon from '@mui/icons-material/Input';
+import { ContentCopy, Input, SaveAlt } from '@mui/icons-material';
 import { Request } from '~/models/testSuiteModels';
-import RequestDetailModal from '~/components/RequestDetailModal/RequestDetailModal';
 import { getRequestDetails } from '~/api/RequestsApi';
-import useStyles from './styles';
-import { ContentCopy, SaveAlt } from '@mui/icons-material';
+import RequestDetailModal from '~/components/RequestDetailModal/RequestDetailModal';
+import CustomTooltip from '~/components/_common/CustomTooltip';
 import { useSnackbar } from 'notistack';
+import useStyles from './styles';
 
 interface RequestListProps {
   resultId: string;
@@ -69,9 +68,9 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
   const renderReferenceIcon = (request: Request) => {
     if (request.result_id !== resultId) {
       return (
-        <Tooltip title="This request was performed in another test and the result is used by this test">
-          <InputIcon fontSize="small" sx={{ pr: 1 }} />
-        </Tooltip>
+        <CustomTooltip title="This request was performed in another test and the result is used by this test">
+          <Input fontSize="small" sx={{ pr: 1 }} />
+        </CustomTooltip>
       );
     }
   };
@@ -130,7 +129,7 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
         </TableCell>
         <TableCell className={classes.requestUrlContainer}>
           <Box display="flex" alignItems="center">
-            <Tooltip title={request.url} placement="bottom-start">
+            <CustomTooltip title={request.url} placement="bottom-start">
               <Typography
                 variant="subtitle2"
                 component="p"
@@ -149,8 +148,8 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
               >
                 {request.url}
               </Typography>
-            </Tooltip>
-            <Tooltip
+            </CustomTooltip>
+            <CustomTooltip
               open={copySuccess[request.url as keyof typeof copySuccess] || false}
               title="Text copied!"
               sx={
@@ -171,7 +170,7 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
               >
                 <ContentCopy fontSize="inherit" />
               </IconButton>
-            </Tooltip>
+            </CustomTooltip>
           </Box>
         </TableCell>
         <TableCell>
@@ -181,9 +180,9 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
         </TableCell>
         <TableCell>
           {request.direction === 'incoming' && (
-            <Tooltip title="Direction: incoming">
+            <CustomTooltip title="Direction: incoming">
               <SaveAlt />
-            </Tooltip>
+            </CustomTooltip>
           )}
         </TableCell>
         {view === 'run' && <TableCell>{renderDetailsButton(request)}</TableCell>}

@@ -41,6 +41,7 @@ export default makeStyles()((theme: Theme) => ({
   },
   serialInput: {
     height: 'max-content',
+    fontFamily: 'monospace',
   },
   dialogActions: {
     display: 'flex',

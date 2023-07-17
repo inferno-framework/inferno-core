@@ -1,12 +1,12 @@
-import { Tooltip } from '@mui/material';
 import React, { FC } from 'react';
 import WarningIcon from '@mui/icons-material/Warning';
+import CustomTooltip from '~/components/_common/CustomTooltip';
 
 const RequiredInputWarning: FC = () => {
   return (
-    <Tooltip title="Missing value for required input">
+    <CustomTooltip title="Missing value for required input">
       <WarningIcon />
-    </Tooltip>
+    </CustomTooltip>
   );
 };
 
