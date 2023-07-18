@@ -36,11 +36,4 @@ export default makeStyles()((theme: Theme) => ({
     fontWeight: 'bolder',
     width: 'max-content',
   },
-  logoLink: {
-    fontStyle: 'normal',
-    color: theme.palette.secondary.main,
-  },
-  linkText: {
-    color: theme.palette.secondary.main,
-  },
 }));
