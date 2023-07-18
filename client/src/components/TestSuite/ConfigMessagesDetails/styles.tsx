@@ -23,4 +23,15 @@ export default makeStyles()((theme: Theme) => ({
   currentItem: {
     fontWeight: 600,
   },
+  tab: {
+    pointerEvents: 'auto',
+    '&:hover, :focus-within': {
+      color: theme.palette.common.grayDarker,
+      fontWeight: 'bolder',
+    },
+    '&.Mui-selected': {
+      color: theme.palette.common.orangeDarker,
+      fontWeight: 'bolder',
+    },
+  },
 }));

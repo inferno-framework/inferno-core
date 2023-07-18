@@ -57,12 +57,6 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
   });
 
   const renderTab = (tab: TabProps, index: number) => {
-    const darkTabText = {
-      '&.Mui-selected': {
-        color: lightTheme.palette.common.orangeDarker,
-      },
-    };
-
     if ((!tab.value || tab.value.length === 0) && tab.label !== 'About') {
       return (
         <Tab
@@ -74,14 +68,18 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
           }
           {...a11yProps(index)}
           disabled
-          sx={darkTabText}
-          style={{ pointerEvents: 'auto' }}
+          classes={{ root: classes.tab, selected: classes.tab }}
         />
       );
     }
 
     return (
-      <Tab key={`${tab.label}-${index}`} label={tab.label} {...a11yProps(index)} sx={darkTabText} />
+      <Tab
+        key={`${tab.label}-${index}`}
+        label={tab.label}
+        {...a11yProps(index)}
+        classes={{ root: classes.tab, selected: classes.tab }}
+      />
     );
   };
 

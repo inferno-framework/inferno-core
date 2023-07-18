@@ -4,7 +4,6 @@ import { Message, TestSuite } from '~/models/testSuiteModels';
 import useStyles from './styles';
 import TabPanel from '../TestSuiteDetails/TestListItem/TabPanel';
 import ReactMarkdown from 'react-markdown';
-import lightTheme from 'styles/theme';
 
 interface ConfigDetailsPanelProps {
   testSuite: TestSuite;
@@ -40,12 +39,6 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
     </Box>
   );
 
-  const darkTabText = {
-    '&.Mui-selected': {
-      color: lightTheme.palette.common.orangeDarker,
-    },
-  };
-
   const a11yProps = (id: string, index: number) => ({
     id: `${id}-tab-${index}`,
     'aria-controls': `${id}-tabpanel-${index}`,
@@ -71,17 +64,17 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
         <Tab
           label={tabLabel('Errors', errorMessages.length)}
           {...a11yProps('errors', 0)}
-          sx={darkTabText}
+          classes={{ root: classes.tab, selected: classes.tab }}
         />
         <Tab
           label={tabLabel('Warnings', warningMessages.length)}
           {...a11yProps('warnings', 1)}
-          sx={darkTabText}
+          classes={{ root: classes.tab, selected: classes.tab }}
         />
         <Tab
           label={tabLabel('Info', infoMessages.length)}
           {...a11yProps('info', 2)}
-          sx={darkTabText}
+          classes={{ root: classes.tab, selected: classes.tab }}
         />
       </Tabs>
       <Divider />
