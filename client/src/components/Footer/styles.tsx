@@ -38,9 +38,9 @@ export default makeStyles()((theme: Theme) => ({
   },
   logoLink: {
     fontStyle: 'normal',
-    color: theme.palette.common.orangeDarkest,
+    color: theme.palette.secondary.main,
   },
   linkText: {
-    color: theme.palette.common.grayDark,
+    color: theme.palette.secondary.main,
   },
 }));
