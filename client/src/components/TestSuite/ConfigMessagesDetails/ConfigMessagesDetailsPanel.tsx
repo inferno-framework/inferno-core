@@ -1,9 +1,10 @@
 import React, { FC } from 'react';
-import { Box, Card, Chip, Divider, Tab, Tabs, Typography } from '@mui/material';
-import { Message, TestSuite } from '~/models/testSuiteModels';
-import useStyles from './styles';
-import TabPanel from '../TestSuiteDetails/TestListItem/TabPanel';
 import ReactMarkdown from 'react-markdown';
+import { Box, Card, Chip, Divider, Tabs, Typography } from '@mui/material';
+import { Message, TestSuite } from '~/models/testSuiteModels';
+import CustomTab from '~/components/_common/CustomTab';
+import TabPanel from '../TestSuiteDetails/TestListItem/TabPanel';
+import useStyles from './styles';
 
 interface ConfigDetailsPanelProps {
   testSuite: TestSuite;
@@ -61,21 +62,12 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
         }}
         variant="fullWidth"
       >
-        <Tab
-          label={tabLabel('Errors', errorMessages.length)}
-          {...a11yProps('errors', 0)}
-          classes={{ root: classes.tab, selected: classes.tab }}
-        />
-        <Tab
+        <CustomTab label={tabLabel('Errors', errorMessages.length)} {...a11yProps('errors', 0)} />
+        <CustomTab
           label={tabLabel('Warnings', warningMessages.length)}
           {...a11yProps('warnings', 1)}
-          classes={{ root: classes.tab, selected: classes.tab }}
         />
-        <Tab
-          label={tabLabel('Info', infoMessages.length)}
-          {...a11yProps('info', 2)}
-          classes={{ root: classes.tab, selected: classes.tab }}
-        />
+        <CustomTab label={tabLabel('Info', infoMessages.length)} {...a11yProps('info', 2)} />
       </Tabs>
       <Divider />
       <TabPanel id="errors" currentTabIndex={tabIndex} index={0}>

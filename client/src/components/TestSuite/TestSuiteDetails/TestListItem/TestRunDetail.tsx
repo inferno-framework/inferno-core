@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import { Box, Card, Divider, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Card, Divider, Tabs, Typography } from '@mui/material';
 import { Message, Request, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
+import CustomTab from '~/components/_common/CustomTab';
 import CustomTooltip from '~/components/_common/CustomTooltip';
 import TabPanel from '~/components/TestSuite/TestSuiteDetails/TestListItem/TabPanel';
 import MessageList from '~/components/TestSuite/TestSuiteDetails/TestListItem/MessageList';
@@ -58,7 +59,7 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
   const renderTab = (tab: TabProps, index: number) => {
     if ((!tab.value || tab.value.length === 0) && tab.label !== 'About') {
       return (
-        <Tab
+        <CustomTab
           key={`${tab.label}-${index}`}
           label={
             <CustomTooltip title={`No ${tab.label.toLowerCase()} available`}>
@@ -67,19 +68,11 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
           }
           {...a11yProps(index)}
           disabled
-          classes={{ root: classes.tab, selected: classes.tab }}
         />
       );
     }
 
-    return (
-      <Tab
-        key={`${tab.label}-${index}`}
-        label={tab.label}
-        {...a11yProps(index)}
-        classes={{ root: classes.tab, selected: classes.tab }}
-      />
-    );
+    return <CustomTab key={`${tab.label}-${index}`} label={tab.label} {...a11yProps(index)} />;
   };
 
   return (

@@ -64,11 +64,14 @@ export default makeStyles()((theme: Theme) => ({
   },
   toggleButton: {
     color: theme.palette.common.grayDark,
-    '&:focus-within': {
+    '&:hover, :focus-within': {
       backgroundColor: theme.palette.common.grayLightest,
+      fontWeight: 'bolder',
     },
     '&.Mui-selected': {
-      color: theme.palette.secondary.dark,
+      backgroundColor: 'unset',
+      border: `1px solid ${theme.palette.secondary.main} !important`,
+      color: theme.palette.secondary.main,
       fontWeight: 'bolder',
     },
   },
