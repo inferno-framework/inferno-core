@@ -1,7 +1,9 @@
 import React, { FC } from 'react';
 import {
   Box,
+  Button,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
@@ -91,7 +93,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
         open={modalVisible}
         fullWidth={true}
         maxWidth="md"
-        onClose={() => hideModal()}
+        onClose={hideModal}
         data-testid="requestDetailModal"
       >
         <DialogTitle>{requestDialogTitle}</DialogTitle>
@@ -113,6 +115,16 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
             <CodeBlock body={request.response_body} headers={request.response_headers} />
           </Box>
         </DialogContent>
+        <DialogActions>
+          <Button
+            color="secondary"
+            variant="contained"
+            data-testid="cancel-button"
+            onClick={hideModal}
+          >
+            Close
+          </Button>
+        </DialogActions>
       </Dialog>
     );
   } else {

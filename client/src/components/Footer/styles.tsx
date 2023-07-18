@@ -11,7 +11,7 @@ export default makeStyles()((theme: Theme) => ({
     overflow: 'auto',
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
     backgroundColor: theme.palette.common.orangeLightest,
-    borderTop: `1px ${theme.palette.common.grayLighter} solid`,
+    borderTop: `1px ${theme.palette.divider} solid`,
     bottom: 0,
     '@media print': {
       display: 'none',

@@ -36,22 +36,40 @@ export default makeStyles()((theme: Theme) => ({
       borderColor: theme.palette.primary.main,
     },
   },
-  inputAction: {
-    color: theme.palette.primary.dark,
-  },
   serialInput: {
     height: 'max-content',
     fontFamily: 'monospace',
   },
   dialogActions: {
     display: 'flex',
+    justifyContent: 'space-between',
+  },
+  toggleButtonGroupContainer: {
+    display: 'flex',
+    border: `1px solid ${theme.palette.divider}`,
+    flexWrap: 'wrap',
   },
   toggleButtonGroup: {
     flexGrow: 1,
+    '& .MuiToggleButtonGroup-grouped': {
+      margin: theme.spacing(0.5),
+      border: 0,
+      '&.Mui-disabled': {
+        border: 0,
+      },
+      '&:not(:first-of-type), :first-of-type': {
+        borderRadius: theme.shape.borderRadius,
+      },
+    },
   },
   toggleButton: {
+    color: theme.palette.common.grayDark,
+    '&:focus-within': {
+      backgroundColor: theme.palette.common.grayLightest,
+    },
     '&.Mui-selected': {
-      color: theme.palette.primary.dark,
+      color: theme.palette.secondary.dark,
+      fontWeight: 'bolder',
     },
   },
 }));

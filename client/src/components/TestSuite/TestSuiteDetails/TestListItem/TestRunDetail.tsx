@@ -7,7 +7,6 @@ import TabPanel from '~/components/TestSuite/TestSuiteDetails/TestListItem/TabPa
 import MessageList from '~/components/TestSuite/TestSuiteDetails/TestListItem/MessageList';
 import RequestList from '~/components/TestSuite/TestSuiteDetails/TestListItem/RequestList';
 import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
-import lightTheme from '~/styles/theme';
 import useStyles from './styles';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
