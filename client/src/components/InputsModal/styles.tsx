@@ -13,10 +13,13 @@ export default makeStyles()((theme: Theme) => ({
       color: theme.palette.common.grayDarkest,
     },
     '& label.Mui-focused': {
-      color: theme.palette.primary.main,
+      color: theme.palette.common.orangeDarkest,
     },
     '& label.Mui-disabled': {
       color: theme.palette.common.gray,
+    },
+    '& label.Mui-error': {
+      color: theme.palette.error.main,
     },
   },
   inputLabel: {

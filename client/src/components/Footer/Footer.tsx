@@ -32,7 +32,6 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
           href={`${apiBase}?scheme=${scheme}&host=${fullHost}`}
           target="_blank"
           rel="noreferrer"
-          underline="always"
           color="secondary"
           className={classes.link}
           sx={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
@@ -100,7 +99,6 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
-                    underline="always"
                     color="secondary"
                     className={classes.link}
                     style={{
@@ -129,7 +127,6 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                   href={link.url}
                   target="_blank"
                   rel="noreferrer"
-                  underline="always"
                   color="secondary"
                   className={classes.link}
                   style={{

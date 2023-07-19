@@ -35,7 +35,7 @@ const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) 
                     color="secondary"
                     href={`${location.pathname}#${testGroup.id}`}
                     data-testid="navigable-group-item"
-                    underline="always"
+                    sx={{ fontWeight: 'bold' }}
                   >
                     {testGroup.title}
                   </Link>

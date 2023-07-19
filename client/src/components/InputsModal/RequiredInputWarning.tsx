@@ -5,7 +5,7 @@ import CustomTooltip from '~/components/_common/CustomTooltip';
 const RequiredInputWarning: FC = () => {
   return (
     <CustomTooltip title="Missing value for required input">
-      <WarningIcon />
+      <WarningIcon fontSize="small" color="error" />
     </CustomTooltip>
   );
 };
