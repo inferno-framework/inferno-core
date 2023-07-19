@@ -215,6 +215,11 @@ const TestListItem: FC<TestListItemProps> = ({
         expanded={open}
         TransitionProps={{ unmountOnExit: true }}
         onClick={handleAccordionClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            handleAccordionClick();
+          }
+        }}
         onMouseEnter={() => setItemMouseHover(true)}
         onMouseLeave={() => setItemMouseHover(false)}
       >
