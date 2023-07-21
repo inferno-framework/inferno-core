@@ -96,7 +96,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       autoHideDuration={duration}
       onClose={() => {
-        if (completedCount === testCount || cancelled) {
+        if (completedCount === testCount || testRun?.status === 'done' || cancelled) {
           setShowProgressBar(false);
         }
       }}
@@ -122,14 +122,14 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
           ) : (
             <LinearProgress
               variant="determinate"
-              value={(100 * completedCount) / testCount || 0}
+              value={testRun?.status === 'done' ? 100 : (100 * completedCount) / testCount || 0}
               className={classes.linearProgress}
             />
           )}
         </Box>
         <Box color="background.paper">
           <Typography variant="body1">
-            {completedCount}/{testCount}
+            {testRun?.status === 'done' ? testCount : completedCount}/{testCount}
           </Typography>
         </Box>
         <Tooltip title="Cancel Test Run">
