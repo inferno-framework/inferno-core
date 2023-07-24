@@ -122,6 +122,10 @@ or
 GET http://localhost:4567/inferno/api/test_sessions/TEST_SESSION_ID/results
 ```
 
+## Running on Windows
+Inferno Core requires a WSL instance in order to run.  Instructions for setting 
+that up can be found at the [Inferno Framework documentation](https://inferno-framework.github.io/inferno-core/getting-started.html#development-with-ruby)
+
 ## Development in a Ruby console
 To get to an interactive console, run `bundle exec bin/inferno console`
 

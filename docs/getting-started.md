@@ -113,12 +113,29 @@ Put the `package.tgz` for the IG you're writing tests for in
 to the resources needed to validate resources against your IG.
 
 ### Development with Ruby
+___
+**NOTE:** Windows developers will need to use [WSL](https://learn.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-wsl#install-wsl-2) in order to interact with Inferno.  It is recommended that you also follow [the steps for installing node.js](https://learn.microsoft.com/en-us/windows/dev-environment/javascript/nodejs-on-wsl#install-nvm-nodejs-and-npm). Once you have WSL (and node.js) set up:
+{: .fs-3}
 
+1. Install VS Code and the [WSL Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-wsl).
+1. Install [Ubuntu from the Windows Store](https://www.microsoft.com/store/productId/9PDXGNCFSCZV).
+1. Open Command Prompt and run `ubuntu`.
+	1. You will have to setup a user and password for this linux subsytem.
+	2. The password will be used for `sudo` commands later, so remember these credentials!
+1.  Install Docker Desktop for Windows.
+	1. Follow the steps from Docker to ensure it plays nicely with WSL, see [here](https://docs.docker.com/desktop/wsl/#turn-on-docker-desktop-wsl-2).  
+	2. From the Docker settings, Open Resources > WSL Integration, and make sure Ubuntu is selected.  Then, hit "Apply and Restart".
+1. From VS Code, press Ctrl + Shift + P to open the command palette, and type "WSL".  Select "Connect to WSL in new Window using distro..." and select Ubuntu.
+1.  Open a terminal in the new WSL window and try to `ping google.com`.
+  1. If you cannot ping google.com, you may not be able to connect to the internet from within the WSL instance.  The steps at [this stack overflow article](https://stackoverflow.com/questions/55649015/could-not-resolve-host-github-com-only-in-windows-bash#:~:text=It%20could%20be%20that%20your%20/etc/resolv.conf%20file%20is%20corrupt%20%2D%20it%20happened%20to%20me!) should resolve the issue. If it does not, open cmd and run `nslookup`.  Copy the Default Address, then in your wsl instance type `sudo nano /etc/resolv.conf`.  Add the default address as another nameserver.
+1. Continue from step 2 in [Installation](#installation).
+{: .fs-3 .lh-default}
+___
 #### Installation
 1. Install [Docker](https://www.docker.com/get-started).
 1. Install Ruby. It is highly recommended that you install ruby via a [ruby
    version
-   manager](https://www.ruby-lang.org/en/documentation/installation/#managers).
+   manager](https://www.ruby-lang.org/en/documentation/installation/#managers).  Use the manager's documentation for instructions on installing/switching ruby versions, and be sure to download the same ruby version that is in `.ruby-version` in the repo.
 1. Install [Docker](https://www.docker.com/get-started).
 1. Clone the [Inferno Template
    repository](https://github.com/inferno-framework/inferno-template). You can
