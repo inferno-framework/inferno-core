@@ -7,6 +7,7 @@ import { makeStyles } from 'tss-react/mui';
 
 export default makeStyles()((theme: Theme) => ({
   footer: {
+    display: 'flex',
     width: '100%',
     overflow: 'auto',
     zIndex: `${theme.zIndex.drawer + 1} !important` as any,
