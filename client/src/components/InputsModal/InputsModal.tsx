@@ -93,7 +93,6 @@ const InputsModal: FC<InputsModalProps> = ({
     if (input.type === 'oauth_credentials') {
       try {
         const oAuthJSON = JSON.parse(
-          // JSON.stringify(inputsMap.get(input.name) || {})
           (inputsMap.get(input.name) as string) || '{ "access_token": null }'
         ) as OAuthCredentials;
         const accessTokenIsEmpty = oAuthJSON.access_token === '';
@@ -216,13 +215,9 @@ const InputsModal: FC<InputsModalProps> = ({
   const serializeMap = (map: Map<string, unknown>): string => {
     const flatObj = inputs.map((requirement: TestInput) => {
       if (requirement.type === 'oauth_credentials') {
-        console.log(JSON.parse((map.get(requirement.name) as string) || '{ "access_token": "" }'));
-
         return {
           ...requirement,
           value: JSON.parse(
-            // JSON.stringify(map.get(requirement.name) || {})
-            // (map.get(requirement.name) as string) || '{}'
             (map.get(requirement.name) as string) || '{ "access_token": "" }'
           ) as OAuthCredentials,
         };
