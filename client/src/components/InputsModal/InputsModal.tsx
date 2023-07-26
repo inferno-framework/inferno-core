@@ -64,6 +64,11 @@ const InputsModal: FC<InputsModalProps> = ({
   const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
 
   const missingRequiredInput = inputs.some((input: TestInput) => {
+    // Handle JSON/YAML validation separately
+    if (inputType !== 'Field') {
+      return false;
+    }
+
     // radio inputs will always be required and have a default value
     if (input.type === 'radio') return false;
 
@@ -79,6 +84,7 @@ const InputsModal: FC<InputsModalProps> = ({
         enqueueSnackbar(`Checkbox input incorrectly formatted: ${errorMessage}`, {
           variant: 'error',
         });
+        return true;
       }
     }
 
@@ -87,7 +93,8 @@ const InputsModal: FC<InputsModalProps> = ({
     if (input.type === 'oauth_credentials') {
       try {
         const oAuthJSON = JSON.parse(
-          (inputsMap.get(input.name) as string) || '{}'
+          // JSON.stringify(inputsMap.get(input.name) || {})
+          (inputsMap.get(input.name) as string) || '{ "access_token": null }'
         ) as OAuthCredentials;
         const accessTokenIsEmpty = oAuthJSON.access_token === '';
         const refreshIsEmpty =
@@ -99,48 +106,12 @@ const InputsModal: FC<InputsModalProps> = ({
         enqueueSnackbar(`OAuth credentials incorrectly formatted: ${errorMessage}`, {
           variant: 'error',
         });
+        return true;
       }
     }
 
     return (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput;
   });
-
-  useEffect(() => {
-    inputsMap.clear();
-    inputs.forEach((requirement: TestInput) => {
-      inputsMap.set(
-        requirement.name,
-        sessionData.get(requirement.name) || (requirement.default as string) || ''
-      );
-    });
-    setInputsMap(new Map(inputsMap));
-  }, [inputs, sessionData]);
-
-  useEffect(() => {
-    setInvalidInput(false);
-    setBaseInput(serializeMap(inputsMap));
-  }, [inputType, open]);
-
-  const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (
-      open &&
-      e.key === 'Enter' &&
-      (e.metaKey || e.ctrlKey) &&
-      !missingRequiredInput &&
-      !invalidInput
-    ) {
-      submitClicked();
-    }
-  };
-
-  const submitClicked = () => {
-    const inputs_with_values: TestInput[] = [];
-    inputsMap.forEach((input_value, input_name) => {
-      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
-    });
-    createTestRun(runnableType, runnableId, inputs_with_values);
-    closeModal();
-  };
 
   const instructions =
     inputInstructions ||
@@ -201,12 +172,59 @@ const InputsModal: FC<InputsModalProps> = ({
     }
   });
 
+  useEffect(() => {
+    inputsMap.clear();
+    inputs.forEach((requirement: TestInput) => {
+      inputsMap.set(
+        requirement.name,
+        sessionData.get(requirement.name) || (requirement.default as string) || ''
+      );
+    });
+    setInputsMap(new Map(inputsMap));
+  }, [inputs, sessionData]);
+
+  useEffect(() => {
+    setInvalidInput(false);
+    setBaseInput(serializeMap(inputsMap));
+  }, [inputType, open]);
+
+  const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
+    if (value !== null) setInputType(value);
+  };
+
+  const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (
+      open &&
+      e.key === 'Enter' &&
+      (e.metaKey || e.ctrlKey) &&
+      !missingRequiredInput &&
+      !invalidInput
+    ) {
+      submitClicked();
+    }
+  };
+
+  const submitClicked = () => {
+    const inputs_with_values: TestInput[] = [];
+    inputsMap.forEach((input_value, input_name) => {
+      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
+    });
+    createTestRun(runnableType, runnableId, inputs_with_values);
+    closeModal();
+  };
+
   const serializeMap = (map: Map<string, unknown>): string => {
     const flatObj = inputs.map((requirement: TestInput) => {
       if (requirement.type === 'oauth_credentials') {
+        console.log(JSON.parse((map.get(requirement.name) as string) || '{ "access_token": "" }'));
+
         return {
           ...requirement,
-          value: JSON.parse((map.get(requirement.name) as string) || '{}') as OAuthCredentials,
+          value: JSON.parse(
+            // JSON.stringify(map.get(requirement.name) || {})
+            // (map.get(requirement.name) as string) || '{}'
+            (map.get(requirement.name) as string) || '{ "access_token": "" }'
+          ) as OAuthCredentials,
         };
       } else if (requirement.type === 'radio') {
         const firstVal =
@@ -224,10 +242,6 @@ const InputsModal: FC<InputsModalProps> = ({
     return inputType === 'JSON' ? JSON.stringify(flatObj, null, 3) : YAML.dump(flatObj);
   };
 
-  const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
-    if (value !== null) setInputType(value);
-  };
-
   const parseSerialChanges = (changes: string): TestInput[] | undefined => {
     let parsed: TestInput[];
     try {
@@ -236,6 +250,12 @@ const InputsModal: FC<InputsModalProps> = ({
       } else {
         parsed = YAML.load(changes) as TestInput[];
       }
+      // Convert OAuth input values to strings
+      parsed.forEach((input) => {
+        if (input.type === 'oauth_credentials') {
+          input.value = JSON.stringify(input.value);
+        }
+      });
       setInvalidInput(false);
       return parsed;
     } catch (e) {
