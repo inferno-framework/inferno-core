@@ -116,7 +116,16 @@ module Inferno
         def resource_is_valid?(resource, profile_url, runnable)
           profile_url ||= FHIR::Definitions.resource_definition(resource.resourceType).url
 
-          outcome = FHIR::OperationOutcome.new(JSON.parse(validate(resource, profile_url)))
+          begin
+            validation_response = validate(resource, profile_url)
+          rescue StandardError => e
+            runnable.add_message('error', e.message)
+            raise Inferno::Exceptions::ErrorInValidatorException, "Unable to connect to validator at #{url}."
+          end
+
+          # The validator should return OperationOutcome both on successful validation and on error,
+          # so parse the OO before checking the HTTP status code.
+          outcome = FHIR::OperationOutcome.new(JSON.parse(validation_response.body))
 
           message_hashes = outcome.issue&.map { |issue| message_hash_from_issue(issue, resource) } || []
 
@@ -126,7 +135,20 @@ module Inferno
 
           message_hashes
             .each { |message_hash| runnable.add_message(message_hash[:type], message_hash[:message]) }
+
+          unless validation_response.status == 200
+            raise Inferno::Exceptions::ErrorInValidatorException,
+                  'Error occurred in the validator. Review Messages tab or validator service logs for more information.'
+          end
+
+          message_hashes
             .none? { |message_hash| message_hash[:type] == 'error' }
+        rescue Inferno::Exceptions::ErrorInValidatorException
+          raise
+        rescue StandardError => e
+          runnable.add_message('error', e.message)
+          raise Inferno::Exceptions::ErrorInValidatorException,
+                'Error occurred in the validator. Review Messages tab or validator service logs for more information.'
         end
 
         # @private
@@ -171,12 +193,12 @@ module Inferno
         #
         # @param resource [FHIR::Model]
         # @param profile_url [String]
-        # @return [String] the body of the validation response
+        # @return [Faraday::Response] the validation response
         def validate(resource, profile_url)
           Faraday.new(
             url,
             params: { profile: profile_url }
-          ).post('validate', resource.source_contents).body
+          ).post('validate', resource.source_contents)
         end
       end
 
