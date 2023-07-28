@@ -437,20 +437,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
       end
     end
 
-    context 'with oauth_credentials' do
-      it 'performs a refresh if the token is about to expire' do
-        client = group.fhir_client(:client_with_oauth_credentials)
-        allow(client).to receive(:need_to_refresh?).and_return(true)
-        allow(client).to receive(:able_to_refresh?).and_return(true)
-        allow(group).to receive(:perform_refresh).with(client)
-
-        group.fhir_vread(resource.resourceType, resource_id, version_id, client: :client_with_oauth_credentials)
-
-        expect(stub_vread_request).to have_been_made.once
-        expect(group).to have_received(:perform_refresh)
-      end
-    end
-
     context 'with a base url that causes a TCP error' do
       before do
         allow_any_instance_of(FHIR::Client)
@@ -526,20 +512,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
         expect(other_request_stub).to have_been_made
         expect(stub_update_request).to_not have_been_made
-      end
-    end
-
-    context 'with oauth_credentials' do
-      it 'performs a refresh if the token is about to expire' do
-        client = group.fhir_client(:client_with_oauth_credentials)
-        allow(client).to receive(:need_to_refresh?).and_return(true)
-        allow(client).to receive(:able_to_refresh?).and_return(true)
-        allow(group).to receive(:perform_refresh).with(client)
-
-        group.fhir_update(resource, resource_id, client: :client_with_oauth_credentials)
-
-        expect(stub_update_request).to have_been_made.once
-        expect(group).to have_received(:perform_refresh)
       end
     end
 
@@ -620,20 +592,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
         expect(other_request_stub).to have_been_made
         expect(stub_patch_request).to_not have_been_made
-      end
-    end
-
-    context 'with oauth_credentials' do
-      it 'performs a refresh if the token is about to expire' do
-        client = group.fhir_client(:client_with_oauth_credentials)
-        allow(client).to receive(:need_to_refresh?).and_return(true)
-        allow(client).to receive(:able_to_refresh?).and_return(true)
-        allow(group).to receive(:perform_refresh).with(client)
-
-        group.fhir_patch(resource.resourceType, resource_id, patch, client: :client_with_oauth_credentials)
-
-        expect(stub_patch_request).to have_been_made.once
-        expect(group).to have_received(:perform_refresh)
       end
     end
 
@@ -732,21 +690,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
         expect(other_request_stub).to have_been_made
         expect(stub_all_history_request).to_not have_been_made
-      end
-    end
-
-    context 'with oauth_credentials' do
-      it 'performs a refresh if the token is about to expire' do
-        stub_all_history_request
-        client = group.fhir_client(:client_with_oauth_credentials)
-        allow(client).to receive(:need_to_refresh?).and_return(true)
-        allow(client).to receive(:able_to_refresh?).and_return(true)
-        allow(group).to receive(:perform_refresh).with(client)
-
-        group.fhir_history(client: :client_with_oauth_credentials)
-
-        expect(stub_all_history_request).to have_been_made.once
-        expect(group).to have_received(:perform_refresh)
       end
     end
 

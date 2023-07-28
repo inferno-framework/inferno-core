@@ -175,7 +175,7 @@ module Inferno
       def fhir_patch(resource_type, id, patchset, client: :default, name: nil)
         store_request_and_refresh_token(fhir_client(client), name) do
           tcp_exception_handler do
-            fhir_client(client).partial_update(resource_type, id, patchset)
+            fhir_client(client).partial_update(fhir_class_from_resource_type(resource_type), id, patchset)
           end
         end
       end
@@ -192,9 +192,9 @@ module Inferno
         store_request_and_refresh_token(fhir_client(client), name) do
           tcp_exception_handler do
             if id
-              fhir_client(client).resource_instance_history(resource_type, id)
+              fhir_client(client).resource_instance_history(fhir_class_from_resource_type(resource_type), id)
             elsif resource_type
-              fhir_client(client).resource_history(resource_type)
+              fhir_client(client).resource_history(fhir_class_from_resource_type(resource_type))
             else
               fhir_client(client).all_history
             end
