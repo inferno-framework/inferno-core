@@ -64,11 +64,6 @@ const InputsModal: FC<InputsModalProps> = ({
   const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
 
   const missingRequiredInput = inputs.some((input: TestInput) => {
-    // Handle JSON/YAML validation separately
-    if (inputType !== 'Field') {
-      return false;
-    }
-
     // radio inputs will always be required and have a default value
     if (input.type === 'radio') return false;
 
