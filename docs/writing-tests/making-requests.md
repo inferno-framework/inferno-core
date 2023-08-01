@@ -151,6 +151,9 @@ The following methods are currently available for making FHIR requests:
 - `fhir_get_capability_statement`
 - `fhir_operation`
 - `fhir_read`
+- `fhir_vread`
+- `fhir_update`
+- `fhir_patch`
 - `fhir_search`
 - `fhir_history`
 - `fhir_transaction`
