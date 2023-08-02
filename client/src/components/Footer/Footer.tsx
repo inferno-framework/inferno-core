@@ -152,7 +152,13 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
         maxHeight: `${footerHeight}px`,
       }}
     >
-      <Box display="flex" flexDirection="row" justifyContent="space-between" overflow="auto">
+      <Box
+        display="flex"
+        flexDirection="row"
+        justifyContent="space-between"
+        overflow="auto"
+        width="100%"
+      >
         <Box display="flex" alignItems="center" px={2}>
           <Link
             href="https://inferno-framework.github.io/inferno-core"
