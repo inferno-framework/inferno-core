@@ -285,7 +285,7 @@ const InputsModal: FC<InputsModalProps> = ({
       </DialogTitle>
       <DialogContent>
         <main>
-          <DialogContentText component="div">
+          <DialogContentText component="div" style={{ wordBreak: 'break-word' }}>
             <ReactMarkdown>
               {instructions +
                 (inputType === 'Field'

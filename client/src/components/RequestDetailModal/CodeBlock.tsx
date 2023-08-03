@@ -22,7 +22,9 @@ const CodeBlock: FC<CodeBlockProps> = ({ body, headers }) => {
         data-testid="code-block"
       >
         <pre data-testid="pre">
-          <code data-testid="code">{formatBodyIfJSON(body, headers)}</code>
+          <code data-testid="code" className={classes.code}>
+            {formatBodyIfJSON(body, headers)}
+          </code>
         </pre>
       </Container>
     );
