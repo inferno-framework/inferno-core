@@ -92,15 +92,13 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
 
     it 'performs a post' do
-      
       group.fhir_operation(path)
-      
+
       expect(stub_operation_request).to have_been_made.once
     end
 
     it 'performs a get' do
-
-      group.fhir_operation(path, affectsState: false)
+      group.fhir_operation(path, affects_state: false)
 
       expect(stub_operation_get_request).to have_been_made.once
     end
@@ -120,15 +118,15 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
     context 'with a body of parameters' do
       p1 = FHIR::Parameters::Parameter.new
-      p1.name="Param1"
-      p1.valueBoolean= true
+      p1.name = 'Param1'
+      p1.valueBoolean = true
 
       p2 = FHIR::Parameters::Parameter.new
-      p2.name="Param2"
-      p2.valueString="zyx"
+      p2.name = 'Param2'
+      p2.valueString = 'zyx'
 
       p3 = FHIR::Parameters::Parameter.new
-      p3.name = "nonPrimParam"
+      p3.name = 'nonPrimParam'
 
       ratio = FHIR::Ratio.new
       ratio.numerator = FHIR::Quantity.new
@@ -136,30 +134,27 @@ RSpec.describe Inferno::DSL::FHIRClient do
       p3.valueRatio = ratio
 
       it 'uses get when all parameters are primitive' do
-        
         b = FHIR::Parameters.new
         b.parameter = [p1, p2]
 
         query_string = '?Param1=true&Param2=zyx'
 
-        get_with_body_request_stub = 
-          stub_request(:get, "#{base_url}/#{path+query_string}")
+        get_with_body_request_stub =
+          stub_request(:get, "#{base_url}/#{path + query_string}")
             .to_return(status: 200, body: resource.to_json)
-        
-        group.fhir_operation(path, body: b, affectsState: false)
+
+        group.fhir_operation(path, body: b, affects_state: false)
 
         expect(get_with_body_request_stub).to have_been_made.once
       end
-
 
       it 'prevents get when parameters are non-primitive' do
         b = FHIR::Parameters.new
         b.parameter = [p1, p3]
         expect do
-          group.fhir_operation(path, body: b, affectsState: false)
-        end.to raise_error(ArgumentError, "Cannot use GET request with non-primitive datatype nonPrimParam")
+          group.fhir_operation(path, body: b, affects_state: false)
+        end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype nonPrimParam')
       end
-
     end
 
     context 'with the client parameter' do
