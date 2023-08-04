@@ -75,6 +75,50 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
+  describe '#body_to_path' do
+    p1 = FHIR::Parameters::Parameter.new
+    p1.name = 'Param1'
+    p1.valueBoolean = true
+
+    p2 = FHIR::Parameters::Parameter.new
+    p2.name = 'Param2'
+    p2.valueString = 'zyx'
+
+    p3 = FHIR::Parameters::Parameter.new
+    p3.name = 'non_prim_param'
+
+    p4 = FHIR::Parameters::Parameter.new
+    p4.name = 'resource_param'
+    p4.resource = FHIR::Patient.new
+
+    ratio = FHIR::Ratio.new
+    ratio.numerator = FHIR::Quantity.new
+    ratio.denominator = FHIR::Quantity.new
+    p3.valueRatio = ratio
+
+    it 'converts primitives into a path query' do
+      b = FHIR::Parameters.new
+      b.parameter = [p1, p2]
+      expect(group.body_to_path('', b)).to eq('?Param1=true&Param2=zyx&')
+    end
+
+    it 'raises error if non-primitive parameter found' do
+      b = FHIR::Parameters.new
+      b.parameter = [p1, p3]
+      expect do
+        group.body_to_path('', b)
+      end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype non_prim_param')
+    end
+
+    it 'raises error if parameter is resource' do
+      b = FHIR::Parameters.new
+      b.parameter = [p1, p4]
+      expect do
+        group.body_to_path('', b)
+      end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype resource_param')
+    end
+  end
+
   describe '#fhir_operation' do
     let(:path) { 'abc' }
     let(:stub_operation_request) do
@@ -126,7 +170,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
       p2.valueString = 'zyx'
 
       p3 = FHIR::Parameters::Parameter.new
-      p3.name = 'nonPrimParam'
+      p3.name = 'non_prim_param'
 
       ratio = FHIR::Ratio.new
       ratio.numerator = FHIR::Quantity.new
@@ -153,7 +197,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
         b.parameter = [p1, p3]
         expect do
           group.fhir_operation(path, body: b, affects_state: false)
-        end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype nonPrimParam')
+        end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype non_prim_param')
       end
     end
 

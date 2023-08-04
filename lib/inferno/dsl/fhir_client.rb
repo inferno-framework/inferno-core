@@ -67,10 +67,9 @@ module Inferno
       # @private
       def body_to_path(path, body)
         body.parameter.reduce("#{path}?") do |new_path, x|
-          next new_path unless x.valid? && x.part.empty? && x.resource.nil? # Parameter is valid
-
+          valid = x.valid? && x.part.empty? && x.resource.nil? # Parameter is valid
           param_val = x.to_hash.except('name') # should contain only one value if is a valid parameter, checked above
-          if !param_val.empty? && FHIR.primitive?(datatype: param_val.keys[0][5..], value: param_val.values[0])
+          if valid && !param_val.empty? && FHIR.primitive?(datatype: param_val.keys[0][5..], value: param_val.values[0])
             "#{new_path}#{x.name}=#{param_val.values[0]}&"
           else
             # Handle the case of nonprimitive
