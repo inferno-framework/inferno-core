@@ -66,12 +66,12 @@ module Inferno
       #   general operations
       #
       # @param path [String]
-      # @param body [FHIR::Parameters]
+      # @param body [FHIR::Parameters] Must all be primitive if making GET request
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @param headers [Hash] custom headers for this operation
-      # @param methods [Symbol] Designates which method to use to send
+      # @param affectsState [Bool] indicates whether operation affects server (true implies POST)
       # @return [Inferno::Entities::Request]
       def fhir_operation(path, body: nil, client: :default, name: nil, headers: {}, affectsState: true)
         store_request_and_refresh_token(fhir_client(client), name) do
@@ -79,8 +79,6 @@ module Inferno
             operation_headers = fhir_client(client).fhir_headers
             operation_headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
             operation_headers.merge!(headers) if headers.present?
-            # Servers SHALL support the GET method when the operation has affectsState = false and all 
-            # required parameters for the operation are primitive.        ^ how to check this?
             if !affectsState
               path = body.parameter.reduce(path + "?") { |path, x| 
                 if x.valid? and x.part.empty? and x.resource.nil? # Parameter is valid
@@ -90,7 +88,7 @@ module Inferno
                   else
                     # Handle the case of nonprimitive
                     Inferno::Application[:logger].error "Cannot use GET request with non-primitive datatype #{x.name}"
-                    raise StandardError.new "Cannot use GET request with non-primitive datatype #{x.name}" 
+                    raise ArgumentError.new "Cannot use GET request with non-primitive datatype #{x.name}" 
                   end
                 end
               } if body.present?

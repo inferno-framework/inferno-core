@@ -157,7 +157,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
         b.parameter = [p1, p3]
         expect do
           group.fhir_operation(path, body: b, affectsState: false)
-        end.to raise_error(StandardError, "Cannot use GET request with non-primitive datatype nonPrimParam")
+        end.to raise_error(ArgumentError, "Cannot use GET request with non-primitive datatype nonPrimParam")
       end
 
     end
