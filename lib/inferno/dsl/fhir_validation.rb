@@ -191,6 +191,7 @@ module Inferno
         #
         # @param resource [FHIR::Model]
         # @param profile_url [String]
+        # @param runnable [Inferno::Entities::Test]
         # @return [[Array(FHIR::OperationOutcome, Number)] the validation response and HTTP status code
         def validate(resource, profile_url, runnable)
           begin
