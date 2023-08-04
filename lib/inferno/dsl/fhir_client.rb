@@ -71,15 +71,33 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @param headers [Hash] custom headers for this operation
+      # @param methods [Symbol] Designates which method to use to send
       # @return [Inferno::Entities::Request]
-      def fhir_operation(path, body: nil, client: :default, name: nil, headers: {})
+      def fhir_operation(path, body: nil, client: :default, name: nil, headers: {}, affectsState: true)
         store_request_and_refresh_token(fhir_client(client), name) do
           tcp_exception_handler do
             operation_headers = fhir_client(client).fhir_headers
             operation_headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
             operation_headers.merge!(headers) if headers.present?
-
-            fhir_client(client).send(:post, path, body, operation_headers)
+            # Servers SHALL support the GET method when the operation has affectsState = false and all 
+            # required parameters for the operation are primitive.        ^ how to check this?
+            if !affectsState
+              path = body.parameter.reduce(path + "?") { |path, x| 
+                if x.valid? and x.part.empty? and x.resource.nil? # Parameter is valid
+                  param_val = x.to_hash.except("name") # should contain only one value if is a valid parameter, checked above
+                  if !param_val.empty? && FHIR.primitive?(datatype: param_val.keys[0][5..-1], value: param_val.values[0]) #strip "value" from key name to use FHIR.primitive?
+                    path += x.name + "=" + param_val.values[0].to_s + "&"
+                  else
+                    # Handle the case of nonprimitive
+                    Inferno::Application[:logger].error "Cannot use GET request with non-primitive datatype #{x.name}"
+                    raise StandardError.new "Cannot use GET request with non-primitive datatype #{x.name}" 
+                  end
+                end
+              } if body.present?
+              fhir_client(client).send(:get, path, operation_headers)
+            else
+              fhir_client(client).send(:post, path, body, operation_headers)
+            end
           end
         end
       end

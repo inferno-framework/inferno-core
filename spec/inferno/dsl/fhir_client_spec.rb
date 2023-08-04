@@ -81,15 +81,28 @@ RSpec.describe Inferno::DSL::FHIRClient do
       stub_request(:post, "#{base_url}/#{path}")
         .to_return(status: 200, body: resource.to_json)
     end
+    let(:stub_operation_get_request) do
+      stub_request(:get, "#{base_url}/#{path}")
+        .to_return(status: 200, body: resource.to_json)
+    end
 
     before do
       stub_operation_request
+      stub_operation_get_request
+    end
+
+    it 'performs a post' do
+      
+      group.fhir_operation(path)
+      
+      expect(stub_operation_request).to have_been_made.once
     end
 
     it 'performs a get' do
-      group.fhir_operation(path)
 
-      expect(stub_operation_request).to have_been_made.once
+      group.fhir_operation(path, affectsState: false)
+
+      expect(stub_operation_get_request).to have_been_made.once
     end
 
     it 'returns an Inferno::Entities::Request' do
@@ -103,6 +116,50 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
       expect(group.requests).to include(result)
       expect(group.request).to eq(result)
+    end
+
+    context 'with a body of parameters' do
+      p1 = FHIR::Parameters::Parameter.new
+      p1.name="Param1"
+      p1.valueBoolean= true
+
+      p2 = FHIR::Parameters::Parameter.new
+      p2.name="Param2"
+      p2.valueString="zyx"
+
+      p3 = FHIR::Parameters::Parameter.new
+      p3.name = "nonPrimParam"
+
+      ratio = FHIR::Ratio.new
+      ratio.numerator = FHIR::Quantity.new
+      ratio.denominator = FHIR::Quantity.new
+      p3.valueRatio = ratio
+
+      it 'uses get when all parameters are primitive' do
+        
+        b = FHIR::Parameters.new
+        b.parameter = [p1, p2]
+
+        query_string = '?Param1=true&Param2=zyx'
+
+        get_with_body_request_stub = 
+          stub_request(:get, "#{base_url}/#{path+query_string}")
+            .to_return(status: 200, body: resource.to_json)
+        
+        group.fhir_operation(path, body: b, affectsState: false)
+
+        expect(get_with_body_request_stub).to have_been_made.once
+      end
+
+
+      it 'prevents get when parameters are non-primitive' do
+        b = FHIR::Parameters.new
+        b.parameter = [p1, p3]
+        expect do
+          group.fhir_operation(path, body: b, affectsState: false)
+        end.to raise_error(StandardError, "Cannot use GET request with non-primitive datatype nonPrimParam")
+      end
+
     end
 
     context 'with the client parameter' do
@@ -149,7 +206,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
           .to_return(status: 200, body: resource.to_json)
       end
 
-      it 'as custom only, performs a get' do
+      it 'as custom only, performs a post' do
         operation_request =
           stub_request(:post, "#{base_url}/#{path}")
             .with(headers: { 'CustomHeader' => 'CustomTest' })
@@ -160,7 +217,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(operation_request).to have_been_made.once
       end
 
-      it 'as default only, performs a get' do
+      it 'as default only, performs a post' do
         operation_request =
           stub_request(:post, "#{base_url}/#{path}")
             .with(headers: { 'DefaultHeader' => 'ClientHeader' })
@@ -172,7 +229,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(operation_request).to have_been_made.once
       end
 
-      it 'as both default and custom, performs a get' do
+      it 'as both default and custom, performs a post' do
         operation_request =
           stub_request(:post, "#{base_url}/#{path}")
             .with(headers: { 'DefaultHeader' => 'ClientHeader', 'CustomHeader' => 'CustomTest' })
