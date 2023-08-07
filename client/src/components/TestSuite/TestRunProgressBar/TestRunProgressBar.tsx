@@ -6,16 +6,16 @@ import {
   CircularProgress,
   LinearProgress,
   Snackbar,
-  Tooltip,
   Typography,
 } from '@mui/material';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CancelIcon from '@mui/icons-material/Cancel';
 import DoneIcon from '@mui/icons-material/Done';
 import FilterNoneIcon from '@mui/icons-material/FilterNone';
-import useStyles from './styles';
+import CustomTooltip from '~/components/_common/CustomTooltip';
 import lightTheme from '~/styles/theme';
 import { useAppStore } from '~/store/app';
+import useStyles from './styles';
 
 export interface TestRunProgressBarProps {
   showProgressBar: boolean;
@@ -31,33 +31,33 @@ const StatusIndicator = (status: string | null | undefined) => {
   switch (status) {
     case 'running':
       return (
-        <Tooltip title="Running">
+        <CustomTooltip title="Running">
           <CircularProgress size={24} />
-        </Tooltip>
+        </CustomTooltip>
       );
     case 'cancelling':
       return (
-        <Tooltip title="Cancelling">
+        <CustomTooltip title="Cancelling">
           <CircularProgress size={24} />
-        </Tooltip>
+        </CustomTooltip>
       );
     case 'waiting':
       return (
-        <Tooltip title="Waiting">
+        <CustomTooltip title="Waiting">
           <AccessTimeIcon color="primary" />
-        </Tooltip>
+        </CustomTooltip>
       );
     case 'queued':
       return (
-        <Tooltip title="Queued">
+        <CustomTooltip title="Queued">
           <FilterNoneIcon color="primary" />
-        </Tooltip>
+        </CustomTooltip>
       );
     case 'done':
       return (
-        <Tooltip title="Done">
+        <CustomTooltip title="Done">
           <DoneIcon color="primary" />
-        </Tooltip>
+        </CustomTooltip>
       );
     default:
       return null;
@@ -132,7 +132,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
             {testRun?.status === 'done' ? testCount : completedCount}/{testCount}
           </Typography>
         </Box>
-        <Tooltip title="Cancel Test Run">
+        <CustomTooltip title="Cancel Test Run">
           <IconButton
             aria-label="cancel"
             disabled={!cancellable}
@@ -142,7 +142,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
           >
             <CancelIcon />
           </IconButton>
-        </Tooltip>
+        </CustomTooltip>
       </Box>
     </Snackbar>
   );

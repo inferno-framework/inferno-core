@@ -1,20 +1,21 @@
+import React, { FC } from 'react';
 import {
   Box,
+  Button,
   Dialog,
+  DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
   IconButton,
-  Tooltip,
   Typography,
 } from '@mui/material';
 import { Request } from '~/models/testSuiteModels';
-import React, { FC } from 'react';
+import { ContentCopy, Input } from '@mui/icons-material';
+import CustomTooltip from '~/components/_common/CustomTooltip';
 import CodeBlock from './CodeBlock';
 import HeaderTable from './HeaderTable';
 import useStyles from './styles';
-import InputIcon from '@mui/icons-material/Input';
-import { ContentCopy } from '@mui/icons-material';
 
 export interface RequestDetailModalProps {
   request?: Request;
@@ -43,14 +44,14 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
   };
 
   const usedRequestIcon = (
-    <Tooltip title="This request was performed in another test and the result is used by this test">
-      <InputIcon className={classes.inputIcon} />
-    </Tooltip>
+    <CustomTooltip title="This request was performed in another test and the result is used by this test">
+      <Input className={classes.inputIcon} />
+    </CustomTooltip>
   );
 
   const requestDialogTitle = (
     <Box display="flex" className={classes.modalTitle}>
-      <Tooltip
+      <CustomTooltip
         title={`${request?.verb.toUpperCase() || ''} ${request?.url || ''} \u2192 ${
           request?.status || ''
         }`}
@@ -64,19 +65,19 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
             {request?.url}
           </Box>
           {request?.url && (
-            <Tooltip open={copySuccess} title="Text copied!">
+            <CustomTooltip open={copySuccess} title="Text copied!">
               <Box pr={1}>
                 <IconButton color="secondary" onClick={() => void copyTextClick(request.url)}>
                   <ContentCopy fontSize="inherit" />
                 </IconButton>
               </Box>
-            </Tooltip>
+            </CustomTooltip>
           )}
           <Box display="flex" flexShrink={0}>
             &#8594; {request?.status}
           </Box>
         </Box>
-      </Tooltip>
+      </CustomTooltip>
       <Box display="flex" flexGrow={1} pr={1} />
       {usedRequest && (
         <Box display="flex" flexShrink={1} flexDirection="row-reverse" px={2}>
@@ -92,7 +93,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
         open={modalVisible}
         fullWidth={true}
         maxWidth="md"
-        onClose={() => hideModal()}
+        onClose={hideModal}
         data-testid="requestDetailModal"
       >
         <DialogTitle>{requestDialogTitle}</DialogTitle>
@@ -114,6 +115,16 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
             <CodeBlock body={request.response_body} headers={request.response_headers} />
           </Box>
         </DialogContent>
+        <DialogActions>
+          <Button
+            color="secondary"
+            variant="contained"
+            data-testid="cancel-button"
+            onClick={hideModal}
+          >
+            Close
+          </Button>
+        </DialogActions>
       </Dialog>
     );
   } else {

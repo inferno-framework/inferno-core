@@ -32,8 +32,8 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
           href={`${apiBase}?scheme=${scheme}&host=${fullHost}`}
           target="_blank"
           rel="noreferrer"
-          underline="hover"
-          className={`${classes.link} ${classes.logoLink}`}
+          color="secondary"
+          className={classes.link}
           sx={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
         >
           API
@@ -99,8 +99,8 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
-                    underline="hover"
-                    className={`${classes.link} ${classes.linkText}`}
+                    color="secondary"
+                    className={classes.link}
                     style={{
                       fontSize: '0.8rem',
                     }}
@@ -127,8 +127,8 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                   href={link.url}
                   target="_blank"
                   rel="noreferrer"
-                  underline="hover"
-                  className={`${classes.link} ${classes.linkText}`}
+                  color="secondary"
+                  className={classes.link}
                   style={{
                     fontSize: '1.1rem',
                     margin: '0 16px',

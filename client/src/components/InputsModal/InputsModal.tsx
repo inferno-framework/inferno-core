@@ -11,6 +11,8 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   Typography,
+  Paper,
+  Box,
 } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import YAML from 'js-yaml';
@@ -298,65 +300,75 @@ const InputsModal: FC<InputsModalProps> = ({
           ) : (
             <TextField
               id={`${inputType}-serial-input`}
-              fullWidth
-              multiline
               minRows={4}
               key={baseInput}
               error={invalidInput}
               defaultValue={baseInput}
-              data-testid="serial-input"
-              className={classes.serialInput}
-              onChange={(e) => handleSerialChanges(e.target.value)}
               label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
+              InputProps={{
+                classes: {
+                  input: classes.serialInput,
+                },
+              }}
+              fullWidth
+              multiline
+              data-testid="serial-input"
+              onChange={(e) => handleSerialChanges(e.target.value)}
             />
           )}
         </main>
       </DialogContent>
       <DialogActions className={classes.dialogActions}>
-        <ToggleButtonGroup
-          exclusive
-          role="group"
-          color="primary"
-          size="small"
-          value={inputType}
-          onChange={handleInputTypeChange}
-          className={classes.toggleButtonGroup}
-        >
-          <ToggleButton
-            value="Field"
-            disabled={invalidInput}
-            data-testid="field-button"
-            className={classes.toggleButton}
+        <Paper elevation={0} className={classes.toggleButtonGroupContainer}>
+          <ToggleButtonGroup
+            exclusive
+            role="group"
+            color="secondary"
+            size="small"
+            value={inputType}
+            onChange={handleInputTypeChange}
+            className={classes.toggleButtonGroup}
           >
-            Field
-          </ToggleButton>
-          <ToggleButton
-            value="JSON"
-            disabled={invalidInput}
-            data-testid="json-button"
-            className={classes.toggleButton}
+            <ToggleButton
+              value="Field"
+              disabled={invalidInput}
+              data-testid="field-button"
+              className={classes.toggleButton}
+            >
+              Field
+            </ToggleButton>
+            <ToggleButton
+              value="JSON"
+              disabled={invalidInput}
+              data-testid="json-button"
+              className={classes.toggleButton}
+            >
+              JSON
+            </ToggleButton>
+            <ToggleButton
+              value="YAML"
+              disabled={invalidInput}
+              data-testid="yaml-button"
+              className={classes.toggleButton}
+            >
+              YAML
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Paper>
+        <Box>
+          <Button color="secondary" data-testid="cancel-button" onClick={closeModal} sx={{ mr: 1 }}>
+            Cancel
+          </Button>
+          <Button
+            color="secondary"
+            variant="contained"
+            disableElevation
+            onClick={submitClicked}
+            disabled={missingRequiredInput || invalidInput}
           >
-            JSON
-          </ToggleButton>
-          <ToggleButton
-            value="YAML"
-            disabled={invalidInput}
-            data-testid="yaml-button"
-            className={classes.toggleButton}
-          >
-            YAML
-          </ToggleButton>
-        </ToggleButtonGroup>
-        <Button data-testid="cancel-button" className={classes.inputAction} onClick={closeModal}>
-          Cancel
-        </Button>
-        <Button
-          onClick={submitClicked}
-          disabled={missingRequiredInput || invalidInput}
-          className={classes.inputAction}
-        >
-          Submit
-        </Button>
+            Submit
+          </Button>
+        </Box>
       </DialogActions>
     </Dialog>
   );

@@ -19,12 +19,14 @@ const InputTextField: FC<InputTextFieldProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
+  const [hasBeenModified, setHasBeenModified] = React.useState(false);
 
   return (
     <ListItem>
       <TextField
         disabled={requirement.locked}
         required={!requirement.optional}
+        error={hasBeenModified && !requirement.optional && !inputsMap.get(requirement.name)}
         id={`requirement${index}_input`}
         className={classes.inputField}
         variant="standard"
@@ -36,6 +38,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
           const value = event.target.value;
           inputsMap.set(requirement.name, value);
           setInputsMap(new Map(inputsMap));
+          setHasBeenModified(true);
         }}
         InputLabelProps={{ shrink: true }}
         FormHelperTextProps={{

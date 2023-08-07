@@ -100,6 +100,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
         <TextField
           disabled={requirement.locked}
           required={field.required}
+          error={field.required && !oAuthCredentials[field.name as keyof OAuthCredentials]}
           id={`requirement${index}_${field.name}`}
           label={fieldLabel}
           helperText={requirement.description}
