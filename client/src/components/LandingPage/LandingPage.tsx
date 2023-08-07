@@ -192,7 +192,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             className={classes.leftBorder}
           >
             <Typography variant="h5" component="h1" className={classes.title}>
-              About {selectedTestSuite.title}
+              {selectedTestSuite.title}
             </Typography>
             <Typography variant="h6" component="h2" sx={{ wordBreak: 'break-word' }}>
               <ReactMarkdown>
@@ -245,6 +245,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             <SelectionPanel
               title="Options"
               options={selectedTestSuite?.suite_options || []}
+              selection={defaultSuiteOptions}
               setSelection={setOptionsSelected}
               showBackButton={true}
               backTooltipText="Back to Suites"
