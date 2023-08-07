@@ -35,19 +35,23 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
-  const template = {
-    access_token: '',
-    refresh_token: '',
-    expires_in: '',
-    client_id: '',
-    client_secret: '',
-    token_url: '',
-  };
+
+  // Convert OAuth string to Object
+  // OAuth should be an Object while in this component but should be converted to a string
+  // before being updated in the inputs map
   const oAuthCredentials = (
     inputsMap.get(requirement.name)
       ? JSON.parse(inputsMap.get(requirement.name) as string)
-      : template
+      : {
+          access_token: '',
+          refresh_token: '',
+          expires_in: '',
+          client_id: '',
+          client_secret: '',
+          token_url: '',
+        }
   ) as OAuthCredentials;
+
   const showRefreshDetails = !!oAuthCredentials.refresh_token;
 
   const oAuthFields: InputOAuthField[] = [
