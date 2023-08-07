@@ -57,22 +57,24 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
   });
 
   const renderTab = (tab: TabProps, index: number) => {
-    if ((!tab.value || tab.value.length === 0) && tab.label !== 'About') {
-      return (
-        <CustomTab
-          key={`${tab.label}-${index}`}
-          label={
+    const disableTab = (!tab.value || tab.value.length === 0) && tab.label !== 'About';
+
+    return (
+      <CustomTab
+        key={`${tab.label}-${index}`}
+        label={
+          disableTab ? (
             <CustomTooltip title={`No ${tab.label.toLowerCase()} available`}>
               <Typography variant="button">{tab.label}</Typography>
             </CustomTooltip>
-          }
-          {...a11yProps(index)}
-          disabled
-        />
-      );
-    }
-
-    return <CustomTab key={`${tab.label}-${index}`} label={tab.label} {...a11yProps(index)} />;
+          ) : (
+            tab.label
+          )
+        }
+        {...a11yProps(index)}
+        disabled={disableTab}
+      />
+    );
   };
 
   return (
