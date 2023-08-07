@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
-import { IconButton, Tooltip } from '@mui/material';
+import { IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CustomTooltip from '~/components/_common/CustomTooltip';
 
 export interface BackButtonProps {
   tooltipText: string;
@@ -9,11 +10,11 @@ export interface BackButtonProps {
 
 const BackButton: FC<BackButtonProps> = ({ tooltipText, clickHandler }) => {
   return (
-    <Tooltip title={tooltipText}>
+    <CustomTooltip title={tooltipText}>
       <IconButton size="small" onClick={clickHandler}>
         <ArrowBackIcon fontSize="large" />
       </IconButton>
-    </Tooltip>
+    </CustomTooltip>
   );
 };
 

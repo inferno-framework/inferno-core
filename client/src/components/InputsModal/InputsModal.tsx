@@ -11,6 +11,8 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   Typography,
+  Paper,
+  Box,
 } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import YAML from 'js-yaml';
@@ -79,6 +81,7 @@ const InputsModal: FC<InputsModalProps> = ({
         enqueueSnackbar(`Checkbox input incorrectly formatted: ${errorMessage}`, {
           variant: 'error',
         });
+        return true;
       }
     }
 
@@ -87,7 +90,7 @@ const InputsModal: FC<InputsModalProps> = ({
     if (input.type === 'oauth_credentials') {
       try {
         const oAuthJSON = JSON.parse(
-          (inputsMap.get(input.name) as string) || '{}'
+          (inputsMap.get(input.name) as string) || '{ "access_token": null }'
         ) as OAuthCredentials;
         const accessTokenIsEmpty = oAuthJSON.access_token === '';
         const refreshIsEmpty =
@@ -99,48 +102,12 @@ const InputsModal: FC<InputsModalProps> = ({
         enqueueSnackbar(`OAuth credentials incorrectly formatted: ${errorMessage}`, {
           variant: 'error',
         });
+        return true;
       }
     }
 
     return (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput;
   });
-
-  useEffect(() => {
-    inputsMap.clear();
-    inputs.forEach((requirement: TestInput) => {
-      inputsMap.set(
-        requirement.name,
-        sessionData.get(requirement.name) || (requirement.default as string) || ''
-      );
-    });
-    setInputsMap(new Map(inputsMap));
-  }, [inputs, sessionData]);
-
-  useEffect(() => {
-    setInvalidInput(false);
-    setBaseInput(serializeMap(inputsMap));
-  }, [inputType, open]);
-
-  const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (
-      open &&
-      e.key === 'Enter' &&
-      (e.metaKey || e.ctrlKey) &&
-      !missingRequiredInput &&
-      !invalidInput
-    ) {
-      submitClicked();
-    }
-  };
-
-  const submitClicked = () => {
-    const inputs_with_values: TestInput[] = [];
-    inputsMap.forEach((input_value, input_name) => {
-      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
-    });
-    createTestRun(runnableType, runnableId, inputs_with_values);
-    closeModal();
-  };
 
   const instructions =
     inputInstructions ||
@@ -201,12 +168,55 @@ const InputsModal: FC<InputsModalProps> = ({
     }
   });
 
+  useEffect(() => {
+    inputsMap.clear();
+    inputs.forEach((requirement: TestInput) => {
+      inputsMap.set(
+        requirement.name,
+        sessionData.get(requirement.name) || (requirement.default as string) || ''
+      );
+    });
+    setInputsMap(new Map(inputsMap));
+  }, [inputs, sessionData]);
+
+  useEffect(() => {
+    setInvalidInput(false);
+    setBaseInput(serializeMap(inputsMap));
+  }, [inputType, open]);
+
+  const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
+    if (value !== null) setInputType(value);
+  };
+
+  const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (
+      open &&
+      e.key === 'Enter' &&
+      (e.metaKey || e.ctrlKey) &&
+      !missingRequiredInput &&
+      !invalidInput
+    ) {
+      submitClicked();
+    }
+  };
+
+  const submitClicked = () => {
+    const inputs_with_values: TestInput[] = [];
+    inputsMap.forEach((input_value, input_name) => {
+      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
+    });
+    createTestRun(runnableType, runnableId, inputs_with_values);
+    closeModal();
+  };
+
   const serializeMap = (map: Map<string, unknown>): string => {
     const flatObj = inputs.map((requirement: TestInput) => {
       if (requirement.type === 'oauth_credentials') {
         return {
           ...requirement,
-          value: JSON.parse((map.get(requirement.name) as string) || '{}') as OAuthCredentials,
+          value: JSON.parse(
+            (map.get(requirement.name) as string) || '{ "access_token": "" }'
+          ) as OAuthCredentials,
         };
       } else if (requirement.type === 'radio') {
         const firstVal =
@@ -224,10 +234,6 @@ const InputsModal: FC<InputsModalProps> = ({
     return inputType === 'JSON' ? JSON.stringify(flatObj, null, 3) : YAML.dump(flatObj);
   };
 
-  const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
-    if (value !== null) setInputType(value);
-  };
-
   const parseSerialChanges = (changes: string): TestInput[] | undefined => {
     let parsed: TestInput[];
     try {
@@ -236,6 +242,12 @@ const InputsModal: FC<InputsModalProps> = ({
       } else {
         parsed = YAML.load(changes) as TestInput[];
       }
+      // Convert OAuth input values to strings
+      parsed.forEach((input) => {
+        if (input.type === 'oauth_credentials') {
+          input.value = JSON.stringify(input.value);
+        }
+      });
       setInvalidInput(false);
       return parsed;
     } catch (e) {
@@ -288,65 +300,75 @@ const InputsModal: FC<InputsModalProps> = ({
           ) : (
             <TextField
               id={`${inputType}-serial-input`}
-              fullWidth
-              multiline
               minRows={4}
               key={baseInput}
               error={invalidInput}
               defaultValue={baseInput}
-              data-testid="serial-input"
-              className={classes.serialInput}
-              onChange={(e) => handleSerialChanges(e.target.value)}
               label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
+              InputProps={{
+                classes: {
+                  input: classes.serialInput,
+                },
+              }}
+              fullWidth
+              multiline
+              data-testid="serial-input"
+              onChange={(e) => handleSerialChanges(e.target.value)}
             />
           )}
         </main>
       </DialogContent>
       <DialogActions className={classes.dialogActions}>
-        <ToggleButtonGroup
-          exclusive
-          role="group"
-          color="primary"
-          size="small"
-          value={inputType}
-          onChange={handleInputTypeChange}
-          className={classes.toggleButtonGroup}
-        >
-          <ToggleButton
-            value="Field"
-            disabled={invalidInput}
-            data-testid="field-button"
-            className={classes.toggleButton}
+        <Paper elevation={0} className={classes.toggleButtonGroupContainer}>
+          <ToggleButtonGroup
+            exclusive
+            role="group"
+            color="secondary"
+            size="small"
+            value={inputType}
+            onChange={handleInputTypeChange}
+            className={classes.toggleButtonGroup}
           >
-            Field
-          </ToggleButton>
-          <ToggleButton
-            value="JSON"
-            disabled={invalidInput}
-            data-testid="json-button"
-            className={classes.toggleButton}
+            <ToggleButton
+              value="Field"
+              disabled={invalidInput}
+              data-testid="field-button"
+              className={classes.toggleButton}
+            >
+              Field
+            </ToggleButton>
+            <ToggleButton
+              value="JSON"
+              disabled={invalidInput}
+              data-testid="json-button"
+              className={classes.toggleButton}
+            >
+              JSON
+            </ToggleButton>
+            <ToggleButton
+              value="YAML"
+              disabled={invalidInput}
+              data-testid="yaml-button"
+              className={classes.toggleButton}
+            >
+              YAML
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Paper>
+        <Box>
+          <Button color="secondary" data-testid="cancel-button" onClick={closeModal} sx={{ mr: 1 }}>
+            Cancel
+          </Button>
+          <Button
+            color="secondary"
+            variant="contained"
+            disableElevation
+            onClick={submitClicked}
+            disabled={missingRequiredInput || invalidInput}
           >
-            JSON
-          </ToggleButton>
-          <ToggleButton
-            value="YAML"
-            disabled={invalidInput}
-            data-testid="yaml-button"
-            className={classes.toggleButton}
-          >
-            YAML
-          </ToggleButton>
-        </ToggleButtonGroup>
-        <Button data-testid="cancel-button" className={classes.inputAction} onClick={closeModal}>
-          Cancel
-        </Button>
-        <Button
-          onClick={submitClicked}
-          disabled={missingRequiredInput || invalidInput}
-          className={classes.inputAction}
-        >
-          Submit
-        </Button>
+            Submit
+          </Button>
+        </Box>
       </DialogActions>
     </Dialog>
   );
