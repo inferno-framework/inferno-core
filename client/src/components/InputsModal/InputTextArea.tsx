@@ -14,12 +14,14 @@ export interface InputTextAreaProps {
 
 const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
+  const [hasBeenModified, setHasBeenModified] = React.useState(false);
 
   return (
     <ListItem>
       <TextField
         disabled={requirement.locked}
         required={!requirement.optional}
+        error={hasBeenModified && !requirement.optional && !inputsMap.get(requirement.name)}
         id={`requirement${index}_input`}
         className={classes.inputField}
         variant="standard"
@@ -33,6 +35,7 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
           const value = event.target.value;
           inputsMap.set(requirement.name, value);
           setInputsMap(new Map(inputsMap));
+          setHasBeenModified(true);
         }}
         FormHelperTextProps={{
           sx: { '&.Mui-disabled': { color: lightTheme.palette.common.grayDark } },

@@ -94,6 +94,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
         id={`requirement${index}_input`}
         disabled={requirement.locked}
         fullWidth
+        className={classes.inputField}
       >
         <FormLabel required={!requirement.optional} className={classes.inputLabel}>
           <FieldLabel requirement={requirement} />

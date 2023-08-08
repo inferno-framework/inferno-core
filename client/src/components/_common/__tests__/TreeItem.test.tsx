@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import TreeView from '@mui/lab/TreeView';
 import TreeItemLabel from 'components/TestSuite/TestSuiteTree/TreeItemLabel';
 import ThemeProvider from 'components/ThemeProvider';
-import CustomTreeItem from '../TreeItem';
+import CustomTreeItem from '../CustomTreeItem';
 import { mockedTestSuite } from '../__mocked_data__/mockData';
 
 test('renders custom TreeItem', () => {
