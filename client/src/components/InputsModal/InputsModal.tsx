@@ -239,7 +239,9 @@ const InputsModal: FC<InputsModalProps> = ({
         };
       }
     });
-    return inputType === 'JSON' ? JSON.stringify(flatObj, null, 3) : YAML.dump(flatObj);
+    return inputType === 'JSON'
+      ? JSON.stringify(flatObj, null, 3)
+      : YAML.dump(flatObj, { lineWidth: -1 });
   };
 
   const parseSerialChanges = (changes: string): TestInput[] | undefined => {
@@ -287,7 +289,6 @@ const InputsModal: FC<InputsModalProps> = ({
       maxWidth="sm"
       onKeyDown={handleSubmitKeydown}
       onClose={closeModal}
-      className={classes.dialog}
     >
       <DialogTitle component="div">
         <Typography component="h1" variant="h6">
