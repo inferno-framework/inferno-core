@@ -285,6 +285,7 @@ const InputsModal: FC<InputsModalProps> = ({
       maxWidth="sm"
       onKeyDown={handleSubmitKeydown}
       onClose={closeModal}
+      className={classes.dialog}
     >
       <DialogTitle component="div">
         <Typography component="h1" variant="h6">
