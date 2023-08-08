@@ -240,7 +240,7 @@ const InputsModal: FC<InputsModalProps> = ({
       }
     });
     return inputType === 'JSON'
-      ? JSON.stringify(flatObj, null, 3)
+      ? JSON.stringify(flatObj, null, 2)
       : YAML.dump(flatObj, { lineWidth: -1 });
   };
 
