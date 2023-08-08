@@ -1,4 +1,4 @@
 module Inferno
   # Standard patterns for gem versions: https://guides.rubygems.org/patterns/
-  VERSION = '0.4.17'.freeze
+  VERSION = '0.4.18'.freeze
 end
