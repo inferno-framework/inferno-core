@@ -60,6 +60,7 @@ const InputsModal: FC<InputsModalProps> = ({
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = React.useState<boolean>(true);
+  const [edited, setEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
   const [baseInput, setBaseInput] = React.useState<string>('');
@@ -121,7 +122,7 @@ const InputsModal: FC<InputsModalProps> = ({
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
             key={`input-${index}`}
           />
         );
@@ -131,7 +132,9 @@ const InputsModal: FC<InputsModalProps> = ({
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
+            setInputsMap={(newInputsMap, editStatus) =>
+              handleSetInputsMap(newInputsMap, editStatus)
+            }
             key={`input-${index}`}
           />
         );
@@ -141,7 +144,7 @@ const InputsModal: FC<InputsModalProps> = ({
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
             key={`input-${index}`}
           />
         );
@@ -151,7 +154,7 @@ const InputsModal: FC<InputsModalProps> = ({
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
             key={`input-${index}`}
           />
         );
@@ -161,7 +164,7 @@ const InputsModal: FC<InputsModalProps> = ({
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
             key={`input-${index}`}
           />
         );
@@ -186,6 +189,11 @@ const InputsModal: FC<InputsModalProps> = ({
 
   const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
     if (value !== null) setInputType(value);
+  };
+
+  const handleSetInputsMap = (inputsMap: Map<string, unknown>, edited?: boolean) => {
+    setInputsMap(inputsMap);
+    setEdited(edited !== false); // explicit check for false values
   };
 
   const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -267,9 +275,12 @@ const InputsModal: FC<InputsModalProps> = ({
     setInputsMap(new Map(inputsMap));
   };
 
-  const closeModal = () => {
-    setOpen(false);
-    hideModal();
+  const closeModal = (edited = false) => {
+    // For external clicks, check if inputs have been edited first
+    if (!edited) {
+      setOpen(false);
+      hideModal();
+    }
   };
 
   return (
@@ -278,7 +289,7 @@ const InputsModal: FC<InputsModalProps> = ({
       fullWidth
       maxWidth="sm"
       onKeyDown={handleSubmitKeydown}
-      onClose={closeModal}
+      onClose={() => closeModal(edited)}
     >
       <DialogTitle component="div">
         <Typography component="h1" variant="h6">
@@ -356,7 +367,12 @@ const InputsModal: FC<InputsModalProps> = ({
           </ToggleButtonGroup>
         </Paper>
         <Box>
-          <Button color="secondary" data-testid="cancel-button" onClick={closeModal} sx={{ mr: 1 }}>
+          <Button
+            color="secondary"
+            data-testid="cancel-button"
+            onClick={() => closeModal()}
+            sx={{ mr: 1 }}
+          >
             Cancel
           </Button>
           <Button
