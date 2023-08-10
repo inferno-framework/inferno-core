@@ -65,7 +65,6 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
     // Make sure starting values get set in inputsMap
     inputsMap.set(requirement.name, transformValuesToJSONArray(values));
     setInputsMap(new Map(inputsMap), false);
-    console.log('set map');
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
