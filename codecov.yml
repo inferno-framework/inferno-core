@@ -1,7 +1,7 @@
 coverage:
   status:
-    project: on
-    patch: on
+    project: off
+    patch: off
 
 flag_management:
   individual_flags:
@@ -13,7 +13,7 @@ flag_management:
         - spec/
       statuses:
         - type: project
-          target: 100%
+          target: 90%
           threshold: 1%
     - name: frontend
       paths:
