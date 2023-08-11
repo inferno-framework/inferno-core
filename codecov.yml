@@ -15,10 +15,16 @@ flag_management:
         - type: project
           target: 90%
           threshold: 1%
+        - type: patch
+          target: 90%
+          threshold: 1%
     - name: frontend
       paths:
         - client/
       statuses:
         - type: project
+          target: auto
+          threshold: 1%
+        - type: patch
           target: auto
           threshold: 1%
