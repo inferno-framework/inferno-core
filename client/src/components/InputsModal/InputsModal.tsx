@@ -219,9 +219,12 @@ const InputsModal: FC<InputsModalProps> = ({
 
   const serializeMap = (map: Map<string, unknown>): string => {
     const flatObj = inputs.map((requirement: TestInput) => {
+      // Parse out \n chars from descriptions
+      const parsedDescription = requirement.description?.replaceAll('\n', ' ').trim();
       if (requirement.type === 'oauth_credentials') {
         return {
           ...requirement,
+          description: parsedDescription,
           value: JSON.parse(
             (map.get(requirement.name) as string) || '{ "access_token": "" }'
           ) as OAuthCredentials,
@@ -233,13 +236,20 @@ const InputsModal: FC<InputsModalProps> = ({
             : '';
         return {
           ...requirement,
+          description: parsedDescription,
           value: map.get(requirement.name) || requirement.default || firstVal,
         };
       } else {
-        return { ...requirement, value: map.get(requirement.name) || '' };
+        return {
+          ...requirement,
+          description: parsedDescription,
+          value: map.get(requirement.name) || '',
+        };
       }
     });
-    return inputType === 'JSON' ? JSON.stringify(flatObj, null, 3) : YAML.dump(flatObj);
+    return inputType === 'JSON'
+      ? JSON.stringify(flatObj, null, 2)
+      : YAML.dump(flatObj, { lineWidth: -1 });
   };
 
   const parseSerialChanges = (changes: string): TestInput[] | undefined => {
@@ -298,7 +308,7 @@ const InputsModal: FC<InputsModalProps> = ({
       </DialogTitle>
       <DialogContent>
         <main>
-          <DialogContentText component="div">
+          <DialogContentText component="div" style={{ wordBreak: 'break-word' }}>
             <ReactMarkdown>
               {instructions +
                 (inputType === 'Field'
