@@ -187,6 +187,27 @@ module Inferno
           "#{location_prefix}: #{location}: #{issue&.details&.text}"
         end
 
+        def wrap_resource_for_hl7_wrapper(resource)
+          wrapped_resource = {
+              "cliContext" => {
+                  "targetVer" => "4.0.1",
+                  "sv" => "4.0.1",
+                  "igs" => [
+                      "hl7.fhir.us.core#4.0.0"
+                  ]
+              },
+              "filesToValidate" => [
+                  {
+                      "fileName" => "manually_entered_file.json",
+                      "fileContent" => resource.to_json,
+                      "fileType" => "json"
+                  }
+              ],
+              "sessionId" => "6135ea2b-d478-4eb4-adc1-7878e314394f"
+          }
+          wrapped_resource.to_json
+        end
+
         # Post a resource to the validation service for validating.
         #
         # @param resource [FHIR::Model]
@@ -195,23 +216,40 @@ module Inferno
         # @return [[Array(FHIR::OperationOutcome, Number)] the validation response and HTTP status code
         def validate(resource, profile_url, runnable)
           begin
+            request_body = wrap_resource_for_hl7_wrapper(resource)
+            # request_body = resource.source_contents
             response = Faraday.new(
               url,
-              params: { profile: profile_url }
-            ).post('validate', resource.source_contents)
+              # params: { profile: profile_url }
+            ).post('validate', request_body, :content_type => 'application/json')
           rescue StandardError => e
             runnable.add_message('error', e.message)
             raise Inferno::Exceptions::ErrorInValidatorException, "Unable to connect to validator at #{url}."
           end
+
+          puts response.body
+
           outcome = operation_outcome_from_validator_response(response.body, runnable)
 
           [outcome, response.status]
         end
 
+        def operation_outcome_from_hl7_wrapped_response(response)
+          res = JSON.parse(response)
+          # assume for now that one resource -> one request
+          issues = res['outcomes'][0]['issues']&.map do |i|
+            # puts i
+            { severity: i['level'].downcase, expression: i['location'], details: { :text => i['message'] } }
+          end
+          # this is circuitous, ideally we would map this response directly to message_hashes
+          FHIR::OperationOutcome.new(issue: issues)
+        end
+
         # @private
         def operation_outcome_from_validator_response(response, runnable)
           if response.start_with? '{'
-            FHIR::OperationOutcome.new(JSON.parse(response))
+            # FHIR::OperationOutcome.new(JSON.parse(response))
+            operation_outcome_from_hl7_wrapped_response(response)
           else
             runnable.add_message('error', "Validator Response: #{response}")
             raise Inferno::Exceptions::ErrorInValidatorException,
