@@ -1,3 +1,12 @@
+# 0.4.18
+* Fix a bug which could prevent some test results from appearing until the page
+  is reloaded.
+* Add `vread`, `update`, `patch`, `history`, and system `search` interactions to
+  the FHIR DSL.
+* Fix a JSON parse error which could occur for OAuth Credentials inputs when
+  switching between the normal input view and the JSON view.
+* Make minor visual improvements.
+
 # 0.4.17
 * Fix a bug which prevented the swagger documentation from loading when no query
   parameters were provided.
