@@ -63,7 +63,7 @@ const InputsModal: FC<InputsModalProps> = ({
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = React.useState<boolean>(true);
-  const [edited, setEdited] = React.useState<boolean>(false);
+  const [inputsEdited, setInputsEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
   const [baseInput, setBaseInput] = React.useState<string>('');
@@ -196,7 +196,7 @@ const InputsModal: FC<InputsModalProps> = ({
 
   const handleSetInputsMap = (inputsMap: Map<string, unknown>, edited?: boolean) => {
     setInputsMap(inputsMap);
-    setEdited(edited !== false); // explicit check for false values
+    setInputsEdited(inputsEdited || edited !== false); // explicit check for false values
   };
 
   const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -278,7 +278,6 @@ const InputsModal: FC<InputsModalProps> = ({
   };
 
   const handleSerialChanges = (serialChanges: string) => {
-    setEdited(true);
     const parsedChanges = parseSerialChanges(serialChanges);
     if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
       parsedChanges.forEach((change: TestInput) => {
@@ -286,7 +285,7 @@ const InputsModal: FC<InputsModalProps> = ({
           inputsMap.set(change.name, change.value || '');
       });
     }
-    setInputsMap(new Map(inputsMap));
+    handleSetInputsMap(new Map(inputsMap), true);
   };
 
   const closeModal = (edited = false) => {
@@ -303,7 +302,7 @@ const InputsModal: FC<InputsModalProps> = ({
       fullWidth
       maxWidth="sm"
       onKeyDown={handleSubmitKeydown}
-      onClose={() => closeModal(edited)}
+      onClose={() => closeModal(inputsEdited)}
     >
       <DialogTitle component="div">
         <Box display="flex" justifyContent="space-between">
