@@ -13,7 +13,9 @@ import {
   Typography,
   Paper,
   Box,
+  IconButton,
 } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
 import YAML from 'js-yaml';
 import { useSnackbar } from 'notistack';
@@ -23,6 +25,7 @@ import InputCheckboxGroup from './InputCheckboxGroup';
 import InputRadioGroup from './InputRadioGroup';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
+import CustomTooltip from '../_common/CustomTooltip';
 import useStyles from './styles';
 
 export interface InputsModalProps {
@@ -303,9 +306,24 @@ const InputsModal: FC<InputsModalProps> = ({
       onClose={() => closeModal(edited)}
     >
       <DialogTitle component="div">
-        <Typography component="h1" variant="h6">
-          {title}
-        </Typography>
+        <Box display="flex" justifyContent="space-between">
+          <Typography component="h1" variant="h6">
+            {title}
+          </Typography>
+          <CustomTooltip title="Cancel - Inputs will be lost">
+            <IconButton
+              onClick={() => closeModal()}
+              aria-label="cancel"
+              sx={{
+                position: 'absolute',
+                right: 8,
+                top: 8,
+              }}
+            >
+              <Close />
+            </IconButton>
+          </CustomTooltip>
+        </Box>
       </DialogTitle>
       <DialogContent>
         <main>
