@@ -275,6 +275,7 @@ const InputsModal: FC<InputsModalProps> = ({
   };
 
   const handleSerialChanges = (serialChanges: string) => {
+    setEdited(true);
     const parsedChanges = parseSerialChanges(serialChanges);
     if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
       parsedChanges.forEach((change: TestInput) => {
