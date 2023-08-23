@@ -69,7 +69,13 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
     if (request.result_id !== resultId) {
       return (
         <CustomTooltip title="This request was performed in another test and the result is used by this test">
-          <Input fontSize="small" sx={{ pr: 1 }} />
+          <Input
+            color="secondary"
+            fontSize="small"
+            tabIndex={0}
+            aria-hidden="false"
+            sx={{ pr: 1 }}
+          />
         </CustomTooltip>
       );
     }
@@ -150,8 +156,10 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
               </Typography>
             </CustomTooltip>
             <CustomTooltip
-              open={copySuccess[request.url as keyof typeof copySuccess] || false}
-              title="Text copied!"
+              // open={copySuccess[request.url as keyof typeof copySuccess] || false}
+              title={
+                copySuccess[request.url as keyof typeof copySuccess] ? 'Text copied!' : 'Copy text'
+              }
               sx={
                 view === 'report'
                   ? {
