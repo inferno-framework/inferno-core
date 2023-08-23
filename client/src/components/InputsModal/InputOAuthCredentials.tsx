@@ -35,6 +35,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
+  const [hasBeenModified, setHasBeenModified] = React.useState({});
 
   // Convert OAuth string to Object
   // OAuth should be an Object while in this component but should be converted to a string
@@ -100,7 +101,11 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
         <TextField
           disabled={requirement.locked}
           required={field.required}
-          error={field.required && !oAuthCredentials[field.name as keyof OAuthCredentials]}
+          error={
+            hasBeenModified[field.name as keyof typeof hasBeenModified] &&
+            field.required &&
+            !oAuthCredentials[field.name as keyof OAuthCredentials]
+          }
           id={`requirement${index}_${field.name}`}
           label={fieldLabel}
           helperText={requirement.description}
@@ -108,6 +113,11 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           className={classes.inputField}
           variant="standard"
           fullWidth
+          onBlur={(e) => {
+            if (e.currentTarget === e.target) {
+              setHasBeenModified({ ...hasBeenModified, [field.name]: true });
+            }
+          }}
           onChange={(event) => {
             const value = event.target.value;
             oAuthCredentials[field.name as keyof OAuthCredentials] = value;

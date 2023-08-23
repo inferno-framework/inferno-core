@@ -26,6 +26,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
+  const [hasBeenModified, setHasBeenModified] = React.useState(false);
 
   const [values, setValues] = React.useState<CheckboxValues>(() => {
     // Default values should be in form ['value'] where all values are checked
@@ -75,6 +76,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
     inputsMap.set(requirement.name, transformValuesToJSONArray(newValues));
     setInputsMap(new Map(inputsMap));
     setValues(newValues);
+    setHasBeenModified(true);
   };
 
   // Convert map from item name to checked status back to array of checked values
@@ -93,10 +95,12 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
         component="fieldset"
         id={`requirement${index}_input`}
         disabled={requirement.locked}
+        required={!requirement.optional}
+        error={hasBeenModified && !requirement.optional && inputsMap.get(requirement.name) === '[]'}
         fullWidth
         className={classes.inputField}
       >
-        <FormLabel required={!requirement.optional} className={classes.inputLabel}>
+        <FormLabel className={classes.inputLabel}>
           <FieldLabel requirement={requirement} />
         </FormLabel>
         {requirement.description && (
@@ -110,6 +114,11 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
                   size="small"
                   name={option.value}
                   checked={values[option.value as keyof CheckboxValues] || false}
+                  onBlur={(e) => {
+                    if (e.currentTarget === e.target) {
+                      setHasBeenModified(true);
+                    }
+                  }}
                   onChange={handleChange}
                 />
               }

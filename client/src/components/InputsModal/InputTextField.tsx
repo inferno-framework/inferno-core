@@ -34,11 +34,15 @@ const InputTextField: FC<InputTextFieldProps> = ({
         label={<FieldLabel requirement={requirement} />}
         helperText={requirement.description}
         value={inputsMap.get(requirement.name)}
+        onBlur={(e) => {
+          if (e.currentTarget === e.target) {
+            setHasBeenModified(true);
+          }
+        }}
         onChange={(event) => {
           const value = event.target.value;
           inputsMap.set(requirement.name, value);
           setInputsMap(new Map(inputsMap));
-          setHasBeenModified(true);
         }}
         InputLabelProps={{ shrink: true }}
         FormHelperTextProps={{

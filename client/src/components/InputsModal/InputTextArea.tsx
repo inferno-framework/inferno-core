@@ -31,11 +31,15 @@ const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, 
         value={inputsMap.get(requirement.name)}
         multiline
         rows={4}
+        onBlur={(e) => {
+          if (e.currentTarget === e.target) {
+            setHasBeenModified(true);
+          }
+        }}
         onChange={(event) => {
           const value = event.target.value;
           inputsMap.set(requirement.name, value);
           setInputsMap(new Map(inputsMap));
-          setHasBeenModified(true);
         }}
         FormHelperTextProps={{
           sx: { '&.Mui-disabled': { color: lightTheme.palette.common.grayDark } },
