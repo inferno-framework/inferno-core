@@ -156,7 +156,6 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
               </Typography>
             </CustomTooltip>
             <CustomTooltip
-              // open={copySuccess[request.url as keyof typeof copySuccess] || false}
               title={
                 copySuccess[request.url as keyof typeof copySuccess] ? 'Text copied!' : 'Copy text'
               }
