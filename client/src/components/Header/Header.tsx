@@ -8,6 +8,7 @@ import { useAppStore } from '~/store/app';
 import useStyles from './styles';
 import icon from '~/images/inferno_icon.png';
 import lightTheme from '~/styles/theme';
+import CustomTooltip from '../_common/CustomTooltip';
 
 export interface HeaderProps {
   suiteId?: string;
@@ -63,7 +64,13 @@ const Header: FC<HeaderProps> = ({
           </IconButton>
         ) : (
           <Link to="/" aria-label="Inferno Home">
-            <img src={getStaticPath(icon as string)} alt="Inferno logo" className={classes.logo} />
+            <CustomTooltip title="Return to Suite Selection">
+              <img
+                src={getStaticPath(icon as string)}
+                alt="Inferno logo"
+                className={classes.logo}
+              />
+            </CustomTooltip>
           </Link>
         )}
 
