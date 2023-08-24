@@ -9,7 +9,7 @@ export interface InputTextAreaProps {
   requirement: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
-  setInputsMap: (map: Map<string, unknown>) => void;
+  setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
 const InputTextArea: FC<InputTextAreaProps> = ({ requirement, index, inputsMap, setInputsMap }) => {
