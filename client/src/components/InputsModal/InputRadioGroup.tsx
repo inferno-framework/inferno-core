@@ -16,7 +16,7 @@ export interface InputRadioGroupProps {
   requirement: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
-  setInputsMap: (map: Map<string, unknown>) => void;
+  setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
 const InputRadioGroup: FC<InputRadioGroupProps> = ({

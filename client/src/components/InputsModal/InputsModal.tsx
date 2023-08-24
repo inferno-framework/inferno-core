@@ -13,7 +13,9 @@ import {
   Typography,
   Paper,
   Box,
+  IconButton,
 } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
 import YAML from 'js-yaml';
 import { useSnackbar } from 'notistack';
@@ -23,6 +25,7 @@ import InputCheckboxGroup from './InputCheckboxGroup';
 import InputRadioGroup from './InputRadioGroup';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
+import CustomTooltip from '../_common/CustomTooltip';
 import useStyles from './styles';
 
 export interface InputsModalProps {
@@ -60,6 +63,7 @@ const InputsModal: FC<InputsModalProps> = ({
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = React.useState<boolean>(true);
+  const [inputsEdited, setInputsEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
   const [baseInput, setBaseInput] = React.useState<string>('');
@@ -121,7 +125,7 @@ const InputsModal: FC<InputsModalProps> = ({
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
             key={`input-${index}`}
           />
         );
@@ -131,7 +135,9 @@ const InputsModal: FC<InputsModalProps> = ({
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
+            setInputsMap={(newInputsMap, editStatus) =>
+              handleSetInputsMap(newInputsMap, editStatus)
+            }
             key={`input-${index}`}
           />
         );
@@ -141,7 +147,7 @@ const InputsModal: FC<InputsModalProps> = ({
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
             key={`input-${index}`}
           />
         );
@@ -151,7 +157,7 @@ const InputsModal: FC<InputsModalProps> = ({
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
             key={`input-${index}`}
           />
         );
@@ -161,7 +167,7 @@ const InputsModal: FC<InputsModalProps> = ({
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
             key={`input-${index}`}
           />
         );
@@ -186,6 +192,11 @@ const InputsModal: FC<InputsModalProps> = ({
 
   const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
     if (value !== null) setInputType(value);
+  };
+
+  const handleSetInputsMap = (inputsMap: Map<string, unknown>, edited?: boolean) => {
+    setInputsMap(inputsMap);
+    setInputsEdited(inputsEdited || edited !== false); // explicit check for false values
   };
 
   const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -274,12 +285,15 @@ const InputsModal: FC<InputsModalProps> = ({
           inputsMap.set(change.name, change.value || '');
       });
     }
-    setInputsMap(new Map(inputsMap));
+    handleSetInputsMap(new Map(inputsMap), true);
   };
 
-  const closeModal = () => {
-    setOpen(false);
-    hideModal();
+  const closeModal = (edited = false) => {
+    // For external clicks, check if inputs have been edited first
+    if (!edited) {
+      setOpen(false);
+      hideModal();
+    }
   };
 
   return (
@@ -288,12 +302,27 @@ const InputsModal: FC<InputsModalProps> = ({
       fullWidth
       maxWidth="sm"
       onKeyDown={handleSubmitKeydown}
-      onClose={closeModal}
+      onClose={() => closeModal(inputsEdited)}
     >
       <DialogTitle component="div">
-        <Typography component="h1" variant="h6">
-          {title}
-        </Typography>
+        <Box display="flex" justifyContent="space-between">
+          <Typography component="h1" variant="h6">
+            {title}
+          </Typography>
+          <CustomTooltip title="Cancel - Inputs will be lost">
+            <IconButton
+              onClick={() => closeModal()}
+              aria-label="cancel"
+              sx={{
+                position: 'absolute',
+                right: 8,
+                top: 8,
+              }}
+            >
+              <Close />
+            </IconButton>
+          </CustomTooltip>
+        </Box>
       </DialogTitle>
       <DialogContent>
         <main>
@@ -366,7 +395,12 @@ const InputsModal: FC<InputsModalProps> = ({
           </ToggleButtonGroup>
         </Paper>
         <Box>
-          <Button color="secondary" data-testid="cancel-button" onClick={closeModal} sx={{ mr: 1 }}>
+          <Button
+            color="secondary"
+            data-testid="cancel-button"
+            onClick={() => closeModal()}
+            sx={{ mr: 1 }}
+          >
             Cancel
           </Button>
           <Button
