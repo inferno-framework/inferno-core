@@ -16,7 +16,7 @@ export interface InputCheckboxGroupProps {
   requirement: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
-  setInputsMap: (map: Map<string, unknown>) => void;
+  setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
 const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
@@ -64,7 +64,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
   useEffect(() => {
     // Make sure starting values get set in inputsMap
     inputsMap.set(requirement.name, transformValuesToJSONArray(values));
-    setInputsMap(new Map(inputsMap));
+    setInputsMap(new Map(inputsMap), false);
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
