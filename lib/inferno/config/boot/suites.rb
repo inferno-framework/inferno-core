@@ -30,12 +30,11 @@ Inferno::Application.boot(:suites) do
       if descendant.id.blank?
         raise StandardError, 'Error initializing test suites: custom test suite ID cannot be blank'
       end
-      # When ID not assigned in custom test suites, Runnable.id will return default ID 
-      #equal to the custom test suite's parent class name
+      # When ID not assigned in custom test suites, Runnable.id will return default ID
+      # equal to the custom test suite's parent class name
       if descendant.id == 'Inferno::Entities::TestSuite'
         raise StandardError, 'Error initializing test suites: custom test suite ID is not set'
       end
     end
-    
   end
 end
