@@ -65,7 +65,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
             {request?.url}
           </Box>
           {request?.url && (
-            <CustomTooltip open={copySuccess} title="Text copied!">
+            <CustomTooltip title={copySuccess ? 'Text copied!' : 'Copy text'}>
               <Box pr={1}>
                 <IconButton color="secondary" onClick={() => void copyTextClick(request.url)}>
                   <ContentCopy fontSize="inherit" />
