@@ -11,7 +11,11 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   Typography,
+  Paper,
+  Box,
+  IconButton,
 } from '@mui/material';
+import { Close } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
 import YAML from 'js-yaml';
 import { useSnackbar } from 'notistack';
@@ -21,6 +25,7 @@ import InputCheckboxGroup from './InputCheckboxGroup';
 import InputRadioGroup from './InputRadioGroup';
 import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
+import CustomTooltip from '../_common/CustomTooltip';
 import useStyles from './styles';
 
 export interface InputsModalProps {
@@ -58,6 +63,7 @@ const InputsModal: FC<InputsModalProps> = ({
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = React.useState<boolean>(true);
+  const [inputsEdited, setInputsEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
   const [baseInput, setBaseInput] = React.useState<string>('');
@@ -79,6 +85,7 @@ const InputsModal: FC<InputsModalProps> = ({
         enqueueSnackbar(`Checkbox input incorrectly formatted: ${errorMessage}`, {
           variant: 'error',
         });
+        return true;
       }
     }
 
@@ -87,7 +94,7 @@ const InputsModal: FC<InputsModalProps> = ({
     if (input.type === 'oauth_credentials') {
       try {
         const oAuthJSON = JSON.parse(
-          (inputsMap.get(input.name) as string) || '{}'
+          (inputsMap.get(input.name) as string) || '{ "access_token": null }'
         ) as OAuthCredentials;
         const accessTokenIsEmpty = oAuthJSON.access_token === '';
         const refreshIsEmpty =
@@ -99,10 +106,72 @@ const InputsModal: FC<InputsModalProps> = ({
         enqueueSnackbar(`OAuth credentials incorrectly formatted: ${errorMessage}`, {
           variant: 'error',
         });
+        return true;
       }
     }
 
     return (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput;
+  });
+
+  const instructions =
+    inputInstructions ||
+    `Please fill out required fields in order to run the ${runnableTypeReadable(runnableType)}.`;
+
+  const inputFields = inputs.map((requirement: TestInput, index: number) => {
+    switch (requirement.type) {
+      case 'oauth_credentials':
+        return (
+          <InputOAuthCredentials
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
+            key={`input-${index}`}
+          />
+        );
+      case 'checkbox':
+        return (
+          <InputCheckboxGroup
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={(newInputsMap, editStatus) =>
+              handleSetInputsMap(newInputsMap, editStatus)
+            }
+            key={`input-${index}`}
+          />
+        );
+      case 'radio':
+        return (
+          <InputRadioGroup
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
+            key={`input-${index}`}
+          />
+        );
+      case 'textarea':
+        return (
+          <InputTextArea
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
+            key={`input-${index}`}
+          />
+        );
+      default:
+        return (
+          <InputTextField
+            requirement={requirement}
+            index={index}
+            inputsMap={inputsMap}
+            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
+            key={`input-${index}`}
+          />
+        );
+    }
   });
 
   useEffect(() => {
@@ -120,6 +189,15 @@ const InputsModal: FC<InputsModalProps> = ({
     setInvalidInput(false);
     setBaseInput(serializeMap(inputsMap));
   }, [inputType, open]);
+
+  const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
+    if (value !== null) setInputType(value);
+  };
+
+  const handleSetInputsMap = (inputsMap: Map<string, unknown>, edited?: boolean) => {
+    setInputsMap(inputsMap);
+    setInputsEdited(inputsEdited || edited !== false); // explicit check for false values
+  };
 
   const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (
@@ -142,71 +220,17 @@ const InputsModal: FC<InputsModalProps> = ({
     closeModal();
   };
 
-  const instructions =
-    inputInstructions ||
-    `Please fill out required fields in order to run the ${runnableTypeReadable(runnableType)}.`;
-
-  const inputFields = inputs.map((requirement: TestInput, index: number) => {
-    switch (requirement.type) {
-      case 'oauth_credentials':
-        return (
-          <InputOAuthCredentials
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
-            key={`input-${index}`}
-          />
-        );
-      case 'checkbox':
-        return (
-          <InputCheckboxGroup
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
-            key={`input-${index}`}
-          />
-        );
-      case 'radio':
-        return (
-          <InputRadioGroup
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
-            key={`input-${index}`}
-          />
-        );
-      case 'textarea':
-        return (
-          <InputTextArea
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
-            key={`input-${index}`}
-          />
-        );
-      default:
-        return (
-          <InputTextField
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={setInputsMap}
-            key={`input-${index}`}
-          />
-        );
-    }
-  });
-
   const serializeMap = (map: Map<string, unknown>): string => {
     const flatObj = inputs.map((requirement: TestInput) => {
+      // Parse out \n chars from descriptions
+      const parsedDescription = requirement.description?.replaceAll('\n', ' ').trim();
       if (requirement.type === 'oauth_credentials') {
         return {
           ...requirement,
-          value: JSON.parse((map.get(requirement.name) as string) || '{}') as OAuthCredentials,
+          description: parsedDescription,
+          value: JSON.parse(
+            (map.get(requirement.name) as string) || '{ "access_token": "" }'
+          ) as OAuthCredentials,
         };
       } else if (requirement.type === 'radio') {
         const firstVal =
@@ -215,17 +239,20 @@ const InputsModal: FC<InputsModalProps> = ({
             : '';
         return {
           ...requirement,
+          description: parsedDescription,
           value: map.get(requirement.name) || requirement.default || firstVal,
         };
       } else {
-        return { ...requirement, value: map.get(requirement.name) || '' };
+        return {
+          ...requirement,
+          description: parsedDescription,
+          value: map.get(requirement.name) || '',
+        };
       }
     });
-    return inputType === 'JSON' ? JSON.stringify(flatObj, null, 3) : YAML.dump(flatObj);
-  };
-
-  const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
-    if (value !== null) setInputType(value);
+    return inputType === 'JSON'
+      ? JSON.stringify(flatObj, null, 2)
+      : YAML.dump(flatObj, { lineWidth: -1 });
   };
 
   const parseSerialChanges = (changes: string): TestInput[] | undefined => {
@@ -236,6 +263,12 @@ const InputsModal: FC<InputsModalProps> = ({
       } else {
         parsed = YAML.load(changes) as TestInput[];
       }
+      // Convert OAuth input values to strings
+      parsed.forEach((input) => {
+        if (input.type === 'oauth_credentials') {
+          input.value = JSON.stringify(input.value);
+        }
+      });
       setInvalidInput(false);
       return parsed;
     } catch (e) {
@@ -252,12 +285,15 @@ const InputsModal: FC<InputsModalProps> = ({
           inputsMap.set(change.name, change.value || '');
       });
     }
-    setInputsMap(new Map(inputsMap));
+    handleSetInputsMap(new Map(inputsMap), true);
   };
 
-  const closeModal = () => {
-    setOpen(false);
-    hideModal();
+  const closeModal = (edited = false) => {
+    // For external clicks, check if inputs have been edited first
+    if (!edited) {
+      setOpen(false);
+      hideModal();
+    }
   };
 
   return (
@@ -266,16 +302,31 @@ const InputsModal: FC<InputsModalProps> = ({
       fullWidth
       maxWidth="sm"
       onKeyDown={handleSubmitKeydown}
-      onClose={closeModal}
+      onClose={() => closeModal(inputsEdited)}
     >
       <DialogTitle component="div">
-        <Typography component="h1" variant="h6">
-          {title}
-        </Typography>
+        <Box display="flex" justifyContent="space-between">
+          <Typography component="h1" variant="h6">
+            {title}
+          </Typography>
+          <CustomTooltip title="Cancel - Inputs will be lost">
+            <IconButton
+              onClick={() => closeModal()}
+              aria-label="cancel"
+              sx={{
+                position: 'absolute',
+                right: 8,
+                top: 8,
+              }}
+            >
+              <Close />
+            </IconButton>
+          </CustomTooltip>
+        </Box>
       </DialogTitle>
       <DialogContent>
         <main>
-          <DialogContentText component="div">
+          <DialogContentText component="div" style={{ wordBreak: 'break-word' }}>
             <ReactMarkdown>
               {instructions +
                 (inputType === 'Field'
@@ -288,65 +339,80 @@ const InputsModal: FC<InputsModalProps> = ({
           ) : (
             <TextField
               id={`${inputType}-serial-input`}
-              fullWidth
-              multiline
               minRows={4}
               key={baseInput}
               error={invalidInput}
               defaultValue={baseInput}
-              data-testid="serial-input"
-              className={classes.serialInput}
-              onChange={(e) => handleSerialChanges(e.target.value)}
               label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
+              InputProps={{
+                classes: {
+                  input: classes.serialInput,
+                },
+              }}
+              fullWidth
+              multiline
+              data-testid="serial-input"
+              onChange={(e) => handleSerialChanges(e.target.value)}
             />
           )}
         </main>
       </DialogContent>
       <DialogActions className={classes.dialogActions}>
-        <ToggleButtonGroup
-          exclusive
-          role="group"
-          color="primary"
-          size="small"
-          value={inputType}
-          onChange={handleInputTypeChange}
-          className={classes.toggleButtonGroup}
-        >
-          <ToggleButton
-            value="Field"
-            disabled={invalidInput}
-            data-testid="field-button"
-            className={classes.toggleButton}
+        <Paper elevation={0} className={classes.toggleButtonGroupContainer}>
+          <ToggleButtonGroup
+            exclusive
+            role="group"
+            color="secondary"
+            size="small"
+            value={inputType}
+            onChange={handleInputTypeChange}
+            className={classes.toggleButtonGroup}
           >
-            Field
-          </ToggleButton>
-          <ToggleButton
-            value="JSON"
-            disabled={invalidInput}
-            data-testid="json-button"
-            className={classes.toggleButton}
+            <ToggleButton
+              value="Field"
+              disabled={invalidInput}
+              data-testid="field-button"
+              className={classes.toggleButton}
+            >
+              Field
+            </ToggleButton>
+            <ToggleButton
+              value="JSON"
+              disabled={invalidInput}
+              data-testid="json-button"
+              className={classes.toggleButton}
+            >
+              JSON
+            </ToggleButton>
+            <ToggleButton
+              value="YAML"
+              disabled={invalidInput}
+              data-testid="yaml-button"
+              className={classes.toggleButton}
+            >
+              YAML
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Paper>
+        <Box>
+          <Button
+            color="secondary"
+            data-testid="cancel-button"
+            onClick={() => closeModal()}
+            sx={{ mr: 1 }}
           >
-            JSON
-          </ToggleButton>
-          <ToggleButton
-            value="YAML"
-            disabled={invalidInput}
-            data-testid="yaml-button"
-            className={classes.toggleButton}
+            Cancel
+          </Button>
+          <Button
+            color="secondary"
+            variant="contained"
+            disableElevation
+            onClick={submitClicked}
+            disabled={missingRequiredInput || invalidInput}
           >
-            YAML
-          </ToggleButton>
-        </ToggleButtonGroup>
-        <Button data-testid="cancel-button" className={classes.inputAction} onClick={closeModal}>
-          Cancel
-        </Button>
-        <Button
-          onClick={submitClicked}
-          disabled={missingRequiredInput || invalidInput}
-          className={classes.inputAction}
-        >
-          Submit
-        </Button>
+            Submit
+          </Button>
+        </Box>
       </DialogActions>
     </Dialog>
   );

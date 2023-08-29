@@ -1,7 +1,9 @@
-import { Badge, SvgIconTypeMap, Tooltip } from '@mui/material';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
 import React, { FC } from 'react';
+import { Badge, SvgIconTypeMap } from '@mui/material';
+import { OverridableComponent } from '@mui/material/OverridableComponent';
 import clsx from 'clsx';
+import CustomTooltip from '~/components/_common/CustomTooltip';
+
 import useStyles from './styles';
 
 type ProblemBadgeProps = {
@@ -57,7 +59,7 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
         }
       }}
     >
-      <Tooltip describeChild title={description}>
+      <CustomTooltip describeChild title={description}>
         <Icon
           aria-label={`View ${description}`}
           aria-hidden={false}
@@ -74,7 +76,7 @@ const ProblemBadge: FC<ProblemBadgeProps> = ({
             }
           }}
         />
-      </Tooltip>
+      </CustomTooltip>
     </Badge>
   );
 };

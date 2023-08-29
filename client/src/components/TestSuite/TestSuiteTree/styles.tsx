@@ -22,7 +22,7 @@ export default makeStyles()((theme: Theme) => ({
     display: 'inline',
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: theme.palette.common.grayDarkest,
+    color: theme.palette.common.grayDarker,
   },
   testSuiteTreePanel: {
     display: 'flex',
@@ -45,9 +45,9 @@ export default makeStyles()((theme: Theme) => ({
     padding: '8px 20px !important',
   },
   treeItemTopBorder: {
-    borderTop: `1px solid ${theme.palette.common.grayLighter}`,
+    borderTop: `1px solid ${theme.palette.divider}`,
   },
   treeItemBottomBorder: {
-    borderBottom: `1px solid ${theme.palette.common.grayLighter}`,
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
 }));

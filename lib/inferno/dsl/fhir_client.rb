@@ -163,6 +163,78 @@ module Inferno
         end
       end
 
+      # Perform a FHIR vread interaction.
+      #
+      # @param resource_type [String, Symbol, Class]
+      # @param id [String]
+      # @param version_id [String]
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @return [Inferno::Entities::Request]
+      def fhir_vread(resource_type, id, version_id, client: :default, name: nil)
+        store_request_and_refresh_token(fhir_client(client), name) do
+          tcp_exception_handler do
+            fhir_client(client).vread(fhir_class_from_resource_type(resource_type), id, version_id)
+          end
+        end
+      end
+
+      # Perform a FHIR update interaction.
+      #
+      # @param resource [FHIR::Model]
+      # @param id [String]
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @return [Inferno::Entities::Request]
+      def fhir_update(resource, id, client: :default, name: nil)
+        store_request_and_refresh_token(fhir_client(client), name) do
+          tcp_exception_handler do
+            fhir_client(client).update(resource, id)
+          end
+        end
+      end
+
+      # Perform a FHIR patch interaction.
+      #
+      # @param resource_type [String, Symbol, Class]
+      # @param id [String]
+      # @param patchset [Array]
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @return [Inferno::Entities::Request]
+      def fhir_patch(resource_type, id, patchset, client: :default, name: nil)
+        store_request_and_refresh_token(fhir_client(client), name) do
+          tcp_exception_handler do
+            fhir_client(client).partial_update(fhir_class_from_resource_type(resource_type), id, patchset)
+          end
+        end
+      end
+
+      # Perform a FHIR history interaction.
+      #
+      # @param resource_type [String, Symbol, Class]
+      # @param id [String]
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @return [Inferno::Entities::Request]
+      def fhir_history(resource_type = nil, id = nil, client: :default, name: nil)
+        store_request_and_refresh_token(fhir_client(client), name) do
+          tcp_exception_handler do
+            if id
+              fhir_client(client).resource_instance_history(fhir_class_from_resource_type(resource_type), id)
+            elsif resource_type
+              fhir_client(client).resource_history(fhir_class_from_resource_type(resource_type))
+            else
+              fhir_client(client).all_history
+            end
+          end
+        end
+      end
+
       # Perform a FHIR search interaction.
       #
       # @param resource_type [String, Symbol, Class]
@@ -172,7 +244,7 @@ module Inferno
       #   other tests
       # @param search_method [Symbol] Use `:post` to search via POST
       # @return [Inferno::Entities::Request]
-      def fhir_search(resource_type, client: :default, params: {}, name: nil, search_method: :get)
+      def fhir_search(resource_type = nil, client: :default, params: {}, name: nil, search_method: :get)
         search =
           if search_method == :post
             { body: params }
@@ -182,8 +254,12 @@ module Inferno
 
         store_request_and_refresh_token(fhir_client(client), name) do
           tcp_exception_handler do
-            fhir_client(client)
-              .search(fhir_class_from_resource_type(resource_type), { search: })
+            if resource_type
+              fhir_client(client)
+                .search(fhir_class_from_resource_type(resource_type), { search: })
+            else
+              fhir_client(client).search_all({ search: })
+            end
           end
         end
       end

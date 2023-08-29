@@ -1,6 +1,7 @@
+import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
 
-export default makeStyles()(() => ({
+export default makeStyles()((theme: Theme) => ({
   optionsList: {
     display: 'flex',
     flexDirection: 'column',
@@ -10,6 +11,6 @@ export default makeStyles()(() => ({
     overflow: 'auto',
   },
   selectedItem: {
-    backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
+    backgroundColor: `${theme.palette.common.orangeLighter} !important`,
   },
 }));

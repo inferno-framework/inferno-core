@@ -16,7 +16,7 @@ export interface InputRadioGroupProps {
   requirement: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
-  setInputsMap: (map: Map<string, unknown>) => void;
+  setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
 const InputRadioGroup: FC<InputRadioGroupProps> = ({
@@ -48,6 +48,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
         id={`requirement${index}_input`}
         disabled={requirement.locked}
         fullWidth
+        className={classes.inputField}
       >
         <FormLabel required={!requirement.optional} className={classes.inputLabel}>
           <FieldLabel requirement={requirement} />

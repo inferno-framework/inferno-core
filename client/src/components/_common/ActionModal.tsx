@@ -25,7 +25,13 @@ const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTestRu
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={cancelTestRun} data-testid="cancel-button">
+        <Button
+          color="secondary"
+          variant="contained"
+          disableElevation
+          onClick={cancelTestRun}
+          data-testid="cancel-button"
+        >
           Cancel
         </Button>
       </DialogActions>

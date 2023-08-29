@@ -1,13 +1,21 @@
-import { SnackbarProvider } from 'notistack';
 import React, { FC, useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
+import { Theme } from '@mui/material/styles';
+import { SnackbarProvider } from 'notistack';
 import { getTestSuites } from '~/api/TestSuitesApi';
 import { router } from '~/components/App/Router';
 import { TestSuite } from '~/models/testSuiteModels';
 import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
 import SnackbarCloseButton from 'components/_common/SnackbarCloseButton';
-import lightTheme from '~/styles/theme';
+import { makeStyles } from 'tss-react/mui';
+
+const useStyles = makeStyles<{ height: string }>()((theme: Theme, { height }) => ({
+  container: {
+    marginBottom: height,
+    zIndex: `${theme.zIndex.snackbar} !important`,
+  },
+}));
 
 const App: FC<unknown> = () => {
   const footerHeight = useAppStore((state) => state.footerHeight);
@@ -17,6 +25,10 @@ const App: FC<unknown> = () => {
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const setWindowIsSmall = useAppStore((state) => state.setWindowIsSmall);
   const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
+
+  const { classes } = useStyles({
+    height: testRunInProgress ? `${72 + footerHeight}px` : `${footerHeight}px`,
+  });
 
   // Update UI on window resize
   useEffect(() => {
@@ -57,9 +69,8 @@ const App: FC<unknown> = () => {
         horizontal: 'right',
       }}
       action={(id) => <SnackbarCloseButton id={id} />}
-      style={{
-        marginBottom: testRunInProgress ? `${72 + footerHeight}px` : `${footerHeight}px`,
-        zIndex: lightTheme.zIndex.snackbar,
+      classes={{
+        containerAnchorOriginBottomRight: classes.container,
       }}
     >
       <RouterProvider router={router(testSuites)} />

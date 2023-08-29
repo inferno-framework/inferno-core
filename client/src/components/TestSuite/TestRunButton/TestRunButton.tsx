@@ -1,8 +1,9 @@
 import React, { FC } from 'react';
-import { Button, Tooltip } from '@mui/material';
+import { Button } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import { TestGroup, Runnable, RunnableType } from '~/models/testSuiteModels';
+import CustomTooltip from '~/components/_common/CustomTooltip';
 import lightTheme from '~/styles/theme';
 
 import { useAppStore } from '~/store/app';
@@ -46,7 +47,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
 
   // Custom icon button to resolve nested interactive control error
   const iconButton = (
-    <Tooltip describeChild title={`Run ${runnable.title}`}>
+    <CustomTooltip describeChild title={`Run ${runnable.title}`}>
       <PlayCircleIcon
         aria-label={`Run ${runnable.title}${
           testRunInProgress ? ' Disabled - Test Run in Progress' : ''
@@ -75,7 +76,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
               },
         }}
       />
-    </Tooltip>
+    </CustomTooltip>
   );
 
   if (!showRunButton) {
