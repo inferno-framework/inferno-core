@@ -76,45 +76,59 @@ RSpec.describe Inferno::DSL::FHIRClient do
   end
 
   describe '#body_to_path' do
-    p1 = FHIR::Parameters::Parameter.new
-    p1.name = 'Param1'
-    p1.valueBoolean = true
+    let(:primitive_param_bool) do ppb = FHIR::Parameters::Parameter.new
+      ppb.name="prim_param_bool"
+      ppb.valueBoolean=true
+      ppb
+    end
 
-    p2 = FHIR::Parameters::Parameter.new
-    p2.name = 'Param2'
-    p2.valueString = 'zyx'
+    let(:primitive_param_string) do pps = FHIR::Parameters::Parameter.new
+      pps.name = 'prim_param_string'
+      pps.valueString = 'xyz'
+      pps
+    end
 
-    p3 = FHIR::Parameters::Parameter.new
-    p3.name = 'non_prim_param'
+    let(:nonprimitive_param) do npp = FHIR::Parameters::Parameter.new
+      npp.name = 'non_prim_param'
+      ratio = FHIR::Ratio.new
+      ratio.numerator = FHIR::Quantity.new
+      ratio.denominator = FHIR::Quantity.new
+      npp.valueRatio = ratio
+      npp
+    end
 
-    p4 = FHIR::Parameters::Parameter.new
-    p4.name = 'resource_param'
-    p4.resource = FHIR::Patient.new
+    let(:resource_param) do rp = FHIR::Parameters::Parameter.new
+      rp.name = 'resource_param'
+      rp.resource = FHIR::Patient.new
+      rp
+    end
 
-    ratio = FHIR::Ratio.new
-    ratio.numerator = FHIR::Quantity.new
-    ratio.denominator = FHIR::Quantity.new
-    p3.valueRatio = ratio
+    before do
+      primitive_param_bool
+      primitive_param_string
+      nonprimitive_param
+      resource_param
+    end
 
     it 'converts primitives into a path query' do
-      b = FHIR::Parameters.new
-      b.parameter = [p1, p2]
-      expect(group.body_to_path('', b)).to eq('?Param1=true&Param2=zyx&')
+      body = FHIR::Parameters.new
+      body.parameter = [primitive_param_string, primitive_param_bool]
+      expect(group.body_to_path('', body)).to eq('?prim_param_bool=true&prim_param_string=xyz')
     end
 
     it 'raises error if non-primitive parameter found' do
-      b = FHIR::Parameters.new
-      b.parameter = [p1, p3]
+      body = FHIR::Parameters.new
+      body.parameter = [primitive_param_bool, nonprimitive_param]
       expect do
-        group.body_to_path('', b)
+        group.body_to_path('', body)
       end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype non_prim_param')
     end
 
     it 'raises error if parameter is resource' do
-      b = FHIR::Parameters.new
-      b.parameter = [p1, p4]
+      body = FHIR::Parameters.new
+      body.parameter = [primitive_param_bool, resource_param]
       expect do
-        group.body_to_path('', b)
+        group.body_to_path('', body)
       end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype resource_param')
     end
   end
@@ -129,10 +143,40 @@ RSpec.describe Inferno::DSL::FHIRClient do
       stub_request(:get, "#{base_url}/#{path}")
         .to_return(status: 200, body: resource.to_json)
     end
+    let(:primitive_param_bool) do ppb = FHIR::Parameters::Parameter.new
+      ppb.name="prim_param_bool"
+      ppb.valueBoolean=true
+      ppb
+    end
+
+    let(:primitive_param_string) do pps = FHIR::Parameters::Parameter.new
+      pps.name = 'prim_param_string'
+      pps.valueString = 'xyz'
+      pps
+    end
+
+    let(:nonprimitive_param) do npp = FHIR::Parameters::Parameter.new
+      npp.name = 'non_prim_param'
+      ratio = FHIR::Ratio.new
+      ratio.numerator = FHIR::Quantity.new
+      ratio.denominator = FHIR::Quantity.new
+      npp.valueRatio = ratio
+      npp
+    end
+
+    let(:resource_param) do rp = FHIR::Parameters::Parameter.new
+      rp.name = 'resource_param'
+      rp.resource = FHIR::Patient.new
+      rp
+    end
 
     before do
       stub_operation_request
       stub_operation_get_request
+      primitive_param_bool
+      primitive_param_string
+      nonprimitive_param
+      resource_param
     end
 
     it 'performs a post' do
@@ -142,7 +186,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
 
     it 'performs a get' do
-      group.fhir_operation(path, affects_state: false)
+      group.fhir_operation(path, operation_method: :get)
 
       expect(stub_operation_get_request).to have_been_made.once
     end
@@ -161,42 +205,27 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
 
     context 'with a body of parameters' do
-      p1 = FHIR::Parameters::Parameter.new
-      p1.name = 'Param1'
-      p1.valueBoolean = true
-
-      p2 = FHIR::Parameters::Parameter.new
-      p2.name = 'Param2'
-      p2.valueString = 'zyx'
-
-      p3 = FHIR::Parameters::Parameter.new
-      p3.name = 'non_prim_param'
-
-      ratio = FHIR::Ratio.new
-      ratio.numerator = FHIR::Quantity.new
-      ratio.denominator = FHIR::Quantity.new
-      p3.valueRatio = ratio
 
       it 'uses get when all parameters are primitive' do
-        b = FHIR::Parameters.new
-        b.parameter = [p1, p2]
+        body = FHIR::Parameters.new
+        body.parameter = [primitive_param_string, primitive_param_bool]
 
-        query_string = '?Param1=true&Param2=zyx'
+        query_string = '?prim_param_bool=true&prim_param_string=xyz'
 
         get_with_body_request_stub =
           stub_request(:get, "#{base_url}/#{path + query_string}")
             .to_return(status: 200, body: resource.to_json)
 
-        group.fhir_operation(path, body: b, affects_state: false)
+        group.fhir_operation(path, body: body, operation_method: :get)
 
         expect(get_with_body_request_stub).to have_been_made.once
       end
 
       it 'prevents get when parameters are non-primitive' do
-        b = FHIR::Parameters.new
-        b.parameter = [p1, p3]
+        body = FHIR::Parameters.new
+        body.parameter = [primitive_param_bool, nonprimitive_param]
         expect do
-          group.fhir_operation(path, body: b, affects_state: false)
+          group.fhir_operation(path, body: body, operation_method: :get)
         end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype non_prim_param')
       end
     end
