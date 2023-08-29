@@ -39,6 +39,33 @@ RSpec.describe Inferno::DSL::FHIRClient do
   let(:default_client) { group.fhir_clients[:default] }
   let(:bundle) { FHIR::Bundle.new(type: 'history', entry: [{ resource: }]) }
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
+  let(:primitive_param_bool) do
+    ppb = FHIR::Parameters::Parameter.new
+    ppb.name = 'prim_param_bool'
+    ppb.valueBoolean = true
+    ppb
+  end
+  let(:primitive_param_string) do
+    pps = FHIR::Parameters::Parameter.new
+    pps.name = 'prim_param_string'
+    pps.valueString = 'xyz'
+    pps
+  end
+  let(:nonprimitive_param) do
+    npp = FHIR::Parameters::Parameter.new
+    npp.name = 'non_prim_param'
+    ratio = FHIR::Ratio.new
+    ratio.numerator = FHIR::Quantity.new
+    ratio.denominator = FHIR::Quantity.new
+    npp.valueRatio = ratio
+    npp
+  end
+  let(:resource_param) do
+    rp = FHIR::Parameters::Parameter.new
+    rp.name = 'resource_param'
+    rp.resource = FHIR::Patient.new
+    rp
+  end
 
   describe '#fhir_client' do
     context 'without an argument' do
@@ -77,37 +104,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
   end
 
   describe '#body_to_path' do
-    let(:primitive_param_bool) do
-      ppb = FHIR::Parameters::Parameter.new
-      ppb.name = 'prim_param_bool'
-      ppb.valueBoolean = true
-      ppb
-    end
-
-    let(:primitive_param_string) do
-      pps = FHIR::Parameters::Parameter.new
-      pps.name = 'prim_param_string'
-      pps.valueString = 'xyz'
-      pps
-    end
-
-    let(:nonprimitive_param) do
-      npp = FHIR::Parameters::Parameter.new
-      npp.name = 'non_prim_param'
-      ratio = FHIR::Ratio.new
-      ratio.numerator = FHIR::Quantity.new
-      ratio.denominator = FHIR::Quantity.new
-      npp.valueRatio = ratio
-      npp
-    end
-
-    let(:resource_param) do
-      rp = FHIR::Parameters::Parameter.new
-      rp.name = 'resource_param'
-      rp.resource = FHIR::Patient.new
-      rp
-    end
-
     before do
       primitive_param_bool
       primitive_param_string
@@ -118,14 +114,14 @@ RSpec.describe Inferno::DSL::FHIRClient do
     it 'converts primitives into a path query' do
       body = FHIR::Parameters.new
       body.parameter = [primitive_param_string, primitive_param_bool]
-      expect(group.body_to_path('', body)).to eq('?prim_param_bool=true&prim_param_string=xyz')
+      expect(group.body_to_path(body)).to eq('prim_param_bool=true&prim_param_string=xyz')
     end
 
     it 'raises error if non-primitive parameter found' do
       body = FHIR::Parameters.new
       body.parameter = [primitive_param_bool, nonprimitive_param]
       expect do
-        group.body_to_path('', body)
+        group.body_to_path(body)
       end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype non_prim_param')
     end
 
@@ -133,7 +129,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
       body = FHIR::Parameters.new
       body.parameter = [primitive_param_bool, resource_param]
       expect do
-        group.body_to_path('', body)
+        group.body_to_path(body)
       end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype resource_param')
     end
   end
@@ -147,36 +143,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
     let(:stub_operation_get_request) do
       stub_request(:get, "#{base_url}/#{path}")
         .to_return(status: 200, body: resource.to_json)
-    end
-    let(:primitive_param_bool) do
-      ppb = FHIR::Parameters::Parameter.new
-      ppb.name = 'prim_param_bool'
-      ppb.valueBoolean = true
-      ppb
-    end
-
-    let(:primitive_param_string) do
-      pps = FHIR::Parameters::Parameter.new
-      pps.name = 'prim_param_string'
-      pps.valueString = 'xyz'
-      pps
-    end
-
-    let(:nonprimitive_param) do
-      npp = FHIR::Parameters::Parameter.new
-      npp.name = 'non_prim_param'
-      ratio = FHIR::Ratio.new
-      ratio.numerator = FHIR::Quantity.new
-      ratio.denominator = FHIR::Quantity.new
-      npp.valueRatio = ratio
-      npp
-    end
-
-    let(:resource_param) do
-      rp = FHIR::Parameters::Parameter.new
-      rp.name = 'resource_param'
-      rp.resource = FHIR::Patient.new
-      rp
     end
 
     before do

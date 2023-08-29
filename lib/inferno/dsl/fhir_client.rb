@@ -65,7 +65,7 @@ module Inferno
       # @param path [String]
       # @param body [FHIR::Parameters] Must all be primitive if making GET request
       # @private
-      def body_to_path(path, body)
+      def body_to_path(body)
         query_hash = body.parameter.reduce({}) do |query, param|
           valid = param.valid? && param.part.empty? && param.resource.nil? # Parameter is valid
           param_val = param.to_hash.except('name') # should contain only one value if is a valid parameter
@@ -78,7 +78,7 @@ module Inferno
             raise ArgumentError, "Cannot use GET request with non-primitive datatype #{param.name}"
           end
         end
-        "#{path}?#{query_hash.to_query}"
+        query_hash.to_query
       end
 
       # Perform a FHIR operation
@@ -106,7 +106,7 @@ module Inferno
             when :post
               fhir_client(client).send(:post, path, body, operation_headers)
             when :get
-              path = body_to_path(path, body) if body.present?
+              path = "#{path}?#{body_to_path(body)}" if body.present?
               fhir_client(client).send(:get, path, operation_headers)
             else
               # Handle the case of non-supported operation_method
