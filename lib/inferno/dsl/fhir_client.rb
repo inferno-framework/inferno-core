@@ -68,9 +68,9 @@ module Inferno
       def body_to_path(path, body)
         query_hash = body.parameter.reduce({}) do |query, param|
           valid = param.valid? && param.part.empty? && param.resource.nil? # Parameter is valid
-          param_val = param.to_hash.except('name') # should contain only one value if is a valid parameter, checked above
+          param_val = param.to_hash.except('name') # should contain only one value if is a valid parameter
           if valid && !param_val.empty? && FHIR.primitive?(datatype: param_val.keys[0][5..], value: param_val.values[0])
-            query.merge!({param.name => param_val.values[0]})
+            query.merge!({ param.name => param_val.values[0] })
             query
           else
             # Handle the case of nonprimitive
@@ -102,9 +102,10 @@ module Inferno
             operation_headers = fhir_client(client).fhir_headers
             operation_headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
             operation_headers.merge!(headers) if headers.present?
-            if operation_method == :post
+            case operation_method
+            when :post
               fhir_client(client).send(:post, path, body, operation_headers)
-            elsif operation_method == :get
+            when :get
               path = body_to_path(path, body) if body.present?
               fhir_client(client).send(:get, path, operation_headers)
             else
