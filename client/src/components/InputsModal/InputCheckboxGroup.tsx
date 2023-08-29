@@ -62,6 +62,9 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
     return startingValues as CheckboxValues;
   });
 
+  const isMissingInput =
+    hasBeenModified && !requirement.optional && inputsMap.get(requirement.name) === '[]';
+
   useEffect(() => {
     // Make sure starting values get set in inputsMap
     inputsMap.set(requirement.name, transformValuesToJSONArray(values));
@@ -96,12 +99,12 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
         id={`requirement${index}_input`}
         disabled={requirement.locked}
         required={!requirement.optional}
-        error={hasBeenModified && !requirement.optional && inputsMap.get(requirement.name) === '[]'}
+        error={isMissingInput}
         fullWidth
         className={classes.inputField}
       >
         <FormLabel className={classes.inputLabel}>
-          <FieldLabel requirement={requirement} />
+          <FieldLabel requirement={requirement} isMissingInput={isMissingInput} />
         </FormLabel>
         {requirement.description && (
           <FormHelperText sx={{ mx: 0 }}>{requirement.description}</FormHelperText>

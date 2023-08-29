@@ -23,9 +23,8 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   inputLabel: {
-    color: theme.palette.common.grayDarkest,
+    color: theme.palette.common.grayDarker,
     fontWeight: 600,
-    fontSize: '.75rem',
   },
   lockedIcon: {
     marginLeft: '5px',
