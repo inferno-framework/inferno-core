@@ -27,7 +27,11 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
   if (isRunning && result?.test_run_id !== testRunId) {
     return (
       <CustomTooltip title="pending">
-        <Pending style={{ color: grey[500] }} /* data-testid={`${result.id}-${result.result}`} */ />
+        <Pending
+          tabIndex={0}
+          aria-hidden="false"
+          style={{ color: grey[500] }} /* data-testid={`${result.id}-${result.result}`} */
+        />
       </CustomTooltip>
     );
   } else if (result) {
@@ -36,6 +40,8 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
         return (
           <CustomTooltip title="passed">
             <CheckCircle
+              tabIndex={0}
+              aria-hidden="false"
               style={{ color: result.optional ? green[100] : green[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
@@ -45,6 +51,8 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
         return (
           <CustomTooltip title="failed">
             <Cancel
+              tabIndex={0}
+              aria-hidden="false"
               style={{ color: result.optional ? grey[500] : red[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
@@ -54,6 +62,8 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
         return (
           <CustomTooltip title="cancel">
             <Cancel
+              tabIndex={0}
+              aria-hidden="false"
               style={{ color: result.optional ? grey[500] : red[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
@@ -63,6 +73,8 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
         return (
           <CustomTooltip title="skipped">
             <Block
+              tabIndex={0}
+              aria-hidden="false"
               style={{ color: result.optional ? grey[500] : orange[800] }}
               data-testid={`${result.id}-${result.result}`}
             />
@@ -71,13 +83,20 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
       case 'omit':
         return (
           <CustomTooltip title="omitted">
-            <Circle style={{ color: grey[500] }} data-testid={`${result.id}-${result.result}`} />
+            <Circle
+              tabIndex={0}
+              aria-hidden="false"
+              style={{ color: grey[500] }}
+              data-testid={`${result.id}-${result.result}`}
+            />
           </CustomTooltip>
         );
       case 'error':
         return (
           <CustomTooltip title="error">
             <Error
+              tabIndex={0}
+              aria-hidden="false"
               style={{ color: result.optional ? grey[500] : purple[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
@@ -86,26 +105,38 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
       case 'wait':
         return (
           <CustomTooltip title="wait">
-            <AccessTime data-testid={`${result.id}-${result.result}`} />
+            <AccessTime
+              tabIndex={0}
+              aria-hidden="false"
+              data-testid={`${result.id}-${result.result}`}
+            />
           </CustomTooltip>
         );
 
       default:
         return (
-          <RadioButtonUnchecked
-            style={{
-              color: grey[500],
-            }}
-          />
+          <CustomTooltip title="no result">
+            <RadioButtonUnchecked
+              tabIndex={0}
+              aria-hidden="false"
+              style={{
+                color: grey[500],
+              }}
+            />
+          </CustomTooltip>
         );
     }
   } else {
     return (
-      <RadioButtonUnchecked
-        style={{
-          color: grey[500],
-        }}
-      />
+      <CustomTooltip title="no result">
+        <RadioButtonUnchecked
+          tabIndex={0}
+          aria-hidden="false"
+          style={{
+            color: grey[500],
+          }}
+        />
+      </CustomTooltip>
     );
   }
 };
