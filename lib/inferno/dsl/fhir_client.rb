@@ -60,23 +60,31 @@ module Inferno
         @fhir_clients ||= {}
       end
 
+      # Checks if a parameter can be used in a GET request according FHIR specification
+      #
+      # @param param [FHIR::Parameters::Parameter] Parameter to be checked
+      # @private
+      def safe_for_get?(param)
+        valid = param.valid? && param.part.empty? && param.resource.nil? # Parameter is valid
+        param_val = param.to_hash.except('name') # should contain only one value if it is a valid parameter
+        valid && !param_val.empty? && FHIR.primitive?(datatype: param_val.keys[0][5..], value: param_val.values[0])
+      end
+
       # Converts a list of FHIR Parameters into a query string for GET requests
       #
       # @param body [FHIR::Parameters] Must all be primitive if making GET request
       # @private
       def body_to_path(body)
-        query_hash = body.parameter.map do |param|
-          valid = param.valid? && param.part.empty? && param.resource.nil? # Parameter is valid
-          param_val = param.to_hash.except('name') # should contain only one value if is a valid parameter
-          if valid && !param_val.empty? && FHIR.primitive?(datatype: param_val.keys[0][5..], value: param_val.values[0])
-            { param.name => param_val.values[0] }
+        query_hashes = body.parameter.map do |param|
+          if safe_for_get?(param)
+            { param.name => param.to_hash.except('name').values[0] }
           else
             # Handle the case of nonprimitive
             Inferno::Application[:logger].error "Cannot use GET request with non-primitive datatype #{param.name}"
             raise ArgumentError, "Cannot use GET request with non-primitive datatype #{param.name}"
           end
         end
-        query_hash.map(&:to_query).join('&')
+        query_hashes.map(&:to_query).join('&')
       end
 
       # Perform a FHIR operation

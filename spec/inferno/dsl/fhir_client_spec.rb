@@ -39,62 +39,62 @@ RSpec.describe Inferno::DSL::FHIRClient do
   let(:default_client) { group.fhir_clients[:default] }
   let(:bundle) { FHIR::Bundle.new(type: 'history', entry: [{ resource: }]) }
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
+  let(:boolean_parameter) do
+    FHIR::Parameters::Parameter.new.tap do |param|
+      param.name = 'PARAM_BOOL'
+      param.valueBoolean = true
+    end
+  end
+  let(:ratio_parameter) do
+    FHIR::Parameters::Parameter.new.tap do |param|
+      param.name = 'PARAM_RATIO'
+      param.valueRatio = FHIR::Ratio.new.tap do |ratio|
+        ratio.numerator = FHIR::Quantity.new
+        ratio.denominator = FHIR::Quantity.new
+      end
+    end
+  end
+  let(:resource_parameter) do
+    FHIR::Parameters::Parameter.new.tap do |param|
+      param.name = 'PARAM_RESOURCE'
+      param.resource = FHIR::Patient.new
+    end
+  end
   let(:body_with_two_primitives) do
     FHIR::Parameters.new.tap do |body|
       body.parameter = [
-      FHIR::Parameters::Parameter.new.tap do |param|
-        param.name = "PARAM_BOOL"
-        param.valueBoolean = true
-      end,
-      FHIR::Parameters::Parameter.new.tap do |param|
-        param.name = "PARAM_STRING"
-        param.valueString = "STRING"
-      end
+        boolean_parameter,
+        FHIR::Parameters::Parameter.new.tap do |param|
+          param.name = 'PARAM_STRING'
+          param.valueString = 'STRING'
+        end
       ]
     end
   end
   let(:body_with_repeated_parameters) do
     FHIR::Parameters.new.tap do |body|
       body.parameter = [
-      FHIR::Parameters::Parameter.new.tap do |param|
-        param.name = "PARAM_BOOL"
-        param.valueBoolean = true
-      end,
-      FHIR::Parameters::Parameter.new.tap do |param|
-        param.name = "PARAM_BOOL"
-        param.valueBoolean = false
-      end
+        boolean_parameter,
+        FHIR::Parameters::Parameter.new.tap do |param|
+          param.name = 'PARAM_BOOL'
+          param.valueBoolean = false
+        end
       ]
     end
   end
   let(:body_with_nonprimitive) do
     FHIR::Parameters.new.tap do |body|
       body.parameter = [
-      FHIR::Parameters::Parameter.new.tap do |param|
-        param.name = "PARAM_BOOL"
-        param.valueBoolean = true
-      end,
-      FHIR::Parameters::Parameter.new.tap do |param|
-        param.name = "PARAM_RATIO"
-        param.valueRatio = FHIR::Ratio.new.tap do |ratio|
-          ratio.numerator = FHIR::Quantity.new
-          ratio.denominator = FHIR::Quantity.new
-        end
-      end
+        boolean_parameter,
+        ratio_parameter
       ]
     end
   end
   let(:body_with_resource) do
     FHIR::Parameters.new.tap do |body|
       body.parameter = [
-      FHIR::Parameters::Parameter.new.tap do |param|
-        param.name = "PARAM_BOOL"
-        param.valueBoolean = true
-      end,
-      FHIR::Parameters::Parameter.new.tap do |param|
-        param.name = "PARAM_RESOURCE"
-        param.resource = FHIR::Patient.new
-      end
+        boolean_parameter,
+        resource_parameter
       ]
     end
   end
@@ -135,14 +135,27 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
-  describe '#body_to_path' do
+  describe '#safe_for_get?' do
+    it 'returns true when given a primitive parameter' do
+      expect(group.safe_for_get?(boolean_parameter)).to be true
+    end
 
+    it 'returns false when given a resource parameter' do
+      expect(group.safe_for_get?(resource_parameter)).to be false
+    end
+
+    it 'returns false when given a complex parameter' do
+      expect(group.safe_for_get?(ratio_parameter)).to be false
+    end
+  end
+
+  describe '#body_to_path' do
     it 'converts primitives into a path query' do
-      expect(group.body_to_path(body_with_two_primitives)).to eq({PARAM_BOOL: true, PARAM_STRING: "STRING"}.to_query)
+      expect(group.body_to_path(body_with_two_primitives)).to eq({ PARAM_BOOL: true, PARAM_STRING: 'STRING' }.to_query)
     end
 
     it 'handles repeated parameters' do
-      expected_body = [{PARAM_BOOL: true}, {PARAM_BOOL: false}].map(&:to_query).join('&')
+      expected_body = [{ PARAM_BOOL: true }, { PARAM_BOOL: false }].map(&:to_query).join('&')
       expect(group.body_to_path(body_with_repeated_parameters)).to eq(expected_body)
     end
 
@@ -207,7 +220,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
         body = body_with_two_primitives
         get_with_body_request_stub =
           stub_request(:get, "#{base_url}/#{path}")
-            .with(query: { PARAM_BOOL: true, PARAM_STRING: "STRING"})
+            .with(query: { PARAM_BOOL: true, PARAM_STRING: 'STRING' })
             .to_return(status: 200, body: resource.to_json)
 
         group.fhir_operation(path, body:, operation_method: :get)
