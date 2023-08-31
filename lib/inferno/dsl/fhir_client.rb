@@ -60,25 +60,23 @@ module Inferno
         @fhir_clients ||= {}
       end
 
-      # Move parameters from body to the path for GET operations
+      # Converts a list of FHIR Parameters into a query string for GET requests
       #
-      # @param path [String]
       # @param body [FHIR::Parameters] Must all be primitive if making GET request
       # @private
       def body_to_path(body)
-        query_hash = body.parameter.reduce({}) do |query, param|
+        query_hash = body.parameter.map do |param|
           valid = param.valid? && param.part.empty? && param.resource.nil? # Parameter is valid
           param_val = param.to_hash.except('name') # should contain only one value if is a valid parameter
           if valid && !param_val.empty? && FHIR.primitive?(datatype: param_val.keys[0][5..], value: param_val.values[0])
-            query.merge!({ param.name => param_val.values[0] })
-            query
+            { param.name => param_val.values[0] }
           else
             # Handle the case of nonprimitive
             Inferno::Application[:logger].error "Cannot use GET request with non-primitive datatype #{param.name}"
             raise ArgumentError, "Cannot use GET request with non-primitive datatype #{param.name}"
           end
         end
-        query_hash.to_query
+        query_hash.map(&:to_query).join('&')
       end
 
       # Perform a FHIR operation
@@ -94,7 +92,7 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @param headers [Hash] custom headers for this operation
-      # @param search_method [Symbol] indicates which request type to use for the operation
+      # @param operation_method [Symbol] indicates which request type to use for the operation
       # @return [Inferno::Entities::Request]
       def fhir_operation(path, body: nil, client: :default, name: nil, headers: {}, operation_method: :post)
         store_request_and_refresh_token(fhir_client(client), name) do

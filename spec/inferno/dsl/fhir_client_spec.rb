@@ -39,32 +39,64 @@ RSpec.describe Inferno::DSL::FHIRClient do
   let(:default_client) { group.fhir_clients[:default] }
   let(:bundle) { FHIR::Bundle.new(type: 'history', entry: [{ resource: }]) }
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
-  let(:primitive_param_bool) do
-    ppb = FHIR::Parameters::Parameter.new
-    ppb.name = 'prim_param_bool'
-    ppb.valueBoolean = true
-    ppb
+  let(:body_with_two_primitives) do
+    FHIR::Parameters.new.tap do |body|
+      body.parameter = [
+      FHIR::Parameters::Parameter.new.tap do |param|
+        param.name = "PARAM_BOOL"
+        param.valueBoolean = true
+      end,
+      FHIR::Parameters::Parameter.new.tap do |param|
+        param.name = "PARAM_STRING"
+        param.valueString = "STRING"
+      end
+      ]
+    end
   end
-  let(:primitive_param_string) do
-    pps = FHIR::Parameters::Parameter.new
-    pps.name = 'prim_param_string'
-    pps.valueString = 'xyz'
-    pps
+  let(:body_with_repeated_parameters) do
+    FHIR::Parameters.new.tap do |body|
+      body.parameter = [
+      FHIR::Parameters::Parameter.new.tap do |param|
+        param.name = "PARAM_BOOL"
+        param.valueBoolean = true
+      end,
+      FHIR::Parameters::Parameter.new.tap do |param|
+        param.name = "PARAM_BOOL"
+        param.valueBoolean = false
+      end
+      ]
+    end
   end
-  let(:nonprimitive_param) do
-    npp = FHIR::Parameters::Parameter.new
-    npp.name = 'non_prim_param'
-    ratio = FHIR::Ratio.new
-    ratio.numerator = FHIR::Quantity.new
-    ratio.denominator = FHIR::Quantity.new
-    npp.valueRatio = ratio
-    npp
+  let(:body_with_nonprimitive) do
+    FHIR::Parameters.new.tap do |body|
+      body.parameter = [
+      FHIR::Parameters::Parameter.new.tap do |param|
+        param.name = "PARAM_BOOL"
+        param.valueBoolean = true
+      end,
+      FHIR::Parameters::Parameter.new.tap do |param|
+        param.name = "PARAM_RATIO"
+        param.valueRatio = FHIR::Ratio.new.tap do |ratio|
+          ratio.numerator = FHIR::Quantity.new
+          ratio.denominator = FHIR::Quantity.new
+        end
+      end
+      ]
+    end
   end
-  let(:resource_param) do
-    rp = FHIR::Parameters::Parameter.new
-    rp.name = 'resource_param'
-    rp.resource = FHIR::Patient.new
-    rp
+  let(:body_with_resource) do
+    FHIR::Parameters.new.tap do |body|
+      body.parameter = [
+      FHIR::Parameters::Parameter.new.tap do |param|
+        param.name = "PARAM_BOOL"
+        param.valueBoolean = true
+      end,
+      FHIR::Parameters::Parameter.new.tap do |param|
+        param.name = "PARAM_RESOURCE"
+        param.resource = FHIR::Patient.new
+      end
+      ]
+    end
   end
 
   describe '#fhir_client' do
@@ -104,33 +136,28 @@ RSpec.describe Inferno::DSL::FHIRClient do
   end
 
   describe '#body_to_path' do
-    before do
-      primitive_param_bool
-      primitive_param_string
-      nonprimitive_param
-      resource_param
-    end
 
     it 'converts primitives into a path query' do
-      body = FHIR::Parameters.new
-      body.parameter = [primitive_param_string, primitive_param_bool]
-      expect(group.body_to_path(body)).to eq('prim_param_bool=true&prim_param_string=xyz')
+      expect(group.body_to_path(body_with_two_primitives)).to eq({PARAM_BOOL: true, PARAM_STRING: "STRING"}.to_query)
+    end
+
+    it 'handles repeated parameters' do
+      expected_body = [{PARAM_BOOL: true}, {PARAM_BOOL: false}].map(&:to_query).join('&')
+      expect(group.body_to_path(body_with_repeated_parameters)).to eq(expected_body)
     end
 
     it 'raises error if non-primitive parameter found' do
-      body = FHIR::Parameters.new
-      body.parameter = [primitive_param_bool, nonprimitive_param]
+      body = body_with_nonprimitive
       expect do
         group.body_to_path(body)
-      end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype non_prim_param')
+      end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype PARAM_RATIO')
     end
 
     it 'raises error if parameter is resource' do
-      body = FHIR::Parameters.new
-      body.parameter = [primitive_param_bool, resource_param]
+      body = body_with_resource
       expect do
         group.body_to_path(body)
-      end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype resource_param')
+      end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype PARAM_RESOURCE')
     end
   end
 
@@ -148,10 +175,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
     before do
       stub_operation_request
       stub_operation_get_request
-      primitive_param_bool
-      primitive_param_string
-      nonprimitive_param
-      resource_param
     end
 
     it 'performs a post' do
@@ -181,13 +204,10 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
     context 'with a body of parameters' do
       it 'uses get when all parameters are primitive' do
-        body = FHIR::Parameters.new
-        body.parameter = [primitive_param_string, primitive_param_bool]
-
-        query_string = '?prim_param_bool=true&prim_param_string=xyz'
-
+        body = body_with_two_primitives
         get_with_body_request_stub =
-          stub_request(:get, "#{base_url}/#{path + query_string}")
+          stub_request(:get, "#{base_url}/#{path}")
+            .with(query: { PARAM_BOOL: true, PARAM_STRING: "STRING"})
             .to_return(status: 200, body: resource.to_json)
 
         group.fhir_operation(path, body:, operation_method: :get)
@@ -196,11 +216,10 @@ RSpec.describe Inferno::DSL::FHIRClient do
       end
 
       it 'prevents get when parameters are non-primitive' do
-        body = FHIR::Parameters.new
-        body.parameter = [primitive_param_bool, nonprimitive_param]
+        body = body_with_nonprimitive
         expect do
           group.fhir_operation(path, body:, operation_method: :get)
-        end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype non_prim_param')
+        end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype PARAM_RATIO')
       end
     end
 
