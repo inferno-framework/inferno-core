@@ -36,7 +36,8 @@ module Inferno
           command = "rerun \"#{command}\" --background"
         end
 
-        system command
+        # system command
+        exec command
       end
 
       desc 'suites', 'List available test suites'
