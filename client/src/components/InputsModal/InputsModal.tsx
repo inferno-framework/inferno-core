@@ -349,6 +349,7 @@ const InputsModal: FC<InputsModalProps> = ({
                   input: classes.serialInput,
                 },
               }}
+              color="secondary"
               fullWidth
               multiline
               data-testid="serial-input"

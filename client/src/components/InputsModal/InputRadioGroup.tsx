@@ -66,7 +66,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
           {requirement.options?.list_options?.map((option, i) => (
             <FormControlLabel
               value={option.value}
-              control={<Radio size="small" />}
+              control={<Radio size="small" color="secondary" />}
               label={option.label}
               key={`radio-button-${i}`}
             />
