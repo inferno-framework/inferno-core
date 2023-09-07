@@ -36,7 +36,6 @@ module Inferno
           command = "rerun \"#{command}\" --background"
         end
 
-        # system command
         exec command
       end
 
