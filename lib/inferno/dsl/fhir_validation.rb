@@ -64,6 +64,15 @@ module Inferno
           @url
         end
 
+        # Set the IGs that the validator will need to load
+        # Example: ["hl7.fhir.us.core#4.0.0"]
+        # @param igs [String]
+        def igs(validator_igs = nil)
+          @igs = validator_igs if validator_igs
+
+          @igs
+        end
+
         # @private
         def additional_validations
           @additional_validations ||= []
@@ -187,23 +196,24 @@ module Inferno
           "#{location_prefix}: #{location}: #{issue&.details&.text}"
         end
 
-        def wrap_resource_for_hl7_wrapper(resource)
+        def wrap_resource_for_hl7_wrapper(resource, profile_url)
           wrapped_resource = {
-              "cliContext" => {
-                  "targetVer" => "4.0.1",
-                  "sv" => "4.0.1",
-                  "igs" => [
-                      "hl7.fhir.us.core#4.0.0"
-                  ]
-              },
-              "filesToValidate" => [
-                  {
-                      "fileName" => "manually_entered_file.json",
-                      "fileContent" => resource.to_json,
-                      "fileType" => "json"
-                  }
-              ],
-              "sessionId" => "6135ea2b-d478-4eb4-adc1-7878e314394f"
+            cliContext: {
+              # TODO: this FHIR version flag "sv" could be configurable as well
+              sv: '4.0.1',
+              igs: @igs || [],
+              # NOTE: this profile must be part of a loaded IG,
+              # otherwise the response is an HTTP 500 with no content
+              profiles: [profile_url]
+            },
+            filesToValidate: [
+              {
+                fileName: 'manually_entered_file.json',
+                fileContent: resource.to_json,
+                fileType: 'json'
+              }
+            ],
+            sessionId: @session_id
           }
           wrapped_resource.to_json
         end
@@ -216,30 +226,27 @@ module Inferno
         # @return [[Array(FHIR::OperationOutcome, Number)] the validation response and HTTP status code
         def validate(resource, profile_url, runnable)
           begin
-            request_body = wrap_resource_for_hl7_wrapper(resource)
-            # request_body = resource.source_contents
+            request_body = wrap_resource_for_hl7_wrapper(resource, profile_url)
             response = Faraday.new(
-              url,
-              # params: { profile: profile_url }
-            ).post('validate', request_body, :content_type => 'application/json')
+              url
+            ).post('validate', request_body, content_type: 'application/json')
           rescue StandardError => e
             runnable.add_message('error', e.message)
             raise Inferno::Exceptions::ErrorInValidatorException, "Unable to connect to validator at #{url}."
           end
-
-          puts response.body
-
-          outcome = operation_outcome_from_validator_response(response.body, runnable)
-
+          outcome = operation_outcome_from_validator_response(response, runnable)
           [outcome, response.status]
         end
 
+        # @private
         def operation_outcome_from_hl7_wrapped_response(response)
           res = JSON.parse(response)
+
+          @session_id = res['sessionId']
+
           # assume for now that one resource -> one request
           issues = res['outcomes'][0]['issues']&.map do |i|
-            # puts i
-            { severity: i['level'].downcase, expression: i['location'], details: { :text => i['message'] } }
+            { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
           end
           # this is circuitous, ideally we would map this response directly to message_hashes
           FHIR::OperationOutcome.new(issue: issues)
@@ -247,11 +254,10 @@ module Inferno
 
         # @private
         def operation_outcome_from_validator_response(response, runnable)
-          if response.start_with? '{'
-            # FHIR::OperationOutcome.new(JSON.parse(response))
-            operation_outcome_from_hl7_wrapped_response(response)
+          if response.body.start_with? '{'
+            operation_outcome_from_hl7_wrapped_response(response.body)
           else
-            runnable.add_message('error', "Validator Response: #{response}")
+            runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{response.body}")
             raise Inferno::Exceptions::ErrorInValidatorException,
                   'Validator response was an unexpected format. '\
                   'Review Messages tab or validator service logs for more information.'
