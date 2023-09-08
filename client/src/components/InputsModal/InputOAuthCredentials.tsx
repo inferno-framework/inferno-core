@@ -41,18 +41,15 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   // Convert OAuth string to Object
   // OAuth should be an Object while in this component but should be converted to a string
   // before being updated in the inputs map
-  const oAuthCredentials = (
-    inputsMap.get(requirement.name)
-      ? JSON.parse(inputsMap.get(requirement.name) as string)
-      : {
-          access_token: '',
-          refresh_token: '',
-          expires_in: '',
-          client_id: '',
-          client_secret: '',
-          token_url: '',
-        }
-  ) as OAuthCredentials;
+  const oAuthCredentials = {
+    access_token: '',
+    refresh_token: '',
+    expires_in: '',
+    client_id: '',
+    client_secret: '',
+    token_url: '',
+    ...JSON.parse((inputsMap.get(requirement.name) as string) || '{}'),
+  } as OAuthCredentials;
 
   const showRefreshDetails = !!oAuthCredentials.refresh_token;
 
