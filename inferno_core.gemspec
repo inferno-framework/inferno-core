@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'oj', '3.11.0'
   spec.add_runtime_dependency 'pry'
   spec.add_runtime_dependency 'pry-byebug'
-  spec.add_runtime_dependency 'puma', '~> 5.3'
+  spec.add_runtime_dependency 'puma', '~> 5.6.7'
   spec.add_runtime_dependency 'rake', '~> 13.0'
   spec.add_runtime_dependency 'sequel', '~> 5.42.0'
   spec.add_runtime_dependency 'sidekiq', '~> 6.5.6'
