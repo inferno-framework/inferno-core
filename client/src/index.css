@@ -24,6 +24,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-button:focus {
+/* Keyboard-only focus indicator */
+button:focus-visible {
   border: 1px solid #707070;
+}
+
+/* Darken button backgrounds on hover on text styled buttons */
+button:hover {
+  &.MuiButton-text {
+    background-color: #cbd5df60;
+  }
 }
