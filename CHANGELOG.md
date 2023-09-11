@@ -7,8 +7,9 @@
   https://github.com/inferno-framework/inferno-core/pull/386
 * FI-2035: Improve error handling for validator errors by @dehall in
   https://github.com/inferno-framework/inferno-core/pull/379
-* FI-2070-Inferno Framework Documentation Advanced Test Features Information Fix
-  by @emichaud998 in https://github.com/inferno-framework/inferno-core/pull/385
+* FI-2070: Inferno Framework Documentation Advanced Test Features Information
+  Fix by @emichaud998 in
+  https://github.com/inferno-framework/inferno-core/pull/385
 * FI-2041: Custom suites with no ids now throw standard error by @alisawallace
   in https://github.com/inferno-framework/inferno-core/pull/387
 * FI-2156: Dependabot updates by @Jammjammjamm in
