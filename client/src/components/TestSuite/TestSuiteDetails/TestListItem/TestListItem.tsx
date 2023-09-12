@@ -25,6 +25,7 @@ import ProblemBadge from './ProblemBadge';
 import TestRunDetail from './TestRunDetail';
 import type { TabProps } from './TestRunDetail';
 import { MessageCounts, countMessageTypes } from './helper';
+import CustomTooltip from '~/components/_common/CustomTooltip';
 import useStyles from './styles';
 
 interface TestListItemProps {
@@ -216,7 +217,11 @@ const TestListItem: FC<TestListItemProps> = ({
         TransitionProps={{ unmountOnExit: true }}
         onClick={handleAccordionClick}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (e.key === 'Enter') {
+            // Don't open/close accordion on enter
+            setTabIndex(findPopulatedTabIndex());
+          }
+          if (e.key === ' ') {
             handleAccordionClick();
           }
         }}
@@ -228,7 +233,13 @@ const TestListItem: FC<TestListItemProps> = ({
           data-testid={`${test.id}-summary`}
           aria-controls={`${test.id}-detail`}
           role={view === 'report' ? 'region' : 'button'}
-          expandIcon={view === 'run' && <ExpandMoreIcon />}
+          expandIcon={
+            view === 'run' && (
+              <CustomTooltip title="expand test">
+                <ExpandMoreIcon tabIndex={0} aria-hidden="false" />
+              </CustomTooltip>
+            )
+          }
           className={classes.accordionSummary}
           onKeyDown={(e) => {
             if (view !== 'report' && e.key === 'Enter') {

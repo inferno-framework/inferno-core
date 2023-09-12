@@ -107,6 +107,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           value={oAuthCredentials[field.name as keyof OAuthCredentials]}
           className={classes.inputField}
           variant="standard"
+          color="secondary"
           fullWidth
           onChange={(event) => {
             const value = event.target.value;

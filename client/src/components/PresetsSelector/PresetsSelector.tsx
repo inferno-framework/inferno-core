@@ -109,7 +109,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
         <DialogActions>
           <Button
             data-testid="preset-cancel-button"
-            sx={{ color: theme.palette.primary.dark }}
+            sx={{ color: theme.palette.primary.dark, fontWeight: 'bold' }}
             onClick={() => {
               setSelectedPreset(formerPreset);
               setModalVisible(false);
@@ -119,7 +119,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
           </Button>
           <Button
             data-testid="preset-apply-button"
-            sx={{ color: theme.palette.primary.dark }}
+            sx={{ color: theme.palette.primary.dark, fontWeight: 'bold' }}
             onClick={() => {
               applyPresetToSession(presetTitleToIdMap[selectedPreset]);
               setFormerPreset(selectedPreset);

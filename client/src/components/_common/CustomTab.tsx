@@ -10,7 +10,7 @@ interface CustomTabProps {
 const CustomTab = styled((props: CustomTabProps) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
     pointerEvents: 'auto',
-    fontWeight: 'bolder',
+    fontWeight: 'bold',
     '&:hover, :focus-within': {
       color: theme.palette.common.grayDarkest,
     },
