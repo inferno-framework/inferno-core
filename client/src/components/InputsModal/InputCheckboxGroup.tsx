@@ -108,6 +108,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
               control={
                 <Checkbox
                   size="small"
+                  color="secondary"
                   name={option.value}
                   checked={values[option.value as keyof CheckboxValues] || false}
                   onChange={handleChange}
