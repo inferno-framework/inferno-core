@@ -350,6 +350,7 @@ const InputsModal: FC<InputsModalProps> = ({
                   input: classes.serialInput,
                 },
               }}
+              color="secondary"
               fullWidth
               multiline
               data-testid="serial-input"
@@ -400,7 +401,7 @@ const InputsModal: FC<InputsModalProps> = ({
             color="secondary"
             data-testid="cancel-button"
             onClick={() => closeModal()}
-            sx={{ mr: 1 }}
+            sx={{ mr: 1, fontWeight: 'bold' }}
           >
             Cancel
           </Button>
@@ -410,6 +411,7 @@ const InputsModal: FC<InputsModalProps> = ({
             disableElevation
             onClick={submitClicked}
             disabled={missingRequiredInput || invalidInput}
+            sx={{ fontWeight: 'bold' }}
           >
             Submit
           </Button>

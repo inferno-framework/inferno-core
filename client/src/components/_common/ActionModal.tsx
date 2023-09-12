@@ -31,6 +31,7 @@ const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTestRu
           disableElevation
           onClick={cancelTestRun}
           data-testid="cancel-button"
+          sx={{ fontWeight: 'bold' }}
         >
           Cancel
         </Button>

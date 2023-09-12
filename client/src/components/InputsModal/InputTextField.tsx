@@ -33,6 +33,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
         id={`requirement${index}_input`}
         className={classes.inputField}
         variant="standard"
+        color="secondary"
         fullWidth
         label={<FieldLabel requirement={requirement} isMissingInput={isMissingInput} />}
         helperText={requirement.description}

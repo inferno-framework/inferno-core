@@ -13,7 +13,7 @@ export default makeStyles()((theme: Theme) => ({
       color: theme.palette.common.grayDarkest,
     },
     '& label.Mui-focused': {
-      color: theme.palette.common.orangeDarkest,
+      color: theme.palette.secondary.main,
     },
     '& label.Mui-disabled': {
       color: theme.palette.common.gray,
@@ -35,7 +35,7 @@ export default makeStyles()((theme: Theme) => ({
     margin: '8px 0',
     borderColor: theme.palette.common.grayLight,
     '&:focus-within': {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.secondary.main,
     },
   },
   serialInput: {
