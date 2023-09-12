@@ -66,7 +66,7 @@ module Inferno
 
         # Set the IGs that the validator will need to load
         # Example: ["hl7.fhir.us.core#4.0.0"]
-        # @param igs [String]
+        # @param igs [Array<String>]
         def igs(validator_igs = nil)
           @igs = validator_igs if validator_igs
 
@@ -196,11 +196,14 @@ module Inferno
           "#{location_prefix}: #{location}: #{issue&.details&.text}"
         end
 
+        # @private
         def wrap_resource_for_hl7_wrapper(resource, profile_url)
           wrapped_resource = {
             cliContext: {
-              # TODO: this FHIR version flag "sv" could be configurable as well
+              # TODO: these should be configurable as well
               sv: '4.0.1',
+              # displayWarnings: true,  # -display-issues-are-warnings
+              # txServer: nil,          # -tx n/a
               igs: @igs || [],
               # NOTE: this profile must be part of a loaded IG,
               # otherwise the response is an HTTP 500 with no content
