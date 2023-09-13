@@ -1,3 +1,9 @@
+# 0.4.20
+* FI-2077: Improve colors and contrasts for a11y by @AlyssaWang in
+  https://github.com/inferno-framework/inferno-core/pull/392
+* Revert "FI-2035: Improve error handling for validator errors (#379)" by
+  @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/393
+
 # 0.4.19
 * FI-2053: Fix inputs dialog overflow by @AlyssaWang in
   https://github.com/inferno-framework/inferno-core/pull/382
