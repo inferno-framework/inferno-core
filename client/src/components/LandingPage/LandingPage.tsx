@@ -102,6 +102,9 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
           >
             FHIR Testing with Inferno
           </Typography>
+          <Typography variant="h4" component="h1" align="center">
+            Test Change
+          </Typography>
         </Box>
         <Box mb={2} alignItems="center" maxWidth="600px">
           <Typography
