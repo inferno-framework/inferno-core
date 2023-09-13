@@ -130,45 +130,6 @@ RSpec.describe Inferno::DSL::FHIRValidation do
       end
     end
 
-    context 'with error from validator' do
-      let(:error_outcome) do
-        {
-          resourceType: 'OperationOutcome',
-          issue: [
-            {
-              severity: 'fatal',
-              code: 'structure',
-              diagnostics: 'Validator still warming up... Please wait',
-              details: {
-                text: 'Validator still warming up... Please wait'
-              }
-            }
-          ]
-        }.to_json
-      end
-
-      it 'throws ErrorInValidatorException when validator not ready yet' do
-        stub_request(:post, "#{validation_url}/validate?profile=#{profile_url}")
-          .with(body: resource_string)
-          .to_return(status: 503, body: error_outcome)
-
-        expect do
-          validator.resource_is_valid?(resource, profile_url, runnable)
-        end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
-        expect(runnable.messages.first[:message]).to include('Validator still warming up... Please wait')
-      end
-
-      it 'throws ErrorInValidatorException for non-JSON response' do
-        stub_request(:post, "#{validation_url}/validate?profile=#{profile_url}")
-          .with(body: resource_string)
-          .to_return(status: 500, body: '<html><body>Internal Server Error</body></html>')
-
-        expect do
-          validator.resource_is_valid?(resource, profile_url, runnable)
-        end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
-      end
-    end
-
     it 'posts the resource with primitive extensions intact' do
       stub_request(:post, "#{validation_url}/validate?profile=#{profile_url}")
         .with(body: resource_string)

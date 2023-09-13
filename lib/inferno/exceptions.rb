@@ -39,16 +39,6 @@ module Inferno
       end
     end
 
-    class ErrorInValidatorException < TestResultException
-      # This extends TestResultException instead of RuntimeError
-      # to bypass printing the stack trace in the UI.
-      # (The stack trace of this exception may not be useful,
-      # instead the message should point to where in the validator an error occurred)
-      def result
-        'error'
-      end
-    end
-
     class ParentNotLoadedException < RuntimeError
       def initialize(klass, id)
         super("No #{klass.name.demodulize} found with id '#{id}'")

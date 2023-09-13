@@ -116,35 +116,8 @@ module Inferno
         def resource_is_valid?(resource, profile_url, runnable)
           profile_url ||= FHIR::Definitions.resource_definition(resource.resourceType).url
 
-          outcome, http_status = validate(resource, profile_url, runnable)
+          outcome = FHIR::OperationOutcome.new(JSON.parse(validate(resource, profile_url)))
 
-          message_hashes = message_hashes_from_outcome(outcome, resource, profile_url)
-
-          message_hashes
-            .each { |message_hash| runnable.add_message(message_hash[:type], message_hash[:message]) }
-
-          unless http_status == 200
-            raise Inferno::Exceptions::ErrorInValidatorException,
-                  'Error occurred in the validator. Review Messages tab or validator service logs for more information.'
-          end
-
-          message_hashes
-            .none? { |message_hash| message_hash[:type] == 'error' }
-        rescue Inferno::Exceptions::ErrorInValidatorException
-          raise
-        rescue StandardError => e
-          runnable.add_message('error', e.message)
-          raise Inferno::Exceptions::ErrorInValidatorException,
-                'Error occurred in the validator. Review Messages tab or validator service logs for more information.'
-        end
-
-        # @private
-        def filter_messages(message_hashes)
-          message_hashes.reject! { |message| exclude_message.call(Entities::Message.new(message)) } if exclude_message
-        end
-
-        # @private
-        def message_hashes_from_outcome(outcome, resource, profile_url)
           message_hashes = outcome.issue&.map { |issue| message_hash_from_issue(issue, resource) } || []
 
           message_hashes.concat(additional_validation_messages(resource, profile_url))
@@ -152,6 +125,13 @@ module Inferno
           filter_messages(message_hashes)
 
           message_hashes
+            .each { |message_hash| runnable.add_message(message_hash[:type], message_hash[:message]) }
+            .none? { |message_hash| message_hash[:type] == 'error' }
+        end
+
+        # @private
+        def filter_messages(message_hashes)
+          message_hashes.reject! { |message| exclude_message.call(Entities::Message.new(message)) } if exclude_message
         end
 
         # @private
@@ -191,33 +171,12 @@ module Inferno
         #
         # @param resource [FHIR::Model]
         # @param profile_url [String]
-        # @param runnable [Inferno::Entities::Test]
-        # @return [[Array(FHIR::OperationOutcome, Number)] the validation response and HTTP status code
-        def validate(resource, profile_url, runnable)
-          begin
-            response = Faraday.new(
-              url,
-              params: { profile: profile_url }
-            ).post('validate', resource.source_contents)
-          rescue StandardError => e
-            runnable.add_message('error', e.message)
-            raise Inferno::Exceptions::ErrorInValidatorException, "Unable to connect to validator at #{url}."
-          end
-          outcome = operation_outcome_from_validator_response(response.body, runnable)
-
-          [outcome, response.status]
-        end
-
-        # @private
-        def operation_outcome_from_validator_response(response, runnable)
-          if response.start_with? '{'
-            FHIR::OperationOutcome.new(JSON.parse(response))
-          else
-            runnable.add_message('error', "Validator Response: #{response}")
-            raise Inferno::Exceptions::ErrorInValidatorException,
-                  'Validator response was an unexpected format. '\
-                  'Review Messages tab or validator service logs for more information.'
-          end
+        # @return [String] the body of the validation response
+        def validate(resource, profile_url)
+          Faraday.new(
+            url,
+            params: { profile: profile_url }
+          ).post('validate', resource.source_contents).body
         end
       end
 
