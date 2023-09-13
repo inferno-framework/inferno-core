@@ -98,8 +98,7 @@ const InputsModal: FC<InputsModalProps> = ({
         ) as OAuthCredentials;
         const accessTokenIsEmpty = oAuthJSON.access_token === '';
         const refreshIsEmpty =
-          oAuthJSON.refresh_token !== '' &&
-          (oAuthJSON.token_url === '' || oAuthJSON.client_id === '');
+          oAuthJSON.refresh_token !== '' && (!oAuthJSON.token_url || !oAuthJSON.client_id);
         oAuthMissingRequiredInput = (accessTokenIsEmpty && !input.optional) || refreshIsEmpty;
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);
