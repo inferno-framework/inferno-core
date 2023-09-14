@@ -217,7 +217,7 @@ module Inferno
           if response.start_with? '{'
             FHIR::OperationOutcome.new(JSON.parse(response))
           else
-            runnable.add_message('error', "Validator Response: #{response}")
+            runnable.add_message('error', "Validator Response:\n#{response}")
             raise Inferno::Exceptions::ErrorInValidatorException,
                   'Validator response was an unexpected format. '\
                   'Review Messages tab or validator service logs for more information.'
