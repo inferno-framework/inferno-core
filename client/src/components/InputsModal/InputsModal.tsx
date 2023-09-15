@@ -98,8 +98,7 @@ const InputsModal: FC<InputsModalProps> = ({
         ) as OAuthCredentials;
         const accessTokenIsEmpty = oAuthJSON.access_token === '';
         const refreshIsEmpty =
-          oAuthJSON.refresh_token !== '' &&
-          (oAuthJSON.token_url === '' || oAuthJSON.client_id === '');
+          oAuthJSON.refresh_token !== '' && (!oAuthJSON.token_url || !oAuthJSON.client_id);
         oAuthMissingRequiredInput = (accessTokenIsEmpty && !input.optional) || refreshIsEmpty;
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);
@@ -281,8 +280,9 @@ const InputsModal: FC<InputsModalProps> = ({
     const parsedChanges = parseSerialChanges(serialChanges);
     if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
       parsedChanges.forEach((change: TestInput) => {
-        if (!change.locked && change.value !== undefined)
+        if (!change.locked && change.value !== undefined) {
           inputsMap.set(change.name, change.value || '');
+        }
       });
     }
     handleSetInputsMap(new Map(inputsMap), true);
