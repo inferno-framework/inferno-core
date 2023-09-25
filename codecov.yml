@@ -5,7 +5,7 @@ coverage:
 
 flag_management:
   default_rules:
-    carryforward: true;
+    carryforward: true
   individual_flags:
     - name: backend
       paths:
