@@ -24,8 +24,8 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
   // render markdown once on mount - it's too slow with re-rendering
   const description = useMemo(() => {
     return runnable.description ? (
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{runnable.description}</ReactMarkdown>) :
-      undefined;
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{runnable.description}</ReactMarkdown>
+      ) : undefined;
   }, [runnable.description]);
 
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
