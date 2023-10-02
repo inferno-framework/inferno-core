@@ -9,6 +9,11 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     # This is a markdown header
     **Inferno** [github](https://github.com/inferno-framework/inferno-core)
 
+    Below is a markdown table
+    | Column 1 | Column 2 | Column 3 |
+    | :--- | :---: | ---: |
+    | Entry 1 | Entry 2 | Entry 3|
+    | Entry 4 | Entry 5 | Entry 6 |
     )
 
     # Inputs and outputs

@@ -7,6 +7,7 @@ import InputOutputList from './TestListItem/InputOutputList';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
+import remarkGfm from 'remark-gfm';
 
 interface TestGroupCardProps {
   children: React.ReactNode;
@@ -22,7 +23,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
 
   // render markdown once on mount - it's too slow with re-rendering
   const description = useMemo(() => {
-    return runnable.description ? <ReactMarkdown>{runnable.description}</ReactMarkdown> : undefined;
+    return runnable.description ? <ReactMarkdown remarkPlugins={[remarkGfm]}>{runnable.description}</ReactMarkdown> : undefined;
   }, [runnable.description]);
 
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
