@@ -15,7 +15,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     | Entry 1 | Entry 2 | Entry 3|
     | Entry 4 | Entry 5 | Entry 6 |
 
-    This is a dummy canonical link http://hl7.org/fhir/ValueSet/my-valueset|0.8 that should not be interpreted as a table
+    This is a dummy canonical link http://hl7.org/fhir/ValueSet/my-valueset|0.8 that should not be 
+    interpreted as a table
     )
 
     # Inputs and outputs
