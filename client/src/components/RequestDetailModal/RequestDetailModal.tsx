@@ -121,6 +121,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
             variant="contained"
             data-testid="cancel-button"
             onClick={hideModal}
+            sx={{ fontWeight: 'bold' }}
           >
             Close
           </Button>

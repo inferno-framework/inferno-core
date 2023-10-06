@@ -12,6 +12,7 @@ import {
 import { OAuthCredentials, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
 import useStyles from './styles';
+import RequiredInputWarning from './RequiredInputWarning';
 
 export interface InputOAuthCredentialsProps {
   requirement: TestInput;
@@ -35,22 +36,20 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
+  const [hasBeenModified, setHasBeenModified] = React.useState({});
 
   // Convert OAuth string to Object
   // OAuth should be an Object while in this component but should be converted to a string
   // before being updated in the inputs map
-  const oAuthCredentials = (
-    inputsMap.get(requirement.name)
-      ? JSON.parse(inputsMap.get(requirement.name) as string)
-      : {
-          access_token: '',
-          refresh_token: '',
-          expires_in: '',
-          client_id: '',
-          client_secret: '',
-          token_url: '',
-        }
-  ) as OAuthCredentials;
+  const oAuthCredentials = {
+    access_token: '',
+    refresh_token: '',
+    expires_in: '',
+    client_id: '',
+    client_secret: '',
+    token_url: '',
+    ...JSON.parse((inputsMap.get(requirement.name) as string) || '{}'),
+  } as OAuthCredentials;
 
   const showRefreshDetails = !!oAuthCredentials.refresh_token;
 
@@ -91,23 +90,45 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     },
   ];
 
+  const getIsMissingInput = (field: InputOAuthField) => {
+    return (
+      hasBeenModified[field.name as keyof typeof hasBeenModified] &&
+      field.required &&
+      !oAuthCredentials[field.name as keyof OAuthCredentials]
+    );
+  };
+
   const oAuthField = (field: InputOAuthField) => {
-    const fieldLabel = field.required
+    const fieldName = field.required
       ? `${(field.label || field.name) as string} (required)`
       : field.label || field.name;
+
+    const fieldLabel = (
+      <>
+        {getIsMissingInput(field) && <RequiredInputWarning />}
+        {fieldName}
+      </>
+    );
+
     return (
       <ListItem disabled={field.locked} key={field.name}>
         <TextField
           disabled={requirement.locked}
           required={field.required}
-          error={field.required && !oAuthCredentials[field.name as keyof OAuthCredentials]}
+          error={getIsMissingInput(field)}
           id={`requirement${index}_${field.name}`}
           label={fieldLabel}
           helperText={requirement.description}
           value={oAuthCredentials[field.name as keyof OAuthCredentials]}
           className={classes.inputField}
           variant="standard"
+          color="secondary"
           fullWidth
+          onBlur={(e) => {
+            if (e.currentTarget === e.target) {
+              setHasBeenModified({ ...hasBeenModified, [field.name]: true });
+            }
+          }}
           onChange={(event) => {
             const value = event.target.value;
             oAuthCredentials[field.name as keyof OAuthCredentials] = value;
@@ -128,7 +149,6 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
             required={!requirement.optional}
             disabled={requirement.locked}
             className={classes.inputLabel}
-            shrink
           >
             <FieldLabel requirement={requirement} />
           </InputLabel>
