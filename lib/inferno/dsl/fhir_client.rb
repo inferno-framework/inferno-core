@@ -60,14 +60,13 @@ module Inferno
         @fhir_clients ||= {}
       end
 
-      # Checks if a parameter can be used in a GET request according FHIR specification
+      # Wrapper for checking if parameter contents are primitive
       #
       # @param param [FHIR::Parameters::Parameter] Parameter to be checked
       # @private
-      def safe_for_get?(param)
-        valid = param.valid? && param.part.empty? && param.resource.nil? # Parameter is valid
-        param_val = param.to_hash.except('name') # should contain only one value if it is a valid parameter
-        valid && !param_val.empty? && FHIR.primitive?(datatype: param_val.keys[0][5..], value: param_val.values[0])
+      def primitive_parameter?(param)
+        param_val = param.to_hash.except('name')
+        param_val.any? { |datatype, param_value| FHIR.primitive?(datatype: datatype[5..], value: param_value) }
       end
 
       # Converts a list of FHIR Parameters into a query string for GET requests
@@ -76,10 +75,9 @@ module Inferno
       # @private
       def body_to_path(body)
         query_hashes = body.parameter.map do |param|
-          if safe_for_get?(param)
+          if primitive_parameter?(param)
             { param.name => param.to_hash.except('name').values[0] }
           else
-            # Handle the case of nonprimitive
             Inferno::Application[:logger].error "Cannot use GET request with non-primitive datatype #{param.name}"
             raise ArgumentError, "Cannot use GET request with non-primitive datatype #{param.name}"
           end
@@ -91,8 +89,10 @@ module Inferno
       #
       # @note This is a placeholder method until the FHIR::Client supports
       #   general operations.  Note that while both POST and GET methods are allowed,
-      #   GET is only allowed when the operation does not affect the servers state.
+      #   GET is only allowed when the operation does not affect the server's state.
       #   See https://build.fhir.org/operationdefinition-definitions.html#OperationDefinition.affectsState
+      #
+      # @note Currently does not allow for repeated parameters if using GET
       #
       # @param path [String]
       # @param body [FHIR::Parameters] Must all be primitive if making GET request
@@ -115,7 +115,6 @@ module Inferno
               path = "#{path}?#{body_to_path(body)}" if body.present?
               fhir_client(client).send(:get, path, operation_headers)
             else
-              # Handle the case of non-supported operation_method
               Inferno::Application[:logger].error "Cannot perform #{operation_method} requests, use GET or POST"
               raise ArgumentError, "Cannot perform #{operation_method} requests, use GET or POST"
             end
