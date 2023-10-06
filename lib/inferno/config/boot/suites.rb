@@ -25,5 +25,13 @@ Inferno::Application.boot(:suites) do
     end
 
     ObjectSpace.each_object(TracePoint, &:disable)
+
+    Inferno::Entities::TestSuite.descendants.each do |descendant|
+      # When ID not assigned in custom test suites, Runnable.id will return default ID
+      # equal to the custom test suite's parent class name
+      if descendant.id.blank? || descendant.id == 'Inferno::Entities::TestSuite'
+        raise StandardError, "Error initializing test suite #{descendant.name}: test suite ID is not set"
+      end
+    end
   end
 end

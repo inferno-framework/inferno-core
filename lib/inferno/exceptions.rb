@@ -39,11 +39,14 @@ module Inferno
       end
     end
 
+    # ErrorInValidatorException is used when an exception occurred in
+    # calling the validator service, for example a connection timeout
+    # or an unexpected response format.
+    # Note: This class extends TestResultException instead of RuntimeError
+    # to bypass printing the stack trace in the UI, since
+    # the stack trace of this exception is not likely be useful.
+    # Instead the message should point to where in the validator an error occurred.
     class ErrorInValidatorException < TestResultException
-      # This extends TestResultException instead of RuntimeError
-      # to bypass printing the stack trace in the UI.
-      # (The stack trace of this exception may not be useful,
-      # instead the message should point to where in the validator an error occurred)
       def result
         'error'
       end

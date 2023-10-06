@@ -217,7 +217,11 @@ const TestListItem: FC<TestListItemProps> = ({
         TransitionProps={{ unmountOnExit: true }}
         onClick={handleAccordionClick}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
+          if (e.key === 'Enter') {
+            // Don't open/close accordion on enter
+            setTabIndex(findPopulatedTabIndex());
+          }
+          if (e.key === ' ') {
             handleAccordionClick();
           }
         }}

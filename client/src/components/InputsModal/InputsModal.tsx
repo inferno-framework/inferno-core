@@ -98,8 +98,7 @@ const InputsModal: FC<InputsModalProps> = ({
         ) as OAuthCredentials;
         const accessTokenIsEmpty = oAuthJSON.access_token === '';
         const refreshIsEmpty =
-          oAuthJSON.refresh_token !== '' &&
-          (oAuthJSON.token_url === '' || oAuthJSON.client_id === '');
+          oAuthJSON.refresh_token !== '' && (!oAuthJSON.token_url || !oAuthJSON.client_id);
         oAuthMissingRequiredInput = (accessTokenIsEmpty && !input.optional) || refreshIsEmpty;
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);
@@ -281,8 +280,9 @@ const InputsModal: FC<InputsModalProps> = ({
     const parsedChanges = parseSerialChanges(serialChanges);
     if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
       parsedChanges.forEach((change: TestInput) => {
-        if (!change.locked && change.value !== undefined)
+        if (!change.locked && change.value !== undefined) {
           inputsMap.set(change.name, change.value || '');
+        }
       });
     }
     handleSetInputsMap(new Map(inputsMap), true);
@@ -349,6 +349,7 @@ const InputsModal: FC<InputsModalProps> = ({
                   input: classes.serialInput,
                 },
               }}
+              color="secondary"
               fullWidth
               multiline
               data-testid="serial-input"
@@ -399,7 +400,7 @@ const InputsModal: FC<InputsModalProps> = ({
             color="secondary"
             data-testid="cancel-button"
             onClick={() => closeModal()}
-            sx={{ mr: 1 }}
+            sx={{ mr: 1, fontWeight: 'bold' }}
           >
             Cancel
           </Button>
@@ -409,6 +410,7 @@ const InputsModal: FC<InputsModalProps> = ({
             disableElevation
             onClick={submitClicked}
             disabled={missingRequiredInput || invalidInput}
+            sx={{ fontWeight: 'bold' }}
           >
             Submit
           </Button>

@@ -2,6 +2,11 @@ import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
 
 export default makeStyles()((theme: Theme) => ({
+  label: {
+    '& label.Mui-focused': {
+      color: theme.palette.common.orangeDarkest,
+    },
+  },
   optionsList: {
     display: 'flex',
     flexDirection: 'column',
