@@ -135,43 +135,11 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
-  describe '#primitive_parameter?' do
-    # it 'returns true when given a primitive parameter' do
-    #   expect(group.primitive_parameter?(boolean_parameter)).to be true
-    # end
-
-    # it 'returns false when given a resource parameter' do
-    #   expect(group.primitive_parameter?(resource_parameter)).to be false
-    # end
-
-    # it 'returns false when given a complex parameter' do
-    #   expect(group.primitive_parameter?(ratio_parameter)).to be false
-    # end
-  end
-
   describe '#body_to_path' do
-    # it 'converts primitives into a path query' do
-    #   expect(group.body_to_path(body_with_two_primitives)).to eq({ PARAM_BOOL: true, PARAM_STRING: 'STRING' }.to_query)
-    # end
-
     it 'handles repeated parameters' do
       expected_body = [{ PARAM_BOOL: true }, { PARAM_BOOL: false }].map(&:to_query).join('&')
       expect(group.body_to_path(body_with_repeated_parameters)).to eq(expected_body)
     end
-
-    # it 'raises error if non-primitive parameter found' do
-    #   body = body_with_nonprimitive
-    #   expect do
-    #     group.body_to_path(body)
-    #   end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype PARAM_RATIO')
-    # end
-
-    # it 'raises error if parameter is resource' do
-    #   body = body_with_resource
-    #   expect do
-    #     group.body_to_path(body)
-    #   end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype PARAM_RESOURCE')
-    # end
   end
 
   describe '#fhir_operation' do
