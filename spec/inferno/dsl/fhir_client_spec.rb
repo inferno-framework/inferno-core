@@ -228,7 +228,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
       it 'prevents REST methods other than GET and POST' do
         body = body_with_two_primitives
-        expect do 
+        expect do
           group.fhir_operation(path, body:, operation_method: :put)
         end.to raise_error(ArgumentError, 'Cannot perform put requests, use GET or POST')
       end
