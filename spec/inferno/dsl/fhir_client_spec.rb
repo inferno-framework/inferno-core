@@ -225,6 +225,13 @@ RSpec.describe Inferno::DSL::FHIRClient do
           group.fhir_operation(path, body:, operation_method: :get)
         end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype PARAM_RESOURCE')
       end
+
+      it 'prevents REST methods other than GET and POST' do
+        body = body_with_two_primitives
+        expect do 
+          group.fhir_operation(path, body:, operation_method: :put)
+        end.to raise_error(ArgumentError, 'Cannot perform put requests, use GET or POST')
+      end
     end
 
     context 'with the client parameter' do
