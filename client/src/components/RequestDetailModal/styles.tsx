@@ -23,6 +23,9 @@ export default makeStyles()((_theme: Theme) => ({
     fontSize: 'small',
     marginTop: '10px',
   },
+  code: {
+    textWrap: 'wrap',
+  },
   inputIcon: {
     float: 'right',
     verticalAlign: 'middle',

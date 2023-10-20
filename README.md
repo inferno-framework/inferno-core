@@ -147,9 +147,6 @@ bundle exec jekyll serve
 ```
 By default the site will be served at `http://localhost:4000/inferno-core/`
 
-HL7, FHIR and the FHIR [FLAME DESIGN] are the registered trademarks of Health
-Level Seven International and their use does not constitute endorsement by HL7.
-
 ## License
 Copyright 2023 The MITRE Corporation
 

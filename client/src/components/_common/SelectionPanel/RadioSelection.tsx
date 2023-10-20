@@ -1,15 +1,9 @@
 import React, { FC, useEffect } from 'react';
-import {
-  Box,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Radio,
-  RadioGroup,
-  Tooltip,
-} from '@mui/material';
+import { Box, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@mui/material';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import { RadioOption, RadioOptionSelection } from '~/models/selectionModels';
+import CustomTooltip from '~/components/_common/CustomTooltip';
+import useStyles from '~/components/_common/SelectionPanel/styles';
 
 export interface RadioSelectionProps {
   options: RadioOption[];
@@ -20,6 +14,7 @@ const RadioSelection: FC<RadioSelectionProps> = ({
   options,
   setSelections: setParentSelections,
 }) => {
+  const { classes } = useStyles();
   const initialSelectedRadioOptions: RadioOptionSelection[] = options.map((option) => ({
     // just grab the first to start
     // perhaps choices should be persisted in the URL to make it easy to share specific options
@@ -46,13 +41,18 @@ const RadioSelection: FC<RadioSelectionProps> = ({
   return (
     <Box px={4} py={2}>
       {options.map((option, i) => (
-        <FormControl fullWidth id={`radio-input-${i}`} key={`radio-form-control${i}`}>
+        <FormControl
+          fullWidth
+          id={`radio-input-${i}`}
+          key={`radio-form-control${i}`}
+          className={classes.label}
+        >
           <FormLabel sx={{ display: 'flex', alignItems: 'center' }}>
             {option.title || option.id}
             {option.description && (
-              <Tooltip title={option.description}>
+              <CustomTooltip title={option.description}>
                 <HelpOutlineOutlinedIcon fontSize="small" color="secondary" sx={{ px: 0.5 }} />
-              </Tooltip>
+              </CustomTooltip>
             )}
           </FormLabel>
 

@@ -1,0 +1,32 @@
+coverage:
+  status:
+    project: off
+    patch: off
+
+flag_management:
+  default_rules:
+    carryforward: true
+  individual_flags:
+    - name: backend
+      paths:
+        - config/
+        - dev_suites/
+        - lib/
+        - spec/
+      statuses:
+        - type: project
+          target: 90%
+          threshold: 1%
+        - type: patch
+          target: 90%
+          threshold: 1%
+    - name: frontend
+      paths:
+        - client/
+      statuses:
+        - type: project
+          target: auto
+          threshold: 1%
+        - type: patch
+          target: auto
+          threshold: 1%

@@ -12,7 +12,7 @@ export default makeStyles()((theme: Theme) => ({
     display: 'inline',
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: theme.palette.common.grayDarkest,
+    color: theme.palette.common.grayDarker,
   },
   currentItem: {
     fontWeight: 600,

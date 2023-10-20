@@ -1,4 +1,5 @@
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 import { vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -12,15 +13,17 @@ import {
 } from '~/components/RequestDetailModal/__mocked_data__/mockData';
 
 describe('The RequestsList component', () => {
-  test('it orders requests based on their index', () => {
+  test('it orders requests based on their index', async () => {
     const requests = [codeResponseWithHTML, mockedRequest];
 
-    render(
-      <ThemeProvider>
-        <SnackbarProvider>
-          <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
-        </SnackbarProvider>
-      </ThemeProvider>
+    await act(() =>
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
+          </SnackbarProvider>
+        </ThemeProvider>
+      )
     );
 
     const renderedRequests = document.querySelectorAll('tbody > tr');
@@ -43,12 +46,14 @@ describe('The RequestsList component', () => {
       },
     });
 
-    render(
-      <ThemeProvider>
-        <SnackbarProvider>
-          <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
-        </SnackbarProvider>
-      </ThemeProvider>
+    await act(() =>
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
+          </SnackbarProvider>
+        </ThemeProvider>
+      )
     );
 
     const buttons = screen.getAllByRole('button');
@@ -64,15 +69,17 @@ describe('The RequestsList component', () => {
     vi.resetAllMocks();
   });
 
-  test('shows details when button is clicked', () => {
+  test('shows details when button is clicked', async () => {
     const requests = [codeResponseWithHTML, mockedRequest];
 
-    render(
-      <ThemeProvider>
-        <SnackbarProvider>
-          <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
-        </SnackbarProvider>
-      </ThemeProvider>
+    await act(() =>
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
+          </SnackbarProvider>
+        </ThemeProvider>
+      )
     );
 
     const buttons = screen.getAllByRole('button');

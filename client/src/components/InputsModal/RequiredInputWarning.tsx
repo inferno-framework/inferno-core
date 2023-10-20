@@ -1,12 +1,20 @@
-import { Tooltip } from '@mui/material';
 import React, { FC } from 'react';
-import WarningIcon from '@mui/icons-material/Warning';
+import { Report } from '@mui/icons-material';
+import CustomTooltip from '~/components/_common/CustomTooltip';
 
 const RequiredInputWarning: FC = () => {
   return (
-    <Tooltip title="Missing value for required input">
-      <WarningIcon />
-    </Tooltip>
+    <CustomTooltip title="Missing value for required input">
+      <Report
+        color="error"
+        aria-hidden={false}
+        tabIndex={0}
+        sx={{
+          marginRight: '4px',
+          verticalAlign: 'bottom',
+        }}
+      />
+    </CustomTooltip>
   );
 };
 

@@ -10,19 +10,21 @@ export default makeStyles()((theme: Theme) => ({
   inputField: {
     '& > label.MuiInputLabel-shrink': {
       fontWeight: 600,
-      color: 'rgba(0,0,0,0.85)',
+      color: theme.palette.common.grayDarkest,
     },
     '& label.Mui-focused': {
-      color: theme.palette.primary.main,
+      color: theme.palette.secondary.main,
     },
     '& label.Mui-disabled': {
       color: theme.palette.common.gray,
     },
+    '& label.Mui-error': {
+      color: theme.palette.error.main,
+    },
   },
   inputLabel: {
-    color: 'rgba(0,0,0,0.85)',
+    color: theme.palette.common.grayDarker,
     fontWeight: 600,
-    fontSize: '.75rem',
   },
   lockedIcon: {
     marginLeft: '5px',
@@ -31,26 +33,48 @@ export default makeStyles()((theme: Theme) => ({
   oauthCard: {
     width: '100%',
     margin: '8px 0',
-    borderColor: 'rgba(0,0,0,0.3)',
+    borderColor: theme.palette.common.grayLight,
     '&:focus-within': {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.secondary.main,
     },
-  },
-  inputAction: {
-    color: theme.palette.primary.dark,
   },
   serialInput: {
     height: 'max-content',
+    fontFamily: 'monospace',
   },
   dialogActions: {
     display: 'flex',
+    justifyContent: 'space-between',
+  },
+  toggleButtonGroupContainer: {
+    display: 'flex',
+    border: `1px solid ${theme.palette.divider}`,
+    flexWrap: 'wrap',
   },
   toggleButtonGroup: {
     flexGrow: 1,
+    '& .MuiToggleButtonGroup-grouped': {
+      margin: theme.spacing(0.5),
+      border: 0,
+      '&.Mui-disabled': {
+        border: 0,
+      },
+      '&:not(:first-of-type), :first-of-type': {
+        borderRadius: theme.shape.borderRadius,
+      },
+    },
   },
   toggleButton: {
+    color: theme.palette.common.grayDark,
+    '&:hover, :focus-within': {
+      backgroundColor: theme.palette.common.grayLightest,
+      fontWeight: 'bolder',
+    },
     '&.Mui-selected': {
-      color: theme.palette.primary.dark,
+      backgroundColor: 'unset',
+      border: `1px solid ${theme.palette.secondary.main} !important`,
+      color: theme.palette.secondary.main,
+      fontWeight: 'bolder',
     },
   },
 }));
