@@ -64,6 +64,15 @@ module Inferno
           @url
         end
 
+        # Set the IGs that the validator will need to load
+        # Example: ["hl7.fhir.us.core#4.0.0"]
+        # @param igs [Array<String>]
+        def igs(validator_igs = nil)
+          @igs = validator_igs if validator_igs
+
+          @igs
+        end
+
         # @private
         def additional_validations
           @additional_validations ||= []
@@ -124,7 +133,7 @@ module Inferno
             runnable.add_message('error', e.message)
             raise Inferno::Exceptions::ErrorInValidatorException, "Unable to connect to validator at #{url}."
           end
-          outcome = operation_outcome_from_validator_response(response.body, runnable)
+          outcome = operation_outcome_from_validator_response(response, runnable)
 
           message_hashes = message_hashes_from_outcome(outcome, resource, profile_url)
 
@@ -195,6 +204,31 @@ module Inferno
           "#{location_prefix}: #{location}: #{issue&.details&.text}"
         end
 
+        # @private
+        def wrap_resource_for_hl7_wrapper(resource, profile_url)
+          wrapped_resource = {
+            cliContext: {
+              # TODO: these should be configurable as well
+              sv: '4.0.1',
+              # displayWarnings: true,  # -display-issues-are-warnings
+              # txServer: nil,          # -tx n/a
+              igs: @igs || [],
+              # NOTE: this profile must be part of a loaded IG,
+              # otherwise the response is an HTTP 500 with no content
+              profiles: [profile_url]
+            },
+            filesToValidate: [
+              {
+                fileName: 'manually_entered_file.json',
+                fileContent: resource.to_json,
+                fileType: 'json'
+              }
+            ],
+            sessionId: @session_id
+          }
+          wrapped_resource.to_json
+        end
+
         # Post a resource to the validation service for validating.
         #
         # @param resource [FHIR::Model]
@@ -206,18 +240,32 @@ module Inferno
 
         # @private
         def call_validator(resource, profile_url)
-          Faraday.new(
-            url,
-            params: { profile: profile_url }
-          ).post('validate', resource.source_contents)
+          request_body = wrap_resource_for_hl7_wrapper(resource, profile_url)
+          response = Faraday.new(
+            url
+          ).post('validate', request_body, content_type: 'application/json')
+        end
+
+        # @private
+        def operation_outcome_from_hl7_wrapped_response(response)
+          res = JSON.parse(response)
+
+          @session_id = res['sessionId']
+
+          # assume for now that one resource -> one request
+          issues = res['outcomes'][0]['issues']&.map do |i|
+            { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
+          end
+          # this is circuitous, ideally we would map this response directly to message_hashes
+          FHIR::OperationOutcome.new(issue: issues)
         end
 
         # @private
         def operation_outcome_from_validator_response(response, runnable)
-          if response.start_with? '{'
-            FHIR::OperationOutcome.new(JSON.parse(response))
+          if response.body.start_with? '{'
+            operation_outcome_from_hl7_wrapped_response(response.body)
           else
-            runnable.add_message('error', "Validator Response:\n#{response}")
+            runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{response.body}")
             raise Inferno::Exceptions::ErrorInValidatorException,
                   'Validator response was an unexpected format. '\
                   'Review Messages tab or validator service logs for more information.'
