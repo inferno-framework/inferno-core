@@ -129,7 +129,12 @@ ___
 1.  Open a terminal in the new WSL window and try to `ping google.com`.
   1. If you cannot ping google.com, you may not be able to connect to the internet from within the WSL instance.  The steps at [this stack overflow article](https://stackoverflow.com/questions/55649015/could-not-resolve-host-github-com-only-in-windows-bash#:~:text=It%20could%20be%20that%20your%20/etc/resolv.conf%20file%20is%20corrupt%20%2D%20it%20happened%20to%20me!) should resolve the issue. If it does not, open cmd and run `nslookup`.  Copy the Default Address, then in your wsl instance type `sudo nano /etc/resolv.conf`.  Add the default address as another nameserver.
 1. Continue from step 2 in [Installation](#installation).
-{: .fs-3 .lh-default}
+{: .lh-default}
+
+**NOTE:** If, when running Inferno within WSL, the tests begin to stall and the console repeatedly prints `WARN: Your Redis network connection is performing extremely poorly.`,
+WSL may be having networking issues.  To resolve this, you can follow the steps in this [WSL Slow Network Issue thread](https://github.com/microsoft/WSL/issues/4901#issuecomment-1724482084).  You can make a `.wslconfig` file from your `%USERDATA%` directory if it does not already exist, and you will need to restart WSL (usually through `wsl --shutdown` in Windows Powershell) before the changes take effect.
+{: .fs-3}
+
 ___
 #### Installation
 1. Install [Docker](https://www.docker.com/get-started).
