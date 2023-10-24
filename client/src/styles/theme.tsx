@@ -7,6 +7,7 @@ declare module '@mui/material/styles/createPalette' {
     black: string;
     red: string;
     orangeLightest: string;
+    orangeLighter: string;
     orange: string;
     orangeDarker: string;
     orangeDarkest: string;
@@ -22,6 +23,7 @@ declare module '@mui/material/styles/createPalette' {
     grayLightest: string;
     grayMedium: string;
     grayDark: string;
+    grayDarker: string;
     grayDarkest: string;
   }
 }
@@ -30,22 +32,24 @@ const colors = {
   black: '#222',
   red: '#d95d77',
   orangeLightest: '#fff8f2',
-  orange: '#F88B30',
-  orangeDarker: '#C05702',
-  orangeDarkest: '#853C00',
+  orangeLighter: '#ffe4ce',
+  orange: '#f88b30',
+  orangeDarker: '#c05702',
+  orangeDarkest: '#853c00',
   green: '#2fa874',
-  blue: '#51788D',
+  blue: '#51788d',
   blueLight: '#9ad2f0',
   blueGray: '#cbd5df',
   blueGrayLighter: '#e6ebf2',
   blueGrayLightest: '#f1f8ff',
-  gray: 'rgba(0, 0, 0, 0.6)',
+  gray: '#707070',
   grayLight: '#bdbdbd',
   grayLighter: '#e0e0e0',
   grayLightest: '#eeeeee',
   grayMedium: '#757575',
   grayDark: '#616161',
-  grayDarkest: '#424242',
+  grayDarker: '#424242',
+  grayDarkest: '#191919',
 };
 
 const paletteBase = {

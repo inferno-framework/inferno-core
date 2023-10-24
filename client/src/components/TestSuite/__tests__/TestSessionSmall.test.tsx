@@ -1,5 +1,6 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { act } from 'react-dom/test-utils';
 import { render, renderHook, screen } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
@@ -13,25 +14,27 @@ beforeEach(() => {
   result.current.windowIsSmall = true;
 });
 
-test('renders narrow screen TestSession', () => {
+test('renders narrow screen TestSession', async () => {
   let drawerOpen = false;
 
-  render(
-    <MemoryRouter>
-      <ThemeProvider>
-        <SnackbarProvider>
-          <TestSessionComponent
-            testSession={mockedTestSession}
-            previousResults={mockedResultsList}
-            initialTestRun={null}
-            sessionData={new Map()}
-            setSessionData={() => {}}
-            drawerOpen={drawerOpen}
-            toggleDrawer={() => (drawerOpen = !drawerOpen)}
-          />
-        </SnackbarProvider>
-      </ThemeProvider>
-    </MemoryRouter>
+  await act(() =>
+    render(
+      <MemoryRouter>
+        <ThemeProvider>
+          <SnackbarProvider>
+            <TestSessionComponent
+              testSession={mockedTestSession}
+              previousResults={mockedResultsList}
+              initialTestRun={null}
+              sessionData={new Map()}
+              setSessionData={() => {}}
+              drawerOpen={drawerOpen}
+              toggleDrawer={() => (drawerOpen = !drawerOpen)}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </MemoryRouter>
+    )
   );
 
   const testSessionTitleComponentList = screen.getAllByTestId('navigable-group-item');

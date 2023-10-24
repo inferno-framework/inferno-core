@@ -9,7 +9,7 @@ export interface InputTextFieldProps {
   requirement: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
-  setInputsMap: (map: Map<string, unknown>) => void;
+  setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
 const InputTextField: FC<InputTextFieldProps> = ({
@@ -19,19 +19,30 @@ const InputTextField: FC<InputTextFieldProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
+  const [hasBeenModified, setHasBeenModified] = React.useState(false);
+
+  const isMissingInput =
+    hasBeenModified && !requirement.optional && !inputsMap.get(requirement.name);
 
   return (
     <ListItem>
       <TextField
         disabled={requirement.locked}
         required={!requirement.optional}
+        error={isMissingInput}
         id={`requirement${index}_input`}
         className={classes.inputField}
         variant="standard"
+        color="secondary"
         fullWidth
-        label={<FieldLabel requirement={requirement} />}
+        label={<FieldLabel requirement={requirement} isMissingInput={isMissingInput} />}
         helperText={requirement.description}
         value={inputsMap.get(requirement.name)}
+        onBlur={(e) => {
+          if (e.currentTarget === e.target) {
+            setHasBeenModified(true);
+          }
+        }}
         onChange={(event) => {
           const value = event.target.value;
           inputsMap.set(requirement.name, value);

@@ -34,10 +34,70 @@ RSpec.describe Inferno::DSL::FHIRClient do
   let(:group) { FHIRClientDSLTestClass.new }
   let(:base_url) { 'http://www.example.com/fhir' }
   let(:resource_id) { '123' }
-  let(:resource) { FHIR::CarePlan.new(id: resource_id) }
+  let(:version_id) { '4' }
+  let(:resource) { FHIR::CarePlan.new(id: resource_id, meta: { versionId: version_id }) }
   let(:default_client) { group.fhir_clients[:default] }
-  let(:bundle) { FHIR::Bundle.new(entry: [{ resource: }]) }
+  let(:bundle) { FHIR::Bundle.new(type: 'history', entry: [{ resource: }]) }
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
+  let(:boolean_parameter) do
+    FHIR::Parameters::Parameter.new.tap do |param|
+      param.name = 'PARAM_BOOL'
+      param.valueBoolean = true
+    end
+  end
+  let(:ratio_parameter) do
+    FHIR::Parameters::Parameter.new.tap do |param|
+      param.name = 'PARAM_RATIO'
+      param.valueRatio = FHIR::Ratio.new.tap do |ratio|
+        ratio.numerator = FHIR::Quantity.new
+        ratio.denominator = FHIR::Quantity.new
+      end
+    end
+  end
+  let(:resource_parameter) do
+    FHIR::Parameters::Parameter.new.tap do |param|
+      param.name = 'PARAM_RESOURCE'
+      param.resource = FHIR::Patient.new
+    end
+  end
+  let(:body_with_two_primitives) do
+    FHIR::Parameters.new.tap do |body|
+      body.parameter = [
+        boolean_parameter,
+        FHIR::Parameters::Parameter.new.tap do |param|
+          param.name = 'PARAM_STRING'
+          param.valueString = 'STRING'
+        end
+      ]
+    end
+  end
+  let(:body_with_repeated_parameters) do
+    FHIR::Parameters.new.tap do |body|
+      body.parameter = [
+        boolean_parameter,
+        FHIR::Parameters::Parameter.new.tap do |param|
+          param.name = 'PARAM_BOOL'
+          param.valueBoolean = false
+        end
+      ]
+    end
+  end
+  let(:body_with_nonprimitive) do
+    FHIR::Parameters.new.tap do |body|
+      body.parameter = [
+        boolean_parameter,
+        ratio_parameter
+      ]
+    end
+  end
+  let(:body_with_resource) do
+    FHIR::Parameters.new.tap do |body|
+      body.parameter = [
+        boolean_parameter,
+        resource_parameter
+      ]
+    end
+  end
 
   describe '#fhir_client' do
     context 'without an argument' do
@@ -75,21 +135,39 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
+  describe '#body_to_path' do
+    it 'handles repeated parameters' do
+      expected_body = [{ PARAM_BOOL: true }, { PARAM_BOOL: false }].map(&:to_query).join('&')
+      expect(group.body_to_path(body_with_repeated_parameters)).to eq(expected_body)
+    end
+  end
+
   describe '#fhir_operation' do
     let(:path) { 'abc' }
     let(:stub_operation_request) do
       stub_request(:post, "#{base_url}/#{path}")
         .to_return(status: 200, body: resource.to_json)
     end
+    let(:stub_operation_get_request) do
+      stub_request(:get, "#{base_url}/#{path}")
+        .to_return(status: 200, body: resource.to_json)
+    end
 
     before do
       stub_operation_request
+      stub_operation_get_request
     end
 
-    it 'performs a get' do
+    it 'performs a post' do
       group.fhir_operation(path)
 
       expect(stub_operation_request).to have_been_made.once
+    end
+
+    it 'performs a get' do
+      group.fhir_operation(path, operation_method: :get)
+
+      expect(stub_operation_get_request).to have_been_made.once
     end
 
     it 'returns an Inferno::Entities::Request' do
@@ -103,6 +181,57 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
       expect(group.requests).to include(result)
       expect(group.request).to eq(result)
+    end
+
+    context 'with a body of parameters' do
+      it 'uses get when all parameters are primitive and GET specified' do
+        body = body_with_two_primitives
+        get_with_body_request_stub =
+          stub_request(:get, "#{base_url}/#{path}")
+            .with(query: { PARAM_BOOL: true, PARAM_STRING: 'STRING' })
+            .to_return(status: 200, body: resource.to_json)
+
+        group.fhir_operation(path, body:, operation_method: :get)
+
+        expect(get_with_body_request_stub).to have_been_made.once
+      end
+
+      # This test left for testing DoD of FI-2223
+      # https://oncprojectracking.healthit.gov/support/browse/FI-2223
+      #
+      # it 'correctly handles repeated parameters' do
+      #   body = body_with_repeated_parameters
+      #   get_with_body_request_stub =
+      #     stub_request(:get, "#{base_url}/#{path}")
+      #       .with(body: URI.encode_www_form({PARAM_BOOL: [true, false]}))
+      #       .to_return(status: 200, body: resource.to_json)
+      #   puts get_with_body_request_stub.to_s
+
+      #   group.fhir_operation(path, body:, operation_method: :get)
+
+      #   expect(get_with_body_request_stub).to have_been_made.once
+      # end
+
+      it 'prevents get when parameters are non-primitive' do
+        body = body_with_nonprimitive
+        expect do
+          group.fhir_operation(path, body:, operation_method: :get)
+        end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype PARAM_RATIO')
+      end
+
+      it 'prevents get when parameters contain resources' do
+        body = body_with_resource
+        expect do
+          group.fhir_operation(path, body:, operation_method: :get)
+        end.to raise_error(ArgumentError, 'Cannot use GET request with non-primitive datatype PARAM_RESOURCE')
+      end
+
+      it 'prevents REST methods other than GET and POST' do
+        body = body_with_two_primitives
+        expect do
+          group.fhir_operation(path, body:, operation_method: :put)
+        end.to raise_error(ArgumentError, 'Cannot perform put requests, use GET or POST')
+      end
     end
 
     context 'with the client parameter' do
@@ -149,7 +278,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
           .to_return(status: 200, body: resource.to_json)
       end
 
-      it 'as custom only, performs a get' do
+      it 'as custom only, performs a post' do
         operation_request =
           stub_request(:post, "#{base_url}/#{path}")
             .with(headers: { 'CustomHeader' => 'CustomTest' })
@@ -160,7 +289,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(operation_request).to have_been_made.once
       end
 
-      it 'as default only, performs a get' do
+      it 'as default only, performs a post' do
         operation_request =
           stub_request(:post, "#{base_url}/#{path}")
             .with(headers: { 'DefaultHeader' => 'ClientHeader' })
@@ -172,7 +301,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(operation_request).to have_been_made.once
       end
 
-      it 'as both default and custom, performs a get' do
+      it 'as both default and custom, performs a post' do
         operation_request =
           stub_request(:post, "#{base_url}/#{path}")
             .with(headers: { 'DefaultHeader' => 'ClientHeader', 'CustomHeader' => 'CustomTest' })
@@ -391,6 +520,336 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
+  describe '#fhir_vread' do
+    let(:stub_vread_request) do
+      stub_request(:get, "#{base_url}/#{resource.resourceType}/#{resource_id}/_history/#{version_id}")
+        .to_return(status: 200, body: resource.to_json)
+    end
+
+    before do
+      stub_vread_request
+    end
+
+    it 'performs a FHIR vread' do
+      group.fhir_vread(resource.resourceType, resource_id, version_id)
+
+      expect(stub_vread_request).to have_been_made.once
+    end
+
+    it 'returns an Inferno::Entities::Request' do
+      result = group.fhir_vread(resource.resourceType, resource_id, version_id)
+
+      expect(result).to be_a(Inferno::Entities::Request)
+    end
+
+    it 'adds the request to the list of requests' do
+      result = group.fhir_vread(resource.resourceType, resource_id, version_id)
+
+      expect(group.requests).to include(result)
+      expect(group.request).to eq(result)
+    end
+
+    context 'with the client parameter' do
+      it 'uses that client' do
+        other_url = 'http://www.example.com/fhir/r4'
+        group.fhir_clients[:other_client] = FHIR::Client.new(other_url)
+
+        other_request_stub =
+          stub_request(:get, "#{other_url}/#{resource.resourceType}/#{resource_id}/_history/#{version_id}")
+            .to_return(status: 200, body: resource.to_json)
+
+        group.fhir_vread(resource.resourceType, resource_id, version_id, client: :other_client)
+
+        expect(other_request_stub).to have_been_made
+        expect(stub_vread_request).to_not have_been_made
+      end
+    end
+
+    context 'with a base url that causes a TCP error' do
+      before do
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:vread)
+          .and_raise(SocketError, 'Failed to open TCP')
+      end
+
+      it 'raises a test failure exception' do
+        expect do
+          group.fhir_vread :patient, '0', '1'
+        end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
+      end
+    end
+
+    context 'with a base url that causes a non-TCP error' do
+      before do
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:vread)
+          .and_raise(SocketError, 'not a TCP error')
+      end
+
+      it 'raises the error' do
+        expect do
+          group.fhir_vread :patient, '0', '1'
+        end.to raise_error(SocketError, 'not a TCP error')
+      end
+    end
+  end
+
+  describe '#fhir_update' do
+    let(:stub_update_request) do
+      stub_request(:put, "#{base_url}/#{resource.resourceType}/#{resource_id}")
+        .with(body: resource.to_json)
+        .to_return(status: 200,
+                   headers: { 'Location' => "#{base_url}/#{resource.resourceType}/#{resource.id}/_history/555" })
+    end
+
+    before do
+      stub_update_request
+    end
+
+    it 'performs a FHIR update' do
+      group.fhir_update(resource, resource_id)
+
+      expect(stub_update_request).to have_been_made.once
+    end
+
+    it 'returns an Inferno::Entities::Request' do
+      result = group.fhir_update(resource, resource_id)
+
+      expect(result).to be_a(Inferno::Entities::Request)
+    end
+
+    it 'adds the request to the list of requests' do
+      result = group.fhir_update(resource, resource_id)
+
+      expect(group.requests).to include(result)
+      expect(group.request).to eq(result)
+    end
+
+    context 'with the client parameter' do
+      it 'uses that client' do
+        other_url = 'http://www.example.com/fhir/r4'
+        group.fhir_clients[:other_client] = FHIR::Client.new(other_url)
+
+        other_request_stub =
+          stub_request(:put, "#{other_url}/#{resource.resourceType}/#{resource_id}")
+            .with(body: resource.to_json)
+            .to_return(status: 200,
+                       headers: { 'Location' => "#{other_url}/#{resource.resourceType}/#{resource.id}/_history/555" })
+
+        group.fhir_update(resource, resource_id, client: :other_client)
+
+        expect(other_request_stub).to have_been_made
+        expect(stub_update_request).to_not have_been_made
+      end
+    end
+
+    context 'with a base url that causes a TCP error' do
+      before do
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:update)
+          .and_raise(SocketError, 'Failed to open TCP')
+      end
+
+      it 'raises a test failure exception' do
+        expect do
+          group.fhir_update resource, resource_id
+        end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
+      end
+    end
+
+    context 'with a base url that causes a non-TCP error' do
+      before do
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:update)
+          .and_raise(SocketError, 'not a TCP error')
+      end
+
+      it 'raises the error' do
+        expect do
+          group.fhir_update resource, resource_id
+        end.to raise_error(SocketError, 'not a TCP error')
+      end
+    end
+  end
+
+  describe '#fhir_patch' do
+    let(:patch) { [{ op: 'replace', path: '/status/', value: 'active' }] }
+
+    let(:stub_patch_request) do
+      stub_request(:patch, "#{base_url}/#{resource.resourceType}/#{resource_id}")
+        .with(body: patch.to_json)
+        .to_return(status: 200,
+                   headers: { 'Location' => "#{base_url}/#{resource.resourceType}/#{resource.id}/_history/555" })
+    end
+
+    before do
+      stub_patch_request
+    end
+
+    it 'performs a FHIR patch' do
+      group.fhir_patch(resource.resourceType, resource_id, patch)
+
+      expect(stub_patch_request).to have_been_made.once
+    end
+
+    it 'returns an Inferno::Entities::Request' do
+      result = group.fhir_patch(resource.resourceType, resource_id, patch)
+
+      expect(result).to be_a(Inferno::Entities::Request)
+    end
+
+    it 'adds the request to the list of requests' do
+      result = group.fhir_patch(resource.resourceType, resource_id, patch)
+
+      expect(group.requests).to include(result)
+      expect(group.request).to eq(result)
+    end
+
+    context 'with the client parameter' do
+      it 'uses that client' do
+        other_url = 'http://www.example.com/fhir/r4'
+        group.fhir_clients[:other_client] = FHIR::Client.new(other_url)
+
+        other_request_stub =
+          stub_request(:patch, "#{other_url}/#{resource.resourceType}/#{resource_id}")
+            .with(body: patch.to_json)
+            .to_return(status: 200,
+                       headers: { 'Location' => "#{other_url}/#{resource.resourceType}/#{resource.id}/_history/555" })
+
+        group.fhir_patch(resource.resourceType, resource_id, patch, client: :other_client)
+
+        expect(other_request_stub).to have_been_made
+        expect(stub_patch_request).to_not have_been_made
+      end
+    end
+
+    context 'with a base url that causes a TCP error' do
+      before do
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:partial_update)
+          .and_raise(SocketError, 'Failed to open TCP')
+      end
+
+      it 'raises a test failure exception' do
+        expect do
+          group.fhir_patch resource.resourceType, resource_id, patch
+        end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
+      end
+    end
+
+    context 'with a base url that causes a non-TCP error' do
+      before do
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:partial_update)
+          .and_raise(SocketError, 'not a TCP error')
+      end
+
+      it 'raises the error' do
+        expect do
+          group.fhir_patch resource.resourceType, resource_id, patch
+        end.to raise_error(SocketError, 'not a TCP error')
+      end
+    end
+  end
+
+  describe '#fhir_history' do
+    let(:stub_instance_history_request) do
+      stub_request(:get, "#{base_url}/#{resource.resourceType}/#{resource_id}/_history")
+        .to_return(status: 200, body: bundle.to_json)
+    end
+
+    let(:stub_type_history_request) do
+      stub_request(:get, "#{base_url}/#{resource.resourceType}/_history")
+        .to_return(status: 200, body: bundle.to_json)
+    end
+
+    let(:stub_all_history_request) do
+      stub_request(:get, "#{base_url}/_history")
+        .to_return(status: 200, body: bundle.to_json)
+    end
+
+    before do
+      stub_instance_history_request
+      stub_type_history_request
+      stub_all_history_request
+    end
+
+    it 'performs an instance level history interaction' do
+      group.fhir_history(resource.resourceType, resource_id)
+
+      expect(stub_instance_history_request).to have_been_made.once
+    end
+
+    it 'performs an type history interaction' do
+      group.fhir_history(resource.resourceType)
+
+      expect(stub_type_history_request).to have_been_made.once
+    end
+
+    it 'performs a whole system history interaction' do
+      group.fhir_history
+
+      expect(stub_all_history_request).to have_been_made.once
+    end
+
+    it 'returns an Inferno::Entities::Request' do
+      result = group.fhir_history
+
+      expect(result).to be_a(Inferno::Entities::Request)
+    end
+
+    it 'adds the request to the list of requests' do
+      result = group.fhir_history
+
+      expect(group.requests).to include(result)
+      expect(group.request).to eq(result)
+    end
+
+    context 'with the client parameter' do
+      it 'uses that client' do
+        other_url = 'http://www.example.com/fhir/r4'
+        group.fhir_clients[:other_client] = FHIR::Client.new(other_url)
+
+        other_request_stub =
+          stub_request(:get, "#{other_url}/_history")
+            .to_return(status: 200, body: bundle.to_json)
+
+        group.fhir_history(client: :other_client)
+
+        expect(other_request_stub).to have_been_made
+        expect(stub_all_history_request).to_not have_been_made
+      end
+    end
+
+    context 'with a base url that causes a TCP error' do
+      before do
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:history)
+          .and_raise(SocketError, 'Failed to open TCP')
+      end
+
+      it 'raises a test failure exception' do
+        expect do
+          group.fhir_history
+        end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
+      end
+    end
+
+    context 'with a base url that causes a non-TCP error' do
+      before do
+        allow_any_instance_of(FHIR::Client)
+          .to receive(:history)
+          .and_raise(SocketError, 'not a TCP error')
+      end
+
+      it 'raises the error' do
+        expect do
+          group.fhir_history
+        end.to raise_error(SocketError, 'not a TCP error')
+      end
+    end
+  end
+
   describe '#fhir_create' do
     let(:stub_create_request) do
       stub_request(:post, "#{base_url}/#{resource.resourceType}")
@@ -454,8 +913,17 @@ RSpec.describe Inferno::DSL::FHIRClient do
       stub_request(:get, "#{base_url}/#{resource.resourceType}?patient=123")
         .to_return(status: 200, body: bundle.to_json)
     end
+    let(:stub_get_search_all_request) do
+      stub_request(:get, "#{base_url}/?patient=123")
+        .to_return(status: 200, body: bundle.to_json)
+    end
     let(:stub_post_search_request) do
       stub_request(:post, "#{base_url}/#{resource.resourceType}/_search")
+        .with(body: search_params)
+        .to_return(status: 200, body: bundle.to_json)
+    end
+    let(:stub_post_search_all_request) do
+      stub_request(:post, "#{base_url}/_search")
         .with(body: search_params)
         .to_return(status: 200, body: bundle.to_json)
     end
@@ -463,12 +931,19 @@ RSpec.describe Inferno::DSL::FHIRClient do
     context 'when performing a GET search' do
       before do
         stub_get_search_request
+        stub_get_search_all_request
       end
 
-      it 'performs a FHIR search' do
+      it 'performs a FHIR type level search' do
         group.fhir_search(resource.resourceType, params: { patient: 123 })
 
         expect(stub_get_search_request).to have_been_made.once
+      end
+
+      it 'performs a FHIR whole system search' do
+        group.fhir_search(params: { patient: 123 })
+
+        expect(stub_get_search_all_request).to have_been_made.once
       end
 
       it 'returns an Inferno::Entities::Request' do
@@ -506,12 +981,19 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
       before do
         stub_post_search_request
+        stub_post_search_all_request
       end
 
-      it 'performs a FHIR search' do
+      it 'performs a FHIR type level search' do
         group.fhir_search(resource.resourceType, params: search_params, search_method: :post)
 
         expect(stub_post_search_request).to have_been_made.once
+      end
+
+      it 'performs a FHIR whole system search' do
+        group.fhir_search(params: search_params, search_method: :post)
+
+        expect(stub_post_search_all_request).to have_been_made.once
       end
     end
 

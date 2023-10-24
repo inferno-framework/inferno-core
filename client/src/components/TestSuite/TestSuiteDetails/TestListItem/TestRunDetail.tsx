@@ -1,12 +1,13 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import { Box, Card, Divider, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import { Box, Card, Divider, Tabs, Typography } from '@mui/material';
 import { Message, Request, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
+import CustomTab from '~/components/_common/CustomTab';
+import CustomTooltip from '~/components/_common/CustomTooltip';
 import TabPanel from '~/components/TestSuite/TestSuiteDetails/TestListItem/TabPanel';
 import MessageList from '~/components/TestSuite/TestSuiteDetails/TestListItem/MessageList';
 import RequestList from '~/components/TestSuite/TestSuiteDetails/TestListItem/RequestList';
 import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
-import lightTheme from '~/styles/theme';
 import useStyles from './styles';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -56,31 +57,23 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
   });
 
   const renderTab = (tab: TabProps, index: number) => {
-    const darkTabText = {
-      '&.Mui-selected': {
-        color: lightTheme.palette.common.orangeDarker,
-      },
-    };
-
-    if ((!tab.value || tab.value.length === 0) && tab.label !== 'About') {
-      return (
-        <Tab
-          key={`${tab.label}-${index}`}
-          label={
-            <Tooltip title={`No ${tab.label.toLowerCase()} available`}>
-              <Typography variant="button">{tab.label}</Typography>
-            </Tooltip>
-          }
-          {...a11yProps(index)}
-          disabled
-          sx={darkTabText}
-          style={{ pointerEvents: 'auto' }}
-        />
-      );
-    }
+    const disableTab = (!tab.value || tab.value.length === 0) && tab.label !== 'About';
 
     return (
-      <Tab key={`${tab.label}-${index}`} label={tab.label} {...a11yProps(index)} sx={darkTabText} />
+      <CustomTab
+        key={`${tab.label}-${index}`}
+        label={
+          disableTab ? (
+            <CustomTooltip title={`No ${tab.label.toLowerCase()} available`}>
+              <Typography variant="button">{tab.label}</Typography>
+            </CustomTooltip>
+          ) : (
+            tab.label
+          )
+        }
+        {...a11yProps(index)}
+        disabled={disableTab}
+      />
     );
   };
 

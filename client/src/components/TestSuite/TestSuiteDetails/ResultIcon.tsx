@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { Result } from '~/models/testSuiteModels';
-import { Tooltip } from '@mui/material';
 import { red, orange, green, purple, grey } from '@mui/material/colors';
 import {
   AccessTime,
@@ -12,7 +11,7 @@ import {
   Pending,
   RadioButtonUnchecked,
 } from '@mui/icons-material';
-
+import CustomTooltip from '~/components/_common/CustomTooltip';
 import { useTestSessionStore } from '~/store/testSession';
 
 export interface ResultIconProps {
@@ -27,86 +26,117 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
   // run and result is not for other test runs
   if (isRunning && result?.test_run_id !== testRunId) {
     return (
-      <Tooltip title="pending">
-        <Pending style={{ color: grey[500] }} /* data-testid={`${result.id}-${result.result}`} */ />
-      </Tooltip>
+      <CustomTooltip title="pending">
+        <Pending
+          tabIndex={0}
+          aria-hidden="false"
+          style={{ color: grey[500] }} /* data-testid={`${result.id}-${result.result}`} */
+        />
+      </CustomTooltip>
     );
   } else if (result) {
     switch (result.result) {
       case 'pass':
         return (
-          <Tooltip title="passed">
+          <CustomTooltip title="passed">
             <CheckCircle
+              tabIndex={0}
+              aria-hidden="false"
               style={{ color: result.optional ? green[100] : green[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
-          </Tooltip>
+          </CustomTooltip>
         );
       case 'fail':
         return (
-          <Tooltip title="failed">
+          <CustomTooltip title="failed">
             <Cancel
-              style={{ color: result.optional ? grey[500] : red[500] }}
+              tabIndex={0}
+              aria-hidden="false"
+              style={{ color: result.optional ? grey[500] : red[700] }}
               data-testid={`${result.id}-${result.result}`}
             />
-          </Tooltip>
+          </CustomTooltip>
         );
       case 'cancel':
         return (
-          <Tooltip title="cancel">
+          <CustomTooltip title="cancel">
             <Cancel
-              style={{ color: result.optional ? grey[500] : red[500] }}
+              tabIndex={0}
+              aria-hidden="false"
+              style={{ color: result.optional ? grey[500] : red[700] }}
               data-testid={`${result.id}-${result.result}`}
             />
-          </Tooltip>
+          </CustomTooltip>
         );
       case 'skip':
         return (
-          <Tooltip title="skipped">
+          <CustomTooltip title="skipped">
             <Block
+              tabIndex={0}
+              aria-hidden="false"
               style={{ color: result.optional ? grey[500] : orange[800] }}
               data-testid={`${result.id}-${result.result}`}
             />
-          </Tooltip>
+          </CustomTooltip>
         );
       case 'omit':
         return (
-          <Tooltip title="omitted">
-            <Circle style={{ color: grey[500] }} data-testid={`${result.id}-${result.result}`} />
-          </Tooltip>
+          <CustomTooltip title="omitted">
+            <Circle
+              tabIndex={0}
+              aria-hidden="false"
+              style={{ color: grey[500] }}
+              data-testid={`${result.id}-${result.result}`}
+            />
+          </CustomTooltip>
         );
       case 'error':
         return (
-          <Tooltip title="error">
+          <CustomTooltip title="error">
             <Error
+              tabIndex={0}
+              aria-hidden="false"
               style={{ color: result.optional ? grey[500] : purple[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
-          </Tooltip>
+          </CustomTooltip>
         );
       case 'wait':
         return (
-          <Tooltip title="wait">
-            <AccessTime data-testid={`${result.id}-${result.result}`} />
-          </Tooltip>
+          <CustomTooltip title="wait">
+            <AccessTime
+              tabIndex={0}
+              aria-hidden="false"
+              data-testid={`${result.id}-${result.result}`}
+            />
+          </CustomTooltip>
         );
 
       default:
         return (
-          <RadioButtonUnchecked
-            style={{
-              color: grey[500],
-            }}
-          />
+          <CustomTooltip title="no result">
+            <RadioButtonUnchecked
+              tabIndex={0}
+              aria-hidden="false"
+              style={{
+                color: grey[500],
+              }}
+            />
+          </CustomTooltip>
         );
     }
   } else {
     return (
-      <RadioButtonUnchecked
-        style={{
-          color: grey[500],
-        }}
-      />
+      <CustomTooltip title="no result">
+        <RadioButtonUnchecked
+          tabIndex={0}
+          aria-hidden="false"
+          style={{
+            color: grey[500],
+          }}
+        />
+      </CustomTooltip>
     );
   }
 };

@@ -9,6 +9,7 @@ import clsx from 'clsx';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import lightTheme from '~/styles/theme';
 
 interface CustomTreeItemContentProps extends TreeItemContentProps {
   testId?: string;
@@ -95,7 +96,7 @@ const CustomTreeItem = styled((props: TreeItemProps) => (
   <TreeItem ContentComponent={CustomContent} {...props} />
 ))(() => ({
   [`& .${treeItemClasses.selected}`]: {
-    backgroundColor: 'rgba(248, 139, 48, 0.2) !important',
+    backgroundColor: `${lightTheme.palette.common.orangeLighter} !important`,
   },
   [`& .${treeItemClasses.content}`]: {
     width: 'auto',

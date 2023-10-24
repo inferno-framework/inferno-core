@@ -1,3 +1,37 @@
+# 0.4.20
+* FI-2077: Improve colors and contrasts for a11y by @AlyssaWang in
+  https://github.com/inferno-framework/inferno-core/pull/392
+* Revert "FI-2035: Improve error handling for validator errors (#379)" by
+  @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/393
+
+# 0.4.19
+* FI-2053: Fix inputs dialog overflow by @AlyssaWang in
+  https://github.com/inferno-framework/inferno-core/pull/382
+* FI-2038: Prevent modal close on edit by @AlyssaWang in
+  https://github.com/inferno-framework/inferno-core/pull/383
+* FI-2094: Improve tooltip a11y by @AlyssaWang in
+  https://github.com/inferno-framework/inferno-core/pull/386
+* FI-2035: Improve error handling for validator errors by @dehall in
+  https://github.com/inferno-framework/inferno-core/pull/379
+* FI-2070: Inferno Framework Documentation Advanced Test Features Information
+  Fix by @emichaud998 in
+  https://github.com/inferno-framework/inferno-core/pull/385
+* FI-2041: Custom suites with no ids now throw standard error by @alisawallace
+  in https://github.com/inferno-framework/inferno-core/pull/387
+* FI-2156: Dependabot updates by @Jammjammjamm in
+  https://github.com/inferno-framework/inferno-core/pull/390
+* FI-2086: fix errors on webpack shutdown by @alisawallace in
+  https://github.com/inferno-framework/inferno-core/pull/389
+
+# 0.4.18
+* Fix a bug which could prevent some test results from appearing until the page
+  is reloaded.
+* Add `vread`, `update`, `patch`, `history`, and system `search` interactions to
+  the FHIR DSL.
+* Fix a JSON parse error which could occur for OAuth Credentials inputs when
+  switching between the normal input view and the JSON view.
+* Make minor visual improvements.
+
 # 0.4.17
 * Fix a bug which prevented the swagger documentation from loading when no query
   parameters were provided.

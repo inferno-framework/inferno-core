@@ -85,7 +85,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         component="h1"
         align="center"
         sx={{
-          color: lightTheme.palette.common.grayDarkest,
+          color: lightTheme.palette.common.grayDarker,
           fontSize: windowIsSmall ? '2rem' : 'auto',
           fontWeight: 'bolder',
           letterSpacing: 2,
