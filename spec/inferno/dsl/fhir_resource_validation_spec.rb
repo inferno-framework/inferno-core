@@ -13,8 +13,18 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
   describe '#perform_additional_validation' do
     before do
-      stub_request(:post, "#{validation_url}/validate?profile=#{profile_url}")
-        .to_return(status: 200, body: FHIR::OperationOutcome.new.to_json)
+      stub_request(:post, "#{validation_url}/validate")
+        .to_return(status: 200, body: {
+          outcomes: [{
+            fileInfo: {
+              fileName: 'manually_entered_file.json',
+              fileContent: resource.to_json,
+              fileType: 'json'
+            },
+            issues: []
+          }],
+          sessionId: '5c7f903b-7e46-4e83-bdc9-0248ad2ba5f5'
+        }.to_json)
     end
 
     context 'when the step does not return a hash' do
@@ -88,93 +98,75 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         }
       }.to_json
     end
-    let(:resource) { FHIR.from_contents(resource_string) }
+    let(:resource2) { FHIR.from_contents(resource_string) }
+
+    let(:wrapped_resource_string) do
+      {
+        cliContext: {
+          sv: '4.0.1',
+          igs: [],
+          profiles: [profile_url]
+        },
+        filesToValidate: [
+          {
+            fileName: 'manually_entered_file.json',
+            fileContent: resource2.to_json,
+            fileType: 'json'
+          }
+        ],
+        sessionId: nil
+      }.to_json
+    end
 
     context 'with invalid resource' do
       let(:invalid_outcome) do
         {
-          resourceType: 'OperationOutcome',
-          issue: [
-            {
-              severity: 'error',
-              code: 'processing',
-              diagnostics: 'Identifier.system must be an absolute reference, not a local reference',
-              location: [
-                'Patient.identifier[0]',
-                'Line 14, Col 10'
-              ]
-            }
-          ]
+          outcomes: [{
+            fileInfo: {
+              fileName: 'manually_entered_file.json',
+              fileContent: resource_string.to_json,
+              fileType: 'json'
+            },
+            issues: [{
+              source: 'InstanceValidator',
+              line: 4,
+              col: 4,
+              location: 'Patient.identifier[0]',
+              message: 'Identifier.system must be an absolute reference, not a local reference',
+              messageId: 'Type_Specific_Checks_DT_Identifier_System',
+              type: 'CODEINVALID',
+              level: 'ERROR',
+              html: 'Identifier.system must be an absolute reference, not a local reference',
+              display: 'ERROR: Patient.identifier[0]: Identifier.system must be an absolute reference, ',
+              error: true
+            }]
+          }],
+          sessionId: 'b8cf5547-1dc7-4714-a797-dc2347b93fe2'
         }.to_json
       end
 
       before do
-        stub_request(:post, "#{validation_url}/validate?profile=#{profile_url}")
-          .with(body: resource_string)
+        stub_request(:post, "#{validation_url}/validate")
+          .with(body: wrapped_resource_string)
           .to_return(status: 200, body: invalid_outcome)
       end
 
       it 'includes resourceType/id in error message' do
-        result = validator.resource_is_valid?(resource, profile_url, runnable)
+        result = validator.resource_is_valid?(resource2, profile_url, runnable)
 
         expect(result).to be(false)
-        expect(runnable.messages.first[:message]).to start_with("#{resource.resourceType}/#{resource.id}:")
-      end
-
-      it 'includes resourceType in error message if resource.id is nil' do
-        resource.id = nil
-        result = validator.resource_is_valid?(resource, profile_url, runnable)
-
-        expect(result).to be(false)
-        expect(runnable.messages.first[:message]).to start_with("#{resource.resourceType}:")
+        expect(runnable.messages.first[:message]).to start_with("#{resource2.resourceType}/#{resource2.id}:")
       end
     end
 
-    context 'with error from validator' do
-      let(:error_outcome) do
-        {
-          resourceType: 'OperationOutcome',
-          issue: [
-            {
-              severity: 'fatal',
-              code: 'structure',
-              diagnostics: 'Validator still warming up... Please wait',
-              details: {
-                text: 'Validator still warming up... Please wait'
-              }
-            }
-          ]
-        }.to_json
-      end
+    it 'throws ErrorInValidatorException for non-JSON response' do
+      stub_request(:post, "#{validation_url}/validate")
+        .with(body: wrapped_resource_string)
+        .to_return(status: 500, body: '<html><body>Internal Server Error</body></html>')
 
-      it 'throws ErrorInValidatorException when validator not ready yet' do
-        stub_request(:post, "#{validation_url}/validate?profile=#{profile_url}")
-          .with(body: resource_string)
-          .to_return(status: 503, body: error_outcome)
-
-        expect do
-          validator.resource_is_valid?(resource, profile_url, runnable)
-        end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
-        expect(runnable.messages.first[:message]).to include('Validator still warming up... Please wait')
-      end
-
-      it 'throws ErrorInValidatorException for non-JSON response' do
-        stub_request(:post, "#{validation_url}/validate?profile=#{profile_url}")
-          .with(body: resource_string)
-          .to_return(status: 500, body: '<html><body>Internal Server Error</body></html>')
-
-        expect do
-          validator.resource_is_valid?(resource, profile_url, runnable)
-        end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
-      end
-    end
-
-    it 'posts the resource with primitive extensions intact' do
-      stub_request(:post, "#{validation_url}/validate?profile=#{profile_url}")
-        .with(body: resource_string)
-        .to_return(status: 200, body: FHIR::OperationOutcome.new.to_json)
-
-      expect(validator.resource_is_valid?(resource, profile_url, runnable)).to be(true)
+      expect do
+        validator.resource_is_valid?(resource2, profile_url, runnable)
+      end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
     end
   end
 

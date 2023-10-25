@@ -241,7 +241,7 @@ module Inferno
         # @private
         def call_validator(resource, profile_url)
           request_body = wrap_resource_for_hl7_wrapper(resource, profile_url)
-          response = Faraday.new(
+          Faraday.new(
             url
           ).post('validate', request_body, content_type: 'application/json')
         end
