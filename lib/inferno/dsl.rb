@@ -14,7 +14,8 @@ module Inferno
       FHIRClient,
       HTTPClient,
       Results,
-      FHIRValidation
+      FHIRValidation,
+      FHIRResourceValidation
     ].freeze
 
     EXTENDABLE_DSL_MODULES = [

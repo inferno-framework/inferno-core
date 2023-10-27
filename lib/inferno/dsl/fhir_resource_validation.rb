@@ -25,22 +25,6 @@ module Inferno
         klass.extend ClassMethods
       end
 
-      # Perform validation, and add validation messages to the runnable
-      #
-      # @param resource [FHIR::Model]
-      # @param profile_url [String]
-      # @param validator [Symbol] the name of the validator to use
-      # @return [Boolean] whether the resource is valid
-      def resource_is_valid?(resource: self.resource, profile_url: nil, validator: :default)
-        find_validator(validator).resource_is_valid?(resource, profile_url, self)
-      end
-
-      # Find a particular validator. Looks through a runnable's parents up to
-      # the suite to find a validator with a particular name
-      def find_validator(validator_name)
-        self.class.find_validator(validator_name, suite_options)
-      end
-
       class Validator
         attr_reader :requirements
 
@@ -242,7 +226,8 @@ module Inferno
         def call_validator(resource, profile_url)
           request_body = wrap_resource_for_hl7_wrapper(resource, profile_url)
           Faraday.new(
-            url
+            url,
+            request: { timeout: 600 }
           ).post('validate', request_body, content_type: 'application/json')
         end
 
@@ -281,7 +266,7 @@ module Inferno
 
         # Define a validator
         # @example
-        #   validator do
+        #   fhir_resource_validator do
         #     url 'http://example.com/validator'
         #     exclude_message { |message| message.type == 'info' }
         #     perform_additional_validation do |resource, profile_url|
@@ -297,7 +282,7 @@ module Inferno
         #   using multiple validators
         # @param required_suite_options [Hash] suite options that must be
         #   selected in order to use this validator
-        def validator(name = :default, required_suite_options: nil, &block)
+        def fhir_resource_validator(name = :default, required_suite_options: nil, &block)
           current_validators = fhir_validators[name] || []
 
           new_validator = Inferno::DSL::FHIRResourceValidation::Validator.new(required_suite_options, &block)
@@ -306,26 +291,6 @@ module Inferno
           current_validators << new_validator
 
           fhir_validators[name] = current_validators
-        end
-
-        # Find a particular validator. Looks through a runnable's parents up to
-        # the suite to find a validator with a particular name
-        def find_validator(validator_name, selected_suite_options = nil)
-          validators = fhir_validators[validator_name] ||
-                       Array.wrap(parent&.find_validator(validator_name, selected_suite_options))
-
-          validator =
-            if selected_suite_options.present?
-              validators.find do |possible_validator|
-                possible_validator.requirements.nil? || selected_suite_options >= possible_validator.requirements
-              end
-            else
-              validators.first
-            end
-
-          raise Exceptions::ValidatorNotFoundException, validator_name if validator.nil?
-
-          validator
         end
       end
     end
