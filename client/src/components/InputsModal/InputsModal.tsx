@@ -96,10 +96,10 @@ const InputsModal: FC<InputsModalProps> = ({
         const oAuthJSON = JSON.parse(
           (inputsMap.get(input.name) as string) || '{ "access_token": null }'
         ) as OAuthCredentials;
-        const accessTokenIsEmpty = oAuthJSON.access_token === '';
-        const refreshIsEmpty =
-          oAuthJSON.refresh_token !== '' && (!oAuthJSON.token_url || !oAuthJSON.client_id);
-        oAuthMissingRequiredInput = (accessTokenIsEmpty && !input.optional) || refreshIsEmpty;
+        const accessTokenIsEmpty = !oAuthJSON.access_token;
+        const refreshTokenIsEmpty =
+          !!oAuthJSON.refresh_token && (!oAuthJSON.token_url || !oAuthJSON.client_id);
+        oAuthMissingRequiredInput = (!input.optional && accessTokenIsEmpty) || refreshTokenIsEmpty;
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);
         enqueueSnackbar(`OAuth credentials incorrectly formatted: ${errorMessage}`, {
