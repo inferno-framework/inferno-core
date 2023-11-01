@@ -1,3 +1,13 @@
+# 0.4.21
+* FI-2075: Input validation by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/388
+* FI-2003: Fix Codecov flag settings by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/394
+* FI-2166: improve validator error handling without changing API by @dehall in https://github.com/inferno-framework/inferno-core/pull/397
+* FI-2198 Markdown processing added to group level by @360dgries in https://github.com/inferno-framework/inferno-core/pull/399
+* FI-2015 GET requests added to fhir_operation by @360dgries in https://github.com/inferno-framework/inferno-core/pull/380
+* Fix npm install that fails due to wrong checksum in package-lock. by @arscan in https://github.com/inferno-framework/inferno-core/pull/400
+* Added Documentation for Windows by @360dgries in https://github.com/inferno-framework/inferno-core/pull/375
+* g10 preset updated with new bulk token endpoint by @rpassas
+
 # 0.4.20
 * FI-2077: Improve colors and contrasts for a11y by @AlyssaWang in
   https://github.com/inferno-framework/inferno-core/pull/392

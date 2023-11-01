@@ -60,26 +60,64 @@ module Inferno
         @fhir_clients ||= {}
       end
 
+      # Wrapper for checking if parameter contents are primitive
+      #
+      # @param param [FHIR::Parameters::Parameter] Parameter to be checked
+      # @private
+      def primitive_parameter?(param)
+        param_val = param.to_hash.except('name')
+        param_val.any? { |datatype, param_value| FHIR.primitive?(datatype: datatype[5..], value: param_value) }
+      end
+
+      # Converts a list of FHIR Parameters into a query string for GET requests
+      #
+      # @param body [FHIR::Parameters] Must all be primitive if making GET request
+      # @private
+      def body_to_path(body)
+        query_hashes = body.parameter.map do |param|
+          if primitive_parameter?(param)
+            { param.name => param.to_hash.except('name').values[0] }
+          else
+            Inferno::Application[:logger].error "Cannot use GET request with non-primitive datatype #{param.name}"
+            raise ArgumentError, "Cannot use GET request with non-primitive datatype #{param.name}"
+          end
+        end
+        query_hashes.map(&:to_query).join('&')
+      end
+
       # Perform a FHIR operation
       #
       # @note This is a placeholder method until the FHIR::Client supports
-      #   general operations
+      #   general operations.  Note that while both POST and GET methods are allowed,
+      #   GET is only allowed when the operation does not affect the server's state.
+      #   See https://build.fhir.org/operationdefinition-definitions.html#OperationDefinition.affectsState
+      #
+      # @note Currently does not allow for repeated parameters if using GET
       #
       # @param path [String]
-      # @param body [FHIR::Parameters]
+      # @param body [FHIR::Parameters] Must all be primitive if making GET request
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @param headers [Hash] custom headers for this operation
+      # @param operation_method [Symbol] indicates which request type to use for the operation
       # @return [Inferno::Entities::Request]
-      def fhir_operation(path, body: nil, client: :default, name: nil, headers: {})
+      def fhir_operation(path, body: nil, client: :default, name: nil, headers: {}, operation_method: :post)
         store_request_and_refresh_token(fhir_client(client), name) do
           tcp_exception_handler do
             operation_headers = fhir_client(client).fhir_headers
             operation_headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
             operation_headers.merge!(headers) if headers.present?
-
-            fhir_client(client).send(:post, path, body, operation_headers)
+            case operation_method
+            when :post
+              fhir_client(client).send(:post, path, body, operation_headers)
+            when :get
+              path = "#{path}?#{body_to_path(body)}" if body.present?
+              fhir_client(client).send(:get, path, operation_headers)
+            else
+              Inferno::Application[:logger].error "Cannot perform #{operation_method} requests, use GET or POST"
+              raise ArgumentError, "Cannot perform #{operation_method} requests, use GET or POST"
+            end
           end
         end
       end
