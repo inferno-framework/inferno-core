@@ -1,3 +1,6 @@
+# 0.4.22
+* FI-2271: Update OAuth input requirements by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/403
+
 # 0.4.21
 * FI-2075: Input validation by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/388
 * FI-2003: Fix Codecov flag settings by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/394
