@@ -28,10 +28,10 @@ services:
     volumes:
       - ./data/redis:/data
     command: redis-server --appendonly yes
+  # To enable the HL7 Validator Wrapper, both the section below and
+  # the section in nginx.background.conf need to be uncommented
   # hl7_validator_service:
   #   image: markiantorno/validator-wrapper
   #   # Update this path to match your directory structure
   #   volumes:
   #     - ./igs:/home/igs
-  #   ports:
-  #     - "3500:3500"
