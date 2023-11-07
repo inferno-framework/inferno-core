@@ -32,6 +32,8 @@ module Inferno
         def initialize(requirements = nil, &)
           instance_eval(&)
           @requirements = requirements
+
+          Jobs.perform(Jobs::InvokeValidatorSession, url, igs)
         end
 
         # @private
