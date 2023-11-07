@@ -3,7 +3,7 @@ module Inferno
     class Services < Thor
       no_commands do
         def base_command
-          'docker-compose -f docker-compose.background.yml'
+          'docker compose -f docker-compose.background.yml'
         end
       end
 

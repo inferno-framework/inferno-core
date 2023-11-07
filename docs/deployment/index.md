@@ -17,7 +17,7 @@ At a minimum, deploying inferno involves the following:
   some other way)
 - run `setup.sh` to pull & build the needed docker images and run database
   migrations
-- run `docker-compose up -d` to start all of the services in the background
+- run `docker compose up -d` to start all of the services in the background
 
 ## Services
 By default, a deployment of Inferno includes the following services:
