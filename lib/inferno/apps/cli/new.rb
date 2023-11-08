@@ -1,8 +1,8 @@
 module Inferno
   module CLI
     class New
-      def run
-        puts "you called inferno new"
+      def run(name)
+        puts "This will generate a new inferno test kit called #{name}"
       end
     end
   end

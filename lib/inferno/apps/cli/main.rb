@@ -52,9 +52,9 @@ module Inferno
       subcommand 'suite', Suite
 
       map 'new' => :new_app
-      desc 'new', 'Generate a new Inferno test kit'
-      def new_app
-        New.new.run
+      desc 'new TEST_KIT_NAME', 'Generate a new Inferno test kit'
+      def new_app(name)
+        New.new.run(name)
       end
     end
   end
