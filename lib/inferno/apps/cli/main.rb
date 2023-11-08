@@ -3,6 +3,7 @@ require_relative 'migration'
 require_relative 'services'
 require_relative 'suite'
 require_relative 'suites'
+require_relative 'new'
 
 module Inferno
   module CLI
@@ -49,6 +50,12 @@ module Inferno
 
       desc 'suite SUBCOMMAND ...ARGS', 'Perform suite-based operations'
       subcommand 'suite', Suite
+
+      map 'new' => :new_app
+      desc 'new', 'Generate a new Inferno test kit'
+      def new_app
+        New.new.run
+      end
     end
   end
 end
