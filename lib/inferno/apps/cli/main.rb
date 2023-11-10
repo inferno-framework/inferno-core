@@ -3,7 +3,7 @@ require_relative 'migration'
 require_relative 'services'
 require_relative 'suite'
 require_relative 'suites'
-require_relative 'new'
+require_relative 'new/new'
 
 module Inferno
   module CLI
