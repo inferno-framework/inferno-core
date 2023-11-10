@@ -22,6 +22,7 @@ PATH
       pry-byebug
       puma (~> 5.6.7)
       rake (~> 13.0)
+      rubyzip (= 2.3.2)
       sequel (~> 5.42.0)
       sidekiq (~> 6.5.6)
       sqlite3 (~> 1.4)
@@ -269,6 +270,7 @@ GEM
       rubocop (~> 1.0)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
+    rubyzip (2.3.2)
     sequel (5.42.0)
     sidekiq (6.5.12)
       connection_pool (>= 2.2.5, < 3)

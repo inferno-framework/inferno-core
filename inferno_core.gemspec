@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'pry-byebug'
   spec.add_runtime_dependency 'puma', '~> 5.6.7'
   spec.add_runtime_dependency 'rake', '~> 13.0'
+  spec.add_runtime_dependency 'rubyzip', '2.3.2'
   spec.add_runtime_dependency 'sequel', '~> 5.42.0'
   spec.add_runtime_dependency 'sidekiq', '~> 6.5.6'
   spec.add_runtime_dependency 'sqlite3', '~> 1.4'
