@@ -36,7 +36,7 @@ module Inferno
 
         # @private
         def default_validator_url
-          ENV.fetch('VALIDATOR_URL')
+          ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL')
         end
 
         # Set the url of the validator service
@@ -203,7 +203,7 @@ module Inferno
             },
             filesToValidate: [
               {
-                fileName: 'manually_entered_file.json',
+                fileName: "#{resource.resourceType}/#{resource.id}.json",
                 fileContent: resource.to_json,
                 fileType: 'json'
               }
