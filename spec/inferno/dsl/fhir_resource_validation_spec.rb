@@ -17,7 +17,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         .to_return(status: 200, body: {
           outcomes: [{
             fileInfo: {
-              fileName: 'manually_entered_file.json',
+              fileName: 'Patient/id.json',
               fileContent: resource.to_json,
               fileType: 'json'
             },
@@ -109,7 +109,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         },
         filesToValidate: [
           {
-            fileName: 'manually_entered_file.json',
+            fileName: 'Patient/0000.json',
             fileContent: resource2.to_json,
             fileType: 'json'
           }
@@ -123,7 +123,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         {
           outcomes: [{
             fileInfo: {
-              fileName: 'manually_entered_file.json',
+              fileName: 'Patient/0000.json',
               fileContent: resource_string.to_json,
               fileType: 'json'
             },
