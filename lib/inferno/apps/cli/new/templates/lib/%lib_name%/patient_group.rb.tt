@@ -1,4 +1,4 @@
-module InfernoTemplate
+module <%= module_name %>
   class PatientGroup < Inferno::TestGroup
     title 'Patient  Tests'
     description 'Verify that the server makes Patient resources available'

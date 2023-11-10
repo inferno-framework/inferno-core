@@ -4,7 +4,7 @@ services:
     image: infernocommunity/fhir-validator-service
     # Update this path to match your directory structure
     volumes:
-      - ./lib/inferno_template/igs:/home/igs
+      - ./lib/<%= lib_name %>/igs:/home/igs
   fhir_validator_app:
     image: infernocommunity/fhir-validator-app
     depends_on:

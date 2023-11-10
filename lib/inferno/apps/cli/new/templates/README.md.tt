@@ -1,7 +1,7 @@
-# <%= human_name %> Inferno Test Kit
+# <%= title_name %> Test Kit
 
-This is a template repository for an
-[Inferno](https://github.com/inferno-community/inferno-core) test kit.
+<%= human_name %> [Inferno](https://github.com/inferno-community/inferno-core) test kit
+for FHIR testing.
 
 ## Documentation
 - [Inferno documentation](https://inferno-framework.github.io/inferno-core/)
@@ -14,8 +14,7 @@ This is a template repository for an
 - Run `setup.sh` in this repo to pull the needed docker images and set up the
   database.
 - Put the `package.tgz` for the IG you're writing tests for in
-  `lib/your_test_kit_name/igs` and update this path in
-  `docker-compose.background.yml`.
+  `lib/<%= lib_name %>/igs`.
   This will ensure that the validator has access to the resources needed to
   validate resources against your IG.
 
@@ -65,8 +64,8 @@ a powerful interactive console to explore and experiment with your tests with
 `inferno console`:
 ```ruby
 ᐅ bundle exec inferno console
-[1] pry(main)> suite = InfernoTemplate::Suite
-=> InfernoTemplate::Suite
+[1] pry(main)> suite = <%= module_name %>::Suite
+=> <%= module_name %>::Suite
 [2] pry(main)> suite.groups
 => [#<Class:0x00000001539ecd30>, #<Class:0x0000000155509500>]
 [3] pry(main)> suite.groups.map(&:title)
@@ -84,7 +83,7 @@ behavior:
   interactive console.
 
 ```ruby
-module InfernoTemplate
+module <%= module_name %>
   class PatientGroup < Inferno::TestGroup
     ...
     test do
@@ -109,7 +108,7 @@ end
 ᐅ bundle exec rdbg -A
 DEBUGGER (client): Connected. PID:22112, $0:sidekiq 6.5.7  [0 of 10 busy]
 
-[18, 27] in ~/code/inferno-template/lib/inferno_template/patient_group.rb
+[18, 27] in ~/code/<%= root_name %>/lib/<%= lib_name %>/patient_group.rb
     18|
     19|       run do
     20|         fhir_read(:patient, patient_id, name: :patient)
@@ -121,7 +120,7 @@ DEBUGGER (client): Connected. PID:22112, $0:sidekiq 6.5.7  [0 of 10 busy]
     26|         assert_resource_type(:patient)
     27|         assert resource.id == patient_id,
 (ruby:remote) self.id
-"test_suite_template-patient_group-Test01"
+"<%= test_suite_id %>-patient_group-Test01"
 (ruby:remote) self.title
 "Server returns requested Patient resource from the Patient read interaction"
 (rdbg:remote) inputs
@@ -158,8 +157,8 @@ like a standard ruby gem (ruby libraries are called gems).
 - Fill in the information in the `gemspec` file in the root of this repository.
   The name of this file should match the `spec.name` within the file. This will
   be the name of the gem you create. For example, if your file is
-  `my_test_kit.gemspec` and its `spec.name` is `'my_test_kit'`, then others will
-  be able to install your gem with `gem install my_test_kit`. There are
+  `<%= lib_name %>.gemspec` and its `spec.name` is `'<%= lib_name %>'`, then others will
+  be able to install your gem with `gem install <%= lib_name %>`. There are
   [recommended naming conventions for
   gems](https://guides.rubygems.org/name-your-gem/).
 - Your tests must be in `lib`
@@ -182,7 +181,7 @@ like a standard ruby gem (ruby libraries are called gems).
 - https://github.com/inferno-community/shc-vaccination-test-kit
 
 ## License
-Copyright 2022 The MITRE Corporation
+Copyright <%= Time.now.year %> TODO
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the
