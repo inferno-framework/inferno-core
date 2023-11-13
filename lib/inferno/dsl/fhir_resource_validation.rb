@@ -27,13 +27,12 @@ module Inferno
 
       class Validator
         attr_reader :requirements
+        attr_accessor :session_id
 
         # @private
         def initialize(requirements = nil, &)
           instance_eval(&)
           @requirements = requirements
-
-          Jobs.perform(Jobs::InvokeValidatorSession, url, igs)
         end
 
         # @private

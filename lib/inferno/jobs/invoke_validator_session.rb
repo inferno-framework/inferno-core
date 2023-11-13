@@ -13,7 +13,7 @@ module Inferno
           },
           filesToValidate: [
             {
-              fileName: 'manually_entered_file.json',
+              fileName: 'session_starter.json',
               fileContent: FHIR::Patient.new.to_json,
               fileType: 'json'
             }
@@ -21,8 +21,6 @@ module Inferno
         }
 
         request_body[:cliContext][:txServer] = nil if disable_tx
-
-        # puts request_body.to_json
 
         response = Faraday.new(
           url,
@@ -32,13 +30,19 @@ module Inferno
         if response.body.start_with? '{'
           res = JSON.parse(response.body)
           session_id = res['sessionId']
-          puts session_id
-          # TODO: put this session ID somewhere so we can look it up
-
+          # TODO: (FI-2311) store this session ID so it can be referenced as needed,
+          # instead of iterating through all test suites to find where it goes
+          Inferno::Repositories::TestSuites.new.all.each do |suite|
+            suite.fhir_validators.each do |name, validators|
+              validators.each do |validator|
+                if validator.url == url and validator.igs == igs
+                  validator.session_id = session_id
+                end
+              end
+            end
+          end
         else
-          puts response.body
-          puts response.status
-          # TODO: something went wrong. now what?
+          Inferno::Application['logger'].error("InvokeValidatorSession - error calling validator. #{response.inspect}")
         end
       end
     end
