@@ -1,4 +1,6 @@
 require 'dry/inflector'
+require 'faraday'
+require 'fileutils'
 require 'thor'
 
 module Inferno
@@ -24,7 +26,7 @@ module Inferno
 
       def create_app
         @name = name
-        @ig = options['implementation-guide']
+        @ig_url = options['implementation_guide']
 
         ## Template Generation:
         # copies all files from ./templates/ folder
@@ -32,12 +34,29 @@ module Inferno
         # replaces all %foo% file names with foo() method call
         directory('.', root_name, { mode: :preserve, recursive: true })
 
-        case @ig
-        when /^https?/, /^localhost/, /^\d+\.\d+\.\d+\.\d+/
-          say 'todo fetch url', color: :blue
+        case @ig_url
+        when /^https?:\/\//
+          
+          response = Faraday.get(@ig_url)
+          if response.status == 200
+            create_file(ig_file, response.body)
+          else
+            say "Failed to load #{@ig_url}", :red
+            say "Please add the implementation guide package.tgz file into #{ig_path}", :red
+          end
+        when /^file:/
+          @ig_url.rchomp! 'file:'.reverse # TODO test
+          begin
+            FileUtils.cp(@ig_url, ig_file)
+          rescue
+            say "Failed to load #{@ig_url}", :red
+            say "Please add the implementation guide package.tgz file into #{ig_path}", :red
+          end
         else
-          say "If you want to test against a FHIR implementation guide, please copy its package.tgz file into #{File.join(root_name, 'lib', lib_name, 'igs')}", color: :yellow
+          say "If you want to test against an implementation guide, add its package.tgz file into #{ig_path}"
         end
+
+        say "Successfully created #{root_name} test kit!", :green
       end
 
       # root folder name, i.e: inferno-template
@@ -68,6 +87,16 @@ module Inferno
       # suffix '_test_suite' in snake case, i.e: inferno_template_test_suite
       def test_suite_id
         "#{lib_name}_test_suite"
+      end
+
+      # path to where package.tgz should reside, i.e: lib/inferno_template/igs
+      def ig_path
+        File.join('lib', lib_name, 'igs')
+      end
+
+      # path to package.tgz including file, i.e: lib/inferno_template/igs/package.tgz
+      def ig_file
+        File.join( ig_path, 'package.tgz' )
       end
     end
   end
