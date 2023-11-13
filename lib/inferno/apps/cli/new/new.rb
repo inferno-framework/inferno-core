@@ -3,8 +3,16 @@ require 'thor'
 
 module Inferno
   module CLI
-    class New
+    class New < Thor::Group
       include Thor::Actions
+
+      desc <<~HELP
+        Generate a new Inferno test kit for FHIR
+      HELP
+
+      argument :name, type: :string, required: true, desc: 'name for new Inferno project'
+
+      class_option :implementation_guide, aliases: '-i', default: nil, banner: 'IG_URL', desc: 'URL to a FHIR Implementation Guide or path to a package.tgz'
 
       @@inflector = Dry::Inflector.new do |inflections|
         inflections.acronym 'FHIR'
@@ -14,12 +22,9 @@ module Inferno
         File.join(__dir__, 'templates')
       end
 
-      def initialize(_args = [], _options = {}, _config = {})
-        # required by Thor::Actions
-      end
-
-      def run(name, implementation_guide = nil)
+      def create_app
         @name = name
+        @ig = options['implementation-guide']
 
         ## Template Generation:
         # copies all files from ./templates/ folder
@@ -27,7 +32,7 @@ module Inferno
         # replaces all %foo% file names with foo() method call
         directory('.', root_name, { mode: :preserve, recursive: true })
 
-        case implementation_guide
+        case @ig
         when /^https?/, /^localhost/, /^\d+\.\d+\.\d+\.\d+/
           say 'todo fetch url', color: :blue
         else

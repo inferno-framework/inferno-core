@@ -51,16 +51,7 @@ module Inferno
       desc 'suite SUBCOMMAND ...ARGS', 'Perform suite-based operations'
       subcommand 'suite', Suite
 
-      map 'new' => :new_app
-      desc 'new TEST_KIT_NAME [-i IG_URL]', 'Generate a new Inferno test kit'
-      option :implementation_guide,
-             default: nil,
-             type: :string,
-             aliases: '-i',
-             desc: 'URL to an implementation guide to load'
-      def new_app(name)
-        New.new().run(name, options[:implementation_guide])
-      end
+      register(New, 'new', 'new TEST_KIT_NAME [-i IG_URL]', 'create an Inferno test kit')
     end
   end
 end
