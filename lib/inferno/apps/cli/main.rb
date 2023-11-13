@@ -52,14 +52,14 @@ module Inferno
       subcommand 'suite', Suite
 
       map 'new' => :new_app
-      desc 'new TEST_KIT_NAME', 'Generate a new Inferno test kit'
+      desc 'new TEST_KIT_NAME [-i IG_URL]', 'Generate a new Inferno test kit'
       option :implementation_guide,
              default: nil,
              type: :string,
              aliases: '-i',
-             desc: "URL to an implementation guide to load"
+             desc: 'URL to an implementation guide to load'
       def new_app(name)
-        New.new.run(name, options[:implementation_guide])
+        New.new().run(name, options[:implementation_guide])
       end
     end
   end

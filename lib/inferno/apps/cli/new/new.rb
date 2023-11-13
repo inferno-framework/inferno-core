@@ -14,6 +14,10 @@ module Inferno
         File.join(__dir__, 'templates')
       end
 
+      def initialize(_args = [], _options = {}, _config = {})
+        # required by Thor::Actions
+      end
+
       def run(name, implementation_guide = nil)
         @name = name
 
@@ -21,8 +25,14 @@ module Inferno
         # copies all files from ./templates/ folder
         # performs ERB substitution on all .tt files and removes .tt suffix
         # replaces all %foo% file names with foo() method call
-        directory('.', root_name)
-        
+        directory('.', root_name, { mode: :preserve, recursive: true })
+
+        case implementation_guide
+        when /^https?/, /^localhost/, /^\d+\.\d+\.\d+\.\d+/
+          say 'todo fetch url', color: :blue
+        else
+          say "If you want to test against a FHIR implementation guide, please copy its package.tgz file into #{File.join(root_name, 'lib', lib_name, 'igs')}", color: :yellow
+        end
       end
 
       # root folder name, i.e: inferno-template
@@ -47,7 +57,7 @@ module Inferno
 
       # title case name, i.e: Inferno Template
       def title_name
-        human_name.split(' ').map{ |s| s.capitalize }.join(' ')
+        human_name.split.map{ |s| s.capitalize }.join(' ')
       end
 
       # suffix '_test_suite' in snake case, i.e: inferno_template_test_suite
