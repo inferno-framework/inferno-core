@@ -72,7 +72,7 @@ module Inferno
           say_unless_quiet "If you want to test for an implementation guide, add its package.tgz file into #{ig_path}"
         else
           begin
-            FileUtils.cp(@ig_uri, ig_file)
+            FileUtils.cp(@ig_uri, ig_file) unless options['pretend']
           rescue
             ig_load_error
           end
