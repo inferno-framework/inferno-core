@@ -14,6 +14,10 @@ module Inferno
         https://github.com/inferno-framework
       HELP
 
+      def self.source_root
+        File.join(__dir__, 'templates')
+      end
+
       argument :name,
                type: :string,
                required: true,
@@ -27,7 +31,7 @@ module Inferno
       class_option :author,
                    type: :string,
                    aliases: '-a',
-                   default: fetch_user(),
+                   default: [],
                    repeatable: true,
                    desc: 'Author names for *.gemspec file; you can specify this more than once'
 
@@ -35,14 +39,11 @@ module Inferno
         inflections.acronym 'FHIR', 'IG'
       end
 
-      def self.source_root
-        File.join(__dir__, 'templates')
-      end
-
       def create_app
         @name = name
         @ig_uri = options['implementation_guide']
         @authors = options['author']
+        @authors << fetch_user() if @authors.empty?
 
         ## Template Generation:
         # copies all files from ./templates/ folder
@@ -73,7 +74,7 @@ module Inferno
           end
         end
 
-        say "Created #{root_name} test kit!", :green
+        say "Created #{root_name} Inferno test kit!", :green
       end
 
       # root folder name, i.e: inferno-template
@@ -106,6 +107,8 @@ module Inferno
         "#{lib_name}_test_suite"
       end
 
+      private
+
       # path to where package.tgz should reside, i.e: lib/inferno_template/igs
       def ig_path
         File.join('lib', lib_name, 'igs')
@@ -116,15 +119,20 @@ module Inferno
         File.join(ig_path, 'package.tgz')
       end
 
+      #private
+
       def ig_load_failed_error
         say "Failed to load #{@ig_uri}", :red
         say "Please add the implementation guide package.tgz file into #{ig_path}", :red        
       end
 
-      # returns system username or 'TODO' in an array
       def fetch_user()
-        [ ENV['USER'] || ENV['USERNAME'] || 'TODO' ]
+        ENV['USER'] || ENV['USERNAME'] || 'TODO'
       end
+
+
+
+
     end
   end
 end

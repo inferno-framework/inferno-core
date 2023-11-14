@@ -1,7 +1,7 @@
 Gem::Specification.new do |spec|
   spec.name          = '<%= lib_name %>'
   spec.version       = '0.0.1'
-  # spec.authors       = ['TODO']
+  spec.authors       = <%= @authors %>
   # spec.email         = ['TODO']
   spec.date          = Time.now.utc.strftime('%Y-%m-%d')
   spec.summary       = '<%= title_name %> Test Kit'
