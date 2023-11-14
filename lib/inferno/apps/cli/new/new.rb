@@ -9,15 +9,30 @@ module Inferno
       include Thor::Actions
 
       desc <<~HELP
-        Generate a new Inferno test kit for FHIR
+        Generate a new Inferno test kit for FHIR software testing
+
+        https://github.com/inferno-framework
       HELP
 
-      argument :name, type: :string, required: true, desc: 'name for new Inferno project'
-
-      class_option :implementation_guide, aliases: '-i', default: nil, banner: 'IG_URL', desc: 'URL to a FHIR Implementation Guide or path to a package.tgz'
+      argument :name,
+               type: :string,
+               required: true,
+               desc: 'name for new Inferno project'
+      class_option :implementation_guide,
+                   type: :string,
+                   aliases: '-i',
+                   default: nil,
+                   banner: 'IG_URL',
+                   desc: 'URL to a FHIR Implementation Guide or path to a package.tgz'
+      class_option :author,
+                   type: :string,
+                   aliases: '-a',
+                   default: fetch_user(),
+                   repeatable: true,
+                   desc: 'Author names for *.gemspec file; you can specify this more than once'
 
       @@inflector = Dry::Inflector.new do |inflections|
-        inflections.acronym 'FHIR'
+        inflections.acronym 'FHIR', 'IG'
       end
 
       def self.source_root
@@ -26,7 +41,8 @@ module Inferno
 
       def create_app
         @name = name
-        @ig_url = options['implementation_guide']
+        @ig_uri = options['implementation_guide']
+        @authors = options['author']
 
         ## Template Generation:
         # copies all files from ./templates/ folder
@@ -34,29 +50,30 @@ module Inferno
         # replaces all %foo% file names with foo() method call
         directory('.', root_name, { mode: :preserve, recursive: true })
 
-        case @ig_url
+        case @ig_uri
         when /^https?:\/\//
-          
-          response = Faraday.get(@ig_url)
-          if response.status == 200
+          @ig_uri = @ig_uri.gsub(/[^\/]*\.html\s*$/, 'package.tgz')
+          @ig_uri = File.join(@ig_uri, 'package.tgz') unless @ig_uri.ends_with? 'package.tgz'
+
+          response = Faraday.get(@ig_uri)
+          if response.status == 200 # TODO validate file because an incorrect package.tgz will break inferno
             create_file(ig_file, response.body)
           else
-            say "Failed to load #{@ig_url}", :red
+            say "Failed to load #{@ig_uri}", :red
             say "Please add the implementation guide package.tgz file into #{ig_path}", :red
           end
-        when /^file:/
-          @ig_url.rchomp! 'file:'.reverse # TODO test
-          begin
-            FileUtils.cp(@ig_url, ig_file)
-          rescue
-            say "Failed to load #{@ig_url}", :red
-            say "Please add the implementation guide package.tgz file into #{ig_path}", :red
-          end
+        when ->(ig_uri) { ig_uri.nil? }
+          say "If you want to test for an implementation guide, add its package.tgz file into #{ig_path}"
         else
-          say "If you want to test against an implementation guide, add its package.tgz file into #{ig_path}"
+          begin
+            FileUtils.cp(@ig_uri, ig_file)
+          rescue
+            say "Failed to load #{@ig_uri}", :red
+            say "Please add the implementation guide package.tgz file into #{ig_path}", :red
+          end
         end
 
-        say "Successfully created #{root_name} test kit!", :green
+        say "Created #{root_name} test kit!", :green
       end
 
       # root folder name, i.e: inferno-template
@@ -96,7 +113,17 @@ module Inferno
 
       # path to package.tgz including file, i.e: lib/inferno_template/igs/package.tgz
       def ig_file
-        File.join( ig_path, 'package.tgz' )
+        File.join(ig_path, 'package.tgz')
+      end
+
+      def ig_load_failed_error
+        say "Failed to load #{@ig_uri}", :red
+        say "Please add the implementation guide package.tgz file into #{ig_path}", :red        
+      end
+
+      # returns system username or 'TODO' in an array
+      def fetch_user()
+        [ ENV['USER'] || ENV['USERNAME'] || 'TODO' ]
       end
     end
   end
