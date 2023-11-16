@@ -4,6 +4,15 @@ Sequel.migration do
       Integer :version, :default=>0, :null=>false
     end
     
+    create_table(:tags, :ignore_index_errors=>true) do
+      String :id, :size=>36, :null=>false
+      String :name, :size=>255, :null=>false
+      
+      primary_key [:id]
+      
+      index [:name], :unique=>true
+    end
+    
     create_table(:test_sessions) do
       String :id, :size=>36, :null=>false
       String :test_suite_id, :size=>255, :null=>false
@@ -120,6 +129,16 @@ Sequel.migration do
       
       index [:requests_id]
       index [:results_id]
+    end
+    
+    create_table(:requests_tags, :ignore_index_errors=>true) do
+      foreign_key :tags_id, :tags, :type=>String, :size=>36, :null=>false, :key=>[:id]
+      foreign_key :requests_id, :requests, :null=>false, :key=>[:index]
+      
+      index [:requests_id]
+      index [:requests_id, :tags_id], :unique=>true
+      index [:tags_id]
+      index [:tags_id, :requests_id], :unique=>true
     end
   end
 end
