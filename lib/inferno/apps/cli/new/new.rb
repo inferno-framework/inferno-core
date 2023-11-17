@@ -72,7 +72,7 @@ module Inferno
           say_unless_quiet "If you want to test for an implementation guide, add its package.tgz file into #{ig_path}"
         else
           begin
-            FileUtils.cp(@ig_uri, ig_file) unless options['pretend']
+            FileUtils.cp(@ig_uri, ig_file) unless options['pretend'] # TODO proper dry-run implementation
           rescue
             ig_load_error
           end
@@ -126,6 +126,7 @@ module Inferno
       def ig_load_error
         say_error "Failed to load #{@ig_uri}", :red
         say_error "Please add the implementation guide package.tgz file into #{ig_path}", :red        
+        raise StandardError.new("Failed to load #{@ig_uri}")
       end
 
       def fetch_user()
