@@ -5,23 +5,23 @@ RSpec.describe Inferno::Repositories::Requests do
   let(:test_run) { repo_create(:test_run) }
   let(:result) { repo_create(:result, test_run:) }
   let(:test_session) { test_run.test_session }
+  let(:request_params) do
+    {
+      verb: 'get',
+      url: 'http://example.com',
+      direction: 'outgoing',
+      status: 200,
+      request_body: 'REQUEST_BODY',
+      response_body: 'RESPONSE_BODY',
+      result_id: result.id,
+      test_session_id: test_session.id,
+      request_headers: [{ name: 'REQUEST_HEADER_NAME', value: 'REQUEST_HEADER_VALUE', type: 'request' }],
+      response_headers: [{ name: 'RESPONSE_HEADER_NAME', value: 'RESPONSE_HEADER_VALUE', type: 'response' }],
+      tags: ['abc', 'def']
+    }
+  end
 
   describe '#create' do
-    let(:request_params) do
-      {
-        verb: 'get',
-        url: 'http://example.com',
-        direction: 'outgoing',
-        status: 200,
-        request_body: 'REQUEST_BODY',
-        response_body: 'RESPONSE_BODY',
-        result_id: result.id,
-        test_session_id: test_session.id,
-        request_headers: [{ name: 'REQUEST_HEADER_NAME', value: 'REQUEST_HEADER_VALUE', type: 'request' }],
-        response_headers: [{ name: 'RESPONSE_HEADER_NAME', value: 'RESPONSE_HEADER_VALUE', type: 'response' }]
-      }
-    end
-
     it 'persists a request' do
       request = repo.create(request_params)
 
@@ -67,7 +67,7 @@ RSpec.describe Inferno::Repositories::Requests do
   end
 
   describe '#find_full_request' do
-    let(:persisted_request) { repo_create(:request) }
+    let(:persisted_request) { repo_create(:request, request_params) }
 
     it 'returns a complete request' do
       request = repo.find_full_request(persisted_request.id)
@@ -86,6 +86,8 @@ RSpec.describe Inferno::Repositories::Requests do
       expect(request.headers.length).to eq(persisted_request.headers.length)
       expect(request.request_headers.length).to eq(persisted_request.request_headers.length)
       expect(request.response_headers.length).to eq(persisted_request.response_headers.length)
+      expect(request.tags).to be_present
+      expect(request.tags).to match_array(persisted_request.tags)
     end
   end
 

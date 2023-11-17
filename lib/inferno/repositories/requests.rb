@@ -1,11 +1,28 @@
 module Inferno
   module Repositories
     class Requests < Repository
-      include Import[headers_repo: 'inferno.repositories.headers']
+      include Import[
+                headers_repo: 'inferno.repositories.headers',
+                tags_repo: 'inferno.repositories.tags'
+              ]
 
       def create(params)
         request = self.class::Model.create(db_params(params))
 
+        headers = create_headers(request, params)
+
+        params[:tags]&.each do |tag|
+          request.add_tag(name: tag, request_id: request.index)
+        end
+
+        build_entity(
+          request.to_hash
+            .merge(headers:)
+            .merge(non_db_params(params))
+        )
+      end
+
+      def create_headers(request, params)
         request_headers = (params[:request_headers] || []).map do |header|
           request.add_header(header.merge(request_id: request.index, type: 'request'))
         end
@@ -13,13 +30,7 @@ module Inferno
           request.add_header(header.merge(request_id: request.index, type: 'response'))
         end
 
-        headers = (request_headers + response_headers).map { |header| headers_repo.build_entity(header.to_hash) }
-
-        build_entity(
-          request.to_hash
-            .merge(headers:)
-            .merge(non_db_params(params))
-        )
+        (request_headers + response_headers).map { |header| headers_repo.build_entity(header.to_hash) }
       end
 
       def find(id)
@@ -68,14 +79,25 @@ module Inferno
 
       def json_serializer_options
         {
-          include: :headers
+          include: [:headers, :tags]
         }
       end
 
       class Model < Sequel::Model(db)
-        many_to_many :result, class: 'Inferno::Repositories::Results::Model', join_table: :requests_results,
-                              left_key: :request_id, right_key: :result_id
-        one_to_many :headers, class: 'Inferno::Repositories::Headers::Model', key: :request_id
+        many_to_many :result,
+                     class: 'Inferno::Repositories::Results::Model',
+                     join_table: :requests_results,
+                     left_key: :request_id,
+                     right_key: :result_id
+        many_to_many :tags,
+                     class: 'Inferno::Repositories::Tags::Model',
+                     join_table: :requests_tags,
+                     left_key: :requests_id,
+                     right_key: :tags_id,
+                     adder: :add_tag
+        one_to_many :headers,
+                    class: 'Inferno::Repositories::Headers::Model',
+                    key: :request_id
 
         def before_create
           self.id = SecureRandom.uuid
@@ -83,6 +105,15 @@ module Inferno
           self.created_at ||= time
           self.updated_at ||= time
           super
+        end
+
+        def add_tag(tag_hash)
+          tag = Tags::Model.find_or_create(tag_hash.slice(:name))
+
+          Inferno::Application['db.connection'][:requests_tags].insert(
+            tags_id: tag.id,
+            requests_id: index
+          )
         end
       end
     end

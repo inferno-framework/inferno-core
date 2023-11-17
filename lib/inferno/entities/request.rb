@@ -34,7 +34,7 @@ module Inferno
       ATTRIBUTES = [
         :id, :index, :verb, :url, :direction, :name, :status,
         :request_body, :response_body, :result_id, :test_session_id, :created_at,
-        :updated_at, :headers
+        :updated_at, :headers, :tags
       ].freeze
       SUMMARY_FIELDS = [
         :id, :index, :url, :verb, :direction, :name, :status, :result_id, :created_at, :updated_at
@@ -48,6 +48,18 @@ module Inferno
 
         @name = params[:name]&.to_sym
         @headers = params[:headers]&.map { |header| header.is_a?(Hash) ? Header.new(header) : header } || []
+        format_tags(params[:tags] || [])
+      end
+
+      def format_tags(raw_tags)
+        @tags = raw_tags.map do |tag|
+          case tag
+          when Hash
+            tag[:name]
+          when String
+            tag
+          end
+        end
       end
 
       # @return [Hash<String, String>]
@@ -124,6 +136,7 @@ module Inferno
           test_session_id:,
           request_headers: request_headers.map(&:to_hash),
           response_headers: response_headers.map(&:to_hash),
+          tags:,
           created_at:,
           updated_at:
         }.compact
