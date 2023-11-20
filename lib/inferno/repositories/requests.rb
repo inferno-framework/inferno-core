@@ -70,11 +70,13 @@ module Inferno
       def tagged_requests(test_session_id, tags)
         self.class::Model
           .tagged_requests(test_session_id, tags)
-          .all
-          .map! do |result_hash|
-            build_entity(result_hash)
-              .to_json_data(json_serializer_options)
-              .deep_symbolize_keys!
+          .to_a
+          .map! do |request|
+            build_entity(
+              request
+                .to_json_data(json_serializer_options)
+                .deep_symbolize_keys!
+            )
           end
       end
 
@@ -129,15 +131,35 @@ module Inferno
 
         def self.tagged_requests_sql
           <<~SQL.gsub(/\s+/, ' ').freeze
-            SELECT * from requests a
-            WHERE test_session_id = :test_session_id
+            select * from requests where requests.id in (
+                select r.id request_id from requests r
+                inner join requests_tags rt on r.id = rt.requests_id
+                inner join tags t on rt.tags_id = t.id
+                where r.test_session_id = :test_session_id
+                and r.result_id in (
+                SELECT a.id FROM results a
+                            WHERE a.test_session_id = r.test_session_id
+                            AND a.id IN  (
+                            SELECT id
+                            FROM results b
+                            WHERE (b.test_session_id = a.test_session_id AND b.test_id = a.test_id) OR
+                                    (b.test_session_id = a.test_session_id AND b.test_group_id = a.test_group_id) OR
+                                    (b.test_session_id = a.test_session_id AND b.test_suite_id = a.test_suite_id)
+                            ORDER BY updated_at DESC
+                            LIMIT 1
+                            )
+                )
+                and t.name in :tags
+                group by r.id, t.id
+                having count(*) = :tag_count
+            );
           SQL
           # and tags in :tags through the requests_tags join table
           # and result_id belongs to the most recent result for that runnable
         end
 
         def self.tagged_requests(test_session_id, tags)
-          fetch(tagged_requests_sql, test_session_id:, tags:)
+          fetch(tagged_requests_sql, test_session_id:, tags:, tag_count: tags.length)
         end
       end
     end
