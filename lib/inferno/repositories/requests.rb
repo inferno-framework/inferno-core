@@ -67,6 +67,17 @@ module Inferno
         build_entity(result)
       end
 
+      def tagged_requests(test_session_id, tags)
+        self.class::Model
+          .tagged_requests(test_session_id, tags)
+          .all
+          .map! do |result_hash|
+            build_entity(result_hash)
+              .to_json_data(json_serializer_options)
+              .deep_symbolize_keys!
+          end
+      end
+
       def requests_for_result(result_id)
         self.class::Model
           .order(:index)
@@ -114,6 +125,19 @@ module Inferno
             tags_id: tag.id,
             requests_id: index
           )
+        end
+
+        def self.tagged_requests_sql
+          <<~SQL.gsub(/\s+/, ' ').freeze
+            SELECT * from requests a
+            WHERE test_session_id = :test_session_id
+          SQL
+          # and tags in :tags through the requests_tags join table
+          # and result_id belongs to the most recent result for that runnable
+        end
+
+        def self.tagged_requests(test_session_id, tags)
+          fetch(tagged_requests_sql, test_session_id:, tags:)
         end
       end
     end
