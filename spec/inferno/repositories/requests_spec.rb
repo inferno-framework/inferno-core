@@ -131,16 +131,16 @@ RSpec.describe Inferno::Repositories::Requests do
   end
 
   describe '#tagged_requests' do
-    it 'returns an empty array when no requests match' do
-      request = repo_create(:request, request_params)
+    let(:request) { repo_create(:request, request_params) }
 
+    it 'returns an empty array when no requests match' do
       requests = repo.tagged_requests(request.test_session_id, [SecureRandom.uuid])
+
       expect(requests).to be_an(Array)
       expect(requests.length).to eq(1)
     end
 
     it 'returns requests matching a tag' do
-      request = repo_create(:request, request_params)
       tags = request.tags
 
       tags.each do |tag|
@@ -152,12 +152,29 @@ RSpec.describe Inferno::Repositories::Requests do
     end
 
     it 'returns requests matching all tags' do
-      request = repo_create(:request, request_params)
-
       requests = repo.tagged_requests(request.test_session_id, request.tags)
 
       expect(requests.length).to eq(1)
       expect(requests.first.id).to eq(request.id)
+    end
+
+    it 'only returns requests from the most recent result for a runnable' do
+      new_request =
+        repo_create(
+          :request,
+          test_session_id: request.test_session_id,
+          result: repo_create(
+            :result,
+            test_session_id: request.test_session_id,
+            updated_at: Time.now + 1.minute
+          ),
+          tags: request.tags
+        )
+
+      requests = repo.tagged_requests(request.test_session_id, request.tags)
+
+      expect(requests.length).to eq(1)
+      expect(requests.first.id).to eq(new_request.id)
     end
   end
 end
