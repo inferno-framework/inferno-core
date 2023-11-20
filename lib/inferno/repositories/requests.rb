@@ -130,32 +130,41 @@ module Inferno
         end
 
         def self.tagged_requests_sql
+          # Find all the requests for the current session which:
+          # - match all supplied tags
+          # - are the from the most recent test run for each runnable
           <<~SQL.gsub(/\s+/, ' ').freeze
-            select * from requests where requests.id in (
-                select r.id request_id from requests r
-                inner join requests_tags rt on r.id = rt.requests_id
-                inner join tags t on rt.tags_id = t.id
-                where r.test_session_id = :test_session_id
-                and r.result_id in (
-                SELECT a.id FROM results a
-                            WHERE a.test_session_id = r.test_session_id
-                            AND a.id IN  (
-                            SELECT id
-                            FROM results b
-                            WHERE (b.test_session_id = a.test_session_id AND b.test_id = a.test_id) OR
-                                    (b.test_session_id = a.test_session_id AND b.test_group_id = a.test_group_id) OR
-                                    (b.test_session_id = a.test_session_id AND b.test_suite_id = a.test_suite_id)
-                            ORDER BY updated_at DESC
-                            LIMIT 1
-                            )
-                )
-                and t.name in :tags
-                group by r.id, t.id
-                having count(*) = :tag_count
-            );
+            select final_requests.*
+            from (
+                select uncounted_requests.request_id request_id
+                from (
+                        select r.id request_id, t.id tag_id from requests r
+                        inner join requests_tags rt on r.`index` = rt.requests_id
+                        inner join tags t on rt.tags_id = t.id
+                        where r.test_session_id = :test_session_id
+                        and r.result_id in (
+                        SELECT a.id FROM results a
+                                WHERE a.test_session_id = r.test_session_id
+                                AND a.id IN  (
+                                SELECT id
+                                FROM results b
+                                WHERE (b.test_session_id = a.test_session_id AND b.test_id = a.test_id) OR
+                                        (b.test_session_id = a.test_session_id AND b.test_group_id = a.test_group_id) OR
+                                        (b.test_session_id = a.test_session_id AND b.test_suite_id = a.test_suite_id)
+                                ORDER BY updated_at DESC
+                                LIMIT 1
+                                )
+                        )
+                        and t.name in :tags
+                        group by r.id, t.id
+                    ) as uncounted_requests
+                    group by uncounted_requests.request_id
+                    having count(*) = :tag_count
+                ) as matched_requests
+            inner join requests final_requests on final_requests.id = matched_requests.request_id
+            where final_requests.test_session_id = :test_session_id
+            order by final_requests.`index`
           SQL
-          # and tags in :tags through the requests_tags join table
-          # and result_id belongs to the most recent result for that runnable
         end
 
         def self.tagged_requests(test_session_id, tags)

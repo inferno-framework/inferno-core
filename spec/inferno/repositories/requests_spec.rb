@@ -137,7 +137,7 @@ RSpec.describe Inferno::Repositories::Requests do
       requests = repo.tagged_requests(request.test_session_id, [SecureRandom.uuid])
 
       expect(requests).to be_an(Array)
-      expect(requests.length).to eq(1)
+      expect(requests.length).to eq(0)
     end
 
     it 'returns requests matching a tag' do
