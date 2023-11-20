@@ -129,4 +129,35 @@ RSpec.describe Inferno::Repositories::Requests do
       expect(request.headers).to be_present
     end
   end
+
+  describe '#tagged_requests' do
+    it 'returns an empty array when no requests match' do
+      request = repo_create(:request, request_params)
+
+      requests = repo.tagged_requests(request.test_session_id, [SecureRandom.uuid])
+      expect(requests).to be_an(Array)
+      expect(requests.length).to eq(1)
+    end
+
+    it 'returns requests matching a tag' do
+      request = repo_create(:request, request_params)
+      tags = request.tags
+
+      tags.each do |tag|
+        requests = repo.tagged_requests(request.test_session_id, [tag])
+
+        expect(requests.length).to eq(1)
+        expect(requests.first.id).to eq(request.id)
+      end
+    end
+
+    it 'returns requests matching all tags' do
+      request = repo_create(:request, request_params)
+
+      requests = repo.tagged_requests(request.test_session_id, request.tags)
+
+      expect(requests.length).to eq(1)
+      expect(requests.first.id).to eq(request.id)
+    end
+  end
 end
