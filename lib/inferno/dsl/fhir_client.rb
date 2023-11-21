@@ -104,14 +104,14 @@ module Inferno
       # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_operation(
-            path,
-            body: nil,
-            client: :default,
-            name: nil,
-            headers: {},
-            operation_method: :post,
-            tags: []
-          )
+        path,
+        body: nil,
+        client: :default,
+        name: nil,
+        headers: {},
+        operation_method: :post,
+        tags: []
+      )
         store_request_and_refresh_token(fhir_client(client), name, tags) do
           tcp_exception_handler do
             operation_headers = fhir_client(client).fhir_headers
@@ -267,13 +267,13 @@ module Inferno
       # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_search(
-            resource_type = nil,
-            client: :default,
-            params: {},
-            name: nil,
-            search_method: :get,
-            tags: []
-          )
+        resource_type = nil,
+        client: :default,
+        params: {},
+        name: nil,
+        search_method: :get,
+        tags: []
+      )
         search =
           if search_method == :post
             { body: params }

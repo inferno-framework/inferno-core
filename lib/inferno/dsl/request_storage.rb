@@ -43,7 +43,7 @@ module Inferno
       def load_tagged_requests(*tags)
         return [] if tags.blank?
 
-        Repositories::Requests.new.tagged_requests(self.test_session_id, tags).tap do |tagged_requests|
+        Repositories::Requests.new.tagged_requests(test_session_id, tags).tap do |tagged_requests|
           requests.concat(tagged_requests)
         end
       end
