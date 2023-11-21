@@ -5,10 +5,9 @@ require 'inferno/apps/cli/new/new'
 
 RSpec.describe Inferno::CLI::New do
 
-#  def run_generator(*args)
-#    Inferno::CLI::New.start(args)
-#  end
-
+  ABSOLUTE_PATH_TO_IG = File.expand_path(__FILE__, '../../../fixtures/small_package.tgz')
+    
+  # Wrap all 'it' examples in a temp dir
   around(:each) do |test|
     Dir.mktmpdir do |tmpdir|
       FileUtils.chdir(tmpdir) do
@@ -17,51 +16,47 @@ RSpec.describe Inferno::CLI::New do
     end
   end
 
+  # NOTE: WebMock blocks real HTTP requests for some reason: https://stackoverflow.com/a/22976546
+  # Re-enabling it for testing online IG pull
+  WebMock.allow_net_connect!
 
-  it 'works' do
-    expect { Inferno::CLI::New.start(['spec_1', '--quiet']) }.not_to raise_error
+  # test various `inferno new ...`
+  [
+    %w(spec-1 --quiet),
+    %w(spec-1 --implementation-guide https://build.fhir.org/ig/HL7/US-Core/ --quiet),
+    %w(spec-1 --implementation-guide https://build.fhir.org/ig/HL7/US-Core/index.html --quiet),
+    %w(spec-1 --implementation-guide https://build.fhir.org/ig/HL7/US-Core/package.tgz --quiet),
+    %W(spec-1 --implementation-guide #{ABSOLUTE_PATH_TO_IG} --quiet),
+    %w(spec-1 --author ABC --author DEF --quiet)
+  ].each do |cli_args|
+    it "generates Inferno project with #{cli_args}" do
+      expect { Inferno::CLI::New.start(cli_args) }.not_to raise_error
 
-    expect(Dir).to exist('spec-1')
-    expect(File).to exist('spec-1/Gemfile')
-    expect(File).to exist('spec-1/spec_1.gemspec')
+      expect(Dir).to exist('spec-1')
+      expect(File).to exist('spec-1/Gemfile')
+      expect(File).to exist('spec-1/spec_1.gemspec')
+      expect(File).to exist('spec-1/lib/spec_1.rb')
+      
+      if cli_args.include? '--implementation-guide'
+        expect(File).to exist('spec-1/lib/spec_1/igs/package.tgz')
+      end
+
+      if cli_args.include? '--author'
+        expect(File.read('spec-1/spec_1.gemspec')).to match(/authors\s*=.*ABC.*DEF/)
+      end
+    end
   end
 
+  # test `inferno new ... --pretend`
+  it 'does not create Inferno project with ["spec-1", "--pretend", "--quiet"]' do
+    expect { Inferno::CLI::New.start(%w(spec-1 --pretend --quiet)) }.not_to raise_error
 
-  shared_examples 'working inferno project' do |name, lib_name|
-    it 'has root directory' do
-      expect(Dir).to exist(name)
-    end
-
-    it 'has Gemfile' do
-      expect(File).to exist("#{name}/Gemfile")
-    end
-
-    it 'has gemspec' do
-      expect(File).to exist("#{name}/#{lib_name}.gemspec")
-    end
+    expect(Dir).not_to exist('spec-1')
   end
 
-  context 'TODO' do
-
-#
-#    it 'with an http implementation guide should create an Inferno project' do
-#      expect { Inferno::CLI::New.start(['spec_2', '--implementation-guide', 'http://build.fhir.org/ig/HL7/US-Core/']) }.not_to raise_error
-#
-#      expect { File.directory?('spec-2') }.to be true
-#      expect { File.exist?('spec-2/Gemfile') }.to be true
-#      expect { File.exist?('spec-2/spec_2.gemspec') }.to be true
-#    end
-#
-#    it 'with an absolute path to an implementation guide should create an Inferno project' do
-#      absolute_path_to_ig = File.expand_path('../../../../fixtures/small_package.tgz', __FILE__)
-#
-#      expect { Inferno::CLI::New.start(['spec_3', '--implementation-guide', absolute_path_to_ig, '--quiet']) }.not_to raise_error
-#
-#      expect { File.directory?('spec-3') }.to be true
-#      expect { File.exist?('spec-3/Gemfile') }.to be true
-#      expect { File.exist?('spec-3/spec_1.gemspec') }.to be true
-#    end
-#
+  # test `inferno new ... --skip` and `inferno new ... --force`
+  it 'asdf' do
+    # TODO
   end
 
 end
