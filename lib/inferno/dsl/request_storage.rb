@@ -50,18 +50,18 @@ module Inferno
       end
 
       # @private
-      def store_request(direction, name = nil, &block)
+      def store_request(direction, name, tags, &block)
         response = block.call
 
         name = self.class.config.request_name(name)
         request =
           if response.is_a? FHIR::ClientReply
             Entities::Request.from_fhir_client_reply(
-              response, direction:, name:, test_session_id:
+              response, direction:, name:, test_session_id:, tags:
             )
           else
             Entities::Request.from_http_response(
-              response, direction:, name:, test_session_id:
+              response, direction:, name:, test_session_id:, tags:
             )
           end
 

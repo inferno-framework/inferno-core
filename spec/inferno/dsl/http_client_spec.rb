@@ -122,6 +122,17 @@ RSpec.describe Inferno::DSL::HTTPClient do
         expect(request.response_body).to eq('BODY')
       end
 
+      it 'adds tags to a request' do
+        stub_request(:get, base_url)
+          .to_return(status: 200, body: response_body)
+
+        tags = ['abc', 'def']
+
+        request = group.get(tags:)
+
+        expect(request.tags).to match_array(tags)
+      end
+
       context 'without a url argument' do
         let(:stub_get_request) do
           stub_request(:get, base_url)

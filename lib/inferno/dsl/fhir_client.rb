@@ -102,8 +102,16 @@ module Inferno
       # @param headers [Hash] custom headers for this operation
       # @param operation_method [Symbol] indicates which request type to use for the operation
       # @return [Inferno::Entities::Request]
-      def fhir_operation(path, body: nil, client: :default, name: nil, headers: {}, operation_method: :post)
-        store_request_and_refresh_token(fhir_client(client), name) do
+      def fhir_operation(
+            path,
+            body: nil,
+            client: :default,
+            name: nil,
+            headers: {},
+            operation_method: :post,
+            tags: []
+          )
+        store_request_and_refresh_token(fhir_client(client), name, tags) do
           tcp_exception_handler do
             operation_headers = fhir_client(client).fhir_headers
             operation_headers.merge!('Content-Type' => 'application/fhir+json') if body.present?
@@ -128,8 +136,8 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_get_capability_statement(client: :default, name: nil)
-        store_request_and_refresh_token(fhir_client(client), name) do
+      def fhir_get_capability_statement(client: :default, name: nil, tags: [])
+        store_request_and_refresh_token(fhir_client(client), name, tags) do
           tcp_exception_handler do
             fhir_client(client).conformance_statement
             fhir_client(client).reply
@@ -144,8 +152,8 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_create(resource, client: :default, name: nil)
-        store_request_and_refresh_token(fhir_client(client), name) do
+      def fhir_create(resource, client: :default, name: nil, tags: [])
+        store_request_and_refresh_token(fhir_client(client), name, tags) do
           tcp_exception_handler do
             fhir_client(client).create(resource)
           end
@@ -160,8 +168,8 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_read(resource_type, id, client: :default, name: nil)
-        store_request_and_refresh_token(fhir_client(client), name) do
+      def fhir_read(resource_type, id, client: :default, name: nil, tags: [])
+        store_request_and_refresh_token(fhir_client(client), name, tags) do
           tcp_exception_handler do
             fhir_client(client).read(fhir_class_from_resource_type(resource_type), id)
           end
@@ -177,8 +185,8 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_vread(resource_type, id, version_id, client: :default, name: nil)
-        store_request_and_refresh_token(fhir_client(client), name) do
+      def fhir_vread(resource_type, id, version_id, client: :default, name: nil, tags: [])
+        store_request_and_refresh_token(fhir_client(client), name, tags) do
           tcp_exception_handler do
             fhir_client(client).vread(fhir_class_from_resource_type(resource_type), id, version_id)
           end
@@ -193,8 +201,8 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_update(resource, id, client: :default, name: nil)
-        store_request_and_refresh_token(fhir_client(client), name) do
+      def fhir_update(resource, id, client: :default, name: nil, tags: [])
+        store_request_and_refresh_token(fhir_client(client), name, tags) do
           tcp_exception_handler do
             fhir_client(client).update(resource, id)
           end
@@ -210,8 +218,8 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_patch(resource_type, id, patchset, client: :default, name: nil)
-        store_request_and_refresh_token(fhir_client(client), name) do
+      def fhir_patch(resource_type, id, patchset, client: :default, name: nil, tags: [])
+        store_request_and_refresh_token(fhir_client(client), name, tags) do
           tcp_exception_handler do
             fhir_client(client).partial_update(fhir_class_from_resource_type(resource_type), id, patchset)
           end
@@ -226,8 +234,8 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_history(resource_type = nil, id = nil, client: :default, name: nil)
-        store_request_and_refresh_token(fhir_client(client), name) do
+      def fhir_history(resource_type = nil, id = nil, client: :default, name: nil, tags: [])
+        store_request_and_refresh_token(fhir_client(client), name, tags) do
           tcp_exception_handler do
             if id
               fhir_client(client).resource_instance_history(fhir_class_from_resource_type(resource_type), id)
@@ -249,7 +257,14 @@ module Inferno
       #   other tests
       # @param search_method [Symbol] Use `:post` to search via POST
       # @return [Inferno::Entities::Request]
-      def fhir_search(resource_type = nil, client: :default, params: {}, name: nil, search_method: :get)
+      def fhir_search(
+            resource_type = nil,
+            client: :default,
+            params: {},
+            name: nil,
+            search_method: :get,
+            tags: []
+          )
         search =
           if search_method == :post
             { body: params }
@@ -257,7 +272,7 @@ module Inferno
             { parameters: params }
           end
 
-        store_request_and_refresh_token(fhir_client(client), name) do
+        store_request_and_refresh_token(fhir_client(client), name, tags) do
           tcp_exception_handler do
             if resource_type
               fhir_client(client)
@@ -277,8 +292,8 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_delete(resource_type, id, client: :default, name: nil)
-        store_request('outgoing', name) do
+      def fhir_delete(resource_type, id, client: :default, name: nil, tags: [])
+        store_request('outgoing', name, tags) do
           tcp_exception_handler do
             fhir_client(client).destroy(fhir_class_from_resource_type(resource_type), id)
           end
@@ -292,8 +307,8 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @return [Inferno::Entities::Request]
-      def fhir_transaction(bundle = nil, client: :default, name: nil)
-        store_request('outgoing', name) do
+      def fhir_transaction(bundle = nil, client: :default, name: nil, tags: [])
+        store_request('outgoing', name, tags) do
           tcp_exception_handler do
             fhir_client(client).transaction_bundle = bundle if bundle.present?
             fhir_client(client).end_transaction
@@ -312,8 +327,8 @@ module Inferno
       # expired. It's combined with `store_request` so that all of the fhir
       # request methods don't have to be wrapped twice.
       # @private
-      def store_request_and_refresh_token(client, name, &block)
-        store_request('outgoing', name) do
+      def store_request_and_refresh_token(client, name, tags, &block)
+        store_request('outgoing', name, tags) do
           perform_refresh(client) if client.need_to_refresh? && client.able_to_refresh?
           block.call
         end

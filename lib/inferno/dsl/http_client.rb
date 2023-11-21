@@ -69,8 +69,8 @@ module Inferno
       #   other tests
       # @param headers [Hash] Input headers here
       # @return [Inferno::Entities::Request]
-      def get(url = '', client: :default, name: nil, headers: nil)
-        store_request('outgoing', name) do
+      def get(url = '', client: :default, name: nil, headers: nil, tags: [])
+        store_request('outgoing', name, tags) do
           tcp_exception_handler do
             client = http_client(client)
 
@@ -104,8 +104,8 @@ module Inferno
       #   other tests
       # @param headers [Hash] Input headers here
       # @return [Inferno::Entities::Request]
-      def post(url = '', body: nil, client: :default, name: nil, headers: nil)
-        store_request('outgoing', name) do
+      def post(url = '', body: nil, client: :default, name: nil, headers: nil, tags: [])
+        store_request('outgoing', name, tags) do
           tcp_exception_handler do
             client = http_client(client)
 
@@ -130,8 +130,8 @@ module Inferno
       #   other tests
       # @param headers [Hash] Input headers here
       # @return [Inferno::Entities::Request]
-      def delete(url = '', client: :default, name: :nil, headers: nil)
-        store_request('outgoing', name) do
+      def delete(url = '', client: :default, name: :nil, headers: nil, tags: [])
+        store_request('outgoing', name, tags) do
           tcp_exception_handler do
             client = http_client(client)
 
@@ -160,7 +160,7 @@ module Inferno
       #   other tests
       # @param headers [Hash] Input headers here
       # @return [Inferno::Entities::Request]
-      def stream(block, url = '', limit = 100, client: :default, name: nil, headers: nil)
+      def stream(block, url = '', limit = 100, client: :default, name: nil, headers: nil, tags: [])
         streamed = []
 
         collector = proc do |chunk, bytes|
@@ -169,7 +169,7 @@ module Inferno
           block.call(chunk, bytes)
         end
 
-        store_request('outgoing', name) do
+        store_request('outgoing', name, tags) do
           tcp_exception_handler do
             client = http_client(client)
 
