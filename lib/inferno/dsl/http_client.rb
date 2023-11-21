@@ -68,6 +68,7 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @param headers [Hash] Input headers here
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def get(url = '', client: :default, name: nil, headers: nil, tags: [])
         store_request('outgoing', name, tags) do
@@ -103,6 +104,7 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @param headers [Hash] Input headers here
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def post(url = '', body: nil, client: :default, name: nil, headers: nil, tags: [])
         store_request('outgoing', name, tags) do
@@ -129,6 +131,7 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @param headers [Hash] Input headers here
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def delete(url = '', client: :default, name: :nil, headers: nil, tags: [])
         store_request('outgoing', name, tags) do
@@ -159,6 +162,7 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @param headers [Hash] Input headers here
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def stream(block, url = '', limit = 100, client: :default, name: nil, headers: nil, tags: [])
         streamed = []

@@ -36,6 +36,10 @@ module Inferno
         request&.resource
       end
 
+      # Returns requests which match all of the given tags
+      #
+      # @param tags [String]
+      # @return [Inferno::Entities::Request]
       def load_tagged_requests(*tags)
         return [] if tags.blank?
 

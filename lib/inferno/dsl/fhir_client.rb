@@ -101,6 +101,7 @@ module Inferno
       #   other tests
       # @param headers [Hash] custom headers for this operation
       # @param operation_method [Symbol] indicates which request type to use for the operation
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_operation(
             path,
@@ -135,6 +136,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_get_capability_statement(client: :default, name: nil, tags: [])
         store_request_and_refresh_token(fhir_client(client), name, tags) do
@@ -151,6 +153,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_create(resource, client: :default, name: nil, tags: [])
         store_request_and_refresh_token(fhir_client(client), name, tags) do
@@ -167,6 +170,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_read(resource_type, id, client: :default, name: nil, tags: [])
         store_request_and_refresh_token(fhir_client(client), name, tags) do
@@ -184,6 +188,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_vread(resource_type, id, version_id, client: :default, name: nil, tags: [])
         store_request_and_refresh_token(fhir_client(client), name, tags) do
@@ -200,6 +205,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_update(resource, id, client: :default, name: nil, tags: [])
         store_request_and_refresh_token(fhir_client(client), name, tags) do
@@ -217,6 +223,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_patch(resource_type, id, patchset, client: :default, name: nil, tags: [])
         store_request_and_refresh_token(fhir_client(client), name, tags) do
@@ -233,6 +240,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_history(resource_type = nil, id = nil, client: :default, name: nil, tags: [])
         store_request_and_refresh_token(fhir_client(client), name, tags) do
@@ -256,6 +264,7 @@ module Inferno
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
       # @param search_method [Symbol] Use `:post` to search via POST
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_search(
             resource_type = nil,
@@ -291,6 +300,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_delete(resource_type, id, client: :default, name: nil, tags: [])
         store_request('outgoing', name, tags) do
@@ -306,6 +316,7 @@ module Inferno
       # @param client [Symbol]
       # @param name [Symbol] Name for this request to allow it to be used by
       #   other tests
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_transaction(bundle = nil, client: :default, name: nil, tags: [])
         store_request('outgoing', name, tags) do
