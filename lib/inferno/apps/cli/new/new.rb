@@ -9,6 +9,17 @@ module Inferno
       desc <<~HELP
         Generate a new Inferno test kit for FHIR software testing
 
+        Examples:
+
+          `inferno new test_fhir_app`
+            => generates an Inferno app
+
+          `inferno new test_us_core -i https://build.fhir.org/ig/HL7/US-Core/`
+            => generates Inferno app and loads US Core implementation guide
+
+          `inferno new test_my_ig -i /absolute/path/to/ig/package.tgz -a Name`
+            => generates Inferno app, loads a local implementation guide, and specifies Name as author
+
         https://inferno-framework.github.io/index.html
       HELP
 
@@ -29,7 +40,7 @@ module Inferno
                    aliases: '-i',
                    default: nil,
                    banner: 'IG_URL',
-                   desc: 'URL to a FHIR Implementation Guide or path to a package.tgz'
+                   desc: 'URL to an implementation guide or absolute path to a package.tgz'
       class_option :author,
                    type: :string,
                    aliases: '-a',

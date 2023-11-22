@@ -51,7 +51,7 @@ module Inferno
       desc 'suite SUBCOMMAND ...ARGS', 'Perform suite-based operations'
       subcommand 'suite', Suite
 
-      register(New, 'new', 'new TEST_KIT_NAME [-i IG_URL]', 'Create an Inferno test kit')
+      register(New, 'new', 'new TEST_KIT_NAME [-i IG_URL]', 'Run `inferno new --help` for full help')
     end
   end
 end
