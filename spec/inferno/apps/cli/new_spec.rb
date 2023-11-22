@@ -3,8 +3,7 @@ require 'inferno/apps/cli/new/new'
 
 ABSOLUTE_PATH_TO_IG = File.expand_path('../../../fixtures/small_package.tgz', __dir__)
 
-RSpec.describe Inferno::CLI::New do
-
+RSpec.describe Inferno::CLI::New do # rubocop:disable RSpec/FilePath
   # Wrap all 'it' examples in a temp dir
   around do |test|
     Dir.mktmpdir do |tmpdir|
@@ -30,7 +29,7 @@ RSpec.describe Inferno::CLI::New do
     cli_args.append('--quiet')
 
     it "runs inferno new #{cli_args.join(' ')}" do
-      expect { Inferno::CLI::New.start(cli_args) }.to_not raise_error
+      expect { described_class.start(cli_args) }.to_not raise_error
 
       expect(Dir).to exist('test-fhir-app')
       expect(File).to exist('test-fhir-app/Gemfile')

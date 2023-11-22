@@ -70,18 +70,20 @@ module Inferno
           begin
             get(@ig_uri, ig_file, verbose: !options['quiet'])
           rescue StandardError => e
-            say_unless_quiet e.message, :red
-            ig_load_error
+            say_error e.message, :red
+            say_error "Failed to load #{@ig_uri}", :red
+            say_error "Please add the implementation guide package.tgz file into #{ig_path}", :red
           else
             say_unless_quiet "Loaded implementation guide #{@ig_uri}", :green
           end
         end
 
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
-        if options['pretend']
-          say_unless_quiet 'This was a dry run; re-run without `--pretend` to actually create project',
-                           :yellow
-        end
+
+        return unless options['pretend']
+
+        say_unless_quiet 'This was a dry run; re-run without `--pretend` to actually create project',
+                         :yellow
       end
 
       private
@@ -108,7 +110,7 @@ module Inferno
 
       # title case name, i.e: Inferno Template
       def title_name
-        human_name.split.map { |s| s.capitalize }.join(' ')
+        human_name.split.map(&:capitalize).join(' ')
       end
 
       # suffix '_test_suite' in snake case, i.e: inferno_template_test_suite
@@ -124,12 +126,6 @@ module Inferno
       # full path to package.tgz, i.e: inferno-template/lib/inferno_template/igs/package.tgz
       def ig_file
         File.join(root_name, ig_path, 'package.tgz')
-      end
-
-      def ig_load_error
-        say_error "Failed to load #{@ig_uri}", :red
-        say_error "Please add the implementation guide package.tgz file into #{ig_path}", :red
-        raise StandardError, "Failed to load #{@ig_uri}"
       end
 
       def fetch_user
