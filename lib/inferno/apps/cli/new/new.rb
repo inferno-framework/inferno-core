@@ -50,15 +50,12 @@ module Inferno
 
       add_runtime_options! # adds --force, --pretend, --quiet, --skip
 
-      @@inflector = Dry::Inflector.new do |inflections|
-        inflections.acronym 'FHIR'
-      end
-
       def create_app
         @name = name
         @ig_uri = options['implementation_guide']
         @authors = options['author']
         @authors << fetch_user if @authors.empty?
+        @inflector = Dry::Inflector.new
 
         ## Template Generation:
         # copies all files from ./templates/ folder
@@ -91,22 +88,22 @@ module Inferno
 
       # root folder name, i.e: inferno-template
       def root_name
-        @@inflector.dasherize(@@inflector.underscore(@name))
+        @inflector.dasherize(@inflector.underscore(@name))
       end
 
       # library name, i.e: inferno_template
       def lib_name
-        @@inflector.underscore(@name)
+        @inflector.underscore(@name)
       end
 
       # module name, i.e: InfernoTemplate
       def module_name
-        @@inflector.camelize(@name)
+        @inflector.camelize(@name)
       end
 
       # English grammatical name, i.e: Inferno template
       def human_name
-        @@inflector.humanize(@@inflector.camelize(@name))
+        @inflector.humanize(@inflector.underscore(@name))
       end
 
       # title case name, i.e: Inferno Template
