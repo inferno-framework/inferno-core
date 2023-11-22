@@ -40,7 +40,7 @@ module Inferno
       add_runtime_options! # adds --force, --pretend, --quiet, --skip
 
       @@inflector = Dry::Inflector.new do |inflections|
-        inflections.acronym 'FHIR', 'IG'
+        inflections.acronym 'FHIR'
       end
 
       def create_app
@@ -77,7 +77,7 @@ module Inferno
 
       # root folder name, i.e: inferno-template
       def root_name
-        @@inflector.dasherize(@name)
+        @@inflector.dasherize(@@inflector.underscore(@name))
       end
 
       # library name, i.e: inferno_template
