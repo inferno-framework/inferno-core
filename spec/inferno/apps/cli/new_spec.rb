@@ -1,13 +1,12 @@
 require 'rspec'
 require 'inferno/apps/cli/new/new'
 
+ABSOLUTE_PATH_TO_IG = File.expand_path('../../../fixtures/small_package.tgz', __dir__)
 
 RSpec.describe Inferno::CLI::New do
 
-  ABSOLUTE_PATH_TO_IG = File.expand_path('../../../../fixtures/small_package.tgz', __FILE__)
-    
   # Wrap all 'it' examples in a temp dir
-  around(:each) do |test|
+  around do |test|
     Dir.mktmpdir do |tmpdir|
       FileUtils.chdir(tmpdir) do
         WebMock.allow_net_connect!
@@ -17,27 +16,30 @@ RSpec.describe Inferno::CLI::New do
     end
   end
 
-
   # test various `inferno new ...` options
   [
-    %w(test-fhir-app --quiet),
-    %w(test_fhir_app --quiet),
-    %w(TestFHIRApp --quiet),
-    %w(TestFhirApp --quiet),
-    %w(test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/ --quiet),
-    %w(test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/index.html --quiet),
-    %w(test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/package.tgz --quiet),
-    %W(test-fhir-app --implementation-guide #{ABSOLUTE_PATH_TO_IG} --quiet),
-    %w(test-fhir-app --author ABC --author DEF --quiet)
+    %w[test-fhir-app --quiet],
+    %w[test_fhir_app --quiet],
+    %w[TestFHIRApp --quiet],
+    %w[TestFhirApp --quiet],
+    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/ --quiet],
+    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/index.html --quiet],
+    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/package.tgz --quiet],
+    %W[test-fhir-app --implementation-guide #{ABSOLUTE_PATH_TO_IG} --quiet],
+    %w[test-fhir-app --author ABC --author DEF --quiet]
   ].each do |cli_args|
-    it "generates Inferno project with #{cli_args}" do
-      expect { Inferno::CLI::New.start(cli_args) }.not_to raise_error
+    it "runs inferno new #{cli_args.join(' ')}" do
+      expect { Inferno::CLI::New.start(cli_args) }.to_not raise_error
 
       expect(Dir).to exist('test-fhir-app')
       expect(File).to exist('test-fhir-app/Gemfile')
       expect(File).to exist('test-fhir-app/test_fhir_app.gemspec')
       expect(File).to exist('test-fhir-app/lib/test_fhir_app.rb')
-      
+      expect(File.read('test-fhir-app/lib/test_fhir_app.rb')).to include('module TestFHIRApp')
+      expect(File.read('test-fhir-app/lib/test_fhir_app.rb')).to include('id :test_fhir_app_test_suite')
+      expect(File.read('test-fhir-app/lib/test_fhir_app.rb')).to include("title 'Test FHIR App test suite'")
+      expect(File.read('test-fhir-app/lib/test_fhir_app.rb')).to match(/description.+Test FHIR app/)
+
       if cli_args.include? '--implementation-guide'
         expect(File).to exist('test-fhir-app/lib/test_fhir_app/igs/package.tgz')
       end
@@ -50,9 +52,8 @@ RSpec.describe Inferno::CLI::New do
 
   # test `inferno new ... --pretend`
   it 'does not generate Inferno project with ["test-fhir-app", "--pretend", "--quiet"]' do
-    expect { Inferno::CLI::New.start(%w(test-fhir-app --pretend --quiet)) }.not_to raise_error
+    expect { Inferno::CLI::New.start(%w[test-fhir-app --pretend --quiet]) }.to_not raise_error
 
-    expect(Dir).not_to exist('test-fhir-app')
+    expect(Dir).to_not exist('test-fhir-app')
   end
-
 end

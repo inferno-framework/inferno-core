@@ -58,7 +58,7 @@ module Inferno
         @name = name
         @ig_uri = options['implementation_guide']
         @authors = options['author']
-        @authors << fetch_user() if @authors.empty?
+        @authors << fetch_user if @authors.empty?
 
         ## Template Generation:
         # copies all files from ./templates/ folder
@@ -67,13 +67,13 @@ module Inferno
         directory('.', root_name, { mode: :preserve, recursive: true, verbose: !options['quiet'] })
 
         if @ig_uri
-          @ig_uri = @ig_uri.gsub(/[^\/]*\.html\s*$/, 'package.tgz')
+          @ig_uri = @ig_uri.gsub(%r{[^/]*\.html\s*$}, 'package.tgz')
           @ig_uri = File.join(@ig_uri, 'package.tgz') unless @ig_uri.ends_with? 'package.tgz'
 
           begin
             get(@ig_uri, ig_file, verbose: !options['quiet'])
-          rescue Exception => err
-            say_unless_quiet err.message, :red
+          rescue StandardError => e
+            say_unless_quiet e.message, :red
             ig_load_error
           else
             say_unless_quiet "Loaded implementation guide #{@ig_uri}", :green
@@ -81,7 +81,10 @@ module Inferno
         end
 
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
-        say_unless_quiet 'This was a dry run; re-run without `--pretend` to actually create project', :yellow if options['pretend']
+        if options['pretend']
+          say_unless_quiet 'This was a dry run; re-run without `--pretend` to actually create project',
+                           :yellow
+        end
       end
 
       private
@@ -103,12 +106,12 @@ module Inferno
 
       # English grammatical name, i.e: Inferno template
       def human_name
-        @@inflector.humanize(@name)
+        @@inflector.humanize(@@inflector.camelize(@name))
       end
 
       # title case name, i.e: Inferno Template
       def title_name
-        human_name.split.map{ |s| s.capitalize }.join(' ')
+        human_name.split.map { |s| s.capitalize }.join(' ')
       end
 
       # suffix '_test_suite' in snake case, i.e: inferno_template_test_suite
@@ -128,11 +131,11 @@ module Inferno
 
       def ig_load_error
         say_error "Failed to load #{@ig_uri}", :red
-        say_error "Please add the implementation guide package.tgz file into #{ig_path}", :red        
-        raise StandardError.new("Failed to load #{@ig_uri}")
+        say_error "Please add the implementation guide package.tgz file into #{ig_path}", :red
+        raise StandardError, "Failed to load #{@ig_uri}"
       end
 
-      def fetch_user()
+      def fetch_user
         ENV['USER'] || ENV['USERNAME'] || 'TODO'
       end
 
