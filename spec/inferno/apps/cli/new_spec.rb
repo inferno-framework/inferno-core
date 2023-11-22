@@ -5,7 +5,7 @@ require 'inferno/apps/cli/new/new'
 
 RSpec.describe Inferno::CLI::New do
 
-  ABSOLUTE_PATH_TO_IG = File.expand_path(__FILE__, '../../../fixtures/small_package.tgz')
+  ABSOLUTE_PATH_TO_IG = File.expand_path('../../../../fixtures/small_package.tgz', __FILE__)
     
   # Wrap all 'it' examples in a temp dir
   around(:each) do |test|

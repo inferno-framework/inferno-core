@@ -1,6 +1,4 @@
 require 'dry/inflector'
-require 'faraday'
-require 'fileutils'
 require 'thor'
 
 module Inferno
@@ -57,28 +55,22 @@ module Inferno
         # replaces all %foo% file names with foo() method call
         directory('.', root_name, { mode: :preserve, recursive: true, verbose: !options['quiet'] })
 
-        case @ig_uri
-        when /^https?:\/\//
+        if @ig_uri
           @ig_uri = @ig_uri.gsub(/[^\/]*\.html\s*$/, 'package.tgz')
           @ig_uri = File.join(@ig_uri, 'package.tgz') unless @ig_uri.ends_with? 'package.tgz'
 
-          response = Faraday.get(@ig_uri)
-          if response.status == 200
-            create_file(ig_file, response.body)
-          else
-            ig_load_error
-          end
-        when ->(ig_uri) { ig_uri.nil? }
-          say_unless_quiet "If you want to test for an implementation guide, add its package.tgz file into #{ig_path}"
-        else
           begin
-            FileUtils.cp(@ig_uri, ig_file) unless options['pretend'] # TODO proper dry-run implementation
-          rescue
+            get(@ig_uri, ig_file, verbose: !options['quiet'])
+          rescue Exception => err
+            say_unless_quiet err.message, :red
             ig_load_error
+          else
+            say_unless_quiet "Loaded implementation guide #{@ig_uri}", :green
           end
         end
 
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
+        say_unless_quiet 'This was a dry run; re-run without `--pretend` to actually create project', :yellow if options['pretend']
       end
 
       private
