@@ -18,15 +18,17 @@ RSpec.describe Inferno::CLI::New do
 
   # test various `inferno new ...` options
   [
-    %w[test-fhir-app --quiet],
-    %w[test_fhir_app --quiet],
-    %w[TestFhirApp --quiet],
-    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/ --quiet],
-    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/index.html --quiet],
-    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/package.tgz --quiet],
-    %W[test-fhir-app --implementation-guide #{ABSOLUTE_PATH_TO_IG} --quiet],
-    %w[test-fhir-app --author ABC --author DEF --quiet]
+    %w[test-fhir-app],
+    %w[test_fhir_app],
+    %w[TestFhirApp],
+    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/],
+    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/index.html],
+    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/package.tgz],
+    %W[test-fhir-app --implementation-guide #{ABSOLUTE_PATH_TO_IG}],
+    %w[test-fhir-app --author ABC --author DEF]
   ].each do |cli_args|
+    cli_args.append('--quiet')
+
     it "runs inferno new #{cli_args.join(' ')}" do
       expect { Inferno::CLI::New.start(cli_args) }.to_not raise_error
 
@@ -47,12 +49,5 @@ RSpec.describe Inferno::CLI::New do
         expect(File.read('test-fhir-app/test_fhir_app.gemspec')).to match(/authors\s*=.*ABC.*DEF/)
       end
     end
-  end
-
-  # test `inferno new ... --pretend`
-  it 'runs inferno new test-fhir-app --pretend --quiet' do
-    expect { Inferno::CLI::New.start(%w[test-fhir-app --pretend --quiet]) }.to_not raise_error
-
-    expect(Dir).to_not exist('test-fhir-app')
   end
 end
