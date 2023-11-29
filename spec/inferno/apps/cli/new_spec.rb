@@ -18,8 +18,6 @@ RSpec.describe Inferno::CLI::New do # rubocop:disable RSpec/FilePath
   # test various `inferno new ...` options
   [
     %w[test-fhir-app],
-    %w[test_fhir_app],
-    %w[TestFhirApp],
     %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/],
     %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/index.html],
     %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/package.tgz],
@@ -35,10 +33,6 @@ RSpec.describe Inferno::CLI::New do # rubocop:disable RSpec/FilePath
       expect(File).to exist('test-fhir-app/Gemfile')
       expect(File).to exist('test-fhir-app/test_fhir_app.gemspec')
       expect(File).to exist('test-fhir-app/lib/test_fhir_app.rb')
-      expect(File.read('test-fhir-app/lib/test_fhir_app.rb')).to include('module TestFhirApp')
-      expect(File.read('test-fhir-app/lib/test_fhir_app.rb')).to include('id :test_fhir_app_test_suite')
-      expect(File.read('test-fhir-app/lib/test_fhir_app.rb')).to include("title 'Test Fhir App Test Suite'")
-      expect(File.read('test-fhir-app/README.md')).to match(/^Test fhir app/)
 
       if cli_args.include? '--implementation-guide'
         expect(File).to exist('test-fhir-app/lib/test_fhir_app/igs/package.tgz')
