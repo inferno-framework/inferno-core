@@ -411,7 +411,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           <ActionModal
             cancelTestRun={cancelTestRun}
             message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
-            modalVisible={waitingTestId !== null}
+            modalVisible={!!waitingTestId}
           />
         </Box>
       </main>
