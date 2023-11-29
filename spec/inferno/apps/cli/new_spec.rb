@@ -1,5 +1,5 @@
 require 'rspec'
-require 'inferno/apps/cli/new/new'
+require 'inferno/apps/cli/new'
 
 ABSOLUTE_PATH_TO_IG = File.expand_path('../../../fixtures/small_package.tgz', __dir__)
 
