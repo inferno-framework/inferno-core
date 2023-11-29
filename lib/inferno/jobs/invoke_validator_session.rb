@@ -15,7 +15,7 @@ module Inferno
           # TODO: (FI-2311) store this session ID so it can be referenced as needed
           validator.session_id = session_id
         else
-          Inferno::Application['logger'].error("InvokeValidatorSession - error calling validator. #{response.inspect}")
+          Inferno::Application['logger'].error("InvokeValidatorSession - error from validator: #{response_body}")
         end
       end
     end
