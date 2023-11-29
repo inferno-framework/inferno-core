@@ -1,10 +1,11 @@
-require 'dry/inflector'
 require 'thor'
+require_relative '../../utils/named_thor_actions.rb'
 
 module Inferno
   module CLI
     class New < Thor::Group
       include Thor::Actions
+      include Inferno::Utils::NamedThorActions
 
       desc <<~HELP
         Generate a new Inferno test kit for FHIR software testing
@@ -55,7 +56,7 @@ module Inferno
         @ig_uri = options['implementation_guide']
         @authors = options['author']
         @authors << fetch_user if @authors.empty?
-        @inflector = Dry::Inflector.new
+        # @inflector = Dry::Inflector.new
 
         ## Template Generation:
         # copies all files from ./templates/ folder
@@ -88,39 +89,9 @@ module Inferno
 
       private
 
-      # root folder name, i.e: inferno-template
-      def root_name
-        @inflector.dasherize(@inflector.underscore(@name))
-      end
-
-      # library name, i.e: inferno_template
-      def lib_name
-        @inflector.underscore(@name)
-      end
-
-      # module name, i.e: InfernoTemplate
-      def module_name
-        @inflector.camelize(@name)
-      end
-
-      # English grammatical name, i.e: Inferno template
-      def human_name
-        @inflector.humanize(@inflector.underscore(@name))
-      end
-
-      # title case name, i.e: Inferno Template
-      def title_name
-        human_name.split.map(&:capitalize).join(' ')
-      end
-
-      # suffix '_test_suite' in snake case, i.e: inferno_template_test_suite
-      def test_suite_id
-        "#{lib_name}_test_suite"
-      end
-
       # path to where package.tgz should reside, i.e: lib/inferno_template/igs
       def ig_path
-        File.join('lib', lib_name, 'igs')
+        File.join('lib', library_name, 'igs')
       end
 
       # full path to package.tgz, i.e: inferno-template/lib/inferno_template/igs/package.tgz

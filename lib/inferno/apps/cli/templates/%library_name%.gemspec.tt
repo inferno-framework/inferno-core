@@ -1,5 +1,5 @@
 Gem::Specification.new do |spec|
-  spec.name          = '<%= lib_name %>'
+  spec.name          = '<%= library_name %>'
   spec.version       = '0.0.1'
   spec.authors       = <%= @authors %>
   # spec.email         = ['TODO']
