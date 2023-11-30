@@ -24,7 +24,7 @@ deployment. Multi-user deployments should use PostgreSQL instead.
 
 ### PostgreSQL with Docker
 Rather than setting up a separate PostgreSQL service, you can run it via
-`docker-compose` along with the rest of Inferno's services. To do so:
+`docker compose` along with the rest of Inferno's services. To do so:
 * Add `gem 'pg'` to `Gemfile`
 * Add the following entry to `docker-compose.yml`:
 ```yaml
