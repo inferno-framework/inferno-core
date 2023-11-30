@@ -101,7 +101,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
   };
 
   if (!showPage) {
-    return <Box display="flex" ref={selectionPanel} maxHeight="100%" m={3} />;
+    // 432px = 400 (default width of SelectionPanel Paper component) + 16px margin on each side
+    return <Box ref={selectionPanel} width="432px" />;
   }
 
   return (
