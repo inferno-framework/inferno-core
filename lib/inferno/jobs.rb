@@ -2,6 +2,7 @@ require 'sidekiq'
 
 require_relative 'jobs/execute_test_run'
 require_relative 'jobs/resume_test_run'
+require_relative 'jobs/invoke_validator_session'
 
 module Inferno
   module Jobs
