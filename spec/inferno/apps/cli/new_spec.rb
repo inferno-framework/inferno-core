@@ -14,6 +14,7 @@ RSpec.describe Inferno::CLI::New do # rubocop:disable RSpec/FilePath
 
   [
     %w[test-fhir-app],
+    %w[test-fhir-app --author ABC],
     %w[test-fhir-app --author ABC --author DEF]
   ].each do |cli_args|
     cli_args.append('--quiet')
