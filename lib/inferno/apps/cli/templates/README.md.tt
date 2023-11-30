@@ -10,7 +10,6 @@ for FHIR testing.
 
 ## Instructions for Developing tests
 
-- Clone this repo/Click "Use this template" on github.
 - Run `setup.sh` in this repo to pull the needed docker images and set up the
   database.
 - Put the `package.tgz` for the IG you're writing tests for in
