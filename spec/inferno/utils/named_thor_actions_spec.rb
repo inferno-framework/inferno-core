@@ -21,7 +21,7 @@ RSpec.describe Inferno::Utils::NamedThorActions do
       end
 
       it 'returns library name in snake case' do
-        expect(dummy.library_name).to eq('test_fhir_app')        
+        expect(dummy.library_name).to eq('test_fhir_app')
       end
 
       it 'returns module name in pascal case' do

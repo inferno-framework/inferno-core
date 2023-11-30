@@ -1,5 +1,5 @@
 require 'thor'
-require_relative '../../utils/named_thor_actions.rb'
+require_relative '../../utils/named_thor_actions'
 
 module Inferno
   module CLI
@@ -52,22 +52,8 @@ module Inferno
       add_runtime_options!
 
       def create_app
-        normalized_ig_uri = options['implementation_guide']
-
         directory('.', root_name, { mode: :preserve, recursive: true, verbose: !options['quiet'] })
-
-        if normalized_ig_uri
-          begin
-            get(normalized_ig_uri, ig_file, verbose: !options['quiet'])
-          rescue StandardError => e
-            say_error e.message, :red
-            say_error "Failed to load #{normalized_ig_uri}", :red
-            say_error "Please add the implementation guide package.tgz file into #{ig_path}", :red
-          else
-            say_unless_quiet "Loaded implementation guide #{normalized_ig_uri}", :green
-          end
-        end
-
+        load_ig
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
 
         return unless options['pretend']
@@ -77,11 +63,28 @@ module Inferno
       end
 
       private
+
+      def load_ig
+        return unless normalized_ig_uri
+
+        begin
+          get(normalized_ig_uri, ig_file, verbose: !options['quiet'])
+        rescue StandardError => e
+          say_error e.message, :red
+          say_error "Failed to load #{normalized_ig_uri}", :red
+          say_error "Please add the implementation guide package.tgz file into #{ig_path}", :red
+        else
+          say_unless_quiet "Loaded implementation guide #{normalized_ig_uri}", :green
+        end
+      end
+
       def normalized_ig_uri
         uri = options['implementation_guide']
         return if uri.nil?
+
         uri = uri.gsub(%r{[^/]*\.html\s*$}, 'package.tgz')
         uri = File.join(uri, 'package.tgz') unless uri.ends_with? 'package.tgz'
+        uri
       end
 
       def ig_path

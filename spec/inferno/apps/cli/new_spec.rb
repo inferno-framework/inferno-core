@@ -4,23 +4,24 @@ require 'inferno/apps/cli/new'
 ABSOLUTE_PATH_TO_IG = File.expand_path('../../../fixtures/small_package.tgz', __dir__)
 
 RSpec.describe Inferno::CLI::New do # rubocop:disable RSpec/FilePath
-  # Wrap all 'it' examples in a temp dir
+  before do |_test|
+    stub_request(:get, %r{https?://.*package.tgz})
+      .to_return(status: 200, body: File.read(ABSOLUTE_PATH_TO_IG), headers: { 'Content-Type' => 'application/gzip' })
+  end
+
   around do |test|
     Dir.mktmpdir do |tmpdir|
       FileUtils.chdir(tmpdir) do
-        WebMock.allow_net_connect!
         test.run
-        WebMock.disable_net_connect!
       end
     end
   end
 
-  # test various `inferno new ...` options
   [
     %w[test-fhir-app],
-    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/],
-    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/index.html],
-    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/US-Core/package.tgz],
+    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/fhir-udap-security-ig/],
+    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/fhir-udap-security-ig/index.html],
+    %w[test-fhir-app --implementation-guide https://build.fhir.org/ig/HL7/fhir-udap-security-ig/package.tgz],
     %W[test-fhir-app --implementation-guide #{ABSOLUTE_PATH_TO_IG}],
     %w[test-fhir-app --author ABC --author DEF]
   ].each do |cli_args|

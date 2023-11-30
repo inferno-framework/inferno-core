@@ -3,7 +3,6 @@ require 'dry/inflector'
 module Inferno
   module Utils
     module NamedThorActions
-
       INFLECTOR = Dry::Inflector.new
 
       def root_name
@@ -29,7 +28,6 @@ module Inferno
       def test_suite_id
         "#{library_name}_test_suite"
       end
-
     end
   end
 end
