@@ -15,17 +15,14 @@ module Inferno
           `inferno new test_fhir_app`
             => generates an Inferno app
 
-          `inferno new test_us_core -i https://build.fhir.org/ig/HL7/US-Core/`
-            => generates Inferno app and loads US Core implementation guide
-
-          `inferno new test_my_ig -i /absolute/path/to/ig/package.tgz -a Name`
-            => generates Inferno app, loads a local implementation guide, and specifies Name as author
+          `inferno new test_my_ig -a MyName`
+            => generates Inferno app and specifies MyName as gemspec author
 
         https://inferno-framework.github.io/index.html
       HELP
 
       def self.banner
-        'inferno new TEST_KIT_NAME [-i IG_URL]'
+        'inferno new TEST_KIT_NAME'
       end
 
       def self.source_root
@@ -36,12 +33,6 @@ module Inferno
                type: :string,
                required: true,
                desc: 'name for new Inferno project'
-      class_option :implementation_guide,
-                   type: :string,
-                   aliases: '-i',
-                   default: nil,
-                   banner: 'IG_URL',
-                   desc: 'URL to an implementation guide or absolute path to a package.tgz'
       class_option :author,
                    type: :string,
                    aliases: '-a',
@@ -53,7 +44,6 @@ module Inferno
 
       def create_app
         directory('.', root_name, { mode: :preserve, recursive: true, verbose: !options['quiet'] })
-        load_ig
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
 
         return unless options['pretend']
@@ -64,35 +54,8 @@ module Inferno
 
       private
 
-      def load_ig
-        return unless normalized_ig_uri
-
-        begin
-          get(normalized_ig_uri, ig_file, verbose: !options['quiet'])
-        rescue StandardError => e
-          say_error e.message, :red
-          say_error "Failed to load #{normalized_ig_uri}", :red
-          say_error "Please add the implementation guide package.tgz file into #{ig_path}", :red
-        else
-          say_unless_quiet "Loaded implementation guide #{normalized_ig_uri}", :green
-        end
-      end
-
-      def normalized_ig_uri
-        uri = options['implementation_guide']
-        return if uri.nil?
-
-        uri = uri.gsub(%r{[^/]*\.html\s*$}, 'package.tgz')
-        uri = File.join(uri, 'package.tgz') unless uri.ends_with? 'package.tgz'
-        uri
-      end
-
       def ig_path
         File.join('lib', library_name, 'igs')
-      end
-
-      def ig_file
-        File.join(root_name, ig_path, 'package.tgz')
       end
 
       def authors
