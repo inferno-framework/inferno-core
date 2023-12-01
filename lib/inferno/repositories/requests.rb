@@ -12,7 +12,7 @@ module Inferno
         headers = create_headers(request, params)
 
         params[:tags]&.each do |tag|
-          request.add_tag(name: tag, request_id: request.index)
+          request.add_tag(tag)
         end
 
         build_entity(
@@ -120,8 +120,8 @@ module Inferno
           super
         end
 
-        def add_tag(tag_hash)
-          tag = Tags::Model.find_or_create(tag_hash.slice(:name))
+        def add_tag(tag_name)
+          tag = Tags::Model.find_or_create(name: tag_name)
 
           Inferno::Application['db.connection'][:requests_tags].insert(
             tags_id: tag.id,
