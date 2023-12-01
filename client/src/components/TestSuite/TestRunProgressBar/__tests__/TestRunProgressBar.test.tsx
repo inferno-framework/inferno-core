@@ -61,7 +61,7 @@ describe('The TestRunProgressBar Component', () => {
     expect(testRunCancelled).toEqual(true);
 
     setTimeout(() => {
-      const progressBarElement = screen.getByTestId('progress-bar');
+      const progressBarElement = screen.queryByTestId('progress-bar');
       expect(progressBarElement).toBeNull();
     }, 500);
   });
