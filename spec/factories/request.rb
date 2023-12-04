@@ -27,6 +27,8 @@ FactoryBot.define do
       ]
     end
 
+    tags { [] }
+
     request_body { nil }
 
     sequence(:response_body) { |n| "RESPONSE_BODY #{n}" }

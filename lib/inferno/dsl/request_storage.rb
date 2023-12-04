@@ -36,24 +36,36 @@ module Inferno
         request&.resource
       end
 
+      # Returns requests which match all of the given tags
+      #
+      # @param tags [String]
+      # @return [Inferno::Entities::Request]
+      def load_tagged_requests(*tags)
+        return [] if tags.blank?
+
+        Repositories::Requests.new.tagged_requests(test_session_id, tags).tap do |tagged_requests|
+          requests.concat(tagged_requests)
+        end
+      end
+
       # @private
       def named_request(name)
         requests.find { |request| request.name == self.class.config.request_name(name.to_sym) }
       end
 
       # @private
-      def store_request(direction, name = nil, &block)
+      def store_request(direction, name, tags, &block)
         response = block.call
 
         name = self.class.config.request_name(name)
         request =
           if response.is_a? FHIR::ClientReply
             Entities::Request.from_fhir_client_reply(
-              response, direction:, name:, test_session_id:
+              response, direction:, name:, test_session_id:, tags:
             )
           else
             Entities::Request.from_http_response(
-              response, direction:, name:, test_session_id:
+              response, direction:, name:, test_session_id:, tags:
             )
           end
 

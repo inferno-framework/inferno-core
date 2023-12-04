@@ -318,7 +318,7 @@ module Inferno
       #
       # @see Inferno::DSL::Results#wait
       # @example
-      #   resume_test_route :get, '/launch' do
+      #   resume_test_route :get, '/launch', tags: ['launch'] do
       #     request.query_parameters['iss']
       #   end
       #
@@ -341,15 +341,17 @@ module Inferno
       #   [Any of the path options available in Hanami
       #   Router](https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#a-beautiful-dsl)
       #   can be used here.
+      # @param tags [Array<String>] a list of tags to assign to the request
       # @yield This method takes a block which must return the identifier
       #   defined when a test was set to wait for the test run that hit this
       #   route. The block has access to the `request` method which returns a
       #   {Inferno::Entities::Request} object with the information for the
       #   incoming request.
       # @return [void]
-      def resume_test_route(method, path, &block)
+      def resume_test_route(method, path, tags: [], &block)
         route_class = Class.new(ResumeTestRoute) do |klass|
           klass.singleton_class.instance_variable_set(:@test_run_identifier_block, block)
+          klass.singleton_class.instance_variable_set(:@tags, tags)
         end
 
         route(method, path, route_class)
