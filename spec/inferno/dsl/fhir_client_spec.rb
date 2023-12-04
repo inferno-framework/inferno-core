@@ -387,6 +387,13 @@ RSpec.describe Inferno::DSL::FHIRClient do
       expect(group.request).to eq(result)
     end
 
+    it 'adds tags to the request' do
+      tags = ['abc', 'def']
+      request = group.fhir_get_capability_statement(tags:)
+
+      expect(request.tags).to match_array(tags)
+    end
+
     context 'with the client parameter' do
       it 'uses that client' do
         other_url = 'http://www.example.com/fhir/r4'

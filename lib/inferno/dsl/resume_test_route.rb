@@ -24,6 +24,11 @@ module Inferno
       end
 
       # @private
+      def tags
+        self.class.singleton_class.instance_variable_get(:@tags)
+      end
+
+      # @private
       def find_test_run(test_run_identifier)
         test_runs_repo.find_latest_waiting_by_identifier(test_run_identifier)
       end
@@ -44,7 +49,8 @@ module Inferno
           request.to_hash.merge(
             test_session_id: test_run.test_session_id,
             result_id: waiting_result.id,
-            name: test.config.request_name(test.incoming_request_name)
+            name: test.config.request_name(test.incoming_request_name),
+            tags:
           )
         )
       end
