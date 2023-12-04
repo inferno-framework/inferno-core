@@ -49,13 +49,30 @@ module Inferno
           @url
         end
 
-        # Set the IGs that the validator will need to load
-        # Example: ["hl7.fhir.us.core#4.0.0"]
-        # @param igs [Array<String>]
-        def igs(validator_igs = nil)
-          @igs = validator_igs if validator_igs
+        # @private
+        def cli_context
+          @cli_context ||= {
+            sv: '4.0.1',
+            igs: [],
+            doNative: false,
+            extensions: ['any']
+          }
+        end
 
-          @igs
+        # @private
+        def method_missing(method_name, *args)
+          # Interpret any other method as setting a field on cliContext.
+          # Follow the same format as `url` here:
+          # only set the value if one is provided.
+          # args will be an empty array if no value is provided.
+          cli_context[method_name] = args[0] unless args.empty?
+
+          cli_context[method_name]
+        end
+
+        # @private
+        def respond_to_missing?(_method_name, _include_private = false)
+          true
         end
 
         # @private
@@ -193,13 +210,7 @@ module Inferno
         def wrap_resource_for_hl7_wrapper(resource, profile_url)
           wrapped_resource = {
             cliContext: {
-              # TODO: these should be configurable as well
-              sv: '4.0.1',
-              # displayWarnings: true,  # -display-issues-are-warnings
-              # txServer: nil,          # -tx n/a
-              igs: @igs || [],
-              # NOTE: this profile must be part of a loaded IG,
-              # otherwise the response is an HTTP 500 with no content
+              **cli_context,
               profiles: [profile_url]
             },
             filesToValidate: [

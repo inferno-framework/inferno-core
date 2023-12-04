@@ -105,6 +105,8 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         cliContext: {
           sv: '4.0.1',
           igs: [],
+          doNative: false,
+          extensions: ['any'],
           profiles: [profile_url]
         },
         filesToValidate: [
@@ -167,6 +169,65 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       expect do
         validator.resource_is_valid?(resource2, profile_url, runnable)
       end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
+    end
+  end
+
+  describe '.method_missing' do
+    it 'applies the correct settings to cli_context' do
+      v1 = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url validation_url
+        txServer nil
+      end
+
+      v2 = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url validation_url
+        displayWarnings true
+      end
+
+      expect(v1.cli_context.fetch(:txServer, :missing)).to eq(nil)
+      expect(v1.cli_context.fetch(:displayWarnings, :missing)).to eq(:missing)
+      expect(v1.txServer).to eq(nil)
+
+      expect(v2.cli_context.fetch(:txServer, :missing)).to eq(:missing)
+      expect(v2.cli_context[:displayWarnings]).to eq(true)
+      expect(v2.displayWarnings).to eq(true)
+    end
+
+    it 'uses the right cli_context when submitting the validation request' do
+      v3 = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url 'http://example.com'
+        txServer nil
+        displayWarnings true
+        igs ['hl7.fhir.us.core#1.0.1']
+      end
+
+      expected_request_body = {
+        cliContext: {
+          sv: '4.0.1',
+          igs: ['hl7.fhir.us.core#1.0.1'],
+          doNative: false,
+          extensions: ['any'],
+          txServer: nil,
+          displayWarnings: true,
+          profiles: [profile_url]
+        },
+        filesToValidate: [
+          {
+            fileName: 'Patient/.json',
+            fileContent: resource.to_json,
+            fileType: 'json'
+          }
+        ],
+        sessionId: nil
+      }.to_json
+
+      stub_request(:post, 'http://example.com/validate')
+        .with(body: expected_request_body)
+        .to_return(status: 200, body: '{}')
+
+      expect(v3.validate(resource, profile_url)).to eq('{}')
+      # if the request body doesn't match the stub,
+      # validate will throw an exception
     end
   end
 
