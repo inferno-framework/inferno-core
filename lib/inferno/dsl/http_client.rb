@@ -71,7 +71,7 @@ module Inferno
       # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def get(url = '', client: :default, name: nil, headers: nil, tags: [])
-        store_request('outgoing', name, tags) do
+        store_request('outgoing', name:, tags:) do
           tcp_exception_handler do
             client = http_client(client)
 
@@ -107,7 +107,7 @@ module Inferno
       # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def post(url = '', body: nil, client: :default, name: nil, headers: nil, tags: [])
-        store_request('outgoing', name, tags) do
+        store_request('outgoing', name:, tags:) do
           tcp_exception_handler do
             client = http_client(client)
 
@@ -134,7 +134,7 @@ module Inferno
       # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def delete(url = '', client: :default, name: :nil, headers: nil, tags: [])
-        store_request('outgoing', name, tags) do
+        store_request('outgoing', name:, tags:) do
           tcp_exception_handler do
             client = http_client(client)
 
@@ -173,7 +173,7 @@ module Inferno
           block.call(chunk, bytes)
         end
 
-        store_request('outgoing', name, tags) do
+        store_request('outgoing', name:, tags:) do
           tcp_exception_handler do
             client = http_client(client)
 

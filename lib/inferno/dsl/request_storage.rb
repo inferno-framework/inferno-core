@@ -54,7 +54,7 @@ module Inferno
       end
 
       # @private
-      def store_request(direction, name, tags, &block)
+      def store_request(direction, name: nil, tags: [], &block)
         response = block.call
 
         name = self.class.config.request_name(name)

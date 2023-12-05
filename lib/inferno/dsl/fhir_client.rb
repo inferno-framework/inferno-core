@@ -303,7 +303,7 @@ module Inferno
       # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_delete(resource_type, id, client: :default, name: nil, tags: [])
-        store_request('outgoing', name, tags) do
+        store_request('outgoing', name:, tags:) do
           tcp_exception_handler do
             fhir_client(client).destroy(fhir_class_from_resource_type(resource_type), id)
           end
@@ -319,7 +319,7 @@ module Inferno
       # @param tags [Array<String>] a list of tags to assign to the request
       # @return [Inferno::Entities::Request]
       def fhir_transaction(bundle = nil, client: :default, name: nil, tags: [])
-        store_request('outgoing', name, tags) do
+        store_request('outgoing', name:, tags:) do
           tcp_exception_handler do
             fhir_client(client).transaction_bundle = bundle if bundle.present?
             fhir_client(client).end_transaction
@@ -339,7 +339,7 @@ module Inferno
       # request methods don't have to be wrapped twice.
       # @private
       def store_request_and_refresh_token(client, name, tags, &block)
-        store_request('outgoing', name, tags) do
+        store_request('outgoing', name:, tags:) do
           perform_refresh(client) if client.need_to_refresh? && client.able_to_refresh?
           block.call
         end
