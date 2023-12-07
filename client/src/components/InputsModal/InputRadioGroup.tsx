@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   FormControl,
   FormControlLabel,
@@ -33,6 +33,12 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   const [value, setValue] = React.useState(
     inputsMap.get(requirement.name) || requirement.default || firstValue
   );
+
+  // Set default on mounted
+  useEffect(() => {
+    inputsMap.set(requirement.name, value);
+    setInputsMap(new Map(inputsMap));
+  }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
