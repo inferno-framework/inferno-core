@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    inferno_core (0.4.23)
+    inferno_core (0.4.24)
       activesupport (~> 6.1.7.5)
       base62-rb (= 0.3.1)
       blueprinter (= 0.25.2)
@@ -179,7 +179,7 @@ GEM
     method_source (1.0.0)
     mime-types (3.5.1)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2023.1003)
+    mime-types-data (3.2023.1205)
     minitest (5.18.0)
     multi_json (1.15.0)
     multi_xml (0.6.0)
