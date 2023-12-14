@@ -199,11 +199,12 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
     it 'uses the right cli_context when submitting the validation request' do
       v3 = Inferno::DSL::FHIRResourceValidation::Validator.new do
         url 'http://example.com'
-        igs ['hl7.fhir.us.core#1.0.1']
+        igs 'hl7.fhir.us.core#1.0.1'
         cli_context do
           txServer nil
           displayWarnings true
           doNative true
+          igs ['hl7.fhir.us.core#3.1.1']
         end
       end
 
@@ -212,7 +213,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           sv: '4.0.1',
           doNative: true,
           extensions: ['any'],
-          igs: ['hl7.fhir.us.core#1.0.1'],
+          igs: ['hl7.fhir.us.core#1.0.1', 'hl7.fhir.us.core#3.1.1'],
           txServer: nil,
           displayWarnings: true,
           profiles: [profile_url]

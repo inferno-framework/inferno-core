@@ -50,10 +50,13 @@ module Inferno
         end
 
         # Set the IGs that the validator will need to load
-        # Example: ["hl7.fhir.us.core#4.0.0"]
+        # @example
+        #   igs "hl7.fhir.us.core#4.0.0"
+        # @example
+        #   igs("hl7.fhir.us.core#3.1.1", "hl7.fhir.us.core#6.0.0")
         # @param validator_igs [Array<String>]
-        def igs(validator_igs = nil)
-          cli_context.igs(validator_igs) if validator_igs
+        def igs(*validator_igs)
+          cli_context(igs: validator_igs) if validator_igs
 
           cli_context.igs
         end
@@ -72,11 +75,20 @@ module Inferno
         #     end
         #   end
         #
+        # @example
+        #   fhir_resource_validator do
+        #     url 'http://example.org/validator'
+        #     cli_context({
+        #       noExtensibleBindingMessages: true,
+        #       txServer: nil
+        #     })
+        #   end
+        #
         # @param definition [Hash] raw fields to set, optional
         def cli_context(definition = nil, &)
           if @cli_context
             if definition
-              @cli_context.definition.merge!(definition)
+              merge_into_cli_context(definition)
             elsif block_given?
               @cli_context.instance_eval(&)
             end
@@ -84,6 +96,21 @@ module Inferno
             @cli_context = CliContext.new(definition || {}, &)
           end
           @cli_context
+        end
+
+        # @private
+        def merge_into_cli_context(new_def)
+          @cli_context.definition.merge!(new_def) do |_key, old_val, new_val|
+            case old_val
+            when Array
+              # take the union of the 2
+              old_val | new_val
+            when Hash
+              old_val.merge(new_val)
+            else
+              new_val
+            end
+          end
         end
 
         # @private
@@ -302,9 +329,21 @@ module Inferno
           # Interpret any other method as setting a field on cliContext.
           # Follow the same format as `Validator.url` here:
           # only set the value if one is provided.
+          # Array or Hash values will be merged if a value is already present.
           # args will be an empty array if no value is provided.
-          definition[method_name] = args[0] unless args.empty?
-
+          unless args.empty?
+            new_val = args[0]
+            old_val = definition[method_name]
+            definition[method_name] = case old_val
+                                      when Array
+                                        # take the union of the 2
+                                        old_val | new_val
+                                      when Hash
+                                        old_val.merge(new_val)
+                                      else
+                                        new_val
+                                      end
+          end
           definition[method_name]
         end
 
