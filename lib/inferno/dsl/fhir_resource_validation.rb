@@ -88,7 +88,7 @@ module Inferno
         def cli_context(definition = nil, &)
           if @cli_context
             if definition
-              merge_into_cli_context(definition)
+              @cli_context.definition.merge!(definition.deep_symbolize_keys)
             elsif block_given?
               @cli_context.instance_eval(&)
             end
@@ -96,21 +96,6 @@ module Inferno
             @cli_context = CliContext.new(definition || {}, &)
           end
           @cli_context
-        end
-
-        # @private
-        def merge_into_cli_context(new_def)
-          @cli_context.definition.merge!(new_def) do |_key, old_val, new_val|
-            case old_val
-            when Array
-              # take the union of the 2
-              old_val | new_val
-            when Hash
-              old_val.merge(new_val)
-            else
-              new_val
-            end
-          end
         end
 
         # @private
@@ -254,7 +239,7 @@ module Inferno
             filesToValidate: [
               {
                 fileName: "#{resource.resourceType}/#{resource.id}.json",
-                fileContent: resource.to_json,
+                fileContent: resource.source_contents,
                 fileType: 'json'
               }
             ],
@@ -320,7 +305,7 @@ module Inferno
 
         # @private
         def initialize(definition, &)
-          @definition = CLICONTEXT_DEFAULTS.merge(definition)
+          @definition = CLICONTEXT_DEFAULTS.merge(definition.deep_symbolize_keys)
           instance_eval(&) if block_given?
         end
 
@@ -329,21 +314,9 @@ module Inferno
           # Interpret any other method as setting a field on cliContext.
           # Follow the same format as `Validator.url` here:
           # only set the value if one is provided.
-          # Array or Hash values will be merged if a value is already present.
           # args will be an empty array if no value is provided.
-          unless args.empty?
-            new_val = args[0]
-            old_val = definition[method_name]
-            definition[method_name] = case old_val
-                                      when Array
-                                        # take the union of the 2
-                                        old_val | new_val
-                                      when Hash
-                                        old_val.merge(new_val)
-                                      else
-                                        new_val
-                                      end
-          end
+          definition[method_name] = args[0] unless args.empty?
+
           definition[method_name]
         end
 

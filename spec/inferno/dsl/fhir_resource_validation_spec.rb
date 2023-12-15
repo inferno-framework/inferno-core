@@ -18,7 +18,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           outcomes: [{
             fileInfo: {
               fileName: 'Patient/id.json',
-              fileContent: resource.to_json,
+              fileContent: resource.source_contents,
               fileType: 'json'
             },
             issues: []
@@ -111,7 +111,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         filesToValidate: [
           {
             fileName: 'Patient/0000.json',
-            fileContent: resource2.to_json,
+            fileContent: resource2.source_contents,
             fileType: 'json'
           }
         ],
@@ -187,6 +187,14 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
                     })
       end
 
+      v3 = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url 'http://example.com'
+        cli_context({
+                      'igs' => ['hl7.fhir.us.core#1.0.1'],
+                      'extensions' => []
+                    })
+      end
+
       expect(v1.cli_context.definition.fetch(:txServer, :missing)).to eq(nil)
       expect(v1.cli_context.definition.fetch(:displayWarnings, :missing)).to eq(:missing)
       expect(v1.cli_context.txServer).to eq(nil)
@@ -194,10 +202,13 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       expect(v2.cli_context.definition.fetch(:txServer, :missing)).to eq(:missing)
       expect(v2.cli_context.definition[:displayWarnings]).to eq(true)
       expect(v2.cli_context.displayWarnings).to eq(true)
+
+      expect(v3.cli_context.igs).to eq(['hl7.fhir.us.core#1.0.1'])
+      expect(v3.cli_context.extensions).to eq([])
     end
 
     it 'uses the right cli_context when submitting the validation request' do
-      v3 = Inferno::DSL::FHIRResourceValidation::Validator.new do
+      v4 = Inferno::DSL::FHIRResourceValidation::Validator.new do
         url 'http://example.com'
         igs 'hl7.fhir.us.core#1.0.1'
         cli_context do
@@ -213,7 +224,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           sv: '4.0.1',
           doNative: true,
           extensions: ['any'],
-          igs: ['hl7.fhir.us.core#1.0.1', 'hl7.fhir.us.core#3.1.1'],
+          igs: ['hl7.fhir.us.core#3.1.1'],
           txServer: nil,
           displayWarnings: true,
           profiles: [profile_url]
@@ -221,7 +232,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         filesToValidate: [
           {
             fileName: 'Patient/.json',
-            fileContent: resource.to_json,
+            fileContent: resource.source_contents,
             fileType: 'json'
           }
         ],
@@ -232,7 +243,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         .with(body: expected_request_body)
         .to_return(status: 200, body: '{}')
 
-      expect(v3.validate(resource, profile_url)).to eq('{}')
+      expect(v4.validate(resource, profile_url)).to eq('{}')
       # if the request body doesn't match the stub,
       # validate will throw an exception
     end
