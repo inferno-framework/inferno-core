@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    inferno_core (0.4.24)
+    inferno_core (0.4.25)
       activesupport (~> 6.1.7.5)
       base62-rb (= 0.3.1)
       blueprinter (= 0.25.2)
@@ -299,7 +299,7 @@ GEM
       strings (~> 0.2.0)
       tty-color (~> 0.5)
       tty-screen (~> 0.8)
-    tty-screen (0.8.1)
+    tty-screen (0.8.2)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.1.0)
