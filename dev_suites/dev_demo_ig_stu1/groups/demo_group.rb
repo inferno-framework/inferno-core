@@ -330,5 +330,20 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     test 'read from scratch' do
       run { assert scratch[:abc] == 'xyz' }
     end
+
+    test 'tag a request' do
+      run do
+        fhir_read :patient, patient_id, client: :this_client_name, tags: ['example_tag_1', 'example_tag_2']
+      end
+    end
+
+    test 'load a tagged request' do
+      run do
+        tagged_requests = load_tagged_requests('example_tag_1', 'example_tag_2')
+
+        assert tagged_requests.length == 1, 'Incorrect number of requests loaded'
+        assert request.id == tagged_requests.first.id, 'Incorrect request loaded'
+      end
+    end
   end
 end

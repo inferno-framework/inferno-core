@@ -1,3 +1,15 @@
+# 0.4.24
+* FI-2347: Set radio default input by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/416
+
+# 0.4.23
+* FI-2233: New validation module for HL7 validator wrapper by @dehall in https://github.com/inferno-framework/inferno-core/pull/401
+* FI-2091 Replaced docker-compose with docker compose by @360dgries in https://github.com/inferno-framework/inferno-core/pull/405
+* Backend job to start up sessions on HL7 validator wrapper by @dehall in https://github.com/inferno-framework/inferno-core/pull/406
+* Bump @adobe/css-tools from 4.2.0 to 4.3.2 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/411
+* Bump @babel/traverse from 7.22.4 to 7.23.5 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/410
+* Update null test by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/412
+* FI-2330: Request tags by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/407
+
 # 0.4.22
 * FI-2271: Update OAuth input requirements by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/403
 

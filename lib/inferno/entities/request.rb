@@ -34,7 +34,7 @@ module Inferno
       ATTRIBUTES = [
         :id, :index, :verb, :url, :direction, :name, :status,
         :request_body, :response_body, :result_id, :test_session_id, :created_at,
-        :updated_at, :headers
+        :updated_at, :headers, :tags
       ].freeze
       SUMMARY_FIELDS = [
         :id, :index, :url, :verb, :direction, :name, :status, :result_id, :created_at, :updated_at
@@ -48,6 +48,18 @@ module Inferno
 
         @name = params[:name]&.to_sym
         @headers = params[:headers]&.map { |header| header.is_a?(Hash) ? Header.new(header) : header } || []
+        format_tags(params[:tags] || [])
+      end
+
+      def format_tags(raw_tags)
+        @tags = raw_tags.map do |tag|
+          case tag
+          when Hash
+            tag[:name]
+          when String
+            tag
+          end
+        end
       end
 
       # @return [Hash<String, String>]
@@ -124,6 +136,7 @@ module Inferno
           test_session_id:,
           request_headers: request_headers.map(&:to_hash),
           response_headers: response_headers.map(&:to_hash),
+          tags:,
           created_at:,
           updated_at:
         }.compact
@@ -138,7 +151,7 @@ module Inferno
 
       class << self
         # @private
-        def from_hanami_request(request, name: nil)
+        def from_hanami_request(request, name: nil, tags: [])
           url = "#{request.base_url}#{request.path}"
           url += "?#{request.query_string}" if request.query_string.present?
           request_headers =
@@ -153,12 +166,13 @@ module Inferno
             direction: 'incoming',
             name:,
             request_body: request.body.string,
-            headers: request_headers
+            headers: request_headers,
+            tags:
           )
         end
 
         # @private
-        def from_http_response(response, test_session_id:, direction: 'outgoing', name: nil)
+        def from_http_response(response, test_session_id:, direction: 'outgoing', name: nil, tags: [])
           request_headers =
             response.env.request_headers
               .map { |header_name, value| Header.new(name: header_name.downcase, value:, type: 'request') }
@@ -175,12 +189,13 @@ module Inferno
             request_body: response.env.request_body,
             response_body: response.body,
             test_session_id:,
-            headers: request_headers + response_headers
+            headers: request_headers + response_headers,
+            tags:
           )
         end
 
         # @private
-        def from_fhir_client_reply(reply, test_session_id:, direction: 'outgoing', name: nil)
+        def from_fhir_client_reply(reply, test_session_id:, direction: 'outgoing', name: nil, tags: [])
           request = reply.request
           response = reply.response
           request_headers = request[:headers]
@@ -203,7 +218,8 @@ module Inferno
             request_body:,
             response_body: response[:body],
             test_session_id:,
-            headers: request_headers + response_headers
+            headers: request_headers + response_headers,
+            tags:
           )
         end
       end
