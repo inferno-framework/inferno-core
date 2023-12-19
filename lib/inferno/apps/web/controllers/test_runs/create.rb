@@ -56,8 +56,8 @@ module Inferno
               test_session.suite_options
             )
 
+            binding.pry
             test_run = repo.create(create_params(req.params).merge(status: 'queued'))
-
             res.body = serialize(test_run, suite_options: test_session.suite_options)
 
             persist_inputs(req.params, test_run)
