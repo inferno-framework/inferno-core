@@ -36,6 +36,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
     initialSelectedSuiteOptions || []
   );
   const [descriptionWidth, setDescriptionWidth] = React.useState<string>('');
+  const [showPage, setShowPage] = React.useState<boolean>(false);
   const selectionPanel = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -45,12 +46,15 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
       (!testSuite?.suite_options || testSuite?.suite_options.length === 0)
     ) {
       createTestSession(null);
+    } else {
+      setShowPage(true);
+      getDescriptionWidth();
     }
   }, []);
 
   useEffect(() => {
     getDescriptionWidth();
-  }, [windowIsSmall]);
+  }, [windowIsSmall, selectionPanel.current]);
 
   const getDescriptionWidth = () => {
     if (windowIsSmall) {
@@ -95,6 +99,11 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
       </Typography>
     );
   };
+
+  if (!showPage) {
+    // 432px = 400 (default width of SelectionPanel Paper component) + 16px margin on each side
+    return <Box ref={selectionPanel} width="432px" />;
+  }
 
   return (
     <Container
