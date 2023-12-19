@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Menu, NoteAdd } from '@mui/icons-material';
-import { getStaticPath } from '~/api/infernoApiService';
+import { basePath, getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice } from '~/models/testSuiteModels';
 import { useAppStore } from '~/store/app';
 import useStyles from './styles';
@@ -28,12 +28,12 @@ const Header: FC<HeaderProps> = ({
   toggleDrawer,
 }) => {
   const { classes } = useStyles();
-  const navigate = useNavigate();
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
+  // Use window navigation instead of React router to trigger new page request
   const startNewSession = () => {
-    navigate('/');
+    window.location.href = `/${basePath}`;
   };
 
   const suiteOptionsString =
@@ -63,7 +63,7 @@ const Header: FC<HeaderProps> = ({
             <Menu fontSize="inherit" />
           </IconButton>
         ) : (
-          <Link to="/" aria-label="Inferno Home">
+          <Link to="/" reloadDocument aria-label="Inferno Home">
             <CustomTooltip title="Return to Suite Selection">
               <img
                 src={getStaticPath(icon as string)}
@@ -86,7 +86,12 @@ const Header: FC<HeaderProps> = ({
         >
           <Box display="flex" flexDirection="row" alignItems="baseline">
             <Typography variant="h5" component="h1" className={classes.title}>
-              <Link to={`/${suiteId || ''}`} aria-label="Inferno Home" className={classes.homeLink}>
+              <Link
+                to={`/${suiteId || ''}`}
+                reloadDocument
+                aria-label="Inferno Home"
+                className={classes.homeLink}
+              >
                 {suiteTitle}
               </Link>
             </Typography>

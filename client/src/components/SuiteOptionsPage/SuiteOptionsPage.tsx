@@ -14,6 +14,7 @@ import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
 import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
 import useStyles from './styles';
+import { basePath } from '~/api/infernoApiService';
 
 export interface SuiteOptionsPageProps {
   testSuite?: TestSuite;
@@ -41,7 +42,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
 
   useEffect(() => {
     if (
-      // If no suite or no options and no description, then start a test session
+      // If no suite or no options, then start a test session
       !testSuite?.suite_summary &&
       (!testSuite?.suite_options || testSuite?.suite_options.length === 0)
     ) {
@@ -75,6 +76,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
       .then((testSession: TestSession | null) => {
         if (testSession && testSession.test_suite) {
           navigate(`/${testSession.test_suite_id}/${testSession.id}`);
+          // Use window navigation as a workaround for router errors
+          window.location.href = `/${basePath}/${testSession.test_suite_id}/${testSession.id}`;
         }
       })
       .catch((e: Error) => {
