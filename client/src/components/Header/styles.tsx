@@ -4,7 +4,6 @@
 
 import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
-import lightTheme from '~/styles/theme';
 
 export default makeStyles()((theme: Theme) => ({
   appbar: {
@@ -36,7 +35,7 @@ export default makeStyles()((theme: Theme) => ({
     fontStyle: 'italic',
   },
   homeLink: {
-    color: lightTheme.palette.common.orangeDarker,
+    color: theme.palette.common.orangeDarker,
     textDecoration: 'none',
   },
 }));
