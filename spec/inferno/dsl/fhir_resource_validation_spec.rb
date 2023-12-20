@@ -18,7 +18,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           outcomes: [{
             fileInfo: {
               fileName: 'Patient/id.json',
-              fileContent: resource.to_json,
+              fileContent: resource.source_contents,
               fileType: 'json'
             },
             issues: []
@@ -104,13 +104,14 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       {
         cliContext: {
           sv: '4.0.1',
-          igs: [],
+          doNative: false,
+          extensions: ['any'],
           profiles: [profile_url]
         },
         filesToValidate: [
           {
             fileName: 'Patient/0000.json',
-            fileContent: resource2.to_json,
+            fileContent: resource2.source_contents,
             fileType: 'json'
           }
         ],
@@ -167,6 +168,84 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       expect do
         validator.resource_is_valid?(resource2, profile_url, runnable)
       end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
+    end
+  end
+
+  describe '.cli_context' do
+    it 'applies the correct settings to cli_context' do
+      v1 = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url 'http://example.com'
+        cli_context do
+          txServer nil
+        end
+      end
+
+      v2 = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url 'http://example.com'
+        cli_context({
+                      displayWarnings: true
+                    })
+      end
+
+      v3 = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url 'http://example.com'
+        cli_context({
+                      'igs' => ['hl7.fhir.us.core#1.0.1'],
+                      'extensions' => []
+                    })
+      end
+
+      expect(v1.cli_context.definition.fetch(:txServer, :missing)).to eq(nil)
+      expect(v1.cli_context.definition.fetch(:displayWarnings, :missing)).to eq(:missing)
+      expect(v1.cli_context.txServer).to eq(nil)
+
+      expect(v2.cli_context.definition.fetch(:txServer, :missing)).to eq(:missing)
+      expect(v2.cli_context.definition[:displayWarnings]).to eq(true)
+      expect(v2.cli_context.displayWarnings).to eq(true)
+
+      expect(v3.cli_context.igs).to eq(['hl7.fhir.us.core#1.0.1'])
+      expect(v3.cli_context.extensions).to eq([])
+    end
+
+    it 'uses the right cli_context when submitting the validation request' do
+      v4 = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url 'http://example.com'
+        igs 'hl7.fhir.us.core#1.0.1'
+        cli_context do
+          txServer nil
+          displayWarnings true
+          doNative true
+          igs ['hl7.fhir.us.core#3.1.1']
+        end
+      end
+
+      expected_request_body = {
+        cliContext: {
+          sv: '4.0.1',
+          doNative: true,
+          extensions: ['any'],
+          igs: ['hl7.fhir.us.core#3.1.1'],
+          txServer: nil,
+          displayWarnings: true,
+          profiles: [profile_url]
+        },
+        filesToValidate: [
+          {
+            fileName: 'Patient/.json',
+            fileContent: resource.source_contents,
+            fileType: 'json'
+          }
+        ],
+        sessionId: nil
+      }.to_json
+
+      stub_request(:post, 'http://example.com/validate')
+        .with(body: expected_request_body)
+        .to_return(status: 200, body: '{}')
+
+      expect(v4.validate(resource, profile_url)).to eq('{}')
+      # if the request body doesn't match the stub,
+      # validate will throw an exception
     end
   end
 

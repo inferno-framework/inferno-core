@@ -85,7 +85,7 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
           {showBackButton && <Box minWidth="45px" />}
         </Box>
 
-        <Box overflow="auto">
+        <Box px={2} pb={2} overflow="auto">
           {options && options.length > 0 ? (
             renderSelection()
           ) : (
@@ -100,7 +100,7 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
             color="primary"
             fullWidth
             data-testid="go-button"
-            disabled={!selection}
+            disabled={!selection && options.length !== 0}
             sx={{ fontWeight: 600 }}
             onClick={() => submitAction()}
           >

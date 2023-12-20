@@ -1,3 +1,8 @@
+# 0.4.25
+* FI-2270: Migrate FI-1990, fix flicker by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/409
+* FI-2383: Force page reroute in header by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/419
+* FI-2236: Support arbitrary fields in HL7 validator cliContext by @dehall in https://github.com/inferno-framework/inferno-core/pull/413
+
 # 0.4.24
 * FI-2347: Set radio default input by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/416
 

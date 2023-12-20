@@ -14,6 +14,7 @@ import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
 import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
 import useStyles from './styles';
+import { basePath } from '~/api/infernoApiService';
 
 export interface SuiteOptionsPageProps {
   testSuite?: TestSuite;
@@ -36,21 +37,25 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
     initialSelectedSuiteOptions || []
   );
   const [descriptionWidth, setDescriptionWidth] = React.useState<string>('');
+  const [showPage, setShowPage] = React.useState<boolean>(false);
   const selectionPanel = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (
-      // If no suite or no options and no description, then start a test session
+      // If no suite or no options, then start a test session
       !testSuite?.suite_summary &&
       (!testSuite?.suite_options || testSuite?.suite_options.length === 0)
     ) {
       createTestSession(null);
+    } else {
+      setShowPage(true);
+      getDescriptionWidth();
     }
   }, []);
 
   useEffect(() => {
     getDescriptionWidth();
-  }, [windowIsSmall]);
+  }, [windowIsSmall, selectionPanel.current]);
 
   const getDescriptionWidth = () => {
     if (windowIsSmall) {
@@ -71,6 +76,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
       .then((testSession: TestSession | null) => {
         if (testSession && testSession.test_suite) {
           navigate(`/${testSession.test_suite_id}/${testSession.id}`);
+          // Use window navigation as a workaround for router errors
+          window.location.href = `/${basePath}/${testSession.test_suite_id}/${testSession.id}`;
         }
       })
       .catch((e: Error) => {
@@ -95,6 +102,11 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
       </Typography>
     );
   };
+
+  if (!showPage) {
+    // 432px = 400 (default width of SelectionPanel Paper component) + 16px margin on each side
+    return <Box ref={selectionPanel} width="432px" />;
+  }
 
   return (
     <Container
