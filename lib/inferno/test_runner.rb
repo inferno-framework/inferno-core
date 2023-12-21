@@ -132,6 +132,8 @@ module Inferno
 
       results.flatten!
 
+      ## XXX when group has no children this raises Sequel::ValidationError
+      # binding.pry
       group_result = persist_result(group.reference_hash.merge(result: roll_up_result(results),
                                                                input_json: JSON.generate(group_inputs_with_values)))
 

@@ -3,6 +3,7 @@ require_relative 'external_inner_group'
 module InfrastructureTest
   class ExternalOuterGroup < Inferno::TestGroup
     id 'external_outer_group'
+    title 'External Outer Group'
 
     input :external_outer_group_input
     output :external_outer_group_output
