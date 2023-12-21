@@ -15,6 +15,7 @@ import lightTheme from '~/styles/theme';
 import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
 import useStyles from './styles';
 import { basePath } from '~/api/infernoApiService';
+import remarkGfm from 'remark-gfm';
 
 export interface SuiteOptionsPageProps {
   testSuite?: TestSuite;
@@ -162,7 +163,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
               wordBreak: 'break-word',
             }}
           >
-            <ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {testSuite?.suite_summary || testSuite?.description || ''}
             </ReactMarkdown>
           </Typography>
