@@ -33,7 +33,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'contains the correct groups' do
-        expect(suite.groups.length).to eq(5)
+        expect(suite.groups.length).to eq(6)
         expect(suite.groups.first).to eq(outer_inline_group)
       end
 
@@ -432,6 +432,20 @@ RSpec.describe InfrastructureTest::Suite do
           expect(group.tests.length).to eq(1)
           expect(group.tests.first).to be_required
         end
+      end
+    end
+
+    describe 'empty_group' do
+      let(:empty_group) { Inferno::Repositories::TestGroups.new.find('empty_group') }
+
+      it 'contains zero tests' do
+        expect(empty_group.tests.length).to eq(0)
+      end
+
+      it 'results in error' do
+        result = runner.run(:empty_group)
+
+        expect(result.result).to eq('error')
       end
     end
   end

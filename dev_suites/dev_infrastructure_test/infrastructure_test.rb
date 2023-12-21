@@ -112,7 +112,7 @@ module InfrastructureTest
     group from: 'passing_optional_group'
     group from: 'failing_optional_group'
     group from: 'mixed_optional_group', exclude_optional: true
+    group from: 'empty_group'
     group from: 'external_outer_group'
-    # group from: 'empty_group'
   end
 end
