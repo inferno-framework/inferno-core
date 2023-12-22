@@ -147,15 +147,15 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   }, [testSession]);
 
   useEffect(() => {
-    let waitingTestId = null;
+    let waitingId = null;
     if (testRun?.status === 'waiting') {
       resultsMap.forEach((result) => {
         if (result.test_id && result.result === 'wait') {
-          waitingTestId = result.test_id;
+          waitingId = result.test_id;
         }
       });
     }
-    setWaitingTestId(waitingTestId);
+    setWaitingTestId(waitingId);
   }, [resultsMap]);
 
   // when leaving the TestSession, we want to cancel the poller
@@ -411,7 +411,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           <ActionModal
             cancelTestRun={cancelTestRun}
             message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
-            modalVisible={waitingTestId !== null}
+            modalVisible={!!waitingTestId}
           />
         </Box>
       </main>
