@@ -59,7 +59,7 @@ module Inferno
       end
 
       def authors
-        options['author'].empty? ? options['author'].append(default_author) : options['author']
+        options['author'].presence || [default_author]
       end
 
       def default_author
