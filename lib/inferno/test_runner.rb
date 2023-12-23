@@ -124,11 +124,10 @@ module Inferno
       end
 
       if group.children.empty?
-        group_result = persist_result(
-                        group.reference_hash.merge(result: 'omit',
-                                                   result_message: 'No tests defined',
-                                                   input_json: JSON.generate(group_inputs_with_values),
-                                                   output_json: '[]'))
+        group_result = persist_result(group.reference_hash.merge(result: 'omit',
+                                                                 result_message: 'No tests defined',
+                                                                 input_json: JSON.generate(group_inputs_with_values),
+                                                                 output_json: '[]'))
         update_parent_result(group.parent)
         return group_result
       end
@@ -142,8 +141,6 @@ module Inferno
 
       results.flatten!
 
-      ## XXX when group has no children this raises Sequel::ValidationError
-      # binding.pry
       group_result = persist_result(group.reference_hash.merge(result: roll_up_result(results),
                                                                input_json: JSON.generate(group_inputs_with_values)))
 
@@ -212,10 +209,7 @@ module Inferno
     end
 
     def persist_result(params)
-
-      ## XXX
-      # binding.pry
-
+      binding.pry
       result = results_repo.create(
         params.merge(test_run_id: test_run.id, test_session_id: test_session.id)
       )

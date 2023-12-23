@@ -66,8 +66,10 @@ RSpec.describe InfrastructureTest::Suite do
 
         required_results = results.reject(&:optional?)
         non_passing_results = required_results.reject { |result| result.result == 'pass' }
+        bad_results = non_passing_results.reject { |result| result.test_group.id == 'infra_test-empty_group' &&
+                                                            result.result == 'omit' }
 
-        expect(non_passing_results).to be_empty, non_passing_results.map { |r|
+        expect(bad_results).to be_empty, bad_results.map { |r|
           "#{r.runnable.title}: #{r.result_message}"
         }.join("\n")
       end
@@ -436,16 +438,17 @@ RSpec.describe InfrastructureTest::Suite do
     end
 
     describe 'empty_group' do
-      let(:empty_group) { Inferno::Repositories::TestGroups.new.find('empty_group') }
+      let(:empty_group) { Inferno::Repositories::TestGroups.new.find('infra_test-empty_group') }
 
       it 'contains zero tests' do
         expect(empty_group.tests.length).to eq(0)
       end
 
-      it 'results in error' do
+      it 'results in omit' do
         result = runner.run(empty_group)
 
-        expect(result.result).to eq('error')
+        expect(result.result).to eq('omit')
+        expect(result.message).to eq('No tests defined')
       end
     end
   end
