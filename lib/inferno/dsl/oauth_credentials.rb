@@ -80,7 +80,7 @@ module Inferno
 
         return true if expires_in.blank?
 
-        token_retrieval_time.to_i + expires_in - DateTime.now.to_i < 60
+        token_retrieval_time.to_i + expires_in.to_i - DateTime.now.to_i < 60
       end
 
       # @private
