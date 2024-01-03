@@ -39,15 +39,22 @@ module Inferno
                    default: [],
                    repeatable: true,
                    desc: "Author names for gemspec file; you may use '-a' multiple times"
+      class_option :skip_bundle,
+                   type: :boolean,
+                   aliases: '-b',
+                   default: false,
+                   desc: "Do not run bundle install"
 
       add_runtime_options!
 
       def create_app
         directory('.', root_name, { mode: :preserve, recursive: true, verbose: !options['quiet'] })
+
+        bundle_install
+
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
 
         return unless options['pretend']
-
         say_unless_quiet 'This was a dry run; re-run without `--pretend` to actually create project',
                          :yellow
       end
@@ -64,6 +71,16 @@ module Inferno
 
       def default_author
         ENV['USER'] || ENV['USERNAME'] || 'TODO'
+      end
+
+      def bundle_install
+        return if options['skip_bundle']
+
+        inside(root_name) do
+          Bundler.with_unbundled_env do
+            run 'bundle install', verbose: !options['quiet'], capture: !!options['quiet']
+          end
+        end
       end
 
       def say_unless_quiet(*args)

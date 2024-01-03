@@ -18,6 +18,7 @@ RSpec.describe Inferno::CLI::New do # rubocop:disable RSpec/FilePath
     %w[test-fhir-app --author ABC --author DEF]
   ].each do |cli_args|
     cli_args.append('--quiet')
+    cli_args.append('--skip-bundle')
 
     it "runs inferno new #{cli_args.join(' ')}" do
       expect { described_class.start(cli_args) }.to_not raise_error
