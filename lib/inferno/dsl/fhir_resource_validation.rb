@@ -50,12 +50,52 @@ module Inferno
         end
 
         # Set the IGs that the validator will need to load
-        # Example: ["hl7.fhir.us.core#4.0.0"]
-        # @param igs [Array<String>]
-        def igs(validator_igs = nil)
-          @igs = validator_igs if validator_igs
+        # @example
+        #   igs "hl7.fhir.us.core#4.0.0"
+        # @example
+        #   igs("hl7.fhir.us.core#3.1.1", "hl7.fhir.us.core#6.0.0")
+        # @param validator_igs [Array<String>]
+        def igs(*validator_igs)
+          cli_context(igs: validator_igs) if validator_igs
 
-          @igs
+          cli_context.igs
+        end
+
+        # Set the cliContext used as part of each validation request.
+        # Fields may be passed as either a Hash or block.
+        # Note that all fields included here will be sent directly in requests,
+        # there is no check that the fields are correct.
+        #
+        # @example
+        #   fhir_resource_validator do
+        #     url 'http://example.com/validator'
+        #     cli_context do
+        #       noExtensibleBindingMessages true
+        #       txServer nil
+        #     end
+        #   end
+        #
+        # @example
+        #   fhir_resource_validator do
+        #     url 'http://example.org/validator'
+        #     cli_context({
+        #       noExtensibleBindingMessages: true,
+        #       txServer: nil
+        #     })
+        #   end
+        #
+        # @param definition [Hash] raw fields to set, optional
+        def cli_context(definition = nil, &)
+          if @cli_context
+            if definition
+              @cli_context.definition.merge!(definition.deep_symbolize_keys)
+            elsif block_given?
+              @cli_context.instance_eval(&)
+            end
+          else
+            @cli_context = CliContext.new(definition || {}, &)
+          end
+          @cli_context
         end
 
         # @private
@@ -193,19 +233,13 @@ module Inferno
         def wrap_resource_for_hl7_wrapper(resource, profile_url)
           wrapped_resource = {
             cliContext: {
-              # TODO: these should be configurable as well
-              sv: '4.0.1',
-              # displayWarnings: true,  # -display-issues-are-warnings
-              # txServer: nil,          # -tx n/a
-              igs: @igs || [],
-              # NOTE: this profile must be part of a loaded IG,
-              # otherwise the response is an HTTP 500 with no content
+              **cli_context.definition,
               profiles: [profile_url]
             },
             filesToValidate: [
               {
                 fileName: "#{resource.resourceType}/#{resource.id}.json",
-                fileContent: resource.to_json,
+                fileContent: resource.source_contents,
                 fileType: 'json'
               }
             ],
@@ -256,6 +290,39 @@ module Inferno
                   'Validator response was an unexpected format. '\
                   'Review Messages tab or validator service logs for more information.'
           end
+        end
+      end
+
+      # @private
+      class CliContext
+        attr_reader :definition
+
+        CLICONTEXT_DEFAULTS = {
+          sv: '4.0.1',
+          doNative: false,
+          extensions: ['any']
+        }.freeze
+
+        # @private
+        def initialize(definition, &)
+          @definition = CLICONTEXT_DEFAULTS.merge(definition.deep_symbolize_keys)
+          instance_eval(&) if block_given?
+        end
+
+        # @private
+        def method_missing(method_name, *args)
+          # Interpret any other method as setting a field on cliContext.
+          # Follow the same format as `Validator.url` here:
+          # only set the value if one is provided.
+          # args will be an empty array if no value is provided.
+          definition[method_name] = args[0] unless args.empty?
+
+          definition[method_name]
+        end
+
+        # @private
+        def respond_to_missing?(_method_name, _include_private = false)
+          true
         end
       end
 
