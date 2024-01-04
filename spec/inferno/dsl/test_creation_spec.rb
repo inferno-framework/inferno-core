@@ -66,8 +66,9 @@ RSpec.describe InfrastructureTest::Suite do
 
         required_results = results.reject(&:optional?)
         non_passing_results = required_results.reject { |result| result.result == 'pass' }
-        bad_results = non_passing_results.reject { |result| result.test_group.id == 'infra_test-empty_group' &&
-                                                            result.result == 'omit' }
+        bad_results = non_passing_results.reject do |result|
+          result.test_group.id == 'infra_test-empty_group' && result.result == 'omit'
+        end
 
         expect(bad_results).to be_empty, bad_results.map { |r|
           "#{r.runnable.title}: #{r.result_message}"

@@ -20,7 +20,7 @@ module Inferno
                   repo.results_for_test_run(test_run.id)
                 end
             end
-            
+
             test_session = test_sessions_repo.find(test_run.test_session_id)
             res.body = serialize(test_run, suite_options: test_session.suite_options)
           end

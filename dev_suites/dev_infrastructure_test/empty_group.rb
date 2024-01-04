@@ -6,6 +6,5 @@ module InfrastructureTest
     fhir_client :empty_group do
       url 'EMPTY_GROUP'
     end
-
   end
 end
