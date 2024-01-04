@@ -8,8 +8,7 @@
 set -e
 set -v
 
-#REPO_URL=git@github.com:inferno-framework/inferno-template.git
-REPO_URL=git@github.com:Shaumik-Ashraf/test_publish_template_script_2.git
+REPO_URL=git@github.com:inferno-framework/inferno-template.git
 TIMESTAMP=$(date -I)
 
 mkdir -p tmp
