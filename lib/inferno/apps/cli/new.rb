@@ -43,7 +43,7 @@ module Inferno
                    type: :boolean,
                    aliases: '-b',
                    default: false,
-                   desc: "Do not run bundle install"
+                   desc: 'Do not run bundle install'
 
       add_runtime_options!
 
@@ -55,6 +55,7 @@ module Inferno
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
 
         return unless options['pretend']
+
         say_unless_quiet 'This was a dry run; re-run without `--pretend` to actually create project',
                          :yellow
       end
@@ -78,7 +79,7 @@ module Inferno
 
         inside(root_name) do
           Bundler.with_unbundled_env do
-            run 'bundle install', verbose: !options['quiet'], capture: !!options['quiet']
+            run 'bundle install', verbose: !options['quiet'], capture: options['quiet']
           end
         end
       end
