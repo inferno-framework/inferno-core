@@ -209,7 +209,6 @@ module Inferno
     end
 
     def persist_result(params)
-      binding.pry
       result = results_repo.create(
         params.merge(test_run_id: test_run.id, test_session_id: test_session.id)
       )

@@ -21,9 +21,6 @@ module Inferno
                 end
             end
             
-            ## XXX
-            # binding.pry
-
             test_session = test_sessions_repo.find(test_run.test_session_id)
             res.body = serialize(test_run, suite_options: test_session.suite_options)
           end
