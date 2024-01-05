@@ -78,7 +78,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         if (testSession && testSession.test_suite) {
           navigate(`/${testSession.test_suite_id}/${testSession.id}`);
           // Use window navigation as a workaround for router errors
-          window.location.href = `/${basePath}/${testSession.test_suite_id}/${testSession.id}`;
+          const root = basePath ? `/${basePath}` : window.location.origin;
+          window.location.href = `${root}/${testSession.test_suite_id}/${testSession.id}`;
         }
       })
       .catch((e: Error) => {
