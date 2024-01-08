@@ -439,7 +439,14 @@ RSpec.describe InfrastructureTest::Suite do
     end
 
     describe 'empty_group' do
-      let(:empty_group) { Inferno::Repositories::TestGroups.new.find('infra_test-empty_group') }
+      let(:empty_group) { InfrastructureTest::EmptyGroup }
+      let(:test_run) do
+        repo_create(
+          :test_run,
+          runnable: { test_group_id: empty_group.id },
+          test_session:
+        )
+      end
 
       it 'contains zero tests' do
         expect(empty_group.tests.length).to eq(0)
@@ -449,7 +456,7 @@ RSpec.describe InfrastructureTest::Suite do
         result = runner.run(empty_group)
 
         expect(result.result).to eq('omit')
-        expect(result.message).to eq('No tests defined')
+        expect(result.result_message).to eq('No tests defined')
       end
     end
   end
