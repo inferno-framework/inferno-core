@@ -1,5 +1,6 @@
 require 'thor'
 require_relative '../../utils/named_thor_actions'
+require_relative '../../version'
 
 module Inferno
   module CLI
