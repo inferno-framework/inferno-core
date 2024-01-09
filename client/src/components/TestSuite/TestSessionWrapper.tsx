@@ -10,7 +10,7 @@ import {
 } from '~/models/testSuiteModels';
 import TestSessionComponent from './TestSession';
 import { useParams } from 'react-router-dom';
-import { Alert, Backdrop, Box } from '@mui/material';
+import { Alert, Box, Fade } from '@mui/material';
 import Header from '~/components/Header';
 import Footer from '~/components/Footer';
 import {
@@ -23,6 +23,7 @@ import { getCoreVersion } from '~/api/VersionsApi';
 import { useSnackbar } from 'notistack';
 
 import { useAppStore } from '~/store/app';
+import HeaderSkeleton from '../Skeletons/HeaderSkeleton';
 
 const TestSessionWrapper: FC<unknown> = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -149,28 +150,30 @@ const TestSessionWrapper: FC<unknown> = () => {
     setTitle(testSession);
 
     return (
-      <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
-        <Header
-          suiteId={testSession.test_suite.id}
-          suiteTitle={testSession.test_suite.title}
-          suiteVersion={testSession.test_suite.version}
-          suiteOptions={parsedOptions}
-          drawerOpen={drawerOpen}
-          toggleDrawer={toggleDrawer}
-        />
-        <TestSessionComponent
-          testSession={testSession}
-          previousResults={testResults}
-          initialTestRun={testRun}
-          sessionData={sessionData}
-          suiteOptions={parsedOptions}
-          drawerOpen={drawerOpen}
-          setSessionData={setSessionData}
-          getSessionData={tryGetSessionData}
-          toggleDrawer={toggleDrawer}
-        />
-        <Footer version={coreVersion} linkList={testSession.test_suite.links} />
-      </Box>
+      <Fade in={true}>
+        <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
+          <Header
+            suiteId={testSession.test_suite.id}
+            suiteTitle={testSession.test_suite.title}
+            suiteVersion={testSession.test_suite.version}
+            suiteOptions={parsedOptions}
+            drawerOpen={drawerOpen}
+            toggleDrawer={toggleDrawer}
+          />
+          <TestSessionComponent
+            testSession={testSession}
+            previousResults={testResults}
+            initialTestRun={testRun}
+            sessionData={sessionData}
+            suiteOptions={parsedOptions}
+            drawerOpen={drawerOpen}
+            setSessionData={setSessionData}
+            getSessionData={tryGetSessionData}
+            toggleDrawer={toggleDrawer}
+          />
+          <Footer version={coreVersion} linkList={testSession.test_suite.links} />
+        </Box>
+      </Fade>
     );
   } else if (
     attemptedGetSession &&
@@ -194,8 +197,11 @@ const TestSessionWrapper: FC<unknown> = () => {
       tryGetTestResults(test_session_id);
       tryGetSessionData(test_session_id);
     }
-
-    return <Backdrop open={true} />;
+    return (
+      <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
+        <HeaderSkeleton />
+      </Box>
+    );
   }
 };
 
