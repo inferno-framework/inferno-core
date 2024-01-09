@@ -1,3 +1,9 @@
+# 0.4.26
+* FI-2392-header-jog by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/422
+* FI-2329 Add integer conversion to need_to_refresh? method by @360dgries in https://github.com/inferno-framework/inferno-core/pull/423
+* FI-2396-redirect-session by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/426
+* FI-2182: Upgrade to TypeScript 5 by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/418
+
 # 0.4.25
 * FI-2270: Migrate FI-1990, fix flicker by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/409
 * FI-2383: Force page reroute in header by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/419
