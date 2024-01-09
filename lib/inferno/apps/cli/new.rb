@@ -1,4 +1,5 @@
 require 'thor'
+require 'bundler'
 require_relative '../../utils/named_thor_actions'
 require_relative '../../version'
 
