@@ -1,4 +1,6 @@
 import React, { FC, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { Alert, Box, Fade } from '@mui/material';
 import {
   Result,
   SuiteOption,
@@ -8,11 +10,11 @@ import {
   TestSession,
   TestSuite,
 } from '~/models/testSuiteModels';
-import TestSessionComponent from './TestSession';
-import { useParams } from 'react-router-dom';
-import { Alert, Box, Fade } from '@mui/material';
-import Header from '~/components/Header';
 import Footer from '~/components/Footer';
+import FooterSkeleton from '~/components/Skeletons/FooterSkeleton';
+import Header from '~/components/Header';
+import HeaderSkeleton from '~/components/Skeletons/HeaderSkeleton';
+import TestSessionComponent from '~/components/TestSuite/TestSession';
 import {
   getCurrentTestSessionResults,
   getLastTestRun,
@@ -21,9 +23,7 @@ import {
 } from '~/api/TestSessionApi';
 import { getCoreVersion } from '~/api/VersionsApi';
 import { useSnackbar } from 'notistack';
-
 import { useAppStore } from '~/store/app';
-import HeaderSkeleton from '../Skeletons/HeaderSkeleton';
 
 const TestSessionWrapper: FC<unknown> = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -200,6 +200,7 @@ const TestSessionWrapper: FC<unknown> = () => {
     return (
       <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
         <HeaderSkeleton />
+        <FooterSkeleton />
       </Box>
     );
   }
