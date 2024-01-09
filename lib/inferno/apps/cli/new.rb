@@ -73,7 +73,7 @@ module Inferno
       end
 
       def default_author
-        ENV['USER'] || ENV['USERNAME'] || 'TODO'
+        ENV['USER'] || ENV['USERNAME'] || 'PUT_YOUR_NAME_HERE'
       end
 
       def bundle_install
