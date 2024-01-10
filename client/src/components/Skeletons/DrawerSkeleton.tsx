@@ -2,21 +2,23 @@ import React, { FC } from 'react';
 // import { AppBar, Box, Drawer, Skeleton, SwipeableDrawer, Toolbar } from '@mui/material';
 import { Box, Drawer, Skeleton } from '@mui/material';
 import { useAppStore } from '~/store/app';
-import useStyles from '~/components/TestSuite/TestSuiteTree/styles';
+import useStylesDrawer from '~/components/TestSuite/styles';
+import useStylesTree from '~/components/TestSuite/TestSuiteTree/styles';
 
 const DrawerSkeleton: FC<Record<string, never>> = () => {
-  const { classes } = useStyles();
+  const drawerClasses = useStylesDrawer().classes;
+  const treeClasses = useStylesTree().classes;
   // const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
   return windowIsSmall ? (
     <></>
   ) : (
-    <Drawer variant="permanent" anchor="left">
-      <Skeleton variant="rounded" height="40" width="100%" />
+    <Drawer variant="permanent" anchor="left" classes={{ paper: drawerClasses.drawerPaper }}>
+      <Skeleton variant="rounded" height="40" width="40" />
 
-      <Box className={classes.testSuiteTreePanel}>
-        <Skeleton variant="rounded" height="40" width="100%" />
+      <Box className={treeClasses.testSuiteTreePanel}>
+        <Skeleton variant="rounded" height="40" width="40" />
 
         {/* <TreeView
             aria-label="navigation-panel"
