@@ -10,6 +10,7 @@ import {
   TestSession,
   TestSuite,
 } from '~/models/testSuiteModels';
+import AppSkeleton from '~/components/Skeletons/AppSkeleton';
 import Footer from '~/components/Footer';
 import FooterSkeleton from '~/components/Skeletons/FooterSkeleton';
 import Header from '~/components/Header';
@@ -200,6 +201,7 @@ const TestSessionWrapper: FC<unknown> = () => {
     return (
       <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
         <HeaderSkeleton />
+        <AppSkeleton />
         <FooterSkeleton />
       </Box>
     );

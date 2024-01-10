@@ -7,8 +7,9 @@ import { basePath } from '~/api/infernoApiService';
 import Page from '~/components/App/Page';
 import { TestSuite } from '~/models/testSuiteModels';
 import { Box } from '@mui/material';
-import HeaderSkeleton from '../Skeletons/HeaderSkeleton';
-import FooterSkeleton from '../Skeletons/FooterSkeleton';
+import AppSkeleton from '~/components/Skeletons/AppSkeleton';
+import HeaderSkeleton from '~/components/Skeletons/HeaderSkeleton';
+import FooterSkeleton from '~/components/Skeletons/FooterSkeleton';
 
 export const router = (testSuites: TestSuite[]) => {
   return createBrowserRouter(
@@ -39,6 +40,7 @@ export const router = (testSuites: TestSuite[]) => {
         element: (
           <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
             <HeaderSkeleton />
+            <AppSkeleton />
             <FooterSkeleton />
           </Box>
         ),
