@@ -10,7 +10,9 @@ module Inferno
 
           def handle(req, res)
             params = req.params.to_h
-            params.merge!(JSON.parse(req.body.string).symbolize_keys) unless req.body.string.blank?
+            unless req.body.string.blank? || req.env['CONTENT_TYPE'].include?('multipart/form-data')
+              params.merge!(JSON.parse(req.body.string).symbolize_keys)
+            end
 
             session = repo.create(create_params(params))
 
