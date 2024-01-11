@@ -53,6 +53,7 @@ module Inferno
         directory('.', root_name, { mode: :preserve, recursive: true, verbose: !options['quiet'] })
 
         bundle_install
+        inferno_migrate
 
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
 
@@ -83,6 +84,14 @@ module Inferno
           Bundler.with_unbundled_env do
             run 'bundle install', verbose: !options['quiet'], capture: options['quiet']
           end
+        end
+      end
+
+      def inferno_migrate
+        return if options['skip_bundle']
+
+        inside(root_name) do
+          run 'inferno migrate', verbose: !options['quiet'], capture: options['quiet']
         end
       end
 
