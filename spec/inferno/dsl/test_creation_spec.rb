@@ -62,7 +62,7 @@ RSpec.describe InfrastructureTest::Suite do
 
         results = results_repo.current_results_for_test_session(test_session.id)
 
-        expect(results.length).to eq(16)
+        expect(results.length).to eq(17)
 
         required_results = results.reject(&:optional?)
         non_passing_results = required_results.reject { |result| result.result == 'pass' }
