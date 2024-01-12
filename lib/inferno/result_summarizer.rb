@@ -18,7 +18,7 @@ module Inferno
 
     def prioritized_result_strings
       if all_optional_results?
-        Entities::Result::RESULT_OPTIONS.slice(0,3) + Entities::Result::RESULT_OPTIONS.slice(3,8).reverse!.rotate!
+        Entities::Result::RESULT_OPTIONS.slice(0, 3) + Entities::Result::RESULT_OPTIONS.slice(3, 8).reverse!.rotate!
       else
         Entities::Result::RESULT_OPTIONS
       end
