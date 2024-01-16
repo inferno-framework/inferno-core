@@ -1,3 +1,8 @@
+# 0.4.27
+* FI-2395: Data rights legend by @bmath10 in https://github.com/inferno-framework/inferno-core/pull/424
+* fi-2341 Update docs site to point to preview of new docs site. by @arscan in https://github.com/inferno-framework/inferno-core/pull/430
+* FI-2426: Fix tagged request query in postgres by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/432
+
 # 0.4.26
 * FI-2392-header-jog by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/422
 * FI-2329 Add integer conversion to need_to_refresh? method by @360dgries in https://github.com/inferno-framework/inferno-core/pull/423
