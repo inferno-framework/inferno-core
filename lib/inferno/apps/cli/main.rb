@@ -3,6 +3,7 @@ require_relative 'migration'
 require_relative 'services'
 require_relative 'suite'
 require_relative 'suites'
+require_relative 'new'
 
 module Inferno
   module CLI
@@ -49,6 +50,8 @@ module Inferno
 
       desc 'suite SUBCOMMAND ...ARGS', 'Perform suite-based operations'
       subcommand 'suite', Suite
+
+      register(New, 'new', 'new TEST_KIT_NAME', 'Run `inferno new --help` for full help')
     end
   end
 end
