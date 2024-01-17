@@ -139,7 +139,7 @@ module Inferno
                 select uncounted_requests.request_id request_id
                 from (
                         select r.id request_id, t.id tag_id from requests r
-                        inner join requests_tags rt on r.`index` = rt.requests_id
+                        inner join requests_tags rt on r."index" = rt.requests_id
                         inner join tags t on rt.tags_id = t.id
                         where r.test_session_id = :test_session_id
                         and r.result_id in (
@@ -163,7 +163,7 @@ module Inferno
                 ) as matched_requests
             inner join requests final_requests on final_requests.id = matched_requests.request_id
             where final_requests.test_session_id = :test_session_id
-            order by final_requests.`index`
+            order by final_requests."index"
           SQL
         end
 

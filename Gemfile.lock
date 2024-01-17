@@ -10,7 +10,7 @@ GIT
 PATH
   remote: .
   specs:
-    inferno_core (0.4.26)
+    inferno_core (0.4.27)
       activesupport (~> 6.1.7.5)
       base62-rb (= 0.3.1)
       blueprinter (= 0.25.2)
@@ -18,6 +18,7 @@ PATH
       dry-configurable (= 0.13.0)
       dry-container (= 0.9.0)
       dry-core (= 0.8.1)
+      dry-inflector (= 0.3)
       dry-system (= 0.20.0)
       faraday (~> 1.2)
       faraday_middleware (~> 1.2)
@@ -71,7 +72,7 @@ GEM
       reline (>= 0.3.8)
     diff-lcs (1.5.0)
     docile (1.4.0)
-    domain_name (0.6.20231109)
+    domain_name (0.6.20240107)
     dotenv (2.8.1)
     dry-auto_inject (0.9.0)
       dry-container (>= 0.3.4)
