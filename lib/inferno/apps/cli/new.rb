@@ -91,7 +91,7 @@ module Inferno
         return if options['skip_bundle']
 
         inside(root_name) do
-          run 'inferno migrate', verbose: !options['quiet'], capture: options['quiet']
+          run 'bundle exec inferno migrate', verbose: !options['quiet'], capture: options['quiet']
         end
       end
 
