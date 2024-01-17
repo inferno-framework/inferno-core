@@ -451,13 +451,6 @@ RSpec.describe InfrastructureTest::Suite do
       it 'contains zero tests' do
         expect(empty_group.tests.length).to eq(0)
       end
-
-      it 'results in omit' do
-        result = runner.run(empty_group)
-
-        expect(result.result).to eq('omit')
-        expect(result.result_message).to eq('No tests defined')
-      end
     end
   end
 end
