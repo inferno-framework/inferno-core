@@ -10,7 +10,7 @@ module Inferno
 
           def handle(req, res)
             params = req.params.to_h
-            if !req.body.string.blank? && !req.env['CONTENT_TYPE'].include?('multipart/form-data')
+            if req.body.string.present? && req.env['CONTENT_TYPE'].include?('application/JSON')
               params.merge!(JSON.parse(req.body.string).symbolize_keys)
             end
 
