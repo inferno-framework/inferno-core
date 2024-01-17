@@ -11,17 +11,17 @@ module Inferno
     end
 
     def summarize
+      return 'pass' if all_optional_results? &&
+                       unique_result_strings.any?('pass') &&
+                       unique_result_strings.none? { |result| %w[cancel wait running].include? result }
+
       prioritized_result_strings.find { |result_string| unique_result_strings.include? result_string }
     end
 
     private
 
     def prioritized_result_strings
-      if all_optional_results?
-        Entities::Result::RESULT_OPTIONS.slice(0, 3) + Entities::Result::RESULT_OPTIONS.slice(3, 8).reverse!.rotate!
-      else
-        Entities::Result::RESULT_OPTIONS
-      end
+      Entities::Result::RESULT_OPTIONS
     end
 
     def required_results
