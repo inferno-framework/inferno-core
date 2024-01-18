@@ -56,7 +56,7 @@ module Inferno
             .order(Sequel.desc(:updated_at))
             .limit(1)
             .to_a
-            .map { |record| record.to_json_data(json_serializer_options).deep_symbolize_keys! }
+            .map { |record| record.to_json_data.deep_symbolize_keys! }
             &.first
             &.to_hash
 
