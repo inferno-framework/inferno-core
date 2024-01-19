@@ -123,6 +123,15 @@ module Inferno
         }
       end
 
+      if group.children.empty?
+        group_result = persist_result(group.reference_hash.merge(result: 'omit',
+                                                                 result_message: 'No tests defined',
+                                                                 input_json: JSON.generate(group_inputs_with_values),
+                                                                 output_json: '[]'))
+        update_parent_result(group.parent)
+        return group_result
+      end
+
       results = []
       group.children(test_session.suite_options).each do |child|
         result = run(child, scratch)

@@ -3,6 +3,7 @@ require_relative 'external_test1'
 module InfrastructureTest
   class ExternalInnerGroup < Inferno::TestGroup
     id 'external_inner_group'
+    title 'External Inner Group'
 
     input :external_inner_group_input, type: 'text'
     output :external_inner_group_output
