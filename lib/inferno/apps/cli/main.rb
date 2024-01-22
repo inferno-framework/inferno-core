@@ -4,6 +4,7 @@ require_relative 'services'
 require_relative 'suite'
 require_relative 'suites'
 require_relative 'new'
+require_relative '../../version'
 
 module Inferno
   module CLI
@@ -52,6 +53,11 @@ module Inferno
       subcommand 'suite', Suite
 
       register(New, 'new', 'new TEST_KIT_NAME', 'Run `inferno new --help` for full help')
-    end
+
+      desc 'version', "Output Inferno version (#{Inferno::VERSION})"
+      def version
+        puts Inferno::VERSION
+      end
+   end
   end
 end
