@@ -70,26 +70,38 @@ module Inferno
           suite_options: test_session.suite_options_hash
         )
 
-      result = begin
-        raise Exceptions::CancelException, 'Test cancelled by user' if test_run_is_cancelling
+      result = ''
 
-        test_instance.load_named_requests
-        test_instance.instance_eval(&test.block)
-        'pass'
-      rescue Exceptions::TestResultException => e
-        test_instance.result_message = format_markdown(e.message)
-        e.result
-      rescue StandardError => e
-        Application['logger'].error(e.full_message)
-        test_instance.result_message = format_markdown("Error: #{e.message}\n\n#{e.backtrace.first}")
-        'error'
+      inputs.each do |key, value|
+        if value.nil? && !test.config.input_optional(key)
+          result = 'skip'
+          test_instance.result_message = format_markdown("Input '#{key}' is nil, skipping test.")
+          break
+        end
       end
 
-      outputs = save_outputs(test_instance)
-      output_json_string = JSON.generate(outputs)
+      if result.blank?
+        result = begin
+          raise Exceptions::CancelException, 'Test cancelled by user' if test_run_is_cancelling
 
-      if result == 'wait'
-        test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
+          test_instance.load_named_requests
+          test_instance.instance_eval(&test.block)
+          'pass'
+        rescue Exceptions::TestResultException => e
+          test_instance.result_message = format_markdown(e.message)
+          e.result
+        rescue StandardError => e
+          Application['logger'].error(e.full_message)
+          test_instance.result_message = format_markdown("Error: #{e.message}\n\n#{e.backtrace.first}")
+          'error'
+        end
+
+        outputs = save_outputs(test_instance)
+        output_json_string = JSON.generate(outputs)
+
+        if result == 'wait'
+          test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
+        end
       end
 
       test_result = persist_result(

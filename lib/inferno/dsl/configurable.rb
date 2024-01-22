@@ -177,6 +177,11 @@ module Inferno
           inputs[identifier]&.type
         end
 
+        # @private
+        def input_optional(identifier)
+          inputs[identifier]&.optional
+        end
+
         ### Output Configuration ###
 
         # The output configuration for this runnable.
