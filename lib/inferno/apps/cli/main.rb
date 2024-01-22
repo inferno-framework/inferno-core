@@ -58,6 +58,6 @@ module Inferno
       def version
         puts Inferno::VERSION
       end
-   end
+    end
   end
 end
