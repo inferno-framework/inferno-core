@@ -5,10 +5,16 @@ module InfrastructureTest
 
     optional
 
-    test 'Test in Optional Group' do
+    test 'Passing test in Optional Group' do
       optional
 
       run { assert true }
+    end
+
+    test 'Failing test in Optional Group' do
+      optional
+
+      run { assert false }
     end
   end
 end

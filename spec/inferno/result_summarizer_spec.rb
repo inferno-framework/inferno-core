@@ -13,12 +13,12 @@ RSpec.describe Inferno::ResultSummarizer do
   end
 
   context 'when all results are optional' do
-    it 'returns the highest priority result' do
+    it 'prioritizes passing over failing when a result passes' do
       allow(passing_result).to receive(:optional?).and_return(true)
       allow(failing_result).to receive(:optional?).and_return(true)
       result = described_class.new([passing_result, failing_result]).summarize
 
-      expect(result).to eq('fail')
+      expect(result).to eq('pass')
     end
   end
 

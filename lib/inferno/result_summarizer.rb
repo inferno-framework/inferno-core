@@ -11,6 +11,10 @@ module Inferno
     end
 
     def summarize
+      return 'pass' if all_optional_results? &&
+                       unique_result_strings.any?('pass') &&
+                       unique_result_strings.none? { |result| %w[wait running].include? result }
+
       prioritized_result_strings.find { |result_string| unique_result_strings.include? result_string }
     end
 
