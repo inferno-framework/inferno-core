@@ -8,12 +8,10 @@ const TestSessionSkeleton: FC<Record<string, never>> = () => {
   // const { classes } = useStyles();
 
   return (
-    <Box display="flex">
-      <Card variant="outlined" sx={{ mb: 3 }}>
-        <Skeleton variant="circular" height={32} width={32} style={{ marginRight: '8px' }} />
-        <Skeleton variant="rounded" height={30} width={140} />
-      </Card>
-    </Box>
+    <Card variant="outlined" sx={{ mb: 3 }}>
+      <Skeleton variant="circular" height={32} width={32} sx={{ m: 16, mr: 1 }} />
+      <Skeleton variant="rounded" height={30} width={140} />
+    </Card>
   );
 };
 

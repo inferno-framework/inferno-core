@@ -30,7 +30,7 @@ const HeaderSkeleton: FC<Record<string, never>> = () => {
         {/* New Session button */}
         <Box display="flex" style={windowIsSmall ? { marginRight: '-16px' } : {}}>
           {windowIsSmall ? (
-            <Skeleton variant="circular" height={32} width={32} style={{ marginRight: '8px' }} />
+            <Skeleton variant="circular" height={32} width={32} sx={{ mr: 1 }} />
           ) : (
             <Skeleton variant="rounded" height={30} width={140} />
           )}

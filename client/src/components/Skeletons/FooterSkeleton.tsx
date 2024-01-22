@@ -20,7 +20,7 @@ const FooterSkeleton: FC<Record<string, never>> = () => {
       <Box display="flex" flexDirection="row" justifyContent="space-between" width="100%">
         <Box display="flex" alignItems="center" px={2}>
           {windowIsSmall ? (
-            <Skeleton variant="rectangular" height={22} width={80} style={{ marginRight: '8px' }} />
+            <Skeleton variant="rectangular" height={22} width={80} sx={{ mr: 1 }} />
           ) : (
             <Skeleton
               variant="rectangular"
