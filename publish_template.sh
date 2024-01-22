@@ -23,6 +23,6 @@ bundle exec ./bin/inferno new inferno-template --author 'Inferno Template' --for
 
 git -C ./inferno-template add --all
 git -C ./inferno-template commit --message "update inferno-template to v$VERSION"
-git -C ./inferno-template push origin main --force
+git -C ./inferno-template push origin main
 
 rm -rf ./inferno-template
