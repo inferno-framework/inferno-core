@@ -33,7 +33,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'contains the correct groups' do
-        expect(suite.groups.length).to eq(5)
+        expect(suite.groups.length).to eq(6)
         expect(suite.groups.first).to eq(outer_inline_group)
       end
 
@@ -62,12 +62,15 @@ RSpec.describe InfrastructureTest::Suite do
 
         results = results_repo.current_results_for_test_session(test_session.id)
 
-        expect(results.length).to eq(16)
+        expect(results.length).to eq(18)
 
         required_results = results.reject(&:optional?)
         non_passing_results = required_results.reject { |result| result.result == 'pass' }
+        bad_results = non_passing_results.reject do |result|
+          result.test_group.id == 'infra_test-empty_group' && result.result == 'omit'
+        end
 
-        expect(non_passing_results).to be_empty, non_passing_results.map { |r|
+        expect(bad_results).to be_empty, bad_results.map { |r|
           "#{r.runnable.title}: #{r.result_message}"
         }.join("\n")
       end
@@ -432,6 +435,21 @@ RSpec.describe InfrastructureTest::Suite do
           expect(group.tests.length).to eq(1)
           expect(group.tests.first).to be_required
         end
+      end
+    end
+
+    describe 'empty_group' do
+      let(:empty_group) { InfrastructureTest::EmptyGroup }
+      let(:test_run) do
+        repo_create(
+          :test_run,
+          runnable: { test_group_id: empty_group.id },
+          test_session:
+        )
+      end
+
+      it 'contains zero tests' do
+        expect(empty_group.tests.length).to eq(0)
       end
     end
   end

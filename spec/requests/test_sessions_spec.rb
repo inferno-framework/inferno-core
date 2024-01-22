@@ -52,6 +52,18 @@ RSpec.describe '/test_sessions' do
           expect(persisted_session.suite_options).to eq(expected_options)
         end
       end
+
+      context 'with form data' do
+        it 'renders the test session json' do
+          post_form_data create_path, input
+
+          expect(last_response.status).to eq(200)
+
+          expect(parsed_body).to include(*response_fields)
+          expect(parsed_body['id']).to be_present
+          expect(parsed_body['test_suite_id']).to eq(test_suite_id)
+        end
+      end
     end
 
     context 'with invalid input' do

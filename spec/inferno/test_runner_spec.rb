@@ -165,4 +165,23 @@ RSpec.describe Inferno::TestRunner do
       expect(results).to all(eq('pass'))
     end
   end
+
+  describe 'when running an empty group' do
+    let(:test_session) { repo_create(:test_session, test_suite_id: 'infra_test') }
+    let(:empty_group) { InfrastructureTest::EmptyGroup }
+    let(:test_run) do
+      repo_create(
+        :test_run,
+        runnable: { test_group_id: empty_group.id },
+        test_session:
+      )
+    end
+
+    it 'results in omit' do
+      result = runner.run(empty_group)
+
+      expect(result.result).to eq('omit')
+      expect(result.result_message).to eq('No tests defined')
+    end
+  end
 end
