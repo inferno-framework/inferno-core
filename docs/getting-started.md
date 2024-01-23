@@ -141,7 +141,6 @@ ___
 1. Install Ruby. It is highly recommended that you install ruby via a [ruby
    version
    manager](https://www.ruby-lang.org/en/documentation/installation/#managers).  Use the manager's documentation for instructions on installing/switching ruby versions, and be sure to download the same ruby version that is in `.ruby-version` in the repo.
-1. Install [Docker](https://www.docker.com/get-started).
 1. Clone the [Inferno Template
    repository](https://github.com/inferno-framework/inferno-template). You can
    either clone this repository directly, or click the green "Use this template"
