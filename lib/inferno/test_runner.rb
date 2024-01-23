@@ -70,15 +70,7 @@ module Inferno
           suite_options: test_session.suite_options_hash
         )
 
-      result = ''
-
-      inputs.each do |key, value|
-        if value.nil? && !test.config.input_optional(key)
-          result = 'skip'
-          test_instance.result_message = format_markdown("Input '#{key}' is nil, skipping test.")
-          break
-        end
-      end
+      result = check_inputs(test, test_instance, inputs)
 
       if result.blank?
         result = begin
@@ -122,6 +114,19 @@ module Inferno
       update_parent_result(test.parent)
 
       test_result
+    end
+
+    def check_inputs(test, test_instance, inputs)
+      result = ''
+      inputs.each do |key, value|
+        optional = test.config.input_optional(key)
+        next unless value.nil? && optional
+
+        result = 'skip'
+        test_instance.result_message = format_markdown("Input '#{key}' is nil, skipping test.")
+        break
+      end
+      result
     end
 
     def run_group(group, scratch)

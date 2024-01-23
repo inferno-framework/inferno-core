@@ -141,11 +141,13 @@ RSpec.describe Inferno::TestRunner do
 
     let(:suite) { OptionsSuite::Suite }
 
-    let(:inputs) {[
-      { v1_input: 'v1_input_value' },
-      { v2_input: 'v2_input_value' },
-      { all_versions_input: 'all_versions_input_value' }
-    ]}
+    let(:inputs) do
+      [
+        { v1_input: 'v1_input_value' },
+        { v2_input: 'v2_input_value' },
+        { all_versions_input: 'all_versions_input_value' }
+      ]
+    end
 
     before do
       inputs.each do |input|
@@ -160,9 +162,9 @@ RSpec.describe Inferno::TestRunner do
       end
     end
 
-    it 'only runs groups which should be included based on options' do     
+    it 'only runs groups which should be included based on options' do
       test_session.suite_options = [Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')]
-      
+
       runner.run(suite)
 
       results = results_repo.current_results_for_test_session(test_session.id)

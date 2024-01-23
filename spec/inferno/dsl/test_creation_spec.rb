@@ -8,20 +8,23 @@ RSpec.describe InfrastructureTest::Suite do
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
   let(:results_repo) { Inferno::Repositories::Results.new }
 
-  let(:inline_inputs) {[
-    { suite_input: 'suite_input_value' },
-    { outer_group_input: 'outer_group_input_value' },
-    { inner_group_input: 'inner_group_input_value' },
-    { test_input: 'test_input_value' }
-  ]}
+  let(:inline_inputs) do
+    [
+      { suite_input: 'suite_input_value' },
+      { outer_group_input: 'outer_group_input_value' },
+      { inner_group_input: 'inner_group_input_value' },
+      { test_input: 'test_input_value' }
+    ]
+  end
 
-  let(:external_inputs) {[
-    { suite_input: 'suite_input_value' },
-    { external_outer_group_input: 'outer_group_input_value' },
-    { external_inner_group_input: 'inner_group_input_value' },
-    { external_test1_input: 'test_input_value' }
-  ]}
-
+  let(:external_inputs) do
+    [
+      { suite_input: 'suite_input_value' },
+      { external_outer_group_input: 'outer_group_input_value' },
+      { external_inner_group_input: 'inner_group_input_value' },
+      { external_test1_input: 'test_input_value' }
+    ]
+  end
 
   describe 'inline definitions' do
     let(:outer_inline_group) { suite.groups.first }
@@ -30,7 +33,6 @@ RSpec.describe InfrastructureTest::Suite do
 
     describe 'suite' do
       let(:test_run) { repo_create(:test_run, test_suite_id: suite.id, test_session_id: test_session.id) }
-
 
       before do
         (inline_inputs + external_inputs).uniq.each do |input|
@@ -44,7 +46,7 @@ RSpec.describe InfrastructureTest::Suite do
           end
         end
       end
-      
+
       it 'contains correct metadata' do
         expect(suite.id).to eq('infra_test')
         expect(suite.title).to eq('Infrastructure Test Suite')
