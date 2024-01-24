@@ -6,7 +6,6 @@ import { basePath, getStaticPath } from '~/api/infernoApiService';
 import { FooterLink } from '~/models/testSuiteModels';
 import { useAppStore } from '~/store/app';
 import useStyles from './styles';
-import FooterSkeleton from '../Skeletons/FooterSkeleton';
 
 interface FooterProps {
   version: string;
@@ -145,7 +144,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
     );
   };
 
-  return version && linkList ? (
+  return (
     <footer
       className={classes.footer}
       style={{
@@ -178,8 +177,6 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
         {windowIsSmall ? renderLinksMenu() : renderLinks()}
       </Box>
     </footer>
-  ) : (
-    <FooterSkeleton />
   );
 };
 
