@@ -8,7 +8,8 @@ import { useAppStore } from '~/store/app';
 import useStyles from './styles';
 import icon from '~/images/inferno_icon.png';
 import lightTheme from '~/styles/theme';
-import CustomTooltip from '../_common/CustomTooltip';
+import CustomTooltip from '~/components/_common/CustomTooltip';
+import HeaderSkeleton from '~/components/Skeletons/HeaderSkeleton';
 
 export interface HeaderProps {
   suiteId?: string;
@@ -142,7 +143,7 @@ const Header: FC<HeaderProps> = ({
       </Toolbar>
     </AppBar>
   ) : (
-    <></>
+    <HeaderSkeleton />
   );
 };
 

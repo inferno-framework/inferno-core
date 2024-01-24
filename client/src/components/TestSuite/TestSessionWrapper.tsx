@@ -1,4 +1,6 @@
 import React, { FC, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { Alert, Box, Fade } from '@mui/material';
 import {
   Result,
   SuiteOption,
@@ -8,11 +10,12 @@ import {
   TestSession,
   TestSuite,
 } from '~/models/testSuiteModels';
-import TestSessionComponent from './TestSession';
-import { useParams } from 'react-router-dom';
-import { Alert, Backdrop, Box } from '@mui/material';
-import Header from '~/components/Header';
+import AppSkeleton from '~/components/Skeletons/AppSkeleton';
 import Footer from '~/components/Footer';
+import FooterSkeleton from '~/components/Skeletons/FooterSkeleton';
+import Header from '~/components/Header';
+import HeaderSkeleton from '~/components/Skeletons/HeaderSkeleton';
+import TestSessionComponent from '~/components/TestSuite/TestSession';
 import {
   getCurrentTestSessionResults,
   getLastTestRun,
@@ -21,7 +24,6 @@ import {
 } from '~/api/TestSessionApi';
 import { getCoreVersion } from '~/api/VersionsApi';
 import { useSnackbar } from 'notistack';
-
 import { useAppStore } from '~/store/app';
 
 const TestSessionWrapper: FC<unknown> = () => {
@@ -149,28 +151,30 @@ const TestSessionWrapper: FC<unknown> = () => {
     setTitle(testSession);
 
     return (
-      <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
-        <Header
-          suiteId={testSession.test_suite.id}
-          suiteTitle={testSession.test_suite.title}
-          suiteVersion={testSession.test_suite.version}
-          suiteOptions={parsedOptions}
-          drawerOpen={drawerOpen}
-          toggleDrawer={toggleDrawer}
-        />
-        <TestSessionComponent
-          testSession={testSession}
-          previousResults={testResults}
-          initialTestRun={testRun}
-          sessionData={sessionData}
-          suiteOptions={parsedOptions}
-          drawerOpen={drawerOpen}
-          setSessionData={setSessionData}
-          getSessionData={tryGetSessionData}
-          toggleDrawer={toggleDrawer}
-        />
-        <Footer version={coreVersion} linkList={testSession.test_suite.links} />
-      </Box>
+      <Fade in={true}>
+        <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
+          <Header
+            suiteId={testSession.test_suite.id}
+            suiteTitle={testSession.test_suite.title}
+            suiteVersion={testSession.test_suite.version}
+            suiteOptions={parsedOptions}
+            drawerOpen={drawerOpen}
+            toggleDrawer={toggleDrawer}
+          />
+          <TestSessionComponent
+            testSession={testSession}
+            previousResults={testResults}
+            initialTestRun={testRun}
+            sessionData={sessionData}
+            suiteOptions={parsedOptions}
+            drawerOpen={drawerOpen}
+            setSessionData={setSessionData}
+            getSessionData={tryGetSessionData}
+            toggleDrawer={toggleDrawer}
+          />
+          <Footer version={coreVersion} linkList={testSession.test_suite.links} />
+        </Box>
+      </Fade>
     );
   } else if (
     attemptedGetSession &&
@@ -179,11 +183,14 @@ const TestSessionWrapper: FC<unknown> = () => {
     attemptedGetRun
   ) {
     return (
-      <div>
+      <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
         <Alert severity="error">
           Failed to load test session data. Please make sure you entered the correct session id.
         </Alert>
-      </div>
+        <HeaderSkeleton />
+        <AppSkeleton />
+        <FooterSkeleton />
+      </Box>
     );
   } else {
     const { test_session_id } = useParams<{ test_session_id: string }>();
@@ -194,8 +201,13 @@ const TestSessionWrapper: FC<unknown> = () => {
       tryGetTestResults(test_session_id);
       tryGetSessionData(test_session_id);
     }
-
-    return <Backdrop open={true} />;
+    return (
+      <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
+        <HeaderSkeleton />
+        <AppSkeleton />
+        <FooterSkeleton />
+      </Box>
+    );
   }
 };
 
