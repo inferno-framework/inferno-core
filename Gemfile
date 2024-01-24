@@ -8,7 +8,7 @@ gemspec
 # kits):
 # - Uncomment this line:
 # gem 'onc_certification_g10_test_kit'
-gem 'us_core_test_kit', git: 'https://github.com/inferno-framework/us-core-test-kit.git'
+# gem 'us_core_test_kit', git: 'https://github.com/inferno-framework/us-core-test-kit.git'
 
 # - Run `bundle`
 # - Uncomment the require at the top of
