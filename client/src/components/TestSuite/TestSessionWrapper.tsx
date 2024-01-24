@@ -183,11 +183,14 @@ const TestSessionWrapper: FC<unknown> = () => {
     attemptedGetRun
   ) {
     return (
-      <div>
+      <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
         <Alert severity="error">
           Failed to load test session data. Please make sure you entered the correct session id.
         </Alert>
-      </div>
+        <HeaderSkeleton />
+        <AppSkeleton />
+        <FooterSkeleton />
+      </Box>
     );
   } else {
     const { test_session_id } = useParams<{ test_session_id: string }>();
