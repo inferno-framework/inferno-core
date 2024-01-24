@@ -6,6 +6,7 @@ import useStyles from '~/components/TestSuite/TestSuiteDetails/styles';
 const TestSessionSkeleton: FC<Record<string, never>> = () => {
   const { classes } = useStyles();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const skeletonCount = 3;
 
   const expandableItemSkeleton = (
     <>
@@ -13,10 +14,10 @@ const TestSessionSkeleton: FC<Record<string, never>> = () => {
       <Box
         sx={{
           display: 'flex',
-          overflow: 'auto',
           alignItems: 'center',
           minHeight: '36.5px',
-          padding: '8px 16px',
+          px: 2,
+          py: 1,
         }}
       >
         <Skeleton variant="circular" height={24} width={24} />
@@ -26,6 +27,11 @@ const TestSessionSkeleton: FC<Record<string, never>> = () => {
       </Box>
     </>
   );
+
+  const skeletonList = [];
+  for (let index = 0; index < skeletonCount; index++) {
+    skeletonList.push(<div key={index}>{expandableItemSkeleton}</div>);
+  }
 
   return (
     <Card variant="outlined" sx={{ mb: 3 }}>
@@ -44,17 +50,15 @@ const TestSessionSkeleton: FC<Record<string, never>> = () => {
       </Box>
       <Divider />
       <Box m={2.5}>
-        <Skeleton height={10} width="90%" sx={{ my: 1 }} />
-        <Skeleton height={10} width="95%" sx={{ my: 1 }} />
-        <Skeleton height={10} sx={{ my: 1 }} />
-        <Skeleton height={10} width="90%" sx={{ my: 1 }} />
-        <Skeleton height={10} width="95%" sx={{ my: 1 }} />
-        <Skeleton height={10} sx={{ my: 1 }} />
-        <Skeleton height={10} width="50%" sx={{ my: 1 }} />
+        <Skeleton height={10} sx={{ my: 2 }} />
+        <Skeleton height={10} width="90%" sx={{ my: 2 }} />
+        <Skeleton height={10} width="95%" sx={{ my: 2 }} />
+        <Skeleton height={10} sx={{ my: 2 }} />
+        <Skeleton height={10} width="90%" sx={{ my: 2 }} />
+        <Skeleton height={10} width="95%" sx={{ my: 2 }} />
+        <Skeleton height={10} width="50%" sx={{ my: 2 }} />
       </Box>
-      {expandableItemSkeleton}
-      {expandableItemSkeleton}
-      {expandableItemSkeleton}
+      {skeletonList}
     </Card>
   );
 };

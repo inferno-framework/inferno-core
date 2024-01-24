@@ -11,7 +11,7 @@ const DrawerSkeleton: FC<Record<string, never>> = () => {
   const skeletonCount = 3;
 
   const treeItemSkeleton = (
-    <Box display="flex" flexDirection="row" alignItems="center" mx={2} my={1}>
+    <Box display="flex" flexDirection="row" alignItems="center" mx={2} my={2}>
       <Skeleton variant="circular" height="14px" width="16px" />
       <Skeleton height={10} width={200} sx={{ ml: 1 }} />
     </Box>
