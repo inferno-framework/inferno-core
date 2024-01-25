@@ -56,7 +56,7 @@ module Inferno
 
       desc 'version', "Output Inferno core version (#{Inferno::VERSION})"
       def version
-        puts Inferno::VERSION
+        puts "Inferno Core v#{Inferno::VERSION}"
       end
     end
   end
