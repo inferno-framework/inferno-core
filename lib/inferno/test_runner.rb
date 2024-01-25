@@ -70,23 +70,21 @@ module Inferno
           suite_options: test_session.suite_options_hash
         )
 
-      result = check_inputs(test, test_instance, inputs)
+      result = begin
+        raise Exceptions::CancelException, 'Test cancelled by user' if test_run_is_cancelling
+        check_inputs(test, test_instance, inputs)
 
-      if result.blank?
-        result = begin
-          raise Exceptions::CancelException, 'Test cancelled by user' if test_run_is_cancelling
-
-          test_instance.load_named_requests
-          test_instance.instance_eval(&test.block)
-          'pass'
-        rescue Exceptions::TestResultException => e
-          test_instance.result_message = format_markdown(e.message)
-          e.result
-        rescue StandardError => e
-          Application['logger'].error(e.full_message)
-          test_instance.result_message = format_markdown("Error: #{e.message}\n\n#{e.backtrace.first}")
-          'error'
-        end
+        test_instance.load_named_requests
+        test_instance.instance_eval(&test.block)
+        'pass'
+      rescue Exceptions::TestResultException => e
+        test_instance.result_message = format_markdown(e.message)
+        e.result
+      rescue StandardError => e
+        Application['logger'].error(e.full_message)
+        test_instance.result_message = format_markdown("Error: #{e.message}\n\n#{e.backtrace.first}")
+        'error'
+      end
 
         outputs = save_outputs(test_instance)
         output_json_string = JSON.generate(outputs)
@@ -94,7 +92,6 @@ module Inferno
         if result == 'wait'
           test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
         end
-      end
 
       test_result = persist_result(
         {
@@ -117,16 +114,10 @@ module Inferno
     end
 
     def check_inputs(test, test_instance, inputs)
-      result = ''
       inputs.each do |key, value|
-        optional = test.config.input_optional(key)
-        next unless value.nil? && optional
-
-        result = 'skip'
-        test_instance.result_message = format_markdown("Input '#{key}' is nil, skipping test.")
-        break
+        optional = test.config.input_optional?(key)
+        raise Exceptions::SkipException, "Input '#{test.config.input_name(key)}' is nil, skipping test." if value.nil? && optional
       end
-      result
     end
 
     def run_group(group, scratch)

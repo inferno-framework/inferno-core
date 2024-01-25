@@ -178,7 +178,7 @@ module Inferno
         end
 
         # @private
-        def input_optional(identifier)
+        def input_optional?(identifier)
           inputs[identifier]&.optional
         end
 
