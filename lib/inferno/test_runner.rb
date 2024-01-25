@@ -72,6 +72,7 @@ module Inferno
 
       result = begin
         raise Exceptions::CancelException, 'Test cancelled by user' if test_run_is_cancelling
+
         check_inputs(test, test_instance, inputs)
 
         test_instance.load_named_requests
@@ -86,12 +87,12 @@ module Inferno
         'error'
       end
 
-        outputs = save_outputs(test_instance)
-        output_json_string = JSON.generate(outputs)
+      outputs = save_outputs(test_instance)
+      output_json_string = JSON.generate(outputs)
 
-        if result == 'wait'
-          test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
-        end
+      if result == 'wait'
+        test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
+      end
 
       test_result = persist_result(
         {
@@ -113,10 +114,13 @@ module Inferno
       test_result
     end
 
-    def check_inputs(test, test_instance, inputs)
+    def check_inputs(test, _test_instance, inputs)
       inputs.each do |key, value|
         optional = test.config.input_optional?(key)
-        raise Exceptions::SkipException, "Input '#{test.config.input_name(key)}' is nil, skipping test." if value.nil? && optional
+        if value.nil? && optional
+          raise Exceptions::SkipException,
+                "Input '#{test.config.input_name(key)}' is nil, skipping test."
+        end
       end
     end
 
