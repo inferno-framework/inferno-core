@@ -106,6 +106,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           sv: '4.0.1',
           doNative: false,
           extensions: ['any'],
+          igs: [],
           profiles: [profile_url]
         },
         filesToValidate: [
@@ -246,6 +247,18 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       expect(v4.validate(resource, profile_url)).to eq('{}')
       # if the request body doesn't match the stub,
       # validate will throw an exception
+    end
+
+    it 'finds the IGs in the configured default IG path' do
+      ENV['IGS_PATH'] = ''
+      igs = Inferno::DSL::FHIRResourceValidation::CliContext.default_igs
+      expect(igs).to eq([])
+
+      ENV['IGS_PATH'] = './spec/fixtures'
+      igs = Inferno::DSL::FHIRResourceValidation::CliContext.default_igs
+      expect(igs).to eq(['./igs/small_package.tgz'])
+    ensure
+      ENV['IGS_PATH'] = ''
     end
   end
 

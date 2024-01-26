@@ -297,10 +297,20 @@ module Inferno
       class CliContext
         attr_reader :definition
 
+        # @private
+        def self.default_igs
+          igs_path = ENV['IGS_PATH']
+          return [] unless igs_path && File.directory?(igs_path)
+
+          # Docker volume maps IGS_PATH to './igs' in the container, so realign the paths for any files
+          Dir["#{igs_path}/*.tgz"].select { |f| File.file?(f) }.map { |f| f.sub(igs_path, './igs') }
+        end
+
         CLICONTEXT_DEFAULTS = {
           sv: '4.0.1',
           doNative: false,
-          extensions: ['any']
+          extensions: ['any'],
+          igs: CliContext.default_igs
         }.freeze
 
         # @private

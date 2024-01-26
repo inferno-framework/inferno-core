@@ -2,9 +2,9 @@ version: '3'
 services:
   validator_service:
     image: infernocommunity/fhir-validator-service
-    # Update this path to match your directory structure
+    # Update the IGS_PATH env var to match your directory structure
     volumes:
-      - ./igs:/home/igs
+      - ${IGS_PATH:-./igs}:/home/igs
   fhir_validator_app:
     image: infernocommunity/fhir-validator-app
     depends_on:
@@ -37,9 +37,9 @@ services:
   #   # build:
   #   #   context: .
   #   #   dockerfile: Dockerfile.fhir_resource_validator
-  #   # Update this path to match your directory structure
   #   volumes:
-  #     - ./igs:/home/igs
+  #     # Update the IGS_PATH env var to match your directory structure
+  #     - ${IGS_PATH:-./igs}:/app/igs
   #     # To let the service share your local FHIR package cache,
   #     # uncomment the below line
   #     # - ~/.fhir:/home/ktor/.fhir
