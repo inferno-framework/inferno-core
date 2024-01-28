@@ -48,7 +48,6 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     validator do
-      url ENV.fetch('VALIDATOR_URL')
       exclude_message { |message| message.type == 'info' }
     end
 

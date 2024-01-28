@@ -43,7 +43,7 @@ module Inferno
         # Set the url of the validator service
         #
         # @param validator_url [String]
-        def url(validator_url = nil)
+        def url(validator_url = default_validator_url)
           @url = validator_url if validator_url
 
           @url
