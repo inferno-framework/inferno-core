@@ -54,9 +54,9 @@ module Inferno
 
       register(New, 'new', 'new TEST_KIT_NAME', 'Run `inferno new --help` for full help')
 
-      desc 'version', "Output Inferno version (#{Inferno::VERSION})"
+      desc 'version', "Output Inferno core version (#{Inferno::VERSION})"
       def version
-        puts Inferno::VERSION
+        puts "Inferno Core v#{Inferno::VERSION}"
       end
     end
   end
