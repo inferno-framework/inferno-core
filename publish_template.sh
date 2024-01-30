@@ -11,7 +11,7 @@ set -x
 
 REPO_URL=${1:-git@github.com:inferno-framework/inferno-template.git}
 VERSION=$(bundle exec ./bin/inferno version)
-BRANCH=$(echo "Update $VERSION" | tr ' ' '-')
+BRANCH=$(echo "Update $VERSION" | tr ' [:upper:]' '-[:lower:]')
 
 cd ./tmp
 git clone $REPO_URL ./inferno-template
@@ -27,5 +27,5 @@ git -C ./inferno-template commit --message "Update to $VERSION"
 git -C ./inferno-template push --set-upstream origin $BRANCH
 cd ..
 
-rm -rf ./tmp/inferno-template
+mv ./tmp/inferno-template "./tmp/inferno-template-$BRANCH"
 echo "Pushed to branch $BRANCH, please put up a pull request and merge to main."
