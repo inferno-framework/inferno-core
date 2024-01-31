@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import { Box } from '@mui/material';
 import lightTheme from '~/styles/theme';
-// import { AppBar, Box, Skeleton, Toolbar } from '@mui/material';
 import { useAppStore } from '~/store/app';
 import useStyles from '~/components/TestSuite/styles';
 import DrawerSkeleton from '~/components/Skeletons/DrawerSkeleton';

@@ -14,6 +14,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { TestGroup } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface NestedDescriptionPanelProps {
   testGroup: TestGroup;
@@ -56,7 +57,10 @@ const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) 
           title={descriptionMouseHover ? '' : `${testGroup.id}-description-detail`}
           className={classes.accordionDetailContainer}
         >
-          <ReactMarkdown className={`${classes.accordionDetail} ${classes.nestedDescription}`}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            className={`${classes.accordionDetail} ${classes.nestedDescription}`}
+          >
             {testGroup.description as string}
           </ReactMarkdown>
         </AccordionDetails>
