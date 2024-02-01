@@ -5,6 +5,7 @@ import { Message, TestSuite } from '~/models/testSuiteModels';
 import CustomTab from '~/components/_common/CustomTab';
 import TabPanel from '../TestSuiteDetails/TestListItem/TabPanel';
 import useStyles from './styles';
+import remarkGfm from 'remark-gfm';
 
 interface ConfigDetailsPanelProps {
   testSuite: TestSuite;
@@ -24,7 +25,7 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
       {messages.length > 0 ? (
         messages.map((message, index) => (
           <Card key={index} variant="outlined" sx={{ px: 2, my: 2, overflow: 'auto' }}>
-            <ReactMarkdown>{message.message}</ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.message}</ReactMarkdown>
           </Card>
         ))
       ) : (

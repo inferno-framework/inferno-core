@@ -3,6 +3,7 @@ import useStyles from './styles';
 import { Table, TableBody, TableRow, TableCell, Typography, TableHead, Box } from '@mui/material';
 import { TestInput, TestOutput } from '~/models/testSuiteModels';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface InputOutputListProps {
   inputOutputs: TestInput[] | TestOutput[];
@@ -43,7 +44,7 @@ const InputOutputList: FC<InputOutputListProps> = ({
             </Typography>
           </TableCell>
           <TableCell className={classes.inputOutputsValue}>
-            <ReactMarkdown className={classes.wordWrap}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]} className={classes.wordWrap}>
               {(inputOutputs?.value as string) || ''}
             </ReactMarkdown>
           </TableCell>

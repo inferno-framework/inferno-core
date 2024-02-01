@@ -27,6 +27,7 @@ import type { TabProps } from './TestRunDetail';
 import { MessageCounts, countMessageTypes } from './helper';
 import CustomTooltip from '~/components/_common/CustomTooltip';
 import useStyles from './styles';
+import remarkGfm from 'remark-gfm';
 
 interface TestListItemProps {
   test: Test;
@@ -84,7 +85,7 @@ const TestListItem: FC<TestListItemProps> = ({
       primary={testLabel}
       secondary={
         test.result?.result_message && (
-          <ReactMarkdown className={classes.resultMessageMarkdown}>
+          <ReactMarkdown remarkPlugins={[remarkGfm]} className={classes.resultMessageMarkdown}>
             {test.result.result_message}
           </ReactMarkdown>
         )

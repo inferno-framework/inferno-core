@@ -27,6 +27,7 @@ import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import CustomTooltip from '../_common/CustomTooltip';
 import useStyles from './styles';
+import remarkGfm from 'remark-gfm';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -327,7 +328,7 @@ const InputsModal: FC<InputsModalProps> = ({
       <DialogContent>
         <main>
           <DialogContentText component="div" style={{ wordBreak: 'break-word' }}>
-            <ReactMarkdown>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {instructions +
                 (inputType === 'Field'
                   ? ''
