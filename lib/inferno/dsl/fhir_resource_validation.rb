@@ -45,7 +45,7 @@ module Inferno
         # @param validator_url [String]
         def url(validator_url = nil)
           @url = validator_url if validator_url
-
+          @url ||= default_validator_url
           @url
         end
 
