@@ -46,6 +46,11 @@ module Inferno
                    aliases: '-b',
                    default: false,
                    desc: 'Do not run bundle install'
+      class_option :implementation_guide,
+                   type: :string,
+                   aliases: '-i',
+                   repeatable: true,
+                   desc: 'Load an Implementation Guide by FHIR Registry name, URL, or absolute path'
 
       add_runtime_options!
 
@@ -54,6 +59,7 @@ module Inferno
 
         bundle_install
         inferno_migrate
+        load_ig
 
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
 
@@ -92,6 +98,24 @@ module Inferno
 
         inside(root_name) do
           run 'bundle exec inferno migrate', verbose: !options['quiet'], capture: options['quiet']
+        end
+      end
+
+      def load_igs
+        FHIR_PACKAGE_NAME = /^[a-z][\h-]*\.([a-z][\h-]*\.?)*$/
+        URI = /(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/
+        FHIR_ORG_URI = /^build.fhir.org\/?/
+        # TODO
+
+        options['implementation-guide'].each do |ig|
+          case ig
+          when URI
+          when
+          when
+          else
+            say_unless_quiet "Could not find implementation guide: #{ig}", :red
+            say_unless_quiet "Put its package.tgz file directly in #{ig_path}/", :red
+          end
         end
       end
 
