@@ -75,6 +75,10 @@ module Inferno
         File.join('lib', library_name, 'igs')
       end
 
+      def ig_file(suffix = nil)
+        File.join(ig_path, suffix ? "package_#{suffix}.tgz" : 'package.tgz')
+      end
+
       def authors
         options['author'].presence || [default_author]
       end
@@ -102,16 +106,26 @@ module Inferno
       end
 
       def load_igs
-        FHIR_PACKAGE_NAME = /^[a-z][\h-]*\.([a-z][\h-]*\.?)*$/
-        URI = /(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/
-        FHIR_ORG_URI = /^build.fhir.org\/?/
-        # TODO
+        FHIR_PACKAGE_NAME = /^[a-z][\h-]*\.([a-z][\h-]*\.?)*/
+        HTTP_FHIR_ORG_URI = %r(^https?://build\.fhir\.org(/?[^?#]*))
+        HTTP_URI = %r(^https?:(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)
+        FILE_URI = %r(^file://(.+))
 
-        options['implementation-guide'].each do |ig|
+        options['implementation-guide'].each_with_index do |ig, idx|
           case ig
-          when URI
-          when
-          when
+          when FHIR_PACKAGE_NAME
+            `npm --registry https://packages.simplifier.net install #{ig}`
+            # TODO replace NPM with HTTP call, only grab tarball, and better error handling
+          when HTTP_FHIR_ORG_URI
+            unless ig.end_with? 'package.tgz'
+              ig += 'package.tgz' if ig.end_with? '/'
+              ig.gsub!(%r(/.+\.html), '/package.tgz') if ig.end_with? %r(/.+\.html)
+            end
+            get(ig, ig_file(idx))
+          when HTTP_URI, FILE_URI
+            get(ig, ig_file(idx))
+          # when FILE_URI
+          #   get(ig, ig_file(idx))
           else
             say_unless_quiet "Could not find implementation guide: #{ig}", :red
             say_unless_quiet "Put its package.tgz file directly in #{ig_path}/", :red
