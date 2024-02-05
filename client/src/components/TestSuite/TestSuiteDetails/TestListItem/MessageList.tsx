@@ -6,6 +6,7 @@ import ReactMarkdown from 'react-markdown';
 
 import MessageType from './MessageType';
 import { sortByMessageType } from './helper';
+import remarkGfm from 'remark-gfm';
 
 interface MessageListProps {
   messages: Message[];
@@ -34,7 +35,7 @@ const MessageList: FC<MessageListProps> = ({ messages }) => {
           <MessageType type={message.type} />
         </TableCell>
         <TableCell className={classes.messageMessage}>
-          <ReactMarkdown>{message.message}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.message}</ReactMarkdown>
         </TableCell>
       </TableRow>
     );

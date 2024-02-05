@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import React, { FC } from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export interface ActionModalProps {
   modalVisible: boolean;
@@ -21,7 +22,7 @@ const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTestRu
       <DialogTitle>User Action Required</DialogTitle>
       <DialogContent>
         <DialogContentText component="div">
-          <ReactMarkdown>{message || ''}</ReactMarkdown>
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{message || ''}</ReactMarkdown>
         </DialogContentText>
       </DialogContent>
       <DialogActions>
