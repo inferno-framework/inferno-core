@@ -117,7 +117,7 @@ module Inferno
     def check_inputs(test, _test_instance, inputs)
       inputs.each do |key, value|
         optional = test.config.input_optional?(key)
-        if value.nil? && optional
+        if value.nil? && !optional
           raise Exceptions::SkipException,
                 "Input '#{test.config.input_name(key)}' is nil, skipping test."
         end
