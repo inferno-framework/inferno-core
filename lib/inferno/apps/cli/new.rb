@@ -106,8 +106,9 @@ module Inferno
       end
 
       def load_igs
-        FHIR_PACKAGE_NAME = /^[a-z][\h-]*\.([a-z][\h-]*\.?)*/
+        FHIR_PACKAGE_NAME = /^[a-z][a-zA-Z0-9-]*\.([a-z][a-zA-Z0-9-]*\.?)*/
         HTTP_FHIR_ORG_URI = %r(^https?://build\.fhir\.org(/?[^?#]*))
+        # TODO: add support for https://hl7.org IGs
         HTTP_URI = %r(^https?:(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)
         FILE_URI = %r(^file://(.+))
 
