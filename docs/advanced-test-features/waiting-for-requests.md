@@ -38,11 +38,15 @@ docs](/inferno-core/docs/Inferno/DSL/Results.html#wait-instance_method)
 ### Handling the Incoming Request
 The route to make a test resume execution is created with
 [`resume_test_route`](/inferno-core/docs/Inferno/DSL/Runnable.html#resume_test_route-instance_method),
-which takes three arguments:
+which takes five arguments:
 * `method` - A symbol for the HTTP verb for the incoming request (`:get`,
   `:post`, etc.)
 * `path` - A string for the route path. The route will be served at
   `INFERNO_BASE/custom/SUITE_ID/CUSTOM_ROUTE_PATH`.
+* `tags` - An array of strings with which the incoming request will be tagged.
+* `result` - A string for the result of the test. Must be one of `'pass'`,
+  `'fail'`, `'skip'`, `'omit'`, or `'cancel'`
+  (see [Results](/inferno-core/writing-tests/assertions-and-results.html#results)). The default is `'pass'`.
 * A block which extracts `identifier` from the incoming request and returns it.
   In this block, `request` can be used to access a [`Request`
   object](/inferno-core/docs/Inferno/Entities/Request.html) which contains the

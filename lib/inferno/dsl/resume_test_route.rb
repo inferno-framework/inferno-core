@@ -29,6 +29,11 @@ module Inferno
       end
 
       # @private
+      def result
+        self.class.singleton_class.instance_variable_get(:@result)
+      end
+
+      # @private
       def find_test_run(test_run_identifier)
         test_runs_repo.find_latest_waiting_by_identifier(test_run_identifier)
       end
@@ -40,7 +45,18 @@ module Inferno
 
       # @private
       def update_result(waiting_result)
-        results_repo.pass_waiting_result(waiting_result.id)
+        case result
+        when 'fail'
+          results_repo.fail_waiting_result(waiting_result.id)
+        when 'skip'
+          results_repo.skip_waiting_result(waiting_result.id)
+        when 'omit'
+          results_repo.omit_waiting_result(waiting_result.id)
+        when 'cancel'
+          results_repo.cancel_waiting_result(waiting_result.id)
+        else
+          results_repo.pass_waiting_result(waiting_result.id)
+        end
       end
 
       # @private
