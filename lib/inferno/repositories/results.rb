@@ -136,24 +136,8 @@ module Inferno
           end
       end
 
-      def pass_waiting_result(result_id, message = nil)
-        update(result_id, result: 'pass', result_message: message)
-      end
-
-      def fail_waiting_result(result_id, message = nil)
-        update(result_id, result: 'fail', result_message: message)
-      end
-
-      def skip_waiting_result(result_id, message = nil)
-        update(result_id, result: 'skip', result_message: message)
-      end
-
-      def omit_waiting_result(result_id, message = nil)
-        update(result_id, result: 'omit', result_message: message)
-      end
-
-      def cancel_waiting_result(result_id, message = nil)
-        update(result_id, result: 'cancel', result_message: message)
+      def update_result(result_id, result, result_message = nil)
+        update(result_id, result:, result_message:)
       end
 
       def json_serializer_options

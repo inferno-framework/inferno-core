@@ -21,7 +21,7 @@ module Inferno
 
             if test_run_is_waiting
               waiting_result = results_repo.find_waiting_result(test_run_id: test_run.id)
-              results_repo.cancel_waiting_result(waiting_result.id, 'Test cancelled by user')
+              results_repo.update_result(waiting_result.id, 'cancel', 'Test cancelled by user')
               Jobs.perform(Jobs::ResumeTestRun, test_run.id)
             end
 

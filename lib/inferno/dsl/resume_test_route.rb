@@ -45,18 +45,7 @@ module Inferno
 
       # @private
       def update_result(waiting_result)
-        case result
-        when 'fail'
-          results_repo.fail_waiting_result(waiting_result.id)
-        when 'skip'
-          results_repo.skip_waiting_result(waiting_result.id)
-        when 'omit'
-          results_repo.omit_waiting_result(waiting_result.id)
-        when 'cancel'
-          results_repo.cancel_waiting_result(waiting_result.id)
-        else
-          results_repo.pass_waiting_result(waiting_result.id)
-        end
+        results_repo.update_result(waiting_result.id, result)
       end
 
       # @private
