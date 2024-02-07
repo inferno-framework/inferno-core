@@ -2,7 +2,6 @@ import React, { FC } from 'react';
 import {
   Box,
   Button,
-  IconButton,
   Typography,
   TableRow,
   TableCell,
@@ -11,13 +10,14 @@ import {
   TableBody,
   TableHead,
 } from '@mui/material';
-import { ContentCopy, Input, SaveAlt } from '@mui/icons-material';
+import { Input, SaveAlt } from '@mui/icons-material';
 import { Request } from '~/models/testSuiteModels';
 import { getRequestDetails } from '~/api/RequestsApi';
 import RequestDetailModal from '~/components/RequestDetailModal/RequestDetailModal';
 import CustomTooltip from '~/components/_common/CustomTooltip';
 import { useSnackbar } from 'notistack';
 import useStyles from './styles';
+import CopyButton from '~/components/_common/CopyButton';
 
 interface RequestListProps {
   resultId: string;
@@ -30,7 +30,6 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
   const [showDetails, setShowDetails] = React.useState(false);
-  const [copySuccess, setCopySuccess] = React.useState({});
   const [detailedRequest, setDetailedRequest] = React.useState<Request>();
   const headerTitles = ['Type', 'URL', 'Status'];
 
@@ -53,16 +52,6 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
       setDetailedRequest(request);
       setShowDetails(true);
     }
-  };
-
-  const copyTextClick = async (text: string) => {
-    await navigator.clipboard.writeText(text).then(() => {
-      setCopySuccess({ ...copySuccess, [text]: true });
-      setTimeout(() => {
-        // Reset map instead of setting false to avoid async bug
-        setCopySuccess({});
-      }, 2000); // 2 second delay
-    });
   };
 
   const renderReferenceIcon = (request: Request) => {
@@ -109,7 +98,7 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
         role="none"
         aria-hidden="true"
         aria-label="header-request-direction"
-      ></TableCell>
+      />
       {view === 'run' && (
         <TableCell
           key={'Details'}
@@ -155,29 +144,7 @@ const RequestList: FC<RequestListProps> = ({ requests, resultId, updateRequest, 
                 {request.url}
               </Typography>
             </CustomTooltip>
-            <CustomTooltip
-              title={
-                copySuccess[request.url as keyof typeof copySuccess] ? 'Text copied!' : 'Copy text'
-              }
-              sx={
-                view === 'report'
-                  ? {
-                      display: 'none',
-                      '@media print': {
-                        display: 'none',
-                      },
-                    }
-                  : {}
-              }
-            >
-              <IconButton
-                size="small"
-                color="secondary"
-                onClick={() => void copyTextClick(request.url)}
-              >
-                <ContentCopy fontSize="inherit" />
-              </IconButton>
-            </CustomTooltip>
+            <CopyButton copyText={request.url} size="small" view={view} />
           </Box>
         </TableCell>
         <TableCell>
