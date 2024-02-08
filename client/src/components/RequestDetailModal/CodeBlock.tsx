@@ -11,7 +11,7 @@ export interface CodeBlockProps {
   body?: string | null;
   collapsedState?: boolean;
   headers?: RequestHeader[] | null | undefined;
-  title: string;
+  title?: string;
 }
 
 const CodeBlock: FC<CodeBlockProps> = ({ body, collapsedState = false, headers, title }) => {
@@ -22,7 +22,7 @@ const CodeBlock: FC<CodeBlockProps> = ({ body, collapsedState = false, headers, 
     return (
       <Card variant="outlined" className={classes.codeblock} data-testid="code-block">
         <CardHeader
-          subheader={title}
+          subheader={title || 'Code'}
           action={
             <Box display="flex">
               <CopyButton copyText={formatBodyIfJSON(body, headers)} size="small" />
