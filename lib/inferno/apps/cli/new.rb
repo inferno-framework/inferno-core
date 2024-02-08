@@ -59,7 +59,7 @@ module Inferno
 
         bundle_install
         inferno_migrate
-        load_ig
+        load_igs
 
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
 
@@ -110,12 +110,12 @@ module Inferno
       FILE_URI = %r(^file://(.+))
 
       def load_igs
-        options['implementation-guide'].each_with_index do |ig, idx|
+        options['implementation_guide'].each_with_index do |ig, idx|
           case ig
           when FHIR_PACKAGE_NAME
             if ig.rindex('@')
               ig = ig.split('@').join('/')
-              get(ig, ig_file(idx))
+              get(File.join('https://packages.fhir.org/packages', ig), ig_file(idx))
             else
               say_unless_quiet 'No IG version specified; i.e: hl7.fhir.us.core@7.0.0-ballot', :red
             end
