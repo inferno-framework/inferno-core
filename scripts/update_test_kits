@@ -1,6 +1,4 @@
-# NOTE: DO NOT RUN THIS SCRIPT WITH `bundle exec`. The `bundle update` command
-# will not work if this script is run using `bundle exec`. Instead of updating
-# the test kits dependencies, it will update inferno core's dependencies.
+#!/usr/bin/env ruby
 
 # This script updates the ruby dependencies in all of the test kits in the
 # inferno-framework github organization. For each repository ending in
@@ -11,9 +9,16 @@
 # * Push the branch to github if there have been any changes
 # * Create a PR if a github API key has been provided
 
+if ENV['BUNDLE_GEMFILE']
+  puts "You must run this script without 'bundle exec'."
+  return
+end
+
 require 'pry'
 require 'faraday'
 require 'json'
+
+binding.pry
 
 access_token = ENV['GITHUB_ACCESS_TOKEN']
 
