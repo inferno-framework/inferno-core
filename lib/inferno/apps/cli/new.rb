@@ -104,27 +104,39 @@ module Inferno
       end
 
       FHIR_PACKAGE_NAME = /^[a-z][a-zA-Z0-9-]*\.([a-z][a-zA-Z0-9-]*\.?)*/
-      HTTP_URI = %r(^https?:(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?)
-      FILE_URI = %r(^file://(.+))
+      HTTP_URI = %r{^https?:(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?}
+      FILE_URI = %r{^file://(.+)}
+      HTML_SUFFIX = %r{[^/]*\.x?html?}
+
+      def ig_registry_url(package_name, version)
+        package_name.gsub!(%r{\/}, '')
+        version.gsub!(%r{\/}, '')
+        "https://packages.simplifier.net/#{package_name}/-/#{package_name}-#{version}.tgz"
+      end
+
+      def get_ig(ig_url, idx = nil)
+        say_unless_quiet "Downloading IG from #{ig_url}"
+        get(ig_url, ig_file(idx))
+      end
 
       def load_igs
         options['implementation_guide']&.each_with_index do |ig, idx|
           case ig
           when FHIR_PACKAGE_NAME
             if ig.rindex('@')
-              ig = ig.split('@').join('/')
-              get(File.join('https://packages.fhir.org/packages', ig), ig_file(idx))
+              ig_name, ig_version = *ig.split('@')
+              get_ig(ig_registry_url(ig_name, ig_version), idx)
             else
-              say_unless_quiet 'No IG version specified; i.e: hl7.fhir.us.core@7.0.0-ballot', :red
+              say_unless_quiet "No IG version specified for #{ig}, you must specify one with '@'. I.e: hl7.fhir.us.core@7.0.0-ballot", :red
             end
           when HTTP_URI
             unless ig.end_with? 'package.tgz'
               ig += 'package.tgz' if ig.end_with? '/'
-              ig.gsub!(%r(/.+\.html), '/package.tgz') if ig.end_with? %r(/.+\.html)
+              ig = ig.gsub(HTML_SUFFIX, 'package.tgz') if ig.match? HTML_SUFFIX
             end
-            get(ig, ig_file(idx))
+            get_ig(ig, idx)
           when FILE_URI
-            get(ig, ig_file(idx))
+            get_ig(ig, idx)
           else
             say_unless_quiet "Could not find implementation guide: #{ig}", :red
             say_unless_quiet "Put its package.tgz file directly in #{ig_path}/", :red
