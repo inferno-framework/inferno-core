@@ -52,7 +52,11 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     config options: {
-      wait_test_url: "#{Inferno::Application['base_url']}/custom/demo/resume"
+      wait_test_url: "#{Inferno::Application['base_url']}/custom/demo/resume",
+      wait_test_fail_url: "#{Inferno::Application['base_url']}/custom/demo/resume_fail",
+      wait_test_skip_url: "#{Inferno::Application['base_url']}/custom/demo/resume_skip",
+      wait_test_omit_url: "#{Inferno::Application['base_url']}/custom/demo/resume_omit",
+      wait_test_cancel_url: "#{Inferno::Application['base_url']}/custom/demo/resume_cancel"
     }
 
     group do
@@ -124,6 +128,22 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         request.query_parameters['xyz']
       end
 
+      resume_test_route :get, '/resume_fail', result: 'fail' do |request|
+        request.query_parameters['xyz']
+      end
+
+      resume_test_route :get, '/resume_skip', result: 'skip' do |request|
+        request.query_parameters['xyz']
+      end
+
+      resume_test_route :get, '/resume_omit', result: 'omit' do |request|
+        request.query_parameters['xyz']
+      end
+
+      resume_test_route :get, '/resume_cancel', result: 'cancel' do |request|
+        request.query_parameters['xyz']
+      end
+
       test do
         title 'Pass test'
         run { pass }
@@ -137,8 +157,27 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
           wait(
             identifier: 'abc',
             message: %(
-              [Follow this link to proceed](#{config.options[:wait_test_url]}?xyz=abc).
-              Waiting to receive a request at ```#{config.options[:wait_test_url]}?xyz=abc```.
+              [Follow this link to pass the test and proceed](#{config.options[:wait_test_url]}?xyz=abc).
+
+              [Follow this link to fail the test and proceed](#{config.options[:wait_test_fail_url]}?xyz=abc).
+
+              [Follow this link to skip the test and proceed](#{config.options[:wait_test_skip_url]}?xyz=abc).
+
+              [Follow this link to omit the test and proceed](#{config.options[:wait_test_omit_url]}?xyz=abc).
+
+              [Follow this link to cancel the test and proceed](#{config.options[:wait_test_cancel_url]}?xyz=abc).
+
+              Waiting to receive a request at one of:
+
+              ```#{config.options[:wait_test_url]}?xyz=abc```,
+
+              ```#{config.options[:wait_test_fail_url]}?xyz=abc```,
+
+              ```#{config.options[:wait_test_skip_url]}?xyz=abc```,
+
+              ```#{config.options[:wait_test_omit_url]}?xyz=abc```,
+
+              ```#{config.options[:wait_test_cancel_url]}?xyz=abc```.
             )
           )
         end
