@@ -57,9 +57,11 @@ module Inferno
       def create_app
         directory('.', root_name, { mode: :preserve, recursive: true, verbose: !options['quiet'] })
 
-        bundle_install
-        inferno_migrate
-        load_igs
+        inside(root_name) do
+          bundle_install
+          inferno_migrate
+          load_igs
+        end
 
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
 
@@ -90,19 +92,15 @@ module Inferno
       def bundle_install
         return if options['skip_bundle']
 
-        inside(root_name) do
-          Bundler.with_unbundled_env do
-            run 'bundle install', verbose: !options['quiet'], capture: options['quiet']
-          end
+        Bundler.with_unbundled_env do
+          run 'bundle install', verbose: !options['quiet'], capture: options['quiet']
         end
       end
 
       def inferno_migrate
         return if options['skip_bundle']
 
-        inside(root_name) do
-          run 'bundle exec inferno migrate', verbose: !options['quiet'], capture: options['quiet']
-        end
+        run 'bundle exec inferno migrate', verbose: !options['quiet'], capture: options['quiet']
       end
 
       FHIR_PACKAGE_NAME = /^[a-z][a-zA-Z0-9-]*\.([a-z][a-zA-Z0-9-]*\.?)*/
@@ -110,7 +108,7 @@ module Inferno
       FILE_URI = %r(^file://(.+))
 
       def load_igs
-        options['implementation_guide'].each_with_index do |ig, idx|
+        options['implementation_guide']&.each_with_index do |ig, idx|
           case ig
           when FHIR_PACKAGE_NAME
             if ig.rindex('@')
