@@ -1,3 +1,21 @@
+# 0.4.28
+* FI-2266: inferno new generator by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/408
+* FI-2222: no tests hang fix by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/425
+* FI-2318 Allow for form data at session create endpoint by @360dgries in https://github.com/inferno-framework/inferno-core/pull/429
+* Fi 2413 optional groups prioritize pass by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/431
+* Bump vite from 3.2.7 to 3.2.8 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/436
+* Bump follow-redirects from 1.15.2 to 1.15.5 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/435
+* Fix typo in getting-started.md by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/438
+* FI-2405: Create skeleton loader for main app by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/440
+* Fi 2116 inferno version cli by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/441
+* Inferno Version RSpec Patch by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/444
+* FI-2202: Add reactgfm to ReactMarkdown components by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/421
+* fi-2237 setting default validator url by @rpassas in https://github.com/inferno-framework/inferno-core/pull/443
+* FI-2434: Remove results from last test run query by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/434
+* FI-2463 large request fix by @arscan in https://github.com/inferno-framework/inferno-core/pull/445
+* FI-2468: Enable different test results in resume_test_route by @tstrass in https://github.com/inferno-framework/inferno-core/pull/446
+* FI-2450: Change "2015 Edition Cures Update" to "ONC Certification Update" by @bmath10 in https://github.com/inferno-framework/inferno-core/pull/447
+
 # 0.4.27
 * FI-2395: Data rights legend by @bmath10 in https://github.com/inferno-framework/inferno-core/pull/424
 * fi-2341 Update docs site to point to preview of new docs site. by @arscan in https://github.com/inferno-framework/inferno-core/pull/430
