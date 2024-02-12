@@ -7,7 +7,13 @@ RSpec::Matchers.define :case_match do |expected|
   end
 end
 
-PACKAGE_FIXTURE = File.expand_path('../../../fixtures/small_package.tgz', __dir__)
+RSpec::Matchers.define :be_same_file_as do |expected|
+  match do |actual|
+    expected.rewind.read == actual.rewind.read
+  end
+end
+
+PACKAGE_FIXTURE = File.expand_path('../../fixtures/small_package.tgz', __dir__)
 
 RSpec.describe Inferno::Utils::IgDownloader do
   let(:dummy_class) do
@@ -23,6 +29,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
     dummy_instance.library_name = 'udap'
     dummy_instance
   end
+  let(:package_fixture) { File.new(PACKAGE_FIXTURE, 'r') }
 
   it 'builds correct path to IGs' do
     expect(dummy.ig_path).to eq('lib/udap/igs')
@@ -38,13 +45,21 @@ RSpec.describe Inferno::Utils::IgDownloader do
 
   context 'with IG by canonical name' do
     let(:canonical) { 'hl7.fhir.us.udap-security@1.0.0' }
+    let(:resolved_url) do
+      'https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz'
+    end
+    let(:tempfile) { Tempfile.new('rspec-ig-downloader-canonical', File.join(Inferno::Application.root,'tmp')) }
+
+    before do
+      stub_request(:get, 'https://packages.simplifier.net').to_return(body: package_fixture)
+    end
 
     it 'matches fhir package name regex' do
       expect(canonical).to case_match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME)
     end
 
     it 'returns correct registry url' do
-      expect(dummy.ig_registry_url(canonical)).to eq('https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz')
+      expect(dummy.ig_registry_url(canonical)).to eq(resolved_url)
     end
 
     it 'raises exception if missing version' do
@@ -52,7 +67,9 @@ RSpec.describe Inferno::Utils::IgDownloader do
     end
 
     it 'downloads IG' do
-      # TODO
+      allow(dummy).to receive(:ig_file).and_return(tempfile.path)
+      dummy.load_ig(canonical)
+      expect { tempfile }.to be_same_file_as( package_fixture )
     end
   end
 
@@ -63,6 +80,11 @@ RSpec.describe Inferno::Utils::IgDownloader do
     http://build.fhir.org/ig/HL7/fhir-udap-security-ig/
   ].each do |url|
     context "with IG by http URL #{url}" do
+      let(:tempfile) { Tempfile.new('rspec-ig-downloader-http', File.join(Inferno::Application.root,'tmp')) }
+
+#      before do
+#      end
+
       it 'matches http uri regex' do
         expect(url).to case_match(Inferno::Utils::IgDownloader::HTTP_URI)
       end
@@ -74,22 +96,36 @@ RSpec.describe Inferno::Utils::IgDownloader do
       it 'normalizes to a package.tgz url' do
         expect(dummy.ig_http_url(url)).to match(%r{https?://build.fhir.org/ig/HL7/fhir-udap-security-ig/package.tgz})
       end
+
+      it 'downloads IG' do
+        stub_request(:get, %r{https?://build.fhir.org}).to_return(body: package_fixture)
+        allow(dummy).to receive(:ig_file).and_return(tempfile.path)
+        dummy.load_ig(url)
+        expect { tempfile }.to be_same_file_as( package_fixture )
+      end
     end
   end
 
   context 'with IG by absolute file path' do
-    let(:path) { "file://#{PACKAGE_FIXTURE}" }
+    let(:absolute_path) { "file://#{PACKAGE_FIXTURE}" }
+    let(:tempfile) { Tempfile.new('rspec-ig-downloader-file', File.join(Inferno::Application.root,'tmp')) }
 
     it 'matches file regex' do
-      expect(path).to case_match(Inferno::Utils::IgDownloader::FILE_URI)
+      expect(absolute_path).to case_match(Inferno::Utils::IgDownloader::FILE_URI)
     end
 
     it 'does not match http uri regex' do
-      expect(path).to_not case_match(Inferno::Utils::IgDownloader::HTTP_URI)
+      expect(absolute_path).to_not case_match(Inferno::Utils::IgDownloader::HTTP_URI)
     end
 
     it 'does not match fhir package name regex' do
-      expect(path).to_not case_match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME)
+      expect(absolute_path).to_not case_match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME)
+    end
+
+    it 'downloads IG' do
+      allow(dummy).to receive(:ig_file).and_return(tempfile.path)
+      dummy.load_ig(absolute_path)
+      expect { tempfile }.to be_same_file_as( package_fixture )
     end
   end
 
