@@ -97,10 +97,10 @@ module Inferno
 
       def load_igs
         options['implementation_guide']&.each_with_index do |ig, idx|
-          begin
+          begin # rubocop:disable Style/RedundantBegin
             load_ig(ig, idx)
-          rescue Inferno::Utils::IgDownloader::Error => error
-            say_unless_quiet error.message, :red
+          rescue Inferno::Utils::IgDownloader::Error => e
+            say_unless_quiet e.message, :red
           end
         end
       end
