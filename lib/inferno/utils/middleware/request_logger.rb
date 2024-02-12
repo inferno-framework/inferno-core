@@ -55,7 +55,14 @@ module Inferno
           path = env['REQUEST_URI']
           query = env['rack.request.query_string']
           body = env['rack.input']
-          body = body.instance_of?(Puma::NullIO) ? nil : body.string
+          body =
+            if body.instance_of? Puma::NullIO
+              nil
+            else
+              contents = body.read
+              body.rewind
+              contents
+            end
           query_string = query.blank? ? '' : "?#{query}"
 
           logger.info("#{method} #{scheme}://#{host}#{path}#{query_string}")

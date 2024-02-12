@@ -75,6 +75,38 @@ RSpec.describe Inferno::DSL::Runnable do
 
         expect(updated_run.identifier).to be_nil
       end
+
+      it 'results in a fail when fail result is specified' do
+        get '/custom/demo/resume_fail?xyz=IDENTIFIER'
+
+        updated_result = Inferno::Repositories::Results.new.find(result.id)
+
+        expect(updated_result.result).to eq('fail')
+      end
+
+      it 'results in a skip when skip result is specified' do
+        get '/custom/demo/resume_skip?xyz=IDENTIFIER'
+
+        updated_result = Inferno::Repositories::Results.new.find(result.id)
+
+        expect(updated_result.result).to eq('skip')
+      end
+
+      it 'results in an omit when omit result is specified' do
+        get '/custom/demo/resume_omit?xyz=IDENTIFIER'
+
+        updated_result = Inferno::Repositories::Results.new.find(result.id)
+
+        expect(updated_result.result).to eq('omit')
+      end
+
+      it 'results in a cancel when cancel result is specified' do
+        get '/custom/demo/resume_cancel?xyz=IDENTIFIER'
+
+        updated_result = Inferno::Repositories::Results.new.find(result.id)
+
+        expect(updated_result.result).to eq('cancel')
+      end
     end
   end
 

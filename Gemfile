@@ -6,11 +6,11 @@ gemspec
 
 # To test with the g10 test kit (this also adds the US Core, SMART, and TLS test
 # kits):
-# - Uncomment this line:
+# - Uncomment this line (and change test kit gem as necessary):
 # gem 'onc_certification_g10_test_kit'
 
 # - Run `bundle`
-# - Uncomment the require at the top of
+# - Uncomment (and change as necessary) the require at the top of
 # `dev_suites/dev_demo_ig_stu1/demo_suite.rb`.
 
 group :development, :test do

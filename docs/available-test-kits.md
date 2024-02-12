@@ -12,7 +12,7 @@ nav_order: 7
 - **[ONC Certification (g)(10) Test
     Kit](https://github.com/inferno-framework/onc-certification-g10-test-kit)**:
     Tests for the [Standardized API for Patient and Population Services
-    criterion § 170.315(g)(10) in the 2015 Edition Cures
+    criterion § 170.315(g)(10) in the ONC Certification
     Update](https://www.healthit.gov/test-method/standardized-api-patient-and-population-services#test_procedure).
     You can view this test kit in action
   [here](https://inferno.healthit.gov/onc-certification-g10-test-kit).
