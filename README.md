@@ -80,6 +80,22 @@ Inferno Core can then be accessed by navigating to
 
 To only run the server (JSON API with no UI): `bundle exec puma`
 
+If you would like to test other test suites with changes being made
+to Inferno Core, you may do so by following the instructions
+provided in the Gemfile:
+
+```ruby
+# To test with the g10 test kit (this also adds the US Core, SMART, and TLS test
+# kits):
+# - Uncomment this line (and change test kit gem as necessary):
+# gem 'onc_certification_g10_test_kit'
+
+# - Run `bundle`
+# - Uncomment (and change as necessary) the require at the top of
+# `dev_suites/dev_demo_ig_stu1/demo_suite.rb`.
+
+```
+
 ## Running tests via JSON API
 With the server running, first retrieve a list of available test suites:
 ```
