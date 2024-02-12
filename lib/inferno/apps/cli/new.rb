@@ -1,6 +1,7 @@
 require 'thor'
 require 'bundler'
 require_relative '../../utils/named_thor_actions'
+require_relative '../../utils/ig_downloader'
 require_relative '../../version'
 
 module Inferno
@@ -8,6 +9,7 @@ module Inferno
     class New < Thor::Group
       include Thor::Actions
       include Inferno::Utils::NamedThorActions
+      include Inferno::Utils::IgDownloader
 
       desc <<~HELP
         Generate a new Inferno test kit for FHIR software testing

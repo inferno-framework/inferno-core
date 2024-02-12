@@ -1,8 +1,6 @@
-
 module Inferno
   module Utils
     module IgDownloader
-
       FHIR_PACKAGE_NAME = /^[a-z][a-zA-Z0-9-]*\.([a-z][a-zA-Z0-9-]*\.?)*/
       HTTP_URI = %r{^https?:(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?}
       FILE_URI = %r{^file://(.+)}
@@ -22,12 +20,12 @@ module Inferno
         when HTTP_URI
           thor_get_ig ig_http_url(ig_input), idx
         when FILE_URI
-          thor_get_ig ig_input, idx
+          thor_get_ig ig_input[7..-1], idx
         else
-          raise Error, <<~EOT
-            Could not find implementation guide: #{ig}
+          raise Error, <<~FAILED_TO_LOAD
+            Could not find implementation guide: #{ig_input}
             Put its package.tgz file directly in #{ig_path}
-          EOT
+          FAILED_TO_LOAD
         end
       end
 
@@ -43,24 +41,23 @@ module Inferno
       end
 
       def ig_registry_url(ig_npm_style)
-        if ig_npm_style.include? '@'
-          package_name, version = *ig_npm_style.split('@')
-        else
-          raise Error, <<~EOT
+        unless ig_npm_style.include? '@'
+          raise Error, <<~NO_VERSION
             No IG version specified for #{ig_npm_style}; you must specify one with '@'. I.e: hl7.fhir.us.core@7.0.0-ballot
-          EOT
+          NO_VERSION
         end
+
+        package_name, version = *ig_npm_style.split('@')
         "https://packages.simplifier.net/#{package_name}/-/#{package_name}-#{version}.tgz"
       end
 
       def ig_http_url(ig_page_url)
         unless ig_page_url.end_with? 'package.tgz'
           ig_page_url += 'package.tgz' if ig_page_url.end_with? '/'
-          ig_page_url = ig_page_url.gsub(HTML_SUFFIX, 'package.tgz') if ig.match? HTML_SUFFIX
+          ig_page_url = ig_page_url.gsub(HTML_SUFFIX, 'package.tgz') if ig_page_url.match? HTML_SUFFIX
         end
         ig_page_url
       end
-
     end
   end
 end
