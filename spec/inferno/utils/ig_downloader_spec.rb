@@ -3,9 +3,11 @@ require_relative '../../../lib/inferno/utils/ig_downloader'
 
 RSpec::Matchers.define :case_match do |expected|
   match do |actual|
-    expected === actual
+    expected === actual # rubocop:disable Style/CaseEquality
   end
 end
+
+PACKAGE_FIXTURE = File.expand_path('../../../fixtures/small_package.tgz', __dir__)
 
 RSpec.describe Inferno::Utils::IgDownloader do
   let(:dummy_class) do
@@ -16,13 +18,10 @@ RSpec.describe Inferno::Utils::IgDownloader do
       attr_accessor :library_name
     end
   end
-
-  PACKAGE_FIXTURE = File.expand_path('../../../fixtures/small_package.tgz', __dir__)
-
   let(:dummy) do
-   dummy_instance = dummy_class.new
-   dummy_instance.library_name = 'udap'
-   dummy_instance
+    dummy_instance = dummy_class.new
+    dummy_instance.library_name = 'udap'
+    dummy_instance
   end
 
   it 'builds correct path to IGs' do
@@ -37,7 +36,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
     expect(dummy.ig_file(99)).to eq('lib/udap/igs/package_99.tgz')
   end
 
-  context 'given IG by canonical name' do
+  context 'with IG by canonical name' do
     let(:canonical) { 'hl7.fhir.us.udap-security@1.0.0' }
 
     it 'matches fhir package name regex' do
@@ -49,11 +48,11 @@ RSpec.describe Inferno::Utils::IgDownloader do
     end
 
     it 'raises exception if missing version' do
-      expect{dummy.ig_registry_url('hl7.fhir.us.udap-security').to raise_error(Inferno::Utils::IgDownloader::Error)}
+      expect { dummy.ig_registry_url('hl7.fhir.us.udap-security') }.to raise_error(Inferno::Utils::IgDownloader::Error)
     end
 
     it 'downloads IG' do
-      
+      # TODO
     end
   end
 
@@ -63,13 +62,13 @@ RSpec.describe Inferno::Utils::IgDownloader do
     https://build.fhir.org/ig/HL7/fhir-udap-security-ig/index.html
     http://build.fhir.org/ig/HL7/fhir-udap-security-ig/
   ].each do |url|
-    context "given IG by http URL #{url}" do
+    context "with IG by http URL #{url}" do
       it 'matches http uri regex' do
         expect(url).to case_match(Inferno::Utils::IgDownloader::HTTP_URI)
       end
 
       it 'does not match fhir package name regex' do
-        expect(url).not_to case_match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME)
+        expect(url).to_not case_match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME)
       end
 
       it 'normalizes to a package.tgz url' do
@@ -78,7 +77,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
     end
   end
 
-  context "given IG by absolute file path" do
+  context 'with IG by absolute file path' do
     let(:path) { "file://#{PACKAGE_FIXTURE}" }
 
     it 'matches file regex' do
@@ -86,15 +85,15 @@ RSpec.describe Inferno::Utils::IgDownloader do
     end
 
     it 'does not match http uri regex' do
-      expect(path).not_to case_match(Inferno::Utils::IgDownloader::HTTP_URI)
+      expect(path).to_not case_match(Inferno::Utils::IgDownloader::HTTP_URI)
     end
 
     it 'does not match fhir package name regex' do
-      expect(path).not_to case_match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME)
+      expect(path).to_not case_match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME)
     end
   end
 
-  it 'given bad input raises exception' do
-    expect{ dummy.load_ig('bad') }.to raise_error(Inferno::Utils::IgDownloader::Error)
+  it 'with bad input raises exception' do
+    expect { dummy.load_ig('bad') }.to raise_error(Inferno::Utils::IgDownloader::Error)
   end
 end

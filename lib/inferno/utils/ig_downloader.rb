@@ -20,7 +20,7 @@ module Inferno
         when HTTP_URI
           thor_get_ig ig_http_url(ig_input), idx
         when FILE_URI
-          thor_get_ig ig_input[7..-1], idx
+          thor_get_ig ig_input[7..], idx
         else
           raise Error, <<~FAILED_TO_LOAD
             Could not find implementation guide: #{ig_input}

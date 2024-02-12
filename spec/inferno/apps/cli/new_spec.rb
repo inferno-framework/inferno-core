@@ -1,6 +1,8 @@
 require 'rspec'
 require 'inferno/apps/cli/new'
 
+PACKAGE_FIXTURE = File.expand_path('../../../fixtures/small_package.tgz', __dir__)
+
 RSpec.describe Inferno::CLI::New do # rubocop:disable RSpec/FilePath
   around do |test|
     Dir.mktmpdir do |tmpdir|
@@ -10,15 +12,13 @@ RSpec.describe Inferno::CLI::New do # rubocop:disable RSpec/FilePath
     end
   end
 
-  PACKAGE_FIXTURE = File.expand_path('../../../fixtures/small_package.tgz', __dir__)
-
   [
     %w[test-fhir-app],
     %w[test-fhir-app --author ABC],
     %w[test-fhir-app --author ABC --author DEF],
     %W[test-fhir-app --implementation-guide file://#{PACKAGE_FIXTURE}],
     %W[test-fhir-app --implementation-guide file://#{PACKAGE_FIXTURE} --implementation-guide file://#{PACKAGE_FIXTURE}],
-    %W[test-fhir-app --author ABC --implementation-guide file://#{PACKAGE_FIXTURE}],
+    %W[test-fhir-app --author ABC --implementation-guide file://#{PACKAGE_FIXTURE}]
   ].each do |cli_args|
     cli_args.append('--quiet')
     cli_args.append('--skip-bundle')
