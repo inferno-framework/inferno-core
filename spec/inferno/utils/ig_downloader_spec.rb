@@ -51,6 +51,10 @@ RSpec.describe Inferno::Utils::IgDownloader do
     it 'raises exception if missing version' do
       expect{dummy.ig_registry_url('hl7.fhir.us.udap-security').to raise_error(Inferno::Utils::IgDownloader::Error)}
     end
+
+    it 'downloads IG' do
+      
+    end
   end
 
   %w[
