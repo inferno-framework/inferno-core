@@ -5,7 +5,7 @@ import LandingPage from '~/components/LandingPage';
 import SuiteOptionsPage from '~/components/SuiteOptionsPage';
 import TestSessionWrapper from '~/components/TestSuite/TestSessionWrapper';
 import LandingPageSkeleton from '~/components/Skeletons/LandingPageSkeleton';
-import SelectionSkeleton from '~/components/Skeletons/SelectionSkeletion';
+import SuiteOptionsPageSkeleton from '~/components/Skeletons/SuiteOptionsPageSkeleton';
 import { basePath } from '~/api/infernoApiService';
 import { TestSuite } from '~/models/testSuiteModels';
 
@@ -25,13 +25,13 @@ export const router = (testSuites: TestSuite[]) => {
         path: ':test_suite_id',
         element: <Page title="Options" />,
         loader: ({ params }) => {
-          if (!testSuitesExist) return <SelectionSkeleton />;
+          if (!testSuitesExist) return <SuiteOptionsPageSkeleton />;
           const suiteId: string = params.test_suite_id || '';
           const suite = testSuites.find((suite) => suite.id === suiteId);
           return testSuitesExist && suite ? (
             <SuiteOptionsPage testSuite={suite} />
           ) : (
-            <SelectionSkeleton />
+            <SuiteOptionsPageSkeleton />
           );
         },
       },

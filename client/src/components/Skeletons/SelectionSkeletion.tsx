@@ -6,6 +6,21 @@ import useStyles from '~/components/_common/SelectionPanel/styles';
 const SelectionSkeleton: FC<Record<string, never>> = () => {
   const { classes } = useStyles();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const optionCount = 3;
+
+  const optionSkeleton = (
+    <Skeleton
+      variant="rounded"
+      height={10}
+      width={windowIsSmall ? 200 : 300}
+      style={{ margin: '32px' }}
+    />
+  );
+
+  const skeletonList = [];
+  for (let index = 0; index < optionCount; index++) {
+    skeletonList.push(<div key={index}>{optionSkeleton}</div>);
+  }
 
   return (
     <Box display="flex">
@@ -19,9 +34,7 @@ const SelectionSkeleton: FC<Record<string, never>> = () => {
         </Box>
 
         <Box px={2} pb={2}>
-          <Skeleton variant="rounded" height={10} width={300} style={{ margin: '32px' }} />
-          <Skeleton variant="rounded" height={10} width={300} style={{ margin: '32px' }} />
-          <Skeleton variant="rounded" height={10} width={300} style={{ margin: '32px' }} />
+          {skeletonList}
         </Box>
 
         <Box px={2}>
