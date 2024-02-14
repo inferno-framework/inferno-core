@@ -17,7 +17,7 @@ module Inferno
         File.join(ig_path, suffix ? "package_#{suffix}.tgz" : 'package.tgz')
       end
 
-      def load_ig(ig_input, idx = nil, thor_config = {verbose: true})
+      def load_ig(ig_input, idx = nil, thor_config = { verbose: true })
         case ig_input
         when FHIR_PACKAGE_NAME
           uri = ig_registry_url(ig_input)

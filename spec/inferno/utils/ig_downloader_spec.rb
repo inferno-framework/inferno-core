@@ -9,10 +9,10 @@ end
 
 PACKAGE_FIXTURE = File.expand_path('../../fixtures/small_package.tgz', __dir__)
 
-def with_temp_path(name, &block)
+def with_temp_path(name)
   path = File.join(Inferno::Application.root, 'tmp', "rspec-#{name.sum}.tmp")
   yield(path)
-  File.delete(path) if File.exists?(path)
+  File.delete(path) if File.exist?(path)
 end
 
 RSpec.describe Inferno::Utils::IgDownloader do
@@ -22,6 +22,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
       include Thor::Actions
       include Inferno::Utils::IgDownloader
       attr_accessor :library_name
+
       source_root Inferno::Application.root
     end
   end
@@ -30,7 +31,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
     dummy_instance.library_name = 'udap'
     dummy_instance
   end
-  let(:package_fixture) { File.read(PACKAGE_FIXTURE) }
+  let(:package_binary) { File.read(PACKAGE_FIXTURE) }
 
   it 'builds correct path to IGs' do
     expect(dummy.ig_path).to eq('lib/udap/igs')
@@ -63,13 +64,13 @@ RSpec.describe Inferno::Utils::IgDownloader do
     end
 
     it 'downloads IG' do
-      stub_request(:get, "https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz").
-        to_return(status: 200, body: package_fixture, headers: {'Content-Disposition'=>'attachment'})
+      stub_request(:get, 'https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz')
+        .to_return(body: package_binary)
 
       with_temp_path('ig-downloader-canonical') do |temp_path|
         allow(dummy).to receive(:ig_file).and_return(temp_path)
-        dummy.load_ig(canonical, nil, {verbose: false})
-        expect(File.read(temp_path)).to eq( package_fixture )
+        dummy.load_ig(canonical, nil, { verbose: false })
+        expect(File.read(temp_path)).to eq(package_binary)
       end
     end
   end
@@ -94,11 +95,11 @@ RSpec.describe Inferno::Utils::IgDownloader do
       end
 
       it 'downloads IG' do
-        stub_request(:get, %r{https?://build.fhir.org}).to_return(body: package_fixture)
+        stub_request(:get, %r{https?://build.fhir.org}).to_return(body: package_binary)
         with_temp_path("ig-downloader-#{url}") do |temp_path|
           allow(dummy).to receive(:ig_file).and_return(temp_path)
-          dummy.load_ig(url, nil, {verbose: false})
-          expect(File.read(temp_path)).to eq( package_fixture )
+          dummy.load_ig(url, nil, { verbose: false })
+          expect(File.read(temp_path)).to eq(package_binary)
         end
       end
     end
@@ -122,8 +123,8 @@ RSpec.describe Inferno::Utils::IgDownloader do
     it 'downloads IG' do
       with_temp_path('ig-downloader-file') do |temp_path|
         allow(dummy).to receive(:ig_file).and_return(temp_path)
-        dummy.load_ig(absolute_path, nil, {verbose: false})
-        expect(File.read(temp_path)).to eq( package_fixture )
+        dummy.load_ig(absolute_path, nil, { verbose: false })
+        expect(File.read(temp_path)).to eq(package_binary)
       end
     end
   end
