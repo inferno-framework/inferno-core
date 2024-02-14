@@ -16,6 +16,7 @@ import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
 import useStyles from './styles';
 import { basePath } from '~/api/infernoApiService';
 import remarkGfm from 'remark-gfm';
+import SelectionSkeleton from '~/components/Skeletons/SelectionSkeletion';
 
 export interface SuiteOptionsPageProps {
   testSuite?: TestSuite;
@@ -180,15 +181,19 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         sx={{ backgroundColor: lightTheme.palette.common.grayLightest }}
       >
         <Box display="flex" ref={selectionPanel} justifyContent="center" maxHeight="100%" m={3}>
-          <SelectionPanel
-            title="Options"
-            options={testSuite?.suite_options || []}
-            setSelection={setSelected}
-            showBackButton={true}
-            backTooltipText="Back to Suites"
-            submitAction={() => createTestSession(selectedSuiteOptions)}
-            submitText="Start Testing"
-          />
+          {testSuite?.suite_options ? (
+            <SelectionPanel
+              title="Options"
+              options={testSuite?.suite_options || []}
+              setSelection={setSelected}
+              showBackButton={true}
+              backTooltipText="Back to Suites"
+              submitAction={() => createTestSession(selectedSuiteOptions)}
+              submitText="Start Testing"
+            />
+          ) : (
+            <SelectionSkeleton />
+          )}
         </Box>
       </Box>
     </Container>

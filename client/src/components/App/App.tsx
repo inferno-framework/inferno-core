@@ -56,9 +56,9 @@ const App: FC<unknown> = () => {
     }
   };
 
-  if (!testSuites || testSuites.length === 0) {
-    return <></>;
-  }
+  // if (!testSuites || testSuites.length === 0) {
+  //   return <></>;
+  // }
 
   return (
     <SnackbarProvider
@@ -73,7 +73,8 @@ const App: FC<unknown> = () => {
         containerAnchorOriginBottomRight: classes.container,
       }}
     >
-      <RouterProvider router={router(testSuites)} />
+      {/* <RouterProvider router={router(testSuites)} /> */}
+      <RouterProvider router={router([])} />
     </SnackbarProvider>
   );
 };
