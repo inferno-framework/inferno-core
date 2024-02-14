@@ -1,5 +1,4 @@
 require 'thor'
-require 'tempfile'
 require_relative '../../../lib/inferno/utils/ig_downloader'
 
 RSpec::Matchers.define :case_match do |expected|
@@ -9,6 +8,12 @@ RSpec::Matchers.define :case_match do |expected|
 end
 
 PACKAGE_FIXTURE = File.expand_path('../../fixtures/small_package.tgz', __dir__)
+
+def with_temp_path(name, &block)
+  path = File.join(Inferno::Application.root, 'tmp', "rspec-#{name.sum}.tmp")
+  yield(path)
+  File.delete(path) if File.exists?(path)
+end
 
 RSpec.describe Inferno::Utils::IgDownloader do
   let(:dummy_class) do
@@ -61,11 +66,10 @@ RSpec.describe Inferno::Utils::IgDownloader do
       stub_request(:get, "https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz").
         to_return(status: 200, body: package_fixture, headers: {'Content-Disposition'=>'attachment'})
 
-      Tempfile.create('rspec', File.join(Inferno::Application.root, 'tmp')) do |tempfile|
-        allow(dummy).to receive(:ig_file).and_return(tempfile.path)
-        dummy.load_ig(canonical)
-        tempfile.rewind
-        expect(tempfile.read).to eq( package_fixture )
+      with_temp_path('ig-downloader-canonical') do |temp_path|
+        allow(dummy).to receive(:ig_file).and_return(temp_path)
+        dummy.load_ig(canonical, nil, {verbose: false})
+        expect(File.read(temp_path)).to eq( package_fixture )
       end
     end
   end
@@ -91,11 +95,10 @@ RSpec.describe Inferno::Utils::IgDownloader do
 
       it 'downloads IG' do
         stub_request(:get, %r{https?://build.fhir.org}).to_return(body: package_fixture)
-        Tempfile.create("rspec", File.join(Inferno::Application.root, 'tmp')) do |tempfile|
-          allow(dummy).to receive(:ig_file).and_return(tempfile.path)
-          dummy.load_ig(url)
-          tempfile.rewind
-          expect(tempfile.read).to eq( package_fixture )
+        with_temp_path("ig-downloader-#{url}") do |temp_path|
+          allow(dummy).to receive(:ig_file).and_return(temp_path)
+          dummy.load_ig(url, nil, {verbose: false})
+          expect(File.read(temp_path)).to eq( package_fixture )
         end
       end
     end
@@ -117,11 +120,10 @@ RSpec.describe Inferno::Utils::IgDownloader do
     end
 
     it 'downloads IG' do
-      Tempfile.create('rspec-3-', File.join(Inferno::Application.root, 'tmp')) do |tempfile|
-        allow(dummy).to receive(:ig_file).and_return(tempfile.path)
-        dummy.load_ig(absolute_path)
-        tempfile.rewind
-        expect(tempfile.read).to eq( package_fixture )
+      with_temp_path('ig-downloader-file') do |temp_path|
+        allow(dummy).to receive(:ig_file).and_return(temp_path)
+        dummy.load_ig(absolute_path, nil, {verbose: false})
+        expect(File.read(temp_path)).to eq( package_fixture )
       end
     end
   end

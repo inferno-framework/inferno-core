@@ -98,9 +98,10 @@ module Inferno
       end
 
       def load_igs
+        config = options.merge({verbose: !options['quiet']})
         options['implementation_guide']&.each_with_index do |ig, idx|
           begin # rubocop:disable Style/RedundantBegin
-            uri = options['implementation_guide'].length == 1 ? load_ig(ig) : load_ig(ig, idx)
+            uri = options['implementation_guide'].length == 1 ? load_ig(ig, nil, config) : load_ig(ig, idx, config)
             say_unless_quiet "Downloading IG from #{uri}"
           rescue Inferno::Utils::IgDownloader::Error => e
             say_unless_quiet e.message, :red
