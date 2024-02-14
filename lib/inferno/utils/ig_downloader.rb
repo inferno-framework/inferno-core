@@ -16,24 +16,25 @@ module Inferno
       def load_ig(ig_input, idx = nil)
         case ig_input
         when FHIR_PACKAGE_NAME
-          thor_get_ig ig_registry_url(ig_input), idx
+          uri = ig_registry_url(ig_input)
         when HTTP_URI
-          thor_get_ig ig_http_url(ig_input), idx
+          uri = ig_http_url(ig_input)
         when FILE_URI
-          thor_get_ig ig_input[7..], idx
+          uri = ig_input[7..]
         else
           raise Error, <<~FAILED_TO_LOAD
             Could not find implementation guide: #{ig_input}
             Put its package.tgz file directly in #{ig_path}
           FAILED_TO_LOAD
         end
+        thor_get_ig(uri, idx)
       end
 
       # private
 
       def thor_get_ig(uri, idx = nil)
-        say_unless_quiet "Downloading IG from #{uri}"
         get(uri, ig_file(idx))
+        uri
       end
 
       def ig_file(suffix = nil)

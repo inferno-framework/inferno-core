@@ -29,7 +29,8 @@ RSpec.describe Inferno::Utils::IgDownloader do
     dummy_instance.library_name = 'udap'
     dummy_instance
   end
-  let(:package_fixture) { File.new(PACKAGE_FIXTURE, 'r') }
+  let(:package_fixture) { File.open(PACKAGE_FIXTURE, 'r') }
+  let(:tempdir) { File.join(Inferno::Application.root, 'tmp') }
 
   it 'builds correct path to IGs' do
     expect(dummy.ig_path).to eq('lib/udap/igs')
@@ -48,10 +49,17 @@ RSpec.describe Inferno::Utils::IgDownloader do
     let(:resolved_url) do
       'https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz'
     end
-    let(:tempfile) { Tempfile.new('rspec-ig-downloader-canonical', File.join(Inferno::Application.root,'tmp')) }
+    let(:tempfile) { Tempfile.new('rspec-ig-downloader-canonical-', tempdir) }
 
     before do
-      stub_request(:get, 'https://packages.simplifier.net').to_return(body: package_fixture)
+      stub_request(:get, "https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz").
+        with(
+          headers: {
+       	    'Accept'=>'*/*',
+       	    'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+       	    'User-Agent'=>'Ruby'
+          }).
+        to_return(status: 200, body: package_fixture, headers: {'Content-Disposition'=>'attachment'})
     end
 
     it 'matches fhir package name regex' do
@@ -80,10 +88,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
     http://build.fhir.org/ig/HL7/fhir-udap-security-ig/
   ].each do |url|
     context "with IG by http URL #{url}" do
-      let(:tempfile) { Tempfile.new('rspec-ig-downloader-http', File.join(Inferno::Application.root,'tmp')) }
-
-#      before do
-#      end
+      let(:tempfile) { Tempfile.new('rspec-ig-downloader-http-', tempdir) }
 
       it 'matches http uri regex' do
         expect(url).to case_match(Inferno::Utils::IgDownloader::HTTP_URI)
