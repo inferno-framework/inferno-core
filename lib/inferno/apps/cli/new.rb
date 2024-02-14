@@ -17,10 +17,16 @@ module Inferno
         Examples:
 
           `inferno new test_fhir_app`
-            => generates an Inferno app
+            => generates an Inferno test suite
 
-          `inferno new test_my_ig -a MyName`
-            => generates Inferno app and specifies MyName as gemspec author
+          `inferno new test_us_core -i hl7.fhir.us.core@6.1.0`
+            => generates Inferno app with US Core 6.1.0 implementation guide including its profiles, terminology, and dependencies
+
+          `inferno new test_fast -i https://build.fhir.org/ig/HL7/fhir-identity-matching-ig/index.html -i https://build.fhir.org/ig/HL7/fhir-udap-security-ig/`
+            => generates Inferno app with both identity matching and udap security implementation guides from their continuous web builds
+
+          `inferno new test_my_ig -a MyName -i file:///path/to/my/ig/package.tgz`
+            => generates Inferno app with a local file IG and specifies MyName as gemspec author
 
         https://inferno-framework.github.io/index.html
       HELP

@@ -79,6 +79,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
     https://build.fhir.org/ig/HL7/fhir-udap-security-ig/package.tgz
     https://build.fhir.org/ig/HL7/fhir-udap-security-ig/
     https://build.fhir.org/ig/HL7/fhir-udap-security-ig/index.html
+    https://build.fhir.org/ig/HL7/fhir-udap-security-ig/downloads.html
     http://build.fhir.org/ig/HL7/fhir-udap-security-ig/
   ].each do |url|
     context "with IG by http URL #{url}" do

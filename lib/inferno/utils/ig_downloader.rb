@@ -2,9 +2,9 @@ module Inferno
   module Utils
     module IgDownloader
       FHIR_PACKAGE_NAME = /^[a-z][a-zA-Z0-9-]*\.([a-z][a-zA-Z0-9-]*\.?)*/
-      HTTP_URI = %r{^https?:(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?}
+      HTTP_URI = %r{^https?://[^/?#]+[^?#]*}
       FILE_URI = %r{^file://(.+)}
-      HTML_SUFFIX = %r{[^/]*\.x?html?$}
+      HTTP_URI_END = %r{[^/]*\.x?html?$}
 
       class Error < StandardError
       end
@@ -51,7 +51,7 @@ module Inferno
       def ig_http_url(ig_page_url)
         unless ig_page_url.end_with? 'package.tgz'
           ig_page_url += 'package.tgz' if ig_page_url.end_with? '/'
-          ig_page_url = ig_page_url.gsub(HTML_SUFFIX, 'package.tgz') if ig_page_url.match? HTML_SUFFIX
+          ig_page_url = ig_page_url.gsub(HTTP_URI_END, 'package.tgz') if ig_page_url.match? HTTP_URI_END
         end
         ig_page_url
       end
