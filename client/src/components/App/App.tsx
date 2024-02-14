@@ -69,8 +69,7 @@ const App: FC<unknown> = () => {
         containerAnchorOriginBottomRight: classes.container,
       }}
     >
-      {/* <RouterProvider router={router(testSuites)} /> */}
-      <RouterProvider router={router([])} />
+      <RouterProvider router={router(testSuites)} />
     </SnackbarProvider>
   );
 };
