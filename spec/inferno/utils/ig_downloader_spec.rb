@@ -1,15 +1,10 @@
 require 'thor'
+require 'tempfile'
 require_relative '../../../lib/inferno/utils/ig_downloader'
 
 RSpec::Matchers.define :case_match do |expected|
   match do |actual|
     expected === actual # rubocop:disable Style/CaseEquality
-  end
-end
-
-RSpec::Matchers.define :be_same_file_as do |expected|
-  match do |actual|
-    expected.rewind.read == actual.rewind.read
   end
 end
 
@@ -22,6 +17,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
       include Thor::Actions
       include Inferno::Utils::IgDownloader
       attr_accessor :library_name
+      source_root Inferno::Application.root
     end
   end
   let(:dummy) do
@@ -29,8 +25,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
     dummy_instance.library_name = 'udap'
     dummy_instance
   end
-  let(:package_fixture) { File.open(PACKAGE_FIXTURE, 'r') }
-  let(:tempdir) { File.join(Inferno::Application.root, 'tmp') }
+  let(:package_fixture) { File.read(PACKAGE_FIXTURE) }
 
   it 'builds correct path to IGs' do
     expect(dummy.ig_path).to eq('lib/udap/igs')
@@ -49,18 +44,6 @@ RSpec.describe Inferno::Utils::IgDownloader do
     let(:resolved_url) do
       'https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz'
     end
-    let(:tempfile) { Tempfile.new('rspec-ig-downloader-canonical-', tempdir) }
-
-    before do
-      stub_request(:get, "https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz").
-        with(
-          headers: {
-       	    'Accept'=>'*/*',
-       	    'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-       	    'User-Agent'=>'Ruby'
-          }).
-        to_return(status: 200, body: package_fixture, headers: {'Content-Disposition'=>'attachment'})
-    end
 
     it 'matches fhir package name regex' do
       expect(canonical).to case_match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME)
@@ -75,9 +58,15 @@ RSpec.describe Inferno::Utils::IgDownloader do
     end
 
     it 'downloads IG' do
-      allow(dummy).to receive(:ig_file).and_return(tempfile.path)
-      dummy.load_ig(canonical)
-      expect { tempfile }.to be_same_file_as( package_fixture )
+      stub_request(:get, "https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz").
+        to_return(status: 200, body: package_fixture, headers: {'Content-Disposition'=>'attachment'})
+
+      Tempfile.create('rspec', File.join(Inferno::Application.root, 'tmp')) do |tempfile|
+        allow(dummy).to receive(:ig_file).and_return(tempfile.path)
+        dummy.load_ig(canonical)
+        tempfile.rewind
+        expect(tempfile.read).to eq( package_fixture )
+      end
     end
   end
 
@@ -88,8 +77,6 @@ RSpec.describe Inferno::Utils::IgDownloader do
     http://build.fhir.org/ig/HL7/fhir-udap-security-ig/
   ].each do |url|
     context "with IG by http URL #{url}" do
-      let(:tempfile) { Tempfile.new('rspec-ig-downloader-http-', tempdir) }
-
       it 'matches http uri regex' do
         expect(url).to case_match(Inferno::Utils::IgDownloader::HTTP_URI)
       end
@@ -104,16 +91,18 @@ RSpec.describe Inferno::Utils::IgDownloader do
 
       it 'downloads IG' do
         stub_request(:get, %r{https?://build.fhir.org}).to_return(body: package_fixture)
-        allow(dummy).to receive(:ig_file).and_return(tempfile.path)
-        dummy.load_ig(url)
-        expect { tempfile }.to be_same_file_as( package_fixture )
+        Tempfile.create("rspec", File.join(Inferno::Application.root, 'tmp')) do |tempfile|
+          allow(dummy).to receive(:ig_file).and_return(tempfile.path)
+          dummy.load_ig(url)
+          tempfile.rewind
+          expect(tempfile.read).to eq( package_fixture )
+        end
       end
     end
   end
 
   context 'with IG by absolute file path' do
     let(:absolute_path) { "file://#{PACKAGE_FIXTURE}" }
-    let(:tempfile) { Tempfile.new('rspec-ig-downloader-file', File.join(Inferno::Application.root,'tmp')) }
 
     it 'matches file regex' do
       expect(absolute_path).to case_match(Inferno::Utils::IgDownloader::FILE_URI)
@@ -128,9 +117,12 @@ RSpec.describe Inferno::Utils::IgDownloader do
     end
 
     it 'downloads IG' do
-      allow(dummy).to receive(:ig_file).and_return(tempfile.path)
-      dummy.load_ig(absolute_path)
-      expect { tempfile }.to be_same_file_as( package_fixture )
+      Tempfile.create('rspec-3-', File.join(Inferno::Application.root, 'tmp')) do |tempfile|
+        allow(dummy).to receive(:ig_file).and_return(tempfile.path)
+        dummy.load_ig(absolute_path)
+        tempfile.rewind
+        expect(tempfile.read).to eq( package_fixture )
+      end
     end
   end
 

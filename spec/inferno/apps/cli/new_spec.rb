@@ -39,11 +39,12 @@ RSpec.describe Inferno::CLI::New do # rubocop:disable RSpec/FilePath
         expect(File.read('test-fhir-app/test_fhir_app.gemspec')).to match(/authors\s*=.*ABC.*DEF/)
       end
 
-      if cli_args.include? '--implementation-guide'
-        expect(File).to exist('test-fhir-app/lib/test_fhir_app/igs/package_0.tgz')
+      if cli_args.count('--implementation-guide') == 1
+        expect(File).to exist('test-fhir-app/lib/test_fhir_app/igs/package.tgz')
       end
 
       if cli_args.count('--implementation-guide') == 2
+        expect(File).to exist('test-fhir-app/lib/test_fhir_app/igs/package_0.tgz')
         expect(File).to exist('test-fhir-app/lib/test_fhir_app/igs/package_1.tgz')
       end
     end
