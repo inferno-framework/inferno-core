@@ -40,7 +40,7 @@ module Inferno
       def ig_registry_url(ig_npm_style)
         unless ig_npm_style.include? '@'
           raise Error, <<~NO_VERSION
-            No IG version specified for #{ig_npm_style}; you must specify one with '@'. I.e: hl7.fhir.us.core@7.0.0-ballot
+            No IG version specified for #{ig_npm_style}; you must specify one with '@'. I.e: hl7.fhir.us.core@6.1.0
           NO_VERSION
         end
 

@@ -17,16 +17,16 @@ module Inferno
         Examples:
 
           `inferno new test_fhir_app`
-            => generates an Inferno test suite
+            => generates an Inferno test suite app
 
           `inferno new test_us_core -i hl7.fhir.us.core@6.1.0`
-            => generates Inferno app with US Core 6.1.0 implementation guide including its profiles, terminology, and dependencies
+            => generates Inferno app with US Core 6.1.0 implementation guide
 
-          `inferno new test_fast -i https://build.fhir.org/ig/HL7/fhir-identity-matching-ig/index.html -i https://build.fhir.org/ig/HL7/fhir-udap-security-ig/`
-            => generates Inferno app with both identity matching and udap security implementation guides from their continuous web builds
+          `inferno new test_fast -i http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/index.html -i https://build.fhir.org/ig/HL7/fhir-udap-security-ig/`
+            => generates Inferno app with two implementation guides from their continuous web builds
 
-          `inferno new test_my_ig -a MyName -i file:///path/to/my/ig/package.tgz`
-            => generates Inferno app with a local file IG and specifies MyName as gemspec author
+          `inferno new test_my_ig -a "My Name" -i file:///absolute/path/to/my/ig/package.tgz`
+            => generates Inferno app with a local IG and specifies My Name as gem author
 
         https://inferno-framework.github.io/index.html
       HELP
@@ -53,7 +53,7 @@ module Inferno
                    type: :boolean,
                    aliases: '-b',
                    default: false,
-                   desc: 'Do not run bundle install'
+                   desc: 'Do not run bundle install or inferno migrate'
       class_option :implementation_guide,
                    type: :string,
                    aliases: '-i',
@@ -104,12 +104,15 @@ module Inferno
       end
 
       def load_igs
-        config = options.merge({ verbose: !options['quiet'] })
+        config = { verbose: !options['quiet'] }
         options['implementation_guide']&.each_with_index do |ig, idx|
           begin # rubocop:disable Style/RedundantBegin
             uri = options['implementation_guide'].length == 1 ? load_ig(ig, nil, config) : load_ig(ig, idx, config)
-            say_unless_quiet "Downloading IG from #{uri}"
+            say_unless_quiet "Downloaded IG from #{uri}"
           rescue Inferno::Utils::IgDownloader::Error => e
+            say_unless_quiet e.message, :red
+          rescue OpenURI::HTTPError => e
+            say_unless_quiet "Failed to install implementation guide #{ig}", :red
             say_unless_quiet e.message, :red
           end
         end
