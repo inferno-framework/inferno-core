@@ -25,7 +25,11 @@ const SuiteOptionsPageSkeleton: FC<Record<string, never>> = () => {
   }
 
   return (
-    <Container className={classes.main} sx={{ flexDirection: windowIsSmall ? '' : 'column' }}>
+    <Container
+      className={classes.main}
+      sx={{ flexDirection: windowIsSmall ? '' : 'column' }}
+      data-testid="suiteOptionsPageSkeleton"
+    >
       <Box
         display="flex"
         flexDirection="column"

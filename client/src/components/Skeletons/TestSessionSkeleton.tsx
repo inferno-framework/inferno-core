@@ -34,7 +34,7 @@ const TestSessionSkeleton: FC<Record<string, never>> = () => {
   }
 
   return (
-    <Card variant="outlined" sx={{ mb: 3 }}>
+    <Card variant="outlined" sx={{ mb: 3 }} data-testid="testSessionSkeleton">
       <Box className={classes.testGroupCardHeader}>
         <Skeleton variant="circular" height={24} width={24} />
         <span className={classes.testGroupCardHeaderText}>

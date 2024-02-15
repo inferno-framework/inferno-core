@@ -23,7 +23,7 @@ const SelectionSkeleton: FC<Record<string, never>> = () => {
   }
 
   return (
-    <Box display="flex">
+    <Box display="flex" data-testid="selectionSkeleton">
       <Paper
         elevation={0}
         className={classes.optionsList}

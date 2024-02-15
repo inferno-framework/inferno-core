@@ -16,6 +16,7 @@ const FooterSkeleton: FC<Record<string, never>> = () => {
         maxHeight: `${footerHeight}px`,
         backgroundColor: 'white',
       }}
+      data-testid="footerSkeleton"
     >
       <Box display="flex" flexDirection="row" justifyContent="space-between" width="100%">
         <Box display="flex" alignItems="center" px={2}>
