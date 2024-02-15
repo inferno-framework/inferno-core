@@ -394,7 +394,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           backgroundColor: lightTheme.palette.common.grayLightest,
         }}
       >
-        <Box className={classes.contentContainer} p={windowIsSmall ? 1 : 4}>
+        <Box className={classes.contentContainer} p={windowIsSmall ? 0 : 4}>
           {renderView(view || 'run')}
           {inputModalVisible && (
             <InputsModal
