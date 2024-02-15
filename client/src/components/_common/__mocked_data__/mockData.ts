@@ -9,6 +9,15 @@ export const mockedTest: Test = {
   user_runnable: true,
 };
 
+export const mockedUnrunnableTest: Test = {
+  id: 'mock-unrunnable-test-id',
+  title: 'Mock Unrunnable Test',
+  inputs: [],
+  short_id: 'unrunnable-test',
+  outputs: [],
+  user_runnable: false,
+};
+
 export const mockedTestGroup: TestGroup = {
   id: 'mock-test-group-id',
   title: 'Mock Test Group',
