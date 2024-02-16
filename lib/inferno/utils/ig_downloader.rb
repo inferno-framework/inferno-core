@@ -1,10 +1,10 @@
 module Inferno
   module Utils
     module IgDownloader
-      FHIR_PACKAGE_NAME = /^[a-z][a-zA-Z0-9-]*\.([a-z][a-zA-Z0-9-]*\.?)*/
-      HTTP_URI = %r{^https?://[^/?#]+[^?#]*}
-      FILE_URI = %r{^file://(.+)}
-      HTTP_URI_END = %r{[^/]*\.x?html?$}
+      FHIR_PACKAGE_NAME_REG_EX = /^[a-z][a-zA-Z0-9-]*\.([a-z][a-zA-Z0-9-]*\.?)*/
+      HTTP_URI_REG_EX = %r{^https?://[^/?#]+[^?#]*}
+      FILE_URI_REG_EX = %r{^file://(.+)}
+      HTTP_URI_END_REG_EX = %r{[^/]*\.x?html?$}
 
       class Error < StandardError
       end
@@ -19,11 +19,11 @@ module Inferno
 
       def load_ig(ig_input, idx = nil, thor_config = { verbose: true })
         case ig_input
-        when FHIR_PACKAGE_NAME
+        when FHIR_PACKAGE_NAME_REG_EX
           uri = ig_registry_url(ig_input)
-        when HTTP_URI
+        when HTTP_URI_REG_EX
           uri = ig_http_url(ig_input)
-        when FILE_URI
+        when FILE_URI_REG_EX
           uri = ig_input[7..]
         else
           raise Error, <<~FAILED_TO_LOAD
@@ -49,11 +49,11 @@ module Inferno
       end
 
       def ig_http_url(ig_page_url)
-        unless ig_page_url.end_with? 'package.tgz'
-          ig_page_url += 'package.tgz' if ig_page_url.end_with? '/'
-          ig_page_url = ig_page_url.gsub(HTTP_URI_END, 'package.tgz') if ig_page_url.match? HTTP_URI_END
-        end
-        ig_page_url
+        return ig_page_url if ig_page_url.end_with? 'package.tgz'
+
+        return "#{ig_page_url}package.tgz" if ig_page_url.end_with? '/'
+
+        ig_page_url.gsub(HTTP_URI_END_REG_EX, 'package.tgz')
       end
     end
   end
