@@ -44,7 +44,7 @@ module Inferno
           NO_VERSION
         end
 
-        package_name, version = *ig_npm_style.split('@')
+        package_name, version = ig_npm_style.split('@')
         "https://packages.simplifier.net/#{package_name}/-/#{package_name}-#{version}.tgz"
       end
 
