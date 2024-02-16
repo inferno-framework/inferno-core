@@ -313,7 +313,8 @@ module Inferno
         CLICONTEXT_DEFAULTS = {
           sv: '4.0.1',
           doNative: false,
-          extensions: ['any']
+          extensions: ['any'],
+          disableDefaultResourceFetcher: true
         }.freeze
 
         # @private
