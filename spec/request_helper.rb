@@ -11,10 +11,6 @@ module RequestHelpers
     post path, data.to_json, 'CONTENT_TYPE' => 'application/json'
   end
 
-  def post_form_data(path, data)
-    post path, data, 'CONTENT_TYPE' => 'multipart/form-data'
-  end
-
   def parsed_body
     JSON.parse(last_response.body)
   end
