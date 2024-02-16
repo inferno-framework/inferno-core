@@ -23,6 +23,20 @@ Sequel.migration do
       primary_key [:id]
     end
     
+    create_table(:validator_sessions, :ignore_index_errors=>true) do
+      String :id, :size=>36, :null=>false
+      String :validator_session_id, :size=>255, :null=>false
+      String :test_suite_id, :size=>255, :null=>false
+      String :validator_name, :size=>255, :null=>false
+      String :suite_options, :text=>true
+      DateTime :last_accessed, :null=>false
+      
+      primary_key [:id]
+      
+      index [:validator_session_id], :name=>:sqlite_autoindex_validator_sessions_2, :unique=>true
+      index [:test_suite_id, :validator_name, :suite_options]
+    end
+    
     create_table(:session_data, :ignore_index_errors=>true) do
       String :id, :size=>255, :null=>false
       foreign_key :test_session_id, :test_sessions, :type=>String, :size=>36, :null=>false, :key=>[:id]

@@ -1,3 +1,7 @@
+# 0.4.29
+* Add instructions for loading external test kits. by @arscan in https://github.com/inferno-framework/inferno-core/pull/450
+* FI-2487: Revert "FI-2318 Allow for form data at session create endpoint (#429)" by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/451
+
 # 0.4.28
 * FI-2266: inferno new generator by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/408
 * FI-2222: no tests hang fix by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/425

@@ -15,6 +15,7 @@ unless ENV['NO_DB']&.casecmp? 'true'
   require_relative 'repositories/session_data'
   require_relative 'repositories/test_runs'
   require_relative 'repositories/test_sessions'
+  require_relative 'repositories/validator_sessions'
 end
 
 module Inferno
