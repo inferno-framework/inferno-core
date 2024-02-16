@@ -17,7 +17,7 @@ module Inferno
         Examples:
 
           `inferno new test_fhir_app`
-            => generates an Inferno test suite app
+            => generates an Inferno test kit
 
           `inferno new test_us_core -i hl7.fhir.us.core@6.1.0`
             => generates Inferno app with US Core 6.1.0 implementation guide
