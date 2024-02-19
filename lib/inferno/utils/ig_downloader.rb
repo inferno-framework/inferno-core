@@ -6,9 +6,6 @@ module Inferno
       FILE_URI_REG_EX = %r{^file://(.+)}
       HTTP_URI_END_REG_EX = %r{[^/]*\.x?html?$}
 
-      class Error < StandardError
-      end
-
       def ig_path
         File.join('lib', library_name, 'igs')
       end
@@ -26,7 +23,7 @@ module Inferno
         when FILE_URI_REG_EX
           uri = ig_input[7..]
         else
-          raise Error, <<~FAILED_TO_LOAD
+          raise StandardError, <<~FAILED_TO_LOAD
             Could not find implementation guide: #{ig_input}
             Put its package.tgz file directly in #{ig_path}
           FAILED_TO_LOAD
@@ -39,7 +36,7 @@ module Inferno
 
       def ig_registry_url(ig_npm_style)
         unless ig_npm_style.include? '@'
-          raise Error, <<~NO_VERSION
+          raise StandardError, <<~NO_VERSION
             No IG version specified for #{ig_npm_style}; you must specify one with '@'. I.e: hl7.fhir.us.core@6.1.0
           NO_VERSION
         end

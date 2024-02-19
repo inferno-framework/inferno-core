@@ -109,10 +109,10 @@ module Inferno
           begin # rubocop:disable Style/RedundantBegin
             uri = options['implementation_guide'].length == 1 ? load_ig(ig, nil, config) : load_ig(ig, idx, config)
             say_unless_quiet "Downloaded IG from #{uri}"
-          rescue Inferno::Utils::IgDownloader::Error => e
-            say_unless_quiet e.message, :red
           rescue OpenURI::HTTPError => e
             say_unless_quiet "Failed to install implementation guide #{ig}", :red
+            say_unless_quiet e.message, :red
+          rescue StandardError => e
             say_unless_quiet e.message, :red
           end
         end

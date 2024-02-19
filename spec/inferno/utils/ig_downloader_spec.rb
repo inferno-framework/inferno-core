@@ -1,7 +1,6 @@
+require 'open-uri'
 require 'thor'
 require_relative '../../../lib/inferno/utils/ig_downloader'
-
-PACKAGE_FIXTURE = File.expand_path('../../fixtures/small_package.tgz', __dir__)
 
 def with_temp_path(name)
   path = File.join(Inferno::Application.root, 'tmp', "rspec-#{name.sum}.tmp")
@@ -25,7 +24,8 @@ RSpec.describe Inferno::Utils::IgDownloader do
     ig_downloader_instance.library_name = 'udap'
     ig_downloader_instance
   end
-  let(:package_binary) { File.read(PACKAGE_FIXTURE) }
+  let(:package_fixture) { File.expand_path('../../fixtures/small_package.tgz', __dir__) }
+  let(:package_binary) { File.read(package_fixture) }
 
   describe '#ig_path' do
     it 'builds correct path to IGs' do
@@ -60,15 +60,13 @@ RSpec.describe Inferno::Utils::IgDownloader do
         expect(ig_downloader.ig_registry_url(canonical)).to eq(resolved_url)
       end
 
-      it 'raises exception if missing version' do
-        expect do
-          ig_downloader.ig_registry_url('hl7.fhir.us.udap-security')
-        end.to raise_error(Inferno::Utils::IgDownloader::Error)
+      it 'raises standard error if missing version' do
+        expect { ig_downloader.ig_registry_url('hl7.fhir.us.udap-security') }.to raise_error(StandardError)
       end
     end
 
     describe '#load_ig' do
-      it 'successfully downloads IG' do
+      it 'successfully downloads package' do
         stub_request(:get, 'https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz')
           .to_return(body: package_binary)
 
@@ -109,7 +107,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
       end
 
       describe '#load_ig' do
-        it 'downloads IG' do
+        it 'successfully downloads package' do
           stub_request(:get, %r{https?://build.fhir.org}).to_return(body: package_binary)
           with_temp_path("ig-downloader-#{url}") do |temp_path|
             allow(ig_downloader).to receive(:ig_file).and_return(temp_path)
@@ -143,7 +141,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
     end
 
     describe '#load_ig' do
-      it 'downloads IG' do
+      it 'successfully downloads package' do
         with_temp_path('ig-downloader-file') do |temp_path|
           allow(ig_downloader).to receive(:ig_file).and_return(temp_path)
           ig_downloader.load_ig(absolute_path, nil, { verbose: false })
@@ -154,9 +152,14 @@ RSpec.describe Inferno::Utils::IgDownloader do
   end
 
   describe '#load_ig' do
-    it 'with bad input raises exception' do
-      expect { ig_downloader.load_ig('bad') }.to raise_error(Inferno::Utils::IgDownloader::Error)
+    it 'with bad input raises standard error' do
+      expect { ig_downloader.load_ig('bad') }.to raise_error(StandardError)
     end
 
+    it 'with bad url raises http error' do
+      bad_url = 'http://bad.example.com/package.tgz'
+      stub_request(:get, bad_url).to_return(status: 404)
+      expect { ig_downloader.load_ig(bad_url) }.to raise_error(OpenURI::HTTPError)
+    end
   end
 end
