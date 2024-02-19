@@ -1,12 +1,6 @@
 require 'thor'
 require_relative '../../../lib/inferno/utils/ig_downloader'
 
-RSpec::Matchers.define :case_match do |expected|
-  match do |actual|
-    expected === actual # rubocop:disable Style/CaseEquality
-  end
-end
-
 PACKAGE_FIXTURE = File.expand_path('../../fixtures/small_package.tgz', __dir__)
 
 def with_temp_path(name)
@@ -52,7 +46,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
     end
 
     it 'matches fhir package name regex' do
-      expect(canonical).to case_match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME_REG_EX)
+      expect(canonical).to match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME_REG_EX)
     end
 
     it 'returns correct registry url' do
@@ -60,7 +54,9 @@ RSpec.describe Inferno::Utils::IgDownloader do
     end
 
     it 'raises exception if missing version' do
-      expect { ig_downloader.ig_registry_url('hl7.fhir.us.udap-security') }.to raise_error(Inferno::Utils::IgDownloader::Error)
+      expect do
+        ig_downloader.ig_registry_url('hl7.fhir.us.udap-security')
+      end.to raise_error(Inferno::Utils::IgDownloader::Error)
     end
 
     it 'downloads IG' do
@@ -84,11 +80,11 @@ RSpec.describe Inferno::Utils::IgDownloader do
   ].each do |url|
     context "with IG by http URL #{url}" do
       it 'matches http uri regex' do
-        expect(url).to case_match(Inferno::Utils::IgDownloader::HTTP_URI_REG_EX)
+        expect(url).to match(Inferno::Utils::IgDownloader::HTTP_URI_REG_EX)
       end
 
       it 'does not match fhir package name regex' do
-        expect(url).to_not case_match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME_REG_EX)
+        expect(url).to_not match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME_REG_EX)
       end
 
       it 'normalizes to a package.tgz url' do
@@ -110,15 +106,15 @@ RSpec.describe Inferno::Utils::IgDownloader do
     let(:absolute_path) { "file://#{PACKAGE_FIXTURE}" }
 
     it 'matches file regex' do
-      expect(absolute_path).to case_match(Inferno::Utils::IgDownloader::FILE_URI_REG_EX)
+      expect(absolute_path).to match(Inferno::Utils::IgDownloader::FILE_URI_REG_EX)
     end
 
     it 'does not match http uri regex' do
-      expect(absolute_path).to_not case_match(Inferno::Utils::IgDownloader::HTTP_URI_REG_EX)
+      expect(absolute_path).to_not match(Inferno::Utils::IgDownloader::HTTP_URI_REG_EX)
     end
 
     it 'does not match fhir package name regex' do
-      expect(absolute_path).to_not case_match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME_REG_EX)
+      expect(absolute_path).to_not match(Inferno::Utils::IgDownloader::FHIR_PACKAGE_NAME_REG_EX)
     end
 
     it 'downloads IG' do
