@@ -19,7 +19,7 @@ describe('The PresetsSelector Component', () => {
       </BrowserRouter>
     );
 
-    const selectionElement = screen.getByRole('button');
+    const selectionElement = screen.getByRole('combobox');
     expect(selectionElement).toBeInTheDocument();
   });
 
@@ -34,7 +34,7 @@ describe('The PresetsSelector Component', () => {
       </BrowserRouter>
     );
 
-    const selectionElement = screen.getByRole('button');
+    const selectionElement = screen.getByRole('combobox');
     expect(selectionElement).toBeInTheDocument();
   });
 
@@ -49,7 +49,7 @@ describe('The PresetsSelector Component', () => {
       </BrowserRouter>
     );
 
-    const selectionElement = screen.getByRole('button');
+    const selectionElement = screen.getByRole('combobox');
     userEvent.click(selectionElement);
 
     const presetChoice = screen.getByText('Preset One');

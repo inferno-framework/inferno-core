@@ -3,7 +3,7 @@ import { Router, BrowserRouter } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import TreeView from '@mui/lab/TreeView';
+import { TreeView } from '@mui/x-tree-view/TreeView';
 import TreeItemLabel from 'components/TestSuite/TestSuiteTree/TreeItemLabel';
 import ThemeProvider from 'components/ThemeProvider';
 import CustomTreeItem from '../CustomTreeItem';
