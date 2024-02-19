@@ -28,7 +28,7 @@ export const router = (testSuites: TestSuite[]) => {
           if (!testSuitesExist) return <SuiteOptionsPageSkeleton />;
           const suiteId: string = params.test_suite_id || '';
           const suite = testSuites.find((suite) => suite.id === suiteId);
-          return testSuitesExist && suite ? (
+          return suite ? (
             <SuiteOptionsPage testSuite={suite} />
           ) : (
             <SuiteOptionsPageSkeleton />
