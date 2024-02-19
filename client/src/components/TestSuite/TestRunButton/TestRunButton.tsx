@@ -6,7 +6,6 @@ import { TestGroup, Runnable, RunnableType } from '~/models/testSuiteModels';
 import CustomTooltip from '~/components/_common/CustomTooltip';
 import lightTheme from '~/styles/theme';
 
-import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
 
 export interface TestRunButtonProps {
@@ -22,7 +21,6 @@ const TestRunButton: FC<TestRunButtonProps> = ({
   runnableType,
   buttonText,
 }) => {
-  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
   /* Need to explicitly check against false because undefined needs to be treated
    * as true. */
@@ -38,7 +36,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
       onClick={() => {
         runTests(runnableType, runnable.id);
       }}
-      endIcon={<PlayArrowIcon />}
+      startIcon={<PlayArrowIcon />}
       data-testid={`runButton-${runnable.id}`}
     >
       {buttonText}
@@ -81,10 +79,10 @@ const TestRunButton: FC<TestRunButtonProps> = ({
 
   if (!showRunButton) {
     return <></>;
-  } else if (!windowIsSmall && !!buttonText) {
-    return textButton;
-  } else {
+  } else if (!buttonText) {
     return iconButton;
+  } else {
+    return textButton;
   }
 };
 

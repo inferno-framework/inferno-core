@@ -76,7 +76,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
   };
 
   return (
-    <Card variant="outlined" sx={{ mb: 3 }}>
+    <Card variant="outlined">
       {renderHeader()}
       <Divider />
       {view === 'run' && renderDescription()}
