@@ -6,10 +6,32 @@ import { vi } from 'vitest';
 import { RunnableType } from '~/models/testSuiteModels';
 import ThemeProvider from 'components/ThemeProvider';
 import TestRunButton from '../TestRunButton';
-import { mockedTestRunButtonData } from '../__mocked_data__/mockData';
+import {
+  mockedTestRunButtonData,
+  mockedUnrunnableTestRunButtonData,
+} from '../__mocked_data__/mockData';
 import userEvent from '@testing-library/user-event';
 
 describe('The TestRunButton Component', () => {
+  it('does not render TestRunButton if test is not runnable', () => {
+    render(
+      <BrowserRouter>
+        <ThemeProvider>
+          <SnackbarProvider>
+            <TestRunButton
+              runnable={mockedUnrunnableTestRunButtonData.test}
+              runnableType={RunnableType.Test}
+              runTests={mockedUnrunnableTestRunButtonData.runTests}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    );
+
+    const buttonElements = screen.queryAllByRole('button');
+    expect(buttonElements).toHaveLength(0);
+  });
+
   it('renders TestRunButton for tests', () => {
     render(
       <BrowserRouter>
@@ -25,7 +47,7 @@ describe('The TestRunButton Component', () => {
       </BrowserRouter>
     );
 
-    const buttonElement = screen.getByTestId('runButton-mock-test-id');
+    const buttonElement = screen.queryByTestId(`runButton-${mockedTestRunButtonData.test.id}`);
     expect(buttonElement).toBeInTheDocument();
   });
 
@@ -46,7 +68,7 @@ describe('The TestRunButton Component', () => {
       </BrowserRouter>
     );
 
-    const buttonElement = screen.getByTestId('runButton-mock-test-id');
+    const buttonElement = screen.getByTestId(`runButton-${mockedTestRunButtonData.test.id}`);
     userEvent.click(buttonElement);
     expect(runTests).toBeCalledTimes(1);
   });
@@ -66,7 +88,7 @@ describe('The TestRunButton Component', () => {
       </BrowserRouter>
     );
 
-    const buttonElement = screen.getByTestId('runButton-mock-test-group-id');
+    const buttonElement = screen.queryByTestId(`runButton-${mockedTestRunButtonData.testGroup.id}`);
     expect(buttonElement).toBeInTheDocument();
   });
 
@@ -87,7 +109,7 @@ describe('The TestRunButton Component', () => {
       </BrowserRouter>
     );
 
-    const buttonElement = screen.getByTestId('runButton-mock-test-group-id');
+    const buttonElement = screen.getByTestId(`runButton-${mockedTestRunButtonData.testGroup.id}`);
     userEvent.click(buttonElement);
     expect(runTests).toBeCalledTimes(1);
   });
@@ -107,7 +129,7 @@ describe('The TestRunButton Component', () => {
       </BrowserRouter>
     );
 
-    const buttonElement = screen.getByTestId('runButton-mock-test-suite-id');
+    const buttonElement = screen.queryByTestId(`runButton-${mockedTestRunButtonData.testSuite.id}`);
     expect(buttonElement).toBeInTheDocument();
   });
 
@@ -128,7 +150,7 @@ describe('The TestRunButton Component', () => {
       </BrowserRouter>
     );
 
-    const buttonElement = screen.getByTestId('runButton-mock-test-suite-id');
+    const buttonElement = screen.getByTestId(`runButton-${mockedTestRunButtonData.testSuite.id}`);
     userEvent.click(buttonElement);
     expect(runTests).toBeCalledTimes(1);
   });

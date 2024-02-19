@@ -1,10 +1,11 @@
 import * as React from 'react';
-import TreeItem, {
+import {
+  TreeItem,
   TreeItemProps,
   useTreeItem,
   TreeItemContentProps,
   treeItemClasses,
-} from '@mui/lab/TreeItem';
+} from '@mui/x-tree-view/TreeItem';
 import clsx from 'clsx';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
@@ -30,6 +31,8 @@ const CustomContent = React.forwardRef(function CustomContent(
     testId,
   } = props;
 
+  // These imported TreeItem values only accept MouseEvent types
+  // so KeyboardEvents need to be type asserted
   const {
     disabled,
     expanded,
@@ -44,10 +47,15 @@ const CustomContent = React.forwardRef(function CustomContent(
 
   const icon = iconProp || expansionIcon || displayIcon;
 
-  const handleMouseDown = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    preventSelection(event); // Disable default selection behavior
+  const handleInteractionEvent = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
+  ) => {
     const e = event.target as HTMLInputElement;
     const iconTestName = e.getAttribute('data-testid');
+
+    // Disable default selection behavior
+    preventSelection(event as React.MouseEvent<HTMLDivElement, MouseEvent>);
+
     // Do not select if clicking on expansion icon
     if (iconTestName !== 'ChevronRightIcon' && iconTestName !== 'ExpandMoreIcon') {
       handleSelectionAction(event);
@@ -57,13 +65,13 @@ const CustomContent = React.forwardRef(function CustomContent(
   const handleExpansionAction = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
   ) => {
-    handleExpansion(event);
+    handleExpansion(event as React.MouseEvent<HTMLDivElement, MouseEvent>);
   };
 
   const handleSelectionAction = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
   ) => {
-    handleSelection(event);
+    handleSelection(event as React.MouseEvent<HTMLDivElement, MouseEvent>);
     if (testId) navigate(`#${testId}`);
   };
 
@@ -75,12 +83,17 @@ const CustomContent = React.forwardRef(function CustomContent(
         [classes.focused]: focused,
         [classes.disabled]: disabled,
       })}
-      onMouseDown={handleMouseDown}
+      onMouseDown={handleInteractionEvent}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') handleInteractionEvent(e);
+      }}
       ref={ref as React.Ref<HTMLDivElement>}
     >
       <div
         onClick={handleExpansionAction}
-        onKeyPress={handleExpansionAction}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') handleExpansionAction(e);
+        }}
         className={classes.iconContainer}
       >
         {icon}
