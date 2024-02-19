@@ -103,7 +103,8 @@ RSpec.describe Inferno::Utils::IgDownloader do
 
       describe '#ig_http_url' do
         it 'normalizes to a package.tgz url' do
-          expect(ig_downloader.ig_http_url(url)).to match(%r{https?://build.fhir.org/ig/HL7/fhir-udap-security-ig/package.tgz})
+          expect(ig_downloader.ig_http_url(url))
+            .to match(%r{https?://build.fhir.org/ig/HL7/fhir-udap-security-ig/package.tgz})
         end
       end
 
