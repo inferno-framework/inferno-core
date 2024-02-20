@@ -12,7 +12,7 @@ module Inferno
           session_id = res['sessionId']
           session_repo = Inferno::Repositories::ValidatorSessions.new
           session_repo.save(test_suite_id: suite_id, validator_session_id: session_id,
-                                validator_name:, suite_options: required_suite_options)
+                            validator_name:, suite_options: required_suite_options)
           validator.session_id = session_id
         else
           Inferno::Application['logger'].error("InvokeValidatorSession - error from validator: #{response_body}")

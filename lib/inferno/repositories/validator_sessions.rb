@@ -4,7 +4,6 @@ require_relative 'repository'
 module Inferno
   module Repositories
     class ValidatorSessions < Repository
-
       def save(params)
         validator_session_id = params[:validator_session_id]
         validator_name = params[:validator_name]
@@ -24,8 +23,7 @@ module Inferno
           update: { validator_session_id:,
                     test_suite_id:,
                     suite_options:,
-                    validator_name:
-                    }
+                    validator_name: }
         ).insert(
           id: "#{validator_session_id}_#{validator_name}",
           validator_session_id:,
@@ -37,18 +35,15 @@ module Inferno
       end
 
       def find_validator_session_id(test_suite_id, validator_name, suite_options)
-        suite_options = "[]" if suite_options.nil?
+        suite_options = '[]' if suite_options.nil?
         session = self.class::Model
           .find(test_suite_id:, validator_name:, suite_options:)
         return nil if session.nil?
-        time = Time.now
-        session_id = session[:validator_session_id]
-        rec = self.class::Model.where(:validator_session_id=>session_id).update(:last_accessed=>time)
-        session_id
+
+        session[:validator_session_id]
       end
 
       class Model < Sequel::Model(db)
-
         def before_save
           time = Time.now
           self.last_accessed ||= time

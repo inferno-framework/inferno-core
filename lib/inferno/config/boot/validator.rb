@@ -10,7 +10,8 @@ Inferno::Application.boot(:validator) do
       suite.fhir_validators.each do |name, validators, required_suite_options|
         validators.each_with_index do |validator, index|
           if validator.is_a? Inferno::DSL::FHIRResourceValidation::Validator
-            Inferno::Jobs.perform(Inferno::Jobs::InvokeValidatorSession, suite.id, name.to_s, index, required_suite_options)
+            Inferno::Jobs.perform(Inferno::Jobs::InvokeValidatorSession, suite.id, name.to_s, index,
+                                  required_suite_options)
           end
         end
       end
