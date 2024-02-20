@@ -46,7 +46,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
   context 'with IG by canonical name' do
     let(:canonical) { 'hl7.fhir.us.udap-security@1.0.0' }
     let(:resolved_url) do
-      'https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz'
+      'https://packages.fhir.org/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz'
     end
 
     describe 'FHIR_PACKAGE_NAME_REG_EX' do
@@ -67,7 +67,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
 
     describe '#load_ig' do
       it 'successfully downloads package' do
-        stub_request(:get, 'https://packages.simplifier.net/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz')
+        stub_request(:get, 'https://packages.fhir.org/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz')
           .to_return(body: package_binary)
 
         with_temp_path('ig-downloader-canonical') do |temp_path|

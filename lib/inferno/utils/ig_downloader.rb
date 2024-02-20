@@ -42,7 +42,7 @@ module Inferno
         end
 
         package_name, version = ig_npm_style.split('@')
-        "https://packages.simplifier.net/#{package_name}/-/#{package_name}-#{version}.tgz"
+        "https://packages.fhir.org/#{package_name}/-/#{package_name}-#{version}.tgz"
       end
 
       def ig_http_url(ig_page_url)
