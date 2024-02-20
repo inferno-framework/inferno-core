@@ -56,10 +56,6 @@ const App: FC<unknown> = () => {
     }
   };
 
-  if (!testSuites || testSuites.length === 0) {
-    return <></>;
-  }
-
   return (
     <SnackbarProvider
       dense
