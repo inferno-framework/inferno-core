@@ -11,7 +11,7 @@ const AppSkeleton: FC<Record<string, never>> = () => {
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
   return (
-    <Box className={classes.testSuiteMain}>
+    <Box className={classes.testSuiteMain} data-testid="appSkeleton">
       <DrawerSkeleton />
       <main
         style={{

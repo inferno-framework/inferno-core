@@ -15,6 +15,7 @@ import infernoLogo from '~/images/inferno_logo.png';
 import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
 import lightTheme from '~/styles/theme';
 import useStyles from './styles';
+import SelectionSkeleton from '../Skeletons/SelectionSkeletion';
 
 export interface LandingPageProps {
   testSuites: TestSuite[] | undefined;
@@ -128,17 +129,24 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         py={4}
         sx={{ backgroundColor: lightTheme.palette.common.grayLightest }}
       >
-        <SelectionPanel
-          title="Test Suites"
-          options={(testSuites || []).sort((testSuite1: TestSuite, testSuite2: TestSuite): number =>
-            testSuite1.title.localeCompare(testSuite2.title)
-          )}
-          setSelection={setSelected}
-          submitAction={() =>
-            startTestingClick(testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen))
-          }
-          submitText="Select Suite"
-        />
+        {testSuites ? (
+          <SelectionPanel
+            title="Test Suites"
+            options={(testSuites || []).sort(
+              (testSuite1: TestSuite, testSuite2: TestSuite): number =>
+                testSuite1.title.localeCompare(testSuite2.title)
+            )}
+            setSelection={setSelected}
+            submitAction={() =>
+              startTestingClick(
+                testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen)
+              )
+            }
+            submitText="Select Suite"
+          />
+        ) : (
+          <SelectionSkeleton />
+        )}
       </Box>
     </Container>
   );

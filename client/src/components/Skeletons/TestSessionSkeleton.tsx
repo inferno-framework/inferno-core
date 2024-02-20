@@ -34,18 +34,14 @@ const TestSessionSkeleton: FC<Record<string, never>> = () => {
   }
 
   return (
-    <Card variant="outlined" sx={{ mb: 3 }}>
+    <Card variant="outlined" sx={{ mb: 3 }} data-testid="testSessionSkeleton">
       <Box className={classes.testGroupCardHeader}>
         <Skeleton variant="circular" height={24} width={24} />
         <span className={classes.testGroupCardHeaderText}>
-          <Skeleton height={20} width={240} />
+          <Skeleton height={20} width={windowIsSmall ? 120 : 240} />
         </span>
         <span className={classes.testGroupCardHeaderButton}>
-          {windowIsSmall ? (
-            <Skeleton variant="circular" height={24} width={24} sx={{ mr: 1 }} />
-          ) : (
-            <Skeleton variant="rounded" height={30} width={140} />
-          )}
+          <Skeleton variant="rounded" height={30} width={140} />
         </span>
       </Box>
       <Divider />
