@@ -279,14 +279,12 @@ module Inferno
         # @private
         def operation_outcome_from_hl7_wrapped_response(response)
           res = JSON.parse(response)
-          validator_session_id =
-            validator_session_repo.find_validator_session_id(test_suite_id,
-                                                             name.to_s, requirements)
-          if res['sessionId'] != validator_session_id
+          if res['sessionId'] != @session_id
             validator_session_repo.save(test_suite_id:, validator_session_id: res['sessionId'],
                                         validator_name: name.to_s, suite_options: requirements)
+            @session_id = res['sessionId']
           end
-          @session_id = res['sessionId']
+          
 
           # assume for now that one resource -> one request
           issues = res['outcomes'][0]['issues']&.map do |i|
