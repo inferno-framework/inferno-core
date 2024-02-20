@@ -238,8 +238,8 @@ module Inferno
         # @private
         def wrap_resource_for_hl7_wrapper(resource, profile_url)
           validator_session_id =
-          validator_session_repo.find_validator_session_id(test_suite_id,
-                                                                           name.to_s, requirements)                        
+            validator_session_repo.find_validator_session_id(test_suite_id,
+                                                             name.to_s, requirements)
           @session_id = validator_session_id if validator_session_id
           wrapped_resource = {
             cliContext: {
@@ -280,11 +280,11 @@ module Inferno
         def operation_outcome_from_hl7_wrapped_response(response)
           res = JSON.parse(response)
           validator_session_id =
-          validator_session_repo.new.find_validator_session_id(test_suite_id,
-                                                                           name.to_s, requirements) 
+            validator_session_repo.find_validator_session_id(test_suite_id,
+                                                             name.to_s, requirements)
           if res['sessionId'] != validator_session_id
-            validator_session_repo.save(test_suite_id: test_suite_id, validator_session_id: res['sessionId'],
-              validator_name: name.to_s, suite_options: requirements)
+            validator_session_repo.save(test_suite_id:, validator_session_id: res['sessionId'],
+                                        validator_name: name.to_s, suite_options: requirements)
           end
           @session_id = res['sessionId']
 
@@ -303,7 +303,7 @@ module Inferno
           else
             runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{response.body}")
             raise Inferno::Exceptions::ErrorInValidatorException,
-                  'Validator response was an unexpected format. '\
+                  'Validator response was an unexpected format. ' \
                   'Review Messages tab or validator service logs for more information.'
           end
         end

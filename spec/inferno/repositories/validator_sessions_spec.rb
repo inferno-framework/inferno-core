@@ -4,21 +4,21 @@ RSpec.describe Inferno::Repositories::ValidatorSessions do
   let(:test_suite_id) { 'basic_suite' }
   let(:validator_session_id1) { 'basic_validator1' }
   let(:validator_session_id2) { 'basic_validator2' }
-  let(:suite_options1) {[Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')]}
-  let(:suite_options2) {[Inferno::DSL::SuiteOption.new(id: :ig_version, value: '2')]}
+  let(:suite_options1) { [Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')] }
+  let(:suite_options2) { [Inferno::DSL::SuiteOption.new(id: :ig_version, value: '2')] }
   let(:session1_params) do
     {
       validator_session_id: validator_session_id1,
-      validator_name: validator_name,
-      test_suite_id: test_suite_id,
+      validator_name:,
+      test_suite_id:,
       suite_options: suite_options1
     }
   end
   let(:session2_params) do
     {
       validator_session_id: validator_session_id2,
-      validator_name: validator_name,
-      test_suite_id: test_suite_id,
+      validator_name:,
+      test_suite_id:,
       suite_options: suite_options2
     }
   end
@@ -26,13 +26,12 @@ RSpec.describe Inferno::Repositories::ValidatorSessions do
     {
       validator_session_id: validator_session_id1,
       validator_name: 'new_name',
-      test_suite_id: test_suite_id,
+      test_suite_id:,
       suite_options: suite_options1
     }
   end
 
   describe '#create' do
-
     before do
       repo.save(session1_params)
     end
@@ -64,7 +63,7 @@ RSpec.describe Inferno::Repositories::ValidatorSessions do
         expect(record[:test_suite_id]).to eq(test_suite_id)
       end
     end
-  end 
+  end
 
   describe '#find' do
     before do
@@ -75,7 +74,7 @@ RSpec.describe Inferno::Repositories::ValidatorSessions do
       record = repo.db.first
       suite_options = JSON.generate(session1_params[:suite_options].map(&:to_hash))
       validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
-        session1_params[:validator_name], suite_options)
+                                                    session1_params[:validator_name], suite_options)
       expect(record[:validator_session_id]).to eq(validator_id)
     end
 
@@ -86,9 +85,9 @@ RSpec.describe Inferno::Repositories::ValidatorSessions do
       suite_options = JSON.generate(session1_params[:suite_options].map(&:to_hash))
       suite_options2 = JSON.generate(session2_params[:suite_options].map(&:to_hash))
       validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
-        session1_params[:validator_name], suite_options)
+                                                    session1_params[:validator_name], suite_options)
       validator_id2 = repo.find_validator_session_id(session2_params[:test_suite_id],
-        session2_params[:validator_name], suite_options2)
+                                                     session2_params[:validator_name], suite_options2)
       expect(record[:validator_session_id]).to eq(validator_id)
       expect(record2[:validator_session_id]).to eq(validator_id2)
     end
