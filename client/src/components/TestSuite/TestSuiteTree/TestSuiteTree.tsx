@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { TestSuite, TestGroup, PresetSummary, ViewType } from '~/models/testSuiteModels';
 import { Box, Divider, Typography } from '@mui/material';
-import TreeView from '@mui/lab/TreeView';
+import { TreeView } from '@mui/x-tree-view/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
