@@ -16,6 +16,7 @@ const HeaderSkeleton: FC<Record<string, never>> = () => {
         minHeight: `${headerHeight}px`, // For responsive screens
         maxHeight: `${headerHeight}px`, // For responsive screens
       }}
+      data-testid="headerSkeleton"
     >
       <Toolbar className={classes.toolbar}>
         {/* Home button */}

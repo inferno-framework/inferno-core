@@ -33,7 +33,12 @@ const DrawerSkeleton: FC<Record<string, never>> = () => {
   return windowIsSmall ? (
     <></>
   ) : (
-    <Drawer variant="permanent" anchor="left" classes={{ paper: drawerClasses.drawerPaper }}>
+    <Drawer
+      variant="permanent"
+      anchor="left"
+      classes={{ paper: drawerClasses.drawerPaper }}
+      data-testid="drawerSkeleton"
+    >
       <Skeleton variant="rounded" height={32} sx={{ m: 2 }} />
       <Divider />
       <Box className={treeClasses.testSuiteTreePanel} py={1}>
