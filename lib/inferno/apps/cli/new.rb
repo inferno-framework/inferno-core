@@ -16,17 +16,20 @@ module Inferno
 
         Examples:
 
-          `inferno new test_fhir_app`
+          `inferno new my_test_kit`
             => generates an Inferno test kit
 
-          `inferno new test_us_core -i hl7.fhir.us.core@6.1.0`
-            => generates Inferno app with US Core 6.1.0 implementation guide
+          `inferno new test-us-core -i hl7.fhir.us.core@6.1.0`
+            => generates Inferno test kit with US Core 6.1.0 implementation guide
 
-          `inferno new test_fast -i http://build.fhir.org/ig/HL7/fhir-identity-matching-ig/index.html -i https://build.fhir.org/ig/HL7/fhir-udap-security-ig/`
-            => generates Inferno app with two implementation guides from their continuous web builds
+          `inferno new TestMatching -i https://build.fhir.org/ig/HL7/fhir-identity-matching-ig/`
+            => generates Inferno test kit with an implementation guide from its continuous web build
 
-          `inferno new test_my_ig -a "My Name" -i file:///absolute/path/to/my/ig/package.tgz`
-            => generates Inferno app with a local IG and specifies My Name as gem author
+          `inferno new test-my-ig -a "My Name" -i file:///absolute/path/to/my/ig/package.tgz`
+            => generates Inferno test kit with a local IG and specifies My Name as gem author
+
+           `inferno new test_my_igs -a "My Name" -a "Another Name" -i file:///my/first/package.tgz -i hl7.fhir.us.core@6.1.0`
+            => generates Inferno test kit with multiple IGs and multiple authors
 
         https://inferno-framework.github.io/index.html
       HELP
@@ -62,7 +65,7 @@ module Inferno
 
       add_runtime_options!
 
-      def create_app
+      def create_test_kit
         directory('.', root_name, { mode: :preserve, recursive: true, verbose: !options['quiet'] })
 
         inside(root_name) do
