@@ -91,7 +91,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
               body={request.request_body}
               collapsedState={true}
               headers={request.request_headers}
-              title="Full Request"
+              title="Request Body"
             />
           </Box>
           <Box pb={3}>
@@ -103,7 +103,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
               body={request.response_body}
               collapsedState={true}
               headers={request.response_headers}
-              title="Full Response"
+              title="Response Body"
             />
           </Box>
         </DialogContent>

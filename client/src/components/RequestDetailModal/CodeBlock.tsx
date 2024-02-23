@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 import { Box, Card, CardContent, CardHeader, Collapse, Divider } from '@mui/material';
 import { RequestHeader } from '~/models/testSuiteModels';
+import CollapseButton from '~/components/_common/CollapseButton';
 import CopyButton from '~/components/_common/CopyButton';
 
 import { formatBodyIfJSON } from './helpers';
 import useStyles from './styles';
-import CollapseButton from '../_common/CollapseButton';
 
 export interface CodeBlockProps {
   body?: string | null;

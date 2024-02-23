@@ -8,14 +8,12 @@ export interface CollapseButtonProps {
   setCollapsed: (collapsed: boolean) => void;
   size?: OverridableStringUnion<'small' | 'large' | 'medium', IconButtonPropsSizeOverrides>;
   startState?: boolean;
-  view?: string;
 }
 
 const CollapseButton: FC<CollapseButtonProps> = ({
   setCollapsed: setParentCollapsed,
   size,
   startState = false,
-  view,
 }) => {
   const [collapsed, setCollapsed] = React.useState(startState);
 
@@ -24,30 +22,16 @@ const CollapseButton: FC<CollapseButtonProps> = ({
   }, [collapsed]);
 
   return (
-    <>
-      <CustomTooltip
-        title={collapsed ? 'Expand panel' : 'Collapse panel'}
-        sx={
-          view === 'report'
-            ? {
-                display: 'none',
-                '@media print': {
-                  display: 'none',
-                },
-              }
-            : {}
-        }
+    <CustomTooltip title={collapsed ? 'Expand panel' : 'Collapse panel'}>
+      <IconButton
+        size={size}
+        color="secondary"
+        aria-label={collapsed ? 'expand button' : 'collapse button'}
+        onClick={() => setCollapsed(!collapsed)}
       >
-        <IconButton
-          size={size}
-          color="secondary"
-          aria-label={collapsed ? 'expand button' : 'collapse button'}
-          onClick={() => setCollapsed(!collapsed)}
-        >
-          {collapsed ? <ExpandMore fontSize="inherit" /> : <ExpandLess fontSize="inherit" />}
-        </IconButton>
-      </CustomTooltip>
-    </>
+        {collapsed ? <ExpandMore fontSize="inherit" /> : <ExpandLess fontSize="inherit" />}
+      </IconButton>
+    </CustomTooltip>
   );
 };
 
