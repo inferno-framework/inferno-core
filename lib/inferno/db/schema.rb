@@ -33,8 +33,8 @@ Sequel.migration do
       
       primary_key [:id]
       
-      index [:validator_session_id], :name=>:sqlite_autoindex_validator_sessions_2, :unique=>true
-      index [:test_suite_id, :validator_name, :suite_options]
+      index [:test_suite_id, :validator_name, :suite_options], :unique=>true
+      index [:validator_session_id], :unique=>true
     end
     
     create_table(:session_data, :ignore_index_errors=>true) do

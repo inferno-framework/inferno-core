@@ -15,16 +15,19 @@ module Inferno
           if raw_suite_options.blank?
             '[]'
           else
-            JSON.generate(raw_suite_options.map(&:to_hash))
+            raw_suite_options.sort.to_s
           end
 
         db.insert_conflict(
-          target: :validator_session_id,
+          target: [:test_suite_id,
+                  :suite_options,
+                  :validator_name],
           update: { validator_session_id:,
                     test_suite_id:,
                     suite_options:,
-                    validator_name: }
-        ).insert(
+                    validator_name: 
+                    }
+          ).insert(
           id: "#{validator_session_id}_#{validator_name}",
           validator_session_id:,
           test_suite_id:,
@@ -35,11 +38,12 @@ module Inferno
       end
 
       def find_validator_session_id(test_suite_id, validator_name, suite_options)
-        suite_options = '[]' if suite_options.nil?
+        suite_options = suite_options.nil? ? '[]' : suite_options.sort.to_s
         session = self.class::Model
           .find(test_suite_id:, validator_name:, suite_options:)
         return nil if session.nil?
-
+        time = Time.now
+        session.update(last_accessed: time)
         session[:validator_session_id]
       end
 
