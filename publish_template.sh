@@ -3,7 +3,7 @@
 # Push a new Inferno version to inferno-template GitHub Repository via SSH.
 #
 # USAGE:
-#   ./publish_template
+#   ./publish_template.sh
 
 set -e
 set -x
