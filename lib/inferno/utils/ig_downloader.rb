@@ -30,7 +30,7 @@ module Inferno
         end
 
         # use Thor's get to support CLI options config
-        get(uri, ig_file(idx + 1), thor_config)
+        get(uri, ig_file(idx), thor_config)
         uri
       end
 
