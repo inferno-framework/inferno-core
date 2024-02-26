@@ -2,7 +2,7 @@ Sequel.migration do
   change do
     create_table :validator_sessions do
       column :id, String, primary_key: true, null: false, size: 36
-      column :validator_session_id,  String, null: false, size: 255#, unique: true
+      column :validator_session_id,  String, null: false, size: 255
       column :test_suite_id, String, null: false, size: 255
       column :validator_name, String, null: false, size: 255
       column :suite_options, String, text: true

@@ -284,7 +284,6 @@ module Inferno
                                         validator_name: name.to_s, suite_options: requirements)
             @session_id = res['sessionId']
           end
-          
 
           # assume for now that one resource -> one request
           issues = res['outcomes'][0]['issues']&.map do |i|

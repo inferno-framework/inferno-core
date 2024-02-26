@@ -7,11 +7,10 @@ Inferno::Application.boot(:validator) do
     next if Sidekiq.server?
 
     Inferno::Repositories::TestSuites.new.all.each do |suite|
-      suite.fhir_validators.each do |name, validators, required_suite_options|
+      suite.fhir_validators.each do |name, validators|
         validators.each_with_index do |validator, index|
           if validator.is_a? Inferno::DSL::FHIRResourceValidation::Validator
-            Inferno::Jobs.perform(Inferno::Jobs::InvokeValidatorSession, suite.id, name.to_s, index,
-                                  required_suite_options)
+            Inferno::Jobs.perform(Inferno::Jobs::InvokeValidatorSession, suite.id, name.to_s, index)
           end
         end
       end
