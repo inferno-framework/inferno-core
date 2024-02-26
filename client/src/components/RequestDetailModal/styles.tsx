@@ -18,10 +18,9 @@ export default makeStyles()((_theme: Theme) => ({
     fontWeight: 600,
   },
   codeblock: {
-    width: '100%',
     overflow: 'auto',
     fontSize: 'small',
-    marginTop: '10px',
+    marginTop: '16px',
   },
   code: {
     textWrap: 'wrap',
