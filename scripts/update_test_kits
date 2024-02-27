@@ -18,15 +18,13 @@ require 'pry'
 require 'faraday'
 require 'json'
 
-binding.pry
-
 access_token = ENV['GITHUB_ACCESS_TOKEN']
 
 test_kit_repos = []
 next_link = 'https://api.github.com/orgs/inferno-framework/repos'
 
 loop do
-  response = Faraday.get next_link
+  response = Faraday.get(next_link)
   json_body = JSON.parse(response.body)
   test_kit_repos.concat(json_body.select { |repo| repo['name'].end_with? 'test-kit' })
 
@@ -50,37 +48,48 @@ end
 Dir.mktmpdir do |dir|
   Dir.chdir(dir)
 
-  puts "\nCloning repos into #{dir}\n"
+  puts "* Cloning repos into #{dir}"
 
   test_kit_repos.each do |repo|
     repo_url = repo['ssh_url']
-    puts "* Cloning #{repo['name']}"
+
+    puts "\n* Cloning #{repo['name']}"
     `git clone #{repo_url}`
+
     Dir.chdir(repo['name'])
-    date_string = DateTime.now.iso8601[0, 10]
-    branch_name = "dependency-updates-#{date_string}"
-    puts "* Running bundle update"
+
+    puts "\n* Running bundle update"
     `bundle update`
+
     git_status = `git status`
 
     if !git_status.include? 'Changes not staged for commit:'
-      binding.pry
-      puts "* No updates for #{repo['name']}.\n"
+      puts "\n* No updates for #{repo['name']}."
       Dir.chdir(dir)
       next
     end
 
-    puts "* Creating branch #{branch_name} and committing updates"
+    date_string = DateTime.now.iso8601[0, 10]
+    branch_name = "dependency-updates-#{date_string}"
+
+    puts "\n* Creating branch #{branch_name} and committing updates"
     `git checkout -b #{branch_name}`
     `git commit -am "update dependencies"`
-    puts "* Pushing"
-    system "git push -u origin #{branch_name}"
 
-    if access_token.nil?
-      puts "\n* No access token provided. Skipping PR creation.\n"
+    puts "\n* Pushing branch"
+    push_successful = system "git push -u origin #{branch_name}"
+
+    if !push_successful
+      puts "\n* Error while push branch to github. Skipping PR creation."
       next
     end
 
+    if access_token.nil?
+      puts "\n* No access token provided. Skipping PR creation."
+      next
+    end
+
+    puts "\n* Opening PR"
     connection = Faraday.new(
       url: 'https://api.github.com',
       headers: {
@@ -98,12 +107,13 @@ Dir.mktmpdir do |dir|
           base: 'main'
         }.to_json
       end
-    # Check response for 201 status
+
     if pr_response.status != 201
-      puts "* Error opening PR"
+      puts "\n* Error opening PR"
     end
+
     Dir.chdir(dir)
   end
 end
 
-puts 'DONE'
+puts '\nDONE'
