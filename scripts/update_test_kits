@@ -63,7 +63,7 @@ Dir.mktmpdir do |dir|
 
     git_status = `git status`
 
-    if !git_status.include? 'Changes not staged for commit:'
+    unless git_status.include? 'Changes not staged for commit:'
       puts "\n* No updates for #{repo['name']}."
       Dir.chdir(dir)
       next
@@ -79,7 +79,7 @@ Dir.mktmpdir do |dir|
     puts "\n* Pushing branch"
     push_successful = system "git push -u origin #{branch_name}"
 
-    if !push_successful
+    unless push_successful
       puts "\n* Error while push branch to github. Skipping PR creation."
       next
     end
@@ -108,9 +108,7 @@ Dir.mktmpdir do |dir|
         }.to_json
       end
 
-    if pr_response.status != 201
-      puts "\n* Error opening PR"
-    end
+    puts "\n* Error opening PR" if pr_response.status != 201
 
     Dir.chdir(dir)
   end
