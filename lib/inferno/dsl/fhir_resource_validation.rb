@@ -27,10 +27,12 @@ module Inferno
 
       class Validator
         attr_reader :requirements
-        attr_accessor :session_id
+        attr_accessor :session_id, :name, :test_suite_id
 
         # @private
-        def initialize(requirements = nil, &)
+        def initialize(name = nil, test_suite_id = nil, requirements = nil, &)
+          @name = name
+          @test_suite_id = test_suite_id
           instance_eval(&)
           @requirements = requirements
         end
@@ -38,6 +40,10 @@ module Inferno
         # @private
         def default_validator_url
           ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL')
+        end
+
+        def validator_session_repo
+          @validator_session_repo ||= Inferno::Repositories::ValidatorSessions.new
         end
 
         # Set the url of the validator service
@@ -231,6 +237,10 @@ module Inferno
 
         # @private
         def wrap_resource_for_hl7_wrapper(resource, profile_url)
+          validator_session_id =
+            validator_session_repo.find_validator_session_id(test_suite_id,
+                                                             name.to_s, requirements)
+          @session_id = validator_session_id if validator_session_id
           wrapped_resource = {
             cliContext: {
               **cli_context.definition,
@@ -269,8 +279,11 @@ module Inferno
         # @private
         def operation_outcome_from_hl7_wrapped_response(response)
           res = JSON.parse(response)
-
-          @session_id = res['sessionId']
+          if res['sessionId'] != @session_id
+            validator_session_repo.save(test_suite_id:, validator_session_id: res['sessionId'],
+                                        validator_name: name.to_s, suite_options: requirements)
+            @session_id = res['sessionId']
+          end
 
           # assume for now that one resource -> one request
           issues = res['outcomes'][0]['issues']&.map do |i|
@@ -287,7 +300,7 @@ module Inferno
           else
             runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{response.body}")
             raise Inferno::Exceptions::ErrorInValidatorException,
-                  'Validator response was an unexpected format. '\
+                  'Validator response was an unexpected format. ' \
                   'Review Messages tab or validator service logs for more information.'
           end
         end
@@ -353,7 +366,7 @@ module Inferno
         def fhir_resource_validator(name = :default, required_suite_options: nil, &block)
           current_validators = fhir_validators[name] || []
 
-          new_validator = Inferno::DSL::FHIRResourceValidation::Validator.new(required_suite_options, &block)
+          new_validator = Inferno::DSL::FHIRResourceValidation::Validator.new(name, id, required_suite_options, &block)
 
           current_validators.reject! { |validator| validator.requirements == required_suite_options }
           current_validators << new_validator

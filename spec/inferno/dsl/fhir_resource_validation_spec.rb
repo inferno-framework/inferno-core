@@ -2,7 +2,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
   let(:validation_url) { 'http://example.com' }
   let(:profile_url) { 'PROFILE' }
   let(:validator) do
-    Inferno::DSL::FHIRResourceValidation::Validator.new do
+    Inferno::DSL::FHIRResourceValidation::Validator.new('test_validator', 'test_suite') do
       url 'http://example.com'
     end
   end
@@ -195,13 +195,13 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
                     })
       end
 
-      expect(v1.cli_context.definition.fetch(:txServer, :missing)).to eq(nil)
+      expect(v1.cli_context.definition.fetch(:txServer, :missing)).to be_nil
       expect(v1.cli_context.definition.fetch(:displayWarnings, :missing)).to eq(:missing)
-      expect(v1.cli_context.txServer).to eq(nil)
+      expect(v1.cli_context.txServer).to be_nil
 
       expect(v2.cli_context.definition.fetch(:txServer, :missing)).to eq(:missing)
-      expect(v2.cli_context.definition[:displayWarnings]).to eq(true)
-      expect(v2.cli_context.displayWarnings).to eq(true)
+      expect(v2.cli_context.definition[:displayWarnings]).to be(true)
+      expect(v2.cli_context.displayWarnings).to be(true)
 
       expect(v3.cli_context.igs).to eq(['hl7.fhir.us.core#1.0.1'])
       expect(v3.cli_context.extensions).to eq([])
