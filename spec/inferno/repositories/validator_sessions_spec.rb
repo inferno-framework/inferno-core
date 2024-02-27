@@ -32,7 +32,7 @@ RSpec.describe Inferno::Repositories::ValidatorSessions do
       suite_options: suite_options1
     }
   end
-  let(:session_params_alt1) do
+  let(:session_params_alt_options) do
     {
       validator_session_id: validator_session_id2,
       validator_name:,
@@ -40,7 +40,7 @@ RSpec.describe Inferno::Repositories::ValidatorSessions do
       suite_options: suite_options_alt
     }
   end
-  let(:session4_params) do
+  let(:session_params_alt_name) do
     {
       validator_session_id: validator_session_id2,
       validator_name: 'alt name',
@@ -48,7 +48,7 @@ RSpec.describe Inferno::Repositories::ValidatorSessions do
       suite_options: suite_options1
     }
   end
-  let(:session5_params) do
+  let(:session_params_alt_id) do
     {
       validator_session_id: validator_session_id2,
       validator_name:,
@@ -96,61 +96,70 @@ RSpec.describe Inferno::Repositories::ValidatorSessions do
       repo.save(session1_params)
     end
 
-    it 'single record' do
-      record = repo.db.first
-      # suite_options = JSON.generate(session1_params[:suite_options].map(&:to_hash))
-      validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
-                                                    session1_params[:validator_name], session1_params[:suite_options])
-      expect(record[:validator_session_id]).to eq(validator_id)
-    end
+    context 'with valid params' do
+      it 'finds a single record' do
+        record = repo.db.first
+        validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
+                                                      session1_params[:validator_name],
+                                                      session1_params[:suite_options])
+        expect(record[:validator_session_id]).to eq(validator_id)
+      end
 
-    it 'two records, discriminated by suite options' do
-      repo.save(session2_params)
-      record = repo.db.first
-      record2 = repo.db.all[1]
-      validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
-                                                    session1_params[:validator_name], session1_params[:suite_options])
-      validator_id2 = repo.find_validator_session_id(session2_params[:test_suite_id],
-                                                     session2_params[:validator_name], session2_params[:suite_options])
-      expect(record[:validator_session_id]).to eq(validator_id)
-      expect(record2[:validator_session_id]).to eq(validator_id2)
-    end
+      it 'updates validator session id when reverse order suite options cause overwrite' do
+        repo.save(session_params_alt_options)
+        record = repo.db.first
+        validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
+                                                      session1_params[:validator_name],
+                                                      session1_params[:suite_options])
+        validator_id_alt = repo.find_validator_session_id(session_params_alt_options[:test_suite_id],
+                                                          session_params_alt_options[:validator_name],
+                                                          session_params_alt_options[:suite_options])
+        expect(validator_session_id2).to eq(validator_id)
+        expect(validator_session_id2).to eq(validator_id_alt)
+        expect(validator_session_id2).to eq(record[:validator_session_id])
+      end
 
-    it 'updated validator session id, when reverse order suite options cause overwrite' do
-      repo.save(session_params_alt1)
-      record = repo.db.first
-      validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
-                                                    session1_params[:validator_name], session1_params[:suite_options])
-      validator_id_alt = repo.find_validator_session_id(session_params_alt1[:test_suite_id],
-                                                        session_params_alt1[:validator_name],
-                                                        session_params_alt1[:suite_options])
-      expect(validator_session_id2).to eq(validator_id)
-      expect(validator_session_id2).to eq(validator_id_alt)
-      expect(validator_session_id2).to eq(record[:validator_session_id])
-    end
+      it 'saves two records and finds the correct one, discriminating by suite options' do
+        repo.save(session2_params)
+        record = repo.db.first
+        record2 = repo.db.all[1]
+        validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
+                                                      session1_params[:validator_name],
+                                                      session1_params[:suite_options])
+        validator_id2 = repo.find_validator_session_id(session2_params[:test_suite_id],
+                                                       session2_params[:validator_name],
+                                                       session2_params[:suite_options])
+        expect(record[:validator_session_id]).to eq(validator_id)
+        expect(record2[:validator_session_id]).to eq(validator_id2)
+      end
 
-    it 'two records, discriminate by name' do
-      repo.save(session4_params)
-      record = repo.db.first
-      record4 = repo.db.all[1]
-      validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
-                                                    session1_params[:validator_name], session1_params[:suite_options])
-      validator_id4 = repo.find_validator_session_id(session4_params[:test_suite_id],
-                                                     session4_params[:validator_name], session4_params[:suite_options])
-      expect(record[:validator_session_id]).to eq(validator_id)
-      expect(record4[:validator_session_id]).to eq(validator_id4)
-    end
+      it 'saves two records and finds the correct one, discriminating by validator name' do
+        repo.save(session_params_alt_name)
+        record = repo.db.first
+        record2 = repo.db.all[1]
+        validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
+                                                      session1_params[:validator_name],
+                                                      session1_params[:suite_options])
+        validator_id2 = repo.find_validator_session_id(session_params_alt_name[:test_suite_id],
+                                                       session_params_alt_name[:validator_name],
+                                                       session_params_alt_name[:suite_options])
+        expect(record[:validator_session_id]).to eq(validator_id)
+        expect(record2[:validator_session_id]).to eq(validator_id2)
+      end
 
-    it 'two records, discriminate by suite id' do
-      repo.save(session5_params)
-      record = repo.db.first
-      record5 = repo.db.all[1]
-      validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
-                                                    session1_params[:validator_name], session1_params[:suite_options])
-      validator_id2 = repo.find_validator_session_id(session5_params[:test_suite_id],
-                                                     session5_params[:validator_name], session5_params[:suite_options])
-      expect(record[:validator_session_id]).to eq(validator_id)
-      expect(record5[:validator_session_id]).to eq(validator_id2)
+      it 'saves two records and finds the correct one, discriminating by suite id' do
+        repo.save(session_params_alt_id)
+        record = repo.db.first
+        record2 = repo.db.all[1]
+        validator_id = repo.find_validator_session_id(session1_params[:test_suite_id],
+                                                      session1_params[:validator_name],
+                                                      session1_params[:suite_options])
+        validator_id2 = repo.find_validator_session_id(session_params_alt_id[:test_suite_id],
+                                                       session_params_alt_id[:validator_name],
+                                                       session_params_alt_id[:suite_options])
+        expect(record[:validator_session_id]).to eq(validator_id)
+        expect(record2[:validator_session_id]).to eq(validator_id2)
+      end
     end
   end
 end

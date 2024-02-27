@@ -1,6 +1,7 @@
 require 'thor'
 require 'bundler'
 require_relative '../../utils/named_thor_actions'
+require_relative '../../utils/ig_downloader'
 require_relative '../../version'
 
 module Inferno
@@ -8,17 +9,27 @@ module Inferno
     class New < Thor::Group
       include Thor::Actions
       include Inferno::Utils::NamedThorActions
+      include Inferno::Utils::IgDownloader
 
       desc <<~HELP
         Generate a new Inferno test kit for FHIR software testing
 
         Examples:
 
-          `inferno new test_fhir_app`
-            => generates an Inferno app
+          `inferno new my_test_kit`
+            => generates an Inferno test kit
 
-          `inferno new test_my_ig -a MyName`
-            => generates Inferno app and specifies MyName as gemspec author
+          `inferno new test-us-core -i hl7.fhir.us.core@6.1.0`
+            => generates Inferno test kit with US Core 6.1.0 implementation guide
+
+          `inferno new TestMatching -i https://build.fhir.org/ig/HL7/fhir-identity-matching-ig/`
+            => generates Inferno test kit with an implementation guide from its continuous web build
+
+          `inferno new test-my-ig -a "My Name" -i file:///absolute/path/to/my/ig/package.tgz`
+            => generates Inferno test kit with a local IG and specifies My Name as gem author
+
+           `inferno new test_my_igs -a "My Name" -a "Another Name" -i file:///my/first/package.tgz -i hl7.fhir.us.core@6.1.0`
+            => generates Inferno test kit with multiple IGs and multiple authors
 
         https://inferno-framework.github.io/index.html
       HELP
@@ -45,15 +56,23 @@ module Inferno
                    type: :boolean,
                    aliases: '-b',
                    default: false,
-                   desc: 'Do not run bundle install'
+                   desc: 'Do not run bundle install or inferno migrate'
+      class_option :implementation_guide,
+                   type: :string,
+                   aliases: '-i',
+                   repeatable: true,
+                   desc: 'Load an Implementation Guide by FHIR Registry name, URL, or absolute path'
 
       add_runtime_options!
 
-      def create_app
+      def create_test_kit
         directory('.', root_name, { mode: :preserve, recursive: true, verbose: !options['quiet'] })
 
-        bundle_install
-        inferno_migrate
+        inside(root_name) do
+          bundle_install
+          inferno_migrate
+          load_igs
+        end
 
         say_unless_quiet "Created #{root_name} Inferno test kit!", :green
 
@@ -64,10 +83,6 @@ module Inferno
       end
 
       private
-
-      def ig_path
-        File.join('lib', library_name, 'igs')
-      end
 
       def authors
         options['author'].presence || [default_author]
@@ -80,18 +95,27 @@ module Inferno
       def bundle_install
         return if options['skip_bundle']
 
-        inside(root_name) do
-          Bundler.with_unbundled_env do
-            run 'bundle install', verbose: !options['quiet'], capture: options['quiet']
-          end
+        Bundler.with_unbundled_env do
+          run 'bundle install', verbose: !options['quiet'], capture: options['quiet']
         end
       end
 
       def inferno_migrate
         return if options['skip_bundle']
 
-        inside(root_name) do
-          run 'bundle exec inferno migrate', verbose: !options['quiet'], capture: options['quiet']
+        run 'bundle exec inferno migrate', verbose: !options['quiet'], capture: options['quiet']
+      end
+
+      def load_igs
+        config = { verbose: !options['quiet'] }
+        options['implementation_guide']&.each_with_index do |ig, idx|
+          uri = options['implementation_guide'].length == 1 ? load_ig(ig, nil, config) : load_ig(ig, idx, config)
+          say_unless_quiet "Downloaded IG from #{uri}"
+        rescue OpenURI::HTTPError => e
+          say_unless_quiet "Failed to install implementation guide #{ig}", :red
+          say_unless_quiet e.message, :red
+        rescue StandardError => e
+          say_unless_quiet e.message, :red
         end
       end
 
