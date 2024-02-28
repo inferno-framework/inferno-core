@@ -11,6 +11,7 @@ require_relative 'entities/test_group'
 require_relative 'entities/test_run'
 require_relative 'entities/test_session'
 require_relative 'entities/test_suite'
+require_relative 'entities/validator_session'
 
 module Inferno
   # Entities are domain objects whose identity is based on an `id`. Entities
