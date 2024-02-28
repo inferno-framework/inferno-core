@@ -106,6 +106,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           sv: '4.0.1',
           doNative: false,
           extensions: ['any'],
+          disableDefaultResourceFetcher: true,
           profiles: [profile_url]
         },
         filesToValidate: [
@@ -224,6 +225,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           sv: '4.0.1',
           doNative: true,
           extensions: ['any'],
+          disableDefaultResourceFetcher: true,
           igs: ['hl7.fhir.us.core#3.1.1'],
           txServer: nil,
           displayWarnings: true,
