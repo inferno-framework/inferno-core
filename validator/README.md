@@ -1,4 +1,4 @@
-# infernocommunity/inferno-wrapped-validator
+# infernocommunity/inferno-resource-validator
 
 This Dockerfile is based on the Dockerfile for org.hl7.fhir.validator-wrapper (see https://github.com/hapifhir/org.hl7.fhir.validator-wrapper/blob/master/Dockerfile ) with 3 key differences relevant to Inferno:
 1. It fetches the built JAR from GitHub instead of locally, or building from source
@@ -18,5 +18,5 @@ Replace `1.0.50` below with the appropriate number and run the following command
 
 ```sh
 export PROJECT_VERSION=1.0.50
-docker buildx build --platform linux/arm64,linux/amd64 --build-arg "PROJECT_VERSION=${PROJECT_VERSION}" --tag "infernocommunity/inferno-wrapped-validator:${PROJECT_VERSION}" --tag infernocommunity/inferno-wrapped-validator:latest --push .
+docker buildx build --platform linux/arm64,linux/amd64 --build-arg "PROJECT_VERSION=${PROJECT_VERSION}" --tag "infernocommunity/inferno-resource-validator:${PROJECT_VERSION}" --tag infernocommunity/inferno-resource-validator:latest --push .
 ```
