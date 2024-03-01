@@ -7,5 +7,3 @@ import { devtools } from 'zustand/middleware';
 export const devtoolsInDev = (process.env.NODE_ENV === 'development'
   ? devtools
   : (fn: any) => fn) as unknown as typeof devtools;
-/* eslint-enable @typescript-eslint/no-unsafe-return */
-/* eslint-enable @typescript-eslint/no-explicit-any */
