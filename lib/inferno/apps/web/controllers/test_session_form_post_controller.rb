@@ -2,8 +2,6 @@ module Inferno
   module Web
     module Controllers
       class TestSessionFormPostController < Hanami::Action
-        PARAMS = [:test_suite_id, :suite_options].freeze
-
         def self.call(...)
           new.call(...)
         end
