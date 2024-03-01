@@ -70,4 +70,24 @@ RSpec.describe 'POST /:test_suite_id' do
       expect(session_data_repo.load(test_session_id: session.id, name: 'bearer_token')).to eq('SAMPLE_TOKEN')
     end
   end
+
+  context 'with invalid params' do
+    it 'returns a 404 when the suite can not be found' do
+      post router.path(:session_form_post, test_suite_id: 'bad_suite_id')
+
+      expect(last_response.status).to eq(404)
+    end
+
+    it 'returns a 422 when the preset can not be found' do
+      preset_id = 'bad_preset_id'
+
+      post(
+        router.path(:session_form_post, test_suite_id: 'demo'),
+        URI.encode_www_form(preset_id:),
+        'Content-Type' => 'application/x-www-form-urlencoded'
+      )
+
+      expect(last_response.status).to eq(422)
+    end
+  end
 end
