@@ -11,12 +11,10 @@ In addition to the above differences, published versions of this image have been
 
 
 ## Publishing a new version
-
-The version of the wrapper service to use must be provided as the PROJECT_VERSION build argument (required).
+A script `build_and_push.sh` is provided to assist with publishing a new version. The version of the wrapper service to use must be provided as the first command-line argument (required).
 The available versions are listed at https://github.com/hapifhir/org.hl7.fhir.validator-wrapper/releases .
-Replace `1.0.50` below with the appropriate number and run the following command to build & push a multi-arch image to Docker Hub.
+Replace `1.0.50` in the example below with the appropriate number and run the following command to build & push a multi-arch image to Docker Hub. Images will be tagged as both the provided version number and as `latest`
 
 ```sh
-export PROJECT_VERSION=1.0.50
-docker buildx build --platform linux/arm64,linux/amd64 --build-arg "PROJECT_VERSION=${PROJECT_VERSION}" --tag "infernocommunity/inferno-resource-validator:${PROJECT_VERSION}" --tag infernocommunity/inferno-resource-validator:latest --push .
+./build_and_push.sh 1.0.50
 ```
