@@ -1,5 +1,5 @@
-Inferno::Application.boot(:web) do |_app|
-  init do
+Inferno::Application.register_provider(:web) do |_app|
+  prepare do
     require 'blueprinter'
     require 'hanami/router'
     require 'hanami/controller'
