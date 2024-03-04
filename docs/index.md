@@ -3,7 +3,7 @@ layout: home
 title: Home
 nav_order: 1
 ---
-**We're updating this site!  Preview the new [Inferno Framework Home](https://inferno-framework.github.io/index_new.html) before we release it on February 13 and [let us know what you think](https://inferno-framework.github.io/inferno-core/overview.html#contact-the-inferno-team).**
+**The new [Inferno Framework Home](https://inferno-framework.github.io) is now released! Feel free to [let us know what you think](https://inferno-framework.github.io/inferno-core/overview.html#contact-the-inferno-team).**
 
 ----
 
