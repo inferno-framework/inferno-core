@@ -1,9 +1,9 @@
 require 'sequel'
 require 'erb'
 
-Inferno::Application.boot(:db) do
-  init do
-    use :logging
+Inferno::Application.register_provider(:db) do
+  prepare do
+    target_container.start :logging
 
     require 'yaml'
 

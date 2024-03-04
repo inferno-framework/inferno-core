@@ -1,6 +1,6 @@
 require 'active_support/all'
 require 'dotenv'
-require 'dry/system/container'
+require 'dry/system'
 require 'sequel'
 require_relative 'boot'
 
@@ -25,7 +25,7 @@ module Inferno
 
     configure do |config|
       config.root = File.expand_path('../../..', __dir__)
-      config.bootable_dirs = [File.join('lib', 'inferno', 'config', 'boot')]
+      config.provider_dirs = [File.join('lib', 'inferno', 'config', 'boot')]
       config.component_dirs.add 'lib'
     end
   end
