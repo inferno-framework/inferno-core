@@ -66,6 +66,7 @@ export const shouldShowDescription = (
 ): boolean => !!description && !!runnable.description && runnable.description.length > 0;
 
 export const testRunInProgress = (activeRunnables: Record<string, string>, location: string) => {
+  // Get session ID from URL string
   const sessionId = location.split('?')[0].split('#')[0].split('/').reverse()[0];
   return Object.keys(activeRunnables).includes(sessionId);
 };

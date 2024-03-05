@@ -24,7 +24,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
 }) => {
   const currentRunnables = useTestSessionStore((state) => state.currentRunnables);
   const showRunButton = (runnable as TestGroup).user_runnable !== false;
-  const inProgress = testRunInProgress(currentRunnables, useLocation().hash);
+  const inProgress = testRunInProgress(currentRunnables, useLocation().pathname);
 
   const textButton = (
     <Button

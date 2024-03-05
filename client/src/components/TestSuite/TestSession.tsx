@@ -139,7 +139,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       if (runnableFromSelected) setIsRunning(runnableFromSelected, false);
 
       // Delete runnable from storage when test run is done
-      delete currentRunnables[testSession.id];
+      const updatedRunnables = currentRunnables;
+      delete updatedRunnables[testSession.id];
+      setCurrentRunnables(updatedRunnables);
     }
   }, [testRun]);
 
@@ -298,10 +300,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       ? ['running', 'queued', 'waiting', 'cancelling'].includes(testRun?.status)
       : false;
 
-  console.log(testRunInProgress(currentRunnables, useLocation().hash));
+  console.log(currentRunnables);
 
   const renderTestRunProgressBar = () => {
-    const duration = testRunInProgress(currentRunnables, useLocation().hash) ? null : 500;
+    const duration = testRunInProgress(currentRunnables, useLocation().pathname) ? null : 2000;
     return (
       <TestRunProgressBar
         showProgressBar={showProgressBar}
