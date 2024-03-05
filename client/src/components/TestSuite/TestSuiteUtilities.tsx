@@ -63,10 +63,9 @@ export const setIsRunning = (runnable: Runnable, value: boolean) => {
 export const shouldShowDescription = (
   runnable: Runnable,
   description: JSX.Element | undefined
-): boolean => {
-  if (description && runnable.description && runnable.description.length > 0) {
-    return true;
-  } else {
-    return false;
-  }
+): boolean => !!description && !!runnable.description && runnable.description.length > 0;
+
+export const testRunInProgress = (activeRunnables: Record<string, string>, location: string) => {
+  const sessionId = location.split('?')[0].split('#')[0].split('/').reverse()[0];
+  return Object.keys(activeRunnables).includes(sessionId);
 };
