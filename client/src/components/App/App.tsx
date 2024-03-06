@@ -2,13 +2,12 @@ import React, { FC, useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { Theme } from '@mui/material/styles';
 import { SnackbarProvider } from 'notistack';
+import { makeStyles } from 'tss-react/mui';
 import { getTestSuites } from '~/api/TestSuitesApi';
 import { router } from '~/components/App/Router';
 import { TestSuite } from '~/models/testSuiteModels';
 import { useAppStore } from '~/store/app';
-import { useTestSessionStore } from '~/store/testSession';
-import SnackbarCloseButton from 'components/_common/SnackbarCloseButton';
-import { makeStyles } from 'tss-react/mui';
+import SnackbarCloseButton from '~/components/_common/SnackbarCloseButton';
 
 const useStyles = makeStyles<{ height: string }>()((theme: Theme, { height }) => ({
   container: {
@@ -24,10 +23,9 @@ const App: FC<unknown> = () => {
   const setTestSuites = useAppStore((state) => state.setTestSuites);
   const smallWindowThreshold = useAppStore((state) => state.smallWindowThreshold);
   const setWindowIsSmall = useAppStore((state) => state.setWindowIsSmall);
-  const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
 
   const { classes } = useStyles({
-    height: testRunInProgress ? `${72 + footerHeight}px` : `${footerHeight}px`,
+    height: `${footerHeight}px`,
   });
 
   // Update UI on window resize
