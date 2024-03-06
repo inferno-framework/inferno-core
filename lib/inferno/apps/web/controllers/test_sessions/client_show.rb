@@ -3,8 +3,6 @@ module Inferno
     module Controllers
       module TestSessions
         class ClientShow < Controller
-          config.default_response_format = :html
-
           CLIENT_PAGE =
             ERB.new(
               File.read(
@@ -31,6 +29,7 @@ module Inferno
 
             halt 404 if test_suite.nil?
 
+            res.format = :html
             res.body = CLIENT_PAGE
           end
         end
