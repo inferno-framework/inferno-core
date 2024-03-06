@@ -300,8 +300,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       ? ['running', 'queued', 'waiting', 'cancelling'].includes(testRun?.status)
       : false;
 
-  console.log(currentRunnables);
-
   const renderTestRunProgressBar = () => {
     const duration = testRunInProgress(currentRunnables, useLocation().pathname) ? null : 2000;
     return (
