@@ -175,7 +175,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const showInputsModal = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
     setInputs(inputs);
     setRunnableType(runnableType);
-    setCurrentRunnables({ ...currentRunnables, [testSession.id]: runnableId });
     setInputModalVisible(true);
   };
 
@@ -271,6 +270,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         if (testRun) {
           const runnable = runnableMap.get(runnableId);
           if (runnable) setIsRunning(runnable, true);
+          setCurrentRunnables({ ...currentRunnables, [testSession.id]: runnableId });
           setTestRun(testRun);
           setTestRunId(testRun.id);
           setTestRunCancelled(false);
@@ -407,7 +407,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             <InputsModal
               createTestRun={createTestRun}
               runnableType={runnableType}
-              runnableId={currentRunnables[testSession.id]}
+              runnableId={selectedRunnable}
               title={(runnableMap.get(selectedRunnable) as Runnable).title}
               inputInstructions={(runnableMap.get(selectedRunnable) as Runnable).input_instructions}
               inputs={inputs}
