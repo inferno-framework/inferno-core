@@ -270,9 +270,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         if (testRun) {
           const runnable = runnableMap.get(runnableId);
           if (runnable) setIsRunning(runnable, true);
-          if (runnableId) {
-            setCurrentRunnables({ ...currentRunnables, [testSession.id]: runnableId });
-          }
+          setCurrentRunnables({ ...currentRunnables, [testSession.id]: runnableId });
           setTestRun(testRun);
           setTestRunId(testRun.id);
           setTestRunCancelled(false);
