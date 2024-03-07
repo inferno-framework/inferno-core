@@ -28,5 +28,10 @@ export const formatBodyIfJSON = (
 };
 
 const formatJSON = (json: string): string => {
-  return JSON.stringify(JSON.parse(json), null, 2);
+  try {
+    return JSON.stringify(JSON.parse(json), null, 2);
+  } catch (error) {
+    console.error(error);
+    return '';
+  }
 };
