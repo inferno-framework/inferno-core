@@ -33,7 +33,12 @@ import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
 import { useEffectOnce } from '~/hooks/useEffectOnce';
 import { useTimeout } from '~/hooks/useTimeout';
-import { mapRunnableToId, resultsToMap, setIsRunning } from './TestSuiteUtilities';
+import {
+  mapRunnableToId,
+  resultsToMap,
+  setIsRunning,
+  testRunInProgress,
+} from '~/components/TestSuite/TestSuiteUtilities';
 import lightTheme from '~/styles/theme';
 
 export interface TestSessionComponentProps {
@@ -64,11 +69,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const footerHeight = useAppStore((state) => state.footerHeight);
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
-  const runnableId = useTestSessionStore((state) => state.runnableId);
-  const testRunInProgress = useTestSessionStore((state) => state.testRunInProgress);
-  const setRunnableId = useTestSessionStore((state) => state.setRunnableId);
+  const currentRunnables = useTestSessionStore((state) => state.currentRunnables);
+  const setCurrentRunnables = useTestSessionStore((state) => state.setCurrentRunnables);
   const setTestRunId = useTestSessionStore((state) => state.setTestRunId);
-  const setTestRunInProgress = useTestSessionStore((state) => state.setTestRunInProgress);
 
   const [inputModalVisible, setInputModalVisible] = React.useState(false);
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
@@ -118,6 +121,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
 
     if (testRunIsInProgress(testRun)) {
+      const runnableId = currentRunnables[testSession.id];
       const runnable = runnableMap.get(runnableId);
       if (runnable) setIsRunning(runnable, true);
     }
@@ -125,16 +129,19 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   // Set testRunIsInProgress and is_running status when testRun changes
   useEffect(() => {
-    const inProgress = testRunIsInProgress(testRun);
-    setTestRunInProgress(inProgress);
-
     // Wipe both currently running runnable and selected (currently rendered) runnable
-    if (!inProgress) {
+    if (testRun && !testRunIsInProgress(testRun)) {
+      const runnableId = currentRunnables[testSession.id];
+      const runnableFromId = runnableMap.get(runnableId);
+      if (runnableFromId) setIsRunning(runnableFromId, false);
+
       const runnableFromSelected = runnableMap.get(selectedRunnable);
       if (runnableFromSelected) setIsRunning(runnableFromSelected, false);
 
-      const runnableFromId = runnableMap.get(runnableId);
-      if (runnableFromId) setIsRunning(runnableFromId, false);
+      // Delete runnable from storage when test run is done
+      const updatedRunnables = currentRunnables;
+      delete updatedRunnables[testSession.id];
+      setCurrentRunnables(updatedRunnables);
     }
   }, [testRun]);
 
@@ -168,7 +175,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const showInputsModal = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
     setInputs(inputs);
     setRunnableType(runnableType);
-    setRunnableId(runnableId);
+    setCurrentRunnables({ ...currentRunnables, [testSession.id]: runnableId });
     setInputModalVisible(true);
   };
 
@@ -294,7 +301,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       : false;
 
   const renderTestRunProgressBar = () => {
-    const duration = testRunInProgress ? null : 2000;
+    const duration = testRunInProgress(currentRunnables, useLocation().pathname) ? null : 2000;
     return (
       <TestRunProgressBar
         showProgressBar={showProgressBar}
@@ -400,7 +407,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             <InputsModal
               createTestRun={createTestRun}
               runnableType={runnableType}
-              runnableId={runnableId}
+              runnableId={currentRunnables[testSession.id]}
               title={(runnableMap.get(selectedRunnable) as Runnable).title}
               inputInstructions={(runnableMap.get(selectedRunnable) as Runnable).input_instructions}
               inputs={inputs}

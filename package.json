@@ -19,7 +19,7 @@
     "tss-react": "^4.7.5",
     "web-vitals": "^0.2.4",
     "yaml": "^1.10.2",
-    "zustand": "^3.7.2"
+    "zustand": "^4.5.1"
   },
   "scripts": {
     "start": "webpack serve --config ./webpack.config.js --mode=development",
