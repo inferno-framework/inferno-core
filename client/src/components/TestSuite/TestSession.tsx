@@ -137,7 +137,11 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
       const runnableFromSelected = runnableMap.get(selectedRunnable);
       if (runnableFromSelected) setIsRunning(runnableFromSelected, false);
-      deleteRunnables();
+
+      // Delete runnable from storage when test run is done
+      const updatedRunnables = currentRunnables;
+      delete updatedRunnables[testSession.id];
+      setCurrentRunnables(updatedRunnables);
     }
   }, [testRun]);
 
@@ -242,13 +246,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       result.requests[requestIndex] = request;
       setResultsMap(new Map(resultsMap));
     }
-  };
-
-  // Delete runnable from storage when test run is done
-  const deleteRunnables = () => {
-    const updatedRunnables = currentRunnables;
-    delete updatedRunnables[testSession.id];
-    setCurrentRunnables(updatedRunnables);
   };
 
   const runTests = (runnableType: RunnableType, runnableId: string) => {
