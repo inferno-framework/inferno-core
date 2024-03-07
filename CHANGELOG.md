@@ -1,3 +1,16 @@
+# 0.4.30
+* FI-2485: Update mobile main test run button appearance by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/455
+* FI-2454: Add landing page and suite options skeletons by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/453
+* FI-2433: Collapse request details by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/448
+* FI-2431 inferno new IG loading by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/454
+* Fi 2311 store session ids by @rpassas in https://github.com/inferno-framework/inferno-core/pull/427
+* FI-2337: add disableDefaultResourceFetcher to fhir_resource_validator.cliContext defaults by @dehall in https://github.com/inferno-framework/inferno-core/pull/456
+* Update new website link on old documentation site by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/460
+* FI-2490: Fix multiple test run results overlapping by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/461
+* FI-2338: New Dockerfile for validator by @dehall in https://github.com/inferno-framework/inferno-core/pull/458
+* FI-2562: Fix incorrect progress status on run buttons by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/462
+
+
 # 0.4.29
 * Add instructions for loading external test kits. by @arscan in https://github.com/inferno-framework/inferno-core/pull/450
 * FI-2487: Revert "FI-2318 Allow for form data at session create endpoint (#429)" by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/451
