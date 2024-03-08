@@ -14,9 +14,12 @@ import {
   Paper,
   Box,
   IconButton,
+  Input,
 } from '@mui/material';
-import { Close } from '@mui/icons-material';
+import { Close, CloudUpload, FileUploadOutlined } from '@mui/icons-material';
+import { visuallyHidden } from '@mui/utils';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import YAML from 'js-yaml';
 import { useSnackbar } from 'notistack';
 import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteModels';
@@ -27,7 +30,6 @@ import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import CustomTooltip from '../_common/CustomTooltip';
 import useStyles from './styles';
-import remarkGfm from 'remark-gfm';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -349,6 +351,18 @@ const InputsModal: FC<InputsModalProps> = ({
                 classes: {
                   input: classes.serialInput,
                 },
+                endAdornment: (
+                  <IconButton component="label" color="secondary" sx={{ alignSelf: 'flex-start' }}>
+                    <FileUploadOutlined />
+                    <input
+                      style={{ display: 'none' }}
+                      type="file"
+                      hidden
+                      onChange={() => console.log('upload')}
+                      name="[licenseFile]"
+                    />
+                  </IconButton>
+                ),
               }}
               color="secondary"
               fullWidth
