@@ -17,6 +17,16 @@ RSpec.describe Inferno::DSL::HTTPClient do
   let(:resource_id) { '123' }
   let(:resource) { FHIR::CarePlan.new(id: resource_id) }
   let(:response_body) { 'RESPONSE_BODY' }
+  let(:test) do
+    Class.new(Inferno::Entities::Test) do
+      input :foo
+
+      http_client do
+        url 'http://www.example.com'
+        headers 'Authorization' => "Basic #{foo}"
+      end
+    end
+  end
   let(:default_client) do
     block = proc { url 'http://www.example.com' }
     Inferno::DSL::HTTPClientBuilder.new.build(group, block)
@@ -90,6 +100,20 @@ RSpec.describe Inferno::DSL::HTTPClient do
           block = proc { url 'http://www.example.com' }
           Inferno::DSL::HTTPClientBuilder.new.build(group, block)
         end.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+      end
+    end
+
+    context 'with input references' do
+      it 'gets the input value from the runnable' do
+        runnable = test.new(inputs: { foo: 'BLAH' })
+        request =
+          stub_request(:get, base_url)
+            .with(headers: { 'Authorization' => "Basic BLAH" })
+            .to_return(status: 200, body: FHIR::Patient.new(id: 1).to_json)
+
+        runnable.get
+
+        expect(request).to have_been_made.once
       end
     end
   end
