@@ -9,7 +9,7 @@
 * FI-2490: Fix multiple test run results overlapping by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/461
 * FI-2338: New Dockerfile for validator by @dehall in https://github.com/inferno-framework/inferno-core/pull/458
 * FI-2562: Fix incorrect progress status on run buttons by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/462
-
+* FI-2567: Fix client instance variables by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/464
 
 # 0.4.29
 * Add instructions for loading external test kits. by @arscan in https://github.com/inferno-framework/inferno-core/pull/450
