@@ -149,7 +149,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
         runnable = test.new(inputs: { foo: 'BLAH' })
         request =
           stub_request(:get, "#{base_url}/Patient/1")
-            .with(headers: { 'Authorization' => "Basic BLAH" })
+            .with(headers: { 'Authorization' => 'Basic BLAH' })
             .to_return(status: 200, body: FHIR::Patient.new(id: 1).to_json)
 
         runnable.fhir_read(:patient, '1')

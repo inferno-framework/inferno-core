@@ -108,7 +108,7 @@ RSpec.describe Inferno::DSL::HTTPClient do
         runnable = test.new(inputs: { foo: 'BLAH' })
         request =
           stub_request(:get, base_url)
-            .with(headers: { 'Authorization' => "Basic BLAH" })
+            .with(headers: { 'Authorization' => 'Basic BLAH' })
             .to_return(status: 200, body: FHIR::Patient.new(id: 1).to_json)
 
         runnable.get
