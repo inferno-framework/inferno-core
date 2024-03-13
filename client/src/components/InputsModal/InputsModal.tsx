@@ -23,7 +23,6 @@ import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteMod
 import InputOAuthCredentials from './InputOAuthCredentials';
 import InputCheckboxGroup from './InputCheckboxGroup';
 import InputRadioGroup from './InputRadioGroup';
-import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import CustomTooltip from '../_common/CustomTooltip';
 import useStyles from './styles';
@@ -153,9 +152,10 @@ const InputsModal: FC<InputsModalProps> = ({
         );
       case 'textarea':
         return (
-          <InputTextArea
+          <InputTextField
             requirement={requirement}
             index={index}
+            showMultiline={true}
             inputsMap={inputsMap}
             setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
             key={`input-${index}`}
