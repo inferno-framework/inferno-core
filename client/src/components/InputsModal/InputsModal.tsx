@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { ChangeEvent, FC, useEffect } from 'react';
 import {
   Button,
   Dialog,
@@ -14,10 +14,8 @@ import {
   Paper,
   Box,
   IconButton,
-  Input,
 } from '@mui/material';
-import { Close, CloudUpload, FileUploadOutlined } from '@mui/icons-material';
-import { visuallyHidden } from '@mui/utils';
+import { Close, FileUploadOutlined } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import YAML from 'js-yaml';
@@ -69,7 +67,7 @@ const InputsModal: FC<InputsModalProps> = ({
   const [inputsEdited, setInputsEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
-  const [baseInput, setBaseInput] = React.useState<string>('');
+  const [serialInput, setSerialInput] = React.useState<string>('');
   const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
 
   const missingRequiredInput = inputs.some((input: TestInput) => {
@@ -189,11 +187,27 @@ const InputsModal: FC<InputsModalProps> = ({
 
   useEffect(() => {
     setInvalidInput(false);
-    setBaseInput(serializeMap(inputsMap));
+    setSerialInput(serializeMap(inputsMap));
   }, [inputType, open]);
 
   const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
     if (value !== null) setInputType(value);
+  };
+
+  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const text = reader.result?.toString();
+      if (text) {
+        handleSerialChanges(text);
+        setSerialInput(text);
+      } else {
+        enqueueSnackbar('File is empty. Please import a file with inputs.', { variant: 'error' });
+      }
+    };
+    reader.readAsText(file);
   };
 
   const handleSetInputsMap = (inputsMap: Map<string, unknown>, edited?: boolean) => {
@@ -280,6 +294,7 @@ const InputsModal: FC<InputsModalProps> = ({
   };
 
   const handleSerialChanges = (serialChanges: string) => {
+    setSerialInput(serialChanges);
     const parsedChanges = parseSerialChanges(serialChanges);
     if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
       parsedChanges.forEach((change: TestInput) => {
@@ -343,23 +358,26 @@ const InputsModal: FC<InputsModalProps> = ({
             <TextField
               id={`${inputType}-serial-input`}
               minRows={4}
-              key={baseInput}
+              value={serialInput}
               error={invalidInput}
-              defaultValue={baseInput}
               label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
               InputProps={{
                 classes: {
                   input: classes.serialInput,
                 },
                 endAdornment: (
-                  <IconButton component="label" color="secondary" sx={{ alignSelf: 'flex-start' }}>
+                  <IconButton
+                    component="label"
+                    color="secondary"
+                    aria-label="file-upload"
+                    sx={{ alignSelf: 'flex-start' }}
+                  >
                     <FileUploadOutlined />
                     <input
                       style={{ display: 'none' }}
                       type="file"
                       hidden
-                      onChange={() => console.log('upload')}
-                      name="[licenseFile]"
+                      onChange={(e) => handleFileUpload(e)}
                     />
                   </IconButton>
                 ),
