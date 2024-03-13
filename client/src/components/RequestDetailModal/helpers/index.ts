@@ -1,3 +1,4 @@
+import { enqueueSnackbar } from 'notistack';
 import { RequestHeader } from '~/models/testSuiteModels';
 
 export const formatBodyIfJSON = (
@@ -29,9 +30,10 @@ export const formatBodyIfJSON = (
 
 const formatJSON = (json: string): string => {
   try {
+    enqueueSnackbar('Input is not a JSON file.', { variant: 'error' });
     return JSON.stringify(JSON.parse(json), null, 2);
   } catch (error) {
-    console.error(error);
+    enqueueSnackbar('Input is not a JSON file.', { variant: 'error' });
     return '';
   }
 };

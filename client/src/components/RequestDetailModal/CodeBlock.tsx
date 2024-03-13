@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Box, Card, CardContent, CardHeader, Collapse, Divider } from '@mui/material';
+import { useEffectOnce } from '~/hooks/useEffectOnce';
 import { RequestHeader } from '~/models/testSuiteModels';
 import CollapseButton from '~/components/_common/CollapseButton';
 import CopyButton from '~/components/_common/CopyButton';
@@ -17,6 +18,13 @@ export interface CodeBlockProps {
 const CodeBlock: FC<CodeBlockProps> = ({ body, collapsedState = false, headers, title }) => {
   const { classes } = useStyles();
   const [collapsed, setCollapsed] = React.useState(collapsedState);
+  const [jsonBody, setJsonBody] = React.useState<string>('');
+
+  useEffectOnce(() => {
+    if (body && body.length > 0) {
+      setJsonBody(formatBodyIfJSON(body, headers));
+    }
+  });
 
   if (body && body.length > 0) {
     return (
@@ -25,7 +33,7 @@ const CodeBlock: FC<CodeBlockProps> = ({ body, collapsedState = false, headers, 
           subheader={title || 'Code'}
           action={
             <Box display="flex">
-              <CopyButton copyText={formatBodyIfJSON(body, headers)} size="small" />
+              <CopyButton copyText={jsonBody} size="small" />
               <CollapseButton
                 setCollapsed={setCollapsed}
                 startState={collapsedState}
@@ -39,7 +47,7 @@ const CodeBlock: FC<CodeBlockProps> = ({ body, collapsedState = false, headers, 
           <CardContent sx={{ pt: 0 }}>
             <pre data-testid="pre">
               <code data-testid="code" className={classes.code}>
-                {formatBodyIfJSON(body, headers)}
+                {jsonBody}
               </code>
             </pre>
           </CardContent>
