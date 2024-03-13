@@ -39,6 +39,16 @@ RSpec.describe Inferno::DSL::FHIRClient do
   let(:default_client) { group.fhir_clients[:default] }
   let(:bundle) { FHIR::Bundle.new(type: 'history', entry: [{ resource: }]) }
   let(:session_data_repo) { Inferno::Repositories::SessionData.new }
+  let(:test) do
+    Class.new(Inferno::Entities::Test) do
+      input :foo
+
+      fhir_client do
+        url 'http://www.example.com/fhir'
+        headers 'Authorization' => "Basic #{foo}"
+      end
+    end
+  end
   let(:boolean_parameter) do
     FHIR::Parameters::Parameter.new.tap do |param|
       param.name = 'PARAM_BOOL'
@@ -131,6 +141,20 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect do
           group.fhir_client
         end.to raise_error(SocketError, 'not a TCP error')
+      end
+    end
+
+    context 'with input references' do
+      it 'gets the input value from the runnable' do
+        runnable = test.new(inputs: { foo: 'BLAH' })
+        request =
+          stub_request(:get, "#{base_url}/Patient/1")
+            .with(headers: { 'Authorization' => 'Basic BLAH' })
+            .to_return(status: 200, body: FHIR::Patient.new(id: 1).to_json)
+
+        runnable.fhir_read(:patient, '1')
+
+        expect(request).to have_been_made.once
       end
     end
   end
