@@ -57,6 +57,7 @@ Gem::Specification.new do |spec|
     'LICENSE',
     Dir['lib/inferno/**/*.rb'],
     Dir['lib/inferno/**/*.erb'],
+    Dir['lib/inferno/apps/cli/templates/**/*']
     'bin/inferno',
     Dir['lib/inferno/public/*.png'],
     Dir['lib/inferno/public/*.ico'],
