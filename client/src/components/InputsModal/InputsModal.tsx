@@ -199,13 +199,9 @@ const InputsModal: FC<InputsModalProps> = ({
     const file = e.target.files[0];
     const reader = new FileReader();
     reader.onload = () => {
-      const text = reader.result?.toString();
-      if (text) {
-        handleSerialChanges(text);
-        setSerialInput(text);
-      } else {
-        enqueueSnackbar('File is empty. Please import a file with inputs.', { variant: 'error' });
-      }
+      const text = reader.result?.toString() || '';
+      handleSerialChanges(text);
+      setSerialInput(text);
     };
     reader.readAsText(file);
   };
