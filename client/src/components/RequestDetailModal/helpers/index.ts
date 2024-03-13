@@ -30,7 +30,6 @@ export const formatBodyIfJSON = (
 
 const formatJSON = (json: string): string => {
   try {
-    enqueueSnackbar('Input is not a JSON file.', { variant: 'error' });
     return JSON.stringify(JSON.parse(json), null, 2);
   } catch (error) {
     enqueueSnackbar('Input is not a JSON file.', { variant: 'error' });
