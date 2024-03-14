@@ -3,11 +3,13 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import {
   Card,
   CardContent,
-  FormHelperText,
+  FormControl,
+  FormLabel,
+  Input,
   InputLabel,
   List,
   ListItem,
-  TextField,
+  Typography,
 } from '@mui/material';
 import { OAuthCredentials, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
@@ -24,6 +26,7 @@ export interface InputOAuthCredentialsProps {
 export interface InputOAuthField {
   name: string;
   label?: string | ReactJSXElement;
+  description?: string; // currently empty
   required?: boolean; // default behavior should be false
   hide?: boolean; // default behavior should be false
   locked?: boolean; // default behavior should be false
@@ -112,31 +115,45 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
 
     return (
       <ListItem disabled={field.locked} key={field.name}>
-        <TextField
+        <FormControl
+          component="fieldset"
+          id={`requirement${index}_input`}
           disabled={requirement.locked}
-          required={field.required}
+          required={!requirement.optional}
           error={getIsMissingInput(field)}
-          id={`requirement${index}_${field.name}`}
-          label={fieldLabel}
-          helperText={requirement.description}
-          value={oAuthCredentials[field.name as keyof OAuthCredentials]}
-          className={classes.inputField}
-          variant="standard"
-          color="secondary"
           fullWidth
-          onBlur={(e) => {
-            if (e.currentTarget === e.target) {
-              setHasBeenModified({ ...hasBeenModified, [field.name]: true });
-            }
-          }}
-          onChange={(event) => {
-            const value = event.target.value;
-            oAuthCredentials[field.name as keyof OAuthCredentials] = value;
-            inputsMap.set(requirement.name, JSON.stringify(oAuthCredentials));
-            setInputsMap(new Map(inputsMap));
-          }}
-          InputLabelProps={{ shrink: true }}
-        />
+          className={classes.inputField}
+        >
+          <FormLabel htmlFor={`requirement${index}_input`} className={classes.inputLabel}>
+            {fieldLabel}
+          </FormLabel>
+          {field.description && (
+            <Typography variant="subtitle1" className={classes.inputDescription}>
+              {field.description}
+            </Typography>
+          )}
+          <Input
+            disabled={requirement.locked}
+            required={field.required}
+            error={getIsMissingInput(field)}
+            id={`requirement${index}_${field.name}`}
+            value={oAuthCredentials[field.name as keyof OAuthCredentials]}
+            className={classes.inputField}
+            color="secondary"
+            fullWidth
+            onBlur={(e) => {
+              if (e.currentTarget === e.target) {
+                setHasBeenModified({ ...hasBeenModified, [field.name]: true });
+              }
+            }}
+            onChange={(event) => {
+              const value = event.target.value;
+              oAuthCredentials[field.name as keyof OAuthCredentials] = value;
+              inputsMap.set(requirement.name, JSON.stringify(oAuthCredentials));
+              setInputsMap(new Map(inputsMap));
+            }}
+          />
+        </FormControl>
       </ListItem>
     );
   };
@@ -153,7 +170,9 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
             <FieldLabel requirement={requirement} />
           </InputLabel>
           {requirement.description && (
-            <FormHelperText sx={{ mx: 0 }}>{requirement.description}</FormHelperText>
+            <Typography variant="subtitle1" className={classes.inputDescription}>
+              {requirement.description}
+            </Typography>
           )}
           <List>{oAuthFields.map((field) => !field.hide && oAuthField(field))}</List>
         </CardContent>
