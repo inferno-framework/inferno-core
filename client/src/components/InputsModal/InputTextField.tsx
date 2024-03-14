@@ -29,7 +29,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
     <ListItem>
       <FormControl
         component="fieldset"
-        id={`requirement${index}_input`}
+        id={`requirement${index}_control`}
         disabled={requirement.locked}
         required={!requirement.optional}
         error={isMissingInput}

@@ -124,7 +124,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           fullWidth
           className={classes.inputField}
         >
-          <FormLabel htmlFor={`requirement${index}_input`} className={classes.inputLabel}>
+          <FormLabel htmlFor={`requirement${index}_${field.name}`} className={classes.inputLabel}>
             {fieldLabel}
           </FormLabel>
           {field.description && (
