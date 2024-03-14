@@ -1,3 +1,7 @@
+# 0.4.31
+* Fi 2576 inferno new gemspec patch by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/465
+* fix: id should be 36 char long by @rpassas in https://github.com/inferno-framework/inferno-core/pull/467
+
 # 0.4.30
 * FI-2485: Update mobile main test run button appearance by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/455
 * FI-2454: Add landing page and suite options skeletons by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/453
