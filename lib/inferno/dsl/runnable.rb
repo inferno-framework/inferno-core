@@ -360,6 +360,10 @@ module Inferno
         route(method, path, route_class)
       end
 
+      def suite_endpoint(method, path, endpoint_class)
+        route(method, path, endpoint_class)
+      end
+
       # Create a route to handle a request
       #
       # @param method [Symbol] the HTTP request type (:get, :post, etc.) for the

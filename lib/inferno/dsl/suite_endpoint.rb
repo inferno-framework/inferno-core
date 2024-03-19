@@ -1,21 +1,36 @@
 require 'hanami/controller'
+require_relative '../ext/rack'
 
 module Inferno
   module DSL
     # A base class for creating endpoints to test client requests.
     class SuiteEndpoint < Hanami::Action
-      include Import[
-                requests_repo: 'inferno.repositories.requests',
-                results_repo: 'inferno.repositories.results',
-                test_runs_repo: 'inferno.repositories.test_runs',
-                tests_repo: 'inferno.repositories.tests'
-              ]
-
       attr_reader :req, :res
 
       # @private
       def self.call(...)
         new.call(...)
+      end
+
+      def requests_repo
+        @requests_repo ||= Inferno::Repositories::Requests.new
+      end
+
+      def results_repo
+        @results_repo ||= Inferno::Repositories::Results.new
+      end
+
+      def test_runs_repo
+        @test_runs_repo ||= Inferno::Repositories::TestRuns.new
+      end
+
+      def tests_repo
+        @tests_repo ||= Inferno::Repositories::Tests.new
+      end
+
+      # @private
+      def initialize(config: self.class.config) # rubocop:disable Lint/MissingSuper
+        @config = config
       end
 
       # The incoming request as a `Hanami::Action::Request`
@@ -25,7 +40,7 @@ module Inferno
       # @example
       # request.params               # Get url/query params
       # request.body                 # Get body
-      # request.get_header('accept') # Get Accept header
+      # request.headers['accept'] # Get Accept header
       def request
         req
       end
@@ -53,7 +68,7 @@ module Inferno
       # def test_run_identifier
       #   # Identify the test session of an incoming request based on the bearer
       #   # token
-      #   request.get_header('authorization')&.delete_prefix('Bearer ')
+      #   request.headers['authorization']&.delete_prefix('Bearer ')
       # end
       def test_run_identifier
         nil
@@ -64,12 +79,12 @@ module Inferno
       # @return [Void]
       #
       # @example
-      # def build_response
+      # def make_response
       #   response.status = 200
       #   response.body = { abc: 123 }.to_json
       #   response.format = :json
       # end
-      def build_response
+      def make_response
         nil
       end
 
@@ -81,12 +96,11 @@ module Inferno
         @tags ||= []
       end
 
-      # Override this method to specify whether this request should be
-      # persisted. Defaults to true.
+      # Override this method to assign a name to the request
       #
-      # @return [Boolean]
-      def persist_request?
-        true
+      # @return [String]
+      def name
+        nil
       end
 
       # Override this method to update the current waiting result. To resume the
@@ -100,6 +114,14 @@ module Inferno
       # end
       def update_result
         nil
+      end
+
+      # Override this method to specify whether this request should be
+      # persisted. Defaults to true.
+      #
+      # @return [Boolean]
+      def persist_request?
+        true
       end
 
       # The test run which is waiting for incoming requests
@@ -145,6 +167,7 @@ module Inferno
         request.env['inferno.test_session_id'] = test_run.test_session_id
         request.env['inferno.result_id'] = result.id
         request.env['inferno.tags'] = tags
+        request.env['inferno.name'] = name if name.present?
       end
 
       # @private
@@ -163,8 +186,7 @@ module Inferno
       def handle(req, res)
         @req = req
         @res = res
-
-        build_response
+        make_response
 
         persist_request if persist_request?
 
