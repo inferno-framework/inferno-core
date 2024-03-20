@@ -307,7 +307,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         This group demonstrates custom suite endpoint functionality.
       )
 
-      input :custom_bearer_token
+      input :custom_bearer_token,
+            description: 'This bearer token will be used to identify the incoming request'
 
       suite_endpoint :post, '/suite_endpoint', DemoEndpoint
 
@@ -317,7 +318,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         run do
           wait(
             identifier: custom_bearer_token,
-            message: "Waiting for request with bearer token: #{custom_bearer_token}"
+            message: "Waiting for a POST with bearer token: `#{custom_bearer_token}` to " \
+                     "`#{Inferno::Application['base_url']}/custom/demo/suite_endpoint`"
           )
         end
       end

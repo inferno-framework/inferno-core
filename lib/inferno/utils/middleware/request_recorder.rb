@@ -1,3 +1,5 @@
+require 'puma/null_io'
+
 module Inferno
   module Utils
     # @private
@@ -13,7 +15,7 @@ module Inferno
           @logger ||= Application['logger']
         end
 
-        def call(env)
+        def call(env) # rubocop:disable Metrics/CyclomaticComplexity
           env['rack.after_reply'] ||= []
           env['rack.after_reply'] << proc do
             next unless env['inferno.persist_request']
@@ -24,9 +26,9 @@ module Inferno
             uri.scheme = env['rack.url_scheme']
             uri.host = env['SERVER_NAME']
             uri.port = env['SERVER_PORT']
-            uri.path = env['REQUEST_PATH']
+            uri.path = env['REQUEST_PATH'] || ''
             uri.query = env['rack.request.query_string']
-            url = uri.to_s
+            url = uri&.to_s
             verb = env['REQUEST_METHOD']
             logger.info('get body')
             request_body = env['rack.input']
@@ -63,7 +65,15 @@ module Inferno
             logger.error(e.full_message)
           end
 
-          env['inferno.response'] = app.call(env)
+          response = app.call(env)
+
+          env['inferno.response'] = response
+
+          # rack.after_reply is handled by puma, which doesn't process requests
+          # in unit tests, so we manually run them when in the test environment
+          env['rack.after_reply'].each(&:call) if (ENV['APP_ENV'] = 'test')
+
+          env['inferno.response']
         rescue StandardError => e
           logger.error(e.full_message)
 

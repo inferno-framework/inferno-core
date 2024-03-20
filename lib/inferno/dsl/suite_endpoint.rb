@@ -12,18 +12,22 @@ module Inferno
         new.call(...)
       end
 
+      # @return [Inferno::Repositories::Requests]
       def requests_repo
         @requests_repo ||= Inferno::Repositories::Requests.new
       end
 
+      # @return [Inferno::Repositories::Results]
       def results_repo
         @results_repo ||= Inferno::Repositories::Results.new
       end
 
+      # @return [Inferno::Repositories::TestRuns]
       def test_runs_repo
         @test_runs_repo ||= Inferno::Repositories::TestRuns.new
       end
 
+      # @return [Inferno::Repositories::Tests]
       def tests_repo
         @tests_repo ||= Inferno::Repositories::Tests.new
       end
@@ -163,11 +167,11 @@ module Inferno
 
       # @private
       def persist_request
-        request.env['inferno.persist_request'] = true
-        request.env['inferno.test_session_id'] = test_run.test_session_id
-        request.env['inferno.result_id'] = result.id
-        request.env['inferno.tags'] = tags
-        request.env['inferno.name'] = name if name.present?
+        req.env['inferno.persist_request'] = true
+        req.env['inferno.test_session_id'] = test_run.test_session_id
+        req.env['inferno.result_id'] = result.id
+        req.env['inferno.tags'] = tags
+        req.env['inferno.name'] = name if name.present?
       end
 
       # @private
@@ -177,8 +181,8 @@ module Inferno
 
       # @private
       def resume
-        request.env['inferno.resume_test_run'] = true
-        request.env['inferno.test_run_id'] = test_run.id
+        req.env['inferno.resume_test_run'] = true
+        req.env['inferno.test_run_id'] = test_run.id
       end
 
       # @private
@@ -187,13 +191,13 @@ module Inferno
         @res = res
         test_run
 
-        make_response
-
         persist_request if persist_request?
 
         update_result
 
         resume if resume_test_run?
+
+        make_response
       end
     end
   end
