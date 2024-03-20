@@ -177,15 +177,16 @@ module Inferno
 
       # @private
       def resume
-        test_runs_repo.mark_as_no_longer_waiting(test_run.id)
-
-        Jobs.perform(Jobs::ResumeTestRun, test_run.id)
+        request.env['inferno.resume_test_run'] = true
+        request.env['inferno.test_run_id'] = test_run.id
       end
 
       # @private
       def handle(req, res)
         @req = req
         @res = res
+        test_run
+
         make_response
 
         persist_request if persist_request?
