@@ -309,7 +309,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
       input :custom_bearer_token
 
-      suite_endpoint :get, '/suite_endpoint', DemoEndpoint
+      suite_endpoint :post, '/suite_endpoint', DemoEndpoint
 
       test do
         title 'Wait for request to suite endpoint'

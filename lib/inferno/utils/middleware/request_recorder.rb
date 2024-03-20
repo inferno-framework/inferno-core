@@ -34,7 +34,7 @@ module Inferno
 
             request_headers = Rack::Request.new(env).headers.to_h.map { |name, value| { name:, value: } }
 
-            status, response_headers, response_body = @response
+            status, response_headers, response_body = env['inferno.response']
 
             response_headers = response_headers.map { |name, value| { name:, value: } }
 
@@ -52,15 +52,22 @@ module Inferno
               response_headers:,
               tags: env['inferno.tags']
             )
+
+            if env['inferno.resume_test_run']
+              test_run_id = env['inferno.test_run_id']
+              Inferno::Repositories::TestRuns.new.mark_as_no_longer_waiting(test_run_id)
+
+              Inferno::Jobs.perform(Jobs::ResumeTestRun, test_run_id)
+            end
           rescue StandardError => e
             logger.error(e.full_message)
           end
 
-          @response = app.call(env)
+          env['inferno.response'] = app.call(env)
         rescue StandardError => e
           logger.error(e.full_message)
 
-          @response
+          env['inferno.response'] = response
         end
       end
     end
