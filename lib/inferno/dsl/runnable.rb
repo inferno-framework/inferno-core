@@ -354,7 +354,7 @@ module Inferno
         route_class = Class.new(ResumeTestRoute) do |klass|
           klass.singleton_class.instance_variable_set(:@test_run_identifier_block, block)
           klass.singleton_class.instance_variable_set(:@tags, tags)
-          klass.singleton_class.instance_variable_set(:@result, result)
+          klass.singleton_class.instance_variable_set(:@new_result, result)
         end
 
         route(method, path, route_class)
