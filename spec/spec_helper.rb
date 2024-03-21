@@ -13,6 +13,7 @@ SimpleCov.start do
   add_filter '/lib/inferno/db/migrations'
   add_filter '/lib/inferno/db/schema.rb'
   add_filter '/lib/inferno/apps/cli'
+  add_filter '/lib/inferno/ext/rack.rb'
 end
 
 if ENV['GITHUB_ACTIONS']
