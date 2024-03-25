@@ -4,6 +4,10 @@ module Inferno
   module Utils
     # @private
     module Middleware
+      # This middleware handles persisting the incoming requests to
+      # Inferno::DSL::SuiteEndpoint. It is also responsible for resuming test
+      # runs which those endpoints indicate should be resumed, because the test
+      # runs can't be resumed prior to the incoming request being persisted.
       class RequestRecorder
         attr_reader :app
 
@@ -67,6 +71,9 @@ module Inferno
 
           response = app.call(env)
 
+          # For some reason, response isn't in scope for the proc above. This
+          # ensures that the response is available to the proc so that all
+          # details of the response can be persisted.
           env['inferno.response'] = response
 
           # rack.after_reply is handled by puma, which doesn't process requests
