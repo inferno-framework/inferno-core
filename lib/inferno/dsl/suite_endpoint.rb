@@ -3,65 +3,64 @@ require_relative '../ext/rack'
 
 module Inferno
   module DSL
-    # A base class for creating endpoints to test client requests.
+    # A base class for creating endpoints to test client requests. This class is
+    # based on Hanami::Action, and may be used similarly to [a normal Hanami
+    # endpoint](https://github.com/hanami/controller/tree/v2.0.0).
+    #
+    # @example
+    # class AuthorizedEndpoint < Inferno::DSL::SuiteEndpoint
+    #   # Identify the incoming request based on a bearer token
+    #   def test_run_identifier
+    #     request.header['authorization']&.delete_prefix('Bearer ')
+    #   end
+    #
+    #   # Return a json FHIR Patient resource
+    #   def make_response
+    #     response.status = 200
+    #     response.body = FHIR::Patient.new(id: 'abcdef').to_json
+    #     response.format = :json
+    #   end
+    #
+    #   # Update the waiting test to pass when the incoming request is received.
+    #   # This will resume the test run.
+    #   def update_result
+    #     results_repo.update(result.id, result: 'pass')
+    #   end
+    #
+    #   # Apply the 'authorized' tag to the incoming request so that it may be
+    #   # used by later tests.
+    #   def tags
+    #     ['authorized']
+    #   end
+    # end
+    #
+    # class AuthorizedRequestSuite < Inferno::TestSuite
+    #   id :authorized_suite
+    #   suite_endpoint :get, '/authorized_endpoint', AuthorizedEndpoint
+    #
+    #   group do
+    #     title 'Authorized Request Group'
+    #
+    #     test do
+    #       title 'Wait for authorized request'
+    #
+    #       input :bearer_token
+    #
+    #       run do
+    #         wait(
+    #           identifier: bearer_token,
+    #           message: "Waiting to receive a request with bearer_token: #{bearer_token}" \
+    #                    "at `#{Inferno::Application['base_url']}/custom/authorized_suite/authorized_endpoint`"
+    #         )
+    #       end
+    #     end
+    #   end
+    # end
     class SuiteEndpoint < Hanami::Action
       attr_reader :req, :res
 
-      # @private
-      def self.call(...)
-        new.call(...)
-      end
-
-      # @return [Inferno::Repositories::Requests]
-      def requests_repo
-        @requests_repo ||= Inferno::Repositories::Requests.new
-      end
-
-      # @return [Inferno::Repositories::Results]
-      def results_repo
-        @results_repo ||= Inferno::Repositories::Results.new
-      end
-
-      # @return [Inferno::Repositories::TestRuns]
-      def test_runs_repo
-        @test_runs_repo ||= Inferno::Repositories::TestRuns.new
-      end
-
-      # @return [Inferno::Repositories::Tests]
-      def tests_repo
-        @tests_repo ||= Inferno::Repositories::Tests.new
-      end
-
-      # @private
-      def initialize(config: self.class.config) # rubocop:disable Lint/MissingSuper
-        @config = config
-      end
-
-      # The incoming request as a `Hanami::Action::Request`
-      #
-      # @return [Hanami::Action::Request]
-      #
-      # @example
-      # request.params               # Get url/query params
-      # request.body                 # Get body
-      # request.headers['accept'] # Get Accept header
-      def request
-        req
-      end
-
-      # The response as a `Hanami::Action::Response`. Modify this to build the
-      # response to the incoming request.
-      #
-      # @return [Hanami::Action::Response]
-      #
-      # @example
-      # response.status = 200        # Set the status
-      # response.body = 'Ok'         # Set the body
-      # # Set headers
-      # response.headers.merge!('X-Custom-Header' => 'CUSTOM_HEADER_VALUE')
-      def response
-        res
-      end
+      # @!group Overrides These methods should be overridden by subclasses to
+      #   define the behavior of the endpoint
 
       # Override this method to determine a test run's identifier based on an
       # incoming request.
@@ -128,6 +127,64 @@ module Inferno
         true
       end
 
+      # @!endgroup
+
+      # @private
+      def self.call(...)
+        new.call(...)
+      end
+
+      # @return [Inferno::Repositories::Requests]
+      def requests_repo
+        @requests_repo ||= Inferno::Repositories::Requests.new
+      end
+
+      # @return [Inferno::Repositories::Results]
+      def results_repo
+        @results_repo ||= Inferno::Repositories::Results.new
+      end
+
+      # @return [Inferno::Repositories::TestRuns]
+      def test_runs_repo
+        @test_runs_repo ||= Inferno::Repositories::TestRuns.new
+      end
+
+      # @return [Inferno::Repositories::Tests]
+      def tests_repo
+        @tests_repo ||= Inferno::Repositories::Tests.new
+      end
+
+      # @private
+      def initialize(config: self.class.config) # rubocop:disable Lint/MissingSuper
+        @config = config
+      end
+
+      # The incoming request as a `Hanami::Action::Request`
+      #
+      # @return [Hanami::Action::Request]
+      #
+      # @example
+      # request.params               # Get url/query params
+      # request.body                 # Get body
+      # request.headers['accept'] # Get Accept header
+      def request
+        req
+      end
+
+      # The response as a `Hanami::Action::Response`. Modify this to build the
+      # response to the incoming request.
+      #
+      # @return [Hanami::Action::Response]
+      #
+      # @example
+      # response.status = 200        # Set the status
+      # response.body = 'Ok'         # Set the body
+      # # Set headers
+      # response.headers.merge!('X-Custom-Header' => 'CUSTOM_HEADER_VALUE')
+      def response
+        res
+      end
+
       # The test run which is waiting for incoming requests
       #
       # @return [Inferno::Entities::TestRun]
@@ -166,6 +223,10 @@ module Inferno
       end
 
       # @private
+      # The actual persisting happens in
+      # Inferno::Utils::Middleware::RequestRecorder, which allows the response
+      # to include response headers added by other parts of the rack stack
+      # rather than only the response headers explicitly added in the endpoint.
       def persist_request
         req.env['inferno.persist_request'] = true
         req.env['inferno.test_session_id'] = test_run.test_session_id
@@ -180,6 +241,9 @@ module Inferno
       end
 
       # @private
+      # Inferno::Utils::Middleware::RequestRecorder actually resumes the
+      # TestRun. If it were resumed here, it would be resuming prior to the
+      # Request being persisted.
       def resume
         req.env['inferno.resume_test_run'] = true
         req.env['inferno.test_run_id'] = test_run.id

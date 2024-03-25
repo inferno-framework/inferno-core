@@ -7,24 +7,21 @@ module Inferno
     # @private
     # @see Inferno::DSL::Runnable#resume_test_route
     class ResumeTestRoute < SuiteEndpoint
-      # @private
-      def self.call(...)
-        new.call(...)
+      # The incoming request
+      #
+      # @return [Inferno::Entities::Request]
+      def request
+        @request ||= Inferno::Entities::Request.from_hanami_request(req)
       end
 
       # @private
-      def test_run_identifier_block
-        self.class.singleton_class.instance_variable_get(:@test_run_identifier_block)
+      def test_run_identifier
+        @test_run_identifier ||= instance_exec(request, &test_run_identifier_block)
       end
 
       # @private
       def tags
         self.class.singleton_class.instance_variable_get(:@tags) || []
-      end
-
-      # @private
-      def new_result
-        self.class.singleton_class.instance_variable_get(:@new_result)
       end
 
       # @private
@@ -43,8 +40,13 @@ module Inferno
       end
 
       # @private
-      def test_run_identifier
-        @test_run_identifier ||= instance_exec(request, &test_run_identifier_block)
+      def test_run_identifier_block
+        self.class.singleton_class.instance_variable_get(:@test_run_identifier_block)
+      end
+
+      # @private
+      def new_result
+        self.class.singleton_class.instance_variable_get(:@new_result)
       end
 
       # @private
@@ -55,13 +57,6 @@ module Inferno
       # @private
       def resume_ui_at_id(test_run, test)
         test_run.test_suite_id || test_run.test_group_id || test.parent.id
-      end
-
-      # The incoming request
-      #
-      # @return [Inferno::Entities::Request]
-      def request
-        @request ||= Inferno::Entities::Request.from_hanami_request(req)
       end
     end
   end

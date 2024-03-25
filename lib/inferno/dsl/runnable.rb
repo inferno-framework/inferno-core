@@ -360,6 +360,20 @@ module Inferno
         route(method, path, route_class)
       end
 
+      # Create an endpoint to receive incoming requests during a Test Run.
+      #
+      # @see Inferno::DSL::SuiteEndpoint
+      # @example
+      #  suite_endpoint :post, '/my_suite_endpoint', MySuiteEndpoint
+      # @param method [Symbol] the HTTP request type (:get, :post, etc.) for the
+      #   incoming request
+      # @param path [String] the path for this request. The route will be served
+      #   with a prefix of `/custom/TEST_SUITE_ID` to prevent path conflicts.
+      #   [Any of the path options available in Hanami
+      #   Router](https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#a-beautiful-dsl)
+      #   can be used here.
+      # @param [Class] a subclass of Inferno::DSL::SuiteEndpoint
+      # @return [void]
       def suite_endpoint(method, path, endpoint_class)
         route(method, path, endpoint_class)
       end
