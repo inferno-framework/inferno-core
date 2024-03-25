@@ -1,3 +1,6 @@
+# Patch based on https://github.com/rack/rack/pull/1881
+# This should be removed when/if this functionality makes its way into a rack
+# release (possible rack 3.1.0)
 module Rack
   class Request
     def headers
