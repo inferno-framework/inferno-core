@@ -5,6 +5,7 @@ require_relative 'dsl/fhir_resource_validation'
 require_relative 'dsl/http_client'
 require_relative 'dsl/results'
 require_relative 'dsl/runnable'
+require_relative 'dsl/suite_endpoint'
 
 module Inferno
   # The DSL for writing tests.

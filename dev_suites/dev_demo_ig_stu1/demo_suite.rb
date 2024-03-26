@@ -1,4 +1,5 @@
 # require 'onc_certification_g10_test_kit'
+require_relative 'demo_endpoint'
 require_relative 'groups/demo_group'
 
 module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
@@ -296,6 +297,48 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         run do
           info url1
           pass
+        end
+      end
+    end
+
+    group do
+      title 'Custom Suite Endpoints'
+      description %(
+        This group demonstrates custom suite endpoint functionality.
+      )
+
+      input :custom_bearer_token,
+            description: 'This bearer token will be used to identify the incoming request'
+
+      suite_endpoint :post, '/suite_endpoint', DemoEndpoint
+
+      test do
+        title 'Wait for request to suite endpoint'
+
+        run do
+          wait(
+            identifier: custom_bearer_token,
+            message: "Waiting for a POST with bearer token: `#{custom_bearer_token}` to " \
+                     "`#{Inferno::Application['base_url']}/custom/demo/suite_endpoint`"
+          )
+        end
+      end
+
+      test do
+        title 'Named request from suite endpoint'
+        uses_request :custom_request
+
+        run do
+          assert request.present?, 'Named request not found'
+        end
+      end
+
+      test do
+        title 'Tagged request from suite endpoint'
+
+        run do
+          load_tagged_requests('abc', 'def')
+          assert request.present?, 'Tagged request not found'
         end
       end
     end
