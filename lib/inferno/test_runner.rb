@@ -73,6 +73,8 @@ module Inferno
       result = begin
         raise Exceptions::CancelException, 'Test cancelled by user' if test_run_is_cancelling
 
+        check_inputs(test, test_instance, inputs)
+
         test_instance.load_named_requests
         test_instance.instance_eval(&test.block)
         'pass'
@@ -110,6 +112,16 @@ module Inferno
       update_parent_result(test.parent)
 
       test_result
+    end
+
+    def check_inputs(test, _test_instance, inputs)
+      inputs.each do |key, value|
+        optional = test.config.input_optional?(key)
+        if value.nil? && !optional
+          raise Exceptions::SkipException,
+                "Input '#{test.config.input_name(key)}' is nil, skipping test."
+        end
+      end
     end
 
     def run_group(group, scratch)
