@@ -5,7 +5,26 @@ RSpec.describe InfrastructureTest::Suite do
   let(:test_run) { Inferno::Entities::TestRun.new(id: SecureRandom.uuid) }
   let(:runner) { Inferno::TestRunner.new(test_session:, test_run:) }
   let(:test_session) { repo_create(:test_session, test_suite_id: suite.id) }
+  let(:session_data_repo) { Inferno::Repositories::SessionData.new }
   let(:results_repo) { Inferno::Repositories::Results.new }
+
+  let(:inline_inputs) do
+    [
+      { suite_input: 'suite_input_value' },
+      { outer_group_input: 'outer_group_input_value' },
+      { inner_group_input: 'inner_group_input_value' },
+      { test_input: 'test_input_value' }
+    ]
+  end
+
+  let(:external_inputs) do
+    [
+      { suite_input: 'suite_input_value' },
+      { external_outer_group_input: 'outer_group_input_value' },
+      { external_inner_group_input: 'inner_group_input_value' },
+      { external_test1_input: 'test_input_value' }
+    ]
+  end
 
   describe 'inline definitions' do
     let(:outer_inline_group) { suite.groups.first }
@@ -14,6 +33,19 @@ RSpec.describe InfrastructureTest::Suite do
 
     describe 'suite' do
       let(:test_run) { repo_create(:test_run, test_suite_id: suite.id, test_session_id: test_session.id) }
+
+      before do
+        (inline_inputs + external_inputs).uniq.each do |input|
+          input.each do |name, value|
+            session_data_repo.save(
+              test_session_id: test_session.id,
+              name:,
+              value:,
+              type: 'text'
+            )
+          end
+        end
+      end
 
       it 'contains correct metadata' do
         expect(suite.id).to eq('infra_test')
@@ -85,6 +117,19 @@ RSpec.describe InfrastructureTest::Suite do
         )
       end
 
+      before do
+        inline_inputs.each do |input|
+          input.each do |name, value|
+            session_data_repo.save(
+              test_session_id: test_session.id,
+              name:,
+              value:,
+              type: 'text'
+            )
+          end
+        end
+      end
+
       it 'contains the correct metadata' do
         expect(outer_inline_group.title).to eq('Outer inline group title')
         expect(outer_inline_group.short_title).to eq('Outer inline group short title')
@@ -141,6 +186,19 @@ RSpec.describe InfrastructureTest::Suite do
           runnable: { test_group_id: inner_inline_group.id },
           test_session:
         )
+      end
+
+      before do
+        inline_inputs.each do |input|
+          input.each do |name, value|
+            session_data_repo.save(
+              test_session_id: test_session.id,
+              name:,
+              value:,
+              type: 'text'
+            )
+          end
+        end
       end
 
       it 'contains the correct metadata' do
@@ -204,6 +262,19 @@ RSpec.describe InfrastructureTest::Suite do
         )
       end
 
+      before do
+        inline_inputs.each do |input|
+          input.each do |name, value|
+            session_data_repo.save(
+              test_session_id: test_session.id,
+              name:,
+              value:,
+              type: 'text'
+            )
+          end
+        end
+      end
+
       it 'contains the correct metadata' do
         expect(inline_test1.title).to eq('Inline test 1')
         expect(inline_test1.short_title).to eq('Inline test 1')
@@ -256,6 +327,19 @@ RSpec.describe InfrastructureTest::Suite do
           runnable: { test_group_id: external_outer_group.id },
           test_session:
         )
+      end
+
+      before do
+        external_inputs.each do |input|
+          input.each do |name, value|
+            session_data_repo.save(
+              test_session_id: test_session.id,
+              name:,
+              value:,
+              type: 'text'
+            )
+          end
+        end
       end
 
       it 'contains a nested id' do
@@ -313,6 +397,19 @@ RSpec.describe InfrastructureTest::Suite do
           runnable: { test_group_id: external_inner_group.id },
           test_session:
         )
+      end
+
+      before do
+        external_inputs.each do |input|
+          input.each do |name, value|
+            session_data_repo.save(
+              test_session_id: test_session.id,
+              name:,
+              value:,
+              type: 'text'
+            )
+          end
+        end
       end
 
       it 'contains a nested id' do
@@ -375,6 +472,19 @@ RSpec.describe InfrastructureTest::Suite do
           runnable: { test_id: external_test.id },
           test_session:
         )
+      end
+
+      before do
+        external_inputs.each do |input|
+          input.each do |name, value|
+            session_data_repo.save(
+              test_session_id: test_session.id,
+              name:,
+              value:,
+              type: 'text'
+            )
+          end
+        end
       end
 
       it 'contains a nested id' do

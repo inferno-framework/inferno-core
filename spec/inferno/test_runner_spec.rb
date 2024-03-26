@@ -141,6 +141,27 @@ RSpec.describe Inferno::TestRunner do
 
     let(:suite) { OptionsSuite::Suite }
 
+    let(:inputs) do
+      [
+        { v1_input: 'v1_input_value' },
+        { v2_input: 'v2_input_value' },
+        { all_versions_input: 'all_versions_input_value' }
+      ]
+    end
+
+    before do
+      inputs.each do |input|
+        input.each do |name, value|
+          session_data_repo.save(
+            test_session_id: test_session.id,
+            name:,
+            value:,
+            type: 'text'
+          )
+        end
+      end
+    end
+
     it 'only runs groups which should be included based on options' do
       test_session.suite_options = [Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')]
 
