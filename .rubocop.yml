@@ -10,6 +10,7 @@ AllCops:
     - 'Gemfile'
     - 'vendor/**/*'
     - 'lib/inferno/db/schema.rb'
+    - 'tmp/**/*'
 
 Layout/LineLength:
   Max: 120

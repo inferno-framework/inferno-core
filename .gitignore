@@ -8,7 +8,9 @@
 /lib/inferno/public/*.LICENSE.txt
 /lib/inferno/public/*.png
 !/lib/inferno/public/logo*.png
-/tmp
+!/tmp
+/tmp/*
+!/tmp/.keep
 .env.local
 .env.*.local
 **/.DS_Store
