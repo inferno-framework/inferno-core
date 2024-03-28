@@ -9,7 +9,6 @@ export interface InputTextFieldProps {
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
-  showMultiline?: boolean;
 }
 
 const InputTextField: FC<InputTextFieldProps> = ({
@@ -17,7 +16,6 @@ const InputTextField: FC<InputTextFieldProps> = ({
   index,
   inputsMap,
   setInputsMap,
-  showMultiline,
 }) => {
   const { classes } = useStyles();
   const [hasBeenModified, setHasBeenModified] = React.useState(false);
@@ -52,8 +50,8 @@ const InputTextField: FC<InputTextFieldProps> = ({
           className={classes.inputField}
           color="secondary"
           fullWidth
-          multiline={showMultiline}
-          rows={showMultiline ? 4 : 1}
+          multiline={requirement.type === 'textarea'}
+          rows={requirement.type === 'textarea' ? 4 : 1}
           value={inputsMap.get(requirement.name)}
           onBlur={(e) => {
             if (e.currentTarget === e.target) {

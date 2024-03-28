@@ -150,17 +150,6 @@ const InputsModal: FC<InputsModalProps> = ({
             key={`input-${index}`}
           />
         );
-      case 'textarea':
-        return (
-          <InputTextField
-            requirement={requirement}
-            index={index}
-            showMultiline={true}
-            inputsMap={inputsMap}
-            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
-            key={`input-${index}`}
-          />
-        );
       default:
         return (
           <InputTextField
