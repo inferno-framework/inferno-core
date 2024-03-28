@@ -1,25 +1,23 @@
 # <%= title_name %> Test Kit
 
-<%= human_name %> [Inferno](https://github.com/inferno-community/inferno-core) test kit
+<%= human_name %> [Inferno](https://github.com/inferno-community/inferno-core) Test Kit
 for FHIR testing.
 
+## Instructions for Developing Your Test Kit
+
+Refer to the Inferno documentation for information about [setting up
+your development environment and running your Test Kit](https://inferno-framework.github.io/docs/getting-started/).
+
+More information about what is included in this repository can be [found here](https://inferno-framework.github.io/docs/getting-started/repo-layout-and-organization.html).
+
 ## Documentation
-- [Inferno documentation](https://inferno-framework.github.io/inferno-core/)
-- [Ruby API documentation](https://inferno-framework.github.io/inferno-core/docs)
-- [JSON API documentation](https://inferno-framework.github.io/inferno-core/api-docs)
+- [Inferno documentation](https://inferno-framework.github.io/docs/)
+- [Ruby API documentation](https://inferno-framework.github.io/inferno-core/docs/)
+- [JSON API documentation](https://inferno-framework.github.io/inferno-core/api-docs/)
 
-## Instructions for Developing tests
+## Example Inferno Test Kits
 
-To get started writing tests, click "Use this template" on
-github or use the Ruby-based command: `gem install inferno_core && inferno new my-test-kit`.
-Refer to the Inferno documentation for information about [setting up your development
-environment and running
-Inferno](https://inferno-framework.github.io/inferno-core/getting-started.html#getting-started-for-inferno-test-writers).
-
-## Example Inferno test kits
-
-- https://github.com/inferno-community/ips-test-kit
-- https://github.com/inferno-community/shc-vaccination-test-kit
+A list of all Test Kits registered with the Inferno Team can be found on the [Test Kit Registry](https://inferno-framework.github.io/community/test-kits.html) page.
 
 ## License
 Copyright <%= Time.now.year %> TODO

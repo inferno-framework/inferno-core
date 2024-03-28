@@ -27,7 +27,7 @@ module Inferno
                     suite_options:,
                     validator_name: }
         ).insert(
-          id: "#{validator_session_id}_#{validator_name}",
+          id: SecureRandom.uuid,
           validator_session_id:,
           test_suite_id:,
           validator_name:,

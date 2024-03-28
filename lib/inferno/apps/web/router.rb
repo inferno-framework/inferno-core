@@ -72,6 +72,8 @@ module Inferno
 
       get '/test_sessions/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow, as: :client_session_show
       get '/:test_suite_id/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow, as: :client_suite_session_show
+
+      post '/:test_suite_id', to: Inferno::Web::Controllers::TestSessionFormPostController, as: :session_form_post
     end
 
     Router = # rubocop:disable Naming/ConstantName
