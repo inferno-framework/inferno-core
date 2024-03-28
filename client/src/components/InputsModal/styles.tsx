@@ -26,13 +26,22 @@ export default makeStyles()((theme: Theme) => ({
     color: theme.palette.common.grayDarker,
     fontWeight: 600,
   },
+  inputDescription: {
+    mx: 0,
+    mb: 1,
+    fontSize: '0.95rem',
+    color: theme.palette.common.gray,
+    '&.Mui-disabled': {
+      color: theme.palette.common.grayDark,
+    },
+  },
   lockedIcon: {
     marginLeft: '5px',
     verticalAlign: 'text-bottom',
   },
   oauthCard: {
     width: '100%',
-    margin: '8px 0',
+    mx: 2,
     borderColor: theme.palette.common.grayLight,
     '&:focus-within': {
       borderColor: theme.palette.secondary.main,

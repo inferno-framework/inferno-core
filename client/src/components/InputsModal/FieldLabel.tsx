@@ -23,8 +23,7 @@ const FieldLabel: FC<FieldLabelProps> = ({ requirement, isMissingInput = false }
   return (
     <>
       {isMissingInput && <RequiredInputWarning />}
-      {fieldLabelText}
-      {requiredLabel}
+      {`${fieldLabelText}${requiredLabel}`}
       {lockedIcon}
     </>
   );
