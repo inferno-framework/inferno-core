@@ -1,3 +1,9 @@
+# 0.4.32
+* FI-2495: Create sessions via form POST by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/459
+* FI-2156: Test kit dependency update script by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/457
+* Update README.md.tt by @bmath10 in https://github.com/inferno-framework/inferno-core/pull/471
+* FI-2349: Input Chaining Fix by @emichaud998 in https://github.com/inferno-framework/inferno-core/pull/437
+
 # 0.4.31
 * Fi 2576 inferno new gemspec patch by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/465
 * fix: id should be 36 char long by @rpassas in https://github.com/inferno-framework/inferno-core/pull/467
