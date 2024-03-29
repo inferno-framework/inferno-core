@@ -8,6 +8,7 @@ export default makeStyles()((theme: Theme) => ({
     overflow: 'auto !important',
   },
   inputField: {
+    marginTop: '0 !important',
     '& > label.MuiInputLabel-shrink': {
       fontWeight: 600,
       color: theme.palette.common.grayDarkest,
