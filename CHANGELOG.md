@@ -1,3 +1,6 @@
+# 0.4.33
+* have gemspec include dotfiles from lib/inferno/apps/cli/templates/ by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/470
+
 # 0.4.32
 * FI-2495: Create sessions via form POST by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/459
 * FI-2156: Test kit dependency update script by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/457
