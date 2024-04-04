@@ -10,7 +10,6 @@
 #   GITHUB_ACCESS_TOKEN="PUT_YOUR_TOKEN_HERE" ./publish_template.sh
 
 set -e
-set -x
 
 
 REPO_URL=${1:-git@github.com:inferno-framework/inferno-template.git}
