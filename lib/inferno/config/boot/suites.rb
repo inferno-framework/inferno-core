@@ -18,13 +18,23 @@ Inferno::Application.register_provider(:suites) do
       files_to_load.concat Dir.glob(File.join(Inferno::Application.root, 'spec', 'fixtures', '**', '*.rb'))
     end
 
+    # Whenever the definition of a Runnable class ends, add it to the
+    # appropriate repository.
+    in_memory_entities_trace = TracePoint.trace(:end) do |trace|
+      if trace.self < Inferno::Entities::Test ||
+         trace.self < Inferno::Entities::TestGroup ||
+         trace.self < Inferno::Entities::TestSuite
+        trace.self.add_self_to_repository
+      end
+    end
+
     files_to_load.map! { |path| File.realpath(path) }
 
     files_to_load.each do |path|
       require_relative path
     end
 
-    ObjectSpace.each_object(TracePoint, &:disable)
+    in_memory_entities_trace.disable
 
     Inferno::Entities::TestSuite.descendants.each do |descendant|
       # When ID not assigned in custom test suites, Runnable.id will return default ID
