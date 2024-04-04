@@ -4,6 +4,10 @@
 #
 # USAGE:
 #   ./publish_template.sh
+#       OR
+#   ./publish_template.sh [your/github/fork/url]
+#       OR
+#   GITHUB_ACCESS_TOKEN="PUT_YOUR_TOKEN_HERE" ./publish_template.sh
 
 set -e
 set -x
@@ -11,7 +15,8 @@ set -x
 
 REPO_URL=${1:-git@github.com:inferno-framework/inferno-template.git}
 VERSION=$(bundle exec ./bin/inferno version)
-BRANCH=$(echo "Update $VERSION" | tr ' [:upper:]' '-[:lower:]')
+TITLE="Update $VERSION"
+BRANCH=$(echo $TITLE | tr ' [:upper:]' '-[:lower:]')
 
 
 cd ./tmp
@@ -29,4 +34,19 @@ git -C ./inferno-template push --set-upstream origin $BRANCH
 mv ./inferno-template "./inferno-template-$BRANCH"
 cd ..
 
-echo "Pushed to branch $BRANCH, please put up a pull request and merge to main."
+if [[ ! -z "${GITHUB_ACCESS_TOKEN}" ]]; then
+  ENDPOINT=${REPO_URL%.git}
+  ENDPOINT=${ENDPOINT#git@github.com:}
+
+  curl \
+    --request POST \
+    --header "Content-type: application/json" \
+    --header "Authorization: Bearer ${GITHUB_ACCESS_TOKEN}" \
+    --header "X-GitHub-Api-Version: 2022-11-28" \
+    --data "{ \"title\":\"$TITLE\", \"head\":\"${BRANCH}\", \"base\":\"main\"}" \
+    "https://api.github.com/repos/$ENDPOINT/pulls"
+  echo "Put up pull request: $TITLE. Please merge it to main."
+else
+  echo "No GITHUB_ACCESS_TOKEN found, skipping pull request"
+  echo "Pushed to branch $BRANCH, please put up a pull request and merge to main."
+fi
