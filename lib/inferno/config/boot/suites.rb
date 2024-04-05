@@ -5,6 +5,7 @@ Inferno::Application.register_provider(:suites) do
     require 'inferno/entities/test'
     require 'inferno/entities/test_group'
     require 'inferno/entities/test_suite'
+    require 'inferno/entities/test_kit'
 
     files_to_load = Dir.glob(File.join(Dir.pwd, 'lib', '*.rb'))
 
@@ -23,7 +24,8 @@ Inferno::Application.register_provider(:suites) do
     in_memory_entities_trace = TracePoint.trace(:end) do |trace|
       if trace.self < Inferno::Entities::Test ||
          trace.self < Inferno::Entities::TestGroup ||
-         trace.self < Inferno::Entities::TestSuite
+         trace.self < Inferno::Entities::TestSuite ||
+         trace.self < Inferno::Entities::TestKit
         trace.self.add_self_to_repository
       end
     end
