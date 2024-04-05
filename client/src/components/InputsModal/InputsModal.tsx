@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   Button,
   Dialog,
@@ -15,7 +15,7 @@ import {
   Box,
   IconButton,
 } from '@mui/material';
-import { Close, FileUploadOutlined } from '@mui/icons-material';
+import { Close } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import YAML from 'js-yaml';
@@ -28,6 +28,8 @@ import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import CustomTooltip from '../_common/CustomTooltip';
 import useStyles from './styles';
+import DownloadFileButton from '../_common/DownloadFileButton';
+import UploadFileButton from '../_common/UploadFileButton';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -67,6 +69,7 @@ const InputsModal: FC<InputsModalProps> = ({
   const [inputsEdited, setInputsEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
+  const [fileType, setFileType] = React.useState<string>('txt');
   const [serialInput, setSerialInput] = React.useState<string>('');
   const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
 
@@ -188,22 +191,28 @@ const InputsModal: FC<InputsModalProps> = ({
   useEffect(() => {
     setInvalidInput(false);
     setSerialInput(serializeMap(inputsMap));
+
+    // Set download file extensions based on input format
+    switch (inputType) {
+      case 'JSON':
+        setFileType('json');
+        break;
+      case 'YAML':
+        setFileType('yml');
+        break;
+      default:
+        setFileType('txt');
+        break;
+    }
   }, [inputType, open]);
 
   const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
     if (value !== null) setInputType(value);
   };
 
-  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onload = () => {
-      const text = reader.result?.toString() || '';
-      handleSerialChanges(text);
-      setSerialInput(text);
-    };
-    reader.readAsText(file);
+  const handleFileUpload = (text: string) => {
+    handleSerialChanges(text);
+    setSerialInput(text);
   };
 
   const handleSetInputsMap = (inputsMap: Map<string, unknown>, edited?: boolean) => {
@@ -275,7 +284,7 @@ const InputsModal: FC<InputsModalProps> = ({
       } else {
         parsed = YAML.load(changes) as TestInput[];
       }
-      // Convert OAuth input values to strings
+      // Convert OAuth input values to strings; parsed needs to be an array
       parsed.forEach((input) => {
         if (input.type === 'oauth_credentials') {
           input.value = JSON.stringify(input.value);
@@ -351,39 +360,27 @@ const InputsModal: FC<InputsModalProps> = ({
           {inputType === 'Field' ? (
             <List>{inputFields}</List>
           ) : (
-            <TextField
-              id={`${inputType}-serial-input`}
-              minRows={4}
-              value={serialInput}
-              error={invalidInput}
-              label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
-              InputProps={{
-                classes: {
-                  input: classes.serialInput,
-                },
-                endAdornment: (
-                  <IconButton
-                    component="label"
-                    color="secondary"
-                    aria-label="file-upload"
-                    sx={{ alignSelf: 'flex-start' }}
-                  >
-                    <FileUploadOutlined />
-                    <input
-                      style={{ display: 'none' }}
-                      type="file"
-                      hidden
-                      onChange={(e) => handleFileUpload(e)}
-                    />
-                  </IconButton>
-                ),
-              }}
-              color="secondary"
-              fullWidth
-              multiline
-              data-testid="serial-input"
-              onChange={(e) => handleSerialChanges(e.target.value)}
-            />
+            <>
+              <UploadFileButton onUpload={handleFileUpload} />
+              <DownloadFileButton fileName={title} fileType={fileType} />
+              <TextField
+                id={`${inputType}-serial-input`}
+                minRows={4}
+                value={serialInput}
+                error={invalidInput}
+                label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
+                InputProps={{
+                  classes: {
+                    input: classes.serialInput,
+                  },
+                }}
+                color="secondary"
+                fullWidth
+                multiline
+                data-testid="serial-input"
+                onChange={(e) => handleSerialChanges(e.target.value)}
+              />
+            </>
           )}
         </main>
       </DialogContent>
