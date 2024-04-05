@@ -16,9 +16,9 @@ REPO_URL=${1:-git@github.com:inferno-framework/inferno-template.git}
 VERSION=$(bundle exec ./bin/inferno version)
 TITLE="Update $VERSION"
 BRANCH=$(echo $TITLE | tr ' [:upper:]' '-[:lower:]')
+SCRIPT_PATH=$( readlinkf "${BASH_SOURCE[0]:-"$(command -v -- "$0")"}" )
 
-
-cd ./tmp
+cd "$SCRIPT_PATH/../tmp"
 git clone $REPO_URL ./inferno-template
 git -C ./inferno-template branch $BRANCH
 git -C ./inferno-template checkout $BRANCH
@@ -31,7 +31,7 @@ git -C ./inferno-template add --all
 git -C ./inferno-template commit --message "Update to $VERSION"
 git -C ./inferno-template push --set-upstream origin $BRANCH
 mv ./inferno-template "./inferno-template-$BRANCH"
-cd ..
+cd -
 
 if [[ ! -z "${GITHUB_ACCESS_TOKEN}" ]]; then
   ENDPOINT=${REPO_URL%.git}
