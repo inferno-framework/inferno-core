@@ -74,7 +74,7 @@ module Inferno
           load_igs
         end
 
-        say_unless_quiet "Created #{root_name} Inferno test kit!", :green
+        say_unless_quiet "Created #{root_name} Inferno Test Kit!", :green
 
         return unless options['pretend']
 
