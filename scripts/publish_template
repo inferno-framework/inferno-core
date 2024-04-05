@@ -3,22 +3,22 @@
 # Push a new Inferno version to inferno-template GitHub Repository via SSH.
 #
 # USAGE:
-#   ./publish_template.sh
+#   ./publish_template
 #       OR
-#   ./publish_template.sh [github/ssh/url]
+#   ./publish_template [github/ssh/url]
 #       OR
-#   GITHUB_ACCESS_TOKEN="PUT_YOUR_TOKEN_HERE" ./publish_template.sh
+#   GITHUB_ACCESS_TOKEN="PUT_YOUR_TOKEN_HERE" ./publish_template
 
 set -e
 
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 REPO_URL=${1:-git@github.com:inferno-framework/inferno-template.git}
-VERSION=$(bundle exec ./bin/inferno version)
+VERSION=$(bundle exec $SCRIPT_DIR/../bin/inferno version)
 TITLE="Update $VERSION"
 BRANCH=$(echo $TITLE | tr ' [:upper:]' '-[:lower:]')
-SCRIPT_PATH=$( readlinkf "${BASH_SOURCE[0]:-"$(command -v -- "$0")"}" )
 
-cd "$SCRIPT_PATH/../tmp"
+cd "$SCRIPT_DIR/../tmp"
 git clone $REPO_URL ./inferno-template
 git -C ./inferno-template branch $BRANCH
 git -C ./inferno-template checkout $BRANCH
