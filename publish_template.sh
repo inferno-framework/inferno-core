@@ -5,7 +5,7 @@
 # USAGE:
 #   ./publish_template.sh
 #       OR
-#   ./publish_template.sh [your/github/fork/url]
+#   ./publish_template.sh [github/ssh/url]
 #       OR
 #   GITHUB_ACCESS_TOKEN="PUT_YOUR_TOKEN_HERE" ./publish_template.sh
 
