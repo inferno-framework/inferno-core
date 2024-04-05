@@ -45,7 +45,11 @@ if [[ ! -z "${GITHUB_ACCESS_TOKEN}" ]]; then
     --data "{ \"title\":\"$TITLE\", \"head\":\"${BRANCH}\", \"base\":\"main\"}" \
     "https://api.github.com/repos/$ENDPOINT/pulls"
   echo "Put up pull request: $TITLE. Please merge it to main."
+  echo "You can troubleshoot changes locally at tmp/inferno-template-$BRANCH"
 else
   echo "No GITHUB_ACCESS_TOKEN found, skipping pull request"
-  echo "Pushed to branch $BRANCH, please put up a pull request and merge to main."
+  echo "Committed changes to active branch $BRANCH"
+  echo "Pushed changes to remote branch on origin"
+  echo "You can troubleshoot changes locally at tmp/inferno-template-$BRANCH"
+  echo "Please put up a pull request manually"
 fi
