@@ -1,3 +1,8 @@
+# 0.4.34
+* New template wording fix by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/475
+* Fi 2432 Sync Inferno Template by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/439
+* FI-2664: Prevent validator sessions from being created in test environment by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/477
+
 # 0.4.33
 * have gemspec include dotfiles from lib/inferno/apps/cli/templates/ by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/470
 
