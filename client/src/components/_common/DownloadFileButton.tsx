@@ -16,8 +16,6 @@ const DownloadFileButton: FC<DownloadFileButtonProps> = ({ fileName, fileType })
         type: 'text/plain',
       }
     );
-    console.log(file);
-
     downloadLink.href = URL.createObjectURL(file);
     downloadLink.download = `${fileName}.${fileType}`;
     document.body.appendChild(downloadLink); // Required for this to work in FireFox
@@ -31,8 +29,9 @@ const DownloadFileButton: FC<DownloadFileButtonProps> = ({ fileName, fileType })
       color="secondary"
       aria-label="file-download"
       startIcon={<FileDownloadOutlined />}
+      disableElevation
       onClick={downloadFile}
-      sx={{ mb: 2 }}
+      sx={{ mb: 4 }}
     >
       Download File
     </Button>
