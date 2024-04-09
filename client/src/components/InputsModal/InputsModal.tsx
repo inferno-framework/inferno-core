@@ -364,7 +364,7 @@ const InputsModal: FC<InputsModalProps> = ({
               <UploadFileButton onUpload={handleFileUpload} />
               <DownloadFileButton fileName={title} fileType={fileType} />
               <TextField
-                id={`${inputType}-serial-input`}
+                id={`${fileType}-serial-input`}
                 minRows={4}
                 value={serialInput}
                 error={invalidInput}

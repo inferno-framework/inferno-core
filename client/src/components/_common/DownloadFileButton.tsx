@@ -10,9 +10,14 @@ export interface DownloadFileButtonProps {
 const DownloadFileButton: FC<DownloadFileButtonProps> = ({ fileName, fileType }) => {
   const downloadFile = () => {
     const downloadLink = document.createElement('a');
-    const file = new Blob([(document.getElementById('file-download') as HTMLInputElement)?.value], {
-      type: 'text/plain',
-    });
+    const file = new Blob(
+      [(document.getElementById(`${fileType}-serial-input`) as HTMLInputElement)?.value],
+      {
+        type: 'text/plain',
+      }
+    );
+    console.log(file);
+
     downloadLink.href = URL.createObjectURL(file);
     downloadLink.download = `${fileName}.${fileType}`;
     document.body.appendChild(downloadLink); // Required for this to work in FireFox
