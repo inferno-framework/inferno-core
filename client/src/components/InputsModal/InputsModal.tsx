@@ -30,6 +30,7 @@ import CustomTooltip from '../_common/CustomTooltip';
 import useStyles from './styles';
 import DownloadFileButton from '../_common/DownloadFileButton';
 import UploadFileButton from '../_common/UploadFileButton';
+import CopyButton from '../_common/CopyButton';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -360,7 +361,7 @@ const InputsModal: FC<InputsModalProps> = ({
           {inputType === 'Field' ? (
             <List>{inputFields}</List>
           ) : (
-            <>
+            <Box>
               <UploadFileButton onUpload={handleFileUpload} />
               <DownloadFileButton fileName={title} fileType={fileType} />
               <TextField
@@ -373,6 +374,11 @@ const InputsModal: FC<InputsModalProps> = ({
                   classes: {
                     input: classes.serialInput,
                   },
+                  endAdornment: (
+                    <Box sx={{ alignSelf: 'flex-start' }}>
+                      <CopyButton copyText={serialInput} />
+                    </Box>
+                  ),
                 }}
                 color="secondary"
                 fullWidth
@@ -380,7 +386,7 @@ const InputsModal: FC<InputsModalProps> = ({
                 data-testid="serial-input"
                 onChange={(e) => handleSerialChanges(e.target.value)}
               />
-            </>
+            </Box>
           )}
         </main>
       </DialogContent>
