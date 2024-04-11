@@ -144,13 +144,8 @@ const InputsModal: FC<InputsModalProps> = ({
   };
 
   const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (
-      open &&
-      e.key === 'Enter' &&
-      (e.metaKey || e.ctrlKey) &&
-      !missingRequiredInput &&
-      !invalidInput
-    ) {
+    const opKey = window.navigator.userAgent.includes('Mac') ? e.metaKey : e.ctrlKey;
+    if (open && e.key === 'Enter' && opKey && !missingRequiredInput && !invalidInput) {
       submitClicked();
     }
   };
