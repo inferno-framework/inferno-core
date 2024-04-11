@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  List,
   TextField,
   ToggleButtonGroup,
   ToggleButton,
@@ -19,15 +18,11 @@ import { Close } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
 import YAML from 'js-yaml';
 import { useSnackbar } from 'notistack';
-import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteModels';
-import InputOAuthCredentials from './InputOAuthCredentials';
-import InputCheckboxGroup from './InputCheckboxGroup';
-import InputRadioGroup from './InputRadioGroup';
-import InputTextArea from './InputTextArea';
-import InputTextField from './InputTextField';
-import CustomTooltip from '../_common/CustomTooltip';
-import useStyles from './styles';
 import remarkGfm from 'remark-gfm';
+import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteModels';
+import CustomTooltip from '~/components/_common/CustomTooltip';
+import InputFields from '~/components/InputsModal/InputFields';
+import useStyles from '~/components/InputsModal/styles';
 
 export interface InputsModalProps {
   runnableType: RunnableType;
@@ -40,7 +35,7 @@ export interface InputsModalProps {
   sessionData: Map<string, unknown>;
 }
 
-function runnableTypeReadable(runnableType: RunnableType) {
+const runnableTypeReadable = (runnableType: RunnableType) => {
   switch (runnableType) {
     case RunnableType.TestSuite:
       return 'test suite';
@@ -49,7 +44,7 @@ function runnableTypeReadable(runnableType: RunnableType) {
     case RunnableType.Test:
       return 'test';
   }
-}
+};
 
 const InputsModal: FC<InputsModalProps> = ({
   runnableType,
@@ -115,64 +110,13 @@ const InputsModal: FC<InputsModalProps> = ({
 
   const instructions =
     inputInstructions ||
-    `Please fill out required fields in order to run the ${runnableTypeReadable(runnableType)}.`;
-
-  const inputFields = inputs.map((requirement: TestInput, index: number) => {
-    switch (requirement.type) {
-      case 'oauth_credentials':
-        return (
-          <InputOAuthCredentials
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
-            key={`input-${index}`}
-          />
-        );
-      case 'checkbox':
-        return (
-          <InputCheckboxGroup
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={(newInputsMap, editStatus) =>
-              handleSetInputsMap(newInputsMap, editStatus)
-            }
-            key={`input-${index}`}
-          />
-        );
-      case 'radio':
-        return (
-          <InputRadioGroup
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
-            key={`input-${index}`}
-          />
-        );
-      case 'textarea':
-        return (
-          <InputTextArea
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
-            key={`input-${index}`}
-          />
-        );
-      default:
-        return (
-          <InputTextField
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
-            key={`input-${index}`}
-          />
-        );
-    }
-  });
+    `Please fill out required fields in order to run the ${runnableTypeReadable(runnableType)}.` +
+      (inputType === 'Field'
+        ? ''
+        : ' In this view, only changes to the value attribute of an element will be saved. \
+          Further, only elements with names that match an input defined for the current suite, \
+          group, or test will be saved. The intended use of this view is to provide a template \
+          for users to copy/paste in order to avoid filling out individual fields every time.');
 
   useEffect(() => {
     inputsMap.clear();
@@ -258,11 +202,7 @@ const InputsModal: FC<InputsModalProps> = ({
   const parseSerialChanges = (changes: string): TestInput[] | undefined => {
     let parsed: TestInput[];
     try {
-      if (inputType === 'JSON') {
-        parsed = JSON.parse(changes) as TestInput[];
-      } else {
-        parsed = YAML.load(changes) as TestInput[];
-      }
+      parsed = (inputType === 'JSON' ? JSON.parse(changes) : YAML.load(changes)) as TestInput[];
       // Convert OAuth input values to strings
       parsed.forEach((input) => {
         if (input.type === 'oauth_credentials') {
@@ -314,11 +254,7 @@ const InputsModal: FC<InputsModalProps> = ({
             <IconButton
               onClick={() => closeModal()}
               aria-label="cancel"
-              sx={{
-                position: 'absolute',
-                right: 8,
-                top: 8,
-              }}
+              className={classes.cancelButton}
             >
               <Close />
             </IconButton>
@@ -327,16 +263,11 @@ const InputsModal: FC<InputsModalProps> = ({
       </DialogTitle>
       <DialogContent>
         <main>
-          <DialogContentText component="div" style={{ wordBreak: 'break-word' }}>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {instructions +
-                (inputType === 'Field'
-                  ? ''
-                  : ' In this view, only changes to the value attribute of an element will be saved. Further, only elements with names that match an input defined for the current suite, group, or test will be saved. The intended use of this view is to provide a template for users to copy/paste in order to avoid filling out individual fields every time.')}
-            </ReactMarkdown>
+          <DialogContentText component="div" sx={{ wordBreak: 'break-word' }}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{instructions}</ReactMarkdown>
           </DialogContentText>
           {inputType === 'Field' ? (
-            <List>{inputFields}</List>
+            <InputFields inputs={inputs} inputsMap={inputsMap} setInputsMap={handleSetInputsMap} />
           ) : (
             <TextField
               id={`${inputType}-serial-input`}

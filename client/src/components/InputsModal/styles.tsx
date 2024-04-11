@@ -2,10 +2,10 @@ import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
 
 export default makeStyles()((theme: Theme) => ({
-  textarea: {
-    resize: 'vertical',
-    maxHeight: '400px',
-    overflow: 'auto !important',
+  cancelButton: {
+    position: 'absolute',
+    right: 8,
+    top: 8,
   },
   inputField: {
     '& > label.MuiInputLabel-shrink': {
@@ -29,6 +29,11 @@ export default makeStyles()((theme: Theme) => ({
   lockedIcon: {
     marginLeft: '5px',
     verticalAlign: 'text-bottom',
+  },
+  textarea: {
+    resize: 'vertical',
+    maxHeight: '400px',
+    overflow: 'auto !important',
   },
   oauthCard: {
     width: '100%',
