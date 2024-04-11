@@ -172,7 +172,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     };
   });
 
-  const showInputsModal = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
+  const showInputsModal = (runnableType: RunnableType, inputs: TestInput[]) => {
     setInputs(inputs);
     setRunnableType(runnableType);
     setInputModalVisible(true);
@@ -254,7 +254,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       input.value = sessionData.get(input.name);
     });
     if (runnable?.inputs && runnable.inputs.length > 0) {
-      showInputsModal(runnableType, runnableId, runnable.inputs);
+      showInputsModal(runnableType, runnable.inputs);
     } else {
       createTestRun(runnableType, runnableId, []);
     }
@@ -274,6 +274,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           setTestRun(testRun);
           setTestRunId(testRun.id);
           setTestRunCancelled(false);
+          setInputModalVisible(false);
           setShowProgressBar(true);
           pollTestRunResults(testRun);
         }

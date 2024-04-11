@@ -370,30 +370,19 @@ const InputsModal: FC<InputsModalProps> = ({
             onChange={handleInputTypeChange}
             className={classes.toggleButtonGroup}
           >
-            <ToggleButton
-              value="Field"
-              disabled={invalidInput}
-              data-testid="field-button"
-              className={classes.toggleButton}
-            >
-              Field
-            </ToggleButton>
-            <ToggleButton
-              value="JSON"
-              disabled={invalidInput}
-              data-testid="json-button"
-              className={classes.toggleButton}
-            >
-              JSON
-            </ToggleButton>
-            <ToggleButton
-              value="YAML"
-              disabled={invalidInput}
-              data-testid="yaml-button"
-              className={classes.toggleButton}
-            >
-              YAML
-            </ToggleButton>
+            {['Field', 'JSON', 'YAML'].map((type) => {
+              return (
+                <ToggleButton
+                  value={type}
+                  disabled={invalidInput}
+                  key={`${type.toLowerCase()}-button`}
+                  data-testid={`${type.toLowerCase()}-button`}
+                  className={classes.toggleButton}
+                >
+                  {type}
+                </ToggleButton>
+              );
+            })}
           </ToggleButtonGroup>
         </Paper>
         <Box>
