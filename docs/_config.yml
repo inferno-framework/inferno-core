@@ -20,9 +20,7 @@ baseurl: "/inferno-core" # the subpath of your site, e.g. /blog
 url: "https://inferno-framework.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 
 # Build settings
-markdown: kramdown
-remote_theme: pmarsceill/just-the-docs
-# theme: just-the-docs
+# markdown: kramdown
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
