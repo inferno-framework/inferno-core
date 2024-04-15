@@ -19,17 +19,16 @@ import ReactMarkdown from 'react-markdown';
 import YAML from 'js-yaml';
 import { useSnackbar } from 'notistack';
 import remarkGfm from 'remark-gfm';
-import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteModels';
+import { OAuthCredentials, Runnable, RunnableType, TestInput } from '~/models/testSuiteModels';
 import CustomTooltip from '~/components/_common/CustomTooltip';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from '~/components/InputsModal/styles';
 
 export interface InputsModalProps {
+  runnable: Runnable;
   runnableType: RunnableType;
-  runnableId: string;
-  title: string;
-  inputInstructions?: string;
   inputs: TestInput[];
+  modalVisible: boolean;
   hideModal: () => void;
   createTestRun: (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => void;
   sessionData: Map<string, unknown>;
@@ -47,18 +46,16 @@ const runnableTypeReadable = (runnableType: RunnableType) => {
 };
 
 const InputsModal: FC<InputsModalProps> = ({
+  runnable,
   runnableType,
-  runnableId,
-  title,
-  inputInstructions,
   inputs,
+  modalVisible,
   hideModal,
   createTestRun,
   sessionData,
 }) => {
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const [open, setOpen] = React.useState<boolean>(true);
   const [inputsEdited, setInputsEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
@@ -109,7 +106,7 @@ const InputsModal: FC<InputsModalProps> = ({
   });
 
   const instructions =
-    inputInstructions ||
+    runnable.input_instructions ||
     `Please fill out required fields in order to run the ${runnableTypeReadable(runnableType)}.` +
       (inputType === 'Field'
         ? ''
@@ -132,7 +129,7 @@ const InputsModal: FC<InputsModalProps> = ({
   useEffect(() => {
     setInvalidInput(false);
     setBaseInput(serializeMap(inputsMap));
-  }, [inputType, open]);
+  }, [inputType, modalVisible]);
 
   const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
     if (value !== null) setInputType(value);
@@ -145,7 +142,7 @@ const InputsModal: FC<InputsModalProps> = ({
 
   const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const opKey = window.navigator.userAgent.includes('Mac') ? e.metaKey : e.ctrlKey;
-    if (open && e.key === 'Enter' && opKey && !missingRequiredInput && !invalidInput) {
+    if (modalVisible && e.key === 'Enter' && opKey && !missingRequiredInput && !invalidInput) {
       submitClicked();
     }
   };
@@ -155,7 +152,7 @@ const InputsModal: FC<InputsModalProps> = ({
     inputsMap.forEach((input_value, input_name) => {
       inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
     });
-    createTestRun(runnableType, runnableId, inputs_with_values);
+    createTestRun(runnableType, runnable.id, inputs_with_values);
     closeModal();
   };
 
@@ -227,14 +224,13 @@ const InputsModal: FC<InputsModalProps> = ({
   const closeModal = (edited = false) => {
     // For external clicks, check if inputs have been edited first
     if (!edited) {
-      setOpen(false);
       hideModal();
     }
   };
 
   return (
     <Dialog
-      open={open}
+      open={modalVisible}
       fullWidth
       maxWidth="sm"
       onKeyDown={handleSubmitKeydown}
@@ -243,7 +239,7 @@ const InputsModal: FC<InputsModalProps> = ({
       <DialogTitle component="div">
         <Box display="flex" justifyContent="space-between">
           <Typography component="h1" variant="h6">
-            {title}
+            {runnable.title}
           </Typography>
           <CustomTooltip title="Cancel - Inputs will be lost">
             <IconButton

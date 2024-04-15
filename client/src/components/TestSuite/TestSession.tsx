@@ -271,10 +271,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           const runnable = runnableMap.get(runnableId);
           if (runnable) setIsRunning(runnable, true);
           setCurrentRunnables({ ...currentRunnables, [testSession.id]: runnableId });
+          setInputModalVisible(false);
           setTestRun(testRun);
           setTestRunId(testRun.id);
           setTestRunCancelled(false);
-          setInputModalVisible(false);
           setShowProgressBar(true);
           pollTestRunResults(testRun);
         }
@@ -404,18 +404,15 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       >
         <Box className={classes.contentContainer} p={windowIsSmall ? 0 : 4}>
           {renderView(view || 'run')}
-          {inputModalVisible && (
-            <InputsModal
-              createTestRun={createTestRun}
-              runnableType={runnableType}
-              runnableId={selectedRunnable}
-              title={(runnableMap.get(selectedRunnable) as Runnable).title}
-              inputInstructions={(runnableMap.get(selectedRunnable) as Runnable).input_instructions}
-              inputs={inputs}
-              sessionData={sessionData}
-              hideModal={() => setInputModalVisible(false)}
-            />
-          )}
+          <InputsModal
+            runnable={runnableMap.get(selectedRunnable) as Runnable}
+            runnableType={runnableType}
+            inputs={inputs}
+            modalVisible={inputModalVisible}
+            hideModal={() => setInputModalVisible(false)}
+            createTestRun={createTestRun}
+            sessionData={sessionData}
+          />
           <ActionModal
             cancelTestRun={cancelTestRun}
             message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
