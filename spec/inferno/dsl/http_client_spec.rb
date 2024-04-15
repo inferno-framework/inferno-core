@@ -58,8 +58,6 @@ RSpec.describe Inferno::DSL::HTTPClient do
       it 'returns the default HTTP client' do
         expect(group.http_client).to eq(default_client)
       end
-
-      it 'raises an error if no default HTTP client has been created'
     end
 
     context 'with an argument' do
@@ -69,8 +67,6 @@ RSpec.describe Inferno::DSL::HTTPClient do
 
         expect(group.http_client(name)).to eq(other_client)
       end
-
-      it 'raises an error if the HTTP client is not known'
     end
 
     context 'with a base url that causes a TCP error' do

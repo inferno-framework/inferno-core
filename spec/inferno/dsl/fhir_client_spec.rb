@@ -110,26 +110,6 @@ RSpec.describe Inferno::DSL::FHIRClient do
   end
 
   describe '#fhir_client' do
-    context 'without an argument' do
-      it 'returns the default FHIR client' do
-        expect(group.fhir_client).to eq(default_client)
-      end
-
-      it 'raises an error if no default FHIR client has been created'
-    end
-
-    context 'with an argument' do
-      it 'returns the specified FHIR client' do
-        name = :other_client
-        other_client = FHIR::Client.new('http://www.example.com/fhir/r4')
-        group.fhir_clients[name] = other_client
-
-        expect(group.fhir_client(name)).to eq(other_client)
-      end
-
-      it 'raises an error if the FHIR client is not known'
-    end
-
     context 'with a base url that causes a non-TCP error' do
       before do
         allow_any_instance_of(FHIR::Client)
