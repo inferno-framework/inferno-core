@@ -25,13 +25,13 @@ import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from '~/components/InputsModal/styles';
 
 export interface InputsModalProps {
+  modalVisible: boolean;
+  hideModal: () => void;
   runnable: Runnable;
   runnableType: RunnableType;
   inputs: TestInput[];
-  modalVisible: boolean;
-  hideModal: () => void;
-  createTestRun: (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => void;
   sessionData: Map<string, unknown>;
+  createTestRun: (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => void;
 }
 
 const runnableTypeReadable = (runnableType: RunnableType) => {
@@ -46,13 +46,13 @@ const runnableTypeReadable = (runnableType: RunnableType) => {
 };
 
 const InputsModal: FC<InputsModalProps> = ({
+  modalVisible,
+  hideModal,
   runnable,
   runnableType,
   inputs,
-  modalVisible,
-  hideModal,
-  createTestRun,
   sessionData,
+  createTestRun,
 }) => {
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();

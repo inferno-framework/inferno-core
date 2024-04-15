@@ -405,13 +405,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         <Box className={classes.contentContainer} p={windowIsSmall ? 0 : 4}>
           {renderView(view || 'run')}
           <InputsModal
+            modalVisible={inputModalVisible}
+            hideModal={() => setInputModalVisible(false)}
             runnable={runnableMap.get(selectedRunnable) as Runnable}
             runnableType={runnableType}
             inputs={inputs}
-            modalVisible={inputModalVisible}
-            hideModal={() => setInputModalVisible(false)}
-            createTestRun={createTestRun}
             sessionData={sessionData}
+            createTestRun={createTestRun}
           />
           <ActionModal
             cancelTestRun={cancelTestRun}
