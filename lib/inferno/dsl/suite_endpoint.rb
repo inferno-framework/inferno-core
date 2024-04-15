@@ -165,8 +165,8 @@ module Inferno
       #
       # @example
       # request.params               # Get url/query params
-      # request.body                 # Get body
-      # request.headers['accept'] # Get Accept header
+      # request.body.read            # Get body
+      # request.headers['accept']    # Get Accept header
       def request
         req
       end
@@ -255,13 +255,17 @@ module Inferno
         @res = res
         test_run
 
+        make_response
+
         persist_request if persist_request?
 
         update_result
 
         resume if resume_test_run?
-
-        make_response
+      rescue StandardError => e
+        halt 500, e.full_message
+      ensure
+        request.body&.rewind
       end
     end
   end
