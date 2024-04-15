@@ -28,6 +28,10 @@ class FHIRClientDSLTestClass
       )
     )
   end
+
+  fhir_client :client_with_trailing_slash do
+    url 'http://www.example.com/fhir/'
+  end
 end
 
 RSpec.describe Inferno::DSL::FHIRClient do
@@ -137,6 +141,20 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(request).to have_been_made.once
       end
     end
+
+    context 'with a base_url with a trailing slash' do
+      it 'strips the trailing slash' do
+        runnable = FHIRClientDSLTestClass.new
+
+        request =
+          stub_request(:get, "#{base_url}/Patient/1")
+            .to_return(status: 200, body: FHIR::Patient.new(id: 1).to_json)
+
+        runnable.fhir_read(:patient, '1', client: :client_with_trailing_slash)
+
+        expect(request).to have_been_made.once
+      end
+    end
   end
 
   describe '#body_to_path' do
@@ -185,6 +203,20 @@ RSpec.describe Inferno::DSL::FHIRClient do
 
       expect(group.requests).to include(result)
       expect(group.request).to eq(result)
+    end
+
+    context 'with a url with a trailing slash' do
+      it 'performs a post without the trailing slash' do
+        group.fhir_operation(path, client: :client_with_trailing_slash)
+
+        expect(stub_operation_request).to have_been_made.once
+      end
+
+      it 'performs a get without the trailing slash' do
+        group.fhir_operation(path, operation_method: :get, client: :client_with_trailing_slash)
+
+        expect(stub_operation_get_request).to have_been_made.once
+      end
     end
 
     context 'with a body of parameters' do
