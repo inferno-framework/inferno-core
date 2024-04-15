@@ -70,3 +70,11 @@ use it with the following steps:
 * In `config/database.yml`, change the `adapter` in the `production` entry to
   `postgres`, and supply the `database`, `user`, `password`, `host`, and `port`
   for the PostgreSQL database
+
+**Note**: If you are using replication, for example with AWS RDS, you may
+encounter the error `cannot update table "schema_info" because
+it does not have a replica identity` when first setting up Inferno.
+If this occurs, run the following command in the database:
+```sql
+ALTER TABLE schema_info REPLICA IDENTITY FULL;
+```
