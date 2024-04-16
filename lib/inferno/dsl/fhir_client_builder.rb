@@ -48,7 +48,7 @@ module Inferno
             runnable.send(url)
           else
             url
-          end
+          end&.chomp('/')
       end
 
       # Define the bearer token for a client. A string or symbol can be provided.
