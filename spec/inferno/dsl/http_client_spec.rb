@@ -8,6 +8,10 @@ class HTTPClientDSLTestClass
   def test_session_id
     nil
   end
+
+  http_client :client_with_trailing_slash do
+    url 'http://www.example.com/'
+  end
 end
 
 RSpec.describe Inferno::DSL::HTTPClient do
@@ -58,8 +62,6 @@ RSpec.describe Inferno::DSL::HTTPClient do
       it 'returns the default HTTP client' do
         expect(group.http_client).to eq(default_client)
       end
-
-      it 'raises an error if no default HTTP client has been created'
     end
 
     context 'with an argument' do
@@ -69,8 +71,6 @@ RSpec.describe Inferno::DSL::HTTPClient do
 
         expect(group.http_client(name)).to eq(other_client)
       end
-
-      it 'raises an error if the HTTP client is not known'
     end
 
     context 'with a base url that causes a TCP error' do
@@ -353,6 +353,19 @@ RSpec.describe Inferno::DSL::HTTPClient do
         expect(request.url).to eq(new_url)
         expect(request.status).to eq(200)
         expect(request.response_body).to eq('BODY')
+      end
+    end
+
+    context 'with a base url with a trailing slash' do
+      it 'does not include an extra slash in requests' do
+        path = '/abc'
+        stubbed_request =
+          stub_request(:get, "#{base_url}#{path}")
+            .to_return(status: 200, body: response_body, headers: {})
+
+        group.get(path, client: :client_with_trailing_slash)
+
+        expect(stubbed_request).to have_been_made.once
       end
     end
   end
