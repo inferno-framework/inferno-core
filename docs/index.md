@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: base
 ---
 
 <style type="text/css" media="screen">
@@ -7,9 +7,12 @@ layout: default
     margin: 10px auto;
     max-width: 600px;
     text-align: center;
+    height: 100%;
   }
+
   h1 {
     margin: 30px 0;
+    margin-top: 20%;
     font-size: 4em;
     line-height: 1;
     letter-spacing: -1px;
@@ -17,8 +20,8 @@ layout: default
 </style>
 
 <div class="container">
-  <h1>404</h1>
+  <h1>We moved!</h1>
 
-  <p><strong>Page not found :(</strong></p>
-  <p>The requested page could not be found.</p>
+  <p><strong> That page no longer exists.</strong></p>
+  <p>You've reached an outdated version of the Inferno Documentation site. Head to the <a href="https://inferno-framework.github.io/">new site</a> for updated documentation.</p>
 </div>
