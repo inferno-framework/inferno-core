@@ -1,0 +1,48 @@
+<nav class="header-nav navbar navbar-expand-lg navbar-light navbar-custom">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="https://inferno-framework.github.io" aria-label="Home">
+      <img src="{{ site.baseurl }}/assets/icon_logo.png" alt="Logo" width="46px" height="50px">
+      <span class="visually-hidden">Inferno Framework Homepage</span>
+    </a>
+    <p class="h3 d-lg-none">Inferno Framework</p>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <div class="search-container">
+        <div class="input-group">
+          <span class="input-group-text border-right-0 text-muted" id="search-addon">
+            <i class="fas fa-search"></i>
+          </span>
+          <input type="search" disabled class="form-control border-left-0 pl-0 shadow-none"
+            placeholder="Search Inferno Documentation" aria-label="Search" aria-describedby="search-addon"
+            id="search-input">
+        </div>
+        <div id="search-results" class="search-results"></div>
+      </div>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link{% if page.section == 'about' %} active{% endif %} align-middle" style="display: inline"
+            href="https://inferno-framework.github.io/about">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link{% if page.section == 'docs' %} active{% endif %}"
+            href="https://inferno-framework.github.io/docs">Documentation</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link{% if page.section == 'community' %} active{% endif %}"
+            href="https://inferno-framework.github.io/community">Community</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if page.section == 'news' %} active{% endif %}"
+            href="https://inferno-framework.github.io/news">News</a>
+        </li>
+      </ul>
+      <a href="https://github.com/inferno-framework" target="_blank" rel="noopener noreferrer"
+        class="ms-2 d-flex align-items-center github-menu" style="text-decoration:none">
+        <i class="fab fa-github fa-lg"></i><span class="visually-hidden">Inferno Framework on GitHub</span>
+      </a>
+    </div>
+  </div>
+</nav>
