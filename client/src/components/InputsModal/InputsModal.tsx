@@ -16,13 +16,16 @@ import {
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import YAML from 'js-yaml';
 import { useSnackbar } from 'notistack';
-import remarkGfm from 'remark-gfm';
 import { OAuthCredentials, Runnable, RunnableType, TestInput } from '~/models/testSuiteModels';
 import CustomTooltip from '~/components/_common/CustomTooltip';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from '~/components/InputsModal/styles';
+import DownloadFileButton from '../_common/DownloadFileButton';
+import UploadFileButton from '../_common/UploadFileButton';
+import CopyButton from '../_common/CopyButton';
 
 export interface InputsModalProps {
   modalVisible: boolean;
@@ -59,7 +62,8 @@ const InputsModal: FC<InputsModalProps> = ({
   const [inputsEdited, setInputsEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
-  const [baseInput, setBaseInput] = React.useState<string>('');
+  const [fileType, setFileType] = React.useState<string>('txt');
+  const [serialInput, setSerialInput] = React.useState<string>('');
   const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
 
   const missingRequiredInput = inputs.some((input: TestInput) => {
@@ -128,11 +132,29 @@ const InputsModal: FC<InputsModalProps> = ({
 
   useEffect(() => {
     setInvalidInput(false);
-    setBaseInput(serializeMap(inputsMap));
+    setSerialInput(serializeMap(inputsMap));
+
+    // Set download file extensions based on input format
+    switch (inputType) {
+      case 'JSON':
+        setFileType('json');
+        break;
+      case 'YAML':
+        setFileType('yml');
+        break;
+      default:
+        setFileType('txt');
+        break;
+    }
   }, [inputType, modalVisible]);
 
   const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
     if (value !== null) setInputType(value);
+  };
+
+  const handleFileUpload = (text: string) => {
+    handleSerialChanges(text);
+    setSerialInput(text);
   };
 
   const handleSetInputsMap = (inputsMap: Map<string, unknown>, edited?: boolean) => {
@@ -195,7 +217,7 @@ const InputsModal: FC<InputsModalProps> = ({
     let parsed: TestInput[];
     try {
       parsed = (inputType === 'JSON' ? JSON.parse(changes) : YAML.load(changes)) as TestInput[];
-      // Convert OAuth input values to strings
+      // Convert OAuth input values to strings; parsed needs to be an array
       parsed.forEach((input) => {
         if (input.type === 'oauth_credentials') {
           input.value = JSON.stringify(input.value);
@@ -210,6 +232,7 @@ const InputsModal: FC<InputsModalProps> = ({
   };
 
   const handleSerialChanges = (serialChanges: string) => {
+    setSerialInput(serialChanges);
     const parsedChanges = parseSerialChanges(serialChanges);
     if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
       parsedChanges.forEach((change: TestInput) => {
@@ -260,24 +283,32 @@ const InputsModal: FC<InputsModalProps> = ({
           {inputType === 'Field' ? (
             <InputFields inputs={inputs} inputsMap={inputsMap} setInputsMap={handleSetInputsMap} />
           ) : (
-            <TextField
-              id={`${inputType}-serial-input`}
-              minRows={4}
-              key={baseInput}
-              error={invalidInput}
-              defaultValue={baseInput}
-              label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
-              InputProps={{
-                classes: {
-                  input: classes.serialInput,
-                },
-              }}
-              color="secondary"
-              fullWidth
-              multiline
-              data-testid="serial-input"
-              onChange={(e) => handleSerialChanges(e.target.value)}
-            />
+            <Box>
+              <UploadFileButton onUpload={handleFileUpload} />
+              <DownloadFileButton fileName={runnable.title} fileType={fileType} />
+              <TextField
+                id={`${fileType}-serial-input`}
+                minRows={4}
+                value={serialInput}
+                error={invalidInput}
+                label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
+                InputProps={{
+                  classes: {
+                    input: classes.serialInput,
+                  },
+                  endAdornment: (
+                    <Box sx={{ alignSelf: 'flex-start' }}>
+                      <CopyButton copyText={serialInput} />
+                    </Box>
+                  ),
+                }}
+                color="secondary"
+                fullWidth
+                multiline
+                data-testid="serial-input"
+                onChange={(e) => handleSerialChanges(e.target.value)}
+              />
+            </Box>
           )}
         </main>
       </DialogContent>
