@@ -23,5 +23,5 @@ layout: base
   <h1>We moved!</h1>
 
   <p><strong> This page no longer exists.</strong></p>
-  <p>You've reached an outdated version of the Inferno Documentation site. Head to the <a href="https://inferno-framework.github.io/">new site</a> for updated documentation.</p>
+  <p>You've reached an outdated version of the Inferno Documentation site. Head to the <a href="https://inferno-framework.github.io/docs/">new site</a> for updated documentation.</p>
 </div>
