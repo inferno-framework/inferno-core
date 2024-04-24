@@ -5,7 +5,7 @@ import { testSuites } from '~/components/App/__mocked_data__/mockData';
 import Page from '../Page';
 
 describe('The Page Component', () => {
-  test('sets page title on render', /* async */ () => {
+  it('sets page title on render', /* async */ () => {
     const pageTitle = 'Inferno Test Suites';
     const routes = [
       {

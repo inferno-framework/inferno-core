@@ -24,7 +24,6 @@ import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteMod
 import InputOAuthCredentials from './InputOAuthCredentials';
 import InputCheckboxGroup from './InputCheckboxGroup';
 import InputRadioGroup from './InputRadioGroup';
-import InputTextArea from './InputTextArea';
 import InputTextField from './InputTextField';
 import CustomTooltip from '../_common/CustomTooltip';
 import useStyles from './styles';
@@ -148,16 +147,6 @@ const InputsModal: FC<InputsModalProps> = ({
       case 'radio':
         return (
           <InputRadioGroup
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
-            key={`input-${index}`}
-          />
-        );
-      case 'textarea':
-        return (
-          <InputTextArea
             requirement={requirement}
             index={index}
             inputsMap={inputsMap}

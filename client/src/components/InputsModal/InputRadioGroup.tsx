@@ -2,11 +2,11 @@ import React, { FC, useEffect } from 'react';
 import {
   FormControl,
   FormControlLabel,
-  FormHelperText,
   FormLabel,
   ListItem,
   Radio,
   RadioGroup,
+  Typography,
 } from '@mui/material';
 import { TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
@@ -60,7 +60,9 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
           <FieldLabel requirement={requirement} />
         </FormLabel>
         {requirement.description && (
-          <FormHelperText sx={{ mx: 0 }}>{requirement.description}</FormHelperText>
+          <Typography variant="subtitle1" className={classes.inputDescription}>
+            {requirement.description}
+          </Typography>
         )}
         <RadioGroup
           row
