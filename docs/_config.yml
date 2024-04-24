@@ -21,8 +21,6 @@ url: "https://inferno-framework.github.io" # the base hostname & protocol for yo
 
 # Build settings
 markdown: kramdown
-remote_theme: pmarsceill/just-the-docs
-# theme: just-the-docs
 
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list

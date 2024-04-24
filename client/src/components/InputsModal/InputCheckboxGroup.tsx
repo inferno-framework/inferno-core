@@ -4,9 +4,9 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
-  FormHelperText,
   FormLabel,
   ListItem,
+  Typography,
 } from '@mui/material';
 import { CheckboxValues, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
@@ -107,7 +107,9 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
           <FieldLabel requirement={requirement} isMissingInput={isMissingInput} />
         </FormLabel>
         {requirement.description && (
-          <FormHelperText sx={{ mx: 0 }}>{requirement.description}</FormHelperText>
+          <Typography variant="subtitle1" className={classes.inputDescription}>
+            {requirement.description}
+          </Typography>
         )}
         <FormGroup aria-label={`${requirement.name}-checkboxes-group`}>
           {requirement.options?.list_options?.map((option, i) => (

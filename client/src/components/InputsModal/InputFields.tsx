@@ -4,7 +4,6 @@ import { TestInput } from '~/models/testSuiteModels';
 import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredentials';
 import InputCheckboxGroup from '~/components/InputsModal/InputCheckboxGroup';
 import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
-import InputTextArea from '~/components/InputsModal/InputTextArea';
 import InputTextField from '~/components/InputsModal/InputTextField';
 
 export interface InputFieldsProps {
@@ -41,16 +40,6 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
           case 'radio':
             return (
               <InputRadioGroup
-                requirement={requirement}
-                index={index}
-                inputsMap={inputsMap}
-                setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
-                key={`input-${index}`}
-              />
-            );
-          case 'textarea':
-            return (
-              <InputTextArea
                 requirement={requirement}
                 index={index}
                 inputsMap={inputsMap}
