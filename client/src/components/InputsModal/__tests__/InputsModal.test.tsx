@@ -7,6 +7,7 @@ import ThemeProvider from 'components/ThemeProvider';
 import { SnackbarProvider } from 'notistack';
 
 import { vi } from 'vitest';
+import { mockedTestGroup } from '~/components/_common/__mocked_data__/mockData';
 
 const hideModalMock = vi.fn();
 const createTestRunMock = vi.fn();
@@ -44,19 +45,19 @@ test('Modal visible and inputs are shown', () => {
     <ThemeProvider>
       <SnackbarProvider>
         <InputsModal
+          modalVisible={true}
           hideModal={hideModalMock}
-          title="Modal Title"
-          createTestRun={createTestRunMock}
+          runnable={mockedTestGroup}
           runnableType={RunnableType.TestGroup}
-          runnableId={'test group id'}
           inputs={testInputs}
           sessionData={new Map()}
+          createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
     </ThemeProvider>
   );
 
-  const titleText = screen.getByText('Modal Title');
+  const titleText = screen.getByText('Mock Test Group');
   expect(titleText).toBeVisible();
 
   testInputs.forEach((input: TestInput) => {
@@ -75,13 +76,13 @@ test('Pressing cancel hides the modal', () => {
     <ThemeProvider>
       <SnackbarProvider>
         <InputsModal
+          modalVisible={true}
           hideModal={hideModalMock}
-          title="Modal Title"
-          createTestRun={createTestRunMock}
+          runnable={mockedTestGroup}
           runnableType={RunnableType.TestGroup}
-          runnableId={'test group id'}
           inputs={testInputs}
           sessionData={new Map()}
+          createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
     </ThemeProvider>
@@ -97,13 +98,13 @@ test('Pressing submit hides the modal', () => {
     <ThemeProvider>
       <SnackbarProvider>
         <InputsModal
+          modalVisible={true}
           hideModal={hideModalMock}
-          title="Modal Title"
-          createTestRun={createTestRunMock}
+          runnable={mockedTestGroup}
           runnableType={RunnableType.TestGroup}
-          runnableId={'test group id'}
           inputs={testInputs}
           sessionData={new Map()}
+          createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
     </ThemeProvider>
@@ -119,13 +120,13 @@ test('Field Inputs shown in JSON and YAML', () => {
     <ThemeProvider>
       <SnackbarProvider>
         <InputsModal
+          modalVisible={true}
           hideModal={hideModalMock}
-          title="Modal Title"
-          createTestRun={createTestRunMock}
+          runnable={mockedTestGroup}
           runnableType={RunnableType.TestGroup}
-          runnableId={'test group id'}
           inputs={testInputs}
           sessionData={new Map()}
+          createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
     </ThemeProvider>
@@ -154,13 +155,13 @@ test('Values in Field Inputs shown in JSON and YAML', () => {
     <ThemeProvider>
       <SnackbarProvider>
         <InputsModal
+          modalVisible={true}
           hideModal={hideModalMock}
-          title="Modal Title"
-          createTestRun={createTestRunMock}
+          runnable={mockedTestGroup}
           runnableType={RunnableType.TestGroup}
-          runnableId={'test group id'}
-          inputs={testInputsDefaults}
+          inputs={testInputs}
           sessionData={new Map()}
+          createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
     </ThemeProvider>
