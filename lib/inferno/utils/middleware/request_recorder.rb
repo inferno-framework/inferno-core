@@ -36,6 +36,7 @@ module Inferno
             verb = env['REQUEST_METHOD']
             logger.info('get body')
             request_body = env['rack.input']
+            request_body.rewind if env['rack.input'].respond_to? :rewind
             request_body = request_body.instance_of?(Puma::NullIO) ? nil : request_body.string
 
             request_headers = Rack::Request.new(env).headers.to_h.map { |name, value| { name:, value: } }
