@@ -1,3 +1,16 @@
+# 0.4.35
+
+* Bump follow-redirects from 1.15.5 to 1.15.6 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/479
+* Bump express from 4.18.3 to 4.19.2 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/480
+* Bump webpack-dev-middleware from 5.3.3 to 5.3.4 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/481
+* Bump vite by @dependabot in https://github.com/inferno-framework/inferno-core/pull/482
+* Add note about replication error to DB docs by @dehall in https://github.com/inferno-framework/inferno-core/pull/484
+* FI-2554: Remove trailing slash by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/485
+* FI-2539: Add JSON and YAML file input options by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/466
+* FI-2538: Create new docs 404 page by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/486
+* FI-2540: Make input label sizes consistent by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/469
+* FI-2608: Update ctrl + enter run test hotkey by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/483
+
 # 0.4.34
 * New template wording fix by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/475
 * Fi 2432 Sync Inferno Template by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/439
