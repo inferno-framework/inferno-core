@@ -103,7 +103,7 @@ module Inferno
       #
       # @return [String]
       def name
-        nil
+        result&.runnable&.incoming_request_name
       end
 
       # Override this method to update the current waiting result. To resume the
