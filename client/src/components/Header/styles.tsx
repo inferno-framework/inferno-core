@@ -35,7 +35,7 @@ export default makeStyles()((theme: Theme) => ({
     fontStyle: 'italic',
   },
   homeLink: {
-    color: theme.palette.common.orangeDarker,
+    color: theme.palette.common.grayDark,
     textDecoration: 'none',
   },
 }));

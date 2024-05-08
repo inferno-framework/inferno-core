@@ -15,9 +15,9 @@ const CustomTab = styled((props: CustomTabProps) => <Tab disableRipple {...props
       color: theme.palette.common.grayDarkest,
     },
     '&.Mui-selected': {
-      color: theme.palette.common.orangeDarker,
+      color: theme.palette.common.orangeDark,
       '&:hover, :focus-within': {
-        color: theme.palette.common.orangeDarkest,
+        color: theme.palette.primary.dark,
       },
     },
   })

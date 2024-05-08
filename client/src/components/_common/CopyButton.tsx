@@ -36,7 +36,7 @@ const CopyButton: FC<CopyButtonProps> = ({ copyText, size, view }) => {
           : {}
       }
     >
-      <Box pr={1}>
+      <Box px={1}>
         <IconButton
           size={size}
           color="secondary"

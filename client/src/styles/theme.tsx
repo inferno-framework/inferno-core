@@ -5,50 +5,32 @@ declare module '@mui/material/styles/createPalette' {
   interface CommonColors {
     white: string;
     black: string;
-    red: string;
-    orangeLightest: string;
-    orangeLighter: string;
+    orangeLight: string;
     orange: string;
-    orangeDarker: string;
-    orangeDarkest: string;
-    green: string;
-    blue: string;
+    orangeDark: string;
+    blueLightest: string;
     blueLight: string;
-    blueGray: string;
-    blueGrayLighter: string;
-    blueGrayLightest: string;
-    gray: string;
-    grayLight: string;
-    grayLighter: string;
+    blue: string;
     grayLightest: string;
-    grayMedium: string;
+    grayLight: string;
+    gray: string;
     grayDark: string;
-    grayDarker: string;
     grayDarkest: string;
   }
 }
 const colors = {
   white: '#fff',
   black: '#222',
-  red: '#d95d77',
-  orangeLightest: '#fff8f2',
-  orangeLighter: '#ffe4ce',
-  orange: '#f88b30',
-  orangeDarker: '#c05702',
-  orangeDarkest: '#853c00',
-  green: '#2fa874',
-  blue: '#036cae',
+  orangeLight: '#fbe2cd',
+  orange: '#f77a25',
+  orangeDark: '#c05702',
+  blueLightest: '#f1f8ff',
   blueLight: '#9ad2f0',
-  blueGray: '#cbd5df',
-  blueGrayLighter: '#e6ebf2',
-  blueGrayLightest: '#f1f8ff',
-  gray: '#707070',
-  grayLight: '#bdbdbd',
-  grayLighter: '#e0e0e0',
+  blue: '#316DB1',
   grayLightest: '#F0F2F1',
-  grayMedium: '#757575',
+  grayLight: '#bdbdbd',
+  gray: '#707070',
   grayDark: '#616161',
-  grayDarker: '#424242',
   grayDarkest: '#191919',
 };
 
@@ -63,7 +45,10 @@ const paletteBase = {
 };
 
 const lightTheme = createTheme({
-  palette: { ...paletteBase },
+  palette: {
+    ...paletteBase,
+    contrastThreshold: 4.5,
+  },
   typography: {
     h2: {
       fontWeight: 'bold',

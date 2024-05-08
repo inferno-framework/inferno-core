@@ -82,7 +82,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   accordionDetailContainer: {
-    backgroundColor: theme.palette.common.grayLighter,
+    backgroundColor: theme.palette.common.grayLightest,
     padding: '16px',
     '@media print': {
       padding: '0 16px',
@@ -110,7 +110,7 @@ export default makeStyles()((theme: Theme) => ({
     color: theme.palette.error.dark,
   },
   warning: {
-    color: theme.palette.common.orangeDarker,
+    color: theme.palette.common.orangeDark,
   },
   info: {
     color: theme.palette.info.dark,
@@ -140,8 +140,8 @@ export default makeStyles()((theme: Theme) => ({
   },
   warningBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.common.orangeDarker,
-      border: `1px solid ${theme.palette.common.orangeDarker}`,
+      color: theme.palette.common.orangeDark,
+      border: `1px solid ${theme.palette.common.orangeDark}`,
     },
   },
   infoBadge: {

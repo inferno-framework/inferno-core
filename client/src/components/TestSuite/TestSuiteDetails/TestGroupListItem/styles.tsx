@@ -12,7 +12,7 @@ export default makeStyles()((theme: Theme) => ({
     display: 'inline',
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: theme.palette.common.grayDarker,
+    color: theme.palette.common.grayDark,
   },
   currentItem: {
     fontWeight: 600,
@@ -38,7 +38,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   accordionDetailContainer: {
-    backgroundColor: theme.palette.common.grayLighter,
+    backgroundColor: theme.palette.common.grayLightest,
     '@media print': {
       padding: '0 0 0 16px',
     },
@@ -58,10 +58,10 @@ export default makeStyles()((theme: Theme) => ({
   },
   nestedDescriptionHeader: {
     fontWeight: 'bolder !important',
-    color: theme.palette.common.orangeDarker,
+    color: theme.palette.common.orangeDark,
   },
   nestedDescriptionContainer: {
-    backgroundColor: theme.palette.common.grayLighter,
+    backgroundColor: theme.palette.common.grayLightest,
     padding: '8px 0',
   },
 
@@ -70,7 +70,7 @@ export default makeStyles()((theme: Theme) => ({
     color: theme.palette.error.dark,
   },
   warning: {
-    color: theme.palette.common.orangeDarker,
+    color: theme.palette.common.orangeDark,
   },
   info: {
     color: theme.palette.info.dark,
@@ -89,8 +89,8 @@ export default makeStyles()((theme: Theme) => ({
   },
   warningBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.common.orangeDarker,
-      border: `1px solid ${theme.palette.common.orangeDarker}`,
+      color: theme.palette.common.orangeDark,
+      border: `1px solid ${theme.palette.common.orangeDark}`,
     },
   },
   infoBadge: {

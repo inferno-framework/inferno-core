@@ -24,7 +24,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   inputLabel: {
-    color: theme.palette.common.grayDarker,
+    color: theme.palette.common.grayDark,
     fontWeight: 600,
   },
   inputDescription: {
