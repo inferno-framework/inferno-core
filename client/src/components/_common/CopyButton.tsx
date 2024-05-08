@@ -41,7 +41,10 @@ const CopyButton: FC<CopyButtonProps> = ({ copyText, size, view }) => {
           size={size}
           color="secondary"
           aria-label="copy button"
-          onClick={() => void copyTextClick(copyText)}
+          onClick={(e) => {
+            void copyTextClick(copyText);
+            e.stopPropagation();
+          }}
         >
           <ContentCopy fontSize="inherit" />
         </IconButton>

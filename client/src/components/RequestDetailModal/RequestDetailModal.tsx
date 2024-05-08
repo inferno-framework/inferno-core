@@ -90,7 +90,6 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
             {request.response_body && (
               <CodeBlock
                 body={request.request_body}
-                collapsedState={true}
                 headers={request.request_headers}
                 title="Request Body"
               />
@@ -104,7 +103,6 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
             {request.response_body && (
               <CodeBlock
                 body={request.response_body}
-                collapsedState={true}
                 headers={request.response_headers}
                 title="Response Body"
               />
