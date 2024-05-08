@@ -53,7 +53,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
             <Cancel
               tabIndex={0}
               aria-hidden="false"
-              style={{ color: result.optional ? grey[500] : red[700] }}
+              style={{ color: result.optional ? red[200] : red[700] }}
               data-testid={`${result.id}-${result.result}`}
             />
           </CustomTooltip>
@@ -64,7 +64,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
             <Cancel
               tabIndex={0}
               aria-hidden="false"
-              style={{ color: result.optional ? grey[500] : red[700] }}
+              style={{ color: result.optional ? red[200] : red[700] }}
               data-testid={`${result.id}-${result.result}`}
             />
           </CustomTooltip>
@@ -75,7 +75,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
             <Block
               tabIndex={0}
               aria-hidden="false"
-              style={{ color: result.optional ? grey[500] : orange[800] }}
+              style={{ color: result.optional ? orange[200] : orange[800] }}
               data-testid={`${result.id}-${result.result}`}
             />
           </CustomTooltip>
@@ -97,7 +97,7 @@ const ResultIcon: FC<ResultIconProps> = ({ result, isRunning }) => {
             <Error
               tabIndex={0}
               aria-hidden="false"
-              style={{ color: result.optional ? grey[500] : purple[500] }}
+              style={{ color: result.optional ? purple[200] : purple[500] }}
               data-testid={`${result.id}-${result.result}`}
             />
           </CustomTooltip>
