@@ -214,7 +214,7 @@ const TestListItem: FC<TestListItemProps> = ({
       className={classes.accordion}
       sx={view === 'report' ? { pointerEvents: 'none' } : {}}
       expanded={open}
-      TransitionProps={{ unmountOnExit: true }}
+      slotProps={{ transition: { unmountOnExit: true } }}
       onClick={handleAccordionClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {

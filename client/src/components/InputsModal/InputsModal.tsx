@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  List,
   TextField,
   ToggleButtonGroup,
   ToggleButton,
@@ -20,29 +19,25 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import YAML from 'js-yaml';
 import { useSnackbar } from 'notistack';
-import { OAuthCredentials, RunnableType, TestInput } from '~/models/testSuiteModels';
-import InputOAuthCredentials from './InputOAuthCredentials';
-import InputCheckboxGroup from './InputCheckboxGroup';
-import InputRadioGroup from './InputRadioGroup';
-import InputTextField from './InputTextField';
-import CustomTooltip from '../_common/CustomTooltip';
-import useStyles from './styles';
+import { OAuthCredentials, Runnable, RunnableType, TestInput } from '~/models/testSuiteModels';
+import CustomTooltip from '~/components/_common/CustomTooltip';
+import InputFields from '~/components/InputsModal/InputFields';
+import useStyles from '~/components/InputsModal/styles';
 import DownloadFileButton from '../_common/DownloadFileButton';
 import UploadFileButton from '../_common/UploadFileButton';
 import CopyButton from '../_common/CopyButton';
 
 export interface InputsModalProps {
-  runnableType: RunnableType;
-  runnableId: string;
-  title: string;
-  inputInstructions?: string;
-  inputs: TestInput[];
+  modalVisible: boolean;
   hideModal: () => void;
-  createTestRun: (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => void;
+  runnable: Runnable;
+  runnableType: RunnableType;
+  inputs: TestInput[];
   sessionData: Map<string, unknown>;
+  createTestRun: (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => void;
 }
 
-function runnableTypeReadable(runnableType: RunnableType) {
+const runnableTypeReadable = (runnableType: RunnableType) => {
   switch (runnableType) {
     case RunnableType.TestSuite:
       return 'test suite';
@@ -51,21 +46,19 @@ function runnableTypeReadable(runnableType: RunnableType) {
     case RunnableType.Test:
       return 'test';
   }
-}
+};
 
 const InputsModal: FC<InputsModalProps> = ({
-  runnableType,
-  runnableId,
-  title,
-  inputInstructions,
-  inputs,
+  modalVisible,
   hideModal,
-  createTestRun,
+  runnable,
+  runnableType,
+  inputs,
   sessionData,
+  createTestRun,
 }) => {
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const [open, setOpen] = React.useState<boolean>(true);
   const [inputsEdited, setInputsEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
@@ -117,55 +110,14 @@ const InputsModal: FC<InputsModalProps> = ({
   });
 
   const instructions =
-    inputInstructions ||
-    `Please fill out required fields in order to run the ${runnableTypeReadable(runnableType)}.`;
-
-  const inputFields = inputs.map((requirement: TestInput, index: number) => {
-    switch (requirement.type) {
-      case 'oauth_credentials':
-        return (
-          <InputOAuthCredentials
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
-            key={`input-${index}`}
-          />
-        );
-      case 'checkbox':
-        return (
-          <InputCheckboxGroup
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={(newInputsMap, editStatus) =>
-              handleSetInputsMap(newInputsMap, editStatus)
-            }
-            key={`input-${index}`}
-          />
-        );
-      case 'radio':
-        return (
-          <InputRadioGroup
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
-            key={`input-${index}`}
-          />
-        );
-      default:
-        return (
-          <InputTextField
-            requirement={requirement}
-            index={index}
-            inputsMap={inputsMap}
-            setInputsMap={(newInputsMap) => handleSetInputsMap(newInputsMap)}
-            key={`input-${index}`}
-          />
-        );
-    }
-  });
+    runnable.input_instructions ||
+    `Please fill out required fields in order to run the ${runnableTypeReadable(runnableType)}.` +
+      (inputType === 'Field'
+        ? ''
+        : ' In this view, only changes to the value attribute of an element will be saved. \
+          Further, only elements with names that match an input defined for the current suite, \
+          group, or test will be saved. The intended use of this view is to provide a template \
+          for users to copy/paste in order to avoid filling out individual fields every time.');
 
   useEffect(() => {
     inputsMap.clear();
@@ -194,7 +146,7 @@ const InputsModal: FC<InputsModalProps> = ({
         setFileType('txt');
         break;
     }
-  }, [inputType, open]);
+  }, [inputType, modalVisible]);
 
   const handleInputTypeChange = (e: React.MouseEvent, value: string) => {
     if (value !== null) setInputType(value);
@@ -211,13 +163,8 @@ const InputsModal: FC<InputsModalProps> = ({
   };
 
   const handleSubmitKeydown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (
-      open &&
-      e.key === 'Enter' &&
-      (e.metaKey || e.ctrlKey) &&
-      !missingRequiredInput &&
-      !invalidInput
-    ) {
+    const opKey = e.metaKey || e.ctrlKey;
+    if (modalVisible && e.key === 'Enter' && opKey && !missingRequiredInput && !invalidInput) {
       submitClicked();
     }
   };
@@ -227,7 +174,7 @@ const InputsModal: FC<InputsModalProps> = ({
     inputsMap.forEach((input_value, input_name) => {
       inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
     });
-    createTestRun(runnableType, runnableId, inputs_with_values);
+    createTestRun(runnableType, runnable.id, inputs_with_values);
     closeModal();
   };
 
@@ -269,11 +216,7 @@ const InputsModal: FC<InputsModalProps> = ({
   const parseSerialChanges = (changes: string): TestInput[] | undefined => {
     let parsed: TestInput[];
     try {
-      if (inputType === 'JSON') {
-        parsed = JSON.parse(changes) as TestInput[];
-      } else {
-        parsed = YAML.load(changes) as TestInput[];
-      }
+      parsed = (inputType === 'JSON' ? JSON.parse(changes) : YAML.load(changes)) as TestInput[];
       // Convert OAuth input values to strings; parsed needs to be an array
       parsed.forEach((input) => {
         if (input.type === 'oauth_credentials') {
@@ -304,14 +247,13 @@ const InputsModal: FC<InputsModalProps> = ({
   const closeModal = (edited = false) => {
     // For external clicks, check if inputs have been edited first
     if (!edited) {
-      setOpen(false);
       hideModal();
     }
   };
 
   return (
     <Dialog
-      open={open}
+      open={modalVisible}
       fullWidth
       maxWidth="sm"
       onKeyDown={handleSubmitKeydown}
@@ -320,17 +262,13 @@ const InputsModal: FC<InputsModalProps> = ({
       <DialogTitle component="div">
         <Box display="flex" justifyContent="space-between">
           <Typography component="h1" variant="h6">
-            {title}
+            {runnable.title}
           </Typography>
           <CustomTooltip title="Cancel - Inputs will be lost">
             <IconButton
               onClick={() => closeModal()}
               aria-label="cancel"
-              sx={{
-                position: 'absolute',
-                right: 8,
-                top: 8,
-              }}
+              className={classes.cancelButton}
             >
               <Close />
             </IconButton>
@@ -339,20 +277,15 @@ const InputsModal: FC<InputsModalProps> = ({
       </DialogTitle>
       <DialogContent>
         <main>
-          <DialogContentText component="div" style={{ wordBreak: 'break-word' }}>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {instructions +
-                (inputType === 'Field'
-                  ? ''
-                  : ' In this view, only changes to the value attribute of an element will be saved. Further, only elements with names that match an input defined for the current suite, group, or test will be saved. The intended use of this view is to provide a template for users to copy/paste in order to avoid filling out individual fields every time.')}
-            </ReactMarkdown>
+          <DialogContentText component="div" sx={{ wordBreak: 'break-word' }}>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{instructions}</ReactMarkdown>
           </DialogContentText>
           {inputType === 'Field' ? (
-            <List>{inputFields}</List>
+            <InputFields inputs={inputs} inputsMap={inputsMap} setInputsMap={handleSetInputsMap} />
           ) : (
             <Box>
               <UploadFileButton onUpload={handleFileUpload} />
-              <DownloadFileButton fileName={title} fileType={fileType} />
+              <DownloadFileButton fileName={runnable.title} fileType={fileType} />
               <TextField
                 id={`${fileType}-serial-input`}
                 minRows={4}
@@ -390,30 +323,19 @@ const InputsModal: FC<InputsModalProps> = ({
             onChange={handleInputTypeChange}
             className={classes.toggleButtonGroup}
           >
-            <ToggleButton
-              value="Field"
-              disabled={invalidInput}
-              data-testid="field-button"
-              className={classes.toggleButton}
-            >
-              Field
-            </ToggleButton>
-            <ToggleButton
-              value="JSON"
-              disabled={invalidInput}
-              data-testid="json-button"
-              className={classes.toggleButton}
-            >
-              JSON
-            </ToggleButton>
-            <ToggleButton
-              value="YAML"
-              disabled={invalidInput}
-              data-testid="yaml-button"
-              className={classes.toggleButton}
-            >
-              YAML
-            </ToggleButton>
+            {['Field', 'JSON', 'YAML'].map((type) => {
+              return (
+                <ToggleButton
+                  value={type}
+                  disabled={invalidInput}
+                  key={`${type.toLowerCase()}-button`}
+                  data-testid={`${type.toLowerCase()}-button`}
+                  className={classes.toggleButton}
+                >
+                  {type}
+                </ToggleButton>
+              );
+            })}
           </ToggleButtonGroup>
         </Paper>
         <Box>
