@@ -110,13 +110,13 @@ export default makeStyles()((theme: Theme) => ({
     color: theme.palette.error.dark,
   },
   warning: {
-    color: theme.palette.common.orangeDark,
+    color: theme.palette.primary.dark,
   },
   info: {
     color: theme.palette.info.dark,
   },
   request: {
-    color: theme.palette.secondary.main,
+    color: theme.palette.info.main,
   },
 
   // common styling for the badge component inside a ProblemBadge
@@ -140,8 +140,8 @@ export default makeStyles()((theme: Theme) => ({
   },
   warningBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.common.orangeDark,
-      border: `1px solid ${theme.palette.common.orangeDark}`,
+      color: theme.palette.primary.dark,
+      border: `1px solid ${theme.palette.primary.dark}`,
     },
   },
   infoBadge: {
@@ -152,8 +152,8 @@ export default makeStyles()((theme: Theme) => ({
   },
   requestBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.secondary.main,
-      border: `1px solid ${theme.palette.secondary.main}`,
+      color: theme.palette.info.main,
+      border: `1px solid ${theme.palette.info.main}`,
     },
   },
 }));

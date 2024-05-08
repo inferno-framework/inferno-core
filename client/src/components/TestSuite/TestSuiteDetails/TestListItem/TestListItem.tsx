@@ -209,74 +209,72 @@ const TestListItem: FC<TestListItemProps> = ({
   };
 
   return (
-    <>
-      <Accordion
-        disableGutters
-        className={classes.accordion}
-        sx={view === 'report' ? { pointerEvents: 'none' } : {}}
-        expanded={open}
-        TransitionProps={{ unmountOnExit: true }}
-        onClick={handleAccordionClick}
+    <Accordion
+      disableGutters
+      className={classes.accordion}
+      sx={view === 'report' ? { pointerEvents: 'none' } : {}}
+      expanded={open}
+      TransitionProps={{ unmountOnExit: true }}
+      onClick={handleAccordionClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          // Don't open/close accordion on enter
+          setTabIndex(findPopulatedTabIndex());
+        }
+        if (e.key === ' ') {
+          handleAccordionClick();
+        }
+      }}
+      onMouseEnter={() => setItemMouseHover(true)}
+      onMouseLeave={() => setItemMouseHover(false)}
+    >
+      <AccordionSummary
+        id={itemMouseHover ? '' : `${test.id}-summary`}
+        data-testid={`${test.id}-summary`}
+        aria-controls={`${test.id}-detail`}
+        role={view === 'report' ? 'region' : 'button'}
+        expandIcon={
+          view === 'run' && (
+            <CustomTooltip title="expand test">
+              <ExpandMoreIcon tabIndex={0} aria-hidden="false" />
+            </CustomTooltip>
+          )
+        }
+        className={classes.accordionSummary}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
-            // Don't open/close accordion on enter
-            setTabIndex(findPopulatedTabIndex());
-          }
-          if (e.key === ' ') {
-            handleAccordionClick();
+          if (view !== 'report' && e.key === 'Enter') {
+            setOpen(!open);
           }
         }}
-        onMouseEnter={() => setItemMouseHover(true)}
-        onMouseLeave={() => setItemMouseHover(false)}
       >
-        <AccordionSummary
-          id={itemMouseHover ? '' : `${test.id}-summary`}
-          data-testid={`${test.id}-summary`}
-          aria-controls={`${test.id}-detail`}
-          role={view === 'report' ? 'region' : 'button'}
-          expandIcon={
-            view === 'run' && (
-              <CustomTooltip title="expand test">
-                <ExpandMoreIcon tabIndex={0} aria-hidden="false" />
-              </CustomTooltip>
-            )
-          }
-          className={classes.accordionSummary}
-          onKeyDown={(e) => {
-            if (view !== 'report' && e.key === 'Enter') {
-              setOpen(!open);
-            }
-          }}
-        >
-          <Box display="flex" alignItems="center" width="100%">
-            {resultIcon}
-            {testText}
-            {renderProblemBadge(messageTypeCounts)}
-            {requestsBadge}
-            {testRunButton}
-          </Box>
-        </AccordionSummary>
-        <Divider />
-        {/* Remove default tooltip on hover */}
-        <AccordionDetails
-          title={itemMouseHover ? '' : `${test.id}-detail`}
-          data-testid={`${test.id}-detail`}
-          className={classes.accordionDetailContainer}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {view === 'run' && (
-            <TestRunDetail
-              test={test}
-              tabs={tabs}
-              currentTabIndex={tabIndex}
-              setTabIndex={setTabIndex}
-              updateRequest={updateRequest}
-            />
-          )}
-          {view === 'report' && showReportDetails && reportDetails}
-        </AccordionDetails>
-      </Accordion>
-    </>
+        <Box display="flex" alignItems="center" width="100%">
+          {resultIcon}
+          {testText}
+          {renderProblemBadge(messageTypeCounts)}
+          {requestsBadge}
+          {testRunButton}
+        </Box>
+      </AccordionSummary>
+      <Divider />
+      {/* Remove default tooltip on hover */}
+      <AccordionDetails
+        title={itemMouseHover ? '' : `${test.id}-detail`}
+        data-testid={`${test.id}-detail`}
+        className={classes.accordionDetailContainer}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {view === 'run' && (
+          <TestRunDetail
+            test={test}
+            tabs={tabs}
+            currentTabIndex={tabIndex}
+            setTabIndex={setTabIndex}
+            updateRequest={updateRequest}
+          />
+        )}
+        {view === 'report' && showReportDetails && reportDetails}
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
