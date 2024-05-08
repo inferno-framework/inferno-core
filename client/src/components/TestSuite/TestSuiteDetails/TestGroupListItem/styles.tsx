@@ -1,5 +1,6 @@
 import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
+import { darken } from '@mui/material/styles';
 
 export default makeStyles()((theme: Theme) => ({
   root: {
@@ -25,6 +26,7 @@ export default makeStyles()((theme: Theme) => ({
       borderBottom: `1px solid ${theme.palette.divider}`,
     },
     '@media print': {
+      borderTop: `1px solid ${theme.palette.divider}`,
       borderBottom: 'none !important',
     },
   },
@@ -52,17 +54,22 @@ export default makeStyles()((theme: Theme) => ({
       margin: 0,
     },
   },
-  nestedDescription: {
+  description: {
     padding: '8px 16px 24px 16px',
     overflow: 'auto',
   },
-  nestedDescriptionHeader: {
+  descriptionHeader: {
     fontWeight: 'bolder !important',
     color: theme.palette.common.orangeDark,
   },
-  nestedDescriptionContainer: {
+  descriptionContainer: {
     backgroundColor: theme.palette.common.grayLight,
-    padding: '8px 0',
+  },
+  descriptionDetailContainer: {
+    backgroundColor: darken(theme.palette.common.grayLight, 0.1),
+    '@media print': {
+      padding: '0 0 0 16px',
+    },
   },
 
   // these colors are here for the badges as well as the messages column

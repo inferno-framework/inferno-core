@@ -133,19 +133,19 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         justifyContent="center"
         alignItems="center"
         maxWidth={windowIsSmall ? '100%' : '50%'}
-        maxHeight={windowIsSmall ? 'none' : '100%'}
-        minHeight={windowIsSmall ? 'none' : '100%'}
+        maxHeight={windowIsSmall ? 'unset' : '100%'}
+        minHeight={windowIsSmall ? 'unset' : '100%'}
         overflow="auto"
         px={windowIsSmall ? 0 : 8}
-        my={3}
       >
         {/* Title */}
         <Box
           display="flex"
           alignItems="center"
-          sx={windowIsSmall ? { mx: 2 } : { m: 4 }}
           maxWidth={descriptionWidth}
           maxHeight={windowIsSmall ? 'none' : '100%'}
+          pt={3}
+          sx={windowIsSmall ? { mx: 2 } : { m: 4 }}
         >
           {renderTitle()}
         </Box>
@@ -173,8 +173,8 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
       </Box>
       <Box
         display="flex"
-        height={windowIsSmall ? 'none' : '100%'}
-        width={windowIsSmall ? '100%' : 'none'}
+        height={windowIsSmall ? 'unset' : '100%'}
+        width={windowIsSmall ? '100%' : 'unset'}
         maxWidth={windowIsSmall ? '100%' : '50%'}
         justifyContent="center"
         alignItems="center"

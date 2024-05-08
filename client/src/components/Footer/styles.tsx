@@ -10,7 +10,6 @@ export default makeStyles()((theme: Theme) => ({
     display: 'flex',
     width: '100%',
     overflow: 'auto',
-    zIndex: `${theme.zIndex.drawer + 1} !important` as any,
     borderTop: `1px ${theme.palette.divider} solid`,
     bottom: 0,
     '@media print': {

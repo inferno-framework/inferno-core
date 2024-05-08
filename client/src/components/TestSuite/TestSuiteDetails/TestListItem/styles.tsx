@@ -1,5 +1,6 @@
 import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
+import { darken } from '@mui/material/styles';
 
 export default makeStyles()((theme: Theme) => ({
   root: {
@@ -70,6 +71,9 @@ export default makeStyles()((theme: Theme) => ({
     '&:not(last-child)': {
       borderBottom: `1px solid ${theme.palette.divider}`,
     },
+    '@media print': {
+      borderBottom: 'none !important',
+    },
   },
   accordionSummary: {
     userSelect: 'auto',
@@ -82,7 +86,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   accordionDetailContainer: {
-    backgroundColor: theme.palette.common.grayLight,
+    backgroundColor: darken(theme.palette.common.grayLight, 0.1),
     padding: '16px',
     '@media print': {
       padding: '0 16px',

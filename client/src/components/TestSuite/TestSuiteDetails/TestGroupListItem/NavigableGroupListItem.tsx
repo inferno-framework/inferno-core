@@ -32,10 +32,10 @@ const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) 
                     <Typography className={classes.shortId}>{`${testGroup.short_id} `}</Typography>
                   )}
                   <Link
-                    color="secondary"
+                    color="secondary.dark"
+                    fontWeight="bold"
                     href={`${location.pathname}#${testGroup.id}`}
                     data-testid="navigable-group-item"
-                    sx={{ fontWeight: 'bold' }}
                   >
                     {testGroup.title}
                   </Link>

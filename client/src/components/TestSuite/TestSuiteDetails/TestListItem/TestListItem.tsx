@@ -211,6 +211,7 @@ const TestListItem: FC<TestListItemProps> = ({
   return (
     <Accordion
       disableGutters
+      elevation={0}
       className={classes.accordion}
       sx={view === 'report' ? { pointerEvents: 'none' } : {}}
       expanded={open}
