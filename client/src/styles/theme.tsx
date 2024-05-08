@@ -28,7 +28,6 @@ const colors = {
   blueLight: '#9ad2f0',
   blue: '#316DB1',
   grayLightest: '#F0F2F1',
-  grayLight: '#bdbdbd',
   gray: '#707070',
   grayDark: '#616161',
   grayDarkest: '#191919',

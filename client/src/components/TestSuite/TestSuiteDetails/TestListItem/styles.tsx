@@ -152,8 +152,8 @@ export default makeStyles()((theme: Theme) => ({
   },
   requestBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.info.main,
-      border: `1px solid ${theme.palette.info.main}`,
+      color: theme.palette.info.dark,
+      border: `1px solid ${theme.palette.info.dark}`,
     },
   },
 }));
