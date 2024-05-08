@@ -77,6 +77,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
         maxWidth="md"
         onClose={hideModal}
         data-testid="requestDetailModal"
+        onKeyDown={(e) => e.stopPropagation()}
       >
         <DialogTitle>{requestDialogTitle}</DialogTitle>
         <Divider />
