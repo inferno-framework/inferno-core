@@ -4,14 +4,12 @@ import { createTheme } from '@mui/material/styles';
 declare module '@mui/material/styles/createPalette' {
   interface CommonColors {
     white: string;
-    black: string;
     orangeLight: string;
     orange: string;
     orangeDark: string;
     blueLightest: string;
     blueLight: string;
     blue: string;
-    grayLightest: string;
     grayLight: string;
     gray: string;
     grayDark: string;
@@ -20,14 +18,13 @@ declare module '@mui/material/styles/createPalette' {
 }
 const colors = {
   white: '#fff',
-  black: '#222',
   orangeLight: '#fbe2cd',
   orange: '#f77a25',
   orangeDark: '#c05702',
   blueLightest: '#f1f8ff',
   blueLight: '#9ad2f0',
   blue: '#316DB1',
-  grayLightest: '#F0F2F1',
+  grayLight: '#F0F2F1',
   gray: '#707070',
   grayDark: '#616161',
   grayDarkest: '#191919',

@@ -82,7 +82,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   accordionDetailContainer: {
-    backgroundColor: theme.palette.common.grayLightest,
+    backgroundColor: theme.palette.common.grayLight,
     padding: '16px',
     '@media print': {
       padding: '0 16px',
@@ -100,7 +100,7 @@ export default makeStyles()((theme: Theme) => ({
     margin: '0 8px',
     padding: '0.25em 0.25em', // offset for hover styling
     '&:hover': {
-      background: theme.palette.common.grayLightest,
+      background: theme.palette.common.grayLight,
       borderRadius: '50%',
     },
   },

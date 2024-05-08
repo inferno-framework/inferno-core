@@ -38,7 +38,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   accordionDetailContainer: {
-    backgroundColor: theme.palette.common.grayLightest,
+    backgroundColor: theme.palette.common.grayLight,
     '@media print': {
       padding: '0 0 0 16px',
     },
@@ -61,7 +61,7 @@ export default makeStyles()((theme: Theme) => ({
     color: theme.palette.common.orangeDark,
   },
   nestedDescriptionContainer: {
-    backgroundColor: theme.palette.common.grayLightest,
+    backgroundColor: theme.palette.common.grayLight,
     padding: '8px 0',
   },
 

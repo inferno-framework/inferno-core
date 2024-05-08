@@ -399,7 +399,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         style={{
           overflow: 'auto',
           width: '100%',
-          backgroundColor: lightTheme.palette.common.grayLightest,
+          backgroundColor: lightTheme.palette.common.grayLight,
         }}
       >
         <Box className={classes.contentContainer} p={windowIsSmall ? 0 : 4}>

@@ -17,7 +17,7 @@ const AppSkeleton: FC<Record<string, never>> = () => {
         style={{
           overflow: 'auto',
           width: '100%',
-          backgroundColor: lightTheme.palette.common.grayLightest,
+          backgroundColor: lightTheme.palette.common.grayLight,
         }}
       >
         <Box className={classes.contentContainer} p={windowIsSmall ? 1 : 4}>

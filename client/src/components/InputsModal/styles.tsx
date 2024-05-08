@@ -82,7 +82,7 @@ export default makeStyles()((theme: Theme) => ({
   toggleButton: {
     color: theme.palette.common.grayDark,
     '&:hover, :focus-within': {
-      backgroundColor: theme.palette.common.grayLightest,
+      backgroundColor: theme.palette.common.grayLight,
       fontWeight: 'bolder',
     },
     '&.Mui-selected': {

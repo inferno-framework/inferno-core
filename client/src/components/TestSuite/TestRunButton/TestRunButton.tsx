@@ -67,7 +67,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
           ':hover': inProgress
             ? {}
             : {
-                background: lightTheme.palette.common.grayLightest,
+                background: lightTheme.palette.common.grayLight,
                 borderRadius: '50%',
               },
         }}
