@@ -9,12 +9,13 @@ import FlagIcon from '@mui/icons-material/Flag';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import useStyles from './styles';
-import TestGroupTreeItem from './TestGroupTreeItem';
-import TreeItemLabel from './TreeItemLabel';
+import { useAppStore } from '~/store/app';
 import CustomTreeItem from '~/components/_common/CustomTreeItem';
 import PresetsSelector from '~/components/PresetsSelector/PresetsSelector';
+import TestGroupTreeItem from '~/components/TestSuite/TestSuiteTree/TestGroupTreeItem';
+import TreeItemLabel from '~/components/TestSuite/TestSuiteTree/TreeItemLabel';
 import lightTheme from '~/styles/theme';
+import useStyles from './styles';
 
 export interface TestSuiteTreeProps {
   testSuite: TestSuite;
@@ -43,6 +44,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   getSessionData,
 }) => {
   const { classes } = useStyles();
+  const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
   let selectedNode = selectedRunnable;
   if (view === 'report') {
@@ -149,7 +151,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
             ContentProps={{ testId: `${testSuite.id}/report` } as any}
           />
-          <Box display="flex" alignItems="flex-end" flexGrow={1} mt={8}>
+          <Box display="flex" alignItems="flex-end" flexGrow={1} mt={windowIsSmall ? 0 : 8}>
             <Box width="100%">{renderConfigMessagesTreeItem()}</Box>
           </Box>
         </TreeView>
