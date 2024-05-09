@@ -7,6 +7,5 @@ use Rack::Static,
 Inferno::Application.finalize!
 
 use Inferno::Utils::Middleware::RequestLogger
-use Inferno::Utils::Middleware::RequestRecorder
 
 run Inferno::Web.app

@@ -10,7 +10,6 @@ Inferno::Application.register_provider(:web) do |_app|
     end
 
     require 'inferno/utils/middleware/request_logger'
-    require 'inferno/utils/middleware/request_recorder'
     require 'inferno/apps/web/application'
   end
 end

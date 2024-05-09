@@ -1,4 +1,5 @@
 require 'hanami/controller'
+require 'rack/request'
 require_relative '../ext/rack'
 
 module Inferno
@@ -210,6 +211,11 @@ module Inferno
         @test ||= tests_repo.find(result.test_id)
       end
 
+      # @return [Logger] Inferno's logger
+      def logger
+        @logger ||= Application['logger']
+      end
+
       # @private
       def find_test_run_identifier
         @test_run_identifier ||= test_run_identifier
@@ -228,11 +234,12 @@ module Inferno
       # to include response headers added by other parts of the rack stack
       # rather than only the response headers explicitly added in the endpoint.
       def persist_request
-        req.env['inferno.persist_request'] = true
         req.env['inferno.test_session_id'] = test_run.test_session_id
         req.env['inferno.result_id'] = result.id
         req.env['inferno.tags'] = tags
         req.env['inferno.name'] = name if name.present?
+
+        add_persistence_callback
       end
 
       # @private
@@ -264,6 +271,59 @@ module Inferno
         make_response
       rescue StandardError => e
         halt 500, e.full_message
+      end
+
+      # @private
+      def add_persistence_callback # rubocop:disable Metrics/CyclomaticComplexity
+        logger = Application['logger']
+        env = req.env
+        env['rack.after_reply'] ||= []
+        env['rack.after_reply'] << proc do
+          repo = Inferno::Repositories::Requests.new
+
+          uri = URI('http://example.com')
+          uri.scheme = env['rack.url_scheme']
+          uri.host = env['SERVER_NAME']
+          uri.port = env['SERVER_PORT']
+          uri.path = env['REQUEST_PATH'] || ''
+          uri.query = env['rack.request.query_string'] if env['rack.request.query_string'].present?
+          url = uri&.to_s
+          verb = env['REQUEST_METHOD']
+          logger.info('get body')
+          request_body = env['rack.input']
+          request_body.rewind if env['rack.input'].respond_to? :rewind
+          request_body = request_body.instance_of?(Puma::NullIO) ? nil : request_body.string
+
+          request_headers = ::Rack::Request.new(env).headers.to_h.map { |name, value| { name:, value: } }
+
+          status, response_headers, response_body = env['inferno.response']
+
+          response_headers = response_headers.map { |name, value| { name:, value: } }
+
+          repo.create(
+            verb:,
+            url:,
+            direction: 'incoming',
+            name: env['inferno.name'],
+            status:,
+            request_body:,
+            response_body: response_body.join,
+            result_id: env['inferno.result_id'],
+            test_session_id: env['inferno.test_session_id'],
+            request_headers:,
+            response_headers:,
+            tags: env['inferno.tags']
+          )
+
+          if env['inferno.resume_test_run']
+            test_run_id = env['inferno.test_run_id']
+            Inferno::Repositories::TestRuns.new.mark_as_no_longer_waiting(test_run_id)
+
+            Inferno::Jobs.perform(Jobs::ResumeTestRun, test_run_id)
+          end
+        rescue StandardError => e
+          logger.error(e.full_message)
+        end
       end
     end
   end

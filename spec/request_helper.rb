@@ -1,12 +1,12 @@
 require 'spec_helper'
 require 'rack/test'
 require_relative '../lib/inferno/apps/web/application'
-require_relative '../lib/inferno/utils/middleware/request_recorder'
+require_relative '../lib/inferno/utils/middleware/request_logger'
 
 module RequestHelpers
   def app
     Rack::Builder.new do
-      use Inferno::Utils::Middleware::RequestRecorder
+      use Inferno::Utils::Middleware::RequestLogger
       run Inferno::Web.app
     end
   end
