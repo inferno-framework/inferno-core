@@ -1,8 +1,8 @@
 require_relative '../../repositories/presets'
 
-Inferno::Application.boot(:presets) do
-  init do
-    use :suites
+Inferno::Application.register_provider(:presets) do
+  prepare do
+    target_container.start :suites
 
     files_to_load = Dir.glob(['config/presets/*.json', 'config/presets/*.json.erb'])
     files_to_load.map! { |path| File.realpath(path) }

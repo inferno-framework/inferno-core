@@ -1,5 +1,5 @@
-Inferno::Application.boot(:logging) do
-  init do
+Inferno::Application.register_provider(:logging) do
+  prepare do
     logger =
       if Inferno::Application.env == :test
         log_file_directory = File.join(Dir.pwd, 'tmp')
