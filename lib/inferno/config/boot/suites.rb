@@ -1,6 +1,6 @@
-Inferno::Application.boot(:suites) do
-  init do
-    use :logging
+Inferno::Application.register_provider(:suites) do
+  prepare do
+    target_container.start :logging
 
     require 'inferno/entities/test'
     require 'inferno/entities/test_group'

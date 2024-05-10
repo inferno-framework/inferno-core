@@ -73,6 +73,7 @@ RSpec.describe Inferno::DSL::Runnable do
 
         updated_run = Inferno::Repositories::TestRuns.new.find(test_run.id)
 
+        expect(updated_run.status).to eq('done')
         expect(updated_run.identifier).to be_nil
       end
 
