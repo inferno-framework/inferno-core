@@ -22,7 +22,7 @@ export default makeStyles()((theme: Theme) => ({
     display: 'inline',
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: theme.palette.common.grayDarker,
+    color: theme.palette.common.grayDark,
   },
   testSuiteTreePanel: {
     display: 'flex',

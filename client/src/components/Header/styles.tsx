@@ -29,13 +29,13 @@ export default makeStyles()((theme: Theme) => ({
   title: {
     padding: '0 8px',
     whiteSpace: 'nowrap',
-    fontWeight: 600,
   },
   version: {
     fontStyle: 'italic',
   },
   homeLink: {
-    color: theme.palette.common.orangeDarker,
+    color: theme.palette.common.grayDark,
+    fontWeight: 600,
     textDecoration: 'none',
   },
 }));

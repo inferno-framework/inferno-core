@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui';
 export default makeStyles()((theme: Theme) => ({
   label: {
     '& label.Mui-focused': {
-      color: theme.palette.common.orangeDarkest,
+      color: theme.palette.primary.dark,
     },
   },
   optionsList: {
@@ -16,6 +16,6 @@ export default makeStyles()((theme: Theme) => ({
     overflow: 'auto',
   },
   selectedItem: {
-    backgroundColor: `${theme.palette.common.orangeLighter} !important`,
+    backgroundColor: `${theme.palette.common.orangeLight} !important`,
   },
 }));

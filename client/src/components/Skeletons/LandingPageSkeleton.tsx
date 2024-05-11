@@ -54,7 +54,7 @@ const LandingPageSkeleton: FC<Record<string, never>> = () => {
         alignItems="center"
         width="100%"
         py={4}
-        sx={{ backgroundColor: lightTheme.palette.common.grayLightest }}
+        sx={{ backgroundColor: lightTheme.palette.common.grayLight }}
       >
         <SelectionSkeleton />
       </Box>

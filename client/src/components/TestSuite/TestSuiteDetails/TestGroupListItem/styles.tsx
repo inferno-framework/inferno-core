@@ -1,5 +1,6 @@
 import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
+import { darken } from '@mui/material/styles';
 
 export default makeStyles()((theme: Theme) => ({
   root: {
@@ -12,7 +13,7 @@ export default makeStyles()((theme: Theme) => ({
     display: 'inline',
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: theme.palette.common.grayDarker,
+    color: theme.palette.common.grayDark,
   },
   currentItem: {
     fontWeight: 600,
@@ -25,6 +26,7 @@ export default makeStyles()((theme: Theme) => ({
       borderBottom: `1px solid ${theme.palette.divider}`,
     },
     '@media print': {
+      borderTop: `1px solid ${theme.palette.divider}`,
       borderBottom: 'none !important',
     },
   },
@@ -38,7 +40,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   accordionDetailContainer: {
-    backgroundColor: theme.palette.common.grayLighter,
+    backgroundColor: theme.palette.common.grayLight,
     '@media print': {
       padding: '0 0 0 16px',
     },
@@ -52,17 +54,22 @@ export default makeStyles()((theme: Theme) => ({
       margin: 0,
     },
   },
-  nestedDescription: {
+  description: {
     padding: '8px 16px 24px 16px',
     overflow: 'auto',
   },
-  nestedDescriptionHeader: {
+  descriptionHeader: {
     fontWeight: 'bolder !important',
-    color: theme.palette.common.orangeDarker,
+    color: theme.palette.common.orangeDark,
   },
-  nestedDescriptionContainer: {
-    backgroundColor: theme.palette.common.grayLighter,
-    padding: '8px 0',
+  descriptionContainer: {
+    backgroundColor: theme.palette.common.grayLight,
+  },
+  descriptionDetailContainer: {
+    backgroundColor: darken(theme.palette.common.grayLight, 0.1),
+    '@media print': {
+      padding: '0 0 0 16px',
+    },
   },
 
   // these colors are here for the badges as well as the messages column
@@ -70,13 +77,13 @@ export default makeStyles()((theme: Theme) => ({
     color: theme.palette.error.dark,
   },
   warning: {
-    color: theme.palette.common.orangeDarker,
+    color: theme.palette.primary.dark,
   },
   info: {
     color: theme.palette.info.dark,
   },
   request: {
-    color: theme.palette.secondary.main,
+    color: theme.palette.info.main,
   },
 
   // each badge component inside a ProblemBadge has its own color
@@ -89,8 +96,8 @@ export default makeStyles()((theme: Theme) => ({
   },
   warningBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.common.orangeDarker,
-      border: `1px solid ${theme.palette.common.orangeDarker}`,
+      color: theme.palette.primary.dark,
+      border: `1px solid ${theme.palette.primary.dark}`,
     },
   },
   infoBadge: {
@@ -101,8 +108,8 @@ export default makeStyles()((theme: Theme) => ({
   },
   requestBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.secondary.main,
-      border: `1px solid ${theme.palette.secondary.main}`,
+      color: theme.palette.secondary.dark,
+      border: `1px solid ${theme.palette.info.dark}`,
     },
   },
 }));

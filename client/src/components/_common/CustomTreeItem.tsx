@@ -109,7 +109,7 @@ const CustomTreeItem = styled((props: TreeItemProps) => (
   <TreeItem ContentComponent={CustomContent} {...props} />
 ))(() => ({
   [`& .${treeItemClasses.selected}`]: {
-    backgroundColor: `${lightTheme.palette.common.orangeLighter} !important`,
+    backgroundColor: `${lightTheme.palette.common.orangeLight} !important`,
   },
   [`& .${treeItemClasses.content}`]: {
     width: 'auto',

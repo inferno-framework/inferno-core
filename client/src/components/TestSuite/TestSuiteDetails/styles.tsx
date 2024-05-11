@@ -12,7 +12,7 @@ export default makeStyles()((theme: Theme) => ({
     display: 'inline',
     fontWeight: 'bold',
     alignSelf: 'center',
-    color: theme.palette.common.grayDarker,
+    color: theme.palette.common.grayDark,
   },
   testGroupCardHeader: {
     display: 'flex',
@@ -20,7 +20,7 @@ export default makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     minHeight: '36.5px',
     padding: '8px 16px',
-    backgroundColor: theme.palette.common.blueGrayLightest,
+    backgroundColor: theme.palette.common.blueLightest,
     '@media print': {
       padding: '0 8px',
     },

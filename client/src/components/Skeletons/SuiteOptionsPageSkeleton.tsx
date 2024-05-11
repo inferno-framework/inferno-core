@@ -51,7 +51,7 @@ const SuiteOptionsPageSkeleton: FC<Record<string, never>> = () => {
         width={windowIsSmall ? '100%' : 'none'}
         justifyContent="center"
         alignItems="center"
-        sx={{ backgroundColor: lightTheme.palette.common.grayLightest }}
+        sx={{ backgroundColor: lightTheme.palette.common.grayLight }}
       >
         <Box display="flex" justifyContent="center" m={3}>
           <SelectionSkeleton />

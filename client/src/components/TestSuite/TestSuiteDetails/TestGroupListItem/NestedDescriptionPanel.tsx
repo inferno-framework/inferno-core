@@ -25,12 +25,13 @@ const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) 
   const [descriptionMouseHover, setDescriptionMouseHover] = React.useState(false);
 
   return (
-    <Box className={classes.nestedDescriptionContainer}>
+    <Box py={1} className={classes.descriptionContainer}>
       <Accordion
         disableGutters
+        elevation={0}
         key={`${testGroup.id}-description`}
         className={classes.accordion}
-        TransitionProps={{ unmountOnExit: true }}
+        slotProps={{ transition: { unmountOnExit: true } }}
         onMouseEnter={() => setDescriptionMouseHover(true)}
         onMouseLeave={() => setDescriptionMouseHover(false)}
       >
@@ -44,7 +45,7 @@ const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) 
             <ListItem sx={{ p: 0 }}>
               <ListItemText
                 primary={
-                  <Typography className={classes.nestedDescriptionHeader}>
+                  <Typography className={classes.descriptionHeader}>
                     About {testGroup.short_title || testGroup.title}
                   </Typography>
                 }
@@ -55,11 +56,11 @@ const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) 
         <Divider />
         <AccordionDetails
           title={descriptionMouseHover ? '' : `${testGroup.id}-description-detail`}
-          className={classes.accordionDetailContainer}
+          className={classes.descriptionDetailContainer}
         >
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            className={`${classes.accordionDetail} ${classes.nestedDescription}`}
+            className={`${classes.accordionDetail} ${classes.description}`}
           >
             {testGroup.description as string}
           </ReactMarkdown>

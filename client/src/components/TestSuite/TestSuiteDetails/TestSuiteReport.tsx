@@ -8,6 +8,7 @@ import {
   Box,
   Button,
   Card,
+  Divider,
   FormControlLabel,
   FormGroup,
   IconButton,
@@ -50,9 +51,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
               control={
                 <Switch
                   checked={showDetails}
-                  onChange={() => {
-                    setShowDetails(!showDetails);
-                  }}
+                  onChange={() => setShowDetails(!showDetails)}
                   inputProps={{ 'aria-label': 'controlled' }}
                   color="secondary"
                 />
@@ -82,29 +81,25 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
           )}
         </span>
       </Box>
+      <Divider />
       <Box p={1}>
         <Box className={classes.reportSummaryItems}>
           <Box px={2}>
-            <Typography
-              variant="h5"
-              component="h1"
-              textTransform="uppercase"
-              sx={{ fontWeight: 'bold' }}
-            >
+            <Typography variant="h5" component="h1" textTransform="uppercase" fontWeight="bold">
               {testSuite.result?.result || 'pending'}
             </Typography>
             <Typography variant="button">Final Result</Typography>
           </Box>
           {testSuite.version && (
             <Box px={2}>
-              <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
+              <Typography variant="h5" component="h1" fontWeight="bold">
                 {testSuite.version}
               </Typography>
               <Typography variant="button">Version</Typography>
             </Box>
           )}
           <Box px={2}>
-            <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h5" component="h1" fontWeight="bold">
               {Intl.DateTimeFormat('en', {
                 year: 'numeric',
                 month: 'short',

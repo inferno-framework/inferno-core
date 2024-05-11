@@ -24,7 +24,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   inputLabel: {
-    color: theme.palette.common.grayDarker,
+    color: theme.palette.common.grayDark,
     fontWeight: 600,
   },
   inputDescription: {
@@ -48,7 +48,7 @@ export default makeStyles()((theme: Theme) => ({
   oauthCard: {
     width: '100%',
     mx: 2,
-    borderColor: theme.palette.common.grayLight,
+    borderColor: theme.palette.common.gray,
     '&:focus-within': {
       borderColor: theme.palette.secondary.main,
     },
@@ -82,7 +82,7 @@ export default makeStyles()((theme: Theme) => ({
   toggleButton: {
     color: theme.palette.common.grayDark,
     '&:hover, :focus-within': {
-      backgroundColor: theme.palette.common.grayLightest,
+      backgroundColor: theme.palette.common.grayLight,
       fontWeight: 'bolder',
     },
     '&.Mui-selected': {

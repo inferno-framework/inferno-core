@@ -35,9 +35,9 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
   );
 
   const tabLabel = (label: string, count: number) => (
-    <Box alignItems="center">
-      <Box px={1}>{label}</Box>
-      {count > 0 && <Chip label={count} size="small" style={{ margin: '4px' }} />}
+    <Box alignItems="center" px={1}>
+      {count > 0 && <Chip label={count} size="small" sx={{ mx: 1 }} />}
+      {label}
     </Box>
   );
 
