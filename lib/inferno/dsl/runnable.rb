@@ -26,17 +26,6 @@ module Inferno
 
         extending_class.define_singleton_method(:inherited) do |subclass|
           copy_instance_variables(subclass)
-
-          # Whenever the definition of a Runnable class ends, keep track of the
-          # file it came from. Once the Suite loader successfully loads a file,
-          # it will add all of the Runnable classes from that file to the
-          # appropriate repositories.
-          TracePoint.trace(:end) do |trace|
-            if trace.self == subclass
-              subclass.add_self_to_repository
-              trace.disable
-            end
-          end
         end
       end
 
