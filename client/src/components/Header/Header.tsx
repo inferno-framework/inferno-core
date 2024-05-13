@@ -103,12 +103,7 @@ const Header: FC<HeaderProps> = ({
             )}
           </Box>
           {suiteOptionsString && (
-            <Typography
-              variant="subtitle2"
-              component="h2"
-              className={classes.title}
-              color={lightTheme.palette.common.gray}
-            >
+            <Typography variant="subtitle2" component="h2" className={classes.title}>
               {suiteOptionsString}
             </Typography>
           )}

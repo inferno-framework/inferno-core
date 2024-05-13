@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Box, Drawer, SwipeableDrawer, Toolbar } from '@mui/material';
+import { lighten } from '@mui/material/styles';
 import {
   TestInput,
   RunnableType,
@@ -66,7 +67,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 }) => {
   const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-  const footerHeight = useAppStore((state) => state.footerHeight);
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const currentRunnables = useTestSessionStore((state) => state.currentRunnables);
@@ -382,8 +382,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           {/* Spacer to be updated with header height */}
           <Toolbar sx={{ minHeight: `${headerHeight}px !important` }} />
           {renderDrawerContents()}
-          {/* Spacer to be updated with footer height */}
-          <Toolbar sx={{ minHeight: `${footerHeight}px !important` }} />
         </SwipeableDrawer>
       ) : (
         <Drawer
@@ -399,7 +397,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         style={{
           overflow: 'auto',
           width: '100%',
-          backgroundColor: lightTheme.palette.common.grayLightest,
+          backgroundColor: lighten(lightTheme.palette.common.grayLight, 0.5),
         }}
       >
         <Box className={classes.contentContainer} p={windowIsSmall ? 0 : 4}>

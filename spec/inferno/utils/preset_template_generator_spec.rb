@@ -58,7 +58,9 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
           _description: 'Example of locked, filled, optional field', value: 'example text',
           _locked: true, _optional: true },
         { name: 'cancel_pause_time', _type: 'text', value: '30' },
-        { name: 'url1', _type: 'text', value: nil }
+        { name: 'url1', _type: 'text', value: nil },
+        { name: 'custom_bearer_token', _type: 'text',
+          _description: 'This bearer token will be used to identify the incoming request', value: nil }
       ] }
   end
 

@@ -26,17 +26,6 @@ module Inferno
 
         extending_class.define_singleton_method(:inherited) do |subclass|
           copy_instance_variables(subclass)
-
-          # Whenever the definition of a Runnable class ends, keep track of the
-          # file it came from. Once the Suite loader successfully loads a file,
-          # it will add all of the Runnable classes from that file to the
-          # appropriate repositories.
-          TracePoint.trace(:end) do |trace|
-            if trace.self == subclass
-              subclass.add_self_to_repository
-              trace.disable
-            end
-          end
         end
       end
 
@@ -354,10 +343,28 @@ module Inferno
         route_class = Class.new(ResumeTestRoute) do |klass|
           klass.singleton_class.instance_variable_set(:@test_run_identifier_block, block)
           klass.singleton_class.instance_variable_set(:@tags, tags)
-          klass.singleton_class.instance_variable_set(:@result, result)
+          klass.singleton_class.instance_variable_set(:@new_result, result)
         end
 
         route(method, path, route_class)
+      end
+
+      # Create an endpoint to receive incoming requests during a Test Run.
+      #
+      # @see Inferno::DSL::SuiteEndpoint
+      # @example
+      #  suite_endpoint :post, '/my_suite_endpoint', MySuiteEndpoint
+      # @param method [Symbol] the HTTP request type (:get, :post, etc.) for the
+      #   incoming request
+      # @param path [String] the path for this request. The route will be served
+      #   with a prefix of `/custom/TEST_SUITE_ID` to prevent path conflicts.
+      #   [Any of the path options available in Hanami
+      #   Router](https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#a-beautiful-dsl)
+      #   can be used here.
+      # @param [Class] a subclass of Inferno::DSL::SuiteEndpoint
+      # @return [void]
+      def suite_endpoint(method, path, endpoint_class)
+        route(method, path, endpoint_class)
       end
 
       # Create a route to handle a request

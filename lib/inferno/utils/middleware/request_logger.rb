@@ -1,3 +1,5 @@
+require 'puma/null_io'
+
 module Inferno
   module Utils
     # @private
@@ -27,6 +29,12 @@ module Inferno
             log_response([500, nil, nil], start, Time.now, e)
             raise e
           end
+
+          env['inferno.response'] = response
+
+          # rack.after_reply is handled by puma, which doesn't process requests
+          # in unit tests, so we manually run them when in the test environment
+          env['rack.after_reply']&.each(&:call) if (ENV['APP_ENV'] = 'test')
 
           response
         end

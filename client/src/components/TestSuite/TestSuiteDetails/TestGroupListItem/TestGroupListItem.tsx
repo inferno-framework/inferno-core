@@ -110,6 +110,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
   const expandedGroupListItem = (
     <Accordion
       disableGutters
+      elevation={0}
       className={classes.accordion}
       sx={view === 'report' ? { pointerEvents: 'none' } : {}}
       expanded={expanded}
@@ -117,7 +118,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         setExpanded(!expanded);
         setManualExpand(!expanded);
       }}
-      TransitionProps={{ unmountOnExit: true }}
+      slotProps={{ transition: { unmountOnExit: true } }}
       onMouseEnter={() => setGroupMouseHover(true)}
       onMouseLeave={() => setGroupMouseHover(false)}
     >

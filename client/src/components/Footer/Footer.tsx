@@ -32,7 +32,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
           href={`${apiBase}?scheme=${scheme}&host=${fullHost}`}
           target="_blank"
           rel="noreferrer"
-          color="secondary"
+          color="secondary.dark"
           className={classes.link}
           sx={{ fontSize: windowIsSmall ? '0.7rem' : '0.9rem' }}
         >
@@ -99,7 +99,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                     href={link.url}
                     target="_blank"
                     rel="noreferrer"
-                    color="secondary"
+                    color="secondary.dark"
                     className={classes.link}
                     style={{
                       fontSize: '0.8rem',
@@ -127,7 +127,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
                   href={link.url}
                   target="_blank"
                   rel="noreferrer"
-                  color="secondary"
+                  color="secondary.dark"
                   className={classes.link}
                   style={{
                     fontSize: '1.1rem',
@@ -161,7 +161,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
       >
         <Box display="flex" alignItems="center" px={2}>
           <Link
-            href="https://inferno-framework.github.io/inferno-core"
+            href="https://inferno-framework.github.io/"
             target="_blank"
             rel="noreferrer"
             aria-label="Inferno"

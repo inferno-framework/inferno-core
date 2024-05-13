@@ -1,10 +1,14 @@
 require 'spec_helper'
 require 'rack/test'
 require_relative '../lib/inferno/apps/web/application'
+require_relative '../lib/inferno/utils/middleware/request_logger'
 
 module RequestHelpers
   def app
-    Inferno::Web.app
+    Rack::Builder.new do
+      use Inferno::Utils::Middleware::RequestLogger
+      run Inferno::Web.app
+    end
   end
 
   def post_json(path, data)

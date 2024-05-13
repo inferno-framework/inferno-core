@@ -10,7 +10,7 @@ export default makeStyles()((theme: Theme) => ({
     fontWeight: 600,
     fontSize: '16px',
     borderBottom: `1px solid ${theme.palette.divider}`,
-    backgroundColor: theme.palette.common.blueGrayLightest,
+    backgroundColor: theme.palette.common.blueLightest,
     borderTopLeftRadius: '4px',
     borderTopRightRadius: '4px',
     display: 'flex',

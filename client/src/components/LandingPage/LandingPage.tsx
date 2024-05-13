@@ -127,7 +127,7 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
         width="100%"
         minHeight="200px"
         py={4}
-        sx={{ backgroundColor: lightTheme.palette.common.grayLightest }}
+        sx={{ backgroundColor: lightTheme.palette.common.grayLight }}
       >
         {testSuites ? (
           <SelectionPanel

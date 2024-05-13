@@ -10,14 +10,13 @@ import useStyles from './styles';
 
 export interface CodeBlockProps {
   body?: string | null;
-  collapsedState?: boolean;
   headers?: RequestHeader[] | null | undefined;
   title?: string;
 }
 
-const CodeBlock: FC<CodeBlockProps> = ({ body, collapsedState = false, headers, title }) => {
+const CodeBlock: FC<CodeBlockProps> = ({ body, headers, title }) => {
   const { classes } = useStyles();
-  const [collapsed, setCollapsed] = React.useState(collapsedState);
+  const [collapsed, setCollapsed] = React.useState(true);
   const [jsonBody, setJsonBody] = React.useState<string>('');
 
   useEffectOnce(() => {
@@ -30,17 +29,15 @@ const CodeBlock: FC<CodeBlockProps> = ({ body, collapsedState = false, headers, 
     return (
       <Card variant="outlined" className={classes.codeblock} data-testid="code-block">
         <CardHeader
-          subheader={title || 'Code'}
+          title={title || 'Code'}
+          titleTypographyProps={{ sx: { fontSize: 20, cursor: 'pointer' } }}
           action={
             <Box display="flex">
-              <CopyButton copyText={jsonBody} size="small" />
-              <CollapseButton
-                setCollapsed={setCollapsed}
-                startState={collapsedState}
-                size="small"
-              />
+              <CopyButton copyText={jsonBody} />
+              <CollapseButton setCollapsed={setCollapsed} collapsed={collapsed} />
             </Box>
           }
+          onClick={() => setCollapsed(!collapsed)}
         />
         <Collapse in={!collapsed}>
           <Divider />

@@ -1,5 +1,6 @@
 import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
+import { darken } from '@mui/material/styles';
 
 export default makeStyles()((theme: Theme) => ({
   root: {
@@ -70,6 +71,9 @@ export default makeStyles()((theme: Theme) => ({
     '&:not(last-child)': {
       borderBottom: `1px solid ${theme.palette.divider}`,
     },
+    '@media print': {
+      borderBottom: 'none !important',
+    },
   },
   accordionSummary: {
     userSelect: 'auto',
@@ -82,7 +86,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   accordionDetailContainer: {
-    backgroundColor: theme.palette.common.grayLighter,
+    backgroundColor: darken(theme.palette.common.grayLight, 0.1),
     padding: '16px',
     '@media print': {
       padding: '0 16px',
@@ -100,7 +104,7 @@ export default makeStyles()((theme: Theme) => ({
     margin: '0 8px',
     padding: '0.25em 0.25em', // offset for hover styling
     '&:hover': {
-      background: theme.palette.common.grayLightest,
+      background: theme.palette.common.grayLight,
       borderRadius: '50%',
     },
   },
@@ -110,13 +114,13 @@ export default makeStyles()((theme: Theme) => ({
     color: theme.palette.error.dark,
   },
   warning: {
-    color: theme.palette.common.orangeDarker,
+    color: theme.palette.primary.dark,
   },
   info: {
     color: theme.palette.info.dark,
   },
   request: {
-    color: theme.palette.secondary.main,
+    color: theme.palette.info.main,
   },
 
   // common styling for the badge component inside a ProblemBadge
@@ -140,8 +144,8 @@ export default makeStyles()((theme: Theme) => ({
   },
   warningBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.common.orangeDarker,
-      border: `1px solid ${theme.palette.common.orangeDarker}`,
+      color: theme.palette.primary.dark,
+      border: `1px solid ${theme.palette.primary.dark}`,
     },
   },
   infoBadge: {
@@ -152,8 +156,8 @@ export default makeStyles()((theme: Theme) => ({
   },
   requestBadge: {
     '& .MuiBadge-badge': {
-      color: theme.palette.secondary.main,
-      border: `1px solid ${theme.palette.secondary.main}`,
+      color: theme.palette.info.dark,
+      border: `1px solid ${theme.palette.info.dark}`,
     },
   },
 }));

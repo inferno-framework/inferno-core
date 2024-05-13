@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Box } from '@mui/material';
+import { lighten } from '@mui/material/styles';
 import lightTheme from '~/styles/theme';
 import { useAppStore } from '~/store/app';
 import useStyles from '~/components/TestSuite/styles';
@@ -17,7 +18,7 @@ const AppSkeleton: FC<Record<string, never>> = () => {
         style={{
           overflow: 'auto',
           width: '100%',
-          backgroundColor: lightTheme.palette.common.grayLightest,
+          backgroundColor: lighten(lightTheme.palette.common.grayLight, 0.5),
         }}
       >
         <Box className={classes.contentContainer} p={windowIsSmall ? 1 : 4}>

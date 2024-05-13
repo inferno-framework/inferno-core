@@ -89,7 +89,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
         select
         label="Preset"
         InputLabelProps={{
-          sx: { '&.Mui-focused': { color: lightTheme.palette.common.orangeDarker } },
+          sx: { '&.Mui-focused': { color: lightTheme.palette.primary.dark } },
         }}
         value={selectedPreset}
         onChange={handleOnChange}
