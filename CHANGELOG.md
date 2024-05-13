@@ -1,3 +1,6 @@
+# 0.4.37
+Aligning changes with published gem - the previously published gem does not include all listed changes.
+
 # 0.4.36
 * FI-2533: Add general test endpoints by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/472
 * FI-2525: Update colors in Core by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/488

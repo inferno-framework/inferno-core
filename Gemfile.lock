@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    inferno_core (0.4.36)
+    inferno_core (0.4.37)
       activesupport (~> 6.1.7.5)
       base62-rb (= 0.3.1)
       blueprinter (= 0.25.2)
@@ -149,8 +149,9 @@ GEM
       mustermann (~> 1.0)
       mustermann-contrib (~> 1.0)
       rack (~> 2.0)
-    hanami-utils (2.0.0)
+    hanami-utils (2.1.0)
       concurrent-ruby (~> 1.0)
+      dry-core (~> 1.0, < 2)
       dry-transformer (~> 1.0, < 2)
     hansi (0.2.1)
     hashdiff (1.0.1)
