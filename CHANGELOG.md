@@ -1,5 +1,9 @@
-# 0.4.35
+# 0.4.36
+* FI-2533: Add general test endpoints by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/472
+* FI-2525: Update colors in Core by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/488
+* FI-2647 Add TestKit metadata DRAFT by @arscan in https://github.com/inferno-framework/inferno-core/pull/476
 
+# 0.4.35
 * Bump follow-redirects from 1.15.5 to 1.15.6 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/479
 * Bump express from 4.18.3 to 4.19.2 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/480
 * Bump webpack-dev-middleware from 5.3.3 to 5.3.4 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/481
