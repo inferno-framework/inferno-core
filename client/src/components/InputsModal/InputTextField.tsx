@@ -51,7 +51,8 @@ const InputTextField: FC<InputTextFieldProps> = ({
           color="secondary"
           fullWidth
           multiline={requirement.type === 'textarea'}
-          rows={requirement.type === 'textarea' ? 4 : 1}
+          minRows={requirement.type === 'textarea' ? 4 : 1}
+          // maxRows={10}
           value={inputsMap.get(requirement.name)}
           onBlur={(e) => {
             if (e.currentTarget === e.target) {
@@ -63,6 +64,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
             inputsMap.set(requirement.name, value);
             setInputsMap(new Map(inputsMap));
           }}
+          // inputProps={{ sx: { resize: 'both' } }}
         />
       </FormControl>
     </ListItem>

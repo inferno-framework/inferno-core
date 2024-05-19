@@ -85,15 +85,15 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
           {showBackButton && <Box minWidth="45px" />}
         </Box>
 
-        <Box px={2} pb={2} overflow="auto">
+        <Box px={2} overflow="auto">
           {options && options.length > 0 ? (
             renderSelection()
           ) : (
-            <Typography mt={2}> No options available.</Typography>
+            <Typography m={2}> No options available.</Typography>
           )}
         </Box>
 
-        <Box px={2}>
+        <Box px={4} pb={1}>
           <Button
             variant="contained"
             size="large"
