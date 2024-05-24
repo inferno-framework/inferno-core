@@ -7,6 +7,7 @@ import CopyButton from '~/components/_common/CopyButton';
 
 import { formatBodyIfJSON } from './helpers';
 import useStyles from './styles';
+import lightTheme from '~/styles/theme';
 
 export interface CodeBlockProps {
   body?: string | null;
@@ -27,10 +28,10 @@ const CodeBlock: FC<CodeBlockProps> = ({ body, headers, title }) => {
 
   if (body && body.length > 0) {
     return (
-      <Card variant="outlined" className={classes.codeblock} data-testid="code-block">
+      <Card variant="outlined" className={classes.codeBlock} data-testid="code-block">
         <CardHeader
           title={title || 'Code'}
-          titleTypographyProps={{ sx: { fontSize: 20, cursor: 'pointer' } }}
+          titleTypographyProps={{ sx: { fontSize: 20 } }}
           action={
             <Box display="flex">
               <CopyButton copyText={jsonBody} />
@@ -38,6 +39,10 @@ const CodeBlock: FC<CodeBlockProps> = ({ body, headers, title }) => {
             </Box>
           }
           onClick={() => setCollapsed(!collapsed)}
+          className={classes.codeBlockHeader}
+          sx={{
+            backgroundColor: collapsed ? 'unset' : lightTheme.palette.common.blueLightest,
+          }}
         />
         <Collapse in={!collapsed}>
           <Divider />
