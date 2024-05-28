@@ -11,6 +11,7 @@ module Inferno
     class Main < Thor
       desc 'console', 'Start an interactive console session with Inferno'
       def console
+        Migration.new.run(Logger::INFO)
         Console.new.run
       end
 
@@ -25,6 +26,7 @@ module Inferno
              type: :boolean,
              desc: 'Automatically restart Inferno when a file is changed.'
       def start
+        Migration.new.run(Logger::INFO)
         command = 'foreman start --env=/dev/null'
         if `gem list -i foreman`.chomp == 'false'
           puts "You must install foreman with 'gem install foreman' prior to running Inferno."
