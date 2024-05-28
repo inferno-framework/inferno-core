@@ -1,3 +1,4 @@
+require_relative '../dsl/auth_input'
 require_relative '../dsl/oauth_credentials'
 
 module Inferno
@@ -32,6 +33,8 @@ module Inferno
           DSL::OAuthCredentials.new(JSON.parse(raw_value || '{}'))
         when 'checkbox'
           JSON.parse(raw_value || '[]')
+        when 'auth'
+          DSL::AuthInput.new(JSON.parse(raw_value || '{}'))
         else
           raw_value
         end
@@ -64,6 +67,8 @@ module Inferno
           serialize_checkbox_input(params)
         when 'oauth_credentials'
           serialize_oauth_credentials_input(params)
+        when 'auth'
+          serialize_auth_input(params)
         else
           raise Exceptions::UnknownSessionDataType, params
         end
@@ -101,6 +106,24 @@ module Inferno
 
         credentials.name = params[:name]
         credentials.to_s
+      end
+
+      def serialize_auth_input(params)
+        auth =
+          if params[:value].is_a? String
+            DSL::AuthInput.new(JSON.parse(params[:value]))
+          elsif !params[:value].is_a? DSL::AuthInput
+            raise Exceptions::BadSessionDataType.new(
+              params[:name],
+              DSL::AuthInput.name,
+              params[:value].class
+            )
+          else
+            params[:value]
+          end
+
+        auth.name = params[:name]
+        auth.to_s
       end
 
       class Model < Sequel::Model(db)
