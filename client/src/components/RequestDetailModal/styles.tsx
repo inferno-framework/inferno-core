@@ -1,5 +1,6 @@
 import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';
+import lightTheme from '~/styles/theme';
 
 export default makeStyles()((_theme: Theme) => ({
   modalTitle: {
@@ -17,10 +18,16 @@ export default makeStyles()((_theme: Theme) => ({
   headerName: {
     fontWeight: 600,
   },
-  codeblock: {
+  codeBlock: {
     overflow: 'auto',
     fontSize: 'small',
     marginTop: '16px',
+  },
+  codeBlockHeader: {
+    cursor: 'pointer',
+    ':hover': {
+      backgroundColor: lightTheme.palette.common.blueLightest,
+    },
   },
   code: {
     textWrap: 'wrap',
