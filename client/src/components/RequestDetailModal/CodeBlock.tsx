@@ -26,11 +26,14 @@ const CodeBlock: FC<CodeBlockProps> = ({ body, headers, title }) => {
     }
   });
 
+  const bodyLength = body?.split('\n').length || 0;
+  const fullTitle = `${title || 'Code'} (${bodyLength} line${bodyLength === 1 ? '' : 's'})`;
+
   if (body && body.length > 0) {
     return (
       <Card variant="outlined" className={classes.codeBlock} data-testid="code-block">
         <CardHeader
-          title={title || 'Code'}
+          title={fullTitle}
           titleTypographyProps={{ sx: { fontSize: 20 } }}
           action={
             <Box display="flex">
