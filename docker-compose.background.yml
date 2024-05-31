@@ -28,13 +28,11 @@ services:
     volumes:
       - ./data/redis:/data
     command: redis-server --appendonly yes
-  # To enable the HL7 Validator Wrapper, both the section below and
-  # the section in nginx.background.conf need to be uncommented
-  # hl7_validator_service:
-  #   image: infernocommunity/inferno-resource-validator
-  #   # Update this path to match your directory structure
-  #   volumes:
-  #     - ./igs:/home/igs
-  #     # To let the service share your local FHIR package cache,
-  #     # uncomment the below line
-  #     # - ~/.fhir:/home/ktor/.fhir
+  hl7_validator_service:
+    image: infernocommunity/inferno-resource-validator
+    # Update this path to match your directory structure
+    volumes:
+      - ./igs:/app/igs
+      # To let the service share your local FHIR package cache,
+      # uncomment the below line
+      # - ~/.fhir:/home/ktor/.fhir
