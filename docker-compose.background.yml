@@ -32,7 +32,7 @@ services:
     image: infernocommunity/inferno-resource-validator
     # Update this path to match your directory structure
     volumes:
-      - ./igs:/home/igs
+      - ./igs:/app/igs
       # To let the service share your local FHIR package cache,
       # uncomment the below line
       # - ~/.fhir:/home/ktor/.fhir
