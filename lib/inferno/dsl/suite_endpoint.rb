@@ -244,7 +244,7 @@ module Inferno
 
       # @private
       def resume_test_run?
-        find_result&.result != 'waiting'
+        find_result&.result != 'wait'
       end
 
       # @private
