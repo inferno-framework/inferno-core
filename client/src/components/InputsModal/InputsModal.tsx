@@ -30,7 +30,7 @@ import CopyButton from '../_common/CopyButton';
 export interface InputsModalProps {
   modalVisible: boolean;
   hideModal: () => void;
-  runnable: Runnable;
+  runnable: Runnable | null;
   runnableType: RunnableType;
   inputs: TestInput[];
   sessionData: Map<string, unknown>;
@@ -110,7 +110,7 @@ const InputsModal: FC<InputsModalProps> = ({
   });
 
   const instructions =
-    runnable.input_instructions ||
+    runnable?.input_instructions ||
     `Please fill out required fields in order to run the ${runnableTypeReadable(runnableType)}.` +
       (inputType === 'Field'
         ? ''
@@ -174,7 +174,7 @@ const InputsModal: FC<InputsModalProps> = ({
     inputsMap.forEach((input_value, input_name) => {
       inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
     });
-    createTestRun(runnableType, runnable.id, inputs_with_values);
+    createTestRun(runnableType, runnable?.id || '', inputs_with_values);
     closeModal();
   };
 
@@ -262,7 +262,7 @@ const InputsModal: FC<InputsModalProps> = ({
       <DialogTitle component="div">
         <Box display="flex" justifyContent="space-between">
           <Typography component="h1" variant="h6">
-            {runnable.title}
+            {runnable?.title || 'Test'}
           </Typography>
           <CustomTooltip title="Cancel - Inputs will be lost">
             <IconButton
@@ -285,7 +285,10 @@ const InputsModal: FC<InputsModalProps> = ({
           ) : (
             <Box>
               <UploadFileButton onUpload={handleFileUpload} />
-              <DownloadFileButton fileName={runnable.title} fileType={fileType} />
+              <DownloadFileButton
+                fileName={runnable?.title || 'Untitled Inferno File'}
+                fileType={fileType}
+              />
               <TextField
                 id={`${fileType}-serial-input`}
                 minRows={4}
