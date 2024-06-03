@@ -1,5 +1,16 @@
 version: '3'
 services:
+  hl7_validator_service:
+    image: infernocommunity/inferno-resource-validator
+    environment:
+      # Defines how long validator sessions last if unused, in minutes:
+      # Negative values mean sessions never expire, 0 means sessions immediately expire
+      SESSION_CACHE_DURATION: -1
+    volumes:
+      - ./<%= ig_path %>:/app/igs
+      # To let the service share your local FHIR package cache,
+      # uncomment the below line
+      # - ~/.fhir:/home/ktor/.fhir
   validator_service:
     image: infernocommunity/fhir-validator-service
     # Update this path to match your directory structure
