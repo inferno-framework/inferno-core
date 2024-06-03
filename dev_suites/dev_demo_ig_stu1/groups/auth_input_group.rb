@@ -9,10 +9,10 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       input :public_auth_input,
             type: :auth_input,
             options: {
-              sub_inputs: [
+              components: [
                 {
                   name: :auth_type,
-                  value: 'public',
+                  default: 'public',
                   locked: true
                 }
               ]
@@ -26,10 +26,10 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       input :symmetric_auth_input,
             type: :auth_input,
             options: {
-              sub_inputs: [
+              components: [
                 {
                   name: :auth_type,
-                  value: 'symmetric',
+                  default: 'symmetric',
                   locked: true
                 }
               ]
@@ -43,10 +43,10 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       input :asymmetric_auth_input,
             type: :auth_input,
             options: {
-              sub_inputs: [
+              components: [
                 {
                   name: :auth_type,
-                  value: 'asymmetric',
+                  default: 'asymmetric',
                   locked: true
                 }
               ]
