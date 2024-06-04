@@ -75,7 +75,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const [inputModalVisible, setInputModalVisible] = React.useState(false);
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
-  const [inputs, setInputs] = React.useState<TestInput[]>([]);
   const [runnableType, setRunnableType] = React.useState<RunnableType>(RunnableType.TestSuite);
   const [resultsMap, setResultsMap] = React.useState<Map<string, Result>>(
     resultsToMap(previousResults)
@@ -103,6 +102,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     });
   }
   const selectedRunnable = runnableMap.get(suiteName) ? suiteName : testSession.test_suite.id;
+
+  const [inputsRunnable, setInputsRunnable] = React.useState(
+    runnableMap.get(selectedRunnable) || null
+  );
 
   resultsMap.forEach((result, runnableId) => {
     const runnable = runnableMap.get(runnableId);
@@ -172,9 +175,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     };
   });
 
-  const showInputsModal = (runnableType: RunnableType, inputs: TestInput[]) => {
-    setInputs(inputs);
+  const showInputsModal = (runnable: Runnable, runnableType: RunnableType) => {
     setRunnableType(runnableType);
+    setInputsRunnable(runnable);
     setInputModalVisible(true);
   };
 
@@ -254,7 +257,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       input.value = sessionData.get(input.name);
     });
     if (runnable?.inputs && runnable.inputs.length > 0) {
-      showInputsModal(runnableType, runnable.inputs);
+      showInputsModal(runnable, runnableType);
     } else {
       createTestRun(runnableType, runnableId, []);
     }
@@ -402,15 +405,18 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       >
         <Box className={classes.contentContainer} p={windowIsSmall ? 0 : 4}>
           {renderView(view || 'run')}
-          <InputsModal
-            modalVisible={inputModalVisible}
-            hideModal={() => setInputModalVisible(false)}
-            runnable={runnableMap.get(selectedRunnable) as Runnable}
-            runnableType={runnableType}
-            inputs={inputs}
-            sessionData={sessionData}
-            createTestRun={createTestRun}
-          />
+          {/* Need this check to prevent rendering error during state transition */}
+          {inputModalVisible && (
+            <InputsModal
+              modalVisible={inputModalVisible}
+              hideModal={() => setInputModalVisible(false)}
+              runnable={inputsRunnable}
+              runnableType={runnableType}
+              inputs={inputsRunnable?.inputs || []}
+              sessionData={sessionData}
+              createTestRun={createTestRun}
+            />
+          )}
           <ActionModal
             cancelTestRun={cancelTestRun}
             message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
