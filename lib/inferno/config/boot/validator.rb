@@ -8,6 +8,8 @@ Inferno::Application.register_provider(:validator) do
 
     next if ENV['APP_ENV'] == 'test'
 
+    next if ENV.fetch('INITIALIZE_VALIDATOR_SESSIONS', 'true').casecmp?('false')
+
     Inferno::Repositories::TestSuites.new.all.each do |suite|
       suite.fhir_validators.each do |name, validators|
         validators.each_with_index do |validator, index|
