@@ -1,3 +1,13 @@
+## 0.4.38
+* FI-2765: Automatically run migrations by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/496
+* FI-2753: Add hover effect to request details by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/495
+* FI-2754: Add lines count to request details by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/493
+* FI-2801: Fix validator service race condition by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/498
+* FI-2688: Migrate template to HL7 validator wrapper by @dehall in https://github.com/inferno-framework/inferno-core/pull/492
+* FI-2734: Fix single test run error by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/500
+* FI-2791: Revert resume test route refactor by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/497
+* FI-2745: Skip loading validator sessions when using inferno console by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/499
+
 # 0.4.37
 Aligning changes with published gem - the previously published gem does not include all listed changes.
 
