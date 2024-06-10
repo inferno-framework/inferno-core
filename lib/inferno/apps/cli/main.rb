@@ -45,6 +45,8 @@ module Inferno
           Bundler.with_unbundled_env do
             exec command
           end
+        else
+          exec command
         end
       end
 
