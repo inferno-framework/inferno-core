@@ -28,6 +28,7 @@ module Inferno
       def start
         Migration.new.run(Logger::INFO)
         command = 'foreman start --env=/dev/null'
+
         if `gem list -i foreman`.chomp == 'false'
           puts "You must install foreman with 'gem install foreman' prior to running Inferno."
         end
@@ -40,7 +41,11 @@ module Inferno
           command = "rerun \"#{command}\" --background"
         end
 
-        exec command
+        if defined?(Bundler) && ENV['BUNDLE_GEMFILE']
+          Bundler.with_unbundled_env do
+            exec command
+          end
+        end
       end
 
       desc 'suites', 'List available test suites'
