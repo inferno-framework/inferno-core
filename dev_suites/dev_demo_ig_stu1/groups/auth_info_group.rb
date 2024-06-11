@@ -97,15 +97,15 @@ module AuthInfoConstants
 end
 
 module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
-  class AuthInputGroup < Inferno::TestGroup
-    id :auth_input_demo
+  class AuthInfoGroup < Inferno::TestGroup
+    id :auth_info_demo
     title 'Auth Input Demo'
 
     test do
       title 'Public Auth'
       id :public_auth
-      input :public_auth_input,
-            type: :auth_input,
+      input :public_auth_info,
+            type: :auth_info,
             options: {
               mode: 'auth',
               components: [
@@ -119,7 +119,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
             default: AuthInfoConstants.public_default
       run do
         AuthInfoConstants.public_default.each do |key, original_value|
-          received_value = public_auth_input.send(:key)
+          received_value = public_auth_info.send(:key)
           assert received_value == original_value,
                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
         end
@@ -129,8 +129,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     test do
       title 'Symmetric Confidential Auth'
       id :symmetric_auth
-      input :symmetric_auth_input,
-            type: :auth_input,
+      input :symmetric_auth_info,
+            type: :auth_info,
             options: {
               mode: 'auth',
               components: [
@@ -144,7 +144,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
             default: AuthInfoConstants.symmetric_confidential_default
       run do
         AuthInfoConstants.symmetric_confidential_default.each do |key, original_value|
-          received_value = public_auth_input.send(:key)
+          received_value = public_auth_info.send(:key)
           assert received_value == original_value,
                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
         end
@@ -154,8 +154,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     test do
       title 'Asymmetric Confidential Auth'
       id :asymmetric_auth
-      input :asymmetric_auth_input,
-            type: :auth_input,
+      input :asymmetric_auth_info,
+            type: :auth_info,
             options: {
               mode: 'auth',
               components: [
@@ -169,7 +169,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
             default: AuthInfoConstants.asymmetric_confidential_default
       run do
         AuthInfoConstants.asymmetric_confidential_default.each do |key, original_value|
-          received_value = public_auth_input.send(:key)
+          received_value = public_auth_info.send(:key)
           assert received_value == original_value,
                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
         end
@@ -179,8 +179,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     test do
       title 'Backend Services Auth'
       id :backend_services_auth
-      input :backend_services_auth_input,
-            type: :auth_input,
+      input :backend_services_auth_info,
+            type: :auth_info,
             options: {
               mode: 'auth',
               components: [
@@ -194,7 +194,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
             default: AuthInfoConstants.backend_services_default
       run do
         AuthInfoConstants.backend_services_default.each do |key, original_value|
-          received_value = public_auth_input.send(:key)
+          received_value = public_auth_info.send(:key)
           assert received_value == original_value,
                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
         end

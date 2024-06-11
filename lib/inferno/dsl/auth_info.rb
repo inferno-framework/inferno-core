@@ -5,7 +5,7 @@ module Inferno
     # OAuthCredentials provide a user with a single input which allows a fhir
     # client to use a bearer token and automatically refresh the token when it
     # expires.
-    class AuthInput
+    class AuthInfo
       ATTRIBUTES = [
         :auth_type,
         :resource_url,
