@@ -15,7 +15,10 @@ module Inferno
         :auth_url,
         :redirect_url,
         :client_secret,
-        :algorithm,
+        :pkce_support,
+        :pkce_code_challenge_method,
+        :auth_request_method,
+        :encryption_algorithm,
         :kid,
         :jwks,
         :certificate,
@@ -39,7 +42,10 @@ module Inferno
       # @!attribute [rw] auth_url
       # @!attribute [rw] redirect_url
       # @!attribute [rw] client_secret
-      # @!attribute [rw] algorithm
+      # @!attribute [rw] pkce_support
+      # @!attribute [rw] pkce_code_challenge_method
+      # @!attribute [rw] auth_request_method
+      # @!attribute [rw] encryption_algorithm
       # @!attribute [rw] kid
       # @!attribute [rw] jwks
       # @!attribute [rw] certificate
