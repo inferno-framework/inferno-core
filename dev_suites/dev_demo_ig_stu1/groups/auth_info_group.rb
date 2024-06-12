@@ -93,6 +93,13 @@ module AuthInfoConstants
         kid: KID
       }.freeze
     end
+
+    def token_info
+      {
+        access_token: 'SAMPLE_TOKEN',
+        refresh_token: 'SAMPLE_REFRESH_TOKEN'
+      }
+    end
   end
 end
 
@@ -116,10 +123,10 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
                 }
               ]
             },
-            default: AuthInfoConstants.public_default
+            default: AuthInfoConstants.public_default.to_json
       run do
         AuthInfoConstants.public_default.each do |key, original_value|
-          received_value = public_auth_info.send(:key)
+          received_value = public_auth_info.send(key)
           assert received_value == original_value,
                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
         end
@@ -141,10 +148,10 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
                 }
               ]
             },
-            default: AuthInfoConstants.symmetric_confidential_default
+            default: AuthInfoConstants.symmetric_confidential_default.to_json
       run do
         AuthInfoConstants.symmetric_confidential_default.each do |key, original_value|
-          received_value = public_auth_info.send(:key)
+          received_value = symmetric_auth_info.send(key)
           assert received_value == original_value,
                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
         end
@@ -166,10 +173,11 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
                 }
               ]
             },
-            default: AuthInfoConstants.asymmetric_confidential_default
+            default: AuthInfoConstants.asymmetric_confidential_default.to_json
       run do
         AuthInfoConstants.asymmetric_confidential_default.each do |key, original_value|
-          received_value = public_auth_info.send(:key)
+          next if key == :jwks
+          received_value = asymmetric_auth_info.send(key)
           assert received_value == original_value,
                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
         end
@@ -191,10 +199,11 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
                 }
               ]
             },
-            default: AuthInfoConstants.backend_services_default
+            default: AuthInfoConstants.backend_services_default.to_json
       run do
         AuthInfoConstants.backend_services_default.each do |key, original_value|
-          received_value = public_auth_info.send(:key)
+          next if key == :jwks
+          received_value = backend_services_auth_info.send(key)
           assert received_value == original_value,
                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
         end

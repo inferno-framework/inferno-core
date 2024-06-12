@@ -67,7 +67,7 @@ module Inferno
           serialize_checkbox_input(params)
         when 'oauth_credentials'
           serialize_oauth_credentials_input(params)
-        when 'auth'
+        when 'auth_info'
           serialize_auth_info(params)
         else
           raise Exceptions::UnknownSessionDataType, params
