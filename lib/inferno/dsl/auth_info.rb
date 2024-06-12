@@ -2,19 +2,18 @@ require_relative '../entities/attributes'
 
 module Inferno
   module DSL
-    # OAuthCredentials provide a user with a single input which allows a fhir
-    # client to use a bearer token and automatically refresh the token when it
-    # expires.
+    # AuthInfo provide a user with a single input which allows a fhir client to
+    # use a bearer token and automatically refresh the token when it expires.
     class AuthInfo
       ATTRIBUTES = [
         :auth_type,
         :resource_url,
         :token_url,
+        :auth_url,
         :requested_scopes,
         :client_id,
-        :auth_url,
-        :redirect_url,
         :client_secret,
+        :redirect_url,
         :pkce_support,
         :pkce_code_challenge_method,
         :auth_request_method,
@@ -22,7 +21,6 @@ module Inferno
         :kid,
         :jwks,
         :certificate,
-        :received_scopes,
         :access_token,
         :refresh_token,
         :issue_time,
@@ -37,11 +35,11 @@ module Inferno
       # @!attribute [rw] auth_type
       # @!attribute [rw] resource_url
       # @!attribute [rw] token_url
+      # @!attribute [rw] auth_url
       # @!attribute [rw] requested_scopes
       # @!attribute [rw] client_id
-      # @!attribute [rw] auth_url
-      # @!attribute [rw] redirect_url
       # @!attribute [rw] client_secret
+      # @!attribute [rw] redirect_url
       # @!attribute [rw] pkce_support
       # @!attribute [rw] pkce_code_challenge_method
       # @!attribute [rw] auth_request_method
@@ -49,7 +47,6 @@ module Inferno
       # @!attribute [rw] kid
       # @!attribute [rw] jwks
       # @!attribute [rw] certificate
-      # @!attribute [rw] received_scopes
       # @!attribute [rw] access_token
       # @!attribute [rw] refresh_token
       # @!attribute [rw] issue_time

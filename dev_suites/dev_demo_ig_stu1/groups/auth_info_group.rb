@@ -94,11 +94,33 @@ module AuthInfoConstants
       }.freeze
     end
 
+    def issue_time
+      @issue_time ||= Time.now.iso8601
+    end
+
     def token_info
       {
         access_token: 'SAMPLE_TOKEN',
-        refresh_token: 'SAMPLE_REFRESH_TOKEN'
+        refresh_token: 'SAMPLE_REFRESH_TOKEN',
+        expires_in: '3600',
+        issue_time:
       }
+    end
+
+    def public_access_default
+      public_default.merge(token_info).freeze
+    end
+
+    def symmetric_confidential_access_default
+      symmetric_confidential_default.merge(token_info).freeze
+    end
+
+    def asymmetric_confidential_access_default
+      asymmetric_confidential_default.merge(token_info).freeze
+    end
+
+    def backend_services_access_default
+      backend_services_default.merge(token_info).freeze
     end
   end
 end
@@ -108,104 +130,214 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     id :auth_info_demo
     title 'Auth Input Demo'
 
-    test do
-      title 'Public Auth'
-      id :public_auth
-      input :public_auth_info,
-            type: :auth_info,
-            options: {
-              mode: 'auth',
-              components: [
-                {
-                  name: :auth_type,
-                  default: 'public',
-                  locked: true
-                }
-              ]
-            },
-            default: AuthInfoConstants.public_default.to_json
-      run do
-        AuthInfoConstants.public_default.each do |key, original_value|
-          received_value = public_auth_info.send(key)
-          assert received_value == original_value,
-                 "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+    group do
+      title 'Auth mode'
+
+      test do
+        title 'Public Auth'
+        id :public_auth
+        input :public_auth_info,
+              type: :auth_info,
+              options: {
+                mode: 'auth',
+                components: [
+                  {
+                    name: :auth_type,
+                    default: 'public',
+                    locked: true
+                  }
+                ]
+              },
+              default: AuthInfoConstants.public_default.to_json
+        run do
+          AuthInfoConstants.public_default.each do |key, original_value|
+            received_value = public_auth_info.send(key)
+            assert received_value == original_value,
+                   "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+          end
+        end
+      end
+
+      test do
+        title 'Symmetric Confidential Auth'
+        id :symmetric_auth
+        input :symmetric_auth_info,
+              type: :auth_info,
+              options: {
+                mode: 'auth',
+                components: [
+                  {
+                    name: :auth_type,
+                    default: 'symmetric',
+                    locked: true
+                  }
+                ]
+              },
+              default: AuthInfoConstants.symmetric_confidential_default.to_json
+        run do
+          AuthInfoConstants.symmetric_confidential_default.each do |key, original_value|
+            received_value = symmetric_auth_info.send(key)
+            assert received_value == original_value,
+                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+          end
+        end
+      end
+
+      test do
+        title 'Asymmetric Confidential Auth'
+        id :asymmetric_auth
+        input :asymmetric_auth_info,
+              type: :auth_info,
+              options: {
+                mode: 'auth',
+                components: [
+                  {
+                    name: :auth_type,
+                    default: 'asymmetric',
+                    locked: true
+                  }
+                ]
+              },
+              default: AuthInfoConstants.asymmetric_confidential_default.to_json
+        run do
+          AuthInfoConstants.asymmetric_confidential_default.each do |key, original_value|
+            next if key == :jwks
+            received_value = asymmetric_auth_info.send(key)
+            assert received_value == original_value,
+                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+          end
+        end
+      end
+
+      test do
+        title 'Backend Services Auth'
+        id :backend_services_auth
+        input :backend_services_auth_info,
+              type: :auth_info,
+              options: {
+                mode: 'auth',
+                components: [
+                  {
+                    name: :auth_type,
+                    default: 'backend_services',
+                    locked: true
+                  }
+                ]
+              },
+              default: AuthInfoConstants.backend_services_default.to_json
+        run do
+          AuthInfoConstants.backend_services_default.each do |key, original_value|
+            next if key == :jwks
+            received_value = backend_services_auth_info.send(key)
+            assert received_value == original_value,
+                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+          end
         end
       end
     end
 
-    test do
-      title 'Symmetric Confidential Auth'
-      id :symmetric_auth
-      input :symmetric_auth_info,
-            type: :auth_info,
-            options: {
-              mode: 'auth',
-              components: [
-                {
-                  name: :auth_type,
-                  default: 'symmetric',
-                  locked: true
-                }
-              ]
-            },
-            default: AuthInfoConstants.symmetric_confidential_default.to_json
-      run do
-        AuthInfoConstants.symmetric_confidential_default.each do |key, original_value|
-          received_value = symmetric_auth_info.send(key)
-          assert received_value == original_value,
-                 "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+    group do
+      title 'access mode'
+
+      test do
+        title 'Public Auth'
+        id :public_auth
+        input :public_access_auth_info,
+              type: :auth_info,
+              options: {
+                mode: 'access',
+                components: [
+                  {
+                    name: :auth_type,
+                    default: 'public',
+                    locked: true
+                  }
+                ]
+              },
+              default: AuthInfoConstants.public_access_default.to_json
+        run do
+          AuthInfoConstants.public_access_default.each do |key, original_value|
+            received_value = public_access_auth_info.send(key)
+            assert received_value == original_value,
+                   "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+          end
         end
       end
-    end
 
-    test do
-      title 'Asymmetric Confidential Auth'
-      id :asymmetric_auth
-      input :asymmetric_auth_info,
-            type: :auth_info,
-            options: {
-              mode: 'auth',
-              components: [
-                {
-                  name: :auth_type,
-                  default: 'asymmetric',
-                  locked: true
-                }
-              ]
-            },
-            default: AuthInfoConstants.asymmetric_confidential_default.to_json
-      run do
-        AuthInfoConstants.asymmetric_confidential_default.each do |key, original_value|
-          next if key == :jwks
-          received_value = asymmetric_auth_info.send(key)
-          assert received_value == original_value,
-                 "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+      test do
+        title 'Symmetric Confidential Auth'
+        id :symmetric_auth
+        input :symmetric_access_auth_info,
+              type: :auth_info,
+              options: {
+                mode: 'access',
+                components: [
+                  {
+                    name: :auth_type,
+                    default: 'symmetric',
+                    locked: true
+                  }
+                ]
+              },
+              default: AuthInfoConstants.symmetric_confidential_access_default.to_json
+        run do
+          AuthInfoConstants.symmetric_confidential_access_default.each do |key, original_value|
+            received_value = symmetric_access_auth_info.send(key)
+            assert received_value == original_value,
+                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+          end
         end
       end
-    end
 
-    test do
-      title 'Backend Services Auth'
-      id :backend_services_auth
-      input :backend_services_auth_info,
-            type: :auth_info,
-            options: {
-              mode: 'auth',
-              components: [
-                {
-                  name: :auth_type,
-                  default: 'backend_services',
-                  locked: true
-                }
-              ]
-            },
-            default: AuthInfoConstants.backend_services_default.to_json
-      run do
-        AuthInfoConstants.backend_services_default.each do |key, original_value|
-          next if key == :jwks
-          received_value = backend_services_auth_info.send(key)
-          assert received_value == original_value,
-                 "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+      test do
+        title 'Asymmetric Confidential Auth'
+        id :asymmetric_auth
+        input :asymmetric_access_auth_info,
+              type: :auth_info,
+              options: {
+                mode: 'access',
+                components: [
+                  {
+                    name: :auth_type,
+                    default: 'asymmetric',
+                    locked: true
+                  }
+                ]
+              },
+              default: AuthInfoConstants.asymmetric_confidential_access_default.to_json
+        run do
+          AuthInfoConstants.asymmetric_confidential_access_default.each do |key, original_value|
+            next if key == :jwks
+            received_value = asymmetric_access_auth_info.send(key)
+            assert received_value == original_value,
+                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+          end
+        end
+      end
+
+      test do
+        title 'Backend Services Auth'
+        id :backend_services_auth
+        input :backend_services_access_auth_info,
+              type: :auth_info,
+              options: {
+                mode: 'access',
+                components: [
+                  {
+                    name: :auth_type,
+                    default: 'backend_services',
+                    locked: true
+                  }
+                ]
+              },
+              default: AuthInfoConstants.backend_services_access_default.to_json
+        run do
+          AuthInfoConstants.backend_services_access_default.each do |key, original_value|
+            next if key == :jwks
+            received_value = backend_services_access_auth_info.send(key)
+            assert received_value == original_value,
+                  "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+          end
         end
       end
     end
