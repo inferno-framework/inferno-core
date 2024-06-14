@@ -27,25 +27,22 @@ module Inferno
              desc: 'Automatically restart Inferno when a file is changed.'
       def start
         Migration.new.run(Logger::INFO)
-        command = 'foreman start --env=/dev/null'
 
-        if `gem list -i foreman`.chomp == 'false'
-          puts "You must install foreman with 'gem install foreman' prior to running Inferno."
-        end
+        without_bundler do
+          command = 'foreman start --env=/dev/null'
 
-        if options[:watch]
-          if `gem list -i rerun`.chomp == 'false'
-            puts "You must install 'rerun' with 'gem install rerun' to restart on file changes."
+          if `gem list -i foreman`.chomp == 'false'
+            puts "You must install foreman with 'gem install foreman' prior to running Inferno."
           end
 
-          command = "rerun \"#{command}\" --background"
-        end
+          if options[:watch]
+            if `gem list -i rerun`.chomp == 'false'
+              puts "You must install 'rerun' with 'gem install rerun' to restart on file changes."
+            end
 
-        if defined?(Bundler) && ENV['BUNDLE_GEMFILE']
-          Bundler.with_unbundled_env do
-            exec command
+            command = "rerun \"#{command}\" --background"
           end
-        else
+
           exec command
         end
       end
@@ -67,6 +64,19 @@ module Inferno
       def version
         puts "Inferno Core v#{Inferno::VERSION}"
       end
+
+      private
+
+      def without_bundler(&block)
+        if defined?(Bundler) && ENV['BUNDLE_GEMFILE']
+          Bundler.with_unbundled_env do
+            yield
+          end
+        else
+          yield
+        end
+      end
+
     end
   end
 end
