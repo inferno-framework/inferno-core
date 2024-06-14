@@ -67,16 +67,13 @@ module Inferno
 
       private
 
-      def without_bundler(&block)
+      def without_bundler
         if defined?(Bundler) && ENV['BUNDLE_GEMFILE']
-          Bundler.with_unbundled_env do
-            yield
-          end
+          Bundler.with_unbundled_env(&block)
         else
           yield
         end
       end
-
     end
   end
 end
