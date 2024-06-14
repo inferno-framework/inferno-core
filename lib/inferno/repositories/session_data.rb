@@ -22,7 +22,7 @@ module Inferno
           )
       end
 
-      def load(test_session_id:, name:, type: 'text')
+      def load(test_session_id:, name:, type: 'text') # rubocop:disable Metrics/CyclomaticComplexity
         raw_value =
           self.class::Model
             .find(test_session_id:, name: name.to_s.downcase)
