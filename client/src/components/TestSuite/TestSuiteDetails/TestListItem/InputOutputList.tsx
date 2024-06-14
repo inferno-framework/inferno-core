@@ -42,7 +42,7 @@ const InputOutputList: FC<InputOutputListProps> = ({
             </Typography>
           </TableCell>
           <TableCell className={classes.inputOutputsValue}>
-          <Typography variant="subtitle2" component="p">
+            <Typography variant="subtitle2" component="p">
               {(inputOutputs?.value as string) || ''}
             </Typography>
           </TableCell>
