@@ -7,20 +7,20 @@ module Inferno
     class AuthInfo
       ATTRIBUTES = [
         :auth_type,
-        :resource_url,
+        :use_discovery,
         :token_url,
         :auth_url,
         :requested_scopes,
         :client_id,
         :client_secret,
-        :redirect_url,
+        :redirect_url, # TODO: does this belong here?
         :pkce_support,
         :pkce_code_challenge_method,
         :auth_request_method,
         :encryption_algorithm,
         :kid,
         :jwks,
-        :certificate,
+        # :certificate, TODO
         :access_token,
         :refresh_token,
         :issue_time,
@@ -33,7 +33,6 @@ module Inferno
       attr_accessor :client
 
       # @!attribute [rw] auth_type
-      # @!attribute [rw] resource_url
       # @!attribute [rw] token_url
       # @!attribute [rw] auth_url
       # @!attribute [rw] requested_scopes
@@ -46,7 +45,6 @@ module Inferno
       # @!attribute [rw] encryption_algorithm
       # @!attribute [rw] kid
       # @!attribute [rw] jwks
-      # @!attribute [rw] certificate
       # @!attribute [rw] access_token
       # @!attribute [rw] refresh_token
       # @!attribute [rw] issue_time

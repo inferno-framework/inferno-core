@@ -1,7 +1,6 @@
 # require 'onc_certification_g10_test_kit'
 require_relative 'demo_endpoint'
 require_relative 'groups/demo_group'
-require_relative 'groups/auth_info_group.rb'
 
 module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
   class DemoSuite < Inferno::TestSuite
@@ -343,7 +342,5 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         end
       end
     end
-
-    group from: :auth_info_demo
   end
 end
