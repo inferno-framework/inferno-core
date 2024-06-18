@@ -244,7 +244,7 @@ module Inferno
 
       # @private
       def resume_test_run?
-        find_result&.result != 'waiting'
+        find_result&.result != 'wait'
       end
 
       # @private
@@ -289,7 +289,6 @@ module Inferno
           uri.query = env['rack.request.query_string'] if env['rack.request.query_string'].present?
           url = uri&.to_s
           verb = env['REQUEST_METHOD']
-          logger.info('get body')
           request_body = env['rack.input']
           request_body.rewind if env['rack.input'].respond_to? :rewind
           request_body = request_body.instance_of?(Puma::NullIO) ? nil : request_body.string
