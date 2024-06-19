@@ -67,13 +67,16 @@ module Inferno
 
       private
 
-      def without_bundler
+      # https://github.com/rubocop/rubocop/issues/12571 - still affects Ruby 3.1 upto Rubocop 1.63
+      # rubocop:disable Naming/BlockForwarding
+      def without_bundler(&block)
         if defined?(Bundler) && ENV['BUNDLE_GEMFILE']
           Bundler.with_unbundled_env(&block)
         else
           yield
         end
       end
+      # rubocop:enable Naming/BlockForwarding
     end
   end
 end
