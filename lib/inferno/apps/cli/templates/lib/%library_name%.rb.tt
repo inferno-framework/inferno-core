@@ -21,7 +21,7 @@ module <%= module_name %>
       oauth_credentials :credentials
     end
 
-    # All FHIR validation requsets will use this FHIR validator
+    # All FHIR validation requests will use this FHIR validator
     fhir_resource_validator do
       # igs 'identifier#version' # Use this method for published IGs/versions
       # igs 'igs/filename.tgz'   # Use this otherwise
