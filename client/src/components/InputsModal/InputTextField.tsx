@@ -51,7 +51,8 @@ const InputTextField: FC<InputTextFieldProps> = ({
           color="secondary"
           fullWidth
           multiline={requirement.type === 'textarea'}
-          rows={requirement.type === 'textarea' ? 4 : 1}
+          minRows={requirement.type === 'textarea' ? 4 : 1}
+          maxRows={20}
           value={inputsMap.get(requirement.name)}
           onBlur={(e) => {
             if (e.currentTarget === e.target) {
