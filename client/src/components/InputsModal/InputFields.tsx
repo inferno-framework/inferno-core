@@ -17,6 +17,16 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
     <List>
       {inputs.map((requirement: TestInput, index: number) => {
         switch (requirement.type) {
+          case 'auth_info':
+            return (
+              <InputTextField
+                requirement={requirement}
+                index={index}
+                inputsMap={inputsMap}
+                setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
+                key={`input-${index}`}
+              />
+            );
           case 'oauth_credentials':
             return (
               <InputOAuthCredentials

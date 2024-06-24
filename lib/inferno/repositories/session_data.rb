@@ -1,3 +1,4 @@
+require_relative '../dsl/auth_info'
 require_relative '../dsl/oauth_credentials'
 
 module Inferno
@@ -21,7 +22,7 @@ module Inferno
           )
       end
 
-      def load(test_session_id:, name:, type: 'text')
+      def load(test_session_id:, name:, type: 'text') # rubocop:disable Metrics/CyclomaticComplexity
         raw_value =
           self.class::Model
             .find(test_session_id:, name: name.to_s.downcase)
@@ -32,6 +33,8 @@ module Inferno
           DSL::OAuthCredentials.new(JSON.parse(raw_value || '{}'))
         when 'checkbox'
           JSON.parse(raw_value || '[]')
+        when 'auth_info'
+          DSL::AuthInfo.new(JSON.parse(raw_value || '{}'))
         else
           raw_value
         end
@@ -64,6 +67,8 @@ module Inferno
           serialize_checkbox_input(params)
         when 'oauth_credentials'
           serialize_oauth_credentials_input(params)
+        when 'auth_info'
+          serialize_auth_info(params)
         else
           raise Exceptions::UnknownSessionDataType, params
         end
@@ -101,6 +106,24 @@ module Inferno
 
         credentials.name = params[:name]
         credentials.to_s
+      end
+
+      def serialize_auth_info(params)
+        auth =
+          if params[:value].is_a? String
+            DSL::AuthInfo.new(JSON.parse(params[:value]))
+          elsif !params[:value].is_a? DSL::AuthInfo
+            raise Exceptions::BadSessionDataType.new(
+              params[:name],
+              DSL::AuthInfo.name,
+              params[:value].class
+            )
+          else
+            params[:value]
+          end
+
+        auth.name = params[:name]
+        auth.to_s
       end
 
       class Model < Sequel::Model(db)

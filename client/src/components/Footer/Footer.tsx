@@ -68,6 +68,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
   };
 
   const renderLinksMenu = () => {
+    if (!linkList || linkList.length === 0) return;
     return (
       <Box display="flex" alignItems="center" data-testid="footer-links">
         <IconButton
@@ -117,6 +118,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
   };
 
   const renderLinks = () => {
+    if (!linkList || linkList.length === 0) return;
     return (
       <Box display="flex" alignItems="center" p={2} data-testid="footer-links">
         {linkList &&
