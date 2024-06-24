@@ -27,20 +27,24 @@ module Inferno
              desc: 'Automatically restart Inferno when a file is changed.'
       def start
         Migration.new.run(Logger::INFO)
-        command = 'foreman start --env=/dev/null'
-        if `gem list -i foreman`.chomp == 'false'
-          puts "You must install foreman with 'gem install foreman' prior to running Inferno."
-        end
 
-        if options[:watch]
-          if `gem list -i rerun`.chomp == 'false'
-            puts "You must install 'rerun' with 'gem install rerun' to restart on file changes."
+        without_bundler do
+          command = 'foreman start --env=/dev/null'
+
+          if `gem list -i foreman`.chomp == 'false'
+            puts "You must install foreman with 'gem install foreman' prior to running Inferno."
           end
 
-          command = "rerun \"#{command}\" --background"
-        end
+          if options[:watch]
+            if `gem list -i rerun`.chomp == 'false'
+              puts "You must install 'rerun' with 'gem install rerun' to restart on file changes."
+            end
 
-        exec command
+            command = "rerun \"#{command}\" --background"
+          end
+
+          exec command
+        end
       end
 
       desc 'suites', 'List available test suites'
@@ -60,6 +64,19 @@ module Inferno
       def version
         puts "Inferno Core v#{Inferno::VERSION}"
       end
+
+      private
+
+      # https://github.com/rubocop/rubocop/issues/12571 - still affects Ruby 3.1 upto Rubocop 1.63
+      # rubocop:disable Naming/BlockForwarding
+      def without_bundler(&block)
+        if defined?(Bundler) && ENV['BUNDLE_GEMFILE']
+          Bundler.with_unbundled_env(&block)
+        else
+          yield
+        end
+      end
+      # rubocop:enable Naming/BlockForwarding
     end
   end
 end
