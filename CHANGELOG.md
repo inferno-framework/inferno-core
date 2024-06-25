@@ -1,3 +1,15 @@
+## 0.4.39
+* FI-2836: Fix double requests from suite endpoints by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/505
+* Bump braces from 3.0.2 to 3.0.3 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/506
+* Bump ws from 7.5.9 to 7.5.10 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/507
+* Bump ws from 8.16.0 to 8.17.1 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/508
+* Fix typo 'requests' in inferno template by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/509
+* FI-2729: Remove footer mobile menu if empty by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/494
+* FI-2686: Automatically resize textareas by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/491
+* Make `bundle exec inferno start` work by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/502
+* FI-2787: AuthInfo input skeleton by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/503
+* Remove ReactMarkdown in Inputs/Outputs by @jhlee-mitre in https://github.com/inferno-framework/inferno-core/pull/504
+
 ## 0.4.38
 * FI-2765: Automatically run migrations by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/496
 * FI-2753: Add hover effect to request details by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/495
