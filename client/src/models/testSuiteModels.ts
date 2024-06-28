@@ -1,5 +1,14 @@
 import { Option } from './selectionModels';
 
+export interface Auth {
+  access_token: string;
+  refresh_token?: string;
+  expires_in?: string;
+  client_id?: string;
+  client_secret?: string;
+  token_url?: string;
+}
+
 export interface CheckboxValues {
   [key: string]: boolean;
 }
@@ -12,6 +21,10 @@ export type FooterLink = {
 export interface InputOption {
   label: string;
   value: string;
+}
+
+export interface InputValues {
+  [key: string]: unknown;
 }
 
 export type Message = {
@@ -95,7 +108,9 @@ export interface TestInput {
   optional?: boolean;
   locked?: boolean;
   options?: {
+    components?: TestInput[];
     list_options?: InputOption[];
+    mode?: string;
   };
 }
 

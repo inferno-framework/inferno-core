@@ -5,6 +5,8 @@ import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredential
 import InputCheckboxGroup from '~/components/InputsModal/InputCheckboxGroup';
 import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputTextField from '~/components/InputsModal/InputTextField';
+import InputAuth from './InputAuth';
+import InputSingleCheckbox from './InputSingleCheckbox';
 
 export interface InputFieldsProps {
   inputs: TestInput[];
@@ -19,7 +21,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
         switch (requirement.type) {
           case 'auth_info':
             return (
-              <InputTextField
+              <InputAuth
                 requirement={requirement}
                 index={index}
                 inputsMap={inputsMap}
@@ -38,15 +40,34 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
               />
             );
           case 'checkbox':
-            return (
-              <InputCheckboxGroup
-                requirement={requirement}
-                index={index}
-                inputsMap={inputsMap}
-                setInputsMap={(newInputsMap, editStatus) => setInputsMap(newInputsMap, editStatus)}
-                key={`input-${index}`}
-              />
-            );
+            console.log(requirement);
+
+            if (requirement.options?.list_options?.length) {
+              return (
+                <InputCheckboxGroup
+                  requirement={requirement}
+                  index={index}
+                  inputsMap={inputsMap}
+                  setInputsMap={(newInputsMap, editStatus) =>
+                    setInputsMap(newInputsMap, editStatus)
+                  }
+                  key={`input-${index}`}
+                />
+              );
+            } else {
+              // if no options listed then assume single checkbox input
+              return (
+                <InputSingleCheckbox
+                  requirement={requirement}
+                  index={index}
+                  inputsMap={inputsMap}
+                  setInputsMap={(newInputsMap, editStatus) =>
+                    setInputsMap(newInputsMap, editStatus)
+                  }
+                  key={`input-${index}`}
+                />
+              );
+            }
           case 'radio':
             return (
               <InputRadioGroup

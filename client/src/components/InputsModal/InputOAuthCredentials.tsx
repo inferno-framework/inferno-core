@@ -160,7 +160,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
 
   return (
     <ListItem>
-      <Card variant="outlined" className={classes.oauthCard}>
+      <Card variant="outlined" className={classes.authCard}>
         <CardContent>
           <InputLabel
             required={!requirement.optional}
