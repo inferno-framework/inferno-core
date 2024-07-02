@@ -5,8 +5,9 @@ import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredential
 import InputCheckboxGroup from '~/components/InputsModal/InputCheckboxGroup';
 import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputTextField from '~/components/InputsModal/InputTextField';
-import InputAuth from './InputAuth';
-import InputSingleCheckbox from './InputSingleCheckbox';
+import InputAuth from '~/components/InputsModal/InputAuth';
+import InputSingleCheckbox from '~/components/InputsModal/InputSingleCheckbox';
+import InputCombobox from '~/components/InputsModal/InputCombobox';
 
 export interface InputFieldsProps {
   inputs: TestInput[];
@@ -40,8 +41,6 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
               />
             );
           case 'checkbox':
-            console.log(requirement);
-
             if (requirement.options?.list_options?.length) {
               return (
                 <InputCheckboxGroup
@@ -75,6 +74,18 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
                 index={index}
                 inputsMap={inputsMap}
                 setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
+                key={`input-${index}`}
+              />
+            );
+          case 'select':
+            console.log(requirement);
+
+            return (
+              <InputCombobox
+                requirement={requirement}
+                index={index}
+                inputsMap={inputsMap}
+                setInputsMap={(newInputsMap, editStatus) => setInputsMap(newInputsMap, editStatus)}
                 key={`input-${index}`}
               />
             );

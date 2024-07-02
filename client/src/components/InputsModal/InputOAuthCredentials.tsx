@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import {
   Card,
   CardContent,
@@ -21,15 +20,6 @@ export interface InputOAuthCredentialsProps {
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
-}
-
-export interface InputOAuthField {
-  name: string;
-  label?: string | ReactJSXElement;
-  description?: string; // currently empty
-  required?: boolean; // default behavior should be false
-  hide?: boolean; // default behavior should be false
-  locked?: boolean; // default behavior should be false
 }
 
 const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
@@ -56,55 +46,53 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
 
   const showRefreshDetails = !!oAuthCredentials.refresh_token;
 
-  const oAuthFields: InputOAuthField[] = [
+  const oAuthFields: TestInput[] = [
     {
       name: 'access_token',
-      label: 'Access Token',
-      required: !requirement.optional,
+      title: 'Access Token',
+      optional: requirement.optional,
     },
     {
       name: 'refresh_token',
-      label: 'Refresh Token (will automatically refresh if available)',
-      required: false,
+      title: 'Refresh Token (will automatically refresh if available)',
+      optional: true,
     },
     {
       name: 'token_url',
-      label: 'Token Endpoint',
+      title: 'Token Endpoint',
       hide: !showRefreshDetails,
-      required: true,
     },
     {
       name: 'client_id',
-      label: 'Client ID',
+      title: 'Client ID',
       hide: !showRefreshDetails,
-      required: true,
     },
     {
       name: 'client_secret',
-      label: 'Client Secret',
+      title: 'Client Secret',
       hide: !showRefreshDetails,
-      required: false,
+      optional: true,
     },
     {
       name: 'expires_in',
-      label: 'Expires in (seconds)',
+      title: 'Expires in (seconds)',
       hide: !showRefreshDetails,
-      required: false,
+      optional: true,
     },
   ];
 
-  const getIsMissingInput = (field: InputOAuthField) => {
+  const getIsMissingInput = (field: TestInput) => {
     return (
       hasBeenModified[field.name as keyof typeof hasBeenModified] &&
-      field.required &&
+      !field.optional &&
       !oAuthCredentials[field.name as keyof OAuthCredentials]
     );
   };
 
-  const oAuthField = (field: InputOAuthField) => {
-    const fieldName = field.required
-      ? `${(field.label || field.name) as string} (required)`
-      : field.label || field.name;
+  const oAuthField = (field: TestInput) => {
+    const fieldName = field.optional
+      ? field.title || field.name
+      : `${(field.title || field.name) as string} (required)`;
 
     const fieldLabel = (
       <>
@@ -134,7 +122,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           )}
           <Input
             disabled={requirement.locked}
-            required={field.required}
+            required={!field.optional}
             error={getIsMissingInput(field)}
             id={`requirement${index}_${field.name}`}
             value={oAuthCredentials[field.name as keyof OAuthCredentials]}

@@ -1,3 +1,4 @@
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { Option } from './selectionModels';
 
 export interface Auth {
@@ -100,13 +101,14 @@ export interface SuiteOptionChoice {
 
 export interface TestInput {
   name: string;
-  title?: string;
+  title?: string | ReactJSXElement;
   value?: unknown;
-  type?: 'auth_info' | 'oauth_credentials' | 'checkbox' | 'radio' | 'text' | 'textarea';
+  type?: 'auth_info' | 'oauth_credentials' | 'checkbox' | 'radio' | 'select' | 'text' | 'textarea';
   description?: string;
   default?: string | string[];
   optional?: boolean;
   locked?: boolean;
+  hide?: boolean;
   options?: {
     components?: TestInput[];
     list_options?: InputOption[];

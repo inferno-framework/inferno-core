@@ -11,10 +11,9 @@ import {
 import { TestInput } from '~/models/testSuiteModels';
 // import FieldLabel from './FieldLabel';
 import useStyles from './styles';
-import { InputAuthField } from './InputAuth';
 
 export interface InputSingleCheckboxProps {
-  requirement: TestInput | InputAuthField;
+  requirement: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
@@ -83,7 +82,7 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
                 onChange={handleChange}
               />
             }
-            label={requirement.label || requirement.title || ''}
+            label={requirement.title || ''}
             key={`checkbox-${requirement.name}`}
           />
         </FormGroup>
