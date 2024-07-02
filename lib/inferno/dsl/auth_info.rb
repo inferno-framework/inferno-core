@@ -19,7 +19,7 @@ module Inferno
     # to normal inputs.
     #
     # The AuthInfo input type supports two different modes in the UI. Different
-    # fields will be presented to the user dependengi on which mode is selected.
+    # fields will be presented to the user depending on which mode is selected.
     # - `auth` - This presents the inputs needed to perform authorization, and
     #   is appropriate to use as an input to test groups which perform
     #   authorization
@@ -161,13 +161,12 @@ module Inferno
 
       # @private
       def add_to_client(client)
-        # TODO
-        # client.auth = self
-        # self.client = client
+        client.auth_info = self
+        self.client = client
+        # TODO: do we want to perform authorization if no access_token or rely on SMART/ other auth tests?
+        return unless access_token.present?
 
-        # return unless access_token.present?
-
-        # client.set_bearer_token(access_token)
+        client.set_bearer_token(access_token)
       end
     end
   end

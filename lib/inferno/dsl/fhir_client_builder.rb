@@ -20,6 +20,20 @@ module Inferno
     #     url :url
     #     bearer_token :access_token
     #   end
+    #
+    # @example
+    #   input :url
+    #   input :fhir_auth,
+    #          type: :auth_info,
+    #          options: {
+    #             mode: 'access'
+    #           }
+    #
+    #   fhir_client do
+    #     url :url
+    #     headers 'My-Custom_header' => 'CUSTOM_HEADER_VALUE'
+    #     auth_info :fhir_auth
+    #   end
     class FHIRClientBuilder
       attr_accessor :runnable
 
@@ -33,6 +47,7 @@ module Inferno
           client.default_json
           client.set_bearer_token bearer_token if bearer_token
           oauth_credentials&.add_to_client(client)
+          auth_info&.add_to_client(client)
         end
       end
 
@@ -77,6 +92,20 @@ module Inferno
             runnable.send(oauth_credentials)
           else
             oauth_credentials
+          end
+      end
+
+      # Define auth info for a client. Auth info contains info needed for client
+      # to perform authorization and refresh access token when necessary
+      #
+      # @param auth_info [Inferno::DSL::AuthInfo, Symbol]
+      # @return [void]
+      def auth_info(auth_info = nil)
+        @auth_info ||=
+          if auth_info.is_a? Symbol
+            runnable.send(auth_info)
+          else
+            auth_info
           end
       end
 

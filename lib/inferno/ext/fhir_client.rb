@@ -1,6 +1,6 @@
 module FHIR
   class Client
-    attr_accessor :oauth_credentials
+    attr_accessor :oauth_credentials, :auth_info
 
     def need_to_refresh?
       oauth_credentials&.need_to_refresh?

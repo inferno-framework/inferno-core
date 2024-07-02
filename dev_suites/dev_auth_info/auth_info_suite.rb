@@ -121,6 +121,8 @@ module AuthInfoSuite
     id :auth_info
     title 'AuthInfo Suite'
 
+    URL = 'https://inferno.healthit.gov/reference-server/r4'.freeze
+
     group do
       id :auth_info_demo
       title 'Auth Input Demo'
@@ -252,11 +254,18 @@ module AuthInfoSuite
                   ]
                 },
                 default: AuthInfoConstants.public_access_default.to_json
+
+          fhir_client do
+            url URL
+            auth_info :public_access_auth_info
+          end
           run do
+            auth_info = fhir_client.auth_info
             AuthInfoConstants.public_access_default.each do |key, original_value|
-              received_value = public_access_auth_info.send(key)
+              received_value = auth_info.send(key)
               assert received_value == original_value,
-                     "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+                     "Expected fhir_client auth info `#{key}` to equal `#{original_value}`, " \
+                     "but received `#{received_value}`"
             end
           end
         end
@@ -277,11 +286,18 @@ module AuthInfoSuite
                   ]
                 },
                 default: AuthInfoConstants.symmetric_confidential_access_default.to_json
+
+          fhir_client do
+            url URL
+            auth_info :symmetric_access_auth_info
+          end
           run do
+            auth_info = fhir_client.auth_info
             AuthInfoConstants.symmetric_confidential_access_default.each do |key, original_value|
-              received_value = symmetric_access_auth_info.send(key)
+              received_value = auth_info.send(key)
               assert received_value == original_value,
-                     "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+                     "Expected fhir_client auth info `#{key}` to equal `#{original_value}`, " \
+                     "but received `#{received_value}`"
             end
           end
         end
@@ -302,13 +318,20 @@ module AuthInfoSuite
                   ]
                 },
                 default: AuthInfoConstants.asymmetric_confidential_access_default.to_json
+
+          fhir_client do
+            url URL
+            auth_info :asymmetric_access_auth_info
+          end
           run do
+            auth_info = fhir_client.auth_info
             AuthInfoConstants.asymmetric_confidential_access_default.each do |key, original_value|
               next if key == :jwks
 
-              received_value = asymmetric_access_auth_info.send(key)
+              received_value = auth_info.send(key)
               assert received_value == original_value,
-                     "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+                     "Expected fhir_client auth info `#{key}` to equal `#{original_value}`, " \
+                     "but received `#{received_value}`"
             end
           end
         end
@@ -329,13 +352,20 @@ module AuthInfoSuite
                   ]
                 },
                 default: AuthInfoConstants.backend_services_access_default.to_json
+
+          fhir_client do
+            url URL
+            auth_info :backend_services_access_auth_info
+          end
           run do
+            auth_info = fhir_client.auth_info
             AuthInfoConstants.backend_services_access_default.each do |key, original_value|
               next if key == :jwks
 
-              received_value = backend_services_access_auth_info.send(key)
+              received_value = auth_info.send(key)
               assert received_value == original_value,
-                     "Expected `#{key}` to equal `#{original_value}`, but received `#{received_value}`"
+                     "Expected fhir_client auth info `#{key}` to equal `#{original_value}`, " \
+                     "but received `#{received_value}`"
             end
           end
         end
