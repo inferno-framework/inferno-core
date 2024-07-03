@@ -1,4 +1,51 @@
 RSpec.describe Inferno::DSL::AuthInfo do
+  let(:auth_url) { 'https://inferno-qa.healthit.gov/reference-server/oauth/authorization' }
+  let(:token_url) { 'https://inferno-qa.healthit.gov/reference-server/oauth/token' }
+  let(:requested_scopes) { 'launch/patient openid fhirUser patient/*.*' }
+  let(:encryption_algorithm) { 'ES384' }
+  let(:kid) { '4b49a739d1eb115b3225f4cf9beb6d1b' }
+  let(:jwks) do
+    {
+      keys:
+       [
+         {
+           kty: 'EC',
+           crv: 'P-384',
+           x: 'JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C',
+           y: 'bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw',
+           use: 'sig',
+           key_ops: [
+             'verify'
+           ],
+           ext: true,
+           kid: '4b49a739d1eb115b3225f4cf9beb6d1b',
+           alg: 'ES384'
+         },
+         {
+           kty: 'EC',
+           crv: 'P-384',
+           d: 'kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK',
+           x: 'JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C',
+           y: 'bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw',
+           key_ops: [
+             'sign'
+           ],
+           ext: true,
+           kid: '4b49a739d1eb115b3225f4cf9beb6d1b',
+           alg: 'ES384'
+         }
+       ]
+    }.to_json
+  end
+  let(:issue_time) { Time.now.iso8601 }
+  let(:token_info) do
+    {
+      access_token: 'SAMPLE_TOKEN',
+      refresh_token: 'SAMPLE_REFRESH_TOKEN',
+      expires_in: '3600',
+      issue_time:
+    }
+  end
   let(:full_params) do
     {
       access_token: 'ACCESS_TOKEN',
