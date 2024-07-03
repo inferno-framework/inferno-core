@@ -171,7 +171,7 @@ module Inferno
 
       # @private
       def need_to_refresh?
-        return false if access_token.blank? || refresh_token.blank?
+        return false if access_token.blank? || (auth_type != 'backend_services' && refresh_token.blank?)
 
         return true if expires_in.blank?
 
@@ -180,7 +180,7 @@ module Inferno
 
       # @private
       def able_to_refresh?
-        refresh_token.present? && token_url.present?
+        (auth_type == 'backend_services' && token_url.present?) || (refresh_token.present? && token_url.present?)
       end
 
       # @private
@@ -192,6 +192,8 @@ module Inferno
           symmetric_auth_refresh_params
         when 'asymmetric'
           asymmetric_auth_refresh_params
+        when 'backend_services'
+          backend_services_auth_refresh_params
         end
       end
 
@@ -212,8 +214,18 @@ module Inferno
       def asymmetric_auth_refresh_params
         symmetric_auth_refresh_params.merge(
           'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
-          'client_assertion' => jwt
+          'client_assertion' => signed_jwt
         )
+      end
+
+      # @private
+      def backend_services_auth_refresh_params
+        {
+          'grant_type' => 'client_credentials',
+          'scope' => requested_scopes,
+          'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+          'client_assertion' => signed_jwt
+        }
       end
 
       # @private
@@ -227,6 +239,56 @@ module Inferno
         base_headers.merge(
           'Authorization' => "Basic #{Base64.strict_encode64(credentials)}"
         )
+      end
+
+      # @private
+      def jwk_set
+        jwks_path = File.join(__dir__, 'jwks.json')
+        parsed_jwks = jwks.present? ? JSON.parse(jwks) : JSON.parse(File.read(jwks_path))
+        JWT::JWK::Set.new(parsed_jwks)
+      end
+
+      # @private
+      def private_key
+        @private_key ||= jwk_set
+          .select { |key| key[:key_ops]&.include?('sign') }
+          .select { |key| key[:alg] == encryption_algorithm }
+          .find { |key| !kid || key[:kid] == kid }
+      end
+
+      # @private
+      def signing_key
+        if private_key.nil?
+          raise Inferno::Exceptions::AssertionException,
+                "No signing key found for inputs: encryption method = '#{encryption_algorithm}' and kid = '#{kid}'"
+        end
+
+        @private_key.signing_key
+      end
+
+      # @private
+      def auth_jwt_header
+        {
+          'alg' => encryption_algorithm,
+          'kid' => private_key['kid'],
+          'typ' => 'JWT'
+        }
+      end
+
+      # @private
+      def auth_jwt_claims
+        {
+          'iss' => client_id,
+          'sub' => client_id,
+          'aud' => token_url,
+          'exp' => 5.minutes.from_now.to_i,
+          'jti' => SecureRandom.hex(32)
+        }
+      end
+
+      # @private
+      def signed_jwt
+        JWT.encode auth_jwt_claims, signing_key, encryption_algorithm, auth_jwt_header
       end
 
       # @private
