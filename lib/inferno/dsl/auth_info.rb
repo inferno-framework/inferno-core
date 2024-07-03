@@ -168,6 +168,81 @@ module Inferno
 
         client.set_bearer_token(access_token)
       end
+
+      # @private
+      def need_to_refresh?
+        return false if access_token.blank? || refresh_token.blank?
+
+        return true if expires_in.blank?
+
+        issue_time.to_i + expires_in.to_i - DateTime.now.to_i < 60
+      end
+
+      # @private
+      def able_to_refresh?
+        refresh_token.present? && token_url.present?
+      end
+
+      # @private
+      def oauth2_refresh_params
+        case auth_type
+        when 'public'
+          public_auth_refresh_params
+        when 'symmetric'
+          symmetric_auth_refresh_params
+        when 'asymmetric'
+          asymmetric_auth_refresh_params
+        end
+      end
+
+      # @private
+      def symmetric_auth_refresh_params
+        {
+          'grant_type' => 'refresh_token',
+          'refresh_token' => refresh_token
+        }
+      end
+
+      # @private
+      def public_auth_refresh_params
+        symmetric_auth_refresh_params.merge('client_id' => client_id)
+      end
+
+      # @private
+      def asymmetric_auth_refresh_params
+        symmetric_auth_refresh_params.merge(
+          'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+          'client_assertion' => jwt
+        )
+      end
+
+      # @private
+      def oauth2_refresh_headers
+        base_headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
+
+        return base_headers unless auth_type == 'symmetric'
+
+        credentials = "#{client_id}:#{client_secret}"
+
+        base_headers.merge(
+          'Authorization' => "Basic #{Base64.strict_encode64(credentials)}"
+        )
+      end
+
+      # @private
+      def update_from_response_body(request)
+        token_response_body = JSON.parse(request.response_body)
+
+        expires_in = token_response_body['expires_in'].is_a?(Numeric) ? token_response_body['expires_in'] : nil
+
+        self.access_token = token_response_body['access_token']
+        self.refresh_token = token_response_body['refresh_token'] if token_response_body['refresh_token'].present?
+        self.expires_in = expires_in
+        self.issue_time = DateTime.now
+
+        add_to_client(client)
+        self
+      end
     end
   end
 end
