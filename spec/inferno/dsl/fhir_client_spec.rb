@@ -1331,6 +1331,74 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
+  describe '#need_to_refresh?' do
+    context 'with oauth credentials' do
+      let(:client) { group.fhir_client(:client_with_oauth_credentials) }
+
+      it 'returns true if @oauth_credentials&.need_to_refresh? is true' do
+        client.oauth_credentials.expires_in = nil
+        expect(client.need_to_refresh?).to be(true)
+      end
+
+      it 'returns false if @oauth_credentials&.need_to_refresh? is false' do
+        client.oauth_credentials.access_token = nil
+        expect(client.need_to_refresh?).to be(false)
+      end
+    end
+
+    context 'with aut info' do
+      let(:client) { group.fhir_client(:client_with_auth_info) }
+
+      it 'returns true if @auth_info&.need_to_refresh? is true' do
+        client.auth_info.expires_in = nil
+        expect(client.need_to_refresh?).to be(true)
+      end
+
+      it 'returns false if @auth_info&.need_to_refresh? is false' do
+        client.auth_info.access_token = nil
+        expect(client.need_to_refresh?).to be(false)
+      end
+    end
+
+    it 'returns false if @auth_info and @oauth_credentials are missing' do
+      client = group.fhir_client
+      expect(client.need_to_refresh?).to be(false)
+    end
+  end
+
+  describe '#able_to_refresh?' do
+    context 'with oauth credentials' do
+      let(:client) { group.fhir_client(:client_with_oauth_credentials) }
+
+      it 'returns true if @oauth_credentials&.able_to_refresh? is true' do
+        expect(client.able_to_refresh?).to be(true)
+      end
+
+      it 'returns false if @oauth_credentials&.able_to_refresh? is false' do
+        client.oauth_credentials.token_url = nil
+        expect(client.able_to_refresh?).to be(false)
+      end
+    end
+
+    context 'with aut info' do
+      let(:client) { group.fhir_client(:client_with_auth_info) }
+
+      it 'returns true if @auth_info&.able_to_refresh? is true' do
+        expect(client.able_to_refresh?).to be(true)
+      end
+
+      it 'returns false if @auth_info&.able_to_refresh? is false' do
+        client.auth_info.token_url = nil
+        expect(client.able_to_refresh?).to be(false)
+      end
+    end
+
+    it 'returns false if @auth_info and @oauth_credentials are missing' do
+      client = group.fhir_client
+      expect(client.able_to_refresh?).to be(false)
+    end
+  end
+
   describe '#perform_refresh' do
     context 'with oauth credentials' do
       let(:client) { group.fhir_client(:client_with_oauth_credentials) }
