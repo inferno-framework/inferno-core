@@ -196,8 +196,6 @@ export const getAuthFields = (
   ] as TestInput[];
   if (authSettings && authType) {
     const typeValue = authSettings[authType];
-    console.log(authSettings, authType);
-
     fields.forEach((field) => (field.hide = typeValue.includes(field.name)));
   }
   return fields;

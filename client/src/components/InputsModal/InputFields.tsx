@@ -19,9 +19,20 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
   return (
     <List>
       {inputs.map((requirement: TestInput, index: number) => {
-        switch (requirement.type) {
-          case 'auth_info':
-            if (requirement.options?.mode === 'auth') {
+        if (!requirement.hide) {
+          switch (requirement.type) {
+            case 'auth_info':
+              if (requirement.options?.mode === 'auth') {
+                return (
+                  <InputAuth
+                    requirement={requirement}
+                    index={index}
+                    inputsMap={inputsMap}
+                    setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
+                    key={`input-${index}`}
+                  />
+                );
+              }
               return (
                 <InputAuth
                   requirement={requirement}
@@ -31,30 +42,56 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
                   key={`input-${index}`}
                 />
               );
-            }
-            return (
-              <InputAuth
-                requirement={requirement}
-                index={index}
-                inputsMap={inputsMap}
-                setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
-                key={`input-${index}`}
-              />
-            );
-          case 'oauth_credentials':
-            return (
-              <InputOAuthCredentials
-                requirement={requirement}
-                index={index}
-                inputsMap={inputsMap}
-                setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
-                key={`input-${index}`}
-              />
-            );
-          case 'checkbox':
-            if (requirement.options?.list_options?.length) {
+            case 'oauth_credentials':
               return (
-                <InputCheckboxGroup
+                <InputOAuthCredentials
+                  requirement={requirement}
+                  index={index}
+                  inputsMap={inputsMap}
+                  setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
+                  key={`input-${index}`}
+                />
+              );
+            case 'checkbox':
+              if (requirement.options?.list_options?.length) {
+                return (
+                  <InputCheckboxGroup
+                    requirement={requirement}
+                    index={index}
+                    inputsMap={inputsMap}
+                    setInputsMap={(newInputsMap, editStatus) =>
+                      setInputsMap(newInputsMap, editStatus)
+                    }
+                    key={`input-${index}`}
+                  />
+                );
+              } else {
+                // if no options listed then assume single checkbox input
+                return (
+                  <InputSingleCheckbox
+                    requirement={requirement}
+                    index={index}
+                    inputsMap={inputsMap}
+                    setInputsMap={(newInputsMap, editStatus) =>
+                      setInputsMap(newInputsMap, editStatus)
+                    }
+                    key={`input-${index}`}
+                  />
+                );
+              }
+            case 'radio':
+              return (
+                <InputRadioGroup
+                  requirement={requirement}
+                  index={index}
+                  inputsMap={inputsMap}
+                  setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
+                  key={`input-${index}`}
+                />
+              );
+            case 'select':
+              return (
+                <InputCombobox
                   requirement={requirement}
                   index={index}
                   inputsMap={inputsMap}
@@ -64,50 +101,17 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
                   key={`input-${index}`}
                 />
               );
-            } else {
-              // if no options listed then assume single checkbox input
+            default:
               return (
-                <InputSingleCheckbox
+                <InputTextField
                   requirement={requirement}
                   index={index}
                   inputsMap={inputsMap}
-                  setInputsMap={(newInputsMap, editStatus) =>
-                    setInputsMap(newInputsMap, editStatus)
-                  }
+                  setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
                   key={`input-${index}`}
                 />
               );
-            }
-          case 'radio':
-            return (
-              <InputRadioGroup
-                requirement={requirement}
-                index={index}
-                inputsMap={inputsMap}
-                setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
-                key={`input-${index}`}
-              />
-            );
-          case 'select':
-            return (
-              <InputCombobox
-                requirement={requirement}
-                index={index}
-                inputsMap={inputsMap}
-                setInputsMap={(newInputsMap, editStatus) => setInputsMap(newInputsMap, editStatus)}
-                key={`input-${index}`}
-              />
-            );
-          default:
-            return (
-              <InputTextField
-                requirement={requirement}
-                index={index}
-                inputsMap={inputsMap}
-                setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
-                key={`input-${index}`}
-              />
-            );
+          }
         }
       })}
     </List>

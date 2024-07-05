@@ -7,7 +7,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { TestInput } from '~/models/testSuiteModels';
+import { InputOption, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
 import useStyles from './styles';
 
@@ -20,6 +20,18 @@ export interface InputComboboxProps {
 
 const InputCombobox: FC<InputComboboxProps> = ({ requirement, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
+
+  const getDefaultValue = (): InputOption | null => {
+    const options = requirement.options?.list_options;
+    if (!options) return null;
+
+    let defaultValue = options[0]; // set to first option if no default provided
+    if (requirement.default && typeof requirement.default === 'string') {
+      const discoveredOption = options.find((option) => option.value === requirement.default);
+      if (discoveredOption) defaultValue = discoveredOption;
+    }
+    return defaultValue;
+  };
 
   return (
     <ListItem>
@@ -40,23 +52,19 @@ const InputCombobox: FC<InputComboboxProps> = ({ requirement, index, inputsMap, 
           </Typography>
         )}
         <Autocomplete
+          id={`requirement${index}_input`}
           options={requirement.options?.list_options || []}
-          defaultValue={
-            requirement.options?.list_options ? requirement.options?.list_options[0] : null
-          }
+          defaultValue={getDefaultValue()}
+          disabled={requirement.locked}
           isOptionEqualToValue={(option, value) => option.value === value.value}
           renderInput={(params) => (
             <TextField
               {...params}
-              disabled={requirement.locked}
-              required={!requirement.optional}
-              id={`requirement${index}_input`}
               className={classes.inputField}
+              required={!requirement.optional}
               color="secondary"
               variant="standard"
               fullWidth
-              label={`${requirement.name}`}
-              value={inputsMap.get(requirement.name)}
               onChange={(event) => {
                 const value = event.target.value;
                 inputsMap.set(requirement.name, value);
