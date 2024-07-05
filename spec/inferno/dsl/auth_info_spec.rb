@@ -1,6 +1,6 @@
 RSpec.describe Inferno::DSL::AuthInfo do
-  let(:auth_url) { 'https://inferno-qa.healthit.gov/reference-server/oauth/authorization' }
-  let(:token_url) { 'https://inferno-qa.healthit.gov/reference-server/oauth/token' }
+  let(:auth_url) { 'http://example.com/authorization' }
+  let(:token_url) { 'http://example.com/token' }
   let(:requested_scopes) { 'launch/patient openid fhirUser patient/*.*' }
   let(:encryption_algorithm) { 'ES384' }
   let(:kid) { '4b49a739d1eb115b3225f4cf9beb6d1b' }
@@ -52,10 +52,10 @@ RSpec.describe Inferno::DSL::AuthInfo do
       refresh_token: 'REFRESH_TOKEN',
       issue_time: Time.now.iso8601,
       expires_in: 3600,
-      token_url: 'http://example.com/token',
+      token_url:,
       client_id: 'CLIENT_ID',
       client_secret: 'CLIENT_SECRET',
-      auth_url: 'http://example.com/authorization',
+      auth_url:,
       requested_scopes: 'launch/patient openid fhirUser patient/*.*',
       pkce_support: 'enabled',
       pkce_code_challenge_method: 'S256',
