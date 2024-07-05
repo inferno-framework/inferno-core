@@ -2,12 +2,24 @@ import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { Option } from './selectionModels';
 
 export interface Auth {
-  access_token: string;
-  refresh_token?: string;
-  expires_in?: string;
+  auth_type?: string;
+  use_discovery?: boolean;
+  token_url?: string;
+  auth_url?: string;
+  requested_scopes?: string;
   client_id?: string;
   client_secret?: string;
-  token_url?: string;
+  redirect_url?: string;
+  pkce_support?: string;
+  pkce_code_challenge_method?: string;
+  auth_request_method?: string;
+  encryption_algorithm?: string;
+  kid?: string;
+  jwks?: string;
+  access_token?: string;
+  refresh_token?: string;
+  issue_time?: string;
+  expires_in?: string;
 }
 
 export interface CheckboxValues {

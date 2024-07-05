@@ -44,11 +44,7 @@ const InputCombobox: FC<InputComboboxProps> = ({ requirement, index, inputsMap, 
           defaultValue={
             requirement.options?.list_options ? requirement.options?.list_options[0] : null
           }
-          isOptionEqualToValue={(option, value) => {
-            console.log(option, value);
-
-            return option.value === value.value;
-          }}
+          isOptionEqualToValue={(option, value) => option.value === value.value}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -59,9 +55,7 @@ const InputCombobox: FC<InputComboboxProps> = ({ requirement, index, inputsMap, 
               color="secondary"
               variant="standard"
               fullWidth
-              multiline={requirement.type === 'textarea'}
-              minRows={requirement.type === 'textarea' ? 4 : 1}
-              maxRows={20}
+              label={`${requirement.name}`}
               value={inputsMap.get(requirement.name)}
               onChange={(event) => {
                 const value = event.target.value;

@@ -47,6 +47,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
     setInputsMap(new Map(inputsMap));
   };
 
+  if (requirement.hide) return <></>;
   return (
     <ListItem>
       <FormControl

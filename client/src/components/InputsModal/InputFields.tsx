@@ -21,6 +21,17 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
       {inputs.map((requirement: TestInput, index: number) => {
         switch (requirement.type) {
           case 'auth_info':
+            if (requirement.options?.mode === 'auth') {
+              return (
+                <InputAuth
+                  requirement={requirement}
+                  index={index}
+                  inputsMap={inputsMap}
+                  setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
+                  key={`input-${index}`}
+                />
+              );
+            }
             return (
               <InputAuth
                 requirement={requirement}
@@ -78,8 +89,6 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
               />
             );
           case 'select':
-            console.log(requirement);
-
             return (
               <InputCombobox
                 requirement={requirement}
