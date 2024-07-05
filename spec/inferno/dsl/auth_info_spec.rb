@@ -1,61 +1,14 @@
 RSpec.describe Inferno::DSL::AuthInfo do
-  let(:auth_url) { 'http://example.com/authorization' }
-  let(:token_url) { 'http://example.com/token' }
-  let(:requested_scopes) { 'launch/patient openid fhirUser patient/*.*' }
-  let(:encryption_algorithm) { 'ES384' }
-  let(:kid) { '4b49a739d1eb115b3225f4cf9beb6d1b' }
-  let(:jwks) do
-    {
-      keys:
-       [
-         {
-           kty: 'EC',
-           crv: 'P-384',
-           x: 'JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C',
-           y: 'bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw',
-           use: 'sig',
-           key_ops: [
-             'verify'
-           ],
-           ext: true,
-           kid: '4b49a739d1eb115b3225f4cf9beb6d1b',
-           alg: 'ES384'
-         },
-         {
-           kty: 'EC',
-           crv: 'P-384',
-           d: 'kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK',
-           x: 'JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C',
-           y: 'bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw',
-           key_ops: [
-             'sign'
-           ],
-           ext: true,
-           kid: '4b49a739d1eb115b3225f4cf9beb6d1b',
-           alg: 'ES384'
-         }
-       ]
-    }.to_json
-  end
-  let(:issue_time) { Time.now.iso8601 }
-  let(:token_info) do
-    {
-      access_token: 'SAMPLE_TOKEN',
-      refresh_token: 'SAMPLE_REFRESH_TOKEN',
-      expires_in: '3600',
-      issue_time:
-    }
-  end
   let(:full_params) do
     {
       access_token: 'ACCESS_TOKEN',
       refresh_token: 'REFRESH_TOKEN',
       issue_time: Time.now.iso8601,
       expires_in: 3600,
-      token_url:,
+      token_url: 'http://example.com/token',
       client_id: 'CLIENT_ID',
       client_secret: 'CLIENT_SECRET',
-      auth_url:,
+      auth_url: 'http://example.com/authorization',
       requested_scopes: 'launch/patient openid fhirUser patient/*.*',
       pkce_support: 'enabled',
       pkce_code_challenge_method: 'S256',
@@ -64,55 +17,10 @@ RSpec.describe Inferno::DSL::AuthInfo do
       name: 'NAME'
     }
   end
-  let(:public_access_default) do
-    {
-      auth_type: 'public',
-      token_url:,
-      client_id: 'SAMPLE_PUBLIC_CLIENT_ID',
-      requested_scopes:,
-      pkce_support: 'enabled',
-      pkce_code_challenge_method: 'S256',
-      auth_request_method: 'GET'
-    }.merge(token_info)
-  end
-  let(:symmetric_confidential_access_default) do
-    {
-      auth_type: 'symmetric',
-      token_url:,
-      client_id: 'SAMPLE_CONFIDENTIAL_CLIENT_ID',
-      client_secret: 'SAMPLE_CONFIDENTIAL_CLIENT_SECRET',
-      auth_url:,
-      requested_scopes:,
-      pkce_support: 'enabled',
-      pkce_code_challenge_method: 'S256',
-      auth_request_method: 'POST',
-      use_discovery: 'false'
-    }.merge(token_info)
-  end
-  let(:asymmetric_confidential_access_default) do
-    {
-      auth_type: 'asymmetric',
-      token_url:,
-      client_id: 'SAMPLE_CONFIDENTIAL_CLIENT_ID',
-      requested_scopes:,
-      pkce_support: 'disabled',
-      auth_request_method: 'POST',
-      encryption_algorithm:,
-      jwks:,
-      kid:
-    }.merge(token_info)
-  end
-  let(:backend_services_access_default) do
-    {
-      auth_type: 'backend_services',
-      token_url:,
-      client_id: 'SAMPLE_CONFIDENTIAL_CLIENT_ID',
-      requested_scopes:,
-      encryption_algorithm:,
-      jwks:,
-      kid:
-    }.merge(token_info)
-  end
+  let(:public_access_default) { AuthInfoConstants.public_access_default }
+  let(:symmetric_confidential_access_default) { AuthInfoConstants.symmetric_confidential_access_default }
+  let(:asymmetric_confidential_access_default) { AuthInfoConstants.asymmetric_confidential_access_default }
+  let(:backend_services_access_default) { AuthInfoConstants.backend_services_access_default }
   let(:auth_info) { described_class.new(full_params) }
   let(:public_auth_info) { described_class.new(public_access_default) }
   let(:symmetric_auth_info) { described_class.new(symmetric_confidential_access_default) }
