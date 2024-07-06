@@ -8,6 +8,7 @@ import InputTextField from '~/components/InputsModal/InputTextField';
 import InputAuth from '~/components/InputsModal/InputAuth';
 import InputSingleCheckbox from '~/components/InputsModal/InputSingleCheckbox';
 import InputCombobox from '~/components/InputsModal/InputCombobox';
+import InputAccess from '~/components/InputsModal/InputAccess';
 
 export interface InputFieldsProps {
   inputs: TestInput[];
@@ -34,9 +35,8 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
                 );
               }
               return (
-                <InputAuth
+                <InputAccess
                   requirement={requirement}
-                  index={index}
                   inputsMap={inputsMap}
                   setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
                   key={`input-${index}`}

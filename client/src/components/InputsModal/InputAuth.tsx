@@ -13,7 +13,7 @@ export interface InputAuthProps {
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
-const InputAuth: FC<InputAuthProps> = ({ requirement, /* index, */ inputsMap, setInputsMap }) => {
+const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
   const [authValues, setAuthValues] = React.useState<Map<string, unknown>>(new Map());
   const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
@@ -33,22 +33,6 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, /* index, */ inputsMap, se
       requirement.options?.components || []
     )
   );
-
-  // const [hasBeenModified, setHasBeenModified] = React.useState({});
-
-  //   name: string;
-  //   title?: string;
-  //   value?: unknown;
-  //   type?: 'auth_info' | 'oauth_credentials' | 'checkbox' | 'radio' | 'text' | 'textarea';
-  //   description?: string;
-  //   default?: string | string[];
-  //   optional?: boolean;
-  //   locked?: boolean;
-  //   options?: {
-  //     components?: TestInput[];
-  //     list_options?: InputOption[];
-  //     mode?: string;
-  //   };
 
   const authSelector: TestInput = {
     name: 'auth_type',
@@ -80,24 +64,12 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, /* index, */ inputsMap, se
     },
   };
 
-  // const getIsMissingInput = (field: InputAuthField) => {
-  //   return (
-  //     hasBeenModified[field.name as keyof typeof hasBeenModified] &&
-  //     field.required &&
-  //     !authBody[field.name as keyof Auth]
-  //   );
-  // };
-
   useEffect(() => {
-    console.log(requirement);
-
     // Populate authValues on mount
     const defaultValues = JSON.parse(requirement.default as string) as Auth;
     authFields.forEach((field: TestInput) => {
       authValues.set(field.name, defaultValues[field.name as keyof Auth] || '');
     });
-    // ...(requirement.options?.components?.slice(1, requirement.options?.components.length) || []),
-
     setAuthValuesPopulated(true);
   }, []);
 
@@ -118,10 +90,13 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, /* index, */ inputsMap, se
     }
   }, [authValues]);
 
+  useEffect(() => {
+    // TODO: fix serial inputs
+  }, [inputsMap]);
+
   const handleAuthSelectionChange = (newValues: Map<string, unknown>, editStatus?: boolean) => {
-    console.error('selection', newValues, editStatus, requirement, inputsMap.get(requirement.name));
-    // inputsMap.get(requirement.name);
-    // setInputsMap(newValues, editStatus);
+    console.error(newValues, editStatus);
+    // TODO: Update this when inputsMap can be updated with the auth_type
   };
 
   return (
@@ -135,10 +110,10 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, /* index, */ inputsMap, se
         <List>
           <InputCombobox
             requirement={authSelector}
-            index={0}
-            inputsMap={inputsMap}
+            index={index}
+            inputsMap={authValues}
             setInputsMap={handleAuthSelectionChange}
-            key={`input-${0}`}
+            key={`input-${index}`}
           />
         </List>
         <InputFields inputs={authFields} inputsMap={authValues} setInputsMap={setAuthValues} />

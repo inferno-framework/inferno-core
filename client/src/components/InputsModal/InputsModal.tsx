@@ -197,6 +197,8 @@ const InputsModal: FC<InputsModalProps> = ({
     inputsMap.forEach((inputValue, inputName) => {
       inputsWithValues.push({ name: inputName, value: inputValue, type: 'text' });
     });
+    console.log(inputsMap);
+
     createTestRun(runnableType, runnable?.id || '', inputsWithValues);
     closeModal();
   };
@@ -213,12 +215,12 @@ const InputsModal: FC<InputsModalProps> = ({
             (map.get(requirement.name) as string) || '{ "access_token": "" }'
           ) as OAuthCredentials,
         };
-        // } else if (requirement.type === 'auth_info') {
-        //   return {
-        //     ...requirement,
-        //     description: parsedDescription,
-        //     value: JSON.parse((map.get(requirement.name) as string) || '{}') as Auth,
-        //   };
+      } else if (requirement.type === 'auth_info') {
+        return {
+          ...requirement,
+          description: parsedDescription,
+          value: JSON.parse((map.get(requirement.name) as string) || '{}') as Auth,
+        };
       } else if (requirement.type === 'radio') {
         const firstVal =
           requirement.options?.list_options && requirement.options?.list_options?.length > 0
@@ -248,7 +250,7 @@ const InputsModal: FC<InputsModalProps> = ({
       parsed = (inputType === 'JSON' ? JSON.parse(changes) : YAML.load(changes)) as TestInput[];
       // Convert OAuth/Auth input values to strings; parsed needs to be an array
       parsed.forEach((input) => {
-        if (input.type === 'oauth_credentials' /* || input.type === 'auth_info' */) {
+        if (input.type === 'oauth_credentials' || input.type === 'auth_info') {
           input.value = JSON.stringify(input.value);
         }
       });
@@ -263,6 +265,8 @@ const InputsModal: FC<InputsModalProps> = ({
   const handleSerialChanges = (serialChanges: string) => {
     setSerialInput(serialChanges);
     const parsedChanges = parseSerialChanges(serialChanges);
+    console.log(parsedChanges);
+
     if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
       parsedChanges.forEach((change: TestInput) => {
         if (!change.locked && change.value !== undefined) {
@@ -271,6 +275,7 @@ const InputsModal: FC<InputsModalProps> = ({
       });
     }
     handleSetInputsMap(new Map(inputsMap), true);
+    console.log(inputsMap);
   };
 
   const closeModal = (edited = false) => {
