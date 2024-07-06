@@ -1,18 +1,18 @@
 # Inferno Core
 [![codecov](https://codecov.io/gh/inferno-framework/inferno-core/branch/main/graph/badge.svg?token=6NJTBHF82R)](https://codecov.io/gh/inferno-framework/inferno-core)
 
-Inferno Core is the central component of the [Inferno
+Inferno Core is the central library of the [Inferno
 Framework](https://inferno-framework.github.io) that allows you to write,
-execute, and distribute executable API conformance tests for the [HL7® FHIR®
-standard](http://hl7.org/fhir/) standard.
+execute, and distribute executable conformance tests for the [HL7® FHIR®
+standard](http://hl7.org/fhir/) standard. Inferno Core isn't built to be used
+alone; it is imported as a library into Inferno Test Kits, which are web-based
+testing applications that target specific data exchange use cases enabled by
+FHIR.
 
 To learn how to use the Inferno Framework and Inferno Core to develop your own
-FHIR API tests, visit [Inferno Framework
-Documentation: Getting Started for Inferno Test Writers](https://inferno-framework.github.io/inferno-core/getting-started.html#getting-started-for-inferno-test-writers).
-If you'd like to get started right away, clone the [Inferno Test Kit Template
-repository](https://github.com/inferno-framework/inferno-template) which
-provides a pre-configured project with Inferno Core that you can use to
-start creating tests.
+Inferno Test Kit, visit [Inferno Framework Documentation: Getting Started for
+Inferno Test
+Writers](https://inferno-framework.github.io/docs/getting-started/).
 
 ## About Inferno Core
 Inferno Core is a [Ruby](https://ruby-lang.org/) library used to create
@@ -40,21 +40,27 @@ limited to what is provided by Inferno Core.  Inferno Core's goal is to expand o
 the set of common utilities it provides for the benefit of the community.
 
 To learn more about Inferno Framework and Inferno Core, please visit:
-- [Inferno Framework documentation](https://inferno-framework.github.io/inferno-core/)
+- [Inferno Framework documentation](https://inferno-framework.github.io/docs/)
 - [Inferno Core Ruby API documentation](https://inferno-framework.github.io/inferno-core/docs)
 - [Inferno Core JSON API documentation](https://inferno-framework.github.io/inferno-core/api-docs)
 
 ## Contributing to Inferno Core
 
 Inferno Core contains functionality that should be broadly useful for testing
-any FHIR-based data exchange, and the team welcomes contributions.  Developers
-interested in contributing to the Inferno Core gem must have [Ruby
-3.1+](https://www.ruby-lang.org/en/) and [Node.js and
-NPM](https://www.npmjs.com/get-npm) installed.
+any FHIR-based data exchange, and the team welcomes contributions.
 
-If you are interested in developing tests using Inferno Core, use the [Inferno
-Template Repository](https://github.com/inferno-framework/inferno-template).
-These instructions are for developers working on Inferno Core itself.
+Developers
+interested in contributing to the Inferno Core gem must have [Ruby
+3.1+](https://www.ruby-lang.org/en/), [Node.js and
+NPM](https://www.npmjs.com/get-npm), and [Docker
+Desktop](https://www.docker.com/products/docker-desktop/) installed.
+[Podman](https://podman.io/) may be used an alternative to Docker Desktop.
+
+Inferno Core development is supported within MacOS, Linux or Windows environments.
+However, Windows development currently requires the use of WSL2.  Please visit
+the [Inferno Framework
+documentation](https://inferno-framework.github.io/docs/getting-started/#development-with-ruby)
+site for more information.
 
 ## Running Inferno Core for Development Purposes
 ```
@@ -66,7 +72,7 @@ gem install foreman
 # Set up database
 bin/inferno migrate
 
-# Start Inferno background services (validator, redis, nginx)
+# Start Inferno background services using Docker/Podman (validator, redis, nginx)
 bin/inferno services start
 # Start web server, worker, and webpack
 bin/inferno start
@@ -138,23 +144,24 @@ or
 GET http://localhost:4567/inferno/api/test_sessions/TEST_SESSION_ID/results
 ```
 
-## Running on Windows
-Inferno Core requires a WSL instance in order to run.  Instructions for setting 
-that up can be found at the [Inferno Framework documentation](https://inferno-framework.github.io/inferno-core/getting-started.html#development-with-ruby)
-
 ## Development in a Ruby console
 To get to an interactive console, run `bundle exec bin/inferno console`
 
 ## Customizable Banner
-Inferno Core allows you to add your own customizable banner. It loads the banner
-from the `config/banner.html.erb` file and renders it above the application. The
+Inferno Core allows you to add your own customizable banner in each Test Kit.
+To test this functionality while developing Inferno Core, edit the 
+`config/banner.html.erb` file. The
 size and appearance of the banner can be controlled by using the inline style
 attribute.
 
 ## Documentation
-Inferno documentation source code is located in the `docs/` directory. This
-documentation is rendered using Jekyll, which creates a site that can be built
-and served with:
+Inferno Core documentation has primarily moved to the
+[Inferno Framework documentation
+site](https://github.com/inferno-framework/inferno-framework.github.io/).
+However, Ruby Docs (generated from the source code) and the Swagger API
+documentation is still located within the `docs/` directory. This documentation
+is rendered using Jekyll, which creates a site that can be built and served
+with:
 
 ```sh
 cd docs/
