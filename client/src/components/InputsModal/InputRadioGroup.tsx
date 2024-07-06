@@ -30,14 +30,15 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
     requirement.options?.list_options && requirement.options?.list_options?.length > 0
       ? requirement.options?.list_options[0]?.value
       : '';
-  const [value, setValue] = React.useState(
-    inputsMap.get(requirement.name) || requirement.default || firstValue
-  );
+
+  const [value, setValue] = React.useState<string>('');
 
   // Set default on mounted
   useEffect(() => {
-    inputsMap.set(requirement.name, value);
-    setInputsMap(new Map(inputsMap));
+    setValue(
+      (inputsMap.get(requirement.name) as string) || (requirement.default as string) || firstValue
+    );
+    // console.log(inputsMap.get(requirement.name) as string, requirement.default, firstValue);
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +48,6 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
     setInputsMap(new Map(inputsMap));
   };
 
-  if (requirement.hide) return <></>;
   return (
     <ListItem>
       <FormControl

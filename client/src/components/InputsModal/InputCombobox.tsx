@@ -65,15 +65,13 @@ const InputCombobox: FC<InputComboboxProps> = ({ requirement, index, inputsMap, 
               color="secondary"
               variant="standard"
               fullWidth
-              onChange={(event) => {
-                const value = event.target.value;
-                inputsMap.set(requirement.name, value);
-                setInputsMap(new Map(inputsMap));
-              }}
             />
           )}
-          color="secondary"
-          fullWidth
+          onChange={(event, newValue: InputOption | null) => {
+            const value = newValue?.value;
+            inputsMap.set(requirement.name, value);
+            setInputsMap(new Map(inputsMap));
+          }}
         />
       </FormControl>
     </ListItem>

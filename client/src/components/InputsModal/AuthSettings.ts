@@ -53,26 +53,31 @@ export const authSettings = {
 
 export const getAuthFields = (
   authType: AuthType,
-  requirement: TestInput,
-  authValues: Map<string, unknown>
+  authValues: Map<string, unknown>,
+  components: TestInput[]
 ): TestInput[] => {
   const fields = [
+    // TODO: this is causing test runs to fail
+    // {
+    //   name: 'use_discovery',
+    //   type: 'checkbox',
+    //   title: 'Populate fields from discovery',
+    //   optional: true,
+    //   default: true,
+    // },
     {
-      name: 'use_discovery',
-      type: 'checkbox',
-      title: 'Populate fields from discovery',
-      default: 'true',
+      name: 'auth_url',
+      title: 'Authorization URL',
+      description: "URL of the server's authorization endpoint",
+      optional: true,
+      hide: authValues.get('use_discovery'), // hide if use_discovery is true
     },
     {
       name: 'token_url',
       title: 'Token URL',
       description: "URL of the authorization server's token endpoint",
-    },
-    {
-      name: 'auth_url',
-      title: 'Authorization URL',
-      description: "URL of the server's authorization endpoint",
-      hide: requirement.value === 'public',
+      optional: true,
+      hide: authValues.get('use_discovery'), // hide if use_discovery is trues
     },
     {
       name: 'requested_scopes',
@@ -114,11 +119,12 @@ export const getAuthFields = (
       name: 'pkce_code_challenge_method',
       type: 'radio',
       title: 'PKCE Code Challenge Method',
+      optional: true,
       options: {
         list_options: [
           {
             label: 'S256',
-            value: 's256',
+            value: 'S256',
           },
           {
             label: 'Plain',
@@ -126,7 +132,7 @@ export const getAuthFields = (
           },
         ],
       },
-      hide: authValues ? !authValues.get('pkce_support') : false, // hide if pkce_support is disabled
+      hide: authValues ? authValues.get('pkce_support') === 'disabled' : false, // hide if pkce_support is disabled
     },
     {
       name: 'auth_request_method',
@@ -136,11 +142,11 @@ export const getAuthFields = (
         list_options: [
           {
             label: 'GET',
-            value: 'get',
+            value: 'GET',
           },
           {
             label: 'POST',
-            value: 'post',
+            value: 'POST',
           },
         ],
       },
@@ -153,11 +159,11 @@ export const getAuthFields = (
         list_options: [
           {
             label: 'ES384',
-            value: 'es384',
+            value: 'ES384',
           },
           {
             label: 'RS384',
-            value: 'rs384',
+            value: 'RS384',
           },
         ],
       },
@@ -167,6 +173,7 @@ export const getAuthFields = (
       title: 'Key ID (kid)',
       description:
         'Key ID of the JWKS private key used to sign the client assertion. If blank, the first key for the selected encryption algorithm will be used.',
+      optional: true,
     },
     {
       name: 'jwks',
@@ -174,6 +181,7 @@ export const getAuthFields = (
       title: 'JWKS',
       description:
         "The JWKS (including private keys) which will be used to sign the client assertion. If blank, Inferno's default JWKS will be used.",
+      optional: true,
     },
     {
       name: 'access_token',
@@ -194,9 +202,20 @@ export const getAuthFields = (
       description: 'The lifetime of the access token in seconds',
     },
   ] as TestInput[];
+
+  // If the requirement contains custom fields, replace default fields
+  const fieldsToUpdate = components.map((component) => component.name);
+  fields.forEach((field, i) => {
+    if (fieldsToUpdate.includes(field.name)) {
+      const customComponent = components.find((component) => component.name === field.name);
+      fields[i] = { ...field, ...customComponent };
+    }
+  });
+
   if (authSettings && authType) {
     const typeValue = authSettings[authType];
-    fields.forEach((field) => (field.hide = typeValue.includes(field.name)));
+    fields.forEach((field) => (field.hide = field.hide || !typeValue.includes(field.name)));
   }
+
   return fields;
 };

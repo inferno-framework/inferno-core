@@ -4,13 +4,13 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
-  // FormLabel,
   ListItem,
   Typography,
 } from '@mui/material';
 import { TestInput } from '~/models/testSuiteModels';
 // import FieldLabel from './FieldLabel';
 import useStyles from './styles';
+import FieldLabel from './FieldLabel';
 
 export interface InputSingleCheckboxProps {
   requirement: TestInput;
@@ -34,7 +34,13 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
   });
 
   const isMissingInput =
-    hasBeenModified && !requirement.optional && inputsMap.get(requirement.name) === '[]';
+    hasBeenModified && !requirement.optional && inputsMap.get(requirement.name) === false;
+
+  const fieldLabel = (
+    <>
+      <FieldLabel requirement={requirement} isMissingInput={isMissingInput} /> *
+    </>
+  );
 
   useEffect(() => {
     // Make sure starting values get set in inputsMap
@@ -82,7 +88,7 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
                 onChange={handleChange}
               />
             }
-            label={requirement.title || ''}
+            label={fieldLabel}
             key={`checkbox-${requirement.name}`}
           />
         </FormGroup>

@@ -19,13 +19,19 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import YAML from 'js-yaml';
 import { useSnackbar } from 'notistack';
-import { OAuthCredentials, Runnable, RunnableType, TestInput } from '~/models/testSuiteModels';
+import {
+  Auth,
+  OAuthCredentials,
+  Runnable,
+  RunnableType,
+  TestInput,
+} from '~/models/testSuiteModels';
+import CopyButton from '~/components/_common/CopyButton';
 import CustomTooltip from '~/components/_common/CustomTooltip';
+import DownloadFileButton from '~/components/_common/DownloadFileButton';
+import UploadFileButton from '~/components/_common/UploadFileButton';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from '~/components/InputsModal/styles';
-import DownloadFileButton from '../_common/DownloadFileButton';
-import UploadFileButton from '../_common/UploadFileButton';
-import CopyButton from '../_common/CopyButton';
 
 export interface InputsModalProps {
   modalVisible: boolean;
@@ -80,6 +86,23 @@ const InputsModal: FC<InputsModalProps> = ({
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);
         enqueueSnackbar(`Checkbox input incorrectly formatted: ${errorMessage}`, {
+          variant: 'error',
+        });
+        return true;
+      }
+    }
+
+    // if input is auth_info, check if required values are filled
+    // const authMissingRequiredInput = false;
+    if (input.type === 'auth_info') {
+      try {
+        if (!inputsMap.get(input.name)) return false;
+        // const authJSON = JSON.parse(inputsMap.get(input.name) as string) as Auth;
+        // console.log(inputsMap, input.name);
+        return false;
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        enqueueSnackbar(`Auth info inputs incorrectly formatted: ${errorMessage}`, {
           variant: 'error',
         });
         return true;
@@ -170,11 +193,11 @@ const InputsModal: FC<InputsModalProps> = ({
   };
 
   const submitClicked = () => {
-    const inputs_with_values: TestInput[] = [];
-    inputsMap.forEach((input_value, input_name) => {
-      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
+    const inputsWithValues: TestInput[] = [];
+    inputsMap.forEach((inputValue, inputName) => {
+      inputsWithValues.push({ name: inputName, value: inputValue, type: 'text' });
     });
-    createTestRun(runnableType, runnable?.id || '', inputs_with_values);
+    createTestRun(runnableType, runnable?.id || '', inputsWithValues);
     closeModal();
   };
 
@@ -190,6 +213,12 @@ const InputsModal: FC<InputsModalProps> = ({
             (map.get(requirement.name) as string) || '{ "access_token": "" }'
           ) as OAuthCredentials,
         };
+        // } else if (requirement.type === 'auth_info') {
+        //   return {
+        //     ...requirement,
+        //     description: parsedDescription,
+        //     value: JSON.parse((map.get(requirement.name) as string) || '{}') as Auth,
+        //   };
       } else if (requirement.type === 'radio') {
         const firstVal =
           requirement.options?.list_options && requirement.options?.list_options?.length > 0
@@ -217,9 +246,9 @@ const InputsModal: FC<InputsModalProps> = ({
     let parsed: TestInput[];
     try {
       parsed = (inputType === 'JSON' ? JSON.parse(changes) : YAML.load(changes)) as TestInput[];
-      // Convert OAuth input values to strings; parsed needs to be an array
+      // Convert OAuth/Auth input values to strings; parsed needs to be an array
       parsed.forEach((input) => {
-        if (input.type === 'oauth_credentials') {
+        if (input.type === 'oauth_credentials' /* || input.type === 'auth_info' */) {
           input.value = JSON.stringify(input.value);
         }
       });

@@ -16,10 +16,7 @@ export interface InputAuthProps {
 const InputAuth: FC<InputAuthProps> = ({ requirement, /* index, */ inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
   const [authValues, setAuthValues] = React.useState<Map<string, unknown>>(new Map());
-
-  const defaultValues = JSON.parse(requirement.default as string) as Auth;
-  const startingValues = JSON.parse(requirement.value as string) as Auth;
-  const combinedStartingValues = { ...defaultValues, ...startingValues } as Auth;
+  const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
 
   const authSelectorSettings = requirement.options?.components
     ? requirement.options?.components[0]
@@ -28,6 +25,14 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, /* index, */ inputsMap, se
         name: 'auth_type',
         default: 'public',
       };
+
+  const [authFields, setAuthFields] = React.useState<TestInput[]>(
+    getAuthFields(
+      authSelectorSettings.default as AuthType,
+      authValues,
+      requirement.options?.components || []
+    )
+  );
 
   // const [hasBeenModified, setHasBeenModified] = React.useState({});
 
@@ -75,12 +80,6 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, /* index, */ inputsMap, se
     },
   };
 
-  const authFields = getAuthFields(
-    authSelectorSettings.default as AuthType,
-    requirement,
-    authValues
-  );
-
   // const getIsMissingInput = (field: InputAuthField) => {
   //   return (
   //     hasBeenModified[field.name as keyof typeof hasBeenModified] &&
@@ -89,32 +88,45 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, /* index, */ inputsMap, se
   //   );
   // };
 
-  // Populate authValues on mount
   useEffect(() => {
+    console.log(requirement);
+
+    // Populate authValues on mount
+    const defaultValues = JSON.parse(requirement.default as string) as Auth;
     authFields.forEach((field: TestInput) => {
-      authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
+      authValues.set(field.name, defaultValues[field.name as keyof Auth] || '');
     });
+    // ...(requirement.options?.components?.slice(1, requirement.options?.components.length) || []),
+
+    setAuthValuesPopulated(true);
   }, []);
 
   useEffect(() => {
-    console.log('requirement', requirement);
-    console.log('req values', JSON.parse(requirement.value as string));
-    console.log('auth values', authValues);
+    setAuthFields(
+      getAuthFields(
+        authSelectorSettings.default as AuthType,
+        authValues,
+        requirement.options?.components || []
+      )
+    );
 
-    const stringifiedAuthValues = JSON.stringify(authValues); // TODO: some parsing needed
-    inputsMap.set(requirement.name, stringifiedAuthValues);
-    setInputsMap(new Map(inputsMap));
+    // Update inputsMap
+    if (authValuesPopulated) {
+      const stringifiedAuthValues = JSON.stringify(Object.fromEntries(authValues));
+      inputsMap.set(requirement.name, stringifiedAuthValues);
+      setInputsMap(new Map(inputsMap));
+    }
   }, [authValues]);
 
   const handleAuthSelectionChange = (newValues: Map<string, unknown>, editStatus?: boolean) => {
-    console.log('selection', newValues, editStatus);
-
-    // (newInputsMap, editStatus) => setInputsMap(newInputsMap, editStatus);
+    console.error('selection', newValues, editStatus, requirement, inputsMap.get(requirement.name));
+    // inputsMap.get(requirement.name);
+    // setInputsMap(newValues, editStatus);
   };
 
   return (
     <ListItem>
-      <Box>
+      <Box width="100%">
         {requirement.description && (
           <Typography variant="subtitle1" className={classes.inputDescription}>
             {requirement.description}
@@ -129,7 +141,6 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, /* index, */ inputsMap, se
             key={`input-${0}`}
           />
         </List>
-        {/* {authFields.map((field) => !field.hide && authField(field))} */}
         <InputFields inputs={authFields} inputsMap={authValues} setInputsMap={setAuthValues} />
       </Box>
     </ListItem>
