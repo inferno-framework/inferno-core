@@ -47,7 +47,7 @@ const InputCombobox: FC<InputComboboxProps> = ({ requirement, index, inputsMap, 
           <FieldLabel requirement={requirement} />
         </FormLabel>
         {requirement.description && (
-          <Typography variant="subtitle1" className={classes.inputDescription}>
+          <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
             {requirement.description}
           </Typography>
         )}

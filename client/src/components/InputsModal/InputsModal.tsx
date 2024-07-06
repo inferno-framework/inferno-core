@@ -197,8 +197,6 @@ const InputsModal: FC<InputsModalProps> = ({
     inputsMap.forEach((inputValue, inputName) => {
       inputsWithValues.push({ name: inputName, value: inputValue, type: 'text' });
     });
-    console.log(inputsMap);
-
     createTestRun(runnableType, runnable?.id || '', inputsWithValues);
     closeModal();
   };

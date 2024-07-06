@@ -40,6 +40,10 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, inputsMap, setInputsMa
       accessValues.set(field.name, defaultValues[field.name as keyof Auth] || '');
     });
     setAccessValuesPopulated(true);
+
+    // Trigger change on mount for default values
+    const accessValuesCopy = new Map(accessValues);
+    setAccessValues(accessValuesCopy);
   }, []);
 
   useEffect(() => {
@@ -78,7 +82,7 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, inputsMap, setInputsMa
             <FieldLabel requirement={requirement} />
           </InputLabel>
           {requirement.description && (
-            <Typography variant="subtitle1" className={classes.inputDescription}>
+            <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
               {requirement.description}
             </Typography>
           )}

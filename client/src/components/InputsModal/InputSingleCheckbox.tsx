@@ -68,7 +68,7 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
         className={classes.inputField}
       >
         {requirement.description && (
-          <Typography variant="subtitle1" className={classes.inputDescription}>
+          <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
             {requirement.description}
           </Typography>
         )}

@@ -38,7 +38,6 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
     setValue(
       (inputsMap.get(requirement.name) as string) || (requirement.default as string) || firstValue
     );
-    // console.log(inputsMap.get(requirement.name) as string, requirement.default, firstValue);
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +60,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
           <FieldLabel requirement={requirement} />
         </FormLabel>
         {requirement.description && (
-          <Typography variant="subtitle1" className={classes.inputDescription}>
+          <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
             {requirement.description}
           </Typography>
         )}

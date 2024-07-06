@@ -71,6 +71,10 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
       authValues.set(field.name, defaultValues[field.name as keyof Auth] || '');
     });
     setAuthValuesPopulated(true);
+
+    // Trigger change on mount for default values
+    const authValuesCopy = new Map(authValues);
+    setAuthValues(authValuesCopy);
   }, []);
 
   useEffect(() => {
@@ -100,10 +104,10 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   };
 
   return (
-    <ListItem>
+    <ListItem sx={{ padding: 0 }}>
       <Box width="100%">
         {requirement.description && (
-          <Typography variant="subtitle1" className={classes.inputDescription}>
+          <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
             {requirement.description}
           </Typography>
         )}
