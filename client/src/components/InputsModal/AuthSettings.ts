@@ -69,14 +69,14 @@ export const getAuthFields = (
       title: 'Authorization URL',
       description: "URL of the server's authorization endpoint",
       optional: true,
-      hide: authValues.get('use_discovery'),
+      hide: authValues.get('use_discovery') === 'true',
     },
     {
       name: 'token_url',
       title: 'Token URL',
       description: "URL of the authorization server's token endpoint",
       optional: true,
-      hide: authValues.get('use_discovery'),
+      hide: authValues.get('use_discovery') === 'true',
     },
     {
       name: 'requested_scopes',

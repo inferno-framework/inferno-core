@@ -65,10 +65,13 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   };
 
   useEffect(() => {
-    // Populate authValues on mount
     const defaultValues = JSON.parse(requirement.default as string) as Auth;
+    const startingValues = JSON.parse(requirement.value as string) as Auth;
+    const combinedStartingValues = { ...defaultValues, ...startingValues } as Auth;
+
+    // Populate authValues on mount
     authFields.forEach((field: TestInput) => {
-      authValues.set(field.name, defaultValues[field.name as keyof Auth] || '');
+      authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
     setAuthValuesPopulated(true);
 
