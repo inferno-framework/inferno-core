@@ -18,9 +18,6 @@ export interface InputSingleCheckboxProps {
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
-// Manage this component in strings to remain consistent with eventual request body
-export type BooleanString = 'true' | 'false';
-
 const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
   requirement,
   index,
@@ -29,11 +26,7 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
 }) => {
   const { classes } = useStyles();
   const [hasBeenModified, setHasBeenModified] = React.useState(false);
-  const [value, setValue] = React.useState<BooleanString>(() => {
-    // Default value should be true or false
-    if (requirement.default) return requirement.default as BooleanString;
-    return 'false'; // return false if undefined
-  });
+  const [value, setValue] = React.useState<boolean>(false);
 
   const isMissingInput =
     hasBeenModified && !requirement.optional && inputsMap.get(requirement.name) === false;
@@ -46,17 +39,22 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
   );
 
   useEffect(() => {
-    // Make sure starting values get set in inputsMap
-    inputsMap.set(requirement.name, value);
-    setInputsMap(new Map(inputsMap), false);
+    const inputsValue = inputsMap.get(requirement.name) as string;
+    let startingValue = false;
+    if (inputsValue === 'true') {
+      startingValue = true;
+    } else if (inputsValue !== 'false' && (requirement.default as string) === 'true') {
+      startingValue = true;
+    }
+    setValue(startingValue);
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.checked.toString() as BooleanString;
-    inputsMap.set(requirement.name, newValue);
-    setInputsMap(new Map(inputsMap));
+    const newValue = event.target.checked;
     setValue(newValue);
     setHasBeenModified(true);
+    inputsMap.set(requirement.name, newValue.toString());
+    setInputsMap(new Map(inputsMap));
   };
 
   return (
@@ -82,7 +80,7 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
               <Checkbox
                 size="small"
                 color="secondary"
-                checked={value === 'true'}
+                checked={value}
                 onBlur={(e) => {
                   if (e.currentTarget === e.target) {
                     setHasBeenModified(true);

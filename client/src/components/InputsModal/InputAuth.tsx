@@ -78,6 +78,8 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
     // Trigger change on mount for default values
     const authValuesCopy = new Map(authValues);
     setAuthValues(authValuesCopy);
+
+    console.log(authValues, authFields);
   }, []);
 
   useEffect(() => {
@@ -101,11 +103,6 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
     // TODO: fix serial inputs
   }, [inputsMap]);
 
-  const handleAuthSelectionChange = (newValues: Map<string, unknown>, editStatus?: boolean) => {
-    console.error(newValues, editStatus);
-    // TODO: Update this when inputsMap can be updated with the auth_type
-  };
-
   return (
     <ListItem sx={{ padding: 0 }}>
       <Box width="100%">
@@ -119,7 +116,7 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
             requirement={authSelector}
             index={index}
             inputsMap={authValues}
-            setInputsMap={handleAuthSelectionChange}
+            setInputsMap={setAuthValues}
             key={`input-${index}`}
           />
         </List>
