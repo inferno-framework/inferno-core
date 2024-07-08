@@ -65,9 +65,17 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   };
 
   useEffect(() => {
-    const defaultValues = JSON.parse(requirement.default as string) as Auth;
-    const startingValues = JSON.parse(requirement.value as string) as Auth;
-    const combinedStartingValues = { ...defaultValues, ...startingValues } as Auth;
+    const fieldDefaultValues = authFields.reduce(
+      (acc, field) => ({ ...acc, [field.name]: field.default }),
+      {}
+    ) as Auth;
+    const requirementDefaultValues = JSON.parse(requirement.default as string) as Auth;
+    const requirementStartingValues = JSON.parse(requirement.value as string) as Auth;
+    const combinedStartingValues = {
+      ...fieldDefaultValues,
+      ...requirementDefaultValues,
+      ...requirementStartingValues,
+    } as Auth;
 
     // Populate authValues on mount
     authFields.forEach((field: TestInput) => {
@@ -78,8 +86,6 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
     // Trigger change on mount for default values
     const authValuesCopy = new Map(authValues);
     setAuthValues(authValuesCopy);
-
-    console.log(authValues, authFields);
   }, []);
 
   useEffect(() => {
@@ -104,7 +110,7 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   }, [inputsMap]);
 
   return (
-    <ListItem sx={{ padding: 0 }}>
+    <ListItem sx={{ p: 0 }}>
       <Box width="100%">
         {requirement.description && (
           <Typography variant="subtitle1" component="p" className={classes.inputDescription}>

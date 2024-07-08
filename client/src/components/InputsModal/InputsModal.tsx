@@ -263,8 +263,6 @@ const InputsModal: FC<InputsModalProps> = ({
   const handleSerialChanges = (serialChanges: string) => {
     setSerialInput(serialChanges);
     const parsedChanges = parseSerialChanges(serialChanges);
-    console.log(parsedChanges);
-
     if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
       parsedChanges.forEach((change: TestInput) => {
         if (!change.locked && change.value !== undefined) {
@@ -273,7 +271,6 @@ const InputsModal: FC<InputsModalProps> = ({
       });
     }
     handleSetInputsMap(new Map(inputsMap), true);
-    console.log(inputsMap);
   };
 
   const closeModal = (edited = false) => {
