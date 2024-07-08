@@ -24,7 +24,7 @@ module AuthInfoConstants
         pkce_support: 'enabled',
         pkce_code_challenge_method: 'S256',
         auth_request_method: 'GET'
-      }.merge(token_info).freeze
+      }.merge(token_info)
     end
 
     def symmetric_confidential_access_default
@@ -39,7 +39,7 @@ module AuthInfoConstants
         pkce_code_challenge_method: 'S256',
         auth_request_method: 'POST',
         use_discovery: 'false'
-      }.merge(token_info).freeze
+      }.merge(token_info)
     end
 
     def asymmetric_confidential_access_default
@@ -53,7 +53,7 @@ module AuthInfoConstants
         encryption_algorithm: ENCRYPTION_ALGORITHM,
         jwks: JWKS,
         kid: KID
-      }.merge(token_info).freeze
+      }.merge(token_info)
     end
 
     def backend_services_access_default
@@ -65,7 +65,7 @@ module AuthInfoConstants
         encryption_algorithm: ENCRYPTION_ALGORITHM,
         jwks: JWKS,
         kid: KID
-      }.merge(token_info).freeze
+      }.merge(token_info)
     end
   end
 end
