@@ -44,8 +44,8 @@ module AuthInfoConstants
         client_id: 'SAMPLE_PUBLIC_CLIENT_ID',
         requested_scopes: REQUESTED_SCOPES,
         pkce_support: 'enabled',
-        pkce_code_challenge_method: 'S256',
-        auth_request_method: 'GET'
+        pkce_code_challenge_method: 's256',
+        auth_request_method: 'get'
       }.freeze
     end
 
@@ -57,8 +57,8 @@ module AuthInfoConstants
         auth_url: AUTH_URL,
         requested_scopes: REQUESTED_SCOPES,
         pkce_support: 'enabled',
-        pkce_code_challenge_method: 'S256',
-        auth_request_method: 'POST',
+        pkce_code_challenge_method: 's256',
+        auth_request_method: 'post',
         use_discovery: 'false'
       }.freeze
     end
@@ -68,7 +68,7 @@ module AuthInfoConstants
         client_id: 'SAMPLE_CONFIDENTIAL_CLIENT_ID',
         requested_scopes: REQUESTED_SCOPES,
         pkce_support: 'disabled',
-        auth_request_method: 'POST',
+        auth_request_method: 'post',
         encryption_algorithm: ENCRYPTION_ALGORITHM,
         jwks: JWKS,
         kid: KID

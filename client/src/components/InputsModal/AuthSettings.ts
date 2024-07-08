@@ -119,7 +119,7 @@ export const getAuthFields = (
         list_options: [
           {
             label: 'S256',
-            value: 'S256',
+            value: 's256',
           },
           {
             label: 'Plain',
@@ -137,11 +137,11 @@ export const getAuthFields = (
         list_options: [
           {
             label: 'GET',
-            value: 'GET',
+            value: 'get',
           },
           {
             label: 'POST',
-            value: 'POST',
+            value: 'post',
           },
         ],
       },
@@ -154,11 +154,11 @@ export const getAuthFields = (
         list_options: [
           {
             label: 'ES384',
-            value: 'ES384',
+            value: 'es384',
           },
           {
             label: 'RS384',
-            value: 'RS384',
+            value: 'rs384',
           },
         ],
       },
