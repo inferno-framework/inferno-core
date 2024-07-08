@@ -98,7 +98,6 @@ const InputsModal: FC<InputsModalProps> = ({
       try {
         if (!inputsMap.get(input.name)) return false;
         // const authJSON = JSON.parse(inputsMap.get(input.name) as string) as Auth;
-        // console.log(inputsMap, input.name);
         return false;
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);
@@ -182,6 +181,8 @@ const InputsModal: FC<InputsModalProps> = ({
 
   const handleSetInputsMap = (inputsMap: Map<string, unknown>, edited?: boolean) => {
     setInputsMap(inputsMap);
+    console.log(inputsMap);
+
     setInputsEdited(inputsEdited || edited !== false); // explicit check for false values
   };
 
@@ -216,6 +217,7 @@ const InputsModal: FC<InputsModalProps> = ({
       } else if (requirement.type === 'auth_info') {
         return {
           ...requirement,
+          default: JSON.parse((requirement.default as string) || '{}') as Auth,
           description: parsedDescription,
           value: JSON.parse((map.get(requirement.name) as string) || '{}') as Auth,
         };

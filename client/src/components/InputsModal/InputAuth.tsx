@@ -65,16 +65,19 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   };
 
   useEffect(() => {
+    // Pre-populate values from AuthFields, requirement, and inputsMap in order of precedence
     const fieldDefaultValues = authFields.reduce(
       (acc, field) => ({ ...acc, [field.name]: field.default }),
       {}
     ) as Auth;
     const requirementDefaultValues = JSON.parse(requirement.default as string) as Auth;
     const requirementStartingValues = JSON.parse(requirement.value as string) as Auth;
+    const inputsMapValues = JSON.parse(inputsMap.get(requirement.name) as string) as Auth;
     const combinedStartingValues = {
       ...fieldDefaultValues,
       ...requirementDefaultValues,
       ...requirementStartingValues,
+      ...inputsMapValues,
     } as Auth;
 
     // Populate authValues on mount
