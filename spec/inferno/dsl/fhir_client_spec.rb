@@ -1340,9 +1340,9 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(client.need_to_refresh?).to be(true)
       end
 
-      it 'returns false if @oauth_credentials&.need_to_refresh? is false' do
+      it 'returns a falsey if @oauth_credentials&.need_to_refresh? is false' do
         client.oauth_credentials.access_token = nil
-        expect(client.need_to_refresh?).to be(false)
+        expect(client).to_not be_need_to_refresh
       end
     end
 
@@ -1354,15 +1354,15 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(client.need_to_refresh?).to be(true)
       end
 
-      it 'returns false if @auth_info&.need_to_refresh? is false' do
+      it 'returns a falsey if @auth_info&.need_to_refresh? is false' do
         client.auth_info.access_token = nil
-        expect(client.need_to_refresh?).to be(false)
+        expect(client).to_not be_need_to_refresh
       end
     end
 
-    it 'returns false if @auth_info and @oauth_credentials are missing' do
+    it 'returns a falsey if @auth_info and @oauth_credentials are missing' do
       client = group.fhir_client
-      expect(client.need_to_refresh?).to be(false)
+      expect(client).to_not be_need_to_refresh
     end
   end
 
@@ -1374,9 +1374,9 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(client.able_to_refresh?).to be(true)
       end
 
-      it 'returns false if @oauth_credentials&.able_to_refresh? is false' do
+      it 'returns a falsey if @oauth_credentials&.able_to_refresh? is false' do
         client.oauth_credentials.token_url = nil
-        expect(client.able_to_refresh?).to be(false)
+        expect(client).to_not be_able_to_refresh
       end
     end
 
@@ -1387,15 +1387,15 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(client.able_to_refresh?).to be(true)
       end
 
-      it 'returns false if @auth_info&.able_to_refresh? is false' do
+      it 'returns a falsey if @auth_info&.able_to_refresh? is false' do
         client.auth_info.token_url = nil
-        expect(client.able_to_refresh?).to be(false)
+        expect(client).to_not be_able_to_refresh
       end
     end
 
-    it 'returns false if @auth_info and @oauth_credentials are missing' do
+    it 'returns a falsey if @auth_info and @oauth_credentials are missing' do
       client = group.fhir_client
-      expect(client.able_to_refresh?).to be(false)
+      expect(client).to_not be_able_to_refresh
     end
   end
 

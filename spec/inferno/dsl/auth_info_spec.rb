@@ -154,6 +154,16 @@ RSpec.describe Inferno::DSL::AuthInfo do
     end
   end
 
+  describe '#backend_services?' do
+    it 'returns true if auth type is backend services' do
+      expect(backend_services_auth_info.backend_services?).to be(true)
+    end
+
+    it 'returns false if auth type is not backend services' do
+      expect(public_auth_info.backend_services?).to be(false)
+    end
+  end
+
   describe '#oauth2_refresh_params' do
     context 'when public auth' do
       it 'returns a hash with grant_type, refresh_token, and client_id params' do
@@ -211,10 +221,10 @@ RSpec.describe Inferno::DSL::AuthInfo do
     end
   end
 
-  describe '#signed_jwt' do
+  describe '#client_assertion' do
     context 'when kid is present' do
       it 'returns valid JWT signed with keys having the correct algorithm and kid' do
-        jwt = asymmetric_auth_info.signed_jwt
+        jwt = asymmetric_auth_info.client_assertion
         claims, header = JWT.decode(jwt, nil, false)
 
         expect(header['alg']).to eq(asymmetric_auth_info.encryption_algorithm)
@@ -231,7 +241,7 @@ RSpec.describe Inferno::DSL::AuthInfo do
     context 'when kid is missing' do
       it 'returns valid JWT igned with keys having the correct algorithm' do
         asymmetric_auth_info.kid = nil
-        jwt = asymmetric_auth_info.signed_jwt
+        jwt = asymmetric_auth_info.client_assertion
         claims, header = JWT.decode(jwt, nil, false)
 
         expect(header['alg']).to eq(asymmetric_auth_info.encryption_algorithm)
@@ -248,7 +258,7 @@ RSpec.describe Inferno::DSL::AuthInfo do
     it 'throws exception when kid not found for the given algorithm' do
       asymmetric_auth_info.kid = 'random'
       expect do
-        asymmetric_auth_info.signed_jwt
+        asymmetric_auth_info.client_assertion
       end.to raise_error(Inferno::Exceptions::AssertionException)
     end
   end

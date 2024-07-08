@@ -1,4 +1,5 @@
 require_relative '../entities/attributes'
+require_relative 'jwks'
 
 module Inferno
   module DSL
@@ -171,7 +172,7 @@ module Inferno
 
       # @private
       def need_to_refresh?
-        return false if access_token.blank? || (auth_type != 'backend_services' && refresh_token.blank?)
+        return false if access_token.blank? || (!backend_services? && refresh_token.blank?)
 
         return true if expires_in.blank?
 
@@ -180,7 +181,12 @@ module Inferno
 
       # @private
       def able_to_refresh?
-        (auth_type == 'backend_services' && token_url.present?) || (refresh_token.present? && token_url.present?)
+        token_url.present? && (backend_services? || refresh_token.present?)
+      end
+
+      # @private
+      def backend_services?
+        auth_type == 'backend_services'
       end
 
       # @private
@@ -214,7 +220,7 @@ module Inferno
       def asymmetric_auth_refresh_params
         symmetric_auth_refresh_params.merge(
           'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
-          'client_assertion' => signed_jwt
+          'client_assertion' => client_assertion
         )
       end
 
@@ -224,7 +230,7 @@ module Inferno
           'grant_type' => 'client_credentials',
           'scope' => requested_scopes,
           'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
-          'client_assertion' => signed_jwt
+          'client_assertion' => client_assertion
         }
       end
 
@@ -242,15 +248,8 @@ module Inferno
       end
 
       # @private
-      def jwk_set
-        jwks_path = File.join(__dir__, 'jwks.json')
-        parsed_jwks = jwks.present? ? JSON.parse(jwks) : JSON.parse(File.read(jwks_path))
-        JWT::JWK::Set.new(parsed_jwks)
-      end
-
-      # @private
       def private_key
-        @private_key ||= jwk_set
+        @private_key ||= JWKS.jwks(user_jwks: jwks)
           .select { |key| key[:key_ops]&.include?('sign') }
           .select { |key| key[:alg] == encryption_algorithm }
           .find { |key| !kid || key[:kid] == kid }
@@ -287,7 +286,7 @@ module Inferno
       end
 
       # @private
-      def signed_jwt
+      def client_assertion
         JWT.encode auth_jwt_claims, signing_key, encryption_algorithm, auth_jwt_header
       end
 
