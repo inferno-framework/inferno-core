@@ -32,7 +32,7 @@ import DownloadFileButton from '~/components/_common/DownloadFileButton';
 import UploadFileButton from '~/components/_common/UploadFileButton';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from '~/components/InputsModal/styles';
-// import { AuthType, getAccessFields, getAuthFields } from './AuthSettings';
+import { AuthType, getAccessFields, getAuthFields } from './AuthSettings';
 
 export interface InputsModalProps {
   modalVisible: boolean;
@@ -94,30 +94,33 @@ const InputsModal: FC<InputsModalProps> = ({
     }
 
     // if input is auth_info, check if required values are filled
-    // let authMissingRequiredInput = false;
-    // if (input.type === 'auth_info') {
-    //   try {
-    //     if (
-    //       !inputsMap.get(input.name) ||
-    //       !input.options?.components ||
-    //       input.options?.components.length < 1
-    //     )
-    //       return false;
-    //     const authJson = JSON.parse(inputsMap.get(input.name) as string) as Auth;
-    //     const authType = input.options.components.find((c) => c.type === 'auth_info')
-    //       ?.default as AuthType;
-    //     const fields =
-    //       input.options?.mode === 'auth' ? getAuthFields(authType) : getAccessFields(new Map());
-    //     const requiredFields = fields.filter((field) => !field.optional).map((field) => field.name);
-    //     authMissingRequiredInput = requiredFields.some((field) => !authJson[field as keyof Auth]);
-    //   } catch (e: unknown) {
-    //     const errorMessage = e instanceof Error ? e.message : String(e);
-    //     enqueueSnackbar(`Auth info inputs incorrectly formatted: ${errorMessage}`, {
-    //       variant: 'error',
-    //     });
-    //     return true;
-    //   }
-    // }
+    let authMissingRequiredInput = false;
+    if (input.type === 'auth_info') {
+      try {
+        if (
+          !inputsMap.get(input.name) ||
+          !input.options?.components ||
+          input.options?.components.length < 1
+        )
+          return false;
+        const authJson = JSON.parse(inputsMap.get(input.name) as string) as Auth;
+        const authType = input.options.components.find((c) => c.name === 'auth_type')
+          ?.default as AuthType;
+        // Determine which fields are required; authValues and components props irrelevant for this
+        const fields =
+          input.options?.mode === 'auth'
+            ? getAuthFields(authType, new Map(), [])
+            : getAccessFields(new Map(), []);
+        const requiredFields = fields.filter((field) => !field.optional).map((field) => field.name);
+        authMissingRequiredInput = requiredFields.some((field) => !authJson[field as keyof Auth]);
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        enqueueSnackbar(`Auth info inputs incorrectly formatted: ${errorMessage}`, {
+          variant: 'error',
+        });
+        return true;
+      }
+    }
 
     // if input has OAuth, check if required values are filled
     let oAuthMissingRequiredInput = false;
@@ -140,8 +143,9 @@ const InputsModal: FC<InputsModalProps> = ({
     }
 
     return (
-      (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput
-      // ||  authMissingRequiredInput
+      (!input.optional && !inputsMap.get(input.name)) ||
+      oAuthMissingRequiredInput ||
+      authMissingRequiredInput
     );
   });
 
