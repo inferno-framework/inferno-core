@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { Card, CardContent, InputLabel, ListItem, Typography } from '@mui/material';
 import { Auth, TestInput } from '~/models/testSuiteModels';
-import { AuthType, getAccessFields } from '~/components/InputsModal/AuthSettings';
+import { getAccessFields } from '~/components/InputsModal/AuthSettings';
 import FieldLabel from '~/components/InputsModal/FieldLabel';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from './styles';
@@ -17,27 +17,16 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, inputsMap, setInputsMa
   const [accessValues, setAccessValues] = React.useState<Map<string, unknown>>(new Map());
   const [accessValuesPopulated, setAccessValuesPopulated] = React.useState<boolean>(false);
 
-  const accessSelectorSettings = requirement.options?.components
-    ? requirement.options?.components[0]
-    : // Default auth type settings
-      {
-        name: 'auth_type',
-        default: 'public',
-      };
-
   const [accessFields, setAccessFields] = React.useState<TestInput[]>(
-    getAccessFields(
-      accessSelectorSettings.default as AuthType,
-      accessValues,
-      requirement.options?.components || []
-    )
+    getAccessFields(accessValues, requirement.options?.components || [])
   );
 
   useEffect(() => {
+    const combinedStartingValues = getStartingValues();
+
     // Populate accessValues on mount
-    const defaultValues = JSON.parse(requirement.default as string) as Auth;
     accessFields.forEach((field: TestInput) => {
-      accessValues.set(field.name, defaultValues[field.name as keyof Auth] || '');
+      accessValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
     setAccessValuesPopulated(true);
 
@@ -47,28 +36,43 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, inputsMap, setInputsMa
   }, []);
 
   useEffect(() => {
-    setAccessFields(
-      getAccessFields(
-        accessSelectorSettings.default as AuthType,
-        accessValues,
-        requirement.options?.components || []
-      )
-    );
+    setAccessFields(getAccessFields(accessValues, requirement.options?.components || []));
 
     // Update inputsMap whihle maintaining hidden values
     if (accessValuesPopulated) {
-      const defaultValues = JSON.parse(requirement.default as string) as Auth;
+      const combinedStartingValues = getStartingValues();
       const accessValuesObject = Object.fromEntries(accessValues) as Auth;
-      const combinedValues = { ...defaultValues, ...accessValuesObject };
+      const combinedValues = { ...combinedStartingValues, ...accessValuesObject };
       const stringifiedAccessValues = JSON.stringify(combinedValues);
       inputsMap.set(requirement.name, stringifiedAccessValues);
       setInputsMap(new Map(inputsMap));
     }
   }, [accessValues]);
 
-  useEffect(() => {
-    // TODO: fix serial inputs
-  }, [inputsMap]);
+  const getStartingValues = () => {
+    // Pre-populate values from AuthFields, requirement, and inputsMap in order of precedence
+    const fieldDefaultValues = accessFields.reduce(
+      (acc, field) => ({ ...acc, [field.name]: field.default }),
+      {}
+    ) as Auth;
+    const requirementDefaultValues =
+      requirement.default && typeof requirement.default === 'string'
+        ? (JSON.parse(requirement.default) as Auth)
+        : {};
+    const requirementStartingValues =
+      requirement.value && typeof requirement.value === 'string'
+        ? (JSON.parse(requirement.value) as Auth)
+        : {};
+    const inputsMapValues = inputsMap.get(requirement.name)
+      ? (JSON.parse(inputsMap.get(requirement.name) as string) as Auth)
+      : {};
+    return {
+      ...fieldDefaultValues,
+      ...requirementDefaultValues,
+      ...requirementStartingValues,
+      ...inputsMapValues,
+    } as Auth;
+  };
 
   return (
     <ListItem>

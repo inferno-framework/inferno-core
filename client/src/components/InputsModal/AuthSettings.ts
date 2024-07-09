@@ -53,8 +53,8 @@ export const authSettings = {
 
 export const getAuthFields = (
   authType: AuthType,
-  authValues: Map<string, unknown>,
-  components: TestInput[]
+  authValues?: Map<string, unknown>,
+  components: TestInput[] = []
 ): TestInput[] => {
   const fields = [
     {
@@ -69,14 +69,14 @@ export const getAuthFields = (
       title: 'Authorization URL',
       description: "URL of the server's authorization endpoint",
       optional: true,
-      hide: authValues.get('use_discovery') === 'true',
+      hide: authValues?.get('use_discovery') === 'true',
     },
     {
       name: 'token_url',
       title: 'Token URL',
       description: "URL of the authorization server's token endpoint",
       optional: true,
-      hide: authValues.get('use_discovery') === 'true',
+      hide: authValues?.get('use_discovery') === 'true',
     },
     {
       name: 'requested_scopes',
@@ -234,9 +234,8 @@ export const accessSettings = {
 };
 
 export const getAccessFields = (
-  authType: AuthType,
   accessValues: Map<string, unknown>,
-  components: TestInput[]
+  components: TestInput[] = []
 ): TestInput[] => {
   const fields = [
     {
@@ -330,11 +329,5 @@ export const getAccessFields = (
     }
   });
 
-  // // Remove extra properties based on auth type or hide if no settings
-  // const typeValues = accessSettings[authType];
-  // if (accessSettings && authType) {
-  //   return fields.filter((field) => typeValues.includes(field.name));
-  // }
-  // fields.forEach((field) => (field.hide = field.hide || !typeValues.includes(field.name)));
   return fields;
 };

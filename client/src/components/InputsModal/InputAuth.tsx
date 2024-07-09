@@ -65,20 +65,7 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   };
 
   useEffect(() => {
-    // Pre-populate values from AuthFields, requirement, and inputsMap in order of precedence
-    const fieldDefaultValues = authFields.reduce(
-      (acc, field) => ({ ...acc, [field.name]: field.default }),
-      {}
-    ) as Auth;
-    const requirementDefaultValues = JSON.parse(requirement.default as string) as Auth;
-    const requirementStartingValues = JSON.parse(requirement.value as string) as Auth;
-    const inputsMapValues = JSON.parse(inputsMap.get(requirement.name) as string) as Auth;
-    const combinedStartingValues = {
-      ...fieldDefaultValues,
-      ...requirementDefaultValues,
-      ...requirementStartingValues,
-      ...inputsMapValues,
-    } as Auth;
+    const combinedStartingValues = getStartingValues();
 
     // Populate authValues on mount
     authFields.forEach((field: TestInput) => {
@@ -108,9 +95,30 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
     }
   }, [authValues]);
 
-  useEffect(() => {
-    // TODO: fix serial inputs
-  }, [inputsMap]);
+  const getStartingValues = () => {
+    // Pre-populate values from AuthFields, requirement, and inputsMap in order of precedence
+    const fieldDefaultValues = authFields.reduce(
+      (acc, field) => ({ ...acc, [field.name]: field.default }),
+      {}
+    ) as Auth;
+    const requirementDefaultValues =
+      requirement.default && typeof requirement.default === 'string'
+        ? (JSON.parse(requirement.default) as Auth)
+        : {};
+    const requirementStartingValues =
+      requirement.value && typeof requirement.value === 'string'
+        ? (JSON.parse(requirement.value) as Auth)
+        : {};
+    const inputsMapValues = inputsMap.get(requirement.name)
+      ? (JSON.parse(inputsMap.get(requirement.name) as string) as Auth)
+      : {};
+    return {
+      ...fieldDefaultValues,
+      ...requirementDefaultValues,
+      ...requirementStartingValues,
+      ...inputsMapValues,
+    } as Auth;
+  };
 
   return (
     <ListItem sx={{ p: 0 }}>

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, getDefaultNormalizer } from '@testing-library/react';
 import ThemeProvider from 'components/ThemeProvider';
 import CodeBlock from '../CodeBlock';
-import { codeResponseWithHTML, codeResponseWithJSON } from '../__mocked_data__/mockData';
+import { codeResponseWithHtml, codeResponseWithJson } from '../__mocked_data__/mockData';
 
 import { vi } from 'vitest';
 
@@ -12,8 +12,8 @@ describe('CodeBlock', () => {
   });
 
   it('displays the code body as given if HTML', () => {
-    const headers = codeResponseWithHTML.response_headers;
-    const body = codeResponseWithHTML.response_body;
+    const headers = codeResponseWithHtml.response_headers;
+    const body = codeResponseWithHtml.response_body;
 
     render(
       <ThemeProvider>
@@ -27,8 +27,8 @@ describe('CodeBlock', () => {
   });
 
   it('displays pretty printed JSON if given JSON', () => {
-    const headers = codeResponseWithJSON.response_headers;
-    const body = codeResponseWithJSON.response_body;
+    const headers = codeResponseWithJson.response_headers;
+    const body = codeResponseWithJson.response_body;
 
     render(
       <ThemeProvider>
