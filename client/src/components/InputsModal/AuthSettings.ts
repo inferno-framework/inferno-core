@@ -53,8 +53,8 @@ export const authSettings = {
 
 export const getAuthFields = (
   authType: AuthType,
-  authValues?: Map<string, unknown>,
-  components: TestInput[] = []
+  authValues: Map<string, unknown>,
+  components: TestInput[]
 ): TestInput[] => {
   const fields = [
     {
@@ -235,7 +235,7 @@ export const accessSettings = {
 
 export const getAccessFields = (
   accessValues: Map<string, unknown>,
-  components: TestInput[] = []
+  components: TestInput[]
 ): TestInput[] => {
   const fields = [
     {

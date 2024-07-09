@@ -32,7 +32,7 @@ import DownloadFileButton from '~/components/_common/DownloadFileButton';
 import UploadFileButton from '~/components/_common/UploadFileButton';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from '~/components/InputsModal/styles';
-import { AuthType, getAccessFields, getAuthFields } from './AuthSettings';
+// import { AuthType, getAccessFields, getAuthFields } from './AuthSettings';
 
 export interface InputsModalProps {
   modalVisible: boolean;
@@ -141,7 +141,7 @@ const InputsModal: FC<InputsModalProps> = ({
 
     return (
       (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput
-      // || authMissingRequiredInput
+      // ||  authMissingRequiredInput
     );
   });
 
