@@ -15,7 +15,7 @@ module Inferno
 
         def jwks_path
           @jwks_path ||=
-            ENV.fetch('CORE_JWKS_PATH', default_jwks_path)
+            ENV.fetch('INFERNO_JWKS_PATH', default_jwks_path)
         end
 
         def jwks(user_jwks: nil)
