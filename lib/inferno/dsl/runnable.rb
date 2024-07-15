@@ -435,6 +435,69 @@ module Inferno
           end
       end
 
+      # Set/Get minimum passing children to customize runnable result.
+      #
+      # This method allows the test writer to customize the result of the parent (test suite or group)
+      # based on the results of a subset of its children (groups or tests).
+      # The IDs of these required children can be provided as an array of strings or symbols.
+      # If the minimum passing children are not set, the roll-up behavior defaults to requiring
+      # all required children to pass for the parent to pass.
+      #
+      # @param child_ids [Array<String, Symbol>] An array of child (Group/Test)IDs that
+      #   must pass for the parent to pass.
+      #
+      # @return [Array<Symbol>] The array of child IDs.
+      #
+      # @example
+      #   class Suite < Inferno::TestSuite
+      #     id :suite
+      #     minimum_passing_children [:group1, :group3]
+      #
+      #     group do
+      #       id :group1
+      #       minimum_passing_children [:test2]
+      #
+      #       test do
+      #         id :test1
+      #       end
+      #
+      #       test do
+      #         id :test2
+      #       end
+      #
+      #       test do
+      #         id :test3
+      #       end
+      #     end
+      #
+      #     group do
+      #       id :group2
+      #
+      #       test do
+      #         id :test1
+      #        end
+      #
+      #       test do
+      #         id :test2
+      #       end
+      #     end
+      #
+      #     group do
+      #       id :group3
+      #
+      #       test do
+      #         id :test1
+      #       end
+      #     end
+      #   end
+      def minimum_passing_children(child_ids = nil)
+        if child_ids
+          @minimum_passing_children = child_ids.map(&:to_sym)
+        else
+          @minimum_passing_children ||= []
+        end
+      end
+
       # @private
       def children(selected_suite_options = [])
         return all_children if selected_suite_options.blank?
