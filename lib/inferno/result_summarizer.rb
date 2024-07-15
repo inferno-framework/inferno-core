@@ -32,8 +32,12 @@ module Inferno
       required_results.blank?
     end
 
+    def custom_results
+      @custom_results ||= results.select(&:custom?)
+    end
+
     def results_for_summary
-      all_optional_results? ? results : required_results
+      custom_results.presence || required_results.presence || results
     end
 
     def unique_result_strings
