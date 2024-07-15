@@ -44,6 +44,15 @@ module Inferno
             ENV.fetch('INFERNO_JWKS_PATH', default_jwks_path)
         end
 
+        # Reads the JWKS content from the file located at the JWKS path.
+        #
+        # @return [String] The json content of the JWKS file.
+        #
+        # @private
+        def default_jwks_json
+          @default_jwks_json ||= File.read(jwks_path)
+        end
+
         # Parses and returns a `JWT::JWK::Set` object from the provided JWKS string
         # or from the file located at the JWKS path. If a user-provided JWKS string
         # is not available, it reads the JWKS from the file.
@@ -60,7 +69,7 @@ module Inferno
         #   # Using the default JWKS file
         #   jwks_set = Inferno::JWKS.jwks
         def jwks(user_jwks: nil)
-          JWT::JWK::Set.new(JSON.parse(user_jwks.present? ? user_jwks : File.read(jwks_path)))
+          JWT::JWK::Set.new(JSON.parse(user_jwks.presence || default_jwks_json))
         end
       end
     end
