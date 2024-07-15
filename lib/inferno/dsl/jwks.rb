@@ -1,7 +1,7 @@
 module Inferno
   module DSL
     # The JWKS class provides methods to handle JSON Web Key Sets (JWKS)
-    # within the Inferno.
+    # within Inferno.
     #
     # This class allows users to fetch, parse, and manage JWKS, ensuring
     # that the necessary keys for verifying tokens are available.
