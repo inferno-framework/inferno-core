@@ -5,6 +5,7 @@ require_relative 'suite'
 require_relative 'suites'
 require_relative 'new'
 require_relative '../../version'
+require_relative 'execute'
 
 module Inferno
   module CLI
@@ -63,6 +64,37 @@ module Inferno
       desc 'version', "Output Inferno core version (#{Inferno::VERSION})"
       def version
         puts "Inferno Core v#{Inferno::VERSION}"
+      end
+
+      desc 'execute', 'Run Inferno tests in command line'
+      option :docker_compose,
+             default: true,
+             type: :boolean,
+             desc: 'Run within Docker Compose'
+      option :suite,
+             aliases: ['-s'],
+             required: true,
+             type: :string,
+             desc: 'Test Suite ID to run',
+             banner: 'ID'
+      option :inputs,
+             aliases: ['-i'],
+             optional: true,
+             type: :hash,
+             desc: 'Inputs (i.e: --inputs=foo:bar goo:baz)'
+      def execute
+        # TODO: fold this into Execute
+        if options[:docker_compose]
+          rebuilt_options = options
+                              .merge({docker_compose: false})
+                              .transform_values{|value| value.is_a?(Hash) ? value.to_a.map{|arr| arr.join(':')} : value}
+                              .transform_values{|value| value.is_a?(Array) ? value.join(' ') : value}
+                              .to_a
+                              .join('=')
+          `docker compose run inferno bundle exec inferno execute #{rebuilt_options}`
+        else
+          Execute.new.run(options)
+        end
       end
 
       private
