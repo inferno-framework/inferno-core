@@ -347,7 +347,7 @@ module Inferno
 
       # @private
       def perform_refresh(client)
-        credentials = client.oauth_credentials
+        credentials = client.auth_info || client.oauth_credentials
 
         post(
           credentials.token_url,
@@ -363,7 +363,7 @@ module Inferno
           Inferno::Repositories::SessionData.new.save(
             name: credentials.name,
             value: credentials,
-            type: 'oauth_credentials',
+            type: credentials.is_a?(Inferno::DSL::AuthInfo) ? 'auth_info' : 'oauth_credentials',
             test_session_id:
           )
         end
