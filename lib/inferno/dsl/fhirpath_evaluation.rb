@@ -1,4 +1,4 @@
-require 'fhir_models'
+require_relative '../ext/fhir_models'
 
 module Inferno
     module DSL
