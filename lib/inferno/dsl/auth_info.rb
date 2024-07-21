@@ -271,7 +271,7 @@ module Inferno
           'alg' => encryption_algorithm,
           'kid' => private_key['kid'],
           'typ' => 'JWT',
-          'jku' => "#{Inferno::Application['base_url']}/jwks.json"
+          'jku' => Inferno::Application['jwks_url']
         }
       end
 

@@ -27,7 +27,7 @@ RSpec.describe Inferno::DSL::AuthInfo do
   let(:asymmetric_auth_info) { described_class.new(asymmetric_confidential_access_default) }
   let(:backend_services_auth_info) { described_class.new(backend_services_access_default) }
   let(:client) { FHIR::Client.new('http://example.com') }
-  let(:jwks_url) { "#{Inferno::Application['base_url']}/jwks.json" }
+  let(:jwks_url) { Inferno::Application['jwks_url'] }
 
   describe '.new' do
     it 'raises an error if an invalid key is provided' do
