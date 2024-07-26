@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'hanami-controller', '2.0.0'
   spec.add_runtime_dependency 'hanami-router', '2.0.0'
   spec.add_runtime_dependency 'oj', '3.11.0'
+  spec.add_runtime_dependency 'pastel', '~> 0.8.0'
   spec.add_runtime_dependency 'pry'
   spec.add_runtime_dependency 'pry-byebug'
   spec.add_runtime_dependency 'puma', '~> 5.6.7'

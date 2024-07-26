@@ -18,6 +18,7 @@ PATH
       hanami-controller (= 2.0.0)
       hanami-router (= 2.0.0)
       oj (= 3.11.0)
+      pastel (~> 0.8.0)
       pry
       pry-byebug
       puma (~> 5.6.7)

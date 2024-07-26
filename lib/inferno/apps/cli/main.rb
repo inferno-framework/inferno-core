@@ -67,10 +67,6 @@ module Inferno
       end
 
       desc 'execute', 'Run Inferno tests in command line'
-      option :docker_compose,
-             default: true,
-             type: :boolean,
-             desc: 'Run within Docker Compose'
       option :suite,
              aliases: ['-s'],
              required: true,
