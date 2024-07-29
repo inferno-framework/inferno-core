@@ -3,7 +3,7 @@ module Inferno
   # It provides methods to filter required and optional results, access results
   # by index or by their runnable IDs, and iterate over the collection.
   #
-  # Example usage:
+  # @example
   #
   #   results = [
   #     Result.new(test_group_id: 'group_id1', result: 'pass'),
