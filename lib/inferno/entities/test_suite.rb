@@ -152,6 +152,31 @@ module Inferno
           suite_options << DSL::SuiteOption.new(option_params.merge(id: identifier))
         end
 
+        # Sets or gets the custom block to define the passing criteria for the suite.
+        #
+        # The block receives a ResultCollection of the suite's children (groups) and returns a boolean
+        # indicating if the suite passes based on the custom criteria.
+        #
+        # @yieldparam results [Inferno::ResultCollection] the collection of group results to evaluate
+        # @yieldreturn [Boolean] whether the suite passes based on the custom criteria
+        #
+        # @example
+        #   customize_passing_result do |results|
+        #     group1_result = results[:group_id1]
+        #     other_groups_pass = results.any? do |result|
+        #       result.test_group_id != group1_result.test_group_id && result.result == 'pass'
+        #     end
+        #     group1_result.result == 'pass' && other_groups_pass
+        #   end
+        #
+        #   group from: :group_id1
+        #   group from: :group_id2
+        #   group from: :group_id3
+        def customize_passing_result(&block)
+          @customize_passing_result = block if block_given?
+          @customize_passing_result
+        end
+
         # @return [Array<Inferno::DSL::SuiteOption>] The options defined for
         #   this suite
         def suite_options
