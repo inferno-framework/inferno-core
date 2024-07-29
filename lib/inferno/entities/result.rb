@@ -67,10 +67,6 @@ module Inferno
         !optional?
       end
 
-      def custom?
-        runnable&.parent.present? && runnable.parent.minimum_passing_children.include?(runnable.id.to_sym)
-      end
-
       # @return [Boolean]
       def waiting?
         result == 'wait'
