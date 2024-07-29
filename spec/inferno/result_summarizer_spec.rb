@@ -31,15 +31,15 @@ RSpec.describe Inferno::ResultSummarizer do
     end
   end
 
-  context 'when there are custom results' do
-    it 'returns the highest priority result among custom required' do
-      allow(passing_result).to receive(:custom?).and_return(true)
-      result = described_class.new([passing_result, failing_result]).summarize
+  context 'when custom results block given' do
+    it 'returns pass when the block evaluates to true' do
+      result = described_class.new([passing_result, failing_result]) { |_results| true }.summarize
 
       expect(result).to eq('pass')
+    end
 
-      allow(failing_result).to receive(:custom?).and_return(true)
-      result = described_class.new([passing_result, failing_result]).summarize
+    it 'returns the highest priority result when the block evaluates to false' do
+      result = described_class.new([passing_result, failing_result]) { |_results| false }.summarize
 
       expect(result).to eq('fail')
     end
