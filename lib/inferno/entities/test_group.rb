@@ -67,6 +67,54 @@ module Inferno
           define_child(...)
         end
 
+        # Sets or gets the custom block to define the passing criteria for the group.
+        #
+        # The block receives a ResultCollection of the group's children (groups or tests)
+        # and returns a boolean indicating if the group passes based on the custom criteria.
+        #
+        # @yieldparam results [ResultCollection] the collection of group or test results to evaluate
+        # @yieldreturn [Boolean] whether the group passes based on the custom criteria
+        #
+        # @example
+        #   customize_passing_result do |results|  # results => collection of group results
+        #     group1_result = results[:group_id1]
+        #     other_groups_pass = results.any? do |result|
+        #       result.test_group_id != group1_result.test_group_id && result.result == 'pass'
+        #     end
+        #     group1_result.result == 'pass' && other_groups_pass
+        #   end
+        #
+        #   group do
+        #     id :group_id1
+        #
+        #     test from: :test_id1
+        #     test from: :test_id2
+        #   end
+        #
+        #   group do
+        #     id :group_id2
+        #     customize_passing_result do |results| # results => collection of test results
+        #       required_pass = results.required_results.all? { |result| result.result == 'pass' }
+        #       optional_pass = results.optional_results.any? { |result| result.result == 'pass' }
+        #       required_pass && optional_pass
+        #     end
+        #
+        #     test from: :test_id3
+        #     test from: :test_id4
+        #     test from: :test_id5
+        #     test from: :test_id6
+        #   end
+        #
+        #   group do
+        #     id :group_id3
+        #
+        #     test from: :test_id7
+        #   end
+        def customize_passing_result(&block)
+          @customize_passing_result = block if block_given?
+          @customize_passing_result
+        end
+
         # @private
         def group_metadata
           {
