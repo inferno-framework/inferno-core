@@ -62,8 +62,7 @@ module Inferno
     private
 
     def lookup_by_runnable_id(key)
-      key = "-#{key}"
-      results.find { |result| result.runnable&.id&.end_with?(key) }
+      results.find { |result| result.runnable&.id == key.to_s || result.runnable&.id&.end_with?("-#{key}") }
     end
   end
 end
