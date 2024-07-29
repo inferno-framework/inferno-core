@@ -153,8 +153,10 @@ module Inferno
 
       results.flatten!
 
-      group_result = persist_result(group.reference_hash.merge(result: roll_up_result(results),
-                                                               input_json: JSON.generate(group_inputs_with_values)))
+      group_result = persist_result(group.reference_hash.merge(
+                                      result: roll_up_result(results, &group.customize_passing_result),
+                                      input_json: JSON.generate(group_inputs_with_values)
+                                    ))
 
       update_parent_result(group.parent)
 
@@ -171,7 +173,7 @@ module Inferno
       return if required_children.length != required_results.length
 
       old_result = results_repo.current_result_for_test_session(test_session.id, parent.reference_hash)&.result
-      new_result = roll_up_result(child_results)
+      new_result = roll_up_result(child_results, &parent.customize_passing_result)
 
       if new_result != old_result
         persist_result(parent.reference_hash.merge(result: new_result))
@@ -228,8 +230,8 @@ module Inferno
       run_results[result.runnable.id] = result
     end
 
-    def roll_up_result(results)
-      ResultSummarizer.new(results).summarize
+    def roll_up_result(results, &)
+      ResultSummarizer.new(results, &).summarize
     end
   end
 end
