@@ -27,6 +27,7 @@ RSpec.describe Inferno::DSL::AuthInfo do
   let(:asymmetric_auth_info) { described_class.new(asymmetric_confidential_access_default) }
   let(:backend_services_auth_info) { described_class.new(backend_services_access_default) }
   let(:client) { FHIR::Client.new('http://example.com') }
+  let(:jwks_url) { Inferno::Application['jwks_url'] }
 
   describe '.new' do
     it 'raises an error if an invalid key is provided' do
@@ -229,6 +230,7 @@ RSpec.describe Inferno::DSL::AuthInfo do
 
         expect(header['alg']).to eq(asymmetric_auth_info.encryption_algorithm)
         expect(header['typ']).to eq('JWT')
+        expect(header['jku']).to eq(jwks_url)
         expect(header['kid']).to eq(asymmetric_auth_info.kid)
         expect(claims['iss']).to eq(asymmetric_auth_info.client_id)
         expect(claims['aud']).to eq(asymmetric_auth_info.token_url)
@@ -246,6 +248,7 @@ RSpec.describe Inferno::DSL::AuthInfo do
 
         expect(header['alg']).to eq(asymmetric_auth_info.encryption_algorithm)
         expect(header['typ']).to eq('JWT')
+        expect(header['jku']).to eq(jwks_url)
         expect(header['kid']).to be_present
         expect(claims['iss']).to eq(asymmetric_auth_info.client_id)
         expect(claims['aud']).to eq(asymmetric_auth_info.token_url)
