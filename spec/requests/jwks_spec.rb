@@ -2,7 +2,7 @@ require 'request_helper'
 
 RSpec.describe '/jwks.json' do
   let(:router) { Inferno::Web::Router }
-  let(:parsed_response) { JSON.parse(Inferno::DSL::JWKS.jwks_json) }
+  let(:parsed_response) { JSON.parse(Inferno::JWKS.jwks_json) }
 
   describe '/jwks.json' do
     it 'renders the Inferno Core JWKS as json' do

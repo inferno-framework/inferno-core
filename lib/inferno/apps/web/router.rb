@@ -54,7 +54,7 @@ module Inferno
       # This could be investigated and likely removed if addressed properly elsewhere.
       get '/', to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
       get '/jwks.json', to: lambda { |_env|
-                              [200, { 'Content-Type' => 'application/json' }, [Inferno::DSL::JWKS.jwks_json]]
+                              [200, { 'Content-Type' => 'application/json' }, [Inferno::JWKS.jwks_json]]
                             }, as: :jwks
 
       Inferno.routes.each do |route|
