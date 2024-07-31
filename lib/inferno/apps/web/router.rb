@@ -53,6 +53,9 @@ module Inferno
       # Should not need Content-Type header but GitHub Codespaces will not work without them.
       # This could be investigated and likely removed if addressed properly elsewhere.
       get '/', to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
+      get '/jwks.json', to: lambda { |_env|
+                              [200, { 'Content-Type' => 'application/json' }, [Inferno::JWKS.jwks_json]]
+                            }, as: :jwks
 
       Inferno.routes.each do |route|
         cleaned_id = route[:suite].id.gsub(/[^a-zA-Z\d\-._~]/, '_')
