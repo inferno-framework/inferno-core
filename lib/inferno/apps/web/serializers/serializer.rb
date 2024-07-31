@@ -1,3 +1,6 @@
+require 'oj'
+require 'blueprinter'
+
 module Inferno
   module Web
     module Serializers

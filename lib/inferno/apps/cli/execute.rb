@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 require 'pastel'
+require 'active_support'
 require_relative '../../../inferno'
+require_relative '../web/serializers/test_run'
+require_relative '../web/serializers/result'
 
 module Inferno
   module CLI
@@ -14,6 +17,8 @@ module Inferno
                 session_data_repo: 'inferno.repositories.session_data',
                 test_runs_repo: 'inferno.repositories.test_runs'
               ]
+
+      attr_accessor :options
 
       def verify_runnable(runnable, inputs, selected_suite_options)
         missing_inputs = runnable&.missing_inputs(inputs, selected_suite_options)
@@ -46,52 +51,23 @@ module Inferno
         end
       end
 
-=begin
-      def handle(req, res)
-        test_session = test_sessions_repo.find(req.params[:test_session_id])
-
-        # if testsession.nil?
-        if test_runs_repo.active_test_run_for_session?(test_session.id)
-          halt 409, { error: 'Cannot run new test while another test run is in progress' }.to_json
-        end
-
-        verify_runnable(
-          repo.build_entity(create_params(req.params)).runnable,
-          req.params[:inputs],
-          test_session.suite_options
-        )
-
-        test_run = repo.create(create_params(req.params).merge(status: 'queued'))
-
-        res.body = serialize(test_run, suite_options: test_session.suite_options)
-
-        persist_inputs(req.params, test_run)
-
-        Jobs.perform(Jobs::ExecuteTestRun, test_run.id)
-      rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation,
-             Inferno::Exceptions::RequiredInputsNotFound,
-             Inferno::Exceptions::NotUserRunnableException => e
-        halt 422, { errors: e.message }.to_json
-      rescue StandardError => e
-        Application['logger'].error(e.full_message)
-        halt 500, { errors: e.message }.to_json
-      end
-=end
-
+      ## MAIN
       def run(options)
         puts ''
         puts '=========================================='
         puts " Testing #{options[:suite]} Suite"
         puts '=========================================='
 
+        self.options = options
+        verbose_puts "In verbose mode"
+
+        # TODO: hijack Application logger?
         Inferno::Application.start(:suites)        
 
         suite = Inferno::Repositories::TestSuites.new.find(options[:suite])
         raise StandardError, "Suite #{options[:suite]} not found" if suite.nil?
 
         test_session = test_sessions_repo.create({test_suite_id: suite.id}) # TODO add suite options
-
-        # skip active test run check since new test session is minted
 
         verify_runnable(
           test_runs_repo.build_entity({
@@ -112,17 +88,18 @@ module Inferno
 
         persist_inputs({test_session_id: test_session.id, test_suite_id: suite.id, inputs: thor_hash_to_inputs_array(options[:inputs])}, test_run)
 
-        # TODO to job or not to job that is the question
         Jobs.perform(Jobs::ExecuteTestRun, test_run.id)
 
-        # how to properly wait for jobs to finish; stall? poll?
-        sleep(20) # seconds 
+        # TODO how to properly wait for jobs to finish; stall? poll?
+        sleep(10) # seconds 
 
         results = test_runs_repo.results_for_test_run(test_run.id)
-        #puts serialize(results)
-        puts results
-        puts results.class
-        puts results.to_json
+        verbose_puts "Results:"
+        verbose_puts serialize(results)
+
+        results.each do |result|
+          puts serialize(result)
+        end
 
         puts COLOR.yellow "WIP: implementing"
 
@@ -138,6 +115,27 @@ module Inferno
       def thor_hash_to_inputs_array(hash)
         hash.to_a.map{|pair| {name: pair[0], value: pair[1]}}
       end
+
+      def serialize(entity)
+        case entity.class.to_s
+        when 'Array'
+          entity.map{ |item| serialize(item) }
+        when ->(x) { defined?(x.constantize) && defined?("Inferno::Web::Serializers::#{x.split('::').last}".constantize) }
+          "Inferno::Web::Serializers::#{entity.class.to_s.split('::').last}".constantize.render(entity)
+        else
+          raise StandardError, "CLI does not know how to serialize #{entity.class}"
+        end
+      end
+
+      def verbose_print(*args)
+        print(COLOR.dim(*args)) if self.options[:verbose]
+      end
+
+      def verbose_puts(*args)
+        args.push("\n")
+        verbose_print(*args)
+      end
+
 =begin
       def suppress_output
         begin

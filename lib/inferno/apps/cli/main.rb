@@ -78,6 +78,11 @@ module Inferno
              optional: true,
              type: :hash,
              desc: 'Inputs (i.e: --inputs=foo:bar goo:baz)'
+      option :verbose,
+             aliases: ['-v'],
+             type: :boolean,
+             default: false,
+             desc: 'Output additional information for debugging'
       def execute
         Execute.new.run(options)
       end
