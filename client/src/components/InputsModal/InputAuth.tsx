@@ -68,6 +68,7 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
     const combinedStartingValues = getStartingValues();
 
     // Populate authValues on mount
+    authValues.set('auth_type', authSelectorSettings.default);
     authFields.forEach((field: TestInput) => {
       authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });

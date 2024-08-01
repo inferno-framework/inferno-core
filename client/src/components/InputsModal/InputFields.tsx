@@ -37,6 +37,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
               return (
                 <InputAccess
                   requirement={requirement}
+                  index={index}
                   inputsMap={inputsMap}
                   setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
                   key={`input-${index}`}

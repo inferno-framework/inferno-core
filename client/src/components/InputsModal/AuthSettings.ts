@@ -234,6 +234,7 @@ export const accessSettings = {
 };
 
 export const getAccessFields = (
+  authType: AuthType,
   accessValues: Map<string, unknown>,
   components: TestInput[]
 ): TestInput[] => {
@@ -329,5 +330,11 @@ export const getAccessFields = (
     }
   });
 
+  // Remove extra properties based on auth type or hide if no settings
+  const typeValues = accessSettings[authType];
+  if (accessSettings && authType) {
+    return fields.filter((field) => typeValues.includes(field.name));
+  }
+  fields.forEach((field) => (field.hide = field.hide || !typeValues.includes(field.name)));
   return fields;
 };

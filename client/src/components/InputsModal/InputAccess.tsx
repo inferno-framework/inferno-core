@@ -1,30 +1,75 @@
 import React, { FC, useEffect } from 'react';
-import { Card, CardContent, InputLabel, ListItem, Typography } from '@mui/material';
+import { Card, CardContent, InputLabel, List, ListItem, Typography } from '@mui/material';
 import { Auth, TestInput } from '~/models/testSuiteModels';
-import { getAccessFields } from '~/components/InputsModal/AuthSettings';
+import { AuthType, getAccessFields } from '~/components/InputsModal/AuthSettings';
 import FieldLabel from '~/components/InputsModal/FieldLabel';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from './styles';
+import InputCombobox from './InputCombobox';
 
 export interface InputAccessProps {
   requirement: TestInput;
+  index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
-const InputAccess: FC<InputAccessProps> = ({ requirement, inputsMap, setInputsMap }) => {
+const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
   const [accessValues, setAccessValues] = React.useState<Map<string, unknown>>(new Map());
   const [accessValuesPopulated, setAccessValuesPopulated] = React.useState<boolean>(false);
 
+  const accessSelectorSettings = requirement.options?.components
+    ? requirement.options?.components[0]
+    : // Default auth type settings
+      {
+        name: 'auth_type',
+        default: 'public',
+      };
+
   const [accessFields, setAccessFields] = React.useState<TestInput[]>(
-    getAccessFields(accessValues, requirement.options?.components || [])
+    getAccessFields(
+      accessSelectorSettings.default as AuthType,
+      accessValues,
+      requirement.options?.components || []
+    )
   );
+
+  const accessSelector: TestInput = {
+    name: 'auth_type',
+    type: 'select',
+    title: `${requirement.name} Auth Type`,
+    description: requirement.description,
+    default: accessSelectorSettings.default || 'public',
+    optional: accessSelectorSettings.optional,
+    locked: accessSelectorSettings.locked,
+    options: {
+      list_options: [
+        {
+          label: 'Public',
+          value: 'public',
+        },
+        {
+          label: 'Confidential Symmetric',
+          value: 'symmetric',
+        },
+        {
+          label: 'Confidential Asymmetric',
+          value: 'asymmetric',
+        },
+        {
+          label: 'Backend Services',
+          value: 'backend_services',
+        },
+      ],
+    },
+  };
 
   useEffect(() => {
     const combinedStartingValues = getStartingValues();
 
     // Populate accessValues on mount
+    accessValues.set('auth_type', accessSelectorSettings.default);
     accessFields.forEach((field: TestInput) => {
       accessValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
@@ -36,9 +81,15 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, inputsMap, setInputsMa
   }, []);
 
   useEffect(() => {
-    setAccessFields(getAccessFields(accessValues, requirement.options?.components || []));
+    setAccessFields(
+      getAccessFields(
+        accessSelectorSettings.default as AuthType,
+        accessValues,
+        requirement.options?.components || []
+      )
+    );
 
-    // Update inputsMap whihle maintaining hidden values
+    // Update inputsMap while maintaining hidden values
     if (accessValuesPopulated) {
       const combinedStartingValues = getStartingValues();
       const accessValuesObject = Object.fromEntries(accessValues) as Auth;
@@ -90,6 +141,15 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, inputsMap, setInputsMa
               {requirement.description}
             </Typography>
           )}
+          <List>
+            <InputCombobox
+              requirement={accessSelector}
+              index={index}
+              inputsMap={accessValues}
+              setInputsMap={setAccessValues}
+              key={`input-${index}`}
+            />
+          </List>
           <InputFields
             inputs={accessFields}
             inputsMap={accessValues}
