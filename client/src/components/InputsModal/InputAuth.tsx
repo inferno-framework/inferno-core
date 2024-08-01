@@ -3,8 +3,8 @@ import { Box, List, ListItem, Typography } from '@mui/material';
 import { Auth, TestInput } from '~/models/testSuiteModels';
 import InputFields from './InputFields';
 import useStyles from './styles';
-import InputCombobox from './InputCombobox';
 import { AuthType, getAuthFields } from './AuthSettings';
+import AuthTypeSelector from './AuthTypeSelector';
 
 export interface InputAuthProps {
   requirement: TestInput;
@@ -18,57 +18,20 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   const [authValues, setAuthValues] = React.useState<Map<string, unknown>>(new Map());
   const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
 
-  const authSelectorSettings = requirement.options?.components
-    ? requirement.options?.components[0]
-    : // Default auth type settings
-      {
-        name: 'auth_type',
-        default: 'public',
-      };
+  // Default auth type settings
+  const authType = requirement.options?.components
+    ? requirement.options?.components[0].default
+    : 'public';
 
   const [authFields, setAuthFields] = React.useState<TestInput[]>(
-    getAuthFields(
-      authSelectorSettings.default as AuthType,
-      authValues,
-      requirement.options?.components || []
-    )
+    getAuthFields(authType as AuthType, authValues, requirement.options?.components || [])
   );
-
-  const authSelector: TestInput = {
-    name: 'auth_type',
-    type: 'select',
-    title: `${requirement.name} Auth Type`,
-    description: requirement.description,
-    default: authSelectorSettings.default || 'public',
-    optional: authSelectorSettings.optional,
-    locked: authSelectorSettings.locked,
-    options: {
-      list_options: [
-        {
-          label: 'Public',
-          value: 'public',
-        },
-        {
-          label: 'Confidential Symmetric',
-          value: 'symmetric',
-        },
-        {
-          label: 'Confidential Asymmetric',
-          value: 'asymmetric',
-        },
-        {
-          label: 'Backend Services',
-          value: 'backend_services',
-        },
-      ],
-    },
-  };
 
   useEffect(() => {
     const combinedStartingValues = getStartingValues();
 
     // Populate authValues on mount
-    authValues.set('auth_type', authSelectorSettings.default);
+    authValues.set('auth_type', authType);
     authFields.forEach((field: TestInput) => {
       authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
@@ -81,11 +44,7 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
 
   useEffect(() => {
     setAuthFields(
-      getAuthFields(
-        authSelectorSettings.default as AuthType,
-        authValues,
-        requirement.options?.components || []
-      )
+      getAuthFields(authType as AuthType, authValues, requirement.options?.components || [])
     );
 
     // Update inputsMap
@@ -130,8 +89,8 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
           </Typography>
         )}
         <List>
-          <InputCombobox
-            requirement={authSelector}
+          <AuthTypeSelector
+            requirement={requirement}
             index={index}
             inputsMap={authValues}
             setInputsMap={setAuthValues}

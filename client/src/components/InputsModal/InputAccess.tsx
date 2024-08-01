@@ -5,7 +5,7 @@ import { AuthType, getAccessFields } from '~/components/InputsModal/AuthSettings
 import FieldLabel from '~/components/InputsModal/FieldLabel';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from './styles';
-import InputCombobox from './InputCombobox';
+import AuthTypeSelector from './AuthTypeSelector';
 
 export interface InputAccessProps {
   requirement: TestInput;
@@ -19,57 +19,20 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
   const [accessValues, setAccessValues] = React.useState<Map<string, unknown>>(new Map());
   const [accessValuesPopulated, setAccessValuesPopulated] = React.useState<boolean>(false);
 
-  const accessSelectorSettings = requirement.options?.components
-    ? requirement.options?.components[0]
-    : // Default auth type settings
-      {
-        name: 'auth_type',
-        default: 'public',
-      };
+  // Default auth type settings
+  const authType = requirement.options?.components
+    ? requirement.options?.components[0].default
+    : 'public';
 
   const [accessFields, setAccessFields] = React.useState<TestInput[]>(
-    getAccessFields(
-      accessSelectorSettings.default as AuthType,
-      accessValues,
-      requirement.options?.components || []
-    )
+    getAccessFields(authType as AuthType, accessValues, requirement.options?.components || [])
   );
-
-  const accessSelector: TestInput = {
-    name: 'auth_type',
-    type: 'select',
-    title: `${requirement.name} Auth Type`,
-    description: requirement.description,
-    default: accessSelectorSettings.default || 'public',
-    optional: accessSelectorSettings.optional,
-    locked: accessSelectorSettings.locked,
-    options: {
-      list_options: [
-        {
-          label: 'Public',
-          value: 'public',
-        },
-        {
-          label: 'Confidential Symmetric',
-          value: 'symmetric',
-        },
-        {
-          label: 'Confidential Asymmetric',
-          value: 'asymmetric',
-        },
-        {
-          label: 'Backend Services',
-          value: 'backend_services',
-        },
-      ],
-    },
-  };
 
   useEffect(() => {
     const combinedStartingValues = getStartingValues();
 
     // Populate accessValues on mount
-    accessValues.set('auth_type', accessSelectorSettings.default);
+    accessValues.set('auth_type', authType);
     accessFields.forEach((field: TestInput) => {
       accessValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
@@ -82,11 +45,7 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
 
   useEffect(() => {
     setAccessFields(
-      getAccessFields(
-        accessSelectorSettings.default as AuthType,
-        accessValues,
-        requirement.options?.components || []
-      )
+      getAccessFields(authType as AuthType, accessValues, requirement.options?.components || [])
     );
 
     // Update inputsMap while maintaining hidden values
@@ -142,8 +101,8 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
             </Typography>
           )}
           <List>
-            <InputCombobox
-              requirement={accessSelector}
+            <AuthTypeSelector
+              requirement={requirement}
               index={index}
               inputsMap={accessValues}
               setInputsMap={setAccessValues}
