@@ -105,7 +105,6 @@ module CustomResult
     description 'Criteria: Passes if `Passing Group` passes and any of the other groups passes.'
 
     customize_passing_result do |results|
-      puts "RESULTS SIZE: #{results.results.size}"
       group1_result = results[:passing_custom_result_group]
       other_groups_pass = results.any? do |result|
         result.test_group_id != group1_result.test_group_id && result.result == 'pass'
