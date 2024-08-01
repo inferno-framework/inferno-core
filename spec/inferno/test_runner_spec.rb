@@ -205,4 +205,23 @@ RSpec.describe Inferno::TestRunner do
       expect(result.result_message).to eq('No tests defined')
     end
   end
+
+  describe 'when custom result block provided to the runnable' do
+    let(:suite) { CustomResult::Suite }
+    let(:groups) { suite.children.select(&:required?) }
+    let(:test_run) do
+      repo_create(:test_run, runnable: { test_suite_id: suite.id }, test_session_id: test_session.id)
+    end
+
+    it 'updates the runnable result when all its children have run' do
+      runner.run(suite)
+
+      expect(runner.run_results[suite.id]).to be_present
+    end
+
+    it 'does not update the runnable result when all its children have not run' do
+      groups.each { |group| runner.run(group) }
+      expect(runner.run_results[suite.id]).to be_nil
+    end
+  end
 end
