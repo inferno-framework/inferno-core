@@ -88,7 +88,7 @@ module Inferno
 
         persist_inputs({test_session_id: test_session.id, test_suite_id: suite.id, inputs: thor_hash_to_inputs_array(options[:inputs])}, test_run)
 
-        Jobs.perform(Jobs::ExecuteTestRun, test_run.id)
+        Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
 
         # TODO how to properly wait for jobs to finish; stall? poll?
         sleep(10) # seconds 
