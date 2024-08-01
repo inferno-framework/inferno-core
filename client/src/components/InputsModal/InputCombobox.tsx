@@ -16,9 +16,16 @@ export interface InputComboboxProps {
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
+  disableClear?: boolean;
 }
 
-const InputCombobox: FC<InputComboboxProps> = ({ requirement, index, inputsMap, setInputsMap }) => {
+const InputCombobox: FC<InputComboboxProps> = ({
+  requirement,
+  index,
+  inputsMap,
+  setInputsMap,
+  disableClear,
+}) => {
   const { classes } = useStyles();
 
   const getDefaultValue = (): InputOption | null => {
@@ -56,6 +63,7 @@ const InputCombobox: FC<InputComboboxProps> = ({ requirement, index, inputsMap, 
           options={requirement.options?.list_options || []}
           defaultValue={getDefaultValue()}
           disabled={requirement.locked}
+          disableClearable={disableClear}
           isOptionEqualToValue={(option, value) => option.value === value.value}
           renderInput={(params) => (
             <TextField

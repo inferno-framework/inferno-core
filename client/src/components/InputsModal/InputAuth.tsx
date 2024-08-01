@@ -19,9 +19,11 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
 
   // Default auth type settings
-  const authType = requirement.options?.components
-    ? requirement.options?.components[0].default
-    : 'public';
+  const [authType, setAuthType] = React.useState<string>(
+    requirement.options?.components
+      ? (requirement.options?.components[0].default as string)
+      : 'public'
+  );
 
   const [authFields, setAuthFields] = React.useState<TestInput[]>(
     getAuthFields(authType as AuthType, authValues, requirement.options?.components || [])
@@ -80,6 +82,13 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
     } as Auth;
   };
 
+  const updateAuthType = (map: Map<string, unknown>) => {
+    setAuthValues(map);
+    console.log(map);
+
+    setAuthType(map.get('auth_type') as string);
+  };
+
   return (
     <ListItem sx={{ p: 0 }}>
       <Box width="100%">
@@ -93,7 +102,7 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
             requirement={requirement}
             index={index}
             inputsMap={authValues}
-            setInputsMap={setAuthValues}
+            setInputsMap={updateAuthType}
             key={`input-${index}`}
           />
         </List>

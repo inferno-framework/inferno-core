@@ -60,6 +60,7 @@ const AuthTypeSelector: FC<InputAccessProps> = ({
       inputsMap={inputsMap}
       setInputsMap={setInputsMap}
       key={`input-${index}`}
+      disableClear
     />
   );
 };

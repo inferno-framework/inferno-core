@@ -154,11 +154,11 @@ export const getAuthFields = (
         list_options: [
           {
             label: 'ES384',
-            value: 'es384',
+            value: 'ES384',
           },
           {
             label: 'RS384',
-            value: 'rs384',
+            value: 'RS384',
           },
         ],
       },
