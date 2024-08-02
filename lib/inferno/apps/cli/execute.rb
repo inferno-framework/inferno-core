@@ -2,13 +2,34 @@
 
 require 'pastel'
 require 'active_support'
-require_relative '../../../inferno'
 require_relative '../web/serializers/test_run'
 require_relative '../web/serializers/result'
 
 module Inferno
   module CLI
     class Execute
+
+      def self.suppress_output
+        begin
+          original_stderr = $stderr.clone
+          original_stdout = $stdout.clone
+          $stderr.reopen(File.new('/dev/null', 'w'))
+          $stdout.reopen(File.new('/dev/null', 'w'))
+          retval = yield
+        rescue StandardError => e
+          $stdout.reopen(original_stdout)
+          $stderr.reopen(original_stderr)
+          raise e
+        ensure
+          $stdout.reopen(original_stdout)
+          $stderr.reopen(original_stderr)
+        end
+        retval
+      end
+
+      # Inferno boot flow triggers migration and logger outputs it
+      # I would be allow this in verbose mode but definitely not for JSON output
+      suppress_output{ require_relative '../../../inferno' }
 
       COLOR = Pastel.new
       CHECKMARK = "\u2713"
@@ -57,14 +78,14 @@ module Inferno
       def run(options)
         puts ''
         puts '=========================================='
-        puts " Testing #{options[:suite]} Suite"
+        puts "Testing #{options[:suite]} Suite"
         puts '=========================================='
 
         self.options = options
         verbose_puts "options:", self.options
 
-        # TODO: hijack Application logger?
-        Inferno::Application.start(:suites)        
+        # TODO: hijack Application logger so it displays in verbose mode?
+        Inferno::Application.start(:suites)
 
         suite = Inferno::Repositories::TestSuites.new.find(options[:suite])
         raise StandardError, "Suite #{options[:suite]} not found" if suite.nil?
@@ -163,36 +184,10 @@ module Inferno
         verbose_print(*args)
       end
 
-      def suppress_output
-        begin
-          original_stderr = $stderr.clone
-          original_stdout = $stdout.clone
-          $stderr.reopen(File.new('/dev/null', 'w'))
-          $stdout.reopen(File.new('/dev/null', 'w'))
-          retval = yield
-        rescue StandardError => e
-          $stdout.reopen(original_stdout)
-          $stderr.reopen(original_stderr)
-          raise e
-        ensure
-          $stdout.reopen(original_stdout)
-          $stderr.reopen(original_stderr)
-        end
-        retval
-      end
-
       def fetch_test_id(result)
         [result.test_id, result.test_group_id, result.test_suite_id].find { |x| x.presence }
       end
 
-=begin
-      def unindent_markdown(markdown)
-        return nil if markdown.nil?
-
-        natural_indent = markdown.lines.collect { |l| l.index(/[^ ]/) }.select { |l| !l.nil? && l.positive? }.min || 0
-        markdown.lines.map { |l| l[natural_indent..-1] || "\n" }.join.lstrip
-      end
-=end
       def print_requests(result)
         result.requests.map do |req_res|
           req_res.status.to_s + ' ' + req_res.verb.upcase + ' ' + req_res.url
