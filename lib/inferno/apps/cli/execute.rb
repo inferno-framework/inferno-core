@@ -11,6 +11,7 @@ module Inferno
     class Execute
 
       COLOR = Pastel.new
+      CHECKMARK = "\u2713"
 
       include Import[
                 test_sessions_repo: 'inferno.repositories.test_sessions',
@@ -20,6 +21,7 @@ module Inferno
 
       attr_accessor :options
 
+      # TODO factorize into some helper/util with hanami controller
       def verify_runnable(runnable, inputs, selected_suite_options)
         missing_inputs = runnable&.missing_inputs(inputs, selected_suite_options)
         user_runnable = runnable&.user_runnable?
@@ -27,6 +29,7 @@ module Inferno
         raise Inferno::Exceptions::NotUserRunnableException unless user_runnable
       end
 
+      # TODO likewise
       def persist_inputs(params, test_run)
         available_inputs = test_run.runnable.available_inputs
         params[:inputs]&.each do |input_params|
@@ -51,7 +54,6 @@ module Inferno
         end
       end
 
-      ## MAIN
       def run(options)
         puts ''
         puts '=========================================='
@@ -59,7 +61,7 @@ module Inferno
         puts '=========================================='
 
         self.options = options
-        verbose_puts "In verbose mode"
+        verbose_puts "options:", self.options
 
         # TODO: hijack Application logger?
         Inferno::Application.start(:suites)        
@@ -88,28 +90,53 @@ module Inferno
 
         persist_inputs({test_session_id: test_session.id, test_suite_id: suite.id, inputs: thor_hash_to_inputs_array(options[:inputs])}, test_run)
 
+        puts "Running tests. This may take a while..."
         Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
 
-        # TODO how to properly wait for jobs to finish; stall? poll?
-        sleep(10) # seconds 
-
-        results = test_runs_repo.results_for_test_run(test_run.id)
-        verbose_puts "Results:"
+        results = test_runs_repo.results_for_test_run(test_run.id)&.reverse
+        verbose_puts '=========================================='
+        verbose_puts "JSON Results:"
+        verbose_puts '=========================================='
         verbose_puts serialize(results)
+        verbose_puts '=========================================='
 
+        puts '=========================================='
+        puts "Color Results:"
+        puts '=========================================='
         results.each do |result|
-          puts serialize(result)
+          print fetch_test_id(result), ":"
+          case result.result
+          when 'pass'
+            print COLOR.green(CHECKMARK, ' pass')
+          when 'fail'
+            print COLOR.red 'X fail'
+          when 'skip'
+            print COLOR.yellow '* skip'
+          when 'omit'
+            print COLOR.blue '* omit'
+          when 'error'
+            print COLOR.magenta 'X error'
+          else
+            # TODO strict behavior or no?
+            #raise StandardError.new, "Unrecognized result #{result.result}" # strict
+            print '- unknown'                                               # unstrict
+          end
+          puts ''
+          verbose_puts "\tmessage: ", result.result_message
+          verbose_puts "\trequests: ", print_requests(result)
         end
+        puts '=========================================='
 
-        puts COLOR.yellow "WIP: implementing"
 
       rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation,
              Inferno::Exceptions::RequiredInputsNotFound,
              Inferno::Exceptions::NotUserRunnableException => e
         $stderr.puts COLOR.red "Error: #{e.full_message}"
         # TODO: use Application Logger?
+        exit(1)
       rescue StandardError => e
         $stderr.puts COLOR.red "Error: #{e.full_message}"
+        exit(1)
       end
 
       def thor_hash_to_inputs_array(hash)
@@ -119,7 +146,7 @@ module Inferno
       def serialize(entity)
         case entity.class.to_s
         when 'Array'
-          entity.map{ |item| serialize(item) }
+          JSON.pretty_generate entity.map{ |item| JSON.parse serialize(item) }
         when ->(x) { defined?(x.constantize) && defined?("Inferno::Web::Serializers::#{x.split('::').last}".constantize) }
           "Inferno::Web::Serializers::#{entity.class.to_s.split('::').last}".constantize.render(entity)
         else
@@ -136,7 +163,6 @@ module Inferno
         verbose_print(*args)
       end
 
-=begin
       def suppress_output
         begin
           original_stderr = $stderr.clone
@@ -155,29 +181,23 @@ module Inferno
         retval
       end
 
+      def fetch_test_id(result)
+        [result.test_id, result.test_group_id, result.test_suite_id].find { |x| x.presence }
+      end
+
+=begin
       def unindent_markdown(markdown)
         return nil if markdown.nil?
 
         natural_indent = markdown.lines.collect { |l| l.index(/[^ ]/) }.select { |l| !l.nil? && l.positive? }.min || 0
         markdown.lines.map { |l| l[natural_indent..-1] || "\n" }.join.lstrip
       end
-
-      def print_requests(result)
-        result.request_responses.map do |req_res|
-          req_res.response_code.to_s + ' ' + req_res.request_method.upcase + ' ' + req_res.request_url
-        end
-      end
-
-      # TODO better name
-      def _run(runnable, test_session, inputs = {})
-        test_run_params = { test_session_id: test_session.id }.merge(runnable.reference_hash)
-        test_run = Inferno::Repositories::TestRuns.new.create(test_run_params)
-        inputs.each do |name, value|
-          session_data_repo.save(test_session_id: test_session.id, name: name, value: value, type: 'text')
-        end
-        Inferno::TestRunner.new(test_session: test_session, test_run: test_run).run(runnable)
-      end
 =end
+      def print_requests(result)
+        result.requests.map do |req_res|
+          req_res.status.to_s + ' ' + req_res.verb.upcase + ' ' + req_res.url
+        end
+      end
     end
   end
 end
