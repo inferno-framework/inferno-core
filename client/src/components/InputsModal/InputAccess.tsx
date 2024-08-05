@@ -81,6 +81,7 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
       ...requirementDefaultValues,
       ...requirementStartingValues,
       ...inputsMapValues,
+      ...Object.fromEntries(accessValues), // for auto-populated values, like radio inputs
     } as Auth;
   };
 

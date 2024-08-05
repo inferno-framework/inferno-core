@@ -35,18 +35,24 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
 
   // Set default on mounted
   useEffect(() => {
-    console.log(requirement.name);
-
-    setValue(
-      (inputsMap.get(requirement.name) as string) || (requirement.default as string) || firstValue
-    );
+    const defaultValue =
+      (inputsMap.get(requirement.name) as string) || (requirement.default as string) || firstValue;
+    updateInputs(requirement.name, defaultValue);
   }, []);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
+    updateInputs(requirement.name, value);
+  };
+
+  const updateInputs = (key: string, value: string) => {
+    console.log('kv:', key, value);
+
     setValue(value);
-    inputsMap.set(requirement.name, value);
-    setInputsMap(new Map(inputsMap));
+    inputsMap.set(key, value);
+    setInputsMap(inputsMap);
+
+    console.log(key, inputsMap);
   };
 
   return (

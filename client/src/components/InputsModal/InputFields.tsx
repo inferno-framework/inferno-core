@@ -81,7 +81,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
                 );
               }
             case 'radio':
-              console.log(requirement.name);
+              // console.log(requirement.name);
 
               return (
                 <InputRadioGroup

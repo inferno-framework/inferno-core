@@ -37,6 +37,9 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
     authFields.forEach((field: TestInput) => {
       authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
+
+    console.log('set starting values');
+
     setAuthValuesPopulated(true);
 
     // Trigger change on mount for default values
@@ -48,6 +51,8 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
     setAuthFields(
       getAuthFields(authType as AuthType, authValues, requirement.options?.components || [])
     );
+
+    console.log(authValues);
 
     // Update inputsMap
     if (authValuesPopulated) {
@@ -79,6 +84,7 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
       ...requirementDefaultValues,
       ...requirementStartingValues,
       ...inputsMapValues,
+      ...Object.fromEntries(authValues), // for auto-populated values, like radio inputs
     } as Auth;
   };
 

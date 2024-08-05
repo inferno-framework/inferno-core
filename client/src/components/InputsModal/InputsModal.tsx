@@ -112,6 +112,9 @@ const InputsModal: FC<InputsModalProps> = ({
             ? getAuthFields(authType, new Map(), [])
             : getAccessFields(authType, new Map(), []);
         const requiredFields = fields.filter((field) => !field.optional).map((field) => field.name);
+
+        console.log(requiredFields.filter((field) => !authJson[field as keyof Auth]));
+
         authMissingRequiredInput = requiredFields.some((field) => !authJson[field as keyof Auth]);
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);
@@ -213,10 +216,7 @@ const InputsModal: FC<InputsModalProps> = ({
     const inputsWithValues: TestInput[] = [];
     inputsMap.forEach((inputValue, inputName) => {
       inputsWithValues.push({ name: inputName, value: inputValue, type: 'text' });
-      console.log(JSON.parse(inputValue as string));
     });
-    console.log(inputsWithValues);
-
     createTestRun(runnableType, runnable?.id || '', inputsWithValues);
     closeModal();
   };
