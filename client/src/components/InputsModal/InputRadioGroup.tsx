@@ -33,12 +33,8 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
 
   const [value, setValue] = React.useState<string>(firstValue);
 
-  console.log('render value:', requirement.name, value);
-
   // Set default on mounted
   useEffect(() => {
-    console.log('mounted', requirement.name);
-
     const defaultValue =
       (inputsMap.get(requirement.name) as string) || (requirement.default as string) || firstValue;
     updateInputs(requirement.name, defaultValue);
