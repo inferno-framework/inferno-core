@@ -104,16 +104,15 @@ const InputsModal: FC<InputsModalProps> = ({
         )
           return false;
         const authJson = JSON.parse(inputsMap.get(input.name) as string) as Auth;
-        const authType = input.options.components.find((c) => c.name === 'auth_type')
-          ?.default as AuthType;
+        const authType = (authJson.auth_type ||
+          input.options.components.find((c) => c.name === 'auth_type')?.default) as AuthType;
+
         // Determine which fields are required; authValues and components props irrelevant for this
         const fields =
           input.options?.mode === 'auth'
             ? getAuthFields(authType, new Map(), [])
             : getAccessFields(authType, new Map(), []);
         const requiredFields = fields.filter((field) => !field.optional).map((field) => field.name);
-
-        console.log(requiredFields.filter((field) => !authJson[field as keyof Auth]));
 
         authMissingRequiredInput = requiredFields.some((field) => !authJson[field as keyof Auth]);
       } catch (e: unknown) {

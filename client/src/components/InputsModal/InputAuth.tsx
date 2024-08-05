@@ -38,8 +38,6 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
       authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
 
-    console.log('set starting values');
-
     setAuthValuesPopulated(true);
 
     // Trigger change on mount for default values
@@ -52,13 +50,12 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
       getAuthFields(authType as AuthType, authValues, requirement.options?.components || [])
     );
 
-    console.log(authValues);
-
     // Update inputsMap
     if (authValuesPopulated) {
       const stringifiedAuthValues = JSON.stringify(Object.fromEntries(authValues));
-      inputsMap.set(requirement.name, stringifiedAuthValues);
-      setInputsMap(new Map(inputsMap));
+      const newInputsMap = new Map(inputsMap);
+      newInputsMap.set(requirement.name, stringifiedAuthValues);
+      setInputsMap(newInputsMap);
     }
   }, [authValues]);
 
@@ -91,6 +88,7 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   const updateAuthType = (map: Map<string, unknown>) => {
     setAuthType(map.get('auth_type') as string);
     setAuthValues(map);
+    console.warn('update auth type');
   };
 
   return (

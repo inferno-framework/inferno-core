@@ -31,10 +31,14 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
       ? requirement.options?.list_options[0]?.value
       : '';
 
-  const [value, setValue] = React.useState<string>('');
+  const [value, setValue] = React.useState<string>(firstValue);
+
+  console.log('render value:', requirement.name, value);
 
   // Set default on mounted
   useEffect(() => {
+    console.log('mounted', requirement.name);
+
     const defaultValue =
       (inputsMap.get(requirement.name) as string) || (requirement.default as string) || firstValue;
     updateInputs(requirement.name, defaultValue);
@@ -46,13 +50,9 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   };
 
   const updateInputs = (key: string, value: string) => {
-    console.log('kv:', key, value);
-
     setValue(value);
     inputsMap.set(key, value);
     setInputsMap(inputsMap);
-
-    console.log(key, inputsMap);
   };
 
   return (
@@ -64,7 +64,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
         fullWidth
         className={classes.inputField}
       >
-        <FormLabel required={!requirement.optional} className={classes.inputLabel}>
+        <FormLabel className={classes.inputLabel}>
           <FieldLabel requirement={requirement} />
         </FormLabel>
         {requirement.description && (

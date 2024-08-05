@@ -14,7 +14,8 @@ const FieldLabel: FC<FieldLabelProps> = ({ requirement, isMissingInput = false }
 
   const fieldLabelText = (requirement.title || requirement.name) as string;
 
-  const requiredLabel = !requirement.optional ? ' (required)' : '';
+  // Radio buttons will always have an input value
+  const requiredLabel = !requirement.optional && requirement.type !== 'radio' ? ' (required)' : '';
 
   const lockedIcon = requirement.locked && (
     <LockIcon fontSize="small" className={classes.lockedIcon} />
