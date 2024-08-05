@@ -209,6 +209,7 @@ describe('Input Components', () => {
         <SnackbarProvider>
           <InputAccess
             requirement={accessInput}
+            index={0}
             inputsMap={new Map<string, string>()}
             setInputsMap={() => {}}
           />
