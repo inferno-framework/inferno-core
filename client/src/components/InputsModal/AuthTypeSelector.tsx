@@ -30,7 +30,8 @@ const AuthTypeSelector: FC<InputAccessProps> = ({
     description: requirement.description,
     default: selectorSettings.default || 'public',
     optional: selectorSettings.optional,
-    locked: selectorSettings.locked,
+    // locked: selectorSettings.locked,
+    locked: false,
     options: {
       list_options: [
         {

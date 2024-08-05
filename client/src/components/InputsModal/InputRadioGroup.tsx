@@ -35,6 +35,8 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
 
   // Set default on mounted
   useEffect(() => {
+    console.log(requirement.name);
+
     setValue(
       (inputsMap.get(requirement.name) as string) || (requirement.default as string) || firstValue
     );
