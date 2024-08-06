@@ -84,7 +84,6 @@ module Inferno
         self.options = options
         verbose_puts "options:", self.options
 
-        # TODO: hijack Application logger so it displays in verbose mode?
         Inferno::Application.start(:suites)
 
         suite = Inferno::Repositories::TestSuites.new.find(options[:suite])
@@ -93,57 +92,56 @@ module Inferno
         test_session = test_sessions_repo.create({test_suite_id: suite.id}) # TODO add suite options
 
         verify_runnable(
-          test_runs_repo.build_entity({
-            test_session_id: test_session.id,
-            test_suite_id: suite.id,
-            inputs: thor_hash_to_inputs_array(options[:inputs])
-          }).runnable,
+          test_runs_repo.build_entity(create_params(test_session,suite)).runnable,
           thor_hash_to_inputs_array(options[:inputs]),
           test_session.suite_options
         )
 
-        test_run = test_runs_repo.create({
-          test_session_id: test_session.id,
-          test_suite_id: suite.id,
-          inputs: thor_hash_to_inputs_array(options[:inputs]),
-          status: 'queued'
-        })
+        test_run = test_runs_repo.create(
+          create_params(test_session,suite).merge({status: 'queued'})
+        )
 
-        persist_inputs({test_session_id: test_session.id, test_suite_id: suite.id, inputs: thor_hash_to_inputs_array(options[:inputs])}, test_run)
+        persist_inputs(create_params(test_session, suite), test_run)
 
         puts "Running tests. This may take a while..."
         Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
 
         results = test_runs_repo.results_for_test_run(test_run.id)&.reverse
         verbose_puts '=========================================='
-        verbose_puts "JSON Results:"
+        verbose_puts "JSON Test Results:"
         verbose_puts '=========================================='
         verbose_puts serialize(results)
         verbose_puts '=========================================='
 
         puts '=========================================='
-        puts "Color Results:"
+        puts "Colored Test Results:"
         puts '=========================================='
         results.each do |result|
-          print fetch_test_id(result), ":"
+          print fetch_test_id(result), ": "
           case result.result
           when 'pass'
-            print COLOR.green(CHECKMARK, ' pass')
+            print COLOR.bold.green(CHECKMARK, ' pass')
           when 'fail'
-            print COLOR.red 'X fail'
+            print COLOR.bold.red 'X fail'
           when 'skip'
             print COLOR.yellow '* skip'
           when 'omit'
             print COLOR.blue '* omit'
           when 'error'
             print COLOR.magenta 'X error'
+          when 'wait'
+            # This may be dead code with synchronous test execution
+            print '. wait'
+          when 'cancel'
+            print COLOR.red 'X cancel'
           else
             # TODO strict behavior or no?
             #raise StandardError.new, "Unrecognized result #{result.result}" # strict
-            print '- unknown'                                               # unstrict
+            print '- unknown'                                                # unstrict
           end
           puts ''
-          verbose_puts "\tmessage: ", result.result_message
+          verbose_puts "\tsummary: ",  result.result_message
+          verbose_puts "\tmessages: ", print_messages(result)
           verbose_puts "\trequests: ", print_requests(result)
         end
         puts '=========================================='
@@ -162,6 +160,14 @@ module Inferno
 
       def thor_hash_to_inputs_array(hash)
         hash.to_a.map{|pair| {name: pair[0], value: pair[1]}}
+      end
+
+      def create_params(test_session, suite)
+        {
+          test_session_id: test_session.id,
+          test_suite_id: suite.id,
+          inputs: thor_hash_to_inputs_array(self.options[:inputs])
+        }
       end
 
       def serialize(entity)
@@ -188,9 +194,15 @@ module Inferno
         [result.test_id, result.test_group_id, result.test_suite_id].find { |x| x.presence }
       end
 
+      def print_messages(result)
+        result.messages.map do |message|
+          "\n\t\t" + message.type + ": " + message.message
+        end
+      end
+
       def print_requests(result)
         result.requests.map do |req_res|
-          req_res.status.to_s + ' ' + req_res.verb.upcase + ' ' + req_res.url
+          "\n\t\t" + req_res.status.to_s + ' ' + req_res.verb.upcase + ' ' + req_res.url
         end
       end
     end
