@@ -1,8 +1,15 @@
+require_relative '../../../../utils/verify_runnable'
+require_relative '../../../../utils/persist_inputs'
+
 module Inferno
   module Web
     module Controllers
       module TestRuns
         class Create < Controller
+
+          include ::Inferno::Utils::VerifyRunnable
+          include ::Inferno::Utils::PersistInputs
+
           include Import[
                     test_sessions_repo: 'inferno.repositories.test_sessions',
                     session_data_repo: 'inferno.repositories.session_data',
@@ -10,37 +17,6 @@ module Inferno
                   ]
 
           PARAMS = [:test_session_id, :test_suite_id, :test_group_id, :test_id].freeze
-
-          def verify_runnable(runnable, inputs, selected_suite_options)
-            missing_inputs = runnable&.missing_inputs(inputs, selected_suite_options)
-            user_runnable = runnable&.user_runnable?
-            raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs&.any?
-            raise Inferno::Exceptions::NotUserRunnableException unless user_runnable
-          end
-
-          def persist_inputs(params, test_run)
-            available_inputs = test_run.runnable.available_inputs
-            params[:inputs]&.each do |input_params|
-              input =
-                available_inputs
-                  .find { |_, runnable_input| runnable_input.name == input_params[:name] }
-                  &.last
-
-              if input.nil?
-                Inferno::Application['logger'].warn(
-                  "Unknown input `#{input_params[:name]}` for #{test_run.runnable.id}: #{test_run.runnable.title}"
-                )
-                next
-              end
-
-              session_data_repo.save(
-                test_session_id: test_run.test_session_id,
-                name: input.name,
-                value: input_params[:value],
-                type: input.type
-              )
-            end
-          end
 
           def handle(req, res)
             test_session = test_sessions_repo.find(req.params[:test_session_id])

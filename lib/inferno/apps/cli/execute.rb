@@ -4,10 +4,15 @@ require 'pastel'
 require 'active_support'
 require_relative '../web/serializers/test_run'
 require_relative '../web/serializers/result'
+require_relative '../../utils/verify_runnable'
+require_relative '../../utils/persist_inputs'
 
 module Inferno
   module CLI
     class Execute
+
+      include ::Inferno::Utils::VerifyRunnable
+      include ::Inferno::Utils::PersistInputs
 
       def self.suppress_output
         begin
@@ -31,6 +36,8 @@ module Inferno
       # I would be allow this in verbose mode but definitely not for JSON output
       suppress_output{ require_relative '../../../inferno' }
 
+      # TODO hijack logger and suppress or redirect its output
+
       COLOR = Pastel.new
       CHECKMARK = "\u2713"
 
@@ -42,38 +49,6 @@ module Inferno
 
       attr_accessor :options
 
-      # TODO factorize into some helper/util with hanami controller
-      def verify_runnable(runnable, inputs, selected_suite_options)
-        missing_inputs = runnable&.missing_inputs(inputs, selected_suite_options)
-        user_runnable = runnable&.user_runnable?
-        raise Inferno::Exceptions::RequiredInputsNotFound, missing_inputs if missing_inputs&.any?
-        raise Inferno::Exceptions::NotUserRunnableException unless user_runnable
-      end
-
-      # TODO likewise
-      def persist_inputs(params, test_run)
-        available_inputs = test_run.runnable.available_inputs
-        params[:inputs]&.each do |input_params|
-          input =
-            available_inputs
-              .find { |_, runnable_input| runnable_input.name == input_params[:name] }
-              &.last
-
-          if input.nil?
-            Inferno::Application['logger'].warn(
-              "Unknown input `#{input_params[:name]}` for #{test_run.runnable.id}: #{test_run.runnable.title}"
-            )
-            next
-          end
-
-          session_data_repo.save(
-            test_session_id: test_run.test_session_id,
-            name: input.name,
-            value: input_params[:value],
-            type: input.type
-          )
-        end
-      end
 
       def run(options)
         puts ''
