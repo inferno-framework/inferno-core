@@ -33,11 +33,12 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
 
   const [value, setValue] = React.useState<string>(firstValue);
 
-  // Set default on mounted
+  // Set default if no value is set
   useEffect(() => {
+    // TODO: Investigate if this can be triggered fewer times
     const defaultValue =
       (inputsMap.get(requirement.name) as string) || (requirement.default as string) || firstValue;
-    updateInputs(requirement.name, defaultValue);
+    if (!inputsMap.get(requirement.name)) updateInputs(requirement.name, defaultValue);
   });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,9 +48,8 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
 
   const updateInputs = (key: string, value: string) => {
     setValue(value);
-    const newInputsMap = new Map(inputsMap);
-    newInputsMap.set(key, value);
-    setInputsMap(newInputsMap);
+    inputsMap.set(key, value);
+    setInputsMap(new Map(inputsMap));
   };
 
   return (
