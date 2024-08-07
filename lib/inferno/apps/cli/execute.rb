@@ -118,6 +118,8 @@ module Inferno
           verbose_puts "\tsummary: ",  result.result_message
           verbose_puts "\tmessages: ", format_messages(result)
           verbose_puts "\trequests: ", format_requests(result)
+          verbose_puts "\tinputs: ",   format_inputs(result)
+          verbose_puts "\toutputs: ",  format_outputs(result)
         end
         puts '=========================================='
 
@@ -182,6 +184,19 @@ module Inferno
         result.requests.map do |req_res|
           "\n\t\t" + req_res.status.to_s + ' ' + req_res.verb.upcase + ' ' + req_res.url
         end
+      end
+
+      def format_inputs(result, attr = :input_json)
+        input_json = result.send(attr)
+        return '' if input_json.nil?
+
+        JSON.parse(input_json).map do |input|
+          "\n\t\t#{input['name']}: #{input['value']}"
+        end
+      end
+
+      def format_outputs(result)
+        format_inputs(result, :output_json)
       end
 
       def print_error_and_exit(e, code)
