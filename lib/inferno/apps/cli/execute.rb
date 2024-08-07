@@ -81,7 +81,7 @@ module Inferno
         puts "Running tests. This may take a while..."
         Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
 
-        results = test_runs_repo.results_for_test_run(test_run.id)&.reverse
+        results = test_runs_repo.results_for_test_run(test_run.id).reverse
         verbose_puts '=========================================='
         verbose_puts "JSON Test Results:"
         verbose_puts '=========================================='
@@ -116,21 +116,24 @@ module Inferno
           end
           puts ''
           verbose_puts "\tsummary: ",  result.result_message
-          verbose_puts "\tmessages: ", print_messages(result)
-          verbose_puts "\trequests: ", print_requests(result)
+          verbose_puts "\tmessages: ", format_messages(result)
+          verbose_puts "\trequests: ", format_requests(result)
         end
         puts '=========================================='
 
+        exit(0) if results.find{|result| result.test_suite_id == options[:suite_id]}.result == 'pass'
 
-      rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation,
-             Inferno::Exceptions::RequiredInputsNotFound,
-             Inferno::Exceptions::NotUserRunnableException => e
-        $stderr.puts COLOR.red "Error: #{e.full_message}"
-        # TODO: use Application Logger?
         exit(1)
+      rescue Sequel::ValidationFailed => e
+        print_error_and_exit(e, 3)
+      rescue Sequel::ForeignKeyConstraintViolation => e
+        print_error_and_exit(e, 4)
+      rescue Inferno::Exceptions::RequiredInputsNotFound => e
+        print_error_and_exit(e, 5)
+      rescue Inferno::Exceptions::NotUserRunnableException => e
+        print_error_and_exit(e, 6)
       rescue StandardError => e
-        $stderr.puts COLOR.red "Error: #{e.full_message}"
-        exit(1)
+        print_error_and_exit(e, 2)
       end
 
       def thor_hash_to_inputs_array(hash)
@@ -169,16 +172,22 @@ module Inferno
         [result.test_id, result.test_group_id, result.test_suite_id].find { |x| x.presence }
       end
 
-      def print_messages(result)
+      def format_messages(result)
         result.messages.map do |message|
           "\n\t\t" + message.type + ": " + message.message
         end
       end
 
-      def print_requests(result)
+      def format_requests(result)
         result.requests.map do |req_res|
           "\n\t\t" + req_res.status.to_s + ' ' + req_res.verb.upcase + ' ' + req_res.url
         end
+      end
+
+      def print_error_and_exit(e, code)
+        # TODO: use Application Logger for stderr?
+        $stderr.puts COLOR.red "Error: #{e.full_message}"
+        exit(code)
       end
     end
   end
