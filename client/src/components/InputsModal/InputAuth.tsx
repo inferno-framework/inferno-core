@@ -88,7 +88,6 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   const updateAuthType = (map: Map<string, unknown>) => {
     setAuthType(map.get('auth_type') as string);
     setAuthValues(map);
-    console.warn('update auth type');
   };
 
   return (
