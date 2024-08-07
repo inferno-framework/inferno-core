@@ -20,10 +20,11 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
   const [accessValuesPopulated, setAccessValuesPopulated] = React.useState<boolean>(false);
 
   // Default auth type settings
-  const authType = requirement.options?.components
-    ? requirement.options?.components[0].default
-    : 'public';
-
+  const [authType, setAuthType] = React.useState<string>(
+    requirement.options?.components
+      ? (requirement.options?.components[0].default as string)
+      : 'public'
+  );
   const [accessFields, setAccessFields] = React.useState<TestInput[]>(
     getAccessFields(authType as AuthType, accessValues, requirement.options?.components || [])
   );
@@ -85,6 +86,12 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
     } as Auth;
   };
 
+  const updateAuthType = (map: Map<string, unknown>) => {
+    setAuthType(map.get('auth_type') as string);
+    setAccessValues(map);
+    console.warn('update auth type');
+  };
+
   return (
     <ListItem>
       <Card variant="outlined" className={classes.authCard}>
@@ -106,7 +113,7 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
               requirement={requirement}
               index={index}
               inputsMap={accessValues}
-              setInputsMap={setAccessValues}
+              setInputsMap={updateAuthType}
               key={`input-${index}`}
             />
           </List>
