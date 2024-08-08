@@ -69,7 +69,10 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
 
     // Update inputsMap while maintaining hidden values
     if (accessValuesPopulated) {
-      const stringifiedAccessValues = JSON.stringify(Object.fromEntries(accessValues));
+      const combinedStartingValues = getStartingValues();
+      const accessValuesObject = Object.fromEntries(accessValues) as Auth;
+      const combinedValues = { ...combinedStartingValues, ...accessValuesObject };
+      const stringifiedAccessValues = JSON.stringify(combinedValues);
       inputsMap.set(requirement.name, stringifiedAccessValues);
       setInputsMap(new Map(inputsMap));
     }
