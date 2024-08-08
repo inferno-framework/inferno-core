@@ -101,26 +101,26 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#format_messages' do
-    let(:test_result) { create(:result, message_count: 10) }
+    let(:test_result) { repo_create(:result, message_count: 10) }
     let(:instance) { described_class.new }
 
     it 'includes all characters case-insensitive' do
       messages = test_result.messages
-      formatted_string = instance.format_messages(messages)
+      formatted_string = instance.format_messages(test_result)
 
       messages.each do |message|
-        expect(formatted_string.upcase).to include message.upcase
+        expect(formatted_string.upcase).to include message.message.upcase
       end
     end
   end
 
   describe '#format_requests' do
-    let(:test_result) { create(:result, request_count: 10) }
+    let(:test_result) { repo_create(:result, request_count: 10) }
     let(:instance) { described_class.new }
 
     it 'includes all status codes' do
       requests = test_result.requests
-      formatted_string = instance.format_messages(messages)
+      formatted_string = instance.format_requests(test_result)
 
       requests.each do |request|
         expect(formatted_string.upcase).to include request.status.to_s.upcase
@@ -134,7 +134,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:instance) { described_class.new }
 
     it 'includes all values' do
-      formatted_string = instance.format_inputs(test_result).join
+      formatted_string = instance.format_inputs(test_result)
       inputs.each do |input_element|
         expect(formatted_string).to include  input_element[:value]
       end
@@ -147,7 +147,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:instance) { described_class.new }
 
     it 'includes all values' do
-      formatted_string = instance.format_outputs(test_result).join
+      formatted_string = instance.format_outputs(test_result)
       outputs.each do |output_element|
         expect(formatted_string).to include output_element[:value]
       end

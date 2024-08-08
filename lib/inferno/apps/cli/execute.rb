@@ -178,13 +178,13 @@ module Inferno
       def format_messages(result)
         result.messages.map do |message|
           "\n\t\t" + message.type + ": " + message.message
-        end
+        end.join('')
       end
 
       def format_requests(result)
         result.requests.map do |req_res|
           "\n\t\t" + req_res.status.to_s + ' ' + req_res.verb.upcase + ' ' + req_res.url
-        end
+        end.join('')
       end
 
       def format_inputs(result, attr = :input_json)
@@ -193,7 +193,7 @@ module Inferno
 
         JSON.parse(input_json).map do |input|
           "\n\t\t#{input['name']}: #{input['value']}"
-        end
+        end.join('')
       end
 
       def format_outputs(result)
