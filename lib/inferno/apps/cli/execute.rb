@@ -92,7 +92,7 @@ module Inferno
         puts "Colored Test Results:"
         puts '=========================================='
         results.each do |result|
-          print fetch_test_id(result), ": "
+          print format_id(result), ": "
           case result.result
           when 'pass'
             print COLOR.bold.green(CHECKMARK, ' pass')
@@ -170,9 +170,8 @@ module Inferno
         verbose_print(*args)
       end
 
-      # TODO - try to replace this with `result.runnable.id`
-      def fetch_test_id(result)
-        [result.test_id, result.test_group_id, result.test_suite_id].find { |x| x.presence }
+      def format_id(result)
+        result.runnable.id
       end
 
       def format_messages(result)

@@ -74,8 +74,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  # TODO: see if I can replace fetch_test_id with .runnable.id
-  describe '#fetch_test_id' do
+  describe '#format_id' do
     let(:test_suite) { BasicTestSuite::Suite }
     let(:test_group) { BasicTestSuite::AbcGroup }
     let(:test) { test_group.tests.first }
@@ -84,19 +83,19 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     it 'returns suite id if test result belongs to suite' do
       test_result = create(:result, runnable: {test_suite_id: test_suite.id})
 
-      expect( instance.fetch_test_id(test_result) ).to eq( test_suite.id )
+      expect( instance.format_id(test_result) ).to eq( test_suite.id )
     end
 
     it 'returns group id if test result belongs to group' do
       test_result = create(:result, runnable: {test_group_id: test_group.id})
 
-      expect( instance.fetch_test_id(test_result) ).to eq( test_group.id )
+      expect( instance.format_id(test_result) ).to eq( test_group.id )
     end
 
     it 'returns test id if test result belongs to test' do
       test_result = create(:result, runnable: {test_id: test.id});
 
-      expect( instance.fetch_test_id(test_result) ).to eq( test.id )
+      expect( instance.format_id(test_result) ).to eq( test.id )
     end
   end
 
