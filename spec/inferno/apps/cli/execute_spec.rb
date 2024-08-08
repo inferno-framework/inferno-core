@@ -1,4 +1,4 @@
-require_relative '../../../../lib/inferno/apps/cli/execute.rb'
+require_relative '../../../../lib/inferno/apps/cli/execute'
 
 ## TODO REFACTOR ALL THESE TESTS WITH FACTORY BOT
 
@@ -6,7 +6,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   let(:instance) { described_class.new }
 
   describe '#thor_hash_to_inputs_array' do
-    let(:hash) { {url: 'https://example.com'} }
+    let(:hash) { { url: 'https://example.com' } }
 
     it 'converts hash to array' do
       result = instance.thor_hash_to_inputs_array(hash)
@@ -15,23 +15,23 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
     it 'returns proper inputs array' do
       result = instance.thor_hash_to_inputs_array(hash)
-      expect(result).to eq([{name: :url, value: 'https://example.com'}])
+      expect(result).to eq([{ name: :url, value: 'https://example.com' }])
     end
   end
 
   describe '#create_params' do
     let(:test_suite) { BasicTestSuite::Suite }
     let(:test_session) { create(:test_session) }
-    let(:inputs_hash) { {url: 'https://example.com'} }
-    let(:inputs_array) { [{name: :url, value: 'https://example.com'}] }
+    let(:inputs_hash) { { url: 'https://example.com' } }
+    let(:inputs_array) { [{ name: :url, value: 'https://example.com' }] }
 
     it 'returns test run params' do
-      stubbed_instance = instance()
-      allow(stubbed_instance).to receive(:options).and_return({inputs: inputs_hash})
-      test_session_inst = test_session()
+      stubbed_instance = instance
+      allow(stubbed_instance).to receive(:options).and_return({ inputs: inputs_hash })
+      test_session_inst = test_session
 
       result = stubbed_instance.create_params(test_session_inst, test_suite)
-      expect(result).to eq({test_session_id: test_session.id, test_suite_id: test_suite.id, inputs: inputs_array})
+      expect(result).to eq({ test_session_id: test_session.id, test_suite_id: test_suite.id, inputs: inputs_array })
     end
   end
 
@@ -39,36 +39,36 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:test_results) { create_list(:result, 2) }
 
     it 'handles an array of test results without raising exception' do
-      expect { instance.serialize(test_results) }.not_to raise_error(StandardError)
+      expect { instance.serialize(test_results) }.to_not raise_error(StandardError)
     end
 
     it 'returns legit JSON' do
-      expect { JSON.parse(instance.serialize(test_results)) }.not_to raise_error(JSON::ParserError)
-      expect { JSON.parse(instance.serialize(test_results)) }.not_to raise_error(JSON::NestingError)
-      expect { JSON.parse(instance.serialize(test_results)) }.not_to raise_error(TypeError)
+      expect { JSON.parse(instance.serialize(test_results)) }.to_not raise_error(JSON::ParserError)
+      expect { JSON.parse(instance.serialize(test_results)) }.to_not raise_error(JSON::NestingError)
+      expect { JSON.parse(instance.serialize(test_results)) }.to_not raise_error(TypeError)
     end
   end
 
   describe '#verbose_print' do
     it 'outputs when verbose is true' do
-      stubbed_instance = instance()
-      allow(stubbed_instance).to receive(:options).and_return({verbose: true})
+      stubbed_instance = instance
+      allow(stubbed_instance).to receive(:options).and_return({ verbose: true })
 
       expect { stubbed_instance.verbose_print('Lorem') }.to output(/Lorem/).to_stdout
     end
 
     it 'does not output when verbose is false' do
-      stubbed_instance = instance()
-      allow(stubbed_instance).to receive(:options).and_return({verbose: false})
+      stubbed_instance = instance
+      allow(stubbed_instance).to receive(:options).and_return({ verbose: false })
 
-      expect { stubbed_instance.verbose_print('Lorem') }.not_to output(/.+/).to_stdout
+      expect { stubbed_instance.verbose_print('Lorem') }.to_not output(/.+/).to_stdout
     end
   end
 
   describe '#verbose_puts' do
     it 'has output ending with \n with when verbose is true' do
-      stubbed_instance = instance()
-      allow(stubbed_instance).to receive(:options).and_return({verbose: true})
+      stubbed_instance = instance
+      allow(stubbed_instance).to receive(:options).and_return({ verbose: true })
 
       expect { stubbed_instance.verbose_puts('Lorem') }.to output(/Lorem\n/).to_stdout
     end
@@ -80,21 +80,21 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:test) { test_group.tests.first }
 
     it 'returns suite id if test result belongs to suite' do
-      test_result = create(:result, runnable: {test_suite_id: test_suite.id})
+      test_result = create(:result, runnable: { test_suite_id: test_suite.id })
 
-      expect( instance.format_id(test_result) ).to eq( test_suite.id )
+      expect(instance.format_id(test_result)).to eq(test_suite.id)
     end
 
     it 'returns group id if test result belongs to group' do
-      test_result = create(:result, runnable: {test_group_id: test_group.id})
+      test_result = create(:result, runnable: { test_group_id: test_group.id })
 
-      expect( instance.format_id(test_result) ).to eq( test_group.id )
+      expect(instance.format_id(test_result)).to eq(test_group.id)
     end
 
     it 'returns test id if test result belongs to test' do
-      test_result = create(:result, runnable: {test_id: test.id});
+      test_result = create(:result, runnable: { test_id: test.id })
 
-      expect( instance.format_id(test_result) ).to eq( test.id )
+      expect(instance.format_id(test_result)).to eq(test.id)
     end
   end
 
@@ -126,19 +126,19 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#format_inputs' do
-    let(:inputs) {[{name: :url, value: 'https://example.com'}]}
+    let(:inputs) { [{ name: :url, value: 'https://example.com' }] }
     let(:test_result) { create(:result, input_json: JSON.generate(inputs)) }
 
     it 'includes all values' do
       formatted_string = instance.format_inputs(test_result)
       inputs.each do |input_element|
-        expect(formatted_string).to include  input_element[:value]
+        expect(formatted_string).to include input_element[:value]
       end
     end
   end
 
   describe '#format_outputs' do
-    let(:outputs) {[{name: :token, value: 'SAMPLE_OUTPUT'}]}
+    let(:outputs) { [{ name: :token, value: 'SAMPLE_OUTPUT' }] }
     let(:test_result) { create(:result, output_json: JSON.generate(outputs)) }
 
     it 'includes all values' do

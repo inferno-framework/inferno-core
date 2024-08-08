@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-module DevValidatorSuite # rubocop:disable Naming/ClassAndModuleCamelCase
+module DevValidatorSuite
   class ValidatorSuite < Inferno::TestSuite
     title 'Validator Suite'
     id :dev_validator
-    description "Inferno Core Developer Suite that makes calls to the HL7 Validator."  
+    description 'Inferno Core Developer Suite that makes calls to the HL7 Validator.'
 
     input :url,
           title: 'FHIR Server Base Url'
@@ -19,7 +19,7 @@ module DevValidatorSuite # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     fhir_resource_validator do
-      url "http://localhost/hl7validatorapi"
+      url 'http://localhost/hl7validatorapi'
     end
 
     group do
@@ -54,6 +54,5 @@ module DevValidatorSuite # rubocop:disable Naming/ClassAndModuleCamelCase
         end
       end
     end
-
   end
 end

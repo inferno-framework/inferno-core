@@ -6,7 +6,6 @@ module Inferno
     module Controllers
       module TestRuns
         class Create < Controller
-
           include ::Inferno::Utils::VerifyRunnable
           include ::Inferno::Utils::PersistInputs
 

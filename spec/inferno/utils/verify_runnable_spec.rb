@@ -1,4 +1,4 @@
-require_relative '../../../lib/inferno/utils/verify_runnable.rb'
+require_relative '../../../lib/inferno/utils/verify_runnable'
 
 RSpec.describe Inferno::Utils::VerifyRunnable do
   describe '#verify_runnable' do

@@ -10,7 +10,6 @@ require_relative '../../utils/persist_inputs'
 module Inferno
   module CLI
     class Execute
-
       include ::Inferno::Utils::VerifyRunnable
       include ::Inferno::Utils::PersistInputs
 
@@ -34,9 +33,9 @@ module Inferno
 
       # Inferno boot flow triggers migration and logger outputs it
       # I would be allow this in verbose mode but definitely not for JSON output
-      suppress_output{ require_relative '../../../inferno' }
+      suppress_output { require_relative '../../../inferno' }
 
-      # TODO hijack logger and suppress or redirect its output
+      # TODO: hijack logger and suppress or redirect its output
 
       COLOR = Pastel.new
       CHECKMARK = "\u2713"
@@ -49,7 +48,6 @@ module Inferno
 
       attr_accessor :options
 
-
       def run(options)
         puts ''
         puts '=========================================='
@@ -57,42 +55,42 @@ module Inferno
         puts '=========================================='
 
         self.options = options
-        verbose_puts "options:", self.options
+        verbose_puts 'options:', self.options
 
         Inferno::Application.start(:suites)
 
         suite = Inferno::Repositories::TestSuites.new.find(options[:suite])
         raise StandardError, "Suite #{options[:suite]} not found" if suite.nil?
 
-        test_session = test_sessions_repo.create({test_suite_id: suite.id}) # TODO add suite options
+        test_session = test_sessions_repo.create({ test_suite_id: suite.id }) # TODO: add suite options
 
         verify_runnable(
-          test_runs_repo.build_entity(create_params(test_session,suite)).runnable,
+          test_runs_repo.build_entity(create_params(test_session, suite)).runnable,
           thor_hash_to_inputs_array(options[:inputs]),
           test_session.suite_options
         )
 
         test_run = test_runs_repo.create(
-          create_params(test_session,suite).merge({status: 'queued'})
+          create_params(test_session, suite).merge({ status: 'queued' })
         )
 
         persist_inputs(create_params(test_session, suite), test_run)
 
-        puts "Running tests. This may take a while..." # TODO spinner/progress bar
+        puts 'Running tests. This may take a while...' # TODO: spinner/progress bar
         Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
 
         results = test_runs_repo.results_for_test_run(test_run.id).reverse
         verbose_puts '=========================================='
-        verbose_puts "JSON Test Results:"
+        verbose_puts 'JSON Test Results:'
         verbose_puts '=========================================='
         verbose_puts serialize(results)
         verbose_puts '=========================================='
 
         puts '=========================================='
-        puts "Colored Test Results:"
+        puts 'Colored Test Results:'
         puts '=========================================='
         results.each do |result|
-          print format_id(result), ": "
+          print format_id(result), ': '
           case result.result
           when 'pass'
             print COLOR.bold.green(CHECKMARK, ' pass')
@@ -110,9 +108,9 @@ module Inferno
           when 'cancel'
             print COLOR.red 'X cancel'
           else
-            # TODO strict behavior or no?
-            #raise StandardError.new, "Unrecognized result #{result.result}" # strict
-            print '- unknown'                                                # unstrict
+            # TODO: strict behavior or no?
+            # raise StandardError.new, "Unrecognized result #{result.result}" # strict
+            print '- unknown' # unstrict
           end
           puts ''
           verbose_puts "\tsummary: ",  result.result_message
@@ -123,7 +121,7 @@ module Inferno
         end
         puts '=========================================='
 
-        exit(0) if results.find{|result| result.test_suite_id == options[:suite_id]}.result == 'pass'
+        exit(0) if results.find { |result| result.test_suite_id == options[:suite_id] }.result == 'pass'
 
         exit(1)
       rescue Sequel::ValidationFailed => e
@@ -139,22 +137,24 @@ module Inferno
       end
 
       def thor_hash_to_inputs_array(hash)
-        hash.to_a.map{|pair| {name: pair[0], value: pair[1]}}
+        hash.to_a.map { |pair| { name: pair[0], value: pair[1] } }
       end
 
       def create_params(test_session, suite)
         {
           test_session_id: test_session.id,
           test_suite_id: suite.id,
-          inputs: thor_hash_to_inputs_array(self.options[:inputs])
+          inputs: thor_hash_to_inputs_array(options[:inputs])
         }
       end
 
       def serialize(entity)
         case entity.class.to_s
         when 'Array'
-          JSON.pretty_generate entity.map{ |item| JSON.parse serialize(item) }
-        when ->(x) { defined?(x.constantize) && defined?("Inferno::Web::Serializers::#{x.split('::').last}".constantize) }
+          JSON.pretty_generate entity.map { |item| JSON.parse serialize(item) }
+        when lambda { |x|
+               defined?(x.constantize) && defined?("Inferno::Web::Serializers::#{x.split('::').last}".constantize)
+             }
           "Inferno::Web::Serializers::#{entity.class.to_s.split('::').last}".constantize.render(entity)
         else
           raise StandardError, "CLI does not know how to serialize #{entity.class}"
@@ -162,7 +162,7 @@ module Inferno
       end
 
       def verbose_print(*args)
-        print(COLOR.dim(*args)) if self.options[:verbose]
+        print(COLOR.dim(*args)) if options[:verbose]
       end
 
       def verbose_puts(*args)
@@ -176,7 +176,7 @@ module Inferno
 
       def format_messages(result)
         result.messages.map do |message|
-          "\n\t\t" + message.type + ": " + message.message
+          "\n\t\t" + message.type + ': ' + message.message
         end.join('')
       end
 
@@ -201,7 +201,7 @@ module Inferno
 
       def print_error_and_exit(e, code)
         # TODO: use Application Logger for stderr?
-        $stderr.puts COLOR.red "Error: #{e.full_message}"
+        warn COLOR.red "Error: #{e.full_message}"
         exit(code)
       end
     end

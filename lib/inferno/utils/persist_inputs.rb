@@ -1,7 +1,6 @@
 module Inferno
   module Utils
     module PersistInputs
-
       def persist_inputs(params, test_run)
         available_inputs = test_run.runnable.available_inputs
         params[:inputs]&.each do |input_params|
@@ -25,7 +24,6 @@ module Inferno
           )
         end
       end
-
     end
   end
 end
