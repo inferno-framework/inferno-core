@@ -78,7 +78,7 @@ module Inferno
 
         persist_inputs(create_params(test_session, suite), test_run)
 
-        puts "Running tests. This may take a while..."
+        puts "Running tests. This may take a while..." # TODO spinner/progress bar
         Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
 
         results = test_runs_repo.results_for_test_run(test_run.id).reverse
@@ -170,6 +170,7 @@ module Inferno
         verbose_print(*args)
       end
 
+      # TODO - try to replace this with `result.runnable.id`
       def fetch_test_id(result)
         [result.test_id, result.test_group_id, result.test_suite_id].find { |x| x.presence }
       end
