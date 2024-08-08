@@ -2,7 +2,7 @@ require_relative '../../../../lib/inferno/apps/cli/execute.rb'
 
 ## TODO REFACTOR ALL THESE TESTS WITH FACTORY BOT
 
-RSpec.describe Inferno::CLI::Execute do  
+RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   let(:instance) { described_class.new }
 
   describe '#thor_hash_to_inputs_array' do
@@ -21,32 +21,22 @@ RSpec.describe Inferno::CLI::Execute do
 
   describe '#create_params' do
     let(:test_suite) { BasicTestSuite::Suite }
-    let(:test_sessions_repo) { Inferno::Repositories::TestSessions.new }
+    let(:test_session) { create(:test_session) }
+    let(:inputs_hash) { {url: 'https://example.com'} }
+    let(:inputs_array) { [{name: :url, value: 'https://example.com'}] }
 
     it 'returns test run params' do
       stubbed_instance = instance()
-      allow(stubbed_instance).to receive(:options).and_return({inputs: {url: 'https://example.com'}})
-      test_session = test_sessions_repo.create(test_suite_id: test_suite.id)
+      allow(stubbed_instance).to receive(:options).and_return({inputs: inputs_hash})
+      test_session_inst = test_session()
 
-      result = stubbed_instance.create_params(test_session, test_suite)
-      expect(result).to eq({test_session_id: test_session.id, test_suite_id: 'basic', inputs: [{name: :url, value: 'https://example.com'}]})
+      result = stubbed_instance.create_params(test_session_inst, test_suite)
+      expect(result).to eq({test_session_id: test_session.id, test_suite_id: test_suite.id, inputs: inputs_array})
     end
   end
 
   describe '#serialize' do
-    let(:test_suite) { BasicTestSuite::Suite }
-    let(:test_session) { Inferno::Repositories::TestSessions.new.create(test_suite_id: test_suite.id) }
-    let(:test_run) { Inferno::Repositories::TestRun.new.create({test_session:, test_suite:, status: 'done'}) }
-    let(:test_result) do
-      Inferno::Repositories::Result.new.create({
-        test_suite_id: test_suite.id,
-        test_session_id: test_session.id,
-        test_run_id: test_run.id,
-        result: 'pass',
-        result_message: 'This is a mock result'
-      })
-    end
-    let(:test_results) { [test_result, test_result] }
+    let(:test_results) { create_list(:result, 2) }
 
     it 'handles an array of test results without raising exception' do
       expect { instance.serialize(test_results) }.not_to raise_error(StandardError)
@@ -80,7 +70,7 @@ RSpec.describe Inferno::CLI::Execute do
       stubbed_instance = instance()
       allow(stubbed_instance).to receive(:options).and_return({verbose: true})
 
-      expect { stubbed_instance.verbose_puts('Lorem') }.to output(/Lorem\n$/).to_stdout
+      expect { stubbed_instance.verbose_puts('Lorem') }.to output(/Lorem\n/).to_stdout
     end
   end
 
@@ -89,98 +79,90 @@ RSpec.describe Inferno::CLI::Execute do
     let(:test_suite) { BasicTestSuite::Suite }
     let(:test_group) { BasicTestSuite::AbcGroup }
     let(:test) { test_group.tests.first }
-    let(:test_session) { Inferno::Repositories::TestSessions.new.create(test_suite_id: test_suite.id) }
-    let(:test_run) { Inferno::Repositories::TestRun.new.create({test_session:, test_suite:, status: 'done'}) }
+    let(:instance) { described_class.new }
 
     it 'returns suite id if test result belongs to suite' do
-      let(:test_result) do
-        Inferno::Repositories::Result.new.create({
-          test_suite_id: test_suite.id,
-          test_session_id: test_session.id,
-          test_run_id: test_run.id,
-          result: 'pass',
-          result_message: 'This is a mock result'
-        })
-      end
+      test_result = create(:result, runnable: {test_suite_id: test_suite.id})
 
       expect( instance.fetch_test_id(test_result) ).to eq( test_suite.id )
     end
 
     it 'returns group id if test result belongs to group' do
-      let(:test_result) do
-        Inferno::Repositories::Result.new.create({
-          test_group_id: test_group.id,
-          test_session_id: test_session.id,
-          test_run_id: test_run.id,
-          result: 'pass',
-          result_message: 'This is a mock result'
-        })
-      end
+      test_result = create(:result, runnable: {test_group_id: test_group.id})
 
       expect( instance.fetch_test_id(test_result) ).to eq( test_group.id )
     end
 
     it 'returns test id if test result belongs to test' do
-      let(:test_result) do
-        Inferno::Repositories::Result.new.create({
-          test_id: test.id,
-          test_session_id: test_session.id,
-          test_run_id: test_run.id,
-          result: 'pass',
-          result_message: 'This is a mock result'
-        })
-      end
+      test_result = create(:result, runnable: {test_id: test.id});
 
       expect( instance.fetch_test_id(test_result) ).to eq( test.id )
     end
   end
 
   describe '#format_messages' do
-    let(:test_suite) { BasicTestSuite::Suite }
-    let(:test_session) { Inferno::Repositories::TestSessions.new.create(test_suite_id: test_suite.id) }
-    let(:test_run) { Inferno::Repositories::TestRun.new.create({test_session:, test_suite:, status: 'done'}) }
-    let(:message) { Inferno::Entities::Messages.new }
-    let(:test_result) do
-      Inferno::Repositories::Result.new.create({
-        test_suite_id: test_suite.id,
-        test_session_id: test_session.id,
-        test_run_id: test_run.id,
-        result: 'pass',
-        result_message: 'This is a mock result',
-        messages: [
-          
-        ]
-      })
-    end
+    let(:test_result) { create(:result, message_count: 10) }
+    let(:instance) { described_class.new }
 
-    it 'does not omit any data' do
-      
+    it 'includes all characters case-insensitive' do
+      messages = test_result.messages
+      formatted_string = instance.format_messages(messages)
+
+      messages.each do |message|
+        expect(formatted_string.upcase).to include message.upcase
+      end
     end
   end
 
   describe '#format_requests' do
-    it 'works' do
-      pending 'TODO'
+    let(:test_result) { create(:result, request_count: 10) }
+    let(:instance) { described_class.new }
+
+    it 'includes all status codes' do
+      requests = test_result.requests
+      formatted_string = instance.format_messages(messages)
+
+      requests.each do |request|
+        expect(formatted_string.upcase).to include request.status.to_s.upcase
+      end
     end
   end
 
   describe '#format_inputs' do
-    it 'works' do
-      pending 'TODO'
+    let(:inputs) {[{name: :url, value: 'https://example.com'}]}
+    let(:test_result) { create(:result, input_json: JSON.generate(inputs)) }
+    let(:instance) { described_class.new }
+
+    it 'includes all values' do
+      formatted_string = instance.format_inputs(test_result).join
+      inputs.each do |input_element|
+        expect(formatted_string).to include  input_element[:value]
+      end
     end
   end
 
   describe '#format_outputs' do
-    it 'works' do
-      pending 'TODO'
+    let(:outputs) {[{name: :token, value: 'SAMPLE_OUTPUT'}]}
+    let(:test_result) { create(:result, output_json: JSON.generate(outputs)) }
+    let(:instance) { described_class.new }
+
+    it 'includes all values' do
+      formatted_string = instance.format_outputs(test_result).join
+      outputs.each do |output_element|
+        expect(formatted_string).to include output_element[:value]
+      end
     end
   end
 
   describe '#print_error_and_exit' do
-    it 'works' do
-      let(:mock_error_class) { Class.new(StandardError) }
-      let(:mock_error) { mock_error_class.new('mock message') }
+    let(:mock_error_class) { Class.new(StandardError) }
+    let(:mock_error) { mock_error_class.new('mock message') }
+    let(:instance) { described_class.new }
 
+    it 'outputs to stderr and exits' do
+      expect do
+        expect { instance.print_error_and_exit(mock_error, 2) }.to output(/Error/).to_stderr
+      end.to raise_error(SystemExit)
     end
   end
 end
