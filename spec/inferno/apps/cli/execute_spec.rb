@@ -78,7 +78,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:test_suite) { BasicTestSuite::Suite }
     let(:test_group) { BasicTestSuite::AbcGroup }
     let(:test) { test_group.tests.first }
-    let(:instance) { described_class.new }
 
     it 'returns suite id if test result belongs to suite' do
       test_result = create(:result, runnable: {test_suite_id: test_suite.id})
@@ -101,7 +100,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
   describe '#format_messages' do
     let(:test_result) { repo_create(:result, message_count: 10) }
-    let(:instance) { described_class.new }
 
     it 'includes all characters case-insensitive' do
       messages = test_result.messages
@@ -130,7 +128,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   describe '#format_inputs' do
     let(:inputs) {[{name: :url, value: 'https://example.com'}]}
     let(:test_result) { create(:result, input_json: JSON.generate(inputs)) }
-    let(:instance) { described_class.new }
 
     it 'includes all values' do
       formatted_string = instance.format_inputs(test_result)
@@ -143,7 +140,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   describe '#format_outputs' do
     let(:outputs) {[{name: :token, value: 'SAMPLE_OUTPUT'}]}
     let(:test_result) { create(:result, output_json: JSON.generate(outputs)) }
-    let(:instance) { described_class.new }
 
     it 'includes all values' do
       formatted_string = instance.format_outputs(test_result)
@@ -156,7 +152,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   describe '#print_error_and_exit' do
     let(:mock_error_class) { Class.new(StandardError) }
     let(:mock_error) { mock_error_class.new('mock message') }
-    let(:instance) { described_class.new }
 
     it 'outputs to stderr and exits' do
       expect do
