@@ -26,31 +26,20 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
-  const firstValue =
+  const firstOptionValue =
     requirement.options?.list_options && requirement.options?.list_options?.length > 0
       ? requirement.options?.list_options[0]?.value
       : '';
 
-  const [value, setValue] = React.useState<string>(firstValue);
-
-  // Set default if no value is set
+  // Set starting value to first option if no value and no default
   useEffect(() => {
-    // TODO: Investigate if this can be triggered fewer times
-    const defaultValue =
-      (inputsMap.get(requirement.name) as string) || (requirement.default as string) || firstValue;
-    if (!inputsMap.get(requirement.name)) updateInputs(requirement.name, defaultValue);
-  });
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    updateInputs(requirement.name, value);
-  };
-
-  const updateInputs = (key: string, value: string) => {
-    setValue(value);
-    inputsMap.set(key, value);
+    const startingValue =
+      (inputsMap.get(requirement.name) as string) ||
+      (requirement.default as string) ||
+      firstOptionValue;
+    inputsMap.set(requirement.name, startingValue);
     setInputsMap(new Map(inputsMap));
-  };
+  }, []);
 
   return (
     <ListItem>
@@ -73,8 +62,13 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
           row
           aria-label={`${requirement.name}-radio-buttons-group`}
           name={`${requirement.name}-radio-buttons-group`}
-          value={value}
-          onChange={handleChange}
+          value={
+            inputsMap.get(requirement.name) || (requirement.default as string) || firstOptionValue
+          }
+          onChange={(event) => {
+            inputsMap.set(requirement.name, event.target.value);
+            setInputsMap(new Map(inputsMap));
+          }}
         >
           {requirement.options?.list_options?.map((option, i) => (
             <FormControlLabel

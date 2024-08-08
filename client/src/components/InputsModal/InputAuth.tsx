@@ -30,6 +30,23 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   );
 
   useEffect(() => {
+    // Set defaults on radio buttons
+    // This is necessary because radio buttons with no preset defaults will still cause
+    // missing input errors
+    setAuthFields(
+      authFields.map((field) => {
+        if (
+          field.type === 'radio' &&
+          !field.default &&
+          !field.value &&
+          field.options?.list_options
+        ) {
+          field.default = field.options?.list_options[0].value;
+        }
+        return field;
+      })
+    );
+
     const combinedStartingValues = getStartingValues();
 
     // Populate authValues on mount
@@ -46,6 +63,7 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   }, []);
 
   useEffect(() => {
+    // Recalculate hidden fields
     setAuthFields(
       getAuthFields(authType as AuthType, authValues, requirement.options?.components || [])
     );
@@ -53,9 +71,8 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
     // Update inputsMap
     if (authValuesPopulated) {
       const stringifiedAuthValues = JSON.stringify(Object.fromEntries(authValues));
-      const newInputsMap = new Map(inputsMap);
-      newInputsMap.set(requirement.name, stringifiedAuthValues);
-      setInputsMap(newInputsMap);
+      inputsMap.set(requirement.name, stringifiedAuthValues);
+      setInputsMap(new Map(inputsMap));
     }
   }, [authValues]);
 
@@ -76,12 +93,12 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
     const inputsMapValues = inputsMap.get(requirement.name)
       ? (JSON.parse(inputsMap.get(requirement.name) as string) as Auth)
       : {};
+
     return {
       ...fieldDefaultValues,
       ...requirementDefaultValues,
       ...requirementStartingValues,
       ...inputsMapValues,
-      ...Object.fromEntries(authValues), // for auto-populated values, like radio inputs
     } as Auth;
   };
 

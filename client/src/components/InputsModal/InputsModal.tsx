@@ -113,7 +113,6 @@ const InputsModal: FC<InputsModalProps> = ({
             ? getAuthFields(authType, new Map(), [])
             : getAccessFields(authType, new Map(), []);
         const requiredFields = fields.filter((field) => !field.optional).map((field) => field.name);
-
         authMissingRequiredInput = requiredFields.some((field) => !authJson[field as keyof Auth]);
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);

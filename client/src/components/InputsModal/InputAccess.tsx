@@ -30,6 +30,23 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
   );
 
   useEffect(() => {
+    // Set defaults on radio buttons
+    // This is necessary because radio buttons with no preset defaults will still cause
+    // missing input errors
+    setAccessFields(
+      accessFields.map((field) => {
+        if (
+          field.type === 'radio' &&
+          !field.default &&
+          !field.value &&
+          field.options?.list_options
+        ) {
+          field.default = field.options?.list_options[0].value;
+        }
+        return field;
+      })
+    );
+
     const combinedStartingValues = getStartingValues();
 
     // Populate accessValues on mount
@@ -45,16 +62,14 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
   }, []);
 
   useEffect(() => {
+    // Recalculate hidden fields
     setAccessFields(
       getAccessFields(authType as AuthType, accessValues, requirement.options?.components || [])
     );
 
     // Update inputsMap while maintaining hidden values
     if (accessValuesPopulated) {
-      const combinedStartingValues = getStartingValues();
-      const accessValuesObject = Object.fromEntries(accessValues) as Auth;
-      const combinedValues = { ...combinedStartingValues, ...accessValuesObject };
-      const stringifiedAccessValues = JSON.stringify(combinedValues);
+      const stringifiedAccessValues = JSON.stringify(Object.fromEntries(accessValues));
       inputsMap.set(requirement.name, stringifiedAccessValues);
       setInputsMap(new Map(inputsMap));
     }
@@ -82,14 +97,12 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
       ...requirementDefaultValues,
       ...requirementStartingValues,
       ...inputsMapValues,
-      ...Object.fromEntries(accessValues), // for auto-populated values, like radio inputs
     } as Auth;
   };
 
   const updateAuthType = (map: Map<string, unknown>) => {
     setAuthType(map.get('auth_type') as string);
     setAccessValues(map);
-    console.warn('update auth type');
   };
 
   return (
