@@ -74,7 +74,7 @@ module Inferno
           create_params(test_session, suite).merge({ status: 'queued' })
         )
 
-        persist_inputs(create_params(test_session, suite), test_run)
+        persist_inputs(session_data_repo, create_params(test_session, suite), test_run)
 
         puts 'Running tests. This may take a while...' # TODO: spinner/progress bar
         Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)

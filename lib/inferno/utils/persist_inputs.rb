@@ -1,7 +1,7 @@
 module Inferno
   module Utils
     module PersistInputs
-      def persist_inputs(params, test_run)
+      def persist_inputs(session_data_repo, params, test_run)
         available_inputs = test_run.runnable.available_inputs
         params[:inputs]&.each do |input_params|
           input =
