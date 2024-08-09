@@ -80,46 +80,9 @@ module Inferno
         Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
 
         results = test_runs_repo.results_for_test_run(test_run.id).reverse
-        verbose_puts '=========================================='
-        verbose_puts 'JSON Test Results:'
-        verbose_puts '=========================================='
-        verbose_puts serialize(results)
-        verbose_puts '=========================================='
 
-        puts '=========================================='
-        puts 'Colored Test Results:'
-        puts '=========================================='
-        results.each do |result|
-          print format_id(result), ': '
-          case result.result
-          when 'pass'
-            print COLOR.bold.green(CHECKMARK, ' pass')
-          when 'fail'
-            print COLOR.bold.red 'X fail'
-          when 'skip'
-            print COLOR.yellow '* skip'
-          when 'omit'
-            print COLOR.blue '* omit'
-          when 'error'
-            print COLOR.magenta 'X error'
-          when 'wait'
-            # This may be dead code with synchronous test execution
-            print '. wait'
-          when 'cancel'
-            print COLOR.red 'X cancel'
-          else
-            # TODO: strict behavior or no?
-            # raise StandardError.new, "Unrecognized result #{result.result}" # strict
-            print '- unknown' # unstrict
-          end
-          puts ''
-          verbose_puts "\tsummary: ",  result.result_message
-          verbose_puts "\tmessages: ", format_messages(result)
-          verbose_puts "\trequests: ", format_requests(result)
-          verbose_puts "\tinputs: ",   format_inputs(result)
-          verbose_puts "\toutputs: ",  format_outputs(result)
-        end
-        puts '=========================================='
+        verbose_print_json_results(results)
+        print_color_results(results)
 
         exit(0) if results.find { |result| result.test_suite_id == options[:suite_id] }.result == 'pass'
 
@@ -151,7 +114,7 @@ module Inferno
       def serialize(entity)
         case entity.class.to_s
         when 'Array'
-          JSON.pretty_generate entity.map { |item| JSON.parse serialize(item) }
+          JSON.pretty_generate(entity.map { |item| JSON.parse serialize(item) })
         when lambda { |x|
                defined?(x.constantize) && defined?("Inferno::Web::Serializers::#{x.split('::').last}".constantize)
              }
@@ -176,14 +139,14 @@ module Inferno
 
       def format_messages(result)
         result.messages.map do |message|
-          "\n\t\t" + message.type + ': ' + message.message
-        end.join('')
+          "\n\t\t#{message.type}: #{message.message}"
+        end.join
       end
 
       def format_requests(result)
         result.requests.map do |req_res|
-          "\n\t\t" + req_res.status.to_s + ' ' + req_res.verb.upcase + ' ' + req_res.url
-        end.join('')
+          "\n\t\t#{req_res.status} #{req_res.verb.upcase} #{req_res.url}"
+        end.join
       end
 
       def format_inputs(result, attr = :input_json)
@@ -192,17 +155,62 @@ module Inferno
 
         JSON.parse(input_json).map do |input|
           "\n\t\t#{input['name']}: #{input['value']}"
-        end.join('')
+        end.join
       end
 
       def format_outputs(result)
         format_inputs(result, :output_json)
       end
 
-      def print_error_and_exit(e, code)
+      def format_result(result) # rubocop:disable Metrics/CyclomaticComplexity
+        case result.result
+        when 'pass'
+          COLOR.bold.green(CHECKMARK, ' pass')
+        when 'fail'
+          COLOR.bold.red 'X fail'
+        when 'skip'
+          COLOR.yellow '* skip'
+        when 'omit'
+          COLOR.blue '* omit'
+        when 'error'
+          COLOR.magenta 'X error'
+        when 'wait'
+          # This may be dead code with synchronous test execution
+          '. wait'
+        when 'cancel'
+          COLOR.red 'X cancel'
+        else
+          raise StandardError.new, "Unrecognized result #{result.result}"
+        end
+      end
+
+      def print_error_and_exit(err, code)
         # TODO: use Application Logger for stderr?
-        warn COLOR.red "Error: #{e.full_message}"
+        warn COLOR.red "Error: #{err.full_message}"
         exit(code)
+      end
+
+      def verbose_print_json_results(results)
+        verbose_puts '=========================================='
+        verbose_puts 'JSON Test Results:'
+        verbose_puts '=========================================='
+        verbose_puts serialize(results)
+        verbose_puts '=========================================='
+      end
+
+      def print_color_results(results)
+        puts '=========================================='
+        puts 'Colored Test Results:'
+        puts '=========================================='
+        results.each do |result|
+          print format_id(result), ': ', format_result(result), "\n"
+          verbose_puts "\tsummary: ",   result.result_message
+          verbose_puts "\tmessages: ",  format_messages(result)
+          verbose_puts "\trequests: ",  format_requests(result)
+          verbose_puts "\tinputs: ",    format_inputs(result)
+          verbose_puts "\toutputs: ",   format_outputs(result)
+        end
+        puts '=========================================='
       end
     end
   end
