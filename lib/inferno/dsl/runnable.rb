@@ -291,6 +291,18 @@ module Inferno
         to_s
       end
 
+      # Set/Get the block that is executed when a runnable is run
+      #
+      # @param block [Proc]
+      # @return [Proc] the block that is executed when a runnable is run
+      def block(&block)
+        return @block unless block_given?
+
+        @block = block
+      end
+
+      alias run block
+
       # @private
       def all_children
         @all_children ||= []

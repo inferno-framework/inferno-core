@@ -6,6 +6,7 @@ require_relative 'dsl/http_client'
 require_relative 'dsl/results'
 require_relative 'dsl/runnable'
 require_relative 'dsl/suite_endpoint'
+require_relative 'dsl/messages'
 
 module Inferno
   # The DSL for writing tests.
@@ -16,7 +17,8 @@ module Inferno
       HTTPClient,
       Results,
       FHIRValidation,
-      FHIRResourceValidation
+      FHIRResourceValidation,
+      Messages
     ].freeze
 
     EXTENDABLE_DSL_MODULES = [
