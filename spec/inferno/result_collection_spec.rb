@@ -52,11 +52,18 @@ RSpec.describe Inferno::ResultCollection do
   end
 
   describe '#<<' do
-    let(:new_result) { repo_create(:result, result: 'pass') }
+    let(:new_result1) { repo_create(:result, result: 'pass') }
+    let(:new_result2) { repo_create(:result, result: 'fail') }
 
     it 'adds a new result to the collection' do
-      expect { result_collection << new_result }.to change { result_collection.results.size }.by(1)
-      expect(result_collection.results).to include(new_result)
+      expect { result_collection << new_result1 }.to change { result_collection.results.size }.by(1)
+      expect(result_collection.results).to include(new_result1)
+    end
+
+    it 'flattens the results array after adding a new result' do
+      nested_results = [new_result1, new_result2]
+      expect { result_collection << nested_results }.to change { result_collection.results.size }.by(2)
+      expect(result_collection.results).to include(*nested_results)
     end
   end
 

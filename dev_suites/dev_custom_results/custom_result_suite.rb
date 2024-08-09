@@ -4,14 +4,6 @@ module CustomResult
     title 'Passing Group'
     description 'Criteria: Passes if test 1 passes, or test 2 and test 3 pass'
 
-    customize_passing_result do |results|
-      test1_result = results[tests.first.id].result
-      test2_result = results[tests[1].id].result
-      test3_result = results[tests.last.id].result
-
-      test1_result == 'pass' || (test2_result == 'pass' && test3_result == 'pass')
-    end
-
     test 'Test 1: passing' do
       run { assert true }
     end
@@ -27,6 +19,16 @@ module CustomResult
 
       run { assert false }
     end
+
+    run do
+      test1_result = child_results[tests.first.id].result
+      pass_if test1_result == 'pass', 'Test 1 passed'
+
+      test2_result = child_results[tests[1].id].result
+      test3_result = child_results[tests.last.id].result
+
+      assert test2_result == 'pass' && test3_result == 'pass', 'Either test 1, or test 2 and test 3  must pass'
+    end
   end
 
   class NonPassingCustomResultGroup < Inferno::TestGroup
@@ -35,14 +37,6 @@ module CustomResult
     description 'Criteria: Passes if test 1 passes, or test 2 and test 3 pass'
 
     optional
-
-    customize_passing_result do |results|
-      test1_result = results[tests.first.id].result
-      test2_result = results[tests[1].id].result
-      test3_result = results[tests.last.id].result
-
-      test1_result == 'pass' || (test2_result == 'pass' && test3_result == 'pass')
-    end
 
     test 'Test 1: failing' do
       run { assert false }
@@ -59,6 +53,17 @@ module CustomResult
 
       run { skip }
     end
+
+    run do
+      test1_result = child_results[tests.first.id].result
+      pass_if test1_result == 'pass', 'Test 1 passed'
+      add_message('info', 'Test 1 did not pass')
+
+      test2_result = child_results[tests[1].id].result
+      test3_result = child_results[tests.last.id].result
+
+      assert test2_result == 'pass' && test3_result == 'pass', 'Either test 1, or test 2 and test 3 must pass'
+    end
   end
 
   class PassingCustomResultGroupWithNestedGroups < Inferno::TestGroup
@@ -67,14 +72,6 @@ module CustomResult
     description 'Criteria: Passes if inner group 1 passes, or inner group 2 and inner group 3 pass'
 
     optional
-
-    customize_passing_result do |results|
-      group1_result = results[groups.first.id].result
-      group2_result = results[groups[1].id].result
-      group3_result = results[groups.last.id].result
-
-      group1_result == 'pass' || (group2_result == 'pass' && group3_result == 'pass')
-    end
 
     group 'Inner Group 1: failing' do
       test do
@@ -97,6 +94,18 @@ module CustomResult
         run { assert true }
       end
     end
+
+    run do
+      group1_result = child_results[groups.first.id].result
+      pass_if group1_result == 'pass', 'Inner Group 1 passed.'
+      add_message('info', 'Inner Group 1 did not pass.')
+
+      group2_result = child_results[groups[1].id].result
+      group3_result = child_results[groups.last.id].result
+
+      assert group2_result == 'pass' && group3_result == 'pass',
+             'Either inner group 1, or inner group 2 and inner group 3 must pass'
+    end
   end
 
   class Suite < Inferno::TestSuite
@@ -104,16 +113,17 @@ module CustomResult
     title 'Custom Result Suite'
     description 'Criteria: Passes if `Passing Group` passes and any of the other groups passes.'
 
-    customize_passing_result do |results|
-      group1_result = results[:passing_custom_result_group]
-      other_groups_pass = results.any? do |result|
-        result.test_group_id != group1_result.test_group_id && result.result == 'pass'
-      end
-      group1_result.result == 'pass' && other_groups_pass
-    end
-
     group from: :passing_custom_result_group
     group from: :non_passing_custom_result_group
     group from: :passing_custom_result_group_with_nested_groups
+
+    run do
+      group1_result = child_results[:passing_custom_result_group]
+      other_groups_pass = child_results.any? do |result|
+        result.test_group_id != group1_result.test_group_id && result.result == 'pass'
+      end
+      assert group1_result.result == 'pass' && other_groups_pass,
+             '`Passing Group` and any of the other groups must pass.'
+    end
   end
 end

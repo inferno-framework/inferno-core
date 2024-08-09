@@ -44,7 +44,7 @@ module Inferno
     end
 
     def <<(result)
-      results << result
+      (results << result).flatten!
     end
 
     def each(&)

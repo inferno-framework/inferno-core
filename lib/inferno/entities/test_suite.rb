@@ -1,8 +1,11 @@
 require_relative 'test_group'
 require_relative '../dsl/runnable'
 require_relative '../dsl/suite_option'
+require_relative '../dsl/messages'
 require_relative '../repositories/test_groups'
 require_relative '../repositories/test_suites'
+require_relative '../result_collection'
+require_relative '../utils/markdown_formatter'
 
 module Inferno
   module Entities
@@ -14,6 +17,19 @@ module Inferno
       extend DSL::HTTPClient::ClassMethods
       include DSL::FHIRValidation
       include DSL::FHIRResourceValidation
+      include DSL::Results
+      include DSL::Assertions
+      include DSL::Messages
+      include Inferno::Utils::MarkdownFormatter
+
+      def_delegators 'self.class', :block
+
+      attr_accessor :result_message, :child_results
+
+      # @private
+      def initialize
+        @child_results = Inferno::ResultCollection.new
+      end
 
       class << self
         extend Forwardable
@@ -150,31 +166,6 @@ module Inferno
         # @return [void]
         def suite_option(identifier, **option_params)
           suite_options << DSL::SuiteOption.new(option_params.merge(id: identifier))
-        end
-
-        # Sets or gets the custom block to define the passing criteria for the suite.
-        #
-        # The block receives a ResultCollection of the suite's children (groups) and returns a boolean
-        # indicating if the suite passes based on the custom criteria.
-        #
-        # @yieldparam results [Inferno::ResultCollection] the collection of group results to evaluate
-        # @yieldreturn [Boolean] whether the suite passes based on the custom criteria
-        #
-        # @example
-        #   customize_passing_result do |results|
-        #     group1_result = results[:group_id1]
-        #     other_groups_pass = results.any? do |result|
-        #       result.test_group_id != group1_result.test_group_id && result.result == 'pass'
-        #     end
-        #     group1_result.result == 'pass' && other_groups_pass
-        #   end
-        #
-        #   group from: :group_id1
-        #   group from: :group_id2
-        #   group from: :group_id3
-        def customize_passing_result(&block)
-          @customize_passing_result = block if block_given?
-          @customize_passing_result
         end
 
         # @return [Array<Inferno::DSL::SuiteOption>] The options defined for

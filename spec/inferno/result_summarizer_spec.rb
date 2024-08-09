@@ -30,18 +30,4 @@ RSpec.describe Inferno::ResultSummarizer do
       expect(result).to eq('pass')
     end
   end
-
-  context 'when custom results block given' do
-    it 'returns pass when the block evaluates to true' do
-      result = described_class.new([passing_result, failing_result]) { |_results| true }.summarize
-
-      expect(result).to eq('pass')
-    end
-
-    it 'returns the highest priority result when the block evaluates to false' do
-      result = described_class.new([passing_result, failing_result]) { |_results| false }.summarize
-
-      expect(result).to eq('fail')
-    end
-  end
 end
