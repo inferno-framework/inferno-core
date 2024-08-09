@@ -162,30 +162,29 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     Inferno::Entities::Result::RESULT_OPTIONS.each do |result_option|
       it "can format #{result_option} result type" do
         result = create(:result, result: result_option)
-        expect{ instance.format_result(result) }.not_to raise_error
+        expect { instance.format_result(result) }.to_not raise_error
       end
 
-      it "includes result type in return value" do
+      it 'includes result type in return value' do
         result = create(:result, result: result_option)
-        expect( instance.format_result(result).upcase ).to include result_option.upcase
+        expect(instance.format_result(result).upcase).to include result_option.upcase
       end
     end
-
   end
 
   describe '#print_color_results' do
     let(:results) { create_list(:random_result, 10) }
 
-    it "outputs something with 10 random results" do
+    it 'outputs something with 10 random results' do
       stubbed_instance = instance
       allow(stubbed_instance).to receive(:options).and_return({ verbose: false })
-      expect{ stubbed_instance.print_color_results(results) }.to output(/.+/).to_stdout
+      expect { stubbed_instance.print_color_results(results) }.to output(/.+/).to_stdout
     end
 
-    it "outputs something with verbose true" do
+    it 'outputs something with verbose true' do
       stubbed_instance = instance
       allow(stubbed_instance).to receive(:options).and_return({ verbose: true })
-      expect{ stubbed_instance.print_color_results(results) }.to output(/.+/).to_stdout
+      expect { stubbed_instance.print_color_results(results) }.to output(/.+/).to_stdout
     end
   end
 end

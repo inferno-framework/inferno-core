@@ -107,7 +107,7 @@ module Inferno
         {
           test_session_id: test_session.id,
           test_suite_id: suite.id,
-          inputs: thor_hash_to_inputs_array(self.options[:inputs])
+          inputs: thor_hash_to_inputs_array(options[:inputs])
         }
       end
 
@@ -125,7 +125,7 @@ module Inferno
       end
 
       def verbose_print(*args)
-        print(COLOR.dim(*args)) if self.options[:verbose]
+        print(COLOR.dim(*args)) if options[:verbose]
       end
 
       def verbose_puts(*args)
