@@ -45,7 +45,7 @@ export default makeStyles()((theme: Theme) => ({
     maxHeight: '400px',
     overflow: 'auto !important',
   },
-  oauthCard: {
+  authCard: {
     width: '100%',
     mx: 2,
     borderColor: theme.palette.common.gray,

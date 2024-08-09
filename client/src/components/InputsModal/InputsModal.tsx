@@ -19,13 +19,20 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import YAML from 'js-yaml';
 import { useSnackbar } from 'notistack';
-import { OAuthCredentials, Runnable, RunnableType, TestInput } from '~/models/testSuiteModels';
+import {
+  Auth,
+  OAuthCredentials,
+  Runnable,
+  RunnableType,
+  TestInput,
+} from '~/models/testSuiteModels';
+import CopyButton from '~/components/_common/CopyButton';
 import CustomTooltip from '~/components/_common/CustomTooltip';
+import DownloadFileButton from '~/components/_common/DownloadFileButton';
+import UploadFileButton from '~/components/_common/UploadFileButton';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from '~/components/InputsModal/styles';
-import DownloadFileButton from '../_common/DownloadFileButton';
-import UploadFileButton from '../_common/UploadFileButton';
-import CopyButton from '../_common/CopyButton';
+import { AuthType, getAccessFields, getAuthFields } from './AuthSettings';
 
 export interface InputsModalProps {
   modalVisible: boolean;
@@ -86,16 +93,46 @@ const InputsModal: FC<InputsModalProps> = ({
       }
     }
 
+    // if input is auth_info, check if required values are filled
+    let authMissingRequiredInput = false;
+    if (input.type === 'auth_info') {
+      try {
+        if (
+          !inputsMap.get(input.name) ||
+          !input.options?.components ||
+          input.options?.components.length < 1
+        )
+          return false;
+        const authJson = JSON.parse(inputsMap.get(input.name) as string) as Auth;
+        const authType = (authJson.auth_type ||
+          input.options.components.find((c) => c.name === 'auth_type')?.default) as AuthType;
+
+        // Determine which fields are required; authValues and components props irrelevant for this
+        const fields =
+          input.options?.mode === 'auth'
+            ? getAuthFields(authType, new Map(), [])
+            : getAccessFields(authType, new Map(), []);
+        const requiredFields = fields.filter((field) => !field.optional).map((field) => field.name);
+        authMissingRequiredInput = requiredFields.some((field) => !authJson[field as keyof Auth]);
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        enqueueSnackbar(`Auth info inputs incorrectly formatted: ${errorMessage}`, {
+          variant: 'error',
+        });
+        return true;
+      }
+    }
+
     // if input has OAuth, check if required values are filled
     let oAuthMissingRequiredInput = false;
     if (input.type === 'oauth_credentials') {
       try {
-        const oAuthJSON = JSON.parse(
+        const oAuthJson = JSON.parse(
           (inputsMap.get(input.name) as string) || '{ "access_token": null }'
         ) as OAuthCredentials;
-        const accessTokenIsEmpty = !oAuthJSON.access_token;
+        const accessTokenIsEmpty = !oAuthJson.access_token;
         const refreshTokenIsEmpty =
-          !!oAuthJSON.refresh_token && (!oAuthJSON.token_url || !oAuthJSON.client_id);
+          !!oAuthJson.refresh_token && (!oAuthJson.token_url || !oAuthJson.client_id);
         oAuthMissingRequiredInput = (!input.optional && accessTokenIsEmpty) || refreshTokenIsEmpty;
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);
@@ -106,7 +143,11 @@ const InputsModal: FC<InputsModalProps> = ({
       }
     }
 
-    return (!input.optional && !inputsMap.get(input.name)) || oAuthMissingRequiredInput;
+    return (
+      (!input.optional && !inputsMap.get(input.name)) ||
+      oAuthMissingRequiredInput ||
+      authMissingRequiredInput
+    );
   });
 
   const instructions =
@@ -170,11 +211,11 @@ const InputsModal: FC<InputsModalProps> = ({
   };
 
   const submitClicked = () => {
-    const inputs_with_values: TestInput[] = [];
-    inputsMap.forEach((input_value, input_name) => {
-      inputs_with_values.push({ name: input_name, value: input_value, type: 'text' });
+    const inputsWithValues: TestInput[] = [];
+    inputsMap.forEach((inputValue, inputName) => {
+      inputsWithValues.push({ name: inputName, value: inputValue, type: 'text' });
     });
-    createTestRun(runnableType, runnable?.id || '', inputs_with_values);
+    createTestRun(runnableType, runnable?.id || '', inputsWithValues);
     closeModal();
   };
 
@@ -189,6 +230,13 @@ const InputsModal: FC<InputsModalProps> = ({
           value: JSON.parse(
             (map.get(requirement.name) as string) || '{ "access_token": "" }'
           ) as OAuthCredentials,
+        };
+      } else if (requirement.type === 'auth_info') {
+        return {
+          ...requirement,
+          default: JSON.parse((requirement.default as string) || '{}') as Auth,
+          description: parsedDescription,
+          value: JSON.parse((map.get(requirement.name) as string) || '{}') as Auth,
         };
       } else if (requirement.type === 'radio') {
         const firstVal =
@@ -217,9 +265,9 @@ const InputsModal: FC<InputsModalProps> = ({
     let parsed: TestInput[];
     try {
       parsed = (inputType === 'JSON' ? JSON.parse(changes) : YAML.load(changes)) as TestInput[];
-      // Convert OAuth input values to strings; parsed needs to be an array
+      // Convert OAuth/Auth input values to strings; parsed needs to be an array
       parsed.forEach((input) => {
-        if (input.type === 'oauth_credentials') {
+        if (input.type === 'oauth_credentials' || input.type === 'auth_info') {
           input.value = JSON.stringify(input.value);
         }
       });

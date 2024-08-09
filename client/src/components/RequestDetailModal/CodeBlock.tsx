@@ -5,7 +5,7 @@ import { RequestHeader } from '~/models/testSuiteModels';
 import CollapseButton from '~/components/_common/CollapseButton';
 import CopyButton from '~/components/_common/CopyButton';
 
-import { formatBodyIfJSON } from './helpers';
+import { formatBodyIfJson } from './helpers';
 import useStyles from './styles';
 import lightTheme from '~/styles/theme';
 
@@ -22,7 +22,7 @@ const CodeBlock: FC<CodeBlockProps> = ({ body, headers, title }) => {
 
   useEffectOnce(() => {
     if (body && body.length > 0) {
-      setJsonBody(formatBodyIfJSON(body, headers));
+      setJsonBody(formatBodyIfJson(body, headers));
     }
   });
 

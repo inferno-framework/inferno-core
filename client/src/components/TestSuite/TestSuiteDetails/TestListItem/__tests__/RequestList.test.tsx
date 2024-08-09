@@ -9,12 +9,12 @@ import ThemeProvider from 'components/ThemeProvider';
 import RequestList from '../RequestList';
 import {
   mockedRequest,
-  codeResponseWithHTML,
+  codeResponseWithHtml,
 } from '~/components/RequestDetailModal/__mocked_data__/mockData';
 
 describe('The RequestsList component', () => {
   test('it orders requests based on their index', async () => {
-    const requests = [codeResponseWithHTML, mockedRequest];
+    const requests = [codeResponseWithHtml, mockedRequest];
 
     await act(() =>
       render(
@@ -30,11 +30,11 @@ describe('The RequestsList component', () => {
 
     expect(renderedRequests.length).toEqual(requests.length);
     expect(renderedRequests[0]).toHaveTextContent(mockedRequest.url);
-    expect(renderedRequests[1]).toHaveTextContent(codeResponseWithHTML.url);
+    expect(renderedRequests[1]).toHaveTextContent(codeResponseWithHtml.url);
   });
 
   test('copies url when button is clicked', async () => {
-    const requests = [codeResponseWithHTML, mockedRequest];
+    const requests = [codeResponseWithHtml, mockedRequest];
     // Keep a copy to restore original clipboard
     const originalClipboard = navigator.clipboard;
     const mockedWriteText = vi.fn();
@@ -70,7 +70,7 @@ describe('The RequestsList component', () => {
   });
 
   test('shows details when button is clicked', async () => {
-    const requests = [codeResponseWithHTML, mockedRequest];
+    const requests = [codeResponseWithHtml, mockedRequest];
 
     await act(() =>
       render(

@@ -38,7 +38,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
           <FieldLabel requirement={requirement} isMissingInput={isMissingInput} />
         </FormLabel>
         {requirement.description && (
-          <Typography variant="subtitle1" className={classes.inputDescription}>
+          <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
             {requirement.description}
           </Typography>
         )}
@@ -53,7 +53,7 @@ const InputTextField: FC<InputTextFieldProps> = ({
           multiline={requirement.type === 'textarea'}
           minRows={requirement.type === 'textarea' ? 4 : 1}
           maxRows={20}
-          value={inputsMap.get(requirement.name)}
+          value={inputsMap.get(requirement.name) || ''}
           onBlur={(e) => {
             if (e.currentTarget === e.target) {
               setHasBeenModified(true);

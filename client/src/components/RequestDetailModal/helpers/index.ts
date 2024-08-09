@@ -1,7 +1,7 @@
 import { enqueueSnackbar } from 'notistack';
 import { RequestHeader } from '~/models/testSuiteModels';
 
-export const formatBodyIfJSON = (
+export const formatBodyIfJson = (
   code: string,
   headers: RequestHeader[] | null | undefined
 ): string => {
@@ -12,23 +12,23 @@ export const formatBodyIfJSON = (
 
   const contentTypeHeader = headers.find((h) => h.name === 'content-type');
 
-  let isJSON = false;
+  let isJson = false;
   if (contentTypeHeader) {
     const contentType = contentTypeHeader.value;
     if (contentType.includes('application/fhir+json') || contentType.includes('application/json')) {
-      isJSON = true;
+      isJson = true;
     }
   }
 
-  if (isJSON) {
-    return formatJSON(code);
+  if (isJson) {
+    return formatJson(code);
   } else {
     // it is probably HTML so don't JSON format it
     return code;
   }
 };
 
-const formatJSON = (json: string): string => {
+const formatJson = (json: string): string => {
   try {
     return JSON.stringify(JSON.parse(json), null, 2);
   } catch (error) {
