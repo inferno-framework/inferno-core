@@ -5,6 +5,7 @@ require_relative 'suite'
 require_relative 'suites'
 require_relative 'new'
 require_relative '../../version'
+require_relative 'execute'
 
 module Inferno
   module CLI
@@ -63,6 +64,45 @@ module Inferno
       desc 'version', "Output Inferno core version (#{Inferno::VERSION})"
       def version
         puts "Inferno Core v#{Inferno::VERSION}"
+      end
+
+      EXECUTE_HELP = <<~END_OF_HELP.freeze
+        Run Inferno tests in the command line. Exits with 0 only if test suite passes. Must be run from test kit as working directory.
+
+        You must have background services running: `bundle exec inferno services start`
+
+        You can view suite ids with: `bundle exec inferno suites`
+
+        Examples:
+
+            `bundle exec inferno execute --suite dev_validator --inputs "url:https://hapi.fhir.org/baseR4" patient_id:1234321`
+            => Outputs test results
+      END_OF_HELP
+      desc 'execute', 'Run Inferno tests in command line'
+      long_desc EXECUTE_HELP, wrap: false
+      option :suite,
+             aliases: ['-s'],
+             required: true,
+             type: :string,
+             desc: 'Test Suite ID to run',
+             banner: 'ID'
+      option :inputs,
+             aliases: ['-i'],
+             optional: true,
+             type: :hash,
+             desc: 'Inputs (i.e: --inputs=foo:bar goo:baz)'
+      option :verbose,
+             aliases: ['-v'],
+             type: :boolean,
+             default: false,
+             desc: 'Output additional information for debugging'
+      def execute
+        Execute.new.run(options)
+      end
+
+      # https://github.com/rails/thor/issues/244 - Make Thor exit(1) on Errors/Exceptions
+      def self.exit_on_failure?
+        true
       end
 
       private
