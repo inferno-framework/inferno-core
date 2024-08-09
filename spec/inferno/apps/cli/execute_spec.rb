@@ -192,33 +192,30 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:suite) { 'dev_validator' }
     let(:session_data_repo) { Inferno::Repositories::SessionData.new }
     let(:test_session) { repo_create(:test_session, test_suite_id: suite.id) }
-    #let(:url) { 'http://example.com/fhir' }
-    #let(:group) { suite.groups.first.groups.first }
 
     let(:success_outcome) do
-    {
-      outcomes: [{
-        issues: []
-      }],
-      sessionId: ''
-    }
+      {
+        outcomes: [{
+          issues: []
+        }],
+        sessionId: ''
+      }
     end
 
-    let(:inputs) {{ 'url' => 'https://example.com', 'patient_id' => '1' }}
+    let(:inputs) { { 'url' => 'https://example.com', 'patient_id' => '1' } }
 
     it 'works on dev_validator suite' do
       stub_request(:post, "#{ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL')}/validate")
         .with(query: hash_including({}))
         .to_return(status: 200, body: success_outcome.to_json)
 
-      stub_request(:get, "https://example.com/Patient/1")
-        .to_return(status: 200, body: FHIR::Patient.new({name: {given: 'Smith'}}).to_json)
+      stub_request(:get, 'https://example.com/Patient/1')
+        .to_return(status: 200, body: FHIR::Patient.new({ name: { given: 'Smith' } }).to_json)
 
       expect do
         expect { instance.run({ suite:, inputs:, verbose: true }) }
-          .to raise_error(an_instance_of(SystemExit).and having_attributes(status: 0))
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
       end.to output(/.+/).to_stdout
     end
-
   end
 end

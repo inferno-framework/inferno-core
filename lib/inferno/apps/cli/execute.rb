@@ -188,7 +188,7 @@ module Inferno
 
       def print_error_and_exit(err, code)
         # TODO: use Application Logger for stderr?
-        $stderr.puts COLOR.red "Error: #{err.full_message}"
+        $stderr.puts COLOR.red "Error: #{err.full_message}" # rubocop:disable Style/StderrPuts # always print this error instead of using `warn`
         exit(code)
       end
 
