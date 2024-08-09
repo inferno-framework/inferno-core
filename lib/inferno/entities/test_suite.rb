@@ -5,7 +5,6 @@ require_relative '../dsl/messages'
 require_relative '../repositories/test_groups'
 require_relative '../repositories/test_suites'
 require_relative '../result_collection'
-require_relative '../utils/markdown_formatter'
 
 module Inferno
   module Entities
@@ -20,7 +19,6 @@ module Inferno
       include DSL::Results
       include DSL::Assertions
       include DSL::Messages
-      include Inferno::Utils::MarkdownFormatter
 
       def_delegators 'self.class', :block
 

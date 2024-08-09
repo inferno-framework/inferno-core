@@ -1,7 +1,10 @@
+require_relative '../utils/markdown_formatter'
+
 module Inferno
   module DSL
     # This module contains methods to add meessages to runnable results
     module Messages
+      include Inferno::Utils::MarkdownFormatter
       # @private
       def messages
         @messages ||= []

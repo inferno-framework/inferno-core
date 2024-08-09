@@ -1,6 +1,5 @@
 require_relative '../dsl'
 require_relative '../repositories/tests'
-require_relative '../utils/markdown_formatter'
 require 'pry'
 
 module Inferno
@@ -8,7 +7,6 @@ module Inferno
     class Test
       extend Forwardable
       include DSL
-      include Inferno::Utils::MarkdownFormatter
 
       def_delegators 'self.class', :title, :id, :block, :inputs, :outputs
 
