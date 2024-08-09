@@ -22,13 +22,6 @@ RSpec.describe Inferno::Utils::PersistInputs do
       test_run = create(:test_run, test_session:)
       test_run.test_session_id = test_session.id
 
-      print "\ntest_run: ", test_run
-      print "\ntest_session: ", test_session
-      print "\ntest_run.test_session: ", test_run.test_session
-      print "\ntest_session.id: ", test_session.id
-      print "\ntest_run.test_session_id: ", test_run.test_session_id
-      print "\n"
-
       params = {
         test_session_id: test_session.id,
         test_suite_id: suite.id,

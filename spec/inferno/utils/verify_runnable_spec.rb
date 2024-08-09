@@ -6,7 +6,9 @@ RSpec.describe Inferno::Utils::VerifyRunnable do
     let(:dummy) { dummy_class.new }
     let(:suite) { BasicTestSuite::Suite }
     let(:group) { BasicTestSuite::AbcGroup }
-    let(:good_inputs) { [{ name: 'input1', value: 'baz' }, { name: 'input2', value: 'foo' }] }
+    let(:good_inputs) do
+      [{ name: 'input1', value: 'baz' }, { name: 'input2', value: 'foo' }]
+    end
     let(:bad_inputs) { [{ name: :input2, value: :foo }] }
     let(:unrunnable) { BasicTestSuite::DefGroup.tests.first }
 
@@ -25,7 +27,9 @@ RSpec.describe Inferno::Utils::VerifyRunnable do
     end
 
     it 'rejects tests that are part of run_as_group' do
-      expect { dummy.verify_runnable(unrunnable, [], {}) }.to raise_error(Inferno::Exceptions::NotUserRunnableException)
+      expect do
+        dummy.verify_runnable(unrunnable, [], {})
+      end.to raise_error(Inferno::Exceptions::NotUserRunnableException)
     end
   end
 end
