@@ -57,7 +57,7 @@ module CustomResult
     run do
       test1_result = child_results[tests.first.id].result
       pass_if test1_result == 'pass', 'Test 1 passed'
-      add_message('info', 'Test 1 did not pass')
+      info 'Test 1 did not pass'
 
       test2_result = child_results[tests[1].id].result
       test3_result = child_results[tests.last.id].result
