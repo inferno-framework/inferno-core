@@ -1,7 +1,5 @@
 require_relative '../../../../lib/inferno/apps/cli/execute'
 
-## TODO REFACTOR ALL THESE TESTS WITH FACTORY BOT
-
 RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   let(:instance) { described_class.new }
 
@@ -157,6 +155,37 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
       expect do
         expect { instance.print_error_and_exit(mock_error, 2) }.to output(/Error/).to_stderr
       end.to raise_error(SystemExit)
+    end
+  end
+
+  describe '#format_result' do
+    Inferno::Entities::Result::RESULT_OPTIONS.each do |result_option|
+      it "can format #{result_option} result type" do
+        result = create(:result, result: result_option)
+        expect{ instance.format_result(result) }.not_to raise_error
+      end
+
+      it "includes result type in return value" do
+        result = create(:result, result: result_option)
+        expect( instance.format_result(result).upcase ).to include result_option.upcase
+      end
+    end
+
+  end
+
+  describe '#print_color_results' do
+    let(:results) { create_list(:random_result, 10) }
+
+    it "outputs something with 10 random results" do
+      stubbed_instance = instance
+      allow(stubbed_instance).to receive(:options).and_return({ verbose: false })
+      expect{ stubbed_instance.print_color_results(results) }.to output(/.+/).to_stdout
+    end
+
+    it "outputs something with verbose true" do
+      stubbed_instance = instance
+      allow(stubbed_instance).to receive(:options).and_return({ verbose: true })
+      expect{ stubbed_instance.print_color_results(results) }.to output(/.+/).to_stdout
     end
   end
 end

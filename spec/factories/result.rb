@@ -42,5 +42,9 @@ FactoryBot.define do
         repo_create_list(:request, evaluator.request_count, result_id: instance.id)
       )
     end
+
+    factory :random_result do
+      result { Inferno::Entities::Result::RESULT_OPTIONS.sample }
+    end
   end
 end
