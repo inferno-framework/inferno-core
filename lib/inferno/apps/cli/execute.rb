@@ -188,7 +188,7 @@ module Inferno
 
       def print_error_and_exit(err, code)
         # TODO: use Application Logger for stderr?
-        warn COLOR.red "Error: #{err.full_message}"
+        $stderr.puts COLOR.red "Error: #{err.full_message}"
         exit(code)
       end
 
