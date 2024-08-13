@@ -82,13 +82,11 @@ module Inferno
       long_desc EXECUTE_HELP, wrap: false
       option :suite,
              aliases: ['-s'],
-             required: true,
              type: :string,
              desc: 'Test Suite ID to run',
              banner: 'ID'
       option :inputs,
              aliases: ['-i'],
-             optional: true,
              type: :hash,
              desc: 'Inputs (i.e: --inputs=foo:bar goo:baz)'
       option :verbose,
@@ -96,6 +94,11 @@ module Inferno
              type: :boolean,
              default: false,
              desc: 'Output additional information for debugging'
+      option :help,
+             aliases: ['-h'],
+             type: :boolean,
+             default: false,
+             desc: 'Display this message'
       def execute
         Execute.new.run(options)
       end

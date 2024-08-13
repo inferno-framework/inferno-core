@@ -49,6 +49,11 @@ module Inferno
       attr_accessor :options
 
       def run(options)
+        if options[:help]
+          puts `bundle exec inferno help execute`
+          exit(3)
+        end
+
         puts ''
         puts '=========================================='
         puts "Testing #{options[:suite]} Suite"
@@ -86,17 +91,19 @@ module Inferno
 
         exit(0) if results.find { |result| result.test_suite_id == options[:suite_id] }.result == 'pass'
 
-        exit(1)
+        # exit(1) is for Thor failures
+        # exit(2) is for shell builtin failures
+        exit(3)
       rescue Sequel::ValidationFailed => e
-        print_error_and_exit(e, 3)
-      rescue Sequel::ForeignKeyConstraintViolation => e
         print_error_and_exit(e, 4)
-      rescue Inferno::Exceptions::RequiredInputsNotFound => e
+      rescue Sequel::ForeignKeyConstraintViolation => e
         print_error_and_exit(e, 5)
-      rescue Inferno::Exceptions::NotUserRunnableException => e
+      rescue Inferno::Exceptions::RequiredInputsNotFound => e
         print_error_and_exit(e, 6)
+      rescue Inferno::Exceptions::NotUserRunnableException => e
+        print_error_and_exit(e, 7)
       rescue StandardError => e
-        print_error_and_exit(e, 2)
+        print_error_and_exit(e, 8)
       end
 
       def thor_hash_to_inputs_array(hash)
