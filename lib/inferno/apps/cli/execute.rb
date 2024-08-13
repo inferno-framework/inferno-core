@@ -35,8 +35,6 @@ module Inferno
       # I would be allow this in verbose mode but definitely not for JSON output
       suppress_output { require_relative '../../../inferno' }
 
-      # TODO: hijack logger and suppress or redirect its output
-
       COLOR = Pastel.new
       CHECKMARK = "\u2713"
 
@@ -82,7 +80,15 @@ module Inferno
         persist_inputs(session_data_repo, create_params(test_session, suite), test_run)
 
         puts 'Running tests. This may take a while...' # TODO: spinner/progress bar
-        Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
+
+        # TODO: hijack logger instead of using this if-case
+        if options[:verbose]
+          Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
+        else
+          Inferno::CLI::Execute.suppress_output do
+            Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
+          end
+        end
 
         results = test_runs_repo.results_for_test_run(test_run.id).reverse
 
