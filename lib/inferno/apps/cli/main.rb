@@ -84,7 +84,11 @@ module Inferno
              aliases: ['-s'],
              type: :string,
              desc: 'Test Suite ID to run',
-             banner: 'ID'
+             banner: 'id'
+      option :suite_options,
+             aliases: ['-o'],
+             type: :hash,
+             desc: 'Suite options'
       option :inputs,
              aliases: ['-i'],
              type: :hash,

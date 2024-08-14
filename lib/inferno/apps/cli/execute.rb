@@ -65,7 +65,10 @@ module Inferno
         suite = Inferno::Repositories::TestSuites.new.find(options[:suite])
         raise StandardError, "Suite #{options[:suite]} not found" if suite.nil?
 
-        test_session = test_sessions_repo.create({ test_suite_id: suite.id }) # TODO: add suite options
+        test_session = test_sessions_repo.create({
+          test_suite_id: suite.id,
+          suite_options: thor_hash_to_suite_options_array(options[:suite_options])
+        })
 
         verify_runnable(
           test_runs_repo.build_entity(create_params(test_session, suite)).runnable,
@@ -112,7 +115,11 @@ module Inferno
         print_error_and_exit(e, 8)
       end
 
-      def thor_hash_to_inputs_array(hash)
+      def thor_hash_to_suite_options_array(hash = {})
+        hash.to_a.map { |pair| Inferno::DSL::SuiteOption.new({id: pair[0], value: pair[1]}) }
+      end
+
+      def thor_hash_to_inputs_array(hash = {})
         hash.to_a.map { |pair| { name: pair[0], value: pair[1] } }
       end
 
