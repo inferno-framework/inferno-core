@@ -45,6 +45,7 @@ module Inferno
               ]
 
       attr_accessor :options
+      attr_accessor :runnable_type
 
       def run(options)
         if options[:help]
@@ -54,7 +55,7 @@ module Inferno
 
         puts ''
         puts '=========================================='
-        puts "Testing #{options[:suite]} Suite"
+        puts "Testing #{options[:suite] || options[:group] || options[:test]}"
         puts '=========================================='
 
         self.options = options
@@ -62,25 +63,39 @@ module Inferno
 
         Inferno::Application.start(:suites)
 
-        suite = Inferno::Repositories::TestSuites.new.find(options[:suite])
-        raise StandardError, "Suite #{options[:suite]} not found" if suite.nil?
+        if options[:suite]
+          self.runnable_type = 'suite'
+          runnable = Inferno::Repositories::TestSuites.new.find(options[:suite])
+          raise StandardError, "Suite #{options[:suite]} not found" if runnable.nil?
+        elsif options[:group]
+          self.runnable_type = 'group'
+          runnable = Inferno::Repositories::TestGroups.new.find(options[:group])
+          raise StandardError, "Group #{options[:group]} not found" if runnable.nil?
+        elsif options[:test]
+          self.runnable_type = 'test'
+          runnable = Inferno::Repositories::Tests.new.find(options[:test])
+          raise StandardError, "Group #{options[:test]} not found" if runnable.nil?
+        else
+          raise StandardError, "No suite or group id provided"
+        end
 
         test_session = test_sessions_repo.create({
-          test_suite_id: suite.id,
+          test_suite_id: runnable.suite.id,
           suite_options: thor_hash_to_suite_options_array(options[:suite_options])
         })
 
         verify_runnable(
-          test_runs_repo.build_entity(create_params(test_session, suite)).runnable,
+          # test_runs_repo.build_entity(create_params(test_session, suite)).runnable,
+          runnable,
           thor_hash_to_inputs_array(options[:inputs]),
           test_session.suite_options
         )
 
         test_run = test_runs_repo.create(
-          create_params(test_session, suite).merge({ status: 'queued' })
+          create_params(test_session, runnable).merge({ status: 'queued' })
         )
 
-        persist_inputs(session_data_repo, create_params(test_session, suite), test_run)
+        persist_inputs(session_data_repo, create_params(test_session, runnable), test_run)
 
         puts 'Running tests. This may take a while...' # TODO: spinner/progress bar
 
@@ -98,7 +113,7 @@ module Inferno
         verbose_print_json_results(results)
         print_color_results(results)
 
-        exit(0) if results.find { |result| result.test_suite_id == options[:suite_id] }.result == 'pass'
+        exit(0) if results.find { |result| result.send(runnable_id_key) == options[runnable_type.to_sym] }.result == 'pass'
 
         # exit(1) is for Thor failures
         # exit(2) is for shell builtin failures
@@ -115,6 +130,19 @@ module Inferno
         print_error_and_exit(e, 8)
       end
 
+      def runnable_id_key
+        case self.runnable_type
+        when 'suite'
+          :test_suite_id
+        when 'group'
+          :test_group_id
+        when 'test'
+          :test_id
+        else
+          raise StandardError, "Unrecognized runnable type #{self.runnable_type}"
+        end
+      end
+
       def thor_hash_to_suite_options_array(hash = {})
         hash.to_a.map { |pair| Inferno::DSL::SuiteOption.new({id: pair[0], value: pair[1]}) }
       end
@@ -123,10 +151,10 @@ module Inferno
         hash.to_a.map { |pair| { name: pair[0], value: pair[1] } }
       end
 
-      def create_params(test_session, suite)
+      def create_params(test_session, runnable)
         {
           test_session_id: test_session.id,
-          test_suite_id: suite.id,
+          runnable_id_key => runnable.id,
           inputs: thor_hash_to_inputs_array(options[:inputs])
         }
       end

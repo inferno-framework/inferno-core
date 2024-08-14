@@ -83,12 +83,20 @@ module Inferno
       option :suite,
              aliases: ['-s'],
              type: :string,
-             desc: 'Test Suite ID to run',
+             desc: 'Test suite id to run, mutually exclusive with --group and --test',
              banner: 'id'
       option :suite_options,
              aliases: ['-o'],
              type: :hash,
              desc: 'Suite options'
+      option :group,
+             aliases: ['-g'],
+             type: :string,
+             desc: 'Test group id to run, mutually exclusive with --suite and --test' # TODO make them work together
+      option :test,
+             aliases: ['-t'],
+             type: :string,
+             desc: 'Test id to run, mutually exclusive with --suite and --group'
       option :inputs,
              aliases: ['-i'],
              type: :hash,
