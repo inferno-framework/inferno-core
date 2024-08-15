@@ -13,13 +13,14 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#set_runnable!' do
-    [{suite: 'basic'}, {group: 'BasicTestSuite::AbcGroup'}, {test: 'BasicTestSuite::AbcGroup-demo_test'}].each do |given_options|
+    [{ suite: 'basic' }, { group: 'BasicTestSuite::AbcGroup' },
+     { test: 'BasicTestSuite::AbcGroup-demo_test' }].each do |given_options|
       context "with #{given_options.keys.first} option" do
         it 'does not raise error' do
           stubbed_instance = instance
           allow(stubbed_instance).to receive(:options).and_return(given_options)
 
-          expect { stubbed_instance.set_runnable! }.not_to raise_error(StandardError)
+          expect { stubbed_instance.set_runnable! }.to_not raise_error(StandardError)
         end
 
         it 'sets runnable' do
@@ -69,7 +70,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:inputs_hash) { { url: 'https://example.com' } }
     let(:inputs_array) { [{ name: :url, value: 'https://example.com' }] }
 
-    # TODO test all cases [{suite: }]
+    # TODO: test all cases [{suite: }]
     it 'returns test run params' do
       stubbed_instance = instance
       allow(stubbed_instance).to receive(:options).and_return({ inputs: inputs_hash })

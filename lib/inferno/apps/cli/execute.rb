@@ -36,6 +36,7 @@ module Inferno
 
       COLOR = Pastel.new
       CHECKMARK = "\u2713"
+      BAR = '=========================================='
 
       include Import[
                 test_sessions_repo: 'inferno.repositories.test_sessions',
@@ -43,19 +44,13 @@ module Inferno
                 test_runs_repo: 'inferno.repositories.test_runs'
               ]
 
-      attr_accessor :options
-      attr_accessor :runnable
-      attr_accessor :runnable_type
+      attr_accessor :options, :runnable, :runnable_type
 
       def run(options)
         print_help_and_exit if options[:help]
 
-        puts ''
-        puts '=========================================='
-        puts "Testing #{options[:suite] || options[:group] || options[:test]}"
-        puts '=========================================='
-
         self.options = options
+        print_start_message
         verbose_puts 'options:', self.options
 
         Inferno::Application.start(:suites)
@@ -63,9 +58,11 @@ module Inferno
         set_runnable!
 
         test_session = test_sessions_repo.create({
-          test_suite_id: runnable.suite.id,
-          suite_options: thor_hash_to_suite_options_array(options[:suite_options])
-        })
+                                                   test_suite_id: runnable.suite.id,
+                                                   suite_options: thor_hash_to_suite_options_array(
+                                                     options[:suite_options]
+                                                   )
+                                                 })
 
         verify_runnable(
           runnable,
@@ -95,7 +92,9 @@ module Inferno
         verbose_print_json_results(results)
         print_color_results(results)
 
-        exit(0) if results.find { |result| result.send(runnable_id_key) == options[runnable_type.to_sym] }.result == 'pass'
+        exit(0) if results.find do |result|
+                     result.send(runnable_id_key) == options[runnable_type.to_sym]
+                   end.result == 'pass'
 
         # exit(1) is for Thor failures
         # exit(2) is for shell builtin failures
@@ -117,26 +116,33 @@ module Inferno
         exit(3)
       end
 
+      def print_start_message
+        puts ''
+        puts BAR
+        puts "Testing #{options[:suite] || options[:group] || options[:test]}"
+        puts BAR
+      end
+
       def set_runnable!
-        if self.options[:suite]
+        if options[:suite]
           self.runnable_type = 'suite'
-          self.runnable = Inferno::Repositories::TestSuites.new.find(self.options[:suite])
-          raise StandardError, "Suite #{self.options[:suite]} not found" if self.runnable.nil?
-        elsif self.options[:group]
+          self.runnable = Inferno::Repositories::TestSuites.new.find(options[:suite])
+          raise StandardError, "Suite #{options[:suite]} not found" if runnable.nil?
+        elsif options[:group]
           self.runnable_type = 'group'
-          self.runnable = Inferno::Repositories::TestGroups.new.find(self.options[:group])
-          raise StandardError, "Group #{self.options[:group]} not found" if self.runnable.nil?
-        elsif self.options[:test]
+          self.runnable = Inferno::Repositories::TestGroups.new.find(options[:group])
+          raise StandardError, "Group #{options[:group]} not found" if runnable.nil?
+        elsif options[:test]
           self.runnable_type = 'test'
-          self.runnable = Inferno::Repositories::Tests.new.find(self.options[:test])
-          raise StandardError, "Test #{self.options[:test]} not found" if self.runnable.nil?
+          self.runnable = Inferno::Repositories::Tests.new.find(options[:test])
+          raise StandardError, "Test #{options[:test]} not found" if runnable.nil?
         else
-          raise StandardError, "No suite or group id provided"
+          raise StandardError, 'No suite or group id provided'
         end
       end
 
       def runnable_id_key
-        case self.runnable_type&.to_sym
+        case runnable_type&.to_sym
         when :suite
           :test_suite_id
         when :group
@@ -144,12 +150,12 @@ module Inferno
         when :test
           :test_id
         else
-          raise StandardError, "Unrecognized runnable type #{self.runnable_type}"
+          raise StandardError, "Unrecognized runnable type #{runnable_type}"
         end
       end
 
       def thor_hash_to_suite_options_array(hash = {})
-        hash.to_a.map { |pair| Inferno::DSL::SuiteOption.new({id: pair[0], value: pair[1]}) }
+        hash.to_a.map { |pair| Inferno::DSL::SuiteOption.new({ id: pair[0], value: pair[1] }) }
       end
 
       def thor_hash_to_inputs_array(hash = {})
@@ -239,17 +245,17 @@ module Inferno
       end
 
       def verbose_print_json_results(results)
-        verbose_puts '=========================================='
+        verbose_puts BAR
         verbose_puts 'JSON Test Results:'
-        verbose_puts '=========================================='
+        verbose_puts BAR
         verbose_puts serialize(results)
-        verbose_puts '=========================================='
+        verbose_puts BAR
       end
 
       def print_color_results(results)
-        puts '=========================================='
+        puts BAR
         puts 'Colored Test Results:'
-        puts '=========================================='
+        puts BAR
         results.each do |result|
           print format_id(result), ': ', format_result(result), "\n"
           verbose_puts "\tsummary: ",   result.result_message
@@ -258,7 +264,7 @@ module Inferno
           verbose_puts "\tinputs: ",    format_inputs(result)
           verbose_puts "\toutputs: ",   format_outputs(result)
         end
-        puts '=========================================='
+        puts BAR
       end
 
       def print_error_and_exit(err, code)

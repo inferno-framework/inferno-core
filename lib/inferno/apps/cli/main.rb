@@ -92,7 +92,7 @@ module Inferno
       option :group,
              aliases: ['-g'],
              type: :string,
-             desc: 'Test group id to run, mutually exclusive with --suite and --test' # TODO make them work together
+             desc: 'Test group id to run, mutually exclusive with --suite and --test' # TODO: make them work together
       option :test,
              aliases: ['-t'],
              type: :string,
