@@ -3,6 +3,52 @@ require_relative '../../../../lib/inferno/apps/cli/execute'
 RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   let(:instance) { described_class.new }
 
+  # TODO: test print_help_and_exit, set_runnable, runnable_id_key, thor_hash_to_suite_options_array
+  describe '#print_help_and_exit' do
+    it 'outputs something and exits' do
+      expect do
+        expect { instance.print_help_and_exit }.to output(/.+/).to_stdout
+      end.to raise_error(SystemExit)
+    end
+  end
+
+  describe '#set_runnable!' do
+    [{suite: 'basic'}, {group: 'BasicTestSuite::AbcGroup'}, {test: 'BasicTestSuite::AbcGroup-demo_test'}].each do |given_options|
+      context "with #{given_options.keys.first} option" do
+        it 'does not raise error' do
+          stubbed_instance = instance
+          allow(stubbed_instance).to receive(:options).and_return(given_options)
+
+          expect { stubbed_instance.set_runnable! }.not_to raise_error(StandardError)
+        end
+
+        it 'sets runnable' do
+          stubbed_instance = instance
+          allow(stubbed_instance).to receive(:options).and_return(given_options)
+
+          stubbed_instance.set_runnable!
+          klass = case given_options.keys.first
+                  when :suite
+                    Inferno::TestSuite
+                  when :group
+                    Inferno::TestGroup
+                  else
+                    Inferno::Test
+                  end
+          expect(stubbed_instance.runnable).to be < klass
+        end
+
+        it 'sets runnable_type' do
+          stubbed_instance = instance
+          allow(stubbed_instance).to receive(:options).and_return(given_options)
+
+          stubbed_instance.set_runnable!
+          expect(stubbed_instance.runnable_type).to eq(given_options.keys.first.to_s)
+        end
+      end
+    end
+  end
+
   describe '#thor_hash_to_inputs_array' do
     let(:hash) { { url: 'https://example.com' } }
 
@@ -23,6 +69,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:inputs_hash) { { url: 'https://example.com' } }
     let(:inputs_array) { [{ name: :url, value: 'https://example.com' }] }
 
+    # TODO test all cases [{suite: }]
     it 'returns test run params' do
       stubbed_instance = instance
       allow(stubbed_instance).to receive(:options).and_return({ inputs: inputs_hash })
@@ -112,7 +159,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
   describe '#format_requests' do
     let(:test_result) { repo_create(:result, request_count: 10) }
-    let(:instance) { described_class.new }
 
     it 'includes all status codes' do
       requests = test_result.requests
@@ -148,17 +194,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  describe '#print_error_and_exit' do
-    let(:mock_error_class) { Class.new(StandardError) }
-    let(:mock_error) { mock_error_class.new('mock message') }
-
-    it 'outputs to stderr and exits' do
-      expect do
-        expect { instance.print_error_and_exit(mock_error, 2) }.to output(/Error/).to_stderr
-      end.to raise_error(SystemExit)
-    end
-  end
-
   describe '#format_result' do
     Inferno::Entities::Result::RESULT_OPTIONS.each do |result_option|
       it "can format #{result_option} result type" do
@@ -186,6 +221,17 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
       stubbed_instance = instance
       allow(stubbed_instance).to receive(:options).and_return({ verbose: true })
       expect { stubbed_instance.print_color_results(results) }.to output(/.+/).to_stdout
+    end
+  end
+
+  describe '#print_error_and_exit' do
+    let(:mock_error_class) { Class.new(StandardError) }
+    let(:mock_error) { mock_error_class.new('mock message') }
+
+    it 'outputs to stderr and exits' do
+      expect do
+        expect { instance.print_error_and_exit(mock_error, 2) }.to output(/Error/).to_stderr
+      end.to raise_error(SystemExit)
     end
   end
 

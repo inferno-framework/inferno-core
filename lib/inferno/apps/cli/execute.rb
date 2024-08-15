@@ -129,7 +129,7 @@ module Inferno
         elsif self.options[:test]
           self.runnable_type = 'test'
           self.runnable = Inferno::Repositories::Tests.new.find(self.options[:test])
-          raise StandardError, "Group #{self.options[:test]} not found" if self.runnable.nil?
+          raise StandardError, "Test #{self.options[:test]} not found" if self.runnable.nil?
         else
           raise StandardError, "No suite or group id provided"
         end
@@ -238,12 +238,6 @@ module Inferno
         end
       end
 
-      def print_error_and_exit(err, code)
-        # TODO: use Application Logger for stderr?
-        $stderr.puts COLOR.red "Error: #{err.full_message}" # rubocop:disable Style/StderrPuts # always print this error instead of using `warn`
-        exit(code)
-      end
-
       def verbose_print_json_results(results)
         verbose_puts '=========================================='
         verbose_puts 'JSON Test Results:'
@@ -265,6 +259,12 @@ module Inferno
           verbose_puts "\toutputs: ",   format_outputs(result)
         end
         puts '=========================================='
+      end
+
+      def print_error_and_exit(err, code)
+        # TODO: use Application Logger for stderr?
+        $stderr.puts COLOR.red "Error: #{err.full_message}" # rubocop:disable Style/StderrPuts # always print this error instead of using `warn`
+        exit(code)
       end
     end
   end
