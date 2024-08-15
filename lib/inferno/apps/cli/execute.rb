@@ -32,7 +32,6 @@ module Inferno
       end
 
       # Inferno boot flow triggers migration and logger outputs it
-      # I would be allow this in verbose mode but definitely not for JSON output
       suppress_output { require_relative '../../../inferno' }
 
       COLOR = Pastel.new
@@ -45,13 +44,11 @@ module Inferno
               ]
 
       attr_accessor :options
+      attr_accessor :runnable
       attr_accessor :runnable_type
 
       def run(options)
-        if options[:help]
-          puts `bundle exec inferno help execute`
-          exit(3)
-        end
+        print_help_and_exit if options[:help]
 
         puts ''
         puts '=========================================='
@@ -63,21 +60,7 @@ module Inferno
 
         Inferno::Application.start(:suites)
 
-        if options[:suite]
-          self.runnable_type = 'suite'
-          runnable = Inferno::Repositories::TestSuites.new.find(options[:suite])
-          raise StandardError, "Suite #{options[:suite]} not found" if runnable.nil?
-        elsif options[:group]
-          self.runnable_type = 'group'
-          runnable = Inferno::Repositories::TestGroups.new.find(options[:group])
-          raise StandardError, "Group #{options[:group]} not found" if runnable.nil?
-        elsif options[:test]
-          self.runnable_type = 'test'
-          runnable = Inferno::Repositories::Tests.new.find(options[:test])
-          raise StandardError, "Group #{options[:test]} not found" if runnable.nil?
-        else
-          raise StandardError, "No suite or group id provided"
-        end
+        set_runnable!
 
         test_session = test_sessions_repo.create({
           test_suite_id: runnable.suite.id,
@@ -85,7 +68,6 @@ module Inferno
         })
 
         verify_runnable(
-          # test_runs_repo.build_entity(create_params(test_session, suite)).runnable,
           runnable,
           thor_hash_to_inputs_array(options[:inputs]),
           test_session.suite_options
@@ -130,13 +112,36 @@ module Inferno
         print_error_and_exit(e, 8)
       end
 
+      def print_help_and_exit
+        puts `bundle exec inferno help execute`
+        exit(3)
+      end
+
+      def set_runnable!
+        if self.options[:suite]
+          self.runnable_type = 'suite'
+          self.runnable = Inferno::Repositories::TestSuites.new.find(self.options[:suite])
+          raise StandardError, "Suite #{self.options[:suite]} not found" if self.runnable.nil?
+        elsif self.options[:group]
+          self.runnable_type = 'group'
+          self.runnable = Inferno::Repositories::TestGroups.new.find(self.options[:group])
+          raise StandardError, "Group #{self.options[:group]} not found" if self.runnable.nil?
+        elsif self.options[:test]
+          self.runnable_type = 'test'
+          self.runnable = Inferno::Repositories::Tests.new.find(self.options[:test])
+          raise StandardError, "Group #{self.options[:test]} not found" if self.runnable.nil?
+        else
+          raise StandardError, "No suite or group id provided"
+        end
+      end
+
       def runnable_id_key
-        case self.runnable_type
-        when 'suite'
+        case self.runnable_type&.to_sym
+        when :suite
           :test_suite_id
-        when 'group'
+        when :group
           :test_group_id
-        when 'test'
+        when :test
           :test_id
         else
           raise StandardError, "Unrecognized runnable type #{self.runnable_type}"
@@ -223,12 +228,11 @@ module Inferno
         when 'error'
           COLOR.magenta 'X error'
         when 'wait'
-          # This may be dead code with synchronous test execution
-          '. wait'
+          COLOR.bold '. wait'
         when 'cancel'
           COLOR.red 'X cancel'
         when 'running'
-          '- running'
+          COLOR.bold '- running'
         else
           raise StandardError.new, "Unrecognized result #{result.result}"
         end
