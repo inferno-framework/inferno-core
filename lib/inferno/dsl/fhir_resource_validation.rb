@@ -277,16 +277,15 @@ module Inferno
         end
 
         # @private
-        def operation_outcome_from_hl7_wrapped_response(response)
-          res = JSON.parse(response)
-          if res['sessionId'] != @session_id
-            validator_session_repo.save(test_suite_id:, validator_session_id: res['sessionId'],
+        def operation_outcome_from_hl7_wrapped_response(response_hash)
+          if response_hash['sessionId'] != @session_id
+            validator_session_repo.save(test_suite_id:, validator_session_id: response_hash['sessionId'],
                                         validator_name: name.to_s, suite_options: requirements)
-            @session_id = res['sessionId']
+            @session_id = response_hash['sessionId']
           end
 
           # assume for now that one resource -> one request
-          issues = res['outcomes'][0]['issues']&.map do |i|
+          issues = response_hash['outcomes'][0]['issues']&.map do |i|
             { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
           end
           # this is circuitous, ideally we would map this response directly to message_hashes
@@ -295,14 +294,12 @@ module Inferno
 
         # @private
         def operation_outcome_from_validator_response(response, runnable)
-          if response.body.start_with? '{'
-            operation_outcome_from_hl7_wrapped_response(response.body)
-          else
-            runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{response.body}")
-            raise Inferno::Exceptions::ErrorInValidatorException,
-                  'Validator response was an unexpected format. ' \
-                  'Review Messages tab or validator service logs for more information.'
-          end
+          operation_outcome_from_hl7_wrapped_response(JSON.parse(response.body))
+        rescue JSON::ParserError
+          runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{response.body}")
+          raise Inferno::Exceptions::ErrorInValidatorException,
+                'Validator response was an unexpected format. '\
+                'Review Messages tab or validator service logs for more information.'
         end
       end
 
