@@ -29,6 +29,13 @@ class FHIRClientDSLTestClass
     )
   end
 
+  fhir_client :client_with_auth_info do
+    url 'http://www.example.com/fhir'
+    auth_info(
+      Inferno::DSL::AuthInfo.new(AuthInfoConstants.public_access_default)
+    )
+  end
+
   fhir_client :client_with_trailing_slash do
     url 'http://www.example.com/fhir/'
   end
@@ -364,6 +371,20 @@ RSpec.describe Inferno::DSL::FHIRClient do
       end
     end
 
+    context 'with auth info' do
+      it 'performs a refresh if the token is about to expire' do
+        client = group.fhir_client(:client_with_auth_info)
+        allow(client).to receive(:need_to_refresh?).and_return(true)
+        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(group).to receive(:perform_refresh).with(client)
+
+        group.fhir_operation(path, client: :client_with_auth_info)
+
+        expect(stub_operation_request).to have_been_made.once
+        expect(group).to have_received(:perform_refresh)
+      end
+    end
+
     context 'with a base url that causes a TCP error' do
       before do
         allow_any_instance_of(FHIR::Client)
@@ -528,6 +549,20 @@ RSpec.describe Inferno::DSL::FHIRClient do
         allow(group).to receive(:perform_refresh).with(client)
 
         group.fhir_read(resource.resourceType, resource_id, client: :client_with_oauth_credentials)
+
+        expect(stub_read_request).to have_been_made.once
+        expect(group).to have_received(:perform_refresh)
+      end
+    end
+
+    context 'with auth info' do
+      it 'performs a refresh if the token is about to expire' do
+        client = group.fhir_client(:client_with_auth_info)
+        allow(client).to receive(:need_to_refresh?).and_return(true)
+        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(group).to receive(:perform_refresh).with(client)
+
+        group.fhir_read(resource.resourceType, resource_id, client: :client_with_auth_info)
 
         expect(stub_read_request).to have_been_made.once
         expect(group).to have_received(:perform_refresh)
@@ -1055,6 +1090,21 @@ RSpec.describe Inferno::DSL::FHIRClient do
       end
     end
 
+    context 'with auth info' do
+      it 'performs a refresh if the token is about to expire' do
+        stub_get_search_request
+        client = group.fhir_client(:client_with_auth_info)
+        allow(client).to receive(:need_to_refresh?).and_return(true)
+        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(group).to receive(:perform_refresh).with(client)
+
+        group.fhir_search(resource.resourceType, params: { patient: 123 }, client: :client_with_auth_info)
+
+        expect(stub_get_search_request).to have_been_made.once
+        expect(group).to have_received(:perform_refresh)
+      end
+    end
+
     context 'with a base url that causes a TCP error' do
       before do
         allow_any_instance_of(FHIR::Client)
@@ -1263,65 +1313,216 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
-  describe '#perform_refresh' do
-    let(:client) { group.fhir_client(:client_with_oauth_credentials) }
-    let(:credentials) { client.oauth_credentials }
-    let(:token_url) { client.token_url }
+  describe '#auth_info' do
+    let(:client) { group.fhir_client(:client_with_auth_info) }
 
-    context 'when the refresh is unsuccessful' do
-      it 'does not update credentials' do
-        original_credentials = credentials.to_hash
-        token_request =
-          stub_request(:post, credentials.token_url)
-            .to_return(status: 400)
+    it 'uses the given bearer token in the security header' do
+      token = AuthInfoConstants.public_access_default[:access_token]
+      expect(client.security_headers).to eq({ 'Authorization' => "Bearer #{token}" })
+    end
 
-        group.perform_refresh(client)
+    it 'has the auth flags set correctly' do
+      expect(client.use_basic_auth).to be_truthy
+      expect(client.use_oauth2_auth).to be_falsey
+    end
 
-        expect(client.oauth_credentials.to_hash).to eq(original_credentials)
-        expect(token_request).to have_been_made
+    it 'stores the credentials on the client' do
+      expect(client.instance_variable_get(:@auth_info)).to be_a(Inferno::DSL::AuthInfo)
+    end
+  end
+
+  describe '#need_to_refresh?' do
+    context 'with oauth credentials' do
+      let(:client) { group.fhir_client(:client_with_oauth_credentials) }
+
+      it 'returns true if @oauth_credentials&.need_to_refresh? is true' do
+        client.oauth_credentials.expires_in = nil
+        expect(client.need_to_refresh?).to be(true)
+      end
+
+      it 'returns a falsey if @oauth_credentials&.need_to_refresh? is false' do
+        client.oauth_credentials.access_token = nil
+        expect(client).to_not be_need_to_refresh
       end
     end
 
-    context 'when the refresh is successful' do
-      let(:token_response_body) do
-        {
-          access_token: 'NEW_ACCESS_TOKEN',
-          token_type: 'bearer',
-          expires_in: 5000,
-          scope: 'NEW_SCOPES',
-          refresh_token: 'NEW_REFRESH_TOKEN'
-        }
+    context 'with aut info' do
+      let(:client) { group.fhir_client(:client_with_auth_info) }
+
+      it 'returns true if @auth_info&.need_to_refresh? is true' do
+        client.auth_info.expires_in = nil
+        expect(client.need_to_refresh?).to be(true)
       end
 
-      it 'updates the credentials on the client' do
-        token_request =
-          stub_request(:post, credentials.token_url)
-            .to_return(status: 200, body: JSON.generate(token_response_body))
+      it 'returns a falsey if @auth_info&.need_to_refresh? is false' do
+        client.auth_info.access_token = nil
+        expect(client).to_not be_need_to_refresh
+      end
+    end
 
-        group.perform_refresh(client)
+    it 'returns a falsey if @auth_info and @oauth_credentials are missing' do
+      client = group.fhir_client
+      expect(client).to_not be_need_to_refresh
+    end
+  end
 
-        expect(token_request).to have_been_made
-        expect(credentials.access_token).to eq(token_response_body[:access_token])
-        expect(credentials.refresh_token).to eq(token_response_body[:refresh_token])
+  describe '#able_to_refresh?' do
+    context 'with oauth credentials' do
+      let(:client) { group.fhir_client(:client_with_oauth_credentials) }
+
+      it 'returns true if @oauth_credentials&.able_to_refresh? is true' do
+        expect(client.able_to_refresh?).to be(true)
       end
 
-      it 'updates the credentials in the database' do
-        session = repo_create(:test_session, test_suite_id: 'demo')
-        allow(group).to receive(:test_session_id).and_return(session.id)
+      it 'returns a falsey if @oauth_credentials&.able_to_refresh? is false' do
+        client.oauth_credentials.token_url = nil
+        expect(client).to_not be_able_to_refresh
+      end
+    end
 
-        credentials.name = 'name'
-        token_request =
-          stub_request(:post, credentials.token_url)
-            .to_return(status: 200, body: JSON.generate(token_response_body))
+    context 'with aut info' do
+      let(:client) { group.fhir_client(:client_with_auth_info) }
 
-        group.perform_refresh(client)
+      it 'returns true if @auth_info&.able_to_refresh? is true' do
+        expect(client.able_to_refresh?).to be(true)
+      end
 
-        expect(token_request).to have_been_made
+      it 'returns a falsey if @auth_info&.able_to_refresh? is false' do
+        client.auth_info.token_url = nil
+        expect(client).to_not be_able_to_refresh
+      end
+    end
 
-        persisted_credentials =
-          session_data_repo.load(test_session_id: group.test_session_id, name: 'name', type: 'oauth_credentials')
+    it 'returns a falsey if @auth_info and @oauth_credentials are missing' do
+      client = group.fhir_client
+      expect(client).to_not be_able_to_refresh
+    end
+  end
 
-        expect(persisted_credentials.to_hash).to eq(credentials.to_hash)
+  describe '#perform_refresh' do
+    context 'with oauth credentials' do
+      let(:client) { group.fhir_client(:client_with_oauth_credentials) }
+      let(:credentials) { client.oauth_credentials }
+      let(:token_url) { client.token_url }
+
+      context 'when the refresh is unsuccessful' do
+        it 'does not update credentials' do
+          original_credentials = credentials.to_hash
+          token_request =
+            stub_request(:post, credentials.token_url)
+              .to_return(status: 400)
+
+          group.perform_refresh(client)
+
+          expect(client.oauth_credentials.to_hash).to eq(original_credentials)
+          expect(token_request).to have_been_made
+        end
+      end
+
+      context 'when the refresh is successful' do
+        let(:token_response_body) do
+          {
+            access_token: 'NEW_ACCESS_TOKEN',
+            token_type: 'bearer',
+            expires_in: 5000,
+            scope: 'NEW_SCOPES',
+            refresh_token: 'NEW_REFRESH_TOKEN'
+          }
+        end
+
+        it 'updates the credentials on the client' do
+          token_request =
+            stub_request(:post, credentials.token_url)
+              .to_return(status: 200, body: JSON.generate(token_response_body))
+
+          group.perform_refresh(client)
+
+          expect(token_request).to have_been_made
+          expect(credentials.access_token).to eq(token_response_body[:access_token])
+          expect(credentials.refresh_token).to eq(token_response_body[:refresh_token])
+        end
+
+        it 'updates the credentials in the database' do
+          session = repo_create(:test_session, test_suite_id: 'demo')
+          allow(group).to receive(:test_session_id).and_return(session.id)
+
+          credentials.name = 'name'
+          token_request =
+            stub_request(:post, credentials.token_url)
+              .to_return(status: 200, body: JSON.generate(token_response_body))
+
+          group.perform_refresh(client)
+
+          expect(token_request).to have_been_made
+
+          persisted_credentials =
+            session_data_repo.load(test_session_id: group.test_session_id, name: 'name', type: 'oauth_credentials')
+
+          expect(persisted_credentials.to_hash).to eq(credentials.to_hash)
+        end
+      end
+    end
+
+    context 'with auth info' do
+      let(:client) { group.fhir_client(:client_with_auth_info) }
+      let(:credentials) { client.auth_info }
+      let(:token_url) { client.token_url }
+
+      context 'when the refresh is unsuccessful' do
+        it 'does not update credentials' do
+          original_credentials = credentials.to_hash
+          token_request =
+            stub_request(:post, credentials.token_url)
+              .to_return(status: 400)
+
+          group.perform_refresh(client)
+
+          expect(client.auth_info.to_hash).to eq(original_credentials)
+          expect(token_request).to have_been_made
+        end
+      end
+
+      context 'when the refresh is successful' do
+        let(:token_response_body) do
+          {
+            access_token: 'NEW_ACCESS_TOKEN',
+            token_type: 'bearer',
+            expires_in: 5000,
+            scope: 'NEW_SCOPES',
+            refresh_token: 'NEW_REFRESH_TOKEN'
+          }
+        end
+
+        it 'updates the credentials on the client' do
+          token_request =
+            stub_request(:post, credentials.token_url)
+              .to_return(status: 200, body: JSON.generate(token_response_body))
+
+          group.perform_refresh(client)
+
+          expect(token_request).to have_been_made
+          expect(credentials.access_token).to eq(token_response_body[:access_token])
+          expect(credentials.refresh_token).to eq(token_response_body[:refresh_token])
+        end
+
+        it 'updates the credentials in the database' do
+          session = repo_create(:test_session, test_suite_id: 'demo')
+          allow(group).to receive(:test_session_id).and_return(session.id)
+
+          credentials.name = 'name'
+          token_request =
+            stub_request(:post, credentials.token_url)
+              .to_return(status: 200, body: JSON.generate(token_response_body))
+
+          group.perform_refresh(client)
+
+          expect(token_request).to have_been_made
+
+          persisted_credentials =
+            session_data_repo.load(test_session_id: group.test_session_id, name: 'name', type: 'auth_info')
+
+          expect(persisted_credentials.to_hash).to eq(credentials.to_hash)
+        end
       end
     end
   end

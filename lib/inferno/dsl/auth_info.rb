@@ -1,4 +1,5 @@
 require_relative '../entities/attributes'
+require_relative 'jwks'
 
 module Inferno
   module DSL
@@ -167,6 +168,142 @@ module Inferno
         return unless access_token.present?
 
         client.set_bearer_token(access_token)
+      end
+
+      # @private
+      def need_to_refresh?
+        return false if access_token.blank? || (!backend_services? && refresh_token.blank?)
+
+        return true if expires_in.blank?
+
+        issue_time.to_i + expires_in.to_i - DateTime.now.to_i < 60
+      end
+
+      # @private
+      def able_to_refresh?
+        token_url.present? && (backend_services? || refresh_token.present?)
+      end
+
+      # @private
+      def backend_services?
+        auth_type == 'backend_services'
+      end
+
+      # @private
+      def oauth2_refresh_params
+        case auth_type
+        when 'public'
+          public_auth_refresh_params
+        when 'symmetric'
+          symmetric_auth_refresh_params
+        when 'asymmetric'
+          asymmetric_auth_refresh_params
+        when 'backend_services'
+          backend_services_auth_refresh_params
+        end
+      end
+
+      # @private
+      def symmetric_auth_refresh_params
+        {
+          'grant_type' => 'refresh_token',
+          'refresh_token' => refresh_token
+        }
+      end
+
+      # @private
+      def public_auth_refresh_params
+        symmetric_auth_refresh_params.merge('client_id' => client_id)
+      end
+
+      # @private
+      def asymmetric_auth_refresh_params
+        symmetric_auth_refresh_params.merge(
+          'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+          'client_assertion' => client_assertion
+        )
+      end
+
+      # @private
+      def backend_services_auth_refresh_params
+        {
+          'grant_type' => 'client_credentials',
+          'scope' => requested_scopes,
+          'client_assertion_type' => 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+          'client_assertion' => client_assertion
+        }
+      end
+
+      # @private
+      def oauth2_refresh_headers
+        base_headers = { 'Content-Type' => 'application/x-www-form-urlencoded' }
+
+        return base_headers unless auth_type == 'symmetric'
+
+        credentials = "#{client_id}:#{client_secret}"
+
+        base_headers.merge(
+          'Authorization' => "Basic #{Base64.strict_encode64(credentials)}"
+        )
+      end
+
+      # @private
+      def private_key
+        @private_key ||= JWKS.jwks(user_jwks: jwks)
+          .select { |key| key[:key_ops]&.include?('sign') }
+          .select { |key| key[:alg] == encryption_algorithm }
+          .find { |key| !kid || key[:kid] == kid }
+      end
+
+      # @private
+      def signing_key
+        if private_key.nil?
+          raise Inferno::Exceptions::AssertionException,
+                "No signing key found for inputs: encryption method = '#{encryption_algorithm}' and kid = '#{kid}'"
+        end
+
+        @private_key.signing_key
+      end
+
+      # @private
+      def auth_jwt_header
+        {
+          'alg' => encryption_algorithm,
+          'kid' => private_key['kid'],
+          'typ' => 'JWT',
+          'jku' => Inferno::Application['jwks_url']
+        }
+      end
+
+      # @private
+      def auth_jwt_claims
+        {
+          'iss' => client_id,
+          'sub' => client_id,
+          'aud' => token_url,
+          'exp' => 5.minutes.from_now.to_i,
+          'jti' => SecureRandom.hex(32)
+        }
+      end
+
+      # @private
+      def client_assertion
+        JWT.encode auth_jwt_claims, signing_key, encryption_algorithm, auth_jwt_header
+      end
+
+      # @private
+      def update_from_response_body(request)
+        token_response_body = JSON.parse(request.response_body)
+
+        expires_in = token_response_body['expires_in'].is_a?(Numeric) ? token_response_body['expires_in'] : nil
+
+        self.access_token = token_response_body['access_token']
+        self.refresh_token = token_response_body['refresh_token'] if token_response_body['refresh_token'].present?
+        self.expires_in = expires_in
+        self.issue_time = DateTime.now
+
+        add_to_client(client)
+        self
       end
     end
   end
