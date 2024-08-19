@@ -31,6 +31,7 @@ module Inferno
         retval
       end
 
+      ENV['NO_DB'] = 'true'
       # Inferno boot flow triggers migration and logger outputs it
       suppress_output { require_relative '../../../inferno' }
 
@@ -53,7 +54,7 @@ module Inferno
         print_start_message
         verbose_puts 'options:', self.options
 
-        Inferno::Application.start(:suites)
+        Inferno::Application.start(:cli)
 
         set_runnable!
 
@@ -112,7 +113,7 @@ module Inferno
       end
 
       def print_help_and_exit
-        puts `bundle exec inferno help execute`
+        puts `NO_DB=true bundle exec inferno help execute`
         exit(3)
       end
 

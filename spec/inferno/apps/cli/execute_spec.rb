@@ -3,7 +3,9 @@ require_relative '../../../../lib/inferno/apps/cli/execute'
 RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   let(:instance) { described_class.new }
 
-  # TODO: test print_help_and_exit, set_runnable, runnable_id_key, thor_hash_to_suite_options_array
+  # TODO: runnable_id_key, thor_hash_to_suite_options_array
+
+  # TODO this test catches a weird inferno glitch
   describe '#print_help_and_exit' do
     it 'outputs something and exits' do
       expect do
