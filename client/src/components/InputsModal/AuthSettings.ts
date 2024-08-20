@@ -41,9 +41,6 @@ export const authSettings = {
     'use_discovery',
     'client_id',
     'requested_scopes',
-    'pkce_support',
-    'pkce_code_challenge_method',
-    'auth_request_method',
     'encryption_algorithm',
     'jwks',
     'kid',
@@ -222,7 +219,6 @@ export const accessSettings = {
   ],
   backend_services: [
     'access_token',
-    'refresh_token',
     'client_id',
     'token_url',
     'encryption_algorithm',
@@ -286,7 +282,9 @@ export const getAccessFields = (
         ],
       },
       optional: true,
-      hide: !accessValues.get('refresh_token'),
+      hide:
+        !accessValues.get('refresh_token') ||
+        (authType === 'backend_services' && !accessValues.get('access_token')),
     },
     {
       name: 'kid',
@@ -294,7 +292,10 @@ export const getAccessFields = (
       description:
         'Key ID of the JWKS private key used to sign the client assertion. If blank, the first key for the selected encryption algorithm will be used.',
       optional: true,
-      hide: !accessValues.get('refresh_token'),
+      hide:
+        authType === 'backend_services'
+          ? !accessValues.get('access_token')
+          : !accessValues.get('refresh_token'),
     },
     {
       name: 'jwks',
@@ -303,21 +304,30 @@ export const getAccessFields = (
       description:
         "The JWKS (including private keys) which will be used to sign the client assertion. If blank, Inferno's default JWKS will be used.",
       optional: true,
-      hide: !accessValues.get('refresh_token'),
+      hide:
+        authType === 'backend_services'
+          ? !accessValues.get('access_token')
+          : !accessValues.get('refresh_token'),
     },
     {
       name: 'issue_time',
       title: 'Access Token Issue Time',
       description: 'The time that the access token was issued in iso8601 format',
       optional: true,
-      hide: !accessValues.get('refresh_token'),
+      hide:
+        authType === 'backend_services'
+          ? !accessValues.get('access_token')
+          : !accessValues.get('refresh_token'),
     },
     {
       name: 'expires_in',
       title: 'Token Lifetime',
       description: 'The lifetime of the access token in seconds',
       optional: true,
-      hide: !accessValues.get('refresh_token'),
+      hide:
+        authType === 'backend_services'
+          ? !accessValues.get('access_token')
+          : !accessValues.get('refresh_token'),
     },
   ] as TestInput[];
 
