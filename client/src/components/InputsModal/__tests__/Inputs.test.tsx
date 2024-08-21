@@ -7,6 +7,8 @@ import InputCheckboxGroup from '~/components/InputsModal/InputCheckboxGroup';
 import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputTextField from '~/components/InputsModal/InputTextField';
 import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredentials';
+import InputAuth from '~/components/InputsModal/InputAuth';
+import InputAccess from '~/components/InputsModal/InputAccess';
 
 describe('Input Components', () => {
   it('renders InputCheckboxGroup', () => {
@@ -150,6 +152,72 @@ describe('Input Components', () => {
     );
 
     const inputText = screen.getByText('oauthInput');
+    expect(inputText).toBeVisible();
+  });
+
+  it('renders InputAuth', () => {
+    const authInput = {
+      name: 'authInput',
+      type: 'auth_info' as TestInput['type'],
+      optional: true,
+      options: {
+        mode: 'auth',
+        components: [
+          {
+            default: 'public',
+            name: 'auth_type',
+          },
+        ],
+      },
+    };
+
+    render(
+      <ThemeProvider>
+        <SnackbarProvider>
+          <InputAuth
+            requirement={authInput}
+            index={0}
+            inputsMap={new Map<string, string>()}
+            setInputsMap={() => {}}
+          />
+        </SnackbarProvider>
+      </ThemeProvider>
+    );
+
+    const inputText = screen.getByText('authInput Auth Type (required)');
+    expect(inputText).toBeVisible();
+  });
+
+  it('renders InputAccess', () => {
+    const accessInput = {
+      name: 'accessInput',
+      type: 'auth_info' as TestInput['type'],
+      optional: true,
+      options: {
+        mode: 'access',
+        components: [
+          {
+            default: 'public',
+            name: 'auth_type',
+          },
+        ],
+      },
+    };
+
+    render(
+      <ThemeProvider>
+        <SnackbarProvider>
+          <InputAccess
+            requirement={accessInput}
+            index={0}
+            inputsMap={new Map<string, string>()}
+            setInputsMap={() => {}}
+          />
+        </SnackbarProvider>
+      </ThemeProvider>
+    );
+
+    const inputText = screen.getByText('accessInput');
     expect(inputText).toBeVisible();
   });
 });

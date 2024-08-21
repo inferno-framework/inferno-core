@@ -107,7 +107,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
           <FieldLabel requirement={requirement} isMissingInput={isMissingInput} />
         </FormLabel>
         {requirement.description && (
-          <Typography variant="subtitle1" className={classes.inputDescription}>
+          <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
             {requirement.description}
           </Typography>
         )}
