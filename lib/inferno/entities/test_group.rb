@@ -16,11 +16,11 @@ module Inferno
 
       def_delegators 'self.class', :title, :id, :block, :groups, :inputs, :outputs, :tests
 
-      attr_accessor :result_message, :child_results
+      attr_accessor :result_message, :results
 
       # @private
       def initialize
-        @child_results = Inferno::ResultCollection.new
+        @results = Inferno::ResultCollection.new
       end
 
       # @private

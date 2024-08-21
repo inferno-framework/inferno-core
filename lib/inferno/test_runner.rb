@@ -133,11 +133,11 @@ module Inferno
 
       group.children(test_session.suite_options).each do |child|
         result = run(child, scratch)
-        group_instance.child_results << result
+        group_instance.results << result
         break if result.waiting?
       end
 
-      result = evaluate_runnable_result(group, group_instance) || roll_up_result(group_instance.child_results)
+      result = evaluate_runnable_result(group, group_instance) || roll_up_result(group_instance.results)
 
       group_result = persist_result(group.reference_hash.merge(
                                       messages: group_instance.messages,
@@ -159,7 +159,7 @@ module Inferno
       return unless need_to_update_parent_result?(children, child_results, &parent.block)
 
       parent_instance = parent.new
-      parent_instance.child_results << child_results
+      parent_instance.results << child_results
       old_result = results_repo.current_result_for_test_session(test_session.id, parent.reference_hash)&.result
       new_result = evaluate_runnable_result(parent, parent_instance) || roll_up_result(child_results)
 

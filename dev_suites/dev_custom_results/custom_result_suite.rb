@@ -21,11 +21,11 @@ module CustomResult
     end
 
     run do
-      test1_result = child_results[tests.first.id].result
+      test1_result = results[tests.first.id].result
       pass_if test1_result == 'pass', 'Test 1 passed'
 
-      test2_result = child_results[tests[1].id].result
-      test3_result = child_results[tests.last.id].result
+      test2_result = results[tests[1].id].result
+      test3_result = results[tests.last.id].result
 
       assert test2_result == 'pass' && test3_result == 'pass', 'Either test 1, or test 2 and test 3  must pass'
     end
@@ -55,12 +55,12 @@ module CustomResult
     end
 
     run do
-      test1_result = child_results[tests.first.id].result
+      test1_result = results[tests.first.id].result
       pass_if test1_result == 'pass', 'Test 1 passed'
       info 'Test 1 did not pass'
 
-      test2_result = child_results[tests[1].id].result
-      test3_result = child_results[tests.last.id].result
+      test2_result = results[tests[1].id].result
+      test3_result = results[tests.last.id].result
 
       assert test2_result == 'pass' && test3_result == 'pass', 'Either test 1, or test 2 and test 3 must pass'
     end
@@ -96,12 +96,12 @@ module CustomResult
     end
 
     run do
-      group1_result = child_results[groups.first.id].result
+      group1_result = results[groups.first.id].result
       pass_if group1_result == 'pass', 'Inner Group 1 passed.'
       add_message('info', 'Inner Group 1 did not pass.')
 
-      group2_result = child_results[groups[1].id].result
-      group3_result = child_results[groups.last.id].result
+      group2_result = results[groups[1].id].result
+      group3_result = results[groups.last.id].result
 
       assert group2_result == 'pass' && group3_result == 'pass',
              'Either inner group 1, or inner group 2 and inner group 3 must pass'
@@ -118,8 +118,8 @@ module CustomResult
     group from: :passing_custom_result_group_with_nested_groups
 
     run do
-      group1_result = child_results[:passing_custom_result_group]
-      other_groups_pass = child_results.any? do |result|
+      group1_result = results[:passing_custom_result_group]
+      other_groups_pass = results.any? do |result|
         result.test_group_id != group1_result.test_group_id && result.result == 'pass'
       end
       assert group1_result.result == 'pass' && other_groups_pass,
