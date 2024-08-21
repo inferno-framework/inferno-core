@@ -9,6 +9,7 @@ module Inferno
       extend DSL::HTTPClient::ClassMethods
       extend DSL::Runnable
       include DSL::FHIRValidation
+      include DSL::FhirpathEvaluation
 
       def_delegators 'self.class', :title, :id, :groups, :inputs, :outputs, :tests
 

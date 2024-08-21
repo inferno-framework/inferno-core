@@ -14,6 +14,7 @@ module Inferno
       extend DSL::HTTPClient::ClassMethods
       include DSL::FHIRValidation
       include DSL::FHIRResourceValidation
+      include DSL::FhirpathEvaluation
 
       class << self
         extend Forwardable

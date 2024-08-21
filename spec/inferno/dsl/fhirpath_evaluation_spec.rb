@@ -1,20 +1,120 @@
-require_relative '../../../lib/inferno/dsl/fhirpath_evaluation'
 RSpec.describe Inferno::DSL::FhirpathEvaluation do
-  
-  let(:evaluator) {Inferno::DSL::FhirpathEvaluation::Evaluator.new}
+  let(:evaluator_url) { 'http://example.com' }
+  let(:evaluator) do
+    Inferno::DSL::FhirpathEvaluation::Evaluator.new(evaluator_url)
+  end
+  let(:runnable) { Inferno::Entities::Test.new }
+  let(:patient) do
+    FHIR::Patient.new(
+      id: '1234',
+      name: [FHIR::HumanName.new(family: 'Example',
+                                 given: ['patient', 'sample'])],
+      gender: 'male',
+      birthDate: '1974-01-01'
+    )
+  end
+  let(:fhirpath_expression) { 'Patient.name.given' }
+  let(:response_body) do
+    [
+      { type: 'string', element: 'patient' },
+      { type: 'string', element: 'sample' }
+    ].to_json
+  end
+  let(:headers) { { 'Content-Type' => 'application/json' } }
+  let(:suite) do
+    Class.new(Inferno::Entities::TestSuite) do
+      fhirpath_evaluator url: 'http://default.com'
 
-  #patient example adapted from https://fhirpath-lab.azurewebsites.net/FhirPath/
-  let(:patient) { FHIR::Patient.new(
-    id: 'example',
-    name: [FHIR::HumanName.new(family: 'Chalmers', given: ['Peter', 'James'])],
-    gender: 'male',
-    birthdate: '1974-12-25'
-  ) }
+      fhirpath_evaluator name: :custom, url: 'http://custom.com'
+    end
+  end
 
-  it 'is tests evaluating a fhirpath expression against a known patient resource' do
-    birthdate_expression = 'Patient.birthdate'
-    expected_birthdate = '1974-12-25'
-    birthdate_result = evaluator.evaluate_fhirpath(patient, birthdate_expression)
-    expect(birthdate_result).to eq(expected_birthdate)
+  describe '#evaluate_fhirpath' do
+    context 'when the FHIRPath service responds successfully' do
+      it 'parses the response body and returns the evaluated result' do
+        stub_request(:post, "#{evaluator_url}/evaluate?path=#{fhirpath_expression}")
+          .with(body: patient.to_json, headers:)
+          .to_return(status: 200, body: response_body)
+
+        result = evaluator.evaluate_fhirpath(patient,
+                                             fhirpath_expression, runnable)
+        expect(result).to eq(JSON.parse(response_body))
+      end
+    end
+
+    context 'when the FHIRPath service responds with an error' do
+      it 'raises an ErrorInFhirpathException and adds an error message to the runnable' do
+        stub_request(:post, "#{evaluator_url}/evaluate?path=#{fhirpath_expression}")
+          .with(body: patient.to_json, headers:)
+          .to_return(status: 500, body: 'Internal Server Error')
+
+        expect do
+          evaluator.evaluate_fhirpath(patient, fhirpath_expression,
+                                      runnable)
+        end.to raise_error(
+          Inferno::Exceptions::ErrorInFhirpathException, /FHIRPath service call failed/
+        )
+        expect(runnable.messages.last[:type]).to eq('error')
+        expect(runnable.messages.last[:message]).to match(/FHIRPath service Response: HTTP 500/)
+      end
+    end
+
+    context 'when the FHIRPath service response is not in JSON format' do
+      it 'raises an ErrorInFhirpathException for invalid JSON format and adds an error message to the runnable' do
+        stub_request(:post, "#{evaluator_url}/evaluate?path=#{fhirpath_expression}")
+          .with(body: patient.to_json, headers:)
+          .to_return(status: 200, body: '{]')
+
+        expect do
+          evaluator.evaluate_fhirpath(patient, fhirpath_expression,
+                                      runnable)
+        end.to raise_error(
+          Inferno::Exceptions::ErrorInFhirpathException, /Error occurred in the FHIRPath service/
+        )
+        expect(runnable.messages.last[:type]).to eq('error')
+        expect(runnable.messages.last[:message]).to match(/Invalid FHIRPath service response format/)
+      end
+    end
+
+    context 'when a connection error occurs' do
+      it 'raises an ErrorInFhirpathException for connection failure' do
+        stub_request(:post, "#{evaluator_url}/evaluate?path=#{fhirpath_expression}")
+          .with(body: patient.to_json, headers:)
+          .to_raise(Faraday::ConnectionFailed.new('Connection failed'))
+
+        expect do
+          evaluator.evaluate_fhirpath(patient, fhirpath_expression,
+                                      runnable)
+        end.to raise_error(
+          Inferno::Exceptions::ErrorInFhirpathException, /Unable to connect to FHIRPath service/
+        )
+        expect(runnable.messages.last[:type]).to eq('error')
+        expect(runnable.messages.last[:message]).to match(/Connection failed/)
+      end
+    end
+  end
+
+  describe '.find_fhirpath_evaluator' do
+    context 'when the evaluator exists' do
+      it 'returns the evaluator for the default name' do
+        evaluator = suite.find_fhirpath_evaluator(:default)
+        expect(evaluator.url).to eq('http://default.com')
+      end
+
+      it 'returns the evaluator for a custom name' do
+        evaluator = suite.find_fhirpath_evaluator(:custom)
+        expect(evaluator.url).to eq('http://custom.com')
+      end
+    end
+
+    context 'when the evaluator does not exist' do
+      it 'raises a FhirpathNotFoundException' do
+        expect do
+          suite.find_fhirpath_evaluator(:nonexistent)
+        end.to raise_error(
+          Inferno::Exceptions::FhirpathNotFoundException, /nonexistent/
+        )
+      end
+    end
   end
 end

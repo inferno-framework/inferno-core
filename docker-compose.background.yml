@@ -18,7 +18,7 @@ services:
       - ./config/nginx.background.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
-    command: [nginx, '-g', 'daemon off;']
+    command: [ nginx, '-g', 'daemon off;' ]
     depends_on:
       - fhir_validator_app
   redis:
@@ -36,3 +36,7 @@ services:
       # To let the service share your local FHIR package cache,
       # uncomment the below line
       # - ~/.fhir:/home/ktor/.fhir
+  fhirpath:
+    image: infernocommunity/fhirpath-service
+    ports:
+      - "6789:6789"
