@@ -26,26 +26,20 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
-  const firstValue =
+  const firstOptionValue =
     requirement.options?.list_options && requirement.options?.list_options?.length > 0
       ? requirement.options?.list_options[0]?.value
       : '';
-  const [value, setValue] = React.useState(
-    inputsMap.get(requirement.name) || requirement.default || firstValue
-  );
 
-  // Set default on mounted
+  // Set starting value to first option if no value and no default
   useEffect(() => {
-    inputsMap.set(requirement.name, value);
+    const startingValue =
+      (inputsMap.get(requirement.name) as string) ||
+      (requirement.default as string) ||
+      firstOptionValue;
+    inputsMap.set(requirement.name, startingValue);
     setInputsMap(new Map(inputsMap));
   }, []);
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setValue(value);
-    inputsMap.set(requirement.name, value);
-    setInputsMap(new Map(inputsMap));
-  };
 
   return (
     <ListItem>
@@ -56,11 +50,11 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
         fullWidth
         className={classes.inputField}
       >
-        <FormLabel required={!requirement.optional} className={classes.inputLabel}>
+        <FormLabel className={classes.inputLabel}>
           <FieldLabel requirement={requirement} />
         </FormLabel>
         {requirement.description && (
-          <Typography variant="subtitle1" className={classes.inputDescription}>
+          <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
             {requirement.description}
           </Typography>
         )}
@@ -68,8 +62,13 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
           row
           aria-label={`${requirement.name}-radio-buttons-group`}
           name={`${requirement.name}-radio-buttons-group`}
-          value={value}
-          onChange={handleChange}
+          value={
+            inputsMap.get(requirement.name) || (requirement.default as string) || firstOptionValue
+          }
+          onChange={(event) => {
+            inputsMap.set(requirement.name, event.target.value);
+            setInputsMap(new Map(inputsMap));
+          }}
         >
           {requirement.options?.list_options?.map((option, i) => (
             <FormControlLabel
