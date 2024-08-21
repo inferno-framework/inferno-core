@@ -166,7 +166,7 @@ const TestListItem: FC<TestListItemProps> = ({
   );
 
   const testRunButton = view === 'run' && runTests && (
-    <Box onClick={(e) => e.stopPropagation()}>
+    <Box onClick={(e) => e.stopPropagation()} display="flex" justifyContent="center">
       <TestRunButton runnable={test} runnableType={RunnableType.Test} runTests={runTests} />
     </Box>
   );

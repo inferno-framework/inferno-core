@@ -27,7 +27,7 @@ export const mockedRequest: Request = {
   verb: 'get',
 };
 
-export const codeResponseWithHTML: Request = {
+export const codeResponseWithHtml: Request = {
   direction: 'outgoing',
   id: 'de793781-5eed-421a-88d3-8029499f4bce',
   index: 2,
@@ -41,7 +41,7 @@ export const codeResponseWithHTML: Request = {
   response_body: '<html>html has newlines already</html>',
 };
 
-export const codeResponseWithJSON: Request = {
+export const codeResponseWithJson: Request = {
   direction: 'outgoing',
   id: 'de793781-5eed-421a-88d3-8029499f4bce',
   index: 3,
