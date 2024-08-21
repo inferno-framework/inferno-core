@@ -73,6 +73,10 @@ RSpec.describe Inferno::ResultCollection do
         result_collection.each(&b)
       end.to yield_successive_args(child_results.first, child_results.second, child_results.third)
     end
+
+    it 'returns an Enumerator if no block is given' do
+      expect(result_collection.each).to be_a(Enumerator)
+    end
   end
 
   describe '#required_results' do
