@@ -278,7 +278,7 @@ module Inferno
 
         # @private
         def operation_outcome_from_hl7_wrapped_response(response_hash)
-          if response_hash['sessionId'] != @session_id
+          if response_hash['sessionId'] && response_hash['sessionId'] != @session_id
             validator_session_repo.save(test_suite_id:, validator_session_id: response_hash['sessionId'],
                                         validator_name: name.to_s, suite_options: requirements)
             @session_id = response_hash['sessionId']
