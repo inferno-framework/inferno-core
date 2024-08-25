@@ -31,7 +31,7 @@ module Inferno
         retval
       end
 
-      ENV['NO_DB'] = 'true'
+      ENV['NO_DB'] = 'false'
       # Inferno boot flow triggers migration and logger outputs it
       suppress_output { require_relative '../../../inferno' }
 
