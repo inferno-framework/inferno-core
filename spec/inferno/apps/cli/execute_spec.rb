@@ -5,7 +5,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
   # TODO: runnable_id_key, thor_hash_to_suite_options_array
 
-  # TODO this test catches a weird inferno glitch
+  # TODO: this test catches a weird inferno glitch
   describe '#print_help_and_exit' do
     it 'outputs something and exits' do
       expect do
