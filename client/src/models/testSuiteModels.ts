@@ -1,4 +1,26 @@
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 import { Option } from './selectionModels';
+
+export interface Auth {
+  auth_type?: string;
+  use_discovery?: boolean;
+  token_url?: string;
+  auth_url?: string;
+  requested_scopes?: string;
+  client_id?: string;
+  client_secret?: string;
+  redirect_url?: string;
+  pkce_support?: string;
+  pkce_code_challenge_method?: string;
+  auth_request_method?: string;
+  encryption_algorithm?: string;
+  kid?: string;
+  jwks?: string;
+  access_token?: string;
+  refresh_token?: string;
+  issue_time?: string;
+  expires_in?: string;
+}
 
 export interface CheckboxValues {
   [key: string]: boolean;
@@ -12,6 +34,10 @@ export type FooterLink = {
 export interface InputOption {
   label: string;
   value: string;
+}
+
+export interface InputValues {
+  [key: string]: unknown;
 }
 
 export type Message = {
@@ -87,15 +113,18 @@ export interface SuiteOptionChoice {
 
 export interface TestInput {
   name: string;
-  title?: string;
+  title?: string | ReactJSXElement;
   value?: unknown;
-  type?: 'auth_info' | 'oauth_credentials' | 'checkbox' | 'radio' | 'text' | 'textarea';
+  type?: 'auth_info' | 'oauth_credentials' | 'checkbox' | 'radio' | 'select' | 'text' | 'textarea';
   description?: string;
   default?: string | string[];
   optional?: boolean;
   locked?: boolean;
+  hide?: boolean;
   options?: {
+    components?: TestInput[];
     list_options?: InputOption[];
+    mode?: string;
   };
 }
 
