@@ -81,7 +81,7 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Enabled: false
 
-RSpec/SpecFilePathFormat:
+RSpec/FilePath:
   CustomTransform:
     OAuthCredentials: oauth_credentials
 
