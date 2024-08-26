@@ -293,15 +293,19 @@ module Inferno
         end
 
         # @private
+        def remove_invalid_characters(string)
+          string.gsub(/[^[:print:]\r\n]+/, '')
+        end
+
+        # @private
         def operation_outcome_from_validator_response(response, runnable)
-          # Sanitize the response body by removing non-printable/control characters
-          sanitized_body = response.body.gsub(/[^[:print:]\r\n]+/, '')
+          sanitized_body = remove_invalid_characters(response.body)
 
           operation_outcome_from_hl7_wrapped_response(JSON.parse(sanitized_body))
         rescue JSON::ParserError
           runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{sanitized_body}")
           raise Inferno::Exceptions::ErrorInValidatorException,
-                'Validator response was an unexpected format. '\
+                'Validator response was an unexpected format. ' \
                 'Review Messages tab or validator service logs for more information.'
         end
       end
