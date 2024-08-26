@@ -32,7 +32,7 @@ Style/BlockComments:
 
 Style/Documentation:
   Enabled: false
-    
+
 Style/FrozenStringLiteralComment:
   Enabled: false
 
@@ -81,7 +81,7 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Enabled: false
 
-RSpec/FilePath:
+RSpec/SpecFilePathFormat:
   CustomTransform:
     OAuthCredentials: oauth_credentials
 
