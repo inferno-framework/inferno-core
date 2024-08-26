@@ -177,15 +177,15 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         .to_return(
           status: 500,
           body: "<html><body>Internal Server Error: content#{0.chr} with non-printable#{1.chr} characters</body></html>"
-          )
+        )
 
       expect do
         validator.resource_is_valid?(resource2, profile_url, runnable)
       end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
 
       msg = runnable.messages.first[:message]
-      expect(msg).not_to include(0.chr)
-      expect(msg).not_to include(1.chr)
+      expect(msg).to_not include(0.chr)
+      expect(msg).to_not include(1.chr)
       expect(msg).to match(/Internal Server Error: content with non-printable/)
     end
   end
