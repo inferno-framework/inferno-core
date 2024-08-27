@@ -124,7 +124,7 @@ module Inferno
             runnable.add_message('error', e.message)
             raise Inferno::Exceptions::ErrorInValidatorException, "Unable to connect to validator at #{url}."
           end
-          outcome = operation_outcome_from_validator_response(response.body, runnable)
+          outcome = operation_outcome_from_validator_response(response, runnable)
 
           message_hashes = message_hashes_from_outcome(outcome, resource, profile_url)
 
@@ -213,15 +213,20 @@ module Inferno
         end
 
         # @private
+        def remove_invalid_characters(string)
+          string.gsub(/[^[:print:]\r\n]+/, '')
+        end
+
+        # @private
         def operation_outcome_from_validator_response(response, runnable)
-          if response.start_with? '{'
-            FHIR::OperationOutcome.new(JSON.parse(response))
-          else
-            runnable.add_message('error', "Validator Response:\n#{response}")
-            raise Inferno::Exceptions::ErrorInValidatorException,
-                  'Validator response was an unexpected format. '\
-                  'Review Messages tab or validator service logs for more information.'
-          end
+          sanitized_body = remove_invalid_characters(response.body)
+
+          FHIR::OperationOutcome.new(JSON.parse(sanitized_body))
+        rescue JSON::ParserError
+          runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{sanitized_body}")
+          raise Inferno::Exceptions::ErrorInValidatorException,
+                'Validator response was an unexpected format. ' \
+                'Review Messages tab or validator service logs for more information.'
         end
       end
 
