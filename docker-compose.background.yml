@@ -18,7 +18,7 @@ services:
       - ./config/nginx.background.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
-    command: [ nginx, '-g', 'daemon off;' ]
+    command: [nginx, '-g', 'daemon off;']
     depends_on:
       - fhir_validator_app
   redis:
