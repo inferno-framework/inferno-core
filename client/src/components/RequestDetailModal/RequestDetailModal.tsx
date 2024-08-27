@@ -88,7 +88,7 @@ const RequestDetailModal: FC<RequestDetailModalProps> = ({
             </Typography>
             {timestamp && <Typography variant="overline">{timestamp.toLocaleString()}</Typography>}
             <HeaderTable headers={request.request_headers || []} />
-            {request.response_body && (
+            {request.request_body && (
               <CodeBlock
                 body={request.request_body}
                 headers={request.request_headers}

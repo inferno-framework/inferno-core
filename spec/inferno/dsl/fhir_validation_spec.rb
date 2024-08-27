@@ -176,6 +176,24 @@ RSpec.describe Inferno::DSL::FHIRValidation do
 
       expect(validator.resource_is_valid?(resource, profile_url, runnable)).to be(true)
     end
+
+    it 'removes non-printable characters from the response' do
+      stub_request(:post, "#{validation_url}/validate?profile=#{profile_url}")
+        .with(body: resource_string)
+        .to_return(
+          status: 500,
+          body: "<html><body>Internal Server Error: content#{0.chr} with non-printable#{1.chr} characters</body></html>"
+        )
+
+      expect do
+        validator.resource_is_valid?(resource, profile_url, runnable)
+      end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
+
+      msg = runnable.messages.first[:message]
+      expect(msg).to_not include(0.chr)
+      expect(msg).to_not include(1.chr)
+      expect(msg).to match(/Internal Server Error: content with non-printable/)
+    end
   end
 
   describe '.find_validator' do
