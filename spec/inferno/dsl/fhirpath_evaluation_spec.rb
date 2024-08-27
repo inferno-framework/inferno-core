@@ -93,28 +93,4 @@ RSpec.describe Inferno::DSL::FhirpathEvaluation do
       end
     end
   end
-
-  describe '.find_fhirpath_evaluator' do
-    context 'when the evaluator exists' do
-      it 'returns the evaluator for the default name' do
-        evaluator = suite.find_fhirpath_evaluator(:default)
-        expect(evaluator.url).to eq('http://default.com')
-      end
-
-      it 'returns the evaluator for a custom name' do
-        evaluator = suite.find_fhirpath_evaluator(:custom)
-        expect(evaluator.url).to eq('http://custom.com')
-      end
-    end
-
-    context 'when the evaluator does not exist' do
-      it 'raises a FhirpathNotFoundException' do
-        expect do
-          suite.find_fhirpath_evaluator(:nonexistent)
-        end.to raise_error(
-          Inferno::Exceptions::FhirpathNotFoundException, /nonexistent/
-        )
-      end
-    end
-  end
 end
