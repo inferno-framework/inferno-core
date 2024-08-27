@@ -92,5 +92,23 @@ RSpec.describe Inferno::DSL::FhirpathEvaluation do
         expect(runnable.messages.last[:message]).to match(/Connection failed/)
       end
     end
+
+    it 'removes non-printable characters from the response' do
+      stub_request(:post, "#{evaluator_url}/evaluate?path=#{fhirpath_expression}")
+        .with(body: patient.to_json, headers:)
+        .to_return(
+          status: 500,
+          body: "Internal Server Error: content#{0.chr} with non-printable#{1.chr} characters"
+        )
+
+      expect do
+        evaluator.evaluate_fhirpath(patient, fhirpath_expression, runnable)
+      end.to raise_error(Inferno::Exceptions::ErrorInFhirpathException, /FHIRPath service call failed/)
+
+      msg = runnable.messages.first[:message]
+      expect(msg).to_not include(0.chr)
+      expect(msg).to_not include(1.chr)
+      expect(msg).to match(/Internal Server Error: content with non-printable characters/)
+    end
   end
 end
