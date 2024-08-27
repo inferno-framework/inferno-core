@@ -112,6 +112,7 @@ module Inferno
              default: false,
              desc: 'Display this message'
       def execute
+        Execute.boot_full_inferno
         Execute.new.run(options)
       end
 

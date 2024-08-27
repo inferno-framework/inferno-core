@@ -13,16 +13,20 @@ module Inferno
       include ::Inferno::Utils::VerifyRunnable
       include ::Inferno::Utils::PersistInputs
 
+      COLOR = Pastel.new
+      CHECKMARK = "\u2713"
+      BAR = '=========================================='
+
+      attr_accessor :options, :runnable, :runnable_type
+
       def self.suppress_output
         begin
           original_stderr = $stderr.clone
           original_stdout = $stdout.clone
-          $stderr.reopen(File.new('/dev/null', 'w'))
-          $stdout.reopen(File.new('/dev/null', 'w'))
+          $stderr.reopen(File.new(File::NULL, 'w+'))
+          $stdout.reopen(File.new(File::NULL, 'w+'))
           retval = yield
-        rescue StandardError => e
-          $stdout.reopen(original_stdout)
-          $stderr.reopen(original_stderr)
+        rescue Exception => e
           raise e
         ensure
           $stdout.reopen(original_stdout)
@@ -31,21 +35,25 @@ module Inferno
         retval
       end
 
-      ENV['NO_DB'] = 'false'
-      # Inferno boot flow triggers migration and logger outputs it
-      suppress_output { require_relative '../../../inferno' }
+      def self.boot_full_inferno
+        ENV['NO_DB'] = 'false'
 
-      COLOR = Pastel.new
-      CHECKMARK = "\u2713"
-      BAR = '=========================================='
+        # Inferno boot flow triggers migration and logger outputs it
+        Inferno::CLI::Execute.suppress_output { require_relative '../../../inferno' }
 
-      include Import[
-                test_sessions_repo: 'inferno.repositories.test_sessions',
-                session_data_repo: 'inferno.repositories.session_data',
-                test_runs_repo: 'inferno.repositories.test_runs'
-              ]
+        Inferno::Application.start(:cli)
 
-      attr_accessor :options, :runnable, :runnable_type
+=begin
+        Inferno::CLI::Execute.class_eval do
+          include Import[
+                    test_sessions_repo: 'inferno.repositories.test_sessions',
+                    session_data_repo: 'inferno.repositories.session_data',
+                    test_runs_repo: 'inferno.repositories.test_runs'
+                  ]
+        end
+=end
+        
+      end
 
       def run(options)
         print_help_and_exit if options[:help]
@@ -54,7 +62,9 @@ module Inferno
         print_start_message
         verbose_puts 'options:', self.options
 
-        Inferno::Application.start(:cli)
+        test_sessions_repo = Inferno::Repositories::TestSessions.new
+        session_data_repo = Inferno::Repositories::SessionData.new
+        test_runs_repo = Inferno::Repositories::TestRuns.new
 
         set_runnable!
 
