@@ -14,7 +14,7 @@ module Inferno
     # results will be an array representing the result of evaluating the given
     # expression against the given root element.  Each "result" in the returned
     # array will be in the form
-    # `{ "type": "[FHIR datatype of the result]", "element": "result value of the FHIRPath expression]" }`.
+    # `{ "type": "[FHIR datatype of the result]", "element": "[result value of the FHIRPath expression]" }`.
 
     module FhirpathEvaluation
       def self.included(klass)
@@ -58,7 +58,7 @@ module Inferno
         # @param runnable [Inferno::Test] to add any error message that occurs.
         # @return [Array<Hash>] An array hashes representing the result of evaluating the given expression against
         #   the given root resource. Each "result" in the returned array will be in the form
-        #   `{ "type": "[FHIR datatype of the result]", "element": "result value of the FHIRPath expression]" }`.
+        #   `{ "type": "[FHIR datatype of the result]", "element": "[result value of the FHIRPath expression]" }`.
         def evaluate_fhirpath(fhir_resource, fhirpath_expression, runnable)
           begin
             response = call_fhirpath_service(fhir_resource, fhirpath_expression)
