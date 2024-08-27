@@ -68,13 +68,15 @@ module Inferno
             runnable.add_message('error', e.message)
             raise Inferno::Exceptions::ErrorInFhirpathException, "Unable to connect to FHIRPath service at #{url}."
           end
-          return JSON.parse(response.body) if response.status.to_s.start_with? '2'
 
-          runnable.add_message('error', "FHIRPath service Response: HTTP #{response.status}\n#{response.body}")
+          sanitized_body = remove_invalid_characters(response.body)
+          return JSON.parse(sanitized_body) if response.status.to_s.start_with? '2'
+
+          runnable.add_message('error', "FHIRPath service Response: HTTP #{response.status}\n#{sanitized_body}")
           raise Inferno::Exceptions::ErrorInFhirpathException,
                 'FHIRPath service call failed. Review Messages tab for more information.'
         rescue JSON::ParserError
-          runnable.add_message('error', "Invalid FHIRPath service response format:\n#{response.body}")
+          runnable.add_message('error', "Invalid FHIRPath service response format:\n#{sanitized_body}")
           raise Inferno::Exceptions::ErrorInFhirpathException,
                 'Error occurred in the FHIRPath service. Review Messages tab for more information.'
         end
@@ -88,6 +90,11 @@ module Inferno
             fhir_resource.to_json,
             content_type: 'application/json'
           )
+        end
+
+        # @private
+        def remove_invalid_characters(string)
+          string.gsub(/[^[:print:]\r\n]+/, '')
         end
       end
 
