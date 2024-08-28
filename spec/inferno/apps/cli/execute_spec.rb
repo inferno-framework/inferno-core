@@ -3,9 +3,26 @@ require_relative '../../../../lib/inferno/apps/cli/execute'
 RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   let(:instance) { described_class.new }
 
-  # TODO: runnable_id_key, thor_hash_to_suite_options_array
+  describe '.suppress_output' do
+    it 'disables stdout' do
+      expect do
+        described_class.suppress_output { puts 'Hide me' }
+      end.to_not output(/.+/).to_stdout_from_any_process
+    end
 
-  # TODO: this test catches a weird inferno glitch
+    it 'disables stderr' do
+      expect do
+        described_class.suppress_output { warn 'Hide me' }
+      end.to_not output(/.+/).to_stderr_from_any_process
+    end
+  end
+
+  describe '.boot_full_inferno' do
+    it 'does not raise error' do
+      expect { described_class.boot_full_inferno }.to_not raise_error(StandardError)
+    end
+  end
+
   describe '#print_help_and_exit' do
     it 'outputs something and exits' do
       expect do
@@ -52,6 +69,31 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
+  describe '#runnable_id_key' do
+    { suite: :test_suite_id, group: :test_group_id, test: :test_id }.each do |runnable_type, id_key|
+      it "returns proper id for runnable type #{runnable_type}" do
+        stubbed_instance = instance
+        allow(stubbed_instance).to receive(:runnable_type).and_return(runnable_type)
+
+        expect(stubbed_instance.runnable_id_key).to eq(id_key)
+      end
+    end
+  end
+
+  describe '#thor_hash_to_suite_options_array' do
+    let(:hash) { { us_core: 'us_core_v311' } }
+
+    it 'converts hash to array' do
+      result = instance.thor_hash_to_suite_options_array(hash)
+      expect(result.class).to eq(Array)
+    end
+
+    it 'returns proper inputs array' do
+      result = instance.thor_hash_to_inputs_array(hash)
+      expect(result).to eq([{ name: :us_core, value: 'us_core_v311' }])
+    end
+  end
+
   describe '#thor_hash_to_inputs_array' do
     let(:hash) { { url: 'https://example.com' } }
 
@@ -72,7 +114,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:inputs_hash) { { url: 'https://example.com' } }
     let(:inputs_array) { [{ name: :url, value: 'https://example.com' }] }
 
-    # TODO: test all cases [{suite: }]
     it 'returns test run params' do
       stubbed_instance = instance
       allow(stubbed_instance).to receive(:options).and_return({ inputs: inputs_hash })
