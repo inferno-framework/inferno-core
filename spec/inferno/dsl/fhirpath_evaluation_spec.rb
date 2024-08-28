@@ -31,7 +31,7 @@ RSpec.describe Inferno::DSL::FhirpathEvaluation do
 
   describe '#evaluate_fhirpath' do
     context 'when the FHIRPath service responds successfully' do
-      it 'parses the response body and returns the evaluated result' do
+      it 'parses the response body and returns the evaluated result with primitive data type' do
         stub_request(:post, "#{evaluator_url}/evaluate?path=#{fhirpath_expression}")
           .with(body: patient.to_json, headers:)
           .to_return(status: 200, body: response_body)
@@ -39,6 +39,31 @@ RSpec.describe Inferno::DSL::FhirpathEvaluation do
         result = evaluator.evaluate_fhirpath(patient,
                                              fhirpath_expression, runnable)
         expect(result).to eq(JSON.parse(response_body))
+      end
+
+      it 'parses the response body and returns the evaluated result with complex data type' do
+        body = [
+          {
+            type: 'HumanName',
+            element: {
+              family: 'Example',
+              given: [
+                'patient',
+                'sample'
+              ]
+            }
+          }
+        ].to_json
+
+        stub_request(:post, "#{evaluator_url}/evaluate?path=Patient.name")
+          .with(body: patient.to_json, headers:)
+          .to_return(status: 200, body:)
+
+        result = evaluator.evaluate_fhirpath(patient, 'Patient.name', runnable)
+        expect(result.first['type']).to eq('HumanName')
+        expect(result.first['element']).to be_a(FHIR::HumanName)
+        expect(result.first['element'].family).to eq('Example')
+        expect(result.first['element'].given).to eq(['patient', 'sample'])
       end
     end
 

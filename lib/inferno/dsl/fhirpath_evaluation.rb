@@ -70,7 +70,7 @@ module Inferno
           end
 
           sanitized_body = remove_invalid_characters(response.body)
-          return JSON.parse(sanitized_body) if response.status.to_s.start_with? '2'
+          return transform_fhirpath_results(JSON.parse(sanitized_body)) if response.status.to_s.start_with? '2'
 
           runnable.add_message('error', "FHIRPath service Response: HTTP #{response.status}\n#{sanitized_body}")
           raise Inferno::Exceptions::ErrorInFhirpathException,
@@ -79,6 +79,17 @@ module Inferno
           runnable.add_message('error', "Invalid FHIRPath service response format:\n#{sanitized_body}")
           raise Inferno::Exceptions::ErrorInFhirpathException,
                 'Error occurred in the FHIRPath service. Review Messages tab for more information.'
+        end
+
+        # @private
+        def transform_fhirpath_results(fhirpath_reults)
+          fhirpath_reults.each do |result|
+            klass = Object.const_get("FHIR::#{result['type']}")
+            result['element'] = klass.new(result['element'])
+          rescue NameError
+            next
+          end
+          fhirpath_reults
         end
 
         def call_fhirpath_service(fhir_resource, fhirpath_expression)
