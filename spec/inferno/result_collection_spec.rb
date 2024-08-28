@@ -77,6 +77,11 @@ RSpec.describe Inferno::ResultCollection do
     it 'returns an Enumerator if no block is given' do
       expect(result_collection.each).to be_a(Enumerator)
     end
+
+    it 'returns the `results` attribute of the collection when a block is given' do
+      result = result_collection.each { |r| r.result = 'skip' }
+      expect(result).to eq(result_collection.results)
+    end
   end
 
   describe '#required_results' do
