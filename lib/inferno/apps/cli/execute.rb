@@ -26,8 +26,6 @@ module Inferno
           $stderr.reopen(File.new(File::NULL, 'w+'))
           $stdout.reopen(File.new(File::NULL, 'w+'))
           retval = yield
-        rescue Exception => e
-          raise e
         ensure
           $stdout.reopen(original_stdout)
           $stderr.reopen(original_stderr)
