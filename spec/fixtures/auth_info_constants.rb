@@ -37,7 +37,7 @@ module AuthInfoConstants
         requested_scopes: REQUESTED_SCOPES,
         pkce_support: 'enabled',
         pkce_code_challenge_method: 'S256',
-        auth_request_method: 'POST',
+        auth_request_method: 'post',
         use_discovery: 'false'
       }.merge(token_info)
     end
@@ -49,7 +49,7 @@ module AuthInfoConstants
         client_id: 'SAMPLE_CONFIDENTIAL_CLIENT_ID',
         requested_scopes: REQUESTED_SCOPES,
         pkce_support: 'disabled',
-        auth_request_method: 'POST',
+        auth_request_method: 'post',
         encryption_algorithm: ENCRYPTION_ALGORITHM,
         jwks: JWKS,
         kid: KID
