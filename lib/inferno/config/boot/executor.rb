@@ -1,4 +1,4 @@
-Inferno::Application.register_provider(:cli) do
+Inferno::Application.register_provider(:executor) do
   prepare do
     target_container.start :logging
 

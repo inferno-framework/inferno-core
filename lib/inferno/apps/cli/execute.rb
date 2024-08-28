@@ -41,18 +41,7 @@ module Inferno
         # Inferno boot flow triggers migration and logger outputs it
         Inferno::CLI::Execute.suppress_output { require_relative '../../../inferno' }
 
-        Inferno::Application.start(:cli)
-
-=begin
-        Inferno::CLI::Execute.class_eval do
-          include Import[
-                    test_sessions_repo: 'inferno.repositories.test_sessions',
-                    session_data_repo: 'inferno.repositories.session_data',
-                    test_runs_repo: 'inferno.repositories.test_runs'
-                  ]
-        end
-=end
-        
+        Inferno::Application.start(:executor)
       end
 
       def run(options)
