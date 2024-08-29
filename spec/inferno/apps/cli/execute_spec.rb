@@ -214,26 +214,21 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  describe '#format_inputs' do
-    let(:inputs) { [{ name: :url, value: 'https://example.com' }] }
-    let(:test_result) { create(:result, input_json: JSON.generate(inputs)) }
+  describe '#format_session_data' do
+    let(:data) { [{ name: :url, value: 'https://example.com' }, { name: :token, value: 'SAMPLE_OUTPUT' }] }
+    let(:test_result) { create(:result, input_json: JSON.generate(data), output_json: JSON.generate(data)) }
 
-    it 'includes all values' do
-      formatted_string = instance.format_inputs(test_result)
-      inputs.each do |input_element|
-        expect(formatted_string).to include input_element[:value]
+    it 'includes all values for input_json' do
+      formatted_string = instance.format_session_data(test_result, :input_json)
+      data.each do |data_element|
+        expect(formatted_string).to include data_element[:value]
       end
     end
-  end
 
-  describe '#format_outputs' do
-    let(:outputs) { [{ name: :token, value: 'SAMPLE_OUTPUT' }] }
-    let(:test_result) { create(:result, output_json: JSON.generate(outputs)) }
-
-    it 'includes all values' do
-      formatted_string = instance.format_outputs(test_result)
-      outputs.each do |output_element|
-        expect(formatted_string).to include output_element[:value]
+    it 'includes all values for output_json' do
+      formatted_string = instance.format_session_data(test_result, :output_json)
+      data.each do |data_element|
+        expect(formatted_string).to include data_element[:value]
       end
     end
   end

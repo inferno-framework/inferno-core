@@ -208,17 +208,21 @@ module Inferno
         end.join
       end
 
-      def format_inputs(result, attr = :input_json)
-        input_json = result.send(attr)
-        return '' if input_json.nil?
+      def format_session_data(result, attr)
+        json = result.send(attr)
+        return '' if json.nil?
 
-        JSON.parse(input_json).map do |input|
-          "\n\t\t#{input['name']}: #{input['value']}"
+        JSON.parse(json).map do |hash|
+          "\n\t\t#{hash['name']}: #{hash['value']}"
         end.join
       end
 
+      def format_inputs(result)
+        format_session_data(result, :input_json)
+      end
+
       def format_outputs(result)
-        format_inputs(result, :output_json)
+        format_session_data(result, :output_json)
       end
 
       def format_result(result) # rubocop:disable Metrics/CyclomaticComplexity
