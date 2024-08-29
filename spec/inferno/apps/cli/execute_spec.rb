@@ -12,7 +12,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
     it 'disables stderr' do
       expect do
-        described_class.suppress_output { warn 'Hide me' }
+        described_class.suppress_output { $stderr.puts 'Hide me' } # rubocop:disable Style/StderrPuts
       end.to_not output(/.+/).to_stderr_from_any_process
     end
   end
