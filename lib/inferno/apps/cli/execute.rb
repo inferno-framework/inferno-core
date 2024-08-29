@@ -21,14 +21,11 @@ module Inferno
 
       def self.suppress_output
         begin
-          # original_stderr = $stderr.clone
           original_stdout = $stdout.clone
-          # $stderr.reopen(File.new(File::NULL, 'w+'))
           $stdout.reopen(File.new(File::NULL, 'w+'))
           retval = yield
         ensure
           $stdout.reopen(original_stdout)
-          # $stderr.reopen(original_stderr)
         end
         retval
       end
