@@ -36,17 +36,15 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
      { test: 'BasicTestSuite::AbcGroup-demo_test' }].each do |given_options|
       context "with #{given_options.keys.first} option" do
         it 'does not raise error' do
-          stubbed_instance = instance
-          allow(stubbed_instance).to receive(:options).and_return(given_options)
+          allow(instance).to receive(:options).and_return(given_options)
 
-          expect { stubbed_instance.set_runnable! }.to_not raise_error(StandardError)
+          expect { instance.set_runnable! }.to_not raise_error(StandardError)
         end
 
         it 'sets runnable' do
-          stubbed_instance = instance
-          allow(stubbed_instance).to receive(:options).and_return(given_options)
+          allow(instance).to receive(:options).and_return(given_options)
 
-          stubbed_instance.set_runnable!
+          instance.set_runnable!
           klass = case given_options.keys.first
                   when :suite
                     Inferno::TestSuite
@@ -55,15 +53,14 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
                   else
                     Inferno::Test
                   end
-          expect(stubbed_instance.runnable).to be < klass
+          expect(instance.runnable).to be < klass
         end
 
         it 'sets runnable_type' do
-          stubbed_instance = instance
-          allow(stubbed_instance).to receive(:options).and_return(given_options)
+          allow(instance).to receive(:options).and_return(given_options)
 
-          stubbed_instance.set_runnable!
-          expect(stubbed_instance.runnable_type).to eq(given_options.keys.first.to_s)
+          instance.set_runnable!
+          expect(instance.runnable_type).to eq(given_options.keys.first.to_s)
         end
       end
     end
@@ -72,10 +69,9 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   describe '#runnable_id_key' do
     { suite: :test_suite_id, group: :test_group_id, test: :test_id }.each do |runnable_type, id_key|
       it "returns proper id for runnable type #{runnable_type}" do
-        stubbed_instance = instance
-        allow(stubbed_instance).to receive(:runnable_type).and_return(runnable_type)
+        allow(instance).to receive(:runnable_type).and_return(runnable_type)
 
-        expect(stubbed_instance.runnable_id_key).to eq(id_key)
+        expect(instance.runnable_id_key).to eq(id_key)
       end
     end
   end
@@ -115,12 +111,11 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:inputs_array) { [{ name: :url, value: 'https://example.com' }] }
 
     it 'returns test run params' do
-      stubbed_instance = instance
-      allow(stubbed_instance).to receive(:options).and_return({ inputs: inputs_hash })
-      allow(stubbed_instance).to receive(:runnable_type).and_return('suite')
+      allow(instance).to receive(:options).and_return({ inputs: inputs_hash })
+      allow(instance).to receive(:runnable_type).and_return('suite')
       test_session_inst = test_session
 
-      result = stubbed_instance.create_params(test_session_inst, test_suite)
+      result = instance.create_params(test_session_inst, test_suite)
       expect(result).to eq({ test_session_id: test_session.id, test_suite_id: test_suite.id, inputs: inputs_array })
     end
   end
@@ -139,26 +134,23 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
   describe '#verbose_print' do
     it 'outputs when verbose is true' do
-      stubbed_instance = instance
-      allow(stubbed_instance).to receive(:options).and_return({ verbose: true })
+      allow(instance).to receive(:options).and_return({ verbose: true })
 
-      expect { stubbed_instance.verbose_print('Lorem') }.to output(/Lorem/).to_stdout
+      expect { instance.verbose_print('Lorem') }.to output(/Lorem/).to_stdout
     end
 
     it 'does not output when verbose is false' do
-      stubbed_instance = instance
-      allow(stubbed_instance).to receive(:options).and_return({ verbose: false })
+      allow(instance).to receive(:options).and_return({ verbose: false })
 
-      expect { stubbed_instance.verbose_print('Lorem') }.to_not output(/.+/).to_stdout
+      expect { instance.verbose_print('Lorem') }.to_not output(/.+/).to_stdout
     end
   end
 
   describe '#verbose_puts' do
     it 'has output ending with \n with when verbose is true' do
-      stubbed_instance = instance
-      allow(stubbed_instance).to receive(:options).and_return({ verbose: true })
+      allow(instance).to receive(:options).and_return({ verbose: true })
 
-      expect { stubbed_instance.verbose_puts('Lorem') }.to output(/Lorem\n/).to_stdout
+      expect { instance.verbose_puts('Lorem') }.to output(/Lorem\n/).to_stdout
     end
   end
 
@@ -249,15 +241,13 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:results) { create_list(:random_result, 10) }
 
     it 'outputs something with verbose false' do
-      stubbed_instance = instance
-      allow(stubbed_instance).to receive(:options).and_return({ verbose: false })
-      expect { stubbed_instance.print_color_results(results) }.to output(/.+/).to_stdout
+      allow(instance).to receive(:options).and_return({ verbose: false })
+      expect { instance.print_color_results(results) }.to output(/.+/).to_stdout
     end
 
     it 'outputs something with verbose true' do
-      stubbed_instance = instance
-      allow(stubbed_instance).to receive(:options).and_return({ verbose: true })
-      expect { stubbed_instance.print_color_results(results) }.to output(/.+/).to_stdout
+      allow(instance).to receive(:options).and_return({ verbose: true })
+      expect { instance.print_color_results(results) }.to output(/.+/).to_stdout
     end
   end
 
