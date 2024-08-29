@@ -12,11 +12,7 @@ RSpec.describe Inferno::Utils::VerifyRunnable do
     let(:bad_inputs) { [{ name: :input2, value: :foo }] }
     let(:unrunnable) { BasicTestSuite::DefGroup.tests.first }
 
-    it 'is defined' do
-      expect(described_class.method_defined?(:verify_runnable)).to eq(true)
-    end
-
-    it 'allows legit runnables' do
+    it 'allows runnables with good inputs' do
       expect { dummy.verify_runnable(suite, good_inputs, {}) }.to_not raise_error
     end
 

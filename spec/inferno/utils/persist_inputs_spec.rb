@@ -12,10 +12,6 @@ RSpec.describe Inferno::Utils::PersistInputs do
     let(:test_sessions_repo) { Inferno::Repositories::TestSessions.new }
     let(:session_data_repo) { Inferno::Repositories::SessionData.new }
 
-    it 'is defined' do
-      expect(described_class.method_defined?(:persist_inputs)).to eq(true)
-    end
-
     it 'saves inputs to db' do
       test_session = test_sessions_repo.create(test_suite_id: suite.id)
 
@@ -36,7 +32,7 @@ RSpec.describe Inferno::Utils::PersistInputs do
       expect(persisted_data).to eq('persist me')
     end
 
-    it 'can handle unregistered inputs' do
+    it 'saves known inputs when given unknown extraneous inputs' do
       test_session = test_sessions_repo.create(test_suite_id: suite.id)
 
       test_run = create(:test_run, test_session:)
@@ -46,7 +42,7 @@ RSpec.describe Inferno::Utils::PersistInputs do
         test_session_id: test_session.id,
         test_suite_id: suite.id,
         inputs: [
-          { name: 'unregistered', value: 'omit me' },
+          { name: 'extraneous', value: 'omit me' },
           { name: 'input1', value: 'persist me' }
         ]
       }
