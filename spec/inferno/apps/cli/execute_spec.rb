@@ -255,7 +255,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   describe '#print_color_results' do
     let(:results) { create_list(:random_result, 10) }
 
-    it 'outputs something with 10 random results' do
+    it 'outputs something with verbose false' do
       stubbed_instance = instance
       allow(stubbed_instance).to receive(:options).and_return({ verbose: false })
       expect { stubbed_instance.print_color_results(results) }.to output(/.+/).to_stdout
