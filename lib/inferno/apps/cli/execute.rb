@@ -90,9 +90,11 @@ module Inferno
         verbose_print_json_results(results)
         print_color_results(results)
 
-        exit(0) if results.find do |result|
-                     result.send(runnable_id_key) == options[runnable_type.to_sym]
-                   end.result == 'pass'
+        if results.find do |result|
+             result.send(runnable_id_key) == options[runnable_type.to_sym]
+           end.result == 'pass'
+          exit(0)
+        end
 
         # exit(1) is for Thor failures
         # exit(2) is for shell builtin failures
