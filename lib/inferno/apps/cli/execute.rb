@@ -17,7 +17,7 @@ module Inferno
       CHECKMARK = "\u2713"
       BAR = '=========================================='
 
-      attr_accessor :options, :runnable, :runnable_type
+      attr_accessor :options
 
       def self.suppress_output
         begin
@@ -49,8 +49,6 @@ module Inferno
         test_sessions_repo = Inferno::Repositories::TestSessions.new
         session_data_repo = Inferno::Repositories::SessionData.new
         test_runs_repo = Inferno::Repositories::TestRuns.new
-
-        set_runnable!
 
         test_session = test_sessions_repo.create({
                                                    test_suite_id: runnable.suite.id,
@@ -120,22 +118,33 @@ module Inferno
         puts BAR
       end
 
-      def set_runnable!
-        if options[:suite]
-          self.runnable_type = 'suite'
-          self.runnable = Inferno::Repositories::TestSuites.new.find(options[:suite])
-          raise StandardError, "Suite #{options[:suite]} not found" if runnable.nil?
-        elsif options[:group]
-          self.runnable_type = 'group'
-          self.runnable = Inferno::Repositories::TestGroups.new.find(options[:group])
-          raise StandardError, "Group #{options[:group]} not found" if runnable.nil?
-        elsif options[:test]
-          self.runnable_type = 'test'
-          self.runnable = Inferno::Repositories::Tests.new.find(options[:test])
-          raise StandardError, "Test #{options[:test]} not found" if runnable.nil?
-        else
-          raise StandardError, 'No suite or group id provided'
-        end
+      def runnable
+        @runnable ||=
+          case runnable_type
+          when 'suite'
+            Inferno::Repositories::TestSuites.new.find(options[:suite])
+          when 'group'
+            Inferno::Repositories::TestGroups.new.find(options[:group])
+          when 'test'
+            Inferno::Repositories::Tests.new.find(options[:test])
+          end
+
+        raise StandardError, "#{runnable_type.capitalize} #{options[runnable_type.to_sym]} not found" if @runnable.nil?
+
+        @runnable
+      end
+
+      def runnable_type
+        @runnable_type ||=
+          if options[:suite]
+            'suite'
+          elsif options[:group]
+            'group'
+          elsif options[:test]
+            'test'
+          else
+            raise StandardError, 'No suite, group, or test id provided'
+          end
       end
 
       def runnable_id_key

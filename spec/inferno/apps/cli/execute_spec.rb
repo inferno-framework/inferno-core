@@ -25,32 +25,32 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  describe '#set_runnable!' do
-    [{ suite: 'basic' }, { group: 'BasicTestSuite::AbcGroup' },
-     { test: 'BasicTestSuite::AbcGroup-demo_test' }].each do |given_options|
-      context "with #{given_options.keys.first} option" do
-        it 'sets runnable' do
-          allow(instance).to receive(:options).and_return(given_options)
+  [
+    { suite: 'basic' },
+    { group: 'BasicTestSuite::AbcGroup' },
+    { test: 'BasicTestSuite::AbcGroup-demo_test' }
+  ].each do |given_options|
+    describe '#runnable' do
+      it "sets runnable to #{given_options.keys.first} entity" do
+        allow(instance).to receive(:options).and_return(given_options)
+        klass = case given_options.keys.first
+                when :suite
+                  Inferno::TestSuite
+                when :group
+                  Inferno::TestGroup
+                else
+                  Inferno::Test
+                end
 
-          instance.set_runnable!
-          klass = case given_options.keys.first
-                  when :suite
-                    Inferno::TestSuite
-                  when :group
-                    Inferno::TestGroup
-                  else
-                    Inferno::Test
-                  end
-          expect(instance.runnable).to be < klass
-        end
+        expect(instance.runnable).to be < klass
+      end
+    end
 
-        # TODO: change with new custom getter
-        it 'sets runnable_type' do
-          allow(instance).to receive(:options).and_return(given_options)
+    describe '#runnable_type' do
+      it "sets runnable_type to #{given_options.keys.first}" do
+        allow(instance).to receive(:options).and_return(given_options)
 
-          instance.set_runnable!
-          expect(instance.runnable_type).to eq(given_options.keys.first.to_s)
-        end
+        expect(instance.runnable_type).to eq(given_options.keys.first.to_s)
       end
     end
   end
