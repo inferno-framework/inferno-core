@@ -35,12 +35,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     [{ suite: 'basic' }, { group: 'BasicTestSuite::AbcGroup' },
      { test: 'BasicTestSuite::AbcGroup-demo_test' }].each do |given_options|
       context "with #{given_options.keys.first} option" do
-        it 'does not raise error' do
-          allow(instance).to receive(:options).and_return(given_options)
-
-          expect { instance.set_runnable! }.to_not raise_error(StandardError)
-        end
-
         it 'sets runnable' do
           allow(instance).to receive(:options).and_return(given_options)
 
@@ -56,6 +50,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
           expect(instance.runnable).to be < klass
         end
 
+        # TODO: change with new custom getter
         it 'sets runnable_type' do
           allow(instance).to receive(:options).and_return(given_options)
 
