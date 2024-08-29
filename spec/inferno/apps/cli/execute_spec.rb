@@ -133,9 +133,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
 
     it 'returns valid JSON' do
-      expect { JSON.parse(instance.serialize(test_results)) }.to_not raise_error(JSON::ParserError)
-      expect { JSON.parse(instance.serialize(test_results)) }.to_not raise_error(JSON::NestingError)
-      expect { JSON.parse(instance.serialize(test_results)) }.to_not raise_error(TypeError)
+      expect { JSON.parse(instance.serialize(test_results)) }.to_not raise_error(StandardError)
     end
   end
 
