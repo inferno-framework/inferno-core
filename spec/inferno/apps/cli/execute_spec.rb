@@ -191,12 +191,12 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   describe '#format_messages' do
     let(:test_result) { repo_create(:result, message_count: 10) }
 
-    it 'includes all characters case-insensitive' do
+    it 'includes all characters' do
       messages = test_result.messages
       formatted_string = instance.format_messages(test_result)
 
       messages.each do |message|
-        expect(formatted_string.upcase).to include message.message.upcase
+        expect(formatted_string).to include message.message
       end
     end
   end
@@ -209,7 +209,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
       formatted_string = instance.format_requests(test_result)
 
       requests.each do |request|
-        expect(formatted_string.upcase).to include request.status.to_s.upcase
+        expect(formatted_string).to include request.status.to_s
       end
     end
   end
