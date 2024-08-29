@@ -67,7 +67,8 @@ module Inferno
       end
 
       EXECUTE_HELP = <<~END_OF_HELP.freeze
-        Run Inferno tests in the command line. Exits with 0 only if test suite passes. Must be run from test kit as working directory.
+        Run Inferno tests in the command line. Exits with 0 only if test entity passes.
+        Must be run with test kit as working directory.
 
         You must have background services running: `bundle exec inferno services start`
 
@@ -75,7 +76,9 @@ module Inferno
 
         Examples:
 
-            `bundle exec inferno execute --suite dev_validator --inputs "url:https://hapi.fhir.org/baseR4" patient_id:1234321`
+            `bundle exec inferno execute --suite dev_validator \
+                                        --inputs "url:https://hapi.fhir.org/baseR4" \
+                                                 patient_id:1234321`
             => Outputs test results
       END_OF_HELP
       desc 'execute', 'Run Inferno tests in command line'
