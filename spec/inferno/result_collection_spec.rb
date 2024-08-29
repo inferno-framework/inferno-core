@@ -64,6 +64,12 @@ RSpec.describe Inferno::ResultCollection do
       nested_results = [new_result1, new_result2]
       expect { result_collection << nested_results }.to change { result_collection.results.size }.by(2)
       expect(result_collection.results).to include(*nested_results)
+      expect(result_collection.results.flatten!).to be_nil
+    end
+
+    it 'returns the ResultCollection instance itself after adding a result' do
+      result = result_collection << new_result1
+      expect(result).to eq(result_collection)
     end
   end
 
@@ -78,9 +84,9 @@ RSpec.describe Inferno::ResultCollection do
       expect(result_collection.each).to be_a(Enumerator)
     end
 
-    it 'returns the `results` attribute of the collection when a block is given' do
+    it 'returns the ResultCollection instance itself when a block is given' do
       result = result_collection.each { |r| r.result = 'skip' }
-      expect(result).to eq(result_collection.results)
+      expect(result).to eq(result_collection)
     end
   end
 

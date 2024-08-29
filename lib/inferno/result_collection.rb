@@ -45,10 +45,14 @@ module Inferno
 
     def <<(result)
       (results << result).flatten!
+      self
     end
 
     def each(&)
+      return to_enum(:each) unless block_given?
+
       results.each(&)
+      self
     end
 
     def required_results
