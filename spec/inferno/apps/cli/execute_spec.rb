@@ -102,9 +102,8 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     it 'returns test run params' do
       allow(instance).to receive(:options).and_return({ inputs: inputs_hash })
       allow(instance).to receive(:runnable_type).and_return('suite')
-      test_session_inst = test_session
 
-      result = instance.create_params(test_session_inst, test_suite)
+      result = instance.create_params(test_session, test_suite)
       expect(result).to eq({ test_session_id: test_session.id, test_suite_id: test_suite.id, inputs: inputs_array })
     end
   end
