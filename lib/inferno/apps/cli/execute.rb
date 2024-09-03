@@ -264,7 +264,7 @@ module Inferno
 
       def print_color_results(results)
         puts BAR
-        puts 'Colored Test Results:'
+        puts 'Test Results:'
         puts BAR
         results.each do |result|
           print format_id(result), ': ', format_result(result), "\n"
