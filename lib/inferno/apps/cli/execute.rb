@@ -108,7 +108,7 @@ module Inferno
 
       def print_help_and_exit
         puts `NO_DB=true bundle exec inferno help execute`
-        exit(3)
+        exit(0)
       end
 
       def print_start_message
