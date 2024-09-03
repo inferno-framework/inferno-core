@@ -210,8 +210,18 @@ module Inferno
         verbose_print(*args)
       end
 
-      def format_id(result)
-        result.runnable.id
+      def format_tag(result)
+        if result.runnable.respond_to?(:short_id) && result.runnable.short_title.presence
+          "#{result.runnable.short_id} #{result.runnable.short_title}"
+        elsif result.runnable.respond_to?(:short_id) && result.runnable.title.presence
+          "#{result.runnable.short_id} #{result.runnable.title}"
+        elsif result.runnable.short_title.presence
+          result.runnable.short_title
+        elsif result.runnable.title.presence
+          result.runnable.title
+        else
+          result.runnable.id
+        end
       end
 
       def format_messages(result)
@@ -279,7 +289,7 @@ module Inferno
         puts 'Test Results:'
         puts BAR
         results.each do |result|
-          print format_id(result), ': ', format_result(result), "\n"
+          print format_tag(result), ': ', format_result(result), "\n"
           verbose_puts "\tsummary: ",   result.result_message
           verbose_puts "\tmessages: ",  format_messages(result)
           verbose_puts "\trequests: ",  format_requests(result)

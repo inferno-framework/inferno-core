@@ -142,27 +142,29 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  describe '#format_id' do
+  describe '#format_tag' do
     let(:test_suite) { BasicTestSuite::Suite }
+    let(:test_suite_result) { create(:result, runnable: { test_suite_id: test_suite.id }) }
     let(:test_group) { BasicTestSuite::AbcGroup }
     let(:test) { test_group.tests.first }
 
-    it 'returns suite id if test result belongs to suite' do
-      test_result = create(:result, runnable: { test_suite_id: test_suite.id })
+    it "includes a suite's title if short_title not found" do
+      # test_result = create(:result, runnable: { test_suite_id: test_suite.id })
+      test_result = test_suite_result
 
-      expect(instance.format_id(test_result)).to eq(test_suite.id)
+      expect(instance.format_tag(test_result)).to match(test_suite.short_title)
     end
 
-    it 'returns group id if test result belongs to group' do
+    it "includes a group's short id" do
       test_result = create(:result, runnable: { test_group_id: test_group.id })
 
-      expect(instance.format_id(test_result)).to eq(test_group.id)
+      expect(instance.format_tag(test_result)).to match(test_group.short_id)
     end
 
-    it 'returns test id if test result belongs to test' do
+    it "includes a test's short it" do
       test_result = create(:result, runnable: { test_id: test.id })
 
-      expect(instance.format_id(test_result)).to eq(test.id)
+      expect(instance.format_tag(test_result)).to match(test.short_id)
     end
   end
 
