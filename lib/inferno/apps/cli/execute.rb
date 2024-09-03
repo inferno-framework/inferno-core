@@ -46,25 +46,10 @@ module Inferno
         print_start_message
         verbose_puts 'options:', self.options
 
-        test_sessions_repo = Inferno::Repositories::TestSessions.new
-        session_data_repo = Inferno::Repositories::SessionData.new
-        test_runs_repo = Inferno::Repositories::TestRuns.new
-
-        test_session = test_sessions_repo.create({
-                                                   test_suite_id: runnable.suite.id,
-                                                   suite_options: thor_hash_to_suite_options_array(
-                                                     options[:suite_options]
-                                                   )
-                                                 })
-
         verify_runnable(
           runnable,
           thor_hash_to_inputs_array(options[:inputs]),
           test_session.suite_options
-        )
-
-        test_run = test_runs_repo.create(
-          create_params(test_session, runnable).merge({ status: 'queued' })
         )
 
         persist_inputs(session_data_repo, create_params(test_session, runnable), test_run)
@@ -116,6 +101,33 @@ module Inferno
         puts BAR
         puts "Testing #{options[:suite] || options[:group] || options[:test]}"
         puts BAR
+      end
+
+      def test_sessions_repo
+        @test_sessions_repo ||= Inferno::Repositories::TestSessions.new
+      end
+
+      def session_data_repo
+        @session_data_repo ||= Inferno::Repositories::SessionData.new
+      end
+
+      def test_runs_repo
+        @test_runs_repo ||= Inferno::Repositories::TestRuns.new
+      end
+
+      def test_session
+        @test_session ||= test_sessions_repo.create({
+                                                      test_suite_id: runnable.suite.id,
+                                                      suite_options: thor_hash_to_suite_options_array(
+                                                        options[:suite_options]
+                                                      )
+                                                    })
+      end
+
+      def test_run
+        @test_run ||= test_runs_repo.create(
+          create_params(test_session, runnable).merge({ status: 'queued' })
+        )
       end
 
       def runnable
