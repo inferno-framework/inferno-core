@@ -211,17 +211,15 @@ module Inferno
       end
 
       def format_tag(result)
-        if result.runnable.respond_to?(:short_id) && result.runnable.short_title.presence
-          "#{result.runnable.short_id} #{result.runnable.short_title}"
-        elsif result.runnable.respond_to?(:short_id) && result.runnable.title.presence
-          "#{result.runnable.short_id} #{result.runnable.title}"
-        elsif result.runnable.short_title.presence
-          result.runnable.short_title
-        elsif result.runnable.title.presence
-          result.runnable.title
+        if result.runnable.respond_to?(:short_id)
+          "#{result.runnable.short_id} #{format_tag_suffix(result)}"
         else
-          result.runnable.id
+          format_tag_suffix(result)
         end
+      end
+
+      def format_tag_suffix(result)
+        result.runnable.short_title.presence || result.runnable.title.presence || result.runnable.id
       end
 
       def format_messages(result)

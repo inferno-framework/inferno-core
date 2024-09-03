@@ -143,28 +143,95 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#format_tag' do
-    let(:test_suite) { BasicTestSuite::Suite }
-    let(:test_suite_result) { create(:result, runnable: { test_suite_id: test_suite.id }) }
-    let(:test_group) { BasicTestSuite::AbcGroup }
-    let(:test) { test_group.tests.first }
+    let(:suites_repo) { Inferno::Repositories::TestSuites.new }
 
-    it "includes a suite's title if short_title not found" do
-      # test_result = create(:result, runnable: { test_suite_id: test_suite.id })
-      test_result = test_suite_result
-
-      expect(instance.format_tag(test_result)).to match(test_suite.short_title)
+    let(:suite_all) do
+      Class.new(Inferno::TestSuite) do
+        id 'mock_suite_id_1'
+        short_title 'short'
+        title 'title'
+      end
     end
 
-    it "includes a group's short id" do
-      test_result = create(:result, runnable: { test_group_id: test_group.id })
-
-      expect(instance.format_tag(test_result)).to match(test_group.short_id)
+    let(:suite_no_short_title) do
+      Class.new(Inferno::TestSuite) do
+        id 'mock_suite_id_2'
+        title 'title'
+      end
     end
 
-    it "includes a test's short it" do
-      test_result = create(:result, runnable: { test_id: test.id })
+    let(:suite_id_only) do
+      Class.new(Inferno::TestSuite) do
+        id 'mock_suite_id_3'
+      end
+    end
 
-      expect(instance.format_tag(test_result)).to match(test.short_id)
+    let(:groups_repo) { Inferno::Repositories::TestGroups.new }
+
+    let(:group_all) do
+      Class.new(Inferno::TestGroup) do
+        id 'mock_group_id_1'
+        short_title 'short'
+        title 'title'
+      end
+    end
+
+    let(:group_no_short_title) do
+      Class.new(Inferno::TestGroup) do
+        id 'mock_group_id_2'
+        title 'title'
+      end
+    end
+
+    let(:group_no_titles) do
+      Class.new(Inferno::TestGroup) do
+        id 'mock_group_id_3'
+      end
+    end
+
+    it "includes a runnable's short_id and short_title if possible" do
+      groups_repo.insert(group_all)
+      test_result = create(:result, runnable: { test_group_id: group_all.id })
+
+      expect(instance.format_tag(test_result)).to match(group_all.short_id)
+      expect(instance.format_tag(test_result)).to match(group_all.short_title)
+    end
+
+    it "includes a runnable's short_id and title if no short_title found" do
+      groups_repo.insert(group_no_short_title)
+      test_result = create(:result, runnable: { test_group_id: group_no_short_title.id })
+
+      expect(instance.format_tag(test_result)).to match(group_no_short_title.short_id)
+      expect(instance.format_tag(test_result)).to match(group_no_short_title.title)
+    end
+
+    it "includes a runnable's short_id and id if no title/short_title found" do
+      groups_repo.insert(group_no_titles)
+      test_result = create(:result, runnable: { test_group_id: group_no_titles.id })
+
+      expect(instance.format_tag(test_result)).to match(group_no_titles.short_id)
+      expect(instance.format_tag(test_result)).to match(group_no_titles.id)
+    end
+
+    it "include's a runnable's short_title if no short_id found" do
+      suites_repo.insert(suite_all)
+      test_result = create(:result, runnable: { test_suite_id: suite_all.id })
+
+      expect(instance.format_tag(test_result)).to match(suite_all.short_title)
+    end
+
+    it "include's a runnable's title if no short_id/short_title found" do
+      suites_repo.insert(suite_no_short_title)
+      test_result = create(:result, runnable: { test_suite_id: suite_no_short_title.id })
+
+      expect(instance.format_tag(test_result)).to match(suite_no_short_title.title)
+    end
+
+    it "include's a runnable's id if no short_id/short_title/title found" do
+      suites_repo.insert(suite_id_only)
+      test_result = create(:result, runnable: { test_suite_id: suite_id_only.id })
+
+      expect(instance.format_tag(test_result)).to match(suite_id_only.id)
     end
   end
 
