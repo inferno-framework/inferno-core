@@ -1,5 +1,6 @@
 require_relative '../dsl'
 require_relative '../repositories/test_groups'
+require_relative '../result_collection'
 
 module Inferno
   module Entities
@@ -9,8 +10,18 @@ module Inferno
       extend DSL::HTTPClient::ClassMethods
       extend DSL::Runnable
       include DSL::FHIRValidation
+      include DSL::Results
+      include DSL::Assertions
+      include DSL::Messages
 
-      def_delegators 'self.class', :title, :id, :groups, :inputs, :outputs, :tests
+      def_delegators 'self.class', :title, :id, :block, :groups, :inputs, :outputs, :tests
+
+      attr_accessor :result_message, :results
+
+      # @private
+      def initialize
+        @results = Inferno::ResultCollection.new
+      end
 
       # @private
       def method_missing(name, *args, &)
