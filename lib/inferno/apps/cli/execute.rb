@@ -6,16 +6,13 @@ require_relative '../web/serializers/test_run'
 require_relative '../web/serializers/result'
 require_relative '../../utils/verify_runnable'
 require_relative '../../utils/persist_inputs'
+require_relative 'execute/console_outputter'
 
 module Inferno
   module CLI
     class Execute
       include ::Inferno::Utils::VerifyRunnable
       include ::Inferno::Utils::PersistInputs
-
-      COLOR = Pastel.new
-      CHECKMARK = "\u2713"
-      BAR = '=========================================='
 
       attr_accessor :options
 
@@ -43,8 +40,8 @@ module Inferno
         print_help_and_exit if options[:help]
 
         self.options = options
-        print_start_message
-        verbose_puts 'options:', self.options
+
+        outputter.print_start_message(options)
 
         verify_runnable(
           runnable,
@@ -54,21 +51,22 @@ module Inferno
 
         persist_inputs(session_data_repo, create_params(test_session, runnable), test_run)
 
-        puts 'Running tests. This may take a while...' # TODO: spinner/progress bar
-
-        # TODO: hijack logger instead of using this if-case
-        if options[:verbose]
-          Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
-        else
-          Inferno::CLI::Execute.suppress_output do
+        outputter.print_around_run(options) do
+          # TODO: move suppression into outputter?
+          if options[:verbose]
             Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
+          else
+            Inferno::CLI::Execute.suppress_output do
+              Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
+            end
           end
         end
 
         results = test_runs_repo.results_for_test_run(test_run.id).reverse
 
-        verbose_print_json_results(results)
-        print_color_results(results)
+        outputter.print_results(options, results)
+
+        outputter.print_end_message(options)
 
         if results.find do |result|
              result.send(runnable_id_key) == options[runnable_type.to_sym]
@@ -94,13 +92,6 @@ module Inferno
       def print_help_and_exit
         puts `NO_DB=true bundle exec inferno help execute`
         exit(0)
-      end
-
-      def print_start_message
-        puts ''
-        puts BAR
-        puts "Testing #{options[:suite] || options[:group] || options[:test]}"
-        puts BAR
       end
 
       def test_sessions_repo
@@ -201,106 +192,14 @@ module Inferno
         end
       end
 
-      def verbose_print(*args)
-        print(COLOR.dim(*args)) if options[:verbose]
-      end
-
-      def verbose_puts(*args)
-        args.push("\n")
-        verbose_print(*args)
-      end
-
-      def format_tag(result)
-        if result.runnable.respond_to?(:short_id)
-          "#{result.runnable.short_id} #{format_tag_suffix(result)}"
-        else
-          format_tag_suffix(result)
-        end
-      end
-
-      def format_tag_suffix(result)
-        result.runnable.short_title.presence || result.runnable.title.presence || result.runnable.id
-      end
-
-      def format_messages(result)
-        result.messages.map do |message|
-          "\n\t\t#{message.type}: #{message.message}"
-        end.join
-      end
-
-      def format_requests(result)
-        result.requests.map do |req_res|
-          "\n\t\t#{req_res.status} #{req_res.verb.upcase} #{req_res.url}"
-        end.join
-      end
-
-      def format_session_data(result, attr)
-        json = result.send(attr)
-        return '' if json.nil?
-
-        JSON.parse(json).map do |hash|
-          "\n\t\t#{hash['name']}: #{hash['value']}"
-        end.join
-      end
-
-      def format_inputs(result)
-        format_session_data(result, :input_json)
-      end
-
-      def format_outputs(result)
-        format_session_data(result, :output_json)
-      end
-
-      def format_result(result) # rubocop:disable Metrics/CyclomaticComplexity
-        case result.result
-        when 'pass'
-          COLOR.bold.green(CHECKMARK, ' pass')
-        when 'fail'
-          COLOR.bold.red 'X fail'
-        when 'skip'
-          COLOR.yellow '* skip'
-        when 'omit'
-          COLOR.blue '* omit'
-        when 'error'
-          COLOR.magenta 'X error'
-        when 'wait'
-          COLOR.bold '. wait'
-        when 'cancel'
-          COLOR.red 'X cancel'
-        when 'running'
-          COLOR.bold '- running'
-        else
-          raise StandardError.new, "Unrecognized result #{result.result}"
-        end
-      end
-
-      def verbose_print_json_results(results)
-        verbose_puts BAR
-        verbose_puts 'JSON Test Results:'
-        verbose_puts BAR
-        verbose_puts serialize(results)
-        verbose_puts BAR
-      end
-
-      def print_color_results(results)
-        puts BAR
-        puts 'Test Results:'
-        puts BAR
-        results.each do |result|
-          print format_tag(result), ': ', format_result(result), "\n"
-          verbose_puts "\tsummary: ",   result.result_message
-          verbose_puts "\tmessages: ",  format_messages(result)
-          verbose_puts "\trequests: ",  format_requests(result)
-          verbose_puts "\tinputs: ",    format_inputs(result)
-          verbose_puts "\toutputs: ",   format_outputs(result)
-        end
-        puts BAR
-      end
-
       def print_error_and_exit(err, code)
-        # TODO: use Application Logger for stderr?
-        $stderr.puts COLOR.red "Error: #{err.full_message}" # rubocop:disable Style/StderrPuts # always print this error instead of using `warn`
+        outputter.print_error(err)
         exit(code)
+      end
+
+      def outputter
+        # TODO: swap outputter based on options
+        @outputter ||= Inferno::CLI::Execute::ConsoleOutputter.new
       end
     end
   end
