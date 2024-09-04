@@ -83,14 +83,14 @@ module Inferno
         end
 
         # @private
-        def transform_fhirpath_results(fhirpath_reults)
-          fhirpath_reults.each do |result|
+        def transform_fhirpath_results(fhirpath_results)
+          fhirpath_results.each do |result|
             klass = Object.const_get("FHIR::#{result['type']}")
             result['element'] = klass.new(result['element'])
           rescue NameError
             next
           end
-          fhirpath_reults
+          fhirpath_results
         end
 
         def call_fhirpath_service(fhir_resource, fhirpath_expression)
