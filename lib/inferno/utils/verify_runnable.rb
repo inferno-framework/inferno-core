@@ -2,6 +2,7 @@ require_relative '../exceptions'
 
 module Inferno
   module Utils
+    # @private
     module VerifyRunnable
       def verify_runnable(runnable, inputs, selected_suite_options)
         missing_inputs = runnable&.missing_inputs(inputs, selected_suite_options)

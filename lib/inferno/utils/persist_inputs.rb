@@ -1,5 +1,6 @@
 module Inferno
   module Utils
+    # @private
     module PersistInputs
       def persist_inputs(session_data_repo, params, test_run)
         available_inputs = test_run.runnable.available_inputs
