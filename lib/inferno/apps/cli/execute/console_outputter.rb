@@ -7,17 +7,13 @@ module Inferno
   module CLI
     class Execute
       # @private
-      class ConsoleOutputter  < AbstractOutputter
+      class ConsoleOutputter < AbstractOutputter
 
         COLOR = Pastel.new
         CHECKMARK = "\u2713".freeze
         BAR = ('=' * 80).freeze
 
-        attr_accessor :verbose
-
         def print_start_message(options)
-          self.verbose = options[:verbose]
-
           puts ''
           puts BAR
           puts "Testing #{options[:suite] || options[:group] || options[:test]}"
@@ -31,18 +27,18 @@ module Inferno
         end
 
         def print_results(options, results)
-          verbose_print_json_results(results)
+          verbose_print_json_results(options, results)
 
           puts BAR
           puts 'Test Results:'
           puts BAR
           results.each do |result|
             print format_tag(result), ': ', format_result(result), "\n"
-            verbose_puts "\tsummary: ",   result.result_message
-            verbose_puts "\tmessages: ",  format_messages(result)
-            verbose_puts "\trequests: ",  format_requests(result)
-            verbose_puts "\tinputs: ",    format_inputs(result)
-            verbose_puts "\toutputs: ",   format_outputs(result)
+            verbose_puts(options, "\tsummary: ",     result.result_message)
+            verbose_puts(options, "\tmessages: ",    format_messages(result))
+            verbose_puts(options, "\trequests: ",    format_requests(result))
+            verbose_puts(options, "\tinputs: ",      format_inputs(result))
+            verbose_puts(options, "\toutputs: ",     format_outputs(result))
           end
           puts BAR
         end
@@ -50,20 +46,20 @@ module Inferno
         def print_end_message(options)
         end
 
-        def print_error(exception)
+        def print_error(options, exception)
           puts COLOR.red "Error: #{exception.full_message}"
-          verbose_print(exception.backtrace.join('\n'))
+          verbose_print(exception.backtrace&.join('\n'))
         end
 
-        private
+        # private
 
-        def verbose_print(*args)
-          print(COLOR.dim(*args)) if self.verbose
+        def verbose_print(options, *args)
+          print(COLOR.dim(*args)) if options[:verbose]
         end
 
-        def verbose_puts(*args)
+        def verbose_puts(options, *args)
           args.push("\n")
-          verbose_print(*args)
+          verbose_print(options, *args)
         end
 
         def format_tag(result)
@@ -130,12 +126,12 @@ module Inferno
           end
         end
 
-        def verbose_print_json_results(results)
-          verbose_puts BAR
-          verbose_puts 'JSON Test Results:'
-          verbose_puts BAR
-          verbose_puts serialize(results)
-          verbose_puts BAR
+        def verbose_print_json_results(options, results)
+          verbose_puts(options, BAR)
+          verbose_puts(options, 'JSON Test Results:')
+          verbose_puts(options, BAR)
+          verbose_puts(options, serialize(results))
+          verbose_puts(options, BAR)
         end
 
         def serialize(entity)
