@@ -178,7 +178,7 @@ module Inferno
       end
 
       def print_error_and_exit(err, code)
-        outputter.print_error(self.options || {}, err)
+        outputter.print_error(options || {}, err)
         exit(code)
       end
 

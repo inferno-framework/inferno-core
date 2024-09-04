@@ -2,7 +2,7 @@ require_relative '../../../../../lib/inferno/apps/cli/execute/console_outputter'
 
 RSpec.describe Inferno::CLI::Execute::ConsoleOutputter do # rubocop:disable RSpec/FilePath
   let(:instance) { described_class.new }
-  let(:options) { {verbose: true} }
+  let(:options) { { verbose: true } }
 
   describe '#serialize' do
     let(:test_results) { create_list(:result, 2) }
@@ -22,7 +22,7 @@ RSpec.describe Inferno::CLI::Execute::ConsoleOutputter do # rubocop:disable RSpe
     end
 
     it 'does not output when verbose is false' do
-      expect { instance.verbose_print({verbose: false}, 'Lorem') }.to_not output(/.+/).to_stdout
+      expect { instance.verbose_print({ verbose: false }, 'Lorem') }.to_not output(/.+/).to_stdout
     end
   end
 
@@ -188,7 +188,7 @@ RSpec.describe Inferno::CLI::Execute::ConsoleOutputter do # rubocop:disable RSpe
     let(:results) { create_list(:random_result, 10) }
 
     it 'outputs something with verbose false' do
-      expect { instance.print_results({verbose: false}, results) }.to output(/.+/).to_stdout
+      expect { instance.print_results({ verbose: false }, results) }.to output(/.+/).to_stdout
     end
 
     it 'outputs something with verbose true' do
@@ -196,4 +196,3 @@ RSpec.describe Inferno::CLI::Execute::ConsoleOutputter do # rubocop:disable RSpe
     end
   end
 end
-

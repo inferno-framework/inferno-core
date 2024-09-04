@@ -8,7 +8,6 @@ module Inferno
     class Execute
       # @private
       class ConsoleOutputter < AbstractOutputter
-
         COLOR = Pastel.new
         CHECKMARK = "\u2713".freeze
         BAR = ('=' * 80).freeze
@@ -20,8 +19,8 @@ module Inferno
           puts BAR
         end
 
-        def print_around_run(options, &block)
-          puts "Running tests. This may take a while..."
+        def print_around_run(_options)
+          puts 'Running tests. This may take a while...'
           # TODO: spinner/progress bar
           yield
         end
@@ -43,10 +42,9 @@ module Inferno
           puts BAR
         end
 
-        def print_end_message(options)
-        end
+        def print_end_message(options); end
 
-        def print_error(options, exception)
+        def print_error(_options, exception)
           puts COLOR.red "Error: #{exception.full_message}"
           verbose_print(exception.backtrace&.join('\n'))
         end
@@ -146,7 +144,6 @@ module Inferno
             raise StandardError, "CLI does not know how to serialize #{entity.class}"
           end
         end
-  
       end
     end
   end

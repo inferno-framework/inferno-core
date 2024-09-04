@@ -1,11 +1,9 @@
-
 module Inferno
   module CLI
     class Execute
-
       # Subclass AbstractOutputter to implement your own outputter
+      # rubocop:disable Lint/UnusedMethodArgument
       class AbstractOutputter
-
         # @see Inferno::CLI::Main#execute for options
         def print_start_message(options)
           raise StandardError, 'not implemented'
@@ -13,7 +11,7 @@ module Inferno
 
         # Implementation MUST call `yield`
         # @see Inferno::CLI::Main#execute for options
-        def print_around_run(options, &block)
+        def print_around_run(options, &)
           raise StandardError, 'not implemented'
         end
 
@@ -34,8 +32,8 @@ module Inferno
         def print_error(options, exception)
           raise StandardError, 'not implemented'
         end
-
       end
+      # rubocop:enable Lint/UnusedMethodArgument
     end
   end
 end
