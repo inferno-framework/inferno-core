@@ -1,5 +1,7 @@
 require 'pastel'
 require_relative 'abstract_outputter'
+require_relative '../../web/serializers/test_run'
+require_relative '../../web/serializers/result'
 
 module Inferno
   module CLI
@@ -29,7 +31,7 @@ module Inferno
         end
 
         def print_results(options, results)
-          verbose_print_json_results
+          verbose_print_json_results(results)
 
           puts BAR
           puts 'Test Results:'
@@ -135,6 +137,20 @@ module Inferno
           verbose_puts serialize(results)
           verbose_puts BAR
         end
+
+        def serialize(entity)
+          case entity.class.to_s
+          when 'Array'
+            JSON.pretty_generate(entity.map { |item| JSON.parse serialize(item) })
+          when lambda { |x|
+                 defined?(x.constantize) && defined?("Inferno::Web::Serializers::#{x.split('::').last}".constantize)
+               }
+            "Inferno::Web::Serializers::#{entity.class.to_s.split('::').last}".constantize.render(entity)
+          else
+            raise StandardError, "CLI does not know how to serialize #{entity.class}"
+          end
+        end
+  
       end
     end
   end

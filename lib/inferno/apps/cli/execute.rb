@@ -2,8 +2,6 @@
 
 require 'pastel'
 require 'active_support'
-require_relative '../web/serializers/test_run'
-require_relative '../web/serializers/result'
 require_relative '../../utils/verify_runnable'
 require_relative '../../utils/persist_inputs'
 require_relative 'execute/console_outputter'
@@ -177,19 +175,6 @@ module Inferno
           runnable_id_key => runnable.id,
           inputs: thor_hash_to_inputs_array(options[:inputs])
         }
-      end
-
-      def serialize(entity)
-        case entity.class.to_s
-        when 'Array'
-          JSON.pretty_generate(entity.map { |item| JSON.parse serialize(item) })
-        when lambda { |x|
-               defined?(x.constantize) && defined?("Inferno::Web::Serializers::#{x.split('::').last}".constantize)
-             }
-          "Inferno::Web::Serializers::#{entity.class.to_s.split('::').last}".constantize.render(entity)
-        else
-          raise StandardError, "CLI does not know how to serialize #{entity.class}"
-        end
       end
 
       def print_error_and_exit(err, code)
