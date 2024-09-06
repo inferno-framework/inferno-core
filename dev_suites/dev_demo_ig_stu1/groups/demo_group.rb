@@ -279,8 +279,30 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     test 'checkbox group input' do
-      input :checkbox,
+      input :checkbox_group,
             title: 'Checkbox Group Input Example',
+            type: 'checkbox',
+            description: 'Checkbox description',
+            default: ['value2'],
+            optional: false,
+            options: {
+              list_options: [
+                {
+                  label: 'Label 1',
+                  value: 'value1'
+                }, {
+                  label: 'Label 2',
+                  value: 'value2',
+                }
+              ]
+            }
+
+      run { info "Received the following 'checkbox' variable: '#{checkbox_group}'" }
+    end
+
+        test 'locked checkbox group input' do
+      input :locked_checkbox_group,
+            title: 'Locked Checkbox Group Input Example',
             type: 'checkbox',
             description: 'Checkbox description',
             default: ['value2'],
@@ -298,46 +320,30 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
               ]
             }
 
-      run { info "Received the following 'checkbox' variable: '#{checkbox}'" }
+      run { info "Received the following 'checkbox' variable: '#{locked_checkbox_group}'" }
     end
 
-    test 'checkbox single input unchecked' do
+    test 'single checkbox input' do
       input :single_checkbox,
-            title: 'Checkbox Single Input Example',
+            title: 'Single Checkbox Input Example',
             type: 'checkbox',
             description: 'Checkbox description',
-            default: ['checked'],
-            optional: false,
-            options: {
-              list_options: [
-                {
-                  label: 'Check this box',
-                  value: 'checked'
-                }
-              ]
-            }
+            default: ['true'],
+            optional: false
 
       run { info "Received the following 'checkbox' variable: '#{single_checkbox}'" }
     end
 
-    test 'checkbox locked single input unchecked' do
-      input :single_locked_checkbox,
-            title: 'Checkbox Single Locked Input Example',
+    test 'locked single checkbox input' do
+      input :locked_single_checkbox,
+            title: 'Locked Single Checkbox Input Example',
             type: 'checkbox',
             description: 'Checkbox description',
-            default: ['checked'],
+            default: ['true'],
             optional: false,
-            locked: true,
-            options: {
-              list_options: [
-                {
-                  label: 'Check this box',
-                  value: 'checked'
-                }
-              ]
-            }
+            locked: true
 
-      run { info "Received the following 'checkbox' variable: '#{single_locked_checkbox}'" }
+      run { info "Received the following 'checkbox' variable: '#{locked_single_checkbox}'" }
     end
 
     test 'OAuth Credentials group input' do
