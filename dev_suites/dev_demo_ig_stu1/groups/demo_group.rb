@@ -292,12 +292,52 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
                   value: 'value1'
                 }, {
                   label: 'Label 2',
-                  value: 'value2'
+                  value: 'value2',
+                  locked: true
                 }
               ]
             }
 
       run { info "Received the following 'checkbox' variable: '#{checkbox}'" }
+    end
+
+    test 'checkbox single input unchecked' do
+      input :single_checkbox,
+            title: 'Checkbox Single Input Example',
+            type: 'checkbox',
+            description: 'Checkbox description',
+            default: ['checked'],
+            optional: false,
+            options: {
+              list_options: [
+                {
+                  label: 'Check this box',
+                  value: 'checked'
+                }
+              ]
+            }
+
+      run { info "Received the following 'checkbox' variable: '#{single_checkbox}'" }
+    end
+
+    test 'checkbox locked single input unchecked' do
+      input :single_locked_checkbox,
+            title: 'Checkbox Single Locked Input Example',
+            type: 'checkbox',
+            description: 'Checkbox description',
+            default: ['checked'],
+            optional: false,
+            locked: true,
+            options: {
+              list_options: [
+                {
+                  label: 'Check this box',
+                  value: 'checked'
+                }
+              ]
+            }
+
+      run { info "Received the following 'checkbox' variable: '#{single_locked_checkbox}'" }
     end
 
     test 'OAuth Credentials group input' do
