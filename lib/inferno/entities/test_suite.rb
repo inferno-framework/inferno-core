@@ -1,8 +1,10 @@
 require_relative 'test_group'
 require_relative '../dsl/runnable'
 require_relative '../dsl/suite_option'
+require_relative '../dsl/messages'
 require_relative '../repositories/test_groups'
 require_relative '../repositories/test_suites'
+require_relative '../result_collection'
 
 module Inferno
   module Entities
@@ -15,6 +17,18 @@ module Inferno
       include DSL::FHIRValidation
       include DSL::FHIRResourceValidation
       include DSL::FhirpathEvaluation
+      include DSL::Results
+      include DSL::Assertions
+      include DSL::Messages
+
+      def_delegators 'self.class', :block
+
+      attr_accessor :result_message, :results
+
+      # @private
+      def initialize
+        @results = Inferno::ResultCollection.new
+      end
 
       class << self
         extend Forwardable

@@ -70,22 +70,7 @@ module Inferno
           suite_options: test_session.suite_options_hash
         )
 
-      result = begin
-        raise Exceptions::CancelException, 'Test cancelled by user' if test_run_is_cancelling
-
-        check_inputs(test, test_instance, inputs)
-
-        test_instance.load_named_requests
-        test_instance.instance_eval(&test.block)
-        'pass'
-      rescue Exceptions::TestResultException => e
-        test_instance.result_message = format_markdown(e.message)
-        e.result
-      rescue StandardError => e
-        Application['logger'].error(e.full_message)
-        test_instance.result_message = format_markdown("Error: #{e.message}\n\n#{e.backtrace.first}")
-        'error'
-      end
+      result = evaluate_runnable_result(test, test_instance, inputs)
 
       outputs = save_outputs(test_instance)
       output_json_string = JSON.generate(outputs)
@@ -144,17 +129,22 @@ module Inferno
         return group_result
       end
 
-      results = []
+      group_instance = group.new
+
       group.children(test_session.suite_options).each do |child|
         result = run(child, scratch)
-        results << result
-        break if results.last.waiting?
+        group_instance.results << result
+        break if result.waiting?
       end
 
-      results.flatten!
+      result = evaluate_runnable_result(group, group_instance) || roll_up_result(group_instance.results)
 
-      group_result = persist_result(group.reference_hash.merge(result: roll_up_result(results),
-                                                               input_json: JSON.generate(group_inputs_with_values)))
+      group_result = persist_result(group.reference_hash.merge(
+                                      messages: group_instance.messages,
+                                      result:,
+                                      result_message: group_instance.result_message,
+                                      input_json: JSON.generate(group_inputs_with_values)
+                                    ))
 
       update_parent_result(group.parent)
 
@@ -166,20 +156,58 @@ module Inferno
 
       children = parent.children(test_session.suite_options)
       child_results = results_repo.current_results_for_test_session_and_runnables(test_session.id, children)
-      required_children = children.select(&:required?)
-      required_results = child_results.select(&:required?)
-      return if required_children.length != required_results.length
+      return unless need_to_update_parent_result?(children, child_results, &parent.block)
 
+      parent_instance = parent.new
+      parent_instance.results << child_results
       old_result = results_repo.current_result_for_test_session(test_session.id, parent.reference_hash)&.result
-      new_result = roll_up_result(child_results)
+      new_result = evaluate_runnable_result(parent, parent_instance) || roll_up_result(child_results)
 
       if new_result != old_result
-        persist_result(parent.reference_hash.merge(result: new_result))
+        persist_result(parent.reference_hash.merge(
+                         result: new_result,
+                         result_message: parent_instance.result_message,
+                         messages: parent_instance.messages
+                       ))
 
         update_parent_result(parent.parent)
       end
 
       new_result
+    end
+
+    def evaluate_runnable_result(runnable, runnable_instance, inputs = nil)
+      return if !(runnable < Entities::Test) && !runnable.block
+
+      if runnable < Entities::Test
+        raise Exceptions::CancelException, 'Test cancelled by user' if test_run_is_cancelling
+
+        check_inputs(runnable, runnable_instance, inputs)
+
+        runnable_instance.load_named_requests
+      end
+      runnable_instance.instance_eval(&runnable.block)
+      'pass'
+    rescue Exceptions::TestResultException => e
+      runnable_instance.result_message = format_markdown(e.message)
+      e.result
+    rescue StandardError => e
+      Application['logger'].error(e.full_message)
+      runnable_instance.result_message = format_markdown("Error: #{e.message}\n\n#{e.backtrace.first}")
+      'error'
+    end
+
+    # Determines if the parent result needs to be updated based on the results of its children.
+    #
+    # The parent result needs to be updated if:
+    # - No custom result block is provided and all required children have corresponding required results.
+    # - A custom result block is provided and all children have corresponding results.
+    def need_to_update_parent_result?(children, child_results, &)
+      required_children = children.select(&:required?)
+      required_results = child_results.select(&:required?)
+
+      (!block_given? && required_children.length == required_results.length) ||
+        (block_given? && children.length == child_results.length)
     end
 
     def load_inputs(runnable)
