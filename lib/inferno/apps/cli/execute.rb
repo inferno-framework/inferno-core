@@ -78,6 +78,15 @@ module Inferno
         exit(0)
       end
 
+      def outputter
+        # TODO: swap outputter based on options
+        @outputter ||= Inferno::CLI::Execute::ConsoleOutputter.new
+      end
+
+      def selected_runnables
+        groups + tests
+      end
+
       def run_one(runnable)
         verify_runnable(
           suite,
@@ -90,15 +99,16 @@ module Inferno
         dispatch_job(test_run(runnable))
       end
 
-      def dispatch_job(test_run)
-        # TODO: move suppression to outputter? better suppresion?
-        if options[:verbose]
-          Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
-        else
-          Inferno::CLI::Execute.suppress_output do
-            Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
-          end
-        end
+      def suite
+        @suite ||= Inferno::Repositories::TestSuites.new.find(options[:suite])
+
+        raise StandardError, "Test suite #{options[:suite]} not found" if @suite.nil?
+
+        @suite
+      end
+
+      def test_runs_repo
+        @test_runs_repo ||= Inferno::Repositories::TestRuns.new
       end
 
       def test_run(runnable_param)
@@ -111,12 +121,20 @@ module Inferno
         @test_runs[runnable_param]
       end
 
-      def create_params(test_session, runnable)
-        {
-          test_session_id: test_session.id,
-          runnable_id_key(runnable) => runnable.id,
-          inputs: thor_hash_to_inputs_array(options[:inputs])
-        }
+      def test_groups_repo
+        @test_groups_repo ||= Inferno::Repositories::TestGroups.new
+      end
+
+      def tests_repo
+        @tests_repo ||= Inferno::Repositories::Tests.new
+      end
+
+      def test_sessions_repo
+        @test_sessions_repo ||= Inferno::Repositories::TestSessions.new
+      end
+
+      def session_data_repo
+        @session_data_repo ||= Inferno::Repositories::SessionData.new
       end
 
       def test_session
@@ -128,13 +146,23 @@ module Inferno
                                                     })
       end
 
+      def create_params(test_session, runnable)
+        {
+          test_session_id: test_session.id,
+          runnable_id_key(runnable) => runnable.id,
+          inputs: thor_hash_to_inputs_array(options[:inputs])
+        }
+      end
 
-      def suite
-        @suite ||= Inferno::Repositories::TestSuites.new.find(options[:suite])
-
-        raise StandardError, "Test suite #{options[:suite]} not found" if @suite.nil?
-
-        @suite
+      def dispatch_job(test_run)
+        # TODO: move suppression to outputter? better suppression?
+        if options[:verbose]
+          Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
+        else
+          Inferno::CLI::Execute.suppress_output do
+            Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
+          end
+        end
       end
 
       def groups
@@ -154,8 +182,20 @@ module Inferno
         raise StandardError, "Group or test #{short_id} not found"
       end
 
-      def selected_runnables
-        groups + tests
+      def thor_hash_to_suite_options_array(hash = {})
+        hash.to_a.map { |pair| Inferno::DSL::SuiteOption.new({ id: pair[0], value: pair[1] }) }
+      end
+
+      def thor_hash_to_inputs_array(hash = {})
+        hash.to_a.map { |pair| { name: pair[0], value: pair[1] } }
+      end
+
+      def print_error_and_exit(err, code)
+        outputter.print_error(options || {}, err)
+      rescue StandardError => outputter_err
+        puts "Caught exception #{outputter_err} while printing exception #{err}. Exiting."
+      ensure
+        exit(code)
       end
 
       def runnable_type(runnable)
@@ -180,48 +220,6 @@ module Inferno
           :test_id
         end
       end
-
-      def thor_hash_to_suite_options_array(hash = {})
-        hash.to_a.map { |pair| Inferno::DSL::SuiteOption.new({ id: pair[0], value: pair[1] }) }
-      end
-
-      def thor_hash_to_inputs_array(hash = {})
-        hash.to_a.map { |pair| { name: pair[0], value: pair[1] } }
-      end
-
-      def print_error_and_exit(err, code)
-        outputter.print_error(options || {}, err)
-      rescue StandardError => outputter_err
-        puts "Caught exception #{outputter_err} while printing exception #{err}. Exiting."
-      ensure
-        exit(code)
-      end
-
-      def outputter
-        # TODO: swap outputter based on options
-        @outputter ||= Inferno::CLI::Execute::ConsoleOutputter.new
-      end
-
-      def test_sessions_repo
-        @test_sessions_repo ||= Inferno::Repositories::TestSessions.new
-      end
-
-      def session_data_repo
-        @session_data_repo ||= Inferno::Repositories::SessionData.new
-      end
-
-      def test_runs_repo
-        @test_runs_repo ||= Inferno::Repositories::TestRuns.new
-      end
-
-      def test_groups_repo
-        @test_groups_repo ||= Inferno::Repositories::TestGroups.new
-      end
-
-      def tests_repo
-        @tests_repo ||= Inferno::Repositories::Tests.new
-      end
-
     end
   end
 end
