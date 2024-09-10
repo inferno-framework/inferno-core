@@ -86,20 +86,20 @@ module Inferno
       option :suite,
              aliases: ['-s'],
              type: :string,
-             desc: 'Test suite id to run, mutually exclusive with --group and --test',
+             desc: 'Test suite id to run or to select groups and tests from',
              banner: 'id'
       option :suite_options,
              aliases: ['-o'],
              type: :hash,
              desc: 'Suite options'
-      option :group,
+      option :groups,
              aliases: ['-g'],
-             type: :string,
-             desc: 'Test group id to run, mutually exclusive with --suite and --test' # TODO: make them work together
-      option :test,
+             type: :array,
+             desc: 'Comma delimited test group short ids (AKA sequence number) to run, requires suite'
+      option :tests,
              aliases: ['-t'],
-             type: :string,
-             desc: 'Test id to run, mutually exclusive with --suite and --group'
+             type: :array,
+             desc: 'Comma delimited test short ids (AKA sequence number) to run, requires suite'
       option :inputs,
              aliases: ['-i'],
              type: :hash,

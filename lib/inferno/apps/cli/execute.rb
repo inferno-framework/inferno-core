@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require 'pastel'
 require 'active_support'
 require_relative '../../utils/verify_runnable'
@@ -41,36 +39,42 @@ module Inferno
 
         outputter.print_start_message(options)
 
-        verify_runnable(
-          runnable,
-          thor_hash_to_inputs_array(options[:inputs]),
-          test_session.suite_options
-        )
-
-        persist_inputs(session_data_repo, create_params(test_session, runnable), test_run)
-
+        results = []
         outputter.print_around_run(options) do
-          # TODO: move suppression into outputter?
-          if options[:verbose]
-            Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
+          if runnables.empty? # TODO better cond?
+            # TODO factorize:
+            verify_runnable(
+              suite,
+              thor_hash_to_inputs_array(options[:inputs]),
+              test_session.suite_options
+            )
+
+            persist_inputs(session_data_repo, create_params(test_session, suite), test_run(suite)) # NOTE: diff
+
+            dispatch_job(test_run(suite))
+
+            results = test_runs_repo.results_for_test_run(test_run(suite).id).reverse
           else
-            Inferno::CLI::Execute.suppress_output do
-              Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
+            runnables.each do |runnable|
+                verify_runnable(
+                  suite,
+                  thor_hash_to_inputs_array(options[:inputs]),
+                  test_session.suite_options
+                )
+
+                persist_inputs(session_data_repo, create_params(test_session, suite), test_run(runnable))
+
+                dispatch_job(test_run(runnable))
+                results += test_runs_repo.results_for_test_run(test_run(runnable).id).reverse # NOTE: diff
             end
           end
         end
-
-        results = test_runs_repo.results_for_test_run(test_run.id).reverse
 
         outputter.print_results(options, results)
 
         outputter.print_end_message(options)
 
-        if results.find do |result|
-             result.send(runnable_id_key) == options[runnable_type.to_sym]
-           end.result == 'pass'
-          exit(0)
-        end
+        exit(0) if results.all? { |result| result.result == 'pass' }
 
         # exit(1) is for Thor failures
         # exit(2) is for shell builtin failures
@@ -92,6 +96,17 @@ module Inferno
         exit(0)
       end
 
+      def dispatch_job(test_run)
+        # TODO: move suppression to outputter? better suppresion?
+        if options[:verbose]
+          Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
+        else
+          Inferno::CLI::Execute.suppress_output do
+            Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
+          end
+        end
+      end
+
       def test_sessions_repo
         @test_sessions_repo ||= Inferno::Repositories::TestSessions.new
       end
@@ -106,19 +121,81 @@ module Inferno
 
       def test_session
         @test_session ||= test_sessions_repo.create({
-                                                      test_suite_id: runnable.suite.id,
+                                                      test_suite_id: suite.id,
                                                       suite_options: thor_hash_to_suite_options_array(
                                                         options[:suite_options]
                                                       )
                                                     })
       end
 
-      def test_run
-        @test_run ||= test_runs_repo.create(
-          create_params(test_session, runnable).merge({ status: 'queued' })
+      def test_run(runnable_param)
+        @test_runs ||= {}
+
+        @test_runs[runnable_param] ||= test_runs_repo.create(
+          create_params(test_session, runnable_param).merge({ status: 'queued' })
         )
+
+        @test_runs[runnable_param]
       end
 
+      # TODO run per
+      def create_params(test_session, runnable)
+        {
+          test_session_id: test_session.id,
+          runnable_id_key(runnable) => runnable.id,
+          inputs: thor_hash_to_inputs_array(options[:inputs])
+        }
+      end
+
+      def suite
+        @suite ||= Inferno::Repositories::TestSuites.new.find(options[:suite])
+
+        raise StandardError, "Test suite #{options[:suite]} not found" if @suite.nil?
+
+        @suite
+      end
+
+      def groups
+        @groups ||= Inferno::Repositories::TestGroups.new.all.select do |group|
+          options[:groups]&.include?(group.short_id) && group.suite.id == suite.id
+        end
+      end
+
+      def tests
+        @tests ||= Inferno::Repositories::Tests.new.all.select do |test|
+          options[:tests]&.include?(test.short_id) && test.suite.id == suite.id
+        end
+      end
+
+      def runnables
+        groups + tests
+      end
+
+      def runnable_type(runnable)
+        if Inferno::TestSuite.subclasses.include? runnable
+          :suite
+        elsif Inferno::TestGroup.subclasses.include? runnable
+          :group
+        elsif Inferno::Test.subclasses.include? runnable
+          :test
+        else
+          raise StandardError, "Unidentified runnable #{runnable}"
+        end
+      end
+
+      def runnable_id_key(runnable)
+        case runnable_type(runnable)
+        when :suite
+          :test_suite_id
+        when :group
+          :test_group_id
+        else
+          :test_id
+        end
+      end
+
+=begin
+      # TODO: redo/rm this for short ids in groups and tests
       def runnable
         @runnable ||=
           case runnable_type
@@ -160,6 +237,7 @@ module Inferno
           raise StandardError, "Unrecognized runnable type #{runnable_type}"
         end
       end
+=end
 
       def thor_hash_to_suite_options_array(hash = {})
         hash.to_a.map { |pair| Inferno::DSL::SuiteOption.new({ id: pair[0], value: pair[1] }) }
@@ -169,17 +247,16 @@ module Inferno
         hash.to_a.map { |pair| { name: pair[0], value: pair[1] } }
       end
 
-      def create_params(test_session, runnable)
-        {
-          test_session_id: test_session.id,
-          runnable_id_key => runnable.id,
-          inputs: thor_hash_to_inputs_array(options[:inputs])
-        }
-      end
 
       def print_error_and_exit(err, code)
-        outputter.print_error(options || {}, err)
-        exit(code)
+        # TODO FIXME
+        begin
+          outputter.print_error(options || {}, err)
+        rescue Exception => outputter_err
+          $stderr.puts "Caught exception #{outputter_err} while printing exception #{err}. Exiting."
+        ensure
+          exit(code)
+        end
       end
 
       def outputter
