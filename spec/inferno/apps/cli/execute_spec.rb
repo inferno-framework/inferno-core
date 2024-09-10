@@ -25,35 +25,46 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  [
-    { suite: 'basic' },
-    { group: 'BasicTestSuite::AbcGroup' },
-    { test: 'BasicTestSuite::AbcGroup-demo_test' }
-  ].each do |given_options|
-    describe '#runnable' do
-      it "sets runnable to #{given_options.keys.first} entity" do
-        allow(instance).to receive(:options).and_return(given_options)
-        klass = case given_options.keys.first
-                when :suite
-                  Inferno::TestSuite
-                when :group
-                  Inferno::TestGroup
-                else
-                  Inferno::Test
-                end
-
-        expect(instance.runnable).to be < klass
-      end
-    end
-
-    describe '#runnable_type' do
-      it "sets runnable_type to #{given_options.keys.first}" do
-        allow(instance).to receive(:options).and_return(given_options)
-
-        expect(instance.runnable_type).to eq(given_options.keys.first.to_s)
-      end
+  describe '#outputter' do
+    it 'returns an outputter instance' do
+      expect(instance.outputter).to be_an_instance_of(Inferno::CLI::Execute::AbstractOutputter)
     end
   end
+
+  describe '#selected_runnables' do
+    it 'returns empty array when no short ids given' do
+      allow(instance).to receive(:options).and_return({suite: 'basic'})
+      expect(instance.selected_runnables).to eq([])
+    end
+
+    it 'returns both groups and tests when short ids for both are given' do
+      allow(instance).to receive(:options).and_return({suite: 'basic', groups: '1', tests: '1.01'})
+      expect(instance.selected_runnables.length).to eq(2)
+    end
+  end
+
+  # TODO: run_one spec
+
+  describe '#suite' do
+    it 'returns the correct Inferno TestSuite entity' do
+      allow(instance).to recieve(:options).and_return({suite: 'basic'})
+      expect(instance.suite).to eq(BasicTestSuite::Suite)
+    end
+
+    it 'raises standard error if no suite provided' do
+      expect{ instance.suite }.to raise_error(StandardError)
+    end
+  end
+
+  describe '#test_run' do
+    it 'creates a test run entity' do
+      runnable = BasicTestSuite::Suite
+      expect{ test_run(runnable) }.not_to raise_error
+      expect(Inferno::Repositories::TestRuns.new.all.length).to eq(1) # TODO better?
+    end
+  end
+
+  # TODO continue here
 
   describe '#runnable_id_key' do
     { suite: :test_suite_id, group: :test_group_id, test: :test_id }.each do |runnable_type, id_key|
