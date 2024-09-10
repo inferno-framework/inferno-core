@@ -64,6 +64,25 @@ module Inferno
       end
     end
 
+    class FhirpathNotFoundException < RuntimeError
+      def initialize(fhirpath_name)
+        super("No '#{fhirpath_name}' FHIRPath evaluator found")
+      end
+    end
+
+    # ErrorInFhirpathException is used when an exception occurred in
+    # calling the FHIRPath service, for example a connection timeout
+    # or an unexpected response format.
+    # Note: This class extends TestResultException instead of RuntimeError
+    # to bypass printing the stack trace in the UI, since
+    # the stack trace of this exception is not likely be useful.
+    # Instead the message should point to where in the fhirpath evaluator an error occurred.
+    class ErrorInFhirpathException < TestResultException
+      def result
+        'error'
+      end
+    end
+
     class RequiredInputsNotFound < RuntimeError
       def initialize(missing_inputs)
         super("Missing the following required inputs: #{missing_inputs.join(', ')}")
