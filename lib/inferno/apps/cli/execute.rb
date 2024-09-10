@@ -138,15 +138,20 @@ module Inferno
       end
 
       def groups
-        @groups ||= Inferno::Repositories::TestGroups.new.all.select do |group|
-          options[:groups]&.include?(group.short_id) && group.suite.id == suite.id
-        end
+        return [] if options[:groups].blank?
+        @groups ||= options[:groups]&.map { |short_id| find_by_short_id!(test_groups_repo, short_id) }
       end
 
       def tests
-        @tests ||= Inferno::Repositories::Tests.new.all.select do |test|
-          options[:tests]&.include?(test.short_id) && test.suite.id == suite.id
+        return [] if options[:tests].blank?
+        @tests ||= options[:tests]&.map { |short_id| find_by_short_id!(tests_repo, short_id) }
+      end
+
+      def find_by_short_id!(repo, short_id)
+        repo.all.each do |entity|
+          return entity if short_id == entity.short_id && suite.id == entity.suite.id
         end
+        raise StandardError, "Group or test #{short_id} not found"
       end
 
       def test_sessions_repo
@@ -159,6 +164,14 @@ module Inferno
 
       def test_runs_repo
         @test_runs_repo ||= Inferno::Repositories::TestRuns.new
+      end
+
+      def test_groups_repo
+        @test_groups_repo ||= Inferno::Repositories::TestGroups.new
+      end
+
+      def tests_repo
+        @tests_repo ||= Inferno::Repositories::Tests.new
       end
 
       def selected_runnables
@@ -208,6 +221,7 @@ module Inferno
         # TODO: swap outputter based on options
         @outputter ||= Inferno::CLI::Execute::ConsoleOutputter.new
       end
+
     end
   end
 end

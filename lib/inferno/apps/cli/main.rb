@@ -80,6 +80,12 @@ module Inferno
                                         --inputs "url:https://hapi.fhir.org/baseR4" \
                                                  patient_id:1234321`
             => Outputs test results
+
+            `bundle exec inferno execute --suite dev_validator \
+                                         --inputs "url:https://hapi.fhir.org/baseR4" \
+                                                  patient_id:1234321 \
+                                         --tests 1.01 1.02`
+            => Run specific tests from suite
       END_OF_HELP
       desc 'execute', 'Run Inferno tests in command line'
       long_desc EXECUTE_HELP, wrap: false
@@ -95,11 +101,11 @@ module Inferno
       option :groups,
              aliases: ['-g'],
              type: :array,
-             desc: 'Comma delimited test group short ids (AKA sequence number) to run, requires suite'
+             desc: 'Series of test group short ids (AKA sequence number) to run, requires suite'
       option :tests,
              aliases: ['-t'],
              type: :array,
-             desc: 'Comma delimited test short ids (AKA sequence number) to run, requires suite'
+             desc: 'Series of test short ids (AKA sequence number) to run, requires suite'
       option :inputs,
              aliases: ['-i'],
              type: :hash,

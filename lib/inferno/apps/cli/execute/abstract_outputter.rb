@@ -2,6 +2,8 @@ module Inferno
   module CLI
     class Execute
       # Subclass AbstractOutputter to implement your own outputter
+      #
+      # @abstract
       # rubocop:disable Lint/UnusedMethodArgument
       class AbstractOutputter
         # @see Inferno::CLI::Main#execute for options
