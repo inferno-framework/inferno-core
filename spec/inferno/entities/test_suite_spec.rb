@@ -164,19 +164,70 @@ RSpec.describe Inferno::Entities::TestSuite do
   describe '.links' do
     let(:links) do
       [
-        { label: 'One', url: 'http://one.com' },
-        { label: 'Two', url: 'http://two.com' }
+        { type: 'custom_type', label: 'One', url: 'http://one.com' }
       ]
     end
-    let(:test_suite) do
-      suite_class.links links
-      suite_class
+
+    specify 'it returns an empty array if no links are set' do
+      expect(suite_class.links).to eq([])
     end
 
-    specify 'it can optionally have a list of http links for display' do
-      link = test_suite.links.first
+    specify 'it can set and retrieve a list of http links for display' do
+      suite_class.links links
+      link = suite_class.links.first
       expect(link[:label]).to eq('One')
       expect(link[:url]).to eq('http://one.com')
+      expect(link[:type]).to eq('custom_type')
+    end
+  end
+
+  describe '.add_link' do
+    specify 'it adds a custom link to the list' do
+      suite_class.add_link('custom_type', 'One', 'http://one.com')
+      link = suite_class.links.first
+      expect(link[:type]).to eq('custom_type')
+      expect(link[:label]).to eq('One')
+      expect(link[:url]).to eq('http://one.com')
+    end
+  end
+
+  describe '.source_code' do
+    specify 'it adds a source code link to the list' do
+      suite_class.source_code('http://github.com/source_code')
+      link = suite_class.links.first
+      expect(link[:type]).to eq('source_code')
+      expect(link[:label]).to eq('Open Source')
+      expect(link[:url]).to eq('http://github.com/source_code')
+    end
+  end
+
+  describe '.ig' do
+    specify 'it adds an implementation guide link to the list' do
+      suite_class.ig('http://ig.example.com')
+      link = suite_class.links.first
+      expect(link[:type]).to eq('ig')
+      expect(link[:label]).to eq('Implementation Guide')
+      expect(link[:url]).to eq('http://ig.example.com')
+    end
+  end
+
+  describe '.download' do
+    specify 'it adds a download link to the list' do
+      suite_class.download('http://example.com/download')
+      link = suite_class.links.first
+      expect(link[:type]).to eq('download')
+      expect(link[:label]).to eq('Download')
+      expect(link[:url]).to eq('http://example.com/download')
+    end
+  end
+
+  describe '.report_issue' do
+    specify 'it adds a report issue link to the list' do
+      suite_class.report_issue('http://example.com/report')
+      link = suite_class.links.first
+      expect(link[:type]).to eq('report_issue')
+      expect(link[:label]).to eq('Report Issue')
+      expect(link[:url]).to eq('http://example.com/report')
     end
   end
 end
