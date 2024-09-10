@@ -10,6 +10,7 @@ module Inferno
       extend DSL::HTTPClient::ClassMethods
       extend DSL::Runnable
       include DSL::FHIRValidation
+      include DSL::FhirpathEvaluation
       include DSL::Results
       include DSL::Assertions
       include DSL::Messages
