@@ -154,26 +154,6 @@ module Inferno
         raise StandardError, "Group or test #{short_id} not found"
       end
 
-      def test_sessions_repo
-        @test_sessions_repo ||= Inferno::Repositories::TestSessions.new
-      end
-
-      def session_data_repo
-        @session_data_repo ||= Inferno::Repositories::SessionData.new
-      end
-
-      def test_runs_repo
-        @test_runs_repo ||= Inferno::Repositories::TestRuns.new
-      end
-
-      def test_groups_repo
-        @test_groups_repo ||= Inferno::Repositories::TestGroups.new
-      end
-
-      def tests_repo
-        @tests_repo ||= Inferno::Repositories::Tests.new
-      end
-
       def selected_runnables
         groups + tests
       end
@@ -220,6 +200,26 @@ module Inferno
       def outputter
         # TODO: swap outputter based on options
         @outputter ||= Inferno::CLI::Execute::ConsoleOutputter.new
+      end
+
+      def test_sessions_repo
+        @test_sessions_repo ||= Inferno::Repositories::TestSessions.new
+      end
+
+      def session_data_repo
+        @session_data_repo ||= Inferno::Repositories::SessionData.new
+      end
+
+      def test_runs_repo
+        @test_runs_repo ||= Inferno::Repositories::TestRuns.new
+      end
+
+      def test_groups_repo
+        @test_groups_repo ||= Inferno::Repositories::TestGroups.new
+      end
+
+      def tests_repo
+        @tests_repo ||= Inferno::Repositories::Tests.new
       end
 
     end
