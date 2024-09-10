@@ -85,7 +85,7 @@ module Inferno
         # @private
         def transform_fhirpath_results(fhirpath_results)
           fhirpath_results.each do |result|
-            klass = Object.const_get("FHIR::#{result['type']}")
+            klass = FHIR.const_get(result['type'])
             result['element'] = klass.new(result['element'])
           rescue NameError
             next
