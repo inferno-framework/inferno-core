@@ -43,8 +43,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  # TODO: run_one spec
-
   describe '#suite' do
     it 'returns the correct Inferno TestSuite entity' do
       allow(instance).to receive(:options).and_return({suite: 'basic'})
@@ -90,37 +88,27 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
   describe '#dispatch_job' do
     it 'supresses output if verbose is false' do
-      allow(instance).to receive(:options).and_return({verbose: false})
-      allow(instance).to receive(:test_run).and_return(create(:test_run))
+      allow(instance).to receive(:options).and_return({suite: 'basic', verbose: false})
+      test_session = create(:test_session)
+      test_session.id = SecureRandom.base36
+      test_run = create(:test_run, test_session:, test_session_id: test_session.id)
 
-      expect{ instance.dispatch_job }.to_not output(/.+/).to_stdout
+      expect{ instance.dispatch_job(test_run) }.to_not output(/.+/).to_stdout_from_any_process
     end
   end
 
   describe '#groups' do
-    it 'parses single group by short id' do
+    it 'parses group by short id' do
       allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1']})
-      expect(instance.groups).to eq([BasicTestSuite::AbcGroup])
-    end
-
-    it 'parses multiple groups by short id' do
-      allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1', '2']})
-      expect(instance.groups).to eq([BasicTestSuite::AbcGroup, BasicTestSuite::DefGroup])
+      expect(instance.groups).to eq([BasicTestSuite::Suite.groups.first])
     end
   end
 
   describe '#tests' do
-    it 'parses single test by short id' do
-      allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1.01']})
-      expect(instance.groups).to eq([BasicTestSuite::AbcGroup.tests.first])
+    it 'parses test by short id' do
+      allow(instance).to receive(:options).and_return({suite: 'basic', tests: ['1.01']})
+      expect(instance.tests).to eq([BasicTestSuite::Suite.groups.first.tests.first])
     end
-
-=begin # TODO: change to fixture with multiple tests
-    it 'parses multiple tests by short id' do
-      allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1.01', '2.01']})
-      expect{ instance.groups }.to eq([BasicTestSuite::AbcGroup.tests.first, BasicTestSuite::DefGroup])
-    end
-=end
   end
 
   describe '#find_by_short_id!' do
@@ -142,8 +130,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
       expect(result).to eq([{ name: :us_core, value: 'us_core_v311' }])
     end
   end
-
-  # TODO print_error_and_exit test?
 
   describe '#thor_hash_to_inputs_array' do
     let(:hash) { { url: 'https://example.com' } }
