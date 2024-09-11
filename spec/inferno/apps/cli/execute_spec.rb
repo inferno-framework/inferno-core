@@ -27,7 +27,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
   describe '#outputter' do
     it 'returns an outputter instance' do
-      expect(instance.outputter).to be_an_instance_of(Inferno::CLI::Execute::AbstractOutputter)
+      expect(instance.outputter).to be_a_kind_of(Inferno::CLI::Execute::AbstractOutputter)
     end
   end
 
@@ -59,7 +59,8 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   describe '#test_run' do
     {suite: BasicTestSuite::Suite, group: BasicTestSuite::AbcGroup, test: BasicTestSuite::AbcGroup.tests.first}.each do |type, runnable|
       it "returns a test run for #{type}" do
-        expect(test_run(runnable)).to be_instance_of Inferno::Entities::TestRun
+        allow(instance).to receive(:options).and_return({suite: 'basic'})
+        expect(instance.test_run(runnable)).to be_instance_of Inferno::Entities::TestRun
       end
     end
   end
@@ -72,7 +73,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-
   describe '#create_params' do
     let(:test_suite) { BasicTestSuite::Suite }
     let(:test_session) { create(:test_session) }
@@ -80,8 +80,8 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:inputs_array) { [{ name: :url, value: 'https://example.com' }] }
 
     it 'returns test run params' do
-      allow(instance).to receive(:options).and_return({ inputs: inputs_hash })
-      allow(instance).to receive(:runnable_type).and_return('suite')
+      allow(instance).to receive(:options).and_return({ suite: test_suite.id, inputs: inputs_hash })
+      allow(instance).to receive(:runnable_type).and_return(:suite)
 
       result = instance.create_params(test_session, test_suite)
       expect(result).to eq({ test_session_id: test_session.id, test_suite_id: test_suite.id, inputs: inputs_array })
