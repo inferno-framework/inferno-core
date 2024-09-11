@@ -292,7 +292,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
                   value: 'value1'
                 }, {
                   label: 'Label 2',
-                  value: 'value2',
+                  value: 'value2'
                 }
               ]
             }
@@ -300,7 +300,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       run { info "Received the following 'checkbox' variable: '#{checkbox_group}'" }
     end
 
-        test 'locked checkbox group input' do
+    test 'locked checkbox group input' do
       input :locked_checkbox_group,
             title: 'Locked Checkbox Group Input Example',
             type: 'checkbox',
