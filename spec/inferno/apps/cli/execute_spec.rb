@@ -38,7 +38,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
 
     it 'returns both groups and tests when short ids for both are given' do
-      allow(instance).to receive(:options).and_return({suite: 'basic', groups: '1', tests: '1.01'})
+      allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1'], tests: ['1.01']})
       expect(instance.selected_runnables.length).to eq(2)
     end
   end
@@ -47,7 +47,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
   describe '#suite' do
     it 'returns the correct Inferno TestSuite entity' do
-      allow(instance).to recieve(:options).and_return({suite: 'basic'})
+      allow(instance).to receive(:options).and_return({suite: 'basic'})
       expect(instance.suite).to eq(BasicTestSuite::Suite)
     end
 
@@ -57,7 +57,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#test_run' do
-    {suite: BasicTestSuite::Suite, group: BasicTestSuite::AbcGroup, test: BasicTestSuite::Suite.tests.first}.each do |type, runnable|
+    {suite: BasicTestSuite::Suite, group: BasicTestSuite::AbcGroup, test: BasicTestSuite::AbcGroup.tests.first}.each do |type, runnable|
       it "returns a test run for #{type}" do
         expect(test_run(runnable)).to be_instance_of Inferno::Entities::TestRun
       end
@@ -93,32 +93,32 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
       allow(instance).to receive(:options).and_return({verbose: false})
       allow(instance).to receive(:test_run).and_return(create(:test_run))
 
-      expect{ instance.dispatch_job }.to_not output(/.+/)
+      expect{ instance.dispatch_job }.to_not output(/.+/).to_stdout
     end
   end
 
   describe '#groups' do
     it 'parses single group by short id' do
       allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1']})
-      expect{ instance.groups }.to eq([BasicTestSuite::AbcGroup])
+      expect(instance.groups).to eq([BasicTestSuite::AbcGroup])
     end
 
     it 'parses multiple groups by short id' do
       allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1', '2']})
-      expect{ instance.groups }.to eq([BasicTestSuite::AbcGroup, BasicTestSuite::DefGroup])
+      expect(instance.groups).to eq([BasicTestSuite::AbcGroup, BasicTestSuite::DefGroup])
     end
   end
 
   describe '#tests' do
     it 'parses single test by short id' do
       allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1.01']})
-      expect{ instance.groups }.to eq([BasicTestSuite::Suite.tests.first])
+      expect(instance.groups).to eq([BasicTestSuite::AbcGroup.tests.first])
     end
 
 =begin # TODO: change to fixture with multiple tests
     it 'parses multiple tests by short id' do
       allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1.01', '2.01']})
-      expect{ instance.groups }.to eq([BasicTestSuite::Suite.tests.first, BasicTestSuite::DefGroup])
+      expect{ instance.groups }.to eq([BasicTestSuite::AbcGroup.tests.first, BasicTestSuite::DefGroup])
     end
 =end
   end
@@ -160,7 +160,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#runnable_type' do
-    {BasicTestSuite::Suite => :suite, BasicTestSuite::AbcGroup => :group, BasicTestSuite::Suite.tests.first => :test}.each do |runnable, type|
+    {BasicTestSuite::Suite => :suite, BasicTestSuite::AbcGroup => :group, BasicTestSuite::AbcGroup.tests.first => :test}.each do |runnable, type|
       it "can return #{type} type" do
         expect( instance.runnable_type(runnable) ).to eq(type)
       end
@@ -169,10 +169,17 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
   describe '#runnable_id_key' do
     { suite: :test_suite_id, group: :test_group_id, test: :test_id }.each do |runnable_type, id_key|
-      it "returns proper id for runnable type #{runnable_type}" do
+      it "returns proper id key for runnable type #{runnable_type}" do
         allow(instance).to receive(:runnable_type).and_return(runnable_type)
-
-        expect(instance.runnable_id_key).to eq(id_key)
+        runnable = case runnable_type
+                   when :suite
+                     BasicTestSuite::Suite
+                   when :group
+                     BasicTestSuite::AbcGroup
+                   else
+                     BasicTestSuite::AbcGroup.tests.first
+                   end
+        expect(instance.runnable_id_key(runnable)).to eq(id_key)
       end
     end
   end
