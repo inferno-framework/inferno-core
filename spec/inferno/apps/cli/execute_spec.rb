@@ -57,22 +57,75 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#test_run' do
-    it 'creates a test run entity' do
-      runnable = BasicTestSuite::Suite
-      expect{ test_run(runnable) }.not_to raise_error
-      expect(Inferno::Repositories::TestRuns.new.all.length).to eq(1) # TODO better?
+    {suite: BasicTestSuite::Suite, group: BasicTestSuite::AbcGroup, test: BasicTestSuite::Suite.tests.first}.each do |type, runnable|
+      it "returns a test run for #{type}" do
+        expect(test_run(runnable)).to be_instance_of Inferno::Entities::TestRun
+      end
     end
   end
 
-  # TODO continue here
+  describe '#test_session' do
+    it 'returns test session given suite options' do
+      allow(instance).to receive(:options).and_return({suite: 'basic', suite_options: {option: 'a'}})
+      allow(instance).to receive(:suite).and_return(BasicTestSuite::Suite)
+      expect(instance.test_session).to be_instance_of Inferno::Entities::TestSession
+    end
+  end
 
-  describe '#runnable_id_key' do
-    { suite: :test_suite_id, group: :test_group_id, test: :test_id }.each do |runnable_type, id_key|
-      it "returns proper id for runnable type #{runnable_type}" do
-        allow(instance).to receive(:runnable_type).and_return(runnable_type)
 
-        expect(instance.runnable_id_key).to eq(id_key)
-      end
+  describe '#create_params' do
+    let(:test_suite) { BasicTestSuite::Suite }
+    let(:test_session) { create(:test_session) }
+    let(:inputs_hash) { { url: 'https://example.com' } }
+    let(:inputs_array) { [{ name: :url, value: 'https://example.com' }] }
+
+    it 'returns test run params' do
+      allow(instance).to receive(:options).and_return({ inputs: inputs_hash })
+      allow(instance).to receive(:runnable_type).and_return('suite')
+
+      result = instance.create_params(test_session, test_suite)
+      expect(result).to eq({ test_session_id: test_session.id, test_suite_id: test_suite.id, inputs: inputs_array })
+    end
+  end
+
+  describe '#dispatch_job' do
+    it 'supresses output if verbose is false' do
+      allow(instance).to receive(:options).and_return({verbose: false})
+      allow(instance).to receive(:test_run).and_return(create(:test_run))
+
+      expect{ instance.dispatch_job }.to_not output(/.+/)
+    end
+  end
+
+  describe '#groups' do
+    it 'parses single group by short id' do
+      allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1']})
+      expect{ instance.groups }.to eq([BasicTestSuite::AbcGroup])
+    end
+
+    it 'parses multiple groups by short id' do
+      allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1', '2']})
+      expect{ instance.groups }.to eq([BasicTestSuite::AbcGroup, BasicTestSuite::DefGroup])
+    end
+  end
+
+  describe '#tests' do
+    it 'parses single test by short id' do
+      allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1.01']})
+      expect{ instance.groups }.to eq([BasicTestSuite::Suite.tests.first])
+    end
+
+=begin # TODO: change to fixture with multiple tests
+    it 'parses multiple tests by short id' do
+      allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1.01', '2.01']})
+      expect{ instance.groups }.to eq([BasicTestSuite::Suite.tests.first, BasicTestSuite::DefGroup])
+    end
+=end
+  end
+
+  describe '#find_by_short_id!' do
+    it 'raises standard error when entity not found by short id' do
+      expect { instance.find_by_short_id!(Inferno::Repositories::Tests.new, 'does_not_exist') }.to raise_error(StandardError)
     end
   end
 
@@ -90,6 +143,8 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
+  # TODO print_error_and_exit test?
+
   describe '#thor_hash_to_inputs_array' do
     let(:hash) { { url: 'https://example.com' } }
 
@@ -104,18 +159,21 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  describe '#create_params' do
-    let(:test_suite) { BasicTestSuite::Suite }
-    let(:test_session) { create(:test_session) }
-    let(:inputs_hash) { { url: 'https://example.com' } }
-    let(:inputs_array) { [{ name: :url, value: 'https://example.com' }] }
+  describe '#runnable_type' do
+    {BasicTestSuite::Suite => :suite, BasicTestSuite::AbcGroup => :group, BasicTestSuite::Suite.tests.first => :test}.each do |runnable, type|
+      it "can return #{type} type" do
+        expect( instance.runnable_type(runnable) ).to eq(type)
+      end
+    end
+  end
 
-    it 'returns test run params' do
-      allow(instance).to receive(:options).and_return({ inputs: inputs_hash })
-      allow(instance).to receive(:runnable_type).and_return('suite')
+  describe '#runnable_id_key' do
+    { suite: :test_suite_id, group: :test_group_id, test: :test_id }.each do |runnable_type, id_key|
+      it "returns proper id for runnable type #{runnable_type}" do
+        allow(instance).to receive(:runnable_type).and_return(runnable_type)
 
-      result = instance.create_params(test_session, test_suite)
-      expect(result).to eq({ test_session_id: test_session.id, test_suite_id: test_suite.id, inputs: inputs_array })
+        expect(instance.runnable_id_key).to eq(id_key)
+      end
     end
   end
 
