@@ -1,3 +1,6 @@
+## 0.4.41
+* Include JSON files in gem package by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/524
+
 ## 0.4.40
 * Update README content; fix broken links and improve generally. by @arscan in https://github.com/inferno-framework/inferno-core/pull/511
 * FI-2863: Added support for auth_info to fhir_client by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/512
