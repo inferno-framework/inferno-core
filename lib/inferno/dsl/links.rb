@@ -55,38 +55,42 @@ module Inferno
       # Add a link to the source code repository.
       #
       # @param url [String] The URL to the source code repository.
+      # @param label [String] (optional) A custom label for the link.
       # @return [Array<Hash>] The updated array of links.
-      def source_code(url)
-        add_predefined_link('source_code', url)
+      def source_code_url(url, label: nil)
+        add_predefined_link('source_code', url, label)
       end
 
       # Add a link to the implementation guide.
       #
       # @param url [String] The URL to the implementation guide.
+      # @param label [String] (optional) A custom label for the link.
       # @return [Array<Hash>] The updated array of links.
-      def ig(url)
-        add_predefined_link('ig', url)
+      def ig_url(url, label: nil)
+        add_predefined_link('ig', url, label)
       end
 
       # Add a link to the latest release version of the test kit.
       #
       # @param url [String] The URL to the latest release version of the test kit.
+      # @param label [String] (optional) A custom label for the link.
       # @return [Array<Hash>] The updated array of links.
-      def download(url)
-        add_predefined_link('download', url)
+      def download_url(url, label: nil)
+        add_predefined_link('download', url, label)
       end
 
       # Add a link to report an issue in the footer of the UI.
       #
       # @param url [String] The URL for reporting an issue.
+      # @param label [String] (optional) A custom label for the link.
       # @return [Array<Hash>] The updated array of links.
-      def report_issue(url)
-        add_predefined_link('report_issue', url)
+      def report_issue_url(url, label: nil)
+        add_predefined_link('report_issue', url, label)
       end
 
       # @private
-      def add_predefined_link(type, url)
-        label = DEFAULT_TYPES[type]
+      def add_predefined_link(type, url, label = nil)
+        label ||= DEFAULT_TYPES[type]
         raise ArgumentError, "Invalid link type: #{type}" unless label
 
         add_link(type, label, url)
