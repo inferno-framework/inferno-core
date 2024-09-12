@@ -36,3 +36,7 @@ services:
       # To let the service share your local FHIR package cache,
       # uncomment the below line
       # - ~/.fhir:/home/ktor/.fhir
+  fhirpath:
+    image: infernocommunity/fhirpath-service
+    ports:
+      - "6789:6789"
