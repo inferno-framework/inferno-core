@@ -95,7 +95,7 @@ module Inferno
              desc: 'Test suite id to run or to select groups and tests from',
              banner: 'id'
       option :suite_options,
-             aliases: ['-o'],
+             aliases: ['-u'], # NOTE: -o will be for outputter
              type: :hash,
              desc: 'Suite options'
       option :groups,
