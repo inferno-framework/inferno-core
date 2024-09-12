@@ -33,31 +33,32 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
   describe '#selected_runnables' do
     it 'returns empty array when no short ids given' do
-      allow(instance).to receive(:options).and_return({suite: 'basic'})
+      allow(instance).to receive(:options).and_return({ suite: 'basic' })
       expect(instance.selected_runnables).to eq([])
     end
 
     it 'returns both groups and tests when short ids for both are given' do
-      allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1'], tests: ['1.01']})
+      allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1'], tests: ['1.01'] })
       expect(instance.selected_runnables.length).to eq(2)
     end
   end
 
   describe '#suite' do
     it 'returns the correct Inferno TestSuite entity' do
-      allow(instance).to receive(:options).and_return({suite: 'basic'})
+      allow(instance).to receive(:options).and_return({ suite: 'basic' })
       expect(instance.suite).to eq(BasicTestSuite::Suite)
     end
 
     it 'raises standard error if no suite provided' do
-      expect{ instance.suite }.to raise_error(StandardError)
+      expect { instance.suite }.to raise_error(StandardError)
     end
   end
 
   describe '#test_run' do
-    {suite: BasicTestSuite::Suite, group: BasicTestSuite::AbcGroup, test: BasicTestSuite::AbcGroup.tests.first}.each do |type, runnable|
+    { suite: BasicTestSuite::Suite, group: BasicTestSuite::AbcGroup,
+      test: BasicTestSuite::AbcGroup.tests.first }.each do |type, runnable|
       it "returns a test run for #{type}" do
-        allow(instance).to receive(:options).and_return({suite: 'basic'})
+        allow(instance).to receive(:options).and_return({ suite: 'basic' })
         expect(instance.test_run(runnable)).to be_instance_of Inferno::Entities::TestRun
       end
     end
@@ -65,7 +66,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
   describe '#test_session' do
     it 'returns test session given suite options' do
-      allow(instance).to receive(:options).and_return({suite: 'basic', suite_options: {option: 'a'}})
+      allow(instance).to receive(:options).and_return({ suite: 'basic', suite_options: { option: 'a' } })
       allow(instance).to receive(:suite).and_return(BasicTestSuite::Suite)
       expect(instance.test_session).to be_instance_of Inferno::Entities::TestSession
     end
@@ -87,33 +88,36 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#dispatch_job' do
-    it 'supresses output if verbose is false' do
-      allow(instance).to receive(:options).and_return({suite: 'basic', verbose: false})
-      test_session = create(:test_session)
-      test_session.id = SecureRandom.base36
-      test_run = create(:test_run, test_session:, test_session_id: test_session.id)
+    let(:test_session) { test_run.test_session }
+    let(:test_run) { repo_create(:test_run, test_suite_id: 'basic') }
 
-      expect{ instance.dispatch_job(test_run) }.to_not output(/.+/).to_stdout_from_any_process
+    it 'supresses output if verbose is false' do
+      allow(instance).to receive(:test_session).and_return(test_session)
+      allow(instance).to receive(:options).and_return({ suite: 'basic', verbose: false })
+
+      expect { instance.dispatch_job(test_run) }.to_not output(/.+/).to_stdout_from_any_process
     end
   end
 
   describe '#groups' do
     it 'parses group by short id' do
-      allow(instance).to receive(:options).and_return({suite: 'basic', groups: ['1']})
+      allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1'] })
       expect(instance.groups).to eq([BasicTestSuite::Suite.groups.first])
     end
   end
 
   describe '#tests' do
     it 'parses test by short id' do
-      allow(instance).to receive(:options).and_return({suite: 'basic', tests: ['1.01']})
+      allow(instance).to receive(:options).and_return({ suite: 'basic', tests: ['1.01'] })
       expect(instance.tests).to eq([BasicTestSuite::Suite.groups.first.tests.first])
     end
   end
 
   describe '#find_by_short_id!' do
     it 'raises standard error when entity not found by short id' do
-      expect { instance.find_by_short_id!(Inferno::Repositories::Tests.new, 'does_not_exist') }.to raise_error(StandardError)
+      expect do
+        instance.find_by_short_id!(Inferno::Repositories::Tests.new, 'does_not_exist')
+      end.to raise_error(StandardError)
     end
   end
 
@@ -146,9 +150,10 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#runnable_type' do
-    {BasicTestSuite::Suite => :suite, BasicTestSuite::AbcGroup => :group, BasicTestSuite::AbcGroup.tests.first => :test}.each do |runnable, type|
+    { BasicTestSuite::Suite => :suite, BasicTestSuite::AbcGroup => :group,
+      BasicTestSuite::AbcGroup.tests.first => :test }.each do |runnable, type|
       it "can return #{type} type" do
-        expect( instance.runnable_type(runnable) ).to eq(type)
+        expect(instance.runnable_type(runnable)).to eq(type)
       end
     end
   end

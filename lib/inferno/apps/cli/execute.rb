@@ -167,11 +167,13 @@ module Inferno
 
       def groups
         return [] if options[:groups].blank?
+
         @groups ||= options[:groups]&.map { |short_id| find_by_short_id!(test_groups_repo, short_id) }
       end
 
       def tests
         return [] if options[:tests].blank?
+
         @tests ||= options[:tests]&.map { |short_id| find_by_short_id!(tests_repo, short_id) }
       end
 
@@ -192,8 +194,8 @@ module Inferno
 
       def print_error_and_exit(err, code)
         outputter.print_error(options || {}, err)
-      rescue StandardError => outputter_err
-        puts "Caught exception #{outputter_err} while printing exception #{err}. Exiting."
+      rescue StandardError => e
+        puts "Caught exception #{e} while printing exception #{err}. Exiting."
       ensure
         exit(code)
       end
