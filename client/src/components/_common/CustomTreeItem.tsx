@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
   TreeItem,
   TreeItemProps,
-  useTreeItem,
+  useTreeItemState,
   TreeItemContentProps,
   treeItemClasses,
 } from '@mui/x-tree-view/TreeItem';
@@ -24,7 +24,7 @@ const CustomContent = React.forwardRef(function CustomContent(
     classes,
     className,
     label,
-    nodeId,
+    itemId,
     icon: iconProp,
     expansionIcon,
     displayIcon,
@@ -41,7 +41,7 @@ const CustomContent = React.forwardRef(function CustomContent(
     handleExpansion,
     handleSelection,
     preventSelection,
-  } = useTreeItem(nodeId);
+  } = useTreeItemState(itemId);
 
   const navigate = useNavigate();
 

@@ -3,7 +3,7 @@ import { Router, BrowserRouter } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { TreeView } from '@mui/x-tree-view/TreeView';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import TreeItemLabel from 'components/TestSuite/TestSuiteTree/TreeItemLabel';
 import ThemeProvider from 'components/ThemeProvider';
 import CustomTreeItem from '../CustomTreeItem';
@@ -13,13 +13,13 @@ test('renders custom TreeItem', () => {
   render(
     <BrowserRouter>
       <ThemeProvider>
-        <TreeView>
+        <SimpleTreeView>
           <CustomTreeItem
-            nodeId={mockedTestSuite.id}
+            itemId={mockedTestSuite.id}
             label={<TreeItemLabel runnable={mockedTestSuite} />}
             ContentProps={{ testId: mockedTestSuite.id } as any}
           />
-        </TreeView>
+        </SimpleTreeView>
       </ThemeProvider>
     </BrowserRouter>
   );
@@ -32,15 +32,15 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
   render(
     <BrowserRouter>
       <ThemeProvider>
-        <TreeView expanded={[mockedTestSuite.id]}>
+        <SimpleTreeView expandedItems={[mockedTestSuite.id]}>
           <CustomTreeItem
-            nodeId={mockedTestSuite.id}
+            itemId={mockedTestSuite.id}
             label={<TreeItemLabel runnable={mockedTestSuite} />}
             ContentProps={{ testId: mockedTestSuite.id } as any}
           >
             <></>
           </CustomTreeItem>
-        </TreeView>
+        </SimpleTreeView>
       </ThemeProvider>
     </BrowserRouter>
   );
@@ -61,13 +61,13 @@ test('clicking on TreeItem should navigate to group or test instance', () => {
   render(
     <Router location={history.location} navigator={history}>
       <ThemeProvider>
-        <TreeView>
+        <SimpleTreeView>
           <CustomTreeItem
-            nodeId={mockedTestSuite.id}
+            itemId={mockedTestSuite.id}
             label={<TreeItemLabel runnable={mockedTestSuite} />}
             ContentProps={{ testId: mockedTestSuite.id } as any}
           />
-        </TreeView>
+        </SimpleTreeView>
       </ThemeProvider>
     </Router>
   );

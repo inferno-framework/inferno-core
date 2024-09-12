@@ -9,21 +9,23 @@ export interface TestGroupTreeItemProps {
 }
 
 const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({ testGroup }) => {
-  const itemIcon = (testGroup.run_as_group || testGroup.test_groups.length === 0) && (
-    <ResultIcon result={testGroup.result} isRunning={testGroup.is_running} />
-  );
-
   const renderSublist = (): JSX.Element[] => {
     return testGroup.test_groups.map((subTestGroup, index) => (
       <TestGroupTreeItem testGroup={subTestGroup} key={`ti-${testGroup.short_id}-${index}`} />
     ));
   };
 
+  // Define icon for tree item slots
+  const TreeItemIcon: FC<TestGroupTreeItemProps> = () => {
+    if (testGroup.run_as_group || testGroup.test_groups.length === 0)
+      return <ResultIcon result={testGroup.result} isRunning={testGroup.is_running} />;
+  };
+
   return (
     <CustomTreeItem
-      nodeId={testGroup.id}
+      itemId={testGroup.id}
       label={<TreeItemLabel runnable={testGroup} />}
-      icon={itemIcon}
+      slots={{ icon: TreeItemIcon }}
       // eslint-disable-next-line max-len
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       ContentProps={{ testId: testGroup.short_id } as any}
