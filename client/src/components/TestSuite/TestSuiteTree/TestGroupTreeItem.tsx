@@ -16,19 +16,18 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({ testGroup }) => {
   };
 
   // Define icon for tree item slots
-  const TreeItemIcon: FC<TestGroupTreeItemProps> = () => {
-    if (testGroup.run_as_group || testGroup.test_groups.length === 0)
-      return <ResultIcon result={testGroup.result} isRunning={testGroup.is_running} />;
+  const TreeItemIcon: FC<unknown> = () => {
+    return <ResultIcon result={testGroup.result} isRunning={testGroup.is_running} />;
   };
 
   return (
     <CustomTreeItem
       itemId={testGroup.id}
       label={<TreeItemLabel runnable={testGroup} />}
-      slots={{ icon: TreeItemIcon }}
-      // eslint-disable-next-line max-len
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-      ContentProps={{ testId: testGroup.short_id } as any}
+      slots={
+        testGroup.run_as_group || testGroup.test_groups.length === 0 ? { icon: TreeItemIcon } : {}
+      }
+      ContentProps={{ testId: testGroup.short_id } as never}
     >
       {testGroup.test_groups.length > 0 && !testGroup.run_as_group && renderSublist()}
     </CustomTreeItem>
