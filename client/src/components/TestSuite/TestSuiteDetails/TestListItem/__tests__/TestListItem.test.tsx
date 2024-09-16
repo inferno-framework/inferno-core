@@ -5,6 +5,7 @@ import ThemeProvider from 'components/ThemeProvider';
 
 import TestListItem from '../TestListItem';
 import { Message, Request, Result, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
+import { describe, expect, it, test } from 'vitest';
 
 describe('The TestListItem component', () => {
   test('it renders a table with the test description as markdown', () => {

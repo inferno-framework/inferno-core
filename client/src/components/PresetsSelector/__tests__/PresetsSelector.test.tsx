@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import ThemeProvider from '~/components/ThemeProvider';
 import PresetsSelector from '../PresetsSelector';
 import { presets } from '../__mocked_data__/mockData';
+import { describe, expect, test } from 'vitest';
 
 describe('The PresetsSelector Component', () => {
   test('renders empty PresetsSelector', () => {

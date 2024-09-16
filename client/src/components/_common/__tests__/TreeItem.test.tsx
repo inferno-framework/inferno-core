@@ -8,6 +8,7 @@ import TreeItemLabel from 'components/TestSuite/TestSuiteTree/TreeItemLabel';
 import ThemeProvider from 'components/ThemeProvider';
 import CustomTreeItem from '../CustomTreeItem';
 import { mockedTestSuite } from '../__mocked_data__/mockData';
+import { expect, test } from 'vitest';
 
 test('renders custom TreeItem', () => {
   render(

@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 import Footer from '..';
 import ThemeProvider from 'components/ThemeProvider';
 import { basePath } from '~/api/infernoApiService';
+import { expect, test } from 'vitest';
 
 test('renders Inferno Footer', () => {
   render(

@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import ThemeProvider from 'components/ThemeProvider';
 import { SnackbarProvider } from 'notistack';
 
-import { vi } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import ActionModal from '../ActionModal';
 
 const cancelTestRunMock = vi.fn();

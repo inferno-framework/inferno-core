@@ -9,6 +9,7 @@ import InputTextField from '~/components/InputsModal/InputTextField';
 import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredentials';
 import InputAuth from '~/components/InputsModal/InputAuth';
 import InputAccess from '~/components/InputsModal/InputAccess';
+import { describe, expect, it } from 'vitest';
 
 describe('Input Components', () => {
   it('renders InputCheckboxGroup', () => {

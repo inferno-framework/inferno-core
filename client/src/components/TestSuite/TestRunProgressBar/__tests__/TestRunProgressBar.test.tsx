@@ -6,6 +6,7 @@ import ThemeProvider from 'components/ThemeProvider';
 import { mockedTestRun, getMockedResultsMap } from '../__mocked_data__/mockData';
 import TestRunProgressBar from '../TestRunProgressBar';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, test } from 'vitest';
 
 describe('The TestRunProgressBar Component', () => {
   test('renders TestRunProgressBar', () => {

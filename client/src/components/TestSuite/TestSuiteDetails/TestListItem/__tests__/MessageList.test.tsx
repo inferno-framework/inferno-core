@@ -5,6 +5,7 @@ import ThemeProvider from 'components/ThemeProvider';
 
 import MessageList from '../MessageList';
 import { Message } from '~/models/testSuiteModels';
+import { describe, expect, test } from 'vitest';
 
 describe('The MessagesList component', () => {
   test('it renders all messages', () => {

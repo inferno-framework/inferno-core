@@ -7,6 +7,7 @@ import ThemeProvider from 'components/ThemeProvider';
 import TestSessionComponent from '../TestSession';
 import { mockedTestSession, mockedResultsList } from '../__mocked_data__/mockData';
 import { useAppStore } from '~/store/app';
+import { beforeEach, expect, test } from 'vitest';
 
 // boilerplate for mocking zustand which uses hooks outside of a component
 beforeEach(() => {

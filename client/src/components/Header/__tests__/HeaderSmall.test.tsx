@@ -6,6 +6,7 @@ import Header from '../Header';
 
 import { MemoryRouter } from 'react-router-dom';
 import { useAppStore } from '~/store/app';
+import { beforeEach, expect, test } from 'vitest';
 
 // boilerplate for mocking zustand which uses hooks outside of a component
 beforeEach(() => {

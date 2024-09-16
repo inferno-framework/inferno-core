@@ -7,6 +7,7 @@ import TestSuiteDetailsPanel from '~/components/TestSuite//TestSuiteDetails/Test
 import { mockedTestSuite } from '~/components/_common/__mocked_data__/mockData';
 import { mockedRunTests } from '~/components/TestSuite/TestRunButton/__mocked_data__/mockData';
 import { mockedRequestFunctions } from '~/components/RequestDetailModal/__mocked_data__/mockData';
+import { expect, test } from 'vitest';
 
 test('renders TestSuiteDetailsPanel for test suite', () => {
   render(

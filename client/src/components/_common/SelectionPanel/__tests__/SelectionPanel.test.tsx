@@ -5,7 +5,7 @@ import ThemeProvider from 'components/ThemeProvider';
 import { mockedSelectionPanelData } from '../__mocked_data__/mockData';
 import SelectionPanel from '../SelectionPanel';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 
 describe('SelectionPanel component', () => {
   test('renders SelectionPanel for list options', () => {

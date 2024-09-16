@@ -5,6 +5,7 @@ import ThemeProvider from 'components/ThemeProvider';
 
 import { TestInput, TestOutput } from '~/models/testSuiteModels';
 import InputOutputList from '../InputOutputList';
+import { describe, expect, test } from 'vitest';
 
 describe('The InputOutputsList component', () => {
   test('it renders all inputs', () => {

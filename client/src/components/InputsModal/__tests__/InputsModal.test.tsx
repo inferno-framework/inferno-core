@@ -6,7 +6,7 @@ import { RunnableType, TestInput } from '~/models/testSuiteModels';
 import ThemeProvider from 'components/ThemeProvider';
 import { SnackbarProvider } from 'notistack';
 
-import { vi } from 'vitest';
+import { expect, test, vi } from 'vitest';
 import { mockedTestGroup } from '~/components/_common/__mocked_data__/mockData';
 
 const hideModalMock = vi.fn();

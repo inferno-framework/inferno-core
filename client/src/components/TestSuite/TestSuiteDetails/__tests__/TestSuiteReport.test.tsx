@@ -5,6 +5,7 @@ import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 import TestSuiteReport from '../TestSuiteReport';
 import { mockedTestSuite } from '~/components/_common/__mocked_data__/mockData';
+import { expect, test } from 'vitest';
 
 test('renders TestSuiteReport', () => {
   render(

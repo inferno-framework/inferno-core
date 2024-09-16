@@ -4,7 +4,7 @@ import { Test, TestGroup, TestSuite } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
 import ThemeProvider from 'components/ThemeProvider';
 
-import { vi } from 'vitest';
+import { expect, test, vi } from 'vitest';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => {},

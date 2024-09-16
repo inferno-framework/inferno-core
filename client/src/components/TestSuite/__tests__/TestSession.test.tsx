@@ -3,7 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { act } from 'react-dom/test-utils';
 import { SnackbarProvider } from 'notistack';
 import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import * as versionsApi from '~/api/VersionsApi';
 import ThemeProvider from 'components/ThemeProvider';
 import TestSessionComponent from '../TestSession';
