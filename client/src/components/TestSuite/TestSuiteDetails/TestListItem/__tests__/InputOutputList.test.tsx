@@ -19,7 +19,7 @@ describe('The InputOutputsList component', () => {
         <SnackbarProvider>
           <InputOutputList inputOutputs={inputs} noValuesMessage="No Inputs" headerName="Input" />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const renderedMessages = document.querySelectorAll('tbody > tr');
@@ -41,7 +41,7 @@ describe('The InputOutputsList component', () => {
             headerName="Output"
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const renderedMessages = document.querySelectorAll('tbody > tr');

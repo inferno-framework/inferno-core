@@ -54,7 +54,7 @@ test('Modal visible and inputs are shown', () => {
           createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   const titleText = screen.getByText('Mock Test Group');
@@ -71,7 +71,7 @@ test('Modal visible and inputs are shown', () => {
   });
 });
 
-test('Pressing cancel hides the modal', () => {
+test('Pressing cancel hides the modal', async () => {
   render(
     <ThemeProvider>
       <SnackbarProvider>
@@ -85,15 +85,15 @@ test('Pressing cancel hides the modal', () => {
           createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   const cancelButton = screen.getByTestId('cancel-button');
-  userEvent.click(cancelButton);
+  await userEvent.click(cancelButton);
   expect(hideModalMock).toHaveBeenCalled();
 });
 
-test('Pressing submit hides the modal', () => {
+test('Pressing submit hides the modal', async () => {
   render(
     <ThemeProvider>
       <SnackbarProvider>
@@ -107,15 +107,15 @@ test('Pressing submit hides the modal', () => {
           createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   const submitButton = screen.getByText('Submit');
-  userEvent.click(submitButton);
+  await userEvent.click(submitButton);
   expect(hideModalMock).toHaveBeenCalled();
 });
 
-test('Field Inputs shown in JSON and YAML', () => {
+test('Field Inputs shown in JSON and YAML', async () => {
   render(
     <ThemeProvider>
       <SnackbarProvider>
@@ -129,20 +129,20 @@ test('Field Inputs shown in JSON and YAML', () => {
           createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   const jsonButton = screen.getByTestId('json-button');
   const yamlButton = screen.getByTestId('yaml-button');
 
-  userEvent.click(jsonButton);
+  await userEvent.click(jsonButton);
   let serial = screen.getByTestId('serial-input').textContent || '';
 
   testInputs.forEach((input: TestInput) => {
     expect(serial.includes(input.name));
   });
 
-  userEvent.click(yamlButton);
+  await userEvent.click(yamlButton);
   serial = screen.getByTestId('serial-input').textContent || '';
 
   testInputs.forEach((input: TestInput) => {
@@ -150,7 +150,7 @@ test('Field Inputs shown in JSON and YAML', () => {
   });
 });
 
-test('Values in Field Inputs shown in JSON and YAML', () => {
+test('Values in Field Inputs shown in JSON and YAML', async () => {
   render(
     <ThemeProvider>
       <SnackbarProvider>
@@ -164,13 +164,13 @@ test('Values in Field Inputs shown in JSON and YAML', () => {
           createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   const jsonButton = screen.getByTestId('json-button');
   const yamlButton = screen.getByTestId('yaml-button');
 
-  userEvent.click(jsonButton);
+  await userEvent.click(jsonButton);
   let serial = screen.getByTestId('serial-input').textContent || '';
 
   testInputsDefaults.forEach((input: TestInput) => {
@@ -183,7 +183,7 @@ test('Values in Field Inputs shown in JSON and YAML', () => {
     }
   });
 
-  userEvent.click(yamlButton);
+  await userEvent.click(yamlButton);
   serial = screen.getByTestId('serial-input').textContent || '';
 
   testInputs.forEach((input: TestInput) => {

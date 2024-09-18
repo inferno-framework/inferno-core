@@ -32,7 +32,7 @@ describe('The TestListItem component', () => {
         <ThemeProvider>
           <TestListItem test={test} view="run" />
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const accordion = screen.getByTestId('test_id-summary');
@@ -75,7 +75,7 @@ describe('The TestListItem component', () => {
           <ThemeProvider>
             <TestListItem test={test} view="run" />
           </ThemeProvider>
-        </BrowserRouter>
+        </BrowserRouter>,
       );
 
       const target = screen.getByTestId('test_id-summary');
@@ -129,7 +129,7 @@ describe('The TestListItem component', () => {
           <ThemeProvider>
             <TestListItem test={test} view="run" />
           </ThemeProvider>
-        </BrowserRouter>
+        </BrowserRouter>,
       );
 
       const target = screen.getByLabelText('View 1 request(s)');
@@ -184,7 +184,7 @@ describe('The TestListItem component', () => {
           <ThemeProvider>
             <TestListItem test={test} view="run" />
           </ThemeProvider>
-        </BrowserRouter>
+        </BrowserRouter>,
       );
 
       const target = screen.getByLabelText('View 1 message(s)');

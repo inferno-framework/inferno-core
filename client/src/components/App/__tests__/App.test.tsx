@@ -32,8 +32,8 @@ describe('The App Root Component', () => {
           <SnackbarProvider>
             <App />
           </SnackbarProvider>
-        </ThemeProvider>
-      )
+        </ThemeProvider>,
+      ),
     );
 
     expect(getTestSuites).toBeCalledTimes(1);

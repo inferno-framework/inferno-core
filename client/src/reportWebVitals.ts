@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { MetricType } from 'web-vitals';
 
 const reportWebVitals = (onPerfEntry?: (metric: MetricType) => void) => {

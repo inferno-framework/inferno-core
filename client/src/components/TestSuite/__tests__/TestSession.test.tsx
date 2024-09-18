@@ -23,8 +23,8 @@ describe('The TestSession Component', () => {
               <TestSessionWrapper />
             </SnackbarProvider>
           </ThemeProvider>
-        </BrowserRouter>
-      )
+        </BrowserRouter>,
+      ),
     );
 
     expect(getCoreVersion).toBeCalledTimes(1);
@@ -49,8 +49,8 @@ describe('The TestSession Component', () => {
               />
             </SnackbarProvider>
           </ThemeProvider>
-        </BrowserRouter>
-      )
+        </BrowserRouter>,
+      ),
     );
 
     const testSessionTitleComponentList = screen.getAllByTestId('navigable-group-item');

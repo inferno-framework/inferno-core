@@ -17,7 +17,7 @@ describe('The PresetsSelector Component', () => {
             <PresetsSelector presets={[]} testSessionId="test-id" getSessionData={() => {}} />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const selectionElement = screen.getByRole('combobox');
@@ -32,14 +32,14 @@ describe('The PresetsSelector Component', () => {
             <PresetsSelector presets={presets} testSessionId="test-id" getSessionData={() => {}} />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const selectionElement = screen.getByRole('combobox');
     expect(selectionElement).toBeInTheDocument();
   });
 
-  test('selects a preset', () => {
+  test('selects a preset', async () => {
     render(
       <BrowserRouter>
         <ThemeProvider>
@@ -47,14 +47,14 @@ describe('The PresetsSelector Component', () => {
             <PresetsSelector presets={presets} testSessionId="test-id" getSessionData={() => {}} />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const selectionElement = screen.getByRole('combobox');
-    userEvent.click(selectionElement);
+    await userEvent.click(selectionElement);
 
     const presetChoice = screen.getByText('Preset One');
-    userEvent.click(presetChoice);
+    await userEvent.click(presetChoice);
 
     expect(selectionElement.textContent).toEqual('Preset One');
   });

@@ -3,7 +3,7 @@ import { RequestHeader } from '~/models/testSuiteModels';
 
 export const formatBodyIfJson = (
   code: string,
-  headers: RequestHeader[] | null | undefined
+  headers: RequestHeader[] | null | undefined,
 ): string => {
   // if we don't have metadata then do nothing
   if (!headers) {
@@ -31,8 +31,8 @@ export const formatBodyIfJson = (
 const formatJson = (json: string): string => {
   try {
     return JSON.stringify(JSON.parse(json), null, 2);
-  } catch (error) {
-    enqueueSnackbar('Input is not a JSON file.', { variant: 'error' });
+  } catch (error: unknown) {
+    enqueueSnackbar(`Input is not a JSON file: ${error as string}`, { variant: 'error' });
     return '';
   }
 };

@@ -25,7 +25,7 @@ test('renders wide screen Inferno Header', () => {
           toggleDrawer={() => (drawerOpen = !drawerOpen)}
         />
       </ThemeProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
   const logoElement = screen.getByRole('img');

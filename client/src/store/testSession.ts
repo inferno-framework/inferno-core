@@ -27,10 +27,10 @@ export const useTestSessionStore = create<TestSessionStore>()(
           set({ currentRunnables: { ...currentRunnables } }),
         setRunnableId: (runnableId: string) => set({ runnableId: runnableId }),
         setTestRunId: (testRunId: string | undefined) => set({ testRunId: testRunId }),
-      })
+      }),
     ),
     {
       name: 'test-session',
-    }
-  )
+    },
+  ),
 );

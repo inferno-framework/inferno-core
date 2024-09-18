@@ -21,7 +21,7 @@ test('renders TestSuiteDetailsPanel for test suite', () => {
           />
         </SnackbarProvider>
       </ThemeProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
   const suiteTitleElement = screen.getByText(mockedTestSuite.title);

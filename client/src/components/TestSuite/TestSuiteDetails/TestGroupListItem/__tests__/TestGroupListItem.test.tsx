@@ -21,7 +21,7 @@ describe('The expandable TestGroupListItem component', () => {
     render(
       <ThemeProvider>
         <TestGroupListItem testGroup={testGroup} view="run" />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const accordion = screen.getByTestId('test_group_id-summary');
@@ -46,7 +46,7 @@ describe('The navigable TestGroupListItem component', () => {
     render(
       <ThemeProvider>
         <TestGroupListItem testGroup={testGroup} view="run" />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     expect(screen.getByText('Test Group').closest('a'));

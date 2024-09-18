@@ -17,7 +17,7 @@ test('renders Request List Detail Modal', () => {
         hideModal={hideModalMock}
         usedRequest={true}
       />
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   const modalElement = screen.getByTestId('requestDetailModal');

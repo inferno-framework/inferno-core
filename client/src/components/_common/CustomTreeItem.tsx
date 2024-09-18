@@ -18,7 +18,7 @@ interface CustomTreeItemContentProps extends TreeItemContentProps {
 
 const CustomContent = React.forwardRef(function CustomContent(
   props: CustomTreeItemContentProps,
-  ref
+  ref,
 ) {
   const {
     classes,
@@ -48,7 +48,7 @@ const CustomContent = React.forwardRef(function CustomContent(
   const icon = iconProp || expansionIcon || displayIcon;
 
   const handleInteractionEvent = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>,
   ) => {
     const e = event.target as HTMLInputElement;
     const iconTestName = e.getAttribute('data-testid');
@@ -63,13 +63,13 @@ const CustomContent = React.forwardRef(function CustomContent(
   };
 
   const handleExpansionAction = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>,
   ) => {
     handleExpansion(event as React.MouseEvent<HTMLDivElement, MouseEvent>);
   };
 
   const handleSelectionAction = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>,
   ) => {
     handleSelection(event as React.MouseEvent<HTMLDivElement, MouseEvent>);
     if (testId) navigate(`#${testId}`);

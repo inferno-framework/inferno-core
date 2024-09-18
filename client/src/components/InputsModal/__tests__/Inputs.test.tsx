@@ -41,7 +41,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('checkboxInput');
@@ -77,7 +77,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('radioInput');
@@ -101,7 +101,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('textInput');
@@ -125,7 +125,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('textareaInput');
@@ -149,7 +149,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('oauthInput');
@@ -182,7 +182,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('authInput Auth Type (required)');
@@ -215,7 +215,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('accessInput');

@@ -19,14 +19,14 @@ test('Modal visible and inputs are shown', () => {
           cancelTestRun={cancelTestRunMock}
         />
       </SnackbarProvider>
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   const messageText = screen.getByText('Mock action message');
   expect(messageText).toBeVisible();
 });
 
-test('Pressing cancel hides the modal', () => {
+test('Pressing cancel hides the modal', async () => {
   render(
     <ThemeProvider>
       <SnackbarProvider>
@@ -36,10 +36,10 @@ test('Pressing cancel hides the modal', () => {
           cancelTestRun={cancelTestRunMock}
         />
       </SnackbarProvider>
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   const cancelButton = screen.getByTestId('cancel-button');
-  userEvent.click(cancelButton);
+  await userEvent.click(cancelButton);
   expect(cancelTestRunMock).toHaveBeenCalled();
 });

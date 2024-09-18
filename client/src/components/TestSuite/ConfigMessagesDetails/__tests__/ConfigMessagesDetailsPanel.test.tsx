@@ -15,7 +15,7 @@ test('renders ConfigMessagesDetailsPanel', () => {
           <ConfigMessagesDetailsPanel testSuite={testSuites[0]} />
         </SnackbarProvider>
       </ThemeProvider>
-    </BrowserRouter>
+    </BrowserRouter>,
   );
 
   const tabsList = screen.getAllByRole('tab');

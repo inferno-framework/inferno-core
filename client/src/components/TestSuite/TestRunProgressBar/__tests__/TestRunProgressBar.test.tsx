@@ -28,14 +28,14 @@ describe('The TestRunProgressBar Component', () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const progressBarElement = screen.getByTestId('progress-bar');
     expect(progressBarElement).toBeInTheDocument();
   });
 
-  test('clicking Cancel cancels the test run', () => {
+  test('clicking Cancel cancels the test run', async () => {
     let showProgressBar = true;
     let testRunCancelled = false;
 
@@ -54,11 +54,11 @@ describe('The TestRunProgressBar Component', () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const cancelButton = screen.getByRole('button');
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(testRunCancelled).toEqual(true);
 
     setTimeout(() => {

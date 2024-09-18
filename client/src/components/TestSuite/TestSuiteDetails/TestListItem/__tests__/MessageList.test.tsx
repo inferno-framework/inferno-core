@@ -20,7 +20,7 @@ describe('The MessagesList component', () => {
         <SnackbarProvider>
           <MessageList messages={messages} />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const renderedMessages = document.querySelectorAll('tbody > tr');

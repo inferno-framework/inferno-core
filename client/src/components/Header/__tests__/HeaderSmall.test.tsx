@@ -14,7 +14,7 @@ beforeEach(() => {
   result.current.windowIsSmall = true;
 });
 
-test('renders narrow screen Inferno Header', () => {
+test('renders narrow screen Inferno Header', async () => {
   let drawerOpen = false;
 
   render(
@@ -26,7 +26,7 @@ test('renders narrow screen Inferno Header', () => {
           toggleDrawer={() => (drawerOpen = !drawerOpen)}
         />
       </ThemeProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
   const buttonElement = screen.getAllByRole('button')[0];
@@ -34,6 +34,6 @@ test('renders narrow screen Inferno Header', () => {
 
   // test icon drawer control
   expect(drawerOpen).toBe(false);
-  userEvent.click(buttonElement);
+  await userEvent.click(buttonElement);
   expect(drawerOpen).toBe(true);
 });

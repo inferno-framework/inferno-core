@@ -25,7 +25,7 @@ describe('The TestRunButton Component', () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const buttonElements = screen.queryAllByRole('button');
@@ -44,14 +44,14 @@ describe('The TestRunButton Component', () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const buttonElement = screen.queryByTestId(`runButton-${mockedTestRunButtonData.test.id}`);
     expect(buttonElement).toBeInTheDocument();
   });
 
-  it('runs tests on button click', () => {
+  it('runs tests on button click', async () => {
     const runTests = vi.spyOn(mockedTestRunButtonData, 'runTests');
 
     render(
@@ -65,11 +65,11 @@ describe('The TestRunButton Component', () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const buttonElement = screen.getByTestId(`runButton-${mockedTestRunButtonData.test.id}`);
-    userEvent.click(buttonElement);
+    await userEvent.click(buttonElement);
     expect(runTests).toBeCalledTimes(1);
   });
 
@@ -85,14 +85,14 @@ describe('The TestRunButton Component', () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const buttonElement = screen.queryByTestId(`runButton-${mockedTestRunButtonData.testGroup.id}`);
     expect(buttonElement).toBeInTheDocument();
   });
 
-  it('runs test group on button click', () => {
+  it('runs test group on button click', async () => {
     const runTests = vi.spyOn(mockedTestRunButtonData, 'runTests');
 
     render(
@@ -106,11 +106,11 @@ describe('The TestRunButton Component', () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const buttonElement = screen.getByTestId(`runButton-${mockedTestRunButtonData.testGroup.id}`);
-    userEvent.click(buttonElement);
+    await userEvent.click(buttonElement);
     expect(runTests).toBeCalledTimes(1);
   });
 
@@ -126,14 +126,14 @@ describe('The TestRunButton Component', () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const buttonElement = screen.queryByTestId(`runButton-${mockedTestRunButtonData.testSuite.id}`);
     expect(buttonElement).toBeInTheDocument();
   });
 
-  it('runs test suite on button click', () => {
+  it('runs test suite on button click', async () => {
     const runTests = vi.spyOn(mockedTestRunButtonData, 'runTests');
 
     render(
@@ -147,11 +147,11 @@ describe('The TestRunButton Component', () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const buttonElement = screen.getByTestId(`runButton-${mockedTestRunButtonData.testSuite.id}`);
-    userEvent.click(buttonElement);
+    await userEvent.click(buttonElement);
     expect(runTests).toBeCalledTimes(1);
   });
 });

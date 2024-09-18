@@ -22,14 +22,14 @@ test('renders custom TreeItem', () => {
           />
         </SimpleTreeView>
       </ThemeProvider>
-    </BrowserRouter>
+    </BrowserRouter>,
   );
 
   const treeItemElement = screen.getByRole('treeitem');
   expect(treeItemElement).toBeInTheDocument();
 });
 
-test('TreeItem expansion should not be toggled when label is clicked', () => {
+test('TreeItem expansion should not be toggled when label is clicked', async () => {
   render(
     <BrowserRouter>
       <ThemeProvider>
@@ -43,7 +43,7 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
           </CustomTreeItem>
         </SimpleTreeView>
       </ThemeProvider>
-    </BrowserRouter>
+    </BrowserRouter>,
   );
 
   const labelElement = screen.getAllByTestId('tiLabel', { exact: false })[0];
@@ -51,11 +51,11 @@ test('TreeItem expansion should not be toggled when label is clicked', () => {
   expect(labelElement).toBeInTheDocument();
   expect(treeItemElement).toHaveAttribute('aria-expanded', 'true');
 
-  userEvent.click(labelElement);
+  await userEvent.click(labelElement);
   expect(treeItemElement).toHaveAttribute('aria-expanded', 'true');
 });
 
-test('clicking on TreeItem should navigate to group or test instance', () => {
+test('clicking on TreeItem should navigate to group or test instance', async () => {
   const history = createMemoryHistory();
   history.push(`/${mockedTestSuite.id}/:test_session_id`);
 
@@ -70,12 +70,12 @@ test('clicking on TreeItem should navigate to group or test instance', () => {
           />
         </SimpleTreeView>
       </ThemeProvider>
-    </Router>
+    </Router>,
   );
 
   const labelElement = screen.getAllByTestId('tiLabel', { exact: false })[0];
   expect(labelElement).toBeInTheDocument();
 
-  userEvent.click(labelElement);
+  await userEvent.click(labelElement);
   expect(history.location.hash).toBe(`#${mockedTestSuite.id}`);
 });

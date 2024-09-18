@@ -1,6 +1,4 @@
 // Necessary to override default z-index value of appbar
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { Theme } from '@mui/material/styles';
 import { makeStyles } from 'tss-react/mui';

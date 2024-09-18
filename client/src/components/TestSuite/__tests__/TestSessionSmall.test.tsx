@@ -34,8 +34,8 @@ test('renders narrow screen TestSession', async () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </MemoryRouter>
-    )
+      </MemoryRouter>,
+    ),
   );
 
   const testSessionTitleComponentList = screen.getAllByTestId('navigable-group-item');

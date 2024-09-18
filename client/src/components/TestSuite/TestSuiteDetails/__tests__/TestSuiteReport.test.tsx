@@ -15,7 +15,7 @@ test('renders TestSuiteReport', () => {
           <TestSuiteReport testSuite={mockedTestSuite} />
         </SnackbarProvider>
       </ThemeProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
   const reportTitleElement = screen.getByText(`${mockedTestSuite.title} Report`);

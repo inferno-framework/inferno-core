@@ -18,7 +18,7 @@ describe('CodeBlock', () => {
     render(
       <ThemeProvider>
         <CodeBlock body={body} headers={headers} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const codeBlock = screen.getByTestId('pre');
@@ -33,7 +33,7 @@ describe('CodeBlock', () => {
     render(
       <ThemeProvider>
         <CodeBlock body={body} headers={headers} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const codeBlock = screen.getByTestId('code', {

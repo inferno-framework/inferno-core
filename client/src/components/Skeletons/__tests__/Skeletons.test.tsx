@@ -22,7 +22,7 @@ describe('Skeleton Components', () => {
             <AppSkeleton />
           </SnackbarProvider>
         </ThemeProvider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const skeletonElement = screen.getByTestId('appSkeleton');
@@ -37,7 +37,7 @@ describe('Skeleton Components', () => {
             <LandingPageSkeleton />
           </SnackbarProvider>
         </ThemeProvider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const skeletonElement = screen.getByTestId('landingPageSkeleton');
@@ -52,7 +52,7 @@ describe('Skeleton Components', () => {
             <SuiteOptionsPageSkeleton />
           </SnackbarProvider>
         </ThemeProvider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const skeletonElement = screen.getByTestId('suiteOptionsPageSkeleton');
@@ -67,7 +67,7 @@ describe('Skeleton Components', () => {
             <DrawerSkeleton />
           </SnackbarProvider>
         </ThemeProvider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const skeletonElement = screen.getByTestId('drawerSkeleton');
@@ -82,7 +82,7 @@ describe('Skeleton Components', () => {
             <FooterSkeleton />
           </SnackbarProvider>
         </ThemeProvider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const skeletonElement = screen.getByTestId('footerSkeleton');
@@ -97,7 +97,7 @@ describe('Skeleton Components', () => {
             <HeaderSkeleton />
           </SnackbarProvider>
         </ThemeProvider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const skeletonElement = screen.getByTestId('headerSkeleton');
@@ -112,7 +112,7 @@ describe('Skeleton Components', () => {
             <TestSessionSkeleton />
           </SnackbarProvider>
         </ThemeProvider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const skeletonElement = screen.getByTestId('testSessionSkeleton');
@@ -127,7 +127,7 @@ describe('Skeleton Components', () => {
             <SelectionSkeleton />
           </SnackbarProvider>
         </ThemeProvider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const skeletonElement = screen.getByTestId('selectionSkeleton');
