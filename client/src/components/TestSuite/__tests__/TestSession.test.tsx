@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { act } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { act } from 'react-dom/test-utils';
 import { SnackbarProvider } from 'notistack';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';

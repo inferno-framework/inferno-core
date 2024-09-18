@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -69,14 +69,17 @@ test('sets the Test Session if there is a single Test Suite', () => {
   const postTestSessions = vi.spyOn(testSessionApi, 'postTestSessions');
   postTestSessions.mockResolvedValue(testSession);
 
-  render(
-    <BrowserRouter>
-      <ThemeProvider>
-        <SnackbarProvider>
-          <LandingPage testSuites={singleTestSuite} />
-        </SnackbarProvider>
-      </ThemeProvider>
-    </BrowserRouter>,
-  );
+  act(() => {
+    render(
+      <BrowserRouter>
+        <ThemeProvider>
+          <SnackbarProvider>
+            <LandingPage testSuites={singleTestSuite} />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </BrowserRouter>,
+    );
+  });
+
   expect(postTestSessions).toBeCalledTimes(1);
 });

@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { act } from 'react-dom/test-utils';
 import { render, renderHook, screen } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';

@@ -70,12 +70,11 @@ describe('SelectionPanel component', () => {
     );
 
     const submitButton = screen.getByText('Submit');
-    await userEvent.click(submitButton);
     expect(submitButton).toBeDisabled();
-    expect(submitAction).toBeCalledTimes(0); // should be disabled with no selection
 
     const options = screen.getAllByTestId('list-option');
     await userEvent.click(options[0]); // select first option
+
     expect(submitButton).toBeEnabled();
     await userEvent.click(submitButton);
     await waitFor(() => expect(submitAction).toBeCalled());

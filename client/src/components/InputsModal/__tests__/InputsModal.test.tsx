@@ -111,6 +111,8 @@ test('Pressing submit hides the modal', async () => {
   );
 
   const submitButton = screen.getByText('Submit');
+  expect(submitButton).toBeEnabled();
+
   await userEvent.click(submitButton);
   expect(hideModalMock).toHaveBeenCalled();
 });
