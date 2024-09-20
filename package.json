@@ -61,7 +61,7 @@
     "@types/webpack": "^5.28.5",
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "@typescript-eslint/parser": "^8.6.0",
-    "@vitest/coverage-c8": "^0.22.1",
+    "@vitest/coverage-v8": "^2.1.1",
     "babel-jest": "^29.7.0",
     "babel-loader": "^9.2.1",
     "babel-preset-jest": "^29.6.3",
