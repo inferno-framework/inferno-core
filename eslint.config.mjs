@@ -40,11 +40,8 @@ export default [
     },
 
     rules: {
-      // "@typescript-eslint/brace-style": "error",
-      // "@typescript-eslint/func-call-spacing": "error",
       '@typescript-eslint/no-require-imports': 'error',
       '@typescript-eslint/no-unnecessary-qualifier': 'error',
-      // "@typescript-eslint/semi": "error",
       'brace-style': 'off',
       'func-call-spacing': 'off',
 
