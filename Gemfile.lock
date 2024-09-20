@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    inferno_core (0.4.41)
+    inferno_core (0.4.42)
       activesupport (~> 6.1.7.5)
       base62-rb (= 0.3.1)
       blueprinter (= 0.25.2)
@@ -163,7 +163,7 @@ GEM
     io-console (0.6.0)
     irb (1.6.2)
       reline (>= 0.3.0)
-    jwt (2.8.2)
+    jwt (2.9.0)
       base64
     kramdown (2.4.0)
       rexml
@@ -208,7 +208,7 @@ GEM
       byebug (~> 11.0)
       pry (~> 0.13.0)
     public_suffix (4.0.7)
-    puma (5.6.8)
+    puma (5.6.9)
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (2.2.9)
@@ -228,7 +228,7 @@ GEM
       netrc (~> 0.8)
     rexml (3.2.8)
       strscan (>= 3.0.9)
-    rouge (4.3.0)
+    rouge (4.4.0)
     rspec (3.11.0)
       rspec-core (~> 3.11.0)
       rspec-expectations (~> 3.11.0)
