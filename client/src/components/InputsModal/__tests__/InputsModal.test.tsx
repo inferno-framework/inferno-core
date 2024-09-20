@@ -1,5 +1,5 @@
 import React, { act } from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import InputsModal from '../InputsModal';
 import { RunnableType, TestInput } from '~/models/testSuiteModels';
@@ -40,6 +40,8 @@ const testInputsDefaults: TestInput[] = [
   },
 ];
 
+const mockedSessionData = testInputs.reduce((acc, input) => acc.set(input.name, ''), new Map());
+
 test('Modal visible and inputs are shown', () => {
   render(
     <ThemeProvider>
@@ -50,7 +52,7 @@ test('Modal visible and inputs are shown', () => {
           runnable={mockedTestGroup}
           runnableType={RunnableType.TestGroup}
           inputs={testInputs}
-          sessionData={new Map()}
+          sessionData={mockedSessionData}
           createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
@@ -81,7 +83,7 @@ test('Pressing cancel hides the modal', async () => {
           runnable={mockedTestGroup}
           runnableType={RunnableType.TestGroup}
           inputs={testInputs}
-          sessionData={new Map()}
+          sessionData={mockedSessionData}
           createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
@@ -104,7 +106,7 @@ test('Pressing submit hides the modal', async () => {
             runnable={mockedTestGroup}
             runnableType={RunnableType.TestGroup}
             inputs={testInputs}
-            sessionData={new Map()}
+            sessionData={mockedSessionData}
             createTestRun={createTestRunMock}
           />
         </SnackbarProvider>
@@ -113,8 +115,14 @@ test('Pressing submit hides the modal', async () => {
   );
 
   const submitButton = screen.getByText('Submit');
-  expect(submitButton).toBeEnabled();
+  expect(submitButton).toBeDisabled();
 
+  const inputs = screen.findAllByRole('textbox');
+  (await inputs).forEach((input) => {
+    fireEvent.change(input, { target: { value: 'filler text' } });
+  });
+
+  expect(submitButton).toBeEnabled();
   await userEvent.click(submitButton);
   expect(hideModalMock).toHaveBeenCalled();
 });
@@ -129,7 +137,7 @@ test('Field Inputs shown in JSON and YAML', async () => {
           runnable={mockedTestGroup}
           runnableType={RunnableType.TestGroup}
           inputs={testInputs}
-          sessionData={new Map()}
+          sessionData={mockedSessionData}
           createTestRun={createTestRunMock}
         />
       </SnackbarProvider>
@@ -164,7 +172,7 @@ test('Values in Field Inputs shown in JSON and YAML', async () => {
           runnable={mockedTestGroup}
           runnableType={RunnableType.TestGroup}
           inputs={testInputs}
-          sessionData={new Map()}
+          sessionData={mockedSessionData}
           createTestRun={createTestRunMock}
         />
       </SnackbarProvider>

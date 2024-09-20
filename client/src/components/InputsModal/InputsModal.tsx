@@ -74,9 +74,6 @@ const InputsModal: FC<InputsModalProps> = ({
   const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
 
   const missingRequiredInput = inputs.some((input: TestInput) => {
-    // still waiting to populate in useEffect
-    if (inputsMap.size === 0) return false;
-
     // radio inputs will always be required and have a default value
     if (input.type === 'radio') return false;
 

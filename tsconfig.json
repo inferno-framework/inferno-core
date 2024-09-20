@@ -27,7 +27,8 @@
   "include": [
     "client/src",
     "index.d.ts",
-    "eslint.config.mjs"
+    "eslint.config.mjs",
+    "vite.config.ts"
   ],
   "types": ["vitest/globals"],
   "exclude": [
