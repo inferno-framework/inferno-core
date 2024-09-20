@@ -74,6 +74,9 @@ const InputsModal: FC<InputsModalProps> = ({
   const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
 
   const missingRequiredInput = inputs.some((input: TestInput) => {
+    // still waiting to populate in useEffect
+    if (inputsMap.size === 0) return false;
+
     // radio inputs will always be required and have a default value
     if (input.type === 'radio') return false;
 
@@ -107,7 +110,8 @@ const InputsModal: FC<InputsModalProps> = ({
         const authType = (authJson.auth_type ||
           input.options.components.find((c) => c.name === 'auth_type')?.default) as AuthType;
 
-        // Determine which fields are required; authValues and components props irrelevant for this
+        // Determine which fields are required; authValues and components props
+        // irrelevant for this
         const fields =
           input.options?.mode === 'auth'
             ? getAuthFields(authType, new Map(), [])

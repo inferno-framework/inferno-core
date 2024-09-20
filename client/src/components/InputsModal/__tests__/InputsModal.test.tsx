@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import InputsModal from '../InputsModal';
@@ -94,20 +94,22 @@ test('Pressing cancel hides the modal', async () => {
 });
 
 test('Pressing submit hides the modal', async () => {
-  render(
-    <ThemeProvider>
-      <SnackbarProvider>
-        <InputsModal
-          modalVisible={true}
-          hideModal={hideModalMock}
-          runnable={mockedTestGroup}
-          runnableType={RunnableType.TestGroup}
-          inputs={testInputs}
-          sessionData={new Map()}
-          createTestRun={createTestRunMock}
-        />
-      </SnackbarProvider>
-    </ThemeProvider>,
+  await act(() =>
+    render(
+      <ThemeProvider>
+        <SnackbarProvider>
+          <InputsModal
+            modalVisible={true}
+            hideModal={hideModalMock}
+            runnable={mockedTestGroup}
+            runnableType={RunnableType.TestGroup}
+            inputs={testInputs}
+            sessionData={new Map()}
+            createTestRun={createTestRunMock}
+          />
+        </SnackbarProvider>
+      </ThemeProvider>,
+    ),
   );
 
   const submitButton = screen.getByText('Submit');
