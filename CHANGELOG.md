@@ -1,3 +1,22 @@
+## 0.4.42
+* FI-2887 Remove banner info from readme because that belongs in the docs site. by @arscan in https://github.com/inferno-framework/inferno-core/pull/527
+* FI-3112: Fixed JWKS Template Path Used in Unit Tests by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/526
+
+
+## 0.4.41
+* Include JSON files in gem package by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/524
+
+## 0.4.40
+* Update README content; fix broken links and improve generally. by @arscan in https://github.com/inferno-framework/inferno-core/pull/511
+* FI-2863: Added support for auth_info to fhir_client by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/512
+* FI-2865: FHIR Client Auth Info Refresh by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/513
+* FI-2910: Host JWKS for Client Assertion by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/515
+* FI-2857: Add auth input option by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/514
+* FI-2990: Fix typo in Request Details Modal by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/519
+* FI-2728: Prevent Test Runner from Crashing When Validator Response Contains Bad Characters by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/518
+* Fi-1930:  Custom Result Rollup by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/516
+* FI-2750:  Add FHIRPath Support by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/520
+
 ## 0.4.39
 * FI-2836: Fix double requests from suite endpoints by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/505
 * Bump braces from 3.0.2 to 3.0.3 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/506

@@ -147,13 +147,6 @@ GET http://localhost:4567/inferno/api/test_sessions/TEST_SESSION_ID/results
 ## Development in a Ruby console
 To get to an interactive console, run `bundle exec bin/inferno console`
 
-## Customizable Banner
-Inferno Core allows you to add your own customizable banner in each Test Kit.
-To test this functionality while developing Inferno Core, edit the 
-`config/banner.html.erb` file. The
-size and appearance of the banner can be controlled by using the inline style
-attribute.
-
 ## Documentation
 Inferno Core documentation has primarily moved to the
 [Inferno Framework documentation
