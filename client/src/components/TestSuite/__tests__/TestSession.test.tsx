@@ -1,7 +1,7 @@
 import React, { act } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import * as versionsApi from '~/api/VersionsApi';
 import ThemeProvider from 'components/ThemeProvider';
@@ -26,7 +26,9 @@ describe('The TestSession Component', () => {
       ),
     );
 
-    expect(getCoreVersion).toBeCalledTimes(1);
+    await waitFor(() => {
+      expect(getCoreVersion).toBeCalledTimes(1);
+    });
   });
 
   it('renders TestSession', async () => {
@@ -52,11 +54,13 @@ describe('The TestSession Component', () => {
       ),
     );
 
-    const testSessionTitleComponentList = screen.getAllByTestId('navigable-group-item');
-    testSessionTitleComponentList.forEach((testSessionTitleComponent, i) => {
-      const testGroups = mockedTestSession.test_suite.test_groups || [];
-      const testGroupTitle = testGroups[i].title || undefined;
-      expect(testSessionTitleComponent).toHaveAccessibleName(testGroupTitle);
+    await waitFor(() => {
+      const testSessionTitleComponentList = screen.getAllByTestId('navigable-group-item');
+      testSessionTitleComponentList.forEach((testSessionTitleComponent, i) => {
+        const testGroups = mockedTestSession.test_suite.test_groups || [];
+        const testGroupTitle = testGroups[i].title || undefined;
+        expect(testSessionTitleComponent).toHaveAccessibleName(testGroupTitle);
+      });
     });
   });
 });

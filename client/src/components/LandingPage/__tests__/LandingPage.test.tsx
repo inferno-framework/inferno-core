@@ -1,6 +1,6 @@
 import React, { act } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { expect, test, vi } from 'vitest';
 import { SnackbarProvider } from 'notistack';
@@ -65,7 +65,7 @@ test('should enable Start Testing when test suite is selected', async () => {
   expect(buttonElement).toBeEnabled();
 });
 
-test('sets the Test Session if there is a single Test Suite', () => {
+test('sets the Test Session if there is a single Test Suite', async () => {
   const postTestSessions = vi.spyOn(testSessionApi, 'postTestSessions');
   postTestSessions.mockResolvedValue(testSession);
 
@@ -81,5 +81,7 @@ test('sets the Test Session if there is a single Test Suite', () => {
     );
   });
 
-  expect(postTestSessions).toBeCalledTimes(1);
+  await waitFor(() => {
+    expect(postTestSessions).toBeCalledTimes(1);
+  });
 });

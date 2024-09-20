@@ -1,5 +1,5 @@
 import React, { act } from 'react';
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SnackbarProvider } from 'notistack';
@@ -25,6 +25,7 @@ describe('The App Root Component', () => {
   it('sets Test Suite state on mount', async () => {
     const getTestSuites = vi.spyOn(testSuitesApi, 'getTestSuites');
     getTestSuites.mockResolvedValue(testSuites);
+
     await act(() =>
       render(
         <ThemeProvider>
@@ -35,6 +36,8 @@ describe('The App Root Component', () => {
       ),
     );
 
-    expect(getTestSuites).toBeCalledTimes(1);
+    await waitFor(() => {
+      expect(getTestSuites).toBeCalledTimes(1);
+    });
   });
 });
