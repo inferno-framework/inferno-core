@@ -1,3 +1,8 @@
+## 0.4.42
+* FI-2887 Remove banner info from readme because that belongs in the docs site. by @arscan in https://github.com/inferno-framework/inferno-core/pull/527
+* FI-3112: Fixed JWKS Template Path Used in Unit Tests by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/526
+
+
 ## 0.4.41
 * Include JSON files in gem package by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/524
 
