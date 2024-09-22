@@ -285,10 +285,9 @@ module Inferno
           end
 
           # assume for now that one resource -> one request
-          issues = response_hash.dig('outcomes', 0, 'issues')&.map do |i|
+          issues = (response_hash.dig('outcomes', 0, 'issues') || []).map do |i|
             { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
           end
-          issues ||= []
           # this is circuitous, ideally we would map this response directly to message_hashes
           FHIR::OperationOutcome.new(issue: issues)
         end
