@@ -113,10 +113,10 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  describe '#find_by_short_id!' do
+  describe '#find_by_short_id' do
     it 'raises standard error when entity not found by short id' do
       expect do
-        instance.find_by_short_id!(Inferno::Repositories::Tests.new, 'does_not_exist')
+        instance.find_by_short_id(Inferno::Repositories::Tests.new, 'does_not_exist')
       end.to raise_error(StandardError)
     end
   end

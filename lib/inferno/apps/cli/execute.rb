@@ -168,16 +168,16 @@ module Inferno
       def groups
         return [] if options[:groups].blank?
 
-        @groups ||= options[:groups]&.map { |short_id| find_by_short_id!(test_groups_repo, short_id) }
+        @groups ||= options[:groups]&.map { |short_id| find_by_short_id(test_groups_repo, short_id) }
       end
 
       def tests
         return [] if options[:tests].blank?
 
-        @tests ||= options[:tests]&.map { |short_id| find_by_short_id!(tests_repo, short_id) }
+        @tests ||= options[:tests]&.map { |short_id| find_by_short_id(tests_repo, short_id) }
       end
 
-      def find_by_short_id!(repo, short_id)
+      def find_by_short_id(repo, short_id)
         repo.all.each do |entity|
           return entity if short_id == entity.short_id && suite.id == entity.suite.id
         end
