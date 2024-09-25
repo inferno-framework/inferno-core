@@ -8,6 +8,7 @@ gemspec
 # kits):
 # - Uncomment this line (and change test kit gem as necessary):
 # gem 'onc_certification_g10_test_kit'
+gem 'us_core_test_kit'
 
 # - Run `bundle`
 # - Uncomment (and change as necessary) the require at the top of

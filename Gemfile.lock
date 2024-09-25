@@ -39,6 +39,7 @@ GEM
       zeitwerk (~> 2.3)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
+    aes_key_wrap (1.1.0)
     ast (2.4.2)
     backports (3.23.0)
     base62-rb (0.3.1)
@@ -46,6 +47,7 @@ GEM
     bcp47 (0.3.3)
       i18n
     bigdecimal (3.1.8)
+    bindata (2.5.0)
     blueprinter (0.25.2)
     byebug (11.1.3)
     codecov (0.5.2)
@@ -158,11 +160,17 @@ GEM
     http-accept (1.7.0)
     http-cookie (1.0.7)
       domain_name (~> 0.5)
+    httpclient (2.8.3)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     io-console (0.6.0)
     irb (1.6.2)
       reline (>= 0.3.0)
+    json-jwt (1.15.3.1)
+      activesupport (>= 4.2)
+      aes_key_wrap
+      bindata
+      httpclient
     jwt (2.9.0)
       base64
     kramdown (2.4.0)
@@ -276,6 +284,11 @@ GEM
       simplecov (~> 0.19)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.3)
+    smart_app_launch_test_kit (0.4.3)
+      inferno_core (>= 0.4.2)
+      json-jwt (~> 1.15.3)
+      jwt (~> 2.6)
+      tls_test_kit (~> 0.2.0)
     sqlite3 (1.7.3-arm64-darwin)
     sqlite3 (1.7.3-x86_64-darwin)
     sqlite3 (1.7.3-x86_64-linux)
@@ -287,6 +300,8 @@ GEM
     strscan (3.1.0)
     thor (1.2.2)
     tilt (2.4.0)
+    tls_test_kit (0.2.2)
+      inferno_core (>= 0.4.2)
     tty-color (0.6.0)
     tty-markdown (0.7.2)
       kramdown (>= 1.16.2, < 3.0)
@@ -300,6 +315,10 @@ GEM
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.1.0)
     unicode_utils (1.4.0)
+    us_core_test_kit (0.8.1)
+      inferno_core (>= 0.4.37)
+      smart_app_launch_test_kit (>= 0.4.0)
+      tls_test_kit (~> 0.2.0)
     webmock (3.14.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
@@ -334,6 +353,7 @@ DEPENDENCIES
   rubocop-sequel
   simplecov
   simplecov-cobertura
+  us_core_test_kit
   webmock
   yard
   yard-junk
