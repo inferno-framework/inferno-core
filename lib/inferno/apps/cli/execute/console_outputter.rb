@@ -1,5 +1,4 @@
 require 'pastel'
-require_relative 'abstract_outputter'
 require_relative '../../web/serializers/test_run'
 require_relative '../../web/serializers/result'
 
@@ -7,7 +6,7 @@ module Inferno
   module CLI
     class Execute
       # @private
-      class ConsoleOutputter < AbstractOutputter
+      class ConsoleOutputter
         COLOR = Pastel.new
         CHECKMARK = "\u2713".freeze
         BAR = ('=' * 80).freeze
@@ -44,9 +43,9 @@ module Inferno
 
         def print_end_message(options); end
 
-        def print_error(_options, exception)
+        def print_error(options, exception)
           puts COLOR.red "Error: #{exception.full_message}"
-          verbose_print(exception.backtrace&.join('\n'))
+          verbose_print(options, exception.backtrace&.join('\n'))
         end
 
         # private
