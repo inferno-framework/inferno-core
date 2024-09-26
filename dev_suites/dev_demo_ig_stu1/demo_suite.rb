@@ -1,5 +1,4 @@
 # require 'onc_certification_g10_test_kit'
-require 'us_core_test_kit'
 require_relative 'demo_endpoint'
 require_relative 'groups/demo_group'
 
