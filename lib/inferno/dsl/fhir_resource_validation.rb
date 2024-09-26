@@ -165,8 +165,6 @@ module Inferno
             raise Inferno::Exceptions::ErrorInValidatorException, "Unable to connect to validator at #{url}."
           end
 
-          5.times { Application['logger'].info '-' * 80 } if response.body.start_with? '"'
-          5.times { Application['logger'].info '*' * 80 } unless response.body.is_a? String
           outcome = operation_outcome_from_validator_response(response, runnable)
 
           message_hashes = message_hashes_from_outcome(outcome, resource, profile_url)
@@ -243,10 +241,9 @@ module Inferno
           validator_session_id =
             validator_session_repo.find_validator_session_id(test_suite_id,
                                                              name.to_s, requirements)
-          if validator_session_id
-            # Application['logger'].info "---WR--- OLD: #{@session_id} --- NEW: #{validator_session_id}"
-            @session_id = validator_session_id
-          end
+
+          @session_id = validator_session_id if validator_session_id
+
           wrapped_resource = {
             cliContext: {
               **cli_context.definition,
@@ -284,19 +281,15 @@ module Inferno
 
         # @private
         def operation_outcome_from_hl7_wrapped_response(response_hash)
-          5.times { Application['logger'].info 'X' * 80 } if response_hash.is_a? String
-          Application['logger'].info response_hash[0] if response_hash.is_a? String
           response_hash = JSON.parse(response_hash) if response_hash.is_a? String
 
-          if response_hash['sessionId'] && (response_hash['sessionId'] != @session_id)
-
+          if response_hash['sessionId'] && response_hash['sessionId'] != @session_id
             validator_session_repo.save(test_suite_id:, validator_session_id: response_hash['sessionId'],
                                         validator_name: name.to_s, suite_options: requirements)
             @session_id = response_hash['sessionId']
           end
 
           # assume for now that one resource -> one request
-          5.times { Application['logger'].info '+' * 80 } if response_hash.is_a? String
           issues = (response_hash.dig('outcomes', 0, 'issues') || []).map do |i|
             { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
           end
@@ -312,7 +305,6 @@ module Inferno
         # @private
         def operation_outcome_from_validator_response(response, runnable)
           sanitized_body = remove_invalid_characters(response.body)
-          5.times { Application['logger'].info '$' * 80 } if sanitized_body.start_with? '"'
 
           operation_outcome_from_hl7_wrapped_response(JSON.parse(sanitized_body))
         rescue JSON::ParserError
