@@ -281,6 +281,9 @@ module Inferno
 
         # @private
         def operation_outcome_from_hl7_wrapped_response(response_hash)
+          # This is a workaround for some test kits which for legacy reasons
+          # call this method directly with a String instead of a Hash.
+          # See FI-3178.
           response_hash = JSON.parse(remove_invalid_characters(response_hash)) if response_hash.is_a? String
 
           if response_hash['sessionId'] && response_hash['sessionId'] != @session_id
