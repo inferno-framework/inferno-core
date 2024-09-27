@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    inferno_core (0.4.42)
+    inferno_core (0.4.43)
       activesupport (~> 6.1.7.5)
       base62-rb (= 0.3.1)
       blueprinter (= 0.25.2)
@@ -18,6 +18,7 @@ PATH
       hanami-controller (= 2.0.0)
       hanami-router (= 2.0.0)
       oj (= 3.11.0)
+      pastel (~> 0.8.0)
       pry
       pry-byebug
       puma (~> 5.6.7)
@@ -88,7 +89,7 @@ GEM
       zeitwerk (~> 2.6)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
-    faraday (1.10.3)
+    faraday (1.10.4)
       faraday-em_http (~> 1.0)
       faraday-em_synchrony (~> 1.0)
       faraday-excon (~> 1.1)
@@ -111,7 +112,7 @@ GEM
     faraday-patron (1.0.0)
     faraday-rack (1.0.0)
     faraday-retry (1.0.3)
-    faraday_middleware (1.2.0)
+    faraday_middleware (1.2.1)
       faraday (~> 1.0)
     fhir_client (5.0.3)
       activesupport (>= 3)
@@ -163,7 +164,7 @@ GEM
     io-console (0.6.0)
     irb (1.6.2)
       reline (>= 0.3.0)
-    jwt (2.9.0)
+    jwt (2.9.1)
       base64
     kramdown (2.4.0)
       rexml
