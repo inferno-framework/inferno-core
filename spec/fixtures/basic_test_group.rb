@@ -4,7 +4,8 @@ module BasicTestSuite
 
     input :input1, :input2
     test 'demo_test' do
-      1 + 1
+      id :demo_test
+      run { 1 + 1 }
     end
   end
 end
