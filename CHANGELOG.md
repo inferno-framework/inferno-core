@@ -1,7 +1,10 @@
+## 0.4.43
+* patch undefined method for nil on validator 500 response by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/530
+* FI-3172: Fix validator sessions by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/531
+
 ## 0.4.42
 * FI-2887 Remove banner info from readme because that belongs in the docs site. by @arscan in https://github.com/inferno-framework/inferno-core/pull/527
 * FI-3112: Fixed JWKS Template Path Used in Unit Tests by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/526
-
 
 ## 0.4.41
 * Include JSON files in gem package by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/524
