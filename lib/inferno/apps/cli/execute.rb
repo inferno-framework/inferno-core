@@ -84,7 +84,7 @@ module Inferno
       end
 
       def selected_runnables
-        groups + tests
+        shorts + groups + tests
       end
 
       def run_one(runnable)
@@ -165,6 +165,18 @@ module Inferno
         end
       end
 
+      def shorts
+        return [] if options[:short_ids].blank?
+
+        @shorts ||= options[:short_ids]&.map do |short_id|
+          find_by_short_id(test_groups_repo, short_id)
+        rescue StandardError => maybe_not_found_error
+          raise maybe_not_found_error unless maybe_not_found_error.message == short_id_not_found_message(short_id)
+
+          find_by_short_id(tests_repo, short_id)
+        end
+      end
+
       def groups
         return [] if options[:groups].blank?
 
@@ -181,7 +193,11 @@ module Inferno
         repo.all.each do |entity|
           return entity if short_id == entity.short_id && suite.id == entity.suite.id
         end
-        raise StandardError, "Group or test #{short_id} not found"
+        raise StandardError, short_id_not_found_message(short_id)
+      end
+
+      def short_id_not_found_message(short_id)
+        "Group or test #{short_id} not found"
       end
 
       def thor_hash_to_suite_options_array(hash = {})
