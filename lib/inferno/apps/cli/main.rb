@@ -5,6 +5,7 @@ require_relative 'suite'
 require_relative 'suites'
 require_relative 'new'
 require_relative '../../version'
+require_relative 'execute'
 
 module Inferno
   module CLI
@@ -63,6 +64,70 @@ module Inferno
       desc 'version', "Output Inferno core version (#{Inferno::VERSION})"
       def version
         puts "Inferno Core v#{Inferno::VERSION}"
+      end
+
+      EXECUTE_HELP = <<~END_OF_HELP.freeze
+        Run Inferno tests in the command line. Exits with 0 only if test entity passes.
+        Must be run with test kit as working directory.
+
+        You must have background services running: `bundle exec inferno services start`
+
+        You can view suite ids with: `bundle exec inferno suites`
+
+        Examples:
+
+            `bundle exec inferno execute --suite dev_validator \
+                                        --inputs "url:https://hapi.fhir.org/baseR4" \
+                                                 patient_id:1234321`
+            => Outputs test results
+
+            `bundle exec inferno execute --suite dev_validator \
+                                         --inputs "url:https://hapi.fhir.org/baseR4" \
+                                                  patient_id:1234321 \
+                                         --tests 1.01 1.02`
+            => Run specific tests from suite
+      END_OF_HELP
+      desc 'execute', 'Run Inferno tests in command line'
+      long_desc EXECUTE_HELP, wrap: false
+      option :suite,
+             aliases: ['-s'],
+             type: :string,
+             desc: 'Test suite id to run or to select groups and tests from',
+             banner: 'id'
+      option :suite_options,
+             aliases: ['-u'], # NOTE: -o will be for outputter
+             type: :hash,
+             desc: 'Suite options'
+      option :groups,
+             aliases: ['-g'],
+             type: :array,
+             desc: 'Series of test group short ids (AKA sequence number) to run, requires suite'
+      option :tests,
+             aliases: ['-t'],
+             type: :array,
+             desc: 'Series of test short ids (AKA sequence number) to run, requires suite'
+      option :inputs,
+             aliases: ['-i'],
+             type: :hash,
+             desc: 'Inputs (i.e: --inputs=foo:bar goo:baz)'
+      option :verbose,
+             aliases: ['-v'],
+             type: :boolean,
+             default: false,
+             desc: 'Output additional information for debugging'
+      option :help,
+             aliases: ['-h'],
+             type: :boolean,
+             default: false,
+             desc: 'Display this message'
+      def execute
+        Execute.boot_full_inferno
+        Execute.new.run(options)
+      end
+
+      # https://github.com/rails/thor/issues/244 - Make Thor exit(1) on Errors/Exceptions
+      def self.exit_on_failure?
+        true
       end
 
       private
