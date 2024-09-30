@@ -45,7 +45,7 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
           () => (
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{test.description || ''}</ReactMarkdown>
           ),
-          [test.description]
+          [test.description],
         )}
       </Typography>
     </Box>

@@ -26,7 +26,7 @@ const DrawerSkeleton: FC<Record<string, never>> = () => {
         {treeItemSkeleton}
         {nestedTreeItemSkeleton}
         {nestedTreeItemSkeleton}
-      </div>
+      </div>,
     );
   }
 

@@ -14,7 +14,7 @@ const DownloadFileButton: FC<DownloadFileButtonProps> = ({ fileName, fileType })
       [(document.getElementById(`${fileType}-serial-input`) as HTMLInputElement)?.value],
       {
         type: 'text/plain',
-      }
+      },
     );
     downloadLink.href = URL.createObjectURL(file);
     downloadLink.download = `${fileName}.${fileType}`;

@@ -3,12 +3,13 @@ import { render, screen } from '@testing-library/react';
 import Footer from '..';
 import ThemeProvider from 'components/ThemeProvider';
 import { basePath } from '~/api/infernoApiService';
+import { expect, test } from 'vitest';
 
 test('renders Inferno Footer', () => {
   render(
     <ThemeProvider>
       <Footer version={'dummyVersion'} />
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 });
 
@@ -16,7 +17,7 @@ test('has no links if not provided any', () => {
   render(
     <ThemeProvider>
       <Footer version={'dummyVersion'} />
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   // testing a negative is nearly meaningless
@@ -33,7 +34,7 @@ test('can be given a list of links to display', () => {
   render(
     <ThemeProvider>
       <Footer version={'dummyVersion'} linkList={links} />
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   expect(screen.getByRole('link', { name: /One/ })).toHaveAttribute('href', 'http://one.com');
@@ -49,11 +50,11 @@ test('displays API link with scheme and host name', () => {
   render(
     <ThemeProvider>
       <Footer version={'dummyVersion'} />
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   expect(screen.getByRole('link', { name: /API/ })).toHaveAttribute(
     'href',
-    `${apiBase}?scheme=${scheme}&host=${fullHost}`
+    `${apiBase}?scheme=${scheme}&host=${fullHost}`,
   );
 });

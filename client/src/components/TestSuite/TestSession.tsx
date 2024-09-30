@@ -77,7 +77,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
   const [runnableType, setRunnableType] = React.useState<RunnableType>(RunnableType.TestSuite);
   const [resultsMap, setResultsMap] = React.useState<Map<string, Result>>(
-    resultsToMap(previousResults)
+    resultsToMap(previousResults),
   );
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [testRunCancelled, setTestRunCancelled] = React.useState<boolean>(false);
@@ -87,7 +87,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const poller = useTimeout();
   const runnableMap = React.useMemo(
     () => mapRunnableToId(testSession.test_suite),
-    [testSession.test_suite]
+    [testSession.test_suite],
   );
   const splitLocation = useLocation().hash.replace('#', '').split('/');
   let suiteName = splitLocation[0];
@@ -104,7 +104,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const selectedRunnable = runnableMap.get(suiteName) ? suiteName : testSession.test_suite.id;
 
   const [inputsRunnable, setInputsRunnable] = React.useState(
-    runnableMap.get(selectedRunnable) || null
+    runnableMap.get(selectedRunnable) || null,
   );
 
   resultsMap.forEach((result, runnableId) => {
@@ -294,7 +294,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         .catch((e: Error) =>
           enqueueSnackbar(`Error while cancelling test run: ${e.message}`, {
             variant: 'error',
-          })
+          }),
         );
     }
   };

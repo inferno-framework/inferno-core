@@ -47,21 +47,21 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }
           'error',
           errorMessages.length > 1
             ? `There are ${errorMessages.length} configuration errors that must be resolved.`
-            : `There is 1 configuration error that must be resolved.`
+            : `There is 1 configuration error that must be resolved.`,
         )}
       {warningMessages.length > 0 &&
         alert(
           'warning',
           warningMessages.length > 1
             ? `There are ${warningMessages.length} configuration warnings.`
-            : `There is 1 configuration warning.`
+            : `There is 1 configuration warning.`,
         )}
       {infoMessages.length > 0 &&
         alert(
           'info',
           infoMessages.length > 1
             ? `There are ${infoMessages.length} configuration errors.`
-            : `There is 1 configuration message.`
+            : `There is 1 configuration message.`,
         )}
     </>
   );

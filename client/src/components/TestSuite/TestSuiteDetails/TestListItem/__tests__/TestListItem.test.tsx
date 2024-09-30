@@ -5,6 +5,7 @@ import ThemeProvider from 'components/ThemeProvider';
 
 import TestListItem from '../TestListItem';
 import { Message, Request, Result, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
+import { describe, expect, it, test } from 'vitest';
 
 describe('The TestListItem component', () => {
   test('it renders a table with the test description as markdown', () => {
@@ -31,7 +32,7 @@ describe('The TestListItem component', () => {
         <ThemeProvider>
           <TestListItem test={test} view="run" />
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const accordion = screen.getByTestId('test_id-summary');
@@ -74,7 +75,7 @@ describe('The TestListItem component', () => {
           <ThemeProvider>
             <TestListItem test={test} view="run" />
           </ThemeProvider>
-        </BrowserRouter>
+        </BrowserRouter>,
       );
 
       const target = screen.getByTestId('test_id-summary');
@@ -128,7 +129,7 @@ describe('The TestListItem component', () => {
           <ThemeProvider>
             <TestListItem test={test} view="run" />
           </ThemeProvider>
-        </BrowserRouter>
+        </BrowserRouter>,
       );
 
       const target = screen.getByLabelText('View 1 request(s)');
@@ -183,7 +184,7 @@ describe('The TestListItem component', () => {
           <ThemeProvider>
             <TestListItem test={test} view="run" />
           </ThemeProvider>
-        </BrowserRouter>
+        </BrowserRouter>,
       );
 
       const target = screen.getByLabelText('View 1 message(s)');

@@ -134,12 +134,12 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             title="Test Suites"
             options={(testSuites || []).sort(
               (testSuite1: TestSuite, testSuite2: TestSuite): number =>
-                testSuite1.title.localeCompare(testSuite2.title)
+                testSuite1.title.localeCompare(testSuite2.title),
             )}
             setSelection={setSelected}
             submitAction={() =>
               startTestingClick(
-                testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen)
+                testSuites?.find((suite: TestSuite) => suite.id === testSuiteChosen),
               )
             }
             submitText="Select Suite"

@@ -8,6 +8,7 @@ import {
   InputLabel,
   List,
   ListItem,
+  ListItemButton,
   Typography,
 } from '@mui/material';
 import { OAuthCredentials, TestInput } from '~/models/testSuiteModels';
@@ -102,7 +103,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     );
 
     return (
-      <ListItem disabled={field.locked} key={field.name}>
+      <ListItemButton disabled={field.locked} key={field.name} component="li">
         <FormControl
           component="fieldset"
           id={`requirement${index}_input`}
@@ -142,7 +143,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
             }}
           />
         </FormControl>
-      </ListItem>
+      </ListItemButton>
     );
   };
 

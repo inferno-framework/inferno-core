@@ -32,6 +32,6 @@ export const useAppStore = create<AppStore>()(
       setTestSession: (testSession: TestSession | undefined) => set({ testSession: testSession }),
       setWindowIsSmall: (windowIsSmall: boolean | undefined) =>
         set({ windowIsSmall: windowIsSmall }),
-    })
-  )
+    }),
+  ),
 );

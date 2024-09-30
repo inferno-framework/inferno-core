@@ -4,7 +4,7 @@ import ThemeProvider from 'components/ThemeProvider';
 import RequestDetailModal from '../RequestDetailModal';
 import { mockedRequest } from '../__mocked_data__/mockData';
 
-import { vi } from 'vitest';
+import { expect, test, vi } from 'vitest';
 
 const hideModalMock = vi.fn();
 
@@ -17,7 +17,7 @@ test('renders Request List Detail Modal', () => {
         hideModal={hideModalMock}
         usedRequest={true}
       />
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 
   const modalElement = screen.getByTestId('requestDetailModal');
