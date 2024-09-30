@@ -1,6 +1,5 @@
-import React from 'react';
-import { act } from 'react-dom/test-utils';
-import { vi } from 'vitest';
+import React, { act } from 'react';
+import { describe, expect, test, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { render, screen, waitFor } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
@@ -22,8 +21,8 @@ describe('The RequestsList component', () => {
           <SnackbarProvider>
             <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
           </SnackbarProvider>
-        </ThemeProvider>
-      )
+        </ThemeProvider>,
+      ),
     );
 
     const renderedRequests = document.querySelectorAll('tbody > tr');
@@ -52,13 +51,13 @@ describe('The RequestsList component', () => {
           <SnackbarProvider>
             <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
           </SnackbarProvider>
-        </ThemeProvider>
-      )
+        </ThemeProvider>,
+      ),
     );
 
     const buttons = screen.getAllByRole('button');
     const copyButton = buttons[0];
-    userEvent.click(copyButton);
+    await userEvent.click(copyButton);
 
     await waitFor(() => expect(mockedWriteText).toHaveBeenCalledTimes(1));
 
@@ -78,14 +77,14 @@ describe('The RequestsList component', () => {
           <SnackbarProvider>
             <RequestList requests={requests} resultId="abc" updateRequest={() => {}} view="run" />
           </SnackbarProvider>
-        </ThemeProvider>
-      )
+        </ThemeProvider>,
+      ),
     );
 
     const buttons = screen.getAllByRole('button');
     const showDetailsButton = buttons[1];
 
-    userEvent.click(showDetailsButton);
+    await userEvent.click(showDetailsButton);
     const modal = screen.getByRole('dialog');
     expect(modal).toBeInTheDocument();
   });

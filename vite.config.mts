@@ -2,7 +2,7 @@
 
 import { defineConfig } from 'vite';
 import path from 'path';
-import eslint from 'vite-plugin-eslint';
+import eslint from 'vite-plugin-eslint2';
 
 export default defineConfig({
   clearScreen: true,

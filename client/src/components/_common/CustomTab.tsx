@@ -20,7 +20,7 @@ const CustomTab = styled((props: CustomTabProps) => <Tab disableRipple {...props
         color: theme.palette.primary.dark,
       },
     },
-  })
+  }),
 );
 
 export default CustomTab;

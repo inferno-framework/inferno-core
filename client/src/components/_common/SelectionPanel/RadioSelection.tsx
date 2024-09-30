@@ -22,7 +22,7 @@ const RadioSelection: FC<RadioSelectionProps> = ({
     value: option && option.list_options ? option.list_options[0].value : '',
   }));
   const [selectedRadioOptions, setSelectedRadioOptions] = React.useState<RadioOptionSelection[]>(
-    initialSelectedRadioOptions || []
+    initialSelectedRadioOptions || [],
   );
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const RadioSelection: FC<RadioSelectionProps> = ({
 
   const changeRadioOption = (option_id: string, value: string): void => {
     const newOptions = selectedRadioOptions.map((option: RadioOptionSelection) =>
-      option.id === option_id ? { id: option.id, value: value } : { ...option }
+      option.id === option_id ? { id: option.id, value: value } : { ...option },
     );
     setSelectedRadioOptions(newOptions);
     setParentSelections(newOptions);

@@ -135,14 +135,14 @@ const TestSessionWrapper: FC<unknown> = () => {
       ?.find((suite: TestSuite) => suite.id === testSession.test_suite_id)
       ?.suite_options?.reduce(
         (acc, option) => ({ ...acc, [option.id]: option.list_options || [] }),
-        {}
+        {},
       );
     const parsedOptions = suiteOptionChoices
       ? testSession.suite_options
           ?.map((option: SuiteOption) =>
             suiteOptionChoices[option.id].filter(
-              (choice: SuiteOptionChoice) => choice.value === option.value
-            )
+              (choice: SuiteOptionChoice) => choice.value === option.value,
+            ),
           )
           .flat()
           .filter((v) => v) // Remove empty values

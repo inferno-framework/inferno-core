@@ -62,7 +62,7 @@ export const setIsRunning = (runnable: Runnable, value: boolean) => {
 
 export const shouldShowDescription = (
   runnable: Runnable,
-  description: JSX.Element | undefined
+  description: JSX.Element | undefined,
 ): boolean => !!description && !!runnable.description && runnable.description.length > 0;
 
 export const testRunInProgress = (activeRunnables: Record<string, string>, location: string) => {

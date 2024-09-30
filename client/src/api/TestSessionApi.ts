@@ -10,7 +10,7 @@ import { getApiEndpoint } from './infernoApiService';
 
 export function getLastTestRun(test_session_id: string): Promise<TestRun | null> {
   const testSessionsEndpoint = getApiEndpoint(
-    '/test_sessions/' + test_session_id + '/last_test_run'
+    '/test_sessions/' + test_session_id + '/last_test_run',
   );
   return fetch(testSessionsEndpoint)
     .then((response) => response.json())
@@ -31,7 +31,7 @@ export function getTestSession(test_session_id: string): Promise<TestSession | n
 export function postTestSessions(
   testSuiteID: string,
   presetId: string | null,
-  suiteOptions: SuiteOption[] | null
+  suiteOptions: SuiteOption[] | null,
 ): Promise<TestSession | null> {
   const testSuiteIDParameter = { name: 'test_suite_id', value: testSuiteID };
   const postEndpoint = getApiEndpoint('/test_sessions', [testSuiteIDParameter]);
@@ -69,7 +69,7 @@ export function getTestSessionData(test_session_id: string): Promise<TestOutput[
 
 export function applyPreset(test_session_id: string, preset_id: string): Promise<null> {
   const endpoint = getApiEndpoint(
-    `/test_sessions/${test_session_id}/session_data/apply_preset?preset_id=${preset_id}`
+    `/test_sessions/${test_session_id}/session_data/apply_preset?preset_id=${preset_id}`,
   );
 
   return fetch(endpoint, { method: 'PUT' }).then((response) => {

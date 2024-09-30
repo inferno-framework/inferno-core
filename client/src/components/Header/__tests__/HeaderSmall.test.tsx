@@ -6,6 +6,7 @@ import Header from '../Header';
 
 import { MemoryRouter } from 'react-router-dom';
 import { useAppStore } from '~/store/app';
+import { beforeEach, expect, test } from 'vitest';
 
 // boilerplate for mocking zustand which uses hooks outside of a component
 beforeEach(() => {
@@ -13,7 +14,7 @@ beforeEach(() => {
   result.current.windowIsSmall = true;
 });
 
-test('renders narrow screen Inferno Header', () => {
+test('renders narrow screen Inferno Header', async () => {
   let drawerOpen = false;
 
   render(
@@ -25,7 +26,7 @@ test('renders narrow screen Inferno Header', () => {
           toggleDrawer={() => (drawerOpen = !drawerOpen)}
         />
       </ThemeProvider>
-    </MemoryRouter>
+    </MemoryRouter>,
   );
 
   const buttonElement = screen.getAllByRole('button')[0];
@@ -33,6 +34,6 @@ test('renders narrow screen Inferno Header', () => {
 
   // test icon drawer control
   expect(drawerOpen).toBe(false);
-  userEvent.click(buttonElement);
+  await userEvent.click(buttonElement);
   expect(drawerOpen).toBe(true);
 });

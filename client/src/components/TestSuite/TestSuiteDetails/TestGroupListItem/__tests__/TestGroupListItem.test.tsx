@@ -4,6 +4,7 @@ import ThemeProvider from 'components/ThemeProvider';
 
 import TestGroupListItem from '../TestGroupListItem';
 import { TestGroup } from '~/models/testSuiteModels';
+import { describe, expect, test } from 'vitest';
 
 describe('The expandable TestGroupListItem component', () => {
   test('it renders an accordion for expandable tests and test groups', () => {
@@ -20,7 +21,7 @@ describe('The expandable TestGroupListItem component', () => {
     render(
       <ThemeProvider>
         <TestGroupListItem testGroup={testGroup} view="run" />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const accordion = screen.getByTestId('test_group_id-summary');
@@ -45,7 +46,7 @@ describe('The navigable TestGroupListItem component', () => {
     render(
       <ThemeProvider>
         <TestGroupListItem testGroup={testGroup} view="run" />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     expect(screen.getByText('Test Group').closest('a'));

@@ -37,7 +37,6 @@ export const codeResponseWithHtml: Request = {
   verb: 'get',
   result_id: 'b01dce20-72a8-43e5-b99d-34f3843eddee',
   response_headers: [{ name: 'content-type', value: 'text/html; charset=UTF-8' }],
-  // eslint-disable-next-line prettier/prettier
   response_body: '<html>html has newlines already</html>',
 };
 
@@ -51,7 +50,6 @@ export const codeResponseWithJson: Request = {
   verb: 'get',
   result_id: 'b01dce20-72a8-43e5-b99d-34f3843eddee',
   response_headers: [{ name: 'content-type', value: 'application/fhir+json charset=UTF-8' }],
-  // eslint-disable-next-line prettier/prettier
   response_body:
     '{"resourceType": "OperationOutcome", "issue": [ {"severity": "error", "code": "processing", "diagnostics": "Bearer token is invalid or not supplied Supplied Bearer Token: null" } ]}',
 };

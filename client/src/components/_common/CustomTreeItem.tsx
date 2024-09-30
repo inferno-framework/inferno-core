@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
   TreeItem,
   TreeItemProps,
-  useTreeItem,
+  useTreeItemState,
   TreeItemContentProps,
   treeItemClasses,
 } from '@mui/x-tree-view/TreeItem';
@@ -18,13 +18,13 @@ interface CustomTreeItemContentProps extends TreeItemContentProps {
 
 const CustomContent = React.forwardRef(function CustomContent(
   props: CustomTreeItemContentProps,
-  ref
+  ref,
 ) {
   const {
     classes,
     className,
     label,
-    nodeId,
+    itemId,
     icon: iconProp,
     expansionIcon,
     displayIcon,
@@ -41,14 +41,14 @@ const CustomContent = React.forwardRef(function CustomContent(
     handleExpansion,
     handleSelection,
     preventSelection,
-  } = useTreeItem(nodeId);
+  } = useTreeItemState(itemId);
 
   const navigate = useNavigate();
 
   const icon = iconProp || expansionIcon || displayIcon;
 
   const handleInteractionEvent = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>,
   ) => {
     const e = event.target as HTMLInputElement;
     const iconTestName = e.getAttribute('data-testid');
@@ -63,13 +63,13 @@ const CustomContent = React.forwardRef(function CustomContent(
   };
 
   const handleExpansionAction = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>,
   ) => {
     handleExpansion(event as React.MouseEvent<HTMLDivElement, MouseEvent>);
   };
 
   const handleSelectionAction = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>,
   ) => {
     handleSelection(event as React.MouseEvent<HTMLDivElement, MouseEvent>);
     if (testId) navigate(`#${testId}`);
