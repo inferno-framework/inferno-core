@@ -170,7 +170,7 @@ module Inferno
 
         @shorts ||= options[:short_ids]&.map do |short_id|
           find_by_short_id(test_groups_repo, short_id)
-        rescue StandardError => maybe_not_found_error
+        rescue StandardError => maybe_not_found_error # rubocop:disable Naming/RescuedExceptionsVariableName
           raise maybe_not_found_error unless maybe_not_found_error.message == short_id_not_found_message(short_id)
 
           find_by_short_id(tests_repo, short_id)
