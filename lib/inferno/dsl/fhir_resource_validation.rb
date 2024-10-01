@@ -78,7 +78,7 @@ module Inferno
         #     url 'http://example.com/validator'
         #     cli_context do
         #       noExtensibleBindingMessages true
-        # .     allowExampleUrls true
+        #       allowExampleUrls true
         #       txServer nil
         #     end
         #   end
