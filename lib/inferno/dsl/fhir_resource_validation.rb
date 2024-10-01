@@ -312,6 +312,7 @@ module Inferno
         # @private
         def operation_outcome_from_validator_response(response, runnable)
           sanitized_body = remove_invalid_characters(response.body)
+
           operation_outcome_from_hl7_wrapped_response(JSON.parse(sanitized_body))
         rescue JSON::ParserError
           runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{sanitized_body}")
