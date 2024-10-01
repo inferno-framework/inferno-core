@@ -74,18 +74,10 @@ module Inferno
         #
         # @example
         #   fhir_resource_validator do
-        #     url 'http://example.com/validator'
-        #     cli_context do
-        #       noExtensibleBindingMessages true
-        #       txServer nil
-        #     end
-        #   end
-        #
-        # @example
-        #   fhir_resource_validator do
         #     url 'http://example.org/validator'
         #     cli_context({
         #       noExtensibleBindingMessages: true,
+        # .     allowExampleUrls: true,
         #       txServer: nil
         #     })
         #   end
