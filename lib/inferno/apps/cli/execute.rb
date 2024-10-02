@@ -43,10 +43,32 @@ module Inferno
         outputter.print_around_run(options) do
           if selected_runnables.empty?
             run_one(suite)
+
             results = test_runs_repo.results_for_test_run(test_run(suite).id).reverse
           else
             selected_runnables.each do |runnable|
               run_one(runnable)
+
+              # Since Inferno can only have one test_run executing at a time per test_session,
+              # and each call to `inferno execute` represents one test_session, we block until
+              # each runnable until result is achieved 
+              loop do
+                # @test_runs hashmap is a function of runnable entity and time. Since the CLI
+                # may have the same runnable inputted multiple times, the time MUST vary in
+                # between different runs of the same runnable entity. 1s sleep assumes all
+                # machines have time precision upto 1 second.
+                sleep(1)
+
+                # TODO: this fails because Time.current changes between the first call to `test_run`
+                # and the second call on the same exact runnable, (DUH). So either a map of test run
+                # to time of first call needs to be constructed or another key needs to be used.
+                last_result = results_repo.result_for_test_run(
+                                runnable.reference_hash.merge(test_run_id: test_run(runnable).id)
+                              )
+
+                break unless %w[queued running].include? last_result.result
+              end
+
               results += test_runs_repo.results_for_test_run(test_run(runnable).id).reverse
             end
           end
@@ -111,14 +133,23 @@ module Inferno
         @test_runs_repo ||= Inferno::Repositories::TestRuns.new
       end
 
-      def test_run(runnable_param)
+      def test_run(runnable)
         @test_runs ||= {}
 
-        @test_runs[runnable_param] ||= test_runs_repo.create(
-          create_params(test_session, runnable_param).merge({ status: 'queued' })
+        key = runnable.hash.to_s + '-' + Time.current.iso8601
+
+        @test_runs[key] ||= test_runs_repo.create(
+          create_params(test_session, runnable).merge({ status: 'queued' })
         )
 
-        @test_runs[runnable_param]
+        pp @test_runs.keys
+        pp @test_runs.keys.map(&:hash)
+
+        @test_runs[runnable]
+      end
+
+      def results_repo
+        @results_repo ||= Inferno::Repositories::Results.new
       end
 
       def test_groups_repo
