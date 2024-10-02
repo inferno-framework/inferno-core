@@ -73,19 +73,23 @@ module Inferno
         # there is no check that the fields are correct.
         #
         # @example
+        #   # Passing fields in a block
         #   fhir_resource_validator do
         #     url 'http://example.com/validator'
         #     cli_context do
         #       noExtensibleBindingMessages true
+        #       allowExampleUrls true
         #       txServer nil
         #     end
         #   end
         #
         # @example
+        #   # Passing fields in a Hash
         #   fhir_resource_validator do
         #     url 'http://example.org/validator'
         #     cli_context({
         #       noExtensibleBindingMessages: true,
+        #       allowExampleUrls: true,
         #       txServer: nil
         #     })
         #   end
