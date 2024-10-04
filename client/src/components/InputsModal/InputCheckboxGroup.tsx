@@ -34,6 +34,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
     try {
       // Parse JSON string of values
       inputMapValues = JSON.parse(inputsMap.get(requirement.name) as string) as string[];
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       // If not JSON string, then either array or single value
       if (Array.isArray(inputsMap.get(requirement.name))) {
@@ -56,7 +57,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
             : false), // default to false if defaultValues is not an array of checked values
           acc
         ),
-        {} as CheckboxValues
+        {} as CheckboxValues,
       );
     }
     return startingValues as CheckboxValues;

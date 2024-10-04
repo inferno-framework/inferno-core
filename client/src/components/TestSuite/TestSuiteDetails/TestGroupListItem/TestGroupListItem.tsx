@@ -47,7 +47,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       testGroup.result?.result === 'fail' ||
       testGroup.result?.result === 'error' ||
       testGroup.result?.result === 'skip' ||
-      view === 'report'
+      view === 'report',
   );
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
           testGroup.result?.result === 'fail' ||
           testGroup.result?.result === 'error' ||
           testGroup.result?.result === 'skip' ||
-          view === 'report'
+          view === 'report',
       );
     }
     setWarningCount(getProblemCount(testGroup, 'warning'));
@@ -74,7 +74,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
     const testProblemCount = testGroup.tests
       .map(
         (test) =>
-          test.result?.messages?.filter((message) => message.type === problemType).length || 0
+          test.result?.messages?.filter((message) => message.type === problemType).length || 0,
       )
       .reduce((sum, val) => sum + val, 0);
 

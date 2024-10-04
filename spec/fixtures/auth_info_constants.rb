@@ -4,7 +4,7 @@ module AuthInfoConstants
   REQUESTED_SCOPES = 'launch/patient openid fhirUser patient/*.*'.freeze
   ENCRYPTION_ALGORITHM = 'ES384'.freeze
   KID = '4b49a739d1eb115b3225f4cf9beb6d1b'.freeze
-  JWKS = File.read(File.join('lib', 'inferno', 'dsl', 'jwks.json')).freeze
+  JWKS = File.read(Inferno::JWKS.jwks_path).freeze
   class << self
     def token_info
       {

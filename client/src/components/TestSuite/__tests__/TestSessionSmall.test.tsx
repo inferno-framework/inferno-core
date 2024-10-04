@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { act } from 'react-dom/test-utils';
 import { render, renderHook, screen } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 import TestSessionComponent from '../TestSession';
 import { mockedTestSession, mockedResultsList } from '../__mocked_data__/mockData';
 import { useAppStore } from '~/store/app';
+import { beforeEach, expect, test } from 'vitest';
 
 // boilerplate for mocking zustand which uses hooks outside of a component
 beforeEach(() => {
@@ -33,8 +33,8 @@ test('renders narrow screen TestSession', async () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </MemoryRouter>
-    )
+      </MemoryRouter>,
+    ),
   );
 
   const testSessionTitleComponentList = screen.getAllByTestId('navigable-group-item');

@@ -36,7 +36,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
     value: option && option.list_options ? option.list_options[0].value : '',
   }));
   const [selectedSuiteOptions, setSelectedSuiteOptions] = React.useState<SuiteOption[]>(
-    initialSelectedSuiteOptions || []
+    initialSelectedSuiteOptions || [],
   );
   const [descriptionWidth, setDescriptionWidth] = React.useState<string>('');
   const [showPage, setShowPage] = React.useState<boolean>(false);

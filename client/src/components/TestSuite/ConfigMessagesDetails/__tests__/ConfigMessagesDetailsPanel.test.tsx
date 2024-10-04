@@ -5,6 +5,7 @@ import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 import { testSuites } from '~/components/App/__mocked_data__/mockData';
 import ConfigMessagesDetailsPanel from '../ConfigMessagesDetailsPanel';
+import { expect, test } from 'vitest';
 
 test('renders ConfigMessagesDetailsPanel', () => {
   render(
@@ -14,7 +15,7 @@ test('renders ConfigMessagesDetailsPanel', () => {
           <ConfigMessagesDetailsPanel testSuite={testSuites[0]} />
         </SnackbarProvider>
       </ThemeProvider>
-    </BrowserRouter>
+    </BrowserRouter>,
   );
 
   const tabsList = screen.getAllByRole('tab');

@@ -6,6 +6,7 @@ import ThemeProvider from 'components/ThemeProvider';
 import { mockedTestRun, getMockedResultsMap } from '../__mocked_data__/mockData';
 import TestRunProgressBar from '../TestRunProgressBar';
 import userEvent from '@testing-library/user-event';
+import { describe, expect, test } from 'vitest';
 
 describe('The TestRunProgressBar Component', () => {
   test('renders TestRunProgressBar', () => {
@@ -27,14 +28,14 @@ describe('The TestRunProgressBar Component', () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const progressBarElement = screen.getByTestId('progress-bar');
     expect(progressBarElement).toBeInTheDocument();
   });
 
-  test('clicking Cancel cancels the test run', () => {
+  test('clicking Cancel cancels the test run', async () => {
     let showProgressBar = true;
     let testRunCancelled = false;
 
@@ -53,11 +54,11 @@ describe('The TestRunProgressBar Component', () => {
             />
           </SnackbarProvider>
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const cancelButton = screen.getByRole('button');
-    userEvent.click(cancelButton);
+    await userEvent.click(cancelButton);
     expect(testRunCancelled).toEqual(true);
 
     setTimeout(() => {

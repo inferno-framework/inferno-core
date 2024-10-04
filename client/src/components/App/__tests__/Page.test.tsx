@@ -3,6 +3,7 @@ import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 import { render /* , waitFor */ } from '@testing-library/react';
 import { testSuites } from '~/components/App/__mocked_data__/mockData';
 import Page from '../Page';
+import { describe, it } from 'vitest';
 
 describe('The Page Component', () => {
   it('sets page title on render', /* async */ () => {

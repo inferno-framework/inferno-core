@@ -4,7 +4,7 @@ import { Test, TestGroup, TestSuite } from 'models/testSuiteModels';
 import TestSuiteTree, { TestSuiteTreeProps } from '../TestSuiteTree';
 import ThemeProvider from 'components/ThemeProvider';
 
-import { vi } from 'vitest';
+import { expect, test, vi } from 'vitest';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => {},
@@ -114,7 +114,7 @@ test('Test tree renders', () => {
   render(
     <ThemeProvider>
       <TestSuiteTree {...testSuiteTreeProps} />
-    </ThemeProvider>
+    </ThemeProvider>,
   );
   const treeTitle = screen.getByText(testSuiteTreeProps.testSuite.title);
   expect(treeTitle).toBeVisible();
@@ -132,7 +132,7 @@ test('Individual tests are not shown by default', () => {
   render(
     <ThemeProvider>
       <TestSuiteTree {...testSuiteTreeProps} />
-    </ThemeProvider>
+    </ThemeProvider>,
   );
   sequence1.tests.forEach((test) => {
     const testTitle = screen.queryByText(test.title);

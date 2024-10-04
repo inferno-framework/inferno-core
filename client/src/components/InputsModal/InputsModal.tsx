@@ -107,7 +107,8 @@ const InputsModal: FC<InputsModalProps> = ({
         const authType = (authJson.auth_type ||
           input.options.components.find((c) => c.name === 'auth_type')?.default) as AuthType;
 
-        // Determine which fields are required; authValues and components props irrelevant for this
+        // Determine which fields are required; authValues and components props
+        // irrelevant for this
         const fields =
           input.options?.mode === 'auth'
             ? getAuthFields(authType, new Map(), [])
@@ -128,7 +129,7 @@ const InputsModal: FC<InputsModalProps> = ({
     if (input.type === 'oauth_credentials') {
       try {
         const oAuthJson = JSON.parse(
-          (inputsMap.get(input.name) as string) || '{ "access_token": null }'
+          (inputsMap.get(input.name) as string) || '{ "access_token": null }',
         ) as OAuthCredentials;
         const accessTokenIsEmpty = !oAuthJson.access_token;
         const refreshTokenIsEmpty =
@@ -165,7 +166,7 @@ const InputsModal: FC<InputsModalProps> = ({
     inputs.forEach((requirement: TestInput) => {
       inputsMap.set(
         requirement.name,
-        sessionData.get(requirement.name) || (requirement.default as string) || ''
+        sessionData.get(requirement.name) || (requirement.default as string) || '',
       );
     });
     setInputsMap(new Map(inputsMap));
@@ -228,7 +229,7 @@ const InputsModal: FC<InputsModalProps> = ({
           ...requirement,
           description: parsedDescription,
           value: JSON.parse(
-            (map.get(requirement.name) as string) || '{ "access_token": "" }'
+            (map.get(requirement.name) as string) || '{ "access_token": "" }',
           ) as OAuthCredentials,
         };
       } else if (requirement.type === 'auth_info') {
@@ -274,6 +275,7 @@ const InputsModal: FC<InputsModalProps> = ({
       setInvalidInput(false);
       return parsed;
     } catch (e) {
+      console.error(e);
       setInvalidInput(true);
       return undefined;
     }

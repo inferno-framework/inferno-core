@@ -1,5 +1,6 @@
 import type { Message } from '~/models/testSuiteModels';
 import { sortByMessageType, countMessageTypes } from '../helper';
+import { describe, expect, it } from 'vitest';
 
 describe('TestListItem helpers', () => {
   const messages = [

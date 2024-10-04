@@ -4,7 +4,7 @@ import ThemeProvider from 'components/ThemeProvider';
 import CodeBlock from '../CodeBlock';
 import { codeResponseWithHtml, codeResponseWithJson } from '../__mocked_data__/mockData';
 
-import { vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('CodeBlock', () => {
   afterEach(() => {
@@ -18,7 +18,7 @@ describe('CodeBlock', () => {
     render(
       <ThemeProvider>
         <CodeBlock body={body} headers={headers} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const codeBlock = screen.getByTestId('pre');
@@ -33,7 +33,7 @@ describe('CodeBlock', () => {
     render(
       <ThemeProvider>
         <CodeBlock body={body} headers={headers} />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const codeBlock = screen.getByTestId('code', {

@@ -5,6 +5,7 @@ import ThemeProvider from 'components/ThemeProvider';
 
 import MessageList from '../MessageList';
 import { Message } from '~/models/testSuiteModels';
+import { describe, expect, test } from 'vitest';
 
 describe('The MessagesList component', () => {
   test('it renders all messages', () => {
@@ -19,7 +20,7 @@ describe('The MessagesList component', () => {
         <SnackbarProvider>
           <MessageList messages={messages} />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const renderedMessages = document.querySelectorAll('tbody > tr');

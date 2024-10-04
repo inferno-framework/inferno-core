@@ -73,19 +73,23 @@ module Inferno
         # there is no check that the fields are correct.
         #
         # @example
+        #   # Passing fields in a block
         #   fhir_resource_validator do
         #     url 'http://example.com/validator'
         #     cli_context do
         #       noExtensibleBindingMessages true
+        #       allowExampleUrls true
         #       txServer nil
         #     end
         #   end
         #
         # @example
+        #   # Passing fields in a Hash
         #   fhir_resource_validator do
         #     url 'http://example.org/validator'
         #     cli_context({
         #       noExtensibleBindingMessages: true,
+        #       allowExampleUrls: true,
         #       txServer: nil
         #     })
         #   end
@@ -164,6 +168,7 @@ module Inferno
             runnable.add_message('error', e.message)
             raise Inferno::Exceptions::ErrorInValidatorException, "Unable to connect to validator at #{url}."
           end
+
           outcome = operation_outcome_from_validator_response(response, runnable)
 
           message_hashes = message_hashes_from_outcome(outcome, resource, profile_url)
@@ -240,7 +245,9 @@ module Inferno
           validator_session_id =
             validator_session_repo.find_validator_session_id(test_suite_id,
                                                              name.to_s, requirements)
+
           @session_id = validator_session_id if validator_session_id
+
           wrapped_resource = {
             cliContext: {
               **cli_context.definition,
@@ -278,6 +285,11 @@ module Inferno
 
         # @private
         def operation_outcome_from_hl7_wrapped_response(response_hash)
+          # This is a workaround for some test kits which for legacy reasons
+          # call this method directly with a String instead of a Hash.
+          # See FI-3178.
+          response_hash = JSON.parse(remove_invalid_characters(response_hash)) if response_hash.is_a? String
+
           if response_hash['sessionId'] && response_hash['sessionId'] != @session_id
             validator_session_repo.save(test_suite_id:, validator_session_id: response_hash['sessionId'],
                                         validator_name: name.to_s, suite_options: requirements)
@@ -285,7 +297,7 @@ module Inferno
           end
 
           # assume for now that one resource -> one request
-          issues = response_hash['outcomes'][0]['issues']&.map do |i|
+          issues = (response_hash.dig('outcomes', 0, 'issues') || []).map do |i|
             { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
           end
           # this is circuitous, ideally we would map this response directly to message_hashes

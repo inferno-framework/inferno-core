@@ -9,6 +9,7 @@ import InputTextField from '~/components/InputsModal/InputTextField';
 import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredentials';
 import InputAuth from '~/components/InputsModal/InputAuth';
 import InputAccess from '~/components/InputsModal/InputAccess';
+import { describe, expect, it } from 'vitest';
 
 describe('Input Components', () => {
   it('renders InputCheckboxGroup', () => {
@@ -40,7 +41,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('checkboxInput');
@@ -76,7 +77,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('radioInput');
@@ -100,7 +101,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('textInput');
@@ -124,7 +125,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('textareaInput');
@@ -148,7 +149,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('oauthInput');
@@ -181,7 +182,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('authInput Auth Type (required)');
@@ -214,7 +215,7 @@ describe('Input Components', () => {
             setInputsMap={() => {}}
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const inputText = screen.getByText('accessInput');

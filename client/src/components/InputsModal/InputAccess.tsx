@@ -23,10 +23,10 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
   const [authType, setAuthType] = React.useState<string>(
     requirement.options?.components
       ? (requirement.options?.components[0].default as string)
-      : 'public'
+      : 'public',
   );
   const [accessFields, setAccessFields] = React.useState<TestInput[]>(
-    getAccessFields(authType as AuthType, accessValues, requirement.options?.components || [])
+    getAccessFields(authType as AuthType, accessValues, requirement.options?.components || []),
   );
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
           field.default = field.options?.list_options[0].value;
         }
         return field;
-      })
+      }),
     );
 
     const combinedStartingValues = getStartingValues();
@@ -64,7 +64,7 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
   useEffect(() => {
     // Recalculate hidden fields
     setAccessFields(
-      getAccessFields(authType as AuthType, accessValues, requirement.options?.components || [])
+      getAccessFields(authType as AuthType, accessValues, requirement.options?.components || []),
     );
 
     // Update inputsMap while maintaining hidden values
@@ -82,7 +82,7 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
     // Pre-populate values from AuthFields, requirement, and inputsMap in order of precedence
     const fieldDefaultValues = accessFields.reduce(
       (acc, field) => ({ ...acc, [field.name]: field.default }),
-      {}
+      {},
     ) as Auth;
     const requirementDefaultValues =
       requirement.default && typeof requirement.default === 'string'

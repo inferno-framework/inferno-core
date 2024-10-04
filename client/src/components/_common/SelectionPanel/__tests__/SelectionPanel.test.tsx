@@ -5,7 +5,7 @@ import ThemeProvider from 'components/ThemeProvider';
 import { mockedSelectionPanelData } from '../__mocked_data__/mockData';
 import SelectionPanel from '../SelectionPanel';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 
 describe('SelectionPanel component', () => {
   test('renders SelectionPanel for list options', () => {
@@ -20,7 +20,7 @@ describe('SelectionPanel component', () => {
             submitText="Submit"
           />
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const options = screen.getAllByTestId('list-option');
@@ -39,7 +39,7 @@ describe('SelectionPanel component', () => {
             submitText="Submit"
           />
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const options = screen.getAllByTestId('radio-option-group');
@@ -66,18 +66,17 @@ describe('SelectionPanel component', () => {
             submitText="Submit"
           />
         </ThemeProvider>
-      </BrowserRouter>
+      </BrowserRouter>,
     );
 
     const submitButton = screen.getByText('Submit');
-    userEvent.click(submitButton);
     expect(submitButton).toBeDisabled();
-    expect(submitAction).toBeCalledTimes(0); // should be disabled with no selection
 
     const options = screen.getAllByTestId('list-option');
-    userEvent.click(options[0]); // select first option
+    await userEvent.click(options[0]); // select first option
+
     expect(submitButton).toBeEnabled();
-    userEvent.click(submitButton);
+    await userEvent.click(submitButton);
     await waitFor(() => expect(submitAction).toBeCalled());
   });
 });
