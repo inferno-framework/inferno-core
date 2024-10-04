@@ -19,7 +19,7 @@ module Inferno
           {}.tap do |input|
             input[:name] = original_input.delete(:name)
             input[:value] = (original_input.delete(:default) if original_input.key? :default)
-            original_input.each { |key, value| input["_#{key}".to_sym] = value }
+            original_input.each { |key, value| input[:"_#{key}"] = value }
           end
         end
       end

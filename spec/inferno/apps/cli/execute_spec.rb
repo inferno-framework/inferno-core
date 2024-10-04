@@ -1,6 +1,6 @@
 require_relative '../../../../lib/inferno/apps/cli/execute'
 
-RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
+RSpec.describe Inferno::CLI::Execute do
   let(:instance) { described_class.new }
 
   describe '.suppress_output' do
@@ -95,8 +95,8 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
 
   describe '#test_session' do
     it 'returns test session given suite options' do
-      allow(instance).to receive(:options).and_return({ suite: 'basic', suite_options: { option: 'a' } })
-      allow(instance).to receive(:suite).and_return(BasicTestSuite::Suite)
+      allow(instance).to receive_messages(options: { suite: 'basic', suite_options: { option: 'a' } },
+                                          suite: BasicTestSuite::Suite)
       expect(instance.test_session).to be_instance_of Inferno::Entities::TestSession
     end
   end
@@ -108,8 +108,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:inputs_array) { [{ name: :url, value: 'https://example.com' }] }
 
     it 'returns test run params' do
-      allow(instance).to receive(:options).and_return({ suite: test_suite.id, inputs: inputs_hash })
-      allow(instance).to receive(:runnable_type).and_return(:suite)
+      allow(instance).to receive_messages(options: { suite: test_suite.id, inputs: inputs_hash }, runnable_type: :suite)
 
       result = instance.create_params(test_session, test_suite)
       expect(result).to eq({ test_session_id: test_session.id, test_suite_id: test_suite.id, inputs: inputs_array })
@@ -121,8 +120,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     let(:test_run) { repo_create(:test_run, test_suite_id: 'basic') }
 
     it 'supresses output if verbose is false' do
-      allow(instance).to receive(:test_session).and_return(test_session)
-      allow(instance).to receive(:options).and_return({ suite: 'basic', verbose: false })
+      allow(instance).to receive_messages(test_session:, options: { suite: 'basic', verbose: false })
 
       expect { instance.dispatch_job(test_run) }.to_not output(/.+/).to_stdout_from_any_process
     end
