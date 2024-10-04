@@ -52,13 +52,7 @@ module Inferno
               # Since Inferno can only have one test_run executing at a time per test_session,
               # and each call to `inferno execute` represents one test_session, we block until
               # each runnable until result is achieved
-              loop do
-                last_result = results_repo.result_for_test_run(
-                                runnable.reference_hash.merge(test_run_id: test_run(runnable).id)
-                              )
-
-                break unless %w[queued running].include? last_result.result
-              end
+              block_until_result_for(runnable)
 
               results += test_runs_repo.results_for_test_run(test_run(runnable).id).reverse
             end
@@ -98,8 +92,11 @@ module Inferno
 
       def selected_runnables
         # sort so if a user specifies `inferno execute --tests 1.01 --short-ids 1.02` it will run in order 1.01, 1.02
-        # although this will disallow if a user wanted to intentionally run `inferno execute --tests 1.02 1.01` in that order
-        @selected_runnables ||= validate_unique_runnables(shorts + groups + tests).sort {|a,b| a.short_id <=> b.short_id}
+        # although this will disallow if a user wanted to intentionally run `inferno execute --tests 1.02 1.01` in
+        # that order
+        @selected_runnables ||= validate_unique_runnables(shorts + groups + tests).sort do |a, b|
+          a.short_id <=> b.short_id
+        end
       end
 
       def run_one(runnable)
@@ -112,6 +109,16 @@ module Inferno
         persist_inputs(session_data_repo, create_params(test_session, suite), test_run(runnable))
 
         dispatch_job(test_run(runnable))
+      end
+
+      def block_until_result_for(runnable)
+        loop do
+          last_result = results_repo.result_for_test_run(
+            runnable.reference_hash.merge(test_run_id: test_run(runnable).id)
+          )
+
+          break unless %w[queued running].include? last_result.result
+        end
       end
 
       def suite
@@ -187,7 +194,8 @@ module Inferno
       def validate_unique_runnables(runnables)
         runnables.each_with_index do |validatee, validatee_index|
           runnables.each_with_index do |runnable, runnable_index|
-            if validatee_index != runnable_index && ((validatee == runnable) || runnable_is_included_in?(validatee, runnable))
+            if validatee_index != runnable_index && ((validatee == runnable) || runnable_is_included_in?(validatee,
+                                                                                                         runnable))
               raise StandardError, "Runnable #{validatee.short_id} is already included in #{runnable.short_id}"
             end
           end
