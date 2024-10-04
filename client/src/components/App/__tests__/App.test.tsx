@@ -1,8 +1,7 @@
-import React from 'react';
-import { act } from 'react-dom/test-utils';
-import { render } from '@testing-library/react';
+import React, { act } from 'react';
+import { render, waitFor } from '@testing-library/react';
 
-import { vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SnackbarProvider } from 'notistack';
 
 import ThemeProvider from 'components/ThemeProvider';
@@ -26,16 +25,19 @@ describe('The App Root Component', () => {
   it('sets Test Suite state on mount', async () => {
     const getTestSuites = vi.spyOn(testSuitesApi, 'getTestSuites');
     getTestSuites.mockResolvedValue(testSuites);
+
     await act(() =>
       render(
         <ThemeProvider>
           <SnackbarProvider>
             <App />
           </SnackbarProvider>
-        </ThemeProvider>
-      )
+        </ThemeProvider>,
+      ),
     );
 
-    expect(getTestSuites).toBeCalledTimes(1);
+    await waitFor(() => {
+      expect(getTestSuites).toBeCalledTimes(1);
+    });
   });
 });

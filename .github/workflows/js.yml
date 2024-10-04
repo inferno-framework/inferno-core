@@ -11,16 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['16.x']
+        node-version: ['20.x']
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
     - name: Cache Node.js modules
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         # npm cache files are stored in `~/.npm` on Linux/macOS
         path: ~/.npm
@@ -35,16 +35,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['16.x']
+        node-version: ['20.x']
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Node
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
     - name: Cache Node.js modules
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         # npm cache files are stored in `~/.npm` on Linux/macOS
         path: ~/.npm
@@ -56,7 +56,7 @@ jobs:
     # `npm run coverage` is run tests with coverage flags, rather than repeating them here
     - run: npm run coverage
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         name: frontend-coverage
         flags: frontend
@@ -67,16 +67,16 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['16.x']
+        node-version: ['20.x']
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
     - name: Cache Node.js modules
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         # npm cache files are stored in `~/.npm` on Linux/macOS
         path: ~/.npm

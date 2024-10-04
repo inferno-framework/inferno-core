@@ -13,7 +13,7 @@ export function postTestRun(
   testSessionId: string,
   runnableType: RunnableType,
   runnableId: string,
-  inputs: TestInput[]
+  inputs: TestInput[],
 ): Promise<TestRun | null> {
   const postEndpoint = getApiEndpoint('/test_runs');
   const postBody: CreateTestRunBody = {
@@ -51,7 +51,7 @@ export function deleteTestRun(testRunId: string): Promise<Response> {
 
 export function getTestRunWithResults(
   testRunId: string,
-  time: string | null | undefined
+  time: string | null | undefined,
 ): Promise<TestRun | null> {
   let endpoint = getApiEndpoint(`/test_runs/${testRunId}?include_results=true`);
   if (time) {

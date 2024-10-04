@@ -11,7 +11,7 @@ export const useTimeout = () => {
         timeout.current = undefined;
       }
     },
-    []
+    [],
   );
   return timeout;
 };

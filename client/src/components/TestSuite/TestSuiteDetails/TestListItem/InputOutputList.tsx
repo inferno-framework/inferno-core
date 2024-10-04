@@ -48,7 +48,7 @@ const InputOutputList: FC<InputOutputListProps> = ({
           </TableCell>
         </TableRow>
       );
-    }
+    },
   );
 
   const output =

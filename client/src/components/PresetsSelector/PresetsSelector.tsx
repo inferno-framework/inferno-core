@@ -25,7 +25,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
   const null_preset = { id: 'NULL_PRESET', title: 'None' };
   const presetTitleToIdMap: { [key: string]: string } = presets.reduce(
     (reducedObj, preset) => ({ ...reducedObj, [preset.title]: preset.id }),
-    {}
+    {},
   );
 
   const SHOW_CONFIRMATION_MODAL = false;

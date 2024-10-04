@@ -28,13 +28,13 @@ export const isRadioOption = (object: Option): object is RadioOption => {
 };
 
 export const isListOptionSelection = (
-  object: ListOptionSelection | RadioOptionSelection[]
+  object: ListOptionSelection | RadioOptionSelection[],
 ): object is ListOptionSelection => {
   return typeof object === 'string';
 };
 
 export const isRadioOptionSelection = (
-  object: ListOptionSelection | RadioOptionSelection[]
+  object: ListOptionSelection | RadioOptionSelection[],
 ): object is RadioOptionSelection[] => {
   return Array.isArray(object);
 };

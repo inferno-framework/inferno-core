@@ -62,7 +62,7 @@ const TestListItem: FC<TestListItemProps> = ({
   useEffect(() => {
     setOpen(
       (view === 'report' && showReportDetails && (messagesExist || requestsExist)) ||
-        location === test.short_id
+        location === test.short_id,
     );
   }, [showReportDetails]);
 
@@ -194,7 +194,7 @@ const TestListItem: FC<TestListItemProps> = ({
   // Find first tab with data.  If no tabs have data, return the About tab index.
   const findPopulatedTabIndex = (): number => {
     const firstTab = tabs.findIndex(
-      (tab) => tab.label !== 'About' && tab.value && tab.value?.length > 0
+      (tab) => tab.label !== 'About' && tab.value && tab.value?.length > 0,
     );
 
     if (firstTab === -1) {

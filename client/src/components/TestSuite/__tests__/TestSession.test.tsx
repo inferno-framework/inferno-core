@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { act } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { act } from 'react-dom/test-utils';
 import { SnackbarProvider } from 'notistack';
-import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import * as versionsApi from '~/api/VersionsApi';
 import ThemeProvider from 'components/ThemeProvider';
 import TestSessionComponent from '../TestSession';
@@ -23,11 +22,13 @@ describe('The TestSession Component', () => {
               <TestSessionWrapper />
             </SnackbarProvider>
           </ThemeProvider>
-        </BrowserRouter>
-      )
+        </BrowserRouter>,
+      ),
     );
 
-    expect(getCoreVersion).toBeCalledTimes(1);
+    await waitFor(() => {
+      expect(getCoreVersion).toBeCalledTimes(1);
+    });
   });
 
   it('renders TestSession', async () => {
@@ -49,15 +50,17 @@ describe('The TestSession Component', () => {
               />
             </SnackbarProvider>
           </ThemeProvider>
-        </BrowserRouter>
-      )
+        </BrowserRouter>,
+      ),
     );
 
-    const testSessionTitleComponentList = screen.getAllByTestId('navigable-group-item');
-    testSessionTitleComponentList.forEach((testSessionTitleComponent, i) => {
-      const testGroups = mockedTestSession.test_suite.test_groups || [];
-      const testGroupTitle = testGroups[i].title || undefined;
-      expect(testSessionTitleComponent).toHaveAccessibleName(testGroupTitle);
+    await waitFor(() => {
+      const testSessionTitleComponentList = screen.getAllByTestId('navigable-group-item');
+      testSessionTitleComponentList.forEach((testSessionTitleComponent, i) => {
+        const testGroups = mockedTestSession.test_suite.test_groups || [];
+        const testGroupTitle = testGroups[i].title || undefined;
+        expect(testSessionTitleComponent).toHaveAccessibleName(testGroupTitle);
+      });
     });
   });
 });

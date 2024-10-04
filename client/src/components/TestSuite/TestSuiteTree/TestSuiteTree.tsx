@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { TestSuite, TestGroup, PresetSummary, ViewType } from '~/models/testSuiteModels';
 import { Box, Divider, Typography } from '@mui/material';
-import { TreeView } from '@mui/x-tree-view/TreeView';
+import { SimpleTreeView } from '@mui/x-tree-view';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -94,20 +94,29 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
 
       return (
         <CustomTreeItem
-          nodeId={`${testSuite.id}/config`}
+          itemId={`${testSuite.id}/config`}
           label={
             <Typography component="div" alignItems="center" sx={{ display: 'flex' }}>
               <TreeItemLabel title={'Configuration Messages'} />
               {configMessagesSeverityIcon}
             </Typography>
           }
-          icon={<NotificationsIcon />}
+          slots={{ icon: NotificationsIcon }}
           className={classes.treeItemTopBorder}
           // eslint-disable-next-line max-len
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
           ContentProps={{ testId: `${testSuite.id}/config` } as any}
         />
       );
+    };
+
+    // Define icons for tree item slots
+    const CollapseIcon: FC<Record<string, never>> = () => {
+      return <ExpandMoreIcon aria-hidden={false} tabIndex={0} />;
+    };
+
+    const ExpandIcon: FC<Record<string, never>> = () => {
+      return <ChevronRightIcon aria-hidden={false} tabIndex={0} />;
     };
 
     return (
@@ -122,20 +131,19 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           </Box>
         )}
         <Divider />
-        <TreeView
+        <SimpleTreeView
           aria-label="navigation-panel"
-          defaultCollapseIcon={<ExpandMoreIcon aria-hidden={false} tabIndex={0} />}
-          defaultExpandIcon={<ChevronRightIcon aria-hidden={false} tabIndex={0} />}
-          onNodeToggle={nodeToggle}
-          expanded={expanded}
-          selected={selectedNode}
+          slots={{ collapseIcon: CollapseIcon, expandIcon: ExpandIcon }}
+          onExpandedItemsChange={nodeToggle}
+          expandedItems={expanded}
+          selectedItems={selectedNode}
           className={classes.testSuiteTree}
         >
           <CustomTreeItem
             classes={{ content: classes.treeRoot }}
-            nodeId={testSuite.id}
+            itemId={testSuite.id}
             label={<TreeItemLabel runnable={testSuite} />}
-            icon={<ListAltIcon />}
+            slots={{ icon: ListAltIcon }}
             className={classes.treeItemBottomBorder}
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
@@ -143,9 +151,9 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           />
           {testGroupList}
           <CustomTreeItem
-            nodeId={`${testSuite.id}/report`}
+            itemId={`${testSuite.id}/report`}
             label={<TreeItemLabel title={'Report'} />}
-            icon={<FlagIcon />}
+            slots={{ icon: FlagIcon }}
             className={`${classes.treeItemTopBorder} ${classes.treeItemBottomBorder}`}
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
@@ -154,7 +162,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           <Box display="flex" alignItems="flex-end" flexGrow={1} mt={windowIsSmall ? 0 : 8}>
             <Box width="100%">{renderConfigMessagesTreeItem()}</Box>
           </Box>
-        </TreeView>
+        </SimpleTreeView>
       </Box>
     );
   } else {

@@ -5,6 +5,7 @@ import ThemeProvider from 'components/ThemeProvider';
 
 import { TestInput, TestOutput } from '~/models/testSuiteModels';
 import InputOutputList from '../InputOutputList';
+import { describe, expect, test } from 'vitest';
 
 describe('The InputOutputsList component', () => {
   test('it renders all inputs', () => {
@@ -18,7 +19,7 @@ describe('The InputOutputsList component', () => {
         <SnackbarProvider>
           <InputOutputList inputOutputs={inputs} noValuesMessage="No Inputs" headerName="Input" />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const renderedMessages = document.querySelectorAll('tbody > tr');
@@ -40,7 +41,7 @@ describe('The InputOutputsList component', () => {
             headerName="Output"
           />
         </SnackbarProvider>
-      </ThemeProvider>
+      </ThemeProvider>,
     );
 
     const renderedMessages = document.querySelectorAll('tbody > tr');
