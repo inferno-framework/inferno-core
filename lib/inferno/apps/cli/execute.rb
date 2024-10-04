@@ -106,7 +106,7 @@ module Inferno
       end
 
       def selected_runnables
-        shorts + groups + tests
+        @selected_runnables ||= validate_unique_runnables(shorts + groups + tests).sort {|a,b| a.short_id <=> b.short_id}
       end
 
       def run_one(runnable)
@@ -136,14 +136,9 @@ module Inferno
       def test_run(runnable)
         @test_runs ||= {}
 
-        key = runnable.hash.to_s + '-' + Time.current.iso8601
-
-        @test_runs[key] ||= test_runs_repo.create(
+        @test_runs[runnable] ||= test_runs_repo.create(
           create_params(test_session, runnable).merge({ status: 'queued' })
         )
-
-        pp @test_runs.keys
-        pp @test_runs.keys.map(&:hash)
 
         @test_runs[runnable]
       end
@@ -193,6 +188,28 @@ module Inferno
           Inferno::CLI::Execute.suppress_output do
             Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
           end
+        end
+      end
+
+      def validate_unique_runnables(runnables)
+        runnables.each_with_index do |validatee, validatee_index|
+          runnables.each_with_index do |runnable, runnable_index|
+            if validatee_index != runnable_index && ((validatee == runnable) || runnable_is_included_in?(validatee, runnable))
+              raise StandardError, "Runnable #{validatee.short_id} is already included in #{runnable.short_id}"
+            end
+          end
+        end
+
+        runnables
+      end
+
+      def runnable_is_included_in?(runnable, maybe_parent)
+        if runnable.parent.nil?
+          false
+        elsif runnable.parent == maybe_parent
+          true
+        else
+          runnable_is_included_in?(runnable.parent, maybe_parent)
         end
       end
 
