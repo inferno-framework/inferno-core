@@ -266,11 +266,11 @@ module Inferno
       end
 
       def runnable_type(runnable)
-        if Inferno::TestSuite.subclasses.include? runnable
+        if Inferno::TestSuite.subclasses.include?(runnable) || runnable.ancestors.include?(Inferno::TestSuite)
           :suite
-        elsif Inferno::TestGroup.subclasses.include? runnable
+        elsif Inferno::TestGroup.subclasses.include?(runnable) || runnable.ancestors.include?(Inferno::TestGroup)
           :group
-        elsif Inferno::Test.subclasses.include? runnable
+        elsif Inferno::Test.subclasses.include?(runnable) || runnable.ancestors.include?(Inferno::Test)
           :test
         else
           raise StandardError, "Unidentified runnable #{runnable}"
