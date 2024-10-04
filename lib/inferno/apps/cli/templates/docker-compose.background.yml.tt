@@ -23,6 +23,10 @@ services:
     environment:
       EXTERNAL_VALIDATOR_URL: http://localhost/validatorapi
       VALIDATOR_BASE_PATH: /validator
+  fhirpath:
+    image: infernocommunity/fhirpath-service
+    ports:
+      - "6789:6789"
   nginx:
     image: nginx
     volumes:
@@ -32,6 +36,7 @@ services:
     command: [nginx, '-g', 'daemon off;']
     depends_on:
       - fhir_validator_app
+      - fhirpath
   redis:
     image: redis
     ports:
