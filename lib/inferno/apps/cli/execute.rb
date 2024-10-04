@@ -51,17 +51,8 @@ module Inferno
 
               # Since Inferno can only have one test_run executing at a time per test_session,
               # and each call to `inferno execute` represents one test_session, we block until
-              # each runnable until result is achieved 
+              # each runnable until result is achieved
               loop do
-                # @test_runs hashmap is a function of runnable entity and time. Since the CLI
-                # may have the same runnable inputted multiple times, the time MUST vary in
-                # between different runs of the same runnable entity. 1s sleep assumes all
-                # machines have time precision upto 1 second.
-                sleep(1)
-
-                # TODO: this fails because Time.current changes between the first call to `test_run`
-                # and the second call on the same exact runnable, (DUH). So either a map of test run
-                # to time of first call needs to be constructed or another key needs to be used.
                 last_result = results_repo.result_for_test_run(
                                 runnable.reference_hash.merge(test_run_id: test_run(runnable).id)
                               )
@@ -106,6 +97,8 @@ module Inferno
       end
 
       def selected_runnables
+        # sort so if a user specifies `inferno execute --tests 1.01 --short-ids 1.02` it will run in order 1.01, 1.02
+        # although this will disallow if a user wanted to intentionally run `inferno execute --tests 1.02 1.01` in that order
         @selected_runnables ||= validate_unique_runnables(shorts + groups + tests).sort {|a,b| a.short_id <=> b.short_id}
       end
 
