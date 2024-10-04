@@ -66,9 +66,29 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
       expect(instance.selected_runnables).to eq([])
     end
 
-    it 'returns both groups and tests when short ids for both are given' do
+    it 'returns runnables when group short ids are given' do
+      allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1'] })
+      expect(instance.selected_runnables.length).to eq(1)
+    end
+
+    it 'returns runnables when test short ids are given' do
+      allow(instance).to receive(:options).and_return({ suite: 'basic', tests: ['1.01'] })
+      expect(instance.selected_runnables.length).to eq(1)
+    end
+
+    it 'returns either runnable when short ids are given' do
+      allow(instance).to receive(:options).and_return({ suite: 'basic', short_ids: ['1.01'] })
+      expect(instance.selected_runnables.length).to eq(1)
+    end
+
+    it 'raises error when redundant short ids are given' do
       allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1'], tests: ['1.01'] })
-      expect(instance.selected_runnables.length).to eq(2)
+      expect{ instance.selected_runnables }.to raise_error
+    end
+
+    it 'raises error when a group is given test short ids' do
+      allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1.01'] })
+      expect{ instance.selected_runnables }.to raise_error
     end
   end
 
@@ -125,6 +145,42 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
       allow(instance).to receive(:options).and_return({ suite: 'basic', verbose: false })
 
       expect { instance.dispatch_job(test_run) }.to_not output(/.+/).to_stdout_from_any_process
+    end
+  end
+
+  describe '#validate_unique_runnables' do
+    let(:runnable) { BasicTestSuite::AbcGroup }
+    let(:another_runnable) { BasicTestSuite::DefGroup }
+
+    it 'returns runnables if they are unique' do
+      expect( instance.validate_unique_runnables([runnable, another_runnable]) ).to eq([runnable, another_runnable])
+    end
+  
+    it 'raises an error for duplicate runnables' do
+      expect { instance.validate_unique_runnables([runnable, runnable]) }.to raise_error(StandardError)
+    end
+  
+    it 'raises an error if a runnable is included in another' do
+      child = runnable.tests.first
+      expect { instance.validate_unique_runnables([runnable, child]) }.to raise_error(StandardError)
+    end
+  end
+
+  describe '#runnable_is_included_in?' do
+    let(:parent) { BasicTestSuite::Suite }
+    let(:group) { parent.groups.first }
+    let(:test) { group.tests.first }
+
+    it 'returns false when runnable has no parents' do
+      expect( instance.runnable_is_included_in?(parent, parent) ).to be_falsey;
+    end
+
+    it 'returns true when runnable is a child of parent' do
+      expect( instance.runnable_is_included_in?(group, parent) ).to be_truthy;
+    end
+
+    it 'returns true when runnable is a nested child of parent' do
+      expect( instance.runnable_is_included_in?(test, parent) ).to be_truthy;
     end
   end
 
