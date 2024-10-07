@@ -1,3 +1,5 @@
+require_relative 'console_outputter'
+
 module Inferno
   module CLI
     class Execute

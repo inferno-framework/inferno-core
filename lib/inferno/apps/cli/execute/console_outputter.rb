@@ -1,12 +1,11 @@
 require 'pastel'
-require_relative '../../web/serializers/test_run'
-require_relative '../../web/serializers/result'
+require_relative 'json_outputter'
 
 module Inferno
   module CLI
     class Execute
       # @private
-      class ConsoleOutputter
+      class ConsoleOutputter < JSONOutputter
         CHECKMARK = "\u2713".freeze
         BAR = ('=' * 80).freeze
 
@@ -132,19 +131,6 @@ module Inferno
           verbose_puts(options, BAR)
           verbose_puts(options, serialize(results))
           verbose_puts(options, BAR)
-        end
-
-        def serialize(entity)
-          case entity.class.to_s
-          when 'Array'
-            JSON.pretty_generate(entity.map { |item| JSON.parse serialize(item) })
-          when lambda { |x|
-                 defined?(x.constantize) && defined?("Inferno::Web::Serializers::#{x.split('::').last}".constantize)
-               }
-            "Inferno::Web::Serializers::#{entity.class.to_s.split('::').last}".constantize.render(entity)
-          else
-            raise StandardError, "CLI does not know how to serialize #{entity.class}"
-          end
         end
       end
     end

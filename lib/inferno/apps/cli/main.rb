@@ -110,6 +110,10 @@ module Inferno
              aliases: ['-i'],
              type: :hash,
              desc: 'Inputs (i.e: --inputs=foo:bar goo:baz)'
+      option :outputter,
+             aliases: ['-o'],
+             default: 'console',
+             desc: 'Select an outputter format: console | plain | json | quiet'
       option :verbose,
              aliases: ['-v'],
              type: :boolean,

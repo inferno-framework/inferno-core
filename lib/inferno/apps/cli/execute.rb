@@ -1,14 +1,25 @@
-require 'pastel'
+#require 'pastel'
 require 'active_support'
+require 'dry/inflector'
 require_relative '../../utils/verify_runnable'
 require_relative '../../utils/persist_inputs'
-require_relative 'execute/console_outputter'
+
+Dir[File.join('__dir__', 'execute', '*_outputter.rb')].each { |outputter| require outputter }
+
+#require_relative 'execute/quiet_outputter'
+#require_relative 'execute/json_outputter'
+#require_relative 'execute/console_outputter'
+#require_relative 'execute/plain_outputter'
 
 module Inferno
   module CLI
     class Execute
       include ::Inferno::Utils::VerifyRunnable
       include ::Inferno::Utils::PersistInputs
+
+      INFLECTOR = Dry::Inflector.new do |inflections|
+        inflections.acronym "JSON"
+      end
 
       attr_accessor :options
 
@@ -79,8 +90,9 @@ module Inferno
       end
 
       def outputter
-        # TODO: swap outputter based on options
-        @outputter ||= Inferno::CLI::Execute::ConsoleOutputter.new
+        # TODO: test
+        @outputter ||= INFLECTOR.constantize(INFLECTOR.camelize(options[:outputter]) + 'Outputter').new
+        # @outputter ||= Inferno::CLI::Execute::ConsoleOutputter.new
       end
 
       def selected_runnables
