@@ -7,7 +7,6 @@ module Inferno
     class Execute
       # @private
       class ConsoleOutputter
-        COLOR = Pastel.new
         CHECKMARK = "\u2713".freeze
         BAR = ('=' * 80).freeze
 
@@ -44,14 +43,18 @@ module Inferno
         def print_end_message(options); end
 
         def print_error(options, exception)
-          puts COLOR.red "Error: #{exception.full_message}"
+          puts color.red "Error: #{exception.full_message}"
           verbose_print(options, exception.backtrace&.join('\n'))
         end
 
         # private
 
         def verbose_print(options, *args)
-          print(COLOR.dim(*args)) if options[:verbose]
+          print(color.dim(*args)) if options[:verbose]
+        end
+
+        def color
+          @color ||= Pastel.new(enabled: $stdout.tty?)
         end
 
         def verbose_puts(options, *args)
@@ -103,21 +106,21 @@ module Inferno
         def format_result(result) # rubocop:disable Metrics/CyclomaticComplexity
           case result.result
           when 'pass'
-            COLOR.bold.green(CHECKMARK, ' pass')
+            color.bold.green(CHECKMARK, ' pass')
           when 'fail'
-            COLOR.bold.red 'X fail'
+            color.bold.red 'X fail'
           when 'skip'
-            COLOR.yellow '* skip'
+            color.yellow '* skip'
           when 'omit'
-            COLOR.blue '* omit'
+            color.blue '* omit'
           when 'error'
-            COLOR.magenta 'X error'
+            color.magenta 'X error'
           when 'wait'
-            COLOR.bold '. wait'
+            color.bold '. wait'
           when 'cancel'
-            COLOR.red 'X cancel'
+            color.red 'X cancel'
           when 'running'
-            COLOR.bold '- running'
+            color.bold '- running'
           else
             raise StandardError.new, "Unrecognized result #{result.result}"
           end
