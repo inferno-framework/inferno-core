@@ -1,4 +1,4 @@
-RSpec.shared_examples "outputter_spec" do |outputter_class|
+RSpec.shared_examples 'outputter_spec' do |outputter_class|
   it 'responds to print_start_message' do
     expect(outputter_class.new).to respond_to(:print_start_message)
   end

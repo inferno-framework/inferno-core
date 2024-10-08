@@ -18,5 +18,4 @@ RSpec.describe Inferno::CLI::Execute::JSONOutputter do # rubocop:disable RSpec/F
       expect { JSON.parse(instance.serialize(test_results)) }.to_not raise_error(StandardError)
     end
   end
-
 end

@@ -5,14 +5,13 @@ module Inferno
     class Execute
       # @private
       class PlainOutputter < ConsoleOutputter
-
         # override to disable spinner
         def print_around_run(_options)
-          puts "Running tests. This may take a while..."
+          puts 'Running tests. This may take a while...'
           yield
         end
 
-        def print_error(options, exception)
+        def print_error(_options, exception)
           puts "Error: #{exception.full_message(highlight: false)}"
           puts exception.backtrace&.join('\n')
         end

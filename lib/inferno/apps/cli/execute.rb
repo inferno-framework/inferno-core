@@ -168,7 +168,6 @@ module Inferno
       end
 
       def dispatch_job(test_run)
-        # NOTE: this may cause quiet outputter to output if used with --verbose, but leave this here because of suppress_output
         if options[:verbose]
           Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
         else

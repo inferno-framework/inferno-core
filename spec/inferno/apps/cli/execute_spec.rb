@@ -33,7 +33,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
       'quiet' => Inferno::CLI::Execute::QuietOutputter
     }.each do |selected_outputter, expected_class|
       it "returns #{expected_class} given '#{selected_outputter}'" do
-        allow(instance).to receive(:options).and_return({ outputter: selected_outputter})
+        allow(instance).to receive(:options).and_return({ outputter: selected_outputter })
         expect(instance.outputter).to be_an_instance_of expected_class
       end
     end
