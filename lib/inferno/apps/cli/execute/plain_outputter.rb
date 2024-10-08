@@ -12,6 +12,11 @@ module Inferno
           yield
         end
 
+        def print_error(options, exception)
+          puts "Error: #{exception.full_message(highlight: false)}"
+          puts exception.backtrace&.join('\n')
+        end
+
         def color
           @color ||= Pastel.new(enabled: false)
         end
