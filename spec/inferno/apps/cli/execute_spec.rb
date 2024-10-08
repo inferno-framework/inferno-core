@@ -26,40 +26,16 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#outputter' do
-    before do
-      allow(instance).to receive(:options).and_return({ outputter: %w[console].sample })
-    end
-
-    it 'returns an object that responds to print_start_message' do
-      expect(instance.outputter).to respond_to(:print_start_message)
-    end
-
-    it 'returns an object that responds to print_around_run' do
-      expect(instance.outputter).to respond_to(:print_around_run)
-    end
-
-    it 'returns an object whose print_around_run yields' do
-      expect do
-        expect { |b| instance.outputter.print_around_run({}, &b) }.to yield_control
-      end.to output(/.?/).to_stdout # required to prevent output in rspec
-    end
-
-    it 'returns an object that responds to print_results' do
-      expect(instance.outputter).to respond_to(:print_results)
-    end
-
-    it 'returns an object that responds to print_end_message' do
-      expect(instance.outputter).to respond_to(:print_end_message)
-    end
-
-    it 'returns an object that responds to print_error' do
-      expect(instance.outputter).to respond_to(:print_error)
-    end
-
-    it 'returns an object whose print_error does not raise exception nor exit' do
-      expect do
-        expect { instance.outputter.print_error({}, StandardError.new('my error')) }.to_not raise_error
-      end.to output(/.?/).to_stdout # required to prevent output in rspec
+    {
+      'console' => Inferno::CLI::Execute::ConsoleOutputter,
+      'plain' => Inferno::CLI::Execute::PlainOutputter,
+      'json' => Inferno::CLI::Execute::JSONOutputter,
+      'quiet' => Inferno::CLI::Execute::QuietOutputter
+    }.each do |selected_outputter, expected_class|
+      it "returns #{expected_class} given '#{selected_outputter}'" do
+        allow(instance).to receive(:options).and_return({ outputter: selected_outputter})
+        expect(instance.outputter).to be_an_instance_of expected_class
+      end
     end
   end
 

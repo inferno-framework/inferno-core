@@ -9,7 +9,7 @@ module Inferno
       class ConsoleOutputter < JSONOutputter
         CHECKMARK = "\u2713".freeze
         BAR = ('=' * 80).freeze
-        SPINNER = TTY::Spinner.new("Running tests [:spinner]", format: :bouncing_ball)
+        SPINNER = TTY::Spinner.new("Running tests [:spinner]", format: :bouncing_ball, clear: true, output: $stdout)
 
         def print_start_message(options)
           puts ''
