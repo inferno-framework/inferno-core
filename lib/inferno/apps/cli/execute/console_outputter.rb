@@ -1,4 +1,5 @@
 require 'pastel'
+require 'tty-spinner'
 require_relative 'json_outputter'
 
 module Inferno
@@ -8,6 +9,7 @@ module Inferno
       class ConsoleOutputter < JSONOutputter
         CHECKMARK = "\u2713".freeze
         BAR = ('=' * 80).freeze
+        SPINNER = TTY::Spinner.new("Running tests [:spinner]", format: :bouncing_ball)
 
         def print_start_message(options)
           puts ''
@@ -17,9 +19,9 @@ module Inferno
         end
 
         def print_around_run(_options)
-          puts 'Running tests. This may take a while...'
-          # TODO: spinner/progress bar
+          SPINNER.auto_spin          
           yield
+          SPINNER.stop("done!")
         end
 
         def print_results(options, results)

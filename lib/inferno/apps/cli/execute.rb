@@ -1,15 +1,9 @@
-# require 'pastel'
 require 'active_support'
 require 'dry/inflector'
 require_relative '../../utils/verify_runnable'
 require_relative '../../utils/persist_inputs'
 
 Dir[File.join(__dir__, 'execute', '*_outputter.rb')].each { |outputter| require outputter }
-
-# require_relative 'execute/quiet_outputter'
-# require_relative 'execute/json_outputter'
-# require_relative 'execute/console_outputter'
-# require_relative 'execute/plain_outputter'
 
 module Inferno
   module CLI
@@ -174,7 +168,7 @@ module Inferno
       end
 
       def dispatch_job(test_run)
-        # TODO: move suppression to outputter? better suppression?
+        # NOTE: this may cause quiet outputter to output if used with --verbose, but leave this here because of suppress_output
         if options[:verbose]
           Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
         else
