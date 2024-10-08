@@ -1,4 +1,4 @@
-#require 'pastel'
+# require 'pastel'
 require 'active_support'
 require 'dry/inflector'
 require_relative '../../utils/verify_runnable'
@@ -6,10 +6,10 @@ require_relative '../../utils/persist_inputs'
 
 Dir[File.join(__dir__, 'execute', '*_outputter.rb')].each { |outputter| require outputter }
 
-#require_relative 'execute/quiet_outputter'
-#require_relative 'execute/json_outputter'
-#require_relative 'execute/console_outputter'
-#require_relative 'execute/plain_outputter'
+# require_relative 'execute/quiet_outputter'
+# require_relative 'execute/json_outputter'
+# require_relative 'execute/console_outputter'
+# require_relative 'execute/plain_outputter'
 
 module Inferno
   module CLI
@@ -18,10 +18,10 @@ module Inferno
       include ::Inferno::Utils::PersistInputs
 
       INFLECTOR = Dry::Inflector.new do |inflections|
-        inflections.acronym "JSON"
+        inflections.acronym 'JSON'
       end
 
-      OUTPUTTER_WHITELIST = %w[console plain json quiet]
+      OUTPUTTER_WHITELIST = %w[console plain json quiet].freeze
 
       attr_accessor :options
 
@@ -92,23 +92,14 @@ module Inferno
       end
 
       def outputter
-        raise StandardError, "Unrecognized outputter #{options[:outputter]}" unless OUTPUTTER_WHITELIST.include? options[:outputter]
+        unless OUTPUTTER_WHITELIST.include? options[:outputter]
+          raise StandardError,
+                "Unrecognized outputter #{options[:outputter]}"
+        end
 
-        @outputter ||= INFLECTOR.constantize("Inferno::CLI::Execute::#{INFLECTOR.camelize(options[:outputter])}Outputter").new
-=begin
-        @outputter ||= case options[:outputter]
-            when 'quiet'
-              QuietOutputter.new
-            when 'json'
-              JSONOutputter.new
-            when 'plain'
-              PlainOutputter.new
-            when 'console'
-              ConsoleOutputter.new
-            else
-              raise StandardError, "Unrecognized outputter #{options[:outputter]}"
-            end
-=end
+        @outputter ||= INFLECTOR.constantize(
+          "Inferno::CLI::Execute::#{INFLECTOR.camelize(options[:outputter])}Outputter"
+        ).new
       end
 
       def selected_runnables

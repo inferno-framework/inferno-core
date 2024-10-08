@@ -26,6 +26,10 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#outputter' do
+    before do
+      allow(instance).to receive(:options).and_return({ outputter: %w[console].sample })
+    end
+
     it 'returns an object that responds to print_start_message' do
       expect(instance.outputter).to respond_to(:print_start_message)
     end
@@ -53,7 +57,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
 
     it 'returns an object whose print_error does not raise exception nor exit' do
-      allow(instance).to receive(:options).and_return({})
       expect do
         expect { instance.outputter.print_error({}, StandardError.new('my error')) }.to_not raise_error
       end.to output(/.?/).to_stdout # required to prevent output in rspec
@@ -229,7 +232,7 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
         .to_return(status: 200, body: FHIR::Patient.new({ name: { given: 'Smith' } }).to_json)
 
       expect do
-        expect { instance.run({ suite:, inputs:, verbose: true }) }
+        expect { instance.run({ suite:, inputs:, outputter: 'plain', verbose: true }) }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
       end.to output(/.+/).to_stdout
     end
