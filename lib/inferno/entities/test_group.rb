@@ -25,10 +25,10 @@ module Inferno
       end
 
       # @private
-      def method_missing(name, *args, &)
+      def method_missing(name, ...)
         parent_instance = self.class.parent&.new
         if parent_instance.respond_to?(name)
-          parent_instance.send(name, *args, &)
+          parent_instance.send(name, ...)
         else
           super
         end

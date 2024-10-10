@@ -7,7 +7,7 @@ module Inferno
       def runnable
         return @runnable if @runnable
 
-        @runnable = (test || test_group || test_suite || load_runnable)
+        @runnable = test || test_group || test_suite || load_runnable
       end
 
       private

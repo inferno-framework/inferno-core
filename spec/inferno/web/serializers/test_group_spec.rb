@@ -37,7 +37,7 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
     expect(serialized_group['test_groups']).to be_empty
     expect(serialized_group['tests'].length).to eq(group.tests.length)
 
-    group.available_inputs.each do |_identifier, definition|
+    group.available_inputs.each_value do |definition|
       raw_input = serialized_group['inputs']
         .find { |serialized_input| serialized_input['name'] == definition.name }
         .symbolize_keys
@@ -49,7 +49,7 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
       expect(input).to eq(definition)
     end
 
-    group.output_definitions.each do |_identifier, definition|
+    group.output_definitions.each_value do |definition|
       output =
         serialized_group['outputs']
           .find { |serialized_output| serialized_output['name'] == definition[:name].to_s }

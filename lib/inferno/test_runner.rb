@@ -1,5 +1,5 @@
-require_relative './result_summarizer'
-require_relative './utils/markdown_formatter'
+require_relative 'result_summarizer'
+require_relative 'utils/markdown_formatter'
 
 module Inferno
   # @private

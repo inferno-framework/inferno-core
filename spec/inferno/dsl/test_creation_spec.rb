@@ -1,5 +1,3 @@
-# rubocop:disable RSpec/FilePath
-
 RSpec.describe InfrastructureTest::Suite do
   let(:suite) { described_class }
   let(:test_run) { Inferno::Entities::TestRun.new(id: SecureRandom.uuid) }
@@ -57,11 +55,11 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it 'contains the correct inputs' do
-        expect(suite.inputs).to match_array([:suite_input])
+        expect(suite.inputs).to contain_exactly(:suite_input)
       end
 
       it 'contains the correct outputs' do
-        expect(suite.outputs).to match_array([:suite_output])
+        expect(suite.outputs).to contain_exactly(:suite_output)
       end
 
       it 'contains the correct groups' do
@@ -140,15 +138,15 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own inputs as well as its parents' inputs" do
-        expect(outer_inline_group.inputs).to match_array([:suite_input, :outer_group_input])
+        expect(outer_inline_group.inputs).to contain_exactly(:suite_input, :outer_group_input)
       end
 
       it "contains its own outputs as well as its parents' outputs" do
-        expect(outer_inline_group.outputs).to match_array([:suite_output, :outer_group_output])
+        expect(outer_inline_group.outputs).to contain_exactly(:suite_output, :outer_group_output)
       end
 
       it 'contains the correct groups' do
-        expect(outer_inline_group.groups).to match_array([inner_inline_group])
+        expect(outer_inline_group.groups).to contain_exactly(inner_inline_group)
       end
 
       it 'contains groups with correct short_ids' do
@@ -209,15 +207,15 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own inputs as well as its parents' inputs" do
-        expect(inner_inline_group.inputs).to match_array([:suite_input, :outer_group_input, :inner_group_input])
+        expect(inner_inline_group.inputs).to contain_exactly(:suite_input, :outer_group_input, :inner_group_input)
       end
 
       it "contains its own outputs as well as its parents' outputs" do
-        expect(inner_inline_group.outputs).to match_array([:suite_output, :outer_group_output, :inner_group_output])
+        expect(inner_inline_group.outputs).to contain_exactly(:suite_output, :outer_group_output, :inner_group_output)
       end
 
       it 'contains the correct groups' do
-        expect(inner_inline_group.groups).to match_array([])
+        expect(inner_inline_group.groups).to be_empty
       end
 
       it 'contains the correct tests' do
@@ -347,11 +345,11 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own inputs as well as its parents' inputs" do
-        expect(external_outer_group.inputs).to match_array([:suite_input, :external_outer_group_input])
+        expect(external_outer_group.inputs).to contain_exactly(:suite_input, :external_outer_group_input)
       end
 
       it "contains its own outputs as well as its parents' outputs" do
-        expect(external_outer_group.outputs).to match_array([:suite_output, :external_outer_group_output])
+        expect(external_outer_group.outputs).to contain_exactly(:suite_output, :external_outer_group_output)
       end
 
       it 'contains the correct short_id' do
@@ -372,7 +370,7 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own fhir clients as well as its parents' fhir clients" do
-        expect(external_outer_group.fhir_client_definitions.keys).to match_array([:suite, :external_outer_group])
+        expect(external_outer_group.fhir_client_definitions.keys).to contain_exactly(:suite, :external_outer_group)
       end
 
       it 'passes' do
@@ -564,5 +562,3 @@ RSpec.describe InfrastructureTest::Suite do
     end
   end
 end
-
-# rubocop:enable RSpec/FilePath

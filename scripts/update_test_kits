@@ -18,7 +18,7 @@ require 'pry'
 require 'faraday'
 require 'json'
 
-access_token = ENV['GITHUB_ACCESS_TOKEN']
+access_token = ENV.fetch('GITHUB_ACCESS_TOKEN', nil)
 
 test_kit_repos = []
 next_link = 'https://api.github.com/orgs/inferno-framework/repos'
