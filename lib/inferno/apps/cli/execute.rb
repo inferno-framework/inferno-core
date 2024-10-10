@@ -43,10 +43,17 @@ module Inferno
         outputter.print_around_run(options) do
           if selected_runnables.empty?
             run_one(suite)
+
             results = test_runs_repo.results_for_test_run(test_run(suite).id).reverse
           else
             selected_runnables.each do |runnable|
               run_one(runnable)
+
+              # Since Inferno can only have one test_run executing at a time per test_session,
+              # and each call to `inferno execute` represents one test_session, we block until
+              # each runnable until result is achieved
+              block_until_result_for(runnable)
+
               results += test_runs_repo.results_for_test_run(test_run(runnable).id).reverse
             end
           end
@@ -84,7 +91,12 @@ module Inferno
       end
 
       def selected_runnables
-        groups + tests
+        # sort so if a user specifies `inferno execute --tests 1.01 --short-ids 1.02` it will run in order 1.01, 1.02
+        # although this will disallow if a user wanted to intentionally run `inferno execute --tests 1.02 1.01` in
+        # that order
+        @selected_runnables ||= validate_unique_runnables(shorts + groups + tests).sort do |a, b|
+          a.short_id <=> b.short_id
+        end
       end
 
       def run_one(runnable)
@@ -99,6 +111,16 @@ module Inferno
         dispatch_job(test_run(runnable))
       end
 
+      def block_until_result_for(runnable)
+        loop do
+          last_result = results_repo.result_for_test_run(
+            runnable.reference_hash.merge(test_run_id: test_run(runnable).id)
+          )
+
+          break unless %w[queued running].include? last_result.result
+        end
+      end
+
       def suite
         @suite ||= Inferno::Repositories::TestSuites.new.find(options[:suite])
 
@@ -111,14 +133,18 @@ module Inferno
         @test_runs_repo ||= Inferno::Repositories::TestRuns.new
       end
 
-      def test_run(runnable_param)
+      def test_run(runnable)
         @test_runs ||= {}
 
-        @test_runs[runnable_param] ||= test_runs_repo.create(
-          create_params(test_session, runnable_param).merge({ status: 'queued' })
+        @test_runs[runnable] ||= test_runs_repo.create(
+          create_params(test_session, runnable).merge({ status: 'queued' })
         )
 
-        @test_runs[runnable_param]
+        @test_runs[runnable]
+      end
+
+      def results_repo
+        @results_repo ||= Inferno::Repositories::Results.new
       end
 
       def test_groups_repo
@@ -165,6 +191,41 @@ module Inferno
         end
       end
 
+      def validate_unique_runnables(runnables)
+        runnables.each_with_index do |validatee, validatee_index|
+          runnables.each_with_index do |runnable, runnable_index|
+            if validatee_index != runnable_index && ((validatee == runnable) || runnable_is_included_in?(validatee,
+                                                                                                         runnable))
+              raise StandardError, "Runnable #{validatee.short_id} is already included in #{runnable.short_id}"
+            end
+          end
+        end
+
+        runnables
+      end
+
+      def runnable_is_included_in?(runnable, maybe_parent)
+        if runnable.parent.nil?
+          false
+        elsif runnable.parent == maybe_parent
+          true
+        else
+          runnable_is_included_in?(runnable.parent, maybe_parent)
+        end
+      end
+
+      def shorts
+        return [] if options[:short_ids].blank?
+
+        @shorts ||= options[:short_ids]&.map do |short_id|
+          find_by_short_id(test_groups_repo, short_id)
+        rescue StandardError => maybe_not_found_error # rubocop:disable Naming/RescuedExceptionsVariableName
+          raise maybe_not_found_error unless maybe_not_found_error.message == short_id_not_found_message(short_id)
+
+          find_by_short_id(tests_repo, short_id)
+        end
+      end
+
       def groups
         return [] if options[:groups].blank?
 
@@ -181,7 +242,11 @@ module Inferno
         repo.all.each do |entity|
           return entity if short_id == entity.short_id && suite.id == entity.suite.id
         end
-        raise StandardError, "Group or test #{short_id} not found"
+        raise StandardError, short_id_not_found_message(short_id)
+      end
+
+      def short_id_not_found_message(short_id)
+        "Group or test #{short_id} not found"
       end
 
       def thor_hash_to_suite_options_array(hash = {})
@@ -201,11 +266,11 @@ module Inferno
       end
 
       def runnable_type(runnable)
-        if Inferno::TestSuite.subclasses.include? runnable
+        if Inferno::TestSuite.subclasses.include?(runnable) || runnable.ancestors.include?(Inferno::TestSuite)
           :suite
-        elsif Inferno::TestGroup.subclasses.include? runnable
+        elsif Inferno::TestGroup.subclasses.include?(runnable) || runnable.ancestors.include?(Inferno::TestGroup)
           :group
-        elsif Inferno::Test.subclasses.include? runnable
+        elsif Inferno::Test.subclasses.include?(runnable) || runnable.ancestors.include?(Inferno::Test)
           :test
         else
           raise StandardError, "Unidentified runnable #{runnable}"
