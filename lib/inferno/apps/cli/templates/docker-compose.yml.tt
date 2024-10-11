@@ -27,6 +27,10 @@ services:
     extends:
       file: docker-compose.background.yml
       service: fhir_validator_app
+  fhirpath:
+    extends:
+      file: docker-compose.background.yml
+      service: fhirpath
   nginx:
     extends:
       file: docker-compose.background.yml
