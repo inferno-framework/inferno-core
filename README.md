@@ -149,19 +149,21 @@ To get to an interactive console, run `bundle exec bin/inferno console`
 
 ## Documentation
 Inferno Core documentation has primarily moved to the
-[Inferno Framework documentation
-site](https://github.com/inferno-framework/inferno-framework.github.io/).
-However, Ruby Docs (generated from the source code) and the Swagger API
+[Inferno Framework documentation site](https://github.com/inferno-framework/inferno-framework.github.io/).
+However, Ruby Docs (generated from the source code using `./bin/docs`) and the Swagger API
 documentation is still located within the `docs/` directory. This documentation
 is rendered using Jekyll, which creates a site that can be built and served
 with:
 
 ```sh
+./bin/docs
 cd docs/
 bundle install
 bundle exec jekyll serve
 ```
-By default the site will be served at `http://localhost:4000/inferno-core/`
+
+View the Ruby Docs at [http://localhost:4000/inferno-core/docs](http://localhost:4000/inferno-core/docs) and the API Docs at
+[http://localhost:4000/inferno-core/api-docs](http://localhost:4000/inferno-core/api-docs).
 
 ## License
 
