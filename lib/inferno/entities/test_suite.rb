@@ -2,6 +2,7 @@ require_relative 'test_group'
 require_relative '../dsl/runnable'
 require_relative '../dsl/suite_option'
 require_relative '../dsl/messages'
+require_relative '../dsl/links'
 require_relative '../repositories/test_groups'
 require_relative '../repositories/test_suites'
 require_relative '../result_collection'
@@ -12,6 +13,7 @@ module Inferno
     # single Implementation Guide
     class TestSuite
       extend DSL::Runnable
+      extend DSL::Links
       extend DSL::FHIRClient::ClassMethods
       extend DSL::HTTPClient::ClassMethods
       include DSL::FHIRValidation
@@ -171,30 +173,6 @@ module Inferno
         #   this suite
         def suite_options
           @suite_options ||= []
-        end
-
-        # Set/get a list of links which are displayed in the footer of the UI.
-        #
-        # @param links [Array<Hash>] A list of Hashes for the links to be
-        #   displayed. Each hash needs a `label:` and `url:` entry.
-        #
-        # @return [Array<Hash>, nil]
-        #
-        # @example
-        #   links [
-        #     {
-        #       label: 'Report Issue',
-        #       url: 'https://github.com/onc-healthit/onc-certification-g10-test-kit/issues/'
-        #     },
-        #     {
-        #       label: 'Open Source',
-        #       url: 'https://github.com/onc-healthit/onc-certification-g10-test-kit/'
-        #     }
-        #   ]
-        def links(links = nil)
-          return @links if links.nil?
-
-          @links = links
         end
 
         # Set/get a description which for this test suite which will be
