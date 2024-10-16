@@ -108,7 +108,7 @@ module Inferno
       end
 
       def non_db_params(params)
-        params.reject { |key, _value| self.class::Model.columns.include? key }
+        params.except(*self.class::Model.columns)
       end
 
       def handle_non_db_params(params)

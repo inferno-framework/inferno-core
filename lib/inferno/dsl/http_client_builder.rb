@@ -44,8 +44,8 @@ module Inferno
       end
 
       # @private
-      def method_missing(name, *args, &)
-        return runnable.send(name, *args, &) if runnable.respond_to? name
+      def method_missing(name, ...)
+        return runnable.send(name, ...) if runnable.respond_to? name
 
         super
       end

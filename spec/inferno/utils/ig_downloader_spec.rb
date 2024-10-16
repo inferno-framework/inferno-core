@@ -5,7 +5,7 @@ require_relative '../../../lib/inferno/utils/ig_downloader'
 def with_temp_path(name)
   path = File.join(Inferno::Application.root, 'tmp', "rspec-#{name.sum}.tmp")
   yield(path)
-  File.delete(path) if File.exist?(path)
+  FileUtils.rm_f(path)
 end
 
 RSpec.describe Inferno::Utils::IgDownloader do

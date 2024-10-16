@@ -360,8 +360,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
     context 'with oauth_credentials' do
       it 'performs a refresh if the token is about to expire' do
         client = group.fhir_client(:client_with_oauth_credentials)
-        allow(client).to receive(:need_to_refresh?).and_return(true)
-        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(client).to receive_messages(need_to_refresh?: true, able_to_refresh?: true)
         allow(group).to receive(:perform_refresh).with(client)
 
         group.fhir_operation(path, client: :client_with_oauth_credentials)
@@ -374,8 +373,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
     context 'with auth info' do
       it 'performs a refresh if the token is about to expire' do
         client = group.fhir_client(:client_with_auth_info)
-        allow(client).to receive(:need_to_refresh?).and_return(true)
-        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(client).to receive_messages(need_to_refresh?: true, able_to_refresh?: true)
         allow(group).to receive(:perform_refresh).with(client)
 
         group.fhir_operation(path, client: :client_with_auth_info)
@@ -544,8 +542,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
     context 'with oauth_credentials' do
       it 'performs a refresh if the token is about to expire' do
         client = group.fhir_client(:client_with_oauth_credentials)
-        allow(client).to receive(:need_to_refresh?).and_return(true)
-        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(client).to receive_messages(need_to_refresh?: true, able_to_refresh?: true)
         allow(group).to receive(:perform_refresh).with(client)
 
         group.fhir_read(resource.resourceType, resource_id, client: :client_with_oauth_credentials)
@@ -558,8 +555,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
     context 'with auth info' do
       it 'performs a refresh if the token is about to expire' do
         client = group.fhir_client(:client_with_auth_info)
-        allow(client).to receive(:need_to_refresh?).and_return(true)
-        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(client).to receive_messages(need_to_refresh?: true, able_to_refresh?: true)
         allow(group).to receive(:perform_refresh).with(client)
 
         group.fhir_read(resource.resourceType, resource_id, client: :client_with_auth_info)
@@ -1079,8 +1075,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
       it 'performs a refresh if the token is about to expire' do
         stub_get_search_request
         client = group.fhir_client(:client_with_oauth_credentials)
-        allow(client).to receive(:need_to_refresh?).and_return(true)
-        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(client).to receive_messages(need_to_refresh?: true, able_to_refresh?: true)
         allow(group).to receive(:perform_refresh).with(client)
 
         group.fhir_search(resource.resourceType, params: { patient: 123 }, client: :client_with_oauth_credentials)
@@ -1094,8 +1089,7 @@ RSpec.describe Inferno::DSL::FHIRClient do
       it 'performs a refresh if the token is about to expire' do
         stub_get_search_request
         client = group.fhir_client(:client_with_auth_info)
-        allow(client).to receive(:need_to_refresh?).and_return(true)
-        allow(client).to receive(:able_to_refresh?).and_return(true)
+        allow(client).to receive_messages(need_to_refresh?: true, able_to_refresh?: true)
         allow(group).to receive(:perform_refresh).with(client)
 
         group.fhir_search(resource.resourceType, params: { patient: 123 }, client: :client_with_auth_info)
