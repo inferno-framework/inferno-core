@@ -234,6 +234,11 @@ export const getAccessFields = (
   accessValues: Map<string, unknown>,
   components: TestInput[],
 ): TestInput[] => {
+  const backendServicesHideCondition =
+    authType === 'backend_services'
+      ? !accessValues.get('access_token')
+      : !accessValues.get('refresh_token');
+
   const fields = [
     {
       name: 'access_token',
@@ -249,10 +254,7 @@ export const getAccessFields = (
       title: 'Client ID',
       description: 'Client ID provided during registration of Inferno',
       optional: true,
-      hide:
-        authType === 'backend_services'
-          ? !accessValues.get('access_token')
-          : !accessValues.get('refresh_token'),
+      hide: backendServicesHideCondition,
     },
     {
       name: 'client_secret',
@@ -266,10 +268,7 @@ export const getAccessFields = (
       title: 'Token URL',
       description: "URL of the authorization server's token endpoint",
       optional: true,
-      hide:
-        authType === 'backend_services'
-          ? !accessValues.get('access_token')
-          : !accessValues.get('refresh_token'),
+      hide: backendServicesHideCondition,
     },
     {
       name: 'encryption_algorithm',
@@ -288,10 +287,7 @@ export const getAccessFields = (
         ],
       },
       optional: true,
-      hide:
-        authType === 'backend_services'
-          ? !accessValues.get('access_token')
-          : !accessValues.get('refresh_token'),
+      hide: backendServicesHideCondition,
     },
     {
       name: 'kid',
@@ -299,10 +295,7 @@ export const getAccessFields = (
       description:
         'Key ID of the JWKS private key used to sign the client assertion. If blank, the first key for the selected encryption algorithm will be used.',
       optional: true,
-      hide:
-        authType === 'backend_services'
-          ? !accessValues.get('access_token')
-          : !accessValues.get('refresh_token'),
+      hide: backendServicesHideCondition,
     },
     {
       name: 'jwks',
@@ -311,30 +304,21 @@ export const getAccessFields = (
       description:
         "The JWKS (including private keys) which will be used to sign the client assertion. If blank, Inferno's default JWKS will be used.",
       optional: true,
-      hide:
-        authType === 'backend_services'
-          ? !accessValues.get('access_token')
-          : !accessValues.get('refresh_token'),
+      hide: backendServicesHideCondition,
     },
     {
       name: 'issue_time',
       title: 'Access Token Issue Time',
       description: 'The time that the access token was issued in iso8601 format',
       optional: true,
-      hide:
-        authType === 'backend_services'
-          ? !accessValues.get('access_token')
-          : !accessValues.get('refresh_token'),
+      hide: backendServicesHideCondition,
     },
     {
       name: 'expires_in',
       title: 'Token Lifetime',
       description: 'The lifetime of the access token in seconds',
       optional: true,
-      hide:
-        authType === 'backend_services'
-          ? !accessValues.get('access_token')
-          : !accessValues.get('refresh_token'),
+      hide: backendServicesHideCondition,
     },
   ] as TestInput[];
 
