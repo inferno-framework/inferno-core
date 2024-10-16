@@ -249,7 +249,10 @@ export const getAccessFields = (
       title: 'Client ID',
       description: 'Client ID provided during registration of Inferno',
       optional: true,
-      hide: !accessValues.get('refresh_token'),
+      hide:
+        authType === 'backend_services'
+          ? !accessValues.get('access_token')
+          : !accessValues.get('refresh_token'),
     },
     {
       name: 'client_secret',
@@ -263,7 +266,10 @@ export const getAccessFields = (
       title: 'Token URL',
       description: "URL of the authorization server's token endpoint",
       optional: true,
-      hide: !accessValues.get('refresh_token'),
+      hide:
+        authType === 'backend_services'
+          ? !accessValues.get('access_token')
+          : !accessValues.get('refresh_token'),
     },
     {
       name: 'encryption_algorithm',
@@ -283,8 +289,9 @@ export const getAccessFields = (
       },
       optional: true,
       hide:
-        !accessValues.get('refresh_token') ||
-        (authType === 'backend_services' && !accessValues.get('access_token')),
+        authType === 'backend_services'
+          ? !accessValues.get('access_token')
+          : !accessValues.get('refresh_token'),
     },
     {
       name: 'kid',
