@@ -3,71 +3,73 @@ require_relative 'jwks'
 
 module Inferno
   module DSL
-    # AuthInfo provide a user with a single input which contains the information
-    # needed for a fhir client to perform authorization and refresh an access
+    # AuthInfo provides a user with a single input which contains the information
+    # needed for a FHIR client to perform authorization and refresh an access
     # token when necessary.
     #
     # AuthInfo supports the following `auth_type`:
-    # - `public` - client id only
-    # - `symmetric` - Symmetric confidential (i.e., with a static client id and
-    #   secret)
-    # - `asymmetric` - Symmetric confidential (i.e., a client id with a signed
-    #   JWT rather than a client secret)
-    # - `backend_services`
+    #
+    #   - `public` - Client id only
+    #   - `symmetric` - Confidential symmetric (i.e., with a static client id and
+    #     secret)
+    #   - `asymmetric` - Confidential asymmetric (i.e., a client id with a signed
+    #     JWT rather than a client secret)
+    #   - `backend_services`
     #
     # When configuring an AuthInfo input, the invdidual fields are exposed as
     # `components` in the input's options, and can be configured there similar
     # to normal inputs.
     #
     # The AuthInfo input type supports two different modes in the UI. Different
-    # fields will be presented to the user depending on which mode is selected.
-    # - `auth` - This presents the inputs needed to perform authorization, and
-    #   is appropriate to use as an input to test groups which perform
-    #   authorization
-    # - `access` - This presents the inputs needed to access resources assuming
-    #   that authorization has already happened, and is appropriate to use as an
-    #   input to test groups which access resources using previously granted
-    #   authorization
+    # fields will be presented to the user depending on which mode is selected:
+    #
+    #   - `auth` - This presents the inputs needed to perform authorization, and
+    #     is appropriate to use as an input to test groups which perform
+    #     authorization.
+    #   - `access` - This presents the inputs needed to access resources assuming
+    #     that authorization has already happened, and is appropriate to use as an
+    #     input to test groups which access resources using previously granted
+    #     authorization.
     #
     # @example
-    # class AuthInfoExampleSuite < Inferno::TestSuite
-    #   input :url,
-    #         title: 'Base FHIR url'
+    #   class AuthInfoExampleSuite < Inferno::TestSuite
+    #     input :url,
+    #           title: 'Base FHIR url'
     #
-    #   group do
-    #     title 'Perform public authorization'
-    #     input :fhir_auth,
-    #           type: :auth_info,
-    #           options: {
-    #             mode: 'auth',
-    #             components: [
-    #               {
-    #                 name: :auth_type,
-    #                 default: 'public',
-    #                 locked: true
-    #               }
-    #             ]
-    #           }
+    #     group do
+    #       title 'Perform public authorization'
+    #       input :fhir_auth,
+    #             type: :auth_info,
+    #             options: {
+    #               mode: 'auth',
+    #               components: [
+    #                 {
+    #                   name: :auth_type,
+    #                   default: 'public',
+    #                   locked: true
+    #                 }
+    #               ]
+    #             }
     #
-    #     # Some tests here to perform authorization
-    #   end
-    #
-    #   group do
-    #     title 'FHIR API Tests'
-    #     input :fhir_auth,
-    #           type: :auth_info,
-    #           options: {
-    #             mode: 'access'
-    #           }
-    #
-    #     fhir_client do
-    #       url :url
-    #       auth_info :fhir_auth # NOT YET IMPLEMENTED
+    #       # Some tests here to perform authorization
     #     end
     #
-    #     # Some tests here to access FHIR API
+    #     group do
+    #       title 'FHIR API Tests'
+    #       input :fhir_auth,
+    #             type: :auth_info,
+    #             options: {
+    #               mode: 'access'
+    #             }
+    #
+    #       fhir_client do
+    #         url :url
+    #         auth_info :fhir_auth
+    #       end
+    #
+    #       # Some tests here to access FHIR API
+    #     end
     #   end
-    # end
     class AuthInfo
       ATTRIBUTES = [
         :auth_type,
@@ -95,35 +97,38 @@ module Inferno
 
       attr_accessor :client
 
-      # @!attribute [rw] auth_type The type of authorization to be performed.
-      #   One of `public`, `symmetric`, `asymmetric`, or `backend_services`
-      # @!attribute [rw] token_url The url of the auth server's token endpoint
-      # @!attribute [rw] auth_url The url of the authorization endpoint
-      # @!attribute [rw] requested_scopes The scopes which will be requested
-      #   during authorization
+      # @!attribute [rw] auth_type
+      #   The type of authorization to be performed. One of `public`, `symmetric`, `asymmetric`, or `backend_services`
+      # @!attribute [rw] token_url
+      #   The url of the auth server's token endpoint
+      # @!attribute [rw] auth_url
+      #   The url of the authorization endpoint
+      # @!attribute [rw] requested_scopes
+      #   The scopes which will be requested during authorization
       # @!attribute [rw] client_id
       # @!attribute [rw] client_secret
       # @!attribute [rw] redirect_url
-      # @!attribute [rw] pkce_support Whether PKCE will be used during
-      #   authorization. Either `enabled` or `disabled`.
-      # @!attribute [rw] pkce_code_challenge_method Either `S256` (default) or
-      #   `plain`
-      # @!attribute [rw] auth_request_method The http method which will be used
-      #   to perform the request to the authorization endpoint. Either `get`
-      #   (default) or `post`
-      # @!attribute [rw] encryption_algorithm The encryption algorithm which
-      #   will be used to sign the JWT client credentials. Either `es384`
-      #   (default) or `rs384`
-      # @!attribute [rw] kid The key id for the keys to be used to sign the JWT
-      #   client credentials. When blank, the first key for the selected
-      #   encryption algorithm will be used
-      # @!attribute [rw] jwks A JWKS (including private keys) which will be used
-      #   instead of Inferno's default JWKS if provided
+      # @!attribute [rw] pkce_support
+      #   Whether PKCE will be used during authorization. Either `enabled` or `disabled`.
+      # @!attribute [rw] pkce_code_challenge_method
+      #   Either `S256` (default) or `plain`
+      # @!attribute [rw] auth_request_method
+      #   The http method which will be used to perform the request to the authorization endpoint.
+      #   Either `get` (default) or `post`
+      # @!attribute [rw] encryption_algorithm
+      #   The encryption algorithm which will be used to sign the JWT client credentials.
+      #   Either `es384` (default) or `rs384`
+      # @!attribute [rw] kid
+      #   The key id for the keys to be used to sign the JWT client credentials.
+      #   When blank, the first key for the selected encryption algorithm will be used
+      # @!attribute [rw] jwks
+      #   A JWKS (including private keys) which will be used instead of Inferno's default JWKS if provided
       # @!attribute [rw] access_token
       # @!attribute [rw] refresh_token
-      # @!attribute [rw] issue_time An iso8601 formatted string representing the
-      #   time the access token was issued
-      # @!attribute [rw] expires_in The lifetime of the access token in seconds
+      # @!attribute [rw] issue_time
+      #   An iso8601 formatted string representing the time the access token was issued
+      # @!attribute [rw] expires_in
+      #   The lifetime of the access token in seconds
       # @!attribute [rw] name
 
       # @private

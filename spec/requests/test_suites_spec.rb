@@ -20,19 +20,28 @@ RSpec.describe '/test_suites' do
       expect(test_suites.length).to eq(repo.all.length)
       expect(test_suites).to all(include(*summary_fields))
       expect(test_suites).to all(exclude(*full_fields))
+      expect(test_suites).to all(have_key('links'))
+      expect(test_suites.map { |ts| ts['links'] }).to all(be_an(Array))
     end
   end
 
   describe 'show' do
-    context 'when the test_suite exists' do
-      let(:test_suite_id) { repo.all.first.id }
+    context 'when the test_suite exists and has defined links' do
+      let(:test_suite_id) { 'demo' }
 
       it 'renders the test_suite json' do
         get router.path(:api_test_suites_show, id: test_suite_id)
-
         expect(last_response.status).to eq(200)
         expect(parsed_body['id']).to eq(test_suite_id)
         expect(parsed_body).to include(*all_fields)
+        expect(parsed_body['links']).to be_an(Array)
+        parsed_body['links'].each do |link|
+          expect(link).to be_a(Hash)
+          expect(link).to include('type', 'label', 'url')
+          expect(link['type']).to be_a(String)
+          expect(link['label']).to be_a(String)
+          expect(link['url']).to be_a(String)
+        end
       end
     end
 
