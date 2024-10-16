@@ -279,7 +279,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     test 'checkbox group input' do
-      input :checkbox,
+      input :checkbox_group,
             title: 'Checkbox Group Input Example',
             type: 'checkbox',
             description: 'Checkbox description',
@@ -297,7 +297,53 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
               ]
             }
 
-      run { info "Received the following 'checkbox' variable: '#{checkbox}'" }
+      run { info "Received the following 'checkbox' variable: '#{checkbox_group}'" }
+    end
+
+    test 'locked checkbox group input' do
+      input :locked_checkbox_group,
+            title: 'Locked Checkbox Group Input Example',
+            type: 'checkbox',
+            description: 'Checkbox description',
+            default: ['value2'],
+            optional: false,
+            options: {
+              list_options: [
+                {
+                  label: 'Label 1',
+                  value: 'value1'
+                }, {
+                  label: 'Label 2',
+                  value: 'value2',
+                  locked: true
+                }
+              ]
+            }
+
+      run { info "Received the following 'checkbox' variable: '#{locked_checkbox_group}'" }
+    end
+
+    test 'single checkbox input' do
+      input :single_checkbox,
+            title: 'Single Checkbox Input Example',
+            type: 'checkbox',
+            description: 'Checkbox description',
+            default: ['true'],
+            optional: false
+
+      run { info "Received the following 'checkbox' variable: '#{single_checkbox}'" }
+    end
+
+    test 'locked single checkbox input' do
+      input :locked_single_checkbox,
+            title: 'Locked Single Checkbox Input Example',
+            type: 'checkbox',
+            description: 'Checkbox description',
+            default: ['true'],
+            optional: false,
+            locked: true
+
+      run { info "Received the following 'checkbox' variable: '#{locked_single_checkbox}'" }
     end
 
     test 'OAuth Credentials group input' do

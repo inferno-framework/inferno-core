@@ -31,12 +31,8 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
   const isMissingInput =
     hasBeenModified && !requirement.optional && inputsMap.get(requirement.name) === false;
 
-  const fieldLabel = (
-    <>
-      <FieldLabel requirement={requirement} isMissingInput={isMissingInput} />{' '}
-      {requirement.optional ? '' : '*'}
-    </>
-  );
+  // No "required" formatting because single checkboxes always have a value assigned
+  const fieldLabel = <FieldLabel requirement={requirement} isMissingInput={isMissingInput} />;
 
   useEffect(() => {
     const inputsValue = inputsMap.get(requirement.name) as string;
