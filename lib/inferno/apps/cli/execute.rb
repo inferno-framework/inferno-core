@@ -49,11 +49,6 @@ module Inferno
             selected_runnables.each do |runnable|
               run_one(runnable)
 
-              # Since Inferno can only have one test_run executing at a time per test_session,
-              # and each call to `inferno execute` represents one test_session, we block until
-              # each runnable until result is achieved
-              block_until_result_for(runnable)
-
               results += test_runs_repo.results_for_test_run(test_run(runnable).id).reverse
             end
           end
@@ -104,16 +99,6 @@ module Inferno
         persist_inputs(session_data_repo, create_params(test_session, suite), test_run(runnable))
 
         dispatch_job(test_run(runnable))
-      end
-
-      def block_until_result_for(runnable)
-        loop do
-          last_result = results_repo.result_for_test_run(
-            runnable.reference_hash.merge(test_run_id: test_run(runnable).id)
-          )
-
-          break unless %w[queued running].include? last_result.result
-        end
       end
 
       def suite
