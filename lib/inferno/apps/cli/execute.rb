@@ -91,12 +91,7 @@ module Inferno
       end
 
       def selected_runnables
-        # sort so if a user specifies `inferno execute --tests 1.01 --short-ids 1.02` it will run in order 1.01, 1.02
-        # although this will disallow if a user wanted to intentionally run `inferno execute --tests 1.02 1.01` in
-        # that order
-        @selected_runnables ||= validate_unique_runnables(shorts + groups + tests).sort do |a, b|
-          a.short_id <=> b.short_id
-        end
+        @selected_runnables ||= validate_unique_runnables(shorts + groups + tests)
       end
 
       def run_one(runnable)
