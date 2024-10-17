@@ -212,36 +212,39 @@ module Inferno
       def shorts
         return [] if options[:short_ids].blank?
 
-        @shorts ||= options[:short_ids]&.map do |short_id|
-          find_by_short_id(test_groups_repo, short_id)
-        rescue StandardError => maybe_not_found_error # rubocop:disable Naming/RescuedExceptionsVariableName
-          raise maybe_not_found_error unless maybe_not_found_error.message == short_id_not_found_message(short_id)
-
-          find_by_short_id(tests_repo, short_id)
-        end
+        @shorts ||= options[:short_ids]&.map { |short_id| find_by_short_id(:group_or_test, short_id) }
       end
 
       def groups
         return [] if options[:groups].blank?
 
-        @groups ||= options[:groups]&.map { |short_id| find_by_short_id(test_groups_repo, short_id) }
+        @groups ||= options[:groups]&.map { |short_id| find_by_short_id(:group, short_id) }
       end
 
       def tests
         return [] if options[:tests].blank?
 
-        @tests ||= options[:tests]&.map { |short_id| find_by_short_id(tests_repo, short_id) }
+        @tests ||= options[:tests]&.map { |short_id| find_by_short_id(:test, short_id) }
       end
 
-      def find_by_short_id(repo, short_id)
-        repo.all.each do |entity|
-          return entity if short_id == entity.short_id && suite.id == entity.suite.id
+      def find_by_short_id(repo_symbol, short_id)
+        repos_array = case repo_symbol
+                      when :group
+                        [test_groups_repo]
+                      when :test
+                        [tests_repo]
+                      when :group_or_test
+                        [test_groups_repo, tests_repo]
+                      else
+                        raise StandardError, "Unrecognized repo_symbol #{repo_symbol} for `find_by_short_id`"
+                      end
+
+        repos_array.each do |repo|
+          repo.all.each do |entity|
+            return entity if short_id == entity.short_id && suite.id == entity.suite.id
+          end
         end
-        raise StandardError, short_id_not_found_message(short_id)
-      end
-
-      def short_id_not_found_message(short_id)
-        "Group or test #{short_id} not found"
+        raise StandardError, "#{repo_symbol.to_s.humanize} #{short_id} not found."
       end
 
       def thor_hash_to_suite_options_array(hash = {})

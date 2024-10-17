@@ -200,10 +200,36 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#find_by_short_id' do
+    before(:each) do
+      allow(instance).to receive(:options).and_return({ suite: 'basic' })
+    end
+
+    it 'raises standard error when repo_symbol parameter is not test or group or group_or_test' do
+      expect do
+        instance.find_by_short_id(:bad, '1')
+      end.to raise_error(StandardError)
+    end
+
     it 'raises standard error when entity not found by short id' do
       expect do
-        instance.find_by_short_id(Inferno::Repositories::Tests.new, 'does_not_exist')
+        instance.find_by_short_id(:test, 'does_not_exist')
       end.to raise_error(StandardError)
+    end
+
+    it 'can return a group runnable when group is specified' do
+      expect(instance.find_by_short_id(:group, '1')).to be < Inferno::TestGroup
+    end
+
+    it 'can return a test runnable when test is specified' do
+      expect(instance.find_by_short_id(:test, '1.1')).to be < Inferno::Test
+    end
+
+    it 'can return a group runnable when group_or_test is specified' do
+      expect(instance.find_by_short_id(:group_or_test, '1')).to be < Inferno::TestGroup
+    end
+
+    it 'can return a test runnable when group_or_test is specified' do
+      expect(instance.find_by_short_id(:group_or_test, '1.1')).to be < Inferno::Test
     end
   end
 
