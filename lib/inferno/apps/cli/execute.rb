@@ -43,10 +43,12 @@ module Inferno
         outputter.print_around_run(options) do
           if selected_runnables.empty?
             run_one(suite)
+
             results = test_runs_repo.results_for_test_run(test_run(suite).id).reverse
           else
             selected_runnables.each do |runnable|
               run_one(runnable)
+
               results += test_runs_repo.results_for_test_run(test_run(runnable).id).reverse
             end
           end
@@ -84,7 +86,7 @@ module Inferno
       end
 
       def selected_runnables
-        groups + tests
+        @selected_runnables ||= validate_unique_runnables(shorts + groups + tests)
       end
 
       def run_one(runnable)
@@ -111,14 +113,18 @@ module Inferno
         @test_runs_repo ||= Inferno::Repositories::TestRuns.new
       end
 
-      def test_run(runnable_param)
+      def test_run(runnable)
         @test_runs ||= {}
 
-        @test_runs[runnable_param] ||= test_runs_repo.create(
-          create_params(test_session, runnable_param).merge({ status: 'queued' })
+        @test_runs[runnable] ||= test_runs_repo.create(
+          create_params(test_session, runnable).merge({ status: 'queued' })
         )
 
-        @test_runs[runnable_param]
+        @test_runs[runnable]
+      end
+
+      def results_repo
+        @results_repo ||= Inferno::Repositories::Results.new
       end
 
       def test_groups_repo
@@ -165,23 +171,67 @@ module Inferno
         end
       end
 
+      def validate_unique_runnables(runnables)
+        runnables.each_with_index do |validatee, validatee_index|
+          runnables.each_with_index do |runnable, runnable_index|
+            if validatee_index != runnable_index && ((validatee == runnable) || runnable_is_included_in?(validatee,
+                                                                                                         runnable))
+              raise StandardError, "Runnable #{validatee.short_id} is already included in #{runnable.short_id}"
+            end
+          end
+        end
+
+        runnables
+      end
+
+      def runnable_is_included_in?(runnable, maybe_parent)
+        if runnable.parent.nil?
+          false
+        elsif runnable.parent == maybe_parent
+          true
+        else
+          runnable_is_included_in?(runnable.parent, maybe_parent)
+        end
+      end
+
+      def shorts
+        return [] if options[:short_ids].blank?
+
+        @shorts ||= options[:short_ids]&.map { |short_id| find_by_short_id(:group_or_test, short_id) }
+      end
+
       def groups
         return [] if options[:groups].blank?
 
-        @groups ||= options[:groups]&.map { |short_id| find_by_short_id(test_groups_repo, short_id) }
+        @groups ||= options[:groups]&.map { |short_id| find_by_short_id(:group, short_id) }
       end
 
       def tests
         return [] if options[:tests].blank?
 
-        @tests ||= options[:tests]&.map { |short_id| find_by_short_id(tests_repo, short_id) }
+        @tests ||= options[:tests]&.map { |short_id| find_by_short_id(:test, short_id) }
       end
 
-      def find_by_short_id(repo, short_id)
-        repo.all.each do |entity|
-          return entity if short_id == entity.short_id && suite.id == entity.suite.id
+      def find_by_short_id(repo_symbol, short_id)
+        repo_symbol_to_array(repo_symbol).each do |repo|
+          repo.all.each do |entity|
+            return entity if short_id == entity.short_id && suite.id == entity.suite.id
+          end
         end
-        raise StandardError, "Group or test #{short_id} not found"
+        raise StandardError, "#{repo_symbol.to_s.humanize} #{short_id} not found."
+      end
+
+      def repo_symbol_to_array(repo_symbol)
+        case repo_symbol
+        when :group
+          [test_groups_repo]
+        when :test
+          [tests_repo]
+        when :group_or_test
+          [test_groups_repo, tests_repo]
+        else
+          raise StandardError, "Unrecognized repo_symbol #{repo_symbol} for `find_by_short_id`"
+        end
       end
 
       def thor_hash_to_suite_options_array(hash = {})
@@ -201,11 +251,11 @@ module Inferno
       end
 
       def runnable_type(runnable)
-        if Inferno::TestSuite.subclasses.include? runnable
+        if runnable < Inferno::TestSuite
           :suite
-        elsif Inferno::TestGroup.subclasses.include? runnable
+        elsif runnable < Inferno::TestGroup
           :group
-        elsif Inferno::Test.subclasses.include? runnable
+        elsif runnable < Inferno::Test
           :test
         else
           raise StandardError, "Unidentified runnable #{runnable}"

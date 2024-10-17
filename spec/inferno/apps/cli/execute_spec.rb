@@ -66,9 +66,29 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
       expect(instance.selected_runnables).to eq([])
     end
 
-    it 'returns both groups and tests when short ids for both are given' do
+    it 'returns runnables when group short ids are given' do
+      allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1'] })
+      expect(instance.selected_runnables.length).to eq(1)
+    end
+
+    it 'returns runnables when test short ids are given' do
+      allow(instance).to receive(:options).and_return({ suite: 'basic', tests: ['1.01'] })
+      expect(instance.selected_runnables.length).to eq(1)
+    end
+
+    it 'returns either runnable when short ids are given' do
+      allow(instance).to receive(:options).and_return({ suite: 'basic', short_ids: ['1.01'] })
+      expect(instance.selected_runnables.length).to eq(1)
+    end
+
+    it 'raises error when redundant short ids are given' do
       allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1'], tests: ['1.01'] })
-      expect(instance.selected_runnables.length).to eq(2)
+      expect { instance.selected_runnables }.to raise_error(StandardError)
+    end
+
+    it 'raises error when a group is given test short ids' do
+      allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1.01'] })
+      expect { instance.selected_runnables }.to raise_error(StandardError)
     end
   end
 
@@ -128,6 +148,43 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
+  describe '#validate_unique_runnables' do
+    let(:runnable) { BasicTestSuite::AbcGroup }
+    let(:another_runnable) { BasicTestSuite::DefGroup }
+
+    it 'returns runnables if they are unique' do
+      expect(instance.validate_unique_runnables([runnable, another_runnable])).to eq([runnable, another_runnable])
+    end
+
+    it 'raises an error for duplicate runnables' do
+      expect { instance.validate_unique_runnables([runnable, runnable]) }.to raise_error(StandardError)
+    end
+
+    it 'raises an error if a runnable is included in another' do
+      child = runnable.tests.first
+      expect { instance.validate_unique_runnables([runnable, child]) }.to raise_error(StandardError)
+    end
+  end
+
+  describe '#runnable_is_included_in?' do
+    let(:parent) { BasicTestSuite::Suite }
+    let(:group) { parent.groups.first }
+    let(:test) { group.tests.first }
+
+    it 'returns false when runnable has no parents' do
+      # rubocop thinks `runnable_is_included_in?` is a matcher
+      expect(instance.runnable_is_included_in?(parent, parent)).to be_falsey # rubocop:disable RSpec/PredicateMatcher
+    end
+
+    it 'returns true when runnable is a child of parent' do
+      expect(instance.runnable_is_included_in?(group, parent)).to be_truthy # rubocop:disable RSpec/PredicateMatcher
+    end
+
+    it 'returns true when runnable is a nested child of parent' do
+      expect(instance.runnable_is_included_in?(test, parent)).to be_truthy # rubocop:disable RSpec/PredicateMatcher
+    end
+  end
+
   describe '#groups' do
     it 'parses group by short id' do
       allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1'] })
@@ -143,10 +200,36 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
   end
 
   describe '#find_by_short_id' do
+    before do
+      allow(instance).to receive(:options).and_return({ suite: 'basic' })
+    end
+
+    it 'raises standard error when repo_symbol parameter is not test or group or group_or_test' do
+      expect do
+        instance.find_by_short_id(:bad, '1')
+      end.to raise_error(StandardError)
+    end
+
     it 'raises standard error when entity not found by short id' do
       expect do
-        instance.find_by_short_id(Inferno::Repositories::Tests.new, 'does_not_exist')
+        instance.find_by_short_id(:test, 'does_not_exist')
       end.to raise_error(StandardError)
+    end
+
+    it 'can return a group runnable when group is specified' do
+      expect(instance.find_by_short_id(:group, '1')).to be < Inferno::TestGroup
+    end
+
+    it 'can return a test runnable when test is specified' do
+      expect(instance.find_by_short_id(:test, '1.01')).to be < Inferno::Test
+    end
+
+    it 'can return a group runnable when group_or_test is specified' do
+      expect(instance.find_by_short_id(:group_or_test, '1')).to be < Inferno::TestGroup
+    end
+
+    it 'can return a test runnable when group_or_test is specified' do
+      expect(instance.find_by_short_id(:group_or_test, '1.01')).to be < Inferno::Test
     end
   end
 
