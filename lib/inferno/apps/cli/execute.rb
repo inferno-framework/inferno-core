@@ -96,7 +96,7 @@ module Inferno
 
       def run_one(runnable)
         verify_runnable(
-          suite,
+          runnable,
           thor_hash_to_inputs_array(options[:inputs]),
           test_session.suite_options
         )
