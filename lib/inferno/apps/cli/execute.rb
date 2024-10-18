@@ -1,14 +1,21 @@
-require 'pastel'
 require 'active_support'
+require 'dry/inflector'
 require_relative '../../utils/verify_runnable'
 require_relative '../../utils/persist_inputs'
-require_relative 'execute/console_outputter'
+
+Dir[File.join(__dir__, 'execute', '*_outputter.rb')].each { |outputter| require outputter }
 
 module Inferno
   module CLI
     class Execute
       include ::Inferno::Utils::VerifyRunnable
       include ::Inferno::Utils::PersistInputs
+
+      INFLECTOR = Dry::Inflector.new do |inflections|
+        inflections.acronym 'JSON'
+      end
+
+      OUTPUTTER_WHITELIST = %w[console plain json quiet].freeze
 
       attr_accessor :options
 
@@ -79,8 +86,14 @@ module Inferno
       end
 
       def outputter
-        # TODO: swap outputter based on options
-        @outputter ||= Inferno::CLI::Execute::ConsoleOutputter.new
+        unless OUTPUTTER_WHITELIST.include? options[:outputter]
+          raise StandardError,
+                "Unrecognized outputter #{options[:outputter]}"
+        end
+
+        @outputter ||= INFLECTOR.constantize(
+          "Inferno::CLI::Execute::#{INFLECTOR.camelize(options[:outputter])}Outputter"
+        ).new
       end
 
       def selected_runnables
@@ -155,7 +168,6 @@ module Inferno
       end
 
       def dispatch_job(test_run)
-        # TODO: move suppression to outputter? better suppression?
         if options[:verbose]
           Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
         else

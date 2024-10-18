@@ -37,3 +37,4 @@ group :test do
   gem 'webmock'
   gem 'factory_bot'
 end
+gem "tty-spinner", "~> 0.9.3"

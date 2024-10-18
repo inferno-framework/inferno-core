@@ -1,20 +1,11 @@
 require_relative '../../../../../lib/inferno/apps/cli/execute/console_outputter'
+require_relative 'outputter_spec'
 
 RSpec.describe Inferno::CLI::Execute::ConsoleOutputter do # rubocop:disable RSpec/FilePath
   let(:instance) { described_class.new }
   let(:options) { { verbose: true } }
 
-  describe '#serialize' do
-    let(:test_results) { create_list(:result, 2) }
-
-    it 'handles an array of test results without raising exception' do
-      expect { instance.serialize(test_results) }.to_not raise_error(StandardError)
-    end
-
-    it 'returns valid JSON' do
-      expect { JSON.parse(instance.serialize(test_results)) }.to_not raise_error(StandardError)
-    end
-  end
+  include_examples 'outputter_spec', described_class
 
   describe '#verbose_print' do
     it 'outputs when verbose is true' do
