@@ -342,15 +342,17 @@ const InputsModal: FC<InputsModalProps> = ({
                 value={serialInput}
                 error={invalidInput}
                 label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
-                InputProps={{
-                  classes: {
-                    input: classes.serialInput,
+                slotProps={{
+                  input: {
+                    classes: {
+                      input: classes.serialInput,
+                    },
+                    endAdornment: (
+                      <Box sx={{ alignSelf: 'flex-start' }}>
+                        <CopyButton copyText={serialInput} />
+                      </Box>
+                    ),
                   },
-                  endAdornment: (
-                    <Box sx={{ alignSelf: 'flex-start' }}>
-                      <CopyButton copyText={serialInput} />
-                    </Box>
-                  ),
                 }}
                 color="secondary"
                 fullWidth
