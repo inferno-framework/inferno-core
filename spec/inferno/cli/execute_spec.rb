@@ -1,4 +1,4 @@
-require_relative '../../../../lib/inferno/apps/cli/execute'
+require_relative '../../../lib/inferno/apps/cli/execute'
 
 RSpec.describe Inferno::CLI::Execute do
   let(:instance) { described_class.new }

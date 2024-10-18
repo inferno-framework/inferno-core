@@ -1,4 +1,4 @@
-require_relative '../../../../../lib/inferno/apps/cli/execute/console_outputter'
+require_relative '../../../../lib/inferno/apps/cli/execute/console_outputter'
 
 RSpec.describe Inferno::CLI::Execute::ConsoleOutputter do
   let(:instance) { described_class.new }
