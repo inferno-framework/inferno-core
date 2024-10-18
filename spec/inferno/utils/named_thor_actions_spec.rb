@@ -9,7 +9,7 @@ RSpec.describe Inferno::Utils::NamedThorActions do
   end
 
   %w[test_fhir_app test-fhir-app TestFhirApp testFhir_app].each do |name|
-    context "given name #{name}" do
+    context "when given name #{name}" do
       let(:dummy) do
         dummy_instance = dummy_class.new
         dummy_instance.name = name

@@ -21,7 +21,7 @@ RSpec.describe Inferno::Web::Serializers::Test do
     expect(serialized_test['inputs'].length).to eq(test.inputs.length)
     expect(serialized_test['outputs'].length).to eq(test.outputs.length)
 
-    test.available_inputs.each do |_identifier, definition|
+    test.available_inputs.each_value do |definition|
       raw_input = serialized_test['inputs']
         .find { |serialized_input| serialized_input['name'] == definition.name }
         .symbolize_keys
@@ -33,7 +33,7 @@ RSpec.describe Inferno::Web::Serializers::Test do
       expect(input).to eq(definition)
     end
 
-    test.output_definitions.each do |_identifier, definition|
+    test.output_definitions.each_value do |definition|
       output =
         serialized_test['outputs']
           .find { |serialized_output| serialized_output['name'] == definition[:name].to_s }
