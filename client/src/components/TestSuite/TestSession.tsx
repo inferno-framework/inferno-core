@@ -366,6 +366,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   return (
     <Box className={classes.testSuiteMain}>
+      <meta name="description" content={testSession.test_suite.description || ''} />
       {renderTestRunProgressBar()}
       {windowIsSmall ? (
         <SwipeableDrawer
