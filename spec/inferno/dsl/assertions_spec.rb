@@ -46,7 +46,9 @@ RSpec.describe Inferno::DSL::Assertions do
     context 'when a response is provided' do
       context 'with a single status' do
         it 'does not raise an exception if the response matches the status' do
-          klass.assert_response_status(200, response: { status: 200 })
+          expect do
+            klass.assert_response_status(200, response: { status: 200 })
+          end.to_not raise_error
         end
 
         it 'raises an exception if the response does not match the status' do
@@ -59,7 +61,9 @@ RSpec.describe Inferno::DSL::Assertions do
 
       context 'with an array of statuses' do
         it 'does not raise an exception if the response matches a status' do
-          klass.assert_response_status([100, 200, 300], response: { status: 200 })
+          expect do
+            klass.assert_response_status([100, 200, 300], response: { status: 200 })
+          end.to_not raise_error
         end
 
         it 'raises an exception if the response does not match the status' do
@@ -107,7 +111,9 @@ RSpec.describe Inferno::DSL::Assertions do
   describe '#assert_resource_type' do
     context 'when a resource is provided' do
       it 'does not raise an exception if the resource matches the type' do
-        klass.assert_resource_type('CarePlan', resource: care_plan_resource)
+        expect do
+          klass.assert_resource_type('CarePlan', resource: care_plan_resource)
+        end.to_not raise_error
       end
 
       it 'raises an exception if the resource does not match the type' do
