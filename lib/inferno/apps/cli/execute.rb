@@ -86,7 +86,7 @@ module Inferno
       end
 
       def selected_runnables
-        @selected_runnables ||= validate_unique_runnables(shorts + groups + tests)
+        @selected_runnables ||= validate_unique_runnables(runnables_by_short_id + groups + tests)
       end
 
       def run_one(runnable)
@@ -194,10 +194,10 @@ module Inferno
         end
       end
 
-      def shorts
+      def runnables_by_short_id
         return [] if options[:short_ids].blank?
 
-        @shorts ||= options[:short_ids]&.map { |short_id| find_by_short_id(:group_or_test, short_id) }
+        @runnables_by_short_id ||= options[:short_ids]&.map { |short_id| find_by_short_id(:group_or_test, short_id) }
       end
 
       def groups
