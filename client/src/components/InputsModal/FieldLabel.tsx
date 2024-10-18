@@ -14,8 +14,13 @@ const FieldLabel: FC<FieldLabelProps> = ({ input, isMissingInput = false }) => {
 
   const fieldLabelText = (input.title || input.name) as string;
 
-  // Radio buttons will always have an input value
-  const requiredLabel = !input.optional && input.type !== 'radio' ? ' (required)' : '';
+  // Radio buttons and single checkboxes will always have an input value
+  const requiredLabel =
+    !input.optional &&
+    input.type !== 'radio' &&
+    !(input.type === 'checkbox' && !input.options?.list_options?.length)
+      ? ' (required)'
+      : '';
 
   const lockedIcon = input.locked && <LockIcon fontSize="small" className={classes.lockedIcon} />;
 
