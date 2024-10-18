@@ -81,7 +81,7 @@ RSpec.describe Inferno::DSL::Configurable do
           identifier = :input1
           input = { type: 'textarea' }
           config.add_input(identifier, input)
-          expected_input = Inferno::Entities::Input.new(**{ name: :input1 }.merge(input))
+          expected_input = Inferno::Entities::Input.new(name: :input1, **input)
 
           expect(config.input(identifier)).to eq(expected_input)
         end

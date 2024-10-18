@@ -1,9 +1,9 @@
 require 'rspec'
 require 'inferno/apps/cli/new'
 
-PACKAGE_FIXTURE = File.expand_path('../../../fixtures/small_package.tgz', __dir__)
+PACKAGE_FIXTURE = File.expand_path('../../fixtures/small_package.tgz', __dir__)
 
-RSpec.describe Inferno::CLI::New do # rubocop:disable RSpec/FilePath
+RSpec.describe Inferno::CLI::New do
   around do |test|
     Dir.mktmpdir do |tmpdir|
       FileUtils.chdir(tmpdir) do

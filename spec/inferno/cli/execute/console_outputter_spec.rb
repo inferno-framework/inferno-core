@@ -1,6 +1,6 @@
-require_relative '../../../../../lib/inferno/apps/cli/execute/console_outputter'
+require_relative '../../../../lib/inferno/apps/cli/execute/console_outputter'
 
-RSpec.describe Inferno::CLI::Execute::ConsoleOutputter do # rubocop:disable RSpec/FilePath
+RSpec.describe Inferno::CLI::Execute::ConsoleOutputter do
   let(:instance) { described_class.new }
   let(:options) { { verbose: true } }
 
