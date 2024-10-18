@@ -3,20 +3,15 @@ import { TestInput } from '~/models/testSuiteModels';
 import InputCombobox from './InputCombobox';
 
 export interface InputAccessProps {
-  requirement: TestInput;
+  input: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
-const AuthTypeSelector: FC<InputAccessProps> = ({
-  requirement,
-  index,
-  inputsMap,
-  setInputsMap,
-}) => {
-  const selectorSettings = requirement.options?.components
-    ? requirement.options?.components[0]
+const AuthTypeSelector: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsMap }) => {
+  const selectorSettings = input.options?.components
+    ? input.options?.components[0]
     : // Default auth type settings
       {
         name: 'auth_type',
@@ -27,7 +22,7 @@ const AuthTypeSelector: FC<InputAccessProps> = ({
     name: 'auth_type',
     type: 'select',
     title: 'Auth Type',
-    description: requirement.description,
+    description: input.description,
     default: selectorSettings.default || 'public',
     optional: selectorSettings.optional,
     locked: selectorSettings.locked,
