@@ -26,7 +26,7 @@ const AuthTypeSelector: FC<InputAccessProps> = ({
   const selectorModel: TestInput = {
     name: 'auth_type',
     type: 'select',
-    title: `${requirement.name} Auth Type`,
+    title: 'Auth Type',
     description: requirement.description,
     default: selectorSettings.default || 'public',
     optional: selectorSettings.optional,
