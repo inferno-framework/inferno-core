@@ -60,35 +60,30 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  describe '#selected_runnables' do
+  describe '#all_selected_groups_and_tests' do
     it 'returns empty array when no short ids given' do
       allow(instance).to receive(:options).and_return({ suite: 'basic' })
-      expect(instance.selected_runnables).to eq([])
+      expect(instance.all_selected_groups_and_tests).to eq([])
     end
 
     it 'returns runnables when group short ids are given' do
       allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1'] })
-      expect(instance.selected_runnables.length).to eq(1)
+      expect(instance.all_selected_groups_and_tests.length).to eq(1)
     end
 
     it 'returns runnables when test short ids are given' do
       allow(instance).to receive(:options).and_return({ suite: 'basic', tests: ['1.01'] })
-      expect(instance.selected_runnables.length).to eq(1)
+      expect(instance.all_selected_groups_and_tests.length).to eq(1)
     end
 
     it 'returns either runnable when short ids are given' do
       allow(instance).to receive(:options).and_return({ suite: 'basic', short_ids: ['1.01'] })
-      expect(instance.selected_runnables.length).to eq(1)
-    end
-
-    it 'raises error when redundant short ids are given' do
-      allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1'], tests: ['1.01'] })
-      expect { instance.selected_runnables }.to raise_error(StandardError)
+      expect(instance.all_selected_groups_and_tests.length).to eq(1)
     end
 
     it 'raises error when a group is given test short ids' do
       allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1.01'] })
-      expect { instance.selected_runnables }.to raise_error(StandardError)
+      expect { instance.all_selected_groups_and_tests }.to raise_error(StandardError)
     end
   end
 
@@ -103,12 +98,12 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  describe '#test_run' do
+  describe '#create_test_run' do
     { suite: BasicTestSuite::Suite, group: BasicTestSuite::AbcGroup,
       test: BasicTestSuite::AbcGroup.tests.first }.each do |type, runnable|
       it "returns a test run for #{type}" do
         allow(instance).to receive(:options).and_return({ suite: 'basic' })
-        expect(instance.test_run(runnable)).to be_instance_of Inferno::Entities::TestRun
+        expect(instance.create_test_run(runnable)).to be_instance_of Inferno::Entities::TestRun
       end
     end
   end
@@ -145,24 +140,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
       allow(instance).to receive(:options).and_return({ suite: 'basic', verbose: false })
 
       expect { instance.dispatch_job(test_run) }.to_not output(/.+/).to_stdout_from_any_process
-    end
-  end
-
-  describe '#validate_unique_runnables' do
-    let(:runnable) { BasicTestSuite::AbcGroup }
-    let(:another_runnable) { BasicTestSuite::DefGroup }
-
-    it 'returns runnables if they are unique' do
-      expect(instance.validate_unique_runnables([runnable, another_runnable])).to eq([runnable, another_runnable])
-    end
-
-    it 'raises an error for duplicate runnables' do
-      expect { instance.validate_unique_runnables([runnable, runnable]) }.to raise_error(StandardError)
-    end
-
-    it 'raises an error if a runnable is included in another' do
-      child = runnable.tests.first
-      expect { instance.validate_unique_runnables([runnable, child]) }.to raise_error(StandardError)
     end
   end
 

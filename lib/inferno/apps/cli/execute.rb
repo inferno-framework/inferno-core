@@ -172,19 +172,6 @@ module Inferno
         end
       end
 
-      def validate_unique_runnables(runnables)
-        runnables.each_with_index do |validatee, validatee_index|
-          runnables.each_with_index do |runnable, runnable_index|
-            if validatee_index != runnable_index && ((validatee == runnable) || runnable_is_included_in?(validatee,
-                                                                                                         runnable))
-              raise StandardError, "Runnable #{validatee.short_id} is already included in #{runnable.short_id}"
-            end
-          end
-        end
-
-        runnables
-      end
-
       def runnable_is_included_in?(runnable, maybe_parent)
         if runnable.parent.nil?
           false
