@@ -185,7 +185,7 @@ describe('Input Components', () => {
       </ThemeProvider>,
     );
 
-    const inputText = screen.getByText('authInput Auth Type (required)');
+    const inputText = screen.getByText('Auth Type (required)');
     expect(inputText).toBeVisible();
   });
 
