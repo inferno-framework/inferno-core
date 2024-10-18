@@ -50,7 +50,7 @@ const AuthTypeSelector: FC<InputAccessProps> = ({ input, index, inputsMap, setIn
 
   return (
     <InputCombobox
-      requirement={selectorModel}
+      input={selectorModel}
       index={index}
       inputsMap={inputsMap}
       setInputsMap={setInputsMap}

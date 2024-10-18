@@ -163,11 +163,8 @@ const InputsModal: FC<InputsModalProps> = ({
 
   useEffect(() => {
     inputsMap.clear();
-    inputs.forEach((requirement: TestInput) => {
-      inputsMap.set(
-        requirement.name,
-        sessionData.get(requirement.name) || (requirement.default as string) || '',
-      );
+    inputs.forEach((input: TestInput) => {
+      inputsMap.set(input.name, sessionData.get(input.name) || (input.default as string) || '');
     });
     setInputsMap(new Map(inputsMap));
   }, [inputs, sessionData]);
@@ -221,39 +218,39 @@ const InputsModal: FC<InputsModalProps> = ({
   };
 
   const serializeMap = (map: Map<string, unknown>): string => {
-    const flatObj = inputs.map((requirement: TestInput) => {
+    const flatObj = inputs.map((input: TestInput) => {
       // Parse out \n chars from descriptions
-      const parsedDescription = requirement.description?.replaceAll('\n', ' ').trim();
-      if (requirement.type === 'oauth_credentials') {
+      const parsedDescription = input.description?.replaceAll('\n', ' ').trim();
+      if (input.type === 'oauth_credentials') {
         return {
-          ...requirement,
+          ...input,
           description: parsedDescription,
           value: JSON.parse(
-            (map.get(requirement.name) as string) || '{ "access_token": "" }',
+            (map.get(input.name) as string) || '{ "access_token": "" }',
           ) as OAuthCredentials,
         };
-      } else if (requirement.type === 'auth_info') {
+      } else if (input.type === 'auth_info') {
         return {
-          ...requirement,
-          default: JSON.parse((requirement.default as string) || '{}') as Auth,
+          ...input,
+          default: JSON.parse((input.default as string) || '{}') as Auth,
           description: parsedDescription,
-          value: JSON.parse((map.get(requirement.name) as string) || '{}') as Auth,
+          value: JSON.parse((map.get(input.name) as string) || '{}') as Auth,
         };
-      } else if (requirement.type === 'radio') {
+      } else if (input.type === 'radio') {
         const firstVal =
-          requirement.options?.list_options && requirement.options?.list_options?.length > 0
-            ? requirement.options?.list_options[0]?.value
+          input.options?.list_options && input.options?.list_options?.length > 0
+            ? input.options?.list_options[0]?.value
             : '';
         return {
-          ...requirement,
+          ...input,
           description: parsedDescription,
-          value: map.get(requirement.name) || requirement.default || firstVal,
+          value: map.get(input.name) || input.default || firstVal,
         };
       } else {
         return {
-          ...requirement,
+          ...input,
           description: parsedDescription,
-          value: map.get(requirement.name) || '',
+          value: map.get(input.name) || '',
         };
       }
     });

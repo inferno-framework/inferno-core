@@ -177,7 +177,7 @@ export const getAuthFields = (
     },
   ] as TestInput[];
 
-  // If the requirement contains custom fields, replace default fields
+  // If the input contains custom fields, replace default fields
   const fieldsToUpdate = components.map((component) => component.name);
   fields.forEach((field, i) => {
     if (fieldsToUpdate.includes(field.name)) {
@@ -331,7 +331,7 @@ export const getAccessFields = (
     },
   ] as TestInput[];
 
-  // If the requirement contains custom fields, replace default fields
+  // If the input contains custom fields, replace default fields
   const fieldsToUpdate = components.map((component) => component.name);
   fields.forEach((field, i) => {
     if (fieldsToUpdate.includes(field.name)) {

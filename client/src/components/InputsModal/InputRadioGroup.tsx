@@ -6,38 +6,32 @@ import {
   ListItem,
   Radio,
   RadioGroup,
-  Typography,
 } from '@mui/material';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
 import useStyles from './styles';
 
 export interface InputRadioGroupProps {
-  requirement: TestInput;
+  input: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
-const InputRadioGroup: FC<InputRadioGroupProps> = ({
-  requirement,
-  index,
-  inputsMap,
-  setInputsMap,
-}) => {
+const InputRadioGroup: FC<InputRadioGroupProps> = ({ input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
   const firstOptionValue =
-    requirement.options?.list_options && requirement.options?.list_options?.length > 0
-      ? requirement.options?.list_options[0]?.value
+    input.options?.list_options && input.options?.list_options?.length > 0
+      ? input.options?.list_options[0]?.value
       : '';
 
   // Set starting value to first option if no value and no default
   useEffect(() => {
     const startingValue =
-      (inputsMap.get(requirement.name) as string) ||
-      (requirement.default as string) ||
-      firstOptionValue;
-    inputsMap.set(requirement.name, startingValue);
+      (inputsMap.get(input.name) as string) || (input.default as string) || firstOptionValue;
+    inputsMap.set(input.name, startingValue);
     setInputsMap(new Map(inputsMap));
   }, []);
 
@@ -45,32 +39,30 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({
     <ListItem>
       <FormControl
         component="fieldset"
-        id={`requirement${index}_input`}
-        disabled={requirement.locked}
+        id={`input${index}_control`}
+        disabled={input.locked}
         fullWidth
         className={classes.inputField}
       >
         <FormLabel className={classes.inputLabel}>
-          <FieldLabel requirement={requirement} />
+          <FieldLabel input={input} />
         </FormLabel>
-        {requirement.description && (
-          <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
-            {requirement.description}
-          </Typography>
+        {input.description && (
+          <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+            {input.description}
+          </ReactMarkdown>
         )}
         <RadioGroup
           row
-          aria-label={`${requirement.name}-radio-buttons-group`}
-          name={`${requirement.name}-radio-buttons-group`}
-          value={
-            inputsMap.get(requirement.name) || (requirement.default as string) || firstOptionValue
-          }
+          aria-label={`${input.name}-radio-buttons-group`}
+          name={`${input.name}-radio-buttons-group`}
+          value={inputsMap.get(input.name) || (input.default as string) || firstOptionValue}
           onChange={(event) => {
-            inputsMap.set(requirement.name, event.target.value);
+            inputsMap.set(input.name, event.target.value);
             setInputsMap(new Map(inputsMap));
           }}
         >
-          {requirement.options?.list_options?.map((option, i) => (
+          {input.options?.list_options?.map((option, i) => (
             <FormControlLabel
               value={option.value}
               control={<Radio size="small" color="secondary" />}

@@ -23,15 +23,15 @@ const InputTextField: FC<InputTextFieldProps> = ({ input, index, inputsMap, setI
     <ListItem>
       <FormControl
         component="fieldset"
-        id={`requirement${index}_control`}
+        id={`input${index}_control`}
         disabled={input.locked}
         required={!input.optional}
         error={isMissingInput}
         fullWidth
         className={classes.inputField}
       >
-        <FormLabel htmlFor={`requirement${index}_input`} className={classes.inputLabel}>
-          <FieldLabel requirement={input} isMissingInput={isMissingInput} />
+        <FormLabel htmlFor={`input${index}_text`} className={classes.inputLabel}>
+          <FieldLabel input={input} isMissingInput={isMissingInput} />
         </FormLabel>
         {input.description && (
           <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
@@ -42,7 +42,7 @@ const InputTextField: FC<InputTextFieldProps> = ({ input, index, inputsMap, setI
           disabled={input.locked}
           required={!input.optional}
           error={isMissingInput}
-          id={`requirement${index}_input`}
+          id={`input${index}_text`}
           className={classes.inputField}
           color="secondary"
           fullWidth

@@ -1,5 +1,7 @@
 import React, { FC, useEffect } from 'react';
-import { Box, List, ListItem, Typography } from '@mui/material';
+import { Box, List, ListItem } from '@mui/material';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Auth, TestInput } from '~/models/testSuiteModels';
 import InputFields from './InputFields';
 import useStyles from './styles';
@@ -7,26 +9,24 @@ import { AuthType, getAuthFields } from './AuthSettings';
 import AuthTypeSelector from './AuthTypeSelector';
 
 export interface InputAuthProps {
-  requirement: TestInput;
+  input: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
-const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInputsMap }) => {
+const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
   const [authValues, setAuthValues] = React.useState<Map<string, unknown>>(new Map());
   const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
 
   // Default auth type settings
   const [authType, setAuthType] = React.useState<string>(
-    requirement.options?.components
-      ? (requirement.options?.components[0].default as string)
-      : 'public',
+    input.options?.components ? (input.options?.components[0].default as string) : 'public',
   );
 
   const [authFields, setAuthFields] = React.useState<TestInput[]>(
-    getAuthFields(authType as AuthType, authValues, requirement.options?.components || []),
+    getAuthFields(authType as AuthType, authValues, input.options?.components || []),
   );
 
   useEffect(() => {
@@ -64,40 +64,34 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
 
   useEffect(() => {
     // Recalculate hidden fields
-    setAuthFields(
-      getAuthFields(authType as AuthType, authValues, requirement.options?.components || []),
-    );
+    setAuthFields(getAuthFields(authType as AuthType, authValues, input.options?.components || []));
 
     // Update inputsMap
     if (authValuesPopulated) {
       const stringifiedAuthValues = JSON.stringify(Object.fromEntries(authValues));
-      inputsMap.set(requirement.name, stringifiedAuthValues);
+      inputsMap.set(input.name, stringifiedAuthValues);
       setInputsMap(new Map(inputsMap));
     }
   }, [authValues]);
 
   const getStartingValues = () => {
-    // Pre-populate values from AuthFields, requirement, and inputsMap in order of precedence
+    // Pre-populate values from AuthFields, input, and inputsMap in order of precedence
     const fieldDefaultValues = authFields.reduce(
       (acc, field) => ({ ...acc, [field.name]: field.default }),
       {},
     ) as Auth;
-    const requirementDefaultValues =
-      requirement.default && typeof requirement.default === 'string'
-        ? (JSON.parse(requirement.default) as Auth)
-        : {};
-    const requirementStartingValues =
-      requirement.value && typeof requirement.value === 'string'
-        ? (JSON.parse(requirement.value) as Auth)
-        : {};
-    const inputsMapValues = inputsMap.get(requirement.name)
-      ? (JSON.parse(inputsMap.get(requirement.name) as string) as Auth)
+    const inputDefaultValues =
+      input.default && typeof input.default === 'string' ? (JSON.parse(input.default) as Auth) : {};
+    const inputStartingValues =
+      input.value && typeof input.value === 'string' ? (JSON.parse(input.value) as Auth) : {};
+    const inputsMapValues = inputsMap.get(input.name)
+      ? (JSON.parse(inputsMap.get(input.name) as string) as Auth)
       : {};
 
     return {
       ...fieldDefaultValues,
-      ...requirementDefaultValues,
-      ...requirementStartingValues,
+      ...inputDefaultValues,
+      ...inputStartingValues,
       ...inputsMapValues,
     } as Auth;
   };
@@ -110,14 +104,14 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
   return (
     <ListItem sx={{ p: 0 }}>
       <Box width="100%">
-        {requirement.description && (
-          <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
-            {requirement.description}
-          </Typography>
+        {input.description && (
+          <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+            {input.description}
+          </ReactMarkdown>
         )}
         <List>
           <AuthTypeSelector
-            requirement={requirement}
+            input={input}
             index={index}
             inputsMap={authValues}
             setInputsMap={updateAuthType}
