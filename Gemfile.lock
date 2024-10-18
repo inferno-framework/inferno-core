@@ -32,7 +32,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.7.8)
+    activesupport (6.1.7.9)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -131,7 +131,7 @@ GEM
       date_time_precision (>= 0.8)
       mime-types (>= 3.0)
       nokogiri (>= 1.11.4)
-    fhir_models (4.3.0)
+    fhir_models (5.0.0)
       bcp47 (>= 0.3)
       date_time_precision (>= 0.8)
       mime-types (>= 3.0)
@@ -192,6 +192,10 @@ GEM
     nio4r (2.7.3)
     nokogiri (1.16.7-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.16.7-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.16.7-x86_64-linux)
+      racc (~> 1.4)
     oauth2 (1.4.11)
       faraday (>= 0.17.3, < 3.0)
       jwt (>= 1.0, < 3.0)
@@ -218,7 +222,7 @@ GEM
     puma (5.6.9)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (2.2.9)
+    rack (2.2.10)
     rack-test (2.1.0)
       rack (>= 1.3)
     rainbow (3.1.1)
@@ -250,7 +254,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.1)
-    rubocop (1.66.1)
+    rubocop (1.67.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -286,6 +290,8 @@ GEM
     simplecov-html (0.13.1)
     simplecov_json_formatter (0.1.4)
     sqlite3 (1.7.3-arm64-darwin)
+    sqlite3 (1.7.3-x86_64-darwin)
+    sqlite3 (1.7.3-x86_64-linux)
     stringio (3.1.1)
     strings (0.2.1)
       strings-ansi (~> 0.2)
@@ -330,19 +336,17 @@ DEPENDENCIES
   codecov (= 0.5.2)
   database_cleaner-sequel
   debug
-  factory_bot
+  factory_bot (~> 6.1)
   inferno_core!
-  pry
-  pry-byebug
   rack-test
-  rspec
+  rspec (~> 3.10)
   rubocop (~> 1.9)
   rubocop-rake
   rubocop-rspec
   rubocop-sequel
-  simplecov
+  simplecov (= 0.21.2)
   simplecov-cobertura
-  webmock
+  webmock (~> 3.11)
   yard
   yard-junk
 

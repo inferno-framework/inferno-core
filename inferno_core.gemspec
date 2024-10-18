@@ -37,18 +37,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sqlite3', '~> 1.4'
   spec.add_dependency 'thor', '~> 1.2.1'
   spec.add_dependency 'tty-markdown', '~> 0.7.1'
-  spec.add_development_dependency 'codecov', '0.5.2'
-  spec.add_development_dependency 'database_cleaner-sequel', '~> 1.8'
-  spec.add_development_dependency 'factory_bot', '~> 6.1'
-  spec.add_development_dependency 'rack-test', '~> 1.1'
-  spec.add_development_dependency 'rspec', '~> 3.10'
-  spec.add_development_dependency 'rubocop', '~> 1.9'
-  spec.add_development_dependency 'rubocop-rake', '0.5.1'
-  spec.add_development_dependency 'rubocop-rspec', '~> 2.1'
-  spec.add_development_dependency 'rubocop-sequel', '0.1.0'
-  spec.add_development_dependency 'simplecov', '0.21.2'
-  spec.add_development_dependency 'webmock', '~> 3.11'
-  spec.add_development_dependency 'yard', '0.9.26'
   spec.required_ruby_version = Gem::Requirement.new('~> 3.1.2')
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/inferno-framework/inferno-core'
