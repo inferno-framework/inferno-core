@@ -41,21 +41,26 @@ module Inferno
 
         results = []
         outputter.print_around_run(options) do
-          if selected_runnables.empty?
-            run_one(suite)
+          if all_selected_groups_and_tests.empty?
+            test_run = create_test_run(suite)
+            run_one(suite, test_run)
 
-            results = test_runs_repo.results_for_test_run(test_run(suite).id).reverse
+            # TODO: make results more intuitively ordered than just reversing
+            results = test_runs_repo.results_for_test_run(test_run.id).reverse
           else
-            selected_runnables.each do |runnable|
-              run_one(runnable)
+            all_selected_groups_and_tests.each do |runnable|
+              test_run = create_test_run(runnable)
+              run_one(runnable, test_run)
 
-              results += test_runs_repo.results_for_test_run(test_run(runnable).id).reverse
+              results += test_runs_repo.results_for_test_run(test_run.id).reverse
             end
           end
         end
 
-        outputter.print_results(options, results)
+        # User may enter duplicate runnables, in which case this prevents a bug of extraneous results
+        results.uniq!(&:id)
 
+        outputter.print_results(options, results)
         outputter.print_end_message(options)
 
         exit(0) if results.all? { |result| result.result == 'pass' }
@@ -85,20 +90,20 @@ module Inferno
         @outputter ||= Inferno::CLI::Execute::ConsoleOutputter.new
       end
 
-      def selected_runnables
-        @selected_runnables ||= validate_unique_runnables(runnables_by_short_id + groups + tests)
+      def all_selected_groups_and_tests
+        @all_selected_groups_and_tests ||= runnables_by_short_id + groups + tests
       end
 
-      def run_one(runnable)
+      def run_one(runnable, test_run)
         verify_runnable(
           runnable,
           thor_hash_to_inputs_array(options[:inputs]),
           test_session.suite_options
         )
 
-        persist_inputs(session_data_repo, create_params(test_session, suite), test_run(runnable))
+        persist_inputs(session_data_repo, create_params(test_session, suite), test_run)
 
-        dispatch_job(test_run(runnable))
+        dispatch_job(test_run)
       end
 
       def suite
@@ -113,14 +118,10 @@ module Inferno
         @test_runs_repo ||= Inferno::Repositories::TestRuns.new
       end
 
-      def test_run(runnable)
-        @test_runs ||= {}
-
-        @test_runs[runnable] ||= test_runs_repo.create(
+      def create_test_run(runnable)
+        test_runs_repo.create(
           create_params(test_session, runnable).merge({ status: 'queued' })
         )
-
-        @test_runs[runnable]
       end
 
       def results_repo
