@@ -6,6 +6,7 @@ RUN mkdir -p $INSTALL_PATH
 
 WORKDIR $INSTALL_PATH
 
+ADD lib/<%= library_name %>/test_kit.rb $INSTALL_PATH/lib/<%= library_name %>/test_kit.rb
 ADD *.gemspec $INSTALL_PATH
 ADD Gemfile* $INSTALL_PATH
 RUN gem install bundler
