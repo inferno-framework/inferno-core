@@ -84,6 +84,8 @@ RSpec/ExampleLength:
 RSpec/SpecFilePathFormat:
   CustomTransform:
     OAuthCredentials: oauth_credentials
+  Exclude:
+    - 'spec/inferno/dsl/test_creation_spec.rb'
 
 RSpec/MultipleExpectations:
   Enabled: false
