@@ -200,7 +200,11 @@ module Inferno
 
         @base_id = new_id || @base_id || default_id
 
-        @id = "#{prefix}#{@base_id}"
+        final_id = "#{prefix}#{@base_id}"
+
+        raise StandardError, "ID '#{final_id}' exceeds the maximum id length of 255 characters" if final_id.length > 255
+
+        @id = final_id
       end
 
       # Set/Get a runnable's title
