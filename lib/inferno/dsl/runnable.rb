@@ -1,6 +1,7 @@
 require_relative 'configurable'
 require_relative 'input_output_handling'
 require_relative 'resume_test_route'
+require_relative '../exceptions'
 require_relative '../utils/markdown_formatter'
 
 module Inferno
@@ -202,7 +203,7 @@ module Inferno
 
         final_id = "#{prefix}#{@base_id}"
 
-        raise StandardError, "ID '#{final_id}' exceeds the maximum id length of 255 characters" if final_id.length > 255
+        raise Exceptions::InvalidRunnableIdException, final_id if final_id.length > 255
 
         @id = final_id
       end
