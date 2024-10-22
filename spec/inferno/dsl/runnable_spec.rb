@@ -187,4 +187,10 @@ RSpec.describe Inferno::DSL::Runnable do
       expect(run_as_group_examples.groups.second.tests.first.user_runnable?).to be(false)
     end
   end
+
+  describe '.id' do
+    it 'raises an error if the id is longer than 255 characters' do
+      expect { Class.new(Inferno::Test).id('a' * 256) }.to raise_error(StandardError, /length of 255 characters/)
+    end
+  end
 end
