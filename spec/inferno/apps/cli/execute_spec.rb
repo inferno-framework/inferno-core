@@ -143,25 +143,6 @@ RSpec.describe Inferno::CLI::Execute do # rubocop:disable RSpec/FilePath
     end
   end
 
-  describe '#runnable_is_included_in?' do
-    let(:parent) { BasicTestSuite::Suite }
-    let(:group) { parent.groups.first }
-    let(:test) { group.tests.first }
-
-    it 'returns false when runnable has no parents' do
-      # rubocop thinks `runnable_is_included_in?` is a matcher
-      expect(instance.runnable_is_included_in?(parent, parent)).to be_falsey # rubocop:disable RSpec/PredicateMatcher
-    end
-
-    it 'returns true when runnable is a child of parent' do
-      expect(instance.runnable_is_included_in?(group, parent)).to be_truthy # rubocop:disable RSpec/PredicateMatcher
-    end
-
-    it 'returns true when runnable is a nested child of parent' do
-      expect(instance.runnable_is_included_in?(test, parent)).to be_truthy # rubocop:disable RSpec/PredicateMatcher
-    end
-  end
-
   describe '#groups' do
     it 'parses group by short id' do
       allow(instance).to receive(:options).and_return({ suite: 'basic', groups: ['1'] })

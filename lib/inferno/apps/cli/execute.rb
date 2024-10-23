@@ -45,20 +45,19 @@ module Inferno
             test_run = create_test_run(suite)
             run_one(suite, test_run)
 
-            # TODO: make results more intuitively ordered than just reversing
-            results = test_runs_repo.results_for_test_run(test_run.id).reverse
+            results = test_runs_repo.results_for_test_run(test_run.id)
           else
             all_selected_groups_and_tests.each do |runnable|
               test_run = create_test_run(runnable)
               run_one(runnable, test_run)
 
-              results += test_runs_repo.results_for_test_run(test_run.id).reverse
+              results += test_runs_repo.results_for_test_run(test_run.id)
             end
           end
         end
 
         # User may enter duplicate runnables, in which case this prevents a bug of extraneous results
-        results.uniq!(&:id)
+        results.uniq!(&:id).sort! { |result, other| result.runnable.short_id <=> other.runnable.short_id }
 
         outputter.print_results(options, results)
         outputter.print_end_message(options)
@@ -169,16 +168,6 @@ module Inferno
           Inferno::CLI::Execute.suppress_output do
             Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
           end
-        end
-      end
-
-      def runnable_is_included_in?(runnable, maybe_parent)
-        if runnable.parent.nil?
-          false
-        elsif runnable.parent == maybe_parent
-          true
-        else
-          runnable_is_included_in?(runnable.parent, maybe_parent)
         end
       end
 
