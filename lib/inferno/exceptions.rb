@@ -113,5 +113,11 @@ module Inferno
         super("Expected '#{name}' to be a #{expected_class_names}, but found a #{actual_class.name}.")
       end
     end
+
+    class InvalidRunnableIdException < StandardError
+      def initialize(id)
+        super("ID '#{id}' exceeds the maximum id length of 255 characters")
+      end
+    end
   end
 end
