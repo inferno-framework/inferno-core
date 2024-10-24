@@ -46,6 +46,7 @@ module Inferno
             run_one(suite, test_run)
 
             results = test_runs_repo.results_for_test_run(test_run.id)
+            results.sort_results(results)
           else
             all_selected_groups_and_tests.each do |runnable|
               test_run = create_test_run(runnable)
@@ -58,8 +59,6 @@ module Inferno
 
         # User may enter duplicate runnables, in which case this prevents a bug of extraneous results
         results.uniq!(&:id)
-
-        results = sort_results(results)
 
         outputter.print_results(options, results)
         outputter.print_end_message(options)
