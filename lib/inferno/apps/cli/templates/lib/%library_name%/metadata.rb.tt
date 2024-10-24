@@ -2,7 +2,7 @@ require 'inferno/entities/test_kit'
 
 module <%= module_name %>
   class Metadata < Inferno::TestKit
-    id :us_core
+    id :<%= test_kit_id %>
     title '<%= title_name %>'
     description <<~DESCRIPTION
       This is a big markdown description of the test kit.
