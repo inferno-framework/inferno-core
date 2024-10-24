@@ -156,7 +156,7 @@ module Inferno
 
         # @private
         def repository
-          @repository ||= Inferno::Repositories::TestKits
+          @repository ||= Inferno::Repositories::TestKits.new
         end
 
         # @private
