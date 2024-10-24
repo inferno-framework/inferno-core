@@ -40,8 +40,8 @@ module DevScratchSuite
       end
 
       test do
-        title 'Store nested value'
-        id :scratch_nested_store_test
+        title 'Retrieve nested value'
+        id :retrieve_nested_store_test
 
         run do
           info "Scratch: #{scratch}"
