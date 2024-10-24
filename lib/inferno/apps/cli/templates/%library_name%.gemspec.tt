@@ -1,14 +1,14 @@
-require_relative 'lib/<%= library_name %>/test_kit
+require_relative 'lib/<%= library_name %>/metadata'
 
 Gem::Specification.new do |spec|
   spec.name          = '<%= library_name %>'
-  spec.version       = TestKit.version
-  spec.authors       = TestKit.authors
+  spec.version       = <%= module_name %>::Metadata.version
+  spec.authors       = <%= module_name %>::Metadata.authors
   # spec.email         = ['TODO']
   spec.date          = Time.now.utc.strftime('%Y-%m-%d')
-  spec.summary       = TestKit.title
-  spec.description   = TestKit.description
-  # spec.homepage      = TestKit.repo
+  spec.summary       = <%= module_name %>::Metadata.title
+  spec.description   = <%= module_name %>::Metadata.description
+  # spec.homepage      = <%= module_name %>::Metadata.repo
   spec.license       = 'Apache-2.0'
   spec.add_runtime_dependency 'inferno_core', '~> <%= Inferno::VERSION %>'
   spec.add_development_dependency 'database_cleaner-sequel', '~> 1.8'
