@@ -1,6 +1,7 @@
 require_relative 'configurable'
 require_relative 'input_output_handling'
 require_relative 'resume_test_route'
+require_relative '../exceptions'
 require_relative '../utils/markdown_formatter'
 
 module Inferno
@@ -200,7 +201,11 @@ module Inferno
 
         @base_id = new_id || @base_id || default_id
 
-        @id = "#{prefix}#{@base_id}"
+        final_id = "#{prefix}#{@base_id}"
+
+        raise Exceptions::InvalidRunnableIdException, final_id if final_id.length > 255
+
+        @id = final_id
       end
 
       # Set/Get a runnable's title
