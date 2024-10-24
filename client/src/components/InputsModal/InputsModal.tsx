@@ -17,22 +17,18 @@ import {
 import { Close } from '@mui/icons-material';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import YAML from 'js-yaml';
-import { useSnackbar } from 'notistack';
-import {
-  Auth,
-  OAuthCredentials,
-  Runnable,
-  RunnableType,
-  TestInput,
-} from '~/models/testSuiteModels';
+import { Runnable, RunnableType, TestInput } from '~/models/testSuiteModels';
 import CopyButton from '~/components/_common/CopyButton';
 import CustomTooltip from '~/components/_common/CustomTooltip';
 import DownloadFileButton from '~/components/_common/DownloadFileButton';
 import UploadFileButton from '~/components/_common/UploadFileButton';
+import {
+  getMissingRequiredInput,
+  parseSerialChanges,
+  serializeMap,
+} from '~/components/InputsModal/InputHelpers';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from '~/components/InputsModal/styles';
-import { AuthType, getAccessFields, getAuthFields } from './AuthSettings';
 
 export interface InputsModalProps {
   modalVisible: boolean;
@@ -65,91 +61,13 @@ const InputsModal: FC<InputsModalProps> = ({
   createTestRun,
 }) => {
   const { classes } = useStyles();
-  const { enqueueSnackbar } = useSnackbar();
   const [inputsEdited, setInputsEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
   const [fileType, setFileType] = React.useState<string>('txt');
   const [serialInput, setSerialInput] = React.useState<string>('');
+  const [missingRequiredInput, setMissingRequiredInput] = React.useState<boolean>(false);
   const [invalidInput, setInvalidInput] = React.useState<boolean>(false);
-
-  const missingRequiredInput = inputs.some((input: TestInput) => {
-    // radio inputs will always be required and have a default value
-    if (input.type === 'radio') return false;
-
-    // if required, checkbox inputs must have at least one checked value
-    if (input.type === 'checkbox') {
-      try {
-        const checkboxValues = JSON.parse(inputsMap.get(input.name) as string) as string[];
-        return (
-          !input.optional && (Array.isArray(checkboxValues) ? checkboxValues.length === 0 : true)
-        );
-      } catch (e: unknown) {
-        const errorMessage = e instanceof Error ? e.message : String(e);
-        enqueueSnackbar(`Checkbox input incorrectly formatted: ${errorMessage}`, {
-          variant: 'error',
-        });
-        return true;
-      }
-    }
-
-    // if input is auth_info, check if required values are filled
-    let authMissingRequiredInput = false;
-    if (input.type === 'auth_info') {
-      try {
-        if (
-          !inputsMap.get(input.name) ||
-          !input.options?.components ||
-          input.options?.components.length < 1
-        )
-          return false;
-        const authJson = JSON.parse(inputsMap.get(input.name) as string) as Auth;
-        const authType = (authJson.auth_type ||
-          input.options.components.find((c) => c.name === 'auth_type')?.default) as AuthType;
-
-        // Determine which fields are required; authValues and components props
-        // irrelevant for this
-        const fields =
-          input.options?.mode === 'auth'
-            ? getAuthFields(authType, new Map(), [])
-            : getAccessFields(authType, new Map(), []);
-        const requiredFields = fields.filter((field) => !field.optional).map((field) => field.name);
-        authMissingRequiredInput = requiredFields.some((field) => !authJson[field as keyof Auth]);
-      } catch (e: unknown) {
-        const errorMessage = e instanceof Error ? e.message : String(e);
-        enqueueSnackbar(`Auth info inputs incorrectly formatted: ${errorMessage}`, {
-          variant: 'error',
-        });
-        return true;
-      }
-    }
-
-    // if input has OAuth, check if required values are filled
-    let oAuthMissingRequiredInput = false;
-    if (input.type === 'oauth_credentials') {
-      try {
-        const oAuthJson = JSON.parse(
-          (inputsMap.get(input.name) as string) || '{ "access_token": null }',
-        ) as OAuthCredentials;
-        const accessTokenIsEmpty = !oAuthJson.access_token;
-        const refreshTokenIsEmpty =
-          !!oAuthJson.refresh_token && (!oAuthJson.token_url || !oAuthJson.client_id);
-        oAuthMissingRequiredInput = (!input.optional && accessTokenIsEmpty) || refreshTokenIsEmpty;
-      } catch (e: unknown) {
-        const errorMessage = e instanceof Error ? e.message : String(e);
-        enqueueSnackbar(`OAuth credentials incorrectly formatted: ${errorMessage}`, {
-          variant: 'error',
-        });
-        return true;
-      }
-    }
-
-    return (
-      (!input.optional && !inputsMap.get(input.name)) ||
-      oAuthMissingRequiredInput ||
-      authMissingRequiredInput
-    );
-  });
 
   const instructions =
     runnable?.input_instructions ||
@@ -161,20 +79,29 @@ const InputsModal: FC<InputsModalProps> = ({
           group, or test will be saved. The intended use of this view is to provide a template \
           for users to copy/paste in order to avoid filling out individual fields every time.');
 
+  // Set persisted values and defaults at render
   useEffect(() => {
     inputsMap.clear();
     inputs.forEach((requirement: TestInput) => {
       inputsMap.set(
         requirement.name,
-        sessionData.get(requirement.name) || (requirement.default as string) || '',
+        sessionData.get(requirement.name) || requirement.default || '',
       );
     });
     setInputsMap(new Map(inputsMap));
   }, [inputs, sessionData]);
 
+  // Recalculate missing required values on changes to inputs
+  useEffect(() => {
+    setMissingRequiredInput(getMissingRequiredInput(inputs, inputsMap));
+    return () => {
+      setMissingRequiredInput(false);
+    };
+  }, [inputsMap]);
+
   useEffect(() => {
     setInvalidInput(false);
-    setSerialInput(serializeMap(inputsMap));
+    setSerialInput(serializeMap(inputType, inputs, inputsMap));
 
     // Set download file extensions based on input format
     switch (inputType) {
@@ -199,6 +126,19 @@ const InputsModal: FC<InputsModalProps> = ({
     setSerialInput(text);
   };
 
+  const handleSerialChanges = (serialChanges: string) => {
+    setSerialInput(serialChanges);
+    const parsedChanges = parseSerialChanges(inputType, serialChanges, setInvalidInput);
+    if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
+      parsedChanges.forEach((change: TestInput) => {
+        if (!change.locked && change.value !== undefined) {
+          inputsMap.set(change.name, change.value || '');
+        }
+      });
+    }
+    handleSetInputsMap(new Map(inputsMap), true);
+  };
+
   const handleSetInputsMap = (inputsMap: Map<string, unknown>, edited?: boolean) => {
     setInputsMap(inputsMap);
     setInputsEdited(inputsEdited || edited !== false); // explicit check for false values
@@ -220,85 +160,9 @@ const InputsModal: FC<InputsModalProps> = ({
     closeModal();
   };
 
-  const serializeMap = (map: Map<string, unknown>): string => {
-    const flatObj = inputs.map((requirement: TestInput) => {
-      // Parse out \n chars from descriptions
-      const parsedDescription = requirement.description?.replaceAll('\n', ' ').trim();
-      if (requirement.type === 'oauth_credentials') {
-        return {
-          ...requirement,
-          description: parsedDescription,
-          value: JSON.parse(
-            (map.get(requirement.name) as string) || '{ "access_token": "" }',
-          ) as OAuthCredentials,
-        };
-      } else if (requirement.type === 'auth_info') {
-        return {
-          ...requirement,
-          default: JSON.parse((requirement.default as string) || '{}') as Auth,
-          description: parsedDescription,
-          value: JSON.parse((map.get(requirement.name) as string) || '{}') as Auth,
-        };
-      } else if (requirement.type === 'radio') {
-        const firstVal =
-          requirement.options?.list_options && requirement.options?.list_options?.length > 0
-            ? requirement.options?.list_options[0]?.value
-            : '';
-        return {
-          ...requirement,
-          description: parsedDescription,
-          value: map.get(requirement.name) || requirement.default || firstVal,
-        };
-      } else {
-        return {
-          ...requirement,
-          description: parsedDescription,
-          value: map.get(requirement.name) || '',
-        };
-      }
-    });
-    return inputType === 'JSON'
-      ? JSON.stringify(flatObj, null, 2)
-      : YAML.dump(flatObj, { lineWidth: -1 });
-  };
-
-  const parseSerialChanges = (changes: string): TestInput[] | undefined => {
-    let parsed: TestInput[];
-    try {
-      parsed = (inputType === 'JSON' ? JSON.parse(changes) : YAML.load(changes)) as TestInput[];
-      // Convert OAuth/Auth input values to strings; parsed needs to be an array
-      parsed.forEach((input) => {
-        if (input.type === 'oauth_credentials' || input.type === 'auth_info') {
-          input.value = JSON.stringify(input.value);
-        }
-      });
-      setInvalidInput(false);
-      return parsed;
-    } catch (e) {
-      console.error(e);
-      setInvalidInput(true);
-      return undefined;
-    }
-  };
-
-  const handleSerialChanges = (serialChanges: string) => {
-    setSerialInput(serialChanges);
-    const parsedChanges = parseSerialChanges(serialChanges);
-    if (parsedChanges !== undefined && parsedChanges.keys !== undefined) {
-      parsedChanges.forEach((change: TestInput) => {
-        if (!change.locked && change.value !== undefined) {
-          inputsMap.set(change.name, change.value || '');
-        }
-      });
-    }
-    handleSetInputsMap(new Map(inputsMap), true);
-  };
-
   const closeModal = (edited = false) => {
     // For external clicks, check if inputs have been edited first
-    if (!edited) {
-      hideModal();
-    }
+    if (!edited) hideModal();
   };
 
   return (
@@ -345,15 +209,17 @@ const InputsModal: FC<InputsModalProps> = ({
                 value={serialInput}
                 error={invalidInput}
                 label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
-                InputProps={{
-                  classes: {
-                    input: classes.serialInput,
+                slotProps={{
+                  input: {
+                    classes: {
+                      input: classes.serialInput,
+                    },
+                    endAdornment: (
+                      <Box sx={{ alignSelf: 'flex-start' }}>
+                        <CopyButton copyText={serialInput} />
+                      </Box>
+                    ),
                   },
-                  endAdornment: (
-                    <Box sx={{ alignSelf: 'flex-start' }}>
-                      <CopyButton copyText={serialInput} />
-                    </Box>
-                  ),
                 }}
                 color="secondary"
                 fullWidth
