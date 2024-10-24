@@ -11,20 +11,22 @@ import {
   ListItemButton,
   Typography,
 } from '@mui/material';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { OAuthCredentials, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
 import useStyles from './styles';
 import RequiredInputWarning from './RequiredInputWarning';
 
 export interface InputOAuthCredentialsProps {
-  requirement: TestInput;
+  input: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
 const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
-  requirement,
+  input,
   index,
   inputsMap,
   setInputsMap,
@@ -42,7 +44,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     client_id: '',
     client_secret: '',
     token_url: '',
-    ...JSON.parse((inputsMap.get(requirement.name) as string) || '{}'),
+    ...JSON.parse((inputsMap.get(input.name) as string) || '{}'),
   } as OAuthCredentials;
 
   const showRefreshDetails = !!oAuthCredentials.refresh_token;
@@ -51,7 +53,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     {
       name: 'access_token',
       title: 'Access Token',
-      optional: requirement.optional,
+      optional: input.optional,
     },
     {
       name: 'refresh_token',
@@ -106,26 +108,26 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
       <ListItemButton disabled={field.locked} key={field.name} component="li">
         <FormControl
           component="fieldset"
-          id={`requirement${index}_input`}
-          disabled={requirement.locked}
-          required={!requirement.optional}
+          id={`input${index}_input`}
+          disabled={input.locked}
+          required={!input.optional}
           error={getIsMissingInput(field)}
           fullWidth
           className={classes.inputField}
         >
-          <FormLabel htmlFor={`requirement${index}_${field.name}`} className={classes.inputLabel}>
+          <FormLabel htmlFor={`input${index}_${field.name}`} className={classes.inputLabel}>
             {fieldLabel}
           </FormLabel>
           {field.description && (
-            <Typography variant="subtitle1" className={classes.inputDescription}>
-              {field.description}
-            </Typography>
+            <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+              {input.description}
+            </ReactMarkdown>
           )}
           <Input
-            disabled={requirement.locked}
+            disabled={input.locked}
             required={!field.optional}
             error={getIsMissingInput(field)}
-            id={`requirement${index}_${field.name}`}
+            id={`input${index}_${field.name}`}
             value={oAuthCredentials[field.name as keyof OAuthCredentials]}
             className={classes.inputField}
             color="secondary"
@@ -138,7 +140,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
             onChange={(event) => {
               const value = event.target.value;
               oAuthCredentials[field.name as keyof OAuthCredentials] = value;
-              inputsMap.set(requirement.name, JSON.stringify(oAuthCredentials));
+              inputsMap.set(input.name, JSON.stringify(oAuthCredentials));
               setInputsMap(new Map(inputsMap));
             }}
           />
@@ -152,15 +154,15 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
       <Card variant="outlined" className={classes.authCard}>
         <CardContent>
           <InputLabel
-            required={!requirement.optional}
-            disabled={requirement.locked}
+            required={!input.optional}
+            disabled={input.locked}
             className={classes.inputLabel}
           >
-            <FieldLabel requirement={requirement} />
+            <FieldLabel input={input} />
           </InputLabel>
-          {requirement.description && (
+          {input.description && (
             <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
-              {requirement.description}
+              {input.description}
             </Typography>
           )}
           <List>{oAuthFields.map((field) => !field.hide && oAuthField(field))}</List>
