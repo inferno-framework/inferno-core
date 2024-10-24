@@ -34,6 +34,7 @@ export type FooterLink = {
 export interface InputOption {
   label: string;
   value: string;
+  locked?: boolean;
 }
 
 export interface InputValues {

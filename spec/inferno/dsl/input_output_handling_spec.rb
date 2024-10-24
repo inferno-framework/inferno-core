@@ -129,16 +129,16 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       v2_option = Inferno::DSL::SuiteOption.new(id: :ig_version, value: '2')
 
       missing_inputs = suite.missing_inputs([{ name: 'v1_input', value: 'abc' }], nil)
-      expect(missing_inputs).to match_array(['v2_input', 'all_versions_input'])
+      expect(missing_inputs).to contain_exactly('v2_input', 'all_versions_input')
 
       missing_inputs = suite.missing_inputs([{ name: 'v1_input', value: 'abc' }], [v1_option])
-      expect(missing_inputs).to match_array(['all_versions_input'])
+      expect(missing_inputs).to contain_exactly('all_versions_input')
 
       missing_inputs = suite.missing_inputs([{ name: 'v1_input', value: 'abc' }], [v2_option])
-      expect(missing_inputs).to match_array(['v2_input', 'all_versions_input'])
+      expect(missing_inputs).to contain_exactly('v2_input', 'all_versions_input')
 
       missing_inputs = suite.missing_inputs([{ name: 'v2_input', value: 'abc' }], [v1_option])
-      expect(missing_inputs).to match_array(['v1_input', 'all_versions_input'])
+      expect(missing_inputs).to contain_exactly('v1_input', 'all_versions_input')
     end
   end
 
