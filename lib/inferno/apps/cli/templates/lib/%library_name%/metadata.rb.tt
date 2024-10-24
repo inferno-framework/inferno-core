@@ -1,3 +1,5 @@
+require 'inferno/entities/test_kit'
+
 module <%= module_name %>
   class Metadata < Inferno::TestKit
     id :us_core
