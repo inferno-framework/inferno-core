@@ -58,15 +58,8 @@ module Inferno
 
         # User may enter duplicate runnables, in which case this prevents a bug of extraneous results
         results.uniq!(&:id)
-        results.sort! do |result, other|
-          if result.runnable < Inferno::TestSuite
-            1
-          elsif other.runnable < Inferno::TestSuite
-            -1
-          else
-            result.runnable.short_id <=> other.runnable.short_id 
-          end
-        end
+
+        results = sort_results(results)
 
         outputter.print_results(options, results)
         outputter.print_end_message(options)
@@ -256,6 +249,18 @@ module Inferno
           :test_group_id
         else
           :test_id
+        end
+      end
+
+      def sort_results(results)
+        results.sort do |result, other|
+          if result.runnable < Inferno::TestSuite
+            1
+          elsif other.runnable < Inferno::TestSuite
+            -1
+          else
+            result.runnable.short_id <=> other.runnable.short_id
+          end
         end
       end
     end
