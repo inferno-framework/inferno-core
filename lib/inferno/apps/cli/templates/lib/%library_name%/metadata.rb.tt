@@ -1,5 +1,5 @@
 module <%= module_name %>
-  class TestKit < Inferno::Entities::TestKit
+  class Metadata < Inferno::TestKit
     id :us_core
     title '<%= title_name %>'
     description <<~DESCRIPTION
