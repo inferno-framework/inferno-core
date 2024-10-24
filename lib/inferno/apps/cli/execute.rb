@@ -254,9 +254,9 @@ module Inferno
       def sort_results(results)
         results.sort do |result, other|
           if result.runnable < Inferno::TestSuite
-            1
-          elsif other.runnable < Inferno::TestSuite
             -1
+          elsif other.runnable < Inferno::TestSuite
+            1
           else
             result.runnable.short_id <=> other.runnable.short_id
           end
