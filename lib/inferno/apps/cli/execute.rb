@@ -52,7 +52,7 @@ module Inferno
               test_run = create_test_run(runnable)
               run_one(runnable, test_run)
 
-              results += test_runs_repo.results_for_test_run(test_run.id)
+              results += sort_results(test_runs_repo.results_for_test_run(test_run.id))
             end
           end
         end
