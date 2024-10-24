@@ -168,4 +168,6 @@ module Inferno
       end
     end
   end
+
+  TestKit = Entities::TestKit
 end
