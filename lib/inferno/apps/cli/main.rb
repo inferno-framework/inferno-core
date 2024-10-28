@@ -76,6 +76,8 @@ module Inferno
 
         Examples:
 
+            (These examples only work from within the inferno_core directory).
+
             `bundle exec inferno execute --suite dev_validator \
                                         --inputs "url:https://hapi.fhir.org/baseR4" \
                                                  patient_id:1234321`
