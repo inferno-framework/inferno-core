@@ -13,7 +13,7 @@ RSpec.describe Inferno::Repositories::Presets do
       File.realpath(File.join(Dir.pwd, 'spec/fixtures/simple_preset.json.erb'))
     end
 
-    let(:uuid) { 'very-random-uuid' }
+    let(:uuid) { SecureRandom.uuid }
 
     before { allow(SecureRandom).to receive(:uuid).and_return(uuid) }
 
