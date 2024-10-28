@@ -3,6 +3,7 @@ require 'active_support'
 require_relative '../../utils/verify_runnable'
 require_relative '../../utils/persist_inputs'
 require_relative 'execute/console_outputter'
+require_relative '../../result_summarizer'
 
 module Inferno
   module CLI
@@ -63,7 +64,8 @@ module Inferno
         outputter.print_results(options, results)
         outputter.print_end_message(options)
 
-        exit(0) if results.all? { |result| result.result == 'pass' }
+        # TODO: respect customized rollups
+        exit(0) if Inferno::ResultSummarizer.new(results).summarize == 'pass'
 
         # exit(1) is for Thor failures
         # exit(2) is for shell builtin failures
