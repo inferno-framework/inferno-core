@@ -6,6 +6,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
   class DemoSuite < Inferno::TestSuite
     title 'Demonstration Suite'
     id 'demo'
+    short_description 'Development suite for testing standard inputs and results'
     source_code_url 'https://github.com/inferno-framework/inferno-core'
     report_issue_url 'https://github.com/inferno-framework/inferno-core/issues'
     download_url 'https://github.com/inferno-framework/inferno-core/releases'
