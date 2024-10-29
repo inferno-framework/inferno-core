@@ -1,3 +1,22 @@
+## 0.4.44
+* FI-2937 inferno execute by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/517
+* FI-3104: Update React + other packages by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/529
+* FI-3188: Update documentation on cli_context options. by @arscan in https://github.com/inferno-framework/inferno-core/pull/535
+* cli git ignore .gem by @rpassas in https://github.com/inferno-framework/inferno-core/pull/534
+* FI-3076: Add FHIRPath Service to Template by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/532
+* FI-3275 debug: inferno execute input validation by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/542
+* FI-3193 Add instruction to build Ruby Docs by @mrnosal in https://github.com/inferno-framework/inferno-core/pull/536
+* FI-2609 : DSL Link Methods by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/521
+* FI-3276: Fix AuthInfo Code Documentation by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/543
+* FI-3286: Rename Auth Type dropdown input by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/545
+* FI-2685: Allow locking individual checkboxes by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/522
+* FI-3216: Update Ruby dependencies by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/538
+* FI-3285: Add fields to backend services access mode by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/544
+* FI-3241: Verify runnable id length by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/547
+* FI-3182 Inferno execute unified short ids option by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/540
+* FI-3318: Fix erroneous submit disabling for checkbox inputs by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/548
+* FI-3367 Patch execute rollup by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/550
+
 ## 0.4.43
 * patch undefined method for nil on validator 500 response by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/530
 * FI-3172: Fix validator sessions by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/531
