@@ -120,13 +120,25 @@ const TestSessionWrapper: FC<unknown> = () => {
     setDrawerOpen(newDrawerOpen);
   };
 
-  /*
-   * Set the page title when testSession data is loaded
-   */
-  const setTitle = (session: TestSession) => {
+  /* Meta tags for link unfurling */
+  const renderMetaTags = (session: TestSession) => {
+    // Set the page title when testSession data is loaded
     const suiteName = session?.test_suite.short_title || session?.test_suite.title;
     const titlePrepend = suiteName ? `${suiteName} ` : '';
-    document.title = `${titlePrepend}Test Session`;
+    const title = `${titlePrepend}Test Session`;
+    document.title = title;
+    const description =
+      session.test_suite.short_description || session.test_suite.description || '';
+    return (
+      <>
+        <title>{title}</title>
+        <meta name="og:title" content={title} />
+        <meta name="twitter:title" content={title} />
+        <meta name="description" content={description} />
+        <meta name="og:description" content={description} />
+        <meta name="twitter:description" content={description} />
+      </>
+    );
   };
 
   if (testSession && testResults && sessionData) {
@@ -148,11 +160,10 @@ const TestSessionWrapper: FC<unknown> = () => {
           .filter((v) => v) // Remove empty values
       : [];
 
-    setTitle(testSession);
-
     return (
       <Fade in={true}>
         <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
+          {renderMetaTags(testSession)}
           <Header
             suiteId={testSession.test_suite.id}
             suiteTitle={testSession.test_suite.title}

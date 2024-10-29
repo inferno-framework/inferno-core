@@ -319,23 +319,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     );
   };
 
-  /* Meta tags for link unfurling */
-  const renderMetaTags = () => {
-    const title = testSession.test_suite.short_title || testSession.test_suite.title;
-    const description =
-      testSession.test_suite.short_description || testSession.test_suite.description || '';
-    return (
-      <>
-        <title>{title}</title>
-        <meta name="og:title" content={title} />
-        <meta name="twitter:title" content={title} />
-        <meta name="description" content={description} />
-        <meta name="og:description" content={description} />
-        <meta name="twitter:description" content={description} />
-      </>
-    );
-  };
-
   const renderDrawerContents = () => (
     <nav className={classes.drawer}>
       <TestSuiteTreeComponent
@@ -381,7 +364,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   return (
     <Box className={classes.testSuiteMain}>
-      {renderMetaTags()}
       {renderTestRunProgressBar()}
       {windowIsSmall ? (
         <SwipeableDrawer
