@@ -320,27 +320,21 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   };
 
   /* Meta tags for link unfurling */
-  const renderMetaTags = () => (
-    <>
-      <title>{testSession.test_suite.short_title || testSession.test_suite.title}</title>
-      <meta
-        name="og:title"
-        content={testSession.test_suite.short_title || testSession.test_suite.title}
-      />
-      <meta
-        name="description"
-        content={
-          testSession.test_suite.short_description || testSession.test_suite.description || ''
-        }
-      />
-      <meta
-        name="og:description"
-        content={
-          testSession.test_suite.short_description || testSession.test_suite.description || ''
-        }
-      />
-    </>
-  );
+  const renderMetaTags = () => {
+    const title = testSession.test_suite.short_title || testSession.test_suite.title;
+    const description =
+      testSession.test_suite.short_description || testSession.test_suite.description || '';
+    return (
+      <>
+        <title>{title}</title>
+        <meta name="og:title" content={title} />
+        <meta name="twitter:title" content={title} />
+        <meta name="description" content={description} />
+        <meta name="og:description" content={description} />
+        <meta name="twitter:description" content={description} />
+      </>
+    );
+  };
 
   const renderDrawerContents = () => (
     <nav className={classes.drawer}>

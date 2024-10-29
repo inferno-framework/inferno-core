@@ -66,6 +66,7 @@ const Header: FC<HeaderProps> = ({
         ) : (
           <Link to="/" reloadDocument aria-label="Inferno Home">
             <meta name="og:image" content={getStaticPath(icon as string)} />
+            <meta name="twitter:image" content={getStaticPath(icon as string)} />
             <CustomTooltip title="Return to Suite Selection">
               <img
                 src={getStaticPath(icon as string)}
