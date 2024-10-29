@@ -181,7 +181,7 @@ module Inferno
               .map { |header_name, value| Header.new(name: header_name.downcase, value:, type: 'response') }
 
           new(
-            verb: response.env.method,
+            verb: response.env.method.downcase,
             url: response.env.url.to_s,
             direction:,
             name:,
@@ -210,7 +210,7 @@ module Inferno
             end
 
           new(
-            verb: request[:method],
+            verb: request[:method].downcase,
             url: request[:url],
             direction:,
             name:,
