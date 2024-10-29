@@ -319,20 +319,41 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     );
   };
 
-  const renderDrawerContents = () => {
-    return (
-      <nav className={classes.drawer}>
-        <TestSuiteTreeComponent
-          testSuite={testSession.test_suite}
-          selectedRunnable={selectedRunnable}
-          view={view || 'run'}
-          presets={testSession.test_suite.presets}
-          getSessionData={getSessionData}
-          testSessionId={testSession.id}
-        />
-      </nav>
-    );
-  };
+  /* Meta tags for link unfurling */
+  const renderMetaTags = () => (
+    <>
+      <title>{testSession.test_suite.short_title || testSession.test_suite.title}</title>
+      <meta
+        name="og:title"
+        content={testSession.test_suite.short_title || testSession.test_suite.title}
+      />
+      <meta
+        name="description"
+        content={
+          testSession.test_suite.short_description || testSession.test_suite.description || ''
+        }
+      />
+      <meta
+        name="og:description"
+        content={
+          testSession.test_suite.short_description || testSession.test_suite.description || ''
+        }
+      />
+    </>
+  );
+
+  const renderDrawerContents = () => (
+    <nav className={classes.drawer}>
+      <TestSuiteTreeComponent
+        testSuite={testSession.test_suite}
+        selectedRunnable={selectedRunnable}
+        view={view || 'run'}
+        presets={testSession.test_suite.presets}
+        getSessionData={getSessionData}
+        testSessionId={testSession.id}
+      />
+    </nav>
+  );
 
   const renderView = (view: ViewType) => {
     const runnable = runnableMap.get(selectedRunnable);
@@ -366,7 +387,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   return (
     <Box className={classes.testSuiteMain}>
-      <meta name="description" content={testSession.test_suite.description || ''} />
+      {renderMetaTags()}
       {renderTestRunProgressBar()}
       {windowIsSmall ? (
         <SwipeableDrawer

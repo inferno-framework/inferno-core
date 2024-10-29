@@ -9,10 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta id="base-path" name="base-path" content="<%= Inferno::Application['base_path'] %>">
-    <meta
-      name="description"
-      content="FHIR Testing"
-    />
+    
+    <!-- Social media link unfurling meta tags -->
+    <meta name="description" content="FHIR Testing" />
+    <meta name="og:type" content="website" />
+    <meta name="og:site_name" content="Inferno" />
+    <meta name="og:image" content="<%= Inferno::Application['public_path'] %>/favicon.ico" />
+    
     <link rel="apple-touch-icon" href="<%= Inferno::Application['public_path'] %>/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
