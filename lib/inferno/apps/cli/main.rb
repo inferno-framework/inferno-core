@@ -95,8 +95,8 @@ module Inferno
 
             `bundle exec inferno execute --suite dev_validator \
                                          --inputs "url:https://hapi.fhir.org/baseR4" \
-                                                  patient_id:1234321` \
-                                         --outputter json
+                                                  patient_id:1234321 \
+                                         --outputter json`
             => Outputs test results in JSON
       END_OF_HELP
       desc 'execute', 'Run Inferno tests in command line'
