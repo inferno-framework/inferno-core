@@ -1,5 +1,4 @@
 require 'active_support'
-require 'dry/inflector'
 require_relative '../../utils/verify_runnable'
 require_relative '../../utils/persist_inputs'
 
@@ -11,11 +10,12 @@ module Inferno
       include ::Inferno::Utils::VerifyRunnable
       include ::Inferno::Utils::PersistInputs
 
-      INFLECTOR = Dry::Inflector.new do |inflections|
-        inflections.acronym 'JSON'
-      end
-
-      OUTPUTTER_WHITELIST = %w[console plain json quiet].freeze
+      OUTPUTTERS = {
+        'console' => Inferno::CLI::Execute::ConsoleOutputter,
+        'plain'   => Inferno::CLI::Execute::PlainOutputter,
+        'json'    => Inferno::CLI::Execute::JSONOutputter,
+        'quiet'   => Inferno::CLI::Execute::QuietOutputter
+      }
 
       attr_accessor :options
 
@@ -86,14 +86,12 @@ module Inferno
       end
 
       def outputter
-        unless OUTPUTTER_WHITELIST.include? options[:outputter]
+        unless OUTPUTTERS.key? options[:outputter]
           raise StandardError,
                 "Unrecognized outputter #{options[:outputter]}"
         end
 
-        @outputter ||= INFLECTOR.constantize(
-          "Inferno::CLI::Execute::#{INFLECTOR.camelize(options[:outputter])}Outputter"
-        ).new
+        @outputter ||= OUTPUTTERS[options[:outputter]].new
       end
 
       def selected_runnables
