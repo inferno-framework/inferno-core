@@ -28,6 +28,7 @@ PATH
       sqlite3 (~> 1.4)
       thor (~> 1.2.1)
       tty-markdown (~> 0.7.1)
+      tty-spinner (~> 0.9.3)
 
 GEM
   remote: https://rubygems.org/
@@ -338,7 +339,6 @@ DEPENDENCIES
   rubocop-sequel
   simplecov
   simplecov-cobertura
-  tty-spinner (~> 0.9.3)
   webmock
   yard
   yard-junk
