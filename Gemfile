@@ -35,5 +35,4 @@ group :test do
   gem 'simplecov', '0.21.2', require: false
   gem 'simplecov-cobertura'
   gem 'webmock', '~> 3.11'
-  gem 'factory_bot'
 end

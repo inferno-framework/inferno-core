@@ -1,7 +1,7 @@
-require_relative '../../../../../lib/inferno/apps/cli/execute/plain_outputter'
+require_relative '../../../../lib/inferno/apps/cli/execute/plain_outputter'
 require_relative 'outputter_spec'
 
-RSpec.describe Inferno::CLI::Execute::PlainOutputter do # rubocop:disable RSpec/FilePath
+RSpec.describe Inferno::CLI::Execute::PlainOutputter do
   let(:instance) { described_class.new }
   let(:results) { create_list(:result, 2) }
   let(:options) { { outputter: 'plain', verbose: true } }

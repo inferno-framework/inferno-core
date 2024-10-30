@@ -1,4 +1,4 @@
-require_relative '../../../../../lib/inferno/apps/cli/execute/console_outputter'
+require_relative '../../../../lib/inferno/apps/cli/execute/console_outputter'
 require_relative 'outputter_spec'
 
 RSpec.describe Inferno::CLI::Execute::ConsoleOutputter do
