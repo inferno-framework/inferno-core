@@ -7,7 +7,7 @@ module InfernoFHIRModelExtensions
   attr_accessor :source_hash, :source_text
 
   def initialize(hash = {})
-    super(hash)
+    super
     @source_hash = hash
   end
 
@@ -26,7 +26,7 @@ end
 # allows us to call super() on from_json
 module InfernoJson
   def from_json(json)
-    resource = super(json)
+    resource = super
     resource&.source_text = json
     resource
   end
@@ -36,7 +36,7 @@ end
 # allows us to call super() on from_xml
 module InfernoXml
   def from_xml(xml)
-    resource = super(xml)
+    resource = super
     resource&.source_text = xml
     resource
   end

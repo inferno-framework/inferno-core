@@ -14,7 +14,10 @@ module Inferno
         def print_start_message(options)
           puts ''
           puts BAR
-          puts "Testing #{options[:suite] || options[:group] || options[:test]}"
+          puts "Testing #{options[:suite]}"
+          verbose_puts options, "Running Groups #{options[:groups]}" unless options[:groups].blank?
+          verbose_puts options, "Running Tests #{options[:tests]}" unless options[:tests].blank?
+          verbose_puts options, "Running Entities #{options[:short_ids]}" unless options[:short_ids].blank?
           puts BAR
         end
 

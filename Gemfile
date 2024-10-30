@@ -15,8 +15,6 @@ gemspec
 
 group :development, :test do
   gem 'debug'
-  gem 'pry'
-  gem 'pry-byebug'
   gem 'rubocop', '~> 1.9'
   gem 'rubocop-rake', require: false
   gem 'rubocop-rspec', require: false
@@ -29,11 +27,13 @@ group :development do
 end
 
 group :test do
+  gem 'codecov', '0.5.2'
   gem 'database_cleaner-sequel'
+  gem 'factory_bot', '~> 6.1'
   gem 'rack-test'
-  gem 'rspec'
-  gem 'simplecov', require: false
+  gem 'rspec', '~> 3.10'
+  gem 'simplecov', '0.21.2', require: false
   gem 'simplecov-cobertura'
-  gem 'webmock'
+  gem 'webmock', '~> 3.11'
   gem 'factory_bot'
 end

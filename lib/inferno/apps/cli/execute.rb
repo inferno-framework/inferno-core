@@ -48,22 +48,30 @@ module Inferno
 
         results = []
         outputter.print_around_run(options) do
-          if selected_runnables.empty?
-            run_one(suite)
-            results = test_runs_repo.results_for_test_run(test_run(suite).id).reverse
+          if all_selected_groups_and_tests.empty?
+            test_run = create_test_run(suite)
+            run_one(suite, test_run)
+
+            results = test_runs_repo.results_for_test_run(test_run.id)
+            results = sort_results(results)
           else
-            selected_runnables.each do |runnable|
-              run_one(runnable)
-              results += test_runs_repo.results_for_test_run(test_run(runnable).id).reverse
+            all_selected_groups_and_tests.each do |runnable|
+              test_run = create_test_run(runnable)
+              run_one(runnable, test_run)
+
+              results += sort_results(test_runs_repo.results_for_test_run(test_run.id))
             end
           end
         end
 
-        outputter.print_results(options, results)
+        # User may enter duplicate runnables, in which case this prevents a bug of extraneous results
+        results.uniq!(&:id)
 
+        outputter.print_results(options, results)
         outputter.print_end_message(options)
 
-        exit(0) if results.all? { |result| result.result == 'pass' }
+        # TODO: respect customized rollups
+        exit(0) if Inferno::ResultSummarizer.new(results).summarize == 'pass'
 
         # exit(1) is for Thor failures
         # exit(2) is for shell builtin failures
@@ -94,20 +102,20 @@ module Inferno
         @outputter ||= OUTPUTTERS[options[:outputter]].new
       end
 
-      def selected_runnables
-        groups + tests
+      def all_selected_groups_and_tests
+        @all_selected_groups_and_tests ||= runnables_by_short_id + groups + tests
       end
 
-      def run_one(runnable)
+      def run_one(runnable, test_run)
         verify_runnable(
           runnable,
           thor_hash_to_inputs_array(options[:inputs]),
           test_session.suite_options
         )
 
-        persist_inputs(session_data_repo, create_params(test_session, suite), test_run(runnable))
+        persist_inputs(session_data_repo, create_params(test_session, suite), test_run)
 
-        dispatch_job(test_run(runnable))
+        dispatch_job(test_run)
       end
 
       def suite
@@ -122,14 +130,14 @@ module Inferno
         @test_runs_repo ||= Inferno::Repositories::TestRuns.new
       end
 
-      def test_run(runnable_param)
-        @test_runs ||= {}
-
-        @test_runs[runnable_param] ||= test_runs_repo.create(
-          create_params(test_session, runnable_param).merge({ status: 'queued' })
+      def create_test_run(runnable)
+        test_runs_repo.create(
+          create_params(test_session, runnable).merge({ status: 'queued' })
         )
+      end
 
-        @test_runs[runnable_param]
+      def results_repo
+        @results_repo ||= Inferno::Repositories::Results.new
       end
 
       def test_groups_repo
@@ -175,23 +183,44 @@ module Inferno
         end
       end
 
+      def runnables_by_short_id
+        return [] if options[:short_ids].blank?
+
+        @runnables_by_short_id ||= options[:short_ids]&.map { |short_id| find_by_short_id(:group_or_test, short_id) }
+      end
+
       def groups
         return [] if options[:groups].blank?
 
-        @groups ||= options[:groups]&.map { |short_id| find_by_short_id(test_groups_repo, short_id) }
+        @groups ||= options[:groups]&.map { |short_id| find_by_short_id(:group, short_id) }
       end
 
       def tests
         return [] if options[:tests].blank?
 
-        @tests ||= options[:tests]&.map { |short_id| find_by_short_id(tests_repo, short_id) }
+        @tests ||= options[:tests]&.map { |short_id| find_by_short_id(:test, short_id) }
       end
 
-      def find_by_short_id(repo, short_id)
-        repo.all.each do |entity|
-          return entity if short_id == entity.short_id && suite.id == entity.suite.id
+      def find_by_short_id(repo_symbol, short_id)
+        repo_symbol_to_array(repo_symbol).each do |repo|
+          repo.all.each do |entity|
+            return entity if short_id == entity.short_id && suite.id == entity.suite.id
+          end
         end
-        raise StandardError, "Group or test #{short_id} not found"
+        raise StandardError, "#{repo_symbol.to_s.humanize} #{short_id} not found."
+      end
+
+      def repo_symbol_to_array(repo_symbol)
+        case repo_symbol
+        when :group
+          [test_groups_repo]
+        when :test
+          [tests_repo]
+        when :group_or_test
+          [test_groups_repo, tests_repo]
+        else
+          raise StandardError, "Unrecognized repo_symbol #{repo_symbol} for `find_by_short_id`"
+        end
       end
 
       def thor_hash_to_suite_options_array(hash = {})
@@ -211,11 +240,11 @@ module Inferno
       end
 
       def runnable_type(runnable)
-        if Inferno::TestSuite.subclasses.include? runnable
+        if runnable < Inferno::TestSuite
           :suite
-        elsif Inferno::TestGroup.subclasses.include? runnable
+        elsif runnable < Inferno::TestGroup
           :group
-        elsif Inferno::Test.subclasses.include? runnable
+        elsif runnable < Inferno::Test
           :test
         else
           raise StandardError, "Unidentified runnable #{runnable}"
@@ -230,6 +259,18 @@ module Inferno
           :test_group_id
         else
           :test_id
+        end
+      end
+
+      def sort_results(results)
+        results.sort do |result, other|
+          if result.runnable < Inferno::TestSuite
+            -1
+          elsif other.runnable < Inferno::TestSuite
+            1
+          else
+            result.runnable.short_id <=> other.runnable.short_id
+          end
         end
       end
     end

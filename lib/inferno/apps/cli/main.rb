@@ -80,6 +80,8 @@ module Inferno
 
         Examples:
 
+            (These examples only work from within the inferno_core directory).
+
             `bundle exec inferno execute --suite dev_validator \
                                         --inputs "url:https://hapi.fhir.org/baseR4" \
                                                  patient_id:1234321`
@@ -116,6 +118,10 @@ module Inferno
              aliases: ['-t'],
              type: :array,
              desc: 'Series of test short ids (AKA sequence number) to run, requires suite'
+      option :short_ids,
+             aliases: ['-r'],
+             type: :array,
+             desc: 'Series of test or group short ids (AKA sequence number) to run, requires suite'
       option :inputs,
              aliases: ['-i'],
              type: :hash,
@@ -147,15 +153,13 @@ module Inferno
       private
 
       # https://github.com/rubocop/rubocop/issues/12571 - still affects Ruby 3.1 upto Rubocop 1.63
-      # rubocop:disable Naming/BlockForwarding
-      def without_bundler(&block)
+      def without_bundler(&)
         if defined?(Bundler) && ENV['BUNDLE_GEMFILE']
-          Bundler.with_unbundled_env(&block)
+          Bundler.with_unbundled_env(&)
         else
           yield
         end
       end
-      # rubocop:enable Naming/BlockForwarding
     end
   end
 end
