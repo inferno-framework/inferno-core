@@ -13,7 +13,6 @@ module Inferno
 
         def print_error(_options, exception)
           puts "Error: #{exception.full_message(highlight: false)}"
-          puts exception.backtrace&.join('\n')
         end
 
         def color

@@ -45,7 +45,6 @@ module Inferno
 
         def print_error(options, exception)
           puts color.red "Error: #{exception.full_message}"
-          verbose_print(options, exception.backtrace&.join('\n'))
         end
 
         # private
