@@ -43,7 +43,7 @@ module Inferno
 
         def print_end_message(options); end
 
-        def print_error(options, exception)
+        def print_error(_options, exception)
           puts color.red "Error: #{exception.full_message}"
         end
 

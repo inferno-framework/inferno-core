@@ -12,10 +12,10 @@ module Inferno
 
       OUTPUTTERS = {
         'console' => Inferno::CLI::Execute::ConsoleOutputter,
-        'plain'   => Inferno::CLI::Execute::PlainOutputter,
-        'json'    => Inferno::CLI::Execute::JSONOutputter,
-        'quiet'   => Inferno::CLI::Execute::QuietOutputter
-      }
+        'plain' => Inferno::CLI::Execute::PlainOutputter,
+        'json' => Inferno::CLI::Execute::JSONOutputter,
+        'quiet' => Inferno::CLI::Execute::QuietOutputter
+      }.freeze
 
       attr_accessor :options
 
