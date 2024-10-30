@@ -3,21 +3,19 @@ module Inferno
     class Execute
       # @private
       class QuietOutputter
-        # rubocop:disable Lint/UnusedMethodArgument
-        def print_start_message(options); end
+        def print_start_message(_options); end
 
-        def print_around_run(options, &)
+        def print_around_run(_options, &)
           yield
         end
 
-        def print_results(options, results); end
+        def print_results(_options, _results); end
 
-        def print_end_message(options); end
+        def print_end_message(_options); end
 
         def print_error(options, exception)
           puts "Error: #{exception.full_message}" if options[:verbose]
         end
-        # rubocop:enable Lint/UnusedMethodArgument
       end
     end
   end
