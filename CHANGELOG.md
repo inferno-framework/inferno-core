@@ -1,3 +1,6 @@
+## 0.5.0
+* FI-3358: Check for Duplicate Ids in In-Memory Repositories by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/551
+* FI-3223: Ensure Request Entity Verb Is Always Downcased by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/554
 ## 0.4.44
 * FI-2937 inferno execute by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/517
 * FI-3104: Update React + other packages by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/529
@@ -371,15 +374,15 @@ Aligning changes with published gem - the previously published gem does not incl
 
 # 0.3.4
 
-* Incorporate UI changes to improve info, warning, and error test message readability. 
-* Update to support running locally on M1 MacBooks. 
-* Update gem dependencies. 
-* Add deployment documentation - SSRF protection and SSL, database, and path 
+* Incorporate UI changes to improve info, warning, and error test message readability.
+* Update to support running locally on M1 MacBooks.
+* Update gem dependencies.
+* Add deployment documentation - SSRF protection and SSL, database, and path
   configuration.
 * Include links to Inferno's github repository and issues page in testing view.
 * Improve frontend storage.
-* Implement backend support for suite options: this allows test writers to specify which 
-  tests in a suite are executed and which validator to use during execution. 
+* Implement backend support for suite options: this allows test writers to specify which
+  tests in a suite are executed and which validator to use during execution.
 * Add touchscreen support.
 
 # 0.3.3
