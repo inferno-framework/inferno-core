@@ -2,10 +2,10 @@ require_relative '../../../../lib/inferno/apps/web/serializers/test_group'
 
 RSpec.describe Inferno::Web::Serializers::TestGroup do
   let(:group) { InfrastructureTest::SerializerGroup }
-  let(:test) { group.tests.first }
 
   before do
     options_multi_group = Class.new(OptionsSuite::AllVersionsGroup) do
+      id SecureRandom.uuid
       group from: :v1_group,
             required_suite_options: { ig_version: '1' }
 

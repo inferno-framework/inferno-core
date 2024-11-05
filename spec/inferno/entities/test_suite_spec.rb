@@ -7,6 +7,7 @@ RSpec.describe Inferno::Entities::TestSuite do
     let(:id) { 'GROUP_ID' }
 
     before do
+      suite_class.id(SecureRandom.uuid)
       allow(Class).to receive(:new).with(Inferno::Entities::TestGroup).and_return(group_class)
     end
 
