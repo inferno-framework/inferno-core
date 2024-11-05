@@ -1,4 +1,5 @@
 require 'forwardable'
+require_relative '../exceptions'
 
 module Inferno
   module Repositories
@@ -8,7 +9,10 @@ module Inferno
       def_delegators 'self.class', :all, :all_by_id
 
       def insert(entity)
+        raise Exceptions::DuplicateEntityIdException, entity.id if exists?(entity.id)
+
         all << entity
+        all_by_id[entity.id.to_s] = entity
         entity
       end
 
@@ -17,7 +21,7 @@ module Inferno
       end
 
       def exists?(id)
-        all_by_id.include? id
+        all_by_id.key?(id.to_s)
       end
 
       class << self
@@ -28,13 +32,6 @@ module Inferno
         # @private
         def all_by_id
           @all_by_id ||= {}
-          @all_by_id.length == all.length ? @all_by_id : index_by_id
-        end
-
-        def index_by_id
-          @all_by_id = {}
-          all.each { |klass| @all_by_id[klass.id] = klass }
-          @all_by_id
         end
       end
     end
