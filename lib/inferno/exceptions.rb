@@ -119,5 +119,11 @@ module Inferno
         super("ID '#{id}' exceeds the maximum id length of 255 characters")
       end
     end
+
+    class DuplicateEntityIdException < StandardError
+      def initialize(id)
+        super("ID '#{id}' already exists. Ensure the uniqueness of the IDs.")
+      end
+    end
   end
 end
