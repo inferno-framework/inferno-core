@@ -7,7 +7,7 @@ import {
   FormLabel,
   ListItem,
 } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { CheckboxValues, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
@@ -108,9 +108,9 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
           <FieldLabel input={input} isMissingInput={isMissingInput} />
         </FormLabel>
         {input.description && (
-          <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+          <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
             {input.description}
-          </ReactMarkdown>
+          </Markdown>
         )}
         <FormGroup aria-label={`${input.name}-checkboxes-group`}>
           {input.options?.list_options?.map((option, i) => (

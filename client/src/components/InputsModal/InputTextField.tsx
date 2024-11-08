@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { FormControl, FormLabel, Input, ListItem } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
@@ -34,9 +34,9 @@ const InputTextField: FC<InputTextFieldProps> = ({ input, index, inputsMap, setI
           <FieldLabel input={input} isMissingInput={isMissingInput} />
         </FormLabel>
         {input.description && (
-          <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+          <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
             {input.description}
-          </ReactMarkdown>
+          </Markdown>
         )}
         <Input
           disabled={input.locked}

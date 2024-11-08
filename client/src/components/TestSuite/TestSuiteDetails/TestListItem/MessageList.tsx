@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import useStyles from './styles';
 import { Table, TableBody, TableRow, TableCell, Typography, TableHead, Box } from '@mui/material';
 import { Message } from '~/models/testSuiteModels';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 
 import MessageType from './MessageType';
 import { sortByMessageType } from './helper';
@@ -35,7 +35,7 @@ const MessageList: FC<MessageListProps> = ({ messages }) => {
           <MessageType type={message.type} />
         </TableCell>
         <TableCell className={classes.messageMessage}>
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.message}</ReactMarkdown>
+          <Markdown remarkPlugins={[remarkGfm]}>{message.message}</Markdown>
         </TableCell>
       </TableRow>
     );

@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { Card, CardContent, InputLabel, List, ListItem } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Auth, TestInput } from '~/models/testSuiteModels';
 import { AuthType, getAccessFields } from '~/components/InputsModal/AuthSettings';
@@ -116,9 +116,9 @@ const InputAccess: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsM
             <FieldLabel input={input} />
           </InputLabel>
           {input.description && (
-            <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+            <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
               {input.description}
-            </ReactMarkdown>
+            </Markdown>
           )}
           <List>
             <AuthTypeSelector

@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { Box, List, ListItem } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Auth, TestInput } from '~/models/testSuiteModels';
 import InputFields from './InputFields';
@@ -105,9 +105,9 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
     <ListItem sx={{ p: 0 }}>
       <Box width="100%">
         {input.description && (
-          <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+          <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
             {input.description}
-          </ReactMarkdown>
+          </Markdown>
         )}
         <List>
           <AuthTypeSelector

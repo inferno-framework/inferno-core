@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from 'react';
 import { Checkbox, FormControl, FormControlLabel, FormGroup, ListItem } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { TestInput } from '~/models/testSuiteModels';
 import FieldLabel from '~/components/InputsModal/FieldLabel';
@@ -59,9 +59,9 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
         className={classes.inputField}
       >
         {input.description && (
-          <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+          <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
             {input.description}
-          </ReactMarkdown>
+          </Markdown>
         )}
         {/* TODO: required means set to true and locked? */}
         <FormGroup aria-label={`${input.name}-single-checkbox`}>

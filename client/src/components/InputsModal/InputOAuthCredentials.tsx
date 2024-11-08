@@ -11,7 +11,7 @@ import {
   ListItemButton,
   Typography,
 } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { OAuthCredentials, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
@@ -119,9 +119,9 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
             {fieldLabel}
           </FormLabel>
           {field.description && (
-            <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+            <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
               {input.description}
-            </ReactMarkdown>
+            </Markdown>
           )}
           <Input
             disabled={input.locked}

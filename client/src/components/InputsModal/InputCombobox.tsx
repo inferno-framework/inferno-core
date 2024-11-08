@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Autocomplete, FormControl, FormLabel, ListItem, TextField } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { InputOption, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
@@ -49,9 +49,9 @@ const InputCombobox: FC<InputComboboxProps> = ({
           <FieldLabel input={input} />
         </FormLabel>
         {input.description && (
-          <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+          <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
             {input.description}
-          </ReactMarkdown>
+          </Markdown>
         )}
         <Autocomplete
           id={`input${index}_autocomplete`}

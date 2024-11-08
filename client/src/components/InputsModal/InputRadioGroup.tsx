@@ -7,7 +7,7 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
@@ -48,9 +48,9 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({ input, index, inputsMap, se
           <FieldLabel input={input} />
         </FormLabel>
         {input.description && (
-          <ReactMarkdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+          <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
             {input.description}
-          </ReactMarkdown>
+          </Markdown>
         )}
         <RadioGroup
           row
