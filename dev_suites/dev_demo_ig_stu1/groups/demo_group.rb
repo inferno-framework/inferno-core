@@ -28,8 +28,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     input :url, title: 'URL', description: 'Insert url of FHIR server', default: 'https://inferno.healthit.gov/reference-server/r4'
     input :patient_id, title: 'Patient ID', description: %(
 ### This is a markdown description.
-This is a new line.
-    ), default: '85'
+This is a new line.), default: '85'
     input :bearer_token, optional: true, default: 'SAMPLE_TOKEN'
 
     output :observation_id,
