@@ -14,3 +14,9 @@ namespace :db do
     Inferno::CLI::Migration.new.run
   end
 end
+
+desc 'Evaluate the examples for the IG'
+task :evaluate do
+  puts '** FHIR Evaluator **' 
+  puts 'Options: IG_PATH [EXAMPLES_PATH]' 
+end
