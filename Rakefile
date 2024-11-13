@@ -17,12 +17,7 @@ end
 
 desc 'Evaluate the examples for the IG'
 task :evaluate do
-  puts '** FHIR Evaluator **' 
-  puts 'Options: IG_PATH [EXAMPLES_PATH]' 
-
   require_relative 'lib/fhir_evaluator'
-  require_relative 'lib/fhir_evaluator/cli'
-  
-  FhirEvaluator::CLI.start  
-
+  # require_relative 'lib/fhir_evaluator/cli'
+  # FhirEvaluator::CLI.start
 end
