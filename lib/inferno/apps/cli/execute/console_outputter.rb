@@ -1,15 +1,17 @@
 require 'pastel'
 require 'tty-spinner'
-require_relative 'json_outputter'
+require_relative 'serialize'
 
 module Inferno
   module CLI
     class Execute
       # @private
-      class ConsoleOutputter < JSONOutputter
+      class ConsoleOutputter
         CHECKMARK = "\u2713".freeze
         BAR = ('=' * 80).freeze
         SPINNER = TTY::Spinner.new('Running tests [:spinner]', format: :bouncing_ball, clear: true, output: $stdout)
+
+        include Serialize
 
         def print_start_message(options)
           puts ''
