@@ -131,6 +131,37 @@ module AuthInfoSuite
         title 'Auth mode'
 
         test do
+          title 'Choose Public or Symmetric Auth'
+          id :auth_choice
+          input :auth_credentials,
+                type: :auth_info,
+                options: {
+                  mode: 'auth',
+                  components: [
+                    {
+                      name: :auth_type,
+                      default: 'public',
+                      options: {
+                        list_options: [
+                          {
+                            display: 'Public',
+                            value: 'public'
+                          },
+                          {
+                            display: 'Confidential Symmetric',
+                            value: 'symmetric'
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+          run do
+            assert ['public', 'symmetric'].include?(auth_choice.auth_type)
+          end
+        end
+
+        test do
           title 'Public Auth'
           id :public_auth
           input :public_auth_info,
