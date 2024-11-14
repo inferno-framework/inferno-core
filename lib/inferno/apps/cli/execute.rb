@@ -40,6 +40,8 @@ module Inferno
 
         outputter.print_start_message(options)
 
+        load_preset
+
         results = []
         outputter.print_around_run(options) do
           if all_selected_groups_and_tests.empty?
@@ -90,6 +92,14 @@ module Inferno
       def outputter
         # TODO: swap outputter based on options
         @outputter ||= Inferno::CLI::Execute::ConsoleOutputter.new
+      end
+
+      def load_preset
+        if self.options.key?(:preset)
+          preset_inputs = JSON.parse(File.read(self.options[:preset]))
+
+          self.options[:inputs] = self.options.fetch(:inputs, {}).deep_merge(preset_inputs)
+        end
       end
 
       def all_selected_groups_and_tests

@@ -116,6 +116,10 @@ module Inferno
              aliases: ['-i'],
              type: :hash,
              desc: 'Inputs (i.e: --inputs=foo:bar goo:baz)'
+      option :preset,
+             aliases: ['-p'],
+             type: :string,
+             desc: 'Path to an Inferno preset file for inputs; `--inputs` will merge and override presets if both are given.'
       option :verbose,
              aliases: ['-v'],
              type: :boolean,
