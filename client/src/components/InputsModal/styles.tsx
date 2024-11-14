@@ -13,13 +13,13 @@ export default makeStyles()((theme: Theme) => ({
       fontWeight: 600,
       color: theme.palette.common.grayDarkest,
     },
-    '& label.Mui-focused': {
+    '& > label.Mui-focused': {
       color: theme.palette.secondary.main,
     },
-    '& label.Mui-disabled': {
+    '& > label.Mui-disabled': {
       color: theme.palette.common.gray,
     },
-    '& label.Mui-error': {
+    '& > label.Mui-error': {
       color: theme.palette.error.main,
     },
   },
