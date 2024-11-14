@@ -5,7 +5,6 @@ module Inferno
     class Execute
       # @private
       class JSONOutputter
-
         include Serialize
 
         def print_start_message(_options); end
