@@ -1,4 +1,5 @@
 require_relative 'console'
+require_relative 'evaluator'
 require_relative 'migration'
 require_relative 'services'
 require_relative 'suite'
@@ -10,6 +11,11 @@ require_relative 'execute'
 module Inferno
   module CLI
     class Main < Thor
+      desc 'evaluate', 'Start FHIR Evaluator'
+      def evaluate
+        Evaluator.new.run(Logger::DEBUG)
+      end
+
       desc 'console', 'Start an interactive console session with Inferno'
       def console
         Migration.new.run(Logger::INFO)
