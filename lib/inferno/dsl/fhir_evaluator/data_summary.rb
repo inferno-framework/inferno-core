@@ -33,18 +33,18 @@ module FhirEvaluator
     end
 
     def summarize(data)
-      @root_resource_ids = data.map { |r| { type: r.resourceType, id: r.id } }
-      @root_bundle_resource_ids = data.map { |r| { type: r.resourceType, id: r.id } if r.resourceType == 'Bundle' }
+      # @root_resource_ids = data.map { |r| { type: r.resourceType, id: r.id } }
+      # @root_bundle_resource_ids = data.map { |r| { type: r.resourceType, id: r.id } if r.resourceType == 'Bundle' }
 
-      id_hash = Hash.new { |hash, key| hash[key] = [] }
-      data.map { |e| resources(e) }.flatten.each do |item|
-        id_hash[item[:type]] << item[:id]
-      end
-      @domain_resource_ids = id_hash.to_a
+      # id_hash = Hash.new { |hash, key| hash[key] = [] }
+      # data.map { |e| resources(e) }.flatten.each do |item|
+      #   id_hash[item[:type]] << item[:id]
+      # end
+      # @domain_resource_ids = id_hash.to_a
 
-      @resource_profile_map = data.map { |e| resources_profiles(e) }.flatten.uniq
-      @resource_patient_map = data.map { |e| resources_patients(e) }.flatten.uniq
-      @resource_subject_map = data.map { |e| resources_subjects(e) }.flatten.uniq
+      # @resource_profile_map = data.map { |e| resources_profiles(e) }.flatten.uniq
+      # @resource_patient_map = data.map { |e| resources_patients(e) }.flatten.uniq
+      # @resource_subject_map = data.map { |e| resources_subjects(e) }.flatten.uniq
     end
 
     def resources_ids(resource)
