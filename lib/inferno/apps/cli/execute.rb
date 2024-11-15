@@ -1,15 +1,21 @@
-require 'pastel'
 require 'active_support'
 require_relative '../../utils/verify_runnable'
 require_relative '../../utils/persist_inputs'
-require_relative 'execute/console_outputter'
-require_relative '../../result_summarizer'
+
+Dir[File.join(__dir__, 'execute', '*_outputter.rb')].each { |outputter| require outputter }
 
 module Inferno
   module CLI
     class Execute
       include ::Inferno::Utils::VerifyRunnable
       include ::Inferno::Utils::PersistInputs
+
+      OUTPUTTERS = {
+        'console' => Inferno::CLI::Execute::ConsoleOutputter,
+        'plain' => Inferno::CLI::Execute::PlainOutputter,
+        'json' => Inferno::CLI::Execute::JSONOutputter,
+        'quiet' => Inferno::CLI::Execute::QuietOutputter
+      }.freeze
 
       attr_accessor :options
 
@@ -88,8 +94,12 @@ module Inferno
       end
 
       def outputter
-        # TODO: swap outputter based on options
-        @outputter ||= Inferno::CLI::Execute::ConsoleOutputter.new
+        unless OUTPUTTERS.key? options[:outputter]
+          raise StandardError,
+                "Unrecognized outputter #{options[:outputter]}"
+        end
+
+        @outputter ||= OUTPUTTERS[options[:outputter]].new
       end
 
       def all_selected_groups_and_tests
@@ -164,7 +174,6 @@ module Inferno
       end
 
       def dispatch_job(test_run)
-        # TODO: move suppression to outputter? better suppression?
         if options[:verbose]
           Jobs.perform(Jobs::ExecuteTestRun, test_run.id, force_synchronous: true)
         else
