@@ -22,13 +22,10 @@ module Inferno
     #     end
     #   end
     module FHIREvaluation
-      def self.included(klass)
-        klass.extend ClassMethods
-      end
 
       class Evaluator
         # @private
-        def initialize()  
+        def initialize
           require 'dotenv'
           Dotenv.load
 
@@ -51,15 +48,12 @@ module Inferno
 
           require_relative 'fhir_evaluator/cli'
           FhirEvaluator::CLI.start
-
         end
 
-        def evaluate()
+        def evaluate
           puts 'Evaluate!'
         end
-
       end
-
     end
   end
 end
