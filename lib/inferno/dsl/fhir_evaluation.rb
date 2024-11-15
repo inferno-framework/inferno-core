@@ -22,7 +22,6 @@ module Inferno
     #     end
     #   end
     module FHIREvaluation
-
       class Evaluator
         # @private
         def initialize
