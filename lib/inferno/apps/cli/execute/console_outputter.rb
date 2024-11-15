@@ -1,5 +1,4 @@
 require 'pastel'
-require 'tty-spinner'
 require_relative 'serialize'
 
 module Inferno

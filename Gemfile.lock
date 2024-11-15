@@ -28,7 +28,6 @@ PATH
       sqlite3 (~> 1.4)
       thor (~> 1.2.1)
       tty-markdown (~> 0.7.1)
-      tty-spinner (~> 0.9.3)
 
 GEM
   remote: https://rubygems.org/
@@ -302,7 +301,6 @@ GEM
     thor (1.2.2)
     tilt (2.4.0)
     tty-color (0.6.0)
-    tty-cursor (0.7.1)
     tty-markdown (0.7.2)
       kramdown (>= 1.16.2, < 3.0)
       pastel (~> 0.8)
@@ -311,8 +309,6 @@ GEM
       tty-color (~> 0.5)
       tty-screen (~> 0.8)
     tty-screen (0.8.2)
-    tty-spinner (0.9.3)
-      tty-cursor (~> 0.7)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.6.0)
