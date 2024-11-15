@@ -9,7 +9,6 @@ module Inferno
       class ConsoleOutputter
         CHECKMARK = "\u2713".freeze
         BAR = ('=' * 80).freeze
-        SPINNER = TTY::Spinner.new('Running tests [:spinner]', format: :bouncing_ball, clear: true, output: $stdout)
 
         include Serialize
 
@@ -24,9 +23,8 @@ module Inferno
         end
 
         def print_around_run(_options)
-          SPINNER.auto_spin
+          puts "Running tests. This may take a while..."
           yield
-          SPINNER.stop('done!')
         end
 
         def print_results(options, results)
