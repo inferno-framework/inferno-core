@@ -72,7 +72,7 @@ module Inferno
 
       # @private
       def resume_ui_at_id(test_run, test)
-        test_run.test_suite_id || test_run.test_group_id || test.parent.id
+        test_run.test_suite_id || test_run.test_group_id || test.parent&.id || test.id
       end
 
       # @private
