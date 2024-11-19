@@ -144,11 +144,11 @@ module AuthInfoSuite
                       options: {
                         list_options: [
                           {
-                            display: 'Public',
+                            label: 'Public',
                             value: 'public'
                           },
                           {
-                            display: 'Confidential Symmetric',
+                            label: 'Confidential Symmetric',
                             value: 'symmetric'
                           }
                         ]
