@@ -1,16 +1,16 @@
 require 'yaml'
 
-test_kit_metadata = YAML.safe_load_file(File.join('lib', '<%= library_name %>', 'test_kit_metadata.yml')
+test_kit_metadata = YAML.safe_load_file(File.join('lib', '<%= library_name %>', 'test_kit_metadata.yml'))
 
 Gem::Specification.new do |spec|
   spec.name          = '<%= library_name %>'
-  spec.version       = test_kit_metadata[:version]
-  spec.authors       = test_kit_metadata[:authors]
+  spec.version       = test_kit_metadata['version']
+  spec.authors       = test_kit_metadata['authors']
   # spec.email         = ['TODO']
   spec.date          = Time.now.utc.strftime('%Y-%m-%d')
-  spec.summary       = test_kit_metadata[:title]
-  spec.description   = test_kit_metadata[:description]
-  # spec.homepage      = test_kit_metadata[:repo]
+  spec.summary       = test_kit_metadata['title']
+  spec.description   = test_kit_metadata['description']
+  # spec.homepage      = test_kit_metadata['repo']
   spec.license       = 'Apache-2.0'
   spec.add_runtime_dependency 'inferno_core', '~> <%= Inferno::VERSION %>'
   spec.add_development_dependency 'database_cleaner-sequel', '~> 1.8'
@@ -18,8 +18,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.10'
   spec.add_development_dependency 'webmock', '~> 3.11'
   spec.required_ruby_version = Gem::Requirement.new('>= 3.1.2')
+  spec.metadata['inferno_test_kit'] = 'true'
   # spec.metadata['homepage_uri'] = spec.homepage
-  # spec.metadata['source_code_uri'] = test_kit_metadata[:repo]
+  # spec.metadata['source_code_uri'] = test_kit_metadata['repo']
   spec.files = [
     Dir['lib/**/*.rb'],
     Dir['lib/**/*.json'],
