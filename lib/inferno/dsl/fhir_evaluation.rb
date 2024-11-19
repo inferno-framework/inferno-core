@@ -2,25 +2,6 @@ require_relative '../ext/fhir_models'
 
 module Inferno
   module DSL
-    # This module contains the methods needed to configure a validator to
-    # perform validation of FHIR resources. The actual validation is performed
-    # by an external FHIR validation service. Tests will typically rely on
-    # `assert_valid_resource` for validation rather than directly calling
-    # methods on a validator.
-    #
-    # @example
-    #
-    #   validator do
-    #     url 'http://example.com/validator'
-    #     exclude_message { |message| message.type == 'info' }
-    #     perform_additional_validation do |resource, profile_url|
-    #       if something_is_wrong
-    #         { type: 'error', message: 'something is wrong' }
-    #       else
-    #         { type: 'info', message: 'everything is ok' }
-    #       end
-    #     end
-    #   end
     module FHIREvaluation
       class Evaluator
         # @private
