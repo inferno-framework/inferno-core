@@ -6,9 +6,8 @@ module FhirEvaluator
       @ig = the_ig
     end
 
-    def evaluate(data, summary = nil, config = Config.new)
-      summary ||= DataSummary.new(data)
-      context = EvaluationContext.new(@ig, data, summary, config)
+    def evaluate(data, config = Config.new)
+      context = EvaluationContext.new(@ig, data, config)
 
       active_rules = []
       config.data['Rule'].each_key do |rulename|

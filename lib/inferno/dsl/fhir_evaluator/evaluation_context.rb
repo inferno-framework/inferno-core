@@ -5,12 +5,11 @@ module FhirEvaluator
   # - A summary/characterization of the data
   # - Evaluation results
   class EvaluationContext
-    attr_reader :ig, :data, :summary, :results, :config
+    attr_reader :ig, :data, :results, :config
 
-    def initialize(the_ig, data, summary, config)
+    def initialize(the_ig, data, config)
       @ig = the_ig
       @data = data
-      @summary = summary
       @results = []
       @config = config
     end

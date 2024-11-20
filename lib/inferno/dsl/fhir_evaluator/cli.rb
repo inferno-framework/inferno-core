@@ -24,11 +24,9 @@ module FhirEvaluator
                ig.examples
              end
 
-      data_summary = FhirEvaluator::DataSummary.new(data)
-
       print(data_summary.to_json, 'Data Summary')
 
-      results = FhirEvaluator::Evaluator.new(ig).evaluate(data, data_summary, config)
+      results = FhirEvaluator::Evaluator.new(ig).evaluate(data, config)
 
       output_results(results, options[:output])
     end
