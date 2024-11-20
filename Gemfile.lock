@@ -328,6 +328,7 @@ GEM
 PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
+  arm64-darwin-23
   x86_64-darwin-20
   x86_64-darwin-22
   x86_64-linux
@@ -351,7 +352,7 @@ DEPENDENCIES
   yard-junk
 
 RUBY VERSION
-   ruby 3.1.2p20
+   ruby 3.3.6p108
 
 BUNDLED WITH
    2.4.22
