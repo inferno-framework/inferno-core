@@ -126,7 +126,7 @@ const InputAccess: FC<InputAccessProps> = ({ requirement, index, inputsMap, setI
           )}
           <List>
             <AuthTypeSelector
-              requirement={requirement}
+              input={requirement}
               index={index}
               inputsMap={accessValues}
               setInputsMap={updateAuthType}
