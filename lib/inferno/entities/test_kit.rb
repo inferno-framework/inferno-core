@@ -5,7 +5,6 @@ module Inferno
   module Entities
     # @example
     #
-    #   TODO: update this
     #   module USCoreTestKit
     #     class Metadata < Inferno::Entities::TestKit
     #       id :us_core

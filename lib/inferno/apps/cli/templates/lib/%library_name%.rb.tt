@@ -1,3 +1,4 @@
+require_relative '<%= library_name %>/metadata'
 require_relative '<%= library_name %>/patient_group'
 
 module <%= module_name %>
