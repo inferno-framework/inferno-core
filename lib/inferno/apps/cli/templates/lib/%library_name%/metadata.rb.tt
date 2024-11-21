@@ -1,4 +1,4 @@
-require 'inferno/entities/test_kit'
+require_relative 'version'
 
 module <%= module_name %>
   class Metadata < Inferno::TestKit
@@ -10,9 +10,9 @@ module <%= module_name %>
     suite_ids [:<%= test_suite_id %>]
     # tags ['SMART App Launch', 'US Core']
     # last_updated '2024-03-07'
-    version '0.0.1'
+    version VERSION
     maturity 'Low'
     authors <%= authors %>
-    # repo 'https://github.com/inferno-framework/us-core-test-kit'
+    # repo 'TODO'
   end
 end
