@@ -117,7 +117,7 @@ const InputAuth: FC<InputAuthProps> = ({ requirement, index, inputsMap, setInput
         )}
         <List>
           <AuthTypeSelector
-            requirement={requirement}
+            input={requirement}
             index={index}
             inputsMap={authValues}
             setInputsMap={updateAuthType}

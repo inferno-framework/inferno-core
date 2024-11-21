@@ -74,6 +74,10 @@ module Inferno
 
         You can view suite ids with: `bundle exec inferno suites`
 
+        You can select an output format with the `--outputter` option. Current outputters
+        are console (default), plain, quiet, and json. JSON-formatted output will copy
+        Inferno's REST API: https://inferno-framework.github.io/inferno-core/api-docs/#/Result.
+
         Examples:
 
             (These examples only work from within the inferno_core directory).
@@ -88,6 +92,12 @@ module Inferno
                                                   patient_id:1234321 \
                                          --tests 1.01 1.02`
             => Run specific tests from suite
+
+            `bundle exec inferno execute --suite dev_validator \
+                                         --inputs "url:https://hapi.fhir.org/baseR4" \
+                                                  patient_id:1234321 \
+                                         --outputter json`
+            => Outputs test results in JSON
       END_OF_HELP
       desc 'execute', 'Run Inferno tests in command line'
       long_desc EXECUTE_HELP, wrap: false
@@ -97,7 +107,7 @@ module Inferno
              desc: 'Test suite id to run or to select groups and tests from',
              banner: 'id'
       option :suite_options,
-             aliases: ['-u'], # NOTE: -o will be for outputter
+             aliases: ['-u'],
              type: :hash,
              desc: 'Suite options'
       option :groups,
@@ -120,6 +130,10 @@ module Inferno
              aliases: ['-p'],
              type: :string,
              desc: 'Path to an Inferno preset file for inputs; `--inputs` will merge and override presets if both are given.'
+      option :outputter,
+             aliases: ['-o'],
+             default: 'console',
+             desc: 'Select an outputter format: console | plain | json | quiet'
       option :verbose,
              aliases: ['-v'],
              type: :boolean,
