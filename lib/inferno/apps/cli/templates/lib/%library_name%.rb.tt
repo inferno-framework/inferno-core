@@ -5,7 +5,6 @@ module <%= module_name %>
   class Suite < Inferno::TestSuite
     id :<%= test_suite_id %>
     title '<%= title_name %> Test Suite'
-    version Metadata.version
     description '<%= human_name %> test suite.'
 
     # These inputs will be available to all tests in this suite
