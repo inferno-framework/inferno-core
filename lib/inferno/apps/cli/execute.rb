@@ -44,12 +44,12 @@ module Inferno
 
         self.options = options
 
-        outputter.print_start_message(options)
+        outputter.print_start_message(self.options)
 
         load_preset
-
+    
         results = []
-        outputter.print_around_run(options) do
+        outputter.print_around_run(self.options) do
           if all_selected_groups_and_tests.empty?
             test_run = create_test_run(suite)
             run_one(suite, test_run)
@@ -107,7 +107,9 @@ module Inferno
       def load_preset
         return unless options.key?(:preset)
 
-        preset_inputs = JSON.parse(File.read(options[:preset]))
+        preset_inputs = JSON.parse(File.read(options[:preset]))['inputs'].map do |input|
+          [input['name'], input['value']]
+        end.to_h
 
         options[:inputs] = options.fetch(:inputs, {}).deep_merge(preset_inputs)
       end

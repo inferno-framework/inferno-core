@@ -146,7 +146,7 @@ module Inferno
              desc: 'Display this message'
       def execute
         Execute.boot_full_inferno
-        Execute.new.run(options)
+        Execute.new.run(options.dup) # dup to unfreeze Thor options
       end
 
       # https://github.com/rails/thor/issues/244 - Make Thor exit(1) on Errors/Exceptions
