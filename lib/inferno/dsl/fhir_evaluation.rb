@@ -13,7 +13,6 @@ module Inferno
           require 'fhir_models'
 
           require_relative 'fhir_evaluator/config'
-          require_relative 'fhir_evaluator/version'
           require_relative 'fhir_evaluator/evaluator'
           require_relative 'fhir_evaluator/ig'
           require_relative 'fhir_evaluator/rule'
