@@ -186,28 +186,6 @@ module Inferno
 
           @suite_summary = format_markdown(suite_summary)
         end
-
-        def test_kit
-          @test_kit ||=
-            begin
-              suite_path = Object.const_source_location(name).first
-              suite_directory = File.dirname(suite_path)
-
-              test_kit_gems =
-                Bundler
-                  .definition
-                  .specs
-                  .select { |spec| spec.metadata.fetch('inferno_test_kit', 'false').casecmp? 'true' }
-
-              test_kit_gem = test_kit_gems.find { |gem| suite_directory.start_with? gem.full_gem_path }
-
-              test_kit_metadata_path = File.join(test_kit_gem, 'lib', test_kit_gem.name, 'test_kit_metadata.yml')
-
-              test_kit_metadata = YAML.safe_load_file(test_kit_metadata_path)
-
-              Repositories::TestKits.find(test_kit_metadata[:id])
-            end
-        end
       end
     end
   end
