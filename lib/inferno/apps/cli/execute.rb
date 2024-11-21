@@ -105,11 +105,11 @@ module Inferno
       end
 
       def load_preset
-        if self.options.key?(:preset)
-          preset_inputs = JSON.parse(File.read(self.options[:preset]))
+        return unless options.key?(:preset)
 
-          self.options[:inputs] = self.options.fetch(:inputs, {}).deep_merge(preset_inputs)
-        end
+        preset_inputs = JSON.parse(File.read(options[:preset]))
+
+        options[:inputs] = options.fetch(:inputs, {}).deep_merge(preset_inputs)
       end
 
       def all_selected_groups_and_tests

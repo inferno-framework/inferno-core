@@ -129,7 +129,7 @@ module Inferno
       option :preset,
              aliases: ['-p'],
              type: :string,
-             desc: 'Path to an Inferno preset file for inputs; `--inputs` will merge and override presets if both are given.'
+             desc: 'Path to an Inferno preset file for inputs; `--inputs` will merge and override presets'
       option :outputter,
              aliases: ['-o'],
              default: 'console',
