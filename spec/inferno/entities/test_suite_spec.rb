@@ -1,5 +1,6 @@
 RSpec.describe Inferno::Entities::TestSuite do
   let!(:suite_class) { Class.new(described_class) }
+  let(:suite_id) { 'basic' }
 
   describe '.group' do
     let!(:group_class) { Class.new(Inferno::Entities::TestGroup) }

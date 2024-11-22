@@ -7,3 +7,7 @@ gemspec
 group :development, :test do
   gem 'debug'
 end
+
+group :test do
+  gem 'rack-test'
+end
