@@ -104,27 +104,23 @@ module Inferno
         @outputter ||= OUTPUTTERS[options[:outputter]].new
       end
 
-      def load_preset
-        return unless options.key?(:preset_id) || options.key?(:preset_file)
+      def load_preset_file_and_set_preset_id
+        return unless options[:preset_file]
+        raise StandardError, "Cannot use `--preset-id` and `--preset-file` options together" if options[:preset_id]
 
-        raise StandardError, "Options `--preset-id` and `--preset-file` cannot be used together" if options.key?(:preset_id) && options.key?(:preset_file)
+        options[:preset_id] = JSON.parse(File.read(options[:preset_file]))['id']
+        raise StandardError, "Preset #{options[:preset_file]} is missing id" if options[:preset_id].nil?
 
-        if options.key?(:preset_file)
-          presets_repo.insert_from_file(options[:preset_file])
-          options[:preset_id] = JSON.parse(File.read(options[:preset_file]))['id']
-
-          raise StandardError, "Preset #{options[:preset_file]} is missing id" if options[:preset_id].nil?
-        end
-
-        raise StandardError, "Preset #{options[:preset_id]} cannot apply to suite #{suite.id}" unless presets_repo.presets_for_suite(suite.id).map(&:id).include? options[:preset_id]
+        presets_repo.insert_from_file(options[:preset_file])
 
         test_sessions_repo.apply_preset(test_session, options[:preset_id])
-
-        # options[:inputs] = options.fetch(:inputs, {}).deep_merge(preset_inputs)
       end
 
       def preset
-        @preset ||= true # TODO
+        @preset ||= presets_repo.find(options[:preset_id])
+
+        raise StandardError, "Preset #{options[:preset_id]} not found" if @preset.nil?
+        raise StandardError, "Preset #{options[:preset_id]} is incompatible with suite #{suite.id}" unless presets_repo.
       end
 
       def all_selected_groups_and_tests
@@ -134,7 +130,7 @@ module Inferno
       def run_one(runnable, test_run)
         verify_runnable(
           runnable,
-          preset ? thor_hash_to_inputs_array()) : ,
+          preset ? thor_hash_to_inputs_array()) : , # TODO: verify_runnable is not accounting for presets, but otherwise it actually works
           test_session.suite_options
         )
 
