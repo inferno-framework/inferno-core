@@ -237,12 +237,16 @@ RSpec.describe Inferno::CLI::Execute do
     end
 
     let(:inputs) { { 'url' => 'https://example.com', 'patient_id' => '1' } }
+    let(:preset_id) { 'dev_validator_preset' }
+    let(:preset_file) { Inferno::Application.root.join('config/presets/dev_validator_preset.json').to_s }
 
-    it 'works on dev_validator suite' do
+    before(:each) do
       stub_request(:post, "#{ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL')}/validate")
         .with(query: hash_including({}))
         .to_return(status: 200, body: success_outcome.to_json)
+    end
 
+    it 'works on dev_validator suite' do
       stub_request(:get, 'https://example.com/Patient/1')
         .to_return(status: 200, body: FHIR::Patient.new({ name: { given: 'Smith' } }).to_json)
 
@@ -250,6 +254,26 @@ RSpec.describe Inferno::CLI::Execute do
         expect { instance.run({ suite:, inputs:, outputter: 'plain', verbose: true }) }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
       end.to output(/.+/).to_stdout
+    end
+
+    it 'works with preset id' do
+      stub_request(:get, 'https://hapi.fhir.org/baseR4/Patient/1234321')
+        .to_return(status: 200, body: FHIR::Patient.new({ name: { given: 'Smith' } }).to_json)
+
+      expect do
+        expect { instance.run({ suite:, preset_id:, outputter: 'plain', verbose: true}) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
+      end.to output(/.+/).to_stdout
+    end
+
+    it 'works with preset file' do
+      stub_request(:get, 'https://hapi.fhir.org/baseR4/Patient/1234321')
+        .to_return(status: 200, body: FHIR::Patient.new({ name: { given: 'Smith' } }).to_json)
+
+      expect do
+        expect { instance.run({ suite:, preset_file:, outputter: 'plain', verbose: true}) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
+      end#.to output(/.+/).to_stdout
     end
   end
 end

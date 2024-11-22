@@ -108,6 +108,8 @@ module Inferno
         return unless options[:preset_file]
         raise StandardError, 'Cannot use `--preset-id` and `--preset-file` options together' if options[:preset_id]
 
+        raise StandardError, "File #{options[:preset_file]} not found" unless File.exist? options[:preset_file]
+
         options[:preset_id] = JSON.parse(File.read(options[:preset_file]))['id']
         raise StandardError, "Preset #{options[:preset_file]} is missing id" if options[:preset_id].nil?
 
