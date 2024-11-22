@@ -19,7 +19,7 @@ Since there are many test kits that depend on this validator service, the follow
 1. Watch https://github.com/hapifhir/org.hl7.fhir.validator-wrapper for new releases.
 2. When there is a new release, build this dockerfile locally and test g10 (all versions of US Core) against it by updating the version in `docker-compose.background.yml`
 3. If there are changes needed to this dockerfile, submit that PR first.
-4. Publish a new version of this image once it's ready. IMPORTANT: any test kit that doesn't pin a specific version of the validator will now use that latest.
+4. Publish a new version of this image once it's ready. IMPORTANT: any test kit that doesn't pin a specific version of the validator will now use this latest image.
 5. Submit a PR on g10 to update the the version in `docker-compose.background.yml` and `lib/onc_certification_g10_test_kit/configuration_checker.rb`, and update the message filters if necessary.
 
 ## Publishing a new version
