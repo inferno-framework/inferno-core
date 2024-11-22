@@ -1,3 +1,4 @@
+require_relative 'markdown_extractor'
 require_relative 'serializer'
 
 module Inferno
@@ -7,7 +8,7 @@ module Inferno
         identifier :name
 
         field :title, if: :field_present?
-        field :description, if: :field_present?
+        field :description, extractor: MarkdownExtractor, if: :field_present?
         field :type, if: :field_present?
         field :default, if: :field_present?
         field :optional, if: :field_present?

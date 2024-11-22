@@ -15,8 +15,9 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
           value: 'https://inferno.healthit.gov/reference-server/r4'
         },
         { name: 'patient_id', _type: 'text', _title: 'Patient ID', _description: %(
-### This is a markdown description.
-This is a new line.),  value: '85' },
+        ### This is a markdown description.
+        This is a new line.
+      ),  value: '85' },
         { name: 'bearer_token', _type: 'text', _optional: true, value: 'SAMPLE_TOKEN' },
         { name: 'textarea', _type: 'textarea', _title: 'Textarea Input Example',
           _description: 'Insert something like a patient resource json here', _optional: true, value: nil },

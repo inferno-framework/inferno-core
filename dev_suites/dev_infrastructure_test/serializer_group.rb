@@ -10,6 +10,14 @@ module InfrastructureTest
           description: 'INPUT3_DESCRIPTION',
           default: 'INPUT3_DEFAULT',
           type: 'text'
+    input :markdown_input,
+          description: %(
+            # Markdown Title
+            
+            Markdown description
+          ),
+          default: 'INPUT3_DEFAULT',
+          type: 'text'
 
     output :output3
 
