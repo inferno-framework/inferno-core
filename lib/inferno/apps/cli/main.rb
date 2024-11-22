@@ -13,14 +13,14 @@ module Inferno
     class Main < Thor
       desc 'evaluate', 'Run a FHIR Data Evaluator.'
       long_desc <<-LONGDESC
-        Evaluate FHIR data in the context of a given Implementation Guide, 
+        Evaluate FHIR data in the context of a given Implementation Guide,
         by applying a set of predefined rules designed to check that datasets are comprehensive.
         Issues identified will be printed to console or to a json file.
 
         You must have background services running: `bundle exec inferno services start`
 
-        Run the evaluation CLI with 
-        
+        Run the evaluation CLI with
+
         `bundle exec evaluator evaluate ig_path [data_path]`
 
         Examples:
