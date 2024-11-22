@@ -105,13 +105,26 @@ module Inferno
       end
 
       def load_preset
-        return unless options.key?(:preset)
+        return unless options.key?(:preset_id) || options.key?(:preset_file)
 
-        preset_inputs = JSON.parse(File.read(options[:preset]))['inputs'].map do |input|
-          [input['name'], input['value']]
-        end.to_h
+        raise StandardError, "Options `--preset-id` and `--preset-file` cannot be used together" if options.key?(:preset_id) && options.key?(:preset_file)
 
-        options[:inputs] = options.fetch(:inputs, {}).deep_merge(preset_inputs)
+        if options.key?(:preset_file)
+          presets_repo.insert_from_file(options[:preset_file])
+          options[:preset_id] = JSON.parse(File.read(options[:preset_file]))['id']
+
+          raise StandardError, "Preset #{options[:preset_file]} is missing id" if options[:preset_id].nil?
+        end
+
+        raise StandardError, "Preset #{options[:preset_id]} cannot apply to suite #{suite.id}" unless presets_repo.presets_for_suite(suite.id).map(&:id).include? options[:preset_id]
+
+        test_sessions_repo.apply_preset(test_session, options[:preset_id])
+
+        # options[:inputs] = options.fetch(:inputs, {}).deep_merge(preset_inputs)
+      end
+
+      def preset
+        @preset ||= true # TODO
       end
 
       def all_selected_groups_and_tests
@@ -121,13 +134,21 @@ module Inferno
       def run_one(runnable, test_run)
         verify_runnable(
           runnable,
-          thor_hash_to_inputs_array(options[:inputs]),
+          preset ? thor_hash_to_inputs_array()) : ,
           test_session.suite_options
         )
 
         persist_inputs(session_data_repo, create_params(test_session, suite), test_run)
 
         dispatch_job(test_run)
+      end
+
+      def merge_inputs_and_preset
+        if preset
+          
+        else
+          inputs
+        end
       end
 
       def suite
@@ -166,6 +187,10 @@ module Inferno
 
       def session_data_repo
         @session_data_repo ||= Inferno::Repositories::SessionData.new
+      end
+
+      def presets_repo
+        @presets_repo ||= Inferno::Repositories::Presets.new
       end
 
       def test_session

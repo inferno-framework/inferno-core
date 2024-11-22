@@ -125,11 +125,15 @@ module Inferno
       option :inputs,
              aliases: ['-i'],
              type: :hash,
-             desc: 'Inputs (i.e: --inputs=foo:bar goo:baz)'
-      option :preset,
+             desc: 'Inputs (i.e: --inputs=foo:bar goo:baz); will merge and override preset inputs'
+      option :preset_id,
+             aliases: ['-P'],
+             type: :string,
+             desc: 'Inferno preset id; cannot be used with `--preset-file`'
+      option :preset_file,
              aliases: ['-p'],
              type: :string,
-             desc: 'Path to an Inferno preset file for inputs; `--inputs` will merge and override presets'
+             desc: 'Path to an Inferno preset file for inputs; cannot be used with `--preset-id`'
       option :outputter,
              aliases: ['-o'],
              default: 'console',
