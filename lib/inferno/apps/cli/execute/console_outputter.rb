@@ -1,15 +1,15 @@
 require 'pastel'
-require_relative '../../web/serializers/test_run'
-require_relative '../../web/serializers/result'
+require_relative 'serialize'
 
 module Inferno
   module CLI
     class Execute
       # @private
       class ConsoleOutputter
-        COLOR = Pastel.new
         CHECKMARK = "\u2713".freeze
         BAR = ('=' * 80).freeze
+
+        include Serialize
 
         def print_start_message(options)
           puts ''
@@ -23,7 +23,6 @@ module Inferno
 
         def print_around_run(_options)
           puts 'Running tests. This may take a while...'
-          # TODO: spinner/progress bar
           yield
         end
 
@@ -46,15 +45,18 @@ module Inferno
 
         def print_end_message(options); end
 
-        def print_error(options, exception)
-          puts COLOR.red "Error: #{exception.full_message}"
-          verbose_print(options, exception.backtrace&.join('\n'))
+        def print_error(_options, exception)
+          puts color.red "Error: #{exception.full_message}"
         end
 
         # private
 
         def verbose_print(options, *args)
-          print(COLOR.dim(*args)) if options[:verbose]
+          print(color.dim(*args)) if options[:verbose]
+        end
+
+        def color
+          @color ||= Pastel.new(enabled: $stdout.tty?)
         end
 
         def verbose_puts(options, *args)
@@ -106,21 +108,21 @@ module Inferno
         def format_result(result) # rubocop:disable Metrics/CyclomaticComplexity
           case result.result
           when 'pass'
-            COLOR.bold.green(CHECKMARK, ' pass')
+            color.bold.green(CHECKMARK, ' pass')
           when 'fail'
-            COLOR.bold.red 'X fail'
+            color.bold.red 'X fail'
           when 'skip'
-            COLOR.yellow '* skip'
+            color.yellow '* skip'
           when 'omit'
-            COLOR.blue '* omit'
+            color.blue '* omit'
           when 'error'
-            COLOR.magenta 'X error'
+            color.magenta 'X error'
           when 'wait'
-            COLOR.bold '. wait'
+            color.bold '. wait'
           when 'cancel'
-            COLOR.red 'X cancel'
+            color.red 'X cancel'
           when 'running'
-            COLOR.bold '- running'
+            color.bold '- running'
           else
             raise StandardError.new, "Unrecognized result #{result.result}"
           end
@@ -132,19 +134,6 @@ module Inferno
           verbose_puts(options, BAR)
           verbose_puts(options, serialize(results))
           verbose_puts(options, BAR)
-        end
-
-        def serialize(entity)
-          case entity.class.to_s
-          when 'Array'
-            JSON.pretty_generate(entity.map { |item| JSON.parse serialize(item) })
-          when lambda { |x|
-                 defined?(x.constantize) && defined?("Inferno::Web::Serializers::#{x.split('::').last}".constantize)
-               }
-            "Inferno::Web::Serializers::#{entity.class.to_s.split('::').last}".constantize.render(entity)
-          else
-            raise StandardError, "CLI does not know how to serialize #{entity.class}"
-          end
         end
       end
     end

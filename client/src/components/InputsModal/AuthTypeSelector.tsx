@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TestInput } from '~/models/testSuiteModels';
+import { InputOption, TestInput } from '~/models/testSuiteModels';
 import InputCombobox from './InputCombobox';
 
 export interface InputAccessProps {
@@ -18,6 +18,28 @@ const AuthTypeSelector: FC<InputAccessProps> = ({ input, index, inputsMap, setIn
         default: 'public',
       };
 
+  const selectorOptions: InputOption[] =
+    input.options?.components?.find((component) => component.name === 'auth_type')?.options
+      ?.list_options ||
+    ([
+      {
+        label: 'Public',
+        value: 'public',
+      },
+      {
+        label: 'Confidential Symmetric',
+        value: 'symmetric',
+      },
+      {
+        label: 'Confidential Asymmetric',
+        value: 'asymmetric',
+      },
+      {
+        label: 'Backend Services',
+        value: 'backend_services',
+      },
+    ] as InputOption[]);
+
   const selectorModel: TestInput = {
     name: 'auth_type',
     type: 'select',
@@ -27,24 +49,7 @@ const AuthTypeSelector: FC<InputAccessProps> = ({ input, index, inputsMap, setIn
     optional: selectorSettings.optional,
     locked: selectorSettings.locked,
     options: {
-      list_options: [
-        {
-          label: 'Public',
-          value: 'public',
-        },
-        {
-          label: 'Confidential Symmetric',
-          value: 'symmetric',
-        },
-        {
-          label: 'Confidential Asymmetric',
-          value: 'asymmetric',
-        },
-        {
-          label: 'Backend Services',
-          value: 'backend_services',
-        },
-      ],
+      list_options: selectorOptions,
     },
   };
 
