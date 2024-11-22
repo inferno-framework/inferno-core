@@ -11,7 +11,29 @@ require_relative 'execute'
 module Inferno
   module CLI
     class Main < Thor
-      desc 'evaluate', 'Start FHIR Evaluator'
+      desc 'evaluate', 'Run a FHIR Data Evaluator.'
+      long_desc <<-LONGDESC
+        Evaluate FHIR data in the context of a given Implementation Guide, 
+        by applying a set of predefined rules designed to check that datasets are comprehensive.
+        Issues identified will be printed to console or to a json file.
+
+        You must have background services running: `bundle exec inferno services start`
+
+        Run the evaluation CLI with 
+        
+        `bundle exec evaluator evaluate ig_path [data_path]`
+
+        Examples:
+
+        # Load the us core ig and evaluate the data in the provided example folder. If there are examples in the IG already, they will be ignored.
+        `bundle exec evaluator evaluate ./uscore.tgz ./package/example`
+
+        # Loads the us core ig and evaluate the data included in the IG's example folder
+        `bundle exec evaluator evaluate ./uscore.tgz`
+
+        # Loads the us core ig and evaluate the data included in the IG's example folder, with results redirected to outcome.json as an OperationOutcome
+        `bundle exec evaluator evaluate ./uscore.tgz --output outcome.json`
+      LONGDESC
       def evaluate
         Evaluator.new.run(Logger::DEBUG)
       end
