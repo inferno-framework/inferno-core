@@ -11,14 +11,11 @@ module Inferno
     # @!attribute test_suite_id
     #   @return [String] id of the `TestSuite` being run in this session
     # @!attribute test_suite
-    #   @return [Inferno::Entities::TestSuite] the `TestSuite` being run in this
-    #   session
+    #   @return [Inferno::Entities::TestSuite] the `TestSuite` being run in this session
     # @!attribute test_runs
-    #   @return [Array<Inferno::Entities::TestRun>] the `TestRuns` associated
-    #   with this session
+    #   @return [Array<Inferno::Entities::TestRun>] the `TestRuns` associated with this session
     # @!attribute results
-    #   @return [Array<Inferno::Entities::TestResult>] the `TestResults`
-    #   associated with this session
+    #   @return [Array<Inferno::Entities::TestResult>] the `TestResults` associated with this session
     # @!attribute suite_options
     #   @return [Hash] the suite options associated with this session
     class TestSession < Entity
