@@ -46,8 +46,8 @@ module Inferno
 
         outputter.print_start_message(self.options)
 
-        load_preset
-    
+        load_preset_file_and_set_preset_id
+
         results = []
         outputter.print_around_run(self.options) do
           if all_selected_groups_and_tests.empty?
@@ -106,7 +106,7 @@ module Inferno
 
       def load_preset_file_and_set_preset_id
         return unless options[:preset_file]
-        raise StandardError, "Cannot use `--preset-id` and `--preset-file` options together" if options[:preset_id]
+        raise StandardError, 'Cannot use `--preset-id` and `--preset-file` options together' if options[:preset_id]
 
         options[:preset_id] = JSON.parse(File.read(options[:preset_file]))['id']
         raise StandardError, "Preset #{options[:preset_file]} is missing id" if options[:preset_id].nil?
@@ -116,13 +116,6 @@ module Inferno
         test_sessions_repo.apply_preset(test_session, options[:preset_id])
       end
 
-      def preset
-        @preset ||= presets_repo.find(options[:preset_id])
-
-        raise StandardError, "Preset #{options[:preset_id]} not found" if @preset.nil?
-        raise StandardError, "Preset #{options[:preset_id]} is incompatible with suite #{suite.id}" unless presets_repo.
-      end
-
       def all_selected_groups_and_tests
         @all_selected_groups_and_tests ||= runnables_by_short_id + groups + tests
       end
@@ -130,7 +123,7 @@ module Inferno
       def run_one(runnable, test_run)
         verify_runnable(
           runnable,
-          preset ? thor_hash_to_inputs_array()) : , # TODO: verify_runnable is not accounting for presets, but otherwise it actually works
+          thor_hash_to_inputs_array(inputs_and_preset),
           test_session.suite_options
         )
 
@@ -139,12 +132,31 @@ module Inferno
         dispatch_job(test_run)
       end
 
-      def merge_inputs_and_preset
+      def inputs_and_preset
         if preset
-          
+          preset_inputs = preset.inputs.map do |preset_input|
+            [ preset_input[:name], preset_input[:value] ]
+          end.to_h
+
+          options.fetch(:inputs, {}).merge(preset_inputs)
         else
-          inputs
+          options.fetch(:inputs, {})
         end
+      end
+
+      def preset
+        return unless options[:preset_id]
+
+        @preset ||= presets_repo.find(options[:preset_id])
+
+        raise StandardError, "Preset #{options[:preset_id]} not found" if @preset.nil?
+
+        unless presets_repo.presets_for_suite(suite.id).include?(@preset)
+          raise StandardError,
+                "Preset #{options[:preset_id]} is incompatible with suite #{suite.id}"
+        end
+
+        @preset
       end
 
       def suite
@@ -202,7 +214,7 @@ module Inferno
         {
           test_session_id: test_session.id,
           runnable_id_key(runnable) => runnable.id,
-          inputs: thor_hash_to_inputs_array(options[:inputs])
+          inputs: thor_hash_to_inputs_array(inputs_and_preset)
         }
       end
 
