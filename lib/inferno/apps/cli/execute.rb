@@ -136,9 +136,9 @@ module Inferno
 
       def inputs_and_preset
         if preset
-          preset_inputs = preset.inputs.map do |preset_input|
-            [ preset_input[:name], preset_input[:value] ]
-          end.to_h
+          preset_inputs = preset.inputs.to_h do |preset_input|
+            [preset_input[:name], preset_input[:value]]
+          end
 
           options.fetch(:inputs, {}).merge(preset_inputs)
         else

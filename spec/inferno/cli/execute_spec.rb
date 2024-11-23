@@ -238,9 +238,9 @@ RSpec.describe Inferno::CLI::Execute do
 
     let(:inputs) { { 'url' => 'https://example.com', 'patient_id' => '1' } }
     let(:preset_id) { 'dev_validator_preset' }
-    let(:preset_file) { Inferno::Application.root.join('config/presets/dev_validator_preset.json').to_s }
+    let(:preset_file) { Inferno::Application.root.join('spec/fixtures/dev_validator_preset_2.json').to_s }
 
-    before(:each) do
+    before do
       stub_request(:post, "#{ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL')}/validate")
         .with(query: hash_including({}))
         .to_return(status: 200, body: success_outcome.to_json)
@@ -261,7 +261,7 @@ RSpec.describe Inferno::CLI::Execute do
         .to_return(status: 200, body: FHIR::Patient.new({ name: { given: 'Smith' } }).to_json)
 
       expect do
-        expect { instance.run({ suite:, preset_id:, outputter: 'plain', verbose: true}) }
+        expect { instance.run({ suite:, preset_id:, outputter: 'plain', verbose: true }) }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
       end.to output(/.+/).to_stdout
     end
@@ -271,9 +271,9 @@ RSpec.describe Inferno::CLI::Execute do
         .to_return(status: 200, body: FHIR::Patient.new({ name: { given: 'Smith' } }).to_json)
 
       expect do
-        expect { instance.run({ suite:, preset_file:, outputter: 'plain', verbose: true}) }
+        expect { instance.run({ suite:, preset_file:, outputter: 'plain', verbose: true }) }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
-      end#.to output(/.+/).to_stdout
+      end.to output(/.+/).to_stdout
     end
   end
 end
