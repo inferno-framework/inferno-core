@@ -37,6 +37,18 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
       ? ` - ${suiteOptions.map((option) => option.label).join(', ')}`
       : '';
 
+  // Pull report date from list of test group results
+  const getReportDate = (): Date =>
+    testSuite.test_groups?.reduce((acc: Date, group: TestGroup) => {
+      if (group.result?.updated_at) {
+        const dateUpdated = new Date(group.result?.updated_at);
+        if (dateUpdated > acc) {
+          acc = dateUpdated;
+        }
+      }
+      return acc;
+    }, new Date(0)) || new Date(); // if no test results, default to current date
+
   const header = (
     <Card variant="outlined" sx={{ mb: 3 }}>
       <Box className={classes.testGroupCardHeader}>
@@ -106,7 +118,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
                 day: 'numeric',
                 hour: 'numeric',
                 minute: 'numeric',
-              }).format(new Date())}
+              }).format(getReportDate())}
             </Typography>
             <Typography variant="button">Report Date</Typography>
           </Box>
