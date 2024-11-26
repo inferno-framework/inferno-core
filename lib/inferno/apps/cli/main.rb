@@ -38,7 +38,7 @@ module Inferno
       option :ig_path,
              aliases: ['-i'],
              type: :string,
-             desc: 'FHIR IG Path'
+             desc: 'FHIR IG Path and file name'
       option :data_path,
              aliases: ['-d'],
              type: :string,

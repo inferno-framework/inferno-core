@@ -27,13 +27,14 @@ module Inferno
 
           Config.new
 
-          ig_path = File.join(__dir__, 'fhir_evaluator', 'ig', 'uscore7.0.0.tgz')
-          data_path = File.join(__dir__, 'fhir_evaluator', 'data')
+          # To-Do: these paths will be permanently resolved after
+          # the evaluator is fully integrated with Inferno.
           validate_args(ig_path, data_path)
-          ig = FhirEvaluator::IG.new(ig_path)
+
+          ig = FhirEvaluator::IG.new(File.join(__dir__, 'fhir_evaluator', 'ig', ig_path))
 
           if data_path
-            DatasetLoader.from_path(data_path)
+            DatasetLoader.from_path(File.join(__dir__, 'fhir_evaluator', data_path))
           else
             ig.examples
           end
