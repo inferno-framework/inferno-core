@@ -21,30 +21,35 @@ module Inferno
 
         Run the evaluation CLI with
 
-        `bundle exec evaluator evaluate ig_path [data_path]`
+        `bundle exec inferno evaluate ig_path [data_path]`
 
         Examples:
 
         # Load the us core ig and evaluate the data in the provided example folder. If there are examples in the IG already, they will be ignored.
-        `bundle exec evaluator evaluate ./uscore.tgz ./package/example`
+        `bundle exec inferno evaluate ./uscore.tgz ./package/example`
 
         # Loads the us core ig and evaluate the data included in the IG's example folder
-        `bundle exec evaluator evaluate ./uscore.tgz`
+        `bundle exec inferno evaluate ./uscore.tgz`
 
         # Loads the us core ig and evaluate the data included in the IG's example folder, with results redirected to outcome.json as an OperationOutcome
-        `bundle exec evaluator evaluate ./uscore.tgz --output outcome.json`
+        `bundle exec inferno evaluate ./uscore.tgz --output outcome.json`
       LONGDESC
-      # ToDo: Add options below as arguments
+      # TODO: Add options below as arguments
       option :ig_path,
-              aliases: ['-ig'],
-              type: :string,
-              desc: 'IG Path'
-      option :examples_path,
-              aliases: ['-ex'],
-              type: :string,
-              desc: 'Example data path'
+             aliases: ['-i'],
+             type: :string,
+             desc: 'FHIR IG Path'
+      option :data_path,
+             aliases: ['-d'],
+             type: :string,
+             desc: 'Example FHIR data path'
+      # TODO: implement option of exporting result as OperationOutcome
+      option :output,
+             aliases: ['-o'],
+             type: :string,
+             desc: 'Export evaluation result to outcome.json as an OperationOutcome'
       def evaluate
-        Evaluator.new.run(Logger::INFO, options[:ig_path], options[:examples_path])
+        Evaluator.new.run(Logger::INFO, options[:ig_path], options[:data_path])
       end
 
       desc 'console', 'Start an interactive console session with Inferno'

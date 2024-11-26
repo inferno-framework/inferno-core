@@ -13,7 +13,7 @@ module FhirEvaluator
       config.data['Rule'].each do |rulename, rule_details|
         active_rules << rulename if rule_details['Enabled']
       end
-      
+
       Rule.descendants.each do |rule|
         rule.new.check(context) if active_rules.include?(rule.name.gsub('FhirEvaluator::Rules::', ''))
       end

@@ -25,13 +25,13 @@ module Inferno
             require_relative file
           end
 
-          config = Config.new
+          Config.new
 
           ig_path = File.join(__dir__, 'fhir_evaluator', 'ig', 'uscore7.0.0.tgz')
           validate_args(ig_path, examples_path)
           ig = FhirEvaluator::IG.new(ig_path)
 
-          data = if examples_path
+          if examples_path
             Dataset.from_path(examples_path)
           else
             ig.examples
@@ -40,17 +40,18 @@ module Inferno
           # Rule execution and result output will be later integrated at phase 2 and 3.
 
           # results = FhirEvaluator::Evaluator.new(ig).evaluate(data, config)
-    
-          # output_results(results, options[:output])
 
+          # output_results(results, options[:output])
         end
-    
+
         def validate_args(ig_path, examples_path)
           raise 'A path to an IG is required!' unless ig_path
-  
-          raise "Provided path '#{examples_path}' is not a directory" if examples_path && (!File.directory? examples_path)
+
+          return unless examples_path && (!File.directory? examples_path)
+
+          raise "Provided path '#{examples_path}' is not a directory"
         end
-  
+
         def output_results(results, output)
           if output&.end_with?('json')
             oo = FhirEvaluator::EvaluationResult.to_operation_outcome(results)
@@ -63,7 +64,7 @@ module Inferno
             puts results
           end
         end
-  
+
         def print(output_fields, title)
           puts("╔══════════════ #{title} ═══════════════╗")
           puts('║ ╭────────────────┬──────────────────────╮ ║')
@@ -76,11 +77,10 @@ module Inferno
           puts('║ ╰────────────────┴──────────────────────╯ ║')
           puts('╚═══════════════════════════════════════════╝')
         end
-  
+
         def pad(string, length)
           format("%#{length}.#{length}s", string)
         end
-  
       end
     end
   end
