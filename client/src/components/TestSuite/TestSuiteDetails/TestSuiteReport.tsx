@@ -37,6 +37,32 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
       ? ` - ${suiteOptions.map((option) => option.label).join(', ')}`
       : '';
 
+  // Pull report date from results or indicate there is no date
+  const getReportDate = (): string => {
+    // Set to most recent date from list of test group results
+    const reportDate = testSuite.test_groups?.reduce((acc: Date, group: TestGroup) => {
+      if (group.result?.updated_at) {
+        const dateUpdated = new Date(group.result?.updated_at);
+        if (dateUpdated > acc) {
+          acc = dateUpdated;
+        }
+      }
+      return acc;
+    }, new Date(0));
+
+    if (!testSuite.test_groups || reportDate?.getTime() === new Date(0).getTime()) {
+      return 'N/A';
+    }
+
+    return Intl.DateTimeFormat('en', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    }).format(reportDate);
+  };
+
   const header = (
     <Card variant="outlined" sx={{ mb: 3 }}>
       <Box className={classes.testGroupCardHeader}>
@@ -100,13 +126,7 @@ const TestSuiteReport: FC<TestSuiteReportProps> = ({ testSuite, suiteOptions, up
           )}
           <Box px={2}>
             <Typography variant="h5" component="h1" fontWeight="bold">
-              {Intl.DateTimeFormat('en', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-              }).format(new Date())}
+              {getReportDate()}
             </Typography>
             <Typography variant="button">Report Date</Typography>
           </Box>
