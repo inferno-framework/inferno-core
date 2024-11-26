@@ -1,0 +1,80 @@
+# Common configuration.
+
+Environment:
+  ##########################################
+  # Attributes below are in considerations for implementation later
+  ##########################################
+  # DataSummary:
+  #   Enabled: true
+  # Debug: 
+  #   Enabled: false
+  # ShowMessage: 
+  #   Warning: true
+  # Output: 
+  #   Path: 'output/result.json'
+  ExternalValidator: 
+    Enabled: false
+    url: ''
+
+### Rule ###
+Rule:
+  HasExamples:
+    Description: 'Abstract Rule that declares that an IG has has examples representing specific FHIR features'
+    Enabled: true # Run this rule when enabled
+  AllIGExtensionsHaveExamples:
+    Description: 'All defined extensions are represented in examples'
+    Enabled: true
+  AllExtensionsUsed:
+    Description: 'All extensions specified in profiles are represented in Example instances'
+    Enabled: true
+  AllProfilesHaveExamples:
+    Description: 'All profiles are represented in Example instances'
+    Enabled: true
+    TargetExample:
+      byMetaProfile: false
+      # if byMetaProfile is true, select target examples by same meta.profile in StructureDefintion
+      byConformance: true
+      # if byConformance is true, run the following algorithm
+      # - Find examples with same resource type
+      # - Check for conformance to all profiles for the resource's type, and include in any that it is conformant to
+  AllReferencesResolve:
+    Description: 'All references in Example are resolved'
+    Enabled: true
+  AllResourcesReachable:
+    Description: 'Every resource is either making a resolvable reference or is referenced'
+    Enabled: true
+  # To be implemented
+  #   CheckedAtAll: false
+  #   RunOnlyBaseResource: false  # to determine the base/root resource
+  #   IgnoreType: # which types/resources to ignore
+  #     # - Bundle
+  #     # - Composite
+  AllSearchParametersHaveExamples:
+    Description: 'All SearchParameters have examples'
+    Enabled: true
+  DifferentialContentHasExamples:
+    Description: 'All differential fields are represented in instances'
+    Enabled: true
+  ValueSetsDemonstrate:
+    Description: 'All Value sets are used in Examples'
+    Enabled: true
+    VSAC:
+      url: 'https://cts.nlm.nih.gov'
+      apikey: 'e0b8a2be-921e-442a-947f-449ba4025f22'
+    Exclude:
+      URN: true # Exclude if system is provided as Uniform Resource Name "urn:"
+      Filter: true # Exclude filter
+      SystemOnly: true # Exclude if only system is provided (e.g. http://loing.org)
+  AllMustSupportPresent:
+    Description: 'All MustSupports are represented in Examples'
+    Enabled: true
+    ExampleSelection:
+    # if byMetaProfile is true, select Examples by same meta.profile of StructureDefintion
+      byMetaProfile: false
+    # if byConformance is true, run the following logic Karl suggested:
+      byConformance: true
+    # A generic IG / set of profiles with some thing like the following logic that determines a "target" profile
+    # - follow meta.profile if populated
+    # - If the set has only profile for the resource's type, then use that
+    # - Otherwise, check for conformance to all profiles for the resource's type, and include in any that it is conformant to
+      # byConformance: false

@@ -34,8 +34,17 @@ module Inferno
         # Loads the us core ig and evaluate the data included in the IG's example folder, with results redirected to outcome.json as an OperationOutcome
         `bundle exec evaluator evaluate ./uscore.tgz --output outcome.json`
       LONGDESC
+      # ToDo: Add options below as arguments
+      option :ig_path,
+              aliases: ['-ig'],
+              type: :string,
+              desc: 'IG Path'
+      option :examples_path,
+              aliases: ['-ex'],
+              type: :string,
+              desc: 'Example data path'
       def evaluate
-        Evaluator.new.run(Logger::DEBUG)
+        Evaluator.new.run(Logger::INFO, options[:ig_path], options[:examples_path])
       end
 
       desc 'console', 'Start an interactive console session with Inferno'

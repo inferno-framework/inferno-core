@@ -10,10 +10,10 @@ module FhirEvaluator
       context = EvaluationContext.new(@ig, data, config)
 
       active_rules = []
-      config.data['Rule'].each_key do |rulename|
-        active_rules << rulename if config.data['Rule'][rulename]['Enabled']
+      config.data['Rule'].each do |rulename, rule_details|
+        active_rules << rulename if rule_details['Enabled']
       end
-
+      
       Rule.descendants.each do |rule|
         rule.new.check(context) if active_rules.include?(rule.name.gsub('FhirEvaluator::Rules::', ''))
       end
