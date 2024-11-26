@@ -1,9 +1,13 @@
 # This Dockerfile is based on the Dockerfile for org.hl7.fhir.validator-wrapper
 # https://github.com/hapifhir/org.hl7.fhir.validator-wrapper/blob/master/Dockerfile
-# with 3 key differences:
+# with the following differences:
 # 1. It fetches the built JAR from GitHub instead of locally, or building from source
 # 2. It adds MITRE certs, for ease of use by the MITRE development team
 # 3. It uses an Ubuntu-based base image instead of Alpine to support both AMD64 and ARM architectures
+# 4. It defaults the following environment variables:
+#    - SESSION_CACHE_IMPLEMENTATION=PassiveExpiringSessionCache
+#    - SESSION_CACHE_DURATION=-1
+#      - These enable the old session cache implementation, and configure the session cache to never expire sessions.
 #
 # The software release to use is based on the PROJECT_VERSION build argument (required)
 
@@ -15,7 +19,7 @@ RUN wget https://gitlab.mitre.org/mitre-scripts/mitre-pki/-/raw/master/os_script
 ARG PROJECT_VERSION
 RUN echo "Project version set to -> ${PROJECT_VERSION}"
 
-ENV APPLICATION_USER ktor
+ENV APPLICATION_USER=ktor
 RUN adduser $APPLICATION_USER
 
 RUN mkdir /app
@@ -28,7 +32,9 @@ WORKDIR /app
 RUN wget -O validator-wrapper.jar "https://github.com/hapifhir/org.hl7.fhir.validator-wrapper/releases/download/${PROJECT_VERSION}/validator_cli.jar"
 
 # Environment vars here
-ENV ENVIRONMENT prod
+ENV ENVIRONMENT=prod
+ENV SESSION_CACHE_IMPLEMENTATION=PassiveExpiringSessionCache
+ENV SESSION_CACHE_DURATION=-1
 
 EXPOSE 3500
 
