@@ -19,7 +19,7 @@ module Inferno
   module DSL
     module FHIREvaluation
       class Evaluator
-        def initialize(ig_path, examples_path)
+        def initialize(ig_path, data_path)
           Dotenv.load
           Dir.glob(File.join(__dir__, 'fhir_evaluator', 'rules', '*.rb')).each do |file|
             require_relative file
@@ -28,11 +28,12 @@ module Inferno
           Config.new
 
           ig_path = File.join(__dir__, 'fhir_evaluator', 'ig', 'uscore7.0.0.tgz')
-          validate_args(ig_path, examples_path)
+          data_path = File.join(__dir__, 'fhir_evaluator', 'data')
+          validate_args(ig_path, data_path)
           ig = FhirEvaluator::IG.new(ig_path)
 
-          if examples_path
-            Dataset.from_path(examples_path)
+          if data_path
+            DatasetLoader.from_path(data_path)
           else
             ig.examples
           end
@@ -44,12 +45,12 @@ module Inferno
           # output_results(results, options[:output])
         end
 
-        def validate_args(ig_path, examples_path)
+        def validate_args(ig_path, data_path)
           raise 'A path to an IG is required!' unless ig_path
 
-          return unless examples_path && (!File.directory? examples_path)
+          return unless data_path && (!File.directory? data_path)
 
-          raise "Provided path '#{examples_path}' is not a directory"
+          raise "Provided path '#{data_path}' is not a directory"
         end
 
         def output_results(results, output)
