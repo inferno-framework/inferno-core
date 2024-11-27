@@ -1,7 +1,7 @@
 import React, { FC, useMemo } from 'react';
 import { Box, Card, Divider, Typography } from '@mui/material';
 import useStyles from './styles';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
 import InputOutputList from './TestListItem/InputOutputList';
 import ResultIcon from './ResultIcon';
@@ -24,7 +24,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
   // render markdown once on mount - it's too slow with re-rendering
   const description = useMemo(() => {
     return runnable.description ? (
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{runnable.description}</ReactMarkdown>
+      <Markdown remarkPlugins={[remarkGfm]}>{runnable.description}</Markdown>
     ) : undefined;
   }, [runnable.description]);
 
