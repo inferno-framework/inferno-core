@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useSnackbar } from 'notistack';
 import { Typography, Box, Container } from '@mui/material';
@@ -172,9 +172,9 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
               wordBreak: 'break-word',
             }}
           >
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            <Markdown remarkPlugins={[remarkGfm]}>
               {testSuite?.suite_summary || testSuite?.description || ''}
-            </ReactMarkdown>
+            </Markdown>
           </Typography>
         </Box>
       </Box>

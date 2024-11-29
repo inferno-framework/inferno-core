@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import { Box, Card, Chip, Divider, Tabs, Typography } from '@mui/material';
 import { Message, TestSuite } from '~/models/testSuiteModels';
 import CustomTab from '~/components/_common/CustomTab';
@@ -25,7 +25,7 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
       {messages.length > 0 ? (
         messages.map((message, index) => (
           <Card key={index} variant="outlined" sx={{ px: 2, my: 2, overflow: 'auto' }}>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.message}</ReactMarkdown>
+            <Markdown remarkPlugins={[remarkGfm]}>{message.message}</Markdown>
           </Card>
         ))
       ) : (
