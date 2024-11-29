@@ -11,10 +11,15 @@
     <meta id="base-path" name="base-path" content="<%= Inferno::Application['base_path'] %>">
     
     <!-- Social media link unfurling meta tags -->
+    <title>Inferno Test Session</title>
+    <link rel="canonical" href="<%= Inferno::Application['base_url'] %>" />
     <meta name="application-name" content="Inferno" />
+    <meta name="og:image" content="<%= Inferno::Application['inferno_host'] %><%= Inferno::Application['public_path'] %>/logo192.png" />
     <meta name="og:type" content="website" />
+    <meta name="og:url" content="<%= Inferno::Application['base_url'] %>" />
     <meta name="og:site_name" content="Inferno" />
     <meta name="twitter:card" content="summary" />
+    <meta name="twitter:image" content="<%= Inferno::Application['inferno_host'] %><%= Inferno::Application['public_path'] %>/logo192.png" />
     
     <link rel="apple-touch-icon" href="<%= Inferno::Application['public_path'] %>/logo192.png" />
     <!--

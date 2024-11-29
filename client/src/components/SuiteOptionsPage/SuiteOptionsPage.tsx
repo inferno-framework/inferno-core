@@ -1,8 +1,10 @@
 import React, { FC, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Typography, Box, Container } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useSnackbar } from 'notistack';
+import { Typography, Box, Container } from '@mui/material';
+import { basePath } from '~/api/infernoApiService';
 import { postTestSessions } from '~/api/TestSessionApi';
 import { TestSuite, TestSession, SuiteOption } from '~/models/testSuiteModels';
 import {
@@ -10,13 +12,12 @@ import {
   RadioOptionSelection,
   isRadioOptionSelection,
 } from '~/models/selectionModels';
+import MetaTags from '~/components/_common/MetaTags';
+import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
+import SelectionSkeleton from '~/components/Skeletons/SelectionSkeletion';
 import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
-import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
 import useStyles from './styles';
-import { basePath } from '~/api/infernoApiService';
-import remarkGfm from 'remark-gfm';
-import SelectionSkeleton from '~/components/Skeletons/SelectionSkeletion';
 
 export interface SuiteOptionsPageProps {
   testSuite?: TestSuite;
@@ -127,6 +128,12 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
             }
       }
     >
+      <MetaTags
+        title={testSuite?.title.toUpperCase() || 'Suite Options'}
+        description={
+          testSuite?.short_description || `Select options for the ${testSuite?.title} Test Suite`
+        }
+      />
       <Box
         display="flex"
         flexDirection="column"

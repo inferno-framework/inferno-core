@@ -1,6 +1,14 @@
 import React, { FC, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 import { Alert, Box, Fade } from '@mui/material';
+import {
+  getCurrentTestSessionResults,
+  getLastTestRun,
+  getTestSession,
+  getTestSessionData,
+} from '~/api/TestSessionApi';
+import { getCoreVersion } from '~/api/VersionsApi';
 import {
   Result,
   SuiteOption,
@@ -10,20 +18,13 @@ import {
   TestSession,
   TestSuite,
 } from '~/models/testSuiteModels';
+import MetaTags from '~/components/_common/MetaTags';
 import AppSkeleton from '~/components/Skeletons/AppSkeleton';
 import Footer from '~/components/Footer';
 import FooterSkeleton from '~/components/Skeletons/FooterSkeleton';
 import Header from '~/components/Header';
 import HeaderSkeleton from '~/components/Skeletons/HeaderSkeleton';
 import TestSessionComponent from '~/components/TestSuite/TestSession';
-import {
-  getCurrentTestSessionResults,
-  getLastTestRun,
-  getTestSession,
-  getTestSessionData,
-} from '~/api/TestSessionApi';
-import { getCoreVersion } from '~/api/VersionsApi';
-import { useSnackbar } from 'notistack';
 import { useAppStore } from '~/store/app';
 
 const TestSessionWrapper: FC<unknown> = () => {
@@ -129,16 +130,7 @@ const TestSessionWrapper: FC<unknown> = () => {
     document.title = title;
     const description =
       session.test_suite.short_description || session.test_suite.description || '';
-    return (
-      <>
-        <title>{title}</title>
-        <meta name="og:title" content={title} />
-        <meta name="twitter:title" content={title} />
-        <meta name="description" content={description} />
-        <meta name="og:description" content={description} />
-        <meta name="twitter:description" content={description} />
-      </>
-    );
+    return <MetaTags title={title} description={description} />;
   };
 
   if (testSession && testResults && sessionData) {
