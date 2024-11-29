@@ -23,10 +23,11 @@ module FhirEvaluator
       resource_ids = data.map { |r| extract_resources_ids(r) }.flatten
 
       if resource_ids.uniq == resource_ids
-        puts 'No duplicate Ids found. Proceed to evaluate..'
+        
+        # puts 'No duplicate Ids found. Proceed to evaluate..'
       else
         dup = resource_ids.detect { |r| resource_ids.count(r) > 1 }
-        puts "Warning: Found duplicate resource Ids: #{dup}. Please validate Examples before running FHIR Evaluator."
+        # puts "Warning: Found duplicate resource Ids: #{dup}. Please validate Examples before running FHIR Evaluator."
       end
     end
 

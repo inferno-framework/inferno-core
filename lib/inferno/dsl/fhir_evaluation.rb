@@ -25,15 +25,13 @@ module Inferno
             require_relative file
           end
 
-          Config.new
-
           # To-Do: these paths will be permanently resolved after
           # the evaluator is fully integrated with Inferno.
           validate_args(ig_path, data_path)
 
           ig = FhirEvaluator::IG.new(File.join(__dir__, 'fhir_evaluator', 'ig', ig_path))
 
-          if data_path
+          data = if data_path
             DatasetLoader.from_path(File.join(__dir__, 'fhir_evaluator', data_path))
           else
             ig.examples
@@ -41,7 +39,7 @@ module Inferno
 
           # Rule execution and result output will be later integrated at phase 2 and 3.
 
-          # results = FhirEvaluator::Evaluator.new(ig).evaluate(data, config)
+          # results = FhirEvaluator::Evaluator.new(ig).evaluate(data, Config.new)
 
           # output_results(results, options[:output])
         end
