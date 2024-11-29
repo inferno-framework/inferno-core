@@ -16,7 +16,7 @@ import Error from '@mui/icons-material/Error';
 import Warning from '@mui/icons-material/Warning';
 import Info from '@mui/icons-material/Info';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import MessageList from './MessageList';
 import RequestList from './RequestList';
@@ -85,9 +85,9 @@ const TestListItem: FC<TestListItemProps> = ({
       primary={testLabel}
       secondary={
         test.result?.result_message && (
-          <ReactMarkdown remarkPlugins={[remarkGfm]} className={classes.resultMessageMarkdown}>
+          <Markdown remarkPlugins={[remarkGfm]} className={classes.resultMessageMarkdown}>
             {test.result.result_message}
-          </ReactMarkdown>
+          </Markdown>
         )
       }
       secondaryTypographyProps={{ component: 'div' }}

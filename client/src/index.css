@@ -25,6 +25,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+blockquote {
+  /* Left bar should match theme grayLight */
+  border-left: 0.25em solid #F0F2F1;
+  /* Text should match theme grayDark */
+  color: #616161;
+  margin: 0;
+  padding-left: 8px;
+}
+
 /* Keyboard-only focus indicator */
 button:focus-visible {
   border: 1px solid #707070;
