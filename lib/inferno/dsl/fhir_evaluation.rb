@@ -31,7 +31,7 @@ module Inferno
 
           ig = FhirEvaluator::IG.new(File.join(__dir__, 'fhir_evaluator', 'ig', ig_path))
 
-          data = if data_path
+          if data_path
             DatasetLoader.from_path(File.join(__dir__, 'fhir_evaluator', data_path))
           else
             ig.examples
