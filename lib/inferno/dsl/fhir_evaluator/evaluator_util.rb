@@ -27,31 +27,29 @@ module Util
           @resource_type_ids[type] << value
           @resource_ids.add(value)
         end
-      end
 
-      extract_references(resources)
+        extract_references(resource)
+      end
 
       [@resource_type_ids, @resource_ids, @references]
     end
 
-    def extract_references(resources)
-      resources.each do |resource|
-        resource.each_element do |value, metadata, path|
-          if metadata['type'] == 'Reference' && !value.reference.nil?
-            if value.reference.start_with?('#')
-              # skip contained references (not separate resources)
-              next
-            elsif value.reference.include? '/'
-              add_parsed_reference(resource, value, path)
-            # if type is not specified in the reference, get type from the
-            elsif path.include? 'Reference'
-              add_reference_typed_path(resource, value, path)
-            else
-              # assumes this is a unique uuid
-              reference = value.reference
-              reference = reference[9..] if reference.start_with? 'urn:uuid:'
-              @references[resource.id] << [path, '', reference]
-            end
+    def extract_references(resource)
+      resource.each_element do |value, metadata, path|
+        if metadata['type'] == 'Reference' && !value.reference.nil?
+          if value.reference.start_with?('#')
+            # skip contained references (not separate resources)
+            next
+          elsif value.reference.include? '/'
+            add_parsed_reference(resource, value, path)
+          # if type is not specified in the reference, get type from the
+          elsif path.include? 'Reference'
+            add_reference_typed_path(resource, value, path)
+          else
+            # assumes this is a unique uuid
+            reference = value.reference
+            reference = reference[9..] if reference.start_with? 'urn:uuid:'
+            @references[resource.id] << [path, '', reference]
           end
         end
       end
