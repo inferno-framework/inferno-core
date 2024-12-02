@@ -6,17 +6,17 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     title 'Demo Group'
 
     description %(
-    # This is a markdown header
-    **Inferno** [github](https://github.com/inferno-framework/inferno-core)
+      # This is a markdown header
+      **Inferno** [github](https://github.com/inferno-framework/inferno-core)
 
-    Below is a markdown table
-    | Column 1 | Column 2 | Column 3 |
-    | :--- | :---: | ---: |
-    | Entry 1 | Entry 2 | Entry 3|
-    | Entry 4 | Entry 5 | Entry 6 |
+      Below is a markdown table
+      | Column 1 | Column 2 | Column 3 |
+      | :--- | :---: | ---: |
+      | Entry 1 | Entry 2 | Entry 3|
+      | Entry 4 | Entry 5 | Entry 6 |
 
-    This is a dummy canonical link http://hl7.org/fhir/ValueSet/my-valueset|0.8 that should not be
-    interpreted as a table
+      This is a dummy canonical link http://hl7.org/fhir/ValueSet/my-valueset|0.8 that should not be
+      interpreted as a table
     )
 
     # Inputs and outputs
@@ -26,9 +26,13 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     # while also allowing type hints at a higher level.
 
     input :url, title: 'URL', description: 'Insert url of FHIR server', default: 'https://inferno.healthit.gov/reference-server/r4'
-    input :patient_id, title: 'Patient ID', description: %(
-### This is a markdown description.
-This is a new line.), default: '85'
+    input :patient_id,
+      title: 'Patient ID',
+      default: '85',
+      description: %(
+        ### This is a markdown description.
+        This is a new line.
+      )
     input :bearer_token, optional: true, default: 'SAMPLE_TOKEN'
 
     output :observation_id,
