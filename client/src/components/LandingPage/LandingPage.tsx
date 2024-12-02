@@ -12,6 +12,7 @@ import { postTestSessions } from '~/api/TestSessionApi';
 import { getStaticPath } from '~/api/infernoApiService';
 import { useAppStore } from '~/store/app';
 import infernoLogo from '~/images/inferno_logo.png';
+import MetaTags from '~/components/_common/MetaTags';
 import SelectionPanel from '~/components/_common/SelectionPanel/SelectionPanel';
 import lightTheme from '~/styles/theme';
 import useStyles from './styles';
@@ -73,6 +74,10 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
             }
       }
     >
+      <MetaTags
+        title="Inferno Test Session"
+        description="Test your server's conformance to authentication, authorization, and FHIR content standards."
+      />
       <Box
         display="flex"
         flexDirection="column"

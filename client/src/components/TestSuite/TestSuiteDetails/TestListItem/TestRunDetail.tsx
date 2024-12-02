@@ -9,7 +9,7 @@ import MessageList from '~/components/TestSuite/TestSuiteDetails/TestListItem/Me
 import RequestList from '~/components/TestSuite/TestSuiteDetails/TestListItem/RequestList';
 import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
 import useStyles from './styles';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 interface TestRunDetailProps {
@@ -43,7 +43,7 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
       <Typography variant="subtitle2" component="div">
         {useMemo(
           () => (
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{test.description || ''}</ReactMarkdown>
+            <Markdown remarkPlugins={[remarkGfm]}>{test.description || ''}</Markdown>
           ),
           [test.description],
         )}
