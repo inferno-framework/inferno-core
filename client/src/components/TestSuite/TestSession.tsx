@@ -319,20 +319,18 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     );
   };
 
-  const renderDrawerContents = () => {
-    return (
-      <nav className={classes.drawer}>
-        <TestSuiteTreeComponent
-          testSuite={testSession.test_suite}
-          selectedRunnable={selectedRunnable}
-          view={view || 'run'}
-          presets={testSession.test_suite.presets}
-          getSessionData={getSessionData}
-          testSessionId={testSession.id}
-        />
-      </nav>
-    );
-  };
+  const renderDrawerContents = () => (
+    <nav className={classes.drawer}>
+      <TestSuiteTreeComponent
+        testSuite={testSession.test_suite}
+        selectedRunnable={selectedRunnable}
+        view={view || 'run'}
+        presets={testSession.test_suite.presets}
+        getSessionData={getSessionData}
+        testSessionId={testSession.id}
+      />
+    </nav>
+  );
 
   const renderView = (view: ViewType) => {
     const runnable = runnableMap.get(selectedRunnable);

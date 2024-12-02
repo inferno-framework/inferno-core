@@ -17,6 +17,10 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
       This is a dummy canonical link http://hl7.org/fhir/ValueSet/my-valueset|0.8 that should not be
       interpreted as a table
+
+      > This is a blockquote.
+      >
+      > Blockquotes are useful for quoting standards or other references.
     )
 
     # Inputs and outputs

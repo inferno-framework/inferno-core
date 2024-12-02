@@ -1,6 +1,14 @@
 import React, { FC, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 import { Alert, Box, Fade } from '@mui/material';
+import {
+  getCurrentTestSessionResults,
+  getLastTestRun,
+  getTestSession,
+  getTestSessionData,
+} from '~/api/TestSessionApi';
+import { getCoreVersion } from '~/api/VersionsApi';
 import {
   Result,
   SuiteOption,
@@ -10,20 +18,13 @@ import {
   TestSession,
   TestSuite,
 } from '~/models/testSuiteModels';
+import MetaTags from '~/components/_common/MetaTags';
 import AppSkeleton from '~/components/Skeletons/AppSkeleton';
 import Footer from '~/components/Footer';
 import FooterSkeleton from '~/components/Skeletons/FooterSkeleton';
 import Header from '~/components/Header';
 import HeaderSkeleton from '~/components/Skeletons/HeaderSkeleton';
 import TestSessionComponent from '~/components/TestSuite/TestSession';
-import {
-  getCurrentTestSessionResults,
-  getLastTestRun,
-  getTestSession,
-  getTestSessionData,
-} from '~/api/TestSessionApi';
-import { getCoreVersion } from '~/api/VersionsApi';
-import { useSnackbar } from 'notistack';
 import { useAppStore } from '~/store/app';
 
 const TestSessionWrapper: FC<unknown> = () => {
@@ -120,13 +121,16 @@ const TestSessionWrapper: FC<unknown> = () => {
     setDrawerOpen(newDrawerOpen);
   };
 
-  /*
-   * Set the page title when testSession data is loaded
-   */
-  const setTitle = (session: TestSession) => {
+  /* Meta tags for link unfurling */
+  const renderMetaTags = (session: TestSession) => {
+    // Set the page title when testSession data is loaded
     const suiteName = session?.test_suite.short_title || session?.test_suite.title;
     const titlePrepend = suiteName ? `${suiteName} ` : '';
-    document.title = `${titlePrepend}Test Session`;
+    const title = `${titlePrepend}Test Session`;
+    document.title = title;
+    const description =
+      session.test_suite.short_description || session.test_suite.description || '';
+    return <MetaTags title={title} description={description} />;
   };
 
   if (testSession && testResults && sessionData) {
@@ -148,11 +152,10 @@ const TestSessionWrapper: FC<unknown> = () => {
           .filter((v) => v) // Remove empty values
       : [];
 
-    setTitle(testSession);
-
     return (
       <Fade in={true}>
         <Box display="flex" flexDirection="column" flexGrow="1" height="100%">
+          {renderMetaTags(testSession)}
           <Header
             suiteId={testSession.test_suite.id}
             suiteTitle={testSession.test_suite.title}
