@@ -13,7 +13,7 @@ module InfrastructureTest
     input :markdown_input,
           description: %(
             # Markdown Title
-            
+
             Markdown description
           ),
           default: 'INPUT3_DEFAULT',

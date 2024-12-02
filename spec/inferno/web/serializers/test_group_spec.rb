@@ -2,7 +2,6 @@ require_relative '../../../../lib/inferno/apps/web/serializers/test_group'
 require_relative '../../../../lib/inferno/utils/markdown_formatter'
 
 RSpec.describe Inferno::Web::Serializers::TestGroup do
-
   include Inferno::Utils::MarkdownFormatter
   let(:group) { InfrastructureTest::SerializerGroup }
 
