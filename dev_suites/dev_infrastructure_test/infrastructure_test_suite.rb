@@ -1,8 +1,9 @@
+require_relative 'empty_group'
 require_relative 'external_outer_group'
 require_relative 'failing_optional_group'
-require_relative 'passing_optional_group'
+require_relative 'json_test_endpoint'
 require_relative 'mixed_optional_group'
-require_relative 'empty_group'
+require_relative 'passing_optional_group'
 
 module InfrastructureTest
   class Suite < Inferno::TestSuite
@@ -28,6 +29,8 @@ module InfrastructureTest
         url: 'https://github.com/inferno-framework/inferno-core/issues'
       }
     ]
+
+    suite_endpoint :post, '/json_test', JSONTestEndpoint
 
     input :suite_input
     output :suite_output
