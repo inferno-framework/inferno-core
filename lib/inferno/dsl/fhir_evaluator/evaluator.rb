@@ -15,7 +15,7 @@ module FhirEvaluator
       end
 
       Rule.descendants.each do |rule|
-        rule.new.check(context) if active_rules.include?(rule.name.gsub('FhirEvaluator::Rules::', ''))
+        rule.new.check(context) if active_rules.include?(rule.name.demodulize)
       end
 
       context.results
