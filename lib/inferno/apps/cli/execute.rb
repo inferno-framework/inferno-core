@@ -114,8 +114,6 @@ module Inferno
         raise StandardError, "Preset #{options[:preset_file]} is missing id" if options[:preset_id].nil?
 
         presets_repo.insert_from_file(options[:preset_file])
-
-        test_sessions_repo.apply_preset(test_session, options[:preset_id])
       end
 
       def all_selected_groups_and_tests
@@ -140,7 +138,7 @@ module Inferno
             [preset_input[:name], preset_input[:value]]
           end
 
-          options.fetch(:inputs, {}).merge(preset_inputs)
+          options.fetch(:inputs, {}).reverse_merge(preset_inputs)
         else
           options.fetch(:inputs, {})
         end
