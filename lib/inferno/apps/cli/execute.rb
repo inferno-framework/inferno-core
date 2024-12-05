@@ -44,10 +44,12 @@ module Inferno
 
         self.options = options
 
-        outputter.print_start_message(options)
+        outputter.print_start_message(self.options)
+
+        load_preset_file_and_set_preset_id
 
         results = []
-        outputter.print_around_run(options) do
+        outputter.print_around_run(self.options) do
           if all_selected_groups_and_tests.empty?
             test_run = create_test_run(suite)
             run_one(suite, test_run)
@@ -102,6 +104,18 @@ module Inferno
         @outputter ||= OUTPUTTERS[options[:outputter]].new
       end
 
+      def load_preset_file_and_set_preset_id
+        return unless options[:preset_file]
+        raise StandardError, 'Cannot use `--preset-id` and `--preset-file` options together' if options[:preset_id]
+
+        raise StandardError, "File #{options[:preset_file]} not found" unless File.exist? options[:preset_file]
+
+        options[:preset_id] = JSON.parse(File.read(options[:preset_file]))['id']
+        raise StandardError, "Preset #{options[:preset_file]} is missing id" if options[:preset_id].nil?
+
+        presets_repo.insert_from_file(options[:preset_file])
+      end
+
       def all_selected_groups_and_tests
         @all_selected_groups_and_tests ||= runnables_by_short_id + groups + tests
       end
@@ -109,13 +123,40 @@ module Inferno
       def run_one(runnable, test_run)
         verify_runnable(
           runnable,
-          thor_hash_to_inputs_array(options[:inputs]),
+          thor_hash_to_inputs_array(inputs_and_preset),
           test_session.suite_options
         )
 
         persist_inputs(session_data_repo, create_params(test_session, suite), test_run)
 
         dispatch_job(test_run)
+      end
+
+      def inputs_and_preset
+        if preset
+          preset_inputs = preset.inputs.to_h do |preset_input|
+            [preset_input[:name], preset_input[:value]]
+          end
+
+          options.fetch(:inputs, {}).reverse_merge(preset_inputs)
+        else
+          options.fetch(:inputs, {})
+        end
+      end
+
+      def preset
+        return unless options[:preset_id]
+
+        @preset ||= presets_repo.find(options[:preset_id])
+
+        raise StandardError, "Preset #{options[:preset_id]} not found" if @preset.nil?
+
+        unless presets_repo.presets_for_suite(suite.id).include?(@preset)
+          raise StandardError,
+                "Preset #{options[:preset_id]} is incompatible with suite #{suite.id}"
+        end
+
+        @preset
       end
 
       def suite
@@ -156,6 +197,10 @@ module Inferno
         @session_data_repo ||= Inferno::Repositories::SessionData.new
       end
 
+      def presets_repo
+        @presets_repo ||= Inferno::Repositories::Presets.new
+      end
+
       def test_session
         @test_session ||= test_sessions_repo.create({
                                                       test_suite_id: suite.id,
@@ -169,7 +214,7 @@ module Inferno
         {
           test_session_id: test_session.id,
           runnable_id_key(runnable) => runnable.id,
-          inputs: thor_hash_to_inputs_array(options[:inputs])
+          inputs: thor_hash_to_inputs_array(inputs_and_preset)
         }
       end
 
