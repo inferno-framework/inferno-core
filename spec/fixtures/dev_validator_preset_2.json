@@ -1,0 +1,26 @@
+{
+  "title": "Preset for Validator Suite in RSpec",
+  "id": "dev_validator_preset_2",
+  "test_suite_id": "dev_validator",
+  "inputs": [
+    {
+      "name": "url",
+      "value": "https://hapi.fhir.org/baseR4",
+      "_title": "FHIR Server Base Url",
+      "_type": "text"
+    },
+    {
+      "name": "access_token",
+      "value": null,
+      "_title": "Bearer/Access Token",
+      "_type": "text",
+      "_optional": true
+    },
+    {
+      "name": "patient_id",
+      "value": "1234321",
+      "_title": "Patient ID",
+      "_type": "text"
+    }
+  ]
+}
