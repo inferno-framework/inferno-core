@@ -5,10 +5,5 @@ module FhirEvaluator
     def check(_context)
       raise 'not implemented'
     end
-
-    def self.inherited(subclass)
-      super
-      Rule.descendants << subclass
-    end
   end
 end
