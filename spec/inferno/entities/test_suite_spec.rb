@@ -1,3 +1,26 @@
+module NoTestKit
+  class NoTestKitSuite < Inferno::Entities::TestSuite
+    id :no_test_kit
+  end
+end
+
+module NestedTestKit
+  class Metadata < Inferno::Entities::TestKit
+    id :nested
+    version 'VERSION'
+  end
+
+  class TopLevelSuite < Inferno::Entities::TestSuite
+    id :top_level
+  end
+
+  module SubModule
+    class NestedSuite < Inferno::Entities::TestSuite
+      id :nested
+    end
+  end
+end
+
 RSpec.describe Inferno::Entities::TestSuite do
   let!(:suite_class) { Class.new(described_class) }
   let(:suite_id) { 'basic' }
@@ -93,8 +116,16 @@ RSpec.describe Inferno::Entities::TestSuite do
       suite_class
     end
 
-    specify 'it gets/sets the version' do
+    it 'gets/sets the version' do
       expect(test_suite.version).to eq('VERSION')
+    end
+
+    it 'defaults to the test kit version' do
+      expect(NestedTestKit::TopLevelSuite.version).to eq('VERSION')
+    end
+
+    it 'returns nil if no test kit or version are defined' do
+      expect(NoTestKit::NoTestKitSuite.version).to be_nil
     end
   end
 
@@ -170,11 +201,11 @@ RSpec.describe Inferno::Entities::TestSuite do
       ]
     end
 
-    specify 'it returns an empty array if no links are set' do
+    it 'returns an empty array if no links are set' do
       expect(suite_class.links).to eq([])
     end
 
-    specify 'it can set and retrieve a list of http links for display' do
+    it 'can set and retrieve a list of http links for display' do
       suite_class.links links
       link = suite_class.links.first
       expect(link[:label]).to eq('One')
@@ -184,7 +215,7 @@ RSpec.describe Inferno::Entities::TestSuite do
   end
 
   describe '.add_link' do
-    specify 'it adds a custom link to the list' do
+    it 'adds a custom link to the list' do
       suite_class.add_link('custom_type', 'One', 'http://one.com')
       link = suite_class.links.first
       expect(link[:type]).to eq('custom_type')
@@ -194,7 +225,7 @@ RSpec.describe Inferno::Entities::TestSuite do
   end
 
   describe '.source_code_url' do
-    specify 'it adds a source code link to the list' do
+    it 'adds a source code link to the list' do
       suite_class.source_code_url('http://github.com/source_code')
       link = suite_class.links.first
       expect(link[:type]).to eq('source_code')
@@ -202,7 +233,7 @@ RSpec.describe Inferno::Entities::TestSuite do
       expect(link[:url]).to eq('http://github.com/source_code')
     end
 
-    specify 'it allows overriding the label for source code links' do
+    it 'allows overriding the label for source code links' do
       suite_class.source_code_url('http://github.com/source_code', label: 'My Source')
       link = suite_class.links.first
       expect(link[:label]).to eq('My Source')
@@ -210,7 +241,7 @@ RSpec.describe Inferno::Entities::TestSuite do
   end
 
   describe '.ig_url' do
-    specify 'it adds an implementation guide link to the list' do
+    it 'adds an implementation guide link to the list' do
       suite_class.ig_url('http://ig.example.com')
       link = suite_class.links.first
       expect(link[:type]).to eq('ig')
@@ -218,7 +249,7 @@ RSpec.describe Inferno::Entities::TestSuite do
       expect(link[:url]).to eq('http://ig.example.com')
     end
 
-    specify 'it allows overriding the label for IG links' do
+    it 'allows overriding the label for IG links' do
       suite_class.ig_url('http://ig.example.com', label: 'My IG')
       link = suite_class.links.first
       expect(link[:label]).to eq('My IG')
@@ -226,7 +257,7 @@ RSpec.describe Inferno::Entities::TestSuite do
   end
 
   describe '.download_url' do
-    specify 'it adds a download link to the list' do
+    it 'adds a download link to the list' do
       suite_class.download_url('http://example.com/download')
       link = suite_class.links.first
       expect(link[:type]).to eq('download')
@@ -234,7 +265,7 @@ RSpec.describe Inferno::Entities::TestSuite do
       expect(link[:url]).to eq('http://example.com/download')
     end
 
-    specify 'it allows overriding the label for download links' do
+    it 'allows overriding the label for download links' do
       suite_class.download_url('http://example.com/download', label: 'Get Latest Version')
       link = suite_class.links.first
       expect(link[:label]).to eq('Get Latest Version')
@@ -242,7 +273,7 @@ RSpec.describe Inferno::Entities::TestSuite do
   end
 
   describe '.report_issue_url' do
-    specify 'it adds a report issue link to the list' do
+    it 'adds a report issue link to the list' do
       suite_class.report_issue_url('http://example.com/report')
       link = suite_class.links.first
       expect(link[:type]).to eq('report_issue')
@@ -250,10 +281,24 @@ RSpec.describe Inferno::Entities::TestSuite do
       expect(link[:url]).to eq('http://example.com/report')
     end
 
-    specify 'it allows overriding the label for report issue links' do
+    it 'allows overriding the label for report issue links' do
       suite_class.report_issue_url('http://example.com/report', label: 'Report Problem')
       link = suite_class.links.first
       expect(link[:label]).to eq('Report Problem')
+    end
+  end
+
+  describe '.test_kit' do
+    it 'returns nil if no test kit is defined' do
+      expect(NoTestKit::NoTestKitSuite.test_kit).to be_nil
+    end
+
+    it 'returns a test kit defined in the same module as the suite' do
+      expect(NestedTestKit::TopLevelSuite.test_kit).to eq(NestedTestKit::Metadata)
+    end
+
+    it 'returns a test kit defined in a higher-level module' do
+      expect(NestedTestKit::SubModule::NestedSuite.test_kit).to eq(NestedTestKit::Metadata)
     end
   end
 end

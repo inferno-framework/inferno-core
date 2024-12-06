@@ -36,8 +36,12 @@ RSpec.describe Inferno::Utils::NamedThorActions do
         expect(dummy.title_name).to eq('Test Fhir App')
       end
 
+      it 'returns proper test kit id' do
+        expect(dummy.test_kit_id).to eq('test_fhir_app')
+      end
+
       it 'returns proper test suite id' do
-        expect(dummy.test_suite_id).to eq('test_fhir_app_test_suite')
+        expect(dummy.test_suite_id).to eq('test_fhir_app')
       end
     end
   end

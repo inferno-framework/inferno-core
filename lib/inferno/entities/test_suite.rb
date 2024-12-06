@@ -84,15 +84,16 @@ module Inferno
           }
         end
 
-        # Set/get the version of this test suite.
+        # Set/get the version of this test suite. Defaults to the TestKit
+        # version.
         #
         # @param version [String]
         #
         # @return [String, nil]
         def version(version = nil)
-          return @version if version.nil?
+          @version = version if version.present?
 
-          @version = version
+          @version || test_kit&.version
         end
 
         # @private
@@ -185,6 +186,25 @@ module Inferno
           return @suite_summary if suite_summary.nil?
 
           @suite_summary = format_markdown(suite_summary)
+        end
+
+        # Get the TestKit this suite belongs to
+        #
+        # @return [Inferno::Entities::TestKit]
+        def test_kit
+          return @test_kit if @test_kit
+
+          module_name = name
+
+          while module_name.present? && @test_kit.nil?
+            module_name = module_name.deconstantize
+
+            next unless const_defined?("#{module_name}::Metadata")
+
+            @test_kit = const_get("#{module_name}::Metadata")
+          end
+
+          @test_kit
         end
       end
     end

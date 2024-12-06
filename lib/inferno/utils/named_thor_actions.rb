@@ -25,8 +25,12 @@ module Inferno
         human_name.split.map(&:capitalize).join(' ')
       end
 
+      def test_kit_id
+        library_name.delete_suffix('_test_kit')
+      end
+
       def test_suite_id
-        "#{library_name}_test_suite"
+        test_kit_id
       end
     end
   end
