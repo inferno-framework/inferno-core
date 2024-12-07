@@ -18,28 +18,18 @@ module Inferno
   module DSL
     module FHIREvaluation
       class Evaluator
-        def initialize(ig_path, data_path)
-          validate_args(ig_path, data_path)
+        attr_accessor :data, :config
 
-          Dir.glob(File.join(__dir__, 'rules', '*.rb')).each do |file|
-            require_relative file
-          end
-
-          # IG Import, rule execution, and result output below will be integrated at phase 2 and 3.
-
-          # @ig = File.join(__dir__, 'ig', ig_path)
-
-          # if data_path
-          #   DatasetLoader.from_path(File.join(__dir__, data_path))
-          # else
-          #   ig.examples
-          # end
-
-          # results = evaluate(data, Config.new)
-          # output_results(results, options[:output])
+        def initialize(data, config)
+          @data = data
+          @config = config
         end
 
-        def evaluate(data, config = Config.new)
+        def evaluate
+          # Dir.glob(File.join(__dir__, 'rules', '*.rb')).each do |file|
+          #   require_relative file
+          # end
+
           context = EvaluationContext.new(@ig, data, config)
 
           active_rules = []
@@ -52,44 +42,6 @@ module Inferno
           end
 
           context.results
-        end
-
-        def validate_args(ig_path, data_path)
-          raise 'A path to an IG is required!' unless ig_path
-
-          return unless data_path && (!File.directory? data_path)
-
-          raise "Provided path '#{data_path}' is not a directory"
-        end
-
-        def output_results(results, output)
-          if output&.end_with?('json')
-            oo = FhirEvaluator::EvaluationResult.to_operation_outcome(results)
-            File.write(output, oo.to_json)
-            puts "Results written to #{output}"
-          else
-            counts = results.group_by(&:severity).transform_values(&:count)
-            print(counts, 'Result Count')
-            puts "\n"
-            puts results
-          end
-        end
-
-        def print(output_fields, title)
-          puts("╔══════════════ #{title} ═══════════════╗")
-          puts('║ ╭────────────────┬──────────────────────╮ ║')
-          output_fields.each_with_index do |(key, value), i|
-            field_name = pad(key, 14)
-            field_value = pad(value.to_s, 20)
-            puts("║ │ #{field_name} │ #{field_value} │ ║")
-            puts('║ ├────────────────┼──────────────────────┤ ║') unless i == output_fields.length - 1
-          end
-          puts('║ ╰────────────────┴──────────────────────╯ ║')
-          puts('╚═══════════════════════════════════════════╝')
-        end
-
-        def pad(string, length)
-          format("%#{length}.#{length}s", string)
         end
       end
     end

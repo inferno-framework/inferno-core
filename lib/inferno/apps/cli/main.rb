@@ -1,5 +1,5 @@
 require_relative 'console'
-require_relative 'evaluator'
+require_relative 'evaluate'
 require_relative 'migration'
 require_relative 'services'
 require_relative 'suite'
@@ -49,7 +49,7 @@ module Inferno
              type: :string,
              desc: 'Export evaluation result to outcome.json as an OperationOutcome'
       def evaluate
-        Evaluator.new.run(options[:ig_path], options[:data_path], Logger::INFO)
+        Evaluate.new.run(options[:ig_path], options[:data_path], Logger::INFO)
       end
 
       desc 'console', 'Start an interactive console session with Inferno'
