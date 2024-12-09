@@ -1,0 +1,9 @@
+Environment:
+  ExternalValidator: 
+    Enabled: false
+    Url: ''
+  VSAC:
+    Apikey: ''
+    Url: 'https://cts.nlm.nih.gov'
+
+Rule:

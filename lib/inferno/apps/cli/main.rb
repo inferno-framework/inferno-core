@@ -1,4 +1,5 @@
 require_relative 'console'
+require_relative 'evaluate'
 require_relative 'migration'
 require_relative 'services'
 require_relative 'suite'
@@ -10,6 +11,43 @@ require_relative 'execute'
 module Inferno
   module CLI
     class Main < Thor
+      desc 'evaluate', 'Run a FHIR Data Evaluator.'
+      long_desc <<-LONGDESC
+        Evaluate FHIR data in the context of a given Implementation Guide,
+        by applying a set of predefined rules designed to check that datasets are comprehensive.
+        Issues identified will be printed to console or to a json file.
+
+        You must have background services running: `bundle exec inferno services start`
+
+        Run the evaluation CLI with
+
+        `bundle exec inferno evaluate ig_path`
+
+        Examples:
+
+        # Load the us core ig and evaluate the data in the provided example folder. If there are examples in the IG already, they will be ignored.
+        `bundle exec inferno evaluate ./uscore.tgz -d ./package/example`
+
+        # Loads the us core ig and evaluate the data included in the IG's example folder
+        `bundle exec inferno evaluate ./uscore.tgz`
+
+        # Loads the us core ig and evaluate the data included in the IG's example folder, with results redirected to outcome.json as an OperationOutcome
+        `bundle exec inferno evaluate ./uscore.tgz --output outcome.json`
+      LONGDESC
+      # TODO: Add options below as arguments
+      option :data_path,
+             aliases: ['-d'],
+             type: :string,
+             desc: 'Example FHIR data path'
+      # TODO: implement option of exporting result as OperationOutcome
+      option :output,
+             aliases: ['-o'],
+             type: :string,
+             desc: 'Export evaluation result to outcome.json as an OperationOutcome'
+      def evaluate(ig_path)
+        Evaluate.new.run(ig_path, options[:data_path], Logger::INFO)
+      end
+
       desc 'console', 'Start an interactive console session with Inferno'
       def console
         Migration.new.run(Logger::INFO)
