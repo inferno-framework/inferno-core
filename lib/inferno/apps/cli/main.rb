@@ -21,12 +21,12 @@ module Inferno
 
         Run the evaluation CLI with
 
-        `bundle exec inferno evaluate ig_path [data_path]`
+        `bundle exec inferno evaluate ig_path`
 
         Examples:
 
         # Load the us core ig and evaluate the data in the provided example folder. If there are examples in the IG already, they will be ignored.
-        `bundle exec inferno evaluate ./uscore.tgz ./package/example`
+        `bundle exec inferno evaluate ./uscore.tgz -d ./package/example`
 
         # Loads the us core ig and evaluate the data included in the IG's example folder
         `bundle exec inferno evaluate ./uscore.tgz`
@@ -35,10 +35,6 @@ module Inferno
         `bundle exec inferno evaluate ./uscore.tgz --output outcome.json`
       LONGDESC
       # TODO: Add options below as arguments
-      option :ig_path,
-             aliases: ['-i'],
-             type: :string,
-             desc: 'FHIR IG Path and file name'
       option :data_path,
              aliases: ['-d'],
              type: :string,
@@ -48,8 +44,8 @@ module Inferno
              aliases: ['-o'],
              type: :string,
              desc: 'Export evaluation result to outcome.json as an OperationOutcome'
-      def evaluate
-        Evaluate.new.run(options[:ig_path], options[:data_path], Logger::INFO)
+      def evaluate(ig_path)
+        Evaluate.new.run(ig_path, options[:data_path], Logger::INFO)
       end
 
       desc 'console', 'Start an interactive console session with Inferno'
