@@ -18,9 +18,10 @@ module Inferno
   module DSL
     module FHIREvaluation
       class Evaluator
-        attr_accessor :data, :config
+        attr_accessor :data, :config, :ig
 
-        def initialize(data, config)
+        def initialize(the_ig, data, config)
+          @ig = the_ig
           @data = data
           @config = config
         end
