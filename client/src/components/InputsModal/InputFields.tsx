@@ -19,14 +19,14 @@ export interface InputFieldsProps {
 const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) => {
   return (
     <List>
-      {inputs.map((requirement: TestInput, index: number) => {
-        if (!requirement.hide) {
-          switch (requirement.type) {
+      {inputs.map((input: TestInput, index: number) => {
+        if (!input.hide) {
+          switch (input.type) {
             case 'auth_info':
-              if (requirement.options?.mode === 'auth') {
+              if (input.options?.mode === 'auth') {
                 return (
                   <InputAuth
-                    requirement={requirement}
+                    input={input}
                     index={index}
                     inputsMap={inputsMap}
                     setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
@@ -36,7 +36,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
               }
               return (
                 <InputAccess
-                  requirement={requirement}
+                  input={input}
                   index={index}
                   inputsMap={inputsMap}
                   setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
@@ -46,7 +46,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
             case 'oauth_credentials':
               return (
                 <InputOAuthCredentials
-                  requirement={requirement}
+                  input={input}
                   index={index}
                   inputsMap={inputsMap}
                   setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
@@ -54,10 +54,10 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
                 />
               );
             case 'checkbox':
-              if (requirement.options?.list_options?.length) {
+              if (input.options?.list_options?.length) {
                 return (
                   <InputCheckboxGroup
-                    requirement={requirement}
+                    input={input}
                     index={index}
                     inputsMap={inputsMap}
                     setInputsMap={(newInputsMap, editStatus) =>
@@ -70,7 +70,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
                 // if no options listed then assume single checkbox input
                 return (
                   <InputSingleCheckbox
-                    requirement={requirement}
+                    input={input}
                     index={index}
                     inputsMap={inputsMap}
                     setInputsMap={(newInputsMap, editStatus) =>
@@ -83,7 +83,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
             case 'radio':
               return (
                 <InputRadioGroup
-                  requirement={requirement}
+                  input={input}
                   index={index}
                   inputsMap={inputsMap}
                   setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}
@@ -93,7 +93,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
             case 'select':
               return (
                 <InputCombobox
-                  requirement={requirement}
+                  input={input}
                   index={index}
                   inputsMap={inputsMap}
                   setInputsMap={(newInputsMap, editStatus) =>
@@ -105,7 +105,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
             default:
               return (
                 <InputTextField
-                  requirement={requirement}
+                  input={input}
                   index={index}
                   inputsMap={inputsMap}
                   setInputsMap={(newInputsMap) => setInputsMap(newInputsMap)}

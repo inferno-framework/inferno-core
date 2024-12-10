@@ -6,21 +6,22 @@ import {
   FormGroup,
   FormLabel,
   ListItem,
-  Typography,
 } from '@mui/material';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { CheckboxValues, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
 import useStyles from './styles';
 
 export interface InputCheckboxGroupProps {
-  requirement: TestInput;
+  input: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
 const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
-  requirement,
+  input,
   index,
   inputsMap,
   setInputsMap,
@@ -33,19 +34,19 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
     let inputMapValues: string[] = [];
     try {
       // Parse JSON string of values
-      inputMapValues = JSON.parse(inputsMap.get(requirement.name) as string) as string[];
+      inputMapValues = JSON.parse(inputsMap.get(input.name) as string) as string[];
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       // If not JSON string, then either array or single value
-      if (Array.isArray(inputsMap.get(requirement.name))) {
-        inputMapValues = inputsMap.get(requirement.name) as string[];
+      if (Array.isArray(inputsMap.get(input.name))) {
+        inputMapValues = inputsMap.get(input.name) as string[];
       } else {
-        inputMapValues = [inputsMap.get(requirement.name) as string]; // expecting single value
+        inputMapValues = [inputsMap.get(input.name) as string]; // expecting single value
       }
     }
 
-    const defaultValues = inputMapValues || requirement.default || [];
-    const options = requirement.options?.list_options;
+    const defaultValues = inputMapValues || input.default || [];
+    const options = input.options?.list_options;
 
     let startingValues = {};
     // Convert array of checked values to map from item name to checked status
@@ -63,12 +64,11 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
     return startingValues as CheckboxValues;
   });
 
-  const isMissingInput =
-    hasBeenModified && !requirement.optional && inputsMap.get(requirement.name) === '[]';
+  const isMissingInput = hasBeenModified && !input.optional && inputsMap.get(input.name) === '[]';
 
   useEffect(() => {
     // Make sure starting values get set in inputsMap
-    inputsMap.set(requirement.name, transformValuesToJSONArray(values));
+    inputsMap.set(input.name, transformValuesToJSONArray(values));
     setInputsMap(new Map(inputsMap), false);
   }, []);
 
@@ -77,7 +77,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
       ...values,
       [event.target.name]: event.target.checked,
     };
-    inputsMap.set(requirement.name, transformValuesToJSONArray(newValues));
+    inputsMap.set(input.name, transformValuesToJSONArray(newValues));
     setInputsMap(new Map(inputsMap));
     setValues(newValues);
     setHasBeenModified(true);
@@ -98,22 +98,22 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
       <FormControl
         component="fieldset"
         id={`requirement${index}_input`}
-        disabled={requirement.locked}
-        required={!requirement.optional}
+        disabled={input.locked}
+        required={!input.optional}
         error={isMissingInput}
         fullWidth
         className={classes.inputField}
       >
         <FormLabel className={classes.inputLabel}>
-          <FieldLabel requirement={requirement} isMissingInput={isMissingInput} />
+          <FieldLabel input={input} isMissingInput={isMissingInput} />
         </FormLabel>
-        {requirement.description && (
-          <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
-            {requirement.description}
-          </Typography>
+        {input.description && (
+          <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+            {input.description}
+          </Markdown>
         )}
-        <FormGroup aria-label={`${requirement.name}-checkboxes-group`}>
-          {requirement.options?.list_options?.map((option, i) => (
+        <FormGroup aria-label={`${input.name}-checkboxes-group`}>
+          {input.options?.list_options?.map((option, i) => (
             <FormControlLabel
               control={
                 <Checkbox
