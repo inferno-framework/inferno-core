@@ -1,14 +1,30 @@
 require_relative '../../../inferno/dsl/fhir_evaluation/evaluator'
+require_relative '../../../inferno/dsl/fhir_evaluation/config'
+require_relative '../../../inferno/dsl/ig'
+require_relative '../../utils/ig_downloader'
+
+require 'tempfile'
 
 module Inferno
   module CLI
-    class Evaluate
-      def run(ig_path, data_path, _log_level)
+    class Evaluate < Thor::Group
+      include Thor::Actions
+      include Inferno::Utils::IgDownloader
+
+      def evaluate(ig_path, data_path, _log_level)
         validate_args(ig_path, data_path)
 
-        # IG Import, rule execution, and result output below will be integrated at phase 2 and 3.
+        if File.file?(ig_path)
+          ig = Inferno::DSL::IG.from_file(ig_path)
+        else
+          Tempfile.create('package.tgz') do |temp_file|
+            load_ig(ig_path, nil, { force: true }, temp_file.path)
+            ig = Inferno::DSL::IG.from_file(temp_file.path)
+          end
+        end
 
-        # @ig = File.join(__dir__, 'ig', ig_path)
+        # Rule execution, and result output below will be integrated at phase 2 and 3.
+
         # if data_path
         #   DatasetLoader.from_path(File.join(__dir__, data_path))
         # else

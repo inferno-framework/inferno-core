@@ -14,7 +14,7 @@ module Inferno
         File.join(ig_path, suffix ? "package_#{suffix}.tgz" : 'package.tgz')
       end
 
-      def load_ig(ig_input, idx = nil, thor_config = { verbose: true })
+      def load_ig(ig_input, idx = nil, thor_config = { verbose: true }, output_path = nil)
         case ig_input
         when FHIR_PACKAGE_NAME_REG_EX
           uri = ig_registry_url(ig_input)
@@ -29,8 +29,9 @@ module Inferno
           FAILED_TO_LOAD
         end
 
+        destination = output_path || ig_file(idx)
         # use Thor's get to support CLI options config
-        get(uri, ig_file(idx), thor_config)
+        get(uri, destination, thor_config)
         uri
       end
 
