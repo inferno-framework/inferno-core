@@ -14,39 +14,39 @@ module Inferno
     #       def test_run_identifier
     #         request.header['authorization']&.delete_prefix('Bearer ')
     #       end
-    #  
+    #
     #       # Return a json FHIR Patient resource
     #       def make_response
     #         response.status = 200
     #         response.body = FHIR::Patient.new(id: 'abcdef').to_json
     #         response.format = :json
     #       end
-    #  
+    #
     #       # Update the waiting test to pass when the incoming request is received.
     #       # This will resume the test run.
     #       def update_result
     #         results_repo.update(result.id, result: 'pass')
     #       end
-    #  
+    #
     #       # Apply the 'authorized' tag to the incoming request so that it may be
     #       # used by later tests.
     #       def tags
     #         ['authorized']
     #       end
     #     end
-    #  
+    #
     #     class AuthorizedRequestSuite < Inferno::TestSuite
     #       id :authorized_suite
     #       suite_endpoint :get, '/authorized_endpoint', AuthorizedEndpoint
-    #  
+    #
     #       group do
     #         title 'Authorized Request Group'
-    #  
+    #
     #         test do
     #           title 'Wait for authorized request'
-    #  
+    #
     #           input :bearer_token
-    #  
+    #
     #           run do
     #             wait(
     #               identifier: bearer_token,
