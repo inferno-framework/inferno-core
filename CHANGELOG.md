@@ -1,3 +1,10 @@
+## 0.5.2
+* FI-3366: Fetch report date from test results by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/567
+* FI-3019: Add custom blockquote styles by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/556
+* FI-2622: Update meta tags for link unfurling by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/553
+* FI-2961 execute preset support by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/565
+* FI-3511: Fix json handling by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/568
+
 ## 0.5.1
 * FI-3097: Maintain checkbox label colors on error by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/537
 * Fi 2962 execute outputters by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/541

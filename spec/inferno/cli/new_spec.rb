@@ -31,12 +31,10 @@ RSpec.describe Inferno::CLI::New do
       expect(File).to exist('test-fhir-app/test_fhir_app.gemspec')
       expect(File).to exist('test-fhir-app/lib/test_fhir_app.rb')
 
-      if cli_args.include? '--author'
-        expect(File.read('test-fhir-app/test_fhir_app.gemspec')).to match(/authors\s*=.*ABC/)
-      end
-
-      if cli_args.count('--author') == 2
-        expect(File.read('test-fhir-app/test_fhir_app.gemspec')).to match(/authors\s*=.*ABC.*DEF/)
+      if cli_args.count('--author') == 1
+        expect(File.read('test-fhir-app/lib/test_fhir_app/metadata.rb')).to include('authors ["ABC"]')
+      elsif cli_args.count('--author') == 2
+        expect(File.read('test-fhir-app/lib/test_fhir_app/metadata.rb')).to include('authors ["ABC", "DEF"]')
       end
 
       if cli_args.count('--implementation-guide') == 1
