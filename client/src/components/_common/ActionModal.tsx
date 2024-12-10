@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from '@mui/material';
 import React, { FC } from 'react';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 export interface ActionModalProps {
@@ -22,7 +22,7 @@ const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTestRu
       <DialogTitle>User Action Required</DialogTitle>
       <DialogContent>
         <DialogContentText component="div">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{message || ''}</ReactMarkdown>
+          <Markdown remarkPlugins={[remarkGfm]}>{message || ''}</Markdown>
         </DialogContentText>
       </DialogContent>
       <DialogActions>

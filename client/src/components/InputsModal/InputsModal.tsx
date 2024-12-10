@@ -15,7 +15,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
-import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Runnable, RunnableType, TestInput } from '~/models/testSuiteModels';
 import CopyButton from '~/components/_common/CopyButton';
@@ -192,7 +192,7 @@ const InputsModal: FC<InputsModalProps> = ({
       <DialogContent>
         <main>
           <DialogContentText component="div" sx={{ wordBreak: 'break-word' }}>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{instructions}</ReactMarkdown>
+            <Markdown remarkPlugins={[remarkGfm]}>{instructions}</Markdown>
           </DialogContentText>
           {inputType === 'Field' ? (
             <InputFields inputs={inputs} inputsMap={inputsMap} setInputsMap={handleSetInputsMap} />

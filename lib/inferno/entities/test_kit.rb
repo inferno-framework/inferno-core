@@ -6,7 +6,7 @@ module Inferno
     # @example
     #
     #   module USCoreTestKit
-    #     class TestKit < Inferno::Entities::TestKit
+    #     class Metadata < Inferno::Entities::TestKit
     #       id :us_core
     #       title 'US Core Test Kit'
     #       description <<~DESCRIPTION
@@ -156,7 +156,7 @@ module Inferno
 
         # @private
         def repository
-          @repository ||= Inferno::Repositories::TestKits
+          @repository ||= Inferno::Repositories::TestKits.new
         end
 
         # @private
@@ -168,4 +168,6 @@ module Inferno
       end
     end
   end
+
+  TestKit = Entities::TestKit
 end

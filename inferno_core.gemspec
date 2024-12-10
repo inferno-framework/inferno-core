@@ -56,7 +56,8 @@ Gem::Specification.new do |spec|
     'lib/inferno/public/assets.json',
     'spec/support/factory_bot.rb',
     Dir['spec/factories/**/*.rb'],
-    Dir['spec/fixtures/**/*.rb']
+    Dir['spec/fixtures/**/*.rb'],
+    Dir['spec/*.rb']
   ].flatten
 
   spec.bindir        = 'bin'

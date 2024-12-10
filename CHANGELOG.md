@@ -1,3 +1,18 @@
+## 0.5.2
+* FI-3366: Fetch report date from test results by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/567
+* FI-3019: Add custom blockquote styles by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/556
+* FI-2622: Update meta tags for link unfurling by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/553
+* FI-2961 execute preset support by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/565
+* FI-3511: Fix json handling by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/568
+
+## 0.5.1
+* FI-3097: Maintain checkbox label colors on error by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/537
+* Fi 2962 execute outputters by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/541
+* FI-3469: Use provided auth input options by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/560
+* FI-3475: Unit testing improvements by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/559
+* FI-3023: Add default env vars and documentation to validator dockerfile by @dehall in https://github.com/inferno-framework/inferno-core/pull/562
+* Fix Inferno::Entities::TestSession docs by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/563
+
 ## 0.5.0
 * FI-3358: Check for Duplicate Ids in In-Memory Repositories by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/551
 * FI-3223: Ensure Request Entity Verb Is Always Downcased by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/554

@@ -10,5 +10,6 @@ Inferno::Application.register_provider(:executor) do
     end
 
     target_container.start :suites
+    target_container.start :presets
   end
 end

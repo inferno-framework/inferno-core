@@ -139,7 +139,7 @@ require_relative '../lib/inferno/utils/migration'
 Inferno::Utils::Migration.new.run
 Inferno::Application.finalize!
 
-require_relative 'support/factory_bot'
+Inferno::SpecSupport.require_helpers
 
 RSpec::Matchers.define_negated_matcher :exclude, :include
 require 'fhir_client'
