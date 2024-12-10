@@ -1,17 +1,14 @@
 # frozen_string_literal: true
 
+require_relative 'client_test_endpoint'
+
 module DevClientTesting
   class ClientTestSuite < Inferno::TestSuite
     title 'Client Test Suite'
     id :dev_client_test_suite
     description 'Inferno Core Developer Suite for testing clients.'
 
-    ## BUG: this endpoint is return 302 Found instead of 200 OK
-    route(:get, 'client_test_endpoint', ->(rack_env) { [200, {'Content-Type' => 'application/json'}, JSON.pretty_generate(rack_env).split] })
-
-    resume_test_route :get, '/client_test_endpoint' do |request|
-      request.query_parameters['uid']
-    end
+    suite_endpoint :get, '/client_test_endpoint', ClientTestEndpoint
 
     group do
       title 'Client Test Group'
@@ -53,7 +50,7 @@ module DevClientTesting
         uses_request :client_test_endpoint
 
         run do
-          assert request.query_parameters[:uid] == uid
+          assert 200 == request.status
         end
       end
     end
