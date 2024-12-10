@@ -18,14 +18,13 @@ module Inferno
   module DSL
     module FHIREvaluation
       class Evaluator
-        attr_accessor :data, :config
+        attr_accessor :ig
 
-        def initialize(data, config)
-          @data = data
-          @config = config
+        def initialize(the_ig)
+          @ig = the_ig
         end
 
-        def evaluate
+        def evaluate(data, config = Config.new)
           context = EvaluationContext.new(@ig, data, config)
 
           active_rules = []
