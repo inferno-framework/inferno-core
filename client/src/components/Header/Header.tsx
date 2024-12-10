@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Menu, NoteAdd } from '@mui/icons-material';
+import { Menu, NoteAdd, Share } from '@mui/icons-material';
 import { basePath, getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice } from '~/models/testSuiteModels';
 import { useAppStore } from '~/store/app';
@@ -32,15 +32,20 @@ const Header: FC<HeaderProps> = ({
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
+  const suiteOptionsString =
+    suiteOptions && suiteOptions.length > 0
+      ? `${suiteOptions.map((option) => option.label).join(', ')}`
+      : '';
+
   // Use window navigation instead of React router to trigger new page request
   const startNewSession = () => {
     window.location.href = `/${basePath}`;
   };
 
-  const suiteOptionsString =
-    suiteOptions && suiteOptions.length > 0
-      ? `${suiteOptions.map((option) => option.label).join(', ')}`
-      : '';
+  // TODO: Implementation
+  const shareSession = () => {
+    console.log('share');
+  };
 
   return suiteTitle ? (
     <AppBar
@@ -106,6 +111,33 @@ const Header: FC<HeaderProps> = ({
             <Typography variant="subtitle2" component="h2" className={classes.title}>
               {suiteOptionsString}
             </Typography>
+          )}
+        </Box>
+
+        {/* Share Session button */}
+        <Box
+          display="flex"
+          minWidth="fit-content"
+          pl={1}
+          style={windowIsSmall ? { marginRight: '-16px' } : {}}
+        >
+          {windowIsSmall ? (
+            <IconButton color="secondary" aria-label="Share Session" onClick={shareSession}>
+              <Avatar sx={{ width: 32, height: 32, bgcolor: lightTheme.palette.secondary.main }}>
+                <Share fontSize="small" />
+              </Avatar>
+            </IconButton>
+          ) : (
+            <Button
+              disableElevation
+              color="secondary"
+              size="small"
+              variant="text"
+              startIcon={<Share />}
+              onClick={shareSession}
+            >
+              Share Session
+            </Button>
           )}
         </Box>
 
