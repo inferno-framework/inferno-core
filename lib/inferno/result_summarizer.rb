@@ -12,6 +12,8 @@ module Inferno
     end
 
     def summarize
+      return 'wait' if results.any? { |result| result.result == 'wait' }
+
       return 'pass' if optional_results_passing_criteria_met?
 
       prioritized_result_strings.find { |result_string| unique_result_strings.include? result_string }
