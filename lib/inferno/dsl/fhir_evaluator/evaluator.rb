@@ -26,10 +26,6 @@ module Inferno
         end
 
         def evaluate
-          # Dir.glob(File.join(__dir__, 'rules', '*.rb')).each do |file|
-          #   require_relative file
-          # end
-
           context = EvaluationContext.new(@ig, data, config)
 
           active_rules = []
