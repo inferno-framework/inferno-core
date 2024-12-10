@@ -9,54 +9,54 @@ module Inferno
     # endpoint](https://github.com/hanami/controller/tree/v2.0.0).
     #
     # @example
-    # class AuthorizedEndpoint < Inferno::DSL::SuiteEndpoint
-    #   # Identify the incoming request based on a bearer token
-    #   def test_run_identifier
-    #     request.header['authorization']&.delete_prefix('Bearer ')
-    #   end
-    #
-    #   # Return a json FHIR Patient resource
-    #   def make_response
-    #     response.status = 200
-    #     response.body = FHIR::Patient.new(id: 'abcdef').to_json
-    #     response.format = :json
-    #   end
-    #
-    #   # Update the waiting test to pass when the incoming request is received.
-    #   # This will resume the test run.
-    #   def update_result
-    #     results_repo.update(result.id, result: 'pass')
-    #   end
-    #
-    #   # Apply the 'authorized' tag to the incoming request so that it may be
-    #   # used by later tests.
-    #   def tags
-    #     ['authorized']
-    #   end
-    # end
-    #
-    # class AuthorizedRequestSuite < Inferno::TestSuite
-    #   id :authorized_suite
-    #   suite_endpoint :get, '/authorized_endpoint', AuthorizedEndpoint
-    #
-    #   group do
-    #     title 'Authorized Request Group'
-    #
-    #     test do
-    #       title 'Wait for authorized request'
-    #
-    #       input :bearer_token
-    #
-    #       run do
-    #         wait(
-    #           identifier: bearer_token,
-    #           message: "Waiting to receive a request with bearer_token: #{bearer_token}" \
-    #                    "at `#{Inferno::Application['base_url']}/custom/authorized_suite/authorized_endpoint`"
-    #         )
+    #     class AuthorizedEndpoint < Inferno::DSL::SuiteEndpoint
+    #       # Identify the incoming request based on a bearer token
+    #       def test_run_identifier
+    #         request.header['authorization']&.delete_prefix('Bearer ')
+    #       end
+    #  
+    #       # Return a json FHIR Patient resource
+    #       def make_response
+    #         response.status = 200
+    #         response.body = FHIR::Patient.new(id: 'abcdef').to_json
+    #         response.format = :json
+    #       end
+    #  
+    #       # Update the waiting test to pass when the incoming request is received.
+    #       # This will resume the test run.
+    #       def update_result
+    #         results_repo.update(result.id, result: 'pass')
+    #       end
+    #  
+    #       # Apply the 'authorized' tag to the incoming request so that it may be
+    #       # used by later tests.
+    #       def tags
+    #         ['authorized']
     #       end
     #     end
-    #   end
-    # end
+    #  
+    #     class AuthorizedRequestSuite < Inferno::TestSuite
+    #       id :authorized_suite
+    #       suite_endpoint :get, '/authorized_endpoint', AuthorizedEndpoint
+    #  
+    #       group do
+    #         title 'Authorized Request Group'
+    #  
+    #         test do
+    #           title 'Wait for authorized request'
+    #  
+    #           input :bearer_token
+    #  
+    #           run do
+    #             wait(
+    #               identifier: bearer_token,
+    #               message: "Waiting to receive a request with bearer_token: #{bearer_token}" \
+    #                        "at `#{Inferno::Application['base_url']}/custom/authorized_suite/authorized_endpoint`"
+    #             )
+    #           end
+    #         end
+    #       end
+    #     end
     class SuiteEndpoint < Hanami::Action
       attr_reader :req, :res
 
@@ -69,11 +69,11 @@ module Inferno
       # @return [String]
       #
       # @example
-      # def test_run_identifier
-      #   # Identify the test session of an incoming request based on the bearer
-      #   # token
-      #   request.headers['authorization']&.delete_prefix('Bearer ')
-      # end
+      #   def test_run_identifier
+      #     # Identify the test session of an incoming request based on the bearer
+      #     # token
+      #     request.headers['authorization']&.delete_prefix('Bearer ')
+      #   end
       def test_run_identifier
         nil
       end
@@ -83,11 +83,11 @@ module Inferno
       # @return [Void]
       #
       # @example
-      # def make_response
-      #   response.status = 200
-      #   response.body = { abc: 123 }.to_json
-      #   response.format = :json
-      # end
+      #   def make_response
+      #     response.status = 200
+      #     response.body = { abc: 123 }.to_json
+      #     response.format = :json
+      #   end
       def make_response
         nil
       end
@@ -113,9 +113,9 @@ module Inferno
       # @return [Void]
       #
       # @example
-      # def update_result
-      #   results_repo.update(result.id, result: 'pass')
-      # end
+      #   def update_result
+      #     results_repo.update(result.id, result: 'pass')
+      #   end
       def update_result
         nil
       end
@@ -165,9 +165,9 @@ module Inferno
       # @return [Hanami::Action::Request]
       #
       # @example
-      # request.params               # Get url/query params
-      # request.body.read            # Get body
-      # request.headers['accept']    # Get Accept header
+      #   request.params               # Get url/query params
+      #   request.body.read            # Get body
+      #   request.headers['accept']    # Get Accept header
       def request
         req
       end
@@ -178,10 +178,10 @@ module Inferno
       # @return [Hanami::Action::Response]
       #
       # @example
-      # response.status = 200        # Set the status
-      # response.body = 'Ok'         # Set the body
-      # # Set headers
-      # response.headers.merge!('X-Custom-Header' => 'CUSTOM_HEADER_VALUE')
+      #   response.status = 200        # Set the status
+      #   response.body = 'Ok'         # Set the body
+      #   # Set headers
+      #   response.headers.merge!('X-Custom-Header' => 'CUSTOM_HEADER_VALUE')
       def response
         res
       end
