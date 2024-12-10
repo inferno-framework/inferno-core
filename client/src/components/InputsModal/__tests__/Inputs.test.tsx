@@ -35,7 +35,7 @@ describe('Input Components', () => {
       <ThemeProvider>
         <SnackbarProvider>
           <InputCheckboxGroup
-            requirement={checkboxInput}
+            input={checkboxInput}
             index={0}
             inputsMap={new Map<string, string>()}
             setInputsMap={() => {}}
@@ -71,7 +71,7 @@ describe('Input Components', () => {
       <ThemeProvider>
         <SnackbarProvider>
           <InputRadioGroup
-            requirement={radioInput}
+            input={radioInput}
             index={0}
             inputsMap={new Map<string, string>()}
             setInputsMap={() => {}}
@@ -95,7 +95,7 @@ describe('Input Components', () => {
       <ThemeProvider>
         <SnackbarProvider>
           <InputTextField
-            requirement={textInput}
+            input={textInput}
             index={0}
             inputsMap={new Map<string, string>()}
             setInputsMap={() => {}}
@@ -119,7 +119,7 @@ describe('Input Components', () => {
       <ThemeProvider>
         <SnackbarProvider>
           <InputTextField
-            requirement={textareaInput}
+            input={textareaInput}
             index={0}
             inputsMap={new Map<string, string>()}
             setInputsMap={() => {}}
@@ -143,7 +143,7 @@ describe('Input Components', () => {
       <ThemeProvider>
         <SnackbarProvider>
           <InputOAuthCredentials
-            requirement={oauthInput}
+            input={oauthInput}
             index={0}
             inputsMap={new Map<string, string>()}
             setInputsMap={() => {}}
@@ -176,7 +176,7 @@ describe('Input Components', () => {
       <ThemeProvider>
         <SnackbarProvider>
           <InputAuth
-            requirement={authInput}
+            input={authInput}
             index={0}
             inputsMap={new Map<string, string>()}
             setInputsMap={() => {}}
@@ -209,7 +209,7 @@ describe('Input Components', () => {
       <ThemeProvider>
         <SnackbarProvider>
           <InputAccess
-            requirement={accessInput}
+            input={accessInput}
             index={0}
             inputsMap={new Map<string, string>()}
             setInputsMap={() => {}}
