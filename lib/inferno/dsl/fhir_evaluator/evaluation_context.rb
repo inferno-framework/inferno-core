@@ -9,8 +9,8 @@ module Inferno
       class EvaluationContext
         attr_reader :ig, :data, :results, :config
 
-        def initialize(the_ig, data, config)
-          @ig = the_ig
+        def initialize(ig, data, config)
+          @ig = ig
           @data = data
           @results = []
           @config = config

@@ -1,12 +1,5 @@
 # frozen_string_literal: true
 
-require 'dotenv'
-require 'faraday'
-require 'fhir_models'
-require 'thor'
-require 'erb'
-require 'yaml'
-require 'pathname'
 
 require_relative 'config'
 require_relative 'rule'
@@ -20,8 +13,8 @@ module Inferno
       class Evaluator
         attr_accessor :ig
 
-        def initialize(the_ig)
-          @ig = the_ig
+        def initialize(ig)
+          @ig = ig
         end
 
         def evaluate(data, config = Config.new)

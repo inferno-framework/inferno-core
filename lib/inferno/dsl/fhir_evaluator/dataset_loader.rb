@@ -1,9 +1,6 @@
 module Inferno
   module DSL
     module FHIREvaluation
-      # A Dataset returns an Array of FHIR data to be summarized or evaluated,
-      # with convenience methods for loading from a file path or from an
-      # Array of FHIR JSON strings.
       module DatasetLoader
         def self.from_contents(source_array)
           dataset = []
