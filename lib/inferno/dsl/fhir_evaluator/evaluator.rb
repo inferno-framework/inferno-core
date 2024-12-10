@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 require_relative 'config'
 require_relative 'rule'
 require_relative 'evaluation_context'
@@ -13,8 +12,8 @@ module Inferno
       class Evaluator
         attr_accessor :ig
 
-        def initialize(ig)
-          @ig = ig
+        def initialize(the_ig)
+          @ig = the_ig
         end
 
         def evaluate(data, config = Config.new)
