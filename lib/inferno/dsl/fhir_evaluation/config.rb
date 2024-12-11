@@ -2,7 +2,7 @@ module Inferno
   module DSL
     module FHIREvaluation
       class Config
-        DEFAULT_FILE = File.join(__dir__, 'config', 'default.yml')
+        DEFAULT_FILE = File.join(__dir__, 'default.yml')
         attr_accessor :data
 
         # To-do: add config_file as arguments
