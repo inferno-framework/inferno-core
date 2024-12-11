@@ -12,9 +12,11 @@ module Inferno
       class Evaluator
         attr_accessor :ig
 
-        def initialize(the_ig)
-          @ig = the_ig
+        # rubocop:disable Naming/MethodParameterName
+        def initialize(ig)
+          @ig = ig
         end
+        # rubocop:enable Naming/MethodParameterName
 
         def evaluate(data, config = Config.new)
           context = EvaluationContext.new(@ig, data, config)
