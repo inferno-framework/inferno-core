@@ -12,7 +12,6 @@ module Inferno
             dataset.push resource
           end
 
-          puts "Loaded #{dataset.length} resources"
           dataset
         end
 
@@ -26,7 +25,6 @@ module Inferno
             dataset.push resource
           end
 
-          puts "Loaded #{dataset.length} resources"
           dataset
         end
       end
