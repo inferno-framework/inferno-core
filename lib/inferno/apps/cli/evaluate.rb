@@ -1,4 +1,4 @@
-require_relative '../../../inferno/dsl/fhir_evaluator/evaluator'
+require_relative '../../../inferno/dsl/fhir_evaluation/evaluator'
 
 module Inferno
   module CLI
