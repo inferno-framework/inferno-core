@@ -1,5 +1,4 @@
 require_relative '../../../inferno/dsl/fhir_evaluation/evaluator'
-require_relative '../../../inferno/dsl/fhir_evaluation/config'
 require_relative '../../../inferno/dsl/ig'
 require_relative '../../utils/ig_downloader'
 
@@ -23,7 +22,7 @@ module Inferno
           end
         end
 
-        # Rule execution, and result output below will be integrated at phase 2 and 3.
+        # Rule execution, and result output below will be integrated soon.
 
         # if data_path
         #   DatasetLoader.from_path(File.join(__dir__, data_path))
