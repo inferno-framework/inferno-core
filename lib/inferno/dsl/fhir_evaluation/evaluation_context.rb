@@ -9,14 +9,12 @@ module Inferno
       class EvaluationContext
         attr_reader :ig, :data, :results, :config
 
-        # rubocop:disable Naming/MethodParameterName
-        def initialize(ig, data, config)
+        def initialize(ig, data, config) # rubocop:disable Naming/MethodParameterName
           @ig = ig
           @data = data
           @results = []
           @config = config
         end
-        # rubocop:enable Naming/MethodParameterName
 
         def add_result(result)
           results.push result
