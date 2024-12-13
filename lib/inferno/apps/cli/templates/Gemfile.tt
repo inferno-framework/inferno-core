@@ -6,6 +6,8 @@ gemspec
 
 group :development, :test do
   gem 'debug'
+  gem 'rubocop', '~> 1.9'
+  gem 'rubocop-rspec', require: false
 end
 
 group :test do
