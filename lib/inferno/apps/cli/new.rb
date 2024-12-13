@@ -85,7 +85,7 @@ module Inferno
       private
 
       def authors
-        options['author'].presence || [default_author]
+        (options['author'].presence || [default_author]).to_json.gsub('"', "'")
       end
 
       def default_author
