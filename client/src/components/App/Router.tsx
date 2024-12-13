@@ -37,6 +37,11 @@ export const router = (testSuites: TestSuite[]) => {
         path: ':test_suite_id/:test_session_id',
         element: <TestSessionWrapper />,
       },
+      {
+        // View only version of the test session
+        path: ':test_suite_id/:test_session_id/view',
+        element: <TestSessionWrapper />,
+      },
     ],
     { basename: `/${basePath || ''}` },
   );

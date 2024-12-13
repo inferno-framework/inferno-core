@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { Menu, NoteAdd, Share } from '@mui/icons-material';
+import { Menu, NoteAdd } from '@mui/icons-material';
 import { basePath, getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice } from '~/models/testSuiteModels';
 import { useAppStore } from '~/store/app';
@@ -9,6 +9,7 @@ import useStyles from './styles';
 import icon from '~/images/inferno_icon.png';
 import lightTheme from '~/styles/theme';
 import CustomTooltip from '~/components/_common/CustomTooltip';
+import ShareSessionButton from '~/components/Header/ShareSessionButton';
 import HeaderSkeleton from '~/components/Skeletons/HeaderSkeleton';
 
 export interface HeaderProps {
@@ -40,11 +41,6 @@ const Header: FC<HeaderProps> = ({
   // Use window navigation instead of React router to trigger new page request
   const startNewSession = () => {
     window.location.href = `/${basePath}`;
-  };
-
-  // TODO: Implementation
-  const shareSession = () => {
-    console.log('share');
   };
 
   return suiteTitle ? (
@@ -115,31 +111,7 @@ const Header: FC<HeaderProps> = ({
         </Box>
 
         {/* Share Session button */}
-        <Box
-          display="flex"
-          minWidth="fit-content"
-          pl={1}
-          style={windowIsSmall ? { marginRight: '-16px' } : {}}
-        >
-          {windowIsSmall ? (
-            <IconButton color="secondary" aria-label="Share Session" onClick={shareSession}>
-              <Avatar sx={{ width: 32, height: 32, bgcolor: lightTheme.palette.secondary.main }}>
-                <Share fontSize="small" />
-              </Avatar>
-            </IconButton>
-          ) : (
-            <Button
-              disableElevation
-              color="secondary"
-              size="small"
-              variant="text"
-              startIcon={<Share />}
-              onClick={shareSession}
-            >
-              Share Session
-            </Button>
-          )}
-        </Box>
+        <ShareSessionButton />
 
         {/* New Session button */}
         <Box
