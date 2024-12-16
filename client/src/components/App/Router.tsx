@@ -8,9 +8,12 @@ import LandingPageSkeleton from '~/components/Skeletons/LandingPageSkeleton';
 import SuiteOptionsPageSkeleton from '~/components/Skeletons/SuiteOptionsPageSkeleton';
 import { basePath } from '~/api/infernoApiService';
 import { TestSuite } from '~/models/testSuiteModels';
+import { useTestSessionStore } from '~/store/testSession';
 
 export const router = (testSuites: TestSuite[]) => {
+  const setViewOnlySession = useTestSessionStore((state) => state.setViewOnly);
   const testSuitesExist = !!testSuites && testSuites.length > 0;
+
   return createBrowserRouter(
     [
       {
@@ -35,12 +38,18 @@ export const router = (testSuites: TestSuite[]) => {
         // Title for TestSessionWrapper is set in the component
         // because testSession is not set at the time of render
         path: ':test_suite_id/:test_session_id',
-        element: <TestSessionWrapper />,
+        loader: () => {
+          setViewOnlySession(false);
+          return <TestSessionWrapper />;
+        },
       },
       {
         // View only version of the test session
         path: ':test_suite_id/:test_session_id/view',
-        element: <TestSessionWrapper />,
+        loader: () => {
+          setViewOnlySession(true);
+          return <TestSessionWrapper />;
+        },
       },
     ],
     { basename: `/${basePath || ''}` },
