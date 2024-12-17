@@ -1,25 +1,20 @@
 import React, { FC, useEffect } from 'react';
-import {
-  Checkbox,
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  ListItem,
-  Typography,
-} from '@mui/material';
+import { Checkbox, FormControl, FormControlLabel, FormGroup, ListItem } from '@mui/material';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { TestInput } from '~/models/testSuiteModels';
 import FieldLabel from '~/components/InputsModal/FieldLabel';
 import useStyles from '~/components/InputsModal/styles';
 
 export interface InputSingleCheckboxProps {
-  requirement: TestInput;
+  input: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
 const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
-  requirement,
+  input,
   index,
   inputsMap,
   setInputsMap,
@@ -28,18 +23,17 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
   const [hasBeenModified, setHasBeenModified] = React.useState(false);
   const [value, setValue] = React.useState<boolean>(false);
 
-  const isMissingInput =
-    hasBeenModified && !requirement.optional && inputsMap.get(requirement.name) === false;
+  const isMissingInput = hasBeenModified && !input.optional && inputsMap.get(input.name) === false;
 
   // No "required" formatting because single checkboxes always have a value assigned
-  const fieldLabel = <FieldLabel requirement={requirement} isMissingInput={isMissingInput} />;
+  const fieldLabel = <FieldLabel input={input} isMissingInput={isMissingInput} />;
 
   useEffect(() => {
-    const inputsValue = inputsMap.get(requirement.name) as string;
+    const inputsValue = inputsMap.get(input.name) as string;
     let startingValue = false;
     if (inputsValue === 'true') {
       startingValue = true;
-    } else if (inputsValue !== 'false' && (requirement.default as string) === 'true') {
+    } else if (inputsValue !== 'false' && (input.default as string) === 'true') {
       startingValue = true;
     }
     setValue(startingValue);
@@ -49,7 +43,7 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
     const newValue = event.target.checked;
     setValue(newValue);
     setHasBeenModified(true);
-    inputsMap.set(requirement.name, newValue.toString());
+    inputsMap.set(input.name, newValue.toString());
     setInputsMap(new Map(inputsMap));
   };
 
@@ -57,20 +51,20 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
     <ListItem>
       <FormControl
         component="fieldset"
-        id={`requirement${index}_input`}
-        disabled={requirement.locked}
-        required={!requirement.optional}
+        id={`input${index}_control`}
+        disabled={input.locked}
+        required={!input.optional}
         error={isMissingInput}
         fullWidth
         className={classes.inputField}
       >
-        {requirement.description && (
-          <Typography variant="subtitle1" component="p" className={classes.inputDescription}>
-            {requirement.description}
-          </Typography>
+        {input.description && (
+          <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+            {input.description}
+          </Markdown>
         )}
         {/* TODO: required means set to true and locked? */}
-        <FormGroup aria-label={`${requirement.name}-single-checkbox`}>
+        <FormGroup aria-label={`${input.name}-single-checkbox`}>
           <FormControlLabel
             control={
               <Checkbox
@@ -86,7 +80,7 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
               />
             }
             label={fieldLabel}
-            key={`checkbox-${requirement.name}`}
+            key={`checkbox-${input.name}`}
           />
         </FormGroup>
       </FormControl>

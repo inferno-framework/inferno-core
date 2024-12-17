@@ -28,11 +28,13 @@ export default makeStyles()((theme: Theme) => ({
     fontWeight: 600,
   },
   inputDescription: {
-    mx: 0,
-    mb: 1,
     fontSize: '0.95rem',
     color: theme.palette.common.gray,
-    '&.Mui-disabled': {
+    '& > p': {
+      margin: '0 0 8px 0 !important',
+      lineHeight: '1.75rem',
+    },
+    '& .Mui-disabled': {
       color: theme.palette.common.grayDark,
     },
   },
@@ -49,7 +51,7 @@ export default makeStyles()((theme: Theme) => ({
     width: '100%',
     mx: 2,
     borderColor: theme.palette.common.gray,
-    '&:focus-within': {
+    '& :focus-within': {
       borderColor: theme.palette.secondary.main,
     },
   },
@@ -71,21 +73,21 @@ export default makeStyles()((theme: Theme) => ({
     '& .MuiToggleButtonGroup-grouped': {
       margin: theme.spacing(0.5),
       border: 0,
-      '&.Mui-disabled': {
+      '& .Mui-disabled': {
         border: 0,
       },
-      '&:not(:first-of-type), :first-of-type': {
+      '& :not(:first-of-type), :first-of-type': {
         borderRadius: theme.shape.borderRadius,
       },
     },
   },
   toggleButton: {
     color: theme.palette.common.grayDark,
-    '&:hover, :focus-within': {
+    '& :hover, :focus-within': {
       backgroundColor: theme.palette.common.grayLight,
       fontWeight: 'bolder',
     },
-    '&.Mui-selected': {
+    '& .Mui-selected': {
       backgroundColor: 'unset',
       border: `1px solid ${theme.palette.secondary.main} !important`,
       color: theme.palette.secondary.main,
