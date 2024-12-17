@@ -25,7 +25,6 @@ module Inferno
         else
           raise StandardError, <<~FAILED_TO_LOAD
             Could not find implementation guide: #{ig_input}
-            Put its package.tgz file directly in #{ig_path}
           FAILED_TO_LOAD
         end
 

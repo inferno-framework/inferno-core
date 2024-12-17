@@ -1,4 +1,4 @@
-RSpec.describe Inferno::DSL::IG do
+RSpec.describe Inferno::Entities::IG do
   let(:uscore3_package) { File.expand_path('../../fixtures/uscore311.tgz', __dir__) }
 
   describe '#from_file' do
