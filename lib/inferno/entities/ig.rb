@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'fhir_models'
+require 'pathname'
 require 'rubygems/package'
 require 'zlib'
 
@@ -73,17 +74,19 @@ module Inferno
         ig
       end
 
-      def self.from_directory(ig_path)
+      def self.from_directory(ig_directory)
         ig = IG.new({})
 
+        ig_path = Pathname.new(ig_directory)
         Dir.glob("#{ig_path}/**/*") do |f|
-          next if skip_item?(f, File.directory?(f))
+          relative_path = Pathname.new(f).relative_path_from(ig_path).to_s
+          next if skip_item?(relative_path, File.directory?(f))
 
           begin
             resource = FHIR::Json.from_json(File.read(f))
             next if resource.nil?
 
-            ig.handle_resource(resource, f)
+            ig.handle_resource(resource, relative_path)
           rescue StandardError
             next
           end
