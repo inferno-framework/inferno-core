@@ -38,6 +38,7 @@ export const router = (testSuites: TestSuite[]) => {
         // Title for TestSessionWrapper is set in the component
         // because testSession is not set at the time of render
         path: ':test_suite_id/:test_session_id',
+        element: <TestSessionWrapper />,
         loader: () => {
           setViewOnlySession(false);
           return <TestSessionWrapper />;
@@ -46,6 +47,7 @@ export const router = (testSuites: TestSuite[]) => {
       {
         // View only version of the test session
         path: ':test_suite_id/:test_session_id/view',
+        element: <TestSessionWrapper />,
         loader: () => {
           setViewOnlySession(true);
           return <TestSessionWrapper />;
