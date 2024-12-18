@@ -23,7 +23,7 @@ module Inferno
 
       include Inferno::Entities::Attributes
 
-      def initialize(params)
+      def initialize(**params)
         super(params, ATTRIBUTES)
 
         @profiles = []
@@ -57,7 +57,7 @@ module Inferno
           Zlib::GzipReader.open(ig_path)
         )
 
-        ig = IG.new({})
+        ig = IG.new
 
         tar.each do |entry|
           next if skip_item?(entry.full_name, entry.directory?)
@@ -75,7 +75,7 @@ module Inferno
       end
 
       def self.from_directory(ig_directory)
-        ig = IG.new({})
+        ig = IG.new
 
         ig_path = Pathname.new(ig_directory)
         Dir.glob("#{ig_path}/**/*") do |f|
@@ -102,7 +102,6 @@ module Inferno
 
         file_name = relative_path.split('/').last
 
-        # TODO: consider making these regexes we can iterate over in a single loop
         return true unless file_name.end_with? '.json'
         return true unless relative_path.start_with? 'package/'
 
