@@ -76,6 +76,16 @@ RSpec.describe Inferno::Utils::IgDownloader do
           expect(File.read(temp_path)).to eq(package_binary)
         end
       end
+
+      it 'successfully downloads package to custom path' do
+        stub_request(:get, 'https://packages.fhir.org/hl7.fhir.us.udap-security/-/hl7.fhir.us.udap-security-1.0.0.tgz')
+          .to_return(body: package_binary)
+
+        with_temp_path('ig-downloader-canonical') do |temp_path|
+          ig_downloader.load_ig(canonical, nil, { verbose: false }, temp_path)
+          expect(File.read(temp_path)).to eq(package_binary)
+        end
+      end
     end
   end
 
