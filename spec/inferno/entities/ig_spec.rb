@@ -1,10 +1,25 @@
+require 'extract_tgz_helper'
+
 RSpec.describe Inferno::Entities::IG do
+  include ExtractTGZHelper
+
   let(:uscore3_package) { File.expand_path('../../fixtures/uscore311.tgz', __dir__) }
+  let(:uscore3_untarred) { extract_tgz(uscore3_package) }
+
+  after { cleanup(uscore3_untarred) }
 
   describe '#from_file' do
-    it 'loads an IG from file' do
+    it 'loads an IG from tgz file' do
       ig = described_class.from_file(uscore3_package)
+      expect_uscore3_loaded_properly(ig)
+    end
 
+    it 'loads an IG from directory' do
+      ig = described_class.from_file(uscore3_untarred)
+      expect_uscore3_loaded_properly(ig)
+    end
+
+    def expect_uscore3_loaded_properly(ig) # rubocop:disable Naming/MethodParameterName, Metrics/CyclomaticComplexity
       # For each artifact type in the IG, check:
       # the right number are loaded,
       # they're all the expected type,
