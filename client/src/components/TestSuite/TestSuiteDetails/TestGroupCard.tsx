@@ -1,13 +1,13 @@
 import React, { FC, useMemo } from 'react';
 import { Box, Card, Divider, Typography } from '@mui/material';
-import useStyles from './styles';
 import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
 import InputOutputList from './TestListItem/InputOutputList';
 import ResultIcon from './ResultIcon';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
-import remarkGfm from 'remark-gfm';
+import useStyles from './styles';
 
 interface TestGroupCardProps {
   children: React.ReactNode;
