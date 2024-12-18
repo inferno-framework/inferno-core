@@ -1,3 +1,6 @@
+# You must require 'lib/inferno.rb' file before invoking
+# this provider via `Inferno::Application.start(:suites)`
+# because `Inferno.routes` must be defined for some suites
 Inferno::Application.register_provider(:suites) do
   prepare do
     target_container.start :logging
