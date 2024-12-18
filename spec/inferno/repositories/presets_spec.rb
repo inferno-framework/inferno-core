@@ -30,7 +30,7 @@ RSpec.describe Inferno::Repositories::Presets do
               type: 'text',
               title: 'Title',
               description: 'Description',
-              value: 'https://hardcoded.example.org'
+              value: 'https://inferno.healthit.gov'
             ]
           }
         )
@@ -65,6 +65,17 @@ RSpec.describe Inferno::Repositories::Presets do
         inserted = presets.insert_from_file(simple_erb)
 
         expect(inserted.inputs.first[:value]).to eq('http://default.example.com')
+      end
+    end
+
+    context 'when hosted on QA' do
+      before do
+        stub_const 'Inferno::Application', { 'base_url' => 'https://inferno-qa.healthit.gov' }
+      end
+
+      it 'replaces inferno.healthit.gov with inferno-qa.healthit.gov' do
+        inserted = presets.insert_from_file(simple_json)
+        expect(inserted.inputs.first[:value]).to eq('https://inferno-qa.healthit.gov')
       end
     end
   end

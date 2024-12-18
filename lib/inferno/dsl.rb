@@ -1,6 +1,7 @@
 require_relative 'dsl/assertions'
 require_relative 'dsl/fhir_client'
 require_relative 'dsl/fhir_validation'
+require_relative 'dsl/fhir_evaluation/evaluator'
 require_relative 'dsl/fhir_resource_validation'
 require_relative 'dsl/fhirpath_evaluation'
 require_relative 'dsl/http_client'
@@ -18,6 +19,7 @@ module Inferno
       HTTPClient,
       Results,
       FHIRValidation,
+      FHIREvaluation,
       FHIRResourceValidation,
       FhirpathEvaluation,
       Messages

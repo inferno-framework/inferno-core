@@ -1,3 +1,11 @@
+## 0.5.3
+* FI-2748: Add TestKit to template by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/561
+* FI-3550: Handle optional waiting results by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/570
+* Fix SuiteEndpoint docs by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/571
+* FI-3376 Migrate Evaluator CLI into inferno core CLI by @jhlee-mitre in https://github.com/inferno-framework/inferno-core/pull/557
+* FI-3259: Include presets in gems by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/572
+* FI-3261: Add markdown support to input descriptions by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/546
+
 ## 0.5.2
 * FI-3366: Fetch report date from test results by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/567
 * FI-3019: Add custom blockquote styles by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/556

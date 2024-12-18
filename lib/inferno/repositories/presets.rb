@@ -8,13 +8,19 @@ module Inferno
     # Repository that deals with persistence for the `Preset` entity.
     class Presets < InMemoryRepository
       def insert_from_file(path)
-        case path
-        when /\.json$/
-          preset_hash = JSON.parse(File.read(path))
-        when /\.erb$/
-          templated = ERB.new(File.read(path)).result
-          preset_hash = JSON.parse(templated)
+        raw_contents =
+          case path
+          when /\.json$/
+            File.read(path)
+          when /\.erb$/
+            ERB.new(File.read(path)).result
+          end
+
+        if Application['base_url'].start_with? 'https://inferno-qa.healthit.gov'
+          raw_contents.gsub!('https://inferno.healthit.gov', 'https://inferno-qa.healthit.gov')
         end
+
+        preset_hash = JSON.parse(raw_contents)
 
         preset_hash.deep_symbolize_keys!
         preset_hash[:id] ||= SecureRandom.uuid

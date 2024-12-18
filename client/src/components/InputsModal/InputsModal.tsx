@@ -82,11 +82,8 @@ const InputsModal: FC<InputsModalProps> = ({
   // Set persisted values and defaults at render
   useEffect(() => {
     inputsMap.clear();
-    inputs.forEach((requirement: TestInput) => {
-      inputsMap.set(
-        requirement.name,
-        sessionData.get(requirement.name) || requirement.default || '',
-      );
+    inputs.forEach((input: TestInput) => {
+      inputsMap.set(input.name, sessionData.get(input.name) || input.default || '');
     });
     setInputsMap(new Map(inputsMap));
   }, [inputs, sessionData]);

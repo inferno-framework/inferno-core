@@ -1,6 +1,8 @@
 require_relative '../../../../lib/inferno/apps/web/serializers/test_group'
+require_relative '../../../../lib/inferno/utils/markdown_formatter'
 
 RSpec.describe Inferno::Web::Serializers::TestGroup do
+  include Inferno::Utils::MarkdownFormatter
   let(:group) { InfrastructureTest::SerializerGroup }
 
   before do
@@ -46,7 +48,10 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
 
       input = Inferno::Entities::Input.new(**raw_input)
 
-      expect(input).to eq(definition)
+      expect(input.name).to eq(definition.name)
+      expect(input.type).to eq(definition.type)
+      expect(input.default).to eq(definition.default)
+      expect(input.description).to eq(format_markdown(definition.description))
     end
 
     group.output_definitions.each_value do |definition|
