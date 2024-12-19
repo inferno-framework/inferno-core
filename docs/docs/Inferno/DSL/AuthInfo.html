@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Inferno::DSL::AuthInfo
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Inferno::DSL::AuthInfo";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (A)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span>
+     &raquo; 
+    <span class="title">AuthInfo</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Inferno::DSL::AuthInfo
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Inferno::DSL::AuthInfo</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/inferno/dsl/auth_info.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>AuthInfo provides a user with a single input which contains the information
+needed for a FHIR client to perform authorization and refresh an access
+token when necessary.</p>
+
+<p>AuthInfo supports the following <code>auth_type</code>:</p>
+
+<ul>
+  <li><code>public</code> - Client id only</li>
+  <li><code>symmetric</code> - Confidential symmetric (i.e., with a static client id and
+secret)</li>
+  <li><code>asymmetric</code> - Confidential asymmetric (i.e., a client id with a signed
+JWT rather than a client secret)</li>
+  <li><code>backend_services</code></li>
+</ul>
+
+<p>When configuring an AuthInfo input, the invdidual fields are exposed as
+<code>components</code> in the input’s options, and can be configured there similar
+to normal inputs.</p>
+
+<p>The AuthInfo input type supports two different modes in the UI. Different
+fields will be presented to the user depending on which mode is selected:</p>
+
+<ul>
+  <li><code>auth</code> - This presents the inputs needed to perform authorization, and
+is appropriate to use as an input to test groups which perform
+authorization.</li>
+  <li><code>access</code> - This presents the inputs needed to access resources assuming
+that authorization has already happened, and is appropriate to use as an
+input to test groups which access resources using previously granted
+authorization.</li>
+</ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='kw'>class</span> <span class='const'>AuthInfoExampleSuite</span> <span class='op'>&lt;</span> <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Inferno.html#TestSuite-constant" title="Inferno::TestSuite (constant)">TestSuite</a></span></span>
+  <span class='id identifier rubyid_input'>input</span> <span class='symbol'>:url</span><span class='comma'>,</span>
+        <span class='label'>title:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Base FHIR url</span><span class='tstring_end'>&#39;</span></span>
+
+  <span class='id identifier rubyid_group'>group</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_title'>title</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Perform public authorization</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_input'>input</span> <span class='symbol'>:fhir_auth</span><span class='comma'>,</span>
+          <span class='label'>type:</span> <span class='symbol'>:auth_info</span><span class='comma'>,</span>
+          <span class='label'>options:</span> <span class='lbrace'>{</span>
+            <span class='label'>mode:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>auth</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+            <span class='label'>components:</span> <span class='lbracket'>[</span>
+              <span class='lbrace'>{</span>
+                <span class='label'>name:</span> <span class='symbol'>:auth_type</span><span class='comma'>,</span>
+                <span class='label'>default:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>public</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>locked:</span> <span class='kw'>true</span>
+              <span class='rbrace'>}</span>
+            <span class='rbracket'>]</span>
+          <span class='rbrace'>}</span>
+
+    <span class='comment'># Some tests here to perform authorization
+</span>  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_group'>group</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_title'>title</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>FHIR API Tests</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_input'>input</span> <span class='symbol'>:fhir_auth</span><span class='comma'>,</span>
+          <span class='label'>type:</span> <span class='symbol'>:auth_info</span><span class='comma'>,</span>
+          <span class='label'>options:</span> <span class='lbrace'>{</span>
+            <span class='label'>mode:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>access</span><span class='tstring_end'>&#39;</span></span>
+          <span class='rbrace'>}</span>
+
+    <span class='id identifier rubyid_fhir_client'>fhir_client</span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_url'>url</span> <span class='symbol'>:url</span>
+      <span class='id identifier rubyid_auth_info'>auth_info</span> <span class='symbol'>:fhir_auth</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Some tests here to access FHIR API
+</span>  <span class='kw'>end</span>
+<span class='kw'>end</span></code></pre>
+    
+  </div>
+
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="ATTRIBUTES-constant" class="">ATTRIBUTES =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbracket'>[</span>
+  <span class='symbol'>:auth_type</span><span class='comma'>,</span>
+  <span class='symbol'>:use_discovery</span><span class='comma'>,</span>
+  <span class='symbol'>:token_url</span><span class='comma'>,</span>
+  <span class='symbol'>:auth_url</span><span class='comma'>,</span>
+  <span class='symbol'>:requested_scopes</span><span class='comma'>,</span>
+  <span class='symbol'>:client_id</span><span class='comma'>,</span>
+  <span class='symbol'>:client_secret</span><span class='comma'>,</span>
+  <span class='symbol'>:redirect_url</span><span class='comma'>,</span> <span class='comment'># TODO: does this belong here?
+</span>  <span class='symbol'>:pkce_support</span><span class='comma'>,</span>
+  <span class='symbol'>:pkce_code_challenge_method</span><span class='comma'>,</span>
+  <span class='symbol'>:auth_request_method</span><span class='comma'>,</span>
+  <span class='symbol'>:encryption_algorithm</span><span class='comma'>,</span>
+  <span class='symbol'>:kid</span><span class='comma'>,</span>
+  <span class='symbol'>:jwks</span><span class='comma'>,</span>
+  <span class='symbol'>:access_token</span><span class='comma'>,</span>
+  <span class='symbol'>:refresh_token</span><span class='comma'>,</span>
+  <span class='symbol'>:issue_time</span><span class='comma'>,</span>
+  <span class='symbol'>:expires_in</span><span class='comma'>,</span>
+  <span class='symbol'>:name</span>
+<span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#access_token-instance_method" title="#access_token (instance method)">#<strong>access_token</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#auth_request_method-instance_method" title="#auth_request_method (instance method)">#<strong>auth_request_method</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The http method which will be used to perform the request to the authorization endpoint.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#auth_type-instance_method" title="#auth_type (instance method)">#<strong>auth_type</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The type of authorization to be performed.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#auth_url-instance_method" title="#auth_url (instance method)">#<strong>auth_url</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The url of the authorization endpoint.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#client-instance_method" title="#client (instance method)">#<strong>client</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute client.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#client_id-instance_method" title="#client_id (instance method)">#<strong>client_id</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#client_secret-instance_method" title="#client_secret (instance method)">#<strong>client_secret</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#encryption_algorithm-instance_method" title="#encryption_algorithm (instance method)">#<strong>encryption_algorithm</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The encryption algorithm which will be used to sign the JWT client credentials.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#expires_in-instance_method" title="#expires_in (instance method)">#<strong>expires_in</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The lifetime of the access token in seconds.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#issue_time-instance_method" title="#issue_time (instance method)">#<strong>issue_time</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>An iso8601 formatted string representing the time the access token was issued.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#jwks-instance_method" title="#jwks (instance method)">#<strong>jwks</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A JWKS (including private keys) which will be used instead of Inferno’s default JWKS if provided.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#kid-instance_method" title="#kid (instance method)">#<strong>kid</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The key id for the keys to be used to sign the JWT client credentials.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#name-instance_method" title="#name (instance method)">#<strong>name</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#pkce_code_challenge_method-instance_method" title="#pkce_code_challenge_method (instance method)">#<strong>pkce_code_challenge_method</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Either <code>S256</code> (default) or <code>plain</code>.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#pkce_support-instance_method" title="#pkce_support (instance method)">#<strong>pkce_support</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Whether PKCE will be used during authorization.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#redirect_url-instance_method" title="#redirect_url (instance method)">#<strong>redirect_url</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#refresh_token-instance_method" title="#refresh_token (instance method)">#<strong>refresh_token</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#requested_scopes-instance_method" title="#requested_scopes (instance method)">#<strong>requested_scopes</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The scopes which will be requested during authorization.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#token_url-instance_method" title="#token_url (instance method)">#<strong>token_url</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The url of the auth server’s token endpoint.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+
+  
+  
+  
+  
+  
+  
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="access_token=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="access_token-instance_method">
+  
+    #<strong>access_token</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="auth_request_method=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="auth_request_method-instance_method">
+  
+    #<strong>auth_request_method</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The http method which will be used to perform the request to the authorization endpoint.
+Either <code>get</code> (default) or <code>post</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="auth_type=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="auth_type-instance_method">
+  
+    #<strong>auth_type</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The type of authorization to be performed. One of <code>public</code>, <code>symmetric</code>, <code>asymmetric</code>, or <code>backend_services</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="auth_url=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="auth_url-instance_method">
+  
+    #<strong>auth_url</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The url of the authorization endpoint</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="client=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="client-instance_method">
+  
+    #<strong>client</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute client.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+98
+99
+100</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 98</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_client'>client</span>
+  <span class='ivar'>@client</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="client_id=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="client_id-instance_method">
+  
+    #<strong>client_id</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="client_secret=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="client_secret-instance_method">
+  
+    #<strong>client_secret</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="encryption_algorithm=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="encryption_algorithm-instance_method">
+  
+    #<strong>encryption_algorithm</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The encryption algorithm which will be used to sign the JWT client credentials.
+Either <code>es384</code> (default) or <code>rs384</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="expires_in=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="expires_in-instance_method">
+  
+    #<strong>expires_in</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The lifetime of the access token in seconds</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="issue_time=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="issue_time-instance_method">
+  
+    #<strong>issue_time</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>An iso8601 formatted string representing the time the access token was issued</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="jwks=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="jwks-instance_method">
+  
+    #<strong>jwks</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>A JWKS (including private keys) which will be used instead of Inferno’s default JWKS if provided</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="kid=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="kid-instance_method">
+  
+    #<strong>kid</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The key id for the keys to be used to sign the JWT client credentials.
+When blank, the first key for the selected encryption algorithm will be used</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="name=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="name-instance_method">
+  
+    #<strong>name</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="pkce_code_challenge_method=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="pkce_code_challenge_method-instance_method">
+  
+    #<strong>pkce_code_challenge_method</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Either <code>S256</code> (default) or <code>plain</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="pkce_support=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="pkce_support-instance_method">
+  
+    #<strong>pkce_support</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Whether PKCE will be used during authorization. Either <code>enabled</code> or <code>disabled</code>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="redirect_url=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="redirect_url-instance_method">
+  
+    #<strong>redirect_url</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="refresh_token=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="refresh_token-instance_method">
+  
+    #<strong>refresh_token</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="requested_scopes=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="requested_scopes-instance_method">
+  
+    #<strong>requested_scopes</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The scopes which will be requested during authorization</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="token_url=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="token_url-instance_method">
+  
+    #<strong>token_url</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The url of the auth server’s token endpoint</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/auth_info.rb', line 100</span>
+
+</pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Dec 19 19:22:20 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.1.2).
+</div>
+
+    </div>
+  </body>
+</html>
