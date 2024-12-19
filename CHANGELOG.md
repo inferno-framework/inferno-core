@@ -1,4 +1,4 @@
-## 0.5.3
+## 0.5.4
 * FI-3565: Upgrade validator dockerfile to match upstream by @dehall in https://github.com/inferno-framework/inferno-core/pull/576
 * FI-3440: Add IG entity and repository, integrated into Evaluate task by @dehall in https://github.com/inferno-framework/inferno-core/pull/573
 * Fi 3597 fix js build by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/579
