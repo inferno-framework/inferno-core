@@ -108,7 +108,7 @@ module Inferno
       end
 
       def initialize_git_repo
-        run 'git init && git add . && git commit -am "initial commit"'
+        run 'git init -q && git add . && git commit -aqm "initial commit"'
       end
 
       def load_igs
