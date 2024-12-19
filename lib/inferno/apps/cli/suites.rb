@@ -6,7 +6,7 @@ module Inferno
       def run
         ENV['NO_DB'] = 'true'
 
-        require_relative '../../../inferno'
+        # TODO delete me require_relative '../../../inferno'
 
         Inferno::Application.start(:suites)
 

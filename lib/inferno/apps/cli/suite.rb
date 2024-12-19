@@ -24,7 +24,7 @@ module Inferno
       LONGDESC
       def describe(suite_id)
         ENV['NO_DB'] = 'true'
-        require_relative '../../../inferno'
+        # TODO delete me require_relative '../../../inferno'
         Inferno::Application.start(:suites)
 
         suite = Inferno::Repositories::TestSuites.new.find(suite_id)
