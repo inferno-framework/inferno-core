@@ -29,12 +29,12 @@ const ShareSessionButton: FC<unknown> = () => {
 
   const copyLink = (readOnly?: boolean) => {
     handleMenuClose();
-    const link = `${window.location.href}${readOnly && '/view'}`;
+    const link = `${window.location.href}${readOnly ? '/view' : ''}`;
     void navigator.clipboard
       .writeText(link)
       .then(() => {
         setCopySuccess({ ...copySuccess, [link]: true });
-        enqueueSnackbar(`Successfully copied ${readOnly && 'read-only '}session link`, {
+        enqueueSnackbar(`Successfully copied ${readOnly ? 'read-only ' : ''}session link`, {
           variant: 'success',
         });
         setTimeout(() => {

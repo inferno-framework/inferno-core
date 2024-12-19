@@ -72,6 +72,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const currentRunnables = useTestSessionStore((state) => state.currentRunnables);
   const setCurrentRunnables = useTestSessionStore((state) => state.setCurrentRunnables);
   const setTestRunId = useTestSessionStore((state) => state.setTestRunId);
+  const setViewOnlySession = useTestSessionStore((state) => state.setViewOnly);
 
   const [inputModalVisible, setInputModalVisible] = React.useState(false);
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
@@ -349,6 +350,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       case 'config':
         // Config messages are only defined at the suite level.
         return <ConfigMessagesDetailsPanel testSuite={runnable as TestSuite} />;
+      case 'view':
+        setViewOnlySession(true);
+        break;
       default:
         return (
           <TestSuiteDetailsPanel
