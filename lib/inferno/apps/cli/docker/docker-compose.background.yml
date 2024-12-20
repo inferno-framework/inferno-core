@@ -1,4 +1,4 @@
-version: '3'
+name: inferno-services
 services:
   validator_service:
     image: infernocommunity/fhir-validator-service

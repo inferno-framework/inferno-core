@@ -3,7 +3,19 @@ module Inferno
     class Services < Thor
       no_commands do
         def base_command
-          'docker compose -f docker-compose.background.yml'
+
+          # We should check if we are in a Test Kit
+          # but the likelihood of this file being in the working dir
+          # of a user and not related to Inferno is extremely small.
+
+          compose_file = 'docker-compose.background.yml'
+          compose_path = if File.exist?("./#{compose_file}")
+                          compose_file
+                        else
+                          File.join(__dir__, 'docker', compose_file)
+                        end
+
+          "docker compose -f #{compose_path}"
         end
       end
 
