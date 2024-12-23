@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { TestSuite, TestGroup, PresetSummary, ViewType } from '~/models/testSuiteModels';
 import { Box, Divider, Typography } from '@mui/material';
 import { SimpleTreeView } from '@mui/x-tree-view';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -9,11 +8,13 @@ import FlagIcon from '@mui/icons-material/Flag';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { useAppStore } from '~/store/app';
+import { TestSuite, TestGroup, PresetSummary, ViewType } from '~/models/testSuiteModels';
 import CustomTreeItem from '~/components/_common/CustomTreeItem';
 import PresetsSelector from '~/components/PresetsSelector/PresetsSelector';
 import TestGroupTreeItem from '~/components/TestSuite/TestSuiteTree/TestGroupTreeItem';
 import TreeItemLabel from '~/components/TestSuite/TestSuiteTree/TreeItemLabel';
+import { useAppStore } from '~/store/app';
+import { useTestSessionStore } from '~/store/testSession';
 import lightTheme from '~/styles/theme';
 import useStyles from './styles';
 
@@ -45,12 +46,14 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
 }) => {
   const { classes } = useStyles();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const viewOnlyUrl = viewOnly ? '/view' : '';
 
   let selectedNode = selectedRunnable;
   if (view === 'report') {
-    selectedNode = `${selectedNode}/report`;
+    selectedNode = `${selectedNode}/report${viewOnlyUrl}`;
   } else if (view === 'config') {
-    selectedNode = `${selectedNode}/config`;
+    selectedNode = `${selectedNode}/config${viewOnlyUrl}`;
   }
 
   const defaultExpanded: string[] = [testSuite.id];
@@ -94,7 +97,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
 
       return (
         <CustomTreeItem
-          itemId={`${testSuite.id}/config`}
+          itemId={`${testSuite.id}/config${viewOnlyUrl}`}
           label={
             <Typography component="div" alignItems="center" sx={{ display: 'flex' }}>
               <TreeItemLabel title={'Configuration Messages'} />
@@ -105,7 +108,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           className={classes.treeItemTopBorder}
           // eslint-disable-next-line max-len
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-          ContentProps={{ testId: `${testSuite.id}/config` } as any}
+          ContentProps={{ testId: `${testSuite.id}/config${viewOnlyUrl}` } as any}
         />
       );
     };
@@ -141,23 +144,23 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
         >
           <CustomTreeItem
             classes={{ content: classes.treeRoot }}
-            itemId={testSuite.id}
+            itemId={`${testSuite.id}${viewOnlyUrl}`}
             label={<TreeItemLabel runnable={testSuite} />}
             slots={{ icon: ListAltIcon }}
             className={classes.treeItemBottomBorder}
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-            ContentProps={{ testId: testSuite.id } as any}
+            ContentProps={{ testId: `${testSuite.id}${viewOnlyUrl}` } as any}
           />
           {testGroupList}
           <CustomTreeItem
-            itemId={`${testSuite.id}/report`}
+            itemId={`#${testSuite.id}/report${viewOnlyUrl}`}
             label={<TreeItemLabel title={'Report'} />}
             slots={{ icon: FlagIcon }}
             className={`${classes.treeItemTopBorder} ${classes.treeItemBottomBorder}`}
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-            ContentProps={{ testId: `${testSuite.id}/report` } as any}
+            ContentProps={{ testId: `${testSuite.id}/report${viewOnlyUrl}` } as any}
           />
           <Box display="flex" alignItems="flex-end" flexGrow={1} mt={windowIsSmall ? 0 : 8}>
             <Box width="100%">{renderConfigMessagesTreeItem()}</Box>

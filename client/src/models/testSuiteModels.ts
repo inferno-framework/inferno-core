@@ -153,7 +153,7 @@ export interface TestSession {
   suite_options?: SuiteOption[];
 }
 
-export type ViewType = 'run' | 'view' | 'report' | 'config';
+export type ViewType = 'run' | 'report' | 'config';
 
 // ==========================================
 // RUNNABLES

@@ -116,6 +116,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   });
 
   useEffect(() => {
+    // Poll for previous results
     if (!testRun && initialTestRun) {
       setTestRun(initialTestRun);
       if (testRunIsInProgress(initialTestRun)) {
@@ -124,6 +125,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       }
     }
 
+    // If test run is still running, set variables accordingly
     if (testRunIsInProgress(testRun)) {
       const runnableId = currentRunnables[testSession.id];
       const runnable = runnableMap.get(runnableId);
@@ -334,6 +336,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   );
 
   const renderView = (view: ViewType) => {
+    // Set view-only session status based on URL ending
+    console.log(splitLocation);
+    setViewOnlySession(splitLocation.includes('view'));
+
     const runnable = runnableMap.get(selectedRunnable);
     if (!runnable) return null;
     switch (view) {
@@ -350,9 +356,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       case 'config':
         // Config messages are only defined at the suite level.
         return <ConfigMessagesDetailsPanel testSuite={runnable as TestSuite} />;
-      case 'view':
-        setViewOnlySession(true);
-        break;
       default:
         return (
           <TestSuiteDetailsPanel
