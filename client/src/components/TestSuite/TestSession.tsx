@@ -337,7 +337,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const renderView = (view: ViewType) => {
     // Set view-only session status based on URL ending
-    console.log(splitLocation);
     setViewOnlySession(splitLocation.includes('view'));
 
     const runnable = runnableMap.get(selectedRunnable);

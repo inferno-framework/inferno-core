@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Alert, AlertColor, Box } from '@mui/material';
 import { Message } from '~/models/testSuiteModels';
+import { useTestSessionStore } from '~/store/testSession';
 import useStyles from './styles';
 
 interface TestSuiteMessagesProps {
@@ -12,6 +13,7 @@ interface TestSuiteMessagesProps {
 const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }) => {
   const navigate = useNavigate();
   const { classes } = useStyles();
+  const viewOnlySession = useTestSessionStore((state) => state.viewOnly);
 
   const errorMessages = messages.filter((message) => message.type === 'error');
   const warningMessages = messages.filter((message) => message.type === 'warning');
@@ -24,11 +26,11 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }
         severity={severity}
         variant="filled"
         onClick={() => {
-          navigate(`#${testSuiteId || ''}/config`);
+          navigate(`#${testSuiteId || ''}/config${viewOnlySession ? '/view' : ''}`);
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            navigate(`#${testSuiteId || ''}/config`);
+            navigate(`#${testSuiteId || ''}/config${viewOnlySession ? '/view' : ''}`);
           }
         }}
         className={classes.alert}
