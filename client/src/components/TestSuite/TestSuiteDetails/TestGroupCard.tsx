@@ -3,10 +3,11 @@ import { Box, Card, Divider, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
-import InputOutputList from './TestListItem/InputOutputList';
-import ResultIcon from './ResultIcon';
-import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
+import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
+import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
+import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
+import { useTestSessionStore } from '~/store/testSession';
 import useStyles from './styles';
 
 interface TestGroupCardProps {
@@ -18,8 +19,9 @@ interface TestGroupCardProps {
 
 const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, view }) => {
   const { classes } = useStyles();
+  const viewOnlySession = useTestSessionStore((state) => state.viewOnly);
 
-  const buttonText = runnable.run_as_group ? 'Run Tests' : 'Run All Tests';
+  const buttonText = `${viewOnlySession ? 'View' : 'Run'}${runnable.run_as_group ? '' : ' All'} Tests`;
 
   // render markdown once on mount - it's too slow with re-rendering
   const description = useMemo(() => {

@@ -1,10 +1,12 @@
 import React, { FC } from 'react';
-import useStyles from './styles';
-import { Box, Divider, Link, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Box, Divider, List, ListItem, ListItemText, Typography } from '@mui/material';
 import FolderIcon from '@mui/icons-material/Folder';
+import { Link } from 'react-router-dom';
 import { TestGroup } from '~/models/testSuiteModels';
-import ResultIcon from '../ResultIcon';
+import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
+import { useTestSessionStore } from '~/store/testSession';
 import theme from '~/styles/theme';
+import useStyles from './styles';
 
 interface NavigableGroupListItemProps {
   testGroup: TestGroup;
@@ -12,6 +14,7 @@ interface NavigableGroupListItemProps {
 
 const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) => {
   const { classes } = useStyles();
+  const viewOnlySession = useTestSessionStore((state) => state.viewOnly);
 
   return (
     <>
@@ -32,10 +35,9 @@ const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) 
                     <Typography className={classes.shortId}>{`${testGroup.short_id} `}</Typography>
                   )}
                   <Link
-                    color="secondary.dark"
-                    fontWeight="bold"
-                    href={`${location.pathname}#${testGroup.id}`}
+                    to={`#${testGroup.id}${viewOnlySession ? '/view' : ''}`}
                     data-testid="navigable-group-item"
+                    className={classes.groupLink}
                   >
                     {testGroup.title}
                   </Link>
