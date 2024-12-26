@@ -13,7 +13,7 @@ interface TestSuiteMessagesProps {
 const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }) => {
   const navigate = useNavigate();
   const { classes } = useStyles();
-  const viewOnlySession = useTestSessionStore((state) => state.viewOnly);
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
 
   const errorMessages = messages.filter((message) => message.type === 'error');
   const warningMessages = messages.filter((message) => message.type === 'warning');
@@ -26,11 +26,11 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }
         severity={severity}
         variant="filled"
         onClick={() => {
-          navigate(`#${testSuiteId || ''}/config${viewOnlySession ? '/view' : ''}`);
+          navigate(`#${testSuiteId || ''}/config${viewOnly ? '/view' : ''}`);
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            navigate(`#${testSuiteId || ''}/config${viewOnlySession ? '/view' : ''}`);
+            navigate(`#${testSuiteId || ''}/config${viewOnly ? '/view' : ''}`);
           }
         }}
         className={classes.alert}

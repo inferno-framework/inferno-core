@@ -14,7 +14,7 @@ interface NavigableGroupListItemProps {
 
 const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) => {
   const { classes } = useStyles();
-  const viewOnlySession = useTestSessionStore((state) => state.viewOnly);
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
 
   return (
     <>
@@ -35,7 +35,7 @@ const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) 
                     <Typography className={classes.shortId}>{`${testGroup.short_id} `}</Typography>
                   )}
                   <Link
-                    to={`#${testGroup.id}${viewOnlySession ? '/view' : ''}`}
+                    to={`#${testGroup.id}${viewOnly ? '/view' : ''}`}
                     data-testid="navigable-group-item"
                     className={classes.groupLink}
                   >

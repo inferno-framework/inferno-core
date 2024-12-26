@@ -3,7 +3,8 @@ import { Autocomplete, FormControl, FormLabel, ListItem, TextField } from '@mui/
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { InputOption, TestInput } from '~/models/testSuiteModels';
-import FieldLabel from './FieldLabel';
+import FieldLabel from '~/components/InputsModal/FieldLabel';
+import { useTestSessionStore } from '~/store/testSession';
 import useStyles from './styles';
 
 export interface InputComboboxProps {
@@ -22,6 +23,7 @@ const InputCombobox: FC<InputComboboxProps> = ({
   disableClear,
 }) => {
   const { classes } = useStyles();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
 
   const getDefaultValue = (): InputOption | null => {
     const options = input.options?.list_options;
@@ -40,7 +42,9 @@ const InputCombobox: FC<InputComboboxProps> = ({
       <FormControl
         component="fieldset"
         id={`input${index}_control`}
-        disabled={input.locked}
+        tabIndex={0}
+        disabled={input.locked || viewOnly}
+        aria-disabled={input.locked || viewOnly}
         required={!input.optional}
         fullWidth
         className={classes.inputField}
@@ -57,7 +61,9 @@ const InputCombobox: FC<InputComboboxProps> = ({
           id={`input${index}_autocomplete`}
           options={input.options?.list_options || []}
           defaultValue={getDefaultValue()}
-          disabled={input.locked}
+          tabIndex={0}
+          disabled={input.locked || viewOnly}
+          aria-disabled={input.locked || viewOnly}
           disableClearable={disableClear}
           isOptionEqualToValue={(option, value) => option.value === value.value}
           renderInput={(params) => (

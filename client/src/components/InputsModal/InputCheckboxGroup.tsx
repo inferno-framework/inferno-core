@@ -12,6 +12,7 @@ import remarkGfm from 'remark-gfm';
 import { CheckboxValues, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from './FieldLabel';
 import useStyles from './styles';
+import { useTestSessionStore } from '~/store/testSession';
 
 export interface InputCheckboxGroupProps {
   input: TestInput;
@@ -27,6 +28,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const [hasBeenModified, setHasBeenModified] = React.useState(false);
 
   const [values, setValues] = React.useState<CheckboxValues>(() => {
@@ -98,7 +100,9 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
       <FormControl
         component="fieldset"
         id={`requirement${index}_input`}
-        disabled={input.locked}
+        tabIndex={0}
+        disabled={input.locked || viewOnly}
+        aria-disabled={input.locked || viewOnly}
         required={!input.optional}
         error={isMissingInput}
         fullWidth
@@ -120,7 +124,9 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
                   size="small"
                   color="secondary"
                   name={option.value}
-                  disabled={!!option.locked}
+                  tabIndex={0}
+                  disabled={!!option.locked || viewOnly}
+                  aria-disabled={input.locked || viewOnly}
                   checked={values[option.value as keyof CheckboxValues] || false}
                   onBlur={(e) => {
                     if (e.currentTarget === e.target) {

@@ -23,7 +23,7 @@ export interface PresetsModalProps {
 
 const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSessionData }) => {
   const { enqueueSnackbar } = useSnackbar();
-  const viewOnlySession = useTestSessionStore((state) => state.viewOnly);
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const null_preset = { id: 'NULL_PRESET', title: 'None' };
   const presetTitleToIdMap: { [key: string]: string } = presets.reduce(
     (reducedObj, preset) => ({ ...reducedObj, [preset.title]: preset.id }),
@@ -87,7 +87,7 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
       <TextField
         id="preset-select"
         label="Preset"
-        disabled={viewOnlySession}
+        disabled={viewOnly}
         size="small"
         fullWidth
         select

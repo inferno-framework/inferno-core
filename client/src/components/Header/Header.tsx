@@ -11,6 +11,7 @@ import lightTheme from '~/styles/theme';
 import CustomTooltip from '~/components/_common/CustomTooltip';
 import ShareSessionButton from '~/components/Header/ShareSessionButton';
 import HeaderSkeleton from '~/components/Skeletons/HeaderSkeleton';
+import { useTestSessionStore } from '~/store/testSession';
 
 export interface HeaderProps {
   suiteId?: string;
@@ -32,6 +33,7 @@ const Header: FC<HeaderProps> = ({
   const { classes } = useStyles();
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
 
   const suiteOptionsString =
     suiteOptions && suiteOptions.length > 0
@@ -95,6 +97,7 @@ const Header: FC<HeaderProps> = ({
                 className={classes.homeLink}
               >
                 {suiteTitle}
+                {viewOnly ? ' (View Only)' : ''}
               </Link>
             </Typography>
             {suiteVersion && (

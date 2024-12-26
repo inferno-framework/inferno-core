@@ -3,10 +3,10 @@ import { Box, List, ListItem } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Auth, TestInput } from '~/models/testSuiteModels';
-import InputFields from './InputFields';
+import { AuthType, getAuthFields } from '~/components/InputsModal/AuthSettings';
+import AuthTypeSelector from '~/components/InputsModal/AuthTypeSelector';
+import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from './styles';
-import { AuthType, getAuthFields } from './AuthSettings';
-import AuthTypeSelector from './AuthTypeSelector';
 
 export interface InputAuthProps {
   input: TestInput;

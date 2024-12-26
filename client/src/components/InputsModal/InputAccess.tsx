@@ -8,6 +8,7 @@ import FieldLabel from '~/components/InputsModal/FieldLabel';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from './styles';
 import AuthTypeSelector from './AuthTypeSelector';
+import { useTestSessionStore } from '~/store/testSession';
 
 export interface InputAccessProps {
   input: TestInput;
@@ -18,6 +19,7 @@ export interface InputAccessProps {
 
 const InputAccess: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const [accessValues, setAccessValues] = React.useState<Map<string, unknown>>(new Map());
   const [accessValuesPopulated, setAccessValuesPopulated] = React.useState<boolean>(false);
 
@@ -106,11 +108,13 @@ const InputAccess: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsM
 
   return (
     <ListItem>
-      <Card variant="outlined" className={classes.authCard}>
+      <Card variant="outlined" tabIndex={0} className={classes.authCard}>
         <CardContent>
           <InputLabel
+            tabIndex={0}
             required={!input.optional}
-            disabled={input.locked}
+            disabled={input.locked || viewOnly}
+            aria-disabled={input.locked || viewOnly}
             className={classes.inputLabel}
           >
             <FieldLabel input={input} />
