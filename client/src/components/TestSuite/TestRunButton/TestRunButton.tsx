@@ -23,6 +23,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
   buttonText,
 }) => {
   const currentRunnables = useTestSessionStore((state) => state.currentRunnables);
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const showRunButton = (runnable as TestGroup).user_runnable !== false;
   const inProgress = testRunInProgress(currentRunnables, useLocation().pathname);
 
@@ -45,9 +46,12 @@ const TestRunButton: FC<TestRunButtonProps> = ({
 
   // Custom icon button to resolve nested interactive control error
   const iconButton = (
-    <CustomTooltip describeChild title={`Run ${runnable.title}`}>
+    <CustomTooltip
+      describeChild
+      title={viewOnly ? `View ${runnable.title} Inputs` : `Run ${runnable.title}`}
+    >
       <PlayCircleIcon
-        aria-label={`Run ${runnable.title}${inProgress ? ' Disabled - Test Run in Progress' : ''}`}
+        aria-label={`${viewOnly ? 'View' : 'Run'} ${runnable.title}${inProgress ? ' Disabled - Test Run in Progress' : ''}`}
         aria-hidden={false}
         tabIndex={0}
         color={inProgress ? 'disabled' : 'secondary'}
