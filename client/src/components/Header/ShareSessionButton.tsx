@@ -12,29 +12,38 @@ import {
 import { EditOff, Link, Share } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { useAppStore } from '~/store/app';
-// import useStyles from './styles';
 import lightTheme from '~/styles/theme';
+import { useLocation } from 'react-router-dom';
 
 const ShareSessionButton: FC<unknown> = () => {
-  // const { classes } = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+  const location = useLocation();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [copySuccess, setCopySuccess] = React.useState({});
   const openShareMenu = Boolean(anchorEl);
 
-  const handleShareClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  // Adds and removes '/view' from the URL when necessary
+  const composeUrl = (viewOnly?: boolean): string => {
+    let viewOnlyUrlEnding = location.hash;
+    if (viewOnly && !viewOnlyUrlEnding.includes('/view')) {
+      viewOnlyUrlEnding += '/view';
+    }
+    if (!viewOnly && viewOnlyUrlEnding.includes('/view')) {
+      const viewStringIndex = viewOnlyUrlEnding.indexOf('/view');
+      viewOnlyUrlEnding = viewOnlyUrlEnding.substring(0, viewStringIndex);
+    }
+    return `${window.location.origin}${window.location.pathname}${viewOnlyUrlEnding}`;
   };
 
-  const copyLink = (readOnly?: boolean) => {
+  const copyLink = (viewOnly?: boolean) => {
     handleMenuClose();
-    const link = `${window.location.href}${readOnly ? '/view' : ''}`;
+    const url = composeUrl(viewOnly);
     void navigator.clipboard
-      .writeText(link)
+      .writeText(url)
       .then(() => {
-        setCopySuccess({ ...copySuccess, [link]: true });
-        enqueueSnackbar(`Successfully copied ${readOnly ? 'read-only ' : ''}session link`, {
+        setCopySuccess({ ...copySuccess, [url]: true });
+        enqueueSnackbar(`Successfully copied ${viewOnly ? 'read-only ' : ''}session link`, {
           variant: 'success',
         });
         setTimeout(() => {
@@ -45,6 +54,10 @@ const ShareSessionButton: FC<unknown> = () => {
       .catch((e) => {
         enqueueSnackbar(`Failed to copy session link: ${e}`, { variant: 'error' });
       });
+  };
+
+  const handleShareClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {

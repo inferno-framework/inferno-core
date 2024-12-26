@@ -72,7 +72,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const currentRunnables = useTestSessionStore((state) => state.currentRunnables);
   const setCurrentRunnables = useTestSessionStore((state) => state.setCurrentRunnables);
   const setTestRunId = useTestSessionStore((state) => state.setTestRunId);
-  const setViewOnlySession = useTestSessionStore((state) => state.setViewOnly);
 
   const [inputModalVisible, setInputModalVisible] = React.useState(false);
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
@@ -336,9 +335,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   );
 
   const renderView = (view: ViewType) => {
-    // Set view-only session status based on URL ending
-    setViewOnlySession(splitLocation.includes('view'));
-
     const runnable = runnableMap.get(selectedRunnable);
     if (!runnable) return null;
     switch (view) {

@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { Alert, Box, Fade } from '@mui/material';
 import {
@@ -26,10 +26,12 @@ import Header from '~/components/Header';
 import HeaderSkeleton from '~/components/Skeletons/HeaderSkeleton';
 import TestSessionComponent from '~/components/TestSuite/TestSession';
 import { useAppStore } from '~/store/app';
+import { useTestSessionStore } from '~/store/testSession';
 
 const TestSessionWrapper: FC<unknown> = () => {
   const { enqueueSnackbar } = useSnackbar();
   const testSuites = useAppStore((state) => state.testSuites);
+  const setViewOnlySession = useTestSessionStore((state) => state.setViewOnly);
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [testSession, setTestSession] = React.useState<TestSession>();
   const [testResults, setTestResults] = React.useState<Result[]>();
@@ -42,6 +44,9 @@ const TestSessionWrapper: FC<unknown> = () => {
   const [coreVersion, setCoreVersion] = React.useState<string>('');
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
+  // Set view-only session status based on URL ending
+  const splitLocation = useLocation().hash.replace('#', '').split('/');
+
   useEffect(() => {
     getCoreVersion()
       .then((version: string) => {
@@ -50,6 +55,7 @@ const TestSessionWrapper: FC<unknown> = () => {
       .catch(() => {
         setCoreVersion('');
       });
+    setViewOnlySession(splitLocation.includes('view'));
   }, []);
 
   function tryGetTestSession(test_session_id: string) {
