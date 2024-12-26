@@ -26,6 +26,10 @@ const ShareSessionButton: FC<unknown> = () => {
   // Adds and removes '/view' from the URL when necessary
   const composeUrl = (viewOnly?: boolean): string => {
     let viewOnlyUrlEnding = location.hash;
+    // Remove trailing /
+    while (viewOnlyUrlEnding.endsWith('/')) {
+      viewOnlyUrlEnding = viewOnlyUrlEnding.slice(0, -1);
+    }
     if (viewOnly && !viewOnlyUrlEnding.includes('/view')) {
       viewOnlyUrlEnding += '/view';
     }
