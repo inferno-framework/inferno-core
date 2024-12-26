@@ -25,6 +25,9 @@ RUN adduser $APPLICATION_USER
 RUN mkdir /app
 RUN chown -R $APPLICATION_USER /app
 
+RUN mkdir /home/$APPLICATION_USER/.fhir
+RUN chown -R $APPLICATION_USER /home/$APPLICATION_USER/.fhir
+
 USER $APPLICATION_USER
 
 # These lines copy the packaged application into the Docker image and sets the working directory to where it was copied.

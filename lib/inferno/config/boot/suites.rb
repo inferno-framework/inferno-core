@@ -6,6 +6,7 @@ Inferno::Application.register_provider(:suites) do
     require 'inferno/entities/test_group'
     require 'inferno/entities/test_suite'
     require 'inferno/entities/test_kit'
+    require 'inferno/route_storage'
 
     files_to_load = Dir.glob(File.join(Dir.pwd, 'lib', '*.rb'))
 
