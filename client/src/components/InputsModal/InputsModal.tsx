@@ -272,7 +272,7 @@ const InputsModal: FC<InputsModalProps> = ({
             variant="contained"
             disableElevation
             onClick={submitClicked}
-            disabled={missingRequiredInput || invalidInput}
+            disabled={missingRequiredInput || invalidInput || viewOnly}
             sx={{ fontWeight: 'bold' }}
           >
             Submit

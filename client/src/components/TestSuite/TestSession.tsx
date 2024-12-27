@@ -262,7 +262,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     if (runnable?.inputs && runnable.inputs.length > 0) {
       showInputsModal(runnable, runnableType);
     } else if (viewOnly) {
-      enqueueSnackbar('No inputs to show', { variant: 'info' });
+      enqueueSnackbar(`${runnable?.title} has no inputs`, { variant: 'info' });
     } else {
       createTestRun(runnableType, runnableId, []);
     }
