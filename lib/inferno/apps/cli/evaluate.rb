@@ -1,4 +1,5 @@
 require_relative '../../../inferno/dsl/fhir_evaluation/evaluator'
+require_relative '../../../inferno/dsl/fhir_evaluation/config'
 require_relative '../../../inferno/entities'
 require_relative '../../utils/ig_downloader'
 
@@ -14,19 +15,26 @@ module Inferno
         validate_args(ig_path, data_path)
         _ig = get_ig(ig_path)
 
+        puts "Loaded #{_ig.id}: " \
+        "#{_ig.profiles.length} profiles, " \
+        "#{_ig.extensions.length} extensions, " \
+        "#{_ig.value_sets.length} value sets, " \
+        "#{_ig.examples.length} examples from #{ig_path} \n\n"
+
         # Rule execution, and result output below will be integrated soon.
 
-        # if data_path
-        #   DatasetLoader.from_path(File.join(__dir__, data_path))
-        # else
-        #   ig.examples
-        # end
+        data = 
+          if data_path
+            DatasetLoader.from_path(File.join(__dir__, data_path))
+          else
+            _ig.examples
+          end
 
-        # config = Config.new
-        # evaluator = Inferno::DSL::FHIREvaluation::Evaluator.new(data, config)
+        evaluator = Inferno::DSL::FHIREvaluation::Evaluator.new(_ig)
 
-        # results = evaluate()
-        # output_results(results, options[:output])
+        config = Inferno::DSL::FHIREvaluation::Config.new
+        results = evaluator.evaluate(data, config)
+        output_results(results, options[:output])
       end
 
       def validate_args(ig_path, data_path)
