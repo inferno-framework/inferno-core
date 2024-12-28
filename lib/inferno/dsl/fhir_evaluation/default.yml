@@ -7,5 +7,7 @@ Environment:
     Url: 'https://cts.nlm.nih.gov'
 
 Rule:
-  AllReferencesResolve: true
-  AllResourcesReachable: true
+  AllReferencesResolve: 
+    Enabled: true
+  AllResourcesReachable:
+    Enabled: true

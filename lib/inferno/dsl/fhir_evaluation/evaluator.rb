@@ -19,6 +19,10 @@ module Inferno
         def evaluate(data, config = Config.new)
           context = EvaluationContext.new(@ig, data, config)
 
+          Dir.glob(File.join(__dir__, 'rules', '*.rb')).each do |file|
+            require_relative file
+          end
+
           active_rules = []
           config.data['Rule'].each do |rulename, rule_details|
             active_rules << rulename if rule_details['Enabled']
