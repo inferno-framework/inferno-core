@@ -75,9 +75,15 @@ RSpec.shared_examples 'deployable_test_kit' do
       presets = Dir[
         File.join(base_path, 'config', 'presets', '*.json'),
         File.join(base_path, 'config', 'presets', '*.json.erb')
-      ]
+      ].map { |file_path| file_path.delete_prefix "#{Dir.pwd}/" }
 
-      expect(test_kit_gem.files).to include(*presets)
+      missing_presets = presets - test_kit_gem.files
+
+      error_message =
+        "The following presets are not included in the gem: #{missing_presets.join(', ')}\n" \
+        "Ensure that config/presets is included in spec.files in #{test_kit_gem.name}.gemspec"
+
+      expect(missing_presets).to be_empty, error_message
     end
   end
 
@@ -91,6 +97,13 @@ RSpec.shared_examples 'deployable_test_kit' do
         "spec.files = `[ -d .git ] && git ls-files -z lib config/presets LICENSE`.split(\"\\x0\")\n"
 
       expect(gemspec_contents).to include('[ -d .git ] && git ls-files'), error_message
+    end
+
+    it 'includes the inferno test kit metadata tag' do
+      error_message =
+        %(Add "spec.metadata['inferno_test_kit'] = 'true'" to #{test_kit_gem.name}.gemspec)
+
+      expect(test_kit_gem.metadata['inferno_test_kit']).to eq('true'), error_message
     end
   end
 end
