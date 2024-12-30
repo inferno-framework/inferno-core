@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../utils/evaluator_util'
+
 module Inferno
   module DSL
     module FHIREvaluation
@@ -22,7 +24,7 @@ module Inferno
             # every resource is either making a resolvable reference or is referenced
             @referenced_resources = Set.new
             @referencing_resources = Set.new
-            @resource_type_ids, @resource_ids, references = Util.extract_ids_references(context.data)
+            @resource_type_ids, @resource_ids, references = Inferno::Utils::EvaluatorUtil.extract_ids_references(context.data)
             references.each do |id, refs|
               assess_reachability(id, refs)
             end
