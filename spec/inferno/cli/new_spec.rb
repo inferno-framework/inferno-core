@@ -27,14 +27,15 @@ RSpec.describe Inferno::CLI::New do
       expect { described_class.start(cli_args) }.to_not raise_error
 
       expect(Dir).to exist('test-fhir-app')
+      expect(Dir).to exist('test-fhir-app/.git')
       expect(File).to exist('test-fhir-app/Gemfile')
       expect(File).to exist('test-fhir-app/test_fhir_app.gemspec')
       expect(File).to exist('test-fhir-app/lib/test_fhir_app.rb')
 
       if cli_args.count('--author') == 1
-        expect(File.read('test-fhir-app/lib/test_fhir_app/metadata.rb')).to include('authors ["ABC"]')
+        expect(File.read('test-fhir-app/lib/test_fhir_app/metadata.rb')).to include("authors ['ABC']")
       elsif cli_args.count('--author') == 2
-        expect(File.read('test-fhir-app/lib/test_fhir_app/metadata.rb')).to include('authors ["ABC", "DEF"]')
+        expect(File.read('test-fhir-app/lib/test_fhir_app/metadata.rb')).to include("authors ['ABC','DEF']")
       end
 
       if cli_args.count('--implementation-guide') == 1

@@ -71,6 +71,7 @@ module Inferno
         inside(root_name) do
           bundle_install
           inferno_migrate
+          initialize_git_repo
           load_igs
         end
 
@@ -85,7 +86,7 @@ module Inferno
       private
 
       def authors
-        options['author'].presence || [default_author]
+        (options['author'].presence || [default_author]).to_json.gsub('"', "'")
       end
 
       def default_author
@@ -104,6 +105,10 @@ module Inferno
         return if options['skip_bundle']
 
         run 'bundle exec inferno migrate', verbose: !options['quiet'], capture: options['quiet']
+      end
+
+      def initialize_git_repo
+        run 'git init -q && git add . && git commit -aqm "initial commit"'
       end
 
       def load_igs
