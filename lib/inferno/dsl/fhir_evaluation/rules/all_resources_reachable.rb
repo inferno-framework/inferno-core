@@ -22,19 +22,24 @@ module Inferno
             # TODO: can come up with a "connectedness metric" to see how well-connected the data set is
 
             # every resource is either making a resolvable reference or is referenced
+            util = Inferno::Utils::EvaluatorUtil
             @referenced_resources = Set.new
             @referencing_resources = Set.new
-            @resource_type_ids, @resource_ids, references = Inferno::Utils::EvaluatorUtil.extract_ids_references(context.data)
+            @resourcetype_ids, @resource_type_ids, @resource_ids, references = util.extract_ids_references(context.data)
             references.each do |id, refs|
               assess_reachability(id, refs)
             end
 
             island_resources = @resource_ids - @referenced_resources - @referencing_resources
+            sorted_island_resources = []
+            island_resources.each do |id|
+              types = @resourcetype_ids.select { |_key, values| values.include?(id) }.keys
+              sorted_island_resources << ("#{types[0]}/#{id}")
+            end
 
-            if island_resources.any?
-              sorted_island_resources = Set.new(island_resources.to_a.sort)
+            if sorted_island_resources.any?
               message = "Found resources that have no resolved references and are not referenced: #{
-            sorted_island_resources.to_a.join(', ')}"
+            sorted_island_resources.join(', ')}"
               result = EvaluationResult.new(message, rule: self)
             else
               message = 'All resources are reachable'

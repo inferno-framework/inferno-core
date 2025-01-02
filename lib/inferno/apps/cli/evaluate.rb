@@ -13,13 +13,13 @@ module Inferno
 
       def evaluate(ig_path, data_path, _log_level)
         validate_args(ig_path, data_path)
-        _ig = get_ig(ig_path)
+        ig = get_ig(ig_path)
 
-        puts "Loaded #{_ig.id}: " \
-             "#{_ig.profiles.length} profiles, " \
-             "#{_ig.extensions.length} extensions, " \
-             "#{_ig.value_sets.length} value sets, " \
-             "#{_ig.examples.length} examples from #{ig_path} \n\n"
+        # puts "Loaded #{_ig.id}: " \
+        #      "#{_ig.profiles.length} profiles, " \
+        #      "#{_ig.extensions.length} extensions, " \
+        #      "#{_ig.value_sets.length} value sets, " \
+        #      "#{_ig.examples.length} examples from #{ig_path} \n\n"
 
         # Rule execution, and result output below will be integrated soon.
 
@@ -27,10 +27,10 @@ module Inferno
           if data_path
             DatasetLoader.from_path(File.join(__dir__, data_path))
           else
-            _ig.examples
+            ig.examples
           end
 
-        evaluator = Inferno::DSL::FHIREvaluation::Evaluator.new(_ig)
+        evaluator = Inferno::DSL::FHIREvaluation::Evaluator.new(ig)
 
         config = Inferno::DSL::FHIREvaluation::Config.new
         results = evaluator.evaluate(data, config)

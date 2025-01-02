@@ -10,7 +10,8 @@ module Inferno
           def check(context)
             # resource_type_ids is for quick look up when there is a reference type
             # resource_ids is for quick look up when there is no type (i.e. uuid used)
-            resource_type_ids, resource_ids, references = Inferno::Utils::EvaluatorUtil.extract_ids_references(context.data)
+            util = Inferno::Utils::EvaluatorUtil
+            _, resource_type_ids, resource_ids, references = util.extract_ids_references(context.data)
             unresolved_references = Hash.new { |h, k| h[k] = [] }
             references.each do |k, v|
               v.each do |reference|
