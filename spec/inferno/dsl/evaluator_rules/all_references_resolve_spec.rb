@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../../../../lib/inferno/dsl/fhir_evaluation/rules/all_references_resolve'
 
 RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
