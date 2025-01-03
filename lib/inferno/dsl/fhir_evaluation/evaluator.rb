@@ -5,6 +5,8 @@ require_relative 'rule'
 require_relative 'evaluation_context'
 require_relative 'evaluation_result'
 require_relative 'dataset_loader'
+require_relative 'rules/all_references_resolve'
+require_relative 'rules/all_resources_reachable'
 
 module Inferno
   module DSL
@@ -18,10 +20,6 @@ module Inferno
 
         def evaluate(data, config = Config.new)
           context = EvaluationContext.new(@ig, data, config)
-
-          Dir.glob(File.join(__dir__, 'rules', '*.rb')).each do |file|
-            require_relative file
-          end
 
           active_rules = []
           config.data['Rule'].each do |rulename, rule_details|

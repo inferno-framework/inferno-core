@@ -11,15 +11,6 @@ module Inferno
 
           def check(context)
             @config = context.config
-            # TODO: add some customizable configurations for this rule:
-            # - whether it should be checked at all
-            # - determine the base/root resource
-            # - which types/resources to ignore
-            # TODO: for the customizable configurations, use the config settings below:
-            # config.Rule.AllResourcesReachable.CheckedAtAll: true/false
-            # config.Rule.AllResourcesReachable.RunOnlyBaseResource: true/false
-            # config.Rule.AllResourcesReachable.IgnoreType: - value
-            # TODO: can come up with a "connectedness metric" to see how well-connected the data set is
 
             # every resource is either making a resolvable reference or is referenced
             util = Inferno::Utils::EvaluatorUtil
