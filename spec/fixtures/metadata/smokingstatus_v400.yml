@@ -1,0 +1,258 @@
+---
+:name: us_core_smokingstatus
+:class_name: USCorev400SmokingstatusSequence
+:version: v4.0.0
+:reformatted_version: v400
+:resource: Observation
+:profile_url: http://hl7.org/fhir/us/core/StructureDefinition/us-core-smokingstatus
+:profile_name: US Core Smoking Status Observation Profile
+:profile_version: 4.0.0
+:title: Observation Smoking Status
+:short_description: Verify support for the server capabilities required by the US
+  Core Smoking Status Observation Profile.
+:is_delayed: false
+:interactions:
+- :code: create
+  :expectation: MAY
+- :code: search-type
+  :expectation: SHALL
+- :code: read
+  :expectation: SHALL
+- :code: vread
+  :expectation: SHOULD
+- :code: update
+  :expectation: MAY
+- :code: patch
+  :expectation: MAY
+- :code: delete
+  :expectation: MAY
+- :code: history-instance
+  :expectation: SHOULD
+- :code: history-type
+  :expectation: MAY
+:operations: []
+:searches:
+- :expectation: SHALL
+  :names:
+  - patient
+  - code
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - category
+  - status
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - code
+  - date
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHALL
+  :names:
+  - patient
+  - category
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHALL
+  :names:
+  - patient
+  - category
+  - date
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+:search_definitions:
+  :patient:
+    :paths:
+    - subject
+    :full_paths:
+    - Observation.subject
+    :comparators: {}
+    :values: []
+    :type: Reference
+    :contains_multiple: false
+    :multiple_or: MAY
+  :category:
+    :paths:
+    - category
+    :full_paths:
+    - Observation.category
+    :comparators: {}
+    :values:
+    - social-history
+    :type: CodeableConcept
+    :contains_multiple: true
+    :multiple_or: MAY
+  :status:
+    :paths:
+    - status
+    :full_paths:
+    - Observation.status
+    :comparators: {}
+    :values:
+    - final
+    - entered-in-error
+    :type: code
+    :contains_multiple: false
+    :multiple_or: SHALL
+  :code:
+    :paths:
+    - code
+    :full_paths:
+    - Observation.code
+    :comparators: {}
+    :values:
+    - 72166-2
+    :type: CodeableConcept
+    :contains_multiple: false
+    :multiple_or: SHOULD
+  :date:
+    :paths:
+    - effective
+    :full_paths:
+    - Observation.effective
+    :comparators:
+      :eq: MAY
+      :ne: MAY
+      :gt: SHALL
+      :ge: SHALL
+      :lt: SHALL
+      :le: SHALL
+      :sa: MAY
+      :eb: MAY
+      :ap: MAY
+    :values: []
+    :type: date
+    :contains_multiple: false
+    :multiple_or: MAY
+:include_params: []
+:revincludes:
+- Provenance:target
+:required_concepts: []
+:must_supports:
+  :extensions: []
+  :slices:
+  - :slice_id: Observation.category:SocialHistory
+    :slice_name: SocialHistory
+    :path: category
+    :discriminator:
+      :type: patternCodeableConcept
+      :path: ''
+      :code: social-history
+      :system: http://terminology.hl7.org/CodeSystem/observation-category
+  - :slice_id: Observation.effective[x]:effectiveDateTime
+    :slice_name: effectiveDateTime
+    :path: effective[x]
+    :discriminator:
+      :type: type
+      :code: DateTime
+  - :slice_id: Observation.value[x]:valueCodeableConcept
+    :slice_name: valueCodeableConcept
+    :path: value[x]
+    :discriminator:
+      :type: type
+      :code: CodeableConcept
+  :elements:
+  - :path: status
+  - :path: category
+  - :path: code
+  - :path: subject
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+:mandatory_elements:
+- Observation.status
+- Observation.category
+- Observation.code
+- Observation.subject
+- Observation.effective[x]
+- Observation.value[x]
+- Observation.component.code
+:bindings:
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/us/core/ValueSet/us-core-observation-smoking-status-status
+  :path: status
+:references:
+- :path: Observation.basedOn
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/CarePlan
+  - http://hl7.org/fhir/StructureDefinition/DeviceRequest
+  - http://hl7.org/fhir/StructureDefinition/ImmunizationRecommendation
+  - http://hl7.org/fhir/StructureDefinition/MedicationRequest
+  - http://hl7.org/fhir/StructureDefinition/NutritionOrder
+  - http://hl7.org/fhir/StructureDefinition/ServiceRequest
+- :path: Observation.partOf
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/MedicationAdministration
+  - http://hl7.org/fhir/StructureDefinition/MedicationDispense
+  - http://hl7.org/fhir/StructureDefinition/MedicationStatement
+  - http://hl7.org/fhir/StructureDefinition/Procedure
+  - http://hl7.org/fhir/StructureDefinition/Immunization
+  - http://hl7.org/fhir/StructureDefinition/ImagingStudy
+- :path: Observation.subject
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+- :path: Observation.focus
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Resource
+- :path: Observation.encounter
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Encounter
+- :path: Observation.performer
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Practitioner
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  - http://hl7.org/fhir/StructureDefinition/Organization
+  - http://hl7.org/fhir/StructureDefinition/CareTeam
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+- :path: Observation.specimen
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Specimen
+- :path: Observation.device
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Device
+  - http://hl7.org/fhir/StructureDefinition/DeviceMetric
+- :path: Observation.hasMember
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Observation
+  - http://hl7.org/fhir/StructureDefinition/QuestionnaireResponse
+  - http://hl7.org/fhir/StructureDefinition/MolecularSequence
+- :path: Observation.derivedFrom
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/DocumentReference
+  - http://hl7.org/fhir/StructureDefinition/ImagingStudy
+  - http://hl7.org/fhir/StructureDefinition/Media
+  - http://hl7.org/fhir/StructureDefinition/QuestionnaireResponse
+  - http://hl7.org/fhir/StructureDefinition/Observation
+  - http://hl7.org/fhir/StructureDefinition/MolecularSequence
+:tests:
+- :id: us_core_v400_smokingstatus_patient_code_search_test
+  :file_name: smokingstatus_patient_code_search_test.rb
+- :id: us_core_v400_smokingstatus_patient_category_status_search_test
+  :file_name: smokingstatus_patient_category_status_search_test.rb
+- :id: us_core_v400_smokingstatus_patient_code_date_search_test
+  :file_name: smokingstatus_patient_code_date_search_test.rb
+- :id: us_core_v400_smokingstatus_patient_category_search_test
+  :file_name: smokingstatus_patient_category_search_test.rb
+- :id: us_core_v400_smokingstatus_patient_category_date_search_test
+  :file_name: smokingstatus_patient_category_date_search_test.rb
+- :id: us_core_v400_smokingstatus_read_test
+  :file_name: smokingstatus_read_test.rb
+- :id: us_core_v400_smokingstatus_provenance_revinclude_search_test
+  :file_name: smokingstatus_provenance_revinclude_search_test.rb
+- :id: us_core_v400_smokingstatus_validation_test
+  :file_name: smokingstatus_validation_test.rb
+- :id: us_core_v400_smokingstatus_must_support_test
+  :file_name: smokingstatus_must_support_test.rb
+- :id: us_core_v400_smokingstatus_reference_resolution_test
+  :file_name: smokingstatus_reference_resolution_test.rb
+:id: us_core_v400_smokingstatus
+:file_name: smokingstatus_group.rb
+:delayed_references: []
