@@ -22,15 +22,15 @@ module Inferno
             end
 
             island_resources = @resource_ids - @referenced_resources - @referencing_resources
-            sorted_island_resources = []
-            island_resources.each do |id|
-              types = @resourcetype_ids.select { |_key, values| values.include?(id) }.keys
-              sorted_island_resources << ("#{types[0]}/#{id}")
-            end
+            
+            island_resources.map! { |id|
+              @resourcetype_ids.select { |_key, values| values.include?(id) }.keys[0]+"/"+id
+            }
+            sorted_island_resources = Set.new(island_resources.to_a.sort)
 
             if sorted_island_resources.any?
               message = "Found resources that have no resolved references and are not referenced: #{
-            sorted_island_resources.join(', ')}"
+                sorted_island_resources.join(', ')}"
               result = EvaluationResult.new(message, rule: self)
             else
               message = 'All resources are reachable'
