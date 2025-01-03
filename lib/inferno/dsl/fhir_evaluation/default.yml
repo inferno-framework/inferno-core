@@ -7,3 +7,21 @@ Environment:
     Url: 'https://cts.nlm.nih.gov'
 
 Rule:
+  AllMustSupportsPresent:
+    Description: 'An instance of all MustSupport elements, extensions, and slices is present in the given resources'
+    Enabled: true
+    ConformanceOptions:
+      # ConformanceOptions allows selecting from a few approaches to determine which subset of resources
+      # should be used to search for the MustSupport elements from each profile.
+      # Resources that are not the same type as the target of the profile are never searched, regardless of option.
+
+      # - If considerMetaProfile, the search will include resources that declare the current profile in meta.profile
+      considerMetaProfile: true
+
+      # - If considerValidationResults, resources will be validated against each profile to determine which they should be checked against.
+      #   The search will include resources that validate against the current profile
+      #   (in other words, resources for which a validation request produces no errors).
+      considerValidationResults: false
+
+      # - If considerOnlyResourceType, the search will include resources of the same type as the profile target type (StructureDefintion.type)
+      considerOnlyResourceType: false

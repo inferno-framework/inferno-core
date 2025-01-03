@@ -1,0 +1,305 @@
+---
+:name: us_core_medicationrequest
+:class_name: USCorev501MedicationrequestSequence
+:version: v5.0.1
+:reformatted_version: v501
+:resource: MedicationRequest
+:profile_url: http://hl7.org/fhir/us/core/StructureDefinition/us-core-medicationrequest
+:profile_name: US Core MedicationRequest Profile
+:profile_version: 5.0.1
+:title: MedicationRequest
+:short_description: Verify support for the server capabilities required by the US
+  Core MedicationRequest Profile.
+:is_delayed: false
+:interactions:
+- :code: create
+  :expectation: MAY
+- :code: search-type
+  :expectation: SHALL
+- :code: read
+  :expectation: SHALL
+- :code: vread
+  :expectation: SHOULD
+- :code: update
+  :expectation: MAY
+- :code: patch
+  :expectation: MAY
+- :code: delete
+  :expectation: MAY
+- :code: history-instance
+  :expectation: SHOULD
+- :code: history-type
+  :expectation: MAY
+:operations: []
+:searches:
+- :expectation: SHALL
+  :names:
+  - patient
+  - intent
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHALL
+  :names:
+  - patient
+  - intent
+  - status
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - intent
+  - authoredon
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - intent
+  - encounter
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+:search_definitions:
+  :patient:
+    :paths:
+    - subject
+    :full_paths:
+    - MedicationRequest.subject
+    :comparators: {}
+    :values: []
+    :type: Reference
+    :contains_multiple: false
+    :multiple_or: MAY
+  :intent:
+    :paths:
+    - intent
+    :full_paths:
+    - MedicationRequest.intent
+    :comparators: {}
+    :values:
+    - proposal
+    - plan
+    - order
+    - original-order
+    - reflex-order
+    - filler-order
+    - instance-order
+    - option
+    :type: code
+    :contains_multiple: false
+    :multiple_or: SHALL
+  :status:
+    :paths:
+    - status
+    :full_paths:
+    - MedicationRequest.status
+    :comparators: {}
+    :values:
+    - active
+    - on-hold
+    - cancelled
+    - completed
+    - entered-in-error
+    - stopped
+    - draft
+    - unknown
+    :type: code
+    :contains_multiple: false
+    :multiple_or: SHALL
+  :authoredon:
+    :paths:
+    - authoredOn
+    :full_paths:
+    - MedicationRequest.authoredOn
+    :comparators:
+      :eq: MAY
+      :ne: MAY
+      :gt: SHALL
+      :ge: SHALL
+      :lt: SHALL
+      :le: SHALL
+      :sa: MAY
+      :eb: MAY
+      :ap: MAY
+    :values: []
+    :type: dateTime
+    :contains_multiple: false
+    :multiple_or: MAY
+  :encounter:
+    :paths:
+    - encounter
+    :full_paths:
+    - MedicationRequest.encounter
+    :comparators: {}
+    :values: []
+    :type: Reference
+    :contains_multiple: false
+    :multiple_or: MAY
+:include_params:
+- MedicationRequest:medication
+:revincludes:
+- Provenance:target
+:required_concepts:
+- category
+:must_supports:
+  :extensions: []
+  :slices:
+  - :slice_id: MedicationRequest.category:us-core
+    :slice_name: us-core
+    :path: category
+    :discriminator:
+      :type: requiredBinding
+      :path: ''
+      :values:
+      - :system: http://terminology.hl7.org/CodeSystem/medicationrequest-category
+        :code: inpatient
+      - :system: http://terminology.hl7.org/CodeSystem/medicationrequest-category
+        :code: outpatient
+      - :system: http://terminology.hl7.org/CodeSystem/medicationrequest-category
+        :code: community
+      - :system: http://terminology.hl7.org/CodeSystem/medicationrequest-category
+        :code: discharge
+  :elements:
+  - :path: status
+  - :path: intent
+  - :path: category
+  - :path: reportedBoolean
+    :original_path: reported[x]
+  - :path: reportedReference
+    :original_path: reported[x]
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
+  - :path: medication[x]
+    :types:
+    - Reference
+  - :path: subject
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+  - :path: encounter
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter
+  - :path: authoredOn
+  - :path: requester
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
+  - :path: dosageInstruction
+  - :path: dosageInstruction.text
+  :choices:
+  - :paths:
+    - reportedBoolean
+    - reportedReference
+:mandatory_elements:
+- MedicationRequest.status
+- MedicationRequest.intent
+- MedicationRequest.medication[x]
+- MedicationRequest.subject
+- MedicationRequest.requester
+- MedicationRequest.substitution.allowed[x]
+:bindings:
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/medicationrequest-status
+  :path: status
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/medicationrequest-intent
+  :path: intent
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/request-priority
+  :path: priority
+:references:
+- :path: MedicationRequest.subject
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+- :path: MedicationRequest.encounter
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-encounter
+- :path: MedicationRequest.supportingInformation
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Resource
+- :path: MedicationRequest.requester
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitionerrole
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-relatedperson
+  - http://hl7.org/fhir/StructureDefinition/Device
+- :path: MedicationRequest.performer
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Practitioner
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  - http://hl7.org/fhir/StructureDefinition/Organization
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/Device
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+  - http://hl7.org/fhir/StructureDefinition/CareTeam
+- :path: MedicationRequest.recorder
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Practitioner
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+- :path: MedicationRequest.reasonReference
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Condition
+  - http://hl7.org/fhir/StructureDefinition/Observation
+- :path: MedicationRequest.basedOn
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/CarePlan
+  - http://hl7.org/fhir/StructureDefinition/MedicationRequest
+  - http://hl7.org/fhir/StructureDefinition/ServiceRequest
+  - http://hl7.org/fhir/StructureDefinition/ImmunizationRecommendation
+- :path: MedicationRequest.insurance
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Coverage
+  - http://hl7.org/fhir/StructureDefinition/ClaimResponse
+- :path: MedicationRequest.dispenseRequest.performer
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Organization
+- :path: MedicationRequest.priorPrescription
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/MedicationRequest
+- :path: MedicationRequest.detectedIssue
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/DetectedIssue
+- :path: MedicationRequest.eventHistory
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Provenance
+:tests:
+- :id: us_core_v501_medication_request_patient_intent_search_test
+  :file_name: medication_request_patient_intent_search_test.rb
+- :id: us_core_v501_medication_request_patient_intent_status_search_test
+  :file_name: medication_request_patient_intent_status_search_test.rb
+- :id: us_core_v501_medication_request_patient_intent_authoredon_search_test
+  :file_name: medication_request_patient_intent_authoredon_search_test.rb
+- :id: us_core_v501_medication_request_patient_intent_encounter_search_test
+  :file_name: medication_request_patient_intent_encounter_search_test.rb
+- :id: us_core_v501_medication_request_read_test
+  :file_name: medication_request_read_test.rb
+- :id: us_core_v501_medication_request_provenance_revinclude_search_test
+  :file_name: medication_request_provenance_revinclude_search_test.rb
+- :id: us_core_v501_medication_request_validation_test
+  :file_name: medication_request_validation_test.rb
+- :id: us_core_v501_medication_validation_test
+  :file_name: medication_validation_test.rb
+- :id: us_core_v501_medication_request_must_support_test
+  :file_name: medication_request_must_support_test.rb
+- :id: us_core_v501_medication_request_reference_resolution_test
+  :file_name: medication_request_reference_resolution_test.rb
+:id: us_core_v501_medication_request
+:file_name: medication_request_group.rb
+:delayed_references:
+- :path: requester
+  :resources:
+  - Practitioner
+  - Organization
+  - PractitionerRole
+  - RelatedPerson

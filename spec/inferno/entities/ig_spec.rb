@@ -37,14 +37,16 @@ RSpec.describe Inferno::Entities::IG do
       expect(ig.extensions.map(&:id)).to include('us-core-race', 'us-core-ethnicity')
 
       # https://www.hl7.org/fhir/us/core/STU3.1.1/terminology.html
-      expect(ig.value_sets.length).to eq(32)
-      expect(ig.value_sets.map(&:resourceType).uniq).to eq(['ValueSet'])
-      expect(ig.value_sets.map(&:id)).to include('us-core-usps-state', 'simple-language')
+      value_sets = ig.resources_by_type['ValueSet']
+      expect(value_sets.length).to eq(32)
+      expect(value_sets.map(&:resourceType).uniq).to eq(['ValueSet'])
+      expect(value_sets.map(&:id)).to include('us-core-usps-state', 'simple-language')
 
       # https://www.hl7.org/fhir/us/core/STU3.1.1/searchparameters.html
-      expect(ig.search_params.length).to eq(74)
-      expect(ig.search_params.map(&:resourceType).uniq).to eq(['SearchParameter'])
-      expect(ig.search_params.map(&:id)).to include('us-core-patient-name', 'us-core-encounter-id')
+      search_params = ig.resources_by_type['SearchParameter']
+      expect(search_params.length).to eq(74)
+      expect(search_params.map(&:resourceType).uniq).to eq(['SearchParameter'])
+      expect(search_params.map(&:id)).to include('us-core-patient-name', 'us-core-encounter-id')
 
       # https://www.hl7.org/fhir/us/core/STU3.1.1/all-examples.html
       expect(ig.examples.length).to eq(84)
