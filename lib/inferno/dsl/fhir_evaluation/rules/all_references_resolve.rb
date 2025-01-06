@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../utils/evaluator_util'
+require_relative '../reference_extractor'
 
 module Inferno
   module DSL
@@ -10,16 +10,16 @@ module Inferno
           def check(context)
             # resource_type_ids is for quick look up when there is a reference type
             # resource_ids is for quick look up when there is no type (i.e. uuid used)
-            util = Inferno::Utils::EvaluatorUtil
-            _, resource_type_ids, resource_ids, references = util.extract_ids_references(context.data)
+            extractor = Inferno::DSL::FHIREvaluation::ReferenceExtractor.new
+            _, resource_type_ids, resource_ids, references = extractor.extract_ids_references(context.data)
             unresolved_references = Hash.new { |h, k| h[k] = [] }
-            references.each do |k, v|
+            references.each do |id, v|
               v.each do |reference|
                 # no type for the reference
                 if reference[1] == ''
-                  unresolved_references[k] << reference unless resource_ids.include?(reference[2])
+                  unresolved_references[id] << reference unless resource_ids.include?(reference[2])
                 elsif !resource_type_ids[reference[1]].include?(reference[2])
-                  unresolved_references[k] << reference
+                  unresolved_references[id] << reference
                 end
               end
             end
