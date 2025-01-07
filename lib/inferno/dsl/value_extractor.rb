@@ -53,18 +53,22 @@ module Inferno
 
       def bound_systems_from_valueset(value_set)
         value_set&.compose&.include&.map do |include_element|
-          if include_element.concept.present?
-            include_element
-          elsif include_element.system.present? && include_element.filter&.empty?
-            # Cannot process intensional value set with filters
-            ig_resources.code_system_by_url(include_element.system)
-          elsif include_element.valueSet.present?
-            include_element.valueSet.map do |vs|
-              a_value_set = ig_resources.value_set_by_url(vs)
-              bound_systems_from_valueset(a_value_set)
-            end
-          end
+          bound_systems_from_valueset_include_element(include_element)
         end&.flatten&.compact
+      end
+
+      def bound_systems_from_valueset_include_element(include_element)
+        if include_element.concept.present?
+          include_element
+        elsif include_element.system.present? && include_element.filter&.empty?
+          # Cannot process intensional value set with filters
+          ig_resources.code_system_by_url(include_element.system)
+        elsif include_element.valueSet.present?
+          include_element.valueSet.map do |vs|
+            a_value_set = ig_resources.value_set_by_url(vs)
+            bound_systems_from_valueset(a_value_set)
+          end
+        end
       end
 
       def codes_from_value_set_binding(the_element)

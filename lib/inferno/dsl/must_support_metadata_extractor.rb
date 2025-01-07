@@ -85,47 +85,50 @@ module Inferno
               else
                 current_element
               end
-            metadata[:discriminator] =
-              if pattern_element.patternCodeableConcept.present?
-                {
-                  type: 'patternCodeableConcept',
-                  path: discriminator_path,
-                  code: pattern_element.patternCodeableConcept.coding.first.code,
-                  system: pattern_element.patternCodeableConcept.coding.first.system
-                }
-              elsif pattern_element.patternCoding.present?
-                {
-                  type: 'patternCoding',
-                  path: discriminator_path,
-                  code: pattern_element.patternCoding.code,
-                  system: pattern_element.patternCoding.system
-                }
-              elsif pattern_element.patternIdentifier.present?
-                {
-                  type: 'patternIdentifier',
-                  path: discriminator_path,
-                  system: pattern_element.patternIdentifier.system
-                }
-              elsif pattern_element.binding&.strength == 'required' &&
-                    pattern_element.binding&.valueSet.present?
-
-                value_extractor = ValueExtractor.new(ig_resources, resource, profile_elements)
-
-                values = value_extractor.codings_from_value_set_binding(pattern_element).presence ||
-                         value_extractor.values_from_resource_metadata([metadata[:path]]).presence || []
-
-                {
-                  type: 'requiredBinding',
-                  path: discriminator_path,
-                  values: values
-                }
-              else
-                raise StandardError, 'Unsupported discriminator pattern type'
-              end
-
+            metadata[:discriminator] = construct_discriminator_metadata(pattern_element, metadata)
+            metadata[:discriminator][:path] = discriminator_path
             metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
           end
         end
+      end
+
+      def construct_discriminator_metadata(pattern_element, metadata)
+        if pattern_element.patternCodeableConcept
+          {
+            type: 'patternCodeableConcept',
+            code: pattern_element.patternCodeableConcept.coding.first.code,
+            system: pattern_element.patternCodeableConcept.coding.first.system
+          }
+        elsif pattern_element.patternCoding
+          {
+            type: 'patternCoding',
+            code: pattern_element.patternCoding.code,
+            system: pattern_element.patternCoding.system
+          }
+        elsif pattern_element.patternIdentifier
+          {
+            type: 'patternIdentifier',
+            system: pattern_element.patternIdentifier.system
+          }
+        elsif required_binding_pattern?(pattern_element)
+          {
+            type: 'requiredBinding',
+            values: extract_required_binding_values(pattern_element, metadata)
+          }
+        else
+          raise StandardError, 'Unsupported discriminator pattern type'
+        end
+      end
+
+      def required_binding_pattern?(pattern_element)
+        pattern_element.binding&.strength == 'required' && pattern_element.binding&.valueSet
+      end
+
+      def extract_required_binding_values(pattern_element, metadata)
+        value_extractor = ValueExtractor.new(ig_resources, resource, profile_elements)
+
+        value_extractor.codings_from_value_set_binding(pattern_element).presence ||
+          value_extractor.values_from_resource_metadata([metadata[:path]]).presence || []
       end
 
       def must_support_type_slice_elements
@@ -249,10 +252,14 @@ module Inferno
       end
 
       def handle_type_must_support_target_profiles(type, metadata)
-        # # US Core 3.1.1 profiles do not have US Core target profiles.
-        # # Vital Sign proifles from FHIR R4 (version 4.0.1) do not have US Core target profiles either.
-        # return if ['3.1.1', '4.0.1'].include?(profile.version)
+        target_profiles = extract_target_profiles(type)
 
+        # remove target_profile for FHIR Base resource type.
+        target_profiles.delete_if { |reference| reference.start_with?('http://hl7.org/fhir/StructureDefinition') }
+        metadata[:target_profiles] = target_profiles if target_profiles.present?
+      end
+
+      def extract_target_profiles(type)
         target_profiles = []
 
         if type.targetProfile&.length == 1
@@ -266,9 +273,7 @@ module Inferno
           end
         end
 
-        # remove target_profile for FHIR Base resource type.
-        target_profiles.delete_if { |reference| reference.start_with?('http://hl7.org/fhir/StructureDefinition') }
-        metadata[:target_profiles] = target_profiles if target_profiles.present?
+        target_profiles
       end
 
       def handle_choice_type_in_sliced_element(current_metadata, must_support_elements_metadata)
@@ -285,37 +290,46 @@ module Inferno
       end
 
       def must_support_elements
-        plain_must_support_elements.each_with_object([]) do |current_element, must_support_elements_metadata|
-          {
+        must_support_elements_metadata = []
+        plain_must_support_elements.each do |current_element|
+          current_metadata = {
             path: current_element.id.gsub("#{resource}.", '')
-          }.tap do |current_metadata|
-            current_metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
+          }
+          current_metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
 
-            type_must_support_metadata = get_type_must_support_metadata(current_metadata, current_element)
+          type_must_support_metadata = get_type_must_support_metadata(current_metadata, current_element)
 
-            if type_must_support_metadata.any?
-              must_support_elements_metadata.concat(type_must_support_metadata)
-            else
-              handle_choice_type_in_sliced_element(current_metadata, must_support_elements_metadata)
+          if type_must_support_metadata.any?
+            must_support_elements_metadata.concat(type_must_support_metadata)
+          else
+            handle_choice_type_in_sliced_element(current_metadata, must_support_elements_metadata)
 
-              supported_types = current_element.type.select { |type| save_type_code?(type) }.map(&:code)
-              current_metadata[:types] = supported_types if supported_types.present?
+            supported_types = extract_supported_types(current_element)
+            current_metadata[:types] = supported_types if supported_types.present?
 
-              if current_element.type.first&.code == 'Reference'
-                handle_type_must_support_target_profiles(current_element.type.first,
-                                                         current_metadata)
-              end
-
-              handle_fixed_values(current_metadata, current_element)
-
-              must_support_elements_metadata.delete_if do |metadata|
-                metadata[:path] == current_metadata[:path] && metadata[:fixed_value].blank?
-              end
-
-              must_support_elements_metadata << current_metadata
+            if current_element.type.first&.code == 'Reference'
+              handle_type_must_support_target_profiles(current_element.type.first,
+                                                       current_metadata)
             end
+
+            handle_fixed_values(current_metadata, current_element)
+
+            remove_conflicting_metadata_without_fixed_value(must_support_elements_metadata, current_metadata)
+
+            must_support_elements_metadata << current_metadata
           end
-        end.uniq
+        end
+        must_support_elements_metadata.uniq
+      end
+
+      def extract_supported_types(current_element)
+        current_element.type.select { |type| save_type_code?(type) }.map(&:code)
+      end
+
+      def remove_conflicting_metadata_without_fixed_value(must_support_elements_metadata, current_metadata)
+        must_support_elements_metadata.delete_if do |metadata|
+          metadata[:path] == current_metadata[:path] && metadata[:fixed_value].blank?
+        end
       end
     end
   end
