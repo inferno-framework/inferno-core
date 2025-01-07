@@ -14,14 +14,15 @@ module Inferno
   module DSL
     module FHIREvaluation
       class Evaluator
-        attr_accessor :ig
+        attr_accessor :ig, :validator
 
-        def initialize(ig) # rubocop:disable Naming/MethodParameterName
+        def initialize(ig, validator = nil) # rubocop:disable Naming/MethodParameterName
           @ig = ig
+          @validator = validator
         end
 
         def evaluate(data, config = Config.new)
-          context = EvaluationContext.new(@ig, data, config)
+          context = EvaluationContext.new(@ig, data, config, validator)
 
           active_rules = []
           config.data['Rule'].each do |rulename, rule_details|
