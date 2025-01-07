@@ -10,6 +10,7 @@ module Inferno
           def check(context)
             extractor = Inferno::DSL::FHIREvaluation::ReferenceExtractor.new
             resource_path_ids = extractor.extract_resource_path_ids(context.data)
+            resource_ids = Set.new(resource_path_ids.values.flatten.uniq)
             reference_map = extractor.extract_references(context.data, resource_path_ids)
 
             unresolved_references = Hash.new { |reference, id| reference[id] = [] }

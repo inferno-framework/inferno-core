@@ -9,7 +9,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     data = [patient, encounter]
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)[0]
+    result = described_class.new.check(context)
 
     expect(result.message).to eq('All references resolve')
   end
@@ -21,21 +21,21 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     data = [patient, encounter]
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)[0]
+    result = described_class.new.check(context)
 
     expect(result.message).to eq('All references resolve')
   end
 
   it 'identifies unresolvable references by simple id' do
     patient = FHIR::Patient.new(id: 'patient2')
-    encounter = FHIR::Encounter.new(id: 'enc0', subject: { reference: 'Patient/wrongid' })
+    encounter = FHIR::Encounter.new(id: 'enc0', subject: { reference: 'wrongid' })
     data = [patient, encounter]
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)[0]
+    result = described_class.new.check(context)
     msg = 'Found unresolved references'
 
-    expect(result.message).to eq("#{msg}: \n Resource (id): enc0   \n\tpath: subject, type: patient, id: wrongid")
+    expect(result.message).to eq("#{msg}: \n Resource (id): enc0   \n\tpath: subject, type: , id: wrongid")
   end
 
   it 'identifies unresolvable references by uuid' do
@@ -45,7 +45,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     data = [patient, encounter]
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)[0]
+    result = described_class.new.check(context)
     id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
     msg = 'Found unresolved references'
     expect(result.message).to eq("#{msg}: \n Resource (id): enc444   \n\tpath: subject, type: , id: #{id}")
