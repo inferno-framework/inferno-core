@@ -8,14 +8,13 @@ module Inferno
       module Rules
         class AllReferencesResolve < Rule
           def check(context)
-            # resource_path_ids is for quick look up when there is a reference type
-            # resource_ids is for quick look up when there is no type (i.e. uuid used)
             extractor = Inferno::DSL::FHIREvaluation::ReferenceExtractor.new
-            resource_path_ids, resource_ids, references = extractor.extract_ids_references(context.data)
+            resource_path_ids = extractor.extract_resource_path_ids(context.data)
+            references = extractor.extract_references(context.data, resource_path_ids)
+
             unresolved_references = Hash.new { |h, k| h[k] = [] }
             references.each do |id, reference_values|
               reference_values.each do |reference|
-                # no type for the reference
                 if reference[1] == ''
                   unresolved_references[id] << reference unless resource_ids.include?(reference[2])
                 elsif !resource_path_ids[reference[1]].include?(reference[2])

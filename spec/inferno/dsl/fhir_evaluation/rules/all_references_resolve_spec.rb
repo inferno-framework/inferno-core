@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../../lib/inferno/dsl/fhir_evaluation/rules/all_references_resolve'
+# require_relative '../../../../lib/inferno/dsl/fhir_evaluation/rules/all_references_resolve'
 
 RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
   it 'identifies good references by simple id' do
@@ -33,8 +33,9 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
     result = described_class.new.check(context)[0]
+    msg = 'Found unresolved references'
 
-    expect(result.message).to eq("Found unresolved references: \n Resource (id): enc0   \n\tpath: subject, type: patient, id: wrongid")
+    expect(result.message).to eq("#{msg}: \n Resource (id): enc0   \n\tpath: subject, type: patient, id: wrongid")
   end
 
   it 'identifies unresolvable references by uuid' do
@@ -45,7 +46,8 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
     result = described_class.new.check(context)[0]
-
-    expect(result.message).to eq("Found unresolved references: \n Resource (id): enc444   \n\tpath: subject, type: , id: aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
+    id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
+    msg = 'Found unresolved references'
+    expect(result.message).to eq("#{msg}: \n Resource (id): enc444   \n\tpath: subject, type: , id: #{id}")
   end
 end

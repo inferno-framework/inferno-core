@@ -7,16 +7,18 @@ module Inferno
     module FHIREvaluation
       module Rules
         class AllResourcesReachable < Rule
-          attr_accessor :config, :referenced_resources, :referencing_resources, :resource_ids
+          attr_accessor :config, :referenced_resources, :referencing_resources, :resource_ids, :resource_path_ids
 
           def check(context)
             @config = context.config
-
-            # every resource is either making a resolvable reference or is referenced
-            extractor = Inferno::DSL::FHIREvaluation::ReferenceExtractor.new
             @referenced_resources = Set.new
             @referencing_resources = Set.new
-            @resource_path_ids, @resource_ids, references = extractor.extract_ids_references(context.data)
+
+            extractor = Inferno::DSL::FHIREvaluation::ReferenceExtractor.new
+            @resource_path_ids = extractor.extract_resource_path_ids(context.data)
+            @resource_ids = Set.new(resource_path_ids.values.flatten.uniq)
+            references = extractor.extract_references(context.data, resource_path_ids)
+
             references.each do |id, refs|
               assess_reachability(id, refs)
             end
@@ -49,7 +51,7 @@ module Inferno
                   makes_resolvable_reference = true
                   referenced_resources.add(referenced_id)
                 end
-              elsif @resource_path_ids[type].include?(referenced_id)
+              elsif resource_path_ids[type].include?(referenced_id)
                 makes_resolvable_reference = true
                 referenced_resources.add(referenced_id)
               end
