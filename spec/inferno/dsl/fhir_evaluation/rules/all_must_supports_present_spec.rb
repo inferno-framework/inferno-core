@@ -7,6 +7,53 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
   include ExtractTGZHelper
 
   let(:uscore3_package) { File.realpath(File.join(Dir.pwd, 'spec/fixtures/uscore311.tgz')) }
+  let(:patient_ref) { 'Patient/85' }
+  let(:patient) do
+    FHIR::Patient.new(
+      meta: { profile: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient'] },
+      identifier: [{ system: 'system', value: 'value' }],
+      name: [{ use: 'old', family: 'family', given: ['given'], suffix: ['suffix'], period: { end: '2022-12-12' } }],
+      telecom: [{ system: 'phone', value: 'value', use: 'home' }],
+      gender: 'male',
+      birthDate: '2020-01-01',
+      deceasedDateTime: '2022-12-12',
+      address: [{ use: 'old', line: 'line', city: 'city', state: 'state', postalCode: 'postalCode',
+                  period: { start: '2020-01-01' } }],
+      communication: [{ language: { text: 'text' } }],
+      extension: [
+        {
+          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-race',
+          extension: [
+            { url: 'ombCategory', valueCoding: { display: 'display' } },
+            { url: 'text', valueString: 'valueString' }
+          ]
+        },
+        {
+          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity',
+          extension: [
+            { url: 'ombCategory', valueCoding: { display: 'display' } },
+            { url: 'text', valueString: 'valueString' }
+          ]
+        },
+        {
+          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex',
+          valueCode: 'M'
+        },
+        {
+          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-tribal-affiliation',
+          extension: [{ url: 'tribalAffiliation', valueCodeableConcept: { text: 'text' } }]
+        },
+        {
+          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-sex',
+          valueCode: 'M'
+        },
+        {
+          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-genderIdentity',
+          valueCodeableConcept: { text: 'text' }
+        }
+      ]
+    )
+  end
   let(:uscore3_untarred) { extract_tgz(uscore3_package) }
 
   def fixture(filename)
@@ -16,57 +63,11 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
 
   def metadata_fixture(filename)
     path = File.realpath(File.join(Dir.pwd, 'spec/fixtures/metadata', filename))
-    OpenStruct.new(YAML.load_file(path))  # OpenStruct so that the top-level keys can be accessed directly, ie metadata.must_supports[...]
+    metadata_yaml = YAML.load_file(path)
+    OpenStruct.new(metadata_yaml) # so that the top-level keys can be accessed directly, ie metadata.must_supports[...]
   end
 
   after { cleanup(uscore3_untarred) }
-
-  let(:patient_ref) { 'Patient/85' }
-  let(:patient) do
-    FHIR::Patient.new(
-      meta: { profile: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient'] },
-      identifier: [{system: 'system', value: 'value'}],
-      name: [{use: 'old', family: 'family', given: ['given'], suffix: ['suffix'], period: {end: '2022-12-12'}}],
-      telecom: [{system: 'phone', value: 'value', use: 'home'}],
-      gender: 'male',
-      birthDate: '2020-01-01',
-      deceasedDateTime: '2022-12-12',
-      address: [{use: 'old', line: 'line', city: 'city', state: 'state', postalCode: 'postalCode', period: {start: '2020-01-01'}}],
-      communication: [{language: {text: 'text'}}],
-      extension: [
-        {
-          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-race',
-          extension: [
-            {url: 'ombCategory', valueCoding: {display: 'display'}},
-            {url: 'text', valueString: 'valueString'}
-          ]
-        },
-        {
-          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity',
-          extension: [
-            {url: 'ombCategory', valueCoding: {display: 'display'}},
-            {url: 'text', valueString: 'valueString'}
-          ]
-        },
-        {
-          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex',
-          valueCode: 'M'
-        },
-        {
-          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-tribal-affiliation',
-          extension: [{url: 'tribalAffiliation', valueCodeableConcept: {text: 'text'}}]
-        },
-        {
-          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-sex',
-          valueCode: 'M'
-        },
-        {
-          url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-genderIdentity',
-          valueCodeableConcept: {text: 'text'}
-        }
-      ]
-    )
-  end
 
   describe '#check' do
     it 'identifies when all MS elements are used' do
@@ -87,8 +88,9 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
       profiles = [fixture('StructureDefinition-us-core-medication.json')]
       ig = instance_double(Inferno::Entities::IG, profiles:)
       empty_med = FHIR::Medication.new(
-        meta: {profile: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-medication'] })
-      data = [empty_med] 
+        meta: { profile: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-medication'] }
+      )
+      data = [empty_med]
       config = Inferno::DSL::FHIREvaluation::Config.new
       validator = nil
       context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(ig, data, config, validator)
@@ -96,11 +98,11 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
       described_class.new.check(context)
       result = context.results[0]
 
-      expect(result.message).to eq("Found Profiles with not all MustSupports represented:\n\t\thttp://hl7.org/fhir/us/core/StructureDefinition/us-core-medication: code")
+      expect(result.message).to end_with('http://hl7.org/fhir/us/core/StructureDefinition/us-core-medication: code')
     end
   end
 
-  def run(profile, resources, resource_type, ig=nil, &block)
+  def run(profile, resources, _resource_type, ig = nil, &block) # rubocop:disable Naming/MethodParameterName
     described_class.new.perform_must_support_test(profile, resources, ig, &block)
   end
 
@@ -145,7 +147,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
       result = run(device_profile, [device], 'Device') do |metadata|
         metadata.must_supports[:choices] = choices
       end
-      expect(result).to match_array([])
+      expect(result).to be_empty
     end
 
     it 'fails if server does not support one MS element' do
@@ -161,7 +163,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
 
     it 'passes if server suports all MS extensions' do
       result = run(patient_profile, [patient], 'Patient')
-      expect(result).to match_array([])
+      expect(result).to be_empty
     end
 
     it 'fails if server does not suport one MS extensions' do
@@ -173,7 +175,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
   end
 
   describe 'must support test for slices' do
-    context 'slicing with patternCodeableConcept' do
+    context 'with patternCodeableConcept slicing' do
       let(:careplan_profile) { fixture('StructureDefinition-us-core-careplan.json') }
       let(:careplan) do
         FHIR::CarePlan.new(
@@ -199,7 +201,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
       it 'passes if server suports all MS slices' do
         result = run(careplan_profile, [careplan], 'CarePlan')
 
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
 
       it 'fails if server does not suport one MS extensions' do
@@ -210,7 +212,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
       end
     end
 
-    context 'slicing with patternCodeableConcept and mulitple codings' do
+    context 'with patternCodeableConcept slicing and mulitple codings' do
       let(:coverage_metadata) { metadata_fixture('coverage_v610.yml') }
       let(:coverage) do
         FHIR::Coverage.new(
@@ -286,19 +288,19 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
               value: '123',
               name: 'group'
             }
-          ],
+          ]
         )
       end
 
       it 'passes if server suports all MS slices' do
         result = run_with_metadata([coverage], coverage_metadata)
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
     end
 
-    context 'slicing with type' do
+    context 'with type slicing' do
       let(:smokingstatus_metadata) { metadata_fixture('smokingstatus_v400.yml') }
-      let(:observation) {
+      let(:observation) do
         FHIR::Observation.new(
           status: 'final',
           category: [
@@ -333,26 +335,28 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
             ]
           }
         )
-      }
+      end
 
       it 'passes if server suports all MS slices' do
         result = run_with_metadata([observation], smokingstatus_metadata)
 
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
 
       it 'skips if datetime format is not correct' do
-        observation.effectiveDateTime = "not a date time"
+        observation.effectiveDateTime = 'not a date time'
         result = run_with_metadata([observation], smokingstatus_metadata)
 
         expect(result).to include('Observation.effective[x]:effectiveDateTime')
       end
     end
 
-    context 'slicing with requiredBinding' do
-      context 'Condition ProblemsHealthConcerns' do
-        let(:condition_problems_health_concerns_metadata) { metadata_fixture('condition_problems_health_concerns_v501.yml') }
-        let(:condition) {
+    context 'with requiredBinding slicing' do
+      context 'when Condition ProblemsHealthConcerns' do
+        let(:condition_problems_health_concerns_metadata) do
+          metadata_fixture('condition_problems_health_concerns_v501.yml')
+        end
+        let(:condition) do
           FHIR::Condition.new(
             extension: [
               {
@@ -403,17 +407,17 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
               ]
             },
             subject: {
-              reference: 'Patient/123',
+              reference: 'Patient/123'
             },
             recordedDate: '2016-08-10T07:15:07-08:00',
             onsetDateTime: '2016-08-10T07:15:07-08:00',
             abatementDateTime: '2016-08-10T07:15:07-08:00'
           )
-        }
+        end
 
         it 'passes if server suports all MS slices' do
           result = run_with_metadata([condition], condition_problems_health_concerns_metadata)
-          expect(result).to match_array([])
+          expect(result).to be_empty
         end
 
         it 'fails if server does not support category:us-core slice' do
@@ -424,9 +428,9 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
         end
       end
 
-      context 'MedicationRequest' do
+      context 'when MedicationRequest' do
         let(:medication_request_metadata) { metadata_fixture('medication_request_v501.yml') }
-        let(:medication_request_1) {
+        let(:medication_request1) do
           FHIR::MedicationRequest.new(
             status: 'active',
             intent: 'order',
@@ -443,7 +447,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
               reference: 'Medication/m1'
             },
             subject: {
-              reference: 'Patient/p1',
+              reference: 'Patient/p1'
             },
             encounter: {
               reference: 'Encounter/e1'
@@ -458,19 +462,21 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
               }
             ]
           )
-        }
+        end
 
         it 'passes if server suports all MS slices' do
-          result = run_with_metadata([medication_request_1], medication_request_metadata)
-          expect(result).to match_array([])
+          result = run_with_metadata([medication_request1], medication_request_metadata)
+          expect(result).to be_empty
         end
       end
     end
   end
 
   describe 'must support test for choices' do
-    let(:condition_problems_health_concerns_metadata) { metadata_fixture('condition_problems_health_concerns_v501.yml') }
-    let(:condition) {
+    let(:condition_problems_health_concerns_metadata) do
+      metadata_fixture('condition_problems_health_concerns_v501.yml')
+    end
+    let(:condition) do
       FHIR::Condition.new(
         extension: [
           {
@@ -521,26 +527,26 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
           ]
         },
         subject: {
-          reference: 'Patient/123',
+          reference: 'Patient/123'
         },
         recordedDate: '2016-08-10T07:15:07-08:00',
         onsetDateTime: '2016-08-10T07:15:07-08:00',
         abatementDateTime: '2016-08-10T07:15:07-08:00'
       )
-    }
+    end
 
     it 'passes if server suports assertDate extension' do
       condition.onsetDateTime = nil
 
       result = run_with_metadata([condition], condition_problems_health_concerns_metadata)
-      expect(result).to match_array([])
+      expect(result).to be_empty
     end
 
     it 'passes if server suports onsetDate' do
       condition.extension = []
 
       result = run_with_metadata([condition], condition_problems_health_concerns_metadata)
-      expect(result).to match_array([])
+      expect(result).to be_empty
     end
 
     it 'fails if server suports none of assertDate extension and onsetDate' do
@@ -559,21 +565,21 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
     context 'without custom metadata' do
       it 'passes if both use=old and period.end are provided' do
         result = run(patient_profile, [patient], 'Patient')
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
 
       it 'passes if only use=old is presented' do
         patient.name[0].period = nil
 
         result = run(patient_profile, [patient], 'Patient')
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
 
       it 'passes if only period.end is presented' do
         patient.name[0].use = nil
 
         result = run(patient_profile, [patient], 'Patient')
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
 
       it 'passes if neither use=old nor period.end is presented' do
@@ -582,7 +588,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
         patient.name[0].period = nil
 
         result = run(patient_profile, [patient], 'Patient')
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
     end
 
@@ -608,21 +614,21 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
 
       it 'passes if both use=old and period.end are provided' do
         result = run(patient_profile, [patient], 'Patient') { |metadata| add_previous_name_metadata(metadata) }
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
 
       it 'passes if only use=old is presented' do
         patient.name[0].period = nil
 
         result = run(patient_profile, [patient], 'Patient') { |metadata| add_previous_name_metadata(metadata) }
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
 
       it 'passes if only period.end is presented' do
         patient.name[0].use = nil
 
         result = run(patient_profile, [patient], 'Patient') { |metadata| add_previous_name_metadata(metadata) }
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
 
       it 'fails if neither use=old nor period.end is presented' do
@@ -633,7 +639,6 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
         expect(result).to include('name.period.end')
         expect(result).to include('name.use:old')
       end
-
     end
 
     context 'with full provided metadata' do
@@ -641,21 +646,21 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
 
       it 'passes if both use=old and period.end are provided' do
         result = run_with_metadata([patient], patient_metadata)
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
 
       it 'passes if only use=old is presented' do
         patient.name[0].period = nil
 
         result = run_with_metadata([patient], patient_metadata)
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
 
       it 'passes if only period.end is presented' do
         patient.name[0].use = nil
 
         result = run_with_metadata([patient], patient_metadata)
-        expect(result).to match_array([])
+        expect(result).to be_empty
       end
 
       it 'fails if neither use=old nor period.end is presented' do
@@ -671,85 +676,81 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
 
   describe 'must support tests for sub elements of slices' do
     let(:coverage_metadata) { metadata_fixture('coverage_v610.yml') }
-    let (:group_class) {
-      FHIR::Coverage::Class.new.tap{ |loc_class|
-        loc_class.type = FHIR::CodeableConcept.new.tap{ |code_concept|
-          code_concept.coding = [FHIR::Coding.new.tap{ |coding|
-            coding.system = "http://terminology.hl7.org/CodeSystem/coverage-class"
-            coding.code = "group"
-          }]
-        }
-        loc_class.value = "group-class-value"
-        loc_class.name = "group-class-name"
-      }
-    }
-    let (:plan_class) {
-      FHIR::Coverage::Class.new.tap{ |loc_class|
-        loc_class.type = FHIR::CodeableConcept.new.tap{ |code_concept|
-          code_concept.coding = [FHIR::Coding.new.tap{ |coding|
-            coding.system = "http://terminology.hl7.org/CodeSystem/coverage-class"
-            coding.code = "plan"
-          }]
-        }
-      loc_class.value = "plan-class-value"
-      loc_class.name = "plan-class-name"
-      }
-    }
-    let (:coverage_with_two_classes) {
-      FHIR::Coverage.new.tap{ |cov|
-        cov.status = "active"
-        cov.type = FHIR::CodeableConcept.new.tap{ |code_concept|
-          code_concept.coding = [ FHIR::Coding.new.tap { |coding|
-              coding.system = "https://nahdo.org/sopt"
-              coding.code = "3712"
-              coding.display = "PPO"
-            },
-            FHIR::Coding.new.tap { |coding|
-              coding.system = "http://terminology.hl7.org/CodeSystem/v3-ActCode"
-              coding.code = "PPO"
-              coding.display = "preferred provider organization policy"
-            }
-          ],
-          code_concept.text = "PPO"
-        },
-        cov.subscriberId = "888009335"
-        cov.beneficiary = FHIR::Reference.new.tap { |ref|
-          ref.reference = "Patient/example"
-        }
-        cov.relationship = FHIR::CodeableConcept.new.tap { |code_concept|
-          code_concept.coding = [FHIR::Coding.new.tap { |coding|
-              coding.system ="http://terminology.hl7.org/CodeSystem/subscriber-relationship"
-              coding.code = "self"
-            }
-          ],
-          code_concept.text = "Self"
-        },
-        cov.period =  FHIR::Period.new.tap { |period|
-          period.start = "2020-01-01"
-        }
-        cov.payor = [ FHIR::Reference.new.tap { |ref|
-            ref.reference = "Organization/acme-payer"
-            ref.display = "Acme Health Plan"
-          }
-        ],
-        cov.local_class = [group_class, plan_class]
-        cov.identifier = [FHIR::Identifier.new.tap {|identifier|
-            identifier.type = FHIR::CodeableConcept.new.tap { |code_concept|
-              code_concept.coding = [FHIR::Coding.new.tap{ |coding|
-                coding.system = "http://terminology.hl7.org/CodeSystem/v2-0203"
-                coding.code = "MB"
-              }]
-            }
-            identifier.system = "https://github.com/inferno-framework/us-core-test-kit"
-            identifier.value = "f4a375d2-4e53-4f81-ba95-345e7573b550"
-          }
-        ]
-      }
-    }
+    let(:group_class) do
+      FHIR::Coverage::Class.new.tap do |loc_class|
+        loc_class.type = FHIR::CodeableConcept.new.tap do |code_concept|
+          code_concept.coding = [FHIR::Coding.new.tap do |coding|
+            coding.system = 'http://terminology.hl7.org/CodeSystem/coverage-class'
+            coding.code = 'group'
+          end]
+        end
+        loc_class.value = 'group-class-value'
+        loc_class.name = 'group-class-name'
+      end
+    end
+    let(:plan_class) do
+      FHIR::Coverage::Class.new.tap do |loc_class|
+        loc_class.type = FHIR::CodeableConcept.new.tap do |code_concept|
+          code_concept.coding = [FHIR::Coding.new.tap do |coding|
+            coding.system = 'http://terminology.hl7.org/CodeSystem/coverage-class'
+            coding.code = 'plan'
+          end]
+        end
+        loc_class.value = 'plan-class-value'
+        loc_class.name = 'plan-class-name'
+      end
+    end
+    let(:coverage_with_two_classes) do
+      FHIR::Coverage.new.tap do |cov|
+        cov.status = 'active'
+        cov.type = FHIR::CodeableConcept.new.tap do |code_concept|
+          code_concept.coding = [FHIR::Coding.new.tap do |coding|
+            coding.system = 'https://nahdo.org/sopt'
+            coding.code = '3712'
+            coding.display = 'PPO'
+          end,
+                                 FHIR::Coding.new.tap do |coding|
+                                   coding.system = 'http://terminology.hl7.org/CodeSystem/v3-ActCode'
+                                   coding.code = 'PPO'
+                                   coding.display = 'preferred provider organization policy'
+                                 end],
+                                code_concept.text = 'PPO'
+        end,
+                   cov.subscriberId = '888009335'
+        cov.beneficiary = FHIR::Reference.new.tap do |ref|
+          ref.reference = 'Patient/example'
+        end
+        cov.relationship = FHIR::CodeableConcept.new.tap do |code_concept|
+          code_concept.coding = [FHIR::Coding.new.tap do |coding|
+            coding.system = 'http://terminology.hl7.org/CodeSystem/subscriber-relationship'
+            coding.code = 'self'
+          end],
+                                code_concept.text = 'Self'
+        end,
+                           cov.period = FHIR::Period.new.tap do |period|
+                             period.start = '2020-01-01'
+                           end
+        cov.payor = [FHIR::Reference.new.tap do |ref|
+          ref.reference = 'Organization/acme-payer'
+          ref.display = 'Acme Health Plan'
+        end],
+                    cov.local_class = [group_class, plan_class]
+        cov.identifier = [FHIR::Identifier.new.tap do |identifier|
+          identifier.type = FHIR::CodeableConcept.new.tap do |code_concept|
+            code_concept.coding = [FHIR::Coding.new.tap do |coding|
+              coding.system = 'http://terminology.hl7.org/CodeSystem/v2-0203'
+              coding.code = 'MB'
+            end]
+          end
+          identifier.system = 'https://github.com/inferno-framework/us-core-test-kit'
+          identifier.value = 'f4a375d2-4e53-4f81-ba95-345e7573b550'
+        end]
+      end
+    end
 
     it 'passes if resources cover all must support sub elements of slices' do
       result = run_with_metadata([coverage_with_two_classes], coverage_metadata)
-      expect(result).to match_array([])
+      expect(result).to be_empty
     end
 
     it 'fails if resources do not cover all must support sub elements of slices' do
@@ -757,7 +758,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
       coverage_with_just_group.local_class = [group_class]
 
       result = run_with_metadata([coverage_with_just_group], coverage_metadata)
-      expect(result).to include("class:plan.value", "class:plan.name", "Coverage.class:plan")
+      expect(result).to include('class:plan.value', 'class:plan.name', 'Coverage.class:plan')
     end
 
     it 'passes if resources cover all must support elements over multiple elements' do
@@ -767,7 +768,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
       coverage_with_just_plan.local_class = [plan_class]
 
       result = run_with_metadata([coverage_with_two_classes], coverage_metadata)
-      expect(result).to match_array([])
+      expect(result).to be_empty
     end
   end
 
@@ -777,7 +778,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
 
     it 'passes if server suports all MS slices' do
       result = run_with_metadata([qr], qr_metadata)
-      expect(result).to match_array([])
+      expect(result).to be_empty
     end
 
     it 'fails if both MS extensions in a primitive are not provided' do

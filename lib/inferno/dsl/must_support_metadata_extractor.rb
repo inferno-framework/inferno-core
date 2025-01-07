@@ -20,15 +20,15 @@ module Inferno
         }
       end
 
-      def is_uscdi_requirement_element?(element)
+      def uscdi_requirement_element?(element)
         element.extension.any? do |extension|
           extension.url == 'http://hl7.org/fhir/us/core/StructureDefinition/uscdi-requirement' &&
-          extension.valueBoolean
+            extension.valueBoolean
         end && !element.mustSupport
       end
 
       def all_must_support_elements
-        profile_elements.select { |element| (element.mustSupport || is_uscdi_requirement_element?(element))}
+        profile_elements.select { |element| element.mustSupport || uscdi_requirement_element?(element) }
       end
 
       def must_support_extension_elements
@@ -42,19 +42,21 @@ module Inferno
             path: element.path.gsub("#{resource}.", ''),
             url: element.type.first.profile.first
           }.tap do |metadata|
-            if is_uscdi_requirement_element?(element)
-              metadata[:uscdi_only] = true
-            end
+            metadata[:uscdi_only] = true if uscdi_requirement_element?(element)
           end
         end
       end
 
       def must_support_slice_elements
-        all_must_support_elements.select { |element| !element.path.end_with?('extension') && element.sliceName.present? }
+        all_must_support_elements.select do |element|
+          !element.path.end_with?('extension') && element.sliceName.present?
+        end
       end
 
       def sliced_element(slice)
-        profile_elements.find { |element| element.id == slice.path || element.id == slice.id.sub(":#{slice.sliceName}", '') }
+        profile_elements.find do |element|
+          element.id == slice.path || element.id == slice.id.sub(":#{slice.sliceName}", '')
+        end
       end
 
       def discriminators(slice)
@@ -121,9 +123,7 @@ module Inferno
                 raise StandardError, 'Unsupported discriminator pattern type'
               end
 
-            if is_uscdi_requirement_element?(current_element)
-              metadata[:uscdi_only] = true
-            end
+            metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
           end
         end
       end
@@ -157,9 +157,7 @@ module Inferno
               code: type_code.upcase_first
             }
           }.tap do |metadata|
-            if is_uscdi_requirement_element?(current_element)
-              metadata[:uscdi_only] = true
-            end
+            metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
           end
         end
       end
@@ -192,9 +190,7 @@ module Inferno
               }
             end
 
-            if is_uscdi_requirement_element?(current_element)
-              metadata[:uscdi_only] = true
-            end
+            metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
           end
         end
       end
@@ -204,13 +200,12 @@ module Inferno
       end
 
       def plain_must_support_elements
-        plain_must_supports = all_must_support_elements - must_support_extension_elements - must_support_slice_elements
+        all_must_support_elements - must_support_extension_elements - must_support_slice_elements
       end
 
       def element_part_of_slice_discrimination?(element)
         must_support_slice_elements.any? { |ms_slice| element.id.include?(ms_slice.id) }
       end
-
 
       def handle_fixed_values(metadata, element)
         if element.fixedUri.present?
@@ -229,27 +224,27 @@ module Inferno
       def type_must_support_extension?(extensions)
         extensions&.any? do |extension|
           extension.url == 'http://hl7.org/fhir/StructureDefinition/elementdefinition-type-must-support' &&
-          extension.valueBoolean
+            extension.valueBoolean
         end
       end
 
       def save_type_code?(type)
-        'Reference' == type.code
+        type.code == 'Reference'
       end
 
       def get_type_must_support_metadata(current_metadata, current_element)
         current_element.type.map do |type|
-          if type_must_support_extension?(type.extension)
-            metadata =
+          next unless type_must_support_extension?(type.extension)
+
+          metadata =
             {
               path: "#{current_metadata[:path].delete_suffix('[x]')}#{type.code.upcase_first}",
               original_path: current_metadata[:path]
             }
-            metadata[:types] = [type.code] if save_type_code?(type)
-            handle_type_must_support_target_profiles(type, metadata) if type.code == 'Reference'
+          metadata[:types] = [type.code] if save_type_code?(type)
+          handle_type_must_support_target_profiles(type, metadata) if type.code == 'Reference'
 
-            metadata
-          end
+          metadata
         end.compact
       end
 
@@ -272,20 +267,21 @@ module Inferno
         end
 
         # remove target_profile for FHIR Base resource type.
-        target_profiles.delete_if { |reference| reference.start_with?('http://hl7.org/fhir/StructureDefinition')}
+        target_profiles.delete_if { |reference| reference.start_with?('http://hl7.org/fhir/StructureDefinition') }
         metadata[:target_profiles] = target_profiles if target_profiles.present?
       end
 
       def handle_choice_type_in_sliced_element(current_metadata, must_support_elements_metadata)
         choice_element_metadata = must_support_elements_metadata.find do |metadata|
           metadata[:original_path].present? &&
-          current_metadata[:path].include?( metadata[:original_path] )
+            current_metadata[:path].include?(metadata[:original_path])
         end
 
-        if choice_element_metadata.present?
-          current_metadata[:original_path] = current_metadata[:path]
-          current_metadata[:path] = current_metadata[:path].sub(choice_element_metadata[:original_path], choice_element_metadata[:path])
-        end
+        return unless choice_element_metadata.present?
+
+        current_metadata[:original_path] = current_metadata[:path]
+        current_metadata[:path] =
+          current_metadata[:path].sub(choice_element_metadata[:original_path], choice_element_metadata[:path])
       end
 
       def must_support_elements
@@ -293,9 +289,7 @@ module Inferno
           {
             path: current_element.id.gsub("#{resource}.", '')
           }.tap do |current_metadata|
-            if is_uscdi_requirement_element?(current_element)
-              current_metadata[:uscdi_only] = true
-            end
+            current_metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
 
             type_must_support_metadata = get_type_must_support_metadata(current_metadata, current_element)
 
@@ -304,10 +298,13 @@ module Inferno
             else
               handle_choice_type_in_sliced_element(current_metadata, must_support_elements_metadata)
 
-              supported_types = current_element.type.select { |type| save_type_code?(type) }.map { |type| type.code }
+              supported_types = current_element.type.select { |type| save_type_code?(type) }.map(&:code)
               current_metadata[:types] = supported_types if supported_types.present?
 
-              handle_type_must_support_target_profiles(current_element.type.first, current_metadata) if current_element.type.first&.code == 'Reference'
+              if current_element.type.first&.code == 'Reference'
+                handle_type_must_support_target_profiles(current_element.type.first,
+                                                         current_metadata)
+              end
 
               handle_fixed_values(current_metadata, current_element)
 

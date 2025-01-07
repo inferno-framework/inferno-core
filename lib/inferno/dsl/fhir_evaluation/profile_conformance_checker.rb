@@ -8,15 +8,15 @@ module Inferno
           considerOnlyResourceType: false
         }.freeze
 
-        def conforms_to_profile?(resource, profile, options=DEFAULT_OPTIONS, validator=nil)
+        def conforms_to_profile?(resource, profile, options = DEFAULT_OPTIONS, validator = nil)
           return false if resource.resourceType != profile.type
 
           return true if options[:considerOnlyResourceType]
 
           return true if options[:considerMetaProfile] && declares_meta_profile?(resource, profile)
 
-          return true if options[:considerValidationResults] && validator && validates_profile?(resource, profile, validator)
-          
+          return true if options[:considerValidationResults] && validates_profile?(resource, profile, validator)
+
           false
         end
 
@@ -28,9 +28,9 @@ module Inferno
           declared_profiles.include?(profile_url) || declared_profiles.include?(versioned_url)
         end
 
-        def validates_profile?(resource, profile, validator)
-          # TODO
-          # validator.resource_is_valid?(resource, profile.url, nil)
+        def validates_profile?(_resource, _profile, _validator)
+          raise 'Profile validation is not yet implemented. ' \
+                'Set considerValidationResults=false.'
         end
       end
     end

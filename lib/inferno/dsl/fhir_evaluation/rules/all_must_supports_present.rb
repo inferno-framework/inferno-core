@@ -16,25 +16,26 @@ module Inferno
             conformance_options = context.config.data['Rule']['AllMustSupportsPresent']['ConformanceOptions'].to_options
             missing_items_by_profile = {}
             context.ig.profiles.each do |profile|
-              resource_type = profile.type
-              resources = context.data.filter { |r| conforms_to_profile?(r, profile, conformance_options, context.validator) }
+              resources = context.data.filter do |r|
+                conforms_to_profile?(r, profile, conformance_options, context.validator)
+              end
               if resources.blank?
-                missing_items_by_profile[profile.url] = ["No matching resources were found to check"]
+                missing_items_by_profile[profile.url] = ['No matching resources were found to check']
                 next
               end
               profile_metadata = extract_metadata(profile, context.ig)
               missing_items = perform_must_support_test_with_metadata(resources, profile_metadata)
 
-              if missing_items.any?
-                missing_items_by_profile[profile.url] = missing_items
-              end
+              missing_items_by_profile[profile.url] = missing_items if missing_items.any?
             end
 
             if missing_items_by_profile.count.zero?
               result = EvaluationResult.new('All MustSupports are present', severity: 'success', rule: self)
             else
-              message = "Found Profiles with not all MustSupports represented:"
-              missing_items_by_profile.each { |profile_url, missing_items| message += "\n\t\t#{profile_url}: #{missing_items.join(', ')}" }
+              message = 'Found Profiles with not all MustSupports represented:'
+              missing_items_by_profile.each do |profile_url, missing_items|
+                message += "\n\t\t#{profile_url}: #{missing_items.join(', ')}"
+              end
               result = EvaluationResult.new(message, rule: self)
             end
             context.add_result result
@@ -44,15 +45,16 @@ module Inferno
           # Customizing the metadata may add, modify, or remove items.
           # For instance, US Core 3.1.1 Patient "Previous Name" is defined as MS only in narrative.
           # Choices are also defined only in narrative.
-          def perform_must_support_test(profile, resources, ig)
+          def perform_must_support_test(profile, resources, ig) # rubocop:disable Naming/MethodParameterName
             profile_metadata = extract_metadata(profile, ig)
             yield profile_metadata if block_given?
 
             perform_must_support_test_with_metadata(resources, profile_metadata)
           end
 
-          # perform_must_support_test_with_metadata is invoked from either option above with the final metadata used as the basis for the check
-          # (or directly from a test if you want to completely overwrite the metadata)
+          # perform_must_support_test_with_metadata is invoked from either option above,
+          #   with the metadata to be used as the basis for the check
+          # (or can be invoked directly from a test if you want to completely overwrite the metadata)
           def perform_must_support_test_with_metadata(resources, profile_metadata)
             return if resources.blank?
 
@@ -67,40 +69,46 @@ module Inferno
             missing_must_support_strings
           end
 
-          def extract_metadata(profile, ig)
+          def extract_metadata(profile, ig) # rubocop:disable Naming/MethodParameterName
             MustSupportMetadataExtractor.new(profile.snapshot.element, profile, profile.type, ig)
           end
 
           def handle_must_support_choices
             missing_elements.delete_if do |element|
               choices = metadata.must_supports[:choices].find { |choice| choice[:paths]&.include?(element[:path]) }
-              is_any_choice_supported?(choices)
+              any_choice_supported?(choices)
             end
 
             missing_extensions.delete_if do |extension|
-              choices = metadata.must_supports[:choices].find { |choice| choice[:extension_ids]&.include?(extension[:id]) }
-              is_any_choice_supported?(choices)
+              choices = metadata.must_supports[:choices].find do |choice|
+                choice[:extension_ids]&.include?(extension[:id])
+              end
+              any_choice_supported?(choices)
             end
 
             missing_slices.delete_if do |slice|
               choices = metadata.must_supports[:choices].find { |choice| choice[:slice_names]&.include?(slice[:name]) }
-              is_any_choice_supported?(choices)
+              any_choice_supported?(choices)
             end
           end
 
-          def is_any_choice_supported? (choices)
+          def any_choice_supported?(choices)
             choices.present? &&
-            (
-              choices[:paths]&.any? { |path| missing_elements.none? { |element| element[:path] == path } } ||
-              choices[:extension_ids]&.any? { |extension_id| missing_extensions.none? { |extension| extension[:id] == extension_id} } ||
-              choices[:slice_names]&.any? { |slice_name| missing_slices.none? { |slice| slice[:name] == slice_name} }
-            )
+              (
+                choices[:paths]&.any? { |path| missing_elements.none? { |element| element[:path] == path } } ||
+                choices[:extension_ids]&.any? do |extension_id|
+                  missing_extensions.none? do |extension|
+                    extension[:id] == extension_id
+                  end
+                end ||
+                choices[:slice_names]&.any? { |slice_name| missing_slices.none? { |slice| slice[:name] == slice_name } }
+              )
           end
 
           def missing_must_support_strings
             missing_elements.map { |element_definition| missing_element_string(element_definition) } +
-            missing_slices.map { |slice_definition| slice_definition[:slice_id] } +
-            missing_extensions.map { |extension_definition| extension_definition[:id] }
+              missing_slices.map { |slice_definition| slice_definition[:slice_id] } +
+              missing_extensions.map { |extension_definition| extension_definition[:id] }
           end
 
           def missing_element_string(element_definition)
@@ -111,17 +119,8 @@ module Inferno
             end
           end
 
-          def exclude_uscdi_only_test?
-            false
-            #config.options[:exclude_uscdi_only_test] == true
-          end
-
           def must_support_extensions
-            if exclude_uscdi_only_test?
-              metadata.must_supports[:extensions].reject{ |extension| extension[:uscdi_only] }
-            else
-              metadata.must_supports[:extensions]
-            end
+            metadata.must_supports[:extensions]
           end
 
           def missing_extensions(resources = [])
@@ -144,11 +143,7 @@ module Inferno
           end
 
           def must_support_elements
-            if exclude_uscdi_only_test?
-              metadata.must_supports[:elements].reject{ |element| element[:uscdi_only] }
-            else
-              metadata.must_supports[:elements]
-            end
+            metadata.must_supports[:elements]
           end
 
           def missing_elements(resources = [])
@@ -172,7 +167,7 @@ module Inferno
                   unless has_ms_extension
                     value = value.value if value.instance_of?(Inferno::DSL::PrimitiveType)
                     value_without_extensions =
-                      value.respond_to?(:to_hash) ? value.to_hash.reject { |key, _| key == 'extension' } : value
+                      value.respond_to?(:to_hash) ? value.to_hash.except('extension') : value
                   end
 
                   (has_ms_extension || value_without_extensions.present? || value_without_extensions == false) &&
@@ -185,11 +180,7 @@ module Inferno
           end
 
           def must_support_slices
-            if exclude_uscdi_only_test?
-              metadata.must_supports[:slices].reject{ |slice| slice[:uscdi_only] }
-            else
-              metadata.must_supports[:slices]
-            end
+            metadata.must_supports[:slices]
           end
 
           def missing_slices(resources = [])
@@ -216,7 +207,9 @@ module Inferno
                   coding.code == discriminator[:code] && coding.system == discriminator[:system]
                 end
               when 'patternIdentifier'
-                find_a_value_at(element, discriminator[:path]) { |identifier| identifier.system == discriminator[:system] }
+                find_a_value_at(element, discriminator[:path]) do |identifier|
+                  identifier.system == discriminator[:system]
+                end
               when 'value'
                 values = discriminator[:values].map { |value| value.merge(path: value[:path].split('.')) }
                 find_slice_by_values(element, values)
@@ -267,8 +260,11 @@ module Inferno
                       .all? { |value_definition| value_definition[:value] == el_found }
 
                   child_element_values_match =
-                    child_element_value_definitions.present? ?
-                      find_slice_by_values(el_found, child_element_value_definitions) : true
+                    if child_element_value_definitions.present?
+                      find_slice_by_values(el_found, child_element_value_definitions)
+                    else
+                      true
+                    end
 
                   current_element_values_match && child_element_values_match
                 end
