@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import lightTheme from '~/styles/theme';
+import { useTestSessionStore } from '~/store/testSession';
 
 interface CustomTreeItemContentProps extends TreeItemContentProps {
   testId?: string;
@@ -44,6 +45,8 @@ const CustomContent = React.forwardRef(function CustomContent(
   } = useTreeItemState(itemId);
 
   const navigate = useNavigate();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const viewOnlyUrl = viewOnly ? '/view' : '';
 
   const icon = iconProp || expansionIcon || displayIcon;
 
@@ -72,7 +75,7 @@ const CustomContent = React.forwardRef(function CustomContent(
     event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>,
   ) => {
     handleSelection(event as React.MouseEvent<HTMLDivElement, MouseEvent>);
-    if (testId) navigate(`#${testId}`);
+    if (testId) navigate(`#${testId}${viewOnlyUrl}`);
   };
 
   return (

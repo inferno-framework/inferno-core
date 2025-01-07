@@ -14,7 +14,6 @@ import PresetsSelector from '~/components/PresetsSelector/PresetsSelector';
 import TestGroupTreeItem from '~/components/TestSuite/TestSuiteTree/TestGroupTreeItem';
 import TreeItemLabel from '~/components/TestSuite/TestSuiteTree/TreeItemLabel';
 import { useAppStore } from '~/store/app';
-import { useTestSessionStore } from '~/store/testSession';
 import lightTheme from '~/styles/theme';
 import useStyles from './styles';
 
@@ -46,14 +45,12 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
 }) => {
   const { classes } = useStyles();
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
-  const viewOnlyUrl = viewOnly ? '/view' : '';
 
   let selectedNode = selectedRunnable;
   if (view === 'report') {
-    selectedNode = `${selectedNode}/report${viewOnlyUrl}`;
+    selectedNode = `${selectedNode}/report`;
   } else if (view === 'config') {
-    selectedNode = `${selectedNode}/config${viewOnlyUrl}`;
+    selectedNode = `${selectedNode}/config`;
   }
 
   const defaultExpanded: string[] = [testSuite.id];
@@ -97,7 +94,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
 
       return (
         <CustomTreeItem
-          itemId={`${testSuite.id}/config${viewOnlyUrl}`}
+          itemId={`${testSuite.id}/config`}
           label={
             <Typography component="div" alignItems="center" sx={{ display: 'flex' }}>
               <TreeItemLabel title={'Configuration Messages'} />
@@ -108,7 +105,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           className={classes.treeItemTopBorder}
           // eslint-disable-next-line max-len
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-          ContentProps={{ testId: `${testSuite.id}/config${viewOnlyUrl}` } as any}
+          ContentProps={{ testId: `${testSuite.id}/config` } as any}
         />
       );
     };
@@ -144,23 +141,23 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
         >
           <CustomTreeItem
             classes={{ content: classes.treeRoot }}
-            itemId={`${testSuite.id}${viewOnlyUrl}`}
+            itemId={testSuite.id}
             label={<TreeItemLabel runnable={testSuite} />}
             slots={{ icon: ListAltIcon }}
             className={classes.treeItemBottomBorder}
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-            ContentProps={{ testId: `${testSuite.id}${viewOnlyUrl}` } as any}
+            ContentProps={{ testId: testSuite.id } as any}
           />
           {testGroupList}
           <CustomTreeItem
-            itemId={`#${testSuite.id}/report${viewOnlyUrl}`}
+            itemId={`#${testSuite.id}/report`}
             label={<TreeItemLabel title={'Report'} />}
             slots={{ icon: FlagIcon }}
             className={`${classes.treeItemTopBorder} ${classes.treeItemBottomBorder}`}
             // eslint-disable-next-line max-len
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-            ContentProps={{ testId: `${testSuite.id}/report${viewOnlyUrl}` } as any}
+            ContentProps={{ testId: `${testSuite.id}/report` } as any}
           />
           <Box display="flex" alignItems="flex-end" flexGrow={1} mt={windowIsSmall ? 0 : 8}>
             <Box width="100%">{renderConfigMessagesTreeItem()}</Box>
