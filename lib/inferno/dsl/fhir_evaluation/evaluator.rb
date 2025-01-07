@@ -27,7 +27,7 @@ module Inferno
           end
 
           Rule.descendants.each do |rule|
-            rule.new.check(context) if active_rules.include?(rule.name.demodulize)
+            context.add_result rule.new.check(context) if active_rules.include?(rule.name.demodulize)
           end
 
           context.results

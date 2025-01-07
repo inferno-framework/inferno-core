@@ -3,7 +3,6 @@ module Inferno
     module FHIREvaluation
       class ReferenceExtractor
         def initialize
-          @resource_type_ids = Hash.new { |resource_type, id| resource_type[id] = [] }
           @resource_path_ids = Hash.new { |resource_path, id| resource_path[id] = [] }
           @resource_ids = Set.new
           @references = Hash.new { |reference, id| reference[id] = [] }
@@ -16,7 +15,6 @@ module Inferno
               next if path.include?('contained')
 
               first_path = metadata['path'].partition('.').first.downcase
-              @resource_type_ids[resource.resourceType] << value
               @resource_path_ids[first_path] << value
               @resource_ids.add(value)
             end
@@ -24,7 +22,7 @@ module Inferno
 
           extract_references(resources)
 
-          [@resource_type_ids, @resource_path_ids, @resource_ids, @references]
+          [@resource_path_ids, @resource_ids, @references]
         end
 
         def extract_references(resources)

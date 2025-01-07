@@ -16,17 +16,12 @@ module Inferno
             extractor = Inferno::DSL::FHIREvaluation::ReferenceExtractor.new
             @referenced_resources = Set.new
             @referencing_resources = Set.new
-            @resourcetype_ids, @resource_type_ids, @resource_ids, references = extractor.extract_ids_references(context.data)
+            @resource_path_ids, @resource_ids, references = extractor.extract_ids_references(context.data)
             references.each do |id, refs|
               assess_reachability(id, refs)
             end
 
             island_resources = resource_ids - referenced_resources - referencing_resources
-
-            island_resources.map! do |id|
-              resource_type = @resourcetype_ids.select { |_key, values| values.include?(id) }.keys[0]
-              "#{resource_type}/#{id}"
-            end
             sorted_island_resources = Set.new(island_resources.to_a.sort)
 
             if sorted_island_resources.any?
@@ -38,7 +33,7 @@ module Inferno
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             end
 
-            context.add_result result
+            result
           end
 
           def assess_reachability(id, references)
@@ -54,7 +49,7 @@ module Inferno
                   makes_resolvable_reference = true
                   referenced_resources.add(referenced_id)
                 end
-              elsif @resource_type_ids[type].include?(referenced_id)
+              elsif @resource_path_ids[type].include?(referenced_id)
                 makes_resolvable_reference = true
                 referenced_resources.add(referenced_id)
               end
