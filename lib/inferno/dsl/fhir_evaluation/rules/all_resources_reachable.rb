@@ -17,10 +17,10 @@ module Inferno
             extractor = Inferno::DSL::FHIREvaluation::ReferenceExtractor.new
             @resource_path_ids = extractor.extract_resource_path_ids(context.data)
             @resource_ids = Set.new(resource_path_ids.values.flatten.uniq)
-            references = extractor.extract_references(context.data, resource_path_ids)
+            reference_map = extractor.extract_references(context.data, resource_path_ids)
 
-            references.each do |id, refs|
-              assess_reachability(id, refs)
+            reference_map.each do |id, references|
+              assess_reachability(id, references)
             end
 
             island_resources = resource_ids - referenced_resources - referencing_resources
@@ -40,12 +40,10 @@ module Inferno
 
           def assess_reachability(id, references)
             makes_resolvable_reference = false
-            references.each do |reference_data|
-              # field = reference_data[0]
-              type = reference_data[1]
-              referenced_id = reference_data[2]
+            references.each do |reference|
+              type = reference[1]
+              referenced_id = reference[2]
 
-              # no type for the reference
               if type == ''
                 if resource_ids.include?(referenced_id)
                   makes_resolvable_reference = true
