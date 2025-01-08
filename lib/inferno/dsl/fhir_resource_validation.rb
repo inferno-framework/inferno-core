@@ -380,10 +380,10 @@ module Inferno
         #   using multiple validators
         # @param required_suite_options [Hash] suite options that must be
         #   selected in order to use this validator
-        def fhir_resource_validator(name = :default, required_suite_options: nil, &block)
+        def fhir_resource_validator(name = :default, required_suite_options: nil, &)
           current_validators = fhir_validators[name] || []
 
-          new_validator = Inferno::DSL::FHIRResourceValidation::Validator.new(name, id, required_suite_options, &block)
+          new_validator = Inferno::DSL::FHIRResourceValidation::Validator.new(name, id, required_suite_options, &)
 
           current_validators.reject! { |validator| validator.requirements == required_suite_options }
           current_validators << new_validator
