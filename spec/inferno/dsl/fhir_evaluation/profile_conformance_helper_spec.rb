@@ -1,9 +1,9 @@
-require_relative '../../../../lib/inferno/dsl/fhir_evaluation/profile_conformance_checker'
+require_relative '../../../../lib/inferno/dsl/fhir_evaluation/profile_conformance_helper'
 
-RSpec.describe Inferno::DSL::FHIREvaluation::ProfileConformanceChecker do
+RSpec.describe Inferno::DSL::FHIREvaluation::ProfileConformanceHelper do
   let(:checker_class) do
     Class.new do
-      include Inferno::DSL::FHIREvaluation::ProfileConformanceChecker
+      include Inferno::DSL::FHIREvaluation::ProfileConformanceHelper
     end
   end
 
@@ -118,6 +118,23 @@ RSpec.describe Inferno::DSL::FHIREvaluation::ProfileConformanceChecker do
       expect do
         checker.conforms_to_profile?(patient, patient_profile, options, validator)
       end.to raise_error(StandardError, /Profile validation is not yet implemented/)
+    end
+
+    it 'returns true for a resource when the block returns true' do
+      options = {
+        considerMetaProfile: false,
+        considerOnlyResourceType: false,
+        considerValidationResults: false
+      }
+
+      result = checker.conforms_to_profile?(patient, patient_profile, options)
+      expect(result).to be(false)
+
+      result = checker.conforms_to_profile?(patient, patient_profile, options) { |_r| false }
+      expect(result).to be(false)
+
+      result = checker.conforms_to_profile?(patient, patient_profile, options) { |_r| true }
+      expect(result).to be(true)
     end
   end
 end

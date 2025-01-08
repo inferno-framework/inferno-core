@@ -1,6 +1,6 @@
 require_relative '../../fhir_resource_navigation'
 require_relative '../../must_support_metadata_extractor'
-require_relative '../profile_conformance_checker'
+require_relative '../profile_conformance_helper'
 
 module Inferno
   module DSL
@@ -8,7 +8,7 @@ module Inferno
       module Rules
         class AllMustSupportsPresent
           include FHIRResourceNavigation
-          include ProfileConformanceChecker
+          include ProfileConformanceHelper
           attr_accessor :metadata
 
           # check is invoked from CLI, assume no ability to customize the metadata (for now)
