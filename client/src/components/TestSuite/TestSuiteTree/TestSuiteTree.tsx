@@ -151,7 +151,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
           />
           {testGroupList}
           <CustomTreeItem
-            itemId={`#${testSuite.id}/report`}
+            itemId={`${testSuite.id}/report`}
             label={<TreeItemLabel title={'Report'} />}
             slots={{ icon: FlagIcon }}
             className={`${classes.treeItemTopBorder} ${classes.treeItemBottomBorder}`}
