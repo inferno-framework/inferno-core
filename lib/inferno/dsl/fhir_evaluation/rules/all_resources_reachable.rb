@@ -35,7 +35,7 @@ module Inferno
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             end
 
-            result
+            context.add_result result
           end
 
           def assess_reachability(id, references)

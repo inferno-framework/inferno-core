@@ -9,7 +9,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     data = [patient, encounter]
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)
+    result = described_class.new.check(context)[0]
 
     expect(result.message).to eq('All references resolve')
   end
@@ -21,7 +21,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     data = [patient, encounter]
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)
+    result = described_class.new.check(context)[0]
 
     expect(result.message).to eq('All references resolve')
   end
@@ -32,7 +32,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     data = [patient, encounter]
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)
+    result = described_class.new.check(context)[0]
     msg = 'Found unresolved references'
 
     expect(result.message).to eq("#{msg}: \n Resource (id): enc0   \n\tpath: subject, type: , id: wrongid")
@@ -45,7 +45,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     data = [patient, encounter]
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)
+    result = described_class.new.check(context)[0]
     id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
     msg = 'Found unresolved references'
     expect(result.message).to eq("#{msg}: \n Resource (id): enc444   \n\tpath: subject, type: , id: #{id}")

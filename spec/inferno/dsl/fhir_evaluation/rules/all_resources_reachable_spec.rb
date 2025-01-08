@@ -14,7 +14,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllResourcesReachable do
     data = [patient, encounter]
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)
+    result = described_class.new.check(context)[0]
 
     expect(result.message).to eq('All resources are reachable')
   end
@@ -26,7 +26,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllResourcesReachable do
     data = [patient, encounter]
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)
+    result = described_class.new.check(context)[0]
 
     expect(result.message).to eq('All resources are reachable')
   end
@@ -35,7 +35,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllResourcesReachable do
     data = patient85.entry.map(&:resource)
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)
+    result = described_class.new.check(context)[0]
 
     expect(result.message).to eq('All resources are reachable')
   end
@@ -44,7 +44,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllResourcesReachable do
     data = [patient85.entry[0].resource] # pick just the Patient resource, which has no outgoing references
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
 
-    result = described_class.new.check(context)
+    result = described_class.new.check(context)[0]
 
     expect(result.severity).to eq('warning')
     expect(result.message).to(

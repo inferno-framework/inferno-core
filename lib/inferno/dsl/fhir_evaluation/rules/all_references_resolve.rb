@@ -32,7 +32,7 @@ module Inferno
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             end
 
-            result
+            context.add_result result
           end
 
           def gen_reference_fail_message(unresolved_references)
