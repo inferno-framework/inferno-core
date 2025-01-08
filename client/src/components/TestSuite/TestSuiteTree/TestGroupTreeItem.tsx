@@ -27,7 +27,7 @@ const TestGroupTreeItem: FC<TestGroupTreeItemProps> = ({ testGroup }) => {
       slots={
         testGroup.run_as_group || testGroup.test_groups.length === 0 ? { icon: TreeItemIcon } : {}
       }
-      ContentProps={{ testId: `${testGroup.short_id}` } as never}
+      ContentProps={{ testId: testGroup.short_id } as never}
     >
       {testGroup.test_groups.length > 0 && !testGroup.run_as_group && renderSublist()}
     </CustomTreeItem>

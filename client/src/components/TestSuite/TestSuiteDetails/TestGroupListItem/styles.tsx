@@ -15,10 +15,6 @@ export default makeStyles()((theme: Theme) => ({
     alignSelf: 'center',
     color: theme.palette.common.grayDark,
   },
-  groupLink: {
-    color: theme.palette.secondary.dark,
-    fontWeight: 'bold',
-  },
   currentItem: {
     fontWeight: 600,
   },

@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
-import { Box, Divider, List, ListItem, ListItemText, Typography } from '@mui/material';
+import { Box, Divider, Link, List, ListItem, ListItemText, Typography } from '@mui/material';
 import FolderIcon from '@mui/icons-material/Folder';
-import { Link } from 'react-router-dom';
 import { TestGroup } from '~/models/testSuiteModels';
 import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
 import { useTestSessionStore } from '~/store/testSession';
@@ -35,9 +34,10 @@ const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) 
                     <Typography className={classes.shortId}>{`${testGroup.short_id} `}</Typography>
                   )}
                   <Link
-                    to={`#${testGroup.id}${viewOnly ? '/view' : ''}`}
+                    color="secondary.dark"
+                    fontWeight="bold"
+                    href={`${location.pathname}#${testGroup.id}${viewOnly ? '/view' : ''}`}
                     data-testid="navigable-group-item"
-                    className={classes.groupLink}
                   >
                     {testGroup.title}
                   </Link>
