@@ -37,7 +37,7 @@ RSpec.shared_examples 'deployable_test_kit' do
           'its version can now be determined by the version of its Test Kit.' \
           "Remove the `version` method call in the suite definition.\n"
 
-        expect(suite).to_not match(%r{^\s+version(\s|\()\S+\)?}), error_message
+        expect(suite).to_not match(/^\s+version(\s|\()\S+\)?/), error_message
       end
     end
 
@@ -52,7 +52,7 @@ RSpec.shared_examples 'deployable_test_kit' do
       ]
 
       required_fields.each do |field_name|
-        expect(test_kit).send(field_name).to be_present
+        expect(test_kit.send(field_name)).to be_present
       end
     end
 
@@ -66,7 +66,7 @@ RSpec.shared_examples 'deployable_test_kit' do
     end
 
     it 'has a maturity of "Low", "Medium", or "High"' do
-      expect(['Low', 'Medium', 'High']).to include(test_kit.maturity)
+      expect(['Low', 'Medium', 'High']).to include(test_kit.maturity) # rubocop:disable RSpec/ExpectActual
     end
   end
 
