@@ -43,7 +43,7 @@ module Inferno
 
       # These are the attributes that can be directly copied when merging a
       # runnable's input with an input configuration.
-      MERGEABLE_ATTRIBUTES = (ATTRIBUTES - [:type]).freeze
+      MERGEABLE_ATTRIBUTES = (ATTRIBUTES - [:type, :options]).freeze
 
       def initialize(**params)
         bad_params = params.keys - ATTRIBUTES
@@ -69,20 +69,26 @@ module Inferno
 
         self.type = child_input.type if child_input.present? && child_input.type != 'text'
 
+        merge_components(primary_source: self, secondary_source: child_input)
+
         self
       end
 
       # @private
       # Merge this input with an input from a configuration. Fields defined in
       # the configuration take precedence over those defined on this input.
-      def merge(other_input)
+      def merge(other_input, merge_all: false)
         return self if other_input.nil?
 
-        MERGEABLE_ATTRIBUTES.each do |attribute|
+        attributes_to_merge = merge_all ? ATTRIBUTES : MERGEABLE_ATTRIBUTES
+
+        attributes_to_merge.each do |attribute|
           merge_attribute(attribute, primary_source: other_input, secondary_source: self)
         end
 
         self.type = other_input.type if other_input.type.present? && other_input.type != 'text'
+
+        merge_components(primary_source: other_input, secondary_source: self)
 
         self
       end
@@ -101,6 +107,46 @@ module Inferno
         return if value.nil?
 
         send("#{attribute}=", value)
+      end
+
+      def merge_components(primary_source:, secondary_source:)
+        primary_components = primary_source.options&.dig(:components) || []
+        secondary_components = secondary_source.options&.dig(:components) || []
+
+        return if primary_components.blank? && secondary_components.blank?
+
+        component_keys =
+          (primary_components + secondary_components)
+            .map { |component| component[:name].to_s }
+            .uniq
+
+        merged_components = component_keys.map do |key|
+          primary_component = primary_components.find { |component| component[:name].to_s == key }
+          secondary_component = secondary_components.find { |component| component[:name].to_s == key }
+
+          if primary_component.blank?
+            secondary_component[:name] = secondary_component[:name].to_s
+            next secondary_component
+          end
+
+          if secondary_component.blank?
+            primary_component[:name] = primary_component[:name].to_s
+            next primary_component
+          end
+
+          Input.new(**secondary_component).merge(Input.new(**primary_component), merge_all: true).to_hash
+        end
+
+        if (primary_components + secondary_components).any? { |c| c[:name].to_s == 'pkce_support' && c[:locked] == false }
+          if merged_components.find { |c| c[:name].to_s == 'pkce_support' }&.dig(:locked) == true
+            puts "1: #{primary_components}"
+            puts "2: #{secondary_components}"
+            puts "3: #{merged_components}"
+          end
+        end
+
+        self.options ||= {}
+        self.options[:components] = merged_components
       end
 
       def to_hash

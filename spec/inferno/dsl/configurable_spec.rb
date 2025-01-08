@@ -107,6 +107,83 @@ RSpec.describe Inferno::DSL::Configurable do
           expect(config.input(identifier)).to eq(Inferno::Entities::Input.new(**existing_config.merge(new_config)))
         end
       end
+
+      context 'with auth_info' do
+        it 'merges individual component options' do
+          identifier = :auth_info_merge
+
+          list_options = [
+            {
+              label: 'Public',
+              value: 'public'
+            },
+            {
+              label: 'Confidential Symmetric',
+              value: 'symmetric'
+            }
+          ]
+          existing_component_config = [
+            {
+              name: :use_discovery,
+              locked: true
+            },
+            {
+              name: :auth_type,
+              options: {
+                list_options:
+              }
+            },
+            {
+              name: :pkce_support,
+              default: 'enabled'
+            }
+          ]
+
+          new_component_config = [
+            {
+              name: :auth_type,
+              default: 'symmetric'
+            },
+            {
+              name: :pkce_support,
+              locked: true
+            }
+          ]
+
+          existing_config = {
+            type: 'auth_info',
+            options: {
+              components: existing_component_config
+            }
+          }
+          new_config = {
+            type: 'auth_info',
+            options: {
+              components: new_component_config
+            }
+          }
+
+          config.add_input(identifier, existing_config)
+          config.add_input(identifier, new_config)
+
+          final_components = config.input(identifier).options[:components]
+
+          expect(final_components.length).to eq(3)
+
+          auth_type_component = final_components.find { |component| component[:name] == 'auth_type' }
+
+          expect(auth_type_component[:default]).to eq('symmetric')
+          expect(auth_type_component[:options][:list_options].length).to eq(2)
+
+          pkce_component = final_components.find { |component| component[:name] == 'pkce_support' }
+
+          expect(pkce_component[:default]).to eq('enabled')
+          expect(pkce_component[:locked]).to eq(true)
+
+          discovery_component = final_components.find { |component| component[:name] == 'use_discovery' }
+          expect(discovery_component).to eq(existing_component_config.first)
+        end
+      end
     end
 
     describe '#add_output' do
