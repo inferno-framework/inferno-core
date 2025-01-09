@@ -23,13 +23,13 @@ module Inferno
           @resource_path_ids = resource_path_ids
 
           resources.each do |resource|
-            extract_references_resource(resource)
+            extract_references_from_resource(resource)
           end
 
           @references
         end
 
-        def extract_references_resource(resource)
+        def extract_references_from_resource(resource)
           resource.each_element do |value, metadata, path|
             if metadata['type'] == 'Reference' && !value.reference.nil?
               if value.reference.start_with?('#')
