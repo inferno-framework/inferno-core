@@ -110,35 +110,41 @@ module Inferno
       end
 
       def merge_components(primary_source:, secondary_source:)
-        primary_components = primary_source.options&.dig(:components) || []
-        secondary_components = secondary_source.options&.dig(:components) || []
+        primary_components =
+          (primary_source.options&.dig(:components) || [])
+            .map(&:dup)
+            .each { |component| component[:name] = component[:name].to_sym }
+        secondary_components =
+          (secondary_source.options&.dig(:components) || [])
+            .map(&:dup)
+            .each { |component| component[:name] = component[:name].to_sym }
 
         return if primary_components.blank? && secondary_components.blank?
 
         component_keys =
           (primary_components + secondary_components)
-            .map { |component| component[:name].to_s }
+            .map { |component| component[:name] }
             .uniq
 
         merged_components = component_keys.map do |key|
-          primary_component = primary_components.find { |component| component[:name].to_s == key }
-          secondary_component = secondary_components.find { |component| component[:name].to_s == key }
+          primary_component = primary_components.find { |component| component[:name] == key }
+          secondary_component = secondary_components.find { |component| component[:name] == key }
 
           if primary_component.blank?
-            secondary_component[:name] = secondary_component[:name].to_s
             next secondary_component
           end
 
           if secondary_component.blank?
-            primary_component[:name] = primary_component[:name].to_s
             next primary_component
           end
 
           Input.new(**secondary_component).merge(Input.new(**primary_component), merge_all: true).to_hash
         end
 
-        if (primary_components + secondary_components).any? { |c| c[:name].to_s == 'pkce_support' && c[:locked] == false }
-          if merged_components.find { |c| c[:name].to_s == 'pkce_support' }&.dig(:locked) == true
+        merged_components.each { |component| component[:name] = component[:name].to_sym }
+
+        if (primary_components + secondary_components).any? { |c| c[:name].to_s == 'requested_scopes' }
+          if primary_source.name.to_s == 'ehr_smart_auth_info'
             puts "1: #{primary_components}"
             puts "2: #{secondary_components}"
             puts "3: #{merged_components}"
