@@ -1,4 +1,4 @@
-RSpec.shared_examples 'deployable_test_kit' do
+RSpec.shared_examples 'platform_deployable_test_kit' do
   let(:test_kit_location) do
     Object.const_source_location(described_class.name).first
   end
