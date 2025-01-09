@@ -188,12 +188,22 @@ module Inferno
               inputs[input.name.to_sym] = Entities::Input.new(**input.to_hash)
             end
 
+        if self.id.to_s == 'smart_ehr_launch'
+          puts "Children available inputs"
+          puts children_available_inputs
+        end
+
         available_inputs.each do |input, current_definition|
           child_definition = children_available_inputs(selected_suite_options)[input]
           current_definition.merge_with_child(child_definition)
         end
 
         available_inputs = children_available_inputs(selected_suite_options).merge(available_inputs)
+
+        if self.id.to_s == 'smart_ehr_launch'
+          puts "Available inputs"
+          puts available_inputs
+        end
         order_available_inputs(available_inputs)
       end
     end

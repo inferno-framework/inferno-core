@@ -106,7 +106,19 @@ module Inferno
 
         return if value.nil?
 
+        value = deep_dup(value)
+
         send("#{attribute}=", value)
+      end
+
+      def deep_dup(value)
+        if value.is_a? Array
+          value.map { |element| deep_dup(element) }
+        elsif value.is_a? Hash
+          value.transform_values { |element| deep_dup(element) }
+        else
+          value.dup
+        end
       end
 
       def merge_components(primary_source:, secondary_source:)
@@ -143,13 +155,13 @@ module Inferno
 
         merged_components.each { |component| component[:name] = component[:name].to_sym }
 
-        if (primary_components + secondary_components).any? { |c| c[:name].to_s == 'requested_scopes' }
-          if primary_source.name.to_s == 'ehr_smart_auth_info'
-            puts "1: #{primary_components}"
-            puts "2: #{secondary_components}"
-            puts "3: #{merged_components}"
-          end
-        end
+        # if (primary_components + secondary_components).any? { |c| c[:name].to_s == 'requested_scopes' }
+        #   if primary_source.name.to_s == 'ehr_smart_auth_info'
+        #     puts "1: #{primary_components}"
+        #     puts "2: #{secondary_components}"
+        #     puts "3: #{merged_components}"
+        #   end
+        # end
 
         self.options ||= {}
         self.options[:components] = merged_components
