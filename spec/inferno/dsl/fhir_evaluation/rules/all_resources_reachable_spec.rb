@@ -4,7 +4,7 @@
 
 RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllResourcesReachable do
   let(:patient85) do
-    path = File.expand_path('patient_85.json', __dir__)
+    path = File.expand_path('../../../../../spec/fixtures/patient_85.json', __dir__)
     FHIR::Json.from_json(File.read(path))
   end
 
