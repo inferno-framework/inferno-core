@@ -37,7 +37,7 @@ module Inferno
 
           def gen_reference_fail_message(unresolved_references)
             result_message = unresolved_references.map do |id, reference|
-              "\n Resource (id): #{id}  #{reference.each_with_index.map do |val, _idx|
+              reference_details = reference.each_with_index.map do |val, _idx|
                 val.each_with_index.map do |value, index|
                   case index
                   when 0
@@ -47,8 +47,10 @@ module Inferno
                   when 2
                     " id: #{value}"
                   end
-                end
-              end.join(',')}"
+                end.join(',')
+              end.join(',')
+
+              "\n Resource (id): #{id} #{reference_details}"
             end.join(',')
 
             "Found unresolved references: #{result_message}"
