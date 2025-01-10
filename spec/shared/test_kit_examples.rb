@@ -23,7 +23,7 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
 
       expect { described_class.const_get('Metadata') }.to_not raise_error(NameError), error_message
 
-      expect(described_class.const_get('Metadata') < Inferno::Entities::TestKit).to eq(true)
+      expect(described_class.const_get('Metadata') < Inferno::Entities::TestKit).to be(true)
     end
 
     it 'relies on the test kit version rather than defining the version in the suites' do
