@@ -51,6 +51,22 @@ RSpec.describe Inferno::Entities::IG do
       # https://www.hl7.org/fhir/us/core/STU3.1.1/all-examples.html
       expect(ig.examples.length).to eq(84)
       expect(ig.examples.map(&:id)).to include('child-example', 'self-tylenol')
+
+      patient_profile_url = 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient'
+
+      expect(ig.resource_for_profile(patient_profile_url)).to eq('Patient')
+
+      patient_profile = ig.profile_by_url(patient_profile_url)
+      expect(patient_profile.resourceType).to eq('StructureDefinition')
+      expect(patient_profile.id).to eq('us-core-patient')
+
+      condition_codes_vs = ig.value_set_by_url('http://hl7.org/fhir/us/core/ValueSet/us-core-condition-code')
+      expect(condition_codes_vs.resourceType).to eq('ValueSet')
+      expect(condition_codes_vs.title).to eq('US Core Condition Code')
+
+      race_ethnicity_cs = ig.code_system_by_url('urn:oid:2.16.840.1.113883.6.238')
+      expect(race_ethnicity_cs.resourceType).to eq('CodeSystem')
+      expect(race_ethnicity_cs.title).to eq('Race & Ethnicity - CDC')
     end
   end
 end
