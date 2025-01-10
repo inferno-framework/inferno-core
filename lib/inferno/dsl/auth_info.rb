@@ -310,6 +310,20 @@ module Inferno
         add_to_client(client)
         self
       end
+
+      def self.default_auth_type_component
+        {
+          name: :auth_type,
+          options: {
+            list_options: [
+              { label: 'Public', value: 'public' },
+              { label: 'Confidential Symmetric', value: 'symmetric' },
+              { label: 'Confidential Asymmetric', value: 'asymmetric' },
+              { label: 'Backend Services', value: 'backend_services' }
+            ]
+          }
+        }
+      end
     end
   end
 end
