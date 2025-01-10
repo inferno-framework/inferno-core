@@ -1,6 +1,11 @@
 require_relative '../../../lib/inferno/dsl/must_support_metadata_extractor'
 
 RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
+  include ExtractTGZHelper
+
+  let(:uscore3_package) { File.expand_path('../../fixtures/uscore311.tgz', __dir__) }
+  let(:uscore3_ig) { Inferno::Entities::IG.from_file(uscore3_package) }
+
   let(:extractor) { described_class.new([profile_element], profile, 'resourceConstructor', ig_resources) }
 
   let(:profile) do
@@ -59,6 +64,54 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
 
       expected = []
       expect(result).to eq(expected)
+    end
+  end
+
+  describe '#type_slices' do
+    let(:goal_profile) { uscore3_ig.profile_by_url('http://hl7.org/fhir/us/core/StructureDefinition/us-core-goal') }
+    let(:goal_extractor) do
+      described_class.new(goal_profile.snapshot.element, goal_profile, goal_profile.type, uscore3_ig)
+    end
+
+    it 'extracts slices from profile with slicing by type' do
+      slices = goal_extractor.type_slices
+
+      # Goal profile has a slice on target.due[x], fixed to type date (ie, dueDate)
+      # rubocop:disable Layout/LineLength
+      # https://www.hl7.org/fhir/us/core/STU3.1.1/StructureDefinition-us-core-goal-definitions.html#Goal.target.due[x]:dueDate
+      # rubocop:enable Layout/LineLength
+
+      expect(slices.length).to be(1)
+      expect(slices[0][:slice_id]).to eq('Goal.target.due[x]:dueDate')
+      expect(slices[0][:path]).to eq('target.due[x]')
+      expect(slices[0][:discriminator][:type]).to eq('type')
+      expect(slices[0][:discriminator][:code]).to eq('Date')
+    end
+  end
+
+  describe '#value_slices' do
+    let(:pulseox_profile) { uscore3_ig.profile_by_url('http://hl7.org/fhir/us/core/StructureDefinition/us-core-pulse-oximetry') }
+    let(:pulseox_extractor) do
+      described_class.new(pulseox_profile.snapshot.element, pulseox_profile, pulseox_profile.type, uscore3_ig)
+    end
+
+    it 'extracts slices from profile with slicing by value' do
+      slices = pulseox_extractor.value_slices
+
+      # https://www.hl7.org/fhir/us/core/STU3.1.1/StructureDefinition-us-core-pulse-oximetry.html
+      # PulseOximetry profile has 2 slices by value:
+      # 1 on category, 1 on code.coding
+
+      expect(slices.length).to be(2)
+      expect(slices[0][:slice_id]).to eq('Observation.category:VSCat')
+      expect(slices[0][:path]).to eq('category')
+      expect(slices[0][:discriminator][:type]).to eq('value')
+      expect(slices[0][:discriminator][:values][0]).to eq({ path: 'coding.code', value: 'vital-signs' })
+
+      expect(slices[1][:slice_id]).to eq('Observation.code.coding:PulseOx')
+      expect(slices[1][:path]).to eq('code.coding')
+      expect(slices[1][:discriminator][:type]).to eq('value')
+      expect(slices[1][:discriminator][:values][0]).to eq({ path: 'code', value: '59408-5' })
     end
   end
 end
