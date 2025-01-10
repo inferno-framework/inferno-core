@@ -22,17 +22,17 @@ const InputAccess: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsM
   const [accessValuesPopulated, setAccessValuesPopulated] = React.useState<boolean>(false);
 
   // Default auth type settings
-  const authComponentDefault = input.options?.components?.find(
+  const authComponent = input.options?.components?.find(
     (component) => component.name === 'auth_type',
-  )?.default;
+  );
 
   const firstListOption =
-    input.options?.list_options && input.options?.list_options?.length > 0
-      ? input.options?.list_options[0]
+    authComponent?.options?.list_options && authComponent?.options?.list_options?.length > 0
+      ? authComponent?.options?.list_options[0].value
       : undefined;
 
   const [authType, setAuthType] = React.useState<string>(
-    (authComponentDefault || firstListOption || 'public') as string,
+    (authComponent?.default || firstListOption || 'public') as string,
   );
 
   const [accessFields, setAccessFields] = React.useState<TestInput[]>(
