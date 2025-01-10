@@ -25,7 +25,7 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
     (component) => component.name === 'auth_type',
   );
   const [authType, setAuthType] = React.useState<string>(
-    authComponent ? (authComponent.default as string) : 'public',
+    authComponent?.default ? (authComponent.default as string) : 'public',
   );
 
   const [authFields, setAuthFields] = React.useState<TestInput[]>(
