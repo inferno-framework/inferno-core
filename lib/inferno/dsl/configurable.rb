@@ -138,6 +138,16 @@ module Inferno
           configuration[:inputs] ||= {}
         end
 
+        def deep_dup(value)
+          if value.is_a? Array
+            value.map { |element| deep_dup(element) }
+          elsif value.is_a? Hash
+            value.transform_values { |element| deep_dup(element) }
+          else
+            value.dup
+          end
+        end
+
         # @private
         def add_input(identifier, new_config = {})
           existing_config = input(identifier)
@@ -148,7 +158,7 @@ module Inferno
 
           inputs[identifier] =
             Entities::Input
-              .new(**existing_config.to_hash)
+              .new(**deep_dup(existing_config.to_hash))
               .merge(Entities::Input.new(**new_config))
         end
 

@@ -106,29 +106,15 @@ module Inferno
 
         return if value.nil?
 
-        value = deep_dup(value)
-
         send("#{attribute}=", value)
-      end
-
-      def deep_dup(value)
-        if value.is_a? Array
-          value.map { |element| deep_dup(element) }
-        elsif value.is_a? Hash
-          value.transform_values { |element| deep_dup(element) }
-        else
-          value.dup
-        end
       end
 
       def merge_components(primary_source:, secondary_source:)
         primary_components =
           (primary_source.options&.dig(:components) || [])
-            .map(&:dup)
             .each { |component| component[:name] = component[:name].to_sym }
         secondary_components =
           (secondary_source.options&.dig(:components) || [])
-            .map(&:dup)
             .each { |component| component[:name] = component[:name].to_sym }
 
         return if primary_components.blank? && secondary_components.blank?
