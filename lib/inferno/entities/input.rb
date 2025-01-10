@@ -69,7 +69,7 @@ module Inferno
 
         self.type = child_input.type if child_input.present? && child_input.type != 'text'
 
-        merge_components(primary_source: self, secondary_source: child_input)
+        merge_options(primary_source: self, secondary_source: child_input)
 
         self
       end
@@ -88,7 +88,7 @@ module Inferno
 
         self.type = other_input.type if other_input.type.present? && other_input.type != 'text'
 
-        merge_components(primary_source: other_input, secondary_source: self)
+        merge_options(primary_source: other_input, secondary_source: self)
 
         self
       end
@@ -109,12 +109,25 @@ module Inferno
         send("#{attribute}=", value)
       end
 
-      def merge_components(primary_source:, secondary_source:)
-        primary_components =
-          (primary_source.options&.dig(:components) || [])
+      def merge_options(primary_source:, secondary_source:)
+        primary_options = primary_source.options.dup || {}
+        secondary_options = secondary_source.options.dup || {}
+
+        return if primary_options.blank? && secondary_options.blank?
+
+        primary_components = primary_options.delete(:components) || []
+        secondary_components = secondary_options.delete(:components) || []
+
+        send("options=", secondary_options.merge(primary_options))
+
+        # Change to accept just components
+        merge_components(primary_components:, secondary_components:)
+      end
+
+      def merge_components(primary_components:, secondary_components:)
+        primary_components
             .each { |component| component[:name] = component[:name].to_sym }
-        secondary_components =
-          (secondary_source.options&.dig(:components) || [])
+        secondary_components
             .each { |component| component[:name] = component[:name].to_sym }
 
         return if primary_components.blank? && secondary_components.blank?
