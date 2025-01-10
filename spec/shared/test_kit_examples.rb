@@ -23,12 +23,12 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
 
       expect { described_class.const_get('Metadata') }.to_not raise_error(NameError), error_message
 
-      expect(described_class.const_get('Metadata')).to be_a(Inferno::Entities::TestKit)
+      expect(described_class.const_get('Metadata') < Inferno::Entities::TestKit).to eq(true)
     end
 
     it 'relies on the test kit version rather than defining the version in the suites' do
       suites = test_kit.suite_ids.map { |id| Inferno::Repositories::TestSuites.new.find(id) }
-      suite_paths = suites.map { |suite| Object.const_source_location(suite.name) }
+      suite_paths = suites.map { |suite| Object.const_source_location(suite.name).first }
       suite_contents = suite_paths.map { |path| File.read(path) }
 
       suite_contents.each_with_index do |suite, i|
