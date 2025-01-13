@@ -121,4 +121,56 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
                                                          'value[x]:valueQuantity.code')).to eq('/min')
     end
   end
+
+  describe '#matching_type_slice?' do
+    let(:matcher) { including_class.new }
+
+    it 'matches on Date for a valid Date' do
+      slice = '2024-05-06'
+      discriminator = { code: 'Date' }
+      expect(matcher).to be_matching_type_slice(slice, discriminator)
+    end
+
+    it 'does not match on Date for an invalid Date' do
+      slice = 'hello'
+      discriminator = { code: 'Date' }
+      expect(matcher).to_not be_matching_type_slice(slice, discriminator)
+    end
+
+    it 'matches on DateTime for a valid DateTime' do
+      slice = '2024-05-06T07:08:09'
+      discriminator = { code: 'DateTime' }
+      expect(matcher).to be_matching_type_slice(slice, discriminator)
+    end
+
+    it 'does not match on DateTime for an invalid DateTime' do
+      slice = 'hello'
+      discriminator = { code: 'DateTime' }
+      expect(matcher).to_not be_matching_type_slice(slice, discriminator)
+    end
+
+    it 'matches on String for a String' do
+      slice = 'some value here'
+      discriminator = { code: 'String' }
+      expect(matcher).to be_matching_type_slice(slice, discriminator)
+    end
+
+    it 'does not match on String for a non-String' do
+      slice = FHIR::Quantity.new
+      discriminator = { code: 'String' }
+      expect(matcher).to_not be_matching_type_slice(slice, discriminator)
+    end
+
+    it 'matches on other type for the appropriate type' do
+      slice = FHIR::Quantity.new
+      discriminator = { code: 'Quantity' }
+      expect(matcher).to be_matching_type_slice(slice, discriminator)
+    end
+
+    it 'does not match on other type for the wrong type' do
+      slice = FHIR::Period.new
+      discriminator = { code: 'Quantity' }
+      expect(matcher).to_not be_matching_type_slice(slice, discriminator)
+    end
+  end
 end
