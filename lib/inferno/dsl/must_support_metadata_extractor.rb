@@ -60,12 +60,12 @@ module Inferno
       end
 
       def discriminators(slice)
-        slice.slicing.discriminator
+        slice&.slicing&.discriminator
       end
 
       def must_support_pattern_slice_elements
         must_support_slice_elements.select do |element|
-          discriminators(sliced_element(element)).first.type == 'pattern'
+          discriminators(sliced_element(element))&.first&.type == 'pattern'
         end
       end
 
@@ -79,16 +79,20 @@ module Inferno
             discriminator = discriminators(sliced_element(current_element)).first
             discriminator_path = discriminator.path
             discriminator_path = '' if discriminator_path == '$this'
-            pattern_element =
-              if discriminator_path.present?
-                profile_elements.find { |element| element.id == "#{current_element.id}.#{discriminator_path}" }
-              else
-                current_element
-              end
+            pattern_element = find_element_by_discriminator_path(current_element, discriminator_path)
             metadata[:discriminator] = construct_discriminator_metadata(pattern_element, metadata)
             metadata[:discriminator][:path] = discriminator_path
             metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
           end
+        end
+      end
+
+      def find_element_by_discriminator_path(current_element, discriminator_path)
+        if discriminator_path.present?
+          profile_elements.find { |element| element.id == "#{current_element.id}.#{discriminator_path}" } ||
+            profile_elements.find { |element| element.id == "#{current_element.path}.#{discriminator_path}" }
+        else
+          current_element
         end
       end
 
@@ -116,7 +120,10 @@ module Inferno
             values: extract_required_binding_values(pattern_element, metadata)
           }
         else
-          raise StandardError, 'Unsupported discriminator pattern type'
+          # prevent errors in case an IG does something different
+          {
+            type: 'unsupported'
+          }
         end
       end
 
@@ -133,7 +140,7 @@ module Inferno
 
       def must_support_type_slice_elements
         must_support_slice_elements.select do |element|
-          discriminators(sliced_element(element)).first.type == 'type'
+          discriminators(sliced_element(element))&.first&.type == 'type'
         end
       end
 
@@ -142,12 +149,7 @@ module Inferno
           discriminator = discriminators(sliced_element(current_element)).first
           type_path = discriminator.path
           type_path = '' if type_path == '$this'
-          type_element =
-            if type_path.present?
-              elements.find { |element| element.id == "#{current_element.id}.#{type_path}" }
-            else
-              current_element
-            end
+          type_element = find_element_by_discriminator_path(current_element, type_path)
 
           type_code = type_element.type.first.code
 
@@ -167,7 +169,7 @@ module Inferno
 
       def must_support_value_slice_elements
         must_support_slice_elements.select do |element|
-          discriminators(sliced_element(element)).first.type == 'value'
+          discriminators(sliced_element(element))&.first&.type == 'value'
         end
       end
 
@@ -182,13 +184,12 @@ module Inferno
             }
           }.tap do |metadata|
             metadata[:discriminator][:values] = discriminators(sliced_element(current_element)).map do |discriminator|
-              fixed_element = profile_elements.find do |element|
-                element.id.starts_with?(current_element.id) &&
-                  element.path == "#{current_element.path}.#{discriminator.path}"
-              end
+              discriminator_path = discriminator.path
+              discriminator_path = '' if discriminator_path == '$this'
+              fixed_element = find_element_by_discriminator_path(current_element, discriminator_path)
 
               {
-                path: discriminator.path,
+                path: discriminator_path,
                 value: fixed_element.fixedUri || fixed_element.fixedCode
               }
             end
