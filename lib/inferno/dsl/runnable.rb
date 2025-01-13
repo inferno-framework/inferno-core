@@ -276,6 +276,21 @@ module Inferno
         @input_instructions = format_markdown(new_input_instructions)
       end
 
+      # Set/Get the IDs of requirements verifed by this runnable
+      # Set with [] to clear the list
+      #
+      # @param requirements [Array<String>]
+      # @return [Array<String>] the requirement IDs
+      def verifies_requirements(*requirement_ids)
+        if requirement_ids.empty?
+          @requirement_ids || []
+        elsif requirement_ids == [[]]
+          @requirement_ids = []
+        else
+          @requirement_ids = requirement_ids
+        end
+      end
+
       # Mark as optional. Tests are required by default.
       #
       # @param optional [Boolean]

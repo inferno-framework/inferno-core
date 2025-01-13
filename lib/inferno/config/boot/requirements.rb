@@ -14,6 +14,13 @@ Inferno::Application.register_provider(:requirements) do
 
     files_to_load = Dir.glob(['lib/*test_kit/requirements/*.csv'])
 
+    if ENV['LOAD_DEV_SUITES'].present?
+      ENV['LOAD_DEV_SUITES'].split(',').map(&:strip).reject(&:empty?).each do |suite|
+        files_to_load.concat Dir.glob(File.join(Inferno::Application.root, 'dev_suites', suite, 'requirements',
+                                                '*.csv'))
+      end
+    end
+
     files_to_load +=
       test_kit_gems.flat_map do |gem|
         [
