@@ -24,11 +24,11 @@ module Inferno
             end
 
             island_resources = resource_ids - referenced_resources - referencing_resources
-            sorted_island_resources = Set.new(island_resources.to_a.sort)
+            island_resources.to_a.sort!
 
-            if sorted_island_resources.any?
+            if island_resources.any?
               message = "Found resources that have no resolved references and are not referenced: #{
-                sorted_island_resources.join(', ')}"
+                island_resources.join(', ')}"
               result = EvaluationResult.new(message, rule: self)
             else
               message = 'All resources are reachable'
