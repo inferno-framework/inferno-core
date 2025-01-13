@@ -84,6 +84,20 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
       expect(result.message).to eq('All MustSupports are present')
     end
 
+    it 'identifies when no relevant resources are present' do
+      profiles = [fixture('StructureDefinition-us-core-medication.json')]
+      ig = instance_double(Inferno::Entities::IG, profiles:)
+      data = [patient]
+      config = Inferno::DSL::FHIREvaluation::Config.new
+      validator = nil
+      context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(ig, data, config, validator)
+
+      described_class.new.check(context)
+      result = context.results[0]
+
+      expect(result.message).to end_with('No matching resources were found to check')
+    end
+
     it 'identifies when not all MS elements are used' do
       profiles = [fixture('StructureDefinition-us-core-medication.json')]
       ig = instance_double(Inferno::Entities::IG, profiles:)
@@ -425,6 +439,53 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
 
           result = run_with_metadata([condition], condition_problems_health_concerns_metadata)
           expect(result).to include('Condition.category:us-core')
+        end
+      end
+
+      context 'with patternIdentifier slicing' do
+        let(:practitioner_profile) { fixture('StructureDefinition-us-core-practitioner.json') }
+        let(:practitioner) do
+          FHIR::Practitioner.new(
+            identifier: [
+              {
+                system: 'http://hl7.org/fhir/sid/us-npi',
+                value: '9941339108'
+              }
+            ],
+            name: [
+              {
+                family: 'Bone',
+                given: ['Ronald'],
+                prefix: ['Dr']
+              }
+            ],
+            address: [
+              {
+                use: 'home',
+                line: ['1003 Healthcare Drive'],
+                city: 'Amherst',
+                state: 'MA',
+                postalCode: '01002'
+              }
+            ]
+          )
+        end
+
+        it 'passes when NPI identifier slice present' do
+          result = run(practitioner_profile, [practitioner], 'Practitioner')
+          expect(result).to be_empty
+        end
+
+        it 'fails when no identifier present' do
+          practitioner.identifier = []
+          result = run(practitioner_profile, [practitioner], 'Practitioner')
+          expect(result).to include('Practitioner.identifier:NPI')
+        end
+
+        it 'fails when identifier slice not present' do
+          practitioner.identifier[0].system = 'http://example.com'
+          result = run(practitioner_profile, [practitioner], 'Practitioner')
+          expect(result).to include('Practitioner.identifier:NPI')
         end
       end
 

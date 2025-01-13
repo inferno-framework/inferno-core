@@ -114,4 +114,36 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
       expect(slices[1][:discriminator][:values][0]).to eq({ path: 'code', value: '59408-5' })
     end
   end
+
+  describe '#must_support_elements' do
+    let(:ped_weight_for_height_profile) do
+      uscore3_ig.profile_by_url('http://hl7.org/fhir/us/core/StructureDefinition/pediatric-weight-for-height')
+    end
+
+    it 'extracts the expected MS elements' do
+      pwh_extractor = described_class.new(ped_weight_for_height_profile.snapshot.element,
+                                          ped_weight_for_height_profile, ped_weight_for_height_profile.type, uscore3_ig)
+
+      ms_elements = pwh_extractor.must_support_elements
+      # https://www.hl7.org/fhir/us/core/STU3.1.1/StructureDefinition-pediatric-weight-for-height.html#profile
+      # note also the inhereted elements from the core vital-signs profile
+      # http://hl7.org/fhir/R4/vitalsigns.html
+
+      expect(ms_elements).to include(
+        { path: 'category' },
+        { path: 'category:VSCat.coding' },
+        { path: 'category:VSCat.coding.code', fixed_value: 'vital-signs' },
+        { path: 'category:VSCat.coding.system',
+          fixed_value: 'http://terminology.hl7.org/CodeSystem/observation-category' },
+        { path: 'code.coding.code', fixed_value: '77606-2' },
+        { path: 'subject', types: ['Reference'],
+          target_profiles: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient'] },
+        { path: 'value[x]' },
+        { path: 'value[x]:valueQuantity.value' },
+        { path: 'value[x]:valueQuantity.unit' },
+        { path: 'value[x]:valueQuantity.system', fixed_value: 'http://unitsofmeasure.org' },
+        { path: 'value[x]:valueQuantity.code', fixed_value: '%' }
+      )
+    end
+  end
 end
