@@ -49,6 +49,11 @@ module Inferno
               as: :check_configuration
         end
 
+        scope 'requirements' do
+          get '/', to: Inferno::Web::Controllers::Requirements::Index, as: :index
+          get '/:id', to: Inferno::Web::Controllers::Requirements::Show, as: :show
+        end
+
         get '/requests/:id', to: Inferno::Web::Controllers::Requests::Show, as: :requests_show
 
         get '/version', to: lambda { |_env|

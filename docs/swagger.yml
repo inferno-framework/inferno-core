@@ -341,6 +341,40 @@ paths:
             $ref: "#/definitions/Request"
         "404":
           description: "HTTP request not found"
+  /requirements:
+    get:
+      tags:
+      - "Requirements"
+      summary: "Get the set of requirements for the specification or guide being tested."
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Requirement"
+  /requirements/{requirement_id}:
+    get:
+      tags:
+      - "Requirement"
+      summary: "Get a single Requirement"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "requirement_id"
+        description: "ID of the requirement"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Requirement"
+        "404":
+          description: "Requirement not found"
   /version:
     get:
       tags:
@@ -757,3 +791,28 @@ definitions:
     properties:
       version:
         type: "string"
+  Requirement:
+    type: "object"
+    required:
+    - "id"
+    - "requirement"
+    - "conformance"
+    - "actor"
+    properties:
+      id:
+        type: "string"
+      requirement:
+        type: "string"
+      conformance:
+        type: "string"
+      actor:
+        type: "string"
+      conditionality:
+        type: "string"
+      url:
+        type: "string"
+      sub_requirements:
+        type: "array"
+        items:
+          type: "string"
+
