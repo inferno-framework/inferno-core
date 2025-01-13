@@ -37,8 +37,8 @@ module Inferno
 
           def gen_reference_fail_message(unresolved_references)
             result_message = unresolved_references.map do |id, reference|
-              reference_details = reference.each_with_index.map do |val, _idx|
-                val.each_with_index.map do |value, index|
+              reference_details = reference.map do |reference_detail|
+                reference_detail.each_with_index.map do |value, index|
                   case index
                   when 0
                     " \n\tpath: #{value}"
