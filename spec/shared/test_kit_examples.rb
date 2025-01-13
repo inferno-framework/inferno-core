@@ -13,6 +13,9 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
   rescue NameError
     skip 'TestKit must be defined first'
   end
+  let(:suites) do
+    test_kit.suite_ids.map { |id| Inferno::Repositories::TestSuites.new.find(id) }
+  end
 
   describe 'TestKit' do
     it 'defines test kit in the Metadata class' do
@@ -24,21 +27,6 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
       expect { described_class.const_get('Metadata') }.to_not raise_error(NameError), error_message
 
       expect(described_class.const_get('Metadata') < Inferno::Entities::TestKit).to be(true)
-    end
-
-    it 'relies on the test kit version rather than defining the version in the suites' do
-      suites = test_kit.suite_ids.map { |id| Inferno::Repositories::TestSuites.new.find(id) }
-      suite_paths = suites.map { |suite| Object.const_source_location(suite.name).first }
-      suite_contents = suite_paths.map { |path| File.read(path) }
-
-      suite_contents.each_with_index do |suite, i|
-        error_message =
-          "Suite at #{suite_paths[i]} should not explicitly declare a version, as " \
-          'its version can now be determined by the version of its Test Kit.' \
-          "Remove the `version` method call in the suite definition.\n"
-
-        expect(suite).to_not match(/^\s+version(\s|\()\S+\)?/), error_message
-      end
     end
 
     it 'defines all required fields' do
@@ -67,6 +55,35 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
 
     it 'has a maturity of "Low", "Medium", or "High"' do
       expect(['Low', 'Medium', 'High']).to include(test_kit.maturity) # rubocop:disable RSpec/ExpectActual
+    end
+  end
+
+  describe 'suites' do
+    it 'relies on the test kit version rather than defining the version in the suites' do
+      suite_paths = suites.map { |suite| Object.const_source_location(suite.name).first }
+      suite_contents = suite_paths.map { |path| File.read(path) }
+
+      suite_contents.each_with_index do |suite, i|
+        error_message =
+          "Suite at #{suite_paths[i]} should not explicitly declare a version, as " \
+          'its version can now be determined by the version of its Test Kit.' \
+          "Remove the `version` method call in the suite definition.\n"
+
+        expect(suite).to_not match(/^\s+version(\s|\()\S+\)?/), error_message
+      end
+    end
+
+    it 'contains standard links' do
+      suites.each do |suite|
+        link_labels = suite.links.map { |link| link[:label] }
+
+        expected_labels = ['Report Issue', 'Open Source', 'Download']
+
+        error_message =
+          "Include the standard 'Report Issue', 'Open Source', and 'Download links in " \
+          'each suite.\n'
+        expect(link_labels).to match_array(expected_labels), error_message
+      end
     end
   end
 
