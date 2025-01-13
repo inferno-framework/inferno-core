@@ -90,6 +90,12 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
     OpenStruct.new(metadata_yaml) # so that the top-level keys can be accessed directly, ie metadata.must_supports[...]
   end
 
+  describe '#resolve_path' do
+    it 'gets a value' do
+      expect(must_support_coverage_test.resolve_path(heartrate_by_value, 'value.value')).to contain_exactly(44)
+    end
+  end
+
   describe '#find_a_value_at' do
     it 'finds the first value when not given a specific slice' do
       expect(must_support_coverage_test.find_a_value_at(coverage_with_two_classes, 'class.value')).to eq('groupclass')

@@ -146,10 +146,6 @@ RSpec.describe Inferno::DSL::ValueExtractor do
       expect(result[0]).to be_a(FHIR::CodeSystem)
       expect(result[0].url).to eq('http://terminology.hl7.org/CodeSystem/condition-category')
     end
-
-    # it 'gets systems for VS with include.valueSet' do
-    #   # none of these in us core 3
-    # end
   end
 
   describe '#codes_from_value_set_binding' do
@@ -165,10 +161,6 @@ RSpec.describe Inferno::DSL::ValueExtractor do
       result = extractor.codes_from_value_set_binding(code_field)
       expect(result).to contain_exactly('72166-2')
     end
-
-    # it 'extracts code when the VS has expansion.contains' do
-    #   # no VS in us core 3 has an expansion
-    # end
   end
 
   describe '#values_from_resource_metadata' do

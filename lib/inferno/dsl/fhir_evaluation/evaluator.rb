@@ -5,10 +5,7 @@ require_relative 'rule'
 require_relative 'evaluation_context'
 require_relative 'evaluation_result'
 require_relative 'dataset_loader'
-
-Dir.glob(File.join(__dir__, 'rules', '*.rb')).each do |file|
-  require_relative file
-end
+require_relative 'rules/all_must_supports_present'
 
 module Inferno
   module DSL

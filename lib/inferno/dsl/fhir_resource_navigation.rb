@@ -29,12 +29,6 @@ module Inferno
         path_segments = path.split(/(?<!hl7)\./)
 
         segment = path_segments.shift.delete_suffix('[x]').gsub(/^class$/, 'local_class').gsub('[x]:', ':').to_sym
-        # no_elements_present =
-        #   elements.none? do |element|
-        #     child = get_next_value(element, segment)
-        #     child.present? || child == false
-        #   end
-        # return nil if no_elements_present
 
         remaining_path = path_segments.join('.')
         elements.each do |element|
@@ -188,6 +182,17 @@ module Inferno
             true
           end
         current_element_values_match && child_element_values_match
+      end
+
+      def flatten_bundles(resources)
+        resources.flat_map do |resource|
+          if resource.resourceType == 'Bundle'
+            # Recursive to consider that Bundles may contain Bundles
+            flatten_bundles(resource.entry.map(&:resource))
+          else
+            resource
+          end
+        end
       end
     end
   end

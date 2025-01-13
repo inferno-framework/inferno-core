@@ -6,19 +6,16 @@ module Inferno
   module DSL
     module FHIREvaluation
       module Rules
-        class AllMustSupportsPresent
+        class AllMustSupportsPresent < Rule
           include FHIRResourceNavigation
           include ProfileConformanceHelper
           attr_accessor :metadata
 
           # check is invoked from CLI, assume no ability to customize the metadata (for now)
           def check(context)
-            conformance_options = context.config.data['Rule']['AllMustSupportsPresent']['ConformanceOptions'].to_options
             missing_items_by_profile = {}
             context.ig.profiles.each do |profile|
-              resources = context.data.filter do |r|
-                conforms_to_profile?(r, profile, conformance_options, context.validator)
-              end
+              resources = pick_resources_for_profile(profile, context)
               if resources.blank?
                 missing_items_by_profile[profile.url] = ['No matching resources were found to check']
                 next
@@ -39,6 +36,22 @@ module Inferno
               result = EvaluationResult.new(message, rule: self)
             end
             context.add_result result
+          end
+
+          def pick_resources_for_profile(profile, context)
+            conformance_options = context.config.data['Rule']['AllMustSupportsPresent']['ConformanceOptions'].to_options
+
+            # Unless specifically looking for Bundles, break them out into the resources they include
+            all_resources =
+              if profile.type == 'Bundle'
+                context.data
+              else
+                flatten_bundles(context.data)
+              end
+
+            all_resources.filter do |r|
+              conforms_to_profile?(r, profile, conformance_options, context.validator)
+            end
           end
 
           # perform_must_support_test is invoked from DSL assertions, allows customizing the metdata with a block.
