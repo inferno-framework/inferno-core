@@ -17,7 +17,7 @@ module Inferno
           combined_id = "#{req_set}@#{id}"
 
           # Processing sub requirements: e.g. "170.315(g)(31)_hti-2-proposal@5,17,23,26,27,32,35,38-41"
-          sub_requirements = if sub_requirements_field.nil? || sub_requirements_field.strip.blank?
+          sub_requirements = if sub_requirements_field.nil? || sub_requirements_field.blank?
                                []
                              else
                                base, ids = sub_requirements_field.split('@')
