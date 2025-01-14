@@ -56,6 +56,13 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
     it 'has a maturity of "Low", "Medium", or "High"' do
       expect(['Low', 'Medium', 'High']).to include(test_kit.maturity) # rubocop:disable RSpec/ExpectActual
     end
+
+    it 'uses the correct ruby version in its Dockerfile' do
+      dockerfile_path = File.join(base_path, 'Dockerfile')
+      dockerfile_contents = File.read(dockerfile_path)
+
+      expect(dockerfile_contents.lines.first.chomp).to eq('FROM ruby:3.3.6')
+    end
   end
 
   describe 'suites' do
