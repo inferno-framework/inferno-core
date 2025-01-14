@@ -10,8 +10,12 @@ export interface InputAccessProps {
 }
 
 const AuthTypeSelector: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsMap }) => {
-  const selectorSettings = input.options?.components
-    ? input.options?.components[0]
+  const authComponent = input.options?.components?.find(
+    (component) => component.name === 'auth_type',
+  );
+
+  const selectorSettings = authComponent
+    ? authComponent
     : // Default auth type settings
       {
         name: 'auth_type',

@@ -77,6 +77,7 @@ export const getAuthFields = (
     },
     {
       name: 'requested_scopes',
+      type: 'textarea',
       title: 'Scopes',
       description: 'OAuth 2.0 scopes needed to enable all required functionality',
     },

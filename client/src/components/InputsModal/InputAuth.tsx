@@ -21,8 +21,17 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
   const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
 
   // Default auth type settings
+  const authComponent = input.options?.components?.find(
+    (component) => component.name === 'auth_type',
+  );
+
+  const firstListOption =
+    authComponent?.options?.list_options && authComponent?.options?.list_options?.length > 0
+      ? authComponent?.options?.list_options[0].value
+      : undefined;
+
   const [authType, setAuthType] = React.useState<string>(
-    input.options?.components ? (input.options?.components[0].default as string) : 'public',
+    (authComponent?.default || firstListOption || 'public') as string,
   );
 
   const [authFields, setAuthFields] = React.useState<TestInput[]>(
