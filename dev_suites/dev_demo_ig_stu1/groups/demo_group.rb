@@ -317,6 +317,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
             description: 'Checkbox description',
             default: ['value2'],
             optional: false,
+            locked: true,
             options: {
               list_options: [
                 {
@@ -331,6 +332,29 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
             }
 
       run { info "Received the following 'checkbox' variable: '#{locked_checkbox_group}'" }
+    end
+
+    test 'locked single checkbox in checkbox group input' do
+      input :locked_single_checkbox_group,
+            title: 'Locked Single Checkbox in Group Input Example',
+            type: 'checkbox',
+            description: 'Checkbox description',
+            default: ['value2'],
+            optional: false,
+            options: {
+              list_options: [
+                {
+                  label: 'Label 1',
+                  value: 'value1'
+                }, {
+                  label: 'Label 2',
+                  value: 'value2',
+                  locked: true
+                }
+              ]
+            }
+
+      run { info "Received the following 'checkbox' variable: '#{locked_single_checkbox_group}'" }
     end
 
     test 'single checkbox input' do
