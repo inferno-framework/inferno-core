@@ -57,6 +57,7 @@ Gem::Specification.new do |spec|
     'spec/support/factory_bot.rb',
     Dir['spec/factories/**/*.rb'],
     Dir['spec/fixtures/**/*.rb'],
+    Dir['spec/shared/**/*.rb'],
     Dir['spec/*.rb']
   ].flatten
 

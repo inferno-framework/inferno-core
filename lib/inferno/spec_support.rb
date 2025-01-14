@@ -7,11 +7,13 @@ module Inferno
     FACTORY_PATH = File.expand_path('../../spec/factories', __dir__).freeze
     REQUEST_HELPER_PATH = File.expand_path('../../spec/request_helper', __dir__).freeze
     RUNNABLE_HELPER_PATH = File.expand_path('../../spec/runnable_helper', __dir__).freeze
+    TEST_KIT_SPEC = File.expand_path('../../spec/shared/test_kit_examples', __dir__).freeze
 
     def self.require_helpers
       require FACTORY_BOT_SUPPORT_PATH
       require RUNNABLE_HELPER_PATH
       require REQUEST_HELPER_PATH
+      require TEST_KIT_SPEC
     end
   end
 end
