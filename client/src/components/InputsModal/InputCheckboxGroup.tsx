@@ -120,7 +120,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
                   size="small"
                   color="secondary"
                   name={option.value}
-                  disabled={!!option.locked}
+                  disabled={input.locked || !!option.locked}
                   checked={values[option.value as keyof CheckboxValues] || false}
                   onBlur={(e) => {
                     if (e.currentTarget === e.target) {

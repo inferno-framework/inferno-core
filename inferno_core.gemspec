@@ -37,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sqlite3', '~> 1.4'
   spec.add_dependency 'thor', '~> 1.2.1'
   spec.add_dependency 'tty-markdown', '~> 0.7.1'
-  spec.required_ruby_version = Gem::Requirement.new('~> 3.1.2')
+  spec.required_ruby_version = Gem::Requirement.new('~> 3.3.6')
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = 'https://github.com/inferno-framework/inferno-core'
   spec.metadata['changelog_uri'] = 'https://github.com/inferno-framework/inferno-core/blob/main/CHANGELOG.md'
@@ -57,6 +57,7 @@ Gem::Specification.new do |spec|
     'spec/support/factory_bot.rb',
     Dir['spec/factories/**/*.rb'],
     Dir['spec/fixtures/**/*.rb'],
+    Dir['spec/shared/**/*.rb'],
     Dir['spec/*.rb']
   ].flatten
 
