@@ -276,7 +276,7 @@ module Inferno
         @input_instructions = format_markdown(new_input_instructions)
       end
 
-      # Set/Get the IDs of requirements verifed by this runnable
+      # Set/Get the IDs of requirements verified by this runnable
       # Set with [] to clear the list
       #
       # @param requirements [Array<String>]
