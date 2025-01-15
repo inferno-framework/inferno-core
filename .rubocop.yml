@@ -26,6 +26,14 @@ Lint/EmptyBlock:
   Exclude:
     - 'dev_suites/ui_onc_program/**/*'
 
+inherit_mode:
+  merge:
+    - AllowedNames
+
+Naming/MethodParameterName:
+  AllowedNames:
+  - ig
+
 Style/BlockComments:
   Exclude:
     - 'spec/spec_helper.rb'

@@ -19,7 +19,7 @@ RSpec.describe Inferno::Entities::IG do
       expect_uscore3_loaded_properly(ig)
     end
 
-    def expect_uscore3_loaded_properly(ig) # rubocop:disable Naming/MethodParameterName, Metrics/CyclomaticComplexity
+    def expect_uscore3_loaded_properly(ig) # rubocop:disable Metrics/CyclomaticComplexity
       # For each artifact type in the IG, check:
       # the right number are loaded,
       # they're all the expected type,

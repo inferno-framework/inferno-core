@@ -58,7 +58,7 @@ module Inferno
           # Customizing the metadata may add, modify, or remove items.
           # For instance, US Core 3.1.1 Patient "Previous Name" is defined as MS only in narrative.
           # Choices are also defined only in narrative.
-          def perform_must_support_test(profile, resources, ig) # rubocop:disable Naming/MethodParameterName
+          def perform_must_support_test(profile, resources, ig)
             profile_metadata = extract_metadata(profile, ig)
             yield profile_metadata if block_given?
 
@@ -82,7 +82,7 @@ module Inferno
             missing_must_support_strings
           end
 
-          def extract_metadata(profile, ig) # rubocop:disable Naming/MethodParameterName
+          def extract_metadata(profile, ig)
             MustSupportMetadataExtractor.new(profile.snapshot.element, profile, profile.type, ig)
           end
 

@@ -116,7 +116,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent do
     end
   end
 
-  def run(profile, resources, _resource_type, ig = nil, &block) # rubocop:disable Naming/MethodParameterName
+  def run(profile, resources, _resource_type, ig = nil, &block)
     described_class.new.perform_must_support_test(profile, resources, ig, &block)
   end
 

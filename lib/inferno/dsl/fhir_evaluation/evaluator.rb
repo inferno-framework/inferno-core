@@ -13,7 +13,7 @@ module Inferno
       class Evaluator
         attr_accessor :ig, :validator
 
-        def initialize(ig, validator = nil) # rubocop:disable Naming/MethodParameterName
+        def initialize(ig, validator = nil)
           @ig = ig
           @validator = validator
         end
