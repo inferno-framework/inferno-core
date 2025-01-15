@@ -5,10 +5,10 @@ import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredential
 import InputCheckboxGroup from '~/components/InputsModal/InputCheckboxGroup';
 import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputTextField from '~/components/InputsModal/InputTextField';
-import InputAuth from '~/components/InputsModal/InputAuth';
+import InputAuth from '~/components/InputsModal/Auth/InputAuth';
 import InputSingleCheckbox from '~/components/InputsModal/InputSingleCheckbox';
 import InputCombobox from '~/components/InputsModal/InputCombobox';
-import InputAccess from '~/components/InputsModal/InputAccess';
+import InputAccess from '~/components/InputsModal/Auth/InputAccess';
 
 export interface InputFieldsProps {
   inputs: TestInput[];

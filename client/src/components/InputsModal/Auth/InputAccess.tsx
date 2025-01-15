@@ -3,23 +3,23 @@ import { Card, CardContent, InputLabel, List, ListItem } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Auth, TestInput } from '~/models/testSuiteModels';
-import { AuthType, getAuthFields } from '~/components/InputsModal/AuthSettings';
-import AuthTypeSelector from '~/components/InputsModal/AuthTypeSelector';
+import { AuthType, getAccessFields } from '~/components/InputsModal/Auth/AuthSettings';
+import AuthTypeSelector from '~/components/InputsModal/Auth/AuthTypeSelector';
 import FieldLabel from '~/components/InputsModal/FieldLabel';
 import InputFields from '~/components/InputsModal/InputFields';
-import useStyles from './styles';
+import useStyles from '../styles';
 
-export interface InputAuthProps {
+export interface InputAccessProps {
   input: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
-const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }) => {
+const InputAccess: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
-  const [authValues, setAuthValues] = React.useState<Map<string, unknown>>(new Map());
-  const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
+  const [accessValues, setAccessValues] = React.useState<Map<string, unknown>>(new Map());
+  const [accessValuesPopulated, setAccessValuesPopulated] = React.useState<boolean>(false);
 
   // Default auth type settings
   const authComponent = input.options?.components?.find(
@@ -35,16 +35,16 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
     (authComponent?.default || firstListOption || 'public') as string,
   );
 
-  const [authFields, setAuthFields] = React.useState<TestInput[]>(
-    getAuthFields(authType as AuthType, authValues, input.options?.components || []),
+  const [accessFields, setAccessFields] = React.useState<TestInput[]>(
+    getAccessFields(authType as AuthType, accessValues, input.options?.components || []),
   );
 
   useEffect(() => {
     // Set defaults on radio buttons
     // This is necessary because radio buttons with no preset defaults will still cause
     // missing input errors
-    setAuthFields(
-      authFields.map((field) => {
+    setAccessFields(
+      accessFields.map((field) => {
         if (
           field.type === 'radio' &&
           !field.default &&
@@ -59,34 +59,38 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
 
     const combinedStartingValues = getStartingValues();
 
-    // Populate authValues on mount
-    authValues.set('auth_type', authType);
-    authFields.forEach((field: TestInput) => {
-      authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
+    // Populate accessValues on mount
+    accessValues.set('auth_type', authType);
+    accessFields.forEach((field: TestInput) => {
+      accessValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
-
-    setAuthValuesPopulated(true);
+    setAccessValuesPopulated(true);
 
     // Trigger change on mount for default values
-    const authValuesCopy = new Map(authValues);
-    setAuthValues(authValuesCopy);
+    const accessValuesCopy = new Map(accessValues);
+    setAccessValues(accessValuesCopy);
   }, []);
 
   useEffect(() => {
     // Recalculate hidden fields
-    setAuthFields(getAuthFields(authType as AuthType, authValues, input.options?.components || []));
+    setAccessFields(
+      getAccessFields(authType as AuthType, accessValues, input.options?.components || []),
+    );
 
-    // Update inputsMap
-    if (authValuesPopulated) {
-      const stringifiedAuthValues = JSON.stringify(Object.fromEntries(authValues));
-      inputsMap.set(input.name, stringifiedAuthValues);
+    // Update inputsMap while maintaining hidden values
+    if (accessValuesPopulated) {
+      const combinedStartingValues = getStartingValues();
+      const accessValuesObject = Object.fromEntries(accessValues) as Auth;
+      const combinedValues = { ...combinedStartingValues, ...accessValuesObject };
+      const stringifiedAccessValues = JSON.stringify(combinedValues);
+      inputsMap.set(input.name, stringifiedAccessValues);
       setInputsMap(new Map(inputsMap));
     }
-  }, [authValues]);
+  }, [accessValues]);
 
   const getStartingValues = () => {
     // Pre-populate values from AuthFields, input, and inputsMap in order of precedence
-    const fieldDefaultValues = authFields.reduce(
+    const fieldDefaultValues = accessFields.reduce(
       (acc, field) => ({ ...acc, [field.name]: field.default }),
       {},
     ) as Auth;
@@ -97,7 +101,6 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
     const inputsMapValues = inputsMap.get(input.name)
       ? (JSON.parse(inputsMap.get(input.name) as string) as Auth)
       : {};
-
     return {
       ...fieldDefaultValues,
       ...inputDefaultValues,
@@ -108,7 +111,7 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
 
   const updateAuthType = (map: Map<string, unknown>) => {
     setAuthType(map.get('auth_type') as string);
-    setAuthValues(map);
+    setAccessValues(map);
   };
 
   return (
@@ -131,16 +134,20 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
             <AuthTypeSelector
               input={input}
               index={index}
-              inputsMap={authValues}
+              inputsMap={accessValues}
               setInputsMap={updateAuthType}
               key={`input-${index}`}
             />
           </List>
-          <InputFields inputs={authFields} inputsMap={authValues} setInputsMap={setAuthValues} />
+          <InputFields
+            inputs={accessFields}
+            inputsMap={accessValues}
+            setInputsMap={setAccessValues}
+          />
         </CardContent>
       </Card>
     </ListItem>
   );
 };
 
-export default InputAuth;
+export default InputAccess;

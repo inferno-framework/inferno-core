@@ -3,23 +3,23 @@ import { Card, CardContent, InputLabel, List, ListItem } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Auth, TestInput } from '~/models/testSuiteModels';
-import { AuthType, getAccessFields } from '~/components/InputsModal/AuthSettings';
+import { AuthType, getAuthFields } from '~/components/InputsModal/Auth/AuthSettings';
+import AuthTypeSelector from '~/components/InputsModal/Auth/AuthTypeSelector';
 import FieldLabel from '~/components/InputsModal/FieldLabel';
 import InputFields from '~/components/InputsModal/InputFields';
-import useStyles from './styles';
-import AuthTypeSelector from './AuthTypeSelector';
+import useStyles from '../styles';
 
-export interface InputAccessProps {
+export interface InputAuthProps {
   input: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
-const InputAccess: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsMap }) => {
+const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
-  const [accessValues, setAccessValues] = React.useState<Map<string, unknown>>(new Map());
-  const [accessValuesPopulated, setAccessValuesPopulated] = React.useState<boolean>(false);
+  const [authValues, setAuthValues] = React.useState<Map<string, unknown>>(new Map());
+  const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
 
   // Default auth type settings
   const authComponent = input.options?.components?.find(
@@ -35,16 +35,16 @@ const InputAccess: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsM
     (authComponent?.default || firstListOption || 'public') as string,
   );
 
-  const [accessFields, setAccessFields] = React.useState<TestInput[]>(
-    getAccessFields(authType as AuthType, accessValues, input.options?.components || []),
+  const [authFields, setAuthFields] = React.useState<TestInput[]>(
+    getAuthFields(authType as AuthType, authValues, input.options?.components || []),
   );
 
   useEffect(() => {
     // Set defaults on radio buttons
     // This is necessary because radio buttons with no preset defaults will still cause
     // missing input errors
-    setAccessFields(
-      accessFields.map((field) => {
+    setAuthFields(
+      authFields.map((field) => {
         if (
           field.type === 'radio' &&
           !field.default &&
@@ -59,38 +59,34 @@ const InputAccess: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsM
 
     const combinedStartingValues = getStartingValues();
 
-    // Populate accessValues on mount
-    accessValues.set('auth_type', authType);
-    accessFields.forEach((field: TestInput) => {
-      accessValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
+    // Populate authValues on mount
+    authValues.set('auth_type', authType);
+    authFields.forEach((field: TestInput) => {
+      authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
-    setAccessValuesPopulated(true);
+
+    setAuthValuesPopulated(true);
 
     // Trigger change on mount for default values
-    const accessValuesCopy = new Map(accessValues);
-    setAccessValues(accessValuesCopy);
+    const authValuesCopy = new Map(authValues);
+    setAuthValues(authValuesCopy);
   }, []);
 
   useEffect(() => {
     // Recalculate hidden fields
-    setAccessFields(
-      getAccessFields(authType as AuthType, accessValues, input.options?.components || []),
-    );
+    setAuthFields(getAuthFields(authType as AuthType, authValues, input.options?.components || []));
 
-    // Update inputsMap while maintaining hidden values
-    if (accessValuesPopulated) {
-      const combinedStartingValues = getStartingValues();
-      const accessValuesObject = Object.fromEntries(accessValues) as Auth;
-      const combinedValues = { ...combinedStartingValues, ...accessValuesObject };
-      const stringifiedAccessValues = JSON.stringify(combinedValues);
-      inputsMap.set(input.name, stringifiedAccessValues);
+    // Update inputsMap
+    if (authValuesPopulated) {
+      const stringifiedAuthValues = JSON.stringify(Object.fromEntries(authValues));
+      inputsMap.set(input.name, stringifiedAuthValues);
       setInputsMap(new Map(inputsMap));
     }
-  }, [accessValues]);
+  }, [authValues]);
 
   const getStartingValues = () => {
     // Pre-populate values from AuthFields, input, and inputsMap in order of precedence
-    const fieldDefaultValues = accessFields.reduce(
+    const fieldDefaultValues = authFields.reduce(
       (acc, field) => ({ ...acc, [field.name]: field.default }),
       {},
     ) as Auth;
@@ -101,6 +97,7 @@ const InputAccess: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsM
     const inputsMapValues = inputsMap.get(input.name)
       ? (JSON.parse(inputsMap.get(input.name) as string) as Auth)
       : {};
+
     return {
       ...fieldDefaultValues,
       ...inputDefaultValues,
@@ -111,7 +108,7 @@ const InputAccess: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsM
 
   const updateAuthType = (map: Map<string, unknown>) => {
     setAuthType(map.get('auth_type') as string);
-    setAccessValues(map);
+    setAuthValues(map);
   };
 
   return (
@@ -134,20 +131,16 @@ const InputAccess: FC<InputAccessProps> = ({ input, index, inputsMap, setInputsM
             <AuthTypeSelector
               input={input}
               index={index}
-              inputsMap={accessValues}
+              inputsMap={authValues}
               setInputsMap={updateAuthType}
               key={`input-${index}`}
             />
           </List>
-          <InputFields
-            inputs={accessFields}
-            inputsMap={accessValues}
-            setInputsMap={setAccessValues}
-          />
+          <InputFields inputs={authFields} inputsMap={authValues} setInputsMap={setAuthValues} />
         </CardContent>
       </Card>
     </ListItem>
   );
 };
 
-export default InputAccess;
+export default InputAuth;
