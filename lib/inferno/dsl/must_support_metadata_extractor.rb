@@ -3,13 +3,14 @@ require_relative 'value_extractor'
 module Inferno
   module DSL
     class MustSupportMetadataExtractor
-      attr_accessor :profile_elements, :profile, :resource, :ig_resources
+      attr_accessor :profile_elements, :profile, :resource, :ig_resources, :requirement_extension_url
 
-      def initialize(profile_elements, profile, resource, ig_resources)
+      def initialize(profile_elements, profile, resource, ig_resources, requirement_extension_url = nil)
         self.profile_elements = profile_elements
         self.profile = profile
         self.resource = resource
         self.ig_resources = ig_resources
+        self.requirement_extension_url = requirement_extension_url
       end
 
       def must_supports
@@ -20,15 +21,15 @@ module Inferno
         }
       end
 
-      def uscdi_requirement_element?(element)
-        element.extension.any? do |extension|
-          extension.url == 'http://hl7.org/fhir/us/core/StructureDefinition/uscdi-requirement' &&
-            extension.valueBoolean
-        end && !element.mustSupport
+      def by_requirement_extension_only?(element)
+        requirement_extension_url && !element.mustSupport &&
+          element.extension.any? do |extension|
+            extension.url == requirement_extension_url && extension.valueBoolean
+          end
       end
 
       def all_must_support_elements
-        profile_elements.select { |element| element.mustSupport || uscdi_requirement_element?(element) }
+        profile_elements.select { |element| element.mustSupport || by_requirement_extension_only?(element) }
       end
 
       def must_support_extension_elements
@@ -42,7 +43,7 @@ module Inferno
             path: element.path.gsub("#{resource}.", ''),
             url: element.type.first.profile.first
           }.tap do |metadata|
-            metadata[:uscdi_only] = true if uscdi_requirement_element?(element)
+            metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(element)
           end
         end
       end
@@ -82,7 +83,7 @@ module Inferno
             pattern_element = find_element_by_discriminator_path(current_element, discriminator_path)
             metadata[:discriminator] = construct_discriminator_metadata(pattern_element, metadata)
             metadata[:discriminator][:path] = discriminator_path
-            metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
+            metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(current_element)
           end
         end
       end
@@ -162,7 +163,7 @@ module Inferno
               code: type_code.upcase_first
             }
           }.tap do |metadata|
-            metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
+            metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(current_element)
           end
         end
       end
@@ -194,7 +195,7 @@ module Inferno
               }
             end
 
-            metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
+            metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(current_element)
           end
         end
       end
@@ -296,7 +297,7 @@ module Inferno
           current_metadata = {
             path: current_element.id.gsub("#{resource}.", '')
           }
-          current_metadata[:uscdi_only] = true if uscdi_requirement_element?(current_element)
+          current_metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(current_element)
 
           type_must_support_metadata = get_type_must_support_metadata(current_metadata, current_element)
 

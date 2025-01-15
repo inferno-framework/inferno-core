@@ -10,6 +10,11 @@ Rule:
   AllMustSupportsPresent:
     Description: 'An instance of all MustSupport elements, extensions, and slices is present in the given resources'
     Enabled: true
+    # RequirementExtensionUrl accepts an extension URL which tags element definitions as required for the purposes of this test, even if not Must Support.
+    # For instance, US Core elements with the "http://hl7.org/fhir/us/core/StructureDefinition/uscdi-requirement" extension
+    # may be considered required even if not necessarily tagged Must Support.
+    # An instance of the extension must have valueBoolean=true to be recognized.
+    RequirementExtensionUrl: null
     ConformanceOptions:
       # ConformanceOptions allows selecting from a few approaches to determine which subset of resources
       # should be used to search for the MustSupport elements from each profile.

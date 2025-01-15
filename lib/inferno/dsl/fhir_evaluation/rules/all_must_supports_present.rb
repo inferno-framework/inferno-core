@@ -20,7 +20,8 @@ module Inferno
                 missing_items_by_profile[profile.url] = ['No matching resources were found to check']
                 next
               end
-              profile_metadata = extract_metadata(profile, context.ig)
+              requirement_extension = context.config.data['Rule']['AllMustSupportsPresent']['RequirementExtensionUrl']
+              profile_metadata = extract_metadata(profile, context.ig, requirement_extension)
               missing_items = perform_must_support_test_with_metadata(resources, profile_metadata)
 
               missing_items_by_profile[profile.url] = missing_items if missing_items.any?
@@ -58,8 +59,8 @@ module Inferno
           # Customizing the metadata may add, modify, or remove items.
           # For instance, US Core 3.1.1 Patient "Previous Name" is defined as MS only in narrative.
           # Choices are also defined only in narrative.
-          def perform_must_support_test(profile, resources, ig)
-            profile_metadata = extract_metadata(profile, ig)
+          def perform_must_support_test(profile, resources, ig, requirement_extension = nil)
+            profile_metadata = extract_metadata(profile, ig, requirement_extension)
             yield profile_metadata if block_given?
 
             perform_must_support_test_with_metadata(resources, profile_metadata)
@@ -82,8 +83,8 @@ module Inferno
             missing_must_support_strings
           end
 
-          def extract_metadata(profile, ig)
-            MustSupportMetadataExtractor.new(profile.snapshot.element, profile, profile.type, ig)
+          def extract_metadata(profile, ig, requirement_extension = nil)
+            MustSupportMetadataExtractor.new(profile.snapshot.element, profile, profile.type, ig, requirement_extension)
           end
 
           def handle_must_support_choices
@@ -186,7 +187,6 @@ module Inferno
 
           def missing_elements(resources = [])
             @missing_elements ||= find_missing_elements(resources, must_support_elements)
-            @missing_elements
           end
 
           def find_missing_elements(resources, must_support_elements)

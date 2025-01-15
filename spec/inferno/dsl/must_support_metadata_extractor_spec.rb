@@ -146,4 +146,38 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
       )
     end
   end
+
+  describe '#by_requirement_extension_only?' do
+    let(:dr_profile) do
+      # unfortunately there are no profiles in US Core 3 with a uscdi-requirement extension
+      # so this one comes from US Core 6.1.0
+      FHIR.from_contents(File.read('spec/fixtures/StructureDefinition-us-core-documentreference_v610.json'))
+    end
+
+    let(:dr_category_slice_element) do
+      dr_profile.snapshot.element.find { |e| e.id == 'DocumentReference.category:uscore' }
+    end
+
+    it 'identifies uscdi elements when provided the uscdi extension url' do
+      extension_url = 'http://hl7.org/fhir/us/core/StructureDefinition/uscdi-requirement'
+      dr_extractor = described_class.new(dr_profile.snapshot.element, dr_profile, dr_profile.type, uscore3_ig,
+                                         extension_url)
+
+      expect(dr_extractor).to be_by_requirement_extension_only(dr_category_slice_element)
+    end
+
+    it 'ignores uscdi elements when provided no requirement extension' do
+      dr_extractor = described_class.new(dr_profile.snapshot.element, dr_profile, dr_profile.type, uscore3_ig)
+
+      expect(dr_extractor).to_not be_by_requirement_extension_only(dr_category_slice_element)
+    end
+
+    it 'ignores uscdi elements when provided a different requirement extension' do
+      extension_url = 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-interpreter-needed'
+      dr_extractor = described_class.new(dr_profile.snapshot.element, dr_profile, dr_profile.type, uscore3_ig,
+                                         extension_url)
+
+      expect(dr_extractor).to_not be_by_requirement_extension_only(dr_category_slice_element)
+    end
+  end
 end

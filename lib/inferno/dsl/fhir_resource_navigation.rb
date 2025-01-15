@@ -186,7 +186,7 @@ module Inferno
 
       def flatten_bundles(resources)
         resources.flat_map do |resource|
-          if resource.resourceType == 'Bundle'
+          if resource&.resourceType == 'Bundle'
             # Recursive to consider that Bundles may contain Bundles
             flatten_bundles(resource.entry.map(&:resource))
           else
