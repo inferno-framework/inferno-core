@@ -51,8 +51,8 @@ module Inferno
 
         # private
 
-        def verbose_print(options, *args)
-          print(color.dim(*args)) if options[:verbose]
+        def verbose_print(options, *)
+          print(color.dim(*)) if options[:verbose]
         end
 
         def color

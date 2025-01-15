@@ -1,4 +1,4 @@
-FROM ruby:3.1.2
+FROM ruby:3.3.6
 
 ENV INSTALL_PATH=/opt/inferno/
 ENV APP_ENV=production
