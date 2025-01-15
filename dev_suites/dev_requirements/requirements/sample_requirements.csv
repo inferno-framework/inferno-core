@@ -1,7 +1,7 @@
 ﻿Req Set,ID,URL,Requirement,Conformance,Actor,Sub-Requirement(s),Conditionality
-sample-criteria-proposal,1,,Feugiat in ante metus dictum. Dignissim cras tincidunt lobortis feugiat.,SHALL,Client,"sample-criteria-proposal@2-3,4,6",FALSE
-sample-criteria-proposal,2,,tempor incididunt ut labore et dolore magna aliqua,SHALL,Client,sample-criteria-proposal@3,FALSE
-sample-criteria-proposal,3,,"Lorem ipsum dolor sit amet, consectetur adipiscing elit",SHALL,Client,sample-criteria-proposal@5,FALSE
+sample-criteria-proposal,1,"https://hl7.org/fhir/R4/",Feugiat in ante metus dictum. Dignissim cras tincidunt lobortis feugiat.,SHALL,Client,"sample-criteria-proposal@2-3,4,6",FALSE
+sample-criteria-proposal,2,"https://hl7.org/fhir/R4/",tempor incididunt ut labore et dolore magna aliqua,SHALL,Client,sample-criteria-proposal@3,FALSE
+sample-criteria-proposal,3,"https://hl7.org/fhir/R4/","Lorem ipsum dolor sit amet, consectetur adipiscing elit",SHALL,Client,sample-criteria-proposal@5,FALSE
 sample-criteria-proposal,4,,Consequat mauris nunc congue nisi vitae suscipit tellus mauris.,SHALL,Client,sample-criteria-proposal@6,FALSE
 sample-criteria-proposal,5,,condimentum vitae sapien pellentesque habitant morbi tristique senectus,SHALL,Client,sample-criteria-proposal@6,TRUE
 sample-criteria-proposal,6,,Faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis,SHALL,Client,,TRUE
