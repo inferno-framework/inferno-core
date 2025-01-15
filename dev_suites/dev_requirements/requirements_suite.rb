@@ -4,9 +4,6 @@ module RequirementsSuite
     id :ig_requirements
     description 'Suite Description'
 
-    verifies_requirements 'sample-criteria-proposal@1', 'sample-criteria-proposal@2',
-                          'sample-criteria-proposal@3', 'sample-criteria-proposal@4'
-
     group do
       title 'Test Requirements 1 and 2'
       verifies_requirements 'sample-criteria-proposal@1', 'sample-criteria-proposal@2'
