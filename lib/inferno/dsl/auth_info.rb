@@ -307,7 +307,7 @@ module Inferno
         self.expires_in = expires_in
         self.issue_time = DateTime.now
 
-        add_to_client(client)
+        add_to_client(client) if client
         self
       end
 
