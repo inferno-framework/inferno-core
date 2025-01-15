@@ -30,6 +30,7 @@ Inferno::Application.register_provider(:requirements) do
 
     files_to_load.compact!
     files_to_load.uniq!
+    files_to_load.reject! { |file| file.include?('out_of_scope') }
     files_to_load.map! { |path| File.realpath(path) }
 
     files_to_load.each do |path|
