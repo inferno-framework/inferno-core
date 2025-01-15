@@ -1,12 +1,13 @@
 import React, { FC, useEffect } from 'react';
-import { Box, List, ListItem } from '@mui/material';
+import { Card, CardContent, InputLabel, List, ListItem } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Auth, TestInput } from '~/models/testSuiteModels';
-import InputFields from './InputFields';
+import { AuthType, getAuthFields } from '~/components/InputsModal/AuthSettings';
+import AuthTypeSelector from '~/components/InputsModal/AuthTypeSelector';
+import FieldLabel from '~/components/InputsModal/FieldLabel';
+import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from './styles';
-import { AuthType, getAuthFields } from './AuthSettings';
-import AuthTypeSelector from './AuthTypeSelector';
 
 export interface InputAuthProps {
   input: TestInput;
@@ -111,24 +112,33 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
   };
 
   return (
-    <ListItem sx={{ p: 0 }}>
-      <Box width="100%">
-        {input.description && (
-          <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
-            {input.description}
-          </Markdown>
-        )}
-        <List>
-          <AuthTypeSelector
-            input={input}
-            index={index}
-            inputsMap={authValues}
-            setInputsMap={updateAuthType}
-            key={`input-${index}`}
-          />
-        </List>
-        <InputFields inputs={authFields} inputsMap={authValues} setInputsMap={setAuthValues} />
-      </Box>
+    <ListItem>
+      <Card variant="outlined" className={classes.authCard}>
+        <CardContent>
+          <InputLabel
+            required={!input.optional}
+            disabled={input.locked}
+            className={classes.inputLabel}
+          >
+            <FieldLabel input={input} />
+          </InputLabel>
+          {input.description && (
+            <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+              {input.description}
+            </Markdown>
+          )}
+          <List>
+            <AuthTypeSelector
+              input={input}
+              index={index}
+              inputsMap={authValues}
+              setInputsMap={updateAuthType}
+              key={`input-${index}`}
+            />
+          </List>
+          <InputFields inputs={authFields} inputsMap={authValues} setInputsMap={setAuthValues} />
+        </CardContent>
+      </Card>
     </ListItem>
   );
 };
