@@ -125,7 +125,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
                   color="secondary"
                   name={option.value}
                   tabIndex={0}
-                  disabled={!!option.locked || viewOnly}
+                  disabled={input.locked || !!option.locked || viewOnly}
                   aria-disabled={input.locked || viewOnly}
                   checked={values[option.value as keyof CheckboxValues] || false}
                   onBlur={(e) => {
