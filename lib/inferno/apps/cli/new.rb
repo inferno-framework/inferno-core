@@ -124,8 +124,8 @@ module Inferno
         end
       end
 
-      def say_unless_quiet(*args)
-        say(*args) unless options['quiet']
+      def say_unless_quiet(*)
+        say(*) unless options['quiet']
       end
     end
   end
