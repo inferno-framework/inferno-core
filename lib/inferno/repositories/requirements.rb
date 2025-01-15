@@ -48,6 +48,10 @@ module Inferno
           insert(requirement)
         end
       end
+
+      def filter_requirements_by_ids(ids)
+        all.select { |requirement| ids.include?(requirement.id) }
+      end
     end
   end
 end

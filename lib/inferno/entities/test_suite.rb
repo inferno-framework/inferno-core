@@ -108,6 +108,11 @@ module Inferno
             end
         end
 
+        # @private
+        def suite_requirements(suite_options)
+          children(suite_options).flat_map(&:verifies_requirements)
+        end
+
         # Provide a block which will verify any configuration needed for this
         # test suite to operate properly.
         #

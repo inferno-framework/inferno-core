@@ -47,10 +47,12 @@ module Inferno
           put '/:id/check_configuration',
               to: Inferno::Web::Controllers::TestSuites::CheckConfiguration,
               as: :check_configuration
+          get ':id/sessions/:session_id/requirements',
+              to: Inferno::Web::Controllers::TestSuites::Requirements::Index,
+              as: :requirements
         end
 
         scope 'requirements' do
-          get '/', to: Inferno::Web::Controllers::Requirements::Index, as: :index
           get '/:id', to: Inferno::Web::Controllers::Requirements::Show, as: :show
         end
 

@@ -84,4 +84,39 @@ RSpec.describe '/test_suites' do
       end
     end
   end
+
+  describe 'requirements' do
+    let(:test_session) { repo_create(:test_session, test_suite_id:) }
+    let(:test_suite_id) { 'ig_requirements' }
+
+    context 'when the test_suite and session exist' do
+      it 'renders json of requirements detail for the suite' do
+        get router.path(:api_test_suites_requirements, id: test_suite_id, session_id: test_session.id)
+
+        expect(last_response.status).to eq(200)
+
+        requirements = parsed_body
+        test_suite = repo.find(test_suite_id)
+        suite_requirements = test_suite.suite_requirements(test_session.suite_options)
+        expect(requirements.length).to eq(suite_requirements .length)
+        expect(requirements.map { |req| req['id'] }).to include(*suite_requirements)
+      end
+    end
+
+    context 'when the test_suite does not exist' do
+      it 'renders a 404' do
+        get router.path(:api_test_suites_requirements, id: 'test_suite_id', session_id: test_session.id)
+
+        expect(last_response.status).to eq(404)
+      end
+    end
+
+    context 'when the test session does not exist' do
+      it 'renders a 404' do
+        get router.path(:api_test_suites_requirements, id: test_suite_id, session_id: 'random')
+
+        expect(last_response.status).to eq(404)
+      end
+    end
+  end
 end
