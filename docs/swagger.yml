@@ -61,7 +61,7 @@ paths:
             $ref: "#/definitions/TestSuite"
         "404":
           description: "Test suite not found"
-  /test_suites/{test_suite_id}/sessions/{session_id}/requirements:
+  /test_suites/{test_suite_id}/requirements:
     get:
       tags:
       - "Requirement"
@@ -74,11 +74,11 @@ paths:
         name: "test_suite_id"
         description: "ID of the test suite"
         required: true
-      - in: "path"
+      - in: "query"
         type: "string"
         name: "session_id"
         description: "ID of the test session"
-        required: true
+        required: false
       responses:
         "200":
           description: "success"
