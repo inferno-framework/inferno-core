@@ -566,6 +566,13 @@ module Inferno
       end
 
       # @private
+      def all_requirements(suite_options = [])
+        children(suite_options).flat_map do |child|
+          child.verifies_requirements + child.all_requirements(suite_options)
+        end
+      end
+
+      # @private
       def inspect
         non_dynamic_ancestor = ancestors.find { |ancestor| !ancestor.to_s.start_with? '#' }
         "#<#{non_dynamic_ancestor}".tap do |inspect_string|
