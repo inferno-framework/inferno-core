@@ -13,6 +13,8 @@ gemspec
 # - Uncomment (and change as necessary) the require at the top of
 # `dev_suites/dev_demo_ig_stu1/demo_suite.rb`.
 
+# - Copy the g10 preset file from g10 repo into config/presets/
+
 group :development, :test do
   gem 'debug'
   gem 'rubocop', '~> 1.9'
