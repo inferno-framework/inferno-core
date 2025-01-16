@@ -98,7 +98,7 @@ RSpec.describe '/test_suites' do
         requirements = parsed_body
         test_suite = repo.find(test_suite_id)
         suite_requirements = test_suite.suite_requirements(test_session.suite_options)
-        expect(requirements.length).to eq(suite_requirements .length)
+        expect(requirements.length).to eq(suite_requirements.length)
         expect(requirements.map { |req| req['id'] }).to include(*suite_requirements)
       end
     end
