@@ -47,7 +47,7 @@ module Inferno
           put '/:id/check_configuration',
               to: Inferno::Web::Controllers::TestSuites::CheckConfiguration,
               as: :check_configuration
-          get ':id/sessions/:session_id/requirements',
+          get ':id/requirements',
               to: Inferno::Web::Controllers::TestSuites::Requirements::Index,
               as: :requirements
         end

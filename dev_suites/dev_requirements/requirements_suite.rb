@@ -5,31 +5,56 @@ module RequirementsSuite
     description 'Suite Description'
 
     group do
-      title 'Test Requirements 1 and 2'
-      verifies_requirements 'sample-criteria-proposal@1', 'sample-criteria-proposal@2'
+      title 'Goup 1'
+      group do
+        title 'Test Requirements 1 and 2'
+        verifies_requirements 'sample-criteria-proposal@1', 'sample-criteria-proposal@2'
 
-      test do
-        title 'Requirement 1'
-        run { pass }
+        test do
+          title 'Requirement 1'
+          run { pass }
+        end
+
+        test do
+          title 'Requirement 2'
+          run { pass }
+        end
+
+        test do
+          title 'Requirement 5'
+          verifies_requirements 'sample-criteria-proposal@5'
+          optional
+          run { pass }
+        end
       end
 
-      test do
-        title 'Requirement 2'
-        run { pass }
+      group do
+        title 'Test Requirements 3 and 4'
+        verifies_requirements 'sample-criteria-proposal@3', 'sample-criteria-proposal@4'
+
+        test do
+          title 'Requirement 3'
+          run { pass }
+        end
+
+        test do
+          title 'Requirement 4'
+          run { pass }
+        end
       end
     end
 
     group do
-      title 'Test Requirements 3 and 4'
-      verifies_requirements 'sample-criteria-proposal@3', 'sample-criteria-proposal@4'
+      title 'Test Requirements 6 and 7'
+      verifies_requirements 'sample-criteria-proposal@6', 'sample-criteria-proposal@7'
 
       test do
-        title 'Requirement 3'
+        title 'Requirement 6'
         run { pass }
       end
 
       test do
-        title 'Requirement 4'
+        title 'Requirement 7'
         run { pass }
       end
     end
