@@ -40,14 +40,14 @@ module Inferno
         nil
       end
 
-      def find_in_elements(elements, include_dar: false, &block)
+      def find_in_elements(elements, include_dar: false, &)
         unless include_dar
           elements = elements.reject do |el|
             el.respond_to?(:extension) && el.extension.any? { |ext| ext.url == DAR_EXTENSION_URL }
           end
         end
 
-        return elements.find(&block) if block_given?
+        return elements.find(&) if block_given?
 
         elements.first
       end
