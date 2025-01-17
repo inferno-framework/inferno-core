@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { InputOption, TestInput } from '~/models/testSuiteModels';
-import InputCombobox from './InputCombobox';
+import InputCombobox from '~/components/InputsModal/InputCombobox';
 
 export interface InputAccessProps {
   input: TestInput;

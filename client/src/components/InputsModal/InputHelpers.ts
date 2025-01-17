@@ -1,7 +1,7 @@
 import YAML from 'js-yaml';
 import { enqueueSnackbar } from 'notistack';
 import { Auth, OAuthCredentials, TestInput } from '~/models/testSuiteModels';
-import { AuthType, getAuthFields, getAccessFields } from './AuthSettings';
+import { AuthType, getAuthFields, getAccessFields } from './Auth/AuthSettings';
 
 export const getMissingRequiredInput = (inputs: TestInput[], inputsMap: Map<string, unknown>) => {
   return inputs.some((input: TestInput) => {
