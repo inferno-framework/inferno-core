@@ -1,22 +1,30 @@
 import React, { FC, useEffect } from 'react';
-import { Box, List, ListItem } from '@mui/material';
+import { Card, CardContent, InputLabel, List, ListItem } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Auth, TestInput } from '~/models/testSuiteModels';
-import { AuthType, getAuthFields } from '~/components/InputsModal/AuthSettings';
-import AuthTypeSelector from '~/components/InputsModal/AuthTypeSelector';
+import {
+  AuthType,
+  getAccessFields,
+  getAuthFields,
+} from '~/components/InputsModal/Auth/AuthSettings';
+import AuthTypeSelector from '~/components/InputsModal/Auth/AuthTypeSelector';
+import FieldLabel from '~/components/InputsModal/FieldLabel';
 import InputFields from '~/components/InputsModal/InputFields';
-import useStyles from './styles';
+import { useTestSessionStore } from '~/store/testSession';
+import useStyles from '../styles';
 
 export interface InputAuthProps {
+  mode: 'access' | 'auth';
   input: TestInput;
   index: number;
   inputsMap: Map<string, unknown>;
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
-const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }) => {
+const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const [authValues, setAuthValues] = React.useState<Map<string, unknown>>(new Map());
   const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
 
@@ -34,9 +42,14 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
     (authComponent?.default || firstListOption || 'public') as string,
   );
 
-  const [authFields, setAuthFields] = React.useState<TestInput[]>(
-    getAuthFields(authType as AuthType, authValues, input.options?.components || []),
-  );
+  // Set fields depending on mode
+  let fields: TestInput[] = [];
+  if (mode === 'access') {
+    fields = getAccessFields(authType as AuthType, authValues, input.options?.components || []);
+  } else if (mode === 'auth') {
+    fields = getAuthFields(authType as AuthType, authValues, input.options?.components || []);
+  }
+  const [authFields, setAuthFields] = React.useState<TestInput[]>(fields);
 
   useEffect(() => {
     // Set defaults on radio buttons
@@ -63,7 +76,6 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
     authFields.forEach((field: TestInput) => {
       authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
-
     setAuthValuesPopulated(true);
 
     // Trigger change on mount for default values
@@ -73,12 +85,26 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
 
   useEffect(() => {
     // Recalculate hidden fields
-    setAuthFields(getAuthFields(authType as AuthType, authValues, input.options?.components || []));
+    if (mode === 'access') {
+      setAuthFields(
+        getAccessFields(authType as AuthType, authValues, input.options?.components || []),
+      );
+    } else if (mode === 'auth') {
+      setAuthFields(
+        getAuthFields(authType as AuthType, authValues, input.options?.components || []),
+      );
+    }
 
-    // Update inputsMap
+    // Update inputsMap while maintaining hidden values
     if (authValuesPopulated) {
-      const stringifiedAuthValues = JSON.stringify(Object.fromEntries(authValues));
-      inputsMap.set(input.name, stringifiedAuthValues);
+      let stringifiedValues = JSON.stringify(Object.fromEntries(authValues));
+      if (mode === 'access') {
+        const combinedStartingValues = getStartingValues();
+        const accessValuesObject = Object.fromEntries(authValues) as Auth;
+        const combinedValues = { ...combinedStartingValues, ...accessValuesObject };
+        stringifiedValues = JSON.stringify(combinedValues);
+      }
+      inputsMap.set(input.name, stringifiedValues);
       setInputsMap(new Map(inputsMap));
     }
   }, [authValues]);
@@ -111,24 +137,35 @@ const InputAuth: FC<InputAuthProps> = ({ input, index, inputsMap, setInputsMap }
   };
 
   return (
-    <ListItem sx={{ p: 0 }}>
-      <Box width="100%">
-        {input.description && (
-          <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
-            {input.description}
-          </Markdown>
-        )}
-        <List>
-          <AuthTypeSelector
-            input={input}
-            index={index}
-            inputsMap={authValues}
-            setInputsMap={updateAuthType}
-            key={`input-${index}`}
-          />
-        </List>
-        <InputFields inputs={authFields} inputsMap={authValues} setInputsMap={setAuthValues} />
-      </Box>
+    <ListItem>
+      <Card variant="outlined" tabIndex={0} className={classes.authCard}>
+        <CardContent>
+          <InputLabel
+            tabIndex={0}
+            required={!input.optional}
+            disabled={input.locked || viewOnly}
+            aria-disabled={input.locked || viewOnly}
+            className={classes.inputLabel}
+          >
+            <FieldLabel input={input} />
+          </InputLabel>
+          {input.description && (
+            <Markdown className={classes.inputDescription} remarkPlugins={[remarkGfm]}>
+              {input.description}
+            </Markdown>
+          )}
+          <List>
+            <AuthTypeSelector
+              input={input}
+              index={index}
+              inputsMap={authValues}
+              setInputsMap={updateAuthType}
+              key={`input-${index}`}
+            />
+          </List>
+          <InputFields inputs={authFields} inputsMap={authValues} setInputsMap={setAuthValues} />
+        </CardContent>
+      </Card>
     </ListItem>
   );
 };
