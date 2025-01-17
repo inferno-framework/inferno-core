@@ -64,30 +64,6 @@ module Inferno
         slice&.slicing&.discriminator
       end
 
-      def must_support_pattern_slice_elements
-        must_support_slice_elements.select do |element|
-          discriminators(sliced_element(element))&.first&.type == 'pattern'
-        end
-      end
-
-      def pattern_slices
-        must_support_pattern_slice_elements.map do |current_element|
-          {
-            slice_id: current_element.id,
-            slice_name: current_element.sliceName,
-            path: current_element.path.gsub("#{resource}.", '')
-          }.tap do |metadata|
-            discriminator = discriminators(sliced_element(current_element)).first
-            discriminator_path = discriminator.path
-            discriminator_path = '' if discriminator_path == '$this'
-            pattern_element = find_element_by_discriminator_path(current_element, discriminator_path)
-            metadata[:discriminator] = construct_discriminator_metadata(pattern_element, metadata)
-            metadata[:discriminator][:path] = discriminator_path
-            metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(current_element)
-          end
-        end
-      end
-
       def find_element_by_discriminator_path(current_element, discriminator_path)
         if discriminator_path.present?
           profile_elements.find { |element| element.id == "#{current_element.id}.#{discriminator_path}" } ||
@@ -97,33 +73,38 @@ module Inferno
         end
       end
 
-      def construct_discriminator_metadata(pattern_element, metadata)
+      def save_pattern_slice(pattern_element, discriminator_path, metadata)
         if pattern_element.patternCodeableConcept
           {
             type: 'patternCodeableConcept',
+            path: discriminator_path,
             code: pattern_element.patternCodeableConcept.coding.first.code,
             system: pattern_element.patternCodeableConcept.coding.first.system
           }
         elsif pattern_element.patternCoding
           {
             type: 'patternCoding',
+            path: discriminator_path,
             code: pattern_element.patternCoding.code,
             system: pattern_element.patternCoding.system
           }
         elsif pattern_element.patternIdentifier
           {
             type: 'patternIdentifier',
+            path: discriminator_path,
             system: pattern_element.patternIdentifier.system
           }
         elsif required_binding_pattern?(pattern_element)
           {
             type: 'requiredBinding',
+            path: discriminator_path,
             values: extract_required_binding_values(pattern_element, metadata)
           }
         else
           # prevent errors in case an IG does something different
           {
-            type: 'unsupported'
+            type: 'unsupported',
+            path: discriminator_path
           }
         end
       end
@@ -145,11 +126,14 @@ module Inferno
         end
       end
 
+      def discriminator_path(discriminator)
+        discriminator.path == '$this' ? '' : discriminator.path
+      end
+
       def type_slices
         must_support_type_slice_elements.map do |current_element|
           discriminator = discriminators(sliced_element(current_element)).first
-          type_path = discriminator.path
-          type_path = '' if type_path == '$this'
+          type_path = discriminator_path(discriminator)
           type_element = find_element_by_discriminator_path(current_element, type_path)
 
           type_code = type_element.type.first.code
@@ -170,29 +154,44 @@ module Inferno
 
       def must_support_value_slice_elements
         must_support_slice_elements.select do |element|
-          discriminators(sliced_element(element))&.first&.type == 'value'
+          # discriminator type 'pattern' is deprecated in FHIR R5 and made equivalent to 'value'
+          ['value', 'pattern'].include?(discriminators(sliced_element(element)).first.type)
         end
       end
 
-      def value_slices
+      def value_slices # rubocop:disable Metrics/CyclomaticComplexity
         must_support_value_slice_elements.map do |current_element|
           {
             slice_id: current_element.id,
             slice_name: current_element.sliceName,
-            path: current_element.path.gsub("#{resource}.", ''),
-            discriminator: {
-              type: 'value'
-            }
+            path: current_element.path.gsub("#{resource}.", '')
           }.tap do |metadata|
-            metadata[:discriminator][:values] = discriminators(sliced_element(current_element)).map do |discriminator|
-              discriminator_path = discriminator.path
-              discriminator_path = '' if discriminator_path == '$this'
-              fixed_element = find_element_by_discriminator_path(current_element, discriminator_path)
+            fixed_values = []
+            pattern_value = {}
 
-              {
-                path: discriminator_path,
-                value: fixed_element.fixedUri || fixed_element.fixedCode
+            discriminators(sliced_element(current_element)).each do |discriminator|
+              discriminator_path = discriminator_path(discriminator)
+              pattern_element = find_element_by_discriminator_path(current_element, discriminator_path)
+
+              if pattern_element.fixed.present?
+                fixed_values << {
+                  path: discriminator_path,
+                  value: pattern_element.fixed
+                }
+              elsif pattern_value.present?
+                raise StandardError, "Found more than one pattern slices for the same element #{pattern_element}."
+              else
+                pattern_value = save_pattern_slice(pattern_element, discriminator_path, metadata)
+              end
+            end
+
+            if fixed_values.present?
+              metadata[:discriminator] = {
+                type: 'value',
+                values: fixed_values
               }
+            elsif pattern_value.present?
+              metadata[:discriminator] = pattern_value
             end
 
             metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(current_element)
@@ -201,7 +200,7 @@ module Inferno
       end
 
       def must_support_slices
-        pattern_slices + type_slices + value_slices
+        type_slices + value_slices
       end
 
       def plain_must_support_elements
@@ -213,8 +212,8 @@ module Inferno
       end
 
       def handle_fixed_values(metadata, element)
-        if element.fixedUri.present?
-          metadata[:fixed_value] = element.fixedUri
+        if element.fixed.present?
+          metadata[:fixed_value] = element.fixed
         elsif element.patternCodeableConcept.present? && !element_part_of_slice_discrimination?(element)
           metadata[:fixed_value] = element.patternCodeableConcept.coding.first.code
           metadata[:path] += '.coding.code'

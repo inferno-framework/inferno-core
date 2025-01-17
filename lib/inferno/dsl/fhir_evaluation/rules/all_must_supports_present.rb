@@ -95,7 +95,10 @@ module Inferno
 
           def handle_must_support_element_choices
             missing_elements.delete_if do |element|
-              choices = metadata.must_supports[:choices].find { |choice| choice[:paths]&.include?(element[:path]) }
+              choices = metadata.must_supports[:choices].find do |choice|
+                choice[:paths]&.include?(element[:path]) ||
+                  choice[:elements]&.any? { |ms_element| ms_element[:path] == element[:path] }
+              end
               any_choice_supported?(choices)
             end
           end
@@ -121,25 +124,36 @@ module Inferno
 
             any_path_choice_supported?(choices) ||
               any_extension_ids_choice_supported?(choices) ||
-              any_slice_names_choice_supported?(choices)
+              any_slice_names_choice_supported?(choices) ||
+              any_elements_choice_supported?(choices)
           end
 
           def any_path_choice_supported?(choices)
-            choices[:paths]&.any? { |path| missing_elements.none? { |element| element[:path] == path } }
+            return false unless choices[:paths].present?
+
+            choices[:paths].any? { |path| missing_elements.none? { |element| element[:path] == path } }
           end
 
           def any_extension_ids_choice_supported?(choices)
-            choices[:extension_ids]&.any? do |extension_id|
-              missing_extensions.none? do |extension|
-                extension[:id] == extension_id
-              end
+            return false unless choices[:extension_ids].present?
+
+            choices[:extension_ids].any? do |extension_id|
+              missing_extensions.none? { |extension| extension[:id] == extension_id }
             end
           end
 
           def any_slice_names_choice_supported?(choices)
-            choices[:slice_names]&.any? do |slice_name|
-              missing_slices.none? do |slice|
-                slice[:name] == slice_name
+            return false unless choices[:slice_names].present?
+
+            choices[:slice_names].any? { |slice_name| missing_slices.none? { |slice| slice[:name] == slice_name } }
+          end
+
+          def any_elements_choice_supported?(choices)
+            return false unless choices[:elements].present?
+
+            choices[:elements].any? do |choice|
+              missing_elements.none? do |element|
+                element[:path] == choice[:path] && element[:fixed_value] == choice[:fixed_value]
               end
             end
           end

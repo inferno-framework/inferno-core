@@ -99,10 +99,10 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
       slices = pulseox_extractor.value_slices
 
       # https://www.hl7.org/fhir/us/core/STU3.1.1/StructureDefinition-us-core-pulse-oximetry.html
-      # PulseOximetry profile has 2 slices by value:
-      # 1 on category, 1 on code.coding
+      # PulseOximetry profile has 2 slices by value, 1 on category, 1 on code.coding
+      # and 2 slices by pattern on component.
 
-      expect(slices.length).to be(2)
+      expect(slices.length).to eq(4)
       expect(slices[0][:slice_id]).to eq('Observation.category:VSCat')
       expect(slices[0][:path]).to eq('category')
       expect(slices[0][:discriminator][:type]).to eq('value')
@@ -112,6 +112,16 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
       expect(slices[1][:path]).to eq('code.coding')
       expect(slices[1][:discriminator][:type]).to eq('value')
       expect(slices[1][:discriminator][:values][0]).to eq({ path: 'code', value: '59408-5' })
+
+      expect(slices[2][:slice_id]).to eq('Observation.component:FlowRate')
+      expect(slices[2][:path]).to eq('component')
+      expect(slices[2][:discriminator][:type]).to eq('patternCodeableConcept')
+      expect(slices[2][:discriminator][:code]).to eq('3151-8')
+
+      expect(slices[3][:slice_id]).to eq('Observation.component:Concentration')
+      expect(slices[3][:path]).to eq('component')
+      expect(slices[3][:discriminator][:type]).to eq('patternCodeableConcept')
+      expect(slices[3][:discriminator][:code]).to eq('3150-0')
     end
   end
 
