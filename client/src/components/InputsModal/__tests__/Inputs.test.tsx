@@ -1,15 +1,14 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import { SnackbarProvider } from 'notistack';
 import { TestInput } from '~/models/testSuiteModels';
-import ThemeProvider from '~/components/ThemeProvider';
+import InputAuth from '~/components/InputsModal/Auth/InputAuth';
 import InputCheckboxGroup from '~/components/InputsModal/InputCheckboxGroup';
+import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredentials';
 import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputTextField from '~/components/InputsModal/InputTextField';
-import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredentials';
-import InputAuth from '~/components/InputsModal/InputAuth';
-import InputAccess from '~/components/InputsModal/InputAccess';
-import { describe, expect, it } from 'vitest';
+import ThemeProvider from '~/components/ThemeProvider';
 
 describe('Input Components', () => {
   it('renders InputCheckboxGroup', () => {
@@ -176,6 +175,7 @@ describe('Input Components', () => {
       <ThemeProvider>
         <SnackbarProvider>
           <InputAuth
+            mode="auth"
             input={authInput}
             index={0}
             inputsMap={new Map<string, string>()}
@@ -208,7 +208,8 @@ describe('Input Components', () => {
     render(
       <ThemeProvider>
         <SnackbarProvider>
-          <InputAccess
+          <InputAuth
+            mode="access"
             input={accessInput}
             index={0}
             inputsMap={new Map<string, string>()}

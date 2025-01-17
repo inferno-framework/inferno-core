@@ -1,14 +1,13 @@
 import React, { FC } from 'react';
 import { List } from '@mui/material';
 import { TestInput } from '~/models/testSuiteModels';
-import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredentials';
+import InputAuth from '~/components/InputsModal/Auth/InputAuth';
 import InputCheckboxGroup from '~/components/InputsModal/InputCheckboxGroup';
-import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
-import InputTextField from '~/components/InputsModal/InputTextField';
-import InputAuth from '~/components/InputsModal/InputAuth';
-import InputSingleCheckbox from '~/components/InputsModal/InputSingleCheckbox';
 import InputCombobox from '~/components/InputsModal/InputCombobox';
-import InputAccess from '~/components/InputsModal/InputAccess';
+import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredentials';
+import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
+import InputSingleCheckbox from '~/components/InputsModal/InputSingleCheckbox';
+import InputTextField from '~/components/InputsModal/InputTextField';
 
 export interface InputFieldsProps {
   inputs: TestInput[];
@@ -26,6 +25,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
               if (input.options?.mode === 'auth') {
                 return (
                   <InputAuth
+                    mode="auth"
                     input={input}
                     index={index}
                     inputsMap={inputsMap}
@@ -35,7 +35,8 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
                 );
               }
               return (
-                <InputAccess
+                <InputAuth
+                  mode="access"
                   input={input}
                   index={index}
                   inputsMap={inputsMap}
