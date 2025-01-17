@@ -68,9 +68,11 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
     );
 
     const combinedStartingValues = getStartingValues();
+    // After parsing JSON, set auth_type if value exists in input.value
+    setAuthType(combinedStartingValues.auth_type || authType);
 
     // Populate authValues on mount
-    authValues.set('auth_type', authType);
+    authValues.set('auth_type', combinedStartingValues.auth_type || authType);
     authFields.forEach((field: TestInput) => {
       authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
