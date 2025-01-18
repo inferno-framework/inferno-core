@@ -43,9 +43,19 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
   // Set fields depending on mode
   let fields: TestInput[] = [];
   if (mode === 'access') {
-    fields = getAccessFields(authType as AuthType, authValues, input.options?.components || []);
+    fields = getAccessFields(
+      authType as AuthType,
+      authValues,
+      input.options?.components || [],
+      input.locked || false,
+    );
   } else if (mode === 'auth') {
-    fields = getAuthFields(authType as AuthType, authValues, input.options?.components || []);
+    fields = getAuthFields(
+      authType as AuthType,
+      authValues,
+      input.options?.components || [],
+      input.locked || false,
+    );
   }
   const [authFields, setAuthFields] = React.useState<TestInput[]>(fields);
 
@@ -87,11 +97,21 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
     // Recalculate hidden fields
     if (mode === 'access') {
       setAuthFields(
-        getAccessFields(authType as AuthType, authValues, input.options?.components || []),
+        getAccessFields(
+          authType as AuthType,
+          authValues,
+          input.options?.components || [],
+          input.locked || false,
+        ),
       );
     } else if (mode === 'auth') {
       setAuthFields(
-        getAuthFields(authType as AuthType, authValues, input.options?.components || []),
+        getAuthFields(
+          authType as AuthType,
+          authValues,
+          input.options?.components || [],
+          input.locked || false,
+        ),
       );
     }
 

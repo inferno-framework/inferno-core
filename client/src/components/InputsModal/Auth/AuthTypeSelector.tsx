@@ -61,7 +61,7 @@ const AuthTypeSelector: FC<InputAccessProps> = ({ input, index, inputsMap, setIn
     description: input.description,
     default: getAuthStartingValue(),
     optional: selectorSettings.optional,
-    locked: selectorSettings.locked,
+    locked: selectorSettings.locked || input.locked,
     options: {
       list_options: selectorOptions,
     },
