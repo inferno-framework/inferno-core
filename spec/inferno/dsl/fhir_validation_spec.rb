@@ -114,7 +114,7 @@ RSpec.describe Inferno::DSL::FHIRValidation do
           .to_return(status: 200, body: invalid_outcome)
       end
 
-      context 'when log_messages is set to true' do
+      context 'when add_messages_to_runnable is set to true' do
         it 'includes resourceType/id in error message' do
           result = validator.resource_is_valid?(resource, profile_url, runnable)
 
@@ -131,10 +131,10 @@ RSpec.describe Inferno::DSL::FHIRValidation do
         end
       end
 
-      context 'when log_messages is set to false' do
+      context 'when add_messages_to_runnable is set to false' do
         it 'does not log messages' do
           resource.id = nil
-          result = validator.resource_is_valid?(resource, profile_url, runnable, log_messages: false)
+          result = validator.resource_is_valid?(resource, profile_url, runnable, add_messages_to_runnable: false)
 
           expect(result).to be(false)
           expect(runnable.messages).to be_empty

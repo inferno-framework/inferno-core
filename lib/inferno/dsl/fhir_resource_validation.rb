@@ -157,7 +157,7 @@ module Inferno
         end
 
         # @see Inferno::DSL::FHIRResourceValidation#resource_is_valid?
-        def resource_is_valid?(resource, profile_url, runnable, log_messages: true) # rubocop:disable Metrics/CyclomaticComplexity
+        def resource_is_valid?(resource, profile_url, runnable, add_messages_to_runnable: true) # rubocop:disable Metrics/CyclomaticComplexity
           profile_url ||= FHIR::Definitions.resource_definition(resource.resourceType).url
 
           begin
@@ -173,7 +173,7 @@ module Inferno
 
           message_hashes = message_hashes_from_outcome(outcome, resource, profile_url)
 
-          if log_messages
+          if add_messages_to_runnable
             message_hashes
               .each { |message_hash| runnable.add_message(message_hash[:type], message_hash[:message]) }
           end
