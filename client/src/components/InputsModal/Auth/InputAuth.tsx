@@ -43,9 +43,19 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
   // Set fields depending on mode
   let fields: TestInput[] = [];
   if (mode === 'access') {
-    fields = getAccessFields(authType as AuthType, authValues, input.options?.components || []);
+    fields = getAccessFields(
+      authType as AuthType,
+      authValues,
+      input.options?.components || [],
+      input.locked || false,
+    );
   } else if (mode === 'auth') {
-    fields = getAuthFields(authType as AuthType, authValues, input.options?.components || []);
+    fields = getAuthFields(
+      authType as AuthType,
+      authValues,
+      input.options?.components || [],
+      input.locked || false,
+    );
   }
   const [authFields, setAuthFields] = React.useState<TestInput[]>(fields);
 
@@ -68,9 +78,11 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
     );
 
     const combinedStartingValues = getStartingValues();
+    // After parsing JSON, set auth_type if value exists in input.value
+    setAuthType(combinedStartingValues.auth_type || authType);
 
     // Populate authValues on mount
-    authValues.set('auth_type', authType);
+    authValues.set('auth_type', combinedStartingValues.auth_type || authType);
     authFields.forEach((field: TestInput) => {
       authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
@@ -85,11 +97,21 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
     // Recalculate hidden fields
     if (mode === 'access') {
       setAuthFields(
-        getAccessFields(authType as AuthType, authValues, input.options?.components || []),
+        getAccessFields(
+          authType as AuthType,
+          authValues,
+          input.options?.components || [],
+          input.locked || false,
+        ),
       );
     } else if (mode === 'auth') {
       setAuthFields(
-        getAuthFields(authType as AuthType, authValues, input.options?.components || []),
+        getAuthFields(
+          authType as AuthType,
+          authValues,
+          input.options?.components || [],
+          input.locked || false,
+        ),
       );
     }
 
