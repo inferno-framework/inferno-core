@@ -114,19 +114,31 @@ RSpec.describe Inferno::DSL::FHIRValidation do
           .to_return(status: 200, body: invalid_outcome)
       end
 
-      it 'includes resourceType/id in error message' do
-        result = validator.resource_is_valid?(resource, profile_url, runnable)
+      context 'when log_messages is set to true' do
+        it 'includes resourceType/id in error message' do
+          result = validator.resource_is_valid?(resource, profile_url, runnable)
 
-        expect(result).to be(false)
-        expect(runnable.messages.first[:message]).to start_with("#{resource.resourceType}/#{resource.id}:")
+          expect(result).to be(false)
+          expect(runnable.messages.first[:message]).to start_with("#{resource.resourceType}/#{resource.id}:")
+        end
+
+        it 'includes resourceType in error message if resource.id is nil' do
+          resource.id = nil
+          result = validator.resource_is_valid?(resource, profile_url, runnable)
+
+          expect(result).to be(false)
+          expect(runnable.messages.first[:message]).to start_with("#{resource.resourceType}:")
+        end
       end
 
-      it 'includes resourceType in error message if resource.id is nil' do
-        resource.id = nil
-        result = validator.resource_is_valid?(resource, profile_url, runnable)
+      context 'when log_messages is set to false' do
+        it 'does not log messages' do
+          resource.id = nil
+          result = validator.resource_is_valid?(resource, profile_url, runnable, log_messages: false)
 
-        expect(result).to be(false)
-        expect(runnable.messages.first[:message]).to start_with("#{resource.resourceType}:")
+          expect(result).to be(false)
+          expect(runnable.messages).to be_empty
+        end
       end
     end
 
