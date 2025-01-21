@@ -30,6 +30,7 @@ module Inferno
       # @param resource [FHIR::Model]
       # @param profile_url [String]
       # @param validator [Symbol] the name of the validator to use
+      # @param log_messages [Boolean] whether to log validation messages or not
       # @return [Boolean] whether the resource is valid
       def resource_is_valid?(resource: self.resource, profile_url: nil, validator: :default, log_messages: true)
         find_validator(validator).resource_is_valid?(resource, profile_url, self, log_messages:)
