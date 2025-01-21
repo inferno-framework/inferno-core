@@ -12,7 +12,7 @@ module Inferno
     #     class AuthorizedEndpoint < Inferno::DSL::SuiteEndpoint
     #       # Identify the incoming request based on a bearer token
     #       def test_run_identifier
-    #         request.header['authorization']&.delete_prefix('Bearer ')
+    #         request.headers['authorization']&.delete_prefix('Bearer ')
     #       end
     #
     #       # Return a json FHIR Patient resource

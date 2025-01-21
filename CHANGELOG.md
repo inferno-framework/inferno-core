@@ -1,3 +1,14 @@
+## 0.6.0
+* FI-3395 Fix suite describe with routes by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/577
+* FI-3588: Use git for files in test kit gemspecs by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/578
+* FI-3302: Add CI actions to template by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/574
+* FI-3643: Check input components for auth by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/587
+* FI-3338: Create common test kit specs by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/586
+* FI-3360: Update ruby by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/589
+* FI-3628: Add check for locked input in checkbox group by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/590
+* FI-3598: Add title to auth inputs and consolidate input modes by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/591
+* Change ruby to 3.3.6 in docs.yml by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/593
+
 ## 0.5.4
 * FI-3565: Upgrade validator dockerfile to match upstream by @dehall in https://github.com/inferno-framework/inferno-core/pull/576
 * FI-3440: Add IG entity and repository, integrated into Evaluate task by @dehall in https://github.com/inferno-framework/inferno-core/pull/573
