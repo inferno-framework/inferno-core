@@ -30,9 +30,13 @@ module Inferno
       # @param resource [FHIR::Model]
       # @param profile_url [String]
       # @param validator [Symbol] the name of the validator to use
+      # @param add_messages_to_runnable [Boolean] whether to add validation messages to runnable or not
       # @return [Boolean] whether the resource is valid
-      def resource_is_valid?(resource: self.resource, profile_url: nil, validator: :default)
-        find_validator(validator).resource_is_valid?(resource, profile_url, self)
+      def resource_is_valid?(
+        resource: self.resource, profile_url: nil,
+        validator: :default, add_messages_to_runnable: true
+      )
+        find_validator(validator).resource_is_valid?(resource, profile_url, self, add_messages_to_runnable:)
       end
 
       # Find a particular validator. Looks through a runnable's parents up to
@@ -113,7 +117,7 @@ module Inferno
         end
 
         # @see Inferno::DSL::FHIRValidation#resource_is_valid?
-        def resource_is_valid?(resource, profile_url, runnable)
+        def resource_is_valid?(resource, profile_url, runnable, add_messages_to_runnable: true) # rubocop:disable Metrics/CyclomaticComplexity
           profile_url ||= FHIR::Definitions.resource_definition(resource.resourceType).url
 
           begin
@@ -128,8 +132,10 @@ module Inferno
 
           message_hashes = message_hashes_from_outcome(outcome, resource, profile_url)
 
-          message_hashes
-            .each { |message_hash| runnable.add_message(message_hash[:type], message_hash[:message]) }
+          if add_messages_to_runnable
+            message_hashes
+              .each { |message_hash| runnable.add_message(message_hash[:type], message_hash[:message]) }
+          end
 
           unless response.status == 200
             raise Inferno::Exceptions::ErrorInValidatorException,
