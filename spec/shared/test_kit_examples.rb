@@ -16,6 +16,9 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
   let(:suites) do
     test_kit.suite_ids.map { |id| Inferno::Repositories::TestSuites.new.find(id) }
   end
+  let(:tests) do
+    Inferno::Repositories::Tests.new.all.select { |test| test_kit.suite_ids.include?(test.suite.id) }
+  end
 
   describe 'TestKit' do
     it 'defines test kit in the Metadata class' do
@@ -128,6 +131,21 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
         %(Add "spec.metadata['inferno_test_kit'] = 'true'" to #{test_kit_gem.name}.gemspec)
 
       expect(test_kit_gem.metadata['inferno_test_kit']).to eq('true'), error_message
+    end
+  end
+
+  describe 'test methods integrity' do
+    it 'ensures `fetch_all_bundled_resources` is not overriden in a Test' do
+      tests.each do |test|
+        error_msg = 'Integrety Error: `fetch_all_bundled_resources` is now implemented in Inferno Core. ' \
+                    "It should no longer be defined in Test `#{test.id}`. Please remove the " \
+                    '`fetch_all_bundled_resources` definition from that test to avoid conflicts.'
+
+        method_path = test.instance_method(:fetch_all_bundled_resources).source_location
+        expected_path = Inferno::Test.instance_method(:fetch_all_bundled_resources).source_location
+
+        expect(method_path).to eq(expected_path), error_msg
+      end
     end
   end
 end

@@ -327,6 +327,61 @@ module Inferno
         end
       end
 
+      # Fetch all resources from a paginated FHIR bundle
+      #
+      # @param resource_type [String] The expected resource type to fetch.
+      # @param bundle [FHIR::Bundle] The initial FHIR bundle to process. Defaults to `self.resource`.
+      # @param reply_handler [Proc, nil] A handler for processing replies. Optional.
+      # @param client [Symbol] Defaults to `:default`.
+      # @param max_pages [Integer] Maximum number of pages to fetch. Defaults to 20.
+      # @param additional_resource_types [Array<String>] Additional resource types acceptable in the results.
+      # @param tags [Array<String>] for request tagging. Optional.
+      #
+      # @return [Array<FHIR::Resource>] An array of fetched FHIR resources.
+      def fetch_all_bundled_resources( # rubocop:disable Metrics/CyclomaticComplexity
+        resource_type:,
+        bundle: resource,
+        reply_handler: nil,
+        client: :default,
+        max_pages: 20,
+        additional_resource_types: [],
+        tags: []
+      )
+        page_count = 1
+        resources = []
+
+        while bundle && page_count <= max_pages
+          resources += bundle.entry&.map { |entry| entry&.resource } || []
+          reply_handler&.call(response)
+
+          break if next_bundle_link(bundle).blank?
+
+          bundle = fetch_next_bundle(bundle, client, tags)
+
+          page_count += 1
+        end
+
+        # TODO: Do we still need to perform this check and add the info msg?
+        # Do we also want the option to filter the results?
+        valid_resource_types = [resource_type, 'OperationOutcome'].concat(additional_resource_types)
+        valid_resource_types << 'Medication' if ['MedicationRequest', 'MedicationDispense'].include?(resource_type)
+
+        invalid_resource_types =
+          resources.reject { |entry| valid_resource_types.include? entry.resourceType }
+            .map(&:resourceType)
+            .uniq
+        if invalid_resource_types.any?
+          info "Received resource type(s) #{invalid_resource_types.join(', ')} in search bundle, " \
+               "but only expected resource types #{valid_resource_types.join(', ')}. " \
+               'This is unusual but allowed if the server believes additional resource types are relevant.'
+        end
+
+        resources
+      rescue JSON::ParserError
+        Inferno::Application[:logger].error "Could not resolve next bundle: #{next_bundle_link(bundle)}"
+        resources
+      end
+
       # @todo Make this a FHIR class method? Something like
       #   FHIR.class_for(resource_type)
       # @private
@@ -369,6 +424,20 @@ module Inferno
         end
       rescue StandardError => e
         Inferno::Application[:logger].error "Unable to refresh token: #{e.message}"
+      end
+
+      # @private
+      def fetch_next_bundle(bundle, client, tags)
+        reply = fhir_client(client).raw_read_url(next_bundle_link(bundle))
+        store_request('outgoing', tags:) { reply }
+        return unless request.status == 200
+
+        fhir_client(client).parse_reply(FHIR::Bundle, fhir_client(client).default_format, reply)
+      end
+
+      # @private
+      def next_bundle_link(bundle)
+        bundle&.link&.find { |link| link.relation == 'next' }&.url
       end
 
       module ClassMethods
