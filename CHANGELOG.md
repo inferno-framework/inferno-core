@@ -1,5 +1,6 @@
 ## 0.6.1
 * Pin concurrent-ruby to 1.3.4 by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/596
+* FI-3178: Validate Resource Without Validation Messages by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/595
 
 ## 0.6.0
 * FI-3395 Fix suite describe with routes by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/577
