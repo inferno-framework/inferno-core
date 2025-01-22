@@ -12,21 +12,20 @@ module Inferno
 
       def evaluate(ig_path, data_path, _log_level)
         validate_args(ig_path, data_path)
-        _ig = get_ig(ig_path)
+        ig = get_ig(ig_path)
 
-        # Rule execution, and result output below will be integrated soon.
+        data =
+          if data_path
+            DatasetLoader.from_path(File.join(__dir__, data_path))
+          else
+            ig.examples
+          end
 
-        # if data_path
-        #   DatasetLoader.from_path(File.join(__dir__, data_path))
-        # else
-        #   ig.examples
-        # end
+        evaluator = Inferno::DSL::FHIREvaluation::Evaluator.new(ig)
 
-        # config = Config.new
-        # evaluator = Inferno::DSL::FHIREvaluation::Evaluator.new(data, config)
-
-        # results = evaluate()
-        # output_results(results, options[:output])
+        config = Inferno::DSL::FHIREvaluation::Config.new
+        results = evaluator.evaluate(data, config)
+        output_results(results, options[:output])
       end
 
       def validate_args(ig_path, data_path)

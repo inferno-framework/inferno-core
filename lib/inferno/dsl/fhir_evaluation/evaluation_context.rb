@@ -6,14 +6,16 @@ module Inferno
       # - The data being evaluated
       # - A summary/characterization of the data
       # - Evaluation results
+      # - A Validator instance, configured to point to the given IG
       class EvaluationContext
-        attr_reader :ig, :data, :results, :config
+        attr_reader :ig, :data, :results, :config, :validator
 
-        def initialize(ig, data, config) # rubocop:disable Naming/MethodParameterName
+        def initialize(ig, data, config, validator)
           @ig = ig
           @data = data
           @results = []
           @config = config
+          @validator = validator
         end
 
         def add_result(result)
