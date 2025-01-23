@@ -22,6 +22,7 @@ const CopyButton: FC<CopyButtonProps> = ({ copyText, size, view }) => {
       }, 2000); // 2 second delay
     });
   };
+
   return (
     <CustomTooltip
       title={copySuccess[copyText as keyof typeof copySuccess] ? 'Text copied!' : 'Copy text'}

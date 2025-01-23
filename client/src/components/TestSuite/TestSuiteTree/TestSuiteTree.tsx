@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { TestSuite, TestGroup, PresetSummary, ViewType } from '~/models/testSuiteModels';
 import { Box, Divider, Typography } from '@mui/material';
 import { SimpleTreeView } from '@mui/x-tree-view';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -9,11 +8,12 @@ import FlagIcon from '@mui/icons-material/Flag';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { useAppStore } from '~/store/app';
+import { TestSuite, TestGroup, PresetSummary, ViewType } from '~/models/testSuiteModels';
 import CustomTreeItem from '~/components/_common/CustomTreeItem';
 import PresetsSelector from '~/components/PresetsSelector/PresetsSelector';
 import TestGroupTreeItem from '~/components/TestSuite/TestSuiteTree/TestGroupTreeItem';
 import TreeItemLabel from '~/components/TestSuite/TestSuiteTree/TreeItemLabel';
+import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
 import useStyles from './styles';
 

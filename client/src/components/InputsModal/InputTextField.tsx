@@ -3,7 +3,8 @@ import { FormControl, FormLabel, Input, ListItem } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { TestInput } from '~/models/testSuiteModels';
-import FieldLabel from './FieldLabel';
+import FieldLabel from '~/components/InputsModal/FieldLabel';
+import { useTestSessionStore } from '~/store/testSession';
 import useStyles from './styles';
 
 export interface InputTextFieldProps {
@@ -15,6 +16,7 @@ export interface InputTextFieldProps {
 
 const InputTextField: FC<InputTextFieldProps> = ({ input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const [hasBeenModified, setHasBeenModified] = React.useState(false);
 
   const isMissingInput = hasBeenModified && !input.optional && !inputsMap.get(input.name);
@@ -24,7 +26,9 @@ const InputTextField: FC<InputTextFieldProps> = ({ input, index, inputsMap, setI
       <FormControl
         component="fieldset"
         id={`input${index}_control`}
-        disabled={input.locked}
+        tabIndex={0}
+        disabled={input.locked || viewOnly}
+        aria-disabled={input.locked || viewOnly}
         required={!input.optional}
         error={isMissingInput}
         fullWidth
@@ -39,7 +43,9 @@ const InputTextField: FC<InputTextFieldProps> = ({ input, index, inputsMap, setI
           </Markdown>
         )}
         <Input
-          disabled={input.locked}
+          tabIndex={0}
+          disabled={input.locked || viewOnly}
+          aria-disabled={input.locked || viewOnly}
           required={!input.optional}
           error={isMissingInput}
           id={`input${index}_text`}
