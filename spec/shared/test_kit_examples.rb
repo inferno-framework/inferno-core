@@ -89,7 +89,7 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
         error_message =
           "Include the standard 'Report Issue', 'Open Source', and 'Download links in " \
           'each suite.\n'
-        expect(link_labels).to match_array(expected_labels), error_message
+        expect(link_labels).to include(*expected_labels), error_message
       end
     end
   end

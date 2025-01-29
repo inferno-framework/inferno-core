@@ -22,8 +22,8 @@ Inferno::Application.register_provider(:presets) do
       end
 
     files_to_load.compact!
-    files_to_load.uniq!
     files_to_load.map! { |path| File.realpath(path) }
+    files_to_load.uniq!
 
     files_to_load.each do |path|
       presets_repo.insert_from_file(path)
