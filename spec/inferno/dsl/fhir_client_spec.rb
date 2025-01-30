@@ -1202,6 +1202,60 @@ RSpec.describe Inferno::DSL::FHIRClient do
     end
   end
 
+  describe '#fetch_all_bundled_resources' do
+    let(:resource_type) { resource.resourceType }
+    let(:next_url) { 'next_bundle_page' }
+    let(:stub_next_bundle_request) do
+      stub_request(:get, "#{base_url}/#{next_url}")
+        .to_return(status: 200, body: bundle.to_json)
+    end
+
+    before do
+      stub_next_bundle_request
+    end
+
+    context 'when fetching a single page bundle with entries' do
+      it 'returns all resources in the bundle' do
+        resources = group.fetch_all_bundled_resources(resource_type:, bundle:)
+
+        expect(stub_next_bundle_request).to_not have_been_made.once
+        expect(resources).to contain_exactly(resource)
+      end
+    end
+
+    context 'when fetching a bundle with multiple pages' do
+      it 'fetches all pages and returns the aggregated resources' do
+        allow(group).to receive(:next_bundle_link).and_return(next_url)
+        resources = group.fetch_all_bundled_resources(resource_type:, bundle:, max_pages: 2)
+
+        expect(stub_next_bundle_request).to have_been_made.twice
+        expect(resources).to contain_exactly(resource, resource)
+      end
+    end
+
+    context 'when no bundle is null' do
+      it 'returns an empty array' do
+        resources = group.fetch_all_bundled_resources(resource_type:)
+
+        expect(stub_next_bundle_request).to_not have_been_made
+        expect(resources).to be_empty
+      end
+    end
+
+    context 'when invalid resource types are present' do
+      it 'adds info message to runnable' do
+        test_instance = test.new
+        resources = test_instance.fetch_all_bundled_resources(resource_type: 'Goal', bundle:)
+
+        expect(resources).to contain_exactly(resource)
+
+        message = test_instance.messages.first
+        expect(message[:type]).to eq('info')
+        expect(message[:message]).to match(/This is unusual but allowed if the server believes/)
+      end
+    end
+  end
+
   describe '#requests' do
     it 'returns an array of the requests made' do
       ids = [1, 2, 3]
