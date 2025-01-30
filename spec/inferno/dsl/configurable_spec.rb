@@ -170,17 +170,17 @@ RSpec.describe Inferno::DSL::Configurable do
 
           expect(final_components.length).to eq(3)
 
-          auth_type_component = final_components.find { |component| component[:name] == 'auth_type' }
+          auth_type_component = final_components.find { |component| component[:name] == :auth_type }
 
           expect(auth_type_component[:default]).to eq('symmetric')
           expect(auth_type_component[:options][:list_options].length).to eq(2)
 
-          pkce_component = final_components.find { |component| component[:name] == 'pkce_support' }
+          pkce_component = final_components.find { |component| component[:name] == :pkce_support }
 
           expect(pkce_component[:default]).to eq('enabled')
-          expect(pkce_component[:locked]).to eq(true)
+          expect(pkce_component[:locked]).to be(true)
 
-          discovery_component = final_components.find { |component| component[:name] == 'use_discovery' }
+          discovery_component = final_components.find { |component| component[:name] == :use_discovery }
           expect(discovery_component).to eq(existing_component_config.first)
         end
       end

@@ -138,6 +138,9 @@ module Inferno
           configuration[:inputs] ||= {}
         end
 
+        # @private
+        # Recursively duplicate arrays/hashes to prevent them from being shared
+        # across different runnables
         def deep_dup(value)
           if value.is_a? Array
             value.map { |element| deep_dup(element) }

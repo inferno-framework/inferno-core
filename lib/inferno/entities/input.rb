@@ -109,6 +109,12 @@ module Inferno
         send("#{attribute}=", value)
       end
 
+      # @private
+      # Merge input options. This performs a normal merge for all options except
+      # for the "components" field, the members of which are individually merged
+      # by `merge_components`
+      # @param primary_source [Input]
+      # @param secondary_source [Input]
       def merge_options(primary_source:, secondary_source:)
         primary_options = primary_source.options.dup || {}
         secondary_options = secondary_source.options.dup || {}
@@ -118,17 +124,20 @@ module Inferno
         primary_components = primary_options.delete(:components) || []
         secondary_components = secondary_options.delete(:components) || []
 
-        send("options=", secondary_options.merge(primary_options))
+        send('options=', secondary_options.merge(primary_options))
 
-        # Change to accept just components
         merge_components(primary_components:, secondary_components:)
       end
 
-      def merge_components(primary_components:, secondary_components:)
+      # @private
+      # Merge component hashes.
+      # @param primary_source [Input]
+      # @param secondary_source [Input]
+      def merge_components(primary_components:, secondary_components:) # rubocop:disable Metrics/CyclomaticComplexity
         primary_components
-            .each { |component| component[:name] = component[:name].to_sym }
+          .each { |component| component[:name] = component[:name].to_sym }
         secondary_components
-            .each { |component| component[:name] = component[:name].to_sym }
+          .each { |component| component[:name] = component[:name].to_sym }
 
         return if primary_components.blank? && secondary_components.blank?
 
@@ -141,26 +150,14 @@ module Inferno
           primary_component = primary_components.find { |component| component[:name] == key }
           secondary_component = secondary_components.find { |component| component[:name] == key }
 
-          if primary_component.blank?
-            next secondary_component
-          end
+          next secondary_component if primary_component.blank?
 
-          if secondary_component.blank?
-            next primary_component
-          end
+          next primary_component if secondary_component.blank?
 
           Input.new(**secondary_component).merge(Input.new(**primary_component), merge_all: true).to_hash
         end
 
         merged_components.each { |component| component[:name] = component[:name].to_sym }
-
-        # if (primary_components + secondary_components).any? { |c| c[:name].to_s == 'requested_scopes' }
-        #   if primary_source.name.to_s == 'ehr_smart_auth_info'
-        #     puts "1: #{primary_components}"
-        #     puts "2: #{secondary_components}"
-        #     puts "3: #{merged_components}"
-        #   end
-        # end
 
         self.options ||= {}
         self.options[:components] = merged_components
