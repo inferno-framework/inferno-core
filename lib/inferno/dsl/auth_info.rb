@@ -324,6 +324,55 @@ module Inferno
           }
         }
       end
+
+      def self.default_auth_type_component_without_backend_services
+        {
+          name: :auth_type,
+          options: {
+            list_options: [
+              { label: 'Public', value: 'public' },
+              { label: 'Confidential Symmetric', value: 'symmetric' },
+              { label: 'Confidential Asymmetric', value: 'asymmetric' }
+            ]
+          }
+        }
+      end
+
+      def public_auth?
+        auth_type&.casecmp? 'public'
+      end
+
+      def symmetric_auth?
+        auth_type&.casecmp? 'symmetric'
+      end
+
+      def asymmetric_auth?
+        auth_type&.casecmp? 'asymmetric'
+      end
+
+      def backend_services_auth?
+        auth_type&.casecmp? 'backend_services'
+      end
+
+      def get_auth_request?
+        auth_request_method&.casecmp? 'get'
+      end
+
+      def post_auth_request?
+        auth_request_method&.casecmp? 'post'
+      end
+
+      def pkce_enabled?
+        pkce_support&.casecmp? 'enabled'
+      end
+
+      def s256_code_challenge_method?
+        pkce_code_challenge_method&.casecmp? 'S256'
+      end
+
+      def plain_code_challenge_method?
+        pkce_code_challenge_method&.casecmp? 'plain'
+      end
     end
   end
 end
