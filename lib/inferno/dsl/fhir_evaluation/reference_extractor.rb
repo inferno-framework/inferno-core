@@ -1,0 +1,78 @@
+module Inferno
+  module DSL
+    module FHIREvaluation
+      class ReferenceExtractor
+        attr_accessor :resource_type_ids, :references
+
+        def extract_resource_type_ids(resources)
+          @resource_type_ids = Hash.new { |type, id| type[id] = [] }
+
+          resources.each do |resource|
+            resource.each_element do |value, metadata, path|
+              next unless metadata['type'] == 'id'
+              next if path.include?('contained')
+
+              first_path = metadata['path'].partition('.').first.downcase
+              resource_type_ids[first_path] << value
+            end
+          end
+
+          resource_type_ids
+        end
+
+        def extract_references(resources)
+          @references = Hash.new { |reference, id| reference[id] = [] }
+
+          resources.each do |resource|
+            extract_references_from_resource(resource)
+          end
+
+          references
+        end
+
+        def extract_references_from_resource(resource)
+          resource.each_element do |value, metadata, path|
+            if metadata['type'] == 'Reference' && !value.reference.nil?
+              if value.reference.start_with?('#')
+                # skip contained references (not separate resources)
+                next
+              elsif value.reference.include? '/'
+                add_parsed_reference(resource, value, path)
+              # if type is not specified in the reference, get type from the
+              elsif path.split('.').last.include? 'Reference'
+                add_reference_typed_path(resource, value, path)
+              elsif value.reference.start_with? 'urn:uuid:'
+                references[resource.id] << [path, '', value.reference[9..]]
+              else
+                references[resource.id] << [path, '', value.reference]
+              end
+            end
+          end
+        end
+
+        def add_parsed_reference(resource, value, path)
+          type = value.reference.split('/')[-2].downcase
+          id = value.reference.split('/')[-1]
+          # assumes all profiles are represented
+          references[resource.id] << if resource_type_ids.key?(type)
+                                       [path, type, id]
+                                     else
+                                       # could include a warning here
+                                       [path, '', value.reference]
+                                     end
+        end
+
+        def add_reference_typed_path(resource, value, path)
+          type = path.split('.').last.gsub('Reference', '').downcase
+          # assumes all profiles are represented
+          references[resource.id] << if resource_type_ids.key?(type)
+                                       [path, type, value.reference]
+                                     else
+                                       # could include a warning here
+                                       [path, '', value.reference]
+                                     end
+        end
+      end
+    end
+  end
+end
