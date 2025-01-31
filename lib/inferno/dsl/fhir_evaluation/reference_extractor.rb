@@ -34,15 +34,12 @@ module Inferno
           resource.each_element do |value, metadata, path|
             if metadata['type'] == 'Reference' && !value.reference.nil?
               if value.reference.start_with?('#')
-                # skip contained references (not separate resources)
                 next
               elsif value.reference.include? '/'
                 add_parsed_reference(resource, value, path)
               elsif value.reference.start_with? 'urn:uuid:'
-                # references[resource.id] << [path, '', value.reference[9..]]
                 references[resource.id] << { path: path, type: '', id: value.reference[9..] }
               else
-                # references[resource.id] << [path, '', value.reference]
                 references[resource.id] << { path: path, type: '', id: value.reference }
               end
             end
@@ -52,19 +49,9 @@ module Inferno
         def add_parsed_reference(resource, value, path)
           type = value.reference.split('/')[-2].downcase
           id = value.reference.split('/')[-1]
-          # assumes all profiles are represented
-          # references[resource.id] << if resource_type_ids.key?(type)
-          #                              [path, type, id]
-          #                            else
-          #                              # could include a warning here
-          #                              [path, '', value.reference]
-          #                            end
           references[resource.id] << if resource_type_ids.key?(type)
-                                       # [path, type, id]
                                        { path: path, type: type, id: id }
                                      else
-                                       # could include a warning here
-                                       # [path, '', value.reference]
                                        { path: path, type: '', id: value.reference }
                                      end
         end

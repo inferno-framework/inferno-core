@@ -17,11 +17,6 @@ module Inferno
 
             reference_map.each do |resource_id, references|
               references.each do |reference|
-                # if reference[1] == ''
-                #   unresolved_references[id] << reference unless resource_ids.include?(reference[2])
-                # elsif !resource_type_ids[reference[1]].include?(reference[2])
-                #   unresolved_references[id] << reference
-                # end
                 if reference[:type] == ''
                   unresolved_references[resource_id] << reference unless resource_ids.include?(reference[:id])
                 elsif !resource_type_ids[reference[:type]].include?(reference[:id])
