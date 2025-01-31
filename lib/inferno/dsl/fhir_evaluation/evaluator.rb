@@ -5,6 +5,8 @@ require_relative 'rule'
 require_relative 'evaluation_context'
 require_relative 'evaluation_result'
 require_relative 'dataset_loader'
+require_relative 'rules/all_references_resolve'
+require_relative 'rules/all_resources_reachable'
 
 module Inferno
   module DSL
