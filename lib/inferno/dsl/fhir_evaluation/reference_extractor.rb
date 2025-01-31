@@ -12,8 +12,8 @@ module Inferno
               next unless metadata['type'] == 'id'
               next if path.include?('contained')
 
-              first_path = metadata['path'].partition('.').first.downcase
-              resource_type_ids[first_path] << value
+              type = metadata['path'].partition('.').first.downcase
+              resource_type_ids[type] << value
             end
           end
 
@@ -38,13 +38,12 @@ module Inferno
                 next
               elsif value.reference.include? '/'
                 add_parsed_reference(resource, value, path)
-              # if type is not specified in the reference, get type from the
-              elsif path.split('.').last.include? 'Reference'
-                add_reference_typed_path(resource, value, path)
               elsif value.reference.start_with? 'urn:uuid:'
-                references[resource.id] << [path, '', value.reference[9..]]
+                # references[resource.id] << [path, '', value.reference[9..]]
+                references[resource.id] << { path: path, type: '', id: value.reference[9..] }
               else
-                references[resource.id] << [path, '', value.reference]
+                # references[resource.id] << [path, '', value.reference]
+                references[resource.id] << { path: path, type: '', id: value.reference }
               end
             end
           end
@@ -54,22 +53,19 @@ module Inferno
           type = value.reference.split('/')[-2].downcase
           id = value.reference.split('/')[-1]
           # assumes all profiles are represented
+          # references[resource.id] << if resource_type_ids.key?(type)
+          #                              [path, type, id]
+          #                            else
+          #                              # could include a warning here
+          #                              [path, '', value.reference]
+          #                            end
           references[resource.id] << if resource_type_ids.key?(type)
-                                       [path, type, id]
+                                       # [path, type, id]
+                                       { path: path, type: type, id: id }
                                      else
                                        # could include a warning here
-                                       [path, '', value.reference]
-                                     end
-        end
-
-        def add_reference_typed_path(resource, value, path)
-          type = path.split('.').last.gsub('Reference', '').downcase
-          # assumes all profiles are represented
-          references[resource.id] << if resource_type_ids.key?(type)
-                                       [path, type, value.reference]
-                                     else
-                                       # could include a warning here
-                                       [path, '', value.reference]
+                                       # [path, '', value.reference]
+                                       { path: path, type: '', id: value.reference }
                                      end
         end
       end

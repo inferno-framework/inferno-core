@@ -50,32 +50,4 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     msg = 'Found unresolved references'
     expect(result.message).to eq("#{msg}: \n Resource (id): enc444  \n\tpath: subject, type: , id: #{id}")
   end
-
-  it 'identifies inferred type from path with simple id' do
-    patient = FHIR::Patient.new(id: 'patient2')
-    medication = FHIR::Medication.new(id: 'medication')
-    medication_request = FHIR::MedicationRequest.new(id: 'medication_request', medicationReference: { reference: 'notype_id' })
-    
-    data = [patient, medication, medication_request]
-    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
-
-    result = described_class.new.check(context)[0]
-    msg = 'Found unresolved references'
-
-    expect(result.message).to eq("#{msg}: \n Resource (id): medication_request  \n\tpath: medicationReference, type: medication, id: notype_id")
-  end
-
-  it 'identifies inferred type (result: null) from path with simple id' do
-    patient = FHIR::Patient.new(id: 'patient2')
-    medication_request = FHIR::MedicationRequest.new(id: 'medication_request', medicationReference: { reference: 'notype_id' })
-    
-    data = [patient, medication_request]
-    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
-
-    result = described_class.new.check(context)[0]
-    msg = 'Found unresolved references'
-
-    expect(result.message).to eq("#{msg}: \n Resource (id): medication_request  \n\tpath: medicationReference, type: , id: notype_id")
-  end
-
 end

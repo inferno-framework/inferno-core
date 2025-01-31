@@ -9,18 +9,23 @@ module Inferno
         class AllReferencesResolve < Rule
           def check(context)
             extractor = Inferno::DSL::FHIREvaluation::ReferenceExtractor.new
-            resource_path_ids = extractor.extract_resource_type_ids(context.data)
-            resource_ids = Set.new(resource_path_ids.values.flatten.uniq)
+            resource_type_ids = extractor.extract_resource_type_ids(context.data)
+            resource_ids = Set.new(resource_type_ids.values.flatten.uniq)
             reference_map = extractor.extract_references(context.data)
 
             unresolved_references = Hash.new { |reference, id| reference[id] = [] }
 
-            reference_map.each do |id, references|
+            reference_map.each do |resource_id, references|
               references.each do |reference|
-                if reference[1] == ''
-                  unresolved_references[id] << reference unless resource_ids.include?(reference[2])
-                elsif !resource_path_ids[reference[1]].include?(reference[2])
-                  unresolved_references[id] << reference
+                # if reference[1] == ''
+                #   unresolved_references[id] << reference unless resource_ids.include?(reference[2])
+                # elsif !resource_type_ids[reference[1]].include?(reference[2])
+                #   unresolved_references[id] << reference
+                # end
+                if reference[:type] == ''
+                  unresolved_references[resource_id] << reference unless resource_ids.include?(reference[:id])
+                elsif !resource_type_ids[reference[:type]].include?(reference[:id])
+                  unresolved_references[resource_id] << reference
                 end
               end
             end
@@ -37,21 +42,11 @@ module Inferno
           end
 
           def gen_reference_fail_message(unresolved_references)
-            result_message = unresolved_references.map do |id, reference|
-              reference_details = reference.map do |reference_detail|
-                reference_detail.each_with_index.map do |value, index|
-                  case index
-                  when 0
-                    " \n\tpath: #{value}"
-                  when 1
-                    " type: #{value}"
-                  when 2
-                    " id: #{value}"
-                  end
-                end.join(',')
+            result_message = unresolved_references.map do |resource_id, references|
+              reference_detail = references.map do |reference|
+                " \n\tpath: #{reference[:path]}, type: #{reference[:type]}, id: #{reference[:id]}"
               end.join(',')
-
-              "\n Resource (id): #{id} #{reference_details}"
+              "\n Resource (id): #{resource_id} #{reference_detail}"
             end.join(',')
 
             "Found unresolved references: #{result_message}"

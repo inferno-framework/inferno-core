@@ -7,7 +7,7 @@ module Inferno
     module FHIREvaluation
       module Rules
         class AllResourcesReachable < Rule
-          attr_accessor :config, :referenced_resources, :referencing_resources, :resource_ids, :resource_path_ids
+          attr_accessor :config, :referenced_resources, :referencing_resources, :resource_ids, :resource_type_ids
 
           def check(context)
             @config = context.config
@@ -15,12 +15,12 @@ module Inferno
             @referencing_resources = Set.new
 
             extractor = Inferno::DSL::FHIREvaluation::ReferenceExtractor.new
-            @resource_path_ids = extractor.extract_resource_type_ids(context.data)
-            @resource_ids = Set.new(resource_path_ids.values.flatten.uniq)
+            @resource_type_ids = extractor.extract_resource_type_ids(context.data)
+            @resource_ids = Set.new(resource_type_ids.values.flatten.uniq)
             reference_map = extractor.extract_references(context.data)
 
-            reference_map.each do |id, references|
-              assess_reachability(id, references)
+            reference_map.each do |resource_id, references|
+              assess_reachability(resource_id, references)
             end
 
             island_resources = resource_ids - referenced_resources - referencing_resources
@@ -38,23 +38,23 @@ module Inferno
             context.add_result result
           end
 
-          def assess_reachability(id, references)
+          def assess_reachability(resource_id, references)
             makes_resolvable_reference = false
             references.each do |reference|
-              type = reference[1]
-              referenced_id = reference[2]
+              type = reference[:type]
+              referenced_id = reference[:id]
 
               if type == ''
                 if resource_ids.include?(referenced_id)
                   makes_resolvable_reference = true
                   referenced_resources.add(referenced_id)
                 end
-              elsif resource_path_ids[type].include?(referenced_id)
+              elsif resource_type_ids[type].include?(referenced_id)
                 makes_resolvable_reference = true
                 referenced_resources.add(referenced_id)
               end
             end
-            referencing_resources.add(id) if makes_resolvable_reference
+            referencing_resources.add(resource_id) if makes_resolvable_reference
           end
         end
       end
