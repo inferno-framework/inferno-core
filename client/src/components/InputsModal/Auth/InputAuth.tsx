@@ -28,11 +28,8 @@ const parseJson = (jsonInput: unknown) => {
 
 const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
-<<<<<<< HEAD
   const viewOnly = useTestSessionStore((state) => state.viewOnly);
-=======
   // authValues is a version of inputsMap used exclusively in this component
->>>>>>> 6fc3aa4b654a78fcdca7892b40a06a4d4221e259
   const [authValues, setAuthValues] = React.useState<Map<string, unknown>>(new Map());
   const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
 
