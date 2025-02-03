@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { InputOption, TestInput } from '~/models/testSuiteModels';
+import { Auth, InputOption, TestInput } from '~/models/testSuiteModels';
 import InputCombobox from '~/components/InputsModal/InputCombobox';
 
 export interface InputAccessProps {
@@ -23,8 +23,7 @@ const AuthTypeSelector: FC<InputAccessProps> = ({ input, index, inputsMap, setIn
       };
 
   const selectorOptions: InputOption[] =
-    input.options?.components?.find((component) => component.name === 'auth_type')?.options
-      ?.list_options ||
+    authComponent?.options?.list_options ||
     ([
       {
         label: 'Public',
@@ -44,14 +43,25 @@ const AuthTypeSelector: FC<InputAccessProps> = ({ input, index, inputsMap, setIn
       },
     ] as InputOption[]);
 
+  // Fetch value from input.value field if it exists
+  // Otherwise use, in order, default, then the first available option, then 'public'
+  const getAuthStartingValue = () => {
+    let startingValue = selectorSettings.default || selectorOptions[0].value || 'public';
+    if (input.value && typeof input.value === 'string') {
+      const parsedAuth = JSON.parse(input.value) as Auth;
+      if (parsedAuth.auth_type) startingValue = parsedAuth.auth_type;
+    }
+    return startingValue;
+  };
+
   const selectorModel: TestInput = {
     name: 'auth_type',
     type: 'select',
     title: 'Auth Type',
     description: input.description,
-    default: selectorSettings.default || 'public',
+    default: getAuthStartingValue(),
     optional: selectorSettings.optional,
-    locked: selectorSettings.locked,
+    locked: selectorSettings.locked || input.locked,
     options: {
       list_options: selectorOptions,
     },
