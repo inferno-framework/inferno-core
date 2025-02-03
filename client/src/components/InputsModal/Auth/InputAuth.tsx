@@ -22,9 +22,17 @@ export interface InputAuthProps {
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
+const parseJson = (jsonInput: unknown) => {
+  return jsonInput && typeof jsonInput === 'string' ? (JSON.parse(jsonInput) as Auth) : {};
+};
+
 const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
+<<<<<<< HEAD
   const viewOnly = useTestSessionStore((state) => state.viewOnly);
+=======
+  // authValues is a version of inputsMap used exclusively in this component
+>>>>>>> 6fc3aa4b654a78fcdca7892b40a06a4d4221e259
   const [authValues, setAuthValues] = React.useState<Map<string, unknown>>(new Map());
   const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
 
@@ -33,21 +41,31 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
     (component) => component.name === 'auth_type',
   );
 
+  const authTypeStartingValue = parseJson(input.value).auth_type;
   const firstListOption =
     authComponent?.options?.list_options && authComponent?.options?.list_options?.length > 0
       ? authComponent?.options?.list_options[0].value
       : undefined;
-
   const [authType, setAuthType] = React.useState<string>(
-    (authComponent?.default || firstListOption || 'public') as string,
+    (authTypeStartingValue || authComponent?.default || firstListOption || 'public') as string,
   );
 
   // Set fields depending on mode
   let fields: TestInput[] = [];
   if (mode === 'access') {
-    fields = getAccessFields(authType as AuthType, authValues, input.options?.components || []);
+    fields = getAccessFields(
+      authType as AuthType,
+      authValues,
+      input.options?.components || [],
+      input.locked || false,
+    );
   } else if (mode === 'auth') {
-    fields = getAuthFields(authType as AuthType, authValues, input.options?.components || []);
+    fields = getAuthFields(
+      authType as AuthType,
+      authValues,
+      input.options?.components || [],
+      input.locked || false,
+    );
   }
   const [authFields, setAuthFields] = React.useState<TestInput[]>(fields);
 
@@ -70,9 +88,11 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
     );
 
     const combinedStartingValues = getStartingValues();
+    // After parsing JSON, set auth_type if value exists in input.value
+    setAuthType(combinedStartingValues.auth_type || authType);
 
     // Populate authValues on mount
-    authValues.set('auth_type', authType);
+    authValues.set('auth_type', combinedStartingValues.auth_type || authType);
     authFields.forEach((field: TestInput) => {
       authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
@@ -87,11 +107,21 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
     // Recalculate hidden fields
     if (mode === 'access') {
       setAuthFields(
-        getAccessFields(authType as AuthType, authValues, input.options?.components || []),
+        getAccessFields(
+          authType as AuthType,
+          authValues,
+          input.options?.components || [],
+          input.locked || false,
+        ),
       );
     } else if (mode === 'auth') {
       setAuthFields(
-        getAuthFields(authType as AuthType, authValues, input.options?.components || []),
+        getAuthFields(
+          authType as AuthType,
+          authValues,
+          input.options?.components || [],
+          input.locked || false,
+        ),
       );
     }
 
@@ -115,13 +145,9 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
       (acc, field) => ({ ...acc, [field.name]: field.default }),
       {},
     ) as Auth;
-    const inputDefaultValues =
-      input.default && typeof input.default === 'string' ? (JSON.parse(input.default) as Auth) : {};
-    const inputStartingValues =
-      input.value && typeof input.value === 'string' ? (JSON.parse(input.value) as Auth) : {};
-    const inputsMapValues = inputsMap.get(input.name)
-      ? (JSON.parse(inputsMap.get(input.name) as string) as Auth)
-      : {};
+    const inputDefaultValues = parseJson(input.default);
+    const inputStartingValues = parseJson(input.value);
+    const inputsMapValues = parseJson(inputsMap.get(input.name));
 
     return {
       ...fieldDefaultValues,
