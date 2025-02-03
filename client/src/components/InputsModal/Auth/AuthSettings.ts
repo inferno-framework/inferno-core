@@ -52,6 +52,7 @@ export const getAuthFields = (
   authType: AuthType,
   authValues: Map<string, unknown>,
   components: TestInput[],
+  lockedInput: boolean,
 ): TestInput[] => {
   const fields = [
     {
@@ -59,6 +60,7 @@ export const getAuthFields = (
       type: 'checkbox',
       title: 'Populate fields from discovery',
       optional: true,
+      locked: lockedInput,
       default: 'true',
     },
     {
@@ -66,6 +68,7 @@ export const getAuthFields = (
       title: 'Authorization URL',
       description: "URL of the server's authorization endpoint",
       optional: true,
+      locked: lockedInput,
       hide: authValues?.get('use_discovery') === 'true',
     },
     {
@@ -73,6 +76,7 @@ export const getAuthFields = (
       title: 'Token URL',
       description: "URL of the authorization server's token endpoint",
       optional: true,
+      locked: lockedInput,
       hide: authValues?.get('use_discovery') === 'true',
     },
     {
@@ -80,21 +84,25 @@ export const getAuthFields = (
       type: 'textarea',
       title: 'Scopes',
       description: 'OAuth 2.0 scopes needed to enable all required functionality',
+      locked: lockedInput,
     },
     {
       name: 'client_id',
       title: 'Client ID',
       description: 'Client ID provided during registration of Inferno',
+      locked: lockedInput,
     },
     {
       name: 'client_secret',
       title: 'Client Secret',
       description: 'Client secret provided during registration of Inferno',
+      locked: lockedInput,
     },
     {
       name: 'pkce_support',
       type: 'radio',
       title: 'Proof Key for Code Exchange (PKCE)',
+      locked: lockedInput,
       options: {
         list_options: [
           {
@@ -113,6 +121,7 @@ export const getAuthFields = (
       type: 'radio',
       title: 'PKCE Code Challenge Method',
       optional: true,
+      locked: lockedInput,
       options: {
         list_options: [
           {
@@ -131,6 +140,7 @@ export const getAuthFields = (
       name: 'auth_request_method',
       type: 'radio',
       title: 'Authorization Request Method',
+      locked: lockedInput,
       options: {
         list_options: [
           {
@@ -148,6 +158,7 @@ export const getAuthFields = (
       name: 'encryption_algorithm',
       type: 'radio',
       title: 'Encryption Algorithm',
+      locked: lockedInput,
       options: {
         list_options: [
           {
@@ -167,6 +178,7 @@ export const getAuthFields = (
       description:
         'Key ID of the JWKS private key used to sign the client assertion. If blank, the first key for the selected encryption algorithm will be used.',
       optional: true,
+      locked: lockedInput,
     },
     {
       name: 'jwks',
@@ -175,6 +187,7 @@ export const getAuthFields = (
       description:
         "The JWKS (including private keys) which will be used to sign the client assertion. If blank, Inferno's default JWKS will be used.",
       optional: true,
+      locked: lockedInput,
     },
   ] as TestInput[];
 
@@ -234,6 +247,7 @@ export const getAccessFields = (
   authType: AuthType,
   accessValues: Map<string, unknown>,
   components: TestInput[],
+  lockedInput: boolean,
 ): TestInput[] => {
   const tokenDoesNotExist =
     authType === 'backend_services'
@@ -244,17 +258,20 @@ export const getAccessFields = (
     {
       name: 'access_token',
       title: 'Access Token',
+      locked: lockedInput,
     },
     {
       name: 'refresh_token',
       title: 'Refresh Token (will automatically refresh if available)',
       optional: true,
+      locked: lockedInput,
     },
     {
       name: 'client_id',
       title: 'Client ID',
       description: 'Client ID provided during registration of Inferno',
       optional: true,
+      locked: lockedInput,
       hide: tokenDoesNotExist,
     },
     {
@@ -262,6 +279,7 @@ export const getAccessFields = (
       title: 'Client Secret',
       description: 'Client secret provided during registration of Inferno',
       optional: true,
+      locked: lockedInput,
       hide: !accessValues.get('refresh_token'),
     },
     {
@@ -269,12 +287,24 @@ export const getAccessFields = (
       title: 'Token URL',
       description: "URL of the authorization server's token endpoint",
       optional: true,
+      locked: lockedInput,
       hide: tokenDoesNotExist,
     },
     {
       name: 'encryption_algorithm',
       type: 'radio',
       title: 'Encryption Algorithm',
+      optional: true,
+      locked: lockedInput,
+      hide: tokenDoesNotExist,
+    },
+    {
+      name: 'kid',
+      title: 'Key ID (kid)',
+      description:
+        'Key ID of the JWKS private key used to sign the client assertion. If blank, the first key for the selected encryption algorithm will be used.',
+      optional: true,
+      locked: lockedInput,
       options: {
         list_options: [
           {
@@ -287,15 +317,6 @@ export const getAccessFields = (
           },
         ],
       },
-      optional: true,
-      hide: tokenDoesNotExist,
-    },
-    {
-      name: 'kid',
-      title: 'Key ID (kid)',
-      description:
-        'Key ID of the JWKS private key used to sign the client assertion. If blank, the first key for the selected encryption algorithm will be used.',
-      optional: true,
       hide: tokenDoesNotExist,
     },
     {
@@ -305,6 +326,7 @@ export const getAccessFields = (
       description:
         "The JWKS (including private keys) which will be used to sign the client assertion. If blank, Inferno's default JWKS will be used.",
       optional: true,
+      locked: lockedInput,
       hide: tokenDoesNotExist,
     },
     {
@@ -312,6 +334,7 @@ export const getAccessFields = (
       title: 'Access Token Issue Time',
       description: 'The time that the access token was issued in iso8601 format',
       optional: true,
+      locked: lockedInput,
       hide: tokenDoesNotExist,
     },
     {
@@ -319,6 +342,7 @@ export const getAccessFields = (
       title: 'Token Lifetime',
       description: 'The lifetime of the access token in seconds',
       optional: true,
+      locked: lockedInput,
       hide: tokenDoesNotExist,
     },
   ] as TestInput[];
