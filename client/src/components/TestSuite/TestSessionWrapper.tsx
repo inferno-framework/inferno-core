@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { Alert, Box, Fade } from '@mui/material';
 import {
@@ -29,8 +29,10 @@ import { useAppStore } from '~/store/app';
 import { useTestSessionStore } from '~/store/testSession';
 
 const TestSessionWrapper: FC<unknown> = () => {
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const testSuites = useAppStore((state) => state.testSuites);
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const setViewOnlySession = useTestSessionStore((state) => state.setViewOnly);
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [testSession, setTestSession] = React.useState<TestSession>();
@@ -45,7 +47,9 @@ const TestSessionWrapper: FC<unknown> = () => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   // Set view-only session status based on URL ending
-  const splitLocation = useLocation().hash.replace('#', '').split('/');
+  const locationHash = useLocation().hash;
+  const splitLocation = locationHash.replace('#', '').split('/');
+  const viewOnlyUrl = viewOnly ? '/view' : '';
 
   useEffect(() => {
     getCoreVersion()
@@ -57,6 +61,13 @@ const TestSessionWrapper: FC<unknown> = () => {
       });
     setViewOnlySession(splitLocation.includes('view'));
   }, []);
+
+  useEffect(() => {
+    // If navigating to a test session URL with no suite ID value, add suite ID
+    if (!locationHash && testSession) {
+      navigate(`#${testSession?.test_suite_id}${viewOnlyUrl}`);
+    }
+  }, [testSession]);
 
   function tryGetTestSession(test_session_id: string) {
     getTestSession(test_session_id)
