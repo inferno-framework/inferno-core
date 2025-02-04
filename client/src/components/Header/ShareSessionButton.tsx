@@ -9,7 +9,7 @@ import {
   Menu,
   MenuItem,
 } from '@mui/material';
-import { EditOff, Link, Share } from '@mui/icons-material';
+import { Link, Share, Visibility } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
@@ -121,7 +121,7 @@ const ShareSessionButton: FC<unknown> = () => {
         </MenuItem>
         <MenuItem onClick={() => copyLink(true)}>
           <ListItemIcon>
-            <EditOff fontSize="small" />
+            <Visibility fontSize="small" />
           </ListItemIcon>
           <ListItemText>Copy Read-Only Session Link</ListItemText>
         </MenuItem>
