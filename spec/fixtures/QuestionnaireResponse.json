@@ -1,0 +1,62 @@
+{
+  "resourceType" : "QuestionnaireResponse",
+  "identifier":[
+    {
+      "value": "identifier"
+    }
+  ],
+  "questionnaire": "http://example.com/questionnaire-1",
+  "_questionnaire" : {
+    "extension" : [
+      {
+        "url": "http://hl7.org/fhir/StructureDefinition/display",
+        "valueString": "Test Questionnaire"
+      },
+      {
+          "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-extension-questionnaire-uri",
+          "valueUri": "http://fire.ly/questionnaires/us-core/test"
+      }
+    ]
+  },
+  "status" : "completed",
+  "subject" : {
+    "reference" : "Patient/example",
+    "display" : "Amy V. Shaw"
+  },
+  "authored" : "2014-12-11T04:44:16Z",
+  "author" : {
+    "reference" : "Practitioner/practitioner-1",
+    "display" : "Ronald Bone"
+  },
+  "item" : [
+    {
+      "linkId" : "1",
+      "text" : "Eye Opening Response",
+      "answer" : [
+        {
+          "valueDecimal" : 4
+        },
+        {
+          "valueString" : "valueString"
+        },
+        {
+          "valueCoding" : {
+            "display": "dispaly"
+          }
+        },
+        {
+          "item": [
+            {
+              "linkId": "linkId"
+            }
+          ]
+        }
+      ],
+      "item": [
+        {
+          "linkId": "linkId"
+        }
+      ]
+    }
+  ]
+}
