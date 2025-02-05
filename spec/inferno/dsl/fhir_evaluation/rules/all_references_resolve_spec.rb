@@ -7,7 +7,8 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     patient = FHIR::Patient.new(id: '1234')
     encounter = FHIR::Encounter.new(id: 'enc999', subject: { reference: 'Patient/1234' })
     data = [patient, encounter]
-    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
+    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new,
+                                                                  nil)
 
     result = described_class.new.check(context)[0]
 
@@ -19,7 +20,8 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     encounter = FHIR::Encounter.new(id: 'enc444',
                                     subject: { reference: 'urn:uuid:f340b51a-a70a-4971-bd45-d07fce7b935a' })
     data = [patient, encounter]
-    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
+    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new,
+                                                                  nil)
 
     result = described_class.new.check(context)[0]
 
@@ -30,7 +32,8 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     patient = FHIR::Patient.new(id: 'patient2')
     encounter = FHIR::Encounter.new(id: 'enc0', subject: { reference: 'wrongid' })
     data = [patient, encounter]
-    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
+    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new,
+                                                                  nil)
 
     result = described_class.new.check(context)[0]
     msg = 'Found unresolved references'
@@ -43,7 +46,8 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
     encounter = FHIR::Encounter.new(id: 'enc444',
                                     subject: { reference: 'urn:uuid:aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa' })
     data = [patient, encounter]
-    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new)
+    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(nil, data, Inferno::DSL::FHIREvaluation::Config.new,
+                                                                  nil)
 
     result = described_class.new.check(context)[0]
     id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
