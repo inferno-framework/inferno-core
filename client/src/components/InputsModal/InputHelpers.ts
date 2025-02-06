@@ -46,8 +46,8 @@ export const getMissingRequiredInput = (inputs: TestInput[], inputsMap: Map<stri
         // in getAuthFields() and getAccessFields() are irrelevant for this
         const fields =
           input.options?.mode === 'auth'
-            ? getAuthFields(authType, new Map(), [])
-            : getAccessFields(authType, new Map(), []);
+            ? getAuthFields(authType, new Map(), [], false)
+            : getAccessFields(authType, new Map(), [], false);
         const requiredFields = fields.filter((field) => !field.optional).map((field) => field.name);
         authMissingRequiredInput = requiredFields.some((field) => !authJson[field as keyof Auth]);
       } catch (e: unknown) {
