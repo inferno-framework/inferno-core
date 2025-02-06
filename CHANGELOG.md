@@ -1,3 +1,11 @@
+## 0.6.2
+* FI-3724: Migrate changes by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/601
+  + FI-3556 - migrate MS support by @dehall
+  + FI-3653 - lock authinfo inputs by @AlyssaWang
+  + FI-3441 - migrate evaluator rules 1/4 by @jhlee-mitre
+  + FI-3637 - add fetch bundle resources by @vanessuniq
+  + FI-3694 - remove duplicate presets by @vanessuniq
+
 ## 0.6.1
 * Pin concurrent-ruby to 1.3.4 by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/596
 * FI-3178: Validate Resource Without Validation Messages by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/595
