@@ -1,0 +1,359 @@
+---
+:name: us_core_condition_problems_health_concerns
+:class_name: USCorev501ConditionProblemsHealthConcernsSequence
+:version: v5.0.1
+:reformatted_version: v501
+:resource: Condition
+:profile_url: http://hl7.org/fhir/us/core/StructureDefinition/us-core-condition-problems-health-concerns
+:profile_name: US Core Condition Problems and Health Concerns Profile
+:profile_version: 5.0.1
+:title: Condition Problems and Health Concerns
+:short_description: Verify support for the server capabilities required by the US
+  Core Condition Problems and Health Concerns Profile.
+:is_delayed: false
+:interactions:
+- :code: create
+  :expectation: MAY
+- :code: search-type
+  :expectation: SHALL
+- :code: read
+  :expectation: SHALL
+- :code: vread
+  :expectation: SHOULD
+- :code: update
+  :expectation: MAY
+- :code: patch
+  :expectation: MAY
+- :code: delete
+  :expectation: MAY
+- :code: history-instance
+  :expectation: SHOULD
+- :code: history-type
+  :expectation: MAY
+:operations: []
+:searches:
+- :names:
+  - patient
+  :expectation: SHALL
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - abatement-date
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - asserted-date
+  :names_not_must_support_or_mandatory:
+  - asserted-date
+  :must_support_or_mandatory: false
+- :expectation: SHOULD
+  :names:
+  - patient
+  - code
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - category
+  - encounter
+  :names_not_must_support_or_mandatory:
+  - encounter
+  :must_support_or_mandatory: false
+- :expectation: SHOULD
+  :names:
+  - patient
+  - category
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - recorded-date
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - onset-date
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - clinical-status
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+:search_definitions:
+  :patient:
+    :paths:
+    - subject
+    :full_paths:
+    - Condition.subject
+    :comparators: {}
+    :values: []
+    :type: Reference
+    :contains_multiple: false
+    :multiple_or: MAY
+  :abatement-date:
+    :paths:
+    - abatementDateTime
+    - abatementPeriod
+    :full_paths:
+    - Condition.abatementDateTime
+    - Condition.abatementPeriod
+    :comparators:
+      :eq: MAY
+      :ne: MAY
+      :gt: SHALL
+      :ge: SHALL
+      :lt: SHALL
+      :le: SHALL
+      :sa: MAY
+      :eb: MAY
+      :ap: MAY
+    :values: []
+    :type: date
+    :contains_multiple: false
+    :multiple_or: MAY
+  :asserted-date:
+    :paths:
+    - extension.where(url='http://hl7.org/fhir/StructureDefinition/condition-assertedDate').valueDateTime
+    :full_paths:
+    - Condition.extension.where(url='http://hl7.org/fhir/StructureDefinition/condition-assertedDate').valueDateTime
+    :comparators:
+      :eq: MAY
+      :ne: MAY
+      :gt: SHALL
+      :ge: SHALL
+      :lt: SHALL
+      :le: SHALL
+      :sa: MAY
+      :eb: MAY
+      :ap: MAY
+    :values: []
+    :type: dateTime
+    :contains_multiple: false
+    :multiple_or: MAY
+  :code:
+    :paths:
+    - code
+    :full_paths:
+    - Condition.code
+    :comparators: {}
+    :values:
+    - '160245001'
+    :type: CodeableConcept
+    :contains_multiple: false
+    :multiple_or: MAY
+  :category:
+    :paths:
+    - category
+    :full_paths:
+    - Condition.category
+    :comparators: {}
+    :values:
+    - problem-list-item
+    - health-concern
+    :type: CodeableConcept
+    :contains_multiple: true
+    :multiple_or: MAY
+  :encounter:
+    :paths:
+    - encounter
+    :full_paths:
+    - Condition.encounter
+    :comparators: {}
+    :values: []
+    :type: Reference
+    :contains_multiple: false
+    :multiple_or: MAY
+  :recorded-date:
+    :paths:
+    - recordedDate
+    :full_paths:
+    - Condition.recordedDate
+    :comparators:
+      :eq: MAY
+      :ne: MAY
+      :gt: SHALL
+      :ge: SHALL
+      :lt: SHALL
+      :le: SHALL
+      :sa: MAY
+      :eb: MAY
+      :ap: MAY
+    :values: []
+    :type: dateTime
+    :contains_multiple: false
+    :multiple_or: MAY
+  :onset-date:
+    :paths:
+    - onsetDateTime
+    - onsetPeriod
+    :full_paths:
+    - Condition.onsetDateTime
+    - Condition.onsetPeriod
+    :comparators:
+      :eq: MAY
+      :ne: MAY
+      :gt: SHALL
+      :ge: SHALL
+      :lt: SHALL
+      :le: SHALL
+      :sa: MAY
+      :eb: MAY
+      :ap: MAY
+    :values: []
+    :type: date
+    :contains_multiple: false
+    :multiple_or: MAY
+  :clinical-status:
+    :paths:
+    - clinicalStatus
+    :full_paths:
+    - Condition.clinicalStatus
+    :comparators: {}
+    :values:
+    - active
+    - recurrence
+    - relapse
+    - inactive
+    - remission
+    - resolved
+    :type: CodeableConcept
+    :contains_multiple: false
+    :multiple_or: MAY
+:include_params: []
+:revincludes:
+- Provenance:target
+:required_concepts:
+- clinicalStatus
+- verificationStatus
+- category
+:must_supports:
+  :extensions:
+  - :id: Condition.extension:assertedDate
+    :path: extension
+    :url: http://hl7.org/fhir/StructureDefinition/condition-assertedDate
+  :slices:
+  - :slice_id: Condition.category:us-core
+    :slice_name: us-core
+    :path: category
+    :discriminator:
+      :type: requiredBinding
+      :path: ''
+      :values:
+      - :system: http://terminology.hl7.org/CodeSystem/condition-category
+        :code: problem-list-item
+      - :system: http://hl7.org/fhir/us/core/CodeSystem/condition-category
+        :code: health-concern
+  - :slice_id: Condition.category:sdoh
+    :slice_name: sdoh
+    :path: category
+    :discriminator:
+      :type: patternCodeableConcept
+      :path: ''
+      :code: sdoh
+      :system: http://hl7.org/fhir/us/core/CodeSystem/us-core-tags
+  :elements:
+  - :path: clinicalStatus
+  - :path: verificationStatus
+  - :path: category
+  - :path: code
+  - :path: subject
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+  - :path: onsetDateTime
+    :original_path: onset[x]
+  - :path: abatementDateTime
+    :original_path: abatement[x]
+  - :path: recordedDate
+  :choices:
+  - :paths:
+    - onsetDateTime
+    :extension_ids:
+    - Condition.extension:assertedDate
+:mandatory_elements:
+- Condition.category
+- Condition.code
+- Condition.subject
+:bindings:
+- :type: CodeableConcept
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/condition-clinical
+  :path: clinicalStatus
+- :type: CodeableConcept
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/condition-ver-status
+  :path: verificationStatus
+- :type: CodeableConcept
+  :strength: required
+  :system: http://hl7.org/fhir/us/core/ValueSet/us-core-problem-or-health-concern
+  :path: category
+  :required_binding_slice: true
+:references:
+- :path: Condition.subject
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+- :path: Condition.encounter
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Encounter
+- :path: Condition.recorder
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Practitioner
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+- :path: Condition.asserter
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Practitioner
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+- :path: Condition.stage.assessment
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/ClinicalImpression
+  - http://hl7.org/fhir/StructureDefinition/DiagnosticReport
+  - http://hl7.org/fhir/StructureDefinition/Observation
+- :path: Condition.evidence.detail
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Resource
+:tests:
+- :id: us_core_v501_condition_problems_health_concerns_patient_search_test
+  :file_name: condition_problems_health_concerns_patient_search_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_patient_abatement_date_search_test
+  :file_name: condition_problems_health_concerns_patient_abatement_date_search_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_patient_asserted_date_search_test
+  :file_name: condition_problems_health_concerns_patient_asserted_date_search_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_patient_code_search_test
+  :file_name: condition_problems_health_concerns_patient_code_search_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_patient_category_encounter_search_test
+  :file_name: condition_problems_health_concerns_patient_category_encounter_search_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_patient_category_search_test
+  :file_name: condition_problems_health_concerns_patient_category_search_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_patient_recorded_date_search_test
+  :file_name: condition_problems_health_concerns_patient_recorded_date_search_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_patient_onset_date_search_test
+  :file_name: condition_problems_health_concerns_patient_onset_date_search_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_patient_clinical_status_search_test
+  :file_name: condition_problems_health_concerns_patient_clinical_status_search_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_read_test
+  :file_name: condition_problems_health_concerns_read_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_provenance_revinclude_search_test
+  :file_name: condition_problems_health_concerns_provenance_revinclude_search_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_validation_test
+  :file_name: condition_problems_health_concerns_validation_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_must_support_test
+  :file_name: condition_problems_health_concerns_must_support_test.rb
+- :id: us_core_v501_condition_problems_health_concerns_reference_resolution_test
+  :file_name: condition_problems_health_concerns_reference_resolution_test.rb
+:id: us_core_v501_condition_problems_health_concerns
+:file_name: condition_problems_health_concerns_group.rb
+:delayed_references: []

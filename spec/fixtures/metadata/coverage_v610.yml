@@ -1,0 +1,167 @@
+---
+:name: us_core_coverage
+:class_name: USCorev610CoverageSequence
+:version: v6.1.0
+:reformatted_version: v610
+:resource: Coverage
+:profile_url: http://hl7.org/fhir/us/core/StructureDefinition/us-core-coverage
+:profile_name: US Core Coverage Profile
+:profile_version: 6.1.0
+:title: Coverage
+:short_description: Verify support for the server capabilities required by the US
+  Core Coverage Profile.
+:is_delayed: false
+:interactions:
+- :code: create
+  :expectation: MAY
+- :code: search-type
+  :expectation: SHALL
+- :code: read
+  :expectation: SHALL
+- :code: vread
+  :expectation: SHOULD
+- :code: update
+  :expectation: MAY
+- :code: patch
+  :expectation: MAY
+- :code: delete
+  :expectation: MAY
+- :code: history-instance
+  :expectation: SHOULD
+- :code: history-type
+  :expectation: MAY
+:operations: []
+:searches:
+- :names:
+  - patient
+  :expectation: SHALL
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+:search_definitions:
+  :patient:
+    :paths:
+    - beneficiary
+    :full_paths:
+    - Coverage.beneficiary
+    :comparators: {}
+    :values: []
+    :type: Reference
+    :contains_multiple: false
+    :multiple_or: MAY
+:include_params: []
+:revincludes:
+- Provenance:target
+:required_concepts: []
+:must_supports:
+  :extensions: []
+  :slices:
+  - :slice_id: Coverage.identifier:memberid
+    :slice_name: memberid
+    :path: identifier
+    :discriminator:
+      :type: patternCodeableConcept
+      :path: type
+      :code: MB
+      :system: http://terminology.hl7.org/CodeSystem/v2-0203
+  - :slice_id: Coverage.class:group
+    :slice_name: group
+    :path: class
+    :discriminator:
+      :type: patternCodeableConcept
+      :path: type
+      :code: group
+      :system: http://terminology.hl7.org/CodeSystem/coverage-class
+  - :slice_id: Coverage.class:plan
+    :slice_name: plan
+    :path: class
+    :discriminator:
+      :type: patternCodeableConcept
+      :path: type
+      :code: plan
+      :system: http://terminology.hl7.org/CodeSystem/coverage-class
+  :elements:
+  - :path: identifier
+  - :path: identifier:memberid.type
+  - :path: status
+  - :path: type
+  - :path: subscriberId
+  - :path: beneficiary
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+  - :path: relationship
+  - :path: period
+  - :path: payor
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization
+  - :path: class
+  - :path: class:group.value
+  - :path: class:group.name
+  - :path: class:plan.value
+  - :path: class:plan.name
+:mandatory_elements:
+- Coverage.identifier.type
+- Coverage.status
+- Coverage.beneficiary
+- Coverage.relationship
+- Coverage.payor
+- Coverage.class.type
+- Coverage.class.value
+- Coverage.costToBeneficiary.value[x]
+- Coverage.costToBeneficiary.exception.type
+:bindings:
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/identifier-use
+  :path: identifier.use
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/fm-status
+  :path: status
+:references:
+- :path: Coverage.identifier.assigner
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Organization
+- :path: Coverage.policyHolder
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+  - http://hl7.org/fhir/StructureDefinition/Organization
+- :path: Coverage.subscriber
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+- :path: Coverage.beneficiary
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+- :path: Coverage.payor
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-relatedperson
+- :path: Coverage.contract
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Contract
+:tests:
+- :id: us_core_v610_coverage_patient_search_test
+  :file_name: coverage_patient_search_test.rb
+- :id: us_core_v610_coverage_read_test
+  :file_name: coverage_read_test.rb
+- :id: us_core_v610_coverage_provenance_revinclude_search_test
+  :file_name: coverage_provenance_revinclude_search_test.rb
+- :id: us_core_v610_coverage_validation_test
+  :file_name: coverage_validation_test.rb
+- :id: us_core_v610_coverage_must_support_test
+  :file_name: coverage_must_support_test.rb
+- :id: us_core_v610_coverage_reference_resolution_test
+  :file_name: coverage_reference_resolution_test.rb
+:id: us_core_v610_coverage
+:file_name: coverage_group.rb
+:delayed_references:
+- :path: payor
+  :resources:
+  - Organization
+  - RelatedPerson

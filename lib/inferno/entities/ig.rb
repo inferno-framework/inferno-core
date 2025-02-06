@@ -14,10 +14,7 @@ module Inferno
     class IG < Entity
       ATTRIBUTES = [
         :id,
-        :profiles,
-        :extensions,
-        :value_sets,
-        :search_params,
+        :resources_by_type,
         :examples
       ].freeze
 
@@ -25,12 +22,8 @@ module Inferno
 
       def initialize(**params)
         super(params, ATTRIBUTES)
-
-        @profiles = []
-        @extensions = []
-        @value_sets = []
+        @resources_by_type ||= Hash.new { |hash, key| hash[key] = [] }
         @examples = []
-        @search_params = []
       end
 
       def self.from_file(ig_path)
@@ -71,6 +64,9 @@ module Inferno
             next
           end
         end
+
+        ig.id = extract_package_id(ig.ig_resource)
+
         ig
       end
 
@@ -91,6 +87,9 @@ module Inferno
             next
           end
         end
+
+        ig.id = extract_package_id(ig.ig_resource)
+
         ig
       end
 
@@ -113,26 +112,49 @@ module Inferno
       end
 
       def handle_resource(resource, relative_path)
-        case resource.resourceType
-        when 'StructureDefinition'
-          if resource.type == 'Extension'
-            extensions.push resource
-          else
-            profiles.push resource
-          end
-        when 'ValueSet'
-          value_sets.push resource
-        when 'SearchParameter'
-          search_params.push resource
-        when 'ImplementationGuide'
-          @id = extract_package_id(resource)
+        if relative_path.start_with? 'package/example'
+          examples << resource
         else
-          examples.push(resource) if relative_path.start_with? 'package/example'
+          resources_by_type[resource.resourceType] << resource
         end
       end
 
-      def extract_package_id(ig_resource)
+      def self.extract_package_id(ig_resource)
         "#{ig_resource.id}##{ig_resource.version || 'current'}"
+      end
+
+      def profiles
+        resources_by_type['StructureDefinition'].filter { |sd| sd.type != 'Extension' }
+      end
+
+      def extensions
+        resources_by_type['StructureDefinition'].filter { |sd| sd.type == 'Extension' }
+      end
+
+      def capability_statement(mode = 'server')
+        resources_by_type['CapabilityStatement'].find do |capability_statement_resource|
+          capability_statement_resource.rest.any? { |r| r.mode == mode }
+        end
+      end
+
+      def ig_resource
+        resources_by_type['ImplementationGuide'].first
+      end
+
+      def profile_by_url(url)
+        profiles.find { |profile| profile.url == url }
+      end
+
+      def resource_for_profile(url)
+        profiles.find { |profile| profile.url == url }.type
+      end
+
+      def value_set_by_url(url)
+        resources_by_type['ValueSet'].find { |profile| profile.url == url }
+      end
+
+      def code_system_by_url(url)
+        resources_by_type['CodeSystem'].find { |system| system.url == url }
       end
 
       # @private

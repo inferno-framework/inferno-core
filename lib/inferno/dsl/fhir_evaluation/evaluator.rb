@@ -6,18 +6,23 @@ require_relative 'evaluation_context'
 require_relative 'evaluation_result'
 require_relative 'dataset_loader'
 
+Dir.glob(File.join(__dir__, 'rules', '*.rb')).each do |file|
+  require_relative file
+end
+
 module Inferno
   module DSL
     module FHIREvaluation
       class Evaluator
-        attr_accessor :ig
+        attr_accessor :ig, :validator
 
-        def initialize(ig) # rubocop:disable Naming/MethodParameterName
+        def initialize(ig, validator = nil)
           @ig = ig
+          @validator = validator
         end
 
         def evaluate(data, config = Config.new)
-          context = EvaluationContext.new(@ig, data, config)
+          context = EvaluationContext.new(@ig, data, config, validator)
 
           active_rules = []
           config.data['Rule'].each do |rulename, rule_details|
