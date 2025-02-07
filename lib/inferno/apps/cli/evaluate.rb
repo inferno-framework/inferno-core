@@ -15,6 +15,8 @@ module Inferno
         validate_args(ig_path, data_path)
         ig = get_ig(ig_path)
 
+        check_ig_version(ig)
+
         data =
           if data_path
             DatasetLoader.from_path(File.join(__dir__, data_path))
@@ -46,13 +48,21 @@ module Inferno
           cache_directory = File.join(user_package_cache, ig_path.sub('@', '#'))
           ig = Inferno::Entities::IG.from_file(cache_directory)
         else
-          Tempfile.create('package.tgz') do |temp_file|
+          Tempfile.create(['package', '.tgz']) do |temp_file|
             load_ig(ig_path, nil, { force: true }, temp_file.path)
             ig = Inferno::Entities::IG.from_file(temp_file.path)
           end
         end
         ig.add_self_to_repository
         ig
+      end
+
+      def check_ig_version(ig)
+        versions = ig.ig_resource.fhirVersion
+
+        return unless versions.any? { |v| v > '4.0.1' }
+
+        puts '**WARNING** The selected IG targets a FHIR version higher than 4.0.1, which is not supported by Inferno.'
       end
 
       def user_package_cache

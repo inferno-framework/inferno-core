@@ -1,0 +1,236 @@
+---
+:name: us_core_questionnaireresponse
+:class_name: USCorev610QuestionnaireresponseSequence
+:version: v6.1.0
+:reformatted_version: v610
+:resource: QuestionnaireResponse
+:profile_url: http://hl7.org/fhir/us/core/StructureDefinition/us-core-questionnaireresponse
+:profile_name: US Core QuestionnaireResponse Profile
+:profile_version: 6.1.0
+:title: QuestionnaireResponse
+:short_description: Verify support for the server capabilities required by the US
+  Core QuestionnaireResponse Profile.
+:is_delayed: false
+:interactions:
+- :code: create
+  :expectation: MAY
+- :code: search-type
+  :expectation: SHOULD
+- :code: read
+  :expectation: SHOULD
+- :code: vread
+  :expectation: SHOULD
+- :code: update
+  :expectation: MAY
+- :code: patch
+  :expectation: MAY
+- :code: delete
+  :expectation: MAY
+- :code: history-instance
+  :expectation: SHOULD
+- :code: history-type
+  :expectation: MAY
+:operations: []
+:searches:
+- :names:
+  - patient
+  :expectation: SHALL
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :names:
+  - _id
+  :expectation: SHALL
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - questionnaire
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - authored
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - status
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+:search_definitions:
+  :_id:
+    :paths:
+    - id
+    :full_paths:
+    - QuestionnaireResponse.id
+    :comparators: {}
+    :values: []
+    :type: http://hl7.org/fhirpath/System.String
+    :contains_multiple: false
+    :multiple_or: MAY
+  :patient:
+    :paths:
+    - subject
+    :full_paths:
+    - QuestionnaireResponse.subject
+    :comparators: {}
+    :values: []
+    :type: Reference
+    :contains_multiple: false
+    :multiple_or: MAY
+  :questionnaire:
+    :paths:
+    - questionnaire
+    :full_paths:
+    - QuestionnaireResponse.questionnaire
+    :comparators: {}
+    :values: []
+    :type: canonical
+    :contains_multiple: false
+    :multiple_or: MAY
+  :authored:
+    :paths:
+    - authored
+    :full_paths:
+    - QuestionnaireResponse.authored
+    :comparators:
+      :eq: MAY
+      :ne: MAY
+      :gt: SHALL
+      :ge: SHALL
+      :lt: SHALL
+      :le: SHALL
+      :sa: MAY
+      :eb: MAY
+      :ap: MAY
+    :values: []
+    :type: dateTime
+    :contains_multiple: false
+    :multiple_or: MAY
+  :status:
+    :paths:
+    - status
+    :full_paths:
+    - QuestionnaireResponse.status
+    :comparators: {}
+    :values:
+    - in-progress
+    - completed
+    - amended
+    - entered-in-error
+    - stopped
+    :type: code
+    :contains_multiple: false
+    :multiple_or: SHALL
+:include_params: []
+:revincludes:
+- Provenance:target
+:required_concepts: []
+:must_supports:
+  :extensions:
+  - :id: QuestionnaireResponse.questionnaire.extension:questionnaireDisplay
+    :path: questionnaire.extension
+    :url: http://hl7.org/fhir/StructureDefinition/display
+  - :id: QuestionnaireResponse.questionnaire.extension:url
+    :path: questionnaire.extension
+    :url: http://hl7.org/fhir/us/core/StructureDefinition/us-core-extension-questionnaire-uri
+  :slices: []
+  :elements:
+  - :path: identifier
+  - :path: questionnaire
+  - :path: status
+  - :path: subject
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+  - :path: authored
+  - :path: author
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
+  - :path: item
+  - :path: item.linkId
+  - :path: item.text
+  - :path: item.answer
+  - :path: item.answer.valueDecimal
+    :original_path: item.answer.value[x]
+  - :path: item.answer.valueString
+    :original_path: item.answer.value[x]
+  - :path: item.answer.valueCoding
+    :original_path: item.answer.value[x]
+  - :path: item.answer.item
+  - :path: item.item
+:mandatory_elements:
+- QuestionnaireResponse.questionnaire
+- QuestionnaireResponse.status
+- QuestionnaireResponse.subject
+- QuestionnaireResponse.authored
+- QuestionnaireResponse.item.linkId
+:bindings:
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/questionnaire-answers-status
+  :path: status
+:references:
+- :path: QuestionnaireResponse.basedOn
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/CarePlan
+  - http://hl7.org/fhir/StructureDefinition/ServiceRequest
+- :path: QuestionnaireResponse.partOf
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Observation
+  - http://hl7.org/fhir/StructureDefinition/Procedure
+- :path: QuestionnaireResponse.subject
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+- :path: QuestionnaireResponse.encounter
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Encounter
+- :path: QuestionnaireResponse.author
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  - http://hl7.org/fhir/StructureDefinition/Device
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-relatedperson
+- :path: QuestionnaireResponse.source
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Patient
+  - http://hl7.org/fhir/StructureDefinition/Practitioner
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  - http://hl7.org/fhir/StructureDefinition/RelatedPerson
+:tests:
+- :id: us_core_v610_questionnaire_response_patient_search_test
+  :file_name: questionnaire_response_patient_search_test.rb
+- :id: us_core_v610_questionnaire_response__id_search_test
+  :file_name: questionnaire_response_id_search_test.rb
+- :id: us_core_v610_questionnaire_response_patient_questionnaire_search_test
+  :file_name: questionnaire_response_patient_questionnaire_search_test.rb
+- :id: us_core_v610_questionnaire_response_patient_authored_search_test
+  :file_name: questionnaire_response_patient_authored_search_test.rb
+- :id: us_core_v610_questionnaire_response_patient_status_search_test
+  :file_name: questionnaire_response_patient_status_search_test.rb
+- :id: us_core_v610_questionnaire_response_read_test
+  :file_name: questionnaire_response_read_test.rb
+- :id: us_core_v610_questionnaire_response_provenance_revinclude_search_test
+  :file_name: questionnaire_response_provenance_revinclude_search_test.rb
+- :id: us_core_v610_questionnaire_response_validation_test
+  :file_name: questionnaire_response_validation_test.rb
+- :id: us_core_v610_questionnaire_response_must_support_test
+  :file_name: questionnaire_response_must_support_test.rb
+- :id: us_core_v610_questionnaire_response_reference_resolution_test
+  :file_name: questionnaire_response_reference_resolution_test.rb
+:id: us_core_v610_questionnaire_response
+:file_name: questionnaire_response_group.rb
+:delayed_references:
+- :path: author
+  :resources:
+  - Practitioner
+  - Organization
+  - RelatedPerson
