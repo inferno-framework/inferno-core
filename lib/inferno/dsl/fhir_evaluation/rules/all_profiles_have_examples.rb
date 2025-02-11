@@ -6,70 +6,128 @@ module Inferno
   module DSL
     module FHIREvaluation
       module Rules
-        class AllProfilesHaveExamples < HasExamples
-          attr_accessor :config
+        class AllProfilesHaveExamples < Rule
+          attr_accessor :context, :unused_profile_urls
 
           def check(context)
-            # TODO: rewrite this to use data.summary
-            @used_resources = []
-            @config = context.config
+            @context = context
+            @unused_profile_urls = []
+            options = context.config.data.to_hash['Rule']['AllProfilesHaveExamples']['ConformanceOption']
 
-            if config.Rule.AllProfilesHaveExamples.TargetExample.byMetaProfile
-              @used_resources = context.data.map { |e| profiles(e) }.flatten.uniq
-              profile_is_used = proc do |profile|
-                versioned_url = "#{profile.url}|#{profile.version}"
-                used_resources.include?(profile.url) || used_resources.include?(versioned_url)
-              end
-              get_unused_resource_urls(context.ig.profiles, &profile_is_used)
-            elsif config.Rule.AllProfilesHaveExamples.TargetExample.byConformance
+            if options['considerOnlyResourceType']
               context.ig.profiles.each do |structure_definition|
                 next if structure_definition.abstract
 
-                pass_flg = validate(context)
-                unused_resource_urls << structure_definition.url unless pass_flg
+                pass_flg = context.data.any? { |resource| resource.resourceType == structure_definition.type }
+                unused_profile_urls << structure_definition.url unless pass_flg
               end
             end
 
-            if unused_resource_urls.any?
-              message = "Found unused profiles: #{unused_resource_urls.join(', ')}"
+            if options['considerMetaProfile']
+              used_profiles = context.data.map do |resource|
+                get_profiles_from_example(resource)
+              end.flatten.uniq
+              profile_is_used = proc do |profile|
+                versioned_url = "#{profile.url}|#{profile.version}"
+                used_profiles.include?(profile.url) || used_profiles.include?(versioned_url)
+              end
+              get_unused_profile_urls(context.ig.profiles, &profile_is_used)
+            end
+
+            if options['considerValidationResults']
+              context.ig.profiles.each do |structure_definition|
+                next if structure_definition.abstract
+
+                pass_flg = validate(context.data, structure_definition)
+                unused_profile_urls << structure_definition.url unless pass_flg
+              end
+            end
+
+            unused_profile_urls.uniq!
+
+            if unused_profile_urls.any?
+              message = "Found profiles without examples: #{unused_profile_urls.join(', ')}"
               result = EvaluationResult.new(message, rule: self)
             else
-              message = 'All profiles have instances'
+              message = 'All profiles have example instances.'
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             end
 
             context.add_result result
           end
 
-          def validate(context)
+          def validate(resources, structure_definition)
             pass_flg = false
-            context.data.each do |resource|
-              if structure_definition.type == resource.resourceType
-                if config.Environment.ExternalValidator.Enabled
-                  pass_flg != Util.validate_resource(resource)
-                elsif structure_definition.validates_resource?(resource)
-                  pass_flg = true
-                end
+            resources.each do |resource|
+              next unless structure_definition.type == resource.resourceType
+
+              pass_flg = true if structure_definition.validates_resource?(resource)
+
+              if context.config.data.to_hash['Rule']['AllProfilesHaveExamples']['ExternalValidator']
+                pass_flg != validate_from_external(resource)
               end
             end
             pass_flg
           end
 
-          def profiles(resource)
-            if resource.resourceType == 'Bundle'
-              all_profiles = resource.entry.map do |e|
-                single_resource_profiles(e.resource)
-              end
-              all_profiles << single_resource_profiles(resource)
-              all_profiles.flatten.uniq
-            else
-              single_resource_profiles(resource)
+          def validate_from_external(resource)
+            wrapped_resource = {
+              cliContext: {
+                sv: '4.0.1',
+                ig: [
+                  context.ig.id
+                ],
+                locale: 'en'
+              },
+              filesToValidate: [
+                {
+                  fileName: "#{resource.resourceType}/#{resource.id}.json",
+                  fileContent: resource.to_json,
+                  fileType: 'json'
+                }
+              ],
+              # To-do: replace sessionId later using Inferno's or autogenerated by the validator.
+              sessionId: '32fc25cf-020e-4492-ace5-03fe904d22e0'
+            }
+            request_body = wrapped_resource.to_json
+
+            response = Faraday.new(
+              ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL'),
+              request: { timeout: 600 }
+            ).post('validate', request_body, content_type: 'application/json')
+
+            unless response.status == 200
+              raise StandardError,
+                    "Error occurred in the validator. Http response: #{response.status}"
+            end
+
+            JSON.parse(response.body)['issue'].any? do |issue|
+              %w[error fatal].include?(issue['severity'])
             end
           end
 
-          def single_resource_profiles(resource)
+          def get_profiles_from_example(resource)
+            if resource.resourceType == 'Bundle'
+              all_profiles = resource.entry.map do |entry|
+                get_single_resource_profiles(entry.resource)
+              end
+              all_profiles << get_single_resource_profiles(resource)
+              all_profiles.flatten.uniq
+            else
+              get_single_resource_profiles(resource)
+            end
+          end
+
+          def get_single_resource_profiles(resource)
             resource&.meta&.profile || []
           end
+
+          def get_unused_profile_urls(profiles, &profile_filter)
+            profiles.each do |profile|
+              unused_profile_urls.push profile.url unless profile_filter.call(profile)
+            end
+          end
+
         end
       end
     end
