@@ -1,0 +1,31 @@
+# This workflow publishes documentation to the GitHub wiki, which provides a better
+# user experience than browsing files in the repository.
+
+# To enable this workflow, you need to first create a GitHub wiki for your repository.
+
+# This workflow will publish the docs to the wiki when a push is made to the
+# main branch.  This workflow can also be manually triggered against a PR branch
+# as a method to preview updates prior to merge.
+
+name: Publish Docs Wiki
+description: Publish documentation from /docs to the GitHub repository's wiki.
+on:
+  push:
+    branches: [main]
+    paths:
+      - docs/**
+  workflow_dispatch:
+concurrency:
+  group: publish-docs-wiki
+  cancel-in-progress: true
+permissions:
+  contents: write
+jobs:
+  publish-docs-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Andrew-Chen-Wang/github-wiki-action@86138cbd6328b21d759e89ab6e6dd6a139b22270
+        with:
+          path: docs
+          strategy: init
