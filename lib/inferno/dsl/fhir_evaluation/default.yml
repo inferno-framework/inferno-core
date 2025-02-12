@@ -8,12 +8,12 @@ Environment:
 
 Rule:
   AllReferencesResolve: 
-    Enabled: false
+    Enabled: true
   AllResourcesReachable:
-    Enabled: false
+    Enabled: true
   AllMustSupportsPresent:
     Description: 'An instance of all MustSupport elements, extensions, and slices is present in the given resources'
-    Enabled: false
+    Enabled: true
     # RequirementExtensionUrl accepts an extension URL which tags element definitions as required for the purposes of this test, even if not Must Support.
     # For instance, US Core elements with the "http://hl7.org/fhir/us/core/StructureDefinition/uscdi-requirement" extension
     # may be considered required even if not necessarily tagged Must Support.
@@ -38,14 +38,12 @@ Rule:
 
       # - If considerOnlyResourceType, the search will include resources of the same type as the profile target type (StructureDefintion.type)
       considerOnlyResourceType: false
-  HasExamples:
-    Enabled: true
   AllSearchParametersHaveExamples:
-    Enabled: false
+    Enabled: true
   AllProfilesHaveExamples:
     Enabled: true
     ExternalValidator: false
     ConformanceOption:
-      considerOnlyResourceType: false
+      considerOnlyResourceType: true
       considerMetaProfile: true
-      considerValidationResults: false
+      considerValidationResults: true

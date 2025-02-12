@@ -46,7 +46,7 @@ module Inferno
             unused_profile_urls.uniq!
 
             if unused_profile_urls.any?
-              message = "Found profiles without examples: #{unused_profile_urls.join(', ')}"
+              message = "Found profiles without examples: \n\t #{unused_profile_urls.join(', ')}"
               result = EvaluationResult.new(message, rule: self)
             else
               message = 'All profiles have example instances.'
@@ -127,7 +127,6 @@ module Inferno
               unused_profile_urls.push profile.url unless profile_filter.call(profile)
             end
           end
-
         end
       end
     end

@@ -6,7 +6,9 @@ module Inferno
   module DSL
     module FHIREvaluation
       module Rules
-        class AllSearchParametersHaveExamples < HasExamples
+        class AllSearchParametersHaveExamples < Rule
+          attr_accessor :unused_resource_urls
+
           def check(context)
             unless ENV.fetch('FHIRPATH_URL')
               message = 'FHIRPATH_URL is not found. Skipping rule AllSearchParametersHaveExamples.'
@@ -15,37 +17,40 @@ module Inferno
               return
             end
 
-            get_unused_resource_urls(context.ig.search_params) do |param|
+            @unused_resource_urls = []
+            search_params = context.ig.to_hash[:resources_by_type]['SearchParameter']
+
+            get_unused_resource_urls(context.ig.to_hash[:resources_by_type]['SearchParameter']) do |param|
               param_is_used?(param, context)
             end
 
             if unused_resource_urls.any?
-              message = "Found SearchParameters with no searchable data: #{unused_resource_urls.join(', ')}"
+              message = "Found SearchParameters with no searchable data: \n\t#{unused_resource_urls.join(' ,')}"
               result = EvaluationResult.new(message, rule: self)
-            elsif !context.ig.search_params.empty?
+            elsif !search_params.empty?
               message = 'All SearchParameters have examples'
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             else
-              message = 'IG contains no SearchParameters'
+              message = 'IG contains no SearchParameter'
               result = EvaluationResult.new(message, severity: 'information', rule: self)
             end
 
             context.add_result result
           end
 
+          def get_unused_resource_urls(ig_data, &resource_filter)
+            ig_data.each do |resource|
+              unused_resource_urls.push resource.url unless resource_filter.call(resource)
+            end
+          end
+
           def param_is_used?(param, context)
             # Assume that all params have an expression (fhirpath)
             # This is not guaranteed since the field is 0..1
             # but without it there's no other way to select a value
-            unless param.expression
-              # message = "SearchParameter #{param.url} has no expression and cannot be checked"
-              # result = EvaluationResult.new(message)
-              # context.add_result result
+            return true unless param.expression
 
-              return true # for now
-            end
-
-            used = false
+            used_flg = false
 
             context.data.each do |resource|
               next unless param.base.include? resource.resourceType
@@ -58,17 +63,16 @@ module Inferno
                 result = EvaluationResult.new(message)
                 context.add_result result
 
-                # don't bother evaluating it again
-                used = true
+                used_flg = true
                 break
               end
 
               if result && !result.empty?
-                used = true
+                used_flg = true
                 break
               end
             end
-            used
+            used_flg
           end
 
           def evaluate(expression, resource)
@@ -77,10 +81,6 @@ module Inferno
 
             response = Faraday.post(path, resource.to_json, 'Content-Type' => 'application/json')
             raise "External FHIRPath service failed: #{response.status}" unless response.status.to_s.start_with? '2'
-
-            # return value of the service is something like:
-            # [ { "type": "date", "element": "2022-02-22" } ]
-            # or an empty array if the selector didn't return anything
 
             JSON.parse(response.body)
           rescue Faraday::Error => e
