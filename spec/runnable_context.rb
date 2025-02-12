@@ -16,12 +16,13 @@ RSpec.shared_context('when testing a runnable') do
   def run(runnable, inputs = {})
     test_run_params = { test_session_id: test_session.id }.merge(runnable.reference_hash)
     test_run = Inferno::Repositories::TestRuns.new.create(test_run_params)
-    inputs.each do |name, value|
+    inputs.each do |original_name, value|
+      name = runnable.config.input_name(original_name).presence || original_name
       session_data_repo.save(
         test_session_id: test_session.id,
         name:,
         value:,
-        type: runnable.config.input_type(name)
+        type: runnable.available_inputs[name.to_sym]&.type
       )
     end
 
