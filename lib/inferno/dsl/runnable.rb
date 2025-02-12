@@ -47,11 +47,23 @@ module Inferno
         :@children_available_inputs # Needs to be recalculated
       ].freeze
 
+      # Recursively duplicate arrays/hashes to prevent them from being shared
+      # across different runnables
+      def deep_dup(value)
+        if value.is_a? Array
+          value.map { |element| deep_dup(element) }
+        elsif value.is_a? Hash
+          value.transform_values { |element| deep_dup(element) }
+        else
+          value.dup
+        end
+      end
+
       # @private
       def copy_instance_variables(subclass)
         instance_variables
           .reject { |variable| VARIABLES_NOT_TO_COPY.include? variable }
-          .each { |variable| subclass.instance_variable_set(variable, instance_variable_get(variable).dup) }
+          .each { |variable| subclass.instance_variable_set(variable, deep_dup(instance_variable_get(variable))) }
 
         subclass.config(config)
 
