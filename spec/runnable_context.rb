@@ -5,8 +5,7 @@ RSpec.shared_context('when testing a runnable') do
   let(:test_session) { repo_create(:test_session, test_suite_id: suite_id) }
 
   before do
-    if !(described_class.singleton_class < Inferno::DSL::Runnable) ||
-       described_class.parent.nil?
+    if described_class.respond_to?(:parent) && described_class.parent.nil?
       allow(described_class).to receive(:suite).and_return(suite)
     end
   rescue NameError
