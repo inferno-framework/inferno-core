@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Alert, AlertColor, Box } from '@mui/material';
 import { Message } from '~/models/testSuiteModels';
 import { useTestSessionStore } from '~/store/testSession';

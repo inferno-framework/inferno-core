@@ -9,7 +9,7 @@ import {
 import clsx from 'clsx';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import lightTheme from '~/styles/theme';
 import { useTestSessionStore } from '~/store/testSession';
 

@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Typography, Container, Box } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { TestSuite, TestSession } from '~/models/testSuiteModels';

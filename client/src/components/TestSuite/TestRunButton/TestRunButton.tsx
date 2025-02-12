@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { Button } from '@mui/material';
 import { PlayArrow, PlayCircle, Visibility } from '@mui/icons-material';
 import { TestGroup, Runnable, RunnableType } from '~/models/testSuiteModels';

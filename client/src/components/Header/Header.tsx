@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Menu, NoteAdd } from '@mui/icons-material';
 import { basePath, getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice } from '~/models/testSuiteModels';

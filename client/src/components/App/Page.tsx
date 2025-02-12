@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react';
-import { useLoaderData, useParams } from 'react-router-dom';
+import { useLoaderData, useParams } from 'react-router';
 import { useAppStore } from '~/store/app';
 
 export interface PageProps {
