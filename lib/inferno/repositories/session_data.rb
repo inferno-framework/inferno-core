@@ -112,6 +112,8 @@ module Inferno
         auth =
           if params[:value].is_a? String
             DSL::AuthInfo.new(JSON.parse(params[:value]))
+          elsif params[:value].is_a? Hash
+            DSL::AuthInfo.new(params[:value])
           elsif !params[:value].is_a? DSL::AuthInfo
             raise Exceptions::BadSessionDataType.new(
               params[:name],

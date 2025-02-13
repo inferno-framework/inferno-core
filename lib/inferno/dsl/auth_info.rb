@@ -307,8 +307,94 @@ module Inferno
         self.expires_in = expires_in
         self.issue_time = DateTime.now
 
-        add_to_client(client)
+        add_to_client(client) if client
         self
+      end
+
+      # Returns the default configuration for the "auth_type" component
+      # @return [Hash]
+      def self.default_auth_type_component
+        {
+          name: :auth_type,
+          options: {
+            list_options: [
+              { label: 'Public', value: 'public' },
+              { label: 'Confidential Symmetric', value: 'symmetric' },
+              { label: 'Confidential Asymmetric', value: 'asymmetric' },
+              { label: 'Backend Services', value: 'backend_services' }
+            ]
+          }
+        }
+      end
+
+      # Returns the default configuration for the "auth_type" component without
+      # the option for backend services auth
+      # @return [Hash]
+      def self.default_auth_type_component_without_backend_services
+        {
+          name: :auth_type,
+          options: {
+            list_options: [
+              { label: 'Public', value: 'public' },
+              { label: 'Confidential Symmetric', value: 'symmetric' },
+              { label: 'Confidential Asymmetric', value: 'asymmetric' }
+            ]
+          }
+        }
+      end
+
+      # Returns true when using public auth
+      # @return [Boolean]
+      def public_auth?
+        auth_type&.casecmp? 'public'
+      end
+
+      # Returns true when using confidential symmetric auth
+      # @return [Boolean]
+      def symmetric_auth?
+        auth_type&.casecmp? 'symmetric'
+      end
+
+      # Returns true when using confidential asymmetric auth
+      # @return [Boolean]
+      def asymmetric_auth?
+        auth_type&.casecmp? 'asymmetric'
+      end
+
+      # Returns true when using backend services auth
+      # @return [Boolean]
+      def backend_services_auth?
+        auth_type&.casecmp? 'backend_services'
+      end
+
+      # Returns true when using GET as the authorization request method
+      # @return [Boolean]
+      def get_auth_request?
+        auth_request_method&.casecmp? 'get'
+      end
+
+      # Returns true when using POST as the authorization request method
+      # @return [Boolean]
+      def post_auth_request?
+        auth_request_method&.casecmp? 'post'
+      end
+
+      # Returns true when pkce is enabled
+      # @return [Boolean]
+      def pkce_enabled?
+        pkce_support&.casecmp? 'enabled'
+      end
+
+      # Returns true when using the S256 pkce code challenge method
+      # @return [Boolean]
+      def s256_code_challenge_method?
+        pkce_code_challenge_method&.casecmp? 'S256'
+      end
+
+      # Returns true when using the palin pkce code challenge method
+      # @return [Boolean]
+      def plain_code_challenge_method?
+        pkce_code_challenge_method&.casecmp? 'plain'
       end
     end
   end

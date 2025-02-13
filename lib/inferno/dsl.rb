@@ -1,4 +1,5 @@
 require_relative 'dsl/assertions'
+require_relative 'dsl/auth_info'
 require_relative 'dsl/fhir_client'
 require_relative 'dsl/fhir_validation'
 require_relative 'dsl/fhir_evaluation/evaluator'
