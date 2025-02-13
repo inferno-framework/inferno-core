@@ -1,0 +1,50 @@
+image: ruby:3.3.6
+
+variables:
+  DOCKER_DRIVER: overlay2
+  BUNDLE_PATH: vendor/bundle
+
+stages:
+  - build
+  - test
+  - lint
+
+before_script:
+  - ruby -v
+  - bundle -v
+  - bundle config set --local path 'vendor/bundle'
+  # other restrictions might be desired here like `bundle config set --local deployment true`
+  - bundle install
+
+build:
+  stage: build
+  script:
+    # can we use --jobs $(nproc) here and above to use all CPU cores on our runner?
+    - bundle install
+  artifacts:
+    paths:
+      - vendor/
+    expire_in: 1 hour
+  cache:
+    paths:
+      - vendor/bundle
+
+test:
+  stage: test
+  script:
+    - bundle exec rspec --format RspecJunitFormatter --out rspec-results.xml
+  cache:
+    paths:
+      - vendor/bundle
+  artifacts:
+    when: always
+    reports:
+      # gitlab requires junit output format
+      junit: rspec-results.xml
+
+rubocop:
+  stage: lint
+  # run rubocop for the test kits that have rubocop
+  script:
+    - if bundle list | grep -q "rubocop"; then bundle exec rubocop; else echo "Rubocop not found in bundle, skipping"; exit 0; fi
+
