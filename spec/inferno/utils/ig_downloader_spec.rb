@@ -72,7 +72,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
 
         with_temp_path('ig-downloader-canonical') do |temp_path|
           allow(ig_downloader).to receive(:ig_file).and_return(temp_path)
-          ig_downloader.load_ig(canonical, nil, { verbose: false })
+          ig_downloader.load_ig(canonical, nil)
           expect(File.read(temp_path)).to eq(package_binary)
         end
       end
@@ -82,7 +82,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
           .to_return(body: package_binary)
 
         with_temp_path('ig-downloader-canonical') do |temp_path|
-          ig_downloader.load_ig(canonical, nil, { verbose: false }, temp_path)
+          ig_downloader.load_ig(canonical, nil, temp_path)
           expect(File.read(temp_path)).to eq(package_binary)
         end
       end
@@ -121,7 +121,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
           stub_request(:get, %r{https?://build.fhir.org}).to_return(body: package_binary)
           with_temp_path("ig-downloader-#{url}") do |temp_path|
             allow(ig_downloader).to receive(:ig_file).and_return(temp_path)
-            ig_downloader.load_ig(url, nil, { verbose: false })
+            ig_downloader.load_ig(url, nil)
             expect(File.read(temp_path)).to eq(package_binary)
           end
         end
@@ -154,7 +154,7 @@ RSpec.describe Inferno::Utils::IgDownloader do
       it 'successfully downloads package' do
         with_temp_path('ig-downloader-file') do |temp_path|
           allow(ig_downloader).to receive(:ig_file).and_return(temp_path)
-          ig_downloader.load_ig(absolute_path, nil, { verbose: false })
+          ig_downloader.load_ig(absolute_path, nil)
           expect(File.read(temp_path)).to eq(package_binary)
         end
       end
