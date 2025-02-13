@@ -1,3 +1,5 @@
+require 'open-uri'
+
 module Inferno
   module Utils
     module IgDownloader
@@ -14,7 +16,7 @@ module Inferno
         File.join(ig_path, suffix ? "package_#{suffix}.tgz" : 'package.tgz')
       end
 
-      def load_ig(ig_input, idx = nil, thor_config = { verbose: true }, output_path = nil)
+      def load_ig(ig_input, idx = nil, output_path = nil)
         case ig_input
         when FHIR_PACKAGE_NAME_REG_EX
           uri = ig_registry_url(ig_input)
@@ -29,19 +31,28 @@ module Inferno
         end
 
         destination = output_path || ig_file(idx)
-        # use Thor's get to support CLI options config
-        get(uri, destination, thor_config)
+        download_file(uri, destination)
         uri
       end
 
+      def download_file(uri, destination)
+        # Inspired by Thor `get`
+        # https://github.com/rails/thor/blob/3178667e1727504bf4fb693bf4ac74a5ca6c691e/lib/thor/actions/file_manipulation.rb#L81
+        download = URI.send(:open, uri)
+        IO.copy_stream(download, destination)
+      end
+
       def ig_registry_url(ig_npm_style)
-        unless ig_npm_style.include? '@'
+        if ig_npm_style.include?('@')
+          package_name, version = ig_npm_style.split('@')
+        elsif ig_npm_style.include?('#')
+          package_name, version = ig_npm_style.split('#')
+        else
           raise StandardError, <<~NO_VERSION
-            No IG version specified for #{ig_npm_style}; you must specify one with '@'. I.e: hl7.fhir.us.core@6.1.0
+            No IG version specified for #{ig_npm_style}; you must specify one with '@' or '#'. I.e: hl7.fhir.us.core@6.1.0
           NO_VERSION
         end
 
-        package_name, version = ig_npm_style.split('@')
         "https://packages.fhir.org/#{package_name}/-/#{package_name}-#{version}.tgz"
       end
 
