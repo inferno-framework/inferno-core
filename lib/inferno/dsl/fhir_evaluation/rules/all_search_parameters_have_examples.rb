@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../reference_extractor'
-
 module Inferno
   module DSL
     module FHIREvaluation
