@@ -12,6 +12,8 @@ export interface PageProps {
  */
 const Page: FC<PageProps> = ({ children, title }) => {
   const testSuites = useAppStore((state) => state.testSuites);
+  // Type assertion is necessary here because it will be read as any type
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   const loadedChildren = useLoaderData() as JSX.Element;
   const params = useParams();
 
