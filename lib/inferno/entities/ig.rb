@@ -15,7 +15,8 @@ module Inferno
       ATTRIBUTES = [
         :id,
         :resources_by_type,
-        :examples
+        :examples,
+        :source_path
       ].freeze
 
       include Inferno::Entities::Attributes
@@ -66,6 +67,7 @@ module Inferno
         end
 
         ig.id = extract_package_id(ig.ig_resource)
+        ig.source_path = ig_path
 
         ig
       end
@@ -89,6 +91,7 @@ module Inferno
         end
 
         ig.id = extract_package_id(ig.ig_resource)
+        ig.source_path = ig_directory
 
         ig
       end

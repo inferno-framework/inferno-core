@@ -67,7 +67,7 @@ module Inferno
         #   igs("hl7.fhir.us.core#3.1.1", "hl7.fhir.us.core#6.0.0")
         # @param validator_igs [Array<String>]
         def igs(*validator_igs)
-          cli_context(igs: validator_igs) if validator_igs
+          cli_context(igs: validator_igs) if validator_igs.any?
 
           cli_context.igs
         end

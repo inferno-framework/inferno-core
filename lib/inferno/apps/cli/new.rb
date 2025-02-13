@@ -112,9 +112,8 @@ module Inferno
       end
 
       def load_igs
-        config = { verbose: !options['quiet'] }
         options['implementation_guide']&.each_with_index do |ig, idx|
-          uri = options['implementation_guide'].length == 1 ? load_ig(ig, nil, config) : load_ig(ig, idx, config)
+          uri = options['implementation_guide'].length == 1 ? load_ig(ig, nil) : load_ig(ig, idx)
           say_unless_quiet "Downloaded IG from #{uri}"
         rescue OpenURI::HTTPError => e
           say_unless_quiet "Failed to install implementation guide #{ig}", :red
