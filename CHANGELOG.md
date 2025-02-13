@@ -1,3 +1,17 @@
+## 0.6.3
+* fi-3227 Add docs to template. by @arscan in https://github.com/inferno-framework/inferno-core/pull/606
+* Set Ruby to 3.3.6 in Thor CI Template by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/608
+* FI-3710: Auth info fixes by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/602
+* FI-3678: Update runnable context to support use when describing non-runnables by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/607
+* Bump vite from 5.4.7 to 5.4.14 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/609
+* Bump rollup from 2.79.1 to 4.22.4 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/610
+* Bump cookie and express by @dependabot in https://github.com/inferno-framework/inferno-core/pull/612
+* Bump vitest and @vitest/coverage-v8 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/611
+* FI-3608: Resolve remaining npm audit errors by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/613
+* FI-3732: Add scratch to runnable context by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/614
+* Make publish-docs-wiki action optional by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/617
+* Fix Thor Template Dockerfile by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/615
+
 ## 0.6.2
 * FI-3724: Migrate changes by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/601
   + FI-3556 - migrate MS support by @dehall
