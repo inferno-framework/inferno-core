@@ -67,7 +67,7 @@ module Inferno
                 break
               end
 
-              if result && !result.empty?
+              if result.present?
                 used_flg = true
                 break
               end
