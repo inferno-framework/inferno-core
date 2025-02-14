@@ -218,7 +218,7 @@ module Inferno
         assert missing_elements.empty?, missing_must_support_elements_message(missing_elements, resources)
       end
 
-      # Check that all Must Support elements defined on the given profile are present in the given resources.
+      # Check whether any Must Support elements defined on the given profile are missing in the given resources.
       # Must Support elements are identified on the profile StructureDefinition and pre-parsed into metadata,
       # which may be customized prior to the check by passing a block. Alternate metadata may be provided directly.
       # Set test suite config flag debug_must_support_metadata: true to log the metadata to a file for debugging.
@@ -231,12 +231,12 @@ module Inferno
       # @param requirement_extension [String] Extension URL that implies "required" as an alternative to the MS flag
       # @yield [Metadata] Customize the metadata before running the test
       # @return [Array<Boolean,String>] Boolean result and Message
-      def must_support_elements_present?(resources, profile_url, validator_name: :default, metadata: nil,
+      def must_support_elements_missing?(resources, profile_url, validator_name: :default, metadata: nil,
                                          requirement_extension: nil, &)
         missing_elements = missing_must_support_elements(resources, profile_url, validator_name, metadata,
                                                          requirement_extension, &)
 
-        [missing_elements.empty?, missing_must_support_elements_message(missing_elements, resources)]
+        [missing_elements.any?, missing_must_support_elements_message(missing_elements, resources)]
       end
 
       # @private
