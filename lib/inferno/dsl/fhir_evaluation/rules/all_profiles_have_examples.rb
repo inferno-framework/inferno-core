@@ -12,7 +12,7 @@ module Inferno
           def check(context)
             @context = context
             @unused_profile_urls = []
-            options = context.config.data.to_hash['Rule']['AllProfilesHaveExamples']['ConformanceOption']
+            options = context.config.data['Rule']['AllProfilesHaveExamples']['ConformanceOption']
 
             context.ig.profiles.each do |profile|
               profile_used = context.data.any? { |resource| conforms_to_profile?(resource, profile, options, context.validator) }
@@ -33,17 +33,17 @@ module Inferno
           end
 
           def validate(resources, structure_definition)
-            pass_flg = false
+            passed = false
             resources.each do |resource|
               next unless structure_definition.type == resource.resourceType
 
-              pass_flg = true if structure_definition.validates_resource?(resource)
+              passed = true if structure_definition.validates_resource?(resource)
 
-              if context.config.data.to_hash['Rule']['AllProfilesHaveExamples']['ExternalValidator']
-                pass_flg != validate_from_external(resource)
+              if context.config.data['Rule']['AllProfilesHaveExamples']['ExternalValidator']
+                passed = !validate_from_external(resource)
               end
             end
-            pass_flg
+            passed
           end
 
           def validate_from_external(resource)
