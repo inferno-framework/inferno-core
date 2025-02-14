@@ -1,3 +1,6 @@
+## 0.6.4
+* FI-3756: Add suite option default by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/623
+
 ## 0.6.3
 * fi-3227 Add docs to template. by @arscan in https://github.com/inferno-framework/inferno-core/pull/606
 * Set Ruby to 3.3.6 in Thor CI Template by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/608
