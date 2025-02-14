@@ -5,6 +5,8 @@ module Inferno
     module FHIREvaluation
       module Rules
         class AllProfilesHaveExamples < Rule
+          include ProfileConformanceHelper
+
           attr_accessor :context, :unused_profile_urls
 
           def check(context)
@@ -12,35 +14,11 @@ module Inferno
             @unused_profile_urls = []
             options = context.config.data.to_hash['Rule']['AllProfilesHaveExamples']['ConformanceOption']
 
-            if options['considerOnlyResourceType']
-              context.ig.profiles.each do |structure_definition|
-                next if structure_definition.abstract
-
-                pass_flg = context.data.any? { |resource| resource.resourceType == structure_definition.type }
-                unused_profile_urls << structure_definition.url unless pass_flg
-              end
+            context.ig.profiles.each do |profile|
+              profile_used = context.data.any? { |resource| conforms_to_profile?(resource, profile, options, context.validator) }
+              unused_profile_urls << profile.url unless profile_used
             end
-
-            if options['considerMetaProfile']
-              used_profiles = context.data.map do |resource|
-                get_profiles_from_example(resource)
-              end.flatten.uniq
-              profile_is_used = proc do |profile|
-                versioned_url = "#{profile.url}|#{profile.version}"
-                used_profiles.include?(profile.url) || used_profiles.include?(versioned_url)
-              end
-              get_unused_profile_urls(context.ig.profiles, &profile_is_used)
-            end
-
-            if options['considerValidationResults']
-              context.ig.profiles.each do |structure_definition|
-                next if structure_definition.abstract
-
-                pass_flg = validate(context.data, structure_definition)
-                unused_profile_urls << structure_definition.url unless pass_flg
-              end
-            end
-
+            
             unused_profile_urls.uniq!
 
             if unused_profile_urls.any?
