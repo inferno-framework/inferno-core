@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    inferno_core (0.6.3)
+    inferno_core (0.6.4)
       activesupport (~> 6.1.7.5)
       base62-rb (= 0.3.1)
       blueprinter (= 0.25.2)
