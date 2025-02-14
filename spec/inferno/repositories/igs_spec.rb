@@ -9,10 +9,18 @@ RSpec.describe Inferno::Repositories::IGs do # rubocop:disable RSpec/SpecFilePat
     tpc
   end
 
-  before do
-    # start each test with a clean repository
+  # start and each test with a clean repository
+  def clear_repo
     repo.all.clear
     repo.all_by_id.clear
+  end
+
+  before do
+    clear_repo
+  end
+
+  after do
+    clear_repo
   end
 
   def expect_spot_check_uscore3(ig)
