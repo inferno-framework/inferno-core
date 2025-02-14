@@ -127,6 +127,7 @@ module OptionsSuite
     suite_option :ig_version,
                  title: 'IG Version',
                  description: 'Which IG Version should be used',
+                 default: '2',
                  list_options: [
                    {
                      label: 'v1',
