@@ -12,7 +12,7 @@ module Inferno
           def check(context)
             @context = context
             @unused_profile_urls = []
-            options = context.config.data['Rule']['AllProfilesHaveExamples']['ConformanceOption']
+            options = context.config.data['Rule']['AllProfilesHaveExamples']['ConformanceOptions'].to_options
 
             context.ig.profiles.each do |profile|
               profile_used = context.data.any? { |resource| conforms_to_profile?(resource, profile, options, context.validator) }
@@ -87,7 +87,7 @@ module Inferno
               all_profiles = resource.entry.map do |entry|
                 get_single_resource_profiles(entry.resource)
               end
-              all_profiles << get_single_resource_profiles(resource)
+              all_profiles << get_profiles_from_example(resource)
               all_profiles.flatten.uniq
             else
               get_single_resource_profiles(resource)
