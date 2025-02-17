@@ -601,11 +601,18 @@ definitions:
         type: "string"
   SuiteOption:
     type: "object"
+    required:
+    - "id"
+    - "title"
+    - "list_options"
     properties:
       id:
         type: "string"
         readOnly: true
       title:
+        type: "string"
+        readOnly: true
+      default:
         type: "string"
         readOnly: true
       description:

@@ -20,7 +20,9 @@ module Inferno
           # Hanami Controller 2.0.0 removes the ability to set a default
           # Content-Type response header, so set it manually if it hasn't been
           # set.
-          subclass.after { |_req, res| res.format = :json if res.format == :all && res.body&.first&.first == '{' }
+          subclass.after do |_req, res|
+            res.format = :json if res.format == :all
+          end
         end
 
         def self.resource_name
