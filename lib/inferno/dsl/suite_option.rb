@@ -11,6 +11,7 @@ module Inferno
       ATTRIBUTES = [
         :id,
         :title,
+        :default,
         :description,
         :list_options,
         :value
@@ -20,6 +21,7 @@ module Inferno
 
       # @!attribute [rw] id
       # @!attribute [rw] title
+      # @!attribute [rw] default
       # @!attribute [rw] description
       # @!attribute [rw] list_options
       # @!attribute [rw] value
