@@ -38,9 +38,9 @@ module Inferno
             context.add_result result
           end
 
-          def get_unused_resource_urls(ig_data, &resource_filter)
-            ig_data.each do |resource|
-              unused_resource_urls.push resource.url unless resource_filter.call(resource)
+          def get_unused_resource_urls(search_params, &resource_filter)
+            search_params.each do |search_param|
+              unused_resource_urls.push search_param.url unless resource_filter.call(search_param)
             end
           end
 
@@ -50,7 +50,7 @@ module Inferno
             # but without it there's no other way to select a value
             return true unless param.expression
 
-            used_flg = false
+            used = false
 
             context.data.each do |resource|
               next unless param.base.include? resource.resourceType
@@ -63,18 +63,17 @@ module Inferno
                 result = EvaluationResult.new(message)
                 context.add_result result
 
-                used_flg = true
+                used = true
                 break
               end
 
               if result.present?
-                used_flg = true
+                used = true
                 break
               end
             end
-            used_flg
+            used
           end
-
         end
       end
     end
