@@ -195,4 +195,36 @@ RSpec.describe Inferno::DSL::Runnable do
       end.to raise_error(Inferno::Exceptions::InvalidRunnableIdException, /length of 255 characters/)
     end
   end
+
+  describe '.replace' do
+    let(:group) do
+      Class.new(Inferno::TestGroup) do
+        test { id :abc }
+        test { id :def }
+        test { id :ghw }
+      end
+    end
+
+    let(:new_test) { Class.new(Inferno::Test) { id :xyz } }
+
+    before do
+      group.id(SecureRandom.uuid)
+    end
+
+    it 'replaces a child with a new one' do
+      group.replace(:def, new_test)
+
+      expect(group.children.length).to eq(3)
+      expect(group.children.none? { |child| child.id.to_s.end_with?('def') }).to be true
+      expect(group.children[1]).to eq(new_test)
+    end
+
+    it 'does not change children if the id to replace is not found' do
+      original_children = group.children.dup
+
+      group.replace(:not_found, new_test)
+
+      expect(group.children).to eq(original_children)
+    end
+  end
 end
