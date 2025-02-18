@@ -464,6 +464,21 @@ module Inferno
           end
       end
 
+      # Replace a child test/group
+      #
+      # @param id_to_replace (Symbol, String) The ID of the child to be replaced
+      # @param new_child (Inferno::TestGroup, Inferno::Test) The new child to replace the existing one
+      # @example
+      #   test from: :test1
+      #   test from: :test2
+      #   test from: :test3
+      #
+      #   replace :test2, new_test
+      def replace(id_to_replace, new_child)
+        index = children.find_index { |child| child.id.to_s.end_with? id_to_replace.to_s }
+        children[index] = new_child if index
+      end
+
       # @private
       def children(selected_suite_options = [])
         return all_children if selected_suite_options.blank?
