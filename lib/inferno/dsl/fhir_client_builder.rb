@@ -43,6 +43,7 @@ module Inferno
         instance_exec(self, &block)
 
         FHIR::Client.new(url).tap do |client|
+          client.use_accept_charset = false
           client.additional_headers = headers if headers
           client.default_json
           client.set_bearer_token bearer_token if bearer_token
