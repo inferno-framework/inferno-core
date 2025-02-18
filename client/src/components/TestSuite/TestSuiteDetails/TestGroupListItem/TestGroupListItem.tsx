@@ -112,11 +112,12 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       disableGutters
       elevation={0}
       className={classes.accordion}
-      sx={view === 'report' ? { pointerEvents: 'none' } : {}}
       expanded={expanded}
       onChange={() => {
-        setExpanded(!expanded);
-        setManualExpand(!expanded);
+        if (view !== 'report') {
+          setExpanded(!expanded);
+          setManualExpand(!expanded);
+        }
       }}
       slotProps={{ transition: { unmountOnExit: true } }}
       onMouseEnter={() => setGroupMouseHover(true)}
@@ -128,6 +129,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         aria-controls={`${testGroup.id}-detail`}
         className={classes.accordionSummary}
         expandIcon={view === 'run' && <ExpandMoreIcon tabIndex={0} aria-hidden="false" />}
+        sx={view === 'report' ? { cursor: 'default !important' } : {}}
       >
         <Box display="flex" alignItems="center" width="100%">
           <Box display="inline-flex">

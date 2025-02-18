@@ -204,8 +204,10 @@ const TestListItem: FC<TestListItemProps> = ({
   };
 
   const handleAccordionClick = () => {
-    setTabIndex(findPopulatedTabIndex());
-    setOpen(!open);
+    if (view !== 'report') {
+      setTabIndex(findPopulatedTabIndex());
+      setOpen(!open);
+    }
   };
 
   return (
@@ -213,7 +215,6 @@ const TestListItem: FC<TestListItemProps> = ({
       disableGutters
       elevation={0}
       className={classes.accordion}
-      sx={view === 'report' ? { pointerEvents: 'none' } : {}}
       expanded={open}
       slotProps={{ transition: { unmountOnExit: true } }}
       onClick={handleAccordionClick}
@@ -247,6 +248,7 @@ const TestListItem: FC<TestListItemProps> = ({
             setOpen(!open);
           }
         }}
+        sx={view === 'report' ? { cursor: 'default !important' } : {}}
       >
         <Box display="flex" alignItems="center" width="100%">
           {resultIcon}
