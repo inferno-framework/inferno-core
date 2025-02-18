@@ -103,6 +103,17 @@ RSpec.describe Inferno::DSL::FHIRValidation do
                 'Patient.identifier[0]',
                 'Line 14, Col 10'
               ]
+            },
+            {
+              severity: 'error',
+              code: 'processing',
+              details: {
+                text: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve"
+              },
+              expression: [
+                'Patient',
+                'Line 14, Col 10'
+              ]
             }
           ]
         }.to_json
@@ -128,6 +139,14 @@ RSpec.describe Inferno::DSL::FHIRValidation do
 
           expect(result).to be(false)
           expect(runnable.messages.first[:message]).to start_with("#{resource.resourceType}:")
+        end
+
+        it 'excludes the unresolved url message' do
+          result = validator.resource_is_valid?(resource, profile_url, runnable)
+
+          expect(result).to be(false)
+          expect(runnable.messages)
+            .to all(satisfy { |message| !message[:message].match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) })
         end
       end
 
