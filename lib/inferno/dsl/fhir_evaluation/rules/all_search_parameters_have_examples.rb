@@ -7,8 +7,6 @@ module Inferno
         class AllSearchParametersHaveExamples < Rule
           include FhirpathEvaluation
 
-          attr_accessor :unused_resource_urls
-
           def check(context)
             unless ENV['FHIRPATH_URL']
               message = 'FHIRPATH_URL is not found. Skipping rule AllSearchParametersHaveExamples.'
@@ -17,11 +15,11 @@ module Inferno
               return
             end
 
-            @unused_resource_urls = []
+            unused_resource_urls = []
             search_params = context.ig.resources_by_type['SearchParameter']
 
-            get_unused_resource_urls(search_params) do |param|
-              param_is_used?(param, context)
+            search_params.each do |search_param|
+              unused_resource_urls.push search_param.url unless param_is_used?(search_param, context)
             end
 
             if unused_resource_urls.any?
@@ -36,12 +34,6 @@ module Inferno
             end
 
             context.add_result result
-          end
-
-          def get_unused_resource_urls(search_params, &resource_filter)
-            search_params.each do |search_param|
-              unused_resource_urls.push search_param.url unless resource_filter.call(search_param)
-            end
           end
 
           def param_is_used?(param, context)
