@@ -108,10 +108,10 @@ RSpec.describe Inferno::DSL::FHIRValidation do
               severity: 'error',
               code: 'processing',
               details: {
-                text: 'The valueSet reference https://example.org could not be resolved'
+                text: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve"
               },
-              location: [
-                'Organization.type',
+              expression: [
+                'Patient',
                 'Line 14, Col 10'
               ]
             }
@@ -145,7 +145,8 @@ RSpec.describe Inferno::DSL::FHIRValidation do
           result = validator.resource_is_valid?(resource, profile_url, runnable)
 
           expect(result).to be(false)
-          expect(runnable.messages).to all(satisfy { |message| !message[:message].match?(/could not be resolved/i) })
+          expect(runnable.messages)
+            .to all(satisfy { |message| !message[:message].match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) })
         end
       end
 

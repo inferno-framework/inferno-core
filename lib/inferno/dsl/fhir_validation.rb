@@ -154,7 +154,7 @@ module Inferno
 
         # @private
         def exclude_unresolved_url_message
-          proc { |message| message.message.match?(/could not be resolved/i) }
+          proc { |message| message.message.match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) }
         end
 
         # @private

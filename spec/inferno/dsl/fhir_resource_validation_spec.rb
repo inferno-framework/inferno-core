@@ -148,13 +148,13 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
                   source: 'InstanceValidator',
                   line: 5,
                   col: 5,
-                  location: 'Organization.type',
-                  message: 'The valueSet reference https://example.org could not be resolved',
-                  messageId: 'Type_Specific_Checks_DT_Identifier_System',
+                  location: 'Patient',
+                  message: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
+                  messageId: 'Patient_Profile',
                   type: 'CODEINVALID',
                   level: 'ERROR',
-                  html: 'The valueSet reference https://example.org could not be resolved',
-                  display: 'ERROR: Organization.type: The valueSet reference https://example.org could not be resolved',
+                  html: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
+                  display: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
                   error: true
                 }
               ]
@@ -182,7 +182,8 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           result = validator.resource_is_valid?(resource2, profile_url, runnable)
 
           expect(result).to be(false)
-          expect(runnable.messages).to all(satisfy { |message| !message[:message].match?(/could not be resolved/i) })
+          expect(runnable.messages)
+            .to all(satisfy { |message| !message[:message].match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) })
         end
       end
 
