@@ -1,10 +1,12 @@
-# frozen_string_literal: true
+require_relative '../../fhirpath_evaluation'
 
 module Inferno
   module DSL
     module FHIREvaluation
       module Rules
         class AllSearchParametersHaveExamples < Rule
+          include FhirpathEvaluation
+
           attr_accessor :unused_resource_urls
 
           def check(context)
@@ -54,7 +56,7 @@ module Inferno
               next unless param.base.include? resource.resourceType
 
               begin
-                result = evaluate(param.expression, resource)
+                result = evaluate_fhirpath(resource: resource, path: param.expression)
               rescue StandardError => e
                 message = "SearchParameter #{param.url} failed to evaluate due to an error. " \
                           "Expression: #{param.expression}. #{e}"
@@ -73,17 +75,6 @@ module Inferno
             used_flg
           end
 
-          def evaluate(expression, resource)
-            fhirpath_url = ENV.fetch('FHIRPATH_URL')
-            path = "#{fhirpath_url}/evaluate?path=#{expression}"
-
-            response = Faraday.post(path, resource.to_json, 'Content-Type' => 'application/json')
-            raise "External FHIRPath service failed: #{response.status}" unless response.status.to_s.start_with? '2'
-
-            JSON.parse(response.body)
-          rescue Faraday::Error => e
-            raise "FHIRPath service not available - HTTP request failed: #{e.message}"
-          end
         end
       end
     end
