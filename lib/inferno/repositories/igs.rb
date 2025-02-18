@@ -34,8 +34,9 @@ module Inferno
 
       # @private
       def load(ig_path)
-        if File.exist?(ig_path)
-          ig = Inferno::Entities::IG.from_file(ig_path)
+        local_ig_file = find_local_file(ig_path)
+        if local_ig_file
+          ig = Inferno::Entities::IG.from_file(local_ig_file)
           # To match the HL7 FHIR validator, DO NOT cache igs loaded from file
         elsif in_user_package_cache?(ig_path.sub('@', '#'))
           # NPM syntax for a package identifier is id@version (eg, hl7.fhir.us.core@3.1.1)
@@ -51,6 +52,18 @@ module Inferno
         end
         ig.add_self_to_repository
         ig
+      end
+
+      # @private
+      def find_local_file(ig_path)
+        return nil unless ['.tgz', '.tar.gz'].any? { |ext| ig_path.downcase.end_with?(ext) }
+
+        return ig_path if File.exist?(ig_path)
+
+        # Try to find the file under the current working directory,
+        # eg, given ig_path: 'igs/package123.tgz'
+        # this would find 'lib/my_test_kit/igs/package123.tgz'
+        Dir.glob(File.join('**', ig_path))[0]
       end
 
       # @private
