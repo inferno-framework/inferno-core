@@ -49,7 +49,6 @@ export default makeStyles()((theme: Theme) => ({
   },
   authCard: {
     width: '100%',
-    mx: 2,
     borderColor: theme.palette.common.gray,
     '& :focus-within': {
       borderColor: theme.palette.secondary.main,

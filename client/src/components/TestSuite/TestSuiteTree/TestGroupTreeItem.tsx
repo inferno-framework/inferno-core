@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { TestGroup } from '~/models/testSuiteModels';
 import CustomTreeItem from '~/components/_common/CustomTreeItem';
-import TreeItemLabel from './TreeItemLabel';
-import ResultIcon from '../TestSuiteDetails/ResultIcon';
+import TreeItemLabel from '~/components/TestSuite/TestSuiteTree/TreeItemLabel';
+import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
 
 export interface TestGroupTreeItemProps {
   testGroup: TestGroup;

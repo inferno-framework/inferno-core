@@ -78,10 +78,12 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
     postTestSessions(test_suite_id, null, options)
       .then((testSession: TestSession | null) => {
         if (testSession && testSession.test_suite) {
-          navigate(`/${testSession.test_suite_id}/${testSession.id}`);
+          // eslint-disable-next-line max-len
+          const url = `/${testSession.test_suite_id}/${testSession.id}#${testSession.test_suite_id}`;
+          navigate(url);
           // Use window navigation as a workaround for router errors
           const root = basePath ? `/${basePath}` : window.location.origin;
-          window.location.href = `${root}/${testSession.test_suite_id}/${testSession.id}`;
+          window.location.href = `${root}${url}`;
         }
       })
       .catch((e: Error) => {

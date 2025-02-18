@@ -236,7 +236,7 @@ const TestListItem: FC<TestListItemProps> = ({
         role={view === 'report' ? 'region' : 'button'}
         expandIcon={
           view === 'run' && (
-            <CustomTooltip title="expand test">
+            <CustomTooltip title="Expand test">
               <ExpandMoreIcon tabIndex={0} aria-hidden="false" />
             </CustomTooltip>
           )

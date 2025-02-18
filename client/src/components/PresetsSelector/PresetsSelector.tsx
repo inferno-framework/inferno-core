@@ -8,11 +8,12 @@ import {
   TextField,
   MenuItem,
 } from '@mui/material';
+import { useSnackbar } from 'notistack';
 import { applyPreset } from '~/api/TestSessionApi';
 import { PresetSummary } from '~/models/testSuiteModels';
+import { useTestSessionStore } from '~/store/testSession';
 import theme from '~/styles/theme';
 import lightTheme from '~/styles/theme';
-import { useSnackbar } from 'notistack';
 
 export interface PresetsModalProps {
   presets: PresetSummary[];
@@ -22,6 +23,7 @@ export interface PresetsModalProps {
 
 const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSessionData }) => {
   const { enqueueSnackbar } = useSnackbar();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const null_preset = { id: 'NULL_PRESET', title: 'None' };
   const presetTitleToIdMap: { [key: string]: string } = presets.reduce(
     (reducedObj, preset) => ({ ...reducedObj, [preset.title]: preset.id }),
@@ -84,12 +86,15 @@ const PresetsSelector: FC<PresetsModalProps> = ({ presets, testSessionId, getSes
     <>
       <TextField
         id="preset-select"
-        fullWidth
-        size="small"
-        select
         label="Preset"
-        InputLabelProps={{
-          sx: { '&.Mui-focused': { color: lightTheme.palette.primary.dark } },
+        disabled={viewOnly}
+        size="small"
+        fullWidth
+        select
+        slotProps={{
+          inputLabel: {
+            sx: { '&.Mui-focused': { color: lightTheme.palette.primary.dark } },
+          },
         }}
         value={selectedPreset}
         onChange={handleOnChange}
