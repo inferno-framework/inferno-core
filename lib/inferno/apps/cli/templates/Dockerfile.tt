@@ -6,7 +6,6 @@ RUN mkdir -p $INSTALL_PATH
 
 WORKDIR $INSTALL_PATH
 
-ADD lib/<%= library_name %>/metadata.rb $INSTALL_PATH/lib/<%= library_name %>/metadata.rb
 ADD lib/<%= library_name %>/version.rb $INSTALL_PATH/lib/<%= library_name %>/version.rb
 ADD *.gemspec $INSTALL_PATH
 ADD Gemfile* $INSTALL_PATH

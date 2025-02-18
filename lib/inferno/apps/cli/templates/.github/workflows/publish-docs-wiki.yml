@@ -29,3 +29,6 @@ jobs:
         with:
           path: docs
           strategy: init
+        continue-on-error: true               # Make this workflow optional.
+      - run: echo "Failed to deploy wiki"     # If you want to require publishing docs to wiki
+        if: job.steps.bad.status == failure() # then comment out these 3 lines.
