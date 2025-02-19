@@ -7,7 +7,7 @@ services:
       # Negative values mean sessions never expire, 0 means sessions immediately expire
       SESSION_CACHE_DURATION: -1
     volumes:
-      - ./<%= ig_path %>:/app/igs
+      - .data/igs:/app/igs
       # To let the service share your local FHIR package cache,
       # uncomment the below line
       # - ~/.fhir:/home/ktor/.fhir
