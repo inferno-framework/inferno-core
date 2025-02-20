@@ -220,25 +220,43 @@ RSpec.describe Inferno::DSL::Runnable do
         test { id :ghw }
       end
     end
-
-    let(:new_test) { Class.new(Inferno::Test) { id :xyz } }
+    let(:id) { 'xyz' }
 
     before do
       group.id(SecureRandom.uuid)
     end
 
-    it 'replaces a child with a new one' do
-      group.replace(:def, new_test)
+    it 'replaces a child with a another using its ID' do
+      group.test({ id: })
+      group.replace(:def, id)
 
       expect(group.children.length).to eq(3)
       expect(group.children.none? { |child| child.id.to_s.end_with?('def') }).to be true
-      expect(group.children[1]).to eq(new_test)
+      expect(group.children[1].id.to_s.end_with?('xyz')).to be true
+    end
+
+    it 'applies block configuration to the new child' do
+      group.test({ id: })
+      group.replace(:def, id) do
+        id :new_test_id
+      end
+
+      expect(group.children.length).to eq(3)
+      expect(group.children[1].id.to_s.end_with?('new_test_id')).to be true
     end
 
     it 'does not change children if the id to replace is not found' do
       original_children = group.children.dup
 
-      group.replace(:not_found, new_test)
+      group.replace(id, :ghw)
+
+      expect(group.children).to eq(original_children)
+    end
+
+    it 'does not replace if the new child ID is not found in the repository' do
+      original_children = group.children.dup
+
+      group.replace(:def, id)
 
       expect(group.children).to eq(original_children)
     end

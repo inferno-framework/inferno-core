@@ -466,17 +466,28 @@ module Inferno
 
       # Replace a child test/group
       #
-      # @param id_to_replace [Symbol, String] The ID of the child to be replaced
-      # @param new_child [Inferno::TestGroup, Inferno::Test] The new child to replace the existing one
+      # @param id_to_replace [Symbol, String] The ID of the child to be replaced.
+      # @param replacement_id [Symbol, String] The ID of the child that will take the
+      #   place of the child being replaced.
+      # @yield [Inferno::TestGroup, Inferno::Test] Optional block executed in the
+      #    context of the replacement child for additional configuration.
       # @example
-      #   test from: :test1
-      #   test from: :test2
-      #   test from: :test3
+      #   replace :test2, :test4 do
+      #     id :new_test_id
+      #     config(...)
+      #   end
       #
-      #   replace :test2, new_test
-      def replace(id_to_replace, new_child)
+      def replace(id_to_replace, replacement_id, &)
         index = children.find_index { |child| child.id.to_s.end_with? id_to_replace.to_s }
-        children[index] = new_child if index
+        return unless index
+
+        replacement_child = children.find { |child| child.id.to_s.end_with? replacement_id.to_s }
+        return unless replacement_child
+
+        remove(replacement_id)
+        replacement_child.instance_eval(&) if block_given?
+
+        children[index] = replacement_child
       end
 
       # Remove a child test/group
