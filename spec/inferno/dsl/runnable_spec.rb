@@ -196,6 +196,22 @@ RSpec.describe Inferno::DSL::Runnable do
     end
   end
 
+  describe '.remove' do
+    it 'removes a child' do
+      group = Class.new(Inferno::TestGroup) do
+        id :remove_group
+
+        test { id :abc }
+        test { id :def }
+        test { id :ghw }
+      end
+
+      group.remove :def
+
+      expect(group.children.length).to eq(2)
+    end
+  end
+
   describe '.replace' do
     let(:group) do
       Class.new(Inferno::TestGroup) do

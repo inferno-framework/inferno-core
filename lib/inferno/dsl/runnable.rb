@@ -479,6 +479,19 @@ module Inferno
         children[index] = new_child if index
       end
 
+      # Remove a child test/group
+      #
+      # @param id_to_remove [Symbol, String]
+      # @example
+      #   test from: :test1
+      #   test from: :test2
+      #   test from: :test3
+      #
+      #   remove :test2
+      def remove(id_to_remove)
+        children.reject! { |child| child.id.to_s.end_with? id_to_remove.to_s }
+      end
+
       # @private
       def children(selected_suite_options = [])
         return all_children if selected_suite_options.blank?
