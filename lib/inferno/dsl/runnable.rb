@@ -466,7 +466,7 @@ module Inferno
 
       # Remove a child test/group
       #
-      # @param id_to_remove (Symbol, String)
+      # @param id_to_remove [Symbol, String]
       # @example
       #   test from: :test1
       #   test from: :test2
