@@ -466,8 +466,8 @@ module Inferno
 
       # Replace a child test/group
       #
-      # @param id_to_replace (Symbol, String) The ID of the child to be replaced
-      # @param new_child (Inferno::TestGroup, Inferno::Test) The new child to replace the existing one
+      # @param id_to_replace [Symbol, String] The ID of the child to be replaced
+      # @param new_child [Inferno::TestGroup, Inferno::Test] The new child to replace the existing one
       # @example
       #   test from: :test1
       #   test from: :test2
