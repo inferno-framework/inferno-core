@@ -1,6 +1,7 @@
 Inferno::Application.register_provider(:validator) do
   prepare do
     target_container.start :suites
+    target_container.start :ig_files
 
     # This process should only run once, to start one job per validator,
     # so skipping it on workers will start it only once from the "web" process
