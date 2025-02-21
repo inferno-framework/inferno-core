@@ -2,6 +2,10 @@ require 'fileutils'
 
 Inferno::Application.register_provider(:ig_files) do
   prepare do
+    # This process should only run once, to start one job per validator,
+    # so skipping it on workers will start it only once from the "web" process
+    next if Sidekiq.server?
+
     target_container.start :logging
 
     test_kit_gems = Bundler.definition.specs.select { |spec| spec.metadata['inferno_test_kit']&.casecmp? 'true' }
@@ -19,7 +23,7 @@ Inferno::Application.register_provider(:ig_files) do
         destination_file_path = File.join(Dir.pwd, 'data', 'igs', File.basename(source_file_path))
         Inferno::Application['logger'].info("Copying #{File.basename(source_file_path)} to data/igs")
         # FileUtils.rm_f(destination_file_path)
-        FileUtils.copy_file(source_file_path, destination_file_path)
+        FileUtils.copy_file(source_file_path, destination_file_path, true)
       end
     end
   end
