@@ -2,8 +2,8 @@ require 'fileutils'
 
 Inferno::Application.register_provider(:ig_files) do
   prepare do
-    # This process should only run once, to start one job per validator,
-    # so skipping it on workers will start it only once from the "web" process
+    # This process should only run once, so skipping it on workers will start it
+    # only once from the "web" process
     next if Sidekiq.server?
 
     target_container.start :logging
