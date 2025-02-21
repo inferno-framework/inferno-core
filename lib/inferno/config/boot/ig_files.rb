@@ -22,7 +22,6 @@ Inferno::Application.register_provider(:ig_files) do
       ig_files.each do |source_file_path|
         destination_file_path = File.join(Dir.pwd, 'data', 'igs', File.basename(source_file_path))
         Inferno::Application['logger'].info("Copying #{File.basename(source_file_path)} to data/igs")
-        # FileUtils.rm_f(destination_file_path)
         FileUtils.copy_file(source_file_path, destination_file_path, true)
       end
     end
