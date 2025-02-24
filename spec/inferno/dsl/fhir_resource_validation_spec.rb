@@ -123,26 +123,43 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
     context 'with invalid resource' do
       let(:invalid_outcome) do
         {
-          outcomes: [{
-            fileInfo: {
-              fileName: 'Patient/0000.json',
-              fileContent: resource_string.to_json,
-              fileType: 'json'
-            },
-            issues: [{
-              source: 'InstanceValidator',
-              line: 4,
-              col: 4,
-              location: 'Patient.identifier[0]',
-              message: 'Identifier.system must be an absolute reference, not a local reference',
-              messageId: 'Type_Specific_Checks_DT_Identifier_System',
-              type: 'CODEINVALID',
-              level: 'ERROR',
-              html: 'Identifier.system must be an absolute reference, not a local reference',
-              display: 'ERROR: Patient.identifier[0]: Identifier.system must be an absolute reference, ',
-              error: true
-            }]
-          }],
+          outcomes: [
+            {
+              fileInfo: {
+                fileName: 'Patient/0000.json',
+                fileContent: resource_string.to_json,
+                fileType: 'json'
+              },
+              issues: [
+                {
+                  source: 'InstanceValidator',
+                  line: 4,
+                  col: 4,
+                  location: 'Patient.identifier[0]',
+                  message: 'Identifier.system must be an absolute reference, not a local reference',
+                  messageId: 'Type_Specific_Checks_DT_Identifier_System',
+                  type: 'CODEINVALID',
+                  level: 'ERROR',
+                  html: 'Identifier.system must be an absolute reference, not a local reference',
+                  display: 'ERROR: Patient.identifier[0]: Identifier.system must be an absolute reference, ',
+                  error: true
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 5,
+                  col: 5,
+                  location: 'Patient',
+                  message: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
+                  messageId: 'Patient_Profile',
+                  type: 'CODEINVALID',
+                  level: 'ERROR',
+                  html: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
+                  display: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
+                  error: true
+                }
+              ]
+            }
+          ],
           sessionId: 'b8cf5547-1dc7-4714-a797-dc2347b93fe2'
         }.to_json
       end
@@ -159,6 +176,14 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
           expect(result).to be(false)
           expect(runnable.messages.first[:message]).to start_with("#{resource2.resourceType}/#{resource2.id}:")
+        end
+
+        it 'excludes the unresolved url message' do
+          result = validator.resource_is_valid?(resource2, profile_url, runnable)
+
+          expect(result).to be(false)
+          expect(runnable.messages)
+            .to all(satisfy { |message| !message[:message].match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) })
         end
       end
 
