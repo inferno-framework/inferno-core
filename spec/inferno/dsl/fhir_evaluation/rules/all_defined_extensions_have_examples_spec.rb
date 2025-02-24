@@ -7,7 +7,7 @@ def fixture(file)
   FHIR::Json.from_json(File.read(path))
 end
 
-RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllIGExtensionsHaveExamples do
+RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllDefinedExtensionsHaveExamples do
   let(:patient85) do
     fixture('patient_85.json')
   end

@@ -4,7 +4,7 @@ module Inferno
   module DSL
     module FHIREvaluation
       module Rules
-        class AllIGExtensionsHaveExamples < Rule
+        class AllDefinedExtensionsHaveExamples < Rule
           attr_accessor :used_extensions, :unused_extensions
 
           def check(context)
