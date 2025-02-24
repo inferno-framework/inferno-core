@@ -29,10 +29,13 @@ Inferno::Application.register_provider(:ig_files) do
       }
     end
 
-    if File.exist? File.join(Dir.pwd, 'data', 'igs')
+    igs_directory = File.join(Dir.pwd, 'data', 'igs')
+    if File.exist? igs_directory
+      FileUtils.rm_f(Dir.glob(File.join(igs_directory, '*.tgz')))
+
       test_kit_ig_files.each do |ig_files|
         ig_files[:files].each do |source_file_path|
-          destination_file_path = File.join(Dir.pwd, 'data', 'igs', File.basename(source_file_path))
+          destination_file_path = File.join(igs_directory, File.basename(source_file_path))
           Inferno::Application['logger'].info(
             "Copying #{File.basename(source_file_path)} to data/igs from #{ig_files[:test_kit_name]}"
           )
