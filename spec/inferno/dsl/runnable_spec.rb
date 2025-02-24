@@ -195,4 +195,20 @@ RSpec.describe Inferno::DSL::Runnable do
       end.to raise_error(Inferno::Exceptions::InvalidRunnableIdException, /length of 255 characters/)
     end
   end
+
+  describe '.remove' do
+    it 'removes a child' do
+      group = Class.new(Inferno::TestGroup) do
+        id :remove_group
+
+        test { id :abc }
+        test { id :def }
+        test { id :ghw }
+      end
+
+      group.remove :def
+
+      expect(group.children.length).to eq(2)
+    end
+  end
 end
