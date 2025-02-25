@@ -467,7 +467,7 @@ module Inferno
       # Replace a child test/group
       #
       # @param id_to_replace [Symbol, String] The ID of the child to be replaced.
-      # @param replacement_id [Symbol, String] The ID of the child that will take the
+      # @param replacement_id [Symbol, String] The global ID of the group/test that will take the
       #   place of the child being replaced.
       # @yield [Inferno::TestGroup, Inferno::Test] Optional block executed in the
       #    context of the replacement child for additional configuration.
