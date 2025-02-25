@@ -238,12 +238,10 @@ RSpec.describe Inferno::DSL::Runnable do
       expect(test_group.children[0].id.to_s.end_with?('new_id')).to be true
     end
 
-    it 'does not change children if the id to replace is not found' do
-      original_children = test_group.children.dup
-
-      test_group.replace 'test_id', 'DemoIG_STU1::DemoGroup'
-
-      expect(test_group.children).to eq(original_children)
+    it 'raises an error if the id to replace is not found' do
+      expect do
+        test_group.replace 'test_id', 'DemoIG_STU1::DemoGroup'
+      end.to raise_error(Inferno::Exceptions::RunnableChildNotFoundException, /Could not find a child with an ID/)
     end
   end
 end

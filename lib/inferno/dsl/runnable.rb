@@ -478,7 +478,7 @@ module Inferno
       #   end
       def replace(id_to_replace, replacement_id, &)
         index = children.find_index { |child| child.id.to_s.end_with? id_to_replace.to_s }
-        return unless index
+        raise Exceptions::RunnableChildNotFoundException.new(id_to_replace, self) unless index
 
         if children[index] < Inferno::TestGroup
           group(from: replacement_id, &)
