@@ -153,7 +153,13 @@ module Inferno
         end
 
         # @private
+        def exclude_unresolved_url_message
+          proc { |message| message.message.match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) }
+        end
+
+        # @private
         def filter_messages(message_hashes)
+          message_hashes.reject! { |message| exclude_unresolved_url_message.call(Entities::Message.new(message)) }
           message_hashes.reject! { |message| exclude_message.call(Entities::Message.new(message)) } if exclude_message
         end
 
