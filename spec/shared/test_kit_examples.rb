@@ -70,6 +70,62 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
 
       expect(dockerfile_contents.lines.first.chomp).to eq('FROM ruby:3.3.6')
     end
+
+    context 'when it contains a validator service' do
+      it 'has a data/igs/.keep file' do
+        docker_compose_file_path = File.join(base_path, 'docker-compose.background.yml')
+        docker_compose_contents = YAML.load_file(docker_compose_file_path)
+
+        validator_service_images = [
+          'infernocommunity/fhir-validator-service',
+          'infernocommunity/inferno-resource-validator'
+        ]
+        validator_service =
+          docker_compose_contents['services']
+            .any? { |_name, service| validator_service_images.include? service['image'] }
+
+        if validator_service.present?
+          igs_keep_file = File.join(base_path, 'data', 'igs', '.keep')
+          error_message =
+            "Create a 'data/igs/.keep' file and commit it"
+          expect(File.exist?(igs_keep_file)).to be(true), error_message
+        end
+      end
+
+      it 'uses data/igs as the path for test kit IGs in the hl7 validator service' do
+        docker_compose_file_path = File.join(base_path, 'docker-compose.background.yml')
+        docker_compose_contents = YAML.load_file(docker_compose_file_path)
+
+        hl7_validator_service =
+          docker_compose_contents['services']
+            .find { |_name, service| service['image'] == 'infernocommunity/inferno-resource-validator' }
+        if hl7_validator_service.present?
+          hl7_validator_ig_volume =
+            hl7_validator_service[1]['volumes']&.find { |volume| volume.end_with? 'igs' }
+
+          expected_hl7_validator_volume = './data/igs:/app/igs'
+          error_message =
+            "Update the hl7 validator service IG volume from '#{hl7_validator_ig_volume}' " \
+            "to '#{expected_hl7_validator_volume}'"
+          expect(hl7_validator_ig_volume).to eq(expected_hl7_validator_volume), error_message
+        end
+
+        standalone_validator_service =
+          docker_compose_contents['services']
+            .find { |_name, service| service['image'] == 'infernocommunity/fhir-validator-service' }
+
+        if standalone_validator_service.present?
+          standalone_validator_ig_volume =
+            standalone_validator_service[1]['volumes']&.find { |volume| volume.end_with? 'igs' }
+
+          expected_standalone_validator_volume = './data/igs:/home/igs'
+          error_message =
+            "Update the validator service IG volume from '#{standalone_validator_ig_volume}' " \
+            "to '#{expected_standalone_validator_volume}'"
+          expect(standalone_validator_ig_volume).to eq(expected_standalone_validator_volume), error_message
+        end
+      end
+    end
   end
 
   describe 'suites' do

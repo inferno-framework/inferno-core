@@ -1,8 +1,7 @@
 /data/*.db
+/data/igs/*.tgz
 /data/pg
 /data/redis
-/db/*.db
-/igs
 /lib/inferno/public/assets*
 /lib/inferno/public/*.js
 /lib/inferno/public/*.LICENSE.txt
