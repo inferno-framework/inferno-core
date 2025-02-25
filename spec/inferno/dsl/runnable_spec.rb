@@ -213,52 +213,37 @@ RSpec.describe Inferno::DSL::Runnable do
   end
 
   describe '.replace' do
-    let(:group) do
-      Class.new(Inferno::TestGroup) do
-        test { id :abc }
-        test { id :def }
-        test { id :ghw }
-      end
-    end
-    let(:id) { 'xyz' }
+    let(:test_group) { test_groups_repo.find('auth_info-auth_info_demo') } # 'replace-repetitive_group'
 
     before do
-      group.id(SecureRandom.uuid)
+      test_group.id(SecureRandom.uuid)
     end
 
     it 'replaces a child with a another using its ID' do
-      group.test({ id: })
-      group.replace(:def, id)
+      id_to_replace = test_group.children.first.id.split('-').last
+      test_group.replace id_to_replace, 'DemoIG_STU1::DemoGroup'
 
-      expect(group.children.length).to eq(3)
-      expect(group.children.none? { |child| child.id.to_s.end_with?('def') }).to be true
-      expect(group.children[1].id.to_s.end_with?('xyz')).to be true
+      expect(test_group.children.length).to eq(2)
+      expect(test_group.children.none? { |child| child.id.to_s.end_with?('DEF') }).to be true
+      expect(test_group.children[0].id.to_s.end_with?('DemoIG_STU1::DemoGroup')).to be true
     end
 
     it 'applies block configuration to the new child' do
-      group.test({ id: })
-      group.replace(:def, id) do
-        id :new_test_id
+      id_to_replace = test_group.children.first.id.split('-').last
+      test_group.replace id_to_replace, 'DemoIG_STU1::DemoGroup' do
+        id :new_id
       end
 
-      expect(group.children.length).to eq(3)
-      expect(group.children[1].id.to_s.end_with?('new_test_id')).to be true
+      expect(test_group.children.length).to eq(2)
+      expect(test_group.children[0].id.to_s.end_with?('new_id')).to be true
     end
 
     it 'does not change children if the id to replace is not found' do
-      original_children = group.children.dup
+      original_children = test_group.children.dup
 
-      group.replace(id, :ghw)
+      test_group.replace 'test_id', 'DemoIG_STU1::DemoGroup'
 
-      expect(group.children).to eq(original_children)
-    end
-
-    it 'does not replace if the new child ID is not found in the repository' do
-      original_children = group.children.dup
-
-      group.replace(:def, id)
-
-      expect(group.children).to eq(original_children)
+      expect(test_group.children).to eq(original_children)
     end
   end
 end

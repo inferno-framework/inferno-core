@@ -476,18 +476,17 @@ module Inferno
       #     id :new_test_id
       #     config(...)
       #   end
-      #
       def replace(id_to_replace, replacement_id, &)
         index = children.find_index { |child| child.id.to_s.end_with? id_to_replace.to_s }
         return unless index
 
-        replacement_child = children.find { |child| child.id.to_s.end_with? replacement_id.to_s }
-        return unless replacement_child
+        if children[index] < Inferno::TestGroup
+          group(from: replacement_id, &)
+        else
+          test(from: replacement_id, &)
+        end
 
-        remove(replacement_id)
-        replacement_child.instance_eval(&) if block_given?
-
-        children[index] = replacement_child
+        children[index] = children.pop
       end
 
       # Remove a child test/group
