@@ -82,11 +82,17 @@ Metrics/ParameterLists:
 RSpec/AnyInstance:
   Enabled: false
 
+RSpec/BeforeAfterAll:
+  Enabled: false
+
 RSpec/DescribeClass:
   Exclude:
     - 'spec/requests/**/*'
 
 RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/SkipBlockInsideExample:
   Enabled: false
 
 RSpec/SpecFilePathFormat:
