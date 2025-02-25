@@ -22,7 +22,8 @@ module Inferno
 
       # Halt execution of the current test and mark it as skipped. This method
       # can also take a block with an assertion, and if the assertion fails, the
-      # test will skip rather than fail.
+      # test will skip rather than fail. The message parameter is ignored if a
+      # block is provided.
       #
       # @param message [String]
       # @return [void]
@@ -55,7 +56,8 @@ module Inferno
 
       # Halt execution of the current test and mark it as omitted. This method
       # can also take a block with an assertion, and if the assertion fails, the
-      # test will omit rather than fail.
+      # test will omit rather than fail. The message parameter is ignored if a
+      # block is provided.
       #
       # @param message [String]
       # @return [void]
