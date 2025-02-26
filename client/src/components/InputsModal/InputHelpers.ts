@@ -164,5 +164,5 @@ export const isJsonString = (str: string) => {
   } catch {
     return false;
   }
-  return typeof value === 'object' && value !== null;
+  return !!value && typeof value === 'object';
 };
