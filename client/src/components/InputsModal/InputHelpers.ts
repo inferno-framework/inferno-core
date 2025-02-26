@@ -158,18 +158,11 @@ export const serializeMap = (
 
 // Check if string str is JSON object, exempting other types
 export const isJsonString = (str: string) => {
+  let value: unknown = str;
   try {
-    JSON.parse(str);
+    value = JSON.parse(str);
   } catch {
     return false;
   }
-  // Non-object types are valid JSON, so we have to check those
-  return (
-    isNaN(parseFloat(str)) &&
-    str !== '' &&
-    str !== 'true' &&
-    str !== 'false' &&
-    str !== 'null' &&
-    str !== 'undefined'
-  );
+  return typeof value === 'object' && value !== null;
 };
