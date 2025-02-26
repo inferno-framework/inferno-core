@@ -213,12 +213,12 @@ module Inferno
       # @return [void]
       def assert_must_support_elements_present(resources, profile_url, validator_name: :default, metadata: nil,
                                                requirement_extension: nil, &)
-        missing_elements = missing_must_support_elements(resources, profile_url, validator_name, metadata,
-                                                         requirement_extension, &)
+        missing_elements = missing_must_support_elements(resources, profile_url, validator_name:, metadata:,
+                                                                                 requirement_extension:, &)
         assert missing_elements.empty?, missing_must_support_elements_message(missing_elements, resources)
       end
 
-      # Check whether any Must Support elements defined on the given profile are missing in the given resources.
+      # Find any Must Support elements defined on the given profile that are missing in the given resources.
       # Must Support elements are identified on the profile StructureDefinition and pre-parsed into metadata,
       # which may be customized prior to the check by passing a block. Alternate metadata may be provided directly.
       # Set test suite config flag debug_must_support_metadata: true to log the metadata to a file for debugging.
@@ -230,17 +230,9 @@ module Inferno
       #        if provided the check will use this instead of re-generating metadata from the profile
       # @param requirement_extension [String] Extension URL that implies "required" as an alternative to the MS flag
       # @yield [Metadata] Customize the metadata before running the test
-      # @return [Array<Boolean,String>] Boolean result and Message
-      def must_support_elements_missing?(resources, profile_url, validator_name: :default, metadata: nil,
-                                         requirement_extension: nil, &)
-        missing_elements = missing_must_support_elements(resources, profile_url, validator_name, metadata,
-                                                         requirement_extension, &)
-
-        [missing_elements.any?, missing_must_support_elements_message(missing_elements, resources)]
-      end
-
-      # @private
-      def missing_must_support_elements(resources, profile_url, validator_name, metadata, requirement_extension, &)
+      # @return [Array<String>] List of missing elements
+      def missing_must_support_elements(resources, profile_url, validator_name: :default, metadata: nil,
+                                        requirement_extension: nil, &)
         rule = Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent.new
         debug_metadata = config.options[:debug_must_support_metadata]
 
@@ -250,20 +242,6 @@ module Inferno
           ig, profile = find_ig_and_profile(profile_url, validator_name)
           rule.perform_must_support_test(profile, resources, ig, debug_metadata:, requirement_extension:, &)
         end
-      end
-
-      # @private
-      def find_ig_and_profile(profile_url, validator_name)
-        validator = find_validator(validator_name)
-        if validator.is_a? Inferno::DSL::FHIRResourceValidation::Validator
-          validator.igs.each do |ig_id|
-            ig = Inferno::Repositories::IGs.new.find_or_load(ig_id)
-            profile = ig.profile_by_url(profile_url)
-            return ig, profile if profile
-          end
-        end
-
-        raise "Unable to find profile #{profile_url} in any IG defined for validator #{validator_name}"
       end
 
       # @private
