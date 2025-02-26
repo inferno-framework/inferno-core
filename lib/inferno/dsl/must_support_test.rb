@@ -1,5 +1,11 @@
 module Inferno
   module DSL
+    # The MustSupportTest module contains the logic used behind the scenes of tests
+    # that check "All Must Support elements are present".
+    # Generally, test authors should use `assert_must_support_elements_present`
+    # or `missing_must_support_elements` DSL methods instead of this.
+    # This module is exposed to support the transition of existing tests that
+    # call into these methods directly.
     module MustSupportTest
       def perform_test(resources)
         missing_elements(resources)
