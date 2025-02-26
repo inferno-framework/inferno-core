@@ -154,3 +154,13 @@ export const serializeMap = (
     ? JSON.stringify(flatObj, null, 2)
     : YAML.dump(flatObj, { lineWidth: -1 });
 };
+
+// Check if string str is JSON parseable
+export const isJsonString = (str: string) => {
+  try {
+    JSON.parse(str);
+  } catch {
+    return false;
+  }
+  return true;
+};
