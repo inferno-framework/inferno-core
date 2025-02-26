@@ -6,6 +6,7 @@ RSpec.describe Inferno::DSL::Runnable do
   include RequestHelpers
   let(:test_suites_repo) { Inferno::Repositories::TestSuites.new }
   let(:test_groups_repo) { Inferno::Repositories::TestGroups.new }
+  let(:tests_repo) { Inferno::Repositories::Tests.new }
 
   describe '.resume_test_route' do
     let(:test_suite) { test_suites_repo.find('demo') }
@@ -206,9 +207,11 @@ RSpec.describe Inferno::DSL::Runnable do
         test { id :ghw }
       end
 
+      full_id = group.children[1].id
       group.remove :def
 
       expect(group.children.length).to eq(2)
+      expect(tests_repo.find(full_id)).to be_nil
     end
   end
 
@@ -219,23 +222,29 @@ RSpec.describe Inferno::DSL::Runnable do
       test_group.id(SecureRandom.uuid)
     end
 
-    it 'replaces a child with a another using its ID' do
-      id_to_replace = test_group.children.first.id.split('-').last
-      test_group.replace id_to_replace, 'DemoIG_STU1::DemoGroup'
+    it 'replaces a child with a new one using its ID' do
+      child = test_group.children.first
+      global_id = child.id.split('-').last
+      test_group.replace global_id, 'DemoIG_STU1::DemoGroup'
 
       expect(test_group.children.length).to eq(2)
-      expect(test_group.children.none? { |child| child.id.to_s.end_with?('DEF') }).to be true
+      expect(test_group.children.none? { |c| c.id.to_s.end_with?('DEF') }).to be true
       expect(test_group.children[0].id.to_s.end_with?('DemoIG_STU1::DemoGroup')).to be true
+      expect(test_groups_repo.find(child.id)).to be_nil
+      expect(child.children.filter_map { |c| tests_repo.find(c.id) }).to be_empty
     end
 
-    it 'applies block configuration to the new child' do
-      id_to_replace = test_group.children.first.id.split('-').last
-      test_group.replace id_to_replace, 'DemoIG_STU1::DemoGroup' do
+    it 'applies block configuration to the new child when block given' do
+      child = test_group.children.first
+      global_id = child.id.split('-').last
+      test_group.replace global_id, 'DemoIG_STU1::DemoGroup' do
         id :new_id
       end
 
       expect(test_group.children.length).to eq(2)
       expect(test_group.children[0].id.to_s.end_with?('new_id')).to be true
+      expect(test_groups_repo.find(child.id)).to be_nil
+      expect(child.children.filter_map { |c| tests_repo.find(c.id) }).to be_empty
     end
 
     it 'raises an error if the id to replace is not found' do
