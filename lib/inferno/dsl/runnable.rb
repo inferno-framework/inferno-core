@@ -81,6 +81,12 @@ module Inferno
         repository.insert(self)
       end
 
+      # @private
+      def remove_self_from_repository
+        repository.remove(self)
+        children.each(&:remove_self_from_repository)
+      end
+
       # An instance of the repository for the class using this module
       # @private
       def repository
@@ -486,7 +492,8 @@ module Inferno
           test(from: replacement_id, &)
         end
 
-        children[index] = children.pop
+        remove(id_to_replace)
+        children.insert(index, children.pop)
       end
 
       # Remove a child test/group
@@ -499,7 +506,9 @@ module Inferno
       #
       #   remove :test2
       def remove(id_to_remove)
+        removed = children.select { |child| child.id.to_s.end_with? id_to_remove.to_s }
         children.reject! { |child| child.id.to_s.end_with? id_to_remove.to_s }
+        removed.each(&:remove_self_from_repository)
       end
 
       # @private
