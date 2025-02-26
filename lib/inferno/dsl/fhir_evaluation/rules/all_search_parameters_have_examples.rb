@@ -40,7 +40,13 @@ module Inferno
             # Assume that all params have an expression (fhirpath)
             # This is not guaranteed since the field is 0..1
             # but without it there's no other way to select a value
-            return true unless param.expression
+            # Return warning if params don't include expression
+            unless param.expression
+              message = "Search parameter #{param.url} doesn't have an expression."
+              result = EvaluationResult.new(message, severity: 'warning', rule: self)
+              context.add_result result
+              return false
+            end
 
             used = false
 
