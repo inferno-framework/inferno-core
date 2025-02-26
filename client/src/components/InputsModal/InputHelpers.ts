@@ -156,13 +156,20 @@ export const serializeMap = (
     : YAML.dump(flatObj, { lineWidth: -1 });
 };
 
-// Check if string str is JSON object, exempting numbers
+// Check if string str is JSON object, exempting other types
 export const isJsonString = (str: string) => {
   try {
     JSON.parse(str);
   } catch {
     return false;
   }
-  // Numbers are valid JSON, so we have to check that the str isn't a number string
-  return isNaN(parseFloat(str));
+  // Non-object types are valid JSON, so we have to check those
+  return (
+    isNaN(parseFloat(str)) &&
+    str !== '' &&
+    str !== 'true' &&
+    str !== 'false' &&
+    str !== 'null' &&
+    str !== 'undefined'
+  );
 };
