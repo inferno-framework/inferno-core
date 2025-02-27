@@ -125,5 +125,11 @@ module Inferno
         super("ID '#{id}' already exists. Ensure the uniqueness of the IDs.")
       end
     end
+
+    class RunnableChildNotFoundException < StandardError
+      def initialize(id, runnable)
+        super("Could not find a child with an ID ending in '#{id}' for '#{runnable}'.")
+      end
+    end
   end
 end

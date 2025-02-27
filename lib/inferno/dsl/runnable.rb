@@ -81,6 +81,12 @@ module Inferno
         repository.insert(self)
       end
 
+      # @private
+      def remove_self_from_repository
+        repository.remove(self)
+        children.each(&:remove_self_from_repository)
+      end
+
       # An instance of the repository for the class using this module
       # @private
       def repository
@@ -464,6 +470,32 @@ module Inferno
           end
       end
 
+      # Replace a child test/group
+      #
+      # @param id_to_replace [Symbol, String] The ID of the child to be replaced.
+      # @param replacement_id [Symbol, String] The global ID of the group/test that will take the
+      #   place of the child being replaced.
+      # @yield [Inferno::TestGroup, Inferno::Test] Optional block executed in the
+      #    context of the replacement child for additional configuration.
+      # @example
+      #   replace :test2, :test4 do
+      #     id :new_test_id
+      #     config(...)
+      #   end
+      def replace(id_to_replace, replacement_id, &)
+        index = children.find_index { |child| child.id.to_s.end_with? id_to_replace.to_s }
+        raise Exceptions::RunnableChildNotFoundException.new(id_to_replace, self) unless index
+
+        if children[index] < Inferno::TestGroup
+          group(from: replacement_id, &)
+        else
+          test(from: replacement_id, &)
+        end
+
+        remove(id_to_replace)
+        children.insert(index, children.pop)
+      end
+
       # Remove a child test/group
       #
       # @param id_to_remove [Symbol, String]
@@ -474,7 +506,9 @@ module Inferno
       #
       #   remove :test2
       def remove(id_to_remove)
+        removed = children.select { |child| child.id.to_s.end_with? id_to_remove.to_s }
         children.reject! { |child| child.id.to_s.end_with? id_to_remove.to_s }
+        removed.each(&:remove_self_from_repository)
       end
 
       # @private

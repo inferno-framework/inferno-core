@@ -1,3 +1,5 @@
+require_relative '../dev_demo_ig_stu1/groups/demo_group'
+
 module AuthInfoConstants
   AUTH_URL = 'https://inferno-qa.healthit.gov/reference-server/oauth/authorization'.freeze
   TOKEN_URL = 'https://inferno-qa.healthit.gov/reference-server/oauth/token'.freeze
