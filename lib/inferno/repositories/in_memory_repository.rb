@@ -16,6 +16,13 @@ module Inferno
         entity
       end
 
+      def remove(entity)
+        return unless exists?(entity.id)
+
+        all.delete(entity)
+        all_by_id.delete(entity.id.to_s)
+      end
+
       def find(id)
         all_by_id[id.to_s]
       end
