@@ -43,7 +43,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       ]
     end
 
-    validator do
+    fhir_resource_validator do
       exclude_message { |message| message.type == 'info' }
     end
 
