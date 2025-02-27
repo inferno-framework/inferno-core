@@ -1,0 +1,2990 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="../../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent";
+  relpath = '../../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../../_index.html">Index (A)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../../Inferno.html" title="Inferno (module)">Inferno</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../FHIREvaluation.html" title="Inferno::DSL::FHIREvaluation (module)">FHIREvaluation</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Rules.html" title="Inferno::DSL::FHIREvaluation::Rules (module)">Rules</a></span></span>
+     &raquo; 
+    <span class="title">AllMustSupportsPresent</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName"><span class='object_link'><a href="../Rule.html" title="Inferno::DSL::FHIREvaluation::Rule (class)">Inferno::DSL::FHIREvaluation::Rule</a></span></span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next"><span class='object_link'><a href="../Rule.html" title="Inferno::DSL::FHIREvaluation::Rule (class)">Inferno::DSL::FHIREvaluation::Rule</a></span></li>
+          
+            <li class="next">Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="../ProfileConformanceHelper.html" title="Inferno::DSL::FHIREvaluation::ProfileConformanceHelper (module)">ProfileConformanceHelper</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html" title="Inferno::DSL::FHIRResourceNavigation (module)">Inferno::DSL::FHIRResourceNavigation</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>AllMustSupportsPresent checks that at least one instance of every MustSupport element
+ defined in the given profiles is populated in the given data.
+MustSupport elements include plain elements, extensions, and slices.
+The basis of the test is metadata generated in a first pass that processes the profile into a list of fields,
+ then the second pass check that all elements in the list are present.
+This metadata approach allows for customizing what is checked, for example elements may be added or removed,
+ or choices may be defined where only one choice of multiple must be populated to demonstrate support.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../ProfileConformanceHelper.html" title="Inferno::DSL::FHIREvaluation::ProfileConformanceHelper (module)">ProfileConformanceHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../ProfileConformanceHelper.html#DEFAULT_OPTIONS-constant" title="Inferno::DSL::FHIREvaluation::ProfileConformanceHelper::DEFAULT_OPTIONS (constant)">ProfileConformanceHelper::DEFAULT_OPTIONS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../../FHIRResourceNavigation.html" title="Inferno::DSL::FHIRResourceNavigation (module)">Inferno::DSL::FHIRResourceNavigation</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../FHIRResourceNavigation.html#DAR_EXTENSION_URL-constant" title="Inferno::DSL::FHIRResourceNavigation::DAR_EXTENSION_URL (constant)">Inferno::DSL::FHIRResourceNavigation::DAR_EXTENSION_URL</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#PRIMITIVE_DATA_TYPES-constant" title="Inferno::DSL::FHIRResourceNavigation::PRIMITIVE_DATA_TYPES (constant)">Inferno::DSL::FHIRResourceNavigation::PRIMITIVE_DATA_TYPES</a></span></p>
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#metadata-instance_method" title="#metadata (instance method)">#<strong>metadata</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute metadata.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#any_choice_supported%3F-instance_method" title="#any_choice_supported? (instance method)">#<strong>any_choice_supported?</strong>(choices)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#any_elements_choice_supported%3F-instance_method" title="#any_elements_choice_supported? (instance method)">#<strong>any_elements_choice_supported?</strong>(choices)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#any_extension_ids_choice_supported%3F-instance_method" title="#any_extension_ids_choice_supported? (instance method)">#<strong>any_extension_ids_choice_supported?</strong>(choices)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#any_path_choice_supported%3F-instance_method" title="#any_path_choice_supported? (instance method)">#<strong>any_path_choice_supported?</strong>(choices)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#any_slice_names_choice_supported%3F-instance_method" title="#any_slice_names_choice_supported? (instance method)">#<strong>any_slice_names_choice_supported?</strong>(choices)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#check-instance_method" title="#check (instance method)">#<strong>check</strong>(context)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>check is invoked from the evaluator CLI and applies the logic for this Rule to the provided data.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#extract_metadata-instance_method" title="#extract_metadata (instance method)">#<strong>extract_metadata</strong>(profile, ig, requirement_extension: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_missing_elements-instance_method" title="#find_missing_elements (instance method)">#<strong>find_missing_elements</strong>(resources, must_support_elements)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_pattern_codeable_concept_slice-instance_method" title="#find_pattern_codeable_concept_slice (instance method)">#<strong>find_pattern_codeable_concept_slice</strong>(element, discriminator)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_pattern_coding_slice-instance_method" title="#find_pattern_coding_slice (instance method)">#<strong>find_pattern_coding_slice</strong>(element, discriminator)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_pattern_identifier_slice-instance_method" title="#find_pattern_identifier_slice (instance method)">#<strong>find_pattern_identifier_slice</strong>(element, discriminator)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_required_binding_slice-instance_method" title="#find_required_binding_slice (instance method)">#<strong>find_required_binding_slice</strong>(element, discriminator)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_slice-instance_method" title="#find_slice (instance method)">#<strong>find_slice</strong>(resource, path, discriminator)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_slice_by_values-instance_method" title="#find_slice_by_values (instance method)">#<strong>find_slice_by_values</strong>(element, value_definitions)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_type_slice-instance_method" title="#find_type_slice (instance method)">#<strong>find_type_slice</strong>(element, discriminator)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_value_slice-instance_method" title="#find_value_slice (instance method)">#<strong>find_value_slice</strong>(element, discriminator)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#handle_must_support_choices-instance_method" title="#handle_must_support_choices (instance method)">#<strong>handle_must_support_choices</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#handle_must_support_element_choices-instance_method" title="#handle_must_support_element_choices (instance method)">#<strong>handle_must_support_element_choices</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#handle_must_support_extension_choices-instance_method" title="#handle_must_support_extension_choices (instance method)">#<strong>handle_must_support_extension_choices</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#handle_must_support_slice_choices-instance_method" title="#handle_must_support_slice_choices (instance method)">#<strong>handle_must_support_slice_choices</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#matches_fixed_value%3F-instance_method" title="#matches_fixed_value? (instance method)">#<strong>matches_fixed_value?</strong>(value, fixed_value)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#matching_without_extensions%3F-instance_method" title="#matching_without_extensions? (instance method)">#<strong>matching_without_extensions?</strong>(value, ms_extension_urls, fixed_value)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#missing_element_string-instance_method" title="#missing_element_string (instance method)">#<strong>missing_element_string</strong>(element_definition)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#missing_elements-instance_method" title="#missing_elements (instance method)">#<strong>missing_elements</strong>(resources = [])  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#missing_extensions-instance_method" title="#missing_extensions (instance method)">#<strong>missing_extensions</strong>(resources = [])  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#missing_must_support_strings-instance_method" title="#missing_must_support_strings (instance method)">#<strong>missing_must_support_strings</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#missing_slices-instance_method" title="#missing_slices (instance method)">#<strong>missing_slices</strong>(resources = [])  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#must_support_elements-instance_method" title="#must_support_elements (instance method)">#<strong>must_support_elements</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#must_support_extensions-instance_method" title="#must_support_extensions (instance method)">#<strong>must_support_extensions</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#must_support_slices-instance_method" title="#must_support_slices (instance method)">#<strong>must_support_slices</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#perform_must_support_test-instance_method" title="#perform_must_support_test (instance method)">#<strong>perform_must_support_test</strong>(profile, resources, ig, debug_metadata: false, requirement_extension: nil) {|Metadata| ... } &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>perform_must_support_test is invoked from DSL assertions, allows customizing the metadata with a block.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#perform_must_support_test_with_metadata-instance_method" title="#perform_must_support_test_with_metadata (instance method)">#<strong>perform_must_support_test_with_metadata</strong>(resources, profile_metadata, debug_metadata: false)  &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>perform_must_support_test_with_metadata is invoked from check and perform_must_support_test, with the metadata to be used as the basis for the test.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#pick_resources_for_profile-instance_method" title="#pick_resources_for_profile (instance method)">#<strong>pick_resources_for_profile</strong>(profile, context)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#resource_populates_element%3F-instance_method" title="#resource_populates_element? (instance method)">#<strong>resource_populates_element?</strong>(resource, element_definition)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#value_without_extensions%3F-instance_method" title="#value_without_extensions? (instance method)">#<strong>value_without_extensions?</strong>(value)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#write_metadata_for_debugging-instance_method" title="#write_metadata_for_debugging (instance method)">#<strong>write_metadata_for_debugging</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../ProfileConformanceHelper.html" title="Inferno::DSL::FHIREvaluation::ProfileConformanceHelper (module)">ProfileConformanceHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../ProfileConformanceHelper.html#conforms_to_profile%3F-instance_method" title="Inferno::DSL::FHIREvaluation::ProfileConformanceHelper#conforms_to_profile? (method)">#conforms_to_profile?</a></span>, <span class='object_link'><a href="../ProfileConformanceHelper.html#declares_meta_profile%3F-instance_method" title="Inferno::DSL::FHIREvaluation::ProfileConformanceHelper#declares_meta_profile? (method)">#declares_meta_profile?</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../../FHIRResourceNavigation.html" title="Inferno::DSL::FHIRResourceNavigation (module)">Inferno::DSL::FHIRResourceNavigation</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../FHIRResourceNavigation.html#current_and_child_values_match%3F-instance_method" title="Inferno::DSL::FHIRResourceNavigation#current_and_child_values_match? (method)">#current_and_child_values_match?</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#find_a_value_at-instance_method" title="Inferno::DSL::FHIRResourceNavigation#find_a_value_at (method)">#find_a_value_at</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#find_in_elements-instance_method" title="Inferno::DSL::FHIRResourceNavigation#find_in_elements (method)">#find_in_elements</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#find_slice_via_discriminator-instance_method" title="Inferno::DSL::FHIRResourceNavigation#find_slice_via_discriminator (method)">#find_slice_via_discriminator</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#flatten_bundles-instance_method" title="Inferno::DSL::FHIRResourceNavigation#flatten_bundles (method)">#flatten_bundles</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#get_next_value-instance_method" title="Inferno::DSL::FHIRResourceNavigation#get_next_value (method)">#get_next_value</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#get_primitive_type_value-instance_method" title="Inferno::DSL::FHIRResourceNavigation#get_primitive_type_value (method)">#get_primitive_type_value</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#local_field_name-instance_method" title="Inferno::DSL::FHIRResourceNavigation#local_field_name (method)">#local_field_name</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#matching_pattern_codeable_concept_slice%3F-instance_method" title="Inferno::DSL::FHIRResourceNavigation#matching_pattern_codeable_concept_slice? (method)">#matching_pattern_codeable_concept_slice?</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#matching_pattern_coding_slice%3F-instance_method" title="Inferno::DSL::FHIRResourceNavigation#matching_pattern_coding_slice? (method)">#matching_pattern_coding_slice?</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#matching_pattern_identifier_slice%3F-instance_method" title="Inferno::DSL::FHIRResourceNavigation#matching_pattern_identifier_slice? (method)">#matching_pattern_identifier_slice?</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#matching_required_binding_slice%3F-instance_method" title="Inferno::DSL::FHIRResourceNavigation#matching_required_binding_slice? (method)">#matching_required_binding_slice?</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#matching_slice%3F-instance_method" title="Inferno::DSL::FHIRResourceNavigation#matching_slice? (method)">#matching_slice?</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#matching_type_slice%3F-instance_method" title="Inferno::DSL::FHIRResourceNavigation#matching_type_slice? (method)">#matching_type_slice?</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#matching_value_slice%3F-instance_method" title="Inferno::DSL::FHIRResourceNavigation#matching_value_slice? (method)">#matching_value_slice?</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#resolve_path-instance_method" title="Inferno::DSL::FHIRResourceNavigation#resolve_path (method)">#resolve_path</a></span>, <span class='object_link'><a href="../../FHIRResourceNavigation.html#verify_slice_by_values-instance_method" title="Inferno::DSL::FHIRResourceNavigation#verify_slice_by_values (method)">#verify_slice_by_values</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="metadata=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="metadata-instance_method">
+  
+    #<strong>metadata</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute metadata.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+19
+20
+21</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 19</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_metadata'>metadata</span>
+  <span class='ivar'>@metadata</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="any_choice_supported?-instance_method">
+  
+    #<strong>any_choice_supported?</strong>(choices)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+158
+159
+160
+161
+162
+163
+164
+165</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 158</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_any_choice_supported?'>any_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_choices'>choices</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='id identifier rubyid_any_path_choice_supported?'>any_path_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span> <span class='op'>||</span>
+    <span class='id identifier rubyid_any_extension_ids_choice_supported?'>any_extension_ids_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span> <span class='op'>||</span>
+    <span class='id identifier rubyid_any_slice_names_choice_supported?'>any_slice_names_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span> <span class='op'>||</span>
+    <span class='id identifier rubyid_any_elements_choice_supported?'>any_elements_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="any_elements_choice_supported?-instance_method">
+  
+    #<strong>any_elements_choice_supported?</strong>(choices)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+187
+188
+189
+190
+191
+192
+193
+194
+195</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 187</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_any_elements_choice_supported?'>any_elements_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_choices'>choices</span><span class='lbracket'>[</span><span class='symbol'>:elements</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='id identifier rubyid_choices'>choices</span><span class='lbracket'>[</span><span class='symbol'>:elements</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_choice'>choice</span><span class='op'>|</span>
+    <span class='id identifier rubyid_missing_elements'>missing_elements</span><span class='period'>.</span><span class='id identifier rubyid_none?'>none?</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_element'>element</span><span class='op'>|</span>
+      <span class='id identifier rubyid_element'>element</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='id identifier rubyid_choice'>choice</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_element'>element</span><span class='lbracket'>[</span><span class='symbol'>:fixed_value</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='id identifier rubyid_choice'>choice</span><span class='lbracket'>[</span><span class='symbol'>:fixed_value</span><span class='rbracket'>]</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="any_extension_ids_choice_supported?-instance_method">
+  
+    #<strong>any_extension_ids_choice_supported?</strong>(choices)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+173
+174
+175
+176
+177
+178
+179</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 173</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_any_extension_ids_choice_supported?'>any_extension_ids_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_choices'>choices</span><span class='lbracket'>[</span><span class='symbol'>:extension_ids</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='id identifier rubyid_choices'>choices</span><span class='lbracket'>[</span><span class='symbol'>:extension_ids</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_extension_id'>extension_id</span><span class='op'>|</span>
+    <span class='id identifier rubyid_missing_extensions'>missing_extensions</span><span class='period'>.</span><span class='id identifier rubyid_none?'>none?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_extension'>extension</span><span class='op'>|</span> <span class='id identifier rubyid_extension'>extension</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='id identifier rubyid_extension_id'>extension_id</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="any_path_choice_supported?-instance_method">
+  
+    #<strong>any_path_choice_supported?</strong>(choices)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+167
+168
+169
+170
+171</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 167</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_any_path_choice_supported?'>any_path_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_choices'>choices</span><span class='lbracket'>[</span><span class='symbol'>:paths</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='id identifier rubyid_choices'>choices</span><span class='lbracket'>[</span><span class='symbol'>:paths</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_path'>path</span><span class='op'>|</span> <span class='id identifier rubyid_missing_elements'>missing_elements</span><span class='period'>.</span><span class='id identifier rubyid_none?'>none?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_element'>element</span><span class='op'>|</span> <span class='id identifier rubyid_element'>element</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='id identifier rubyid_path'>path</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="any_slice_names_choice_supported?-instance_method">
+  
+    #<strong>any_slice_names_choice_supported?</strong>(choices)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+181
+182
+183
+184
+185</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 181</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_any_slice_names_choice_supported?'>any_slice_names_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_choices'>choices</span><span class='lbracket'>[</span><span class='symbol'>:slice_names</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='id identifier rubyid_choices'>choices</span><span class='lbracket'>[</span><span class='symbol'>:slice_names</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_slice_name'>slice_name</span><span class='op'>|</span> <span class='id identifier rubyid_missing_slices'>missing_slices</span><span class='period'>.</span><span class='id identifier rubyid_none?'>none?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_slice'>slice</span><span class='op'>|</span> <span class='id identifier rubyid_slice'>slice</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='id identifier rubyid_slice_name'>slice_name</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="check-instance_method">
+  
+    #<strong>check</strong>(context)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>check is invoked from the evaluator CLI and applies the logic for this Rule to the provided data.
+At least one instance of every MustSupport element defined in the profiles must be populated in the data.
+Findings from the rule will be added to context.results.
+The logic is configurable with a few options, but this method does not support customizing the metadata.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>context</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../EvaluationContext.html" title="Inferno::DSL::FHIREvaluation::EvaluationContext (class)">Inferno::DSL::FHIREvaluation::EvaluationContext</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 27</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_check'>check</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_missing_items_by_profile'>missing_items_by_profile</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_ig'>ig</span><span class='period'>.</span><span class='id identifier rubyid_profiles'>profiles</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_profile'>profile</span><span class='op'>|</span>
+    <span class='id identifier rubyid_resources'>resources</span> <span class='op'>=</span> <span class='id identifier rubyid_pick_resources_for_profile'>pick_resources_for_profile</span><span class='lparen'>(</span><span class='id identifier rubyid_profile'>profile</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_resources'>resources</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+      <span class='id identifier rubyid_missing_items_by_profile'>missing_items_by_profile</span><span class='lbracket'>[</span><span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_url'>url</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>No matching resources were found to check</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+      <span class='kw'>next</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_requirement_extension'>requirement_extension</span> <span class='op'>=</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Rule</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>AllMustSupportsPresent</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>RequirementExtensionUrl</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_debug_metadata'>debug_metadata</span> <span class='op'>=</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Rule</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>AllMustSupportsPresent</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>WriteMetadataForDebugging</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_profile_metadata'>profile_metadata</span> <span class='op'>=</span> <span class='id identifier rubyid_extract_metadata'>extract_metadata</span><span class='lparen'>(</span><span class='id identifier rubyid_profile'>profile</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_ig'>ig</span><span class='comma'>,</span> <span class='label'>requirement_extension:</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_missing_items'>missing_items</span> <span class='op'>=</span> <span class='id identifier rubyid_perform_must_support_test_with_metadata'>perform_must_support_test_with_metadata</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_profile_metadata'>profile_metadata</span><span class='comma'>,</span> <span class='label'>debug_metadata:</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_missing_items_by_profile'>missing_items_by_profile</span><span class='lbracket'>[</span><span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_url'>url</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_missing_items'>missing_items</span> <span class='kw'>if</span> <span class='id identifier rubyid_missing_items'>missing_items</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_missing_items_by_profile'>missing_items_by_profile</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span><span class='period'>.</span><span class='id identifier rubyid_zero?'>zero?</span>
+    <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../EvaluationResult.html" title="Inferno::DSL::FHIREvaluation::EvaluationResult (class)">EvaluationResult</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../EvaluationResult.html#initialize-instance_method" title="Inferno::DSL::FHIREvaluation::EvaluationResult#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>All MustSupports are present</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>severity:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>success</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>rule:</span> <span class='kw'>self</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Found Profiles with not all MustSupports represented:</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_missing_items_by_profile'>missing_items_by_profile</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_profile_url'>profile_url</span><span class='comma'>,</span> <span class='id identifier rubyid_missing_items'>missing_items</span><span class='op'>|</span>
+      <span class='id identifier rubyid_message'>message</span> <span class='op'>+=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n\t\t</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_profile_url'>profile_url</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_missing_items'>missing_items</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../EvaluationResult.html" title="Inferno::DSL::FHIREvaluation::EvaluationResult (class)">EvaluationResult</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../EvaluationResult.html#initialize-instance_method" title="Inferno::DSL::FHIREvaluation::EvaluationResult#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='comma'>,</span> <span class='label'>rule:</span> <span class='kw'>self</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_add_result'>add_result</span> <span class='id identifier rubyid_result'>result</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="extract_metadata-instance_method">
+  
+    #<strong>extract_metadata</strong>(profile, ig, requirement_extension: nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+112
+113
+114</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 112</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_extract_metadata'>extract_metadata</span><span class='lparen'>(</span><span class='id identifier rubyid_profile'>profile</span><span class='comma'>,</span> <span class='id identifier rubyid_ig'>ig</span><span class='comma'>,</span> <span class='label'>requirement_extension:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../../MustSupportMetadataExtractor.html" title="Inferno::DSL::MustSupportMetadataExtractor (class)">MustSupportMetadataExtractor</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../../MustSupportMetadataExtractor.html#initialize-instance_method" title="Inferno::DSL::MustSupportMetadataExtractor#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_snapshot'>snapshot</span><span class='period'>.</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_ig'>ig</span><span class='comma'>,</span> <span class='id identifier rubyid_requirement_extension'>requirement_extension</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_missing_elements-instance_method">
+  
+    #<strong>find_missing_elements</strong>(resources, must_support_elements)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+242
+243
+244
+245
+246</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 242</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_missing_elements'>find_missing_elements</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_must_support_elements'>must_support_elements</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_must_support_elements'>must_support_elements</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_element_definition'>element_definition</span><span class='op'>|</span>
+    <span class='id identifier rubyid_resources'>resources</span><span class='period'>.</span><span class='id identifier rubyid_none?'>none?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_resource'>resource</span><span class='op'>|</span> <span class='id identifier rubyid_resource_populates_element?'>resource_populates_element?</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_element_definition'>element_definition</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_pattern_codeable_concept_slice-instance_method">
+  
+    #<strong>find_pattern_codeable_concept_slice</strong>(element, discriminator)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+318
+319
+320
+321
+322
+323</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 318</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_pattern_codeable_concept_slice'>find_pattern_codeable_concept_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_coding_path'>coding_path</span> <span class='op'>=</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>.coding</span><span class='tstring_end'>&quot;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>coding</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_find_a_value_at'>find_a_value_at</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_coding_path'>coding_path</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_coding'>coding</span><span class='op'>|</span>
+    <span class='id identifier rubyid_coding'>coding</span><span class='period'>.</span><span class='id identifier rubyid_code'>code</span> <span class='op'>==</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:code</span><span class='rbracket'>]</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_coding'>coding</span><span class='period'>.</span><span class='id identifier rubyid_system'>system</span> <span class='op'>==</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:system</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_pattern_coding_slice-instance_method">
+  
+    #<strong>find_pattern_coding_slice</strong>(element, discriminator)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+325
+326
+327
+328
+329
+330</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 325</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_pattern_coding_slice'>find_pattern_coding_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_coding_path'>coding_path</span> <span class='op'>=</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>?</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_find_a_value_at'>find_a_value_at</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_coding_path'>coding_path</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_coding'>coding</span><span class='op'>|</span>
+    <span class='id identifier rubyid_coding'>coding</span><span class='period'>.</span><span class='id identifier rubyid_code'>code</span> <span class='op'>==</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:code</span><span class='rbracket'>]</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_coding'>coding</span><span class='period'>.</span><span class='id identifier rubyid_system'>system</span> <span class='op'>==</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:system</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_pattern_identifier_slice-instance_method">
+  
+    #<strong>find_pattern_identifier_slice</strong>(element, discriminator)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+332
+333
+334
+335
+336</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 332</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_pattern_identifier_slice'>find_pattern_identifier_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_find_a_value_at'>find_a_value_at</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_identifier'>identifier</span><span class='op'>|</span>
+    <span class='id identifier rubyid_identifier'>identifier</span><span class='period'>.</span><span class='id identifier rubyid_system'>system</span> <span class='op'>==</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:system</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_required_binding_slice-instance_method">
+  
+    #<strong>find_required_binding_slice</strong>(element, discriminator)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+364
+365
+366
+367
+368
+369
+370</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 364</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_required_binding_slice'>find_required_binding_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_coding_path'>coding_path</span> <span class='op'>=</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>.coding</span><span class='tstring_end'>&quot;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>coding</span><span class='tstring_end'>&#39;</span></span>
+
+  <span class='id identifier rubyid_find_a_value_at'>find_a_value_at</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_coding_path'>coding_path</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_coding'>coding</span><span class='op'>|</span>
+    <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:values</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_value'>value</span><span class='op'>|</span> <span class='id identifier rubyid_value'>value</span><span class='lbracket'>[</span><span class='symbol'>:system</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='id identifier rubyid_coding'>coding</span><span class='period'>.</span><span class='id identifier rubyid_system'>system</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_value'>value</span><span class='lbracket'>[</span><span class='symbol'>:code</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='id identifier rubyid_coding'>coding</span><span class='period'>.</span><span class='id identifier rubyid_code'>code</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_slice-instance_method">
+  
+    #<strong>find_slice</strong>(resource, path, discriminator)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 296</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_slice'>find_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+  <span class='comment'># TODO: there is a lot of similarity
+</span>  <span class='comment'># between this and FHIRResourceNavigation.matching_slice?
+</span>  <span class='comment'># Can these be combined?
+</span>  <span class='id identifier rubyid_find_a_value_at'>find_a_value_at</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_element'>element</span><span class='op'>|</span>
+    <span class='kw'>case</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:type</span><span class='rbracket'>]</span>
+    <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>patternCodeableConcept</span><span class='tstring_end'>&#39;</span></span>
+      <span class='id identifier rubyid_find_pattern_codeable_concept_slice'>find_pattern_codeable_concept_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>patternCoding</span><span class='tstring_end'>&#39;</span></span>
+      <span class='id identifier rubyid_find_pattern_coding_slice'>find_pattern_coding_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>patternIdentifier</span><span class='tstring_end'>&#39;</span></span>
+      <span class='id identifier rubyid_find_pattern_identifier_slice'>find_pattern_identifier_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>value</span><span class='tstring_end'>&#39;</span></span>
+      <span class='id identifier rubyid_find_value_slice'>find_value_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>type</span><span class='tstring_end'>&#39;</span></span>
+      <span class='id identifier rubyid_find_type_slice'>find_type_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>requiredBinding</span><span class='tstring_end'>&#39;</span></span>
+      <span class='id identifier rubyid_find_required_binding_slice'>find_required_binding_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_slice_by_values-instance_method">
+  
+    #<strong>find_slice_by_values</strong>(element, value_definitions)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+372
+373
+374</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 372</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_slice_by_values'>find_slice_by_values</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_value_definitions'>value_definitions</span><span class='rparen'>)</span>
+  <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_el'>el</span><span class='op'>|</span> <span class='id identifier rubyid_verify_slice_by_values'>verify_slice_by_values</span><span class='lparen'>(</span><span class='id identifier rubyid_el'>el</span><span class='comma'>,</span> <span class='id identifier rubyid_value_definitions'>value_definitions</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_type_slice-instance_method">
+  
+    #<strong>find_type_slice</strong>(element, discriminator)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 343</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_type_slice'>find_type_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+  <span class='kw'>case</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:code</span><span class='rbracket'>]</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Date</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>begin</span>
+      <span class='const'>Date</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='rparen'>)</span>
+    <span class='kw'>rescue</span> <span class='const'>ArgumentError</span>
+      <span class='kw'>false</span>
+    <span class='kw'>end</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>DateTime</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>begin</span>
+      <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='rparen'>)</span>
+    <span class='kw'>rescue</span> <span class='const'>ArgumentError</span>
+      <span class='kw'>false</span>
+    <span class='kw'>end</span>
+  <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>String</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_element'>element</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>String</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_element'>element</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'><span class='object_link'><a href="../../../../FHIR.html" title="FHIR (module)">FHIR</a></span></span><span class='period'>.</span><span class='id identifier rubyid_const_get'>const_get</span><span class='lparen'>(</span><span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:code</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="find_value_slice-instance_method">
+  
+    #<strong>find_value_slice</strong>(element, discriminator)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+338
+339
+340
+341</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 338</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_value_slice'>find_value_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_values'>values</span> <span class='op'>=</span> <span class='id identifier rubyid_discriminator'>discriminator</span><span class='lbracket'>[</span><span class='symbol'>:values</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_value'>value</span><span class='op'>|</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='label'>path:</span> <span class='id identifier rubyid_value'>value</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_find_slice_by_values'>find_slice_by_values</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='comma'>,</span> <span class='id identifier rubyid_values'>values</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="handle_must_support_choices-instance_method">
+  
+    #<strong>handle_must_support_choices</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+126
+127
+128
+129
+130</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 126</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_handle_must_support_choices'>handle_must_support_choices</span>
+  <span class='id identifier rubyid_handle_must_support_element_choices'>handle_must_support_element_choices</span>
+  <span class='id identifier rubyid_handle_must_support_extension_choices'>handle_must_support_extension_choices</span>
+  <span class='id identifier rubyid_handle_must_support_slice_choices'>handle_must_support_slice_choices</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="handle_must_support_element_choices-instance_method">
+  
+    #<strong>handle_must_support_element_choices</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+132
+133
+134
+135
+136
+137
+138
+139
+140</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 132</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_handle_must_support_element_choices'>handle_must_support_element_choices</span>
+  <span class='id identifier rubyid_missing_elements'>missing_elements</span><span class='period'>.</span><span class='id identifier rubyid_delete_if'>delete_if</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_element'>element</span><span class='op'>|</span>
+    <span class='id identifier rubyid_choices'>choices</span> <span class='op'>=</span> <span class='id identifier rubyid_metadata'>metadata</span><span class='period'>.</span><span class='id identifier rubyid_must_supports'>must_supports</span><span class='lbracket'>[</span><span class='symbol'>:choices</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_choice'>choice</span><span class='op'>|</span>
+      <span class='id identifier rubyid_choice'>choice</span><span class='lbracket'>[</span><span class='symbol'>:paths</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='op'>||</span>
+        <span class='id identifier rubyid_choice'>choice</span><span class='lbracket'>[</span><span class='symbol'>:elements</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_ms_element'>ms_element</span><span class='op'>|</span> <span class='id identifier rubyid_ms_element'>ms_element</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='id identifier rubyid_element'>element</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_any_choice_supported?'>any_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="handle_must_support_extension_choices-instance_method">
+  
+    #<strong>handle_must_support_extension_choices</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+142
+143
+144
+145
+146
+147
+148
+149</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 142</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_handle_must_support_extension_choices'>handle_must_support_extension_choices</span>
+  <span class='id identifier rubyid_missing_extensions'>missing_extensions</span><span class='period'>.</span><span class='id identifier rubyid_delete_if'>delete_if</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_extension'>extension</span><span class='op'>|</span>
+    <span class='id identifier rubyid_choices'>choices</span> <span class='op'>=</span> <span class='id identifier rubyid_metadata'>metadata</span><span class='period'>.</span><span class='id identifier rubyid_must_supports'>must_supports</span><span class='lbracket'>[</span><span class='symbol'>:choices</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_choice'>choice</span><span class='op'>|</span>
+      <span class='id identifier rubyid_choice'>choice</span><span class='lbracket'>[</span><span class='symbol'>:extension_ids</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_extension'>extension</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_any_choice_supported?'>any_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="handle_must_support_slice_choices-instance_method">
+  
+    #<strong>handle_must_support_slice_choices</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+151
+152
+153
+154
+155
+156</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 151</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_handle_must_support_slice_choices'>handle_must_support_slice_choices</span>
+  <span class='id identifier rubyid_missing_slices'>missing_slices</span><span class='period'>.</span><span class='id identifier rubyid_delete_if'>delete_if</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_slice'>slice</span><span class='op'>|</span>
+    <span class='id identifier rubyid_choices'>choices</span> <span class='op'>=</span> <span class='id identifier rubyid_metadata'>metadata</span><span class='period'>.</span><span class='id identifier rubyid_must_supports'>must_supports</span><span class='lbracket'>[</span><span class='symbol'>:choices</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_choice'>choice</span><span class='op'>|</span> <span class='id identifier rubyid_choice'>choice</span><span class='lbracket'>[</span><span class='symbol'>:slice_names</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_slice'>slice</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_any_choice_supported?'>any_choice_supported?</span><span class='lparen'>(</span><span class='id identifier rubyid_choices'>choices</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="matches_fixed_value?-instance_method">
+  
+    #<strong>matches_fixed_value?</strong>(value, fixed_value)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+273
+274
+275</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 273</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_matches_fixed_value?'>matches_fixed_value?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_fixed_value'>fixed_value</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_fixed_value'>fixed_value</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span> <span class='op'>||</span> <span class='id identifier rubyid_value'>value</span> <span class='op'>==</span> <span class='id identifier rubyid_fixed_value'>fixed_value</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="matching_without_extensions?-instance_method">
+  
+    #<strong>matching_without_extensions?</strong>(value, ms_extension_urls, fixed_value)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 261</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_matching_without_extensions?'>matching_without_extensions?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_ms_extension_urls'>ms_extension_urls</span><span class='comma'>,</span> <span class='id identifier rubyid_fixed_value'>fixed_value</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_instance_of?'>instance_of?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../../../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../PrimitiveType.html" title="Inferno::DSL::PrimitiveType (class)">PrimitiveType</a></span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_urls'>urls</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_extension'>extension</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:url</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_has_ms_extension'>has_ms_extension</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_urls'>urls</span> <span class='op'>&amp;</span> <span class='id identifier rubyid_ms_extension_urls'>ms_extension_urls</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_value'>value</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_has_ms_extension'>has_ms_extension</span> <span class='op'>||</span> <span class='id identifier rubyid_value_without_extensions?'>value_without_extensions?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_matches_fixed_value?'>matches_fixed_value?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_fixed_value'>fixed_value</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="missing_element_string-instance_method">
+  
+    #<strong>missing_element_string</strong>(element_definition)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+203
+204
+205
+206
+207
+208
+209</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 203</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_missing_element_string'>missing_element_string</span><span class='lparen'>(</span><span class='id identifier rubyid_element_definition'>element_definition</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_element_definition'>element_definition</span><span class='lbracket'>[</span><span class='symbol'>:fixed_value</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_element_definition'>element_definition</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_element_definition'>element_definition</span><span class='lbracket'>[</span><span class='symbol'>:fixed_value</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_element_definition'>element_definition</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="missing_elements-instance_method">
+  
+    #<strong>missing_elements</strong>(resources = [])  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+238
+239
+240</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 238</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_missing_elements'>missing_elements</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='ivar'>@missing_elements</span> <span class='op'>||=</span> <span class='id identifier rubyid_find_missing_elements'>find_missing_elements</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_must_support_elements'>must_support_elements</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="missing_extensions-instance_method">
+  
+    #<strong>missing_extensions</strong>(resources = [])  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 215</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_missing_extensions'>missing_extensions</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='ivar'>@missing_extensions</span> <span class='op'>||=</span>
+    <span class='id identifier rubyid_must_support_extensions'>must_support_extensions</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_extension_definition'>extension_definition</span><span class='op'>|</span>
+      <span class='id identifier rubyid_resources'>resources</span><span class='period'>.</span><span class='id identifier rubyid_none?'>none?</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_resource'>resource</span><span class='op'>|</span>
+        <span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='id identifier rubyid_extension_definition'>extension_definition</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span>
+
+        <span class='kw'>if</span> <span class='id identifier rubyid_path'>path</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>extension</span><span class='tstring_end'>&#39;</span></span>
+          <span class='id identifier rubyid_resource'>resource</span><span class='period'>.</span><span class='id identifier rubyid_extension'>extension</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_extension'>extension</span><span class='op'>|</span> <span class='id identifier rubyid_extension'>extension</span><span class='period'>.</span><span class='id identifier rubyid_url'>url</span> <span class='op'>==</span> <span class='id identifier rubyid_extension_definition'>extension_definition</span><span class='lbracket'>[</span><span class='symbol'>:url</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+        <span class='kw'>else</span>
+          <span class='id identifier rubyid_extension'>extension</span> <span class='op'>=</span> <span class='id identifier rubyid_find_a_value_at'>find_a_value_at</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_el'>el</span><span class='op'>|</span>
+            <span class='id identifier rubyid_el'>el</span><span class='period'>.</span><span class='id identifier rubyid_url'>url</span> <span class='op'>==</span> <span class='id identifier rubyid_extension_definition'>extension_definition</span><span class='lbracket'>[</span><span class='symbol'>:url</span><span class='rbracket'>]</span>
+          <span class='kw'>end</span>
+
+          <span class='id identifier rubyid_extension'>extension</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+        <span class='kw'>end</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="missing_must_support_strings-instance_method">
+  
+    #<strong>missing_must_support_strings</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+197
+198
+199
+200
+201</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 197</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_missing_must_support_strings'>missing_must_support_strings</span>
+  <span class='id identifier rubyid_missing_elements'>missing_elements</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_element_definition'>element_definition</span><span class='op'>|</span> <span class='id identifier rubyid_missing_element_string'>missing_element_string</span><span class='lparen'>(</span><span class='id identifier rubyid_element_definition'>element_definition</span><span class='rparen'>)</span> <span class='rbrace'>}</span> <span class='op'>+</span>
+    <span class='id identifier rubyid_missing_slices'>missing_slices</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_slice_definition'>slice_definition</span><span class='op'>|</span> <span class='id identifier rubyid_slice_definition'>slice_definition</span><span class='lbracket'>[</span><span class='symbol'>:slice_id</span><span class='rbracket'>]</span> <span class='rbrace'>}</span> <span class='op'>+</span>
+    <span class='id identifier rubyid_missing_extensions'>missing_extensions</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_extension_definition'>extension_definition</span><span class='op'>|</span> <span class='id identifier rubyid_extension_definition'>extension_definition</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="missing_slices-instance_method">
+  
+    #<strong>missing_slices</strong>(resources = [])  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+286
+287
+288
+289
+290
+291
+292
+293
+294</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 286</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_missing_slices'>missing_slices</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='ivar'>@missing_slices</span> <span class='op'>||=</span>
+    <span class='id identifier rubyid_must_support_slices'>must_support_slices</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_slice'>slice</span><span class='op'>|</span>
+      <span class='id identifier rubyid_resources'>resources</span><span class='period'>.</span><span class='id identifier rubyid_none?'>none?</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_resource'>resource</span><span class='op'>|</span>
+        <span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='id identifier rubyid_slice'>slice</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span>
+        <span class='id identifier rubyid_find_slice'>find_slice</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_slice'>slice</span><span class='lbracket'>[</span><span class='symbol'>:discriminator</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="must_support_elements-instance_method">
+  
+    #<strong>must_support_elements</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+234
+235
+236</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 234</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_must_support_elements'>must_support_elements</span>
+  <span class='id identifier rubyid_metadata'>metadata</span><span class='period'>.</span><span class='id identifier rubyid_must_supports'>must_supports</span><span class='lbracket'>[</span><span class='symbol'>:elements</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="must_support_extensions-instance_method">
+  
+    #<strong>must_support_extensions</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+211
+212
+213</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 211</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_must_support_extensions'>must_support_extensions</span>
+  <span class='id identifier rubyid_metadata'>metadata</span><span class='period'>.</span><span class='id identifier rubyid_must_supports'>must_supports</span><span class='lbracket'>[</span><span class='symbol'>:extensions</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="must_support_slices-instance_method">
+  
+    #<strong>must_support_slices</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+282
+283
+284</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 282</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_must_support_slices'>must_support_slices</span>
+  <span class='id identifier rubyid_metadata'>metadata</span><span class='period'>.</span><span class='id identifier rubyid_must_supports'>must_supports</span><span class='lbracket'>[</span><span class='symbol'>:slices</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="perform_must_support_test-instance_method">
+  
+    #<strong>perform_must_support_test</strong>(profile, resources, ig, debug_metadata: false, requirement_extension: nil) {|Metadata| ... } &#x21d2; <tt>Array&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>perform_must_support_test is invoked from DSL assertions, allows customizing the metadata with a block.
+Customizing the metadata may add, modify, or remove items.
+For instance, US Core 3.1.1 Patient “Previous Name” is defined as MS only in narrative.
+Choices are also defined only in narrative.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>profile</span>
+      
+      
+        <span class='type'>(<tt>FHIR::StructureDefinition</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>resources</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../../../../FHIR/Model.html" title="FHIR::Model (class)">FHIR::Model</a></span>&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>ig</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../Entities/IG.html" title="Inferno::Entities::IG (class)">Inferno::Entities::IG</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>debug_metadata</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>if true, write out the final metadata used to a temporary file</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>requirement_extension</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Extension URL that implies “required” as an alternative to the MS flag</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Metadata</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Customize the metadata before running the test</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>list of elements that were not found in the provided resources</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+82
+83
+84
+85
+86
+87</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 82</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_perform_must_support_test'>perform_must_support_test</span><span class='lparen'>(</span><span class='id identifier rubyid_profile'>profile</span><span class='comma'>,</span> <span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_ig'>ig</span><span class='comma'>,</span> <span class='label'>debug_metadata:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>requirement_extension:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_profile_metadata'>profile_metadata</span> <span class='op'>=</span> <span class='id identifier rubyid_extract_metadata'>extract_metadata</span><span class='lparen'>(</span><span class='id identifier rubyid_profile'>profile</span><span class='comma'>,</span> <span class='id identifier rubyid_ig'>ig</span><span class='comma'>,</span> <span class='label'>requirement_extension:</span><span class='rparen'>)</span>
+  <span class='kw'>yield</span> <span class='id identifier rubyid_profile_metadata'>profile_metadata</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+
+  <span class='id identifier rubyid_perform_must_support_test_with_metadata'>perform_must_support_test_with_metadata</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_profile_metadata'>profile_metadata</span><span class='comma'>,</span> <span class='label'>debug_metadata:</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="perform_must_support_test_with_metadata-instance_method">
+  
+    #<strong>perform_must_support_test_with_metadata</strong>(resources, profile_metadata, debug_metadata: false)  &#x21d2; <tt>Array&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>perform_must_support_test_with_metadata is invoked from check and perform_must_support_test,
+with the metadata to be used as the basis for the test.
+It may also be invoked directly from a test if you want to completely overwrite the metadata.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>resources</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../../../../FHIR/Model.html" title="FHIR::Model (class)">FHIR::Model</a></span>&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>profile_metadata</span>
+      
+      
+        <span class='type'>(<tt>Metadata</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Metadata object with must_supports field</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>debug_metadata</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>if true, write out the final metadata used to a temporary file</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>list of elements that were not found in the provided resources</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 96</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_perform_must_support_test_with_metadata'>perform_must_support_test_with_metadata</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_profile_metadata'>profile_metadata</span><span class='comma'>,</span> <span class='label'>debug_metadata:</span> <span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_resources'>resources</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+
+  <span class='ivar'>@metadata</span> <span class='op'>=</span> <span class='id identifier rubyid_profile_metadata'>profile_metadata</span>
+
+  <span class='id identifier rubyid_write_metadata_for_debugging'>write_metadata_for_debugging</span> <span class='kw'>if</span> <span class='id identifier rubyid_debug_metadata'>debug_metadata</span>
+
+  <span class='id identifier rubyid_missing_elements'>missing_elements</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_missing_slices'>missing_slices</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_missing_extensions'>missing_extensions</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_handle_must_support_choices'>handle_must_support_choices</span> <span class='kw'>if</span> <span class='id identifier rubyid_metadata'>metadata</span><span class='period'>.</span><span class='id identifier rubyid_must_supports'>must_supports</span><span class='lbracket'>[</span><span class='symbol'>:choices</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='id identifier rubyid_missing_must_support_strings'>missing_must_support_strings</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="pick_resources_for_profile-instance_method">
+  
+    #<strong>pick_resources_for_profile</strong>(profile, context)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 55</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_pick_resources_for_profile'>pick_resources_for_profile</span><span class='lparen'>(</span><span class='id identifier rubyid_profile'>profile</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_conformance_options'>conformance_options</span> <span class='op'>=</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Rule</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>AllMustSupportsPresent</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ConformanceOptions</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_options'>to_options</span>
+
+  <span class='comment'># Unless specifically looking for Bundles, break them out into the resources they include
+</span>  <span class='id identifier rubyid_all_resources'>all_resources</span> <span class='op'>=</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_profile'>profile</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Bundle</span><span class='tstring_end'>&#39;</span></span>
+      <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_flatten_bundles'>flatten_bundles</span><span class='lparen'>(</span><span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_all_resources'>all_resources</span><span class='period'>.</span><span class='id identifier rubyid_filter'>filter</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_r'>r</span><span class='op'>|</span>
+    <span class='id identifier rubyid_conforms_to_profile?'>conforms_to_profile?</span><span class='lparen'>(</span><span class='id identifier rubyid_r'>r</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span><span class='comma'>,</span> <span class='id identifier rubyid_conformance_options'>conformance_options</span><span class='comma'>,</span> <span class='id identifier rubyid_context'>context</span><span class='period'>.</span><span class='id identifier rubyid_validator'>validator</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="resource_populates_element?-instance_method">
+  
+    #<strong>resource_populates_element?</strong>(resource, element_definition)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 248</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_resource_populates_element?'>resource_populates_element?</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_element_definition'>element_definition</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='id identifier rubyid_element_definition'>element_definition</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_ms_extension_urls'>ms_extension_urls</span> <span class='op'>=</span> <span class='id identifier rubyid_must_support_extensions'>must_support_extensions</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_ex'>ex</span><span class='op'>|</span> <span class='id identifier rubyid_ex'>ex</span><span class='lbracket'>[</span><span class='symbol'>:path</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_path'>path</span><span class='embexpr_end'>}</span><span class='tstring_content'>.extension</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+    <span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_ex'>ex</span><span class='op'>|</span> <span class='id identifier rubyid_ex'>ex</span><span class='lbracket'>[</span><span class='symbol'>:url</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_value_found'>value_found</span> <span class='op'>=</span> <span class='id identifier rubyid_find_a_value_at'>find_a_value_at</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_potential_value'>potential_value</span><span class='op'>|</span>
+    <span class='id identifier rubyid_matching_without_extensions?'>matching_without_extensions?</span><span class='lparen'>(</span><span class='id identifier rubyid_potential_value'>potential_value</span><span class='comma'>,</span> <span class='id identifier rubyid_ms_extension_urls'>ms_extension_urls</span><span class='comma'>,</span> <span class='id identifier rubyid_element_definition'>element_definition</span><span class='lbracket'>[</span><span class='symbol'>:fixed_value</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Note that false.present? =&gt; false, which is why we need to add this extra check
+</span>  <span class='id identifier rubyid_value_found'>value_found</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>||</span> <span class='id identifier rubyid_value_found'>value_found</span> <span class='op'>==</span> <span class='kw'>false</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="value_without_extensions?-instance_method">
+  
+    #<strong>value_without_extensions?</strong>(value)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+277
+278
+279
+280</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 277</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_value_without_extensions?'>value_without_extensions?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_value_without_extensions'>value_without_extensions</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:to_hash</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_hash'>to_hash</span><span class='period'>.</span><span class='id identifier rubyid_except'>except</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>extension</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_value'>value</span>
+  <span class='id identifier rubyid_value_without_extensions'>value_without_extensions</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>||</span> <span class='id identifier rubyid_value_without_extensions'>value_without_extensions</span> <span class='op'>==</span> <span class='kw'>false</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="write_metadata_for_debugging-instance_method">
+  
+    #<strong>write_metadata_for_debugging</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+116
+117
+118
+119
+120
+121
+122
+123
+124</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_evaluation/rules/all_must_supports_present.rb', line 116</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_write_metadata_for_debugging'>write_metadata_for_debugging</span>
+  <span class='id identifier rubyid_outfile'>outfile</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_metadata'>metadata</span><span class='period'>.</span><span class='id identifier rubyid_profile'>profile</span><span class='op'>&amp;.</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>-</span><span class='embexpr_beg'>#{</span><span class='const'>SecureRandom</span><span class='period'>.</span><span class='id identifier rubyid_uuid'>uuid</span><span class='embexpr_end'>}</span><span class='tstring_content'>.yml</span><span class='tstring_end'>&quot;</span></span>
+
+  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_tmpdir'>tmpdir</span><span class='comma'>,</span> <span class='id identifier rubyid_outfile'>outfile</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>w</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_f'>f</span><span class='op'>|</span>
+    <span class='id identifier rubyid_writable_metadata'>writable_metadata</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>must_supports:</span> <span class='ivar'>@metadata</span><span class='period'>.</span><span class='id identifier rubyid_must_supports'>must_supports</span><span class='period'>.</span><span class='id identifier rubyid_to_hash'>to_hash</span> <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span><span class='lparen'>(</span><span class='const'>YAML</span><span class='period'>.</span><span class='id identifier rubyid_dump'>dump</span><span class='lparen'>(</span><span class='id identifier rubyid_writable_metadata'>writable_metadata</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Wrote MustSupport metadata to </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_f'>f</span><span class='period'>.</span><span class='id identifier rubyid_path'>path</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Thu Feb 27 14:46:24 2025 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.3.6).
+</div>
+
+    </div>
+  </body>
+</html>
