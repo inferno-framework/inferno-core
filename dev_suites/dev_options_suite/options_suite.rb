@@ -116,12 +116,12 @@ module OptionsSuite
       }
     ]
 
-    validator required_suite_options: { ig_version: '1' } do
-      url 'v1_validator'
+    fhir_resource_validator required_suite_options: { ig_version: '1' } do
+      exclude_message { |message| message.type == 'info' }
     end
 
-    validator required_suite_options: { ig_version: '2' } do
-      url 'v2_validator'
+    fhir_resource_validator required_suite_options: { ig_version: '2' } do
+      exclude_message { |message| message.type == 'info' }
     end
 
     suite_option :ig_version,
