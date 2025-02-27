@@ -470,6 +470,30 @@ module Inferno
           end
       end
 
+      # Move a child test/group to a new position within the children list.
+      #
+      # @param child_id [Symbol, String] The ID of the child to be moved.
+      # @param new_index [Integer] The new position for the child.
+      # @example
+      #   reorder(:test3, 1) # Moves `test3` to index 1
+      #
+      def reorder(child_id, new_index)
+        index = children.find_index { |child| child.id.to_s.end_with? child_id.to_s }
+        raise Exceptions::RunnableChildNotFoundException.new(child_id, self) unless index
+
+        unless new_index.between?(0, children.length - 1)
+          Inferno::Application[:logger].error <<~ERROR
+            Error trying to reorder children for #{self}:
+            new_index #{new_index} for #{child_id} is out of range
+            (must be between 0 and #{children.length - 1})
+          ERROR
+          return
+        end
+
+        child = children.delete_at(index)
+        children.insert(new_index, child)
+      end
+
       # Replace a child test/group
       #
       # @param id_to_replace [Symbol, String] The ID of the child to be replaced.

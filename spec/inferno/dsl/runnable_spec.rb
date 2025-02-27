@@ -215,6 +215,49 @@ RSpec.describe Inferno::DSL::Runnable do
     end
   end
 
+  describe '.reorder' do
+    let(:group) do
+      Class.new(Inferno::TestGroup) do
+        test { id :abc }
+        test { id :def }
+        test { id :ghw }
+      end
+    end
+
+    before do
+      group.id(SecureRandom.uuid)
+    end
+
+    it 'moves a child to a new position within bounds' do
+      group.reorder(:def, 0)
+
+      expect(group.children.map(&:id)).to contain_exactly(
+        a_string_ending_with('def'),
+        a_string_ending_with('abc'),
+        a_string_ending_with('ghw')
+      )
+    end
+
+    it 'raises an error if the child ID is not found' do
+      expect do
+        group.reorder(:test_id, 1)
+      end.to raise_error(Inferno::Exceptions::RunnableChildNotFoundException, /Could not find a child with an ID/)
+    end
+
+    it 'logs an error if new_index is out of range' do
+      allow(Inferno::Application[:logger]).to receive(:error)
+
+      group.reorder(:def, 10)
+
+      expect(Inferno::Application[:logger]).to have_received(:error).with(/Error trying to reorder children for .*:/)
+      expect(group.children.map(&:id)).to contain_exactly(
+        a_string_ending_with('abc'),
+        a_string_ending_with('def'),
+        a_string_ending_with('ghw')
+      )
+    end
+  end
+
   describe '.replace' do
     let(:test_group) { test_groups_repo.find('auth_info-auth_info_demo') } # 'replace-repetitive_group'
 
