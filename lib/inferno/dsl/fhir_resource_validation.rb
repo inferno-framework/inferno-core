@@ -9,7 +9,7 @@ module Inferno
     #
     # @example
     #
-    #   validator do
+    #   fhir_resource_validator do
     #     url 'http://example.com/validator'
     #     exclude_message { |message| message.type == 'info' }
     #     perform_additional_validation do |resource, profile_url|
@@ -18,6 +18,11 @@ module Inferno
     #       else
     #         { type: 'info', message: 'everything is ok' }
     #       end
+    #     end
+    #     cli_context do
+    #       noExtensibleBindingMessages true
+    #       allowExampleUrls true
+    #       txServer nil
     #     end
     #   end
     module FHIRResourceValidation
