@@ -25,7 +25,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
               if (input.options?.mode === 'auth') {
                 return (
                   <InputAuth
-                    mode="auth"
+                    mode={input.options?.mode}
                     input={input}
                     index={index}
                     inputsMap={inputsMap}
