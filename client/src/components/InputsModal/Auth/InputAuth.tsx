@@ -11,6 +11,7 @@ import {
 import AuthTypeSelector from '~/components/InputsModal/Auth/AuthTypeSelector';
 import FieldLabel from '~/components/InputsModal/FieldLabel';
 import InputFields from '~/components/InputsModal/InputFields';
+import { isJsonString } from '~/components/InputsModal/InputHelpers';
 import useStyles from '../styles';
 
 export interface InputAuthProps {
@@ -22,7 +23,7 @@ export interface InputAuthProps {
 }
 
 const parseJson = (jsonInput: unknown) => {
-  return jsonInput && typeof jsonInput === 'string' ? (JSON.parse(jsonInput) as Auth) : {};
+  return isJsonString(jsonInput) ? (JSON.parse(jsonInput as string) as Auth) : {};
 };
 
 const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInputsMap }) => {
@@ -46,23 +47,7 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
   );
 
   // Set fields depending on mode
-  let fields: TestInput[] = [];
-  if (mode === 'access') {
-    fields = getAccessFields(
-      authType as AuthType,
-      authValues,
-      input.options?.components || [],
-      input.locked || false,
-    );
-  } else if (mode === 'auth') {
-    fields = getAuthFields(
-      authType as AuthType,
-      authValues,
-      input.options?.components || [],
-      input.locked || false,
-    );
-  }
-  const [authFields, setAuthFields] = React.useState<TestInput[]>(fields);
+  const [authFields, setAuthFields] = React.useState<TestInput[]>(getAuthInputFields(mode));
 
   useEffect(() => {
     // Set defaults on radio buttons
@@ -92,47 +77,31 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
       authValues.set(field.name, combinedStartingValues[field.name as keyof Auth] || '');
     });
     setAuthValuesPopulated(true);
-
-    // Trigger change on mount for default values
-    const authValuesCopy = new Map(authValues);
-    setAuthValues(authValuesCopy);
   }, []);
 
   useEffect(() => {
     // Recalculate hidden fields
+    setAuthFields(getAuthInputFields(mode));
+  }, [authValues]);
+
+  function getAuthInputFields(mode: string) {
     if (mode === 'access') {
-      setAuthFields(
-        getAccessFields(
-          authType as AuthType,
-          authValues,
-          input.options?.components || [],
-          input.locked || false,
-        ),
+      return getAccessFields(
+        authType as AuthType,
+        authValues,
+        input.options?.components || [],
+        input.locked || false,
       );
     } else if (mode === 'auth') {
-      setAuthFields(
-        getAuthFields(
-          authType as AuthType,
-          authValues,
-          input.options?.components || [],
-          input.locked || false,
-        ),
+      return getAuthFields(
+        authType as AuthType,
+        authValues,
+        input.options?.components || [],
+        input.locked || false,
       );
     }
-
-    // Update inputsMap while maintaining hidden values
-    if (authValuesPopulated) {
-      let stringifiedValues = JSON.stringify(Object.fromEntries(authValues));
-      if (mode === 'access') {
-        const combinedStartingValues = getStartingValues();
-        const accessValuesObject = Object.fromEntries(authValues) as Auth;
-        const combinedValues = { ...combinedStartingValues, ...accessValuesObject };
-        stringifiedValues = JSON.stringify(combinedValues);
-      }
-      inputsMap.set(input.name, stringifiedValues);
-      setInputsMap(new Map(inputsMap));
-    }
-  }, [authValues]);
+    return [];
+  }
 
   const getStartingValues = () => {
     // Pre-populate values from AuthFields, input, and inputsMap in order of precedence
@@ -154,7 +123,29 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
 
   const updateAuthType = (map: Map<string, unknown>) => {
     setAuthType(map.get('auth_type') as string);
+    updateAuthInputsMap(map);
+  };
+
+  const updateAuthInputsMap = (map: Map<string, unknown>) => {
     setAuthValues(map);
+    // Update inputsMap while maintaining hidden values
+    if (authValuesPopulated) {
+      const inputsWithValues = new Map();
+      authValues.forEach((inputValue, inputName) => {
+        if (inputValue) {
+          inputsWithValues.set(inputName, inputValue);
+        }
+      });
+      let stringifiedValues = JSON.stringify(Object.fromEntries(inputsWithValues));
+      if (mode === 'access') {
+        const combinedStartingValues = getStartingValues();
+        const accessValuesObject = Object.fromEntries(authValues) as Auth;
+        const combinedValues = { ...combinedStartingValues, ...accessValuesObject };
+        stringifiedValues = JSON.stringify(combinedValues);
+      }
+      inputsMap.set(input.name, stringifiedValues);
+      setInputsMap(new Map(inputsMap));
+    }
   };
 
   return (
@@ -182,7 +173,11 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
               key={`input-${index}`}
             />
           </List>
-          <InputFields inputs={authFields} inputsMap={authValues} setInputsMap={setAuthValues} />
+          <InputFields
+            inputs={authFields}
+            inputsMap={authValues}
+            setInputsMap={updateAuthInputsMap}
+          />
         </CardContent>
       </Card>
     </ListItem>

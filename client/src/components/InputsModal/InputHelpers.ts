@@ -157,7 +157,8 @@ export const serializeMap = (
 };
 
 // Check if string str is JSON object, exempting other types
-export const isJsonString = (str: string) => {
+export const isJsonString = (str: unknown) => {
+  if (typeof str !== 'string') return false;
   let value: unknown = str;
   try {
     value = JSON.parse(str);

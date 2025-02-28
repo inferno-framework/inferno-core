@@ -29,7 +29,6 @@ import {
 } from '~/components/InputsModal/InputHelpers';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from '~/components/InputsModal/styles';
-import { isJsonString } from '~/components/InputsModal/InputHelpers';
 
 export interface InputsModalProps {
   modalVisible: boolean;
@@ -152,20 +151,7 @@ const InputsModal: FC<InputsModalProps> = ({
   const submitClicked = () => {
     const inputsWithValues: TestInput[] = [];
     inputsMap.forEach((inputValue, inputName) => {
-      if (typeof inputValue === 'string' && isJsonString(inputValue)) {
-        // Check if JSON values have empty strings and parse out those fields
-        const newJsonValue: Record<string, unknown> = {};
-        Object.entries(JSON.parse(inputValue) as object).forEach(([key, value]) => {
-          if (key && value) newJsonValue[key] = value;
-        });
-        inputsWithValues.push({
-          name: inputName,
-          value: JSON.stringify(newJsonValue),
-          type: 'text',
-        });
-      } else {
-        inputsWithValues.push({ name: inputName, value: inputValue, type: 'text' });
-      }
+      inputsWithValues.push({ name: inputName, value: inputValue, type: 'text' });
     });
     createTestRun(runnableType, runnable?.id || '', inputsWithValues);
     closeModal();
