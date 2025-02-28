@@ -218,32 +218,6 @@ module Inferno
         assert missing_elements.empty?, missing_must_support_elements_message(missing_elements, resources)
       end
 
-      # Find any Must Support elements defined on the given profile that are missing in the given resources.
-      # Must Support elements are identified on the profile StructureDefinition and pre-parsed into metadata,
-      # which may be customized prior to the check by passing a block. Alternate metadata may be provided directly.
-      # Set test suite config flag debug_must_support_metadata: true to log the metadata to a file for debugging.
-      #
-      # @param resources [Array<FHIR::Resource>]
-      # @param profile_url [String]
-      # @param validator_name [Symbol] Name of the FHIR Validator that references the IG the profile is in
-      # @param metadata [Hash] MustSupport Metadata (optional),
-      #        if provided the check will use this instead of re-generating metadata from the profile
-      # @param requirement_extension [String] Extension URL that implies "required" as an alternative to the MS flag
-      # @yield [Metadata] Customize the metadata before running the test
-      # @return [Array<String>] List of missing elements
-      def missing_must_support_elements(resources, profile_url, validator_name: :default, metadata: nil,
-                                        requirement_extension: nil, &)
-        rule = Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent.new
-        debug_metadata = config.options[:debug_must_support_metadata]
-
-        if metadata.present?
-          rule.perform_must_support_test_with_metadata(resources, metadata, debug_metadata:)
-        else
-          ig, profile = find_ig_and_profile(profile_url, validator_name)
-          rule.perform_must_support_test(profile, resources, ig, debug_metadata:, requirement_extension:, &)
-        end
-      end
-
       # @private
       def missing_must_support_elements_message(missing_elements, resources)
         "Could not find #{missing_elements.join(', ')} in the #{resources.length} " \
