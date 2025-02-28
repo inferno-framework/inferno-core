@@ -11,6 +11,7 @@ import {
 import AuthTypeSelector from '~/components/InputsModal/Auth/AuthTypeSelector';
 import FieldLabel from '~/components/InputsModal/FieldLabel';
 import InputFields from '~/components/InputsModal/InputFields';
+import { useTestSessionStore } from '~/store/testSession';
 import useStyles from '../styles';
 
 export interface InputAuthProps {
@@ -27,6 +28,7 @@ const parseJson = (jsonInput: unknown) => {
 
 const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   // authValues is a version of inputsMap used exclusively in this component
   const [authValues, setAuthValues] = React.useState<Map<string, unknown>>(new Map());
   const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
@@ -159,11 +161,13 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
 
   return (
     <ListItem>
-      <Card variant="outlined" className={classes.authCard}>
+      <Card variant="outlined" tabIndex={0} className={classes.authCard}>
         <CardContent>
           <InputLabel
+            tabIndex={0}
             required={!input.optional}
-            disabled={input.locked}
+            disabled={input.locked || viewOnly}
+            aria-disabled={input.locked || viewOnly}
             className={classes.inputLabel}
           >
             <FieldLabel input={input} />

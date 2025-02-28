@@ -24,12 +24,13 @@ import DownloadFileButton from '~/components/_common/DownloadFileButton';
 import UploadFileButton from '~/components/_common/UploadFileButton';
 import {
   getMissingRequiredInput,
+  isJsonString,
   parseSerialChanges,
   serializeMap,
 } from '~/components/InputsModal/InputHelpers';
 import InputFields from '~/components/InputsModal/InputFields';
 import useStyles from '~/components/InputsModal/styles';
-import { isJsonString } from '~/components/InputsModal/InputHelpers';
+import { useTestSessionStore } from '~/store/testSession';
 
 export interface InputsModalProps {
   modalVisible: boolean;
@@ -62,6 +63,7 @@ const InputsModal: FC<InputsModalProps> = ({
   createTestRun,
 }) => {
   const { classes } = useStyles();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const [inputsEdited, setInputsEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
@@ -188,8 +190,9 @@ const InputsModal: FC<InputsModalProps> = ({
         <Box display="flex" justifyContent="space-between">
           <Typography component="h1" variant="h6">
             {runnable?.title || 'Test'}
+            {viewOnly ? ' (View Only)' : ''}
           </Typography>
-          <CustomTooltip title="Cancel - Inputs will be lost">
+          <CustomTooltip title={`Cancel${viewOnly ? '' : ' - Inputs will be lost'}`}>
             <IconButton
               onClick={() => closeModal()}
               aria-label="cancel"
@@ -220,6 +223,7 @@ const InputsModal: FC<InputsModalProps> = ({
                 value={serialInput}
                 error={invalidInput}
                 label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
+                disabled={viewOnly}
                 slotProps={{
                   input: {
                     classes: {
@@ -282,7 +286,7 @@ const InputsModal: FC<InputsModalProps> = ({
             variant="contained"
             disableElevation
             onClick={submitClicked}
-            disabled={missingRequiredInput || invalidInput}
+            disabled={missingRequiredInput || invalidInput || viewOnly}
             sx={{ fontWeight: 'bold' }}
           >
             Submit
