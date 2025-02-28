@@ -9,6 +9,21 @@ module Inferno
   module DSL
     module FHIREvaluation
       module Rules
+      # This rule evaluates if an IG defines a new valueset, the examples should demonstrate reasonable coverage of that valueset. 
+      # Note this probably only makes sense for small valuesets such as status options, not something like disease codes from SNOMED.
+
+      # Algorithm:
+      # 1. Extract pairs of system and code from include in value sets in IG
+      # 2. If valueSet exists in include, retrieve the value sets from UMLS. Extract pairs of system and code from the result.
+      # 3. For each pair of system and code, check if any resources in the IG have instance of them.
+      # 4. Count total number of existences.
+
+      # Issue
+      # Counting a specific system and code in Examples isn't challenging, however measuring the coverage of a value set for an IG would be tricky. For example:
+      # A same system and code can be used in different value sets. -> overcount
+      # A large value set, for example disease codes may be used only part of its codes.
+      # That an IG includes a value set doesn't necessarily mean that it should be used in the profiles in the IG.
+
         class ValueSetsDemonstrate < Rule
           attr_accessor :config
 
@@ -27,7 +42,7 @@ module Inferno
                 valueset.to_hash['compose']['include'].each do |include|
                   if include['valueSet']
                     include['valueSet'].each do |url|
-                      retrieve_remote_valuesets(url)&.each { |vs| system_codes << vs }
+                      retrieve_valueset_api(url)&.each { |system_code| system_codes << system_code }
                     end
                     next
                   end
@@ -43,7 +58,7 @@ module Inferno
 
                   if system_url
                     if system_url['http://hl7.org/fhir']
-                      retrieve_remote_valuesets(system_url)&.each { |vs| system_codes << vs }
+                      retrieve_valueset_api(system_url)&.each { |vs| system_codes << vs }
                     end
                     next
                   end
@@ -51,23 +66,21 @@ module Inferno
                   value_set_unevaluated << valueset.url unless system_url
 
                   # Exclude if system is provided as Uniform Resource Name "urn:"
-                  if @config.Rule.ValueSetsDemonstrate.Exclude.URL && (system_url['urn'])
+                  if config.Rule.ValueSetsDemonstrate.Exclude.URL && (system_url['urn'])
                     value_set_unevaluated << valueset.url
                   end
 
                   # Exclude filter
-                  if @config.Rule.ValueSetsDemonstrate.Exclude.Filter && (system_url && include['filter'])
+                  if config.Rule.ValueSetsDemonstrate.Exclude.Filter && (system_url && include['filter'])
                     value_set_unevaluated << valueset.url
                   end
 
                   # Exclude only system is provided (e.g. http://loing.org)
-                  if @config.Rule.ValueSetsDemonstrate.Exclude.SystemOnly && (system_url && !include['concept'] && !include['filter'])
+                  if config.Rule.ValueSetsDemonstrate.Exclude.SystemOnly && (system_url && !include['concept'] && !include['filter'])
                     value_set_unevaluated << valueset.url
                   end
                 end
-
               else
-                # In case of value set does not have compose element
                 value_set_unevaluated << valueset.url
               end
               system_codes.flatten.uniq!
@@ -79,8 +92,8 @@ module Inferno
               resource_used = []
 
               context.data.each do |resource|
-                system_codes.each do |sys_code|
-                  if !sys_code.nil? && find_valueset_used(resource.to_hash, sys_code[:system], sys_code[:code])
+                system_codes.each do |system_code|
+                  if !system_code.nil? && find_valueset_used(resource.to_hash, system_code[:system], system_code[:code])
                     cnt += 1
                     resource_used << resource.id unless resource_used.include?(resource.id)
                   end
@@ -107,15 +120,15 @@ module Inferno
 
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             else
-              message = 'All codes in these value sets are used at least once in Examples:'
-              value_set_used.map { |vs| message += "\n\t#{vs}" }
+              message = 'Value sets with all codes used at least once in Examples:'
+              value_set_used.map { |url| message += "\n\t#{url}" }
 
               message += "\nFound unused Value Sets: "
-              value_set_unused.map { |vs| message += "\n\t#{vs}" }
+              value_set_unused.map { |url| message += "\n\t#{url}" }
 
               if value_set_unevaluated.any?
                 message += "\nFound unevaluated Value Sets: "
-                value_set_unevaluated.map { |vs| message += "\n\t#{vs}" }
+                value_set_unevaluated.map { |url| message += "\n\t#{url}" }
               end
 
               result = EvaluationResult.new(message, rule: self)
@@ -150,7 +163,7 @@ module Inferno
             end
           end
 
-          def retrieve_remote_valuesets(url)
+          def retrieve_valueset_api(url)
             url['http:'] = 'https:' if url['http:']
             uri = URI.parse(url)
 

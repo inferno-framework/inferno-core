@@ -6,7 +6,7 @@ module Inferno
       module Rules
         class DifferentialContentHasExamples < Rule
           def check(context)
-            unused_differential = Hash.new { |h, k| h[k] = Set.new }
+            unused_differential = Hash.new { |field, url| field[url] = Set.new }
             collect_profile_differential_content(unused_differential, context.ig.profiles)
             collect_profile_differential_content(unused_differential, context.ig.extensions)
             remove_found_differential_content(unused_differential, context.data)
@@ -109,10 +109,10 @@ module Inferno
 
           def gen_differential_fail_message(unused_differential)
             "Found fields highlighted in the differential view, but not used in instances: #{
-                            unused_differential.map do |k, v|
-                              next if v.empty?
+                            unused_differential.map do |url, field|
+                              next if field.empty?
 
-                              "\n Profile/Extension: #{k}  \n\tFields: #{v.join(', ')}"
+                              "\n Profile/Extension: #{url}  \n\tFields: #{field.join(', ')}"
                             end.compact.join}"
           end
         end

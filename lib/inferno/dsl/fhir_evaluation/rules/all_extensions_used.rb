@@ -6,12 +6,10 @@ module Inferno
       module Rules
         class AllExtensionsUsed < Rule
           def check(context)
-            # all_extensions and unused_extensions are hashes { profile_url: [extension_url,...]}
             all_extensions = collect_profile_extensions(context.ig.profiles)
             unused_extensions = remove_found_resource_extensions(all_extensions, context.data)
-
             if unused_extensions.any? { |_profile, extensions| !extensions.empty? }
-              message = gen_extension_fail_message(unused_extensions)
+              message = get_fail_message(unused_extensions)
               result = EvaluationResult.new(message, rule: self)
             else
               message = 'All extensions specified in profiles are represented in instances.'
@@ -22,17 +20,17 @@ module Inferno
           end
 
           def collect_profile_extensions(profiles)
-            extensions = Hash.new { |h, k| h[k] = Set.new }
+            extensions = Hash.new { |extension, profile| extension[profile] = Set.new }
             profiles.each do |profile|
-              profile.each_element do |value, metadata, _path|
+              profile.each_element do |value, metadata|
                 next unless metadata['type'] == 'ElementDefinition'
 
                 path_end = value.id.split('.')[-1]
                 next unless path_end.include?('extension')
 
-                value.type.each do |value_type|
-                  value_type.profile.each do |value_type_profile|
-                    extensions[profile.url].add(value_type_profile)
+                value.type.each do |element_definition|
+                  element_definition.profile.each do |extension_url|
+                    extensions[profile.url].add(extension_url)
                   end
                 end
               end
@@ -50,22 +48,24 @@ module Inferno
                 next unless path_elements[-2].include?('extension') && path_elements[-1] == 'url'
 
                 profiles = resource&.meta&.profile || []
-                profiles.each do |p|
-                  unused_extensions[p].delete(value) if extensions.key?(p)
+                profiles.each do |profile|
+                  unused_extensions[profile].delete(value) if extensions.key?(profile)
                 end
               end
             end
             unused_extensions
           end
 
-          def gen_extension_fail_message(extensions)
-            "Found extensions specified in profiles, but not used in instances: #{
-                            extensions.map do |k, v|
-                              next if v.empty?
-
-                              "\n Profile: #{k},  \n\tExtensions: #{v.join(', ')}"
-                            end.compact.join(',')}"
+          def get_fail_message(extensions)
+            message = "Found extensions specified in profiles, but not used in instances:"
+            extensions.each do |profile, extension|
+              unless extension.empty?
+                message += "\n Profile: " + profile.to_s + ", \n\tExtensions: " + extension.join(', ')
+              end
+            end
+            message
           end
+        
         end
       end
     end
