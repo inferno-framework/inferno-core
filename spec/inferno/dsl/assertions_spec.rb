@@ -1,7 +1,7 @@
 RSpec.describe Inferno::DSL::Assertions do
   let(:klass) do
     Class.new(Inferno::Entities::Test) do
-      fhir_resource_validator {}
+      fhir_resource_validator {} # rubocop:disable Lint/EmptyBlock
     end.new
   end
   let(:error_response) do
@@ -165,7 +165,7 @@ RSpec.describe Inferno::DSL::Assertions do
       it 'does not raise an exception if the resource is valid' do
         validation_request =
           stub_request(:post, validation_url)
-            .with(body: validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url).to_json)
+            .with(body: validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url))
             .to_return(status: 200, body: success_response.to_json)
 
         klass.assert_valid_resource(resource: patient_resource)
@@ -179,7 +179,7 @@ RSpec.describe Inferno::DSL::Assertions do
         allow(klass).to receive(:resource).and_return(patient_resource)
         validation_request =
           stub_request(:post, validation_url)
-            .with(body: validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url).to_json)
+            .with(body: validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url))
             .to_return(status: 200, body: success_response.to_json)
 
         klass.assert_valid_resource
@@ -192,7 +192,7 @@ RSpec.describe Inferno::DSL::Assertions do
       it "uses the resource's base profile" do
         validation_request =
           stub_request(:post, validation_url)
-            .with(body: validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url).to_json)
+            .with(body: validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url))
             .to_return(status: 200, body: success_response.to_json)
 
         klass.assert_valid_resource(resource: patient_resource)
@@ -214,7 +214,7 @@ RSpec.describe Inferno::DSL::Assertions do
       it 'uses the provided profile_url' do
         validation_request =
           stub_request(:post, validation_url)
-            .with(body: validation_body(patient_resource, profile_url).to_json)
+            .with(body: validation_body(patient_resource, profile_url))
             .to_return(status: 200, body: success_response.to_json)
 
         klass.assert_valid_resource(resource: patient_resource, profile_url:)
@@ -312,13 +312,17 @@ RSpec.describe Inferno::DSL::Assertions do
 
     context 'when a resource is invalid' do
       it 'raises an exception' do
+        patient_validation_body =
+          validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url)
+        care_plan_validation_body =
+          validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url)
         validation_requests =
           [
             stub_request(:post, validation_url)
-              .with(body: validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url).to_json)
+              .with(body: patient_validation_body)
               .to_return(status: 200, body: success_response.to_json),
             stub_request(:post, validation_url)
-              .with(body: validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url).to_json)
+              .with(body: care_plan_validation_body)
               .to_return(status: 200, body: error_response.to_json)
           ]
 
@@ -333,14 +337,18 @@ RSpec.describe Inferno::DSL::Assertions do
     context 'when no bundle is provided' do
       it "uses the class's resource" do
         allow(klass).to receive(:resource).and_return(bundle)
+        patient_validation_body =
+          validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url)
+        care_plan_validation_body =
+          validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url)
 
         validation_requests =
           [
             stub_request(:post, validation_url)
-              .with(body: validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url).to_json)
+              .with(body: patient_validation_body)
               .to_return(status: 200, body: success_response.to_json),
             stub_request(:post, validation_url)
-              .with(body: validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url).to_json)
+              .with(body: care_plan_validation_body)
               .to_return(status: 200, body: success_response.to_json)
           ]
 
@@ -352,13 +360,17 @@ RSpec.describe Inferno::DSL::Assertions do
 
     context 'when no resource_types hash is provided' do
       it 'validates all entries against their base profiles' do
+        patient_validation_body =
+          validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url)
+        care_plan_validation_body =
+          validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url)
         validation_requests =
           [
             stub_request(:post, validation_url)
-              .with(body: validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url).to_json)
+              .with(body: patient_validation_body)
               .to_return(status: 200, body: success_response.to_json),
             stub_request(:post, validation_url)
-              .with(body: validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url).to_json)
+              .with(body: care_plan_validation_body)
               .to_return(status: 200, body: success_response.to_json)
           ]
 
@@ -370,9 +382,11 @@ RSpec.describe Inferno::DSL::Assertions do
 
     context 'when a resource_types string is provided' do
       it 'only validates that resource_type against its base profile' do
+        care_plan_validation_body =
+          validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url)
         validation_request =
           stub_request(:post, validation_url)
-            .with(body: validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url).to_json)
+            .with(body: care_plan_validation_body)
             .to_return(status: 200, body: success_response.to_json)
 
         klass.assert_valid_bundle_entries(bundle:, resource_types: 'CarePlan')
@@ -383,9 +397,11 @@ RSpec.describe Inferno::DSL::Assertions do
 
     context 'when a resource_types array is provided' do
       it 'only validates those resource_types against their base profiles' do
+        care_plan_validation_body =
+          validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url)
         validation_request =
           stub_request(:post, validation_url)
-            .with(body: validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url).to_json)
+            .with(body: care_plan_validation_body)
             .to_return(status: 200, body: success_response.to_json)
 
         klass.assert_valid_bundle_entries(bundle:, resource_types: ['CarePlan'])
@@ -397,13 +413,17 @@ RSpec.describe Inferno::DSL::Assertions do
     context 'when a resource_types hash is provided' do
       it 'only validates those types against the provided profile or the base profile if no profile provided' do
         patient_profile = 'PATIENT_PROFILE'
+        patient_validation_body =
+          validation_body(patient_resource, patient_profile)
+        care_plan_validation_body =
+          validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url)
         validation_requests =
           [
             stub_request(:post, validation_url)
-              .with(body: validation_body(patient_resource, patient_profile))
-                      .to_return(status: 200, body: success_response.to_json),
+              .with(body: patient_validation_body)
+              .to_return(status: 200, body: success_response.to_json),
             stub_request(:post, validation_url)
-              .with(body: validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url).to_json)
+              .with(body: care_plan_validation_body)
               .to_return(status: 200, body: success_response.to_json)
           ]
 
