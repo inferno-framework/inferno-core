@@ -22,10 +22,6 @@ export interface InputAuthProps {
   setInputsMap: (map: Map<string, unknown>, edited?: boolean) => void;
 }
 
-const parseJson = (jsonInput: unknown) => {
-  return isJsonString(jsonInput) ? (JSON.parse(jsonInput as string) as Auth) : {};
-};
-
 const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
   // authValues is a version of inputsMap used exclusively in this component
@@ -36,7 +32,6 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
   const authComponent = input.options?.components?.find(
     (component) => component.name === 'auth_type',
   );
-
   const authTypeStartingValue = parseJson(input.value).auth_type;
   const firstListOption =
     authComponent?.options?.list_options && authComponent?.options?.list_options?.length > 0
@@ -83,6 +78,10 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
     // Recalculate hidden fields
     setAuthFields(getAuthInputFields(mode));
   }, [authValues]);
+
+  function parseJson(jsonInput: unknown) {
+    return isJsonString(jsonInput) ? (JSON.parse(jsonInput as string) as Auth) : {};
+  }
 
   function getAuthInputFields(mode: string) {
     if (mode === 'access') {
