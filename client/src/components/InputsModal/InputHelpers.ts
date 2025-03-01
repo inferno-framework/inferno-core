@@ -116,7 +116,6 @@ export const serializeMap = (
 ): string => {
   const flatObj = inputs.map((requirement: TestInput) => {
     // Parse out \n chars from descriptions
-    // const parsedDescription = requirement.description?.replaceAll('\n', ' ').trim();
     const parsedDescription = requirement.description?.replaceAll('\n', ' ').trim();
     if (requirement.type === 'oauth_credentials') {
       return {

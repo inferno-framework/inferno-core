@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { TestInput } from '~/models/testSuiteModels';
 import FieldLabel from '~/components/InputsModal/FieldLabel';
 import useStyles from '~/components/InputsModal/styles';
+import { useTestSessionStore } from '~/store/testSession';
 
 export interface InputSingleCheckboxProps {
   input: TestInput;
@@ -20,6 +21,7 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const [hasBeenModified, setHasBeenModified] = React.useState(false);
   const [value, setValue] = React.useState<boolean>(false);
 
@@ -52,7 +54,9 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
       <FormControl
         component="fieldset"
         id={`input${index}_control`}
-        disabled={input.locked}
+        tabIndex={0}
+        disabled={input.locked || viewOnly}
+        aria-disabled={input.locked || viewOnly}
         required={!input.optional}
         error={isMissingInput}
         fullWidth
