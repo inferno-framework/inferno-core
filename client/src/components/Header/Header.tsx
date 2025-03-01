@@ -97,12 +97,12 @@ const Header: FC<HeaderProps> = ({
                 className={classes.homeLink}
               >
                 {suiteTitle}
-                {viewOnly ? ' (View Only)' : ''}
               </Link>
             </Typography>
             {suiteVersion && (
               <Typography variant="overline" className={classes.version}>
                 {`v.${suiteVersion}`}
+                {viewOnly ? ' (Read-Only Mode)' : ''}
               </Typography>
             )}
           </Box>
