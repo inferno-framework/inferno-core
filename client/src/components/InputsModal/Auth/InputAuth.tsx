@@ -77,7 +77,8 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
   useEffect(() => {
     // Recalculate hidden fields
     setAuthFields(getAuthInputFields(mode));
-  }, [authValues]);
+    updateAuthInputsMap(authValues);
+  }, [authValues, authValuesPopulated]);
 
   function parseJson(jsonInput: unknown) {
     return isJsonString(jsonInput) ? (JSON.parse(jsonInput as string) as Auth) : {};
@@ -142,6 +143,8 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
         const combinedValues = { ...combinedStartingValues, ...accessValuesObject };
         stringifiedValues = JSON.stringify(combinedValues);
       }
+      // console.log(authValues, inputsWithValues);
+
       inputsMap.set(input.name, stringifiedValues);
       setInputsMap(new Map(inputsMap));
     }
