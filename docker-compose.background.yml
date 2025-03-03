@@ -4,7 +4,7 @@ services:
     image: infernocommunity/fhir-validator-service
     # Update this path to match your directory structure
     volumes:
-      - ./igs:/home/igs
+      - ./data/igs:/home/igs
   fhir_validator_app:
     image: infernocommunity/fhir-validator-app
     depends_on:
@@ -33,7 +33,7 @@ services:
     image: infernocommunity/inferno-resource-validator
     # Update this path to match your directory structure
     volumes:
-      - ./igs:/app/igs
+      - ./data/igs:/app/igs
       # To let the service share your local FHIR package cache,
       # uncomment the below line
       # - ~/.fhir:/home/ktor/.fhir
