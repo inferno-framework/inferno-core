@@ -123,18 +123,6 @@ describe('InputAuth Component', () => {
 
   // auth info empty strings are deleted
   it('deletes empty fields before submission', () => {
-    inputsMap = [mockedRequiredFilledAuthInput].reduce(
-      (acc, input) => acc.set(input.name, ''),
-      new Map(),
-    );
-
-    const authInputFields: TestInput[] = getAuthFields(
-      'backend_services',
-      inputsMap,
-      mockedRequiredFilledAuthInput.options?.components || [],
-      false,
-    );
-
     render(
       <ThemeProvider>
         <SnackbarProvider>
@@ -147,6 +135,15 @@ describe('InputAuth Component', () => {
           />
         </SnackbarProvider>
       </ThemeProvider>,
+    );
+
+    const authValuesJson: object = JSON.parse(inputsMap.get('mock_auth_input') as string);
+    const authValuesMap = new Map(Object.entries(authValuesJson));
+    const authInputFields: TestInput[] = getAuthFields(
+      'backend_services',
+      authValuesMap,
+      mockedFullyFilledAuthInput.options?.components || [],
+      false,
     );
 
     const parsedAuthInput: Auth = JSON.parse(inputsMap.get('mock_auth_input') as string);
