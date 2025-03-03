@@ -28,8 +28,17 @@ const HeaderSkeleton: FC<Record<string, never>> = () => {
           <Skeleton height={15} width="60%" />
         </Box>
 
+        {/* Share Session button */}
+        <Box display="flex" sx={windowIsSmall ? {} : { pr: 2 }}>
+          {windowIsSmall ? (
+            <Skeleton variant="circular" height={32} width={32} sx={{ mr: 1 }} />
+          ) : (
+            <Skeleton variant="rounded" height={30} width={140} />
+          )}
+        </Box>
+
         {/* New Session button */}
-        <Box display="flex" style={windowIsSmall ? { marginRight: '-16px' } : {}}>
+        <Box display="flex" sx={windowIsSmall ? { mr: '-16px' } : {}}>
           {windowIsSmall ? (
             <Skeleton variant="circular" height={32} width={32} sx={{ mr: 1 }} />
           ) : (

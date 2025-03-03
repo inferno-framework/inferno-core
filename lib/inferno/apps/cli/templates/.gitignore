@@ -1,4 +1,5 @@
 /data/*.db
+/data/igs/*.tgz
 /data/redis/**/*.rdb
 /data/redis/**/*.aof
 /data/redis/**/*.manifest
