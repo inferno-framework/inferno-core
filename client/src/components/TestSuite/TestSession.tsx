@@ -72,6 +72,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const currentRunnables = useTestSessionStore((state) => state.currentRunnables);
   const setCurrentRunnables = useTestSessionStore((state) => state.setCurrentRunnables);
   const setTestRunId = useTestSessionStore((state) => state.setTestRunId);
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
 
   const [inputModalVisible, setInputModalVisible] = React.useState(false);
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
@@ -115,6 +116,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   });
 
   useEffect(() => {
+    // Poll for previous results
     if (!testRun && initialTestRun) {
       setTestRun(initialTestRun);
       if (testRunIsInProgress(initialTestRun)) {
@@ -123,6 +125,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       }
     }
 
+    // If test run is still running, set variables accordingly
     if (testRunIsInProgress(testRun)) {
       const runnableId = currentRunnables[testSession.id];
       const runnable = runnableMap.get(runnableId);
@@ -258,6 +261,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     });
     if (runnable?.inputs && runnable.inputs.length > 0) {
       showInputsModal(runnable, runnableType);
+    } else if (viewOnly) {
+      enqueueSnackbar(`${runnable?.title} has no inputs`, { variant: 'info' });
     } else {
       createTestRun(runnableType, runnableId, []);
     }

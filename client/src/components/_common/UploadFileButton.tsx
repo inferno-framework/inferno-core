@@ -2,12 +2,14 @@ import React, { ChangeEvent, FC } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { FileUploadOutlined, TaskOutlined } from '@mui/icons-material';
+import { useTestSessionStore } from '~/store/testSession';
 
 export interface UploadFileButtonProps {
   onUpload: (text: string) => unknown;
 }
 
 const UploadFileButton: FC<UploadFileButtonProps> = ({ onUpload }) => {
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const [fileName, setFileName] = React.useState<string>('');
 
   const uploadFile = (e: ChangeEvent<HTMLInputElement>) => {
@@ -41,6 +43,7 @@ const UploadFileButton: FC<UploadFileButtonProps> = ({ onUpload }) => {
         component="label"
         color="secondary"
         aria-label="file-upload"
+        disabled={viewOnly}
         startIcon={<FileUploadOutlined />}
         disableElevation
         sx={{ flexShrink: 0 }}

@@ -1,10 +1,11 @@
 import React, { FC } from 'react';
-import useStyles from './styles';
 import { Box, Divider, Link, List, ListItem, ListItemText, Typography } from '@mui/material';
 import FolderIcon from '@mui/icons-material/Folder';
 import { TestGroup } from '~/models/testSuiteModels';
-import ResultIcon from '../ResultIcon';
+import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
+import { useTestSessionStore } from '~/store/testSession';
 import theme from '~/styles/theme';
+import useStyles from './styles';
 
 interface NavigableGroupListItemProps {
   testGroup: TestGroup;
@@ -12,6 +13,7 @@ interface NavigableGroupListItemProps {
 
 const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) => {
   const { classes } = useStyles();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
 
   return (
     <>
@@ -34,7 +36,7 @@ const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) 
                   <Link
                     color="secondary.dark"
                     fontWeight="bold"
-                    href={`${location.pathname}#${testGroup.id}`}
+                    href={`${location.pathname}#${testGroup.id}${viewOnly ? '/view' : ''}`}
                     data-testid="navigable-group-item"
                   >
                     {testGroup.title}

@@ -10,7 +10,8 @@ import {
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { TestInput } from '~/models/testSuiteModels';
-import FieldLabel from './FieldLabel';
+import FieldLabel from '~/components/InputsModal/FieldLabel';
+import { useTestSessionStore } from '~/store/testSession';
 import useStyles from './styles';
 
 export interface InputRadioGroupProps {
@@ -22,6 +23,7 @@ export interface InputRadioGroupProps {
 
 const InputRadioGroup: FC<InputRadioGroupProps> = ({ input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const firstOptionValue =
     input.options?.list_options && input.options?.list_options?.length > 0
       ? input.options?.list_options[0]?.value
@@ -40,7 +42,9 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({ input, index, inputsMap, se
       <FormControl
         component="fieldset"
         id={`input${index}_control`}
-        disabled={input.locked}
+        tabIndex={0}
+        disabled={input.locked || viewOnly}
+        aria-disabled={input.locked || viewOnly}
         fullWidth
         className={classes.inputField}
       >
@@ -68,6 +72,8 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({ input, index, inputsMap, se
               control={<Radio size="small" color="secondary" />}
               label={option.label}
               key={`radio-button-${i}`}
+              tabIndex={0}
+              aria-disabled={input.locked || viewOnly}
             />
           ))}
         </RadioGroup>
