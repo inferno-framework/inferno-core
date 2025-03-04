@@ -155,6 +155,19 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
         expect(link_labels).to include(*expected_labels), error_message
       end
     end
+
+    it 'does not rely on the deprecated `Inferno::DSL::FHIRValidation`' do
+      suites.each do |suite|
+        suite.fhir_validators.each do |name, validators|
+          validators.each do |validator|
+            error_message =
+              "Validator '#{name}' in Suite '#{suite.id}' should be changed to a " \
+              'fhir_resource_validator'
+            expect(validator).to_not be_an_instance_of(Inferno::DSL::FHIRValidation::Validator), error_message
+          end
+        end
+      end
+    end
   end
 
   describe 'presets' do
