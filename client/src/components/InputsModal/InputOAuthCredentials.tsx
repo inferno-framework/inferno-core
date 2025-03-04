@@ -94,6 +94,20 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     );
   };
 
+  // Convert internal OAuth credentials object to inputsMap string
+  const updateInputsMap = (field: TestInput, value: string) => {
+    oAuthCredentials[field.name as keyof OAuthCredentials] = value;
+    // Delete fields with empty values
+    const parsedOAuthCredentials: Record<string, unknown> = {};
+    Object.entries(oAuthCredentials).forEach(([inputName, inputValue]) => {
+      if (inputValue) {
+        parsedOAuthCredentials[inputName] = inputValue;
+      }
+    });
+    inputsMap.set(input.name, JSON.stringify(parsedOAuthCredentials));
+    setInputsMap(new Map(inputsMap));
+  };
+
   const oAuthField = (field: TestInput) => {
     const fieldName = field.optional
       ? field.title || field.name
@@ -148,12 +162,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
                 setHasBeenModified({ ...hasBeenModified, [field.name]: true });
               }
             }}
-            onChange={(event) => {
-              const value = event.target.value;
-              oAuthCredentials[field.name as keyof OAuthCredentials] = value;
-              inputsMap.set(input.name, JSON.stringify(oAuthCredentials));
-              setInputsMap(new Map(inputsMap));
-            }}
+            onChange={(event) => updateInputsMap(field, event.target.value)}
           />
         </FormControl>
       </ListItemButton>
