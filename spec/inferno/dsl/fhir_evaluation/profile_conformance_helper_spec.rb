@@ -108,16 +108,31 @@ RSpec.describe Inferno::DSL::FHIREvaluation::ProfileConformanceHelper do
       expect(result).to be(true)
     end
 
-    it 'raises for Not Yet Implemented if considerValidationResults' do
+    it 'returns true for a valid resource if considerValidationResults' do
       options = {
         considerMetaProfile: false,
         considerOnlyResourceType: false,
         considerValidationResults: true
       }
-      validator = nil
-      expect do
-        checker.conforms_to_profile?(patient, patient_profile, options, validator)
-      end.to raise_error(StandardError, /Profile validation is not yet implemented/)
+
+      validator = double
+      allow(validator).to receive(:resource_is_valid?).and_return(true)
+
+      result = checker.conforms_to_profile?(patient, patient_profile, options, validator)
+      expect(result).to be(true)
+    end
+
+    it 'returns false for an invalid resource if considerValidationResults' do
+      options = {
+        considerMetaProfile: false,
+        considerOnlyResourceType: false,
+        considerValidationResults: true
+      }
+      validator = double
+      allow(validator).to receive(:resource_is_valid?).and_return(false)
+
+      result = checker.conforms_to_profile?(patient, patient_profile, options, validator)
+      expect(result).to be(false)
     end
 
     it 'returns true for a resource when the block returns true' do
