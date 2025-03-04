@@ -1,7 +1,7 @@
 require_relative '../../dsl/fhir_evaluation/evaluator'
 require_relative '../../dsl/fhir_evaluation/config'
 require_relative '../../entities'
-require_relative '../../repositories/validator_sessions'
+require_relative '../../repositories'
 require_relative '../../utils/ig_downloader'
 
 require 'tempfile'
