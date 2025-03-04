@@ -1,6 +1,6 @@
-require_relative '../../../inferno/dsl/fhir_evaluation/evaluator'
-require_relative '../../../inferno/dsl/fhir_evaluation/config'
-require_relative '../../../inferno/entities'
+require_relative '../../dsl/fhir_evaluation/evaluator'
+require_relative '../../dsl/fhir_evaluation/config'
+require_relative '../../entities'
 require_relative '../../utils/ig_downloader'
 
 require 'tempfile'
@@ -21,7 +21,9 @@ module Inferno
             ig.examples
           end
 
-        evaluator = Inferno::DSL::FHIREvaluation::Evaluator.new(ig)
+        validator = setup_validator(ig_path)
+
+        evaluator = Inferno::DSL::FHIREvaluation::Evaluator.new(ig, validator)
 
         config = Inferno::DSL::FHIREvaluation::Config.new
         results = evaluator.evaluate(data, config)
@@ -42,6 +44,24 @@ module Inferno
         return unless versions.any? { |v| v > '4.0.1' }
 
         puts '**WARNING** The selected IG targets a FHIR version higher than 4.0.1, which is not supported by Inferno.'
+      end
+
+      def setup_validator(ig_path)
+        igs_directory = File.join(Dir.pwd, 'data', 'igs')
+        if File.exist?(ig_path) && !File.realpath(ig_path).start_with?(igs_directory)
+          puts "Copying #{File.basename(ig_path)} to data/igs so it is accessible to validator"
+          destination_file_path = File.join(igs_directory, File.basename(ig_path))
+          FileUtils.copy_file(ig_path, destination_file_path, true)
+          ig_path = "igs/#{File.basename(ig_path)}"
+        end
+        Inferno::DSL::FHIRResourceValidation::Validator.new(:default, 'evaluator_cli') do
+          igs(ig_path)
+
+          cli_context do
+            # For our purposes, code display mismatches should be warnings and not affect profile conformance
+            displayWarnings(true)
+          end
+        end
       end
 
       def output_results(results, output)
