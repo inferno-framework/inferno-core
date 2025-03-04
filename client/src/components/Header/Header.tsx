@@ -103,6 +103,7 @@ const Header: FC<HeaderProps> = ({
             {suiteVersion && (
               <Typography variant="overline" className={classes.version}>
                 {`v.${suiteVersion}`}
+                {viewOnly ? ' (Read-Only Mode)' : ''}
               </Typography>
             )}
           </Box>

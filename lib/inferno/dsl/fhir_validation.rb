@@ -7,6 +7,7 @@ module Inferno
     # `assert_valid_resource` for validation rather than directly calling
     # methods on a validator.
     #
+    # @deprecated Use {Inferno::DSL::FHIRResourceValidation} instead
     # @example
     #
     #   validator do
@@ -153,7 +154,13 @@ module Inferno
         end
 
         # @private
+        def exclude_unresolved_url_message
+          proc { |message| message.message.match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) }
+        end
+
+        # @private
         def filter_messages(message_hashes)
+          message_hashes.reject! { |message| exclude_unresolved_url_message.call(Entities::Message.new(message)) }
           message_hashes.reject! { |message| exclude_message.call(Entities::Message.new(message)) } if exclude_message
         end
 
@@ -243,6 +250,8 @@ module Inferno
         end
 
         # Define a validator
+        # @deprecated Use
+        #   {Inferno::DSL::FHIRResourceValidation::ClassMethods#fhir_resource_validator} instead
         # @example
         #   validator do
         #     url 'http://example.com/validator'
@@ -261,6 +270,10 @@ module Inferno
         # @param required_suite_options [Hash] suite options that must be
         #   selected in order to use this validator
         def validator(name = :default, required_suite_options: nil, &)
+          Inferno::Application['logger'].warn(
+            "'validator' in '#{suite.id}' TestSuite is deprecated and will be removed in an upcoming release. " \
+            "Use 'fhir_resource_validator' instead."
+          )
           current_validators = fhir_validators[name] || []
 
           new_validator = Inferno::DSL::FHIRValidation::Validator.new(required_suite_options, &)

@@ -20,12 +20,28 @@ module Inferno
         raise Exceptions::PassException, message if test
       end
 
-      # Halt execution of the current test and mark it as skipped.
+      # Halt execution of the current test and mark it as skipped. This method
+      # can also take a block with an assertion, and if the assertion fails, the
+      # test will skip rather than fail. The message parameter is ignored if a
+      # block is provided.
       #
       # @param message [String]
       # @return [void]
+      #
+      # @example
+      #   if some_precondition_not_met?
+      #     skip('Some precondition was not met.')
+      #   end
+      #
+      #   skip do
+      #     assert false, 'This test will skip rather than fail'
+      #   end
       def skip(message = '')
-        raise Exceptions::SkipException, message
+        raise Exceptions::SkipException, message unless block_given?
+
+        yield
+      rescue Exceptions::AssertionException => e
+        raise Exceptions::SkipException, e.message
       end
 
       # Halt execution of the current test and mark it as skipped if a condition
@@ -38,12 +54,28 @@ module Inferno
         raise Exceptions::SkipException, message if test
       end
 
-      # Halt execution of the current test and mark it as omitted.
+      # Halt execution of the current test and mark it as omitted. This method
+      # can also take a block with an assertion, and if the assertion fails, the
+      # test will omit rather than fail. The message parameter is ignored if a
+      # block is provided.
       #
       # @param message [String]
       # @return [void]
+      #
+      # @example
+      #   if behavior_does_not_need_to_be_tested?
+      #     omit('Behavior does not need to be tested.')
+      #   end
+      #
+      #   omit do
+      #     assert false, 'This test will omit rather than fail'
+      #   end
       def omit(message = '')
-        raise Exceptions::OmitException, message
+        raise Exceptions::OmitException, message unless block_given?
+
+        yield
+      rescue Exceptions::AssertionException => e
+        raise Exceptions::OmitException, e.message
       end
 
       # Halt execution of the current test and mark it as omitted if a condition

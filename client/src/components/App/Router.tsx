@@ -9,12 +9,42 @@ import SuiteOptionsPageSkeleton from '~/components/Skeletons/SuiteOptionsPageSke
 import { basePath } from '~/api/infernoApiService';
 import { TestSuite } from '~/models/testSuiteModels';
 
+export interface LoaderProps {
+  params: {
+    test_suite_id: string;
+  };
+}
+
+export interface OptionsRouteProps {
+  loaderData: {
+    suite: TestSuite;
+  };
+}
+
 export interface RouterProps {
   testSuites: TestSuite[];
 }
 
 const Router: FC<RouterProps> = ({ testSuites }) => {
   const testSuitesExist = !!testSuites && testSuites.length > 0;
+
+  function loader({ params }: LoaderProps) {
+    const testSuitesExist = !!testSuites && testSuites.length > 0;
+    if (!testSuitesExist) return <SuiteOptionsPageSkeleton />;
+    const suiteId: string = params.test_suite_id || '';
+    const suite = testSuites.find((suite) => suite.id === suiteId);
+    return suite;
+  }
+
+  function OptionsRoute({ loaderData }: OptionsRouteProps) {
+    const { suite } = loaderData;
+    const childComponent = suite ? (
+      <SuiteOptionsPage testSuite={suite} />
+    ) : (
+      <SuiteOptionsPageSkeleton />
+    );
+    return <Route path=":test_suite_id" element={<Page title="Options">{childComponent}</Page>} />;
+  }
 
   return (
     <BrowserRouter basename={`/${basePath || ''}`}>
@@ -27,16 +57,7 @@ const Router: FC<RouterProps> = ({ testSuites }) => {
             </Page>
           }
         />
-        <Route
-          path=":test_suite_id"
-          element={<Page title="Options" />}
-          loader={({ params }) => {
-            if (!testSuitesExist) return <SuiteOptionsPageSkeleton />;
-            const suiteId: string = params.test_suite_id || '';
-            const suite = testSuites.find((suite) => suite.id === suiteId);
-            return suite ? <SuiteOptionsPage testSuite={suite} /> : <SuiteOptionsPageSkeleton />;
-          }}
-        />
+        <OptionsRoute loaderData={loader(params)} />
         {/*
          * Title for TestSessionWrapper is set in the component
          * because testSession is not set at the time of render

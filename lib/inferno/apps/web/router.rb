@@ -4,8 +4,12 @@ Dir.glob(File.join(__dir__, 'controllers', '**', '*.rb')).each { |path| require_
 
 module Inferno
   module Web
-    client_page = ERB.new(File.read(File.join(Inferno::Application.root, 'lib', 'inferno', 'apps', 'web',
-                                              'index.html.erb'))).result
+    client_page = ERB.new(
+      File.read(
+        File.join(Inferno::Application.root, 'lib', 'inferno', 'apps', 'web', 'index.html.erb')
+      )
+    ).result
+    CLIENT_PAGE_RESPONSE = ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
 
     base_path = Application['base_path']&.delete_prefix('/')
 
@@ -47,12 +51,14 @@ module Inferno
 
         get '/requests/:id', to: Inferno::Web::Controllers::Requests::Show, as: :requests_show
 
-        get '/version', to: ->(_env) { [200, {}, [{ 'version' => Inferno::VERSION.to_s }.to_json]] }, as: :version
+        get '/version', to: lambda { |_env|
+          [200, { 'Content-Type' => 'application/json' }, [{ 'version' => Inferno::VERSION.to_s }.to_json]]
+        }, as: :version
       end
 
       # Should not need Content-Type header but GitHub Codespaces will not work without them.
       # This could be investigated and likely removed if addressed properly elsewhere.
-      get '/', to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
+      get '/', to: CLIENT_PAGE_RESPONSE
       get '/jwks.json', to: lambda { |_env|
                               [200, { 'Content-Type' => 'application/json' }, [Inferno::JWKS.jwks_json]]
                             }, as: :jwks
@@ -70,7 +76,7 @@ module Inferno
 
       Inferno::Repositories::TestSuites.all.map { |suite| "/#{suite.id}" }.each do |suite_path|
         Application['logger'].info("Registering suite route: #{suite_path}")
-        get suite_path, to: ->(_env) { [200, {}, [client_page]] }
+        get suite_path, to: CLIENT_PAGE_RESPONSE
       end
 
       get '/test_sessions/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow, as: :client_session_show
@@ -83,7 +89,7 @@ module Inferno
       if base_path.present?
         Hanami::Router.new do
           scope("#{base_path}/") do
-            get '/', to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
+            get '/', to: CLIENT_PAGE_RESPONSE
           end
           scope(base_path, &route_block)
         end

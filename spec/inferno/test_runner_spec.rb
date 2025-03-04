@@ -34,7 +34,7 @@ RSpec.describe Inferno::TestRunner do
       stub_request(:get, "#{base_url}/Observation")
         .with(query: { 'patient' => patient_id })
         .to_return(status: 200, body: observation_bundle.to_json)
-      stub_request(:post, "#{ENV.fetch('VALIDATOR_URL')}/validate")
+      stub_request(:post, "#{ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL')}/validate")
         .with(query: hash_including({}))
         .to_return(status: 200, body: FHIR::OperationOutcome.new.to_json)
       stub_request(:get, 'http://example.com')

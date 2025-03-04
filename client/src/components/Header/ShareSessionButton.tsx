@@ -37,7 +37,8 @@ const ShareSessionButton: FC<unknown> = () => {
       const viewStringIndex = viewOnlyUrlEnding.indexOf('/view');
       viewOnlyUrlEnding = viewOnlyUrlEnding.substring(0, viewStringIndex);
     }
-    return `${window.location.origin}${window.location.pathname}${viewOnlyUrlEnding}`;
+    // Adding a trailing slash causes re-render
+    return `${window.location.origin}${(window.location.pathname + '/').replace(/\/\/$/, '')}${viewOnlyUrlEnding}`;
   };
 
   const copyLink = (viewOnly?: boolean) => {

@@ -103,6 +103,17 @@ RSpec.describe Inferno::DSL::FHIRValidation do
                 'Patient.identifier[0]',
                 'Line 14, Col 10'
               ]
+            },
+            {
+              severity: 'error',
+              code: 'processing',
+              details: {
+                text: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve"
+              },
+              expression: [
+                'Patient',
+                'Line 14, Col 10'
+              ]
             }
           ]
         }.to_json
@@ -128,6 +139,14 @@ RSpec.describe Inferno::DSL::FHIRValidation do
 
           expect(result).to be(false)
           expect(runnable.messages.first[:message]).to start_with("#{resource.resourceType}:")
+        end
+
+        it 'excludes the unresolved url message' do
+          result = validator.resource_is_valid?(resource, profile_url, runnable)
+
+          expect(result).to be(false)
+          expect(runnable.messages)
+            .to all(satisfy { |message| !message[:message].match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) })
         end
       end
 
@@ -215,8 +234,8 @@ RSpec.describe Inferno::DSL::FHIRValidation do
       v1_validator = suite.find_validator(:default, ig_version: '1')
       v2_validator = suite.find_validator(:default, ig_version: '2')
 
-      expect(v1_validator.url).to eq('v1_validator')
-      expect(v2_validator.url).to eq('v2_validator')
+      expect(v1_validator.url).to eq('https://example.com/v1_validator')
+      expect(v2_validator.url).to eq('https://example.com/v2_validator')
     end
   end
 
@@ -229,8 +248,8 @@ RSpec.describe Inferno::DSL::FHIRValidation do
       v1_validator = v1_test.find_validator(:default)
       v2_validator = v2_test.find_validator(:default)
 
-      expect(v1_validator.url).to eq('v1_validator')
-      expect(v2_validator.url).to eq('v2_validator')
+      expect(v1_validator.url).to eq('https://example.com/v1_validator')
+      expect(v2_validator.url).to eq('https://example.com/v2_validator')
     end
   end
 end
