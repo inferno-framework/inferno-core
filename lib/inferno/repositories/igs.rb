@@ -60,7 +60,12 @@ module Inferno
 
         return ig_path if File.exist?(ig_path)
 
-        # Try to find the file under the current working directory,
+        # IG packages are copied to ./data/igs to be used by the validator,
+        # and if referenced by file in the validator block the path given must be "igs/{filename}.tgz"
+        data_igs_path = File.join('data', ig_path)
+        return data_igs_path if File.exist?(data_igs_path)
+
+        # Last resort, try to find the file under the current working directory,
         # eg, given ig_path: 'igs/package123.tgz'
         # this would find 'lib/my_test_kit/igs/package123.tgz'
         Dir.glob(File.join('**', ig_path))[0]

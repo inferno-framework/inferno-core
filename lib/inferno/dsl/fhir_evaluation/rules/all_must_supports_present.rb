@@ -38,7 +38,8 @@ module Inferno
               end
               requirement_extension = context.config.data['Rule']['AllMustSupportsPresent']['RequirementExtensionUrl']
               debug_metadata = context.config.data['Rule']['AllMustSupportsPresent']['WriteMetadataForDebugging']
-              missing_items = perform_must_support_test(profile, resources, ig, debug_metadata:, requirement_extension:)
+              missing_items = perform_must_support_assessment(profile, resources, ig, debug_metadata:,
+                                                                                      requirement_extension:)
               missing_items_by_profile[profile.url] = missing_items if missing_items.any?
             end
 

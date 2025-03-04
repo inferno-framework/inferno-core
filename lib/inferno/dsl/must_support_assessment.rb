@@ -28,11 +28,11 @@ module Inferno
           InternalMustSupportLogic.new.perform_must_support_test_with_metadata(resources, metadata, debug_metadata:)
         else
           ig, profile = find_ig_and_profile(profile_url, validator_name)
-          perform_must_support_test(profile, resources, ig, debug_metadata:, requirement_extension:, &)
+          perform_must_support_assessment(profile, resources, ig, debug_metadata:, requirement_extension:, &)
         end
       end
 
-      # perform_must_support_test allows customizing the metadata with a block.
+      # perform_must_support_assessment allows customizing the metadata with a block.
       # Customizing the metadata may add, modify, or remove items.
       # For instance, US Core 3.1.1 Patient "Previous Name" is defined as MS only in narrative.
       # Choices are also defined only in narrative.
@@ -43,7 +43,7 @@ module Inferno
       # @param requirement_extension [String] Extension URL that implies "required" as an alternative to the MS flag
       # @yield [Metadata] Customize the metadata before running the test
       # @return [Array<String>] list of elements that were not found in the provided resources
-      def perform_must_support_test(profile, resources, ig, debug_metadata: false, requirement_extension: nil)
+      def perform_must_support_assessment(profile, resources, ig, debug_metadata: false, requirement_extension: nil)
         test_impl = InternalMustSupportLogic.new
         profile_metadata = test_impl.extract_metadata(profile, ig, requirement_extension:)
         yield profile_metadata if block_given?
