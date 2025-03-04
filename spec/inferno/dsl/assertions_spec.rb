@@ -1,3 +1,5 @@
+require 'ostruct'
+
 RSpec.describe Inferno::DSL::Assertions do
   let(:klass) do
     Class.new(Inferno::Entities::Test) do
@@ -455,6 +457,105 @@ RSpec.describe Inferno::DSL::Assertions do
     it 'does not raise an exception when the Content-Type headers starts with the supplied value' do
       request = repo_create(:request, headers: [{ type: 'response', name: 'Content-Type', value: 'abcdef' }])
       expect { klass.assert_response_content_type('abc', request:) }.to_not raise_error
+    end
+  end
+
+  describe '#assert_must_support_elements_present' do
+    let(:test_klass) do
+      uscore3_package = File.expand_path('../../fixtures/uscore311.tgz', __dir__)
+      Class.new(Inferno::Entities::Test) do
+        fhir_resource_validator { igs(uscore3_package) }
+      end.new
+    end
+
+    # https://www.hl7.org/fhir/us/core/STU3.1.1/StructureDefinition-us-core-medication.html
+    # Note the only MS element is Medication.code
+    let(:uscore_medication) do
+      'http://hl7.org/fhir/us/core/StructureDefinition/us-core-medication'
+    end
+
+    let(:medication) do
+      FHIR::Medication.new(
+        meta: { profile: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-medication'] },
+        status: 'active',
+        code: {
+          coding: [{
+            system: 'http://www.nlm.nih.gov/research/umls/rxnorm',
+            code: '206765',
+            display: 'Prinivil 10 MG Oral Tablet'
+          }],
+          text: 'lisinopril oral 10 mg'
+        }
+      )
+    end
+
+    context 'with default metadata' do
+      it 'raises an exception when MS elements are missing' do
+        medication.code = nil
+        expect { test_klass.assert_must_support_elements_present([medication], uscore_medication) }.to(
+          raise_error(assertion_exception, 'Could not find code in the 1 provided resource(s)')
+        )
+      end
+
+      it 'passes when all MS elements are present' do
+        expect { test_klass.assert_must_support_elements_present([medication], uscore_medication) }.to_not raise_error
+      end
+    end
+
+    context 'with modified metadata' do
+      it 'raises an exception when MS elements are missing' do
+        medication.status = nil
+        expect do
+          test_klass.assert_must_support_elements_present([medication], uscore_medication) do |metadata|
+            metadata.must_supports[:elements] << { path: 'status' }
+          end
+        end.to(
+          raise_error(assertion_exception, 'Could not find status in the 1 provided resource(s)')
+        )
+      end
+
+      it 'passes when all MS elements are present' do
+        expect do
+          test_klass.assert_must_support_elements_present([medication], uscore_medication) do |metadata|
+            metadata.must_supports[:elements] << { path: 'status' }
+          end
+        end.to_not raise_error
+      end
+    end
+
+    context 'with provided metadata' do
+      let(:metadata) do
+        OpenStruct.new({
+                         must_supports: {
+                           extensions: [],
+                           slices: [],
+                           elements: [
+                             { path: 'code' },
+                             { path: 'status' }
+                           ]
+                         }
+                       })
+      end
+
+      it 'raises an exception when MS elements are missing' do
+        medication.status = nil
+        expect { test_klass.assert_must_support_elements_present([medication], profile_url, metadata:) }.to(
+          raise_error(assertion_exception, 'Could not find status in the 1 provided resource(s)')
+        )
+      end
+
+      it 'passes when all MS elements are present' do
+        expect do
+          test_klass.assert_must_support_elements_present([medication], profile_url, metadata:)
+        end.to_not raise_error
+      end
+    end
+
+    it 'raises an exception on bad profile URL' do
+      profile_url = 'http://example.com/badprofile'
+      expect { test_klass.assert_must_support_elements_present([], profile_url) }.to(
+        raise_error(RuntimeError, "Unable to find profile #{profile_url} in any IG defined for validator default")
+      )
     end
   end
 end
