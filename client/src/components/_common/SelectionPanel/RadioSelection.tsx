@@ -19,7 +19,7 @@ const RadioSelection: FC<RadioSelectionProps> = ({
     // just grab the first to start
     // perhaps choices should be persisted in the URL to make it easy to share specific options
     id: option.id,
-    value: option && option.list_options ? option.list_options[0].value : '',
+    value: getStartingValue(option),
   }));
   const [selectedRadioOptions, setSelectedRadioOptions] = React.useState<RadioOptionSelection[]>(
     initialSelectedRadioOptions || [],
@@ -28,6 +28,15 @@ const RadioSelection: FC<RadioSelectionProps> = ({
   useEffect(() => {
     setParentSelections(initialSelectedRadioOptions);
   }, []);
+
+  function getStartingValue(option: RadioOption): string {
+    if (option.default) {
+      return option.default;
+    } else if (option.list_options) {
+      return option.list_options[0].value;
+    }
+    return '';
+  }
 
   const changeRadioOption = (option_id: string, value: string): void => {
     const newOptions = selectedRadioOptions.map((option: RadioOptionSelection) =>
@@ -58,9 +67,7 @@ const RadioSelection: FC<RadioSelectionProps> = ({
 
           <RadioGroup
             aria-label={`radio-group-${option.id}`}
-            defaultValue={
-              option.list_options && option.list_options.length && option.list_options[0].value
-            }
+            defaultValue={getStartingValue(option)}
             name={`radio-group-${option.id}`}
             data-testid="radio-option-group"
           >
