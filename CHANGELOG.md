@@ -1,3 +1,22 @@
+## 0.6.5
+* FI-3487: Fix response content types by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/616
+* FI-2783: Turn off Accept Charset Request Header by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/620
+* FI-3714: Add method to remove runnables by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/628
+* FI-3731: Modify cursor behavior to allow tooltips in report by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/625
+* FI-3652: Redirect new session button by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/605
+* FI-2697: Ignore Unresolved URL Error Messages from Validator by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/626
+* FI-3473: Add INFERNO_HOST to Template by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/627
+* FI-3778: Allow skip and omit to take blocks by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/631
+* FI-3713: Delete empty fields from JSON inputs by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/632
+* FI-3715: Add Method to Replace Runnables by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/629
+* FI-3428: Implement view-only session sharing by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/585
+* FI-3762: Improve IG file loading by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/630
+* Fi 3789 add reoder runnable method by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/634
+* FI-3791: Add check to JSON parsing for non-JSON strings by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/633
+* FI-3722: Add branch for built UI by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/637
+* FI-3771: Deprecate legacy validator by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/635
+* FI-3063: Add MustSupport assertion by @dehall in https://github.com/inferno-framework/inferno-core/pull/622
+
 ## 0.6.4
 * FI-3756: Add suite option default by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/623
 
