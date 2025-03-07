@@ -8,12 +8,12 @@ Environment:
 
 Rule:
   AllReferencesResolve: 
-    Enabled: true
+    Enabled: false
   AllResourcesReachable:
-    Enabled: true
+    Enabled: false
   AllMustSupportsPresent:
     Description: 'An instance of all MustSupport elements, extensions, and slices is present in the given resources'
-    Enabled: true
+    Enabled: false
     # RequirementExtensionUrl accepts an extension URL which tags element definitions as required for the purposes of this test, even if not Must Support.
     # For instance, US Core elements with the "http://hl7.org/fhir/us/core/StructureDefinition/uscdi-requirement" extension
     # may be considered required even if not necessarily tagged Must Support.
@@ -38,3 +38,16 @@ Rule:
 
       # - If considerOnlyResourceType, the search will include resources of the same type as the profile target type (StructureDefintion.type)
       considerOnlyResourceType: false
+  AllExtensionsUsed:
+    Enabled: true
+  DifferentialContentHasExamples:
+    Enabled: true
+  ValueSetsDemonstrate:
+    Enabled: true
+    VSAC:
+      url: 'https://cts.nlm.nih.gov'
+      apikey: 'e0b8a2be-921e-442a-947f-449ba4025f22'
+    Exclude:
+      URN: true # Exclude if system is provided as Uniform Resource Name "urn:"
+      Filter: true # Exclude filter
+      SystemOnly: true # Exclude if only system is provided (e.g. http://loing.org)

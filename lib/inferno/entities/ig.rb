@@ -15,6 +15,7 @@ module Inferno
       ATTRIBUTES = [
         :id,
         :resources_by_type,
+        :value_sets,
         :examples
       ].freeze
 
@@ -121,6 +122,10 @@ module Inferno
 
       def self.extract_package_id(ig_resource)
         "#{ig_resource.id}##{ig_resource.version || 'current'}"
+      end
+
+      def value_sets
+        resources_by_type['StructureDefinition'].filter { |sd| sd.type == 'ValueSet' }
       end
 
       def profiles

@@ -16,7 +16,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::DifferentialContentHasExampl
     profiles_to_load = [
       'StructureDefinition-us-core-medication.json'
     ]
-    profiles = profiles_to_load.map { |e| fixture("#{e}") }
+    profiles = profiles_to_load.map { |e| fixture(e.to_s) }
     # https://hl7.org/fhir/us/core/STU3.1.1/StructureDefinition-us-core-medication.html
     expected_differential = { 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-medication' => ['code'] }
 
@@ -30,7 +30,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::DifferentialContentHasExampl
     extensions_to_load = [
       'StructureDefinition-us-core-race.json'
     ]
-    extensions = extensions_to_load.map { |e| fixture("#{e}") }
+    extensions = extensions_to_load.map { |e| fixture(e.to_s) }
     # https://hl7.org/fhir/us/core/STU3.1.1/StructureDefinition-us-core-race.html
     expected_differential = { 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-race' => ['extension', 'extension.url', 'extension.valueCoding', 'extension.valueString', 'url'] }
 
@@ -44,10 +44,11 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::DifferentialContentHasExampl
     profiles_to_load = [
       'StructureDefinition-us-core-patient.json'
     ]
-    profiles = profiles_to_load.map { |e| fixture("#{e}") }
+    profiles = profiles_to_load.map { |e| fixture(e.to_s) }
     ig = instance_double(Inferno::Entities::IG, profiles:, extensions: [])
     data = [patient85.entry[0].resource]
-    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(ig, data, nil, Inferno::DSL::FHIREvaluation::Config.new)
+    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(ig, data, nil,
+                                                                  Inferno::DSL::FHIREvaluation::Config.new)
 
     result = described_class.new.check(context)[0]
 
@@ -59,11 +60,12 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::DifferentialContentHasExampl
     profiles_to_load = [
       'StructureDefinition-us-core-medication.json'
     ]
-    profiles = profiles_to_load.map { |e| fixture("#{e}") }
+    profiles = profiles_to_load.map { |e| fixture(e.to_s) }
     # https://hl7.org/fhir/us/core/STU3.1.1/StructureDefinition-us-core-medication.html
     ig = instance_double(Inferno::Entities::IG, profiles:, extensions: [])
     data = [FHIR::Medication.new]
-    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(ig, data, nil, Inferno::DSL::FHIREvaluation::Config.new)
+    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(ig, data, nil,
+                                                                  Inferno::DSL::FHIREvaluation::Config.new)
 
     result = described_class.new.check(context)[0]
 

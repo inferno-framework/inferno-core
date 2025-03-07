@@ -57,15 +57,12 @@ module Inferno
           end
 
           def get_fail_message(extensions)
-            message = "Found extensions specified in profiles, but not used in instances:"
+            message = 'Found extensions specified in profiles, but not used in instances:'
             extensions.each do |profile, extension|
-              unless extension.empty?
-                message += "\n Profile: " + profile.to_s + ", \n\tExtensions: " + extension.join(', ')
-              end
+              message += "\n Profile: #{profile}, \n\tExtensions: #{extension.join(', ')}" unless extension.empty?
             end
             message
           end
-        
         end
       end
     end
