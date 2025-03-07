@@ -55,10 +55,16 @@ module Inferno
           declared_profiles.include?(profile_url) || declared_profiles.include?(versioned_url)
         end
 
-        # @private until implemented
-        def validates_profile?(_resource, _profile, _validator)
-          raise 'Profile validation is not yet implemented. ' \
-                'Set considerValidationResults=false.'
+        # Check if the given resource validates against the given profile.
+        # "Validates" means the provided Validator instance returns no fatal or error messages.
+        # @param resource [FHIR::Resource]
+        # @param profile [FHIR::StructureDefinition]
+        # @param validator [Inferno::DSL::FHIRResourceValidation::Validator]
+        def validates_profile?(resource, profile, validator)
+          return false if validator.nil?
+
+          runnable = Inferno::Entities::Test.new
+          validator.resource_is_valid?(resource, profile.url, runnable, add_messages_to_runnable: false)
         end
       end
     end
