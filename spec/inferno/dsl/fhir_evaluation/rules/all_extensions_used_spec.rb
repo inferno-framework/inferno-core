@@ -7,6 +7,7 @@ def fixture(file)
   FHIR::Json.from_json(File.read(path))
 end
 
+# rubocop:disable Layout/LineLength
 RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllExtensionsUsed do
   let(:patient85) do
     fixture('patient_85.json')
@@ -71,3 +72,4 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllExtensionsUsed do
     expect(result2.message).to eq("Found extensions specified in profiles, but not used in instances:\n Profile: http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient, \n\tExtensions: http://hl7.org/fhir/us/core/StructureDefinition/us-core-race, http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity")
   end
 end
+# rubocop:enable Layout/LineLength

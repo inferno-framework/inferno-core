@@ -9,20 +9,17 @@ module Inferno
   module DSL
     module FHIREvaluation
       module Rules
-        # This rule evaluates if an IG defines a new valueset, the examples should demonstrate reasonable coverage of that valueset.
-        # Note this probably only makes sense for small valuesets such as status options, not something like disease codes from SNOMED.
+        # This rule evaluates if an IG defines a new valueset, the examples should
+        # demonstrate reasonable coverage of that valueset.
+        # Note this probably only makes sense for small valuesets
+        # such as status options, not something like disease codes from SNOMED.
 
         # Algorithm:
         # 1. Extract pairs of system and code from include in value sets in IG
-        # 2. If valueSet exists in include, retrieve the value sets from UMLS. Extract pairs of system and code from the result.
+        # 2. If valueSet exists in include, retrieve the value sets from UMLS.
+        #    Extract pairs of system and code from the result.
         # 3. For each pair of system and code, check if any resources in the IG have instance of them.
         # 4. Count total number of existences.
-
-        # Issue
-        # Counting a specific system and code in Examples isn't challenging, however measuring the coverage of a value set for an IG would be tricky. For example:
-        # A same system and code can be used in different value sets. -> overcount
-        # A large value set, for example disease codes may be used only part of its codes.
-        # That an IG includes a value set doesn't necessarily mean that it should be used in the profiles in the IG.
 
         class ValueSetsDemonstrate < Rule
           attr_accessor :config
@@ -79,7 +76,6 @@ module Inferno
                   if config.data['Rule']['ValueSetsDemonstrate']['Exclude']['SystemOnly'] && (system_url && !include['concept'] && !include['filter'])
                     value_set_unevaluated << valueset.url
                   end
-
                 end
               else
                 value_set_unevaluated << valueset.url
@@ -140,8 +136,11 @@ module Inferno
 
           def find_valueset_used(resource, system, code)
             resource.each do |key, value|
-              next unless key == 'code' || ['value', 'valueCodeableConcept', 'valueString', 'valueQuantity', 'valueBoolean',
-                                            'valueInteger', 'valueRange', 'valueRatio', 'valueSampleData', 'valueDateTime', 'valuePeriod', 'valueTime'].include?(key)
+              next unless key == 'code' || ['value', 'valueCodeableConcept', 'valueString',
+                                            'valueQuantity', 'valueBoolean',
+                                            'valueInteger', 'valueRange', 'valueRatio',
+                                            'valueSampleData', 'valueDateTime',
+                                            'valuePeriod', 'valueTime'].include?(key)
               next unless value.is_a?(Hash)
 
               value['coding']&.each do |codeset|
@@ -172,7 +171,7 @@ module Inferno
             http.use_ssl = (uri.scheme == 'https')
 
             request = Net::HTTP::Get.new(uri.request_uri)
-            
+
             username = config.data['Rule']['ValueSetsDemonstrate']['url']
             password = config.data['Rule']['ValueSetsDemonstrate']['apikey']
             encoded_credentials = Base64.strict_encode64("#{username}:#{password}")

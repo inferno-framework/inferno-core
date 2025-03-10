@@ -8,6 +8,7 @@ def fixture(file)
 end
 
 RSpec.describe Inferno::DSL::FHIREvaluation::Rules::ValueSetsDemonstrate do
+  # rubocop:disable Layout/LineLength
   it 'test with US Core 3.1.1 search params and example data included in the IG' do
     ig = Inferno::Entities::IG.from_file('spec/fixtures/uscore311.tgz')
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(ig, ig.examples,
@@ -117,4 +118,5 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::ValueSetsDemonstrate do
     #   expect(result.message).to eq("All codes in these value sets are used at least once in Examples:\nFound unused Value Sets: \n\thttp://hl7.org/fhir/us/core/ValueSet/us-core-observation-smokingstatus")
     # end
   end
+  # rubocop:enable Layout/LineLength
 end
