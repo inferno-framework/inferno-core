@@ -37,7 +37,7 @@ const Header: FC<HeaderProps> = ({
 
   // Use window navigation instead of React router to trigger new page request
   const startNewSession = () => {
-    window.location.href = `/${basePath}/${suiteId || ''}`;
+    window.location.href = `/${basePath}`;
   };
 
   const suiteOptionsString =
