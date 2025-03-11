@@ -43,10 +43,7 @@ Rule:
   DifferentialContentHasExamples:
     Enabled: true
   ValueSetsDemonstrate:
-    Enabled: false
-    VSAC:
-      url: 'https://cts.nlm.nih.gov'
-      apikey: '' 
+    Enabled: true
     Exclude:
       URN: true # Exclude if system is provided as Uniform Resource Name "urn:"
       Filter: true # Exclude filter

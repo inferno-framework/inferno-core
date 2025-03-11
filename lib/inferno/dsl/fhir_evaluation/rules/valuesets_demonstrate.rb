@@ -172,8 +172,8 @@ module Inferno
 
             request = Net::HTTP::Get.new(uri.request_uri)
 
-            username = config.data['Rule']['ValueSetsDemonstrate']['url']
-            password = config.data['Rule']['ValueSetsDemonstrate']['apikey']
+            username = config.data['Environment']['VSAC']['Url']
+            password = config.data['Environment']['VSAC']['Apikey']
             encoded_credentials = Base64.strict_encode64("#{username}:#{password}")
             request['Authorization'] = "Basic #{encoded_credentials}"
 
