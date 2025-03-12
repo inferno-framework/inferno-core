@@ -85,6 +85,16 @@ RSpec.describe Inferno::DSL::Configurable do
 
           expect(config.input(identifier)).to eq(expected_input)
         end
+
+        it 'raises an error if attempting to hide a required input' do
+          input = { hidden: true }
+
+          expect { config.add_input(:input1, **input) }.to(
+            raise_error(
+              Inferno::Exceptions::InvalidAttributeException, /cannot be hidden/
+            )
+          )
+        end
       end
 
       context 'with an existing input' do
