@@ -23,7 +23,7 @@ Inferno::Application.register_provider(:ig_files) do
     local_ig_files = Dir.glob(File.join(Dir.pwd, 'lib', '*', 'igs', '*.tgz'))
 
     if local_ig_files.present? && test_kit_gems.none? { |gem| gem.full_gem_path == Dir.pwd }
-      test_kit_ig_files += {
+      test_kit_ig_files << {
         test_kit_name: 'current project',
         files: local_ig_files
       }
