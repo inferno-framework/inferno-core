@@ -32,7 +32,7 @@ module Inferno
             value_set_unused = []
 
             context.ig.resources_by_type['ValueSet'].each do |valueset|
-              cnt = 0
+              valueset_used_count = 0
               system_codes = []
 
               if valueset.to_hash['compose']
@@ -91,14 +91,14 @@ module Inferno
               context.data.each do |resource|
                 system_codes.each do |system_code|
                   if !system_code.nil? && find_valueset_used(resource.to_hash, system_code[:system], system_code[:code])
-                    cnt += 1
+                    valueset_used_count += 1
                     resource_used << resource.id unless resource_used.include?(resource.id)
                   end
                 end
               end
 
-              if cnt.positive?
-                value_set_used << "#{valueset.url} is used #{cnt} times in #{resource_used.count} resources"
+              if valueset_used_count.positive?
+                value_set_used << "#{valueset.url} is used #{valueset_used_count} times in #{resource_used.count} resources"
               else
                 value_set_unused << valueset.url
               end

@@ -15,7 +15,6 @@ module Inferno
       ATTRIBUTES = [
         :id,
         :resources_by_type,
-        :value_sets,
         :examples
       ].freeze
 
