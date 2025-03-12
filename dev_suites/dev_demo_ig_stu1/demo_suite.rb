@@ -117,6 +117,31 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     group do
+      id 'hidden_group'
+      title 'Hidden Inputs Group'
+      description 'This group contains 2 inputs that are optional and hidden from the UI.'
+
+      optional
+
+      test 'Hidden, optional, empty input test' do
+        input :hidden_optional_empty, title: 'Hidden and Optional (should be runnable)',
+                                      description: 'Example of hidden, empty, optional field',
+                                      hidden: true,
+                                      optional: true
+        run { pass }
+      end
+
+      test 'Hidden, optional, filled input test' do
+        input :hidden_optional_filled, title: 'Hidden and Optional (should be runnable)',
+                                       description: 'Example of hidden, filled, optional field',
+                                       default: 'example text',
+                                       hidden: true,
+                                       optional: true
+        run { pass }
+      end
+    end
+
+    group do
       id 'wait_group'
       title 'Wait Group'
 
