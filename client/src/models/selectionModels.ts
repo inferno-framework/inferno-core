@@ -11,6 +11,7 @@ export type ListOptionSelection = string;
 
 export type RadioOption = Option & {
   description: string;
+  default?: string;
   list_options: SuiteOptionChoice[]; // Make this generic if other options are introduced
 };
 
