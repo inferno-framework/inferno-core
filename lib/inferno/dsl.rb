@@ -1,10 +1,12 @@
 require_relative 'dsl/assertions'
+require_relative 'dsl/auth_info'
 require_relative 'dsl/fhir_client'
 require_relative 'dsl/fhir_validation'
 require_relative 'dsl/fhir_evaluation/evaluator'
 require_relative 'dsl/fhir_resource_validation'
 require_relative 'dsl/fhirpath_evaluation'
 require_relative 'dsl/http_client'
+require_relative 'dsl/must_support_assessment'
 require_relative 'dsl/results'
 require_relative 'dsl/runnable'
 require_relative 'dsl/suite_endpoint'
@@ -22,7 +24,8 @@ module Inferno
       FHIREvaluation,
       FHIRResourceValidation,
       FhirpathEvaluation,
-      Messages
+      Messages,
+      MustSupportAssessment
     ].freeze
 
     EXTENDABLE_DSL_MODULES = [

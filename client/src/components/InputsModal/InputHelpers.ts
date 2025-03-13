@@ -116,7 +116,6 @@ export const serializeMap = (
 ): string => {
   const flatObj = inputs.map((requirement: TestInput) => {
     // Parse out \n chars from descriptions
-    // const parsedDescription = requirement.description?.replaceAll('\n', ' ').trim();
     const parsedDescription = requirement.description?.replaceAll('\n', ' ').trim();
     if (requirement.type === 'oauth_credentials') {
       return {
@@ -154,4 +153,16 @@ export const serializeMap = (
   return inputType === 'JSON'
     ? JSON.stringify(flatObj, null, 2)
     : YAML.dump(flatObj, { lineWidth: -1 });
+};
+
+// Check if string str is JSON object, exempting other types
+export const isJsonString = (str: unknown) => {
+  if (typeof str !== 'string') return false;
+  let value: unknown = str;
+  try {
+    value = JSON.parse(str);
+  } catch {
+    return false;
+  }
+  return !!value && typeof value === 'object';
 };

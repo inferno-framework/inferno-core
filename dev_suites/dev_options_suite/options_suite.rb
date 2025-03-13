@@ -116,17 +116,18 @@ module OptionsSuite
       }
     ]
 
-    validator required_suite_options: { ig_version: '1' } do
-      url 'v1_validator'
+    fhir_resource_validator required_suite_options: { ig_version: '1' } do
+      url 'https://example.com/v1_validator'
     end
 
-    validator required_suite_options: { ig_version: '2' } do
-      url 'v2_validator'
+    fhir_resource_validator required_suite_options: { ig_version: '2' } do
+      url 'https://example.com/v2_validator'
     end
 
     suite_option :ig_version,
                  title: 'IG Version',
                  description: 'Which IG Version should be used',
+                 default: '2',
                  list_options: [
                    {
                      label: 'v1',

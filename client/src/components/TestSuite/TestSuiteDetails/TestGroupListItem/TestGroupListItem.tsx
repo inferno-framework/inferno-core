@@ -12,14 +12,14 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Error, Warning } from '@mui/icons-material';
-import InputOutputList from '../TestListItem/InputOutputList';
 import { Request, RunnableType, Test, TestGroup, ViewType } from '~/models/testSuiteModels';
-import ResultIcon from '../ResultIcon';
-import TestRunButton from '../../TestRunButton/TestRunButton';
-import TestListItem from '../TestListItem/TestListItem';
-import NavigableGroupListItem from './NavigableGroupListItem';
-import NestedDescriptionPanel from './NestedDescriptionPanel';
-import ProblemBadge from '../TestListItem/ProblemBadge';
+import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
+import NavigableGroupListItem from '~/components/TestSuite/TestSuiteDetails/TestGroupListItem/NavigableGroupListItem';
+import NestedDescriptionPanel from '~/components/TestSuite/TestSuiteDetails/TestGroupListItem/NestedDescriptionPanel';
+import ProblemBadge from '~/components/TestSuite/TestSuiteDetails/TestListItem/ProblemBadge';
+import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
+import TestListItem from '~/components/TestSuite/TestSuiteDetails/TestListItem/TestListItem';
+import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import useStyles from './styles';
 
 interface TestGroupListItemProps {
@@ -112,11 +112,12 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
       disableGutters
       elevation={0}
       className={classes.accordion}
-      sx={view === 'report' ? { pointerEvents: 'none' } : {}}
       expanded={expanded}
       onChange={() => {
-        setExpanded(!expanded);
-        setManualExpand(!expanded);
+        if (view !== 'report') {
+          setExpanded(!expanded);
+          setManualExpand(!expanded);
+        }
       }}
       slotProps={{ transition: { unmountOnExit: true } }}
       onMouseEnter={() => setGroupMouseHover(true)}
@@ -128,6 +129,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         aria-controls={`${testGroup.id}-detail`}
         className={classes.accordionSummary}
         expandIcon={view === 'run' && <ExpandMoreIcon tabIndex={0} aria-hidden="false" />}
+        sx={view === 'report' ? { cursor: 'default !important' } : {}}
       >
         <Box display="flex" alignItems="center" width="100%">
           <Box display="inline-flex">

@@ -194,6 +194,7 @@ module Inferno
         end
 
         available_inputs = children_available_inputs(selected_suite_options).merge(available_inputs)
+
         order_available_inputs(available_inputs)
       end
     end

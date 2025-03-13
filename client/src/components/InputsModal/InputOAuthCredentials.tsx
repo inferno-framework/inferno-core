@@ -14,9 +14,10 @@ import {
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { OAuthCredentials, TestInput } from '~/models/testSuiteModels';
-import FieldLabel from './FieldLabel';
+import FieldLabel from '~/components/InputsModal/FieldLabel';
+import RequiredInputWarning from '~/components/InputsModal/RequiredInputWarning';
+import { useTestSessionStore } from '~/store/testSession';
 import useStyles from './styles';
-import RequiredInputWarning from './RequiredInputWarning';
 
 export interface InputOAuthCredentialsProps {
   input: TestInput;
@@ -32,6 +33,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const [hasBeenModified, setHasBeenModified] = React.useState({});
 
   // Convert OAuth string to Object
@@ -92,6 +94,20 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     );
   };
 
+  // Convert internal OAuth credentials object to inputsMap string
+  const updateInputsMap = (field: TestInput, value: string) => {
+    oAuthCredentials[field.name as keyof OAuthCredentials] = value;
+    // Delete fields with empty values
+    const parsedOAuthCredentials: Record<string, unknown> = {};
+    Object.entries(oAuthCredentials).forEach(([inputName, inputValue]) => {
+      if (inputValue) {
+        parsedOAuthCredentials[inputName] = inputValue;
+      }
+    });
+    inputsMap.set(input.name, JSON.stringify(parsedOAuthCredentials));
+    setInputsMap(new Map(inputsMap));
+  };
+
   const oAuthField = (field: TestInput) => {
     const fieldName = field.optional
       ? field.title || field.name
@@ -105,11 +121,18 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     );
 
     return (
-      <ListItemButton disabled={field.locked} key={field.name} component="li">
+      <ListItemButton
+        disabled={field.locked || viewOnly}
+        key={field.name}
+        component="li"
+        className={classes.inputField}
+      >
         <FormControl
           component="fieldset"
           id={`input${index}_input`}
-          disabled={input.locked}
+          tabIndex={0}
+          disabled={input.locked || viewOnly}
+          aria-disabled={input.locked || viewOnly}
           required={!input.optional}
           error={getIsMissingInput(field)}
           fullWidth
@@ -124,7 +147,9 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
             </Markdown>
           )}
           <Input
-            disabled={input.locked}
+            tabIndex={0}
+            disabled={input.locked || viewOnly}
+            aria-disabled={input.locked || viewOnly}
             required={!field.optional}
             error={getIsMissingInput(field)}
             id={`input${index}_${field.name}`}
@@ -137,12 +162,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
                 setHasBeenModified({ ...hasBeenModified, [field.name]: true });
               }
             }}
-            onChange={(event) => {
-              const value = event.target.value;
-              oAuthCredentials[field.name as keyof OAuthCredentials] = value;
-              inputsMap.set(input.name, JSON.stringify(oAuthCredentials));
-              setInputsMap(new Map(inputsMap));
-            }}
+            onChange={(event) => updateInputsMap(field, event.target.value)}
           />
         </FormControl>
       </ListItemButton>
@@ -155,7 +175,9 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
         <CardContent>
           <InputLabel
             required={!input.optional}
-            disabled={input.locked}
+            tabIndex={0}
+            disabled={input.locked || viewOnly}
+            aria-disabled={input.locked || viewOnly}
             className={classes.inputLabel}
           >
             <FieldLabel input={input} />

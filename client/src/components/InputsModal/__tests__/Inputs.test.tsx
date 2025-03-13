@@ -3,11 +3,11 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { SnackbarProvider } from 'notistack';
 import { TestInput } from '~/models/testSuiteModels';
-import InputAuth from '~/components/InputsModal/Auth/InputAuth';
 import InputCheckboxGroup from '~/components/InputsModal/InputCheckboxGroup';
 import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredentials';
 import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputTextField from '~/components/InputsModal/InputTextField';
+import { isJsonString } from '~/components/InputsModal/InputHelpers';
 import ThemeProvider from '~/components/ThemeProvider';
 
 describe('Input Components', () => {
@@ -155,71 +155,29 @@ describe('Input Components', () => {
     expect(inputText).toBeVisible();
   });
 
-  it('renders InputAuth', () => {
-    const authInput = {
-      name: 'authInput',
-      type: 'auth_info' as TestInput['type'],
-      optional: true,
-      options: {
-        mode: 'auth',
-        components: [
-          {
-            default: 'public',
-            name: 'auth_type',
-          },
-        ],
-      },
-    };
+  it('parses JSON correctly using isJsonString', () => {
+    const failStrings = [
+      '',
+      'undefined',
+      'null',
+      '0',
+      '1,2',
+      'string',
+      'false',
+      true,
+      0,
+      undefined,
+      null,
+    ];
 
-    render(
-      <ThemeProvider>
-        <SnackbarProvider>
-          <InputAuth
-            mode="auth"
-            input={authInput}
-            index={0}
-            inputsMap={new Map<string, string>()}
-            setInputsMap={() => {}}
-          />
-        </SnackbarProvider>
-      </ThemeProvider>,
-    );
+    const passStrings = ['{}', '{"test": "string"}'];
 
-    const inputText = screen.getByText('Auth Type (required)');
-    expect(inputText).toBeVisible();
-  });
+    failStrings.forEach((string) => {
+      expect(isJsonString(string)).toEqual(false);
+    });
 
-  it('renders InputAccess', () => {
-    const accessInput = {
-      name: 'accessInput',
-      type: 'auth_info' as TestInput['type'],
-      optional: true,
-      options: {
-        mode: 'access',
-        components: [
-          {
-            default: 'public',
-            name: 'auth_type',
-          },
-        ],
-      },
-    };
-
-    render(
-      <ThemeProvider>
-        <SnackbarProvider>
-          <InputAuth
-            mode="access"
-            input={accessInput}
-            index={0}
-            inputsMap={new Map<string, string>()}
-            setInputsMap={() => {}}
-          />
-        </SnackbarProvider>
-      </ThemeProvider>,
-    );
-
-    const inputText = screen.getByText('accessInput');
-    expect(inputText).toBeVisible();
+    passStrings.forEach((string) => {
+      expect(isJsonString(string)).toEqual(true);
+    });
   });
 });

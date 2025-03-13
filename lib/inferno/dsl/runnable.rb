@@ -47,11 +47,23 @@ module Inferno
         :@children_available_inputs # Needs to be recalculated
       ].freeze
 
+      # Recursively duplicate arrays/hashes to prevent them from being shared
+      # across different runnables
+      def deep_dup(value)
+        if value.is_a? Array
+          value.map { |element| deep_dup(element) }
+        elsif value.is_a? Hash
+          value.transform_values { |element| deep_dup(element) }
+        else
+          value.dup
+        end
+      end
+
       # @private
       def copy_instance_variables(subclass)
         instance_variables
           .reject { |variable| VARIABLES_NOT_TO_COPY.include? variable }
-          .each { |variable| subclass.instance_variable_set(variable, instance_variable_get(variable).dup) }
+          .each { |variable| subclass.instance_variable_set(variable, deep_dup(instance_variable_get(variable))) }
 
         subclass.config(config)
 
@@ -67,6 +79,12 @@ module Inferno
       # @private
       def add_self_to_repository
         repository.insert(self)
+      end
+
+      # @private
+      def remove_self_from_repository
+        repository.remove(self)
+        children.each(&:remove_self_from_repository)
       end
 
       # An instance of the repository for the class using this module
@@ -450,6 +468,71 @@ module Inferno
           suite_option_requirements.map do |key, value|
             DSL::SuiteOption.new(id: key, value:)
           end
+      end
+
+      # Move a child test/group to a new position within the children list.
+      #
+      # @param child_id [Symbol, String] The ID of the child to be moved.
+      # @param new_index [Integer] The new position for the child.
+      # @example
+      #   reorder(:test3, 1) # Moves `test3` to index 1
+      #
+      def reorder(child_id, new_index)
+        index = children.find_index { |child| child.id.to_s.end_with? child_id.to_s }
+        raise Exceptions::RunnableChildNotFoundException.new(child_id, self) unless index
+
+        unless new_index.between?(0, children.length - 1)
+          Inferno::Application[:logger].error <<~ERROR
+            Error trying to reorder children for #{self}:
+            new_index #{new_index} for #{child_id} is out of range
+            (must be between 0 and #{children.length - 1})
+          ERROR
+          return
+        end
+
+        child = children.delete_at(index)
+        children.insert(new_index, child)
+      end
+
+      # Replace a child test/group
+      #
+      # @param id_to_replace [Symbol, String] The ID of the child to be replaced.
+      # @param replacement_id [Symbol, String] The global ID of the group/test that will take the
+      #   place of the child being replaced.
+      # @yield [Inferno::TestGroup, Inferno::Test] Optional block executed in the
+      #    context of the replacement child for additional configuration.
+      # @example
+      #   replace :test2, :test4 do
+      #     id :new_test_id
+      #     config(...)
+      #   end
+      def replace(id_to_replace, replacement_id, &)
+        index = children.find_index { |child| child.id.to_s.end_with? id_to_replace.to_s }
+        raise Exceptions::RunnableChildNotFoundException.new(id_to_replace, self) unless index
+
+        if children[index] < Inferno::TestGroup
+          group(from: replacement_id, &)
+        else
+          test(from: replacement_id, &)
+        end
+
+        remove(id_to_replace)
+        children.insert(index, children.pop)
+      end
+
+      # Remove a child test/group
+      #
+      # @param id_to_remove [Symbol, String]
+      # @example
+      #   test from: :test1
+      #   test from: :test2
+      #   test from: :test3
+      #
+      #   remove :test2
+      def remove(id_to_remove)
+        removed = children.select { |child| child.id.to_s.end_with? id_to_remove.to_s }
+        children.reject! { |child| child.id.to_s.end_with? id_to_remove.to_s }
+        removed.each(&:remove_self_from_repository)
       end
 
       # @private
