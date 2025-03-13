@@ -12,7 +12,7 @@ module Inferno
             @unused_profile_urls = []
             options = context.config.data['Rule']['AllProfilesHaveExamples']['ConformanceOptions'].to_options
 
-            used_resources = context.data.map { |entry| extract_resource(entry) }.flatten.uniq
+            used_resources = context.data.map { |entry| extract_resources(entry) }.flatten.uniq
             context.ig.profiles.each do |profile|
               profile_used = used_resources.any? do |resource|
                 conforms_to_profile?(resource, profile, options, context.validator)
@@ -33,13 +33,11 @@ module Inferno
             context.add_result result
           end
 
-          def extract_resource(resource)
+          def extract_resources(resource)
             if resource.resourceType == 'Bundle'
-              all_profiles = resource.entry.map(&:resource)
-              all_profiles << resource
-              all_profiles.flatten.uniq
+              resource.entry.map { |entry| extract_resources(entry.resource) }.flatten
             else
-              resource
+              [resource]
             end
           end
         end
