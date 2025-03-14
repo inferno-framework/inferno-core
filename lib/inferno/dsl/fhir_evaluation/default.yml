@@ -38,3 +38,13 @@ Rule:
 
       # - If considerOnlyResourceType, the search will include resources of the same type as the profile target type (StructureDefintion.type)
       considerOnlyResourceType: false
+  AllExtensionsUsed:
+    Enabled: true
+  DifferentialContentHasExamples:
+    Enabled: true
+  ValueSetsDemonstrate:
+    Enabled: true
+    Exclude:
+      URN: true # Exclude if system is provided as Uniform Resource Name "urn:"
+      Filter: true # Exclude filter
+      SystemOnly: true # Exclude if only system is provided (e.g. http://loing.org)
