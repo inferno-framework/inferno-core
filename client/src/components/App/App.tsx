@@ -1,11 +1,12 @@
 import React, { FC, useEffect } from 'react';
+import { RouterProvider } from 'react-router';
 import { Theme } from '@mui/material/styles';
 import { SnackbarProvider } from 'notistack';
 import { makeStyles } from 'tss-react/mui';
 import { getTestSuites } from '~/api/TestSuitesApi';
+import { router } from '~/components/App/Router';
 import { TestSuite } from '~/models/testSuiteModels';
 import { useAppStore } from '~/store/app';
-import Router from '~/components/App/Router';
 import SnackbarCloseButton from '~/components/_common/SnackbarCloseButton';
 
 const useStyles = makeStyles<{ height: string }>()((theme: Theme, { height }) => ({
@@ -66,7 +67,7 @@ const App: FC<unknown> = () => {
         containerAnchorOriginBottomRight: classes.container,
       }}
     >
-      <Router testSuites={testSuites} />
+      <RouterProvider router={router(testSuites)} />
     </SnackbarProvider>
   );
 };

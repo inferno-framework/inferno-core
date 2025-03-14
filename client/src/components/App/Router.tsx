@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router';
+import React from 'react';
+import { createBrowserRouter } from 'react-router';
 import Page from '~/components/App/Page';
 import LandingPage from '~/components/LandingPage';
 import SuiteOptionsPage from '~/components/SuiteOptionsPage';
@@ -9,63 +9,38 @@ import SuiteOptionsPageSkeleton from '~/components/Skeletons/SuiteOptionsPageSke
 import { basePath } from '~/api/infernoApiService';
 import { TestSuite } from '~/models/testSuiteModels';
 
-export interface LoaderProps {
-  params: {
-    test_suite_id: string;
-  };
-}
-
-export interface OptionsRouteProps {
-  loaderData: {
-    suite: TestSuite;
-  };
-}
-
-export interface RouterProps {
-  testSuites: TestSuite[];
-}
-
-const Router: FC<RouterProps> = ({ testSuites }) => {
+export const router = (testSuites: TestSuite[]) => {
   const testSuitesExist = !!testSuites && testSuites.length > 0;
+  console.log(testSuitesExist);
 
-  function loader({ params }: LoaderProps) {
-    const testSuitesExist = !!testSuites && testSuites.length > 0;
-    if (!testSuitesExist) return <SuiteOptionsPageSkeleton />;
-    const suiteId: string = params.test_suite_id || '';
-    const suite = testSuites.find((suite) => suite.id === suiteId);
-    return suite;
-  }
-
-  function OptionsRoute({ loaderData }: OptionsRouteProps) {
-    const { suite } = loaderData;
-    const childComponent = suite ? (
-      <SuiteOptionsPage testSuite={suite} />
-    ) : (
-      <SuiteOptionsPageSkeleton />
-    );
-    return <Route path=":test_suite_id" element={<Page title="Options">{childComponent}</Page>} />;
-  }
-
-  return (
-    <BrowserRouter basename={`/${basePath || ''}`}>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Page title={`Inferno Test Suites`}>
-              {testSuitesExist ? <LandingPage testSuites={testSuites} /> : <LandingPageSkeleton />}
-            </Page>
-          }
-        />
-        <OptionsRoute loaderData={loader(params)} />
-        {/*
-         * Title for TestSessionWrapper is set in the component
-         * because testSession is not set at the time of render
-         */}
-        <Route path=":test_suite_id/:test_session_id" element={<TestSessionWrapper />} />
-      </Routes>
-    </BrowserRouter>
+  return createBrowserRouter(
+    [
+      {
+        path: '/',
+        element: (
+          <Page title={`Inferno Test Suites`}>
+            {/* {testSuitesExist ? <LandingPage testSuites={testSuites} /> : <LandingPageSkeleton />} */}
+            {<LandingPage testSuites={testSuites} />}
+          </Page>
+        ),
+      },
+      {
+        path: ':test_suite_id',
+        element: <Page title="Options" />,
+        loader: ({ params }) => {
+          if (!testSuitesExist) return <SuiteOptionsPageSkeleton />;
+          const suiteId: string = params.test_suite_id || '';
+          const suite = testSuites.find((suite) => suite.id === suiteId);
+          return suite ? <SuiteOptionsPage testSuite={suite} /> : <SuiteOptionsPageSkeleton />;
+        },
+      },
+      {
+        // Title for TestSessionWrapper is set in the component
+        // because testSession is not set at the time of render
+        path: ':test_suite_id/:test_session_id',
+        element: <TestSessionWrapper />,
+      },
+    ],
+    { basename: `/${basePath || ''}` },
   );
 };
-
-export default Router;
