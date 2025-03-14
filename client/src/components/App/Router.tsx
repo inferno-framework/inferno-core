@@ -15,12 +15,11 @@ export const router = (testSuites: TestSuite[]) => {
       {
         path: '/',
         loader: () => {
-          const testSuitesExist = !!testSuites && testSuites.length > 0;
-          if (testSuitesExist) {
-            return <LandingPage testSuites={testSuites} />;
-          } else {
-            return <LandingPageSkeleton />;
-          }
+          return !!testSuites && testSuites.length > 0 ? (
+            <LandingPage testSuites={testSuites} />
+          ) : (
+            <LandingPageSkeleton />
+          );
         },
         element: <Page title={`Inferno Test Suites`} />,
       },
@@ -28,8 +27,7 @@ export const router = (testSuites: TestSuite[]) => {
         path: ':test_suite_id',
         element: <Page title="Options" />,
         loader: ({ params }) => {
-          const testSuitesExist = !!testSuites && testSuites.length > 0;
-          if (!testSuitesExist) return <SuiteOptionsPageSkeleton />;
+          if (!testSuites || testSuites.length === 0) return <SuiteOptionsPageSkeleton />;
           const suiteId: string = params.test_suite_id || '';
           const suite = testSuites.find((suite) => suite.id === suiteId);
           return suite ? <SuiteOptionsPage testSuite={suite} /> : <SuiteOptionsPageSkeleton />;
