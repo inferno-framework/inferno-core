@@ -10,24 +10,25 @@ import { basePath } from '~/api/infernoApiService';
 import { TestSuite } from '~/models/testSuiteModels';
 
 export const router = (testSuites: TestSuite[]) => {
-  const testSuitesExist = !!testSuites && testSuites.length > 0;
-  console.log(testSuitesExist);
-
   return createBrowserRouter(
     [
       {
         path: '/',
-        element: (
-          <Page title={`Inferno Test Suites`}>
-            {/* {testSuitesExist ? <LandingPage testSuites={testSuites} /> : <LandingPageSkeleton />} */}
-            {<LandingPage testSuites={testSuites} />}
-          </Page>
-        ),
+        loader: () => {
+          const testSuitesExist = !!testSuites && testSuites.length > 0;
+          if (testSuitesExist) {
+            return <LandingPage testSuites={testSuites} />;
+          } else {
+            return <LandingPageSkeleton />;
+          }
+        },
+        element: <Page title={`Inferno Test Suites`} />,
       },
       {
         path: ':test_suite_id',
         element: <Page title="Options" />,
         loader: ({ params }) => {
+          const testSuitesExist = !!testSuites && testSuites.length > 0;
           if (!testSuitesExist) return <SuiteOptionsPageSkeleton />;
           const suiteId: string = params.test_suite_id || '';
           const suite = testSuites.find((suite) => suite.id === suiteId);
