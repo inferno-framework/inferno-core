@@ -14,6 +14,7 @@ module Inferno
         field :optional, if: :field_present?
         field :options, if: :field_present?
         field :locked, if: :field_present?
+        field :hidden, if: :field_present?
         field :value, if: :field_present?
       end
     end

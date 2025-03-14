@@ -14,6 +14,7 @@ module Inferno
         :optional,
         :options,
         :locked,
+        :hidden,
         :value
       ].freeze
       include Entities::Attributes
@@ -21,15 +22,15 @@ module Inferno
       # These attributes require special handling when merging input
       # definitions.
       UNINHERITABLE_ATTRIBUTES = [
-        # Locking an input only has meaning at the level it is locked.
+        # Locking or hiding an input only has meaning at the level it is applied.
         # Consider:
         # - ParentGroup
         #   - Group 1, input :a
-        #   - Group 2, input :a, locked: true
-        # The input 'a' should be only be locked when running Group 2 in
-        # isolation. It should not be locked when running Group 1 or the
-        # ParentGroup.
+        #   - Group 2, input :a, locked: true, hidden: true, optional: true
+        # The input 'a' should only be locked or hidden when running Group 2 in isolation.
+        # It should not be locked or hidden when running Group 1 or the ParentGroup.
         :locked,
+        :hidden,
         # Input type is sometimes only a UI concern (e.g. text vs. textarea), so
         # it is common to not redeclare the type everywhere it's used and needs
         # special handling to avoid clobbering the type with the default (text)
@@ -49,6 +50,14 @@ module Inferno
         bad_params = params.keys - ATTRIBUTES
 
         raise Exceptions::UnknownAttributeException.new(bad_params, self.class) if bad_params.present?
+
+        if params[:hidden] && !params[:optional]
+          raise Exceptions::InvalidAttributeException.new(
+            :hidden,
+            self.class,
+            "Input '#{params[:name]}' cannot be hidden unless it is optional."
+          )
+        end
 
         params
           .compact

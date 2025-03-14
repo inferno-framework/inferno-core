@@ -726,6 +726,9 @@ definitions:
       locked:
         type: "boolean"
         readOnly: true
+      hidden:
+        type: "boolean"
+        readOnly: true
       options:
         type: "array"
         readOnly: true
