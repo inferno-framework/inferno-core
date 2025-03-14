@@ -35,15 +35,15 @@ const Header: FC<HeaderProps> = ({
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const viewOnly = useTestSessionStore((state) => state.viewOnly);
 
+  // Use window navigation instead of React router to trigger new page request
+  const startNewSession = () => {
+    window.location.href = `/${basePath}`;
+  };
+
   const suiteOptionsString =
     suiteOptions && suiteOptions.length > 0
       ? `${suiteOptions.map((option) => option.label).join(', ')}`
       : '';
-
-  // Use window navigation instead of React router to trigger new page request
-  const startNewSession = () => {
-    window.location.href = `/${basePath}/${suiteId || ''}`;
-  };
 
   return suiteTitle ? (
     <AppBar
