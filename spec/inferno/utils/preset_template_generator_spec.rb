@@ -96,6 +96,9 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
         { name: 'hidden_optional_filled', _type: 'text', _title: 'Hidden and Optional (should be runnable)',
           _description: 'Example of hidden, filled, optional field', value: 'example text',
           _hidden: true, _optional: true },
+        { name: 'hidden_locked_filled', _type: 'text', _title: 'Hidden and Locked (should be runnable)',
+          _description: 'Example of hidden, filled, locked field', value: 'example text',
+          _hidden: true, _locked: true },
         { name: 'auth_info_credentials', _type: :auth_info, _title: 'AuthInfo Credentials',
           _description: 'Access mode AuthInfo input with `issue_time` and `expires_in` fields hidden',
           value: {
@@ -122,6 +125,15 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
                 optional: true,
                 hidden: true
               }
+            ]
+          } },
+        { name: 'auth_mode_credentials', _type: :auth_info, _title: 'Auth Mode AuthInfo Credentials',
+          _description: 'Auth mode AuthInfo input with `pkce_support` field hidden',
+          value: AuthInfoConstants.public_default.to_json,
+          _options: {
+            mode: 'auth',
+            components: [
+              { name: :pkce_support, locked: true, hidden: true }
             ]
           } },
         { name: 'cancel_pause_time', _type: 'text', value: '30' },

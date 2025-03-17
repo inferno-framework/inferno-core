@@ -51,11 +51,11 @@ module Inferno
 
         raise Exceptions::UnknownAttributeException.new(bad_params, self.class) if bad_params.present?
 
-        if params[:hidden] && !params[:optional]
+        if params[:hidden] && !params[:optional] && !params[:locked]
           raise Exceptions::InvalidAttributeException.new(
             :hidden,
             self.class,
-            "Input '#{params[:name]}' cannot be hidden unless it is optional."
+            "Input '#{params[:name]}' cannot be hidden unless it is optional or locked."
           )
         end
 

@@ -86,7 +86,7 @@ RSpec.describe Inferno::DSL::Configurable do
           expect(config.input(identifier)).to eq(expected_input)
         end
 
-        it 'raises an error if attempting to hide a required input' do
+        it 'raises an error if attempting to hide an unlocked required input' do
           input = { hidden: true }
 
           expect { config.add_input(:input1, **input) }.to(
