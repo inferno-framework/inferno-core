@@ -22,65 +22,24 @@ module Inferno
         # 4. Count total number of existences.
 
         class ValueSetsDemonstrate < Rule
-          attr_accessor :config
+          attr_accessor :config, :value_set_unevaluated, :value_set_used, :value_set_unused
 
           def check(context)
             @config = context.config
 
-            value_set_unevaluated = []
-            value_set_used = []
-            value_set_unused = []
+            @value_set_unevaluated = []
+            @value_set_used = []
+            @value_set_unused = []
 
+            collect_valuesets_used(context)
+
+            context.add_result create_result_message()
+          end
+
+          def collect_valuesets_used(context)
             context.ig.resources_by_type['ValueSet'].each do |valueset|
               valueset_used_count = 0
-              system_codes = []
-
-              if valueset.to_hash['compose']
-                valueset.to_hash['compose']['include'].each do |include|
-                  if include['valueSet']
-                    include['valueSet'].each do |url|
-                      retrieve_valueset_api(url)&.each { |system_code| system_codes << system_code }
-                    end
-                    next
-                  end
-
-                  system_url = include['system']
-
-                  if system_url && include['concept']
-                    include['concept'].each do |code|
-                      system_codes << { system: system_url, code: code.to_hash['code'] }
-                    end
-                    next
-                  end
-
-                  if system_url
-                    if system_url['http://hl7.org/fhir']
-                      retrieve_valueset_api(system_url)&.each { |vs| system_codes << vs }
-                    end
-                    next
-                  end
-
-                  value_set_unevaluated << valueset.url unless system_url
-
-                  # Exclude if system is provided as Uniform Resource Name "urn:"
-                  if config.data['Rule']['ValueSetsDemonstrate']['Exclude']['URL'] && (system_url['urn'])
-                    value_set_unevaluated << valueset.url
-                  end
-
-                  # Exclude filter
-                  if config.data['Rule']['ValueSetsDemonstrate']['Exclude']['Filter'] && (system_url && include['filter'])
-                    value_set_unevaluated << valueset.url
-                  end
-
-                  # Exclude only system is provided (e.g. http://loing.org)
-                  if config.data['Rule']['ValueSetsDemonstrate']['Exclude']['SystemOnly'] && (system_url && !include['concept'] && !include['filter'])
-                    value_set_unevaluated << valueset.url
-                  end
-                end
-              else
-                value_set_unevaluated << valueset.url
-              end
-              system_codes.flatten.uniq!
+              system_codes = extract_systems_codes_from_valueset(valueset)
 
               value_set_unevaluated << valueset.url if system_codes.none?
 
@@ -105,7 +64,9 @@ module Inferno
             end
 
             value_set_unevaluated.uniq!
+          end
 
+          def create_result_message()
             if value_set_unused.none?
               message = 'All Value sets are used in Examples:'
               value_set_used.map { |value_set| message += "\n\t#{value_set}" }
@@ -115,7 +76,7 @@ module Inferno
                 value_set_unevaluated.map { |value_set| message += "\n\t#{value_set}" }
               end
 
-              result = EvaluationResult.new(message, severity: 'success', rule: self)
+              EvaluationResult.new(message, severity: 'success', rule: self)
             else
               message = 'Value sets with all codes used at least once in Examples:'
               value_set_used.map { |url| message += "\n\t#{url}" }
@@ -128,10 +89,56 @@ module Inferno
                 value_set_unevaluated.map { |url| message += "\n\t#{url}" }
               end
 
-              result = EvaluationResult.new(message, rule: self)
+              EvaluationResult.new(message, rule: self)
             end
 
-            context.add_result result
+          end
+
+          def extract_systems_codes_from_valueset(valueset)
+            system_codes = []
+
+            if valueset.to_hash['compose']
+              valueset.to_hash['compose']['include'].each do |include|
+                if include['valueSet']
+                  include['valueSet'].each do |url|
+                    retrieve_valueset_api(url)&.each { |system_code| system_codes << system_code }
+                  end
+                  next
+                end
+
+                system_url = include['system']
+
+                if system_url && include['concept']
+                  include['concept'].each do |code|
+                    system_codes << { system: system_url, code: code.to_hash['code'] }
+                  end
+                  next
+                end
+
+                if system_url
+                  if system_url['http://hl7.org/fhir']
+                    retrieve_valueset_api(system_url)&.each { |vs| system_codes << vs }
+                  end
+                  next
+                end
+
+                value_set_unevaluated << valueset.url unless system_url
+
+                # Exclude if system is provided as Uniform Resource Name "urn:"
+                # Exclude filter
+                # Exclude only system is provided (e.g. http://loing.org)
+                exclusions = config.data['Rule']['ValueSetsDemonstrate']['Exclude']
+                if (exclusions['URL'] && (system_url['urn'])) \
+                  || (exclusions['Filter'] && (system_url && include['filter'])) \
+                  || (exclusions['SystemOnly'] && (system_url && !include['concept'] && !include['filter']))
+                  value_set_unevaluated << valueset.url
+                end
+
+              end
+            else
+              value_set_unevaluated << valueset.url
+            end
+            system_codes.flatten.uniq
           end
 
           def find_valueset_used(resource, system, code)

@@ -1,17 +1,40 @@
 # frozen_string_literal: true
 
+require 'extract_tgz_helper'
 require_relative '../../../../../lib/inferno/dsl/fhir_evaluation/evaluation_context'
 
-def fixture(file)
-  path = File.expand_path("../../../../../spec/fixtures/#{file}", __dir__)
+def fixture(filename)
+  path = File.join(uscore3_untarred, 'package', filename)
   FHIR::Json.from_json(File.read(path))
 end
 
 RSpec.describe Inferno::DSL::FHIREvaluation::Rules::ValueSetsDemonstrate do
+  include ExtractTGZHelper
+
+  let(:uscore3_package) { File.realpath(File.join(Dir.pwd, 'spec/fixtures/uscore311.tgz')) }
+  let(:uscore3_untarred) { extract_tgz(uscore3_package) }
+
+  let(:patient85) do
+    path = File.expand_path('../../../../../spec/fixtures/patient_85.json', __dir__)
+    FHIR::Json.from_json(File.read(path))
+  end
+
+  after { cleanup(uscore3_untarred) }
+
   # rubocop:disable Layout/LineLength
   it 'test with US Core 3.1.1 search params and example data included in the IG' do
-    ig = Inferno::Entities::IG.from_file('spec/fixtures/uscore311.tgz')
-    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(ig, ig.examples,
+    # ig = Inferno::Entities::IG.from_file('spec/fixtures/uscore311.tgz')
+
+    # data = [patient85.entry[0].resource]
+    value_sets_to_load = ['ValueSet-us-core-observation-smokingstatus.json']
+    profiles = value_sets_to_load.map { |e| fixture(e.to_s) }
+    ig = instance_double(Inferno::Entities::IG, profiles:)
+
+    smoking_status_obs = patient85.entry.map(&:resource).find do |r|
+      r.resourceType == 'Observation' && r.code.text == 'Tobacco smoking status'
+    end
+    data = [smoking_status_obs]
+    context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(ig, data,
                                                                   Inferno::DSL::FHIREvaluation::Config.new, nil)
 
     stub_request(:get, 'http://hl7.org/fhir/us/core/ValueSet/us-core-smoking-status-observation-codes').to_return(
