@@ -143,6 +143,8 @@ module Inferno
           value = DateTime.parse(value) if name == :issue_time && value.is_a?(String)
 
           instance_variable_set(:"@#{name}", value)
+        rescue Date::Error
+          Inferno::Application['logger'].error("Received invalid date: #{value.inspect}")
         end
 
         self.issue_time = DateTime.now if access_token.present? && issue_time.blank?
