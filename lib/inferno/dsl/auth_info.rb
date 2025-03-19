@@ -132,7 +132,7 @@ module Inferno
       # @!attribute [rw] name
 
       # @private
-      def initialize(raw_attributes_hash)
+      def initialize(raw_attributes_hash) # rubocop:disable Metrics/CyclomaticComplexity
         attributes_hash = raw_attributes_hash.symbolize_keys
 
         invalid_keys = attributes_hash.keys - ATTRIBUTES
