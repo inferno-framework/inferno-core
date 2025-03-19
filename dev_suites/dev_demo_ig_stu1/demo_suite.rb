@@ -117,6 +117,86 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     group do
+      id 'hidden_group'
+      title 'Hidden Inputs Group'
+      description 'This group contains inputs that are either optional or locked and hidden from the UI.'
+
+      optional
+
+      test 'Hidden, optional, empty input test' do
+        input :hidden_optional_empty, title: 'Hidden and Optional (should be runnable)',
+                                      description: 'Example of hidden, empty, optional field',
+                                      hidden: true,
+                                      optional: true
+        run { assert hidden_optional_empty.nil? }
+      end
+
+      test 'Hidden, optional, filled input test' do
+        input :hidden_optional_filled, title: 'Hidden and Optional (should be runnable)',
+                                       description: 'Example of hidden, filled, optional field',
+                                       default: 'example text',
+                                       hidden: true,
+                                       optional: true
+        run { assert hidden_optional_filled == 'example text' }
+      end
+
+      test 'Hidden, locked, filled input test' do
+        input :hidden_locked_filled, title: 'Hidden and Locked (should be runnable)',
+                                     description: 'Example of hidden, filled, locked field',
+                                     default: 'example text',
+                                     hidden: true,
+                                     locked: true
+        run { assert hidden_locked_filled == 'example text' }
+      end
+
+      test 'Hidden optional fields in AuthInfo input test' do
+        input :auth_info_credentials,
+              type: :auth_info, title: 'AuthInfo Credentials',
+              description: 'Access mode AuthInfo input with `issue_time` and `expires_in` fields hidden',
+              options: {
+                mode: 'access',
+                components: [
+                  { name: :issue_time, optional: true, hidden: true },
+                  { name: :expires_in, optional: true, hidden: true }
+                ]
+              },
+              default: AuthInfoConstants
+                .public_access_default
+                .merge({ issue_time: '2025-03-13T14:15:50-04:00' }).to_json
+        run do
+          auth_info = AuthInfoConstants.public_access_default.merge({ issue_time: '2025-03-13T14:15:50-04:00' })
+          auth_info.each do |key, original_value|
+            received_value = auth_info_credentials.send(key)
+            assert received_value == original_value,
+                   "Expected fhir_client auth info `#{key}` to equal `#{original_value}`, " \
+                   "but received `#{received_value}`"
+          end
+        end
+      end
+
+      test 'Hidden locked field in AuthInfo input test' do
+        input :auth_mode_credentials,
+              type: :auth_info, title: 'Auth Mode AuthInfo Credentials',
+              description: 'Auth mode AuthInfo input with `pkce_support` field hidden',
+              options: {
+                mode: 'auth',
+                components: [
+                  { name: :pkce_support, locked: true, hidden: true }
+                ]
+              },
+              default: AuthInfoConstants.public_default.to_json
+        run do
+          AuthInfoConstants.public_default.each do |key, original_value|
+            received_value = auth_mode_credentials.send(key)
+            assert received_value == original_value,
+                   "Expected fhir_client auth info `#{key}` to equal `#{original_value}`, " \
+                   "but received `#{received_value}`"
+          end
+        end
+      end
+    end
+
+    group do
       id 'wait_group'
       title 'Wait Group'
 

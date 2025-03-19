@@ -91,6 +91,51 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
         { name: 'locked_optional_filled', _type: 'text', _title: 'Locked and Optional (should be runnable)',
           _description: 'Example of locked, filled, optional field', value: 'example text',
           _locked: true, _optional: true },
+        { name: 'hidden_optional_empty', _type: 'text', _title: 'Hidden and Optional (should be runnable)',
+          _description: 'Example of hidden, empty, optional field', _hidden: true, _optional: true, value: nil },
+        { name: 'hidden_optional_filled', _type: 'text', _title: 'Hidden and Optional (should be runnable)',
+          _description: 'Example of hidden, filled, optional field', value: 'example text',
+          _hidden: true, _optional: true },
+        { name: 'hidden_locked_filled', _type: 'text', _title: 'Hidden and Locked (should be runnable)',
+          _description: 'Example of hidden, filled, locked field', value: 'example text',
+          _hidden: true, _locked: true },
+        { name: 'auth_info_credentials', _type: :auth_info, _title: 'AuthInfo Credentials',
+          _description: 'Access mode AuthInfo input with `issue_time` and `expires_in` fields hidden',
+          value: {
+            client_id: 'SAMPLE_PUBLIC_CLIENT_ID',
+            requested_scopes: 'launch/patient openid fhirUser patient/*.*',
+            pkce_support: 'enabled',
+            pkce_code_challenge_method: 'S256',
+            auth_request_method: 'GET',
+            access_token: 'SAMPLE_TOKEN',
+            refresh_token: 'SAMPLE_REFRESH_TOKEN',
+            expires_in: '3600',
+            issue_time: '2025-03-13T14:15:50-04:00'
+          }.to_json,
+          _options: {
+            mode: 'access',
+            components: [
+              {
+                name: :issue_time,
+                optional: true,
+                hidden: true
+              },
+              {
+                name: :expires_in,
+                optional: true,
+                hidden: true
+              }
+            ]
+          } },
+        { name: 'auth_mode_credentials', _type: :auth_info, _title: 'Auth Mode AuthInfo Credentials',
+          _description: 'Auth mode AuthInfo input with `pkce_support` field hidden',
+          value: AuthInfoConstants.public_default.to_json,
+          _options: {
+            mode: 'auth',
+            components: [
+              { name: :pkce_support, locked: true, hidden: true }
+            ]
+          } },
         { name: 'cancel_pause_time', _type: 'text', value: '30' },
         { name: 'url1', _type: 'text', value: nil },
         { name: 'custom_bearer_token', _type: 'text',

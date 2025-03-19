@@ -12,6 +12,7 @@ module Inferno
       # @option input_params [String] :default The default value for the input
       # @option input_params [Boolean] :optional Set to true to not require input for test execution
       # @option input_params [Boolean] :locked If true, the user can not alter the value
+      # @option input_params [Boolean] :hidden If true, the input will not be visible to the user in the UI
       # @option input_params [Hash] :options Possible input option formats based on input type
       # @option options [Array] :list_options Array of options for input formats
       #   that require a list of possible values (radio and checkbox)
