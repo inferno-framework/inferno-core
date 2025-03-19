@@ -37,6 +37,10 @@ RSpec.describe Inferno::DSL::AuthInfo do
         )
       )
     end
+
+    it 'does not raise an error when issue_time as an empty string' do
+      expect { described_class.new(issue_time: '') }.to_not raise_error
+    end
   end
 
   describe '#add_to_client' do
