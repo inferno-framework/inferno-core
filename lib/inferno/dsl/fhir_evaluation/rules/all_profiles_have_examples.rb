@@ -5,16 +5,19 @@ module Inferno
         class AllProfilesHaveExamples < Rule
           include ProfileConformanceHelper
 
-          attr_accessor :context, :unused_profile_urls
+          attr_accessor :context, :unused_profile_urls, :all_resources
 
           def check(context)
             @context = context
             @unused_profile_urls = []
+            @all_resources = []
             options = context.config.data['Rule']['AllProfilesHaveExamples']['ConformanceOptions'].to_options
 
-            used_resources = context.data.map { |entry| extract_resources(entry) }.flatten.uniq
+            context.data.map { |entry| extract_resources(entry) }
+            all_resources.uniq!
+
             context.ig.profiles.each do |profile|
-              profile_used = used_resources.any? do |resource|
+              profile_used = all_resources.any? do |resource|
                 conforms_to_profile?(resource, profile, options, context.validator)
               end
               unused_profile_urls << profile.url unless profile_used
@@ -34,11 +37,10 @@ module Inferno
           end
 
           def extract_resources(resource)
-            if resource.resourceType == 'Bundle'
-              resource.entry.map { |entry| extract_resources(entry.resource) }.flatten
-            else
-              [resource]
-            end
+            all_resources << resource
+            return unless resource.resourceType == 'Bundle'
+
+            resource.entry.map { |entry| extract_resources(entry.resource) }.flatten
           end
         end
       end
