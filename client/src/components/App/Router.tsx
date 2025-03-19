@@ -22,6 +22,7 @@ export const router = (testSuites: TestSuite[]) => {
           );
         },
         element: <Page title={`Inferno Test Suites`} />,
+        hydrateFallbackElement: <LandingPageSkeleton />,
       },
       {
         path: ':test_suite_id',
@@ -32,6 +33,7 @@ export const router = (testSuites: TestSuite[]) => {
           const suite = testSuites.find((suite) => suite.id === suiteId);
           return suite ? <SuiteOptionsPage testSuite={suite} /> : <SuiteOptionsPageSkeleton />;
         },
+        hydrateFallbackElement: <SuiteOptionsPageSkeleton />,
       },
       {
         // Title for TestSessionWrapper is set in the component
