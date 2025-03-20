@@ -132,7 +132,7 @@ module Inferno
       # @!attribute [rw] name
 
       # @private
-      def initialize(raw_attributes_hash)
+      def initialize(raw_attributes_hash) # rubocop:disable Metrics/CyclomaticComplexity
         attributes_hash = raw_attributes_hash.symbolize_keys
 
         invalid_keys = attributes_hash.keys - ATTRIBUTES
@@ -143,6 +143,8 @@ module Inferno
           value = DateTime.parse(value) if name == :issue_time && value.is_a?(String)
 
           instance_variable_set(:"@#{name}", value)
+        rescue Date::Error
+          Inferno::Application['logger'].error("Received invalid date: #{value.inspect}")
         end
 
         self.issue_time = DateTime.now if access_token.present? && issue_time.blank?

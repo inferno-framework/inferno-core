@@ -1,3 +1,8 @@
+## 0.6.7
+* FI-3757: Allow setting suite defaults in UI by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/642
+* FI-3626: Integrate validator service into evaluator CLI by @dehall in https://github.com/inferno-framework/inferno-core/pull/639
+* FI-3882: Handle AuthInfo date parsing errors by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/648
+
 ## 0.6.6
 * FI-3775: Upgrade github-pages to 232 to Support Ruby 3.3 for Local YARD Documentation by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/640
 * Revert "FI-3652: Redirect new session button (#605)" by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/643
