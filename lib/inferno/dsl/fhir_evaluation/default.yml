@@ -38,3 +38,13 @@ Rule:
 
       # - If considerOnlyResourceType, the search will include resources of the same type as the profile target type (StructureDefintion.type)
       considerOnlyResourceType: false
+  AllSearchParametersHaveExamples:
+    Enabled: true
+  AllIGExtensionsHaveExamples:
+    Enabled: true
+  AllProfilesHaveExamples:
+    Enabled: true
+    ConformanceOptions:
+      considerMetaProfile: true
+      considerValidationResults: false
+      considerOnlyResourceType: false
