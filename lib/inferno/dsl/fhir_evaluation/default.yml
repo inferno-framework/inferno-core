@@ -3,8 +3,8 @@ Environment:
     Enabled: false
     Url: ''
   VSAC:
-    Apikey: ''
-    Url: 'https://cts.nlm.nih.gov'
+    Username: 'apikey'
+    Password: ''
 
 Rule:
   AllReferencesResolve: 
@@ -44,6 +44,7 @@ Rule:
     Enabled: true
   ValueSetsDemonstrate:
     Enabled: true
+    IgnoreUnloadableValueset: false
     Exclude:
       URN: true # Exclude if system is provided as Uniform Resource Name "urn:"
       Filter: true # Exclude filter
