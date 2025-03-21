@@ -3,7 +3,7 @@ import { render, renderHook, screen } from '@testing-library/react';
 import ThemeProvider from 'components/ThemeProvider';
 import Header from '../Header';
 
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { useAppStore } from '~/store/app';
 import { beforeEach, expect, test } from 'vitest';
 

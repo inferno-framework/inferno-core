@@ -100,7 +100,7 @@ const SelectionPanel: FC<SelectionPanelProps> = ({
             color="primary"
             fullWidth
             data-testid="go-button"
-            disabled={!selection && options.length !== 0}
+            disabled={!selection || selection.length === 0 || options.length === 0}
             sx={{ fontWeight: 600 }}
             onClick={() => submitAction()}
           >
