@@ -26,9 +26,9 @@ module Inferno
 
           def check(context)
             @config = context.config
-            @value_set_unevaluated = []
             @value_set_used = []
             @value_set_unused = []
+            @value_set_unevaluated = []
 
             classify_valuesets(context)
 
@@ -41,6 +41,7 @@ module Inferno
               system_codes = extract_systems_codes_from_valueset(valueset)
 
               value_set_unevaluated << "#{valueset.url}: unable to find system and code" if system_codes.none?
+              value_set_unevaluated.uniq!
 
               next if value_set_unevaluated.any? { |element| element.include?(valueset.url) }
 
@@ -62,8 +63,6 @@ module Inferno
                 value_set_unused << valueset.url
               end
             end
-
-            value_set_unevaluated.uniq!
           end
 
           def create_result_message
@@ -100,7 +99,7 @@ module Inferno
               valueset.to_hash['compose']['include'].each do |include|
                 if include['valueSet']
                   include['valueSet'].each do |url|
-                    retrieve_valueset_api(url)&.each { |system_code| system_codes << system_code }
+                    retrieve_valueset_from_api(url)&.each { |system_code| system_codes << system_code }
                   end
                   next
                 end
@@ -116,7 +115,7 @@ module Inferno
 
                 if system_url
                   if system_url['http://hl7.org/fhir']
-                    retrieve_valueset_api(system_url)&.each { |vs| system_codes << vs }
+                    retrieve_valueset_from_api(system_url)&.each { |vs| system_codes << vs }
                   end
                   next
                 end
@@ -162,7 +161,7 @@ module Inferno
             false
           end
 
-          def extract_valueset(response)
+          def extract_valueset_from_response(response)
             value_set = JSON.parse(response.body)
 
             if value_set['compose'] && value_set['compose']['include']
@@ -174,7 +173,7 @@ module Inferno
             end
           end
 
-          def retrieve_valueset_api(url)
+          def retrieve_valueset_from_api(url)
             url['http:'] = 'https:' if url['http:']
             uri = URI.parse(url)
 
@@ -206,7 +205,7 @@ module Inferno
             end
 
             if response.code.to_i == 200
-              extract_valueset(response)
+              extract_valueset_from_response(response)
             else
               if config.data['Rule']['ValueSetsDemonstrate']['IgnoreUnloadableValueset']
                 raise StandardError, "External value set retrieval failed: #{url} HTTP Status code: #{response.code}"
