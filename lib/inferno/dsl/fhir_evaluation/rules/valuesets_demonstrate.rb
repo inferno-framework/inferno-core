@@ -26,33 +26,33 @@ module Inferno
 
           def check(context)
             @config = context.config
-
             @value_set_unevaluated = []
             @value_set_used = []
             @value_set_unused = []
 
-            collect_valuesets_used(context)
+            classify_valuesets(context)
 
-            context.add_result create_result_message()
+            context.add_result create_result_message
           end
 
-          def collect_valuesets_used(context)
+          def classify_valuesets(context)
             context.ig.resources_by_type['ValueSet'].each do |valueset|
               valueset_used_count = 0
               system_codes = extract_systems_codes_from_valueset(valueset)
 
-              value_set_unevaluated << valueset.url if system_codes.none?
+              value_set_unevaluated << "#{valueset.url}: unable to find system and code" if system_codes.none?
 
-              next if value_set_unevaluated.include?(valueset.url)
+              next if value_set_unevaluated.any? { |element| element.include?(valueset.url) }
 
               resource_used = []
 
               context.data.each do |resource|
                 system_codes.each do |system_code|
-                  if !system_code.nil? && find_valueset_used(resource.to_hash, system_code[:system], system_code[:code])
-                    valueset_used_count += 1
-                    resource_used << resource.id unless resource_used.include?(resource.id)
-                  end
+                  next unless !system_code.nil? && determine_use_of_valueset(resource.to_hash, system_code[:system],
+                                                                             system_code[:code])
+
+                  valueset_used_count += 1
+                  resource_used << resource.id unless resource_used.include?(resource.id)
                 end
               end
 
@@ -66,7 +66,7 @@ module Inferno
             value_set_unevaluated.uniq!
           end
 
-          def create_result_message()
+          def create_result_message
             if value_set_unused.none?
               message = 'All Value sets are used in Examples:'
               value_set_used.map { |value_set| message += "\n\t#{value_set}" }
@@ -91,7 +91,6 @@ module Inferno
 
               EvaluationResult.new(message, rule: self)
             end
-
           end
 
           def extract_systems_codes_from_valueset(valueset)
@@ -122,18 +121,23 @@ module Inferno
                   next
                 end
 
-                value_set_unevaluated << valueset.url unless system_url
+                value_set_unevaluated << "#{valueset.url}: system url not provided" unless system_url
 
                 # Exclude if system is provided as Uniform Resource Name "urn:"
                 # Exclude filter
                 # Exclude only system is provided (e.g. http://loing.org)
                 exclusions = config.data['Rule']['ValueSetsDemonstrate']['Exclude']
-                if (exclusions['URL'] && (system_url['urn'])) \
-                  || (exclusions['Filter'] && (system_url && include['filter'])) \
-                  || (exclusions['SystemOnly'] && (system_url && !include['concept'] && !include['filter']))
-                  value_set_unevaluated << valueset.url
+                if exclusions['URL'] && (system_url['urn'])
+                  value_set_unevaluated << "#{valueset.url}: unable to handle Uniform Resource Name"
                 end
 
+                if exclusions['Filter'] && (system_url && include['filter'])
+                  value_set_unevaluated << "#{valueset.url}: unable to handle filter"
+                end
+
+                if exclusions['SystemOnly'] && (system_url && !include['concept'] && !include['filter'])
+                  value_set_unevaluated << "#{valueset.url}: unabe to handle SystemOnly"
+                end
               end
             else
               value_set_unevaluated << valueset.url
@@ -141,7 +145,7 @@ module Inferno
             system_codes.flatten.uniq
           end
 
-          def find_valueset_used(resource, system, code)
+          def determine_use_of_valueset(resource, system, code)
             resource.each do |key, value|
               next unless key == 'code' || ['value', 'valueCodeableConcept', 'valueString',
                                             'valueQuantity', 'valueBoolean',
@@ -179,8 +183,8 @@ module Inferno
 
             request = Net::HTTP::Get.new(uri.request_uri)
 
-            username = config.data['Environment']['VSAC']['Url']
-            password = config.data['Environment']['VSAC']['Apikey']
+            username = config.data['Environment']['VSAC']['Username']
+            password = config.data['Environment']['VSAC']['Password']
             encoded_credentials = Base64.strict_encode64("#{username}:#{password}")
             request['Authorization'] = "Basic #{encoded_credentials}"
 
@@ -204,7 +208,13 @@ module Inferno
             if response.code.to_i == 200
               extract_valueset(response)
             else
-              puts "Failed to retrieve the Value Set: #{url}. HTTP Status Code: #{response.code}"
+              if config.data['Rule']['ValueSetsDemonstrate']['IgnoreUnloadableValueset']
+                raise StandardError, "External value set retrieval failed: #{url} HTTP Status code: #{response.code}"
+              end
+
+              value_set_unevaluated << "#{url}: Failed to retrieve. HTTP Status code: #{response.code}"
+              nil
+
             end
           end
         end
