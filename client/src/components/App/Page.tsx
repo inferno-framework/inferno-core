@@ -14,7 +14,7 @@ const Page: FC<PageProps> = ({ children, title }) => {
   const testSuites = useAppStore((state) => state.testSuites);
   // Type assertion is necessary here because it will be read as any type
 
-  const loadedChildren = useLoaderData();
+  const loadedChildren: JSX.Element = useLoaderData();
   const params = useParams();
 
   // Handle options-specific title population

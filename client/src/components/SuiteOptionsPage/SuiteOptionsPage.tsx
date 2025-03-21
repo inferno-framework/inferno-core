@@ -80,7 +80,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         if (testSession && testSession.test_suite) {
           // eslint-disable-next-line max-len
           const url = `/${testSession.test_suite_id}/${testSession.id}#${testSession.test_suite_id}`;
-          navigate(url);
+          void navigate(url);
           // Use window navigation as a workaround for router errors
           const root = basePath ? `/${basePath}` : window.location.origin;
           window.location.href = `${root}${url}`;

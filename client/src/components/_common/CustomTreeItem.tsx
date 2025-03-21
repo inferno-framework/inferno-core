@@ -75,7 +75,7 @@ const CustomContent = React.forwardRef(function CustomContent(
     event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>,
   ) => {
     handleSelection(event as React.MouseEvent<HTMLDivElement, MouseEvent>);
-    if (testId) navigate(`#${testId}${viewOnlyUrl}`);
+    if (testId) void navigate(`#${testId}${viewOnlyUrl}`);
   };
 
   return (

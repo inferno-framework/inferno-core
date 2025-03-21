@@ -14,7 +14,7 @@ const BackButton: FC<BackButtonProps> = ({ tooltipText, destination }) => {
 
   return (
     <CustomTooltip title={tooltipText}>
-      <IconButton size="small" onClick={() => navigate(destination)}>
+      <IconButton size="small" onClick={() => void navigate(destination)}>
         <ArrowBackIcon fontSize="large" />
       </IconButton>
     </CustomTooltip>
