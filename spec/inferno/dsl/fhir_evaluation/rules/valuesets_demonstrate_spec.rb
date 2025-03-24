@@ -3,11 +3,6 @@
 require 'extract_tgz_helper'
 require_relative '../../../../../lib/inferno/dsl/fhir_evaluation/evaluation_context'
 
-def fixture(filename)
-  path = File.join(uscore3_untarred, 'package', filename)
-  FHIR::Json.from_json(File.read(path))
-end
-
 RSpec.describe Inferno::DSL::FHIREvaluation::Rules::ValueSetsDemonstrate do
   include ExtractTGZHelper
 
@@ -16,6 +11,11 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::ValueSetsDemonstrate do
 
   let(:patient85) do
     path = File.expand_path('../../../../../spec/fixtures/patient_85.json', __dir__)
+    FHIR::Json.from_json(File.read(path))
+  end
+
+  def fixture(filename)
+    path = File.join(uscore3_untarred, 'package', filename)
     FHIR::Json.from_json(File.read(path))
   end
 
