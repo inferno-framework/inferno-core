@@ -7,6 +7,7 @@ module Inferno
     # `assert_valid_resource` for validation rather than directly calling
     # methods on a validator.
     #
+    # @deprecated Use {Inferno::DSL::FHIRResourceValidation} instead
     # @example
     #
     #   validator do
@@ -249,6 +250,8 @@ module Inferno
         end
 
         # Define a validator
+        # @deprecated Use
+        #   {Inferno::DSL::FHIRResourceValidation::ClassMethods#fhir_resource_validator} instead
         # @example
         #   validator do
         #     url 'http://example.com/validator'
@@ -267,6 +270,10 @@ module Inferno
         # @param required_suite_options [Hash] suite options that must be
         #   selected in order to use this validator
         def validator(name = :default, required_suite_options: nil, &)
+          Inferno::Application['logger'].warn(
+            "'validator' in '#{suite.id}' TestSuite is deprecated and will be removed in an upcoming release. " \
+            "Use 'fhir_resource_validator' instead."
+          )
           current_validators = fhir_validators[name] || []
 
           new_validator = Inferno::DSL::FHIRValidation::Validator.new(required_suite_options, &)

@@ -49,3 +49,13 @@ Rule:
       URN: true # Exclude if system is provided as Uniform Resource Name "urn:"
       Filter: true # Exclude filter
       SystemOnly: true # Exclude if only system is provided (e.g. http://loing.org)
+  AllSearchParametersHaveExamples:
+    Enabled: true
+  AllIGExtensionsHaveExamples:
+    Enabled: true
+  AllProfilesHaveExamples:
+    Enabled: true
+    ConformanceOptions:
+      considerMetaProfile: true
+      considerValidationResults: false
+      considerOnlyResourceType: false

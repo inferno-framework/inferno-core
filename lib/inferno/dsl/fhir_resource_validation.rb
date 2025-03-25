@@ -9,7 +9,7 @@ module Inferno
     #
     # @example
     #
-    #   validator do
+    #   fhir_resource_validator do
     #     url 'http://example.com/validator'
     #     exclude_message { |message| message.type == 'info' }
     #     perform_additional_validation do |resource, profile_url|
@@ -19,10 +19,22 @@ module Inferno
     #         { type: 'info', message: 'everything is ok' }
     #       end
     #     end
+    #     cli_context do
+    #       noExtensibleBindingMessages true
+    #       allowExampleUrls true
+    #       txServer nil
+    #     end
     #   end
     module FHIRResourceValidation
       def self.included(klass)
         klass.extend ClassMethods
+      end
+
+      # Find a particular profile StructureDefinition and the IG it belongs to.
+      # Looks through a runnable's parents up to the suite to find a validator with a particular name,
+      # then finds the profile by looking through its defined igs.
+      def find_ig_and_profile(profile_url, validator_name)
+        self.class.find_ig_and_profile(profile_url, validator_name)
       end
 
       class Validator
@@ -62,7 +74,7 @@ module Inferno
         #   igs("hl7.fhir.us.core#3.1.1", "hl7.fhir.us.core#6.0.0")
         # @param validator_igs [Array<String>]
         def igs(*validator_igs)
-          cli_context(igs: validator_igs) if validator_igs
+          cli_context(igs: validator_igs) if validator_igs.any?
 
           cli_context.igs
         end
@@ -397,6 +409,20 @@ module Inferno
           current_validators << new_validator
 
           fhir_validators[name] = current_validators
+        end
+
+        # @private
+        def find_ig_and_profile(profile_url, validator_name)
+          validator = find_validator(validator_name)
+          if validator.is_a? Inferno::DSL::FHIRResourceValidation::Validator
+            validator.igs.each do |ig_id|
+              ig = Inferno::Repositories::IGs.new.find_or_load(ig_id)
+              profile = ig.profile_by_url(profile_url)
+              return ig, profile if profile
+            end
+          end
+
+          raise "Unable to find profile #{profile_url} in any IG defined for validator #{validator_name}"
         end
       end
     end

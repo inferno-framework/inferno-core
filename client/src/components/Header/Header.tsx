@@ -9,7 +9,9 @@ import useStyles from './styles';
 import icon from '~/images/inferno_icon.png';
 import lightTheme from '~/styles/theme';
 import CustomTooltip from '~/components/_common/CustomTooltip';
+import ShareSessionButton from '~/components/Header/ShareSessionButton';
 import HeaderSkeleton from '~/components/Skeletons/HeaderSkeleton';
+import { useTestSessionStore } from '~/store/testSession';
 
 export interface HeaderProps {
   suiteId?: string;
@@ -31,10 +33,11 @@ const Header: FC<HeaderProps> = ({
   const { classes } = useStyles();
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
 
   // Use window navigation instead of React router to trigger new page request
   const startNewSession = () => {
-    window.location.href = `/${basePath}/${suiteId || ''}`;
+    window.location.href = `/${basePath}`;
   };
 
   const suiteOptionsString =
@@ -99,6 +102,7 @@ const Header: FC<HeaderProps> = ({
             {suiteVersion && (
               <Typography variant="overline" className={classes.version}>
                 {`v.${suiteVersion}`}
+                {viewOnly ? ' (Read-Only Mode)' : ''}
               </Typography>
             )}
           </Box>
@@ -108,6 +112,9 @@ const Header: FC<HeaderProps> = ({
             </Typography>
           )}
         </Box>
+
+        {/* Share Session button */}
+        <ShareSessionButton />
 
         {/* New Session button */}
         <Box

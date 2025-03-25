@@ -13,8 +13,9 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import DoneIcon from '@mui/icons-material/Done';
 import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import CustomTooltip from '~/components/_common/CustomTooltip';
-import lightTheme from '~/styles/theme';
 import { useAppStore } from '~/store/app';
+import { useTestSessionStore } from '~/store/testSession';
+import lightTheme from '~/styles/theme';
 import useStyles from './styles';
 
 export interface TestRunProgressBarProps {
@@ -85,6 +86,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
 }) => {
   const { classes } = useStyles();
   const footerHeight = useAppStore((state) => state.footerHeight);
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const cancellable = testRun?.status !== 'cancelling' && testRun?.status !== 'done';
   const statusIndicator = StatusIndicator(testRun?.status);
   const testCount = testRun?.test_count || 0;
@@ -135,7 +137,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
         <CustomTooltip title="Cancel Test Run">
           <IconButton
             aria-label="cancel"
-            disabled={!cancellable}
+            disabled={!cancellable || viewOnly}
             color="primary"
             onClick={cancelTestRun}
             className={classes.cancelButton}

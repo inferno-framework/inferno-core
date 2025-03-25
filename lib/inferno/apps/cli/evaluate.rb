@@ -1,6 +1,7 @@
-require_relative '../../../inferno/dsl/fhir_evaluation/evaluator'
-require_relative '../../../inferno/dsl/fhir_evaluation/config'
-require_relative '../../../inferno/entities'
+require_relative '../../dsl/fhir_evaluation/evaluator'
+require_relative '../../dsl/fhir_evaluation/config'
+require_relative '../../entities'
+require_relative '../../repositories'
 require_relative '../../utils/ig_downloader'
 
 require 'tempfile'
@@ -8,12 +9,9 @@ require 'tempfile'
 module Inferno
   module CLI
     class Evaluate < Thor::Group
-      include Thor::Actions
-      include Inferno::Utils::IgDownloader
-
       def evaluate(ig_path, data_path, _log_level)
         validate_args(ig_path, data_path)
-        ig = get_ig(ig_path)
+        ig = Inferno::Repositories::IGs.new.find_or_load(ig_path)
 
         check_ig_version(ig)
 
@@ -24,7 +22,9 @@ module Inferno
             ig.examples
           end
 
-        evaluator = Inferno::DSL::FHIREvaluation::Evaluator.new(ig)
+        validator = setup_validator(ig_path)
+
+        evaluator = Inferno::DSL::FHIREvaluation::Evaluator.new(ig, validator)
 
         config = Inferno::DSL::FHIREvaluation::Config.new
         results = evaluator.evaluate(data, config)
@@ -39,24 +39,6 @@ module Inferno
         raise "Provided path '#{data_path}' is not a directory"
       end
 
-      def get_ig(ig_path)
-        if File.exist?(ig_path)
-          ig = Inferno::Entities::IG.from_file(ig_path)
-        elsif in_user_package_cache?(ig_path.sub('@', '#'))
-          # NPM syntax for a package identifier is id@version (eg, hl7.fhir.us.core@3.1.1)
-          # but in the cache the separator is # (hl7.fhir.us.core#3.1.1)
-          cache_directory = File.join(user_package_cache, ig_path.sub('@', '#'))
-          ig = Inferno::Entities::IG.from_file(cache_directory)
-        else
-          Tempfile.create(['package', '.tgz']) do |temp_file|
-            load_ig(ig_path, nil, { force: true }, temp_file.path)
-            ig = Inferno::Entities::IG.from_file(temp_file.path)
-          end
-        end
-        ig.add_self_to_repository
-        ig
-      end
-
       def check_ig_version(ig)
         versions = ig.ig_resource.fhirVersion
 
@@ -65,12 +47,22 @@ module Inferno
         puts '**WARNING** The selected IG targets a FHIR version higher than 4.0.1, which is not supported by Inferno.'
       end
 
-      def user_package_cache
-        File.join(Dir.home, '.fhir', 'packages')
-      end
+      def setup_validator(ig_path)
+        igs_directory = File.join(Dir.pwd, 'data', 'igs')
+        if File.exist?(ig_path) && !File.realpath(ig_path).start_with?(igs_directory)
+          puts "Copying #{File.basename(ig_path)} to data/igs so it is accessible to validator"
+          destination_file_path = File.join(igs_directory, File.basename(ig_path))
+          FileUtils.copy_file(ig_path, destination_file_path, true)
+          ig_path = "igs/#{File.basename(ig_path)}"
+        end
+        Inferno::DSL::FHIRResourceValidation::Validator.new(:default, 'evaluator_cli') do
+          igs(ig_path)
 
-      def in_user_package_cache?(ig_identifier)
-        File.directory?(File.join(user_package_cache, ig_identifier))
+          cli_context do
+            # For our purposes, code display mismatches should be warnings and not affect profile conformance
+            displayWarnings(true)
+          end
+        end
       end
 
       def output_results(results, output)
