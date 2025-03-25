@@ -162,13 +162,13 @@ module AuthInfoSuite
           id :symmetric_auth
           input :symmetric_auth_info,
                 type: :auth_info,
+                optional: true,
                 options: {
                   mode: 'auth',
                   components: [
                     {
                       name: :auth_type,
                       default: 'symmetric',
-                      locked: true
                     }
                   ]
                 },

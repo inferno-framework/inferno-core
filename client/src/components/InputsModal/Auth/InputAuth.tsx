@@ -92,6 +92,7 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
         authType as AuthType,
         authValues,
         input.options?.components || [],
+        input.optional || false,
         input.locked || false,
       );
     } else if (mode === 'auth') {
@@ -99,6 +100,7 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
         authType as AuthType,
         authValues,
         input.options?.components || [],
+        input.optional || false,
         input.locked || false,
       );
     }
