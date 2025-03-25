@@ -39,6 +39,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::ValueSetsDemonstrate do
 
     result = described_class.new.check(context)[0]
     expect(result.severity).to eq('success')
+    expect(result.message).to eq("All Value sets are used in Examples:\n\thttp://hl7.org/fhir/us/core/ValueSet/us-core-observation-smokingstatus is used 1 times in 1 resources")
   end
 
   it 'identifies unused valuesets' do
@@ -52,7 +53,8 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::ValueSetsDemonstrate do
 
     result = described_class.new.check(context)[0]
 
-    expect(result.message).to eq("All codes in these value sets are used at least once in Examples:\nFound unused Value Sets: \n\thttp://hl7.org/fhir/us/core/ValueSet/us-core-observation-smokingstatus")
+    expect(result.severity).to eq('warning')
+    expect(result.message).to eq("Value sets with all codes used at least once in Examples:\nFound unused Value Sets: \n\thttp://hl7.org/fhir/us/core/ValueSet/us-core-observation-smokingstatus")
   end
   # rubocop:enable Layout/LineLength
 end

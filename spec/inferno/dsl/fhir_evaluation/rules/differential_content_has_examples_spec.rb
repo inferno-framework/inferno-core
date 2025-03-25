@@ -69,6 +69,8 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::DifferentialContentHasExampl
 
     result = described_class.new.check(context)[0]
 
+    # rubocop:disable Layout/LineLength
     expect(result.message).to eq("Found fields highlighted in the differential view, but not used in instances: \n Profile/Extension: http://hl7.org/fhir/us/core/StructureDefinition/us-core-medication  \n\tFields: code")
+    # rubocop:enable Layout/LineLength
   end
 end

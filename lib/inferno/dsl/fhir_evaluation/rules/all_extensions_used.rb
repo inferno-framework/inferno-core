@@ -38,6 +38,7 @@ module Inferno
             extensions
           end
 
+          # rubocop:disable Metrics/CyclomaticComplexity
           def remove_found_resource_extensions(extensions, examples)
             unused_extensions = extensions.dup
             examples.each do |resource|
@@ -48,12 +49,17 @@ module Inferno
                 next unless path_elements[-2].include?('extension') && path_elements[-1] == 'url'
 
                 profiles = resource&.meta&.profile || []
-                profiles.each do |profile|
-                  unused_extensions[profile].delete(value) if extensions.key?(profile)
-                end
+                update_unused_extensions(profiles, value, unused_extensions, extensions)
               end
             end
             unused_extensions
+          end
+          # rubocop:enable Metrics/CyclomaticComplexity
+
+          def update_unused_extensions(profiles, value, unused_extensions, extensions)
+            profiles.each do |profile|
+              unused_extensions[profile].delete(value) if extensions.key?(profile)
+            end
           end
 
           def get_fail_message(extensions)

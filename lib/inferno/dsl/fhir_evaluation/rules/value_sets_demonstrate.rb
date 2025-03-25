@@ -35,8 +35,9 @@ module Inferno
             context.add_result create_result_message
           end
 
+          # rubocop:disable Metrics/CyclomaticComplexity
           def classify_valuesets(context)
-            context.ig.resources_by_type['ValueSet'].each do |valueset|
+            context.ig.value_sets.each do |valueset|
               valueset_used_count = 0
               system_codes = extract_systems_codes_from_valueset(valueset)
 
@@ -58,13 +59,17 @@ module Inferno
               end
 
               if valueset_used_count.positive?
+                # rubocop:disable Layout/LineLength
                 value_set_used << "#{valueset.url} is used #{valueset_used_count} times in #{resource_used.count} resources"
+                # rubocop:enable Layout/LineLength
               else
                 value_set_unused << valueset.url
               end
             end
           end
+          # rubocop:enable Metrics/CyclomaticComplexity
 
+          # rubocop:disable Metrics/CyclomaticComplexity
           def create_result_message
             if value_set_unused.none?
               message = 'All Value sets are used in Examples:'
@@ -91,7 +96,9 @@ module Inferno
               EvaluationResult.new(message, rule: self)
             end
           end
+          # rubocop:enable Metrics/CyclomaticComplexity
 
+          # rubocop:disable Metrics/CyclomaticComplexity
           def extract_systems_codes_from_valueset(valueset)
             system_codes = []
 
@@ -143,7 +150,9 @@ module Inferno
             end
             system_codes.flatten.uniq
           end
+          # rubocop:enable Metrics/CyclomaticComplexity
 
+          # rubocop:disable Metrics/CyclomaticComplexity
           def determine_use_of_valueset(resource, system, code)
             resource.each do |key, value|
               next unless key == 'code' || ['value', 'valueCodeableConcept', 'valueString',
@@ -160,6 +169,7 @@ module Inferno
 
             false
           end
+          # rubocop:enable Metrics/CyclomaticComplexity
 
           def extract_valueset_from_response(response)
             value_set = JSON.parse(response.body)

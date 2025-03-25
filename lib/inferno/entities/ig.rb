@@ -124,7 +124,7 @@ module Inferno
       end
 
       def value_sets
-        resources_by_type['StructureDefinition'].filter { |sd| sd.type == 'ValueSet' }
+        resources_by_type['ValueSet']
       end
 
       def profiles

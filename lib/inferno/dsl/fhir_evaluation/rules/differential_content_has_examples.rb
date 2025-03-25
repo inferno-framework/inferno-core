@@ -45,6 +45,7 @@ module Inferno
             end
           end
 
+          # rubocop:disable Metrics/CyclomaticComplexity
           def remove_found_differential_content(unused_differential, examples)
             examples.each do |resource|
               extension_base_path = ''
@@ -74,6 +75,7 @@ module Inferno
               end
             end
           end
+          # rubocop:enable Metrics/CyclomaticComplexity
 
           def clean_value(value)
             stripped_val = value.id.partition('.').last
