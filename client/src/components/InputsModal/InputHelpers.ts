@@ -35,6 +35,7 @@ export const getMissingRequiredInput = (inputs: TestInput[], inputsMap: Map<stri
     // If input is auth_info, check if required values are filled
     let authMissingRequiredInput = false;
     if (input.type === 'auth_info') {
+      if (input.optional) return false;
       try {
         if (!inputValue || !input.options?.components || input.options?.components.length < 1)
           return false;
