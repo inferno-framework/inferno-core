@@ -35,10 +35,14 @@ export const getMissingRequiredInput = (inputs: TestInput[], inputsMap: Map<stri
     // If input is auth_info, check if required values are filled
     let authMissingRequiredInput = false;
     if (input.type === 'auth_info') {
-      if (input.optional) return false;
+      if (
+        input.optional ||
+        !inputValue ||
+        !input.options?.components ||
+        input.options?.components.length < 1
+      )
+        return false;
       try {
-        if (!inputValue || !input.options?.components || input.options?.components.length < 1)
-          return false;
         const authJson = JSON.parse(inputValue as string) as Auth;
         const authType = (authJson.auth_type ||
           input.options.components.find((c) => c.name === 'auth_type')?.default) as AuthType;

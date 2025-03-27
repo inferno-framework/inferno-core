@@ -132,6 +132,14 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
 
   const updateAuthInputsMap = (map: Map<string, unknown>) => {
     setAuthValues(map);
+
+    // Set radio button input starting values to first option if not already set to something
+    authFields.forEach((field) => {
+      if (field.type === 'radio' && !map.get(field.name) && field.options?.list_options) {
+        map.set(field.name, field.options?.list_options[0].value);
+      }
+    });
+
     // Update inputsMap while maintaining hidden values
     if (authValuesPopulated) {
       const inputsWithValues = new Map();
@@ -147,8 +155,6 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
         const combinedValues = { ...combinedStartingValues, ...accessValuesObject };
         stringifiedValues = JSON.stringify(combinedValues);
       }
-      // console.log(authValues, inputsWithValues);
-
       inputsMap.set(input.name, stringifiedValues);
       setInputsMap(new Map(inputsMap));
     }
