@@ -143,7 +143,6 @@ module AuthInfoSuite
                     {
                       name: :auth_type,
                       default: 'public',
-                      locked: true
                     }
                   ]
                 },
