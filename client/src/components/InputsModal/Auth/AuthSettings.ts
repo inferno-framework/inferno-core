@@ -210,9 +210,9 @@ export const getAuthFields = (
   // Remove extra properties based on auth type or hide if no settings
   const typeValues = authSettings[authType];
   if (authSettings && authType) {
-    return fields.filter((field) => typeValues.includes(field.name));
+    return fields.filter((field) => typeValues?.includes(field.name));
   }
-  fields.forEach((field) => (field.hide = field.hide || !typeValues.includes(field.name)));
+  fields.forEach((field) => (field.hide = field.hide || !typeValues?.includes(field.name)));
   return fields;
 };
 
@@ -368,8 +368,8 @@ export const getAccessFields = (
   // Remove extra properties based on auth type or hide if no settings
   const typeValues = accessSettings[authType];
   if (accessSettings && authType) {
-    return fields.filter((field) => typeValues.includes(field.name));
+    return fields.filter((field) => typeValues?.includes(field.name));
   }
-  fields.forEach((field) => (field.hide = field.hide || !typeValues.includes(field.name)));
+  fields.forEach((field) => (field.hide = field.hide || !typeValues?.includes(field.name)));
   return fields;
 };
