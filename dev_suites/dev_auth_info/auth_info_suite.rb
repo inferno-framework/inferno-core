@@ -168,7 +168,7 @@ module AuthInfoSuite
                   components: [
                     {
                       name: :auth_type,
-                      default: 'symmetric',
+                      default: 'symmetric'
                     }
                   ]
                 },
@@ -283,7 +283,7 @@ module AuthInfoSuite
                   components: [
                     {
                       name: :auth_type,
-                      default: 'symmetric',
+                      default: 'symmetric'
                     }
                   ]
                 },
