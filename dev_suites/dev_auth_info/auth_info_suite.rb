@@ -142,7 +142,7 @@ module AuthInfoSuite
                   components: [
                     {
                       name: :auth_type,
-                      default: 'public',
+                      default: 'public'
                     }
                   ]
                 },
