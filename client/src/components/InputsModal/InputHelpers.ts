@@ -35,9 +35,14 @@ export const getMissingRequiredInput = (inputs: TestInput[], inputsMap: Map<stri
     // If input is auth_info, check if required values are filled
     let authMissingRequiredInput = false;
     if (input.type === 'auth_info') {
+      if (
+        input.optional ||
+        !inputValue ||
+        !input.options?.components ||
+        input.options?.components.length < 1
+      )
+        return false;
       try {
-        if (!inputValue || !input.options?.components || input.options?.components.length < 1)
-          return false;
         const authJson = JSON.parse(inputValue as string) as Auth;
         const authType = (authJson.auth_type ||
           input.options.components.find((c) => c.name === 'auth_type')?.default) as AuthType;
@@ -46,8 +51,8 @@ export const getMissingRequiredInput = (inputs: TestInput[], inputsMap: Map<stri
         // in getAuthFields() and getAccessFields() are irrelevant for this
         const fields =
           input.options?.mode === 'auth'
-            ? getAuthFields(authType, new Map(), [], false)
-            : getAccessFields(authType, new Map(), [], false);
+            ? getAuthFields(authType, new Map(), [], false, false)
+            : getAccessFields(authType, new Map(), [], false, false);
         const requiredFields = fields.filter((field) => !field.optional).map((field) => field.name);
         authMissingRequiredInput = requiredFields.some((field) => !authJson[field as keyof Auth]);
       } catch (e: unknown) {
