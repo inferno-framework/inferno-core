@@ -126,6 +126,10 @@ module Inferno
         "#{ig_resource.id}##{ig_resource.version || 'current'}"
       end
 
+      def value_sets
+        resources_by_type['ValueSet']
+      end
+
       def profiles
         resources_by_type['StructureDefinition'].filter { |sd| sd.type != 'Extension' }
       end
