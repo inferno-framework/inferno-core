@@ -92,6 +92,7 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
         authType as AuthType,
         authValues,
         input.options?.components || [],
+        input.optional || false,
         input.locked || false,
       );
     } else if (mode === 'auth') {
@@ -99,6 +100,7 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
         authType as AuthType,
         authValues,
         input.options?.components || [],
+        input.optional || false,
         input.locked || false,
       );
     }
@@ -130,6 +132,14 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
 
   const updateAuthInputsMap = (map: Map<string, unknown>) => {
     setAuthValues(map);
+
+    // Set radio button input starting values to first option if not already set to something
+    authFields.forEach((field) => {
+      if (field.type === 'radio' && !map.get(field.name) && field.options?.list_options) {
+        map.set(field.name, field.options?.list_options[0].value);
+      }
+    });
+
     // Update inputsMap while maintaining hidden values
     if (authValuesPopulated) {
       const inputsWithValues = new Map();

@@ -14,6 +14,7 @@ export default makeStyles()((theme: Theme) => ({
     padding: '16px 0',
     borderRadius: '16px',
     overflow: 'auto',
+    maxHeight: '600px', // TODO: Change to dynamic value based on screen height
   },
   selectedItem: {
     backgroundColor: `${theme.palette.common.orangeLight} !important`,
