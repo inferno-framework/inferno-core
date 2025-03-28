@@ -1,7 +1,6 @@
 require_relative '../../dsl/fhir_evaluation/evaluator'
 require_relative '../../dsl/fhir_evaluation/config'
 require_relative '../../entities'
-require_relative '../../repositories'
 require_relative '../../utils/ig_downloader'
 
 require 'tempfile'
@@ -10,6 +9,12 @@ module Inferno
   module CLI
     class Evaluate < Thor::Group
       def evaluate(ig_path, data_path, _log_level)
+        # NOTE: repositories is required here rather than at the top of the file because
+        # the tree of requires means that this file and its requires get required by every CLI app.
+        # Sequel::Model, used in some repositories, fetches the table schema at instantiation.
+        # This breaks the `migrate` task by fetching a table before the task runs/creates it.
+        require_relative '../../repositories'
+
         validate_args(ig_path, data_path)
         ig = Inferno::Repositories::IGs.new.find_or_load(ig_path)
 
