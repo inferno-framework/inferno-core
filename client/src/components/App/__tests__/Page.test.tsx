@@ -1,5 +1,5 @@
 import React from 'react';
-import { RouterProvider, createMemoryRouter } from 'react-router-dom';
+import { RouterProvider, createMemoryRouter } from 'react-router';
 import { render /* , waitFor */ } from '@testing-library/react';
 import { testSuites } from '~/components/App/__mocked_data__/mockData';
 import Page from '../Page';

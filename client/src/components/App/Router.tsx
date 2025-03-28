@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router';
 import Page from '~/components/App/Page';
 import LandingPage from '~/components/LandingPage';
 import SuiteOptionsPage from '~/components/SuiteOptionsPage';
@@ -10,26 +10,30 @@ import { basePath } from '~/api/infernoApiService';
 import { TestSuite } from '~/models/testSuiteModels';
 
 export const router = (testSuites: TestSuite[]) => {
-  const testSuitesExist = !!testSuites && testSuites.length > 0;
   return createBrowserRouter(
     [
       {
         path: '/',
-        element: (
-          <Page title={`Inferno Test Suites`}>
-            {testSuitesExist ? <LandingPage testSuites={testSuites} /> : <LandingPageSkeleton />}
-          </Page>
-        ),
+        loader: () => {
+          return !!testSuites && testSuites.length > 0 ? (
+            <LandingPage testSuites={testSuites} />
+          ) : (
+            <LandingPageSkeleton />
+          );
+        },
+        element: <Page title={`Inferno Test Suites`} />,
+        hydrateFallbackElement: <LandingPageSkeleton />,
       },
       {
         path: ':test_suite_id',
         element: <Page title="Options" />,
         loader: ({ params }) => {
-          if (!testSuitesExist) return <SuiteOptionsPageSkeleton />;
+          if (!testSuites || testSuites.length === 0) return <SuiteOptionsPageSkeleton />;
           const suiteId: string = params.test_suite_id || '';
           const suite = testSuites.find((suite) => suite.id === suiteId);
           return suite ? <SuiteOptionsPage testSuite={suite} /> : <SuiteOptionsPageSkeleton />;
         },
+        hydrateFallbackElement: <SuiteOptionsPageSkeleton />,
       },
       {
         // Title for TestSessionWrapper is set in the component

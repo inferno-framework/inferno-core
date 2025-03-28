@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { useSnackbar } from 'notistack';
 import { Alert, Box, Fade } from '@mui/material';
 import {
@@ -65,7 +65,7 @@ const TestSessionWrapper: FC<unknown> = () => {
   useEffect(() => {
     // If navigating to a test session URL with no suite ID value, add suite ID
     if (!locationHash && testSession) {
-      navigate(`#${testSession?.test_suite_id}${viewOnlyUrl}`);
+      void navigate(`#${testSession?.test_suite_id}${viewOnlyUrl}`);
     }
   }, [testSession]);
 
