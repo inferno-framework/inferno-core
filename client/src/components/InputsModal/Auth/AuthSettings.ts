@@ -52,6 +52,7 @@ export const getAuthFields = (
   authType: AuthType,
   authValues: Map<string, unknown>,
   components: TestInput[],
+  optionalInput: boolean,
   lockedInput: boolean,
 ): TestInput[] => {
   const fields = [
@@ -84,24 +85,28 @@ export const getAuthFields = (
       type: 'textarea',
       title: 'Scopes',
       description: 'OAuth 2.0 scopes needed to enable all required functionality',
+      optional: optionalInput,
       locked: lockedInput,
     },
     {
       name: 'client_id',
       title: 'Client ID',
       description: 'Client ID provided during registration of Inferno',
+      optional: optionalInput,
       locked: lockedInput,
     },
     {
       name: 'client_secret',
       title: 'Client Secret',
       description: 'Client secret provided during registration of Inferno',
+      optional: optionalInput,
       locked: lockedInput,
     },
     {
       name: 'pkce_support',
       type: 'radio',
       title: 'Proof Key for Code Exchange (PKCE)',
+      optional: optionalInput,
       locked: lockedInput,
       options: {
         list_options: [
@@ -140,6 +145,7 @@ export const getAuthFields = (
       name: 'auth_request_method',
       type: 'radio',
       title: 'Authorization Request Method',
+      optional: optionalInput,
       locked: lockedInput,
       options: {
         list_options: [
@@ -158,6 +164,7 @@ export const getAuthFields = (
       name: 'encryption_algorithm',
       type: 'radio',
       title: 'Encryption Algorithm',
+      optional: optionalInput,
       locked: lockedInput,
       options: {
         list_options: [
@@ -203,9 +210,9 @@ export const getAuthFields = (
   // Remove extra properties based on auth type or hide if no settings
   const typeValues = authSettings[authType];
   if (authSettings && authType) {
-    return fields.filter((field) => typeValues.includes(field.name));
+    return fields.filter((field) => typeValues?.includes(field.name));
   }
-  fields.forEach((field) => (field.hide = field.hide || !typeValues.includes(field.name)));
+  fields.forEach((field) => (field.hide = field.hide || !typeValues?.includes(field.name)));
   return fields;
 };
 
@@ -247,6 +254,7 @@ export const getAccessFields = (
   authType: AuthType,
   accessValues: Map<string, unknown>,
   components: TestInput[],
+  optionalInput: boolean,
   lockedInput: boolean,
 ): TestInput[] => {
   const tokenDoesNotExist =
@@ -258,6 +266,7 @@ export const getAccessFields = (
     {
       name: 'access_token',
       title: 'Access Token',
+      optional: optionalInput,
       locked: lockedInput,
     },
     {
@@ -359,8 +368,8 @@ export const getAccessFields = (
   // Remove extra properties based on auth type or hide if no settings
   const typeValues = accessSettings[authType];
   if (accessSettings && authType) {
-    return fields.filter((field) => typeValues.includes(field.name));
+    return fields.filter((field) => typeValues?.includes(field.name));
   }
-  fields.forEach((field) => (field.hide = field.hide || !typeValues.includes(field.name)));
+  fields.forEach((field) => (field.hide = field.hide || !typeValues?.includes(field.name)));
   return fields;
 };

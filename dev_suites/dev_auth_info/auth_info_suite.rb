@@ -142,8 +142,7 @@ module AuthInfoSuite
                   components: [
                     {
                       name: :auth_type,
-                      default: 'public',
-                      locked: true
+                      default: 'public'
                     }
                   ]
                 },
@@ -162,13 +161,13 @@ module AuthInfoSuite
           id :symmetric_auth
           input :symmetric_auth_info,
                 type: :auth_info,
+                optional: true,
                 options: {
                   mode: 'auth',
                   components: [
                     {
                       name: :auth_type,
-                      default: 'symmetric',
-                      locked: true
+                      default: 'symmetric'
                     }
                   ]
                 },
@@ -277,13 +276,13 @@ module AuthInfoSuite
           id :symmetric_auth
           input :symmetric_access_auth_info,
                 type: :auth_info,
+                optional: true,
                 options: {
                   mode: 'access',
                   components: [
                     {
                       name: :auth_type,
-                      default: 'symmetric',
-                      locked: true
+                      default: 'symmetric'
                     }
                   ]
                 },
