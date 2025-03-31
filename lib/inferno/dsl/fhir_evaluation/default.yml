@@ -8,8 +8,10 @@ Environment:
 
 Rule:
   AllReferencesResolve: 
+    Description: 'All References in Examples resolve to each other'
     Enabled: true
   AllResourcesReachable:
+    Description: 'All resources in Examples are reachable'
     Enabled: true
   AllMustSupportsPresent:
     Description: 'An instance of all MustSupport elements, extensions, and slices is present in the given resources'
@@ -39,10 +41,12 @@ Rule:
       # - If considerOnlyResourceType, the search will include resources of the same type as the profile target type (StructureDefintion.type)
       considerOnlyResourceType: false
   AllExtensionsUsed:
+    Description: 'All extensions specified in profiles are represented in Examples'
     Enabled: true
   DifferentialContentHasExamples:
     Enabled: true
   ValueSetsDemonstrate:
+    Descripton: 'Examples demonstrate reasonable coverage of valuesets defines in an IG. (Note this probably only makes sense for small valuesets such as status options, not something like disease codes from SNOMED)'
     Enabled: true
     IgnoreUnloadableValueset: false
     Exclude:
@@ -50,10 +54,13 @@ Rule:
       Filter: true # Exclude filter
       SystemOnly: true # Exclude if only system is provided (e.g. http://loing.org)
   AllSearchParametersHaveExamples:
+    Description: 'Examples cover all search parameters defined in an IG'
     Enabled: true
   AllIGExtensionsHaveExamples:
+    Description: 'All defined extensions are represented in Examples'
     Enabled: true
   AllProfilesHaveExamples:
+    Description: 'All profiles defined in an IG have at least one example instance'
     Enabled: true
     ConformanceOptions:
       considerMetaProfile: true
