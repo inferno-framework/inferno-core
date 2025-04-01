@@ -1,5 +1,5 @@
 require_relative 'metadata'
-require_relative 'example_suite/patient_group'
+require_relative 'patient_group'
 
 module InfernoTemplate
   class Suite < Inferno::TestSuite
