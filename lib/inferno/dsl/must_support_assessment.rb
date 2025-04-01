@@ -352,7 +352,14 @@ module Inferno
           coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : 'coding'
 
           find_a_value_at(element, coding_path) do |coding|
-            discriminator[:values].any? { |value| value[:system] == coding.system && value[:code] == coding.code }
+            discriminator[:values].any? do |value|
+              case value
+              when String
+                value == coding.code
+              when Hash
+                value[:system] == coding.system && value[:code] == coding.code
+              end
+            end
           end
         end
 
