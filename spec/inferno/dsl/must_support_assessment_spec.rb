@@ -320,6 +320,41 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       end
     end
 
+    context 'with type slicing on a Bundle' do
+      let(:pas_request_bundle_metadata) do
+        metadata_fixture('pas_request_bundle_v201.yml')
+      end
+
+      let(:pas_request_bundle) do
+        FHIR::Bundle.new(
+          identifier: {
+            system: "http://example.org/SUBMITTER_TRANSACTION_IDENTIFIER",
+            value: "16139462398"
+          },
+          type: 'collection',
+          timestamp: '2025-06-24T07:34:00+05:00',
+          entry: [
+            {
+              fullUrl: 'http://example.com/Claim/123',
+              resource: FHIR::Claim.new
+            }
+          ]
+        )
+      end
+
+      it 'identifies when the slice is present' do
+        result = run_with_metadata([pas_request_bundle], pas_request_bundle_metadata)
+        expect(result).to be_empty
+      end
+
+      it 'identifies when the slice is not present' do
+        pas_request_bundle.entry.clear
+
+        result = run_with_metadata([pas_request_bundle], pas_request_bundle_metadata)
+        expect(result).to include('Bundle.entry:Claim')
+      end
+    end
+
     context 'with requiredBinding slicing' do
       context 'when Condition ProblemsHealthConcerns' do
         let(:condition_problems_health_concerns_metadata) do
