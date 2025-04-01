@@ -344,6 +344,11 @@ module Inferno
           when 'String'
             element.is_a? String
           else
+            if element.is_a? FHIR::Bundle::Entry
+              # Special case for type slicing in a Bundle - look at the resource not the entry
+              element = element.resource
+            end
+
             element.is_a? FHIR.const_get(discriminator[:code])
           end
         end
