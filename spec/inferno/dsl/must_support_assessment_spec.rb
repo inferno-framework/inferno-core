@@ -328,8 +328,8 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       let(:pas_request_bundle) do
         FHIR::Bundle.new(
           identifier: {
-            system: "http://example.org/SUBMITTER_TRANSACTION_IDENTIFIER",
-            value: "16139462398"
+            system: 'http://example.org/SUBMITTER_TRANSACTION_IDENTIFIER',
+            value: '16139462398'
           },
           type: 'collection',
           timestamp: '2025-06-24T07:34:00+05:00',
