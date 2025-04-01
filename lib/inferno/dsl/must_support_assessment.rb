@@ -332,13 +332,13 @@ module Inferno
           when 'Date'
             begin
               Date.parse(element)
-            rescue ArgumentError
+            rescue ArgumentError, TypeError
               false
             end
           when 'DateTime'
             begin
               DateTime.parse(element)
-            rescue ArgumentError
+            rescue ArgumentError, TypeError
               false
             end
           when 'String'
