@@ -2,6 +2,7 @@
 $VERBOSE = nil
 
 ENV['APP_ENV'] ||= 'test'
+ENV['SAFE_MODE'] ||= 'false'
 
 require 'pry'
 require 'database_cleaner/sequel'

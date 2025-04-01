@@ -8,6 +8,14 @@ RSpec.describe '/requests/:id' do
   let(:result) { repo_create(:result, test_run:) }
   let(:request) { repo_create(:request, result:) }
 
+  before do
+    @original_safe_mode = ENV['SAFE_MODE']
+  end
+
+  after do
+    ENV['SAFE_MODE'] = @original_safe_mode
+  end
+
   describe '/requests/:id' do
     it 'renders the full json for a request' do
       get router.path(:api_requests_show, id: request.id)
@@ -31,6 +39,34 @@ RSpec.describe '/requests/:id' do
       persisted_header = request.response_headers.first
       expect(response_header['name']).to eq(persisted_header.name)
       expect(response_header['value']).to eq(persisted_header.value)
+    end
+
+    context 'when SAFE_MODE is true' do
+      before { ENV['SAFE_MODE'] = 'true' }
+
+      it 'replaces authentication headers with PROTECTED' do
+        get router.path(:api_requests_show, id: request.id)
+
+        expect(last_response.status).to eq(200)
+
+        protected_header = parsed_body['request_headers'].find { |h| h['name'].casecmp?('authorization') }
+        expect(protected_header).not_to be_nil
+        expect(protected_header['value']).to eq('PROTECTED')
+      end
+    end
+
+    context 'when SAFE_MODE is false' do
+      before { ENV['SAFE_MODE'] = 'false' }
+
+      it 'keeps authentication headers without changes' do
+        get router.path(:api_requests_show, id: request.id)
+
+        expect(last_response.status).to eq(200)
+
+        protected_header = parsed_body['request_headers'].find { |h| h['name'].casecmp?('authorization') }
+        expect(protected_header).not_to be_nil
+        expect(protected_header['value']).to eq('Bearer token123')
+      end
     end
   end
 end
