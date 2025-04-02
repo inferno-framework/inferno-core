@@ -38,4 +38,8 @@ export default makeStyles()((theme: Theme) => ({
     fontWeight: 600,
     textDecoration: 'none',
   },
+  help: {
+    fontWeight: 'bolder',
+    cursor: 'pointer',
+  },
 }));

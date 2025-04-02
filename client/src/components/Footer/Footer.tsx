@@ -67,6 +67,30 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
     );
   };
 
+  const footerLink = (link: FooterLink) => {
+    return (
+      <Link
+        href={link.url}
+        target="_blank"
+        rel="noreferrer"
+        color="secondary.dark"
+        className={classes.link}
+        style={
+          windowIsSmall
+            ? {
+                fontSize: '0.8rem',
+              }
+            : {
+                fontSize: '1.1rem',
+                margin: '0 16px',
+              }
+        }
+      >
+        {link.label}
+      </Link>
+    );
+  };
+
   const renderLinksMenu = () => {
     if (!linkList || linkList.length === 0) return;
     return (
@@ -94,22 +118,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
             }}
           >
             {linkList.map((link) => {
-              return (
-                <MenuItem key={link.url}>
-                  <Link
-                    href={link.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    color="secondary.dark"
-                    className={classes.link}
-                    style={{
-                      fontSize: '0.8rem',
-                    }}
-                  >
-                    {link.label}
-                  </Link>
-                </MenuItem>
-              );
+              return <MenuItem key={link.url}>{footerLink(link)}</MenuItem>;
             })}
           </Menu>
         )}
@@ -125,19 +134,7 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
           linkList.map((link, i) => {
             return (
               <React.Fragment key={link.url}>
-                <Link
-                  href={link.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  color="secondary.dark"
-                  className={classes.link}
-                  style={{
-                    fontSize: '1.1rem',
-                    margin: '0 16px',
-                  }}
-                >
-                  {link.label}
-                </Link>
+                {footerLink(link)}
                 {i !== linkList.length - 1 && <Divider orientation="vertical" flexItem />}
               </React.Fragment>
             );
