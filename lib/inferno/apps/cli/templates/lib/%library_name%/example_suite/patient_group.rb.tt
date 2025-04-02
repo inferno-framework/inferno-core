@@ -1,4 +1,4 @@
-module InfernoTemplate
+module <%= module_name %>
   class PatientGroup < Inferno::TestGroup
     title 'Patient'
 
@@ -20,7 +20,7 @@ module InfernoTemplate
       references in some Example profiles to satisfy must support requirements, and those references will be validated to their Example
       profile. These resources will not be tested for FHIR search support.
 
-      ## *If applicable* Dependencies
+      ## <*If applicable*> Dependencies
       Prior to running this scenario, systems must recieve a verified access token from one of the previous SMART App Launch scenarios.
 
       *or*
@@ -28,7 +28,7 @@ module InfernoTemplate
       Prior to running this scenario, first run the Single Patient API tests using resource-level scopes, as this scenario uses content
       saved from that scenario as a baseline for comparison when finer-grained scopes are granted.
 
-      ## *If applicable* Methodology
+      ## <*If applicable*> Methodology
 
       *Only include if different from instructions included in a parent group or suite*
 
@@ -39,7 +39,7 @@ module InfernoTemplate
 
       *or*
 
-      #### Searching
+      ### Searching
 
       This test sequence will first perform each required search associated with this resource.
       This sequence will perform searches with the following parameters:
@@ -56,19 +56,19 @@ module InfernoTemplate
       for an existing `Patient.identifier` from any of the resources returned in the `_id` search. If a value cannot be found this way,
       the search is skipped.
 
-      ##### Search Validation
+      #### Search Validation
 
       Inferno will retrieve up to the first 20 bundle pages of the reply for Patient resources and save them for subsequent tests.
       Each of these resources is then checked to see if it matches the searched parameters in accordance with [FHIR search guidelines](https://www.hl7.org/fhir/search.html).
       The test will fail, for example, if a Patient search for gender=male returns a female patient.
 
-      #### Must Support
+      ### Must Support
 
       Each profile contains elements marked as "must support". This test sequence expects to see each of these elements at least once.
       If at least one cannot be found, the test will fail. The test will look through the Patient resources found in the first test
       for these elements.
 
-      #### Profile Validation
+      ### Profile Validation
 
       Each resource returned from the first search is expected to conform to the [Example Patient Profile](https://www.example.com/patient/profile).
       Each element is checked against teminology binding and cardinality requirements.
@@ -76,12 +76,12 @@ module InfernoTemplate
       Elements with a required binding are validated against their bound ValueSet. If the code/system in the element is not part of the
       ValueSet, then the test will fail.
 
-      #### Reference Validation
+      ### Reference Validation
 
       At least one instance of each external reference in elements marked as "must support" within the resources provided by the
       system must resolve. The test will attempt to read each reference found and will fail if no read succeeds.
 
-      ## *If applicable* Running the Tests
+      ## <*If applicable*> Running the Tests
 
       *Only include if different from instructions included in a parent group or suite*
 
@@ -89,7 +89,7 @@ module InfernoTemplate
       - Launch URI: https://inferno.healthit.gov/suites/custom/smart/launch
       - Redirect URI: https://inferno.healthit.gov/suites/custom/smart/redirect
 
-      ## *If top-level group for criteria* Relevant Specifications
+      ## <*If top-level group for criteria*> Relevant Specifications
 
       The following implementation specifications are relevant to this scenario:
       - [Specification 1 v1](https://www.example.com/spec1/v1)

@@ -1,15 +1,13 @@
 require_relative 'version'
 
-module InfernoTemplate
+module <%= module_name %>
   class Metadata < Inferno::TestKit
     id :example
     title 'Example Test Kit'
     description <<~DESCRIPTION
-      *Criterion*
-
       The Example Test Kit is a testing tool for Health IT systems seeking to meet the requirements of API Criterion within the Example Certification Program.
 
-      *IG*
+      *or*
 
       The Example Test Kit validates the conformance of a server implementation to a specific version of the [Example IG](https://example.com/example).
       Currently, Inferno can test against implementations of following versions of the Example IG: v1.0.0, v1.3.0, v2.0.0, and v3.0.1.

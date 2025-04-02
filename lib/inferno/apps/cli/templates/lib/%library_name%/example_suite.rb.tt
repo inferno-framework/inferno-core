@@ -1,7 +1,7 @@
 require_relative 'metadata'
-require_relative 'patient_group'
+require_relative 'example_suite/patient_group'
 
-module InfernoTemplate
+module <%= module_name %>
   class Suite < Inferno::TestSuite
     id :inferno_template
     title 'A Complicated But Complete Name for Example'
@@ -9,12 +9,10 @@ module InfernoTemplate
 
     # TODO: Update the description below to align with the test suite
     description <<~DESCRIPTION
-      *Criterion*
-
       The Example Test Suite is a testing tool for Health Level 7 (HL7®) Fast Healthcare Interoperability Resources (FHIR®)
       services seeking to meet the requirements of the API criterion within the Example Certification Program.
 
-      *IG*
+      *or*
 
       The Example Test Suite tests systems for their conformance to the [Example Implementation Guide](https://example.com/example).
 
@@ -104,7 +102,7 @@ module InfernoTemplate
     group do
       id :capability_statement
       title 'Capability Statement'
-      description 'Verify that the server has a CapabilityStatement'
+      description 'See a sample description in the Patient Test Group'
 
       test do
         id :capability_statement_read
