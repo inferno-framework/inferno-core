@@ -4,7 +4,6 @@ import { Help } from '@mui/icons-material';
 import logo from '~/images/inferno_logo.png';
 import { basePath, getStaticPath } from '~/api/infernoApiService';
 import { FooterLink } from '~/models/testSuiteModels';
-import HelpModal from '~/components/Footer/HelpModal';
 import { useAppStore } from '~/store/app';
 import useStyles from './styles';
 
@@ -19,7 +18,6 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [showMenu, setShowMenu] = React.useState<boolean>(false);
-  const [showHelpModal, setShowHelpModal] = React.useState(false);
 
   const apiLink = () => {
     // To test locally, set apiBase to 'http://127.0.0.1:4000/inferno-core/api-docs/'
@@ -93,33 +91,6 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
     );
   };
 
-  const helpButton = (
-    <>
-      <Link
-        color="secondary.dark"
-        className={classes.link}
-        style={
-          windowIsSmall
-            ? {
-                fontSize: '0.8rem',
-              }
-            : {
-                fontSize: '1.1rem',
-                margin: '0 16px',
-                cursor: 'pointer',
-              }
-        }
-        onClick={() => setShowHelpModal(true)}
-      >
-        Help
-      </Link>
-      {!windowIsSmall && linkList && linkList.length > 0 && (
-        <Divider orientation="vertical" flexItem />
-      )}
-      <HelpModal modalVisible={showHelpModal} hideModal={() => setShowHelpModal(false)} />
-    </>
-  );
-
   const renderLinksMenu = () => {
     if (!linkList || linkList.length === 0) return;
     return (
@@ -146,7 +117,6 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
               setAnchorEl(null);
             }}
           >
-            <MenuItem key="help">{helpButton}</MenuItem>
             {linkList.map((link) => {
               return <MenuItem key={link.url}>{footerLink(link)}</MenuItem>;
             })}
@@ -160,7 +130,6 @@ const Footer: FC<FooterProps> = ({ version, linkList }) => {
     if (!linkList || linkList.length === 0) return;
     return (
       <Box display="flex" alignItems="center" p={2} data-testid="footer-links">
-        {helpButton}
         {linkList &&
           linkList.map((link, i) => {
             return (
