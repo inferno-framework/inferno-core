@@ -1,3 +1,4 @@
 module <%= module_name %>
   VERSION = '0.0.0'.freeze
+  LAST_UPDATED = '1970-01-01'.freeze # TODO: update next release
 end
