@@ -50,8 +50,8 @@ module Inferno
 
               context.data.each do |resource|
                 system_codes.each do |system_code|
-                  next unless !system_code.nil? && determine_use_of_valueset(resource.to_hash, system_code[:system],
-                                                                             system_code[:code])
+                  next unless !system_code.nil? && resource_uses_code(resource.to_hash, system_code[:system],
+                                                                      system_code[:code])
 
                   valueset_used_count += 1
                   resource_used << resource.id unless resource_used.include?(resource.id)
@@ -153,7 +153,7 @@ module Inferno
           # rubocop:enable Metrics/CyclomaticComplexity
 
           # rubocop:disable Metrics/CyclomaticComplexity
-          def determine_use_of_valueset(resource, system, code)
+          def resource_uses_code(resource, system, code)
             resource.each do |key, value|
               next unless key == 'code' || ['value', 'valueCodeableConcept', 'valueString',
                                             'valueQuantity', 'valueBoolean',
