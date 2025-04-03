@@ -13,13 +13,13 @@ module <%= module_name %>
 
     input :credentials,
           title: 'OAuth Credentials',
-          type: :oauth_credentials,
+          type: :auth_info,
           optional: true
 
     # All FHIR requests in this suite will use this FHIR client
     fhir_client do
       url :url
-      oauth_credentials :credentials
+      auth_info :credentials
     end
 
     # All FHIR validation requests will use this FHIR validator
