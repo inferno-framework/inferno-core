@@ -38,6 +38,7 @@ RUN wget -O validator-wrapper.jar "https://github.com/hapifhir/org.hl7.fhir.vali
 ENV ENVIRONMENT=prod
 ENV SESSION_CACHE_IMPLEMENTATION=PassiveExpiringSessionCache
 ENV SESSION_CACHE_DURATION=-1
+ENV VALIDATION_SERVICE_PRESETS_FILE_PATH=ignore-this-do-not-load-presets
 
 EXPOSE 3500
 
