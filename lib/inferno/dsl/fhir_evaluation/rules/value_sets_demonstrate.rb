@@ -217,8 +217,8 @@ module Inferno
             if response.code.to_i == 200
               extract_valueset_from_response(response)
             else
-              if config.data['Rule']['ValueSetsDemonstrate']['IgnoreUnloadableValueset']
-                raise StandardError, "External value set retrieval failed: #{url} HTTP Status code: #{response.code}"
+              unless config.data['Rule']['ValueSetsDemonstrate']['IgnoreUnloadableValueset']
+                raise StandardError, "Failed to retrieve external value set: #{url} HTTP Status code: #{response.code}"
               end
 
               value_set_unevaluated << "#{url}: Failed to retrieve. HTTP Status code: #{response.code}"
