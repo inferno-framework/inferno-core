@@ -121,7 +121,7 @@ export interface TestInput {
   default?: string | string[];
   optional?: boolean;
   locked?: boolean;
-  hide?: boolean;
+  hidden?: boolean;
   options?: {
     components?: TestInput[];
     list_options?: InputOption[];

@@ -19,7 +19,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
   return (
     <List>
       {inputs.map((input: TestInput, index: number) => {
-        if (!input.hide) {
+        if (!input.hidden) {
           switch (input.type) {
             case 'auth_info':
               if (input.options?.mode === 'auth') {

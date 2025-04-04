@@ -65,23 +65,23 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     {
       name: 'token_url',
       title: 'Token Endpoint',
-      hide: !showRefreshDetails,
+      hidden: !showRefreshDetails,
     },
     {
       name: 'client_id',
       title: 'Client ID',
-      hide: !showRefreshDetails,
+      hidden: !showRefreshDetails,
     },
     {
       name: 'client_secret',
       title: 'Client Secret',
-      hide: !showRefreshDetails,
+      hidden: !showRefreshDetails,
       optional: true,
     },
     {
       name: 'expires_in',
       title: 'Expires in (seconds)',
-      hide: !showRefreshDetails,
+      hidden: !showRefreshDetails,
       optional: true,
     },
   ];
@@ -187,7 +187,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
               {input.description}
             </Typography>
           )}
-          <List>{oAuthFields.map((field) => !field.hide && oAuthField(field))}</List>
+          <List>{oAuthFields.map((field) => !field.hidden && oAuthField(field))}</List>
         </CardContent>
       </Card>
     </ListItem>
