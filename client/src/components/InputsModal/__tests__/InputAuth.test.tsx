@@ -90,6 +90,7 @@ describe('InputAuth Component', () => {
       authValuesMap,
       mockedFullyFilledAuthInput.options?.components || [],
       false,
+      false,
     );
 
     authInputFields.forEach((field) => {
@@ -143,6 +144,7 @@ describe('InputAuth Component', () => {
       'backend_services',
       authValuesMap,
       mockedFullyFilledAuthInput.options?.components || [],
+      false,
       false,
     );
 
