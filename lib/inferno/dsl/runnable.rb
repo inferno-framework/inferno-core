@@ -276,6 +276,21 @@ module Inferno
         @input_instructions = format_markdown(new_input_instructions)
       end
 
+      # Set/Get the IDs of requirements verified by this runnable
+      # Set with [] to clear the list
+      #
+      # @param requirements [Array<String>]
+      # @return [Array<String>] the requirement IDs
+      def verifies_requirements(*requirement_ids)
+        if requirement_ids.empty?
+          @requirement_ids || []
+        elsif requirement_ids == [[]]
+          @requirement_ids = []
+        else
+          @requirement_ids = requirement_ids
+        end
+      end
+
       # Mark as optional. Tests are required by default.
       #
       # @param optional [Boolean]
@@ -547,6 +562,13 @@ module Inferno
           else
             requirements.all? { |requirement| selected_suite_options.include? requirement }
           end
+        end
+      end
+
+      # @private
+      def all_requirements(suite_options = [])
+        children(suite_options).flat_map do |child|
+          child.verifies_requirements + child.all_requirements(suite_options)
         end
       end
 
