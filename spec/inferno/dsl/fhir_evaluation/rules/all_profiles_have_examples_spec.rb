@@ -1,17 +1,26 @@
 # frozen_string_literal: true
 
+require 'extract_tgz_helper'
 require_relative '../../../../../lib/inferno/dsl/fhir_evaluation/evaluator'
 require_relative '../../../../../lib/inferno/dsl/fhir_evaluation/evaluation_context'
 
-def fixture(file)
-  path = File.expand_path("../../../../../spec/fixtures/#{file}", __dir__)
-  FHIR::Json.from_json(File.read(path))
-end
-
 RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllProfilesHaveExamples do
+  include ExtractTGZHelper
+
+  let(:uscore3_package) { File.realpath(File.join(Dir.pwd, 'spec/fixtures/uscore311.tgz')) }
+  let(:uscore3_untarred) { extract_tgz(uscore3_package) }
+
   let(:patient85) do
-    fixture('patient_85.json')
+    path = File.expand_path('../../../../../spec/fixtures/patient_85.json', __dir__)
+    FHIR::Json.from_json(File.read(path))
   end
+
+  def fixture(filename)
+    path = File.join(uscore3_untarred, 'package', filename)
+    FHIR::Json.from_json(File.read(path))
+  end
+
+  after { cleanup(uscore3_untarred) }
 
   it 'can recognize profiles used by meta.profile' do
     profiles_to_load = [
