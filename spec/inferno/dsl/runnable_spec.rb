@@ -296,4 +296,23 @@ RSpec.describe Inferno::DSL::Runnable do
       end.to raise_error(Inferno::Exceptions::RunnableChildNotFoundException, /Could not find a child with an ID/)
     end
   end
+
+  describe '.verifies_requirements' do
+    let(:example_test_group) { Class.new(Inferno::Entities::TestGroup) }
+
+    it 'sets ids of requirements verified by a runnable' do
+      example_test_group.verifies_requirements 'example_requirement'
+
+      expect(example_test_group.verifies_requirements.length).to be(1)
+      expect(example_test_group.verifies_requirements).to include('example_requirement')
+    end
+
+    it 'returns an empty array when no requirement_ids are passed and @requirement_ids not set' do
+      example_test_group.test 'test' do
+        id 'rand_test'
+      end
+
+      expect(example_test_group.verifies_requirements).to eq([])
+    end
+  end
 end
