@@ -23,6 +23,11 @@ FactoryBot.define do
           type: 'response',
           name: 'Response-Header',
           value: 'RESPONSE HEADER VALUE'
+        },
+        {
+          type: 'request',
+          name: 'Authorization',
+          value: 'Bearer token123'
         }
       ]
     end
