@@ -432,6 +432,110 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         end
       end
 
+      context 'when EOB Inpatient Institutional' do
+        let(:eob_inpatient_inst_metadata) do
+          OpenStruct.new({
+                           must_supports: {
+                             extensions: [],
+                             elements: [],
+                             slices: [{
+                               slice_id: 'ExplanationOfBenefit.total:adjudicationamounttype',
+                               slice_name: 'adjudicationamounttype',
+                               path: 'total',
+                               discriminator: {
+                                 type: 'requiredBinding',
+                                 path: 'category',
+                                 values: [
+                                   # add values here in the individual test
+                                 ]
+                               }
+                             }]
+                           }
+                         })
+        end
+
+        let(:eob_inpatient_inst) do
+          FHIR::ExplanationOfBenefit.new({
+                                           id: 'c4bb-EOBInpatient',
+                                           status: 'active',
+                                           type: {
+                                             coding: [{
+                                               system: 'http://terminology.hl7.org/CodeSystem/claim-type',
+                                               code: 'institutional'
+                                             }],
+                                             text: 'Institutional'
+                                           },
+                                           subType: {
+                                             coding: [{
+                                               system: 'http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBInstitutionalClaimSubType',
+                                               code: 'inpatient'
+                                             }],
+                                             text: 'Inpatient'
+                                           },
+                                           use: 'claim',
+                                           patient: {
+                                             reference: 'Patient/888'
+                                           },
+                                           billablePeriod: {
+                                             start: '2019-01-01',
+                                             end: '2019-10-31'
+                                           },
+                                           created: '2019-11-02T00:00:00+00:00',
+                                           total: [
+                                             {
+                                               category: {
+                                                 coding: [
+                                                   {
+                                                     system: 'http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBAdjudication',
+                                                     code: 'paidtoprovider'
+                                                   }
+                                                 ],
+                                                 text: 'Payment Amount'
+                                               },
+                                               amount: {
+                                                 value: 620,
+                                                 currency: 'USD'
+                                               }
+                                             }
+                                           ]
+                                         })
+        end
+
+        context 'with string values' do
+          before do
+            eob_inpatient_inst_metadata.must_supports[:slices][0][:discriminator][:values] << 'paidtoprovider'
+          end
+
+          it 'passes if server suports all MS slices' do
+            result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
+            expect(result).to be_empty
+          end
+
+          it 'fails if server does not support total:adjudicationamounttype slice' do
+            eob_inpatient_inst.total.clear
+            result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
+            expect(result).to include('ExplanationOfBenefit.total:adjudicationamounttype')
+          end
+        end
+
+        context 'with coding values' do
+          before do
+            eob_inpatient_inst_metadata.must_supports[:slices][0][:discriminator][:values] << { system: 'http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBAdjudication', code: 'paidtoprovider' }
+          end
+
+          it 'passes if server suports all MS slices' do
+            result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
+            expect(result).to be_empty
+          end
+
+          it 'fails if server does not support total:adjudicationamounttype slice' do
+            eob_inpatient_inst.total.clear
+            result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
+            expect(result).to include('ExplanationOfBenefit.total:adjudicationamounttype')
+          end
+        end
+      end
+
       context 'with patternIdentifier slicing' do
         let(:practitioner_profile) { fixture('StructureDefinition-us-core-practitioner.json') }
         let(:practitioner) do
