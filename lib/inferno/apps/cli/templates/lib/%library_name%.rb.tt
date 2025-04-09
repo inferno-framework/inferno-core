@@ -1,1 +1,1 @@
-require_relative '<%= library_name %>/suite'
+require_relative '<%= library_name %>/example_suite'
