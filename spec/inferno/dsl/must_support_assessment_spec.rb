@@ -437,7 +437,6 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
           OpenStruct.new({
                            must_supports: {
                              extensions: [],
-                             elements: [],
                              slices: [{
                                slice_id: 'ExplanationOfBenefit.total:adjudicationamounttype',
                                slice_name: 'adjudicationamounttype',
@@ -449,7 +448,10 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
                                    # add values here in the individual test
                                  ]
                                }
-                             }]
+                             }],
+                             elements: [
+                               { path: 'total:adjudicationamounttype.amount' }
+                             ]
                            }
                          })
         end
