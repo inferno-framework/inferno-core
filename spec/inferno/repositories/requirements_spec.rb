@@ -10,6 +10,7 @@ RSpec.describe Inferno::Repositories::Requirements do
         {
           id: 'sample-criteria@1',
           requirement: 'requirement',
+          requirement_set: 'sample-criteria',
           conformance: 'SHALL',
           actor: 'Client',
           sub_requirements: ['sample-criteria@2'],
@@ -22,6 +23,7 @@ RSpec.describe Inferno::Repositories::Requirements do
         {
           id: 'sample-criteria@2',
           requirement: 'requirement',
+          requirement_set: 'sample-criteria',
           conformance: 'SHALL',
           actor: 'Client',
           sub_requirements: [],
