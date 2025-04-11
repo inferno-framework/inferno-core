@@ -15,6 +15,8 @@ module Inferno
               return
             end
 
+            return unless fhirpath_is_available?(context)
+
             unused_resource_urls = []
             search_params = context.ig.resources_by_type['SearchParameter']
 
@@ -36,6 +38,19 @@ module Inferno
             context.add_result result
           end
 
+          def fhirpath_is_available?(context)
+            Faraday.new(
+              URI(ENV.fetch('FHIRPATH_URL', nil)), request: { timeout: 600 }
+            ).post(
+              'evaluate?path=Bundle', { 'resourceType' => 'Bundle' }.to_json, content_type: 'application/json'
+            )
+          rescue StandardError => e
+            message = "FHIRPath server: #{e.message}. Skipping rule AllSearchParametersHaveExamples."
+            result = EvaluationResult.new(message, severity: 'error', rule: self)
+            context.add_result result
+            false
+          end
+
           def param_is_used?(param, context)
             # Assume that all params have an expression (fhirpath)
             # This is not guaranteed since the field is 0..1
@@ -48,7 +63,7 @@ module Inferno
               return false
             end
 
-            used = false
+            param_used = false
 
             context.data.each do |resource|
               next unless param.base.include? resource.resourceType
@@ -58,20 +73,22 @@ module Inferno
               rescue StandardError => e
                 message = "SearchParameter #{param.url} failed to evaluate due to an error. " \
                           "Expression: #{param.expression}. #{e}"
-                result = EvaluationResult.new(message)
+                result = EvaluationResult.new(message, severity: 'warning', rule: self)
                 context.add_result result
 
-                used = true
+                param_used = true
                 break
               end
 
               if result.present?
-                used = true
+                param_used = true
                 break
               end
             end
-            used
+            param_used
           end
+
+          def add_message; end
         end
       end
     end
