@@ -39,20 +39,16 @@ module Inferno
           end
 
           def fhirpath_is_available?(context)
-            begin
-              response = Faraday.new(
-                URI(ENV['FHIRPATH_URL']), request: { timeout: 600 }
-              ).post(
-                "evaluate?path=Bundle", { "resourceType" => "Bundle" }.to_json, content_type: 'application/json'
-              )
-              return true
-            rescue StandardError => e
-              message = "Failed to connect to the FHIRPath server. #{e.message}"
-              result = EvaluationResult.new(message, severity: 'error', rule: self)
-              context.add_result result
-              return false
-            end
-
+            Faraday.new(
+              URI(ENV.fetch('FHIRPATH_URL', nil)), request: { timeout: 600 }
+            ).post(
+              'evaluate?path=Bundle', { 'resourceType' => 'Bundle' }.to_json, content_type: 'application/json'
+            )
+          rescue StandardError => e
+            message = "FHIRPath server: #{e.message}. Skipping rule AllSearchParametersHaveExamples."
+            result = EvaluationResult.new(message, severity: 'error', rule: self)
+            context.add_result result
+            false
           end
 
           def param_is_used?(param, context)
@@ -92,8 +88,7 @@ module Inferno
             param_used
           end
 
-          def add_message()
-          end
+          def add_message; end
         end
       end
     end
