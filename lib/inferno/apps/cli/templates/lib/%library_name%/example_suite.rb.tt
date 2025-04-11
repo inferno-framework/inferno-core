@@ -1,0 +1,128 @@
+require_relative 'metadata'
+require_relative 'example_suite/patient_group'
+
+module <%= module_name %>
+  class ExampleSuite < Inferno::TestSuite
+
+    id :<%= test_suite_id %>
+    title '<%= title_name %>'
+    short_title '<%= title_name %>'
+
+    # TODO: Update the description below to align with the test suite
+    description <<~DESCRIPTION
+      The Example Test Suite is a testing tool for Health Level 7 (HL7®) Fast Healthcare Interoperability Resources (FHIR®)
+      services seeking to meet the requirements of the API criterion within the Example Certification Program.
+
+      *or*
+
+      The Example Test Suite tests systems for their conformance to the [Example Implementation Guide](https://example.com/example).
+
+      ## Organization
+
+      This test suite is organized into testing scenarios that in sum cover all requirements within the Example criterion.
+      The scenarios are intended to be run in order during certification, but can be run out of order to support testing
+      during development or certification preparation. Some scenarios depend on data collected during previous scenarios
+      to function. In these cases, the scenario description describes these dependencies.
+
+      The first three scenarios require the system under test to demonstrate basic SMART App Launch functionality.
+      The fourth uses a valid token provided during earlier tests to verify support for the Single Patient API as
+      described in the criterion. The fifth verifies support for the Multi Patient API, including Backend Services
+      for authorization. Not all authorization-related requirements are verified in the first three scenarios,
+      and the 'Additional Authorization Tests' verify these additional requirements. The last scenario contains
+      a list of 'attestations' and 'visual inspections' for requirements that could not be verified through automated testing.
+
+      *or*
+
+      This test suite is split into three different categories:
+      - All Patients: FHIR Operation to obtain a detailed set of FHIR resources of diverse resource types pertaining to all patients
+      - Group of Patients: FHIR Operation to obtain a detailed set of FHIR resources of diverse resource types pertaining to all members of a specified Group
+      - System Level Export: FHIR Operation to export data from a FHIR server, whether or not it is associated with a patient
+
+      ## Getting Started
+
+      The best way to learn about how to use these tests is the [Example Test Kit walkthrough](https://example.com/Walkthrough),
+      which demonstrates the tests running against a simulated system.
+
+      To get started with the first group of scenarios, please first register the Inferno client as a SMART App with the following information:
+      - SMART Launch URI: https://example.com/smart/launch
+      - OAuth Redirect URI: https://example.com/smart/redirect
+
+      For the multi-patient API, register Inferno with the following JWK Set Url:
+      - https://example.com/suites/custom/example/.well-known/jwks.json
+
+      *or*
+
+      To get started, if your server supports SMART backend services authorization, please first register Inferno with the following JWK Set URL:
+      - https://example.com/suites/custom/example/.well-known/jwks.json
+
+      Then, run the full Example test suite containing both the SMART Backend Services test group and the Bulk Data Export Tests test group.
+      If your server does not support SMART Backend Services authorization, only run the second test group, Bulk Data Export Tests.
+
+      ## Limitations
+
+      Inferno is unable to determine what requests will result in specific kinds of responses from the server under test
+      (e.g., what will result in Instructions being returned vs. Coverage Information). As a result, the tester must
+      supply the request bodies which will cause the system under test to return the desired response types.
+
+      The ability of an Example Server to request additional FHIR resources is not tested.
+
+      Hook configuration is not tested.
+
+      ## *if applicable:* Certification Requirements
+
+      Systems must pass all tests to qualify for Example certification.
+
+    DESCRIPTION
+
+    # These inputs will be available to all tests in this suite
+    input :url,
+          title: 'FHIR Server Base Url'
+
+    input :credentials,
+          title: 'OAuth Credentials',
+          type: :auth_info,
+          optional: true
+
+    # All FHIR requests in this suite will use this FHIR client
+
+    # All FHIR requests in this suite will use this FHIR client
+    fhir_client do
+      url :url
+      auth_info :credentials
+    end
+
+    # All FHIR validation requests will use this FHIR validator
+    fhir_resource_validator do
+      # igs 'identifier#version' # Use this method for published IGs/versions
+      # igs 'igs/filename.tgz'   # Use this otherwise
+
+      exclude_message do |message|
+        message.message.match?(/\A\S+: \S+: URL value '.*' does not resolve/)
+      end
+    end
+
+    # Tests and TestGroups can be defined inline
+    group do
+      id :capability_statement
+      title 'Capability Statement'
+      description 'See a sample description in the Patient Test Group'
+
+      test do
+        id :capability_statement_read
+        title 'Read CapabilityStatement'
+        description 'Read CapabilityStatement from /metadata endpoint'
+
+        run do
+          fhir_get_capability_statement
+
+          assert_response_status(200)
+          assert_resource_type(:capability_statement)
+        end
+      end
+    end
+
+    # Tests and TestGroups can be written in separate files and then included
+    # using their id
+    group from: :patient_group
+  end
+end
