@@ -1,13 +1,13 @@
 RSpec.describe Inferno::Entities::Requirement do
-  describe '#expand_sub_requirements' do
+  describe 'cexpand_requirement_ids' do
     it 'returns an empty array of there are no sub_requirements' do
-      expect(described_class.new({}).expand_sub_requirements).to eq([])
+      expect(described_class.expand_requirement_ids(nil)).to eq([])
     end
 
     it 'returns full ids unchanged' do
       ids = ['criteria3@1', 'criteria4@2']
 
-      expect(described_class.new(sub_requirements: ids.join(',')).expand_sub_requirements).to eq(ids)
+      expect(described_class.expand_requirement_ids(ids.join(','))).to eq(ids)
     end
 
     it 'expands id ranges' do
@@ -19,7 +19,7 @@ RSpec.describe Inferno::Entities::Requirement do
         'criteria4@2'
       ]
 
-      expect(described_class.new(sub_requirements: ids.join(',')).expand_sub_requirements).to eq(expected_ids)
+      expect(described_class.expand_requirement_ids(ids.join(','))).to eq(expected_ids)
     end
 
     it 'adds the requirement set when missing' do
@@ -32,7 +32,7 @@ RSpec.describe Inferno::Entities::Requirement do
         'criteria4@3'
       ]
 
-      expect(described_class.new(sub_requirements: ids.join(',')).expand_sub_requirements).to eq(expected_ids)
+      expect(described_class.expand_requirement_ids(ids.join(','))).to eq(expected_ids)
     end
   end
 end

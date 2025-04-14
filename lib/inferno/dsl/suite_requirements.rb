@@ -1,4 +1,4 @@
-require_relative './requirement_set'
+require_relative 'requirement_set'
 
 module Inferno
   module DSL

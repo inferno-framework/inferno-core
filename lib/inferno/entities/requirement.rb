@@ -24,11 +24,11 @@ module Inferno
         self.requirement_set = id.split('@').first if requirement_set.blank? && id&.include?('@')
       end
 
-      def expand_sub_requirements
-        return [] if sub_requirements.blank?
+      def self.expand_requirement_ids(requirement_id_string, default_set = nil)
+        return [] if requirement_id_string.blank?
 
-        current_set = nil
-        sub_requirements
+        current_set = default_set
+        requirement_id_string
           .split(',')
           .map(&:strip)
           .flat_map do |requirement_string|

@@ -20,11 +20,13 @@ module Inferno
 
         attributes_hash.each do |name, value|
           if name == :suite_options
-            value = value&.map { |option_id, option_value| SuiteOption.new(id: option_id, value: option_value) } || []
+            value = value&.map { |option_id, option_value| SuiteOption.new(id: option_id, value: option_value) }
           end
 
           instance_variable_set(:"@#{name}", value)
         end
+
+        self.suite_options ||= []
       end
 
       def complete?
@@ -32,7 +34,7 @@ module Inferno
       end
 
       def referenced?
-        requirements.casecmp? 'referenced'
+        requirements&.casecmp? 'referenced'
       end
 
       def filtered?
@@ -40,25 +42,7 @@ module Inferno
       end
 
       def expand_requirement_ids
-        return [] if requirements.blank?
-
-        current_set = nil
-        requirements
-          .split(',')
-          .map(&:strip)
-          .flat_map do |requirement_string|
-            current_set, requirement_string = requirement_string.split('@') if requirement_string.include?('@')
-
-            requirement_ids =
-              if requirement_string.include? '-'
-                start_id, end_id = requirement_string.split('-')
-                (start_id..end_id).to_a
-              else
-                [requirement_string]
-              end
-
-            requirement_ids.map { |id| "#{current_set}@#{id}" }
-          end
+        Entities::Requirement.expand_requirement_ids(requirements, identifier)
       end
     end
   end
