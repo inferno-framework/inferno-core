@@ -1,5 +1,24 @@
 module Inferno
   module DSL
+    # A `RequirementSet` represents the set of requirements which are tested by
+    # a TestSuite.
+    #
+    # @!attribute identifier [rw] The unique identifier for the source of
+    #   requirements included in this `RequirementSet`
+    # @!attribute title [rw] A human-readable title for this `RequirementSet`
+    # @!attribute actor [rw] The actor whose requirements are included in this
+    #   `RequirementSet`
+    # @!attribute requirements [rw] There are three options:
+    #   * `"all"` (default) - Include all of the requirements for the specified
+    #     actor from the requirement source
+    #   * `"referenced"` - Only include requirements from this source if they
+    #     are referenced by other included requirements
+    #   * `"1,3,5-8"` - Only include the requirements from a comma-delimited
+    #     list
+    # @!attribute suite_options [rw] A set of suite options which must be
+    #   selected in order for this `RequirementSet` to be included
+    #
+    # @see Inferno::DSL::SuiteRequirements#requirement_sets
     class RequirementSet
       ATTRIBUTES = [
         :identifier,
@@ -29,18 +48,32 @@ module Inferno
         self.suite_options ||= []
       end
 
+      # Returns true when the `RequirementSet` includes all of the requirements
+      # from the source for the specified actor
+      #
+      # @return [Boolean]
       def complete?
         requirements.blank? || requirements.casecmp?('all')
       end
 
+      # Returns true when the `RequirementSet` only includes requirements
+      # referenced by other `RequirementSet`s
+      #
+      # @return [Boolean]
       def referenced?
         requirements&.casecmp? 'referenced'
       end
 
+      # Returns true when the `RequirementSet` only includes requirements
+      # specified in a list
+      #
+      # @return [Boolean]
       def filtered?
         !complete? && !referenced?
       end
 
+      # Expands the compressed comma-separated requirements list into an Array
+      # of full ids
       def expand_requirement_ids
         Entities::Requirement.expand_requirement_ids(requirements, identifier)
       end
