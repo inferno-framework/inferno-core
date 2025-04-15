@@ -7,6 +7,7 @@ module RequirementsSuite
     requirement_sets(
       {
         identifier: 'sample-criteria-proposal',
+        title: 'Sample Criteria Proposal',
         actor: 'Client'
       }
     )

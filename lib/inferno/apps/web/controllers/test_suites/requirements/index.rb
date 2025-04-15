@@ -6,6 +6,7 @@ module Inferno
           class Index < Controller
             include Import[test_suites_repo: 'inferno.repositories.test_suites']
             include Import[test_sessions_repo: 'inferno.repositories.test_sessions']
+
             def handle(req, res)
               test_suite = test_suites_repo.find(req.params[:id])
               halt 404, "Test Suite `#{req.params[:id]}` not found" if test_suite.nil?
