@@ -6,6 +6,7 @@ module Inferno
           class Index < Controller
             include Import[test_suites_repo: 'inferno.repositories.test_suites']
             include Import[test_sessions_repo: 'inferno.repositories.test_sessions']
+
             def handle(req, res)
               test_suite = test_suites_repo.find(req.params[:id])
               halt 404, "Test Suite `#{req.params[:id]}` not found" if test_suite.nil?
@@ -16,8 +17,7 @@ module Inferno
                 halt 404, "Test session `#{req.params[:session_id]}` not found" if test_session.nil?
               end
 
-              requirement_ids = test_suite.all_requirements(test_session&.suite_options || [])
-              requirements = repo.filter_requirements_by_ids(requirement_ids)
+              requirements = repo.requirements_for_suite(test_suite.id, test_session&.id)
 
               res.body = serialize(requirements)
             end
