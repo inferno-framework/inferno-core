@@ -48,6 +48,8 @@ Gem::Specification.new do |spec|
     Dir['lib/inferno/**/*.rb'],
     Dir['lib/inferno/**/*.erb'],
     Dir['lib/inferno/**/*.json'],
+    Dir['lib/inferno/**/*.yml'],
+    Dir['lib/inferno/**/*.conf'],
     Dir['lib/inferno/apps/cli/templates/**/{*,.*}'],
     'bin/inferno',
     Dir['lib/inferno/public/*.png'],

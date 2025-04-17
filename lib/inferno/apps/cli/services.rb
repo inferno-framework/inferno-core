@@ -3,7 +3,15 @@ module Inferno
     class Services < Thor
       no_commands do
         def base_command
-          'docker compose -f docker-compose.background.yml'
+          gemspec_file = Dir.glob('*.gemspec').first
+
+          if ENV['BUNDLE_GEMFILE'] && File.exist?(gemspec_file) && Bundler.load_gemspec(gemspec_file).metadata['inferno_test_kit'] == 'true'
+            compose_path = './docker-compose.background.yml' # Any way to fetch test kit root?
+          else
+            compose_path = File.join(__dir__, 'services', 'docker-compose.global.yml')
+          end
+
+          "docker compose -f #{compose_path}"
         end
       end
 
@@ -50,6 +58,11 @@ module Inferno
         command += " --tail #{options[:tail]}" if options[:tail]
 
         system command
+      end
+
+      desc 'path', 'Output path to the compose file in use'
+      def path
+        puts base_command.sub('docker compose -f ', '')
       end
     end
   end

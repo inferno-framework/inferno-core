@@ -1,0 +1,43 @@
+version: '3'
+services:
+  validator_service:
+    image: infernocommunity/fhir-validator-service
+    # Update this path to match your directory structure
+    volumes:
+      - ~/.inferno/data/igs:/home/igs
+  fhir_validator_app:
+    image: infernocommunity/fhir-validator-app
+    depends_on:
+      - validator_service
+    environment:
+      EXTERNAL_VALIDATOR_URL: http://localhost/validatorapi
+      VALIDATOR_BASE_PATH: /validator
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.global.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    command: [nginx, '-g', 'daemon off;']
+    depends_on:
+      - fhir_validator_app
+      - fhirpath
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ~/.inferno/data/redis:/data
+    command: redis-server --appendonly yes
+  hl7_validator_service:
+    image: infernocommunity/inferno-resource-validator
+    # Update this path to match your directory structure
+    volumes:
+      - ~/.inferno/data/igs:/app/igs
+      # To let the service share your local FHIR package cache,
+      # uncomment the below line
+      # - ~/.fhir:/home/ktor/.fhir
+  fhirpath:
+    image: infernocommunity/fhirpath-service
+    ports:
+      - "6789:6789"

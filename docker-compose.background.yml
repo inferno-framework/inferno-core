@@ -1,36 +1,31 @@
 version: '3'
 services:
   validator_service:
-    image: infernocommunity/fhir-validator-service
-    # Update this path to match your directory structure
+    extends:
+      file: ./lib/inferno/apps/cli/services/docker-compose.global.yml
+      service: validator_service
     volumes:
       - ./data/igs:/home/igs
   fhir_validator_app:
-    image: infernocommunity/fhir-validator-app
-    depends_on:
-      - validator_service
-    environment:
-      EXTERNAL_VALIDATOR_URL: http://localhost/validatorapi
-      VALIDATOR_BASE_PATH: /validator
+    extends:
+      file: ./lib/inferno/apps/cli/services/docker-compose.global.yml
+      service: fhir_validator_app
   nginx:
-    image: nginx
+    extends:
+      file: ./lib/inferno/apps/cli/services/docker-compose.global.yml
+      service: nginx
     volumes:
       - ./config/nginx.background.conf:/etc/nginx/nginx.conf
-    ports:
-      - "80:80"
-    command: [nginx, '-g', 'daemon off;']
-    depends_on:
-      - fhir_validator_app
-      - fhirpath
   redis:
-    image: redis
-    ports:
-      - "6379:6379"
+    extends:
+      file: ./lib/inferno/apps/cli/services/docker-compose.global.yml
+      service: nginx
     volumes:
       - ./data/redis:/data
-    command: redis-server --appendonly yes
   hl7_validator_service:
-    image: infernocommunity/inferno-resource-validator
+    extends:
+      file: ./lib/inferno/apps/cli/services/docker-compose.global.yml
+      service: hl7_validator_service
     # Update this path to match your directory structure
     volumes:
       - ./data/igs:/app/igs
@@ -38,6 +33,6 @@ services:
       # uncomment the below line
       # - ~/.fhir:/home/ktor/.fhir
   fhirpath:
-    image: infernocommunity/fhirpath-service
-    ports:
-      - "6789:6789"
+    extends:
+      file: ./lib/inferno/apps/cli/services/docker-compose.global.yml
+      service: fhirpath
