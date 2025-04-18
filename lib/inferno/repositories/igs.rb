@@ -18,8 +18,7 @@ module Inferno
       def find_or_load(id_or_path)
         return find(id_or_path) if exists?(id_or_path)
 
-        ig_by_path = find_by_path(id_or_path)
-
+        ig_by_path = find_by_path(id_or_path) || find_by_path(find_local_file(id_or_path))
         return ig_by_path if ig_by_path
 
         load(id_or_path)

@@ -56,7 +56,7 @@ Rule:
   AllSearchParametersHaveExamples:
     Description: 'Examples cover all search parameters defined in an IG'
     Enabled: true
-  AllIGExtensionsHaveExamples:
+  AllDefinedExtensionsHaveExamples:
     Description: 'All defined extensions are represented in Examples'
     Enabled: true
   AllProfilesHaveExamples:

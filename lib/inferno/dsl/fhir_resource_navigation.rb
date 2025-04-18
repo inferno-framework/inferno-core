@@ -177,8 +177,17 @@ module Inferno
       end
 
       def matching_required_binding_slice?(slice, discriminator)
-        discriminator[:path].present? ? slice.send((discriminator[:path]).to_s).coding : slice.coding
-        slice_value { |coding| discriminator[:values].include?(coding.code) }
+        slice_coding = discriminator[:path].present? ? slice.send((discriminator[:path]).to_s).coding : slice.coding
+        slice_coding.any? do |coding|
+          discriminator[:values].any? do |value|
+            case value
+            when String
+              value == coding.code
+            when Hash
+              value[:system] == coding.system && value[:code] == coding.code
+            end
+          end
+        end
       end
 
       def verify_slice_by_values(element, value_definitions)
