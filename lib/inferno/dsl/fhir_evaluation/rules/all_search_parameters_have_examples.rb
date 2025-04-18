@@ -48,7 +48,7 @@ module Inferno
               return false
             end
 
-            used = false
+            param_used = false
 
             context.data.each do |resource|
               next unless param.base.include? resource.resourceType
@@ -56,21 +56,31 @@ module Inferno
               begin
                 result = evaluate_fhirpath(resource: resource, path: param.expression)
               rescue StandardError => e
-                message = "SearchParameter #{param.url} failed to evaluate due to an error. " \
-                          "Expression: #{param.expression}. #{e}"
-                result = EvaluationResult.new(message)
+                if e.to_s.include? 'Unable to connect to FHIRPath service'
+                  result = EvaluationResult.new(e.to_s, severity: 'error', rule: self)
+                else
+                  message = "SearchParameter #{param.url} failed to evaluate due to an error. " \
+                            "Expression: #{param.expression}. #{e}"
+                  result = EvaluationResult.new(message, severity: 'warning', rule: self)
+                end
+
                 context.add_result result
 
-                used = true
+                param_used = true
                 break
               end
 
               if result.present?
-                used = true
+                param_used = true
                 break
               end
             end
-            used
+            param_used
+          end
+
+          def add_message(message_type, message)
+            # No implementation but to prevent error from evaluate_fhirpath().
+            # Without this, will throw "undefined method" error since it expects to be called from a Runnable.
           end
         end
       end
