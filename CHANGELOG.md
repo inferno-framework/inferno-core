@@ -1,3 +1,12 @@
+## 0.6.9
+* FI-3867: Add new env var to validator dockerfile to disable presets by @dehall in https://github.com/inferno-framework/inferno-core/pull/664
+* FI-3600: Requirements Support by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/588
+* FI-3558 migrate evaluation rule 4 of 4 by @jhlee-mitre in https://github.com/inferno-framework/inferno-core/pull/636
+* FI-3889: Update template to use auth info by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/665
+* Fix for requirements loading twice by @dehall in https://github.com/inferno-framework/inferno-core/pull/666
+* FI-3939: Add support for requirement sets by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/669
+* FI-3813: MustSupport logic fixes by @dehall in https://github.com/inferno-framework/inferno-core/pull/659
+
 ## 0.6.8
 * FI-3557 Migrate Evaluator rules to inferno core [3 of 4] by @jhlee-mitre in https://github.com/inferno-framework/inferno-core/pull/604
 * FI-3908: Change how evaluator CLI requires repositories, fixing migrate task by @dehall in https://github.com/inferno-framework/inferno-core/pull/654
