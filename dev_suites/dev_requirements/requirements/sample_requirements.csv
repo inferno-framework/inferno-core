@@ -6,3 +6,11 @@ sample-criteria-proposal,4,,Consequat mauris nunc congue nisi vitae suscipit tel
 sample-criteria-proposal,5,,condimentum vitae sapien pellentesque habitant morbi tristique senectus,SHALL,Client,sample-criteria-proposal@6,TRUE
 sample-criteria-proposal,6,,Faucibus scelerisque eleifend donec pretium vulputate sapien nec sagittis,SHALL,Client,,TRUE
 sample-criteria-proposal,7,,Nulla facilisi nullam vehicula ipsum a,SHALL,Client,,FALSE
+sample-criteria-proposal-2,1,,text7,SHALL,Client,sample-criteria-proposal-3@2,FALSE
+sample-criteria-proposal-3,1,"https://hl7.org/fhir/R4/",text1,SHALL,Client,"sample-criteria-proposal-3@2-3,4,6",FALSE
+sample-criteria-proposal-3,2,"https://hl7.org/fhir/R4/",text2,SHALL,Client,sample-criteria-proposal-3@3,FALSE
+sample-criteria-proposal-3,3,"https://hl7.org/fhir/R4/",text3,SHALL,Client,sample-criteria-proposal-3@5,FALSE
+sample-criteria-proposal-3,4,,text4,SHALL,Client,sample-criteria-proposal-3@6,FALSE
+sample-criteria-proposal-3,5,,text5,SHALL,Client,sample-criteria-proposal-3@6,TRUE
+sample-criteria-proposal-3,6,,text6,SHALL,Client,,TRUE
+sample-criteria-proposal-3,7,,text7,SHALL,Client,,FALSE

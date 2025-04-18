@@ -29,9 +29,9 @@ Inferno::Application.register_provider(:requirements) do
       end
 
     files_to_load.compact!
-    files_to_load.uniq!
     files_to_load.reject! { |file| file.include?('out_of_scope') }
     files_to_load.map! { |path| File.realpath(path) }
+    files_to_load.uniq!
 
     files_to_load.each do |path|
       requirements_repo.insert_from_file(path)

@@ -1,4 +1,5 @@
 require_relative 'preset'
+require_relative 'requirement_set'
 require_relative 'suite_option'
 require_relative 'test_group'
 
@@ -27,6 +28,7 @@ module Inferno
 
         view :full do
           include_view :summary
+
           field :test_groups do |suite, options|
             suite_options = options[:suite_options]
             TestGroup.render_as_hash(suite.groups(suite_options), suite_options:)
@@ -35,6 +37,14 @@ module Inferno
           field :inputs do |suite, options|
             suite_options = options[:suite_options]
             Input.render_as_hash(suite.available_inputs(suite_options).values)
+          end
+          field :requirement_sets, if: :field_present? do |suite, options|
+            selected_options = options[:suite_options] || []
+            requirement_sets = suite.requirement_sets.select do |requirement_set|
+              requirement_set.suite_options.all? { |suite_option| selected_options.include? suite_option }
+            end
+
+            RequirementSet.render_as_hash(requirement_sets)
           end
         end
       end

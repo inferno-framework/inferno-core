@@ -54,6 +54,22 @@ RSpec.describe '/test_suites' do
         expect(last_response.status).to eq(404)
       end
     end
+
+    context 'when the test_suite has requirement sets' do
+      let(:test_suite_id) { 'ig_requirements' }
+
+      it 'includes the requirement sets' do
+        get router.path(:api_test_suites_show, id: test_suite_id)
+        expect(last_response.status).to eq(200)
+
+        received_sets = parsed_body['requirement_sets']
+
+        expect(received_sets).to be_present
+        expect(received_sets.length).to eq(1)
+        expect(received_sets.first['identifier']).to be_present
+        expect(received_sets.first['title']).to be_present
+      end
+    end
   end
 
   describe 'check_configuration' do
