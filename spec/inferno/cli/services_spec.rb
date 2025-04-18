@@ -39,12 +39,14 @@ RSpec.describe Inferno::CLI::Services do
 
     context 'inside test kit with bundle exec' do
       around(:each) do |example|
+        original_directory = Dir.pwd
         Dir.mktmpdir do |tmp_test_kit|
           Dir.chdir(tmp_test_kit) do
             setup_mock_test_kit(tmp_test_kit)
             example.run
           end
         end
+        Dir.chdir(original_directory)
       end
 
       before(:each) do
@@ -59,22 +61,9 @@ RSpec.describe Inferno::CLI::Services do
       end
   
       it 'in subfolder outputs background docker compose path' do
-        #require 'pry'
-        #binding.pry
-
-        #pp :DEBUGGING
-        #services_cli.path
-
         expected_output = File.absolute_path('docker-compose.background.yml', Dir.pwd) + "\n"
         Dir.mkdir('lib')
         Dir.chdir('lib') do
-
-        pp Dir.pwd
-        pp Dir.glob('*')
-        pp Dir.glob('../*')
-        services_cli.path
-
-
           expect { services_cli.path }.to output(expected_output).to_stdout
         end
       end

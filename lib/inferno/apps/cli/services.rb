@@ -69,19 +69,19 @@ module Inferno
       
       def test_kit_root
         directory = Dir.pwd
+        original_directory = directory
         while directory != '/' do
-          #pp :D
-          #pp directory
-          #pp Dir.glob('*.gemspec')
-          #pp Bundler.load_gemspec(Dir.glob('*.gemspec').first) if Dir.glob('*.gemspec').any?
-
           gemspec_file = Dir.glob('*.gemspec').first
-          return directory if gemspec_file &&
-                                Bundler.load_gemspec(gemspec_file).metadata['inferno_test_kit'] == 'true'
+          if gemspec_file && (Bundler.load_gemspec(gemspec_file).metadata['inferno_test_kit'] == 'true')
+            Dir.chdir(original_directory)
+            return directory
+          end
 
           directory = File.dirname(directory)
+          Dir.chdir(directory)
         end
 
+        Dir.chdir(original_directory)
         nil
       end
 
