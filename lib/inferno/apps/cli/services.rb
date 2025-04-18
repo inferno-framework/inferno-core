@@ -3,11 +3,11 @@ module Inferno
     class Services < Thor
       no_commands do
         def base_command
-          gemspec_file = Dir.glob('*.gemspec').first
-
-          if ENV['BUNDLE_GEMFILE'] && File.exist?(gemspec_file) && Bundler.load_gemspec(gemspec_file).metadata['inferno_test_kit'] == 'true'
-            compose_path = './docker-compose.background.yml' # Any way to fetch test kit root?
+          if bundle_exec? && in_test_kit?
+            compose_path = File.join(test_kit_root, 'docker-compose.background.yml')
           else
+            puts 'Warning: Using global inferno services because user did not run command with `bundle exec`' if in_test_kit?
+
             compose_path = File.join(__dir__, 'services', 'docker-compose.global.yml')
           end
 
@@ -63,6 +63,34 @@ module Inferno
       desc 'path', 'Output path to the compose file in use'
       def path
         puts base_command.sub('docker compose -f ', '')
+      end
+
+      private
+      
+      def test_kit_root
+        directory = Dir.pwd
+        while directory != '/' do
+          #pp :D
+          #pp directory
+          #pp Dir.glob('*.gemspec')
+          #pp Bundler.load_gemspec(Dir.glob('*.gemspec').first) if Dir.glob('*.gemspec').any?
+
+          gemspec_file = Dir.glob('*.gemspec').first
+          return directory if gemspec_file &&
+                                Bundler.load_gemspec(gemspec_file).metadata['inferno_test_kit'] == 'true'
+
+          directory = File.dirname(directory)
+        end
+
+        nil
+      end
+
+      def in_test_kit?
+        !!test_kit_root
+      end
+
+      def bundle_exec?
+        !!ENV['BUNDLE_GEMFILE']
       end
     end
   end
