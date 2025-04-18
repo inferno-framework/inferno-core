@@ -15,8 +15,6 @@ module Inferno
               return
             end
 
-            return unless fhirpath_is_available?(context)
-
             unused_resource_urls = []
             search_params = context.ig.resources_by_type['SearchParameter']
 
@@ -36,19 +34,6 @@ module Inferno
             end
 
             context.add_result result
-          end
-
-          def fhirpath_is_available?(context)
-            Faraday.new(
-              URI(ENV.fetch('FHIRPATH_URL', nil)), request: { timeout: 600 }
-            ).post(
-              'evaluate?path=Bundle', { 'resourceType' => 'Bundle' }.to_json, content_type: 'application/json'
-            )
-          rescue StandardError => e
-            message = "FHIRPath server: #{e.message}. Skipping rule AllSearchParametersHaveExamples."
-            result = EvaluationResult.new(message, severity: 'error', rule: self)
-            context.add_result result
-            false
           end
 
           def param_is_used?(param, context)
@@ -71,9 +56,14 @@ module Inferno
               begin
                 result = evaluate_fhirpath(resource: resource, path: param.expression)
               rescue StandardError => e
-                message = "SearchParameter #{param.url} failed to evaluate due to an error. " \
-                          "Expression: #{param.expression}. #{e}"
-                result = EvaluationResult.new(message, severity: 'warning', rule: self)
+                if e.to_s.include? 'Unable to connect to FHIRPath service'
+                  result = EvaluationResult.new(e.to_s, severity: 'error', rule: self)
+                else
+                  message = "SearchParameter #{param.url} failed to evaluate due to an error. " \
+                            "Expression: #{param.expression}. #{e}"
+                  result = EvaluationResult.new(message, severity: 'warning', rule: self)
+                end
+
                 context.add_result result
 
                 param_used = true
@@ -88,7 +78,10 @@ module Inferno
             param_used
           end
 
-          def add_message; end
+          def add_message
+            # No implementation but to prevent error from evaluate_fhirpath().
+            # Without this, will throw "undefined method" error since it expects to be called from a Runnable.
+          end
         end
       end
     end
