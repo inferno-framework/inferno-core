@@ -78,7 +78,7 @@ module Inferno
             param_used
           end
 
-          def add_message
+          def add_message(message_type, message)
             # No implementation but to prevent error from evaluate_fhirpath().
             # Without this, will throw "undefined method" error since it expects to be called from a Runnable.
           end
