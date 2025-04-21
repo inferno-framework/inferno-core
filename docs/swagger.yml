@@ -61,6 +61,33 @@ paths:
             $ref: "#/definitions/TestSuite"
         "404":
           description: "Test suite not found"
+  /test_suites/{test_suite_id}/requirements:
+    get:
+      tags:
+      - "Requirement"
+      summary: "Get the requirements for a test suite for a given session."
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_suite_id"
+        description: "ID of the test suite"
+        required: true
+      - in: "query"
+        type: "string"
+        name: "session_id"
+        description: "ID of the test session"
+        required: false
+      responses:
+        "200":
+          description: "success"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Requirement"
+        "404":
+          description: "Test suite or Session not found"
   /test_suites/{test_suite_id}/check_configuration:
     put:
       tags:
@@ -341,6 +368,26 @@ paths:
             $ref: "#/definitions/Request"
         "404":
           description: "HTTP request not found"
+  /requirements/{requirement_id}:
+    get:
+      tags:
+      - "Requirement"
+      summary: "Get a single Requirement"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "requirement_id"
+        description: "ID of the requirement"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+          schema:
+            $ref: "#/definitions/Requirement"
+        "404":
+          description: "Requirement not found"
   /version:
     get:
       tags:
@@ -760,3 +807,28 @@ definitions:
     properties:
       version:
         type: "string"
+  Requirement:
+    type: "object"
+    required:
+    - "id"
+    - "requirement"
+    - "conformance"
+    - "actor"
+    properties:
+      id:
+        type: "string"
+      requirement:
+        type: "string"
+      conformance:
+        type: "string"
+      actor:
+        type: "string"
+      conditionality:
+        type: "string"
+      url:
+        type: "string"
+      sub_requirements:
+        type: "array"
+        items:
+          type: "string"
+

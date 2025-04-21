@@ -1,0 +1,3 @@
+﻿Req Set,ID,URL,Requirement,Conformance,Actor,Sub-Requirement(s),Conditionality
+sample-criteria,1,,requirement,SHALL,Client,sample-criteria@2,FALSE
+sample-criteria,2,,requirement,SHALL,Client,,FALSE
