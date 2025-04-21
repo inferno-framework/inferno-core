@@ -15,7 +15,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllResourcesReachable do
 
     result = described_class.new.check(context)[0]
 
-    expect(result.message).to eq('All resources are reachable')
+    expect(result.message).to eq('All resources in examples are reachable.')
   end
 
   it 'identifies reachable resources by uuid' do
@@ -28,7 +28,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllResourcesReachable do
 
     result = described_class.new.check(context)[0]
 
-    expect(result.message).to eq('All resources are reachable')
+    expect(result.message).to eq('All resources in examples are reachable.')
   end
 
   it 'identifies reachable resources with a full example' do
@@ -38,7 +38,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllResourcesReachable do
 
     result = described_class.new.check(context)[0]
 
-    expect(result.message).to eq('All resources are reachable')
+    expect(result.message).to eq('All resources in examples are reachable.')
   end
 
   it 'identifies unreachable resources' do
@@ -50,7 +50,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllResourcesReachable do
 
     expect(result.severity).to eq('warning')
     expect(result.message).to(
-      eq("Found resources that have no resolved references and are not referenced: #{data[0].id}")
+      eq("Found resources in examples have no resolved references and are not referenced: #{data[0].id}")
     )
   end
 end

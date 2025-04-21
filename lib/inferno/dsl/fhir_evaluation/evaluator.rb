@@ -32,8 +32,6 @@ module Inferno
           Rule.descendants.each do |rule|
             next unless active_rules.include?(rule.name.demodulize)
 
-            header = "Checking evaluation rule #{rule.name.split('::').last}..."
-            context.add_result EvaluationResult.new(header, severity: 'information')
             rule.new.check(context)
           end
 

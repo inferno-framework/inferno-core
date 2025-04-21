@@ -53,7 +53,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllExtensionsUsed do
     result = described_class.new.check(context)[0]
 
     # expect(result.severity).to eq('success')
-    expect(result.message).to eq('All extensions specified in profiles are represented in instances.')
+    expect(result.message).to eq('All extensions specified in profiles are used in examples.')
   end
 
   it 'identifies unused extensions' do
@@ -68,7 +68,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllExtensionsUsed do
 
     result = described_class.new.check(context)[0]
 
-    expect(result.message).to eq("Found extensions specified in profiles, but not used in instances:\n Profile: http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient, \n\tExtensions: http://hl7.org/fhir/us/core/StructureDefinition/us-core-race, http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity, http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex")
+    expect(result.message).to eq("Found extensions specified in profiles, but NOT used in examples:\n Profile: http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient, \n\tExtensions: http://hl7.org/fhir/us/core/StructureDefinition/us-core-race, http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity, http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex")
 
     data = [FHIR::Patient.new(meta: { profile: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient'] },
                               extension: [{
@@ -78,7 +78,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllExtensionsUsed do
                                                                   Inferno::DSL::FHIREvaluation::Config.new)
     result2 = described_class.new.check(context)[0]
 
-    expect(result2.message).to eq("Found extensions specified in profiles, but not used in instances:\n Profile: http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient, \n\tExtensions: http://hl7.org/fhir/us/core/StructureDefinition/us-core-race, http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity")
+    expect(result2.message).to eq("Found extensions specified in profiles, but NOT used in examples:\n Profile: http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient, \n\tExtensions: http://hl7.org/fhir/us/core/StructureDefinition/us-core-race, http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity")
   end
 end
 # rubocop:enable Layout/LineLength
