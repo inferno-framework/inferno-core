@@ -1,0 +1,76 @@
+---
+:name: profile_pas_request_bundle
+:class_name: ProfilePasRequestBundleSequence
+:version: v2.0.1
+:reformatted_version: v201
+:resource: Bundle
+:profile_url: http://hl7.org/fhir/us/davinci-pas/StructureDefinition/profile-pas-request-bundle
+:profile_name: PAS Request Bundle
+:profile_version: 2.0.1
+:title: Request Bundle
+:short_description: Verify support for the server capabilities required by the PAS
+  Request Bundle.
+:interactions: []
+:operations: []
+:required_concepts: []
+:must_supports:
+  :extensions: []
+  :slices:
+  - :slice_id: Bundle.entry:Claim
+    :slice_name: Claim
+    :path: entry
+    :discriminator:
+      :type: type
+      :code: Claim
+  :elements:
+  - :path: identifier
+  - :path: timestamp
+  - :path: entry
+  - :path: entry.fullUrl
+  - :path: entry.resource
+:mandatory_elements:
+- Bundle.identifier
+- Bundle.type
+- Bundle.timestamp
+- Bundle.link.relation
+- Bundle.link.url
+- Bundle.entry
+- Bundle.entry.fullUrl
+- Bundle.entry.resource
+- Bundle.entry.request.method
+- Bundle.entry.request.url
+- Bundle.entry.response.status
+:bindings:
+- :type: code
+  :strength: preferred
+  :system: http://hl7.org/fhir/ValueSet/languages
+  :path: language
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/bundle-type
+  :path: type
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/search-entry-mode
+  :path: entry.search.mode
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/http-verb
+  :path: entry.request.method
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/search-entry-mode
+  :path: entry.search.mode
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/http-verb
+  :path: entry.request.method
+:references: []
+:tests:
+- :id: pas_server_v201_pas_request_bundle_validation_test
+  :file_name: server_pas_request_bundle_validation_test.rb
+- :id: pas_server_submit_request_v201_pas_request_bundle_must_support_test
+  :file_name: server_submit_request_pas_request_bundle_must_support_test.rb
+- :id: pas_client_submit_request_v201_pas_request_bundle_must_support_test
+  :file_name: client_submit_request_pas_request_bundle_must_support_test.rb
+:delayed_references: []

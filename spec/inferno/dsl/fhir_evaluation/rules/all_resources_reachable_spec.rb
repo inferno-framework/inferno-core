@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# require_relative '../../../../lib/inferno/dsl/fhir_evaluation/rules/all_resources_reachable'
-
 RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllResourcesReachable do
   let(:patient85) do
     path = File.expand_path('../../../../../spec/fixtures/patient_85.json', __dir__)

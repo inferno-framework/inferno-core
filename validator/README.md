@@ -8,6 +8,8 @@ This Dockerfile is based on the Dockerfile for org.hl7.fhir.validator-wrapper (s
    - SESSION_CACHE_IMPLEMENTATION=PassiveExpiringSessionCache
    - SESSION_CACHE_DURATION=-1
      - These enable the old session cache implementation, and configure the session cache to never expire sessions.
+   - VALIDATION_SERVICE_PRESETS_FILE_PATH=ignore-this-do-not-load-presets
+     - This disables loading presets at service startup by pointing it to a non-existent file. (There is no other explicit value or setting for "do not load presets")
 
 It is intended to be a drop-in replacement for the official image; i.e., if you don't need features 2 & 3 above you can use the same version of `markiantorno/validator-wrapper`. Version numbers of this image should match the version number of the official image. The only difference is you will need to set the environment variables as mentioned in (4) above, depending on which behavior you want.
 

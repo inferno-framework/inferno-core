@@ -54,6 +54,22 @@ RSpec.describe '/test_suites' do
         expect(last_response.status).to eq(404)
       end
     end
+
+    context 'when the test_suite has requirement sets' do
+      let(:test_suite_id) { 'ig_requirements' }
+
+      it 'includes the requirement sets' do
+        get router.path(:api_test_suites_show, id: test_suite_id)
+        expect(last_response.status).to eq(200)
+
+        received_sets = parsed_body['requirement_sets']
+
+        expect(received_sets).to be_present
+        expect(received_sets.length).to eq(1)
+        expect(received_sets.first['identifier']).to be_present
+        expect(received_sets.first['title']).to be_present
+      end
+    end
   end
 
   describe 'check_configuration' do
@@ -81,6 +97,60 @@ RSpec.describe '/test_suites' do
         put router.path(:api_test_suites_check_configuration, id: test_suite_id)
 
         expect(last_response.status).to eq(404)
+      end
+    end
+  end
+
+  describe 'requirements' do
+    let(:test_session) { repo_create(:test_session, test_suite_id:) }
+    let(:test_suite_id) { 'ig_requirements' }
+
+    context 'when optional session id provided' do
+      it 'renders json of requirements detail for the suite when suite and session exist' do
+        get "#{router.path(:api_test_suites_requirements, id: test_suite_id)}?session_id=#{test_session.id}"
+
+        expect(last_response.status).to eq(200)
+
+        requirements = parsed_body
+        test_suite = repo.find(test_suite_id)
+        suite_requirements = test_suite.all_requirements(test_session.suite_options)
+        expect(requirements.length).to eq(suite_requirements.length)
+        expect(requirements.map { |req| req['id'] }).to include(*suite_requirements)
+      end
+
+      it 'renders a 404 when test suite does not exist' do
+        get "#{router.path(:api_test_suites_requirements, id: 'test_suite_id')}?session_id=#{test_session.id}"
+
+        expect(last_response.status).to eq(404)
+        expect(last_response.body).to include('Test Suite `test_suite_id` not found')
+      end
+
+      it 'renders a 404 when test session does not exist' do
+        get "#{router.path(:api_test_suites_requirements, id: test_suite_id)}?session_id=random"
+
+        expect(last_response.status).to eq(404)
+        expect(last_response.body).to include('Test session `random` not found')
+      end
+    end
+
+    context 'when optional session id not provided' do
+      it 'renders json of requirements detail for the suite when suite exists' do
+        get router.path(:api_test_suites_requirements, id: test_suite_id)
+
+        expect(last_response.status).to eq(200)
+
+        requirements = parsed_body
+        test_suite = repo.find(test_suite_id)
+        suite_requirements = test_suite.all_requirements
+        expect(requirements.length).to eq(suite_requirements.length)
+        expect(requirements.map { |req| req['id'] }).to include(*suite_requirements)
+      end
+
+      it 'renders a 404 when test suite does not exist' do
+        get router.path(:api_test_suites_requirements, id: 'test_suite_id')
+
+        expect(last_response.status).to eq(404)
+        expect(last_response.body).to include('Test Suite `test_suite_id` not found')
       end
     end
   end

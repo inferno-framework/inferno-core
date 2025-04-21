@@ -87,5 +87,16 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
 
     expect(received_groups).to eq(expected_groups)
     expect(serialized_suite['test_count']).to eq(3)
+    expect(serialized_suite['requirement_sets'].length).to eq(2)
+  end
+
+  it 'serializes using selected options to filter requirement_sets' do
+    options_suite = OptionsSuite::Suite
+    options = [Inferno::DSL::SuiteOption.new(id: :ig_version, value: '1')]
+    serialized_suite = JSON.parse(described_class.render(options_suite,
+                                                         view: :full,
+                                                         suite_options: options))
+
+    expect(serialized_suite['requirement_sets'].length).to eq(2)
   end
 end
