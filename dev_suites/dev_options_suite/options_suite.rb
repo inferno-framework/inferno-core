@@ -157,6 +157,27 @@ module OptionsSuite
                    }
                  ]
 
+    requirement_sets(
+      {
+        identifier: 'sample-criteria-proposal',
+        actor: 'Client',
+        suite_options: {
+          ig_version: '1'
+        }
+      },
+      {
+        identifier: 'sample-criteria-proposal-2',
+        actor: 'Client',
+        suite_options: {
+          ig_version: '2'
+        }
+      },
+      {
+        identifier: 'sample-criteria-proposal-3',
+        actor: 'Client'
+      }
+    )
+
     group from: :all_versions_group
 
     group from: :v1_group,

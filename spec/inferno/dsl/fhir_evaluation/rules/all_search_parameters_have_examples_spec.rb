@@ -8,6 +8,9 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllSearchParametersHaveExamp
     context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(ig, ig.examples,
                                                                   Inferno::DSL::FHIREvaluation::Config.new, nil)
     fhirpath = "#{ENV.fetch('FHIRPATH_URL', nil)}/evaluate?path="
+    stub_request(:post, "#{fhirpath}Bundle").to_return(
+      status: 200, body: '[{"type": "code", "element": "notnull"}]'
+    )
     stub_request(:post, "#{fhirpath}AllergyIntolerance.clinicalStatus").to_return(
       status: 200, body: '[{"type": "code", "element": "notnull"}]'
     )

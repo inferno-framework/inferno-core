@@ -332,18 +332,23 @@ module Inferno
           when 'Date'
             begin
               Date.parse(element)
-            rescue ArgumentError
+            rescue ArgumentError, TypeError
               false
             end
           when 'DateTime'
             begin
               DateTime.parse(element)
-            rescue ArgumentError
+            rescue ArgumentError, TypeError
               false
             end
           when 'String'
             element.is_a? String
           else
+            if element.is_a? FHIR::Bundle::Entry
+              # Special case for type slicing in a Bundle - look at the resource not the entry
+              element = element.resource
+            end
+
             element.is_a? FHIR.const_get(discriminator[:code])
           end
         end
@@ -352,7 +357,14 @@ module Inferno
           coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : 'coding'
 
           find_a_value_at(element, coding_path) do |coding|
-            discriminator[:values].any? { |value| value[:system] == coding.system && value[:code] == coding.code }
+            discriminator[:values].any? do |value|
+              case value
+              when String
+                value == coding.code
+              when Hash
+                value[:system] == coding.system && value[:code] == coding.code
+              end
+            end
           end
         end
 

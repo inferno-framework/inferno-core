@@ -1,6 +1,7 @@
 require_relative 'test_group'
 require_relative '../dsl/runnable'
 require_relative '../dsl/suite_option'
+require_relative '../dsl/suite_requirements'
 require_relative '../dsl/messages'
 require_relative '../dsl/links'
 require_relative '../repositories/test_groups'
@@ -16,6 +17,7 @@ module Inferno
       extend DSL::Links
       extend DSL::FHIRClient::ClassMethods
       extend DSL::HTTPClient::ClassMethods
+      extend DSL::SuiteRequirements
       include DSL::FHIRValidation
       include DSL::FHIRResourceValidation
       include DSL::FhirpathEvaluation

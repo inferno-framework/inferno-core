@@ -4,6 +4,14 @@ module RequirementsSuite
     id :ig_requirements
     description 'Suite Description'
 
+    requirement_sets(
+      {
+        identifier: 'sample-criteria-proposal',
+        title: 'Sample Criteria Proposal',
+        actor: 'Client'
+      }
+    )
+
     group do
       title 'Goup 1'
       group do
