@@ -23,7 +23,8 @@ module Inferno
             end
 
             if unused_resource_urls.any?
-              message = "Found SearchParameters with no searchable data in examples: \n\t#{unused_resource_urls.join(' ,')}"
+              unused_resource_list = unused_resource_urls.join("\n\t")
+              message = "Found SearchParameters with no searchable data in examples: \n\t#{unused_resource_list}"
               result = EvaluationResult.new(message, rule: self)
             elsif !search_params.empty?
               message = 'All SearchParameters have examples.'
@@ -42,7 +43,7 @@ module Inferno
             # but without it there's no other way to select a value
             # Return warning if params don't include expression
             unless param.expression
-              message = "Search parameter #{param.url} doesn't have an expression."
+              message = "Search parameter #{param.url} doesn't include an expression."
               result = EvaluationResult.new(message, severity: 'warning', rule: self)
               context.add_result result
               return false
