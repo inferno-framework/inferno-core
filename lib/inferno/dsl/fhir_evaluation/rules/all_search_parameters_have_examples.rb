@@ -23,13 +23,13 @@ module Inferno
             end
 
             if unused_resource_urls.any?
-              message = "Found SearchParameters with no searchable data: \n\t#{unused_resource_urls.join(' ,')}"
+              message = "Found SearchParameters with no searchable data in examples: \n\t#{unused_resource_urls.join(' ,')}"
               result = EvaluationResult.new(message, rule: self)
             elsif !search_params.empty?
-              message = 'All SearchParameters have examples'
+              message = 'All SearchParameters have examples.'
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             else
-              message = 'IG contains no SearchParameter'
+              message = 'IG contains no SearchParameter.'
               result = EvaluationResult.new(message, severity: 'information', rule: self)
             end
 

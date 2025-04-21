@@ -72,7 +72,7 @@ module Inferno
           # rubocop:disable Metrics/CyclomaticComplexity
           def create_result_message
             if value_set_unused.none?
-              message = 'All Value sets are used in Examples:'
+              message = 'All ValueSets are used in examples:'
               value_set_used.map { |value_set| message += "\n\t#{value_set}" }
 
               if value_set_unevaluated.any?
@@ -82,14 +82,14 @@ module Inferno
 
               EvaluationResult.new(message, severity: 'success', rule: self)
             else
-              message = 'Value sets with all codes used at least once in Examples:'
+              message = 'Found ValueSets with all codes used (at least once) in examples:'
               value_set_used.map { |url| message += "\n\t#{url}" }
 
-              message += "\nFound unused Value Sets: "
+              message += "\nFound unused ValueSets: "
               value_set_unused.map { |url| message += "\n\t#{url}" }
 
               if value_set_unevaluated.any?
-                message += "\nFound unevaluated Value Sets: "
+                message += "\nFound unevaluated ValueSets: "
                 value_set_unevaluated.map { |url| message += "\n\t#{url}" }
               end
 
