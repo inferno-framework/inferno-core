@@ -29,11 +29,8 @@ module Inferno
             active_rules << rulename if rule_details['Enabled']
           end
 
-          Rule.descendants.each do |rule|
-            next unless active_rules.include?(rule.name.demodulize)
-
-            rule.new.check(context)
-          end
+          Rule.descendants.select { |rule| active_rules.include?(rule.name.demodulize) }
+            .each { |rule| rule.new.check(context) }
 
           context.results
         end
