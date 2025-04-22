@@ -24,13 +24,12 @@ module Inferno
         def evaluate(data, config = Config.new)
           context = EvaluationContext.new(@ig, data, config, validator)
 
-          active_rules = []
           config.data['Rule'].each do |rulename, rule_details|
-            active_rules << rulename if rule_details['Enabled']
-          end
+            next unless rule_details['Enabled']
 
-          Rule.descendants.select { |rule| active_rules.include?(rule.name.demodulize) }
-            .each { |rule| rule.new.check(context) }
+            Rule.descendants.select { |rule| rule.name.demodulize == rulename }
+              .each { |rule| rule.new.check(context) }
+          end
 
           context.results
         end
