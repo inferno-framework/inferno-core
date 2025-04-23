@@ -74,7 +74,8 @@ module Inferno
         original_directory = directory
         while directory != '/'
           gemspec_file = Dir.glob('*.gemspec').first
-          if gemspec_file && (Bundler.load_gemspec(gemspec_file).metadata['inferno_test_kit'] == 'true')
+          # TODO make bundler a dependency and delete defined? Bundler
+          if gemspec_file && defined?(Bundler) && (Bundler.load_gemspec(gemspec_file).metadata['inferno_test_kit'] == 'true')
             Dir.chdir(original_directory)
             return directory
           end

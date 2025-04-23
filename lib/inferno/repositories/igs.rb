@@ -61,7 +61,7 @@ module Inferno
 
         # IG packages are copied to ./data/igs to be used by the validator,
         # and if referenced by file in the validator block the path given must be "igs/{filename}.tgz"
-        data_igs_path = File.join('data', ig_path)
+        data_igs_path = File.join('data', ig_path) # TODO abstractify this into something that toggles b/n global and local mode
         return data_igs_path if File.exist?(data_igs_path)
 
         # Last resort, try to find the file under the current working directory,
