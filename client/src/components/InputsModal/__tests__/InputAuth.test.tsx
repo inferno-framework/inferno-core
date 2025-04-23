@@ -107,7 +107,7 @@ describe('InputAuth Component', () => {
         }
 
         // Hidden fields should not render
-        if (field.hide) {
+        if (field.hidden) {
           expect(inputField).toEqual(null);
         } else {
           expect(inputField).toBeVisible();
