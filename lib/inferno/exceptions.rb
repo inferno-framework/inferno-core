@@ -102,6 +102,12 @@ module Inferno
       end
     end
 
+    class InvalidAttributeException < RuntimeError
+      def initialize(attribute, klass, message)
+        super("Invalid attribute '#{attribute}' for #{klass.name}: #{message}")
+      end
+    end
+
     class UnknownSessionDataType < RuntimeError
       def initialize(output)
         super("Unknown type '#{output[:type]}' for '#{output[:name]}'.")
