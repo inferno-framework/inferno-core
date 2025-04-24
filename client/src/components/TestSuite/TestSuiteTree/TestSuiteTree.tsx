@@ -8,6 +8,7 @@ import FlagIcon from '@mui/icons-material/Flag';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import VerifiedOutlinedIcon from '@mui/icons-material/VerifiedOutlined';
 import { TestSuite, TestGroup, PresetSummary, ViewType } from '~/models/testSuiteModels';
 import CustomTreeItem from '~/components/_common/CustomTreeItem';
 import PresetsSelector from '~/components/PresetsSelector/PresetsSelector';
@@ -145,19 +146,22 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             label={<TreeItemLabel runnable={testSuite} />}
             slots={{ icon: ListAltIcon }}
             className={classes.treeItemBottomBorder}
-            // eslint-disable-next-line max-len
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-            ContentProps={{ testId: testSuite.id } as any}
+            ContentProps={{ testId: testSuite.id } as never}
           />
           {testGroupList}
           <CustomTreeItem
             itemId={`${testSuite.id}/report`}
             label={<TreeItemLabel title={'Report'} />}
             slots={{ icon: FlagIcon }}
+            className={`${classes.treeItemTopBorder}`}
+            ContentProps={{ testId: `${testSuite.id}/report` } as never}
+          />
+          <CustomTreeItem
+            itemId={`${testSuite.id}/requirements`}
+            label={<TreeItemLabel title={'Specification Requirements'} />}
+            slots={{ icon: VerifiedOutlinedIcon }}
             className={`${classes.treeItemTopBorder} ${classes.treeItemBottomBorder}`}
-            // eslint-disable-next-line max-len
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-            ContentProps={{ testId: `${testSuite.id}/report` } as any}
+            ContentProps={{ testId: `${testSuite.id}/requirements` } as never}
           />
           <Box display="flex" alignItems="flex-end" flexGrow={1} mt={windowIsSmall ? 0 : 8}>
             <Box width="100%">{renderConfigMessagesTreeItem()}</Box>
