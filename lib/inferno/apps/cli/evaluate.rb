@@ -7,8 +7,33 @@ require 'tempfile'
 
 module Inferno
   module CLI
-    class Evaluate < Thor::Group
-      def evaluate(ig_path, data_path, _log_level)
+    class Evaluate # < Thor::Group
+      def run(*args)
+        tmpdir = Dir.mktmpdir
+        Dir.mkdir("#{tmpdir}/data")
+        Dir.mkdir("#{tmpdir}/data/igs")
+        ENV['TMPDIR'] = tmpdir
+        ENV['FHIRPATH_URL'] = 'http://localhost:6789'
+        ENV['FHIR_RESOURCE_VALIDATOR_URL'] = 'http://localhost:3500'
+
+        # TODO: handle port conflicts 
+        # TODO: health checks?
+
+        pp ENV
+
+        puts "Starting Inferno Evaluator Services..."
+        system("docker compose -f #{File.join(__dir__, 'evaluate', 'docker-compose.evaluate.yml')} up -d")
+
+        evaluate(*args)
+
+      ensure
+        system("docker compose -f #{File.join(__dir__, 'evaluate', 'docker-compose.evaluate.yml')} down")
+        puts "Stopped Inferno Evaluator Services"
+
+        FileUtils.remove_entry tmpdir
+      end
+
+      def evaluate(ig_path, data_path, options, _log_level)
         # NOTE: repositories is required here rather than at the top of the file because
         # the tree of requires means that this file and its requires get required by every CLI app.
         # Sequel::Model, used in some repositories, fetches the table schema at instantiation.
@@ -55,7 +80,7 @@ module Inferno
       def setup_validator(ig_path)
         igs_directory = File.join(Dir.pwd, 'data', 'igs')
         if File.exist?(ig_path) && !File.realpath(ig_path).start_with?(igs_directory)
-          puts "Copying #{File.basename(ig_path)} to data/igs so it is accessible to validator"
+          # puts "Copying #{File.basename(ig_path)} to data/igs so it is accessible to validator" ## FIXME
           destination_file_path = File.join(igs_directory, File.basename(ig_path))
           FileUtils.copy_file(ig_path, destination_file_path, true)
           ig_path = "igs/#{File.basename(ig_path)}"

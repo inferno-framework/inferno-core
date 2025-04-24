@@ -1,0 +1,19 @@
+name: inferno_evaluator_services
+
+services:
+  hl7_validator_service:
+    extends:
+      file: ../../../../../docker-compose.background.yml
+      service: hl7_validator_service
+    volumes:
+      - ${TMPDIR}/data/igs:/app/igs
+    ports:
+      - "3500:3500"
+  fhirpath:
+    extends:
+      file: ../../../../../docker-compose.background.yml
+      service: fhirpath
+    ports:
+      - "6789:6789"
+
+# default FHIRPATH_URL = http://fhirpath:6789
