@@ -18,7 +18,10 @@ const UploadFileButton: FC<UploadFileButtonProps> = ({ onUpload }) => {
     setFileName(file.name);
     const reader = new FileReader();
     reader.onload = () => {
-      const text = reader.result?.toString() || '';
+      const text =
+        typeof reader.result === 'object'
+          ? JSON.stringify(reader.result)
+          : reader.result?.toString();
       onUpload(text);
     };
     reader.readAsText(file);

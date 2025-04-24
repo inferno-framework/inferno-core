@@ -6,7 +6,7 @@ import ThemeProvider from 'components/ThemeProvider';
 
 import { expect, test, vi } from 'vitest';
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router', () => ({
   useNavigate: () => {},
 }));
 

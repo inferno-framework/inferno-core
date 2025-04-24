@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider } from 'react-router';
 import { Theme } from '@mui/material/styles';
 import { SnackbarProvider } from 'notistack';
 import { makeStyles } from 'tss-react/mui';

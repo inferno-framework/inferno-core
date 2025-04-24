@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Alert, AlertColor, Box } from '@mui/material';
 import { Message } from '~/models/testSuiteModels';
 import { useTestSessionStore } from '~/store/testSession';
@@ -26,11 +26,11 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }
         severity={severity}
         variant="filled"
         onClick={() => {
-          navigate(`#${testSuiteId || ''}/config${viewOnly ? '/view' : ''}`);
+          void navigate(`#${testSuiteId || ''}/config${viewOnly ? '/view' : ''}`);
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            navigate(`#${testSuiteId || ''}/config${viewOnly ? '/view' : ''}`);
+            void navigate(`#${testSuiteId || ''}/config${viewOnly ? '/view' : ''}`);
           }
         }}
         className={classes.alert}

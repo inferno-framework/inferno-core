@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react';
-import { useLoaderData, useParams } from 'react-router-dom';
+import { useLoaderData, useParams } from 'react-router';
 import { useAppStore } from '~/store/app';
 
 export interface PageProps {
@@ -12,7 +12,9 @@ export interface PageProps {
  */
 const Page: FC<PageProps> = ({ children, title }) => {
   const testSuites = useAppStore((state) => state.testSuites);
-  const loadedChildren = useLoaderData() as JSX.Element;
+  // Type assertion is necessary here because it will be read as any type
+
+  const loadedChildren: JSX.Element = useLoaderData();
   const params = useParams();
 
   // Handle options-specific title population
@@ -29,6 +31,7 @@ const Page: FC<PageProps> = ({ children, title }) => {
   }, [title]);
 
   return children || loadedChildren;
+  // return children;
 };
 
 export default Page;
