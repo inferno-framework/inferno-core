@@ -101,7 +101,7 @@ RSpec.describe Inferno::DSL::FhirpathEvaluation do
       end
     end
 
-    context 'when a connection error occurs' do
+    context 'when network errors happen' do
       it 'raises an ErrorInFhirpathException for connection failure' do
         stub_request(:post, "#{evaluator_url}/evaluate?path=#{fhirpath_expression}")
           .with(body: patient.to_json, headers:)
@@ -111,10 +111,70 @@ RSpec.describe Inferno::DSL::FhirpathEvaluation do
           evaluator.evaluate_fhirpath(patient, fhirpath_expression,
                                       runnable)
         end.to raise_error(
-          Inferno::Exceptions::ErrorInFhirpathException, /Unable to connect to FHIRPath service/
+          Inferno::Exceptions::ErrorInFhirpathException, /Connection failed to evaluator/
         )
         expect(runnable.messages.last[:type]).to eq('error')
         expect(runnable.messages.last[:message]).to match(/Connection failed/)
+      end
+
+      it 'handles timeout errors' do
+        allow(evaluator).to receive(:call_fhirpath_service).and_raise(
+          Faraday::TimeoutError.new('Timeout error message')
+        )
+
+        begin
+          evaluator.evaluate_fhirpath(patient, fhirpath_expression, runnable)
+        rescue Inferno::Exceptions::ErrorInFhirpathException => e
+          expect(e.message).to eq("Timeout while connecting to evaluator at #{evaluator_url}.")
+        end
+
+        expect(runnable.messages.last[:type]).to eq('error')
+        expect(runnable.messages.last[:message]).to match(/Timeout/)
+      end
+
+      it 'handles SSL errors' do
+        allow(evaluator).to receive(:call_fhirpath_service).and_raise(
+          Faraday::SSLError.new('Self-signed certificate in certificate chain')
+        )
+
+        begin
+          evaluator.evaluate_fhirpath(patient, fhirpath_expression, runnable)
+        rescue Inferno::Exceptions::ErrorInFhirpathException => e
+          expect(e.message).to eq("SSL error connecting to evaluator at #{evaluator_url}.")
+        end
+
+        expect(runnable.messages.last[:type]).to eq('error')
+        expect(runnable.messages.last[:message]).to match(/Self-signed/)
+      end
+
+      it 'handles server 400s' do
+        allow(evaluator).to receive(:call_fhirpath_service).and_raise(
+          Faraday::ClientError.new('404 Not Found')
+        )
+
+        begin
+          evaluator.evaluate_fhirpath(patient, fhirpath_expression, runnable)
+        rescue Inferno::Exceptions::ErrorInFhirpathException => e
+          expect(e.message).to eq("Client error (4xx) connecting to evaluator at #{evaluator_url}.")
+        end
+
+        expect(runnable.messages.last[:type]).to eq('error')
+        expect(runnable.messages.last[:message]).to match(/404/)
+      end
+
+      it 'handles server 500s' do
+        allow(evaluator).to receive(:call_fhirpath_service).and_raise(
+          Faraday::ServerError.new('500 Server Error')
+        )
+
+        begin
+          evaluator.evaluate_fhirpath(patient, fhirpath_expression, runnable)
+        rescue Inferno::Exceptions::ErrorInFhirpathException => e
+          expect(e.message).to eq("Server error (5xx) from evaluator at #{evaluator_url}.")
+        end
+
+        expect(runnable.messages.last[:type]).to eq('error')
+        expect(runnable.messages.last[:message]).to match(/500/)
       end
     end
 
