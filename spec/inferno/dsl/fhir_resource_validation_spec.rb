@@ -195,6 +195,81 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           expect(runnable.messages).to be_empty
         end
       end
+
+      context 'when network errors happen' do
+        it 'handles connection failed or refused errors' do
+          # the string of the exception is from the OS - "Connection failed etc" or "Failed to open TCP ..."
+          # so we don't need to worry about over-testing our mock here, we are just invoking an exception
+          # but since inferno does add this text to the runnable message, we should expect() it
+          allow(validator).to receive(:call_validator).and_raise(
+            Faraday::ConnectionFailed.new('Connection failed: example.com:443')
+          )
+
+          begin
+            validator.resource_is_valid?(resource, profile_url, runnable)
+          rescue Inferno::Exceptions::ErrorInValidatorException => e
+            expect(e.message).to eq("Connection failed to validator at #{validation_url}.")
+          end
+
+          expect(runnable.messages.last[:message]).to include('Connection failed')
+        end
+
+        it 'handles timeout errors' do
+          allow(validator).to receive(:call_validator).and_raise(
+            Faraday::TimeoutError.new('Timeout error message')
+          )
+
+          begin
+            validator.resource_is_valid?(resource, profile_url, runnable)
+          rescue Inferno::Exceptions::ErrorInValidatorException => e
+            expect(e.message).to eq("Timeout while connecting to validator at #{validation_url}.")
+          end
+
+          expect(runnable.messages.last[:message]).to include('Timeout')
+        end
+
+        it 'handles SSL errors' do
+          allow(validator).to receive(:call_validator).and_raise(
+            Faraday::SSLError.new('Self-signed certificate in certificate chain')
+          )
+
+          begin
+            validator.resource_is_valid?(resource, profile_url, runnable)
+          rescue Inferno::Exceptions::ErrorInValidatorException => e
+            expect(e.message).to eq("SSL error connecting to validator at #{validation_url}.")
+          end
+
+          expect(runnable.messages.last[:message]).to include('Self-signed')
+        end
+
+        it 'handles server 400s' do
+          allow(validator).to receive(:call_validator).and_raise(
+            Faraday::ClientError.new('404 Not Found')
+          )
+
+          begin
+            validator.resource_is_valid?(resource, profile_url, runnable)
+          rescue Inferno::Exceptions::ErrorInValidatorException => e
+            expect(e.message).to eq("Client error (4xx) connecting to validator at #{validation_url}.")
+          end
+
+          expect(runnable.messages.last[:message]).to include('404')
+        end
+
+        it 'handles server 500s' do
+          allow(validator).to receive(:call_validator).and_raise(
+            Faraday::ServerError.new('500 Server Error')
+          )
+
+          begin
+            validator.resource_is_valid?(resource, profile_url, runnable)
+          rescue Inferno::Exceptions::ErrorInValidatorException => e
+            expect(e.message).to eq("Server error (5xx) from validator at #{validation_url}.")
+          end
+
+          expect(runnable.messages.last[:message]).to include('500')
+        end
+      end
     end
 
     it 'throws ErrorInValidatorException for non-JSON response' do
