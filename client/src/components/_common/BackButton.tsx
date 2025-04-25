@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import CustomTooltip from '~/components/_common/CustomTooltip';
 
 export interface BackButtonProps {
@@ -14,7 +14,7 @@ const BackButton: FC<BackButtonProps> = ({ tooltipText, destination }) => {
 
   return (
     <CustomTooltip title={tooltipText}>
-      <IconButton size="small" onClick={() => navigate(destination)}>
+      <IconButton size="small" onClick={() => void navigate(destination)}>
         <ArrowBackIcon fontSize="large" />
       </IconButton>
     </CustomTooltip>

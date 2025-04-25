@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import ThemeProvider from 'components/ThemeProvider';
 import Header from '../Header';
 
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { useAppStore } from '~/store/app';
 import { beforeEach, expect, test } from 'vitest';
 

@@ -1,4 +1,4 @@
-import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
+import { ReactElement } from 'react';
 import { Option } from './selectionModels';
 
 export interface Auth {
@@ -121,7 +121,7 @@ export interface SuiteOptionChoice {
 
 export interface TestInput {
   name: string;
-  title?: string | ReactJSXElement;
+  title?: string | ReactElement;
   value?: unknown;
   type?: 'auth_info' | 'oauth_credentials' | 'checkbox' | 'radio' | 'select' | 'text' | 'textarea';
   description?: string;
