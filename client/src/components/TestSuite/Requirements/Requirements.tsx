@@ -1,7 +1,8 @@
 import React, { FC } from 'react';
-import { Box, Card, Divider, Grid2, Typography } from '@mui/material';
+import { Box, Card, Divider, Typography } from '@mui/material';
 import { Requirement, TestSuite } from '~/models/testSuiteModels';
 import useStyles from './styles';
+import RequirementContent from './RequirementContent';
 
 interface RequirementsProps {
   testSuite: TestSuite;
@@ -11,24 +12,11 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
   const { classes } = useStyles();
 
   const requirementTestObject: Requirement = {
-    actor: 'CLIENT',
-    conformance: 'SHALL',
+    actor: 'client',
+    conformance: 'deprecated',
     description: 'test description',
-    testId: '1.04',
+    testId: '1.1',
   };
-
-  const requirementRow = (requirement: Requirement) => (
-    <>
-      <Grid2 container spacing={2}>
-        <Grid2 size={4}>
-          <Box>{requirement.actor}</Box>
-        </Grid2>
-        <Grid2 size="grow">
-          <Box>size=grow</Box>
-        </Grid2>
-      </Grid2>
-    </>
-  );
 
   return (
     <Card variant="outlined">
@@ -44,7 +32,7 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
       </Box>
       <Divider />
       <Box m={2} overflow="auto">
-        {requirementRow(requirementTestObject)}
+        <RequirementContent requirements={[requirementTestObject]} />
       </Box>
       <Divider />
     </Card>

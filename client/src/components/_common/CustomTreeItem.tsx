@@ -108,6 +108,7 @@ const CustomContent = React.forwardRef(function CustomContent(
   );
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const CustomTreeItem = styled((props: TreeItemProps) => (
   <TreeItem ContentComponent={CustomContent} {...props} />
 ))(() => ({
