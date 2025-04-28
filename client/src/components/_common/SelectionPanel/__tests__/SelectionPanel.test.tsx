@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import ThemeProvider from 'components/ThemeProvider';
 import { mockedSelectionPanelData } from '../__mocked_data__/mockData';

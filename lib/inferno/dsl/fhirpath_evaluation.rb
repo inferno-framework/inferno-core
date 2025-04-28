@@ -67,7 +67,9 @@ module Inferno
             # This could be a complete failure to connect (fhirpath service isn't running)
             # or a timeout (fhirpath service took too long to respond).
             runnable.add_message('error', e.message)
-            raise Inferno::Exceptions::ErrorInFhirpathException, "Unable to connect to FHIRPath service at #{url}."
+            Application[:logger].error(e.message)
+
+            raise Inferno::Exceptions::ErrorInFhirpathException, evaluator_error_message(e)
           end
 
           sanitized_body = remove_invalid_characters(response.body)
@@ -107,6 +109,28 @@ module Inferno
         # @private
         def remove_invalid_characters(string)
           string.gsub(/[^[:print:]\r\n]+/, '')
+        end
+
+        # Add a specific error message for specific network problems to help the user
+        #
+        # @private
+        # @param error [Exception] An error exception that happened during evaluator connection
+        # @return [String] A readable error message describing the specific network problem
+        def evaluator_error_message(error)
+          case error
+          when Faraday::ConnectionFailed
+            "Connection failed to evaluator at #{url}."
+          when Faraday::TimeoutError
+            "Timeout while connecting to evaluator at #{url}."
+          when Faraday::SSLError
+            "SSL error connecting to evaluator at #{url}."
+          when Faraday::ClientError  # these are 400s
+            "Client error (4xx) connecting to evaluator at #{url}."
+          when Faraday::ServerError  # these are 500s
+            "Server error (5xx) from evaluator at #{url}."
+          else
+            "Unable to connect to FHIRPath service at #{url}."
+          end
         end
       end
 

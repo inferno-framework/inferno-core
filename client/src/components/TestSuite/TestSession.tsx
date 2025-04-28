@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { Box, Drawer, SwipeableDrawer, Toolbar } from '@mui/material';
 import { lighten } from '@mui/material/styles';
 import {
@@ -259,7 +259,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     runnable?.inputs?.forEach((input: TestInput) => {
       input.value = sessionData.get(input.name);
     });
-    if (runnable?.inputs && runnable.inputs.length > 0) {
+    if (runnable?.inputs.every((input) => input.hidden)) {
+      // if all inputs are hidden, run automatically
+      createTestRun(runnableType, runnableId, runnable?.inputs);
+    } else if (runnable?.inputs && runnable.inputs.length > 0) {
       showInputsModal(runnable, runnableType);
     } else if (viewOnly) {
       enqueueSnackbar(`${runnable?.title} has no inputs`, { variant: 'info' });

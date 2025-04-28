@@ -13,7 +13,7 @@ import { Link, Share, Visibility } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import { useAppStore } from '~/store/app';
 import lightTheme from '~/styles/theme';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 
 const ShareSessionButton: FC<unknown> = () => {
   const { enqueueSnackbar } = useSnackbar();
