@@ -18,16 +18,16 @@ module Inferno
         ENV['FHIR_RESOURCE_VALIDATOR_URL'] = 'http://localhost:3500'
 
         puts 'Starting Inferno Evaluator Services...'
-        pp "DEBUGGING"
-        pp services_names
         system("#{services_base_command} up -d #{services_names}")
 
-        evaluate(*)
+        Dir.chdir(tmpdir) do
+          evaluate(*)
+        end
       ensure
         system("#{services_base_command} down #{services_names}")
         puts 'Stopped Inferno Evaluator Services'
 
-        FileUtils.remove_entry tmpdir
+        FileUtils.remove_entry_secure tmpdir
       end
 
       def services_base_command
@@ -37,7 +37,7 @@ module Inferno
       def services_names
         names = 'hl7_validator_service'
 
-        # Since fhirpath service/port may already be exposed by a test kit, we toggle it
+        # Since fhirpath service may already be exposed by a test kit, we toggle it
         names += ' fhirpath' if Faraday.get("#{ENV['FHIRPATH_URL']}/version").status != 200
         names
       rescue Faraday::Error
