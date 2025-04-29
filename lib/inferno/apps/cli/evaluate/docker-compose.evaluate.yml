@@ -8,12 +8,10 @@ services:
     volumes:
       - ${TMPDIR}/data/igs:/app/igs
     ports:
-      - "3500:3500"
+      - "3501:3500"
   fhirpath:
     extends:
       file: ../../../../../docker-compose.background.yml
       service: fhirpath
     ports:
-      - "6789:6789"
-
-# default FHIRPATH_URL = http://fhirpath:6789
+      - "6790:6789"

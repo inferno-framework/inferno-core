@@ -13,8 +13,8 @@ module Inferno
         Dir.mkdir("#{tmpdir}/data")
         Dir.mkdir("#{tmpdir}/data/igs")
         ENV['TMPDIR'] = tmpdir
-        ENV['FHIRPATH_URL'] = 'http://localhost:6789'
-        ENV['FHIR_RESOURCE_VALIDATOR_URL'] = 'http://localhost:3500'
+        ENV['FHIRPATH_URL'] = 'http://localhost:6790'
+        ENV['FHIR_RESOURCE_VALIDATOR_URL'] = 'http://localhost:3501'
 
         # TODO: handle port conflicts
         # TODO: health checks?
