@@ -4,6 +4,7 @@ require_relative '../../entities'
 require_relative '../../utils/ig_downloader'
 
 require 'tempfile'
+require 'faraday'
 
 module Inferno
   module CLI
@@ -13,21 +14,35 @@ module Inferno
         Dir.mkdir("#{tmpdir}/data")
         Dir.mkdir("#{tmpdir}/data/igs")
         ENV['TMPDIR'] = tmpdir
-        ENV['FHIRPATH_URL'] = 'http://localhost:6790'
-        ENV['FHIR_RESOURCE_VALIDATOR_URL'] = 'http://localhost:3501'
-
-        # TODO: handle port conflicts
-        # TODO: health checks?
+        ENV['FHIRPATH_URL'] = 'http://localhost:6789'
+        ENV['FHIR_RESOURCE_VALIDATOR_URL'] = 'http://localhost:3500'
 
         puts 'Starting Inferno Evaluator Services...'
-        system("docker compose -f #{File.join(__dir__, 'evaluate', 'docker-compose.evaluate.yml')} up -d")
+        pp "DEBUGGING"
+        pp services_names
+        system("#{services_base_command} up -d #{services_names}")
 
         evaluate(*)
       ensure
-        system("docker compose -f #{File.join(__dir__, 'evaluate', 'docker-compose.evaluate.yml')} down")
+        system("#{services_base_command} down #{services_names}")
         puts 'Stopped Inferno Evaluator Services'
 
         FileUtils.remove_entry tmpdir
+      end
+
+      def services_base_command
+        "docker compose -f #{File.join(__dir__, 'evaluate', 'docker-compose.evaluate.yml')}"
+      end
+
+      def services_names
+        names = 'hl7_validator_service'
+
+        # Since fhirpath service/port may already be exposed by a test kit, we toggle it
+        names += ' fhirpath' if Faraday.get("#{ENV['FHIRPATH_URL']}/version").status != 200
+        names
+      rescue Faraday::Error
+        names += ' fhirpath'
+        names
       end
 
       def evaluate(ig_path, data_path, options, _log_level)
