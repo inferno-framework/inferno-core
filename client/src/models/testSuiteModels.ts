@@ -81,10 +81,13 @@ export type RequestHeader = {
 };
 
 export type Requirement = {
-  actor: string;
+  id: string;
+  requirement: string;
   conformance: string;
-  description: string;
-  testId: string;
+  actor: string;
+  conditionality: string;
+  url: string;
+  sub_requirements: string[];
 };
 
 export interface Result {

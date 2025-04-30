@@ -1,5 +1,7 @@
 import React, { FC } from 'react';
 import { Box, Card, Divider, Typography } from '@mui/material';
+import { enqueueSnackbar } from 'notistack';
+import { getTestSuiteRequirements } from '~/api/RequirementsApi';
 import { Requirement, TestSuite } from '~/models/testSuiteModels';
 import useStyles from './styles';
 import RequirementContent from './RequirementContent';
@@ -10,13 +12,27 @@ interface RequirementsProps {
 
 const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
   const { classes } = useStyles();
+  const [requirements, setRequirements] = React.useState<Requirement[]>([]);
+  const [triedFetchRequirements, setTriedFetchRequirements] = React.useState<boolean>(false);
 
-  const requirementTestObject: Requirement = {
-    actor: 'client',
-    conformance: 'deprecated',
-    description: 'test description',
-    testId: '1.1',
-  };
+  // Fetch requirements from API
+  if (!triedFetchRequirements) {
+    getTestSuiteRequirements(testSuite.id)
+      .then((result) => {
+        if (result.length > 0) {
+          console.log(result);
+          setRequirements(result);
+        } else {
+          enqueueSnackbar('Failed to fetch specification requirements', { variant: 'error' });
+        }
+      })
+      .catch((e: Error) => {
+        enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
+          variant: 'error',
+        });
+      });
+    setTriedFetchRequirements(true);
+  }
 
   return (
     <Card variant="outlined">
@@ -32,7 +48,11 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
       </Box>
       <Divider />
       <Box m={2} overflow="auto">
-        <RequirementContent requirements={[requirementTestObject]} />
+        {/* <Typography fontWeight="bold">These scenarios test the following requirements:</Typography>
+        <Typography variant="h5" component="p" fontWeight="bold" sx={{ mb: 2 }}>
+          test
+        </Typography> */}
+        <RequirementContent requirements={requirements} />
       </Box>
       <Divider />
     </Card>
