@@ -3,7 +3,7 @@ require_relative '../../../lib/inferno/apps/cli/evaluate'
 RSpec.describe Inferno::CLI::Evaluate do
   let(:evaluate) { described_class.new }
   let(:compose_file) { File.expand_path('../../../lib/inferno/apps/cli/evaluate/docker-compose.evaluate.yml', __dir__) }
-  let(:fhirpath_url) { 'http://localhost:6789' }
+  let(:fhirpath_url) { 'https://example.com/fhirpath' }
 
   describe "#services_base_command" do
     it "returns the correct prefix for docker compose command" do
