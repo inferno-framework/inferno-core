@@ -25,10 +25,10 @@ module Inferno
             end
 
             if unused_extensions.any?
-              message = "Found unused extensions defined in the IG: \n\t #{unused_extensions.join(', ')}"
+              message = "Found defined extensions in the IG without examples: \n\t #{unused_extensions.join(', ')}"
               result = EvaluationResult.new(message, rule: self)
             else
-              message = 'All defined extensions are represented in examples'
+              message = 'All defined extensions in the IG have examples.'
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             end
 

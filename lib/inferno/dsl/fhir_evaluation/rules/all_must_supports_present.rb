@@ -48,7 +48,7 @@ module Inferno
             else
               message = 'Found Profiles with not all MustSupports represented:'
               missing_items_by_profile.each do |profile_url, missing_items|
-                message += "\n\t\t#{profile_url}: #{missing_items.join(', ')}"
+                message += "\n\t#{profile_url}: #{missing_items.join(', ')}"
               end
               result = EvaluationResult.new(message, rule: self)
             end
