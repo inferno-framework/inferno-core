@@ -39,7 +39,7 @@ module Inferno
       # # => []
       # expand_requirement_ids('1,3,5-7', 'example-ig')
       # # => ['example-ig@1','example-ig@3','example-ig@5','example-ig@6','example-ig@7']
-      def self.expand_requirement_ids(requirement_id_string, default_set = nil)
+      def self.expand_requirement_ids(requirement_id_string, default_set = nil) # rubocop:disable Metrics/CyclomaticComplexity
         return [] if requirement_id_string.blank?
 
         current_set = default_set
