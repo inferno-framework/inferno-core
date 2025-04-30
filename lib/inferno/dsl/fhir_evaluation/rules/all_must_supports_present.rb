@@ -46,7 +46,7 @@ module Inferno
             if missing_items_by_profile.count.zero?
               result = EvaluationResult.new('All MustSupports are present', severity: 'success', rule: self)
             else
-              message = 'Found Profiles with not all MustSupports presented:'
+              message = 'Found Profiles with not all MustSupports represented:'
               missing_items_by_profile.each do |profile_url, missing_items|
                 message += "\n\t#{profile_url}: #{missing_items.join(', ')}"
               end
