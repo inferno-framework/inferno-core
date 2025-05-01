@@ -22,11 +22,11 @@ module Inferno
         puts 'Starting Inferno Evaluator Services...'
         system("#{services_base_command} up -d #{services_names}")
 
-        if ig_path.starts_with? '~'
-          ig_path = ig_path.sub('~', Dir.home)
-        else
-          ig_path = File.absolute_path(ig_path)
-        end
+        ig_path = if ig_path.starts_with? '~'
+                    ig_path.sub('~', Dir.home)
+                  else
+                    File.absolute_path(ig_path)
+                  end
 
         Dir.chdir(tmpdir) do
           Migration.new.run(Logger::FATAL) # Hide migration output for evaluator
@@ -46,8 +46,8 @@ module Inferno
       def services_names
         return @service_names if @service_names
 
-        @service_names = 'hl7_validator_service' +
-                      ((Faraday.get("#{ENV['FHIRPATH_URL']}/version").status != 200) ? ' fhirpath' : '')
+        fhirpath_health = Faraday.get("#{ENV.fetch('FHIRPATH_URL', nil)}/version").status
+        @service_names = "hl7_validator_service #{fhirpath_health == 200 ? '' : 'fhirpath'}"
       rescue Faraday::Error
         @service_names = 'hl7_validator_service fhirpath'
       end
