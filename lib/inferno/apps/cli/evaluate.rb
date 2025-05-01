@@ -2,6 +2,7 @@ require_relative '../../dsl/fhir_evaluation/evaluator'
 require_relative '../../dsl/fhir_evaluation/config'
 require_relative '../../entities'
 require_relative '../../utils/ig_downloader'
+require_relative 'migration'
 
 require 'tempfile'
 require 'faraday'
@@ -10,8 +11,7 @@ module Inferno
   module CLI
     class Evaluate
       # @see Inferno::CLI::Main#evaluate
-      # @param *args - Arguments passed to #evaluate, but first argument must be ig_path
-      def run(*args)
+      def run(ig_path, data_path, options, _log_level)
         tmpdir = Dir.mktmpdir
         Dir.mkdir("#{tmpdir}/data")
         Dir.mkdir("#{tmpdir}/data/igs")
@@ -22,14 +22,15 @@ module Inferno
         puts 'Starting Inferno Evaluator Services...'
         system("#{services_base_command} up -d #{services_names}")
 
-        if args[0].starts_with? '~'
-          args[0] = args[0].gsub('~', Dir.home)
+        if ig_path.starts_with? '~'
+          ig_path = ig_path.sub('~', Dir.home)
         else
-          args[0] = File.absolute_path(args[0])
+          ig_path = File.absolute_path(ig_path)
         end
 
         Dir.chdir(tmpdir) do
-          evaluate(*args)
+          Migration.new.run(_log_level)
+          evaluate(ig_path, data_path, options, _log_level)
         end
       ensure
         system("#{services_base_command} down #{services_names}")
@@ -51,12 +52,12 @@ module Inferno
         @service_names = 'hl7_validator_service fhirpath'
       end
 
+      # @see Inferno::CLI::Main#evaluate
       def evaluate(ig_path, data_path, options, _log_level)
         # NOTE: repositories is required here rather than at the top of the file because
         # the tree of requires means that this file and its requires get required by every CLI app.
         # Sequel::Model, used in some repositories, fetches the table schema at instantiation.
         # This breaks the `migrate` task by fetching a table before the task runs/creates it.
-        require_relative '../../../inferno'
         require_relative '../../repositories'
 
         validate_args(ig_path, data_path)
