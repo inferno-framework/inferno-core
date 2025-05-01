@@ -29,7 +29,7 @@ module Inferno
         end
 
         Dir.chdir(tmpdir) do
-          Migration.new.run(_log_level)
+          Migration.new.run(Logger::FATAL) # Hide migration output for evaluator
           evaluate(ig_path, data_path, options, _log_level)
         end
       ensure
