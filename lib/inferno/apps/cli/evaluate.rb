@@ -11,7 +11,7 @@ module Inferno
   module CLI
     class Evaluate
       # @see Inferno::CLI::Main#evaluate
-      def run(ig_path, data_path, options, _log_level)
+      def run(ig_path, data_path, options)
         tmpdir = Dir.mktmpdir
         Dir.mkdir("#{tmpdir}/data")
         Dir.mkdir("#{tmpdir}/data/igs")
@@ -30,7 +30,7 @@ module Inferno
 
         Dir.chdir(tmpdir) do
           Migration.new.run(Logger::FATAL) # Hide migration output for evaluator
-          evaluate(ig_path, data_path, options, _log_level)
+          evaluate(ig_path, data_path, options)
         end
       ensure
         system("#{services_base_command} down #{services_names}")
@@ -53,7 +53,7 @@ module Inferno
       end
 
       # @see Inferno::CLI::Main#evaluate
-      def evaluate(ig_path, data_path, options, _log_level)
+      def evaluate(ig_path, data_path, options)
         # NOTE: repositories is required here rather than at the top of the file because
         # the tree of requires means that this file and its requires get required by every CLI app.
         # Sequel::Model, used in some repositories, fetches the table schema at instantiation.

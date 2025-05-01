@@ -45,8 +45,7 @@ module Inferno
              type: :string,
              desc: 'Export evaluation result to outcome.json as an OperationOutcome'
       def evaluate(ig_path)
-        # Evaluate.new.evaluate(ig_path, options[:data_path], Logger::INFO)
-        Evaluate.new.run(ig_path, options[:data_path], options, Logger::INFO)
+        Evaluate.new.run(ig_path, options[:data_path], options)
       end
 
       desc 'console', 'Start an interactive console session with Inferno'
