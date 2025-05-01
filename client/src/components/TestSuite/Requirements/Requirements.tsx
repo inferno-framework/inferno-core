@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
-import { Box, Card, Divider, Typography } from '@mui/material';
+import { Autocomplete, Box, Card, Divider, TextField, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { getTestSuiteRequirements } from '~/api/RequirementsApi';
+import { getSingleRequirement, getTestSuiteRequirements } from '~/api/RequirementsApi';
 import { Requirement, TestSuite } from '~/models/testSuiteModels';
 import useStyles from './styles';
 import RequirementContent from './RequirementContent';
@@ -13,15 +13,22 @@ interface RequirementsProps {
 const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
   const { classes } = useStyles();
   const [requirements, setRequirements] = React.useState<Requirement[]>([]);
+  const [filters, setFilters] = React.useState<Record<string, string>>({});
+  const [filteredRequirements, setFilteredRequirements] = React.useState<Requirement[]>([]);
   const [triedFetchRequirements, setTriedFetchRequirements] = React.useState<boolean>(false);
+
+  // const selectedValues = React.useMemo(
+  //   () => allValues.filter((v) => v.selected),
+  //   [allValues],
+  // );
 
   // Fetch requirements from API
   if (!triedFetchRequirements) {
     getTestSuiteRequirements(testSuite.id)
       .then((result) => {
         if (result.length > 0) {
-          console.log(result);
           setRequirements(result);
+          setFilteredRequirements(result);
         } else {
           enqueueSnackbar('Failed to fetch specification requirements', { variant: 'error' });
         }
@@ -34,6 +41,17 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
     setTriedFetchRequirements(true);
   }
 
+  const filterRequirements = (filters: Record<string, string>) => {
+    let requirementsCopy = requirements;
+    Object.entries(filters).forEach(([filterName, value]) => {
+      if (!value || value === 'Any') return;
+      requirementsCopy = requirementsCopy.filter(
+        (requirement) => requirement[filterName as keyof Requirement] === value,
+      );
+    });
+    setFilteredRequirements(requirementsCopy);
+  };
+
   return (
     <Card variant="outlined">
       <Box className={classes.header}>
@@ -44,7 +62,19 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
         </span>
       </Box>
       <Box m={2} overflow="auto">
-        header
+        <Autocomplete
+          size="small"
+          options={['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD', 'DEPRECATED']}
+          renderInput={(params) => (
+            <TextField {...params} label="Conformance" variant="standard" color="secondary" />
+          )}
+          onChange={(event, value) => {
+            const newFilters = { ...filters, conformance: value || '' };
+            setFilters(newFilters);
+            filterRequirements(newFilters);
+          }}
+          sx={{ width: 200 }}
+        />
       </Box>
       <Divider />
       <Box m={2} overflow="auto">
@@ -52,7 +82,7 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
         <Typography variant="h5" component="p" fontWeight="bold" sx={{ mb: 2 }}>
           test
         </Typography> */}
-        <RequirementContent requirements={requirements} />
+        <RequirementContent requirements={filteredRequirements} />
       </Box>
       <Divider />
     </Card>

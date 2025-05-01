@@ -86,7 +86,7 @@ export type Requirement = {
   conformance: string;
   actor: string;
   conditionality: string;
-  url: string;
+  url?: string;
   sub_requirements: string[];
 };
 
