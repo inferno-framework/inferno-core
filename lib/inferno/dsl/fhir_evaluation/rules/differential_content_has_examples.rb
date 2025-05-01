@@ -15,7 +15,7 @@ module Inferno
               message = gen_differential_fail_message(unused_differential)
               result = EvaluationResult.new(message, rule: self)
             else
-              message = 'All differential fields are represented in instances'
+              message = 'All differential fields are used in examples.'
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             end
 
@@ -110,7 +110,7 @@ module Inferno
           end
 
           def gen_differential_fail_message(unused_differential)
-            "Found fields highlighted in the differential view, but not used in instances: #{
+            "Found fields highlighted in the differential view, but not used in examples: #{
                             unused_differential.map do |url, field|
                               next if field.empty?
 

@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Typography, Container, Box } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { TestSuite, TestSession } from '~/models/testSuiteModels';
@@ -43,12 +43,12 @@ const LandingPage: FC<LandingPageProps> = ({ testSuites }) => {
 
   const startTestingClick = (suite?: TestSuite) => {
     if (suite && suite.suite_options && suite.suite_options.length > 0) {
-      navigate(`${suite.id}`);
+      void navigate(`${suite.id}`);
     } else if ((suite && suite?.id) || testSuiteChosen) {
       postTestSessions(suite?.id || testSuiteChosen, null, null)
         .then((testSession: TestSession | null) => {
           if (testSession && testSession.test_suite) {
-            navigate(
+            void navigate(
               `/${testSession.test_suite_id}/${testSession.id}#${testSession.test_suite_id}`,
             );
           }

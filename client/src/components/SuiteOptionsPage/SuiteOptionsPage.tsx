@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import { Typography, Box, Container } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -80,7 +80,7 @@ const SuiteOptionsPage: FC<SuiteOptionsPageProps> = ({ testSuite }) => {
         if (testSession && testSession.test_suite) {
           // eslint-disable-next-line max-len
           const url = `/${testSession.test_suite_id}/${testSession.id}#${testSession.test_suite_id}`;
-          navigate(url);
+          void navigate(url);
           // Use window navigation as a workaround for router errors
           const root = basePath ? `/${basePath}` : window.location.origin;
           window.location.href = `${root}${url}`;

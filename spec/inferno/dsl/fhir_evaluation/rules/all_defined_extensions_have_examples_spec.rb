@@ -56,7 +56,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllDefinedExtensionsHaveExam
     result = described_class.new.check(context)[0]
 
     expect(result.severity).to eq('success')
-    expect(result.message).to eq('All defined extensions are represented in examples')
+    expect(result.message).to eq('All defined extensions in the IG have examples.')
   end
 
   it 'identifies missing extensions' do
@@ -69,6 +69,6 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllDefinedExtensionsHaveExam
     result = described_class.new.check(context)[0]
 
     expect(result.severity).to eq('warning')
-    expect(result.message).to eq("Found unused extensions defined in the IG: \n\t http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct")
+    expect(result.message).to eq("Found defined extensions in the IG without examples: \n\t http://hl7.org/fhir/us/core/StructureDefinition/us-core-direct")
   end
 end

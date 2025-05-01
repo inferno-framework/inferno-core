@@ -29,7 +29,7 @@ module Inferno
               message = gen_reference_fail_message(unresolved_references)
               result = EvaluationResult.new(message, rule: self)
             else
-              message = 'All references resolve'
+              message = 'All references in examples resolve.'
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             end
 
@@ -44,7 +44,7 @@ module Inferno
               "\n Resource (id): #{resource_id} #{reference_detail}"
             end.join(',')
 
-            "Found unresolved references: #{result_message}"
+            "Found unresolved references in examples: #{result_message}"
           end
         end
       end

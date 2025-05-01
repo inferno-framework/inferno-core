@@ -29,7 +29,7 @@ module Inferno
               message = "Found profiles without examples: \n\t #{unused_profile_urls.join(', ')}"
               result = EvaluationResult.new(message, rule: self)
             else
-              message = 'All profiles have example instances.'
+              message = 'All profiles have examples.'
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             end
 

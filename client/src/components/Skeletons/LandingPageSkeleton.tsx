@@ -10,7 +10,7 @@ const LandingPageSkeleton: FC<Record<string, never>> = () => {
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
 
   return (
-    <Container className={classes.main} data-testid="landingPageSkeleton">
+    <Container maxWidth={false} className={classes.main} data-testid="landingPageSkeleton">
       <Box
         display="flex"
         flexDirection="column"

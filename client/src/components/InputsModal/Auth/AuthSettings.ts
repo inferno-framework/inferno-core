@@ -70,7 +70,7 @@ export const getAuthFields = (
       description: "URL of the server's authorization endpoint",
       optional: true,
       locked: lockedInput,
-      hide: authValues?.get('use_discovery') === 'true',
+      hidden: authValues?.get('use_discovery') === 'true',
     },
     {
       name: 'token_url',
@@ -78,7 +78,7 @@ export const getAuthFields = (
       description: "URL of the authorization server's token endpoint",
       optional: true,
       locked: lockedInput,
-      hide: authValues?.get('use_discovery') === 'true',
+      hidden: authValues?.get('use_discovery') === 'true',
     },
     {
       name: 'requested_scopes',
@@ -139,7 +139,7 @@ export const getAuthFields = (
           },
         ],
       },
-      hide: authValues ? authValues.get('pkce_support') === 'disabled' : false,
+      hidden: authValues ? authValues.get('pkce_support') === 'disabled' : false,
     },
     {
       name: 'auth_request_method',
@@ -207,12 +207,12 @@ export const getAuthFields = (
     }
   });
 
-  // Remove extra properties based on auth type or hide if no settings
+  // Remove extra properties based on auth type or hidden if no settings
   const typeValues = authSettings[authType];
   if (authSettings && authType) {
     return fields.filter((field) => typeValues?.includes(field.name));
   }
-  fields.forEach((field) => (field.hide = field.hide || !typeValues?.includes(field.name)));
+  fields.forEach((field) => (field.hidden = field.hidden || !typeValues?.includes(field.name)));
   return fields;
 };
 
@@ -281,7 +281,7 @@ export const getAccessFields = (
       description: 'Client ID provided during registration of Inferno',
       optional: true,
       locked: lockedInput,
-      hide: tokenDoesNotExist,
+      hidden: tokenDoesNotExist,
     },
     {
       name: 'client_secret',
@@ -289,7 +289,7 @@ export const getAccessFields = (
       description: 'Client secret provided during registration of Inferno',
       optional: true,
       locked: lockedInput,
-      hide: !accessValues.get('refresh_token'),
+      hidden: !accessValues.get('refresh_token'),
     },
     {
       name: 'token_url',
@@ -297,7 +297,7 @@ export const getAccessFields = (
       description: "URL of the authorization server's token endpoint",
       optional: true,
       locked: lockedInput,
-      hide: tokenDoesNotExist,
+      hidden: tokenDoesNotExist,
     },
     {
       name: 'encryption_algorithm',
@@ -305,7 +305,7 @@ export const getAccessFields = (
       title: 'Encryption Algorithm',
       optional: true,
       locked: lockedInput,
-      hide: tokenDoesNotExist,
+      hidden: tokenDoesNotExist,
     },
     {
       name: 'kid',
@@ -326,7 +326,7 @@ export const getAccessFields = (
           },
         ],
       },
-      hide: tokenDoesNotExist,
+      hidden: tokenDoesNotExist,
     },
     {
       name: 'jwks',
@@ -336,7 +336,7 @@ export const getAccessFields = (
         "The JWKS (including private keys) which will be used to sign the client assertion. If blank, Inferno's default JWKS will be used.",
       optional: true,
       locked: lockedInput,
-      hide: tokenDoesNotExist,
+      hidden: tokenDoesNotExist,
     },
     {
       name: 'issue_time',
@@ -344,7 +344,7 @@ export const getAccessFields = (
       description: 'The time that the access token was issued in iso8601 format',
       optional: true,
       locked: lockedInput,
-      hide: tokenDoesNotExist,
+      hidden: tokenDoesNotExist,
     },
     {
       name: 'expires_in',
@@ -352,7 +352,7 @@ export const getAccessFields = (
       description: 'The lifetime of the access token in seconds',
       optional: true,
       locked: lockedInput,
-      hide: tokenDoesNotExist,
+      hidden: tokenDoesNotExist,
     },
   ] as TestInput[];
 
@@ -365,11 +365,11 @@ export const getAccessFields = (
     }
   });
 
-  // Remove extra properties based on auth type or hide if no settings
+  // Remove extra properties based on auth type or hidden if no settings
   const typeValues = accessSettings[authType];
   if (accessSettings && authType) {
     return fields.filter((field) => typeValues?.includes(field.name));
   }
-  fields.forEach((field) => (field.hide = field.hide || !typeValues?.includes(field.name)));
+  fields.forEach((field) => (field.hidden = field.hidden || !typeValues?.includes(field.name)));
   return fields;
 };
