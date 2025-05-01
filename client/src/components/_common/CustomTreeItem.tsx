@@ -9,7 +9,7 @@ import {
 import clsx from 'clsx';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import lightTheme from '~/styles/theme';
 import { useTestSessionStore } from '~/store/testSession';
 
@@ -75,7 +75,7 @@ const CustomContent = React.forwardRef(function CustomContent(
     event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>,
   ) => {
     handleSelection(event as React.MouseEvent<HTMLDivElement, MouseEvent>);
-    if (testId) navigate(`#${testId}${viewOnlyUrl}`);
+    if (testId) void navigate(`#${testId}${viewOnlyUrl}`);
   };
 
   return (

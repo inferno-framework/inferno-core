@@ -12,7 +12,7 @@ module Inferno
               message = get_fail_message(unused_extensions)
               result = EvaluationResult.new(message, rule: self)
             else
-              message = 'All extensions specified in profiles are represented in instances.'
+              message = 'All extensions specified in profiles are used in examples.'
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             end
 
@@ -63,7 +63,7 @@ module Inferno
           end
 
           def get_fail_message(extensions)
-            message = 'Found extensions specified in profiles, but not used in instances:'
+            message = 'Found extensions specified in profiles, but NOT used in examples:'
             extensions.each do |profile, extension|
               message += "\n Profile: #{profile}, \n\tExtensions: #{extension.join(', ')}" unless extension.empty?
             end
