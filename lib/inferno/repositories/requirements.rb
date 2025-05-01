@@ -33,7 +33,6 @@ module Inferno
 
         result.each do |raw_req|
           requirement = Entities::Requirement.new(raw_req)
-          next if exists?(requirement.id)
 
           insert(requirement)
         end
