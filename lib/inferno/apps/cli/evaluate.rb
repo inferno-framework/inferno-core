@@ -9,7 +9,9 @@ require 'faraday'
 module Inferno
   module CLI
     class Evaluate
-      def run(*)
+      # @see Inferno::CLI::Main#evaluate
+      # @param *args - Arguments passed to #evaluate, but first argument must be ig_path
+      def run(*args)
         tmpdir = Dir.mktmpdir
         Dir.mkdir("#{tmpdir}/data")
         Dir.mkdir("#{tmpdir}/data/igs")
@@ -20,8 +22,14 @@ module Inferno
         puts 'Starting Inferno Evaluator Services...'
         system("#{services_base_command} up -d #{services_names}")
 
+        if args[0].starts_with? '~'
+          args[0] = args[0].gsub('~', Dir.home)
+        else
+          args[0] = File.absolute_path(args[0])
+        end
+
         Dir.chdir(tmpdir) do
-          evaluate(*)
+          evaluate(*args)
         end
       ensure
         system("#{services_base_command} down #{services_names}")
@@ -35,14 +43,12 @@ module Inferno
       end
 
       def services_names
-        names = 'hl7_validator_service'
+        return @service_names if @service_names
 
-        # Since fhirpath service may already be exposed by a test kit, we toggle it
-        names += ' fhirpath' if Faraday.get("#{ENV['FHIRPATH_URL']}/version").status != 200
-        names
+        @service_names = 'hl7_validator_service' +
+                      ((Faraday.get("#{ENV['FHIRPATH_URL']}/version").status != 200) ? ' fhirpath' : '')
       rescue Faraday::Error
-        names += ' fhirpath'
-        names
+        @service_names = 'hl7_validator_service fhirpath'
       end
 
       def evaluate(ig_path, data_path, options, _log_level)
@@ -50,6 +56,7 @@ module Inferno
         # the tree of requires means that this file and its requires get required by every CLI app.
         # Sequel::Model, used in some repositories, fetches the table schema at instantiation.
         # This breaks the `migrate` task by fetching a table before the task runs/creates it.
+        require_relative '../../../inferno'
         require_relative '../../repositories'
 
         validate_args(ig_path, data_path)
