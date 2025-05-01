@@ -61,6 +61,7 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
           </Typography>
         </span>
       </Box>
+      {/* Filters */}
       <Box m={2} overflow="auto">
         <Autocomplete
           size="small"
@@ -82,7 +83,11 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
         <Typography variant="h5" component="p" fontWeight="bold" sx={{ mb: 2 }}>
           test
         </Typography> */}
-        <RequirementContent requirements={filteredRequirements} />
+        {filteredRequirements.length > 0 ? (
+          <RequirementContent requirements={filteredRequirements} />
+        ) : (
+          <Typography fontStyle="italic">No requirements found.</Typography>
+        )}
       </Box>
       <Divider />
     </Card>
