@@ -9,7 +9,7 @@ Inferno::Application.register_provider(:db) do
 
     Sequel::Model.plugin :json_serializer
 
-    config_path = File.expand_path('database.yml', File.join(Dir.pwd, 'config')) # TODO replace Dir.pwd with test_kit_root or global_path based on mode
+    config_path = File.expand_path('database.yml', File.join(Dir.pwd, 'config')) # TODO: replace Dir.pwd with test_kit_root or global_path based on mode
     config_contents = ERB.new(File.read(config_path)).result
     config = YAML.safe_load(config_contents)[ENV.fetch('APP_ENV', nil)]
       .merge(logger: Inferno::Application['logger'])
