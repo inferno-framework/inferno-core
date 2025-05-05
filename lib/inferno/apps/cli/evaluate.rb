@@ -4,6 +4,7 @@ require_relative '../../entities'
 require_relative '../../utils/ig_downloader'
 require_relative 'migration'
 
+require 'fileutils'
 require 'tempfile'
 require 'faraday'
 
@@ -15,6 +16,9 @@ module Inferno
         tmpdir = Dir.mktmpdir
         Dir.mkdir("#{tmpdir}/data")
         Dir.mkdir("#{tmpdir}/data/igs")
+        Dir.mkdir("#{tmpdir}/config")
+        FileUtils.cp(File.expand_path('evaluate/database.yml', __dir__), "#{tmpdir}/config/database.yml")
+
         ENV['TMPDIR'] = tmpdir
         ENV['FHIRPATH_URL'] = 'http://localhost:6789'
         ENV['FHIR_RESOURCE_VALIDATOR_URL'] = 'http://localhost:3500'
