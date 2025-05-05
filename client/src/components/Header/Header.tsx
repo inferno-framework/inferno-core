@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { AppBar, Avatar, Box, Button, IconButton, Link, Toolbar, Typography } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router';
 import { Menu, NoteAdd } from '@mui/icons-material';
 import { basePath, getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice } from '~/models/testSuiteModels';
@@ -99,6 +99,7 @@ const Header: FC<HeaderProps> = ({
                 className={classes.homeLink}
               >
                 {suiteTitle}
+                {viewOnly ? ' (View Only)' : ''}
               </RouterLink>
             </Typography>
             {suiteVersion && (

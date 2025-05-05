@@ -35,7 +35,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllProfilesHaveExamples do
 
     result = described_class.new.check(context)[0]
 
-    expect(result.message).to eq('All profiles have example instances.')
+    expect(result.message).to eq('All profiles have examples.')
   end
 
   it 'can recognize unused profiles by meta.profile' do

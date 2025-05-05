@@ -1,0 +1,141 @@
+module <%= module_name %>
+  class PatientGroup < Inferno::TestGroup
+    title 'Patient'
+
+    description <<~DESCRIPTION
+      This scenario verifies the ability of a system to provide a Patient as described in the Example criterion.
+
+      *or*
+
+      The Example Patient sequence verifies that the system under test is able to provide correct responses for Patient queries.
+
+      ## Requirements
+
+      Patient queries must contain resources conforming to the Example Patient as specified in the Example Implementation Guide.
+
+      *or*
+
+      All Must Support elements must be seen before the test can pass, as well as Data Absent Reason to demonstrate that the server
+      can properly handle missing data. Note that Organization, Practitioner, and RelatedPerson resources must be accessible as
+      references in some Example profiles to satisfy must support requirements, and those references will be validated to their Example
+      profile. These resources will not be tested for FHIR search support.
+
+      ## <*If applicable*> Dependencies
+      Prior to running this scenario, systems must recieve a verified access token from one of the previous SMART App Launch scenarios.
+
+      *or*
+
+      Prior to running this scenario, first run the Single Patient API tests using resource-level scopes, as this scenario uses content
+      saved from that scenario as a baseline for comparison when finer-grained scopes are granted.
+
+      ## <*If applicable*> Methodology
+
+      *Only include if different from instructions included in a parent group or suite*
+
+      The test begins by searching by one or more patients, with the expectation that the Bearer token provided to the test grants
+      access to all Resources. It uses results returned from that query to generate other queries and checks that the results are
+      consistent with the provided search parameters. It then performs a read on each Resource returned and validates the response
+      against the relevant profile as currently defined in the Example Implementation Guide.
+
+      *or*
+
+      ### Searching
+
+      This test sequence will first perform each required search associated with this resource.
+      This sequence will perform searches with the following parameters:
+      - _id
+      - identifier
+      - name
+      - birthdate + name
+      - gender + name
+
+      #### Search Parameters
+
+      The first search uses the selected patient(s) from the prior launch sequence. Any subsequent searches will look for its parameter
+      values from the results of the first search. For example, the `identifier` search in the patient sequence is performed by looking
+      for an existing `Patient.identifier` from any of the resources returned in the `_id` search. If a value cannot be found this way,
+      the search is skipped.
+
+      #### Search Validation
+
+      Inferno will retrieve up to the first 20 bundle pages of the reply for Patient resources and save them for subsequent tests.
+      Each of these resources is then checked to see if it matches the searched parameters in accordance with [FHIR search guidelines](https://www.hl7.org/fhir/search.html).
+      The test will fail, for example, if a Patient search for gender=male returns a female patient.
+
+      ### Must Support
+
+      Each profile contains elements marked as "must support". This test sequence expects to see each of these elements at least once.
+      If at least one cannot be found, the test will fail. The test will look through the Patient resources found in the first test
+      for these elements.
+
+      ### Profile Validation
+
+      Each resource returned from the first search is expected to conform to the [Example Patient Profile](https://www.example.com/patient/profile).
+      Each element is checked against teminology binding and cardinality requirements.
+
+      Elements with a required binding are validated against their bound ValueSet. If the code/system in the element is not part of the
+      ValueSet, then the test will fail.
+
+      ### Reference Validation
+
+      At least one instance of each external reference in elements marked as "must support" within the resources provided by the
+      system must resolve. The test will attempt to read each reference found and will fail if no read succeeds.
+
+      ## <*If applicable*> Running the Tests
+
+      *Only include if different from instructions included in a parent group or suite*
+
+      Register Inferno as an EHR-launched application using patient-level scopes and the following URIs:
+      - Launch URI: https://inferno.healthit.gov/suites/custom/smart/launch
+      - Redirect URI: https://inferno.healthit.gov/suites/custom/smart/redirect
+
+      ## <*If top-level group for criteria*> Relevant Specifications
+
+      The following implementation specifications are relevant to this scenario:
+      - [Specification 1 v1](https://www.example.com/spec1/v1)
+      - [Specification 1 v2](https://www.example.com/spec1/v2)
+      - [Specification 2 v5](https://www.example.com/spec1/v1)
+
+    DESCRIPTION
+
+    id :patient_group
+
+    test do
+      title 'Server returns requested Patient resource from the Patient read interaction'
+      description %(
+        Verify that Patient resources can be read from the server. Expects a 200 response that includes a Patient
+        resource whose ID matches the requested patient ID.
+      )
+
+      input :patient_id,
+            title: 'Patient ID'
+
+      # Named requests can be used by other tests
+      makes_request :patient
+
+      run do
+        fhir_read(:patient, patient_id, name: :patient)
+
+        assert_response_status(200)
+        assert_resource_type(:patient)
+        assert resource.id == patient_id,
+               "Requested resource with id #{patient_id}, received resource with id #{resource.id}"
+      end
+    end
+
+    test do
+      title 'Patient resource is valid'
+      description %(
+        Verify that the Patient resource returned from the server is a valid FHIR resource.
+      )
+      # This test will use the response from the :patient request in the
+      # previous test
+      uses_request :patient
+
+      run do
+        assert_resource_type(:patient)
+        assert_valid_resource
+      end
+    end
+  end
+end

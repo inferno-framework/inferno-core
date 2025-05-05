@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { render, screen } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 import { describe, expect, it, vi } from 'vitest';

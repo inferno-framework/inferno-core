@@ -175,10 +175,10 @@ module Inferno
           begin
             response = call_validator(resource, profile_url)
           rescue StandardError => e
-            # This could be a complete failure to connect (validator isn't running)
-            # or a timeout (validator took too long to respond).
             runnable.add_message('error', e.message)
-            raise Inferno::Exceptions::ErrorInValidatorException, "Unable to connect to validator at #{url}."
+            Application[:logger].error(e.message)
+
+            raise Inferno::Exceptions::ErrorInValidatorException, validator_error_message(e)
           end
 
           outcome = operation_outcome_from_validator_response(response, runnable)
@@ -339,6 +339,28 @@ module Inferno
           raise Inferno::Exceptions::ErrorInValidatorException,
                 'Validator response was an unexpected format. ' \
                 'Review Messages tab or validator service logs for more information.'
+        end
+
+        # Add a specific error message for specific network problems to help the user
+        #
+        # @private
+        # @param error [Exception] An error exception that happened during evaluator connection
+        # @return [String] A readable error message describing the specific network problem
+        def validator_error_message(error)
+          case error
+          when Faraday::ConnectionFailed
+            "Connection failed to validator at #{url}."
+          when Faraday::TimeoutError
+            "Timeout while connecting to validator at #{url}."
+          when Faraday::SSLError
+            "SSL error connecting to validator at #{url}."
+          when Faraday::ClientError  # these are 400s
+            "Client error (4xx) connecting to validator at #{url}."
+          when Faraday::ServerError  # these are 500s
+            "Server error (5xx) from validator at #{url}."
+          else
+            "Unable to connect to validator at #{url}."
+          end
         end
       end
 

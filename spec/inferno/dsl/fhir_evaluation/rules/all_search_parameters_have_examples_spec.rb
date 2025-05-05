@@ -198,7 +198,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllSearchParametersHaveExamp
     result = described_class.new.check(context)[0]
 
     # rubocop:disable Layout/LineLength
-    expect(result.message).to eq("Found SearchParameters with no searchable data: \n\thttp://hl7.org/fhir/us/core/SearchParameter/us-core-practitionerrole-practitioner ,http://hl7.org/fhir/us/core/SearchParameter/us-core-practitionerrole-specialty")
+    expect(result.message).to eq("Found SearchParameters with no searchable data in examples: \n\thttp://hl7.org/fhir/us/core/SearchParameter/us-core-practitionerrole-practitioner\n\thttp://hl7.org/fhir/us/core/SearchParameter/us-core-practitionerrole-specialty")
     # rubocop:enable Layout/LineLength
   end
 end

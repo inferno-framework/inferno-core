@@ -155,6 +155,7 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
         const combinedValues = { ...combinedStartingValues, ...accessValuesObject };
         stringifiedValues = JSON.stringify(combinedValues);
       }
+
       inputsMap.set(input.name, stringifiedValues);
       setInputsMap(new Map(inputsMap));
     }

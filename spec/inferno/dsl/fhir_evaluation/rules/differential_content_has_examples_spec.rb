@@ -62,7 +62,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::DifferentialContentHasExampl
     result = described_class.new.check(context)[0]
 
     # expect(result.severity).to eq('success')
-    expect(result.message).to eq('All differential fields are represented in instances')
+    expect(result.message).to eq('All differential fields are used in examples.')
   end
 
   it 'identifies unused differential content' do
@@ -79,7 +79,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::DifferentialContentHasExampl
     result = described_class.new.check(context)[0]
 
     # rubocop:disable Layout/LineLength
-    expect(result.message).to eq("Found fields highlighted in the differential view, but not used in instances: \n Profile/Extension: http://hl7.org/fhir/us/core/StructureDefinition/us-core-medication  \n\tFields: code")
+    expect(result.message).to eq("Found fields highlighted in the differential view, but not used in examples: \n Profile/Extension: http://hl7.org/fhir/us/core/StructureDefinition/us-core-medication  \n\tFields: code")
     # rubocop:enable Layout/LineLength
   end
 end
