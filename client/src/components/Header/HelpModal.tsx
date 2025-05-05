@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
 import { Result } from '~/models/testSuiteModels';
+import lightTheme from '~/styles/theme';
 
 export interface HelpModalProps {
   modalVisible: boolean;
@@ -109,16 +110,22 @@ const HelpModal: FC<HelpModalProps> = ({ hideModal, modalVisible }) => {
           <Typography component="h3" fontWeight="bold" sx={{ mb: 2 }}>
             Test Icon Legend
           </Typography>
-          <Divider />
           <TableContainer component={Paper} elevation={0}>
             <Table size="small" aria-label="icon legend">
               <TableBody>
                 {iconLegend.map((row) => (
                   <TableRow
                     key={row.label}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                    sx={{ borderTop: `1px solid ${lightTheme.palette.common.grayLight}` }}
                   >
-                    <TableCell sx={{ display: 'flex', alignItems: 'center', fontWeight: 'bold' }}>
+                    <TableCell
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        fontWeight: 'bold',
+                        borderBottom: 0,
+                      }}
+                    >
                       <ResultIcon
                         result={
                           // Since we only need the icon appearance, the other required fields
@@ -137,7 +144,7 @@ const HelpModal: FC<HelpModalProps> = ({ hideModal, modalVisible }) => {
                       />
                       <Box px={1}>{row.label}</Box>
                     </TableCell>
-                    <TableCell>{row.description}</TableCell>
+                    <TableCell sx={{ borderBottom: 0 }}>{row.description}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
