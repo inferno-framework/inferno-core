@@ -27,11 +27,11 @@ module Inferno
             island_resources.to_a.sort!
 
             if island_resources.any?
-              message = "Found resources that have no resolved references and are not referenced: #{
+              message = "Found resources in examples have no resolved references and are not referenced: #{
                 island_resources.join(', ')}"
               result = EvaluationResult.new(message, rule: self)
             else
-              message = 'All resources are reachable'
+              message = 'All resources in examples are reachable.'
               result = EvaluationResult.new(message, severity: 'success', rule: self)
             end
 

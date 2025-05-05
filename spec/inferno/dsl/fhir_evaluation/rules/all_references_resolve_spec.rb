@@ -12,7 +12,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
 
     result = described_class.new.check(context)[0]
 
-    expect(result.message).to eq('All references resolve')
+    expect(result.message).to eq('All references in examples resolve.')
   end
 
   it 'identifies good references by uuid' do
@@ -25,7 +25,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
 
     result = described_class.new.check(context)[0]
 
-    expect(result.message).to eq('All references resolve')
+    expect(result.message).to eq('All references in examples resolve.')
   end
 
   it 'identifies unresolvable references by simple id' do
@@ -36,7 +36,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
                                                                   nil)
 
     result = described_class.new.check(context)[0]
-    msg = 'Found unresolved references'
+    msg = 'Found unresolved references in examples'
 
     expect(result.message).to eq("#{msg}: \n Resource (id): enc0  \n\tpath: subject, type: , id: wrongid")
   end
@@ -51,7 +51,7 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllReferencesResolve do
 
     result = described_class.new.check(context)[0]
     id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'
-    msg = 'Found unresolved references'
+    msg = 'Found unresolved references in examples'
     expect(result.message).to eq("#{msg}: \n Resource (id): enc444  \n\tpath: subject, type: , id: #{id}")
   end
 end
