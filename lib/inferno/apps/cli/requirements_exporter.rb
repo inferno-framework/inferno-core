@@ -62,20 +62,20 @@ module Inferno
 
       # Of the form:
       # {
-      #   req_set_id_1: [row1, row2, row 3, ...],
-      #   req_set_id_2: [row1, row2, row 3, ...]
+      #   requirement_set_id_1: [row1, row2, row 3, ...],
+      #   requirement_set_id_2: [row1, row2, row 3, ...]
       # }
       def input_requirement_sets
-        @input_requirement_sets ||= INPUT_SETS.each_with_object({}) do |req_set_id, hash|
-          req_set_file = available_input_worksheets.find { |worksheet_file| worksheet_file.include?(req_set_id) }
-
-          hash[req_set_id] =
-            unless req_set_file.nil?
-              CSV.parse(Roo::Spreadsheet.open(req_set_file).sheet('Requirements').to_csv,
-                        headers: true).map do |row|
-                row.to_h.slice(*INPUT_HEADERS)
-              end
-            end
+        requirement_set_hash = Hash.new { |hash, key| hash[key] = [] }
+        available_input_worksheets.each_with_object(requirement_set_hash) do |worksheet_file, requirement_sets|
+          CSV.parse(
+            Roo::Spreadsheet.open(worksheet_file).sheet('Requirements').to_csv,
+            headers: true
+          ).each do |row|
+            row_hash = row.to_h
+            requirement_set_id = row_hash['Req Set']
+            requirement_sets[requirement_set_id] << row_hash.slice(*INPUT_HEADERS)
+          end
         end
       end
 
@@ -84,10 +84,10 @@ module Inferno
           CSV.generate(+"\xEF\xBB\xBF") do |csv| # start with an unnecessary BOM to make viewing in excel easier
             csv << REQUIREMENTS_OUTPUT_HEADERS
 
-            input_requirement_sets.each do |req_set_id, input_rows|
+            input_requirement_sets.each do |requirement_set_id, input_rows|
               input_rows.each do |input_row| # NOTE: use row order from source file
                 csv << REQUIREMENTS_OUTPUT_HEADERS.map do |header|
-                  header == 'Req Set' ? req_set_id : input_row[header] || input_row["#{header}*"]
+                  header == 'Req Set' ? requirement_set_id : input_row[header] || input_row["#{header}*"]
                 end
               end
             end
@@ -103,12 +103,12 @@ module Inferno
           CSV.generate(+"\xEF\xBB\xBF") do |csv| # start with an unnecessary BOM to make viewing in excel easier
             csv << PLANNED_NOT_TESTED_OUTPUT_HEADERS
 
-            input_requirement_sets.each do |req_set_id, input_rows|
+            input_requirement_sets.each do |requirement_set_id, input_rows|
               input_rows.each do |row|
                 if spreadsheet_value_falsy?(row['Verifiable?'])
-                  csv << [req_set_id, row['ID*'], 'Not Verifiable', row['Verifiability Details']]
+                  csv << [requirement_set_id, row['ID*'], 'Not Verifiable', row['Verifiability Details']]
                 elsif spreadsheet_value_falsy?(row['Planning To Test?'])
-                  csv << [req_set_id, row['ID*'], 'Not Tested', row['Planning To Test Details']]
+                  csv << [requirement_set_id, row['ID*'], 'Not Tested', row['Planning To Test Details']]
                 end
               end
             end
@@ -199,26 +199,22 @@ module Inferno
         puts <<~MESSAGE
           Check Failed. To resolve, run:
 
-                bundle exec rake "requirements:collect[<base_requirements_folder>]"
+                bundle exec inferno requirements export_csv
 
         MESSAGE
         exit(1)
       end
 
       def check_presence_of_input_files
-        input_requirement_sets.each do |req_set_id, rows|
-          next unless rows.nil?
+        return if available_input_worksheets.present?
 
-          puts %(
-            Could not find input file for set #{req_set_id} in directory #{base_requirements_folder}. Aborting requirements
-            collection..."
-          )
-          exit(1)
-        end
+        puts 'Could not find any input files in directory ' \
+             "#{base_requirements_folder}. Aborting requirements collection."
+        exit(1)
       end
 
-      def spreadsheet_value_falsy?(str)
-        str&.downcase == 'no' || str&.downcase == 'false'
+      def spreadsheet_value_falsy?(string)
+        ['no', 'false'].include? string.downcase
       end
     end
   end
