@@ -1,3 +1,5 @@
+require_relative 'requirements_exporter'
+
 module Inferno
   module CLI
     class Requirements < Thor
@@ -12,7 +14,7 @@ module Inferno
       # option :filename, banner: '<filename>', aliases: [:f]
       def export_csv
         ENV['NO_DB'] = 'true'
-        SuiteInputTemplate.new.run(suite_id, options)
+        RequirementsExporter.new.run
       end
     end
   end
