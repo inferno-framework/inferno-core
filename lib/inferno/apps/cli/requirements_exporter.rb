@@ -85,7 +85,12 @@ module Inferno
           CSV.parse(
             worksheet.sheet('Requirements').to_csv,
             headers: true
-          ).each { |row| requirement_sets[set_identifier] << row.to_h.slice(*INPUT_HEADERS) }
+          ).each do |row|
+            row_hash = row.to_h.slice(*INPUT_HEADERS)
+            row_hash['Sub-Requirement(s)'].delete_prefix!('mailto:')
+
+            requirement_sets[set_identifier] << row_hash
+          end
         end
       end
 
@@ -97,7 +102,7 @@ module Inferno
             input_requirement_sets.each do |requirement_set_id, input_rows|
               input_rows.each do |input_row| # NOTE: use row order from source file
                 csv << REQUIREMENTS_OUTPUT_HEADERS.map do |header|
-                  header == 'Req Set' ? requirement_set_id : input_row[header] || input_row["#{header}*"]
+                  (header == 'Req Set' ? requirement_set_id : input_row[header] || input_row["#{header}*"])&.strip
                 end
               end
             end
