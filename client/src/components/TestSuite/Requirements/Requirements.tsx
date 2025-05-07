@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Autocomplete, Box, Button, Card, Divider, TextField, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { getSingleRequirement, getTestSuiteRequirements } from '~/api/RequirementsApi';
+import { getTestSuiteRequirements } from '~/api/RequirementsApi';
 import { Requirement, TestSuite } from '~/models/testSuiteModels';
 import useStyles from './styles';
 import RequirementContent from './RequirementContent';
@@ -77,10 +77,16 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
           }}
           sx={{ width: 200 }}
         />
-        <Button color="secondary" variant="outlined" onClick={() => {
-          setFilters({});
-          setFilteredRequirements(requirements);
-        }}>Reset Filters</Button>
+        <Button
+          color="secondary"
+          variant="outlined"
+          onClick={() => {
+            setFilters({});
+            setFilteredRequirements(requirements);
+          }}
+        >
+          Reset Filters
+        </Button>
       </Box>
       <Divider />
       <Box m={2} overflow="auto">

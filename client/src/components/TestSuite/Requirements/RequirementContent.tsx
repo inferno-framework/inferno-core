@@ -58,7 +58,7 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
             <Grid2 size={{ xs: 4, sm: 3, md: 2 }}>
               <Stack>
                 <Typography fontWeight="bold">Requirement {requirementCount}:</Typography>
-                <Typography>{requirement.actor.toUpperCase()}</Typography>
+                {/* <Typography>{requirement.actor.toUpperCase()}</Typography> */}
               </Stack>
             </Grid2>
             <Grid2 size="grow">
