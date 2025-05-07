@@ -87,7 +87,7 @@ module Inferno
             headers: true
           ).each do |row|
             row_hash = row.to_h.slice(*INPUT_HEADERS)
-            row_hash['Sub-Requirement(s)'].delete_prefix!('mailto:')
+            row_hash['Sub-Requirement(s)']&.delete_prefix!('mailto:')
 
             requirement_sets[set_identifier] << row_hash
           end
