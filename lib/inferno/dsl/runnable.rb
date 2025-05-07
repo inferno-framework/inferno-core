@@ -347,6 +347,11 @@ module Inferno
       end
 
       # @private
+      def all_descendants
+        children.flat_map { |child| [child] + child.all_descendants }
+      end
+
+      # @private
       def suite
         return self if ancestors.include? Inferno::Entities::TestSuite
 

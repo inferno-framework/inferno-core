@@ -7,6 +7,7 @@ require_relative '../dsl/links'
 require_relative '../repositories/test_groups'
 require_relative '../repositories/test_suites'
 require_relative '../result_collection'
+require_relative '../dsl/short_id_manager'
 
 module Inferno
   module Entities
@@ -18,6 +19,7 @@ module Inferno
       extend DSL::FHIRClient::ClassMethods
       extend DSL::HTTPClient::ClassMethods
       extend DSL::SuiteRequirements
+      extend DSL::ShortIDManager
       include DSL::FHIRValidation
       include DSL::FHIRResourceValidation
       include DSL::FhirpathEvaluation

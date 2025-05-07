@@ -103,7 +103,9 @@ module Inferno
           Inferno::Repositories::Tests.new
         end
 
-        def short_id
+        def short_id(new_short_id = nil)
+          return @short_id = new_short_id if new_short_id
+
           @short_id ||= begin
             prefix = parent.respond_to?(:short_id) ? "#{parent.short_id}." : ''
             suffix = parent ? (parent.tests.find_index(self) + 1).to_s.rjust(2, '0') : 'x'

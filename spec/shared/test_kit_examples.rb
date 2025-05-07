@@ -168,6 +168,38 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
         end
       end
     end
+
+    context 'when short_id map file present' do
+      it 'contains a short_id for every suite test and group' do
+        suites.each do |suite|
+          short_id_map = suite.short_id_map.dup
+          next unless short_id_map
+
+          runnable_ids = suite.all_descendants.map(&:id)
+          missing_ids = runnable_ids.reject { |id| short_id_map.delete(id).present? }
+
+          expect(missing_ids).to be_empty, <<~MSG
+            The following runnables in #{suite.short_id_file_path} are missing short_ids:
+            #{missing_ids.join(', ')}
+          MSG
+        end
+      end
+
+      it 'does not contain any extra short ids' do
+        suites.each do |suite|
+          short_id_map = suite.short_id_map.dup
+          next unless short_id_map
+
+          runnable_ids = suite.all_descendants.map(&:id)
+          extra_ids = short_id_map.keys - runnable_ids
+
+          expect(extra_ids).to be_empty, <<~MSG
+            #{suite.short_id_file_path} contains the following ids which do not belong
+            to any runnable: #{extra_ids.join(', ')}
+          MSG
+        end
+      end
+    end
   end
 
   describe 'presets' do
