@@ -16,6 +16,22 @@ module Inferno
 
       # Assigns locked short IDs to all descendant runnables based on the short ID map.
       #
+      # @example
+      #   module TestKitName
+      #     class Suite < Inferno::TestSuite
+      #       id :suite_id
+      #
+      #       group from: 'group_1'
+      #       group from: 'group_2'
+      #       group from: 'group_3'
+      #
+      #       assign_short_ids
+      #     end
+      #   end
+      #
+      #   This will assign the short_ids defined in
+      #   lib/test_kit_name/suite_short_id_map.yml to each group/test.
+      #
       # @return [void]
       def assign_short_ids
         all_descendants.each do |runnable|
