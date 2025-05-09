@@ -38,7 +38,7 @@ export default makeStyles()((theme: Theme) => ({
     fontWeight: 600,
     textDecoration: 'none',
   },
-  help: {
+  textButton: {
     fontWeight: 'bolder',
     cursor: 'pointer',
   },

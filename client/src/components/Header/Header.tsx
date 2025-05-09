@@ -150,7 +150,7 @@ const Header: FC<HeaderProps> = ({
         <Box display="flex" minWidth="fit-content" pl={1}>
           <Link
             color="secondary"
-            className={classes.help}
+            className={classes.textButton}
             style={windowIsSmall ? { fontSize: '0.8rem' } : { margin: '0 8px' }}
             onClick={() => setShowHelpModal(true)}
           >

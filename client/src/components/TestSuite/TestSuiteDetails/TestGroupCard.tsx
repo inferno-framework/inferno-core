@@ -1,5 +1,6 @@
 import React, { FC, useMemo } from 'react';
-import { Box, Card, Divider, Typography } from '@mui/material';
+import { useNavigate } from 'react-router';
+import { Box, Card, Divider, Link, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
@@ -19,6 +20,7 @@ interface TestGroupCardProps {
 
 const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, view }) => {
   const { classes } = useStyles();
+  const navigate = useNavigate();
   const viewOnly = useTestSessionStore((state) => state.viewOnly);
 
   const buttonText = `${viewOnly ? 'View' : 'Run'}${runnable.run_as_group ? '' : ' All'}${viewOnly ? ' Inputs' : ' Tests'}`;
@@ -65,6 +67,16 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
           <Box mx={2.5} overflow="auto">
             {description}
           </Box>
+          <Box display="flex" justifyContent="end" minWidth="fit-content" pb={2} px={2}>
+            <Link
+              color="secondary"
+              className={classes.textButton}
+              onClick={() => void navigate(`#${runnable.id}/requirements`)}
+            >
+              View Specification Requirements
+            </Link>
+          </Box>
+
           <Divider />
         </>
       );
