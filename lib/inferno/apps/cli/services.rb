@@ -3,7 +3,17 @@ module Inferno
     class Services < Thor
       no_commands do
         def base_command
-          'docker compose -f docker-compose.background.yml'
+          if bundle_exec? && in_test_kit?
+            compose_path = File.join(test_kit_root, 'docker-compose.background.yml')
+          else
+            if in_test_kit?
+              puts 'Warning: Using global inferno services because user did not run command with `bundle exec`'
+            end
+
+            compose_path = File.join(__dir__, 'services', 'docker-compose.global.yml')
+          end
+
+          "docker compose -f #{compose_path}"
         end
       end
 
@@ -50,6 +60,40 @@ module Inferno
         command += " --tail #{options[:tail]}" if options[:tail]
 
         system command
+      end
+
+      desc 'path', 'Output path to the compose file in use'
+      def path
+        puts base_command.sub('docker compose -f ', '')
+      end
+
+      private
+
+      def test_kit_root
+        directory = Dir.pwd
+        original_directory = directory
+        while directory != '/'
+          gemspec_file = Dir.glob('*.gemspec').first
+          # TODO: make bundler a dependency and delete defined? Bundler
+          if gemspec_file && defined?(Bundler) && (Bundler.load_gemspec(gemspec_file).metadata['inferno_test_kit'] == 'true')
+            Dir.chdir(original_directory)
+            return directory
+          end
+
+          directory = File.dirname(directory)
+          Dir.chdir(directory)
+        end
+
+        Dir.chdir(original_directory)
+        nil
+      end
+
+      def in_test_kit?
+        !!test_kit_root
+      end
+
+      def bundle_exec?
+        !!ENV['BUNDLE_GEMFILE']
       end
     end
   end
