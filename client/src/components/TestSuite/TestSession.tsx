@@ -22,11 +22,12 @@ import { deleteTestRun, getTestRunWithResults, postTestRun } from '~/api/TestRun
 import { getCurrentTestSessionResults } from '~/api/TestSessionApi';
 import ActionModal from '~/components/_common/ActionModal';
 import InputsModal from '~/components/InputsModal/InputsModal';
-import TestRunProgressBar from './TestRunProgressBar/TestRunProgressBar';
-import TestSuiteTreeComponent from './TestSuiteTree/TestSuiteTree';
-import TestSuiteDetailsPanel from './TestSuiteDetails/TestSuiteDetailsPanel';
-import TestSuiteReport from './TestSuiteDetails/TestSuiteReport';
-import ConfigMessagesDetailsPanel from './ConfigMessagesDetails/ConfigMessagesDetailsPanel';
+import TestRunProgressBar from '~/components/TestSuite/TestRunProgressBar/TestRunProgressBar';
+import TestSuiteTreeComponent from '~/components/TestSuite/TestSuiteTree/TestSuiteTree';
+import TestSuiteDetailsPanel from '~/components/TestSuite/TestSuiteDetails/TestSuiteDetailsPanel';
+import TestSuiteReport from '~/components/TestSuite/TestSuiteDetails/TestSuiteReport';
+import Requirements from '~/components/TestSuite/Requirements/Requirements';
+import ConfigMessagesDetailsPanel from '~/components/TestSuite/ConfigMessagesDetails/ConfigMessagesDetailsPanel';
 import useStyles from './styles';
 import { useSnackbar } from 'notistack';
 
@@ -354,6 +355,8 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             updateRequest={updateRequest}
           />
         );
+      case 'requirements':
+        return <Requirements testSuite={runnable as TestSuite} />;
       case 'config':
         // Config messages are only defined at the suite level.
         return <ConfigMessagesDetailsPanel testSuite={runnable as TestSuite} />;
