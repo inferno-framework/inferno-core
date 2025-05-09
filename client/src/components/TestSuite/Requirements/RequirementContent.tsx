@@ -59,6 +59,7 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
               <Stack>
                 <Typography fontWeight="bold">Requirement {requirementCount}:</Typography>
                 {/* <Typography>{requirement.actor.toUpperCase()}</Typography> */}
+                <Typography>{requirement.id}</Typography>
               </Stack>
             </Grid2>
             <Grid2 size="grow">
@@ -79,10 +80,10 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
                 {requirement.sub_requirements.length > 0 && (
                   <Box display="flex" px={1.5}>
                     <Typography>
-                      <b>{requirement.id}</b> Sub-requirements:{' '}
+                      {/* <b>{requirement.id}</b> */}Sub-requirements:{' '}
                       {requirement.sub_requirements
                         // Split sub-requirements on '@' to isolate number
-                        .map((subRequirement) => subRequirement.split('@').slice(-1))
+                        // .map((subRequirement) => subRequirement.split('@').slice(-1))
                         .join(', ')}
                     </Typography>
                   </Box>
