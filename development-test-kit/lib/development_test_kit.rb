@@ -1,0 +1,11 @@
+require_relative 'development_test_kit/metadata'
+require_relative 'development_test_kit/version'
+
+# Require all the test suites
+require_relative 'development_test_kit/suites/dev_auth_info/auth_info_suite'
+require_relative 'development_test_kit/suites/dev_infrastructure_test/infrastructure_test_suite'
+require_relative 'development_test_kit/suites/dev_demo_ig_stu1/demo_suite'
+require_relative 'development_test_kit/suites/dev_custom_results/custom_result_suite'
+require_relative 'development_test_kit/suites/dev_options_suite/options_suite'
+require_relative 'development_test_kit/suites/dev_requirements/requirements_suite'
+require_relative 'development_test_kit/suites/dev_validator_suite/validator_suite'
