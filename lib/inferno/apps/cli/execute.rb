@@ -6,6 +6,24 @@ Dir[File.join(__dir__, 'execute', '*_outputter.rb')].each { |outputter| require 
 
 module Inferno
   module CLI
+    # Execute Inferno tests in the Command Line. A single instance
+    # of this class represents a test session, and a single +run+
+    # call queue's TestGroups and Tests for execution.
+    #
+    # The current implementation cannot handle waiting for client
+    # requests or SMART launch.
+    #
+    # @see Inferno::CLI::Main#execute for CLI usage.
+    #
+    # @example
+    #   Inferno::CLI::Execute.new.run({
+    #       suite: 'dev_validator_suite',
+    #       inputs: {
+    #           'patient_id' => '1234321',
+    #           'url' => 'https://hapi.fhir.org/baseR4'
+    #       },
+    #       outputter: 'plain'
+    #   })
     class Execute
       include ::Inferno::Utils::VerifyRunnable
       include ::Inferno::Utils::PersistInputs
@@ -39,6 +57,10 @@ module Inferno
         Inferno::Application.start(:executor)
       end
 
+      def initialize
+
+      end
+
       def run(options)
         print_help_and_exit if options[:help]
 
@@ -47,6 +69,7 @@ module Inferno
         outputter.print_start_message(self.options)
 
         load_preset_file_and_set_preset_id
+        test_session_repo.apply_preset(test_session, options[:preset_id])
 
         results = []
         outputter.print_around_run(self.options) do
@@ -111,7 +134,7 @@ module Inferno
         raise StandardError, "File #{options[:preset_file]} not found" unless File.exist? options[:preset_file]
 
         options[:preset_id] = JSON.parse(File.read(options[:preset_file]))['id']
-        raise StandardError, "Preset #{options[:preset_file]} is missing id" if options[:preset_id].nil?
+        raise StandardError, "Preset #{options[:preset_file]} is missing id. A unique preset id is required for `inferno execute`." if options[:preset_id].nil?
 
         presets_repo.insert_from_file(options[:preset_file])
       end
@@ -123,7 +146,7 @@ module Inferno
       def run_one(runnable, test_run)
         verify_runnable(
           runnable,
-          thor_hash_to_inputs_array(inputs_and_preset),
+          thor_hash_to_inputs_array(all_inputs),
           test_session.suite_options
         )
 
@@ -132,12 +155,13 @@ module Inferno
         dispatch_job(test_run)
       end
 
-      def inputs_and_preset
+      def all_inputs
         if preset
           preset_inputs = preset.inputs.to_h do |preset_input|
             [preset_input[:name], preset_input[:value]]
           end
 
+          # TODO use session and preset processor properly instead of reverse merge
           options.fetch(:inputs, {}).reverse_merge(preset_inputs)
         else
           options.fetch(:inputs, {})
@@ -214,7 +238,7 @@ module Inferno
         {
           test_session_id: test_session.id,
           runnable_id_key(runnable) => runnable.id,
-          inputs: thor_hash_to_inputs_array(inputs_and_preset)
+          inputs: thor_hash_to_inputs_array(all_inputs) # XXX
         }
       end
 
