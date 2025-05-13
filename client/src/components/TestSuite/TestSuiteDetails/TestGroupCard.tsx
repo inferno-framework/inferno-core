@@ -1,11 +1,11 @@
 import React, { FC, useMemo } from 'react';
-import { useNavigate } from 'react-router';
 import { Box, Card, Divider, Link, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
 import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
 import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
+import RequirementsModal from '~/components/TestSuite/Requirements/RequirementsModal';
 import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { useTestSessionStore } from '~/store/testSession';
@@ -20,8 +20,8 @@ interface TestGroupCardProps {
 
 const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, view }) => {
   const { classes } = useStyles();
-  const navigate = useNavigate();
   const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const [showRequirements, setShowRequirements] = React.useState(false);
 
   const buttonText = `${viewOnly ? 'View' : 'Run'}${runnable.run_as_group ? '' : ' All'}${viewOnly ? ' Inputs' : ' Tests'}`;
 
@@ -71,13 +71,17 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
             <Link
               color="secondary"
               className={classes.textButton}
-              onClick={() => void navigate(`#${runnable.id}/requirements`)}
+              onClick={() => setShowRequirements(true)}
             >
               View Specification Requirements
             </Link>
           </Box>
-
           <Divider />
+          <RequirementsModal
+            testSuite={runnable}
+            modalVisible={showRequirements}
+            hideModal={() => setShowRequirements(false)}
+          />
         </>
       );
     }
