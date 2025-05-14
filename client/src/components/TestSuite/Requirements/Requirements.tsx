@@ -90,10 +90,6 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
       </Box>
       <Divider />
       <Box m={2} overflow="auto">
-        {/* <Typography fontWeight="bold">These scenarios test the following requirements:</Typography>
-        <Typography variant="h5" component="p" fontWeight="bold" sx={{ mb: 2 }}>
-          test
-        </Typography> */}
         {filteredRequirements.length > 0 ? (
           <RequirementContent requirements={filteredRequirements} />
         ) : (
