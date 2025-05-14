@@ -19,7 +19,6 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
     },
     {} as Record<string, Requirement[]>,
   );
-  let requirementCount = 0;
   // const viewOnly = useTestSessionStore((state) => state.viewOnly);
   // const viewOnlyUrl = viewOnly ? '/view' : '';
 
@@ -51,48 +50,39 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
           {url}
         </Link>
       </Box>
-      {requirementsList.map((requirement) => {
-        requirementCount++;
-        return (
-          <Grid2 container spacing={2} mb={2} key={requirementCount}>
-            <Grid2 size={{ xs: 4, sm: 3, md: 2 }}>
-              <Stack>
-                <Typography fontWeight="bold">Requirement {requirementCount}:</Typography>
-                {/* <Typography>{requirement.actor.toUpperCase()}</Typography> */}
-                <Typography>{requirement.id}</Typography>
-              </Stack>
-            </Grid2>
-            <Grid2 size="grow">
-              <Stack>
-                <Box px={1} mb={1} sx={{ borderLeft: `4px solid ${grey[100]}` }}>
-                  <Typography>{requirement.requirement}</Typography>
-                </Box>
-                <Box display="flex" px={1.5} mb={requirement.sub_requirements.length > 0 ? 1 : 0}>
-                  {conformanceChip(requirement.conformance)}
-                  {/* <Typography ml={4} fontWeight="bold">
+      {requirementsList.map((requirement) => (
+        <Grid2 container spacing={2} mb={2} key={requirement.id}>
+          <Grid2 size={{ xs: 4, sm: 3, md: 2 }}>
+            <Stack>
+              <Typography fontWeight="bold">{requirement.id}</Typography>
+            </Stack>
+          </Grid2>
+          <Grid2 size="grow">
+            <Stack>
+              <Box px={1} mb={1} sx={{ borderLeft: `4px solid ${grey[100]}` }}>
+                <Typography>{requirement.requirement}</Typography>
+              </Box>
+              <Box display="flex" px={1.5} mb={requirement.sub_requirements.length > 0 ? 1 : 0}>
+                {conformanceChip(requirement.conformance)}
+                {/* <Typography ml={4} fontWeight="bold">
                   Test:{' '}
                   <Link href={`#${requirement.id}${viewOnlyUrl}`} color="secondary">
                     {requirement.id}
                   </Link>
                 </Typography> */}
+              </Box>
+              {/* Subrequirements */}
+              {requirement.sub_requirements.length > 0 && (
+                <Box display="flex" px={1.5}>
+                  <Typography variant="body2">
+                    <b>Sub-requirements:</b> {requirement.sub_requirements.join(', ')}
+                  </Typography>
                 </Box>
-                {/* Subrequirements */}
-                {requirement.sub_requirements.length > 0 && (
-                  <Box display="flex" px={1.5}>
-                    <Typography>
-                      {/* <b>{requirement.id}</b> */}Sub-requirements:{' '}
-                      {requirement.sub_requirements
-                        // Split sub-requirements on '@' to isolate number
-                        // .map((subRequirement) => subRequirement.split('@').slice(-1))
-                        .join(', ')}
-                    </Typography>
-                  </Box>
-                )}
-              </Stack>
-            </Grid2>
+              )}
+            </Stack>
           </Grid2>
-        );
-      })}
+        </Grid2>
+      ))}
       {/* Empty URL is always last */}
       {url && <Divider />}
     </Box>
