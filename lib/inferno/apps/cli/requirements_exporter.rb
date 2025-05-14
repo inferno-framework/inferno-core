@@ -94,7 +94,7 @@ module Inferno
         end
       end
 
-      def new_requirements_csv
+      def new_requirements_csv # rubocop:disable Metrics/CyclomaticComplexity
         @new_requirements_csv ||=
           CSV.generate(+"\xEF\xBB\xBF") do |csv| # start with an unnecessary BOM to make viewing in excel easier
             csv << REQUIREMENTS_OUTPUT_HEADERS
