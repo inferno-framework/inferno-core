@@ -63,20 +63,15 @@ const RequirementsModal: FC<RequirementsModalProps> = ({ testSuite, hideModal, m
       <DialogTitle>Specification Requirements</DialogTitle>
       <Divider />
       <DialogContent>
-        {testSuite.description} {/* Placeholder for requirements description */}
-        <Divider />
-        <Box m={2} overflow="auto">
-          {/* <Typography fontWeight="bold">These scenarios test the following requirements:</Typography>
+        <Typography fontWeight="bold">These scenarios test the following requirements:</Typography>
         <Typography variant="h5" component="p" fontWeight="bold" sx={{ mb: 2 }}>
           test
-        </Typography> */}
-          {filteredRequirements.length > 0 ? (
-            <RequirementContent requirements={filteredRequirements} />
-          ) : (
-            <Typography fontStyle="italic">No requirements found.</Typography>
-          )}
-        </Box>
-        <Divider />
+        </Typography>
+        {filteredRequirements.length > 0 ? (
+          <RequirementContent requirements={filteredRequirements} />
+        ) : (
+          <Typography fontStyle="italic">No requirements found.</Typography>
+        )}
       </DialogContent>
       <DialogActions>
         <Button
