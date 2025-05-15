@@ -2,16 +2,15 @@ name: inferno_evaluator_services
 
 services:
   hl7_validator_service:
-    extends:
-      file: ../../../../../docker-compose.background.yml
-      service: hl7_validator_service
+    image: infernocommunity/inferno-resource-validator
     volumes:
       - ${TMPDIR}/data/igs:/app/igs
+      # To let the service share your local FHIR package cache,
+      # uncomment the below line
+      # - ~/.fhir:/home/ktor/.fhir
     ports:
       - "3501:3500"
   fhirpath:
-    extends:
-      file: ../../../../../docker-compose.background.yml
-      service: fhirpath
-    ports: !override
+    image: infernocommunity/fhirpath-service
+    ports:
       - "6790:6789"
