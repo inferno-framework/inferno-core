@@ -40,7 +40,7 @@ module Inferno
       end
 
       def base_requirements_folder
-        @base_requirements_folder ||= File.join('lib', test_kit_name, 'requirements')
+        @base_requirements_folder ||= Dir.glob(File.join(Dir.pwd, 'lib', '*', 'requirements')).first
       end
 
       def requirements_output_file_name
