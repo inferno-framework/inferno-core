@@ -45,9 +45,12 @@ Gem::Specification.new do |spec|
   spec.files = [
     'lib/inferno.rb',
     'LICENSE',
+    'docker-compose.background.yml',
     Dir['lib/inferno/**/*.rb'],
     Dir['lib/inferno/**/*.erb'],
     Dir['lib/inferno/**/*.json'],
+    Dir['lib/inferno/**/*.yml'],
+    Dir['lib/inferno/**/*.yaml'],
     Dir['lib/inferno/apps/cli/templates/**/{*,.*}'],
     'bin/inferno',
     Dir['lib/inferno/public/*.png'],
