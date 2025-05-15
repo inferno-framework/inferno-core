@@ -13,5 +13,5 @@ services:
     extends:
       file: ../../../../../docker-compose.background.yml
       service: fhirpath
-    ports:
+    ports: !override
       - "6790:6789"

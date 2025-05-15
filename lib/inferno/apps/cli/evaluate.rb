@@ -20,8 +20,8 @@ module Inferno
         FileUtils.cp(File.expand_path('evaluate/database.yml', __dir__), "#{tmpdir}/config/database.yml")
 
         ENV['TMPDIR'] = tmpdir
-        ENV['FHIRPATH_URL'] = 'http://localhost:6789'
-        ENV['FHIR_RESOURCE_VALIDATOR_URL'] = 'http://localhost:3500'
+        ENV['FHIRPATH_URL'] = 'http://localhost:6790'
+        ENV['FHIR_RESOURCE_VALIDATOR_URL'] = 'http://localhost:3501'
 
         puts 'Starting Inferno Evaluator Services...'
         system("#{services_base_command} up -d #{services_names}")
@@ -45,12 +45,7 @@ module Inferno
       end
 
       def services_names
-        return @service_names if @service_names
-
-        fhirpath_health = Faraday.get("#{ENV.fetch('FHIRPATH_URL', nil)}/version").status
-        @service_names = "hl7_validator_service #{fhirpath_health == 200 ? '' : 'fhirpath'}"
-      rescue Faraday::Error
-        @service_names = 'hl7_validator_service fhirpath'
+        'hl7_validator_service fhirpath'
       end
 
       # @private
