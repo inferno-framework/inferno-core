@@ -6,7 +6,6 @@ require_relative 'migration'
 
 require 'fileutils'
 require 'tempfile'
-require 'faraday'
 
 module Inferno
   module CLI
