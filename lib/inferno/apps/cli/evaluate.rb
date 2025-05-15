@@ -2,13 +2,62 @@ require_relative '../../dsl/fhir_evaluation/evaluator'
 require_relative '../../dsl/fhir_evaluation/config'
 require_relative '../../entities'
 require_relative '../../utils/ig_downloader'
+require_relative 'migration'
 
+require 'fileutils'
 require 'tempfile'
 
 module Inferno
   module CLI
-    class Evaluate < Thor::Group
-      def evaluate(ig_path, data_path, _log_level)
+    class Evaluate
+      # @see Inferno::CLI::Main#evaluate
+      def run(ig_path, data_path, options)
+        tmpdir = Dir.mktmpdir
+        Dir.mkdir("#{tmpdir}/data")
+        Dir.mkdir("#{tmpdir}/data/igs")
+        Dir.mkdir("#{tmpdir}/config")
+        FileUtils.cp(File.expand_path('evaluate/database.yml', __dir__), "#{tmpdir}/config/database.yml")
+
+        ENV['TMPDIR'] = tmpdir
+        ENV['FHIRPATH_URL'] = 'http://localhost:6790'
+        ENV['FHIR_RESOURCE_VALIDATOR_URL'] = 'http://localhost:3501'
+
+        puts 'Starting Inferno Evaluator Services...'
+        system("#{services_base_command} up -d #{services_names}")
+
+        ig_path = absolute_path_with_home_expansion(ig_path)
+        data_path = absolute_path_with_home_expansion(data_path) if data_path
+
+        Dir.chdir(tmpdir) do
+          Migration.new.run(Logger::FATAL) # Hide migration output for evaluator
+          evaluate(ig_path, data_path, options)
+        end
+      ensure
+        system("#{services_base_command} down #{services_names}")
+        puts 'Stopped Inferno Evaluator Services'
+
+        FileUtils.remove_entry_secure tmpdir
+      end
+
+      def services_base_command
+        "docker compose -f #{File.join(__dir__, 'evaluate', 'docker-compose.evaluate.yml')}"
+      end
+
+      def services_names
+        'hl7_validator_service fhirpath'
+      end
+
+      # @private
+      def absolute_path_with_home_expansion(path)
+        if path.starts_with? '~'
+          path.sub('~', Dir.home)
+        else
+          File.absolute_path(path)
+        end
+      end
+
+      # @see Inferno::CLI::Main#evaluate
+      def evaluate(ig_path, data_path, options)
         # NOTE: repositories is required here rather than at the top of the file because
         # the tree of requires means that this file and its requires get required by every CLI app.
         # Sequel::Model, used in some repositories, fetches the table schema at instantiation.
@@ -55,7 +104,6 @@ module Inferno
       def setup_validator(ig_path)
         igs_directory = File.join(Dir.pwd, 'data', 'igs')
         if File.exist?(ig_path) && !File.realpath(ig_path).start_with?(igs_directory)
-          puts "Copying #{File.basename(ig_path)} to data/igs so it is accessible to validator"
           destination_file_path = File.join(igs_directory, File.basename(ig_path))
           FileUtils.copy_file(ig_path, destination_file_path, true)
           ig_path = "igs/#{File.basename(ig_path)}"

@@ -1,0 +1,15 @@
+# Inferno is using `Psych::safe_load` so YAML anchors are disabled
+development:
+  adapter: sqlite
+  database: ':memory:'
+  max_connections: 10
+
+production:
+  adapter: sqlite
+  database: ':memory:'
+  max_connections: 10
+
+test:
+  adapter: sqlite
+  database: ':memory:'
+  max_connections: 10
