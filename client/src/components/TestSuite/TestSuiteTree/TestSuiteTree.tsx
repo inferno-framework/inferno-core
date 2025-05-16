@@ -50,6 +50,8 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   let selectedNode = selectedRunnable;
   if (view === 'report') {
     selectedNode = `${selectedNode}/report`;
+  } else if (view === 'requirements') {
+    selectedNode = `${selectedNode}/requirements`;
   } else if (view === 'config') {
     selectedNode = `${selectedNode}/config`;
   }
