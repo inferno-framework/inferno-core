@@ -110,7 +110,7 @@ module Inferno
       end
 
       def old_requirements_csv
-        @old_requirements_csv ||= File.read(requirements_output_file_name)
+        @old_requirements_csv ||= File.read(requirements_output_file_path)
       end
 
       def new_planned_not_tested_csv
@@ -138,7 +138,7 @@ module Inferno
         check_presence_of_input_files
 
         update_requirements =
-          if File.exist?(requirements_output_file_name)
+          if File.exist?(requirements_output_file_path)
             if old_requirements_csv == new_requirements_csv
               puts "'#{requirements_output_file_name}' file is up to date."
               false
@@ -153,7 +153,7 @@ module Inferno
 
         if update_requirements
           puts "Writing to file #{requirements_output_file_name}..."
-          File.write(requirements_output_file_name, new_requirements_csv, encoding: Encoding::UTF_8)
+          File.write(requirements_output_file_path, new_requirements_csv, encoding: Encoding::UTF_8)
         end
 
         udpate_planned_not_tested =
@@ -182,7 +182,7 @@ module Inferno
         check_presence_of_input_files
 
         requirements_ok =
-          if File.exist?(requirements_output_file_name)
+          if File.exist?(requirements_output_file_path)
             if old_requirements_csv == new_requirements_csv
               puts "'#{requirements_output_file_name}' file is up to date."
               true
