@@ -2,6 +2,7 @@ import React, { FC } from 'react';
 import { Box, Chip, Divider, Grid2, Link, Stack, Typography } from '@mui/material';
 import { blue, grey, purple, red, teal } from '@mui/material/colors';
 import { Requirement } from '~/models/testSuiteModels';
+import lightTheme from '~/styles/theme';
 // import { useTestSessionStore } from '~/store/testSession';
 
 interface RequirementContentProps {
@@ -43,39 +44,48 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
     );
   };
 
+  console.log(requirementsByUrl);
+
   return Object.entries(requirementsByUrl).map(([url, requirementsList]) => (
     <Box key={url}>
       <Box pb={2}>
-        <Link href={url} color="secondary">
-          {url}
-        </Link>
+        <Typography variant="h5" component="p" fontWeight="bold" sx={{ mb: 1 }}>
+          {/* Pull the specification out from the first requirement */}
+          {requirementsList[0].id.split('@')[0]}
+        </Typography>
+        {url ? (
+          <Link href={url} color="secondary">
+            {url}
+          </Link>
+        ) : (
+          <Typography color={lightTheme.palette.common.gray}>(no link available)</Typography>
+        )}
       </Box>
       {requirementsList.map((requirement) => (
         <Grid2 container spacing={2} mb={2} key={requirement.id}>
-          <Grid2 size={{ xs: 4, sm: 3, md: 2 }}>
-            <Stack>
-              <Typography fontWeight="bold">{requirement.id}</Typography>
-            </Stack>
+          <Grid2>
+            <Typography fontWeight="bold">{requirement.id.split('@').slice(-1)}</Typography>
           </Grid2>
+          <Grid2>{conformanceChip(requirement.conformance)}</Grid2>
           <Grid2 size="grow">
             <Stack>
               <Box px={1} mb={1} sx={{ borderLeft: `4px solid ${grey[100]}` }}>
                 <Typography>{requirement.requirement}</Typography>
               </Box>
-              <Box display="flex" px={1.5} mb={requirement.sub_requirements.length > 0 ? 1 : 0}>
-                {conformanceChip(requirement.conformance)}
-                {/* <Typography ml={4} fontWeight="bold">
-                  Test:{' '}
-                  <Link href={`#${requirement.id}${viewOnlyUrl}`} color="secondary">
-                    {requirement.id}
-                  </Link>
-                </Typography> */}
-              </Box>
+              {/* <Typography ml={1.5} fontWeight="bold">
+                Test:{' '}
+                <Link href={`#${requirement.id}${viewOnlyUrl}`} color="secondary">
+                  test url placeholder
+                </Link>
+              </Typography> */}
               {/* Subrequirements */}
               {requirement.sub_requirements.length > 0 && (
                 <Box display="flex" px={1.5}>
                   <Typography variant="body2">
-                    <b>Sub-requirements:</b> {requirement.sub_requirements.join(', ')}
+                    <b>Sub-requirements:</b>{' '}
+                    {requirement.sub_requirements
+                      .map((subRequirement) => subRequirement.split('@').slice(-1))
+                      .join(', ')}
                   </Typography>
                 </Box>
               )}
@@ -84,7 +94,7 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
         </Grid2>
       ))}
       {/* Empty URL is always last */}
-      {url && <Divider />}
+      {url && <Divider sx={{ mb: 2 }} />}
     </Box>
   ));
 };
