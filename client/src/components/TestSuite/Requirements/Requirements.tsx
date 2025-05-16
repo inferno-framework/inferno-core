@@ -29,8 +29,6 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
         if (result.length > 0) {
           setRequirements(result);
           setFilteredRequirements(result);
-        } else {
-          enqueueSnackbar('Failed to fetch specification requirements', { variant: 'error' });
         }
       })
       .catch((e: Error) => {

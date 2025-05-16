@@ -44,8 +44,6 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
     );
   };
 
-  console.log(requirementsByUrl);
-
   return Object.entries(requirementsByUrl).map(([url, requirementsList]) => (
     <Box key={url}>
       <Box pb={2}>
