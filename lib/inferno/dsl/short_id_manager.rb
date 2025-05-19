@@ -3,8 +3,16 @@ module Inferno
     # This module manages and locks short IDs, ensuring that short IDs
     # remain stable and do not change unexpectedly.
     module ShortIDManager
+      def base_short_id_file_folder
+        File.join(Dir.pwd, 'lib', name.split('::').first.underscore)
+      end
+
+      def short_id_file_name
+        "#{name.demodulize.underscore}_short_id_map.yml"
+      end
+
       def short_id_file_path
-        File.join('lib', "#{name.underscore}_short_id_map.yml")
+        File.join(base_short_id_file_folder, short_id_file_name).freeze
       end
 
       # Loads and memoizes the short ID map from the YAML file.
