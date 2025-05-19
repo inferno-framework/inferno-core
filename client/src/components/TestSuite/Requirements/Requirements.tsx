@@ -73,7 +73,7 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
           variant="outlined"
           onClick={() => {
             setFilters({});
-            // setFilteredRequirements(requirements);
+            setFilteredRequirements(requirements);
           }}
         >
           Reset Filters
