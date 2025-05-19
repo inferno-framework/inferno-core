@@ -1,6 +1,7 @@
 require_relative 'console'
 require_relative 'evaluate'
 require_relative 'migration'
+require_relative 'requirements'
 require_relative 'services'
 require_relative 'suite'
 require_relative 'suites'
@@ -58,6 +59,9 @@ module Inferno
       def migrate
         Migration.new.run
       end
+
+      desc 'requirements SUBCOMMAND ...ARGS', 'Perform requirements operations'
+      subcommand 'requirements', Requirements
 
       desc 'start', 'Start Inferno'
       option :watch,
