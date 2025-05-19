@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { AppBar, Avatar, Box, Button, IconButton, Toolbar, Typography } from '@mui/material';
-import { Link } from 'react-router';
+import { AppBar, Avatar, Box, Button, IconButton, Link, Toolbar, Typography } from '@mui/material';
+import { Link as RouterLink } from 'react-router';
 import { Menu, NoteAdd } from '@mui/icons-material';
 import { basePath, getStaticPath } from '~/api/infernoApiService';
 import { SuiteOptionChoice } from '~/models/testSuiteModels';
@@ -9,6 +9,7 @@ import useStyles from './styles';
 import icon from '~/images/inferno_icon.png';
 import lightTheme from '~/styles/theme';
 import CustomTooltip from '~/components/_common/CustomTooltip';
+import HelpModal from '~/components/Header/HelpModal';
 import ShareSessionButton from '~/components/Header/ShareSessionButton';
 import HeaderSkeleton from '~/components/Skeletons/HeaderSkeleton';
 import { useTestSessionStore } from '~/store/testSession';
@@ -34,6 +35,7 @@ const Header: FC<HeaderProps> = ({
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
   const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const [showHelpModal, setShowHelpModal] = React.useState(false);
 
   // Use window navigation instead of React router to trigger new page request
   const startNewSession = () => {
@@ -67,7 +69,7 @@ const Header: FC<HeaderProps> = ({
             <Menu fontSize="inherit" />
           </IconButton>
         ) : (
-          <Link to="/" reloadDocument aria-label="Inferno Home">
+          <RouterLink to="/" reloadDocument aria-label="Inferno Home">
             <CustomTooltip title="Return to Suite Selection">
               <img
                 src={getStaticPath(icon as string)}
@@ -75,7 +77,7 @@ const Header: FC<HeaderProps> = ({
                 className={classes.logo}
               />
             </CustomTooltip>
-          </Link>
+          </RouterLink>
         )}
 
         {/* Header Text */}
@@ -90,7 +92,7 @@ const Header: FC<HeaderProps> = ({
         >
           <Box display="flex" flexDirection="row" alignItems="baseline">
             <Typography variant="h5" component="h1" className={classes.title}>
-              <Link
+              <RouterLink
                 to={`/${suiteId || ''}`}
                 reloadDocument
                 aria-label="Inferno Home"
@@ -98,7 +100,7 @@ const Header: FC<HeaderProps> = ({
               >
                 {suiteTitle}
                 {viewOnly ? ' (View Only)' : ''}
-              </Link>
+              </RouterLink>
             </Typography>
             {suiteVersion && (
               <Typography variant="overline" className={classes.version}>
@@ -122,7 +124,7 @@ const Header: FC<HeaderProps> = ({
           display="flex"
           minWidth="fit-content"
           pl={1}
-          style={windowIsSmall ? { marginRight: '-16px' } : {}}
+          style={windowIsSmall ? { marginRight: '-8px' } : {}}
         >
           {windowIsSmall ? (
             <IconButton color="secondary" aria-label="New Session" onClick={startNewSession}>
@@ -143,6 +145,19 @@ const Header: FC<HeaderProps> = ({
             </Button>
           )}
         </Box>
+
+        {/* Help button */}
+        <Box display="flex" minWidth="fit-content" pl={1}>
+          <Link
+            color="secondary"
+            className={classes.help}
+            style={windowIsSmall ? { fontSize: '0.8rem' } : { margin: '0 8px' }}
+            onClick={() => setShowHelpModal(true)}
+          >
+            Help
+          </Link>
+        </Box>
+        <HelpModal modalVisible={showHelpModal} hideModal={() => setShowHelpModal(false)} />
       </Toolbar>
     </AppBar>
   ) : (
