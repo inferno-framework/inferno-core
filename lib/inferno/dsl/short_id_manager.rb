@@ -14,23 +14,10 @@ module Inferno
         @short_id_map ||= YAML.load_file(short_id_file_path)
       end
 
+      # @private
       # Assigns locked short IDs to all descendant runnables based on the short ID map.
       #
-      # @example
-      #   module TestKitName
-      #     class Suite < Inferno::TestSuite
-      #       id :suite_id
-      #
-      #       group from: 'group_1'
-      #       group from: 'group_2'
-      #       group from: 'group_3'
-      #
-      #       assign_short_ids
-      #     end
-      #   end
-      #
-      #   This will assign the short_ids defined in
-      #   lib/test_kit_name/suite_short_id_map.yml to each group/test.
+      # This method is called at boot time.
       #
       # @return [void]
       def assign_short_ids
@@ -41,7 +28,11 @@ module Inferno
           Inferno::Application['logger'].warn("No short id defined for #{runnable.id}")
         end
       rescue Errno::ENOENT
-        Inferno::Application['logger'].warn('No short id map found')
+        Inferno::Application['logger'].warn(
+          "Unable to lock short ids: no short id map found for suite `#{name}`. " \
+          "To generate one, run: `bundle exec inferno suite lock_short_ids '#{id}'`. " \
+          'Ignore this message if locking short ids for this suite is not needed.'
+        )
       end
 
       # Builds and memoizes the current mapping of runnable IDs to their short IDs.
