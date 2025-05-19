@@ -47,10 +47,12 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
   return Object.entries(requirementsByUrl).map(([url, requirementsList]) => (
     <Box key={url}>
       <Box pb={2}>
-        <Typography variant="h5" component="p" fontWeight="bold" sx={{ mb: 1 }}>
-          {/* Pull the specification out from the first requirement */}
-          {requirementsList[0].id.split('@')[0]}
-        </Typography>
+        {requirementsList[0] && (
+          <Typography variant="h5" component="p" fontWeight="bold" sx={{ mb: 1 }}>
+            {/* Pull the specification out from the first requirement */}
+            {requirementsList[0].id.split('@')[0]}
+          </Typography>
+        )}
         {url ? (
           <Link href={url} color="secondary">
             {url}

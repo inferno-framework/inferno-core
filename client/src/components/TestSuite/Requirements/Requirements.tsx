@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Autocomplete, Box, Button, Card, Divider, TextField, Typography } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
 import { getTestSuiteRequirements } from '~/api/RequirementsApi';
@@ -15,15 +15,9 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
   const [requirements, setRequirements] = React.useState<Requirement[]>([]);
   const [filters, setFilters] = React.useState<Record<string, string>>({});
   const [filteredRequirements, setFilteredRequirements] = React.useState<Requirement[]>([]);
-  const [triedFetchRequirements, setTriedFetchRequirements] = React.useState<boolean>(false);
 
-  // const selectedValues = React.useMemo(
-  //   () => allValues.filter((v) => v.selected),
-  //   [allValues],
-  // );
-
-  // Fetch requirements from API
-  if (!triedFetchRequirements) {
+  useEffect(() => {
+    // Fetch requirements from API
     getTestSuiteRequirements(testSuite.id)
       .then((result) => {
         if (result.length > 0) {
@@ -36,8 +30,7 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
           variant: 'error',
         });
       });
-    setTriedFetchRequirements(true);
-  }
+  }, []);
 
   const filterRequirements = (filters: Record<string, string>) => {
     let requirementsCopy = requirements;
@@ -80,7 +73,7 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
           variant="outlined"
           onClick={() => {
             setFilters({});
-            setFilteredRequirements(requirements);
+            // setFilteredRequirements(requirements);
           }}
         >
           Reset Filters
