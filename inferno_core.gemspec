@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pry-byebug'
   spec.add_dependency 'puma', '~> 5.6.7'
   spec.add_dependency 'rake', '~> 13.0'
+  spec.add_dependency 'roo', '~> 2.10.1'
   spec.add_dependency 'sequel', '~> 5.42.0'
   spec.add_dependency 'sidekiq', '~> 7.2.4'
   spec.add_dependency 'sqlite3', '~> 1.4'
