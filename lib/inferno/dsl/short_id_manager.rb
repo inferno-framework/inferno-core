@@ -19,6 +19,8 @@ module Inferno
       #
       # @return [Hash] mapping of runnable IDs to their locked short IDs
       def short_id_map
+        return unless File.exist?(short_id_file_path)
+
         @short_id_map ||= YAML.load_file(short_id_file_path)
       end
 
@@ -29,18 +31,14 @@ module Inferno
       #
       # @return [void]
       def assign_short_ids
+        return unless short_id_map
+
         all_descendants.each do |runnable|
           new_short_id = short_id_map.fetch(runnable.id)
           runnable.short_id(new_short_id)
         rescue KeyError
           Inferno::Application['logger'].warn("No short id defined for #{runnable.id}")
         end
-      rescue Errno::ENOENT
-        Inferno::Application['logger'].warn(
-          "Unable to lock short ids: no short id map found for suite `#{name}`. " \
-          "To generate one, run: `bundle exec inferno suite lock_short_ids '#{id}'`. " \
-          'Ignore this message if locking short ids for this suite is not needed.'
-        )
       end
 
       # Builds and memoizes the current mapping of runnable IDs to their short IDs.
