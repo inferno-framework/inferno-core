@@ -16,6 +16,8 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
   const [filters, setFilters] = React.useState<Record<string, string>>({});
   const [filteredRequirements, setFilteredRequirements] = React.useState<Requirement[]>([]);
 
+  const conformances = ['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD', 'DEPRECATED'];
+
   useEffect(() => {
     // Fetch requirements from API
     getTestSuiteRequirements(testSuite.id)
@@ -57,7 +59,7 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
         <Autocomplete
           value={filters.conformance ?? ''}
           size="small"
-          options={['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD', 'DEPRECATED']}
+          options={conformances}
           renderInput={(params) => (
             <TextField {...params} label="Conformance" variant="standard" color="secondary" />
           )}
