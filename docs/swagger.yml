@@ -646,6 +646,11 @@ definitions:
           $ref: "#/definitions/SuiteOption"
       suite_summary:
         type: "string"
+      verifies_requirements:
+        type: "array"
+        readOnly: true,
+        items:
+          type: "string"
   SuiteOption:
     type: "object"
     required:
@@ -719,6 +724,11 @@ definitions:
       optional:
         type: "boolean"
         readOnly: true
+      verifies_requirements:
+        type: "array"
+        readOnly: true,
+        items:
+          type: "string"
   Test:
     type: "object"
     required:
@@ -749,6 +759,11 @@ definitions:
       optional:
         type: "boolean"
         readOnly: true
+      verifies_requirements:
+        type: "array"
+        readOnly: true,
+        items:
+          type: "string"
   Input:
     type: "object"
     required:
