@@ -46,6 +46,7 @@ module Inferno
 
             RequirementSet.render_as_hash(requirement_sets)
           end
+          field :verifies_requirements, if: :field_present?
         end
       end
     end

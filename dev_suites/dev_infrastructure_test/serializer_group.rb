@@ -21,6 +21,8 @@ module InfrastructureTest
 
     output :output3
 
+    verifies_requirements 'sample-criteria@3'
+
     test from: :infrastructure_serializer_test
   end
 end
