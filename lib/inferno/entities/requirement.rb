@@ -13,7 +13,9 @@ module Inferno
         :conformance,
         :actor,
         :sub_requirements,
-        :conditionality
+        :conditionality,
+        :not_tested_reason,
+        :not_tested_details
       ].freeze
 
       include Inferno::Entities::Attributes
@@ -35,9 +37,11 @@ module Inferno
       # @example
       # expand_requirement_ids('example-ig@1,3,5-7')
       # # => ['example-ig@1','example-ig@3','example-ig@5','example-ig@6','example-ig@7']
+      # expand_requirement_ids('example-ig')
+      # # => []
       # expand_requirement_ids('1,3,5-7', 'example-ig')
       # # => ['example-ig@1','example-ig@3','example-ig@5','example-ig@6','example-ig@7']
-      def self.expand_requirement_ids(requirement_id_string, default_set = nil)
+      def self.expand_requirement_ids(requirement_id_string, default_set = nil) # rubocop:disable Metrics/CyclomaticComplexity
         return [] if requirement_id_string.blank?
 
         current_set = default_set
@@ -50,13 +54,21 @@ module Inferno
             requirement_ids =
               if requirement_string.include? '-'
                 start_id, end_id = requirement_string.split('-')
-                (start_id..end_id).to_a
+                if start_id.match?(/^\d+$/) && end_id.match?(/^\d+$/)
+                  (start_id..end_id).to_a
+                else
+                  []
+                end
               else
                 [requirement_string]
               end
 
             requirement_ids.map { |id| "#{current_set}@#{id}" }
           end
+      end
+
+      def tested?
+        not_tested_reason.blank?
       end
     end
   end

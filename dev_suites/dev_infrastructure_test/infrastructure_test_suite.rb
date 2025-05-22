@@ -44,6 +44,8 @@ module InfrastructureTest
       ]
     end
 
+    verifies_requirements 'sample-criteria@4', 'sample-criteria@5', 'sample-criteria@6'
+
     def suite_helper
       'SUITE_HELPER'
     end

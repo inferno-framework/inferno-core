@@ -20,7 +20,7 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
     ]
   end
   let(:full_keys) do
-    summary_keys + ['configuration_messages', 'test_groups', 'inputs']
+    summary_keys + ['configuration_messages', 'test_groups', 'inputs', 'verifies_requirements']
   end
 
   it 'serializes a suite summary view' do
@@ -60,6 +60,7 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
     expect(serialized_suite['configuration_messages']).to eq(expected_messages)
     expect(serialized_suite['presets']).to eq([])
     expect(serialized_suite['suite_summary']).to eq(suite.suite_summary)
+    expect(serialized_suite['verifies_requirements']).to eq(suite.verifies_requirements)
 
     expected_links = suite.links.map(&:with_indifferent_access)
     expect(serialized_suite['links']).to eq(expected_links)

@@ -45,6 +45,9 @@ Inferno::Application.register_provider(:suites) do
       if descendant.id.blank? || descendant.id == 'Inferno::Entities::TestSuite'
         raise StandardError, "Error initializing test suite #{descendant.name}: test suite ID is not set"
       end
+
+      # This will lock the short IDs if a short ID map for this suite is present
+      descendant.assign_short_ids
     end
   end
 end

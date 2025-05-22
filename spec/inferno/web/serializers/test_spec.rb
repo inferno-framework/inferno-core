@@ -8,7 +8,7 @@ RSpec.describe Inferno::Web::Serializers::Test do
 
     expected_keys = ['id', 'short_id', 'description', 'inputs', 'outputs', 'title',
                      'user_runnable', 'optional', 'short_description', 'short_title',
-                     'input_instructions']
+                     'input_instructions', 'verifies_requirements']
 
     expect(serialized_test.keys).to match_array(expected_keys)
     expect(serialized_test['id']).to eq(test.id.to_s)
@@ -20,6 +20,7 @@ RSpec.describe Inferno::Web::Serializers::Test do
     expect(serialized_test['input_instructions']).to eq(test.input_instructions)
     expect(serialized_test['inputs'].length).to eq(test.inputs.length)
     expect(serialized_test['outputs'].length).to eq(test.outputs.length)
+    expect(serialized_test['verifies_requirements'].length).to eq(test.verifies_requirements.length)
 
     test.available_inputs.each_value do |definition|
       raw_input = serialized_test['inputs']
