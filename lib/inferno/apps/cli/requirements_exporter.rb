@@ -27,9 +27,10 @@ module Inferno
           'Conformance',
           'Actor',
           'Sub-Requirement(s)',
-          'Conditionality'
+          'Conditionality',
+          'Not Tested Reason',
+          'Not Tested Details'
         ].freeze
-      PLANNED_NOT_TESTED_OUTPUT_HEADERS = ['Req Set', 'ID', 'Reason', 'Details'].freeze
 
       def local_test_kit_gem
         @local_test_kit_gem ||= Bundler.definition.specs.find { |spec| spec.full_gem_path == Dir.pwd }
@@ -49,14 +50,6 @@ module Inferno
 
       def requirements_output_file_path
         File.join(base_requirements_folder, requirements_output_file_name).freeze
-      end
-
-      def planned_not_tested_output_file_name
-        "#{test_kit_name}_out_of_scope_requirements.csv"
-      end
-
-      def planned_not_tested_output_file_path
-        File.join(base_requirements_folder, planned_not_tested_output_file_name).freeze
       end
 
       def available_input_worksheets
@@ -100,9 +93,28 @@ module Inferno
             csv << REQUIREMENTS_OUTPUT_HEADERS
 
             input_requirement_sets.each do |requirement_set_id, input_rows|
-              input_rows.each do |input_row| # NOTE: use row order from source file
+              input_rows.each do |row| # NOTE: use row order from source file
                 csv << REQUIREMENTS_OUTPUT_HEADERS.map do |header|
-                  (header == 'Req Set' ? requirement_set_id : input_row[header] || input_row["#{header}*"])&.strip
+                  (
+                    case header
+                    when 'Req Set'
+                      requirement_set_id
+                    when 'Not Tested Reason'
+                      if spreadsheet_value_falsy?(row['Verifiable?'])
+                        'Not Verifiable'
+                      elsif spreadsheet_value_falsy?(row['Planning To Test?'])
+                        'Not Tested'
+                      end
+                    when 'Not Tested Details'
+                      if spreadsheet_value_falsy?(row['Verifiable?'])
+                        row['Verifiability Details']
+                      elsif spreadsheet_value_falsy?(row['Planning To Test?'])
+                        row['Planning To Test Details']
+                      end
+                    else
+                      row[header] || row["#{header}*"]
+                    end
+                  )&.strip
                 end
               end
             end
@@ -111,27 +123,6 @@ module Inferno
 
       def old_requirements_csv
         @old_requirements_csv ||= File.read(requirements_output_file_path)
-      end
-
-      def new_planned_not_tested_csv
-        @new_planned_not_tested_csv ||=
-          CSV.generate(+"\xEF\xBB\xBF") do |csv| # start with an unnecessary BOM to make viewing in excel easier
-            csv << PLANNED_NOT_TESTED_OUTPUT_HEADERS
-
-            input_requirement_sets.each do |requirement_set_id, input_rows|
-              input_rows.each do |row|
-                if spreadsheet_value_falsy?(row['Verifiable?'])
-                  csv << [requirement_set_id, row['ID*'], 'Not Verifiable', row['Verifiability Details']]
-                elsif spreadsheet_value_falsy?(row['Planning To Test?'])
-                  csv << [requirement_set_id, row['ID*'], 'Not Tested', row['Planning To Test Details']]
-                end
-              end
-            end
-          end
-      end
-
-      def old_planned_not_tested_csv
-        @old_planned_not_tested_csv ||= File.read(planned_not_tested_output_file_path)
       end
 
       def run
@@ -156,25 +147,6 @@ module Inferno
           File.write(requirements_output_file_path, new_requirements_csv, encoding: Encoding::UTF_8)
         end
 
-        udpate_planned_not_tested =
-          if File.exist?(planned_not_tested_output_file_path)
-            if old_planned_not_tested_csv == new_planned_not_tested_csv
-              puts "'#{planned_not_tested_output_file_name}' file is up to date."
-              false
-            else
-              puts 'Planned Not Tested Requirements set has changed.'
-              true
-            end
-          else
-            puts "No existing #{planned_not_tested_output_file_name}."
-            true
-          end
-
-        if udpate_planned_not_tested
-          puts "Writing to file #{planned_not_tested_output_file_path}..."
-          File.write(planned_not_tested_output_file_path, new_planned_not_tested_csv, encoding: Encoding::UTF_8)
-        end
-
         puts 'Done.'
       end
 
@@ -195,21 +167,7 @@ module Inferno
             false
           end
 
-        planned_not_tested_requirements_ok =
-          if File.exist?(planned_not_tested_output_file_path)
-            if old_planned_not_tested_csv == new_planned_not_tested_csv
-              puts "'#{planned_not_tested_output_file_name}' file is up to date."
-              true
-            else
-              puts "#{planned_not_tested_output_file_name} file is out of date."
-              false
-            end
-          else
-            puts "No existing #{planned_not_tested_output_file_name} file."
-            false
-          end
-
-        return if planned_not_tested_requirements_ok && requirements_ok
+        return if requirements_ok
 
         puts <<~MESSAGE
           Check Failed. To resolve, run:

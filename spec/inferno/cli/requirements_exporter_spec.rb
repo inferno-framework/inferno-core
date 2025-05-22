@@ -46,18 +46,4 @@ RSpec.describe Inferno::CLI::RequirementsExporter do
       expect(parsed_csv.length).to eq(exporter.input_requirement_sets.values.first.length + 1)
     end
   end
-
-  describe '#new_planned_not_tested_csv' do
-    it 'generates a CSV with the correct columns' do
-      csv = exporter.new_planned_not_tested_csv
-
-      parsed_csv = CSV.parse(csv)
-
-      # The added BOM makes the first column header not match
-      expect(parsed_csv.first.first).to_not eq(described_class::PLANNED_NOT_TESTED_OUTPUT_HEADERS.first)
-      expect(parsed_csv.first.slice(1..-1)).to eq(described_class::PLANNED_NOT_TESTED_OUTPUT_HEADERS.slice(1..-1))
-
-      expect(parsed_csv.length).to eq(3)
-    end
-  end
 end
