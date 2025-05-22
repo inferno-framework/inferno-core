@@ -71,7 +71,7 @@ module Inferno
 
         data =
           if data_path
-            DatasetLoader.from_path(File.join(__dir__, data_path))
+            Inferno::DSL::FHIREvaluation::DatasetLoader.from_path(File.join(__dir__, data_path))
           else
             ig.examples
           end
