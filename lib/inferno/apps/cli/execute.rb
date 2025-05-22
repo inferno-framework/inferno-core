@@ -57,7 +57,7 @@ module Inferno
         Inferno::Application.start(:executor)
       end
 
-      # TODO: delete or refactor
+      # TODO
       # def initialize
       # end
 
@@ -69,6 +69,7 @@ module Inferno
         outputter.print_start_message(self.options)
 
         load_preset_file_and_set_preset_id
+
         test_sessions_repo.apply_preset(test_session, options[:preset_id])
 
         results = []
@@ -167,6 +168,7 @@ module Inferno
           pp preset_inputs
           puts "====================="
 
+          # TODO use session and preset processor properly instead of reverse merge
           options.fetch(:inputs, {}).reverse_merge(preset_inputs)
         else
           options.fetch(:inputs, {})
