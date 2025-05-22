@@ -57,20 +57,12 @@ module Inferno
         Inferno::Application.start(:executor)
       end
 
-      # TODO
-      # def initialize
-      # end
-
       def run(options)
         print_help_and_exit if options[:help]
 
         self.options = options
 
         outputter.print_start_message(self.options)
-
-        load_preset_file_and_set_preset_id
-
-        test_sessions_repo.apply_preset(test_session, options[:preset_id])
 
         results = []
         outputter.print_around_run(self.options) do
@@ -128,18 +120,6 @@ module Inferno
         @outputter ||= OUTPUTTERS[options[:outputter]].new
       end
 
-      def load_preset_file_and_set_preset_id
-        return unless options[:preset_file]
-        raise StandardError, 'Cannot use `--preset-id` and `--preset-file` options together' if options[:preset_id]
-
-        raise StandardError, "File #{options[:preset_file]} not found" unless File.exist? options[:preset_file]
-
-        options[:preset_id] = JSON.parse(File.read(options[:preset_file]))['id']
-        raise StandardError, "Preset #{options[:preset_file]} is missing id. A unique preset id is required for `inferno execute`." if options[:preset_id].nil?
-
-        presets_repo.insert_from_file(options[:preset_file])
-      end
-
       def all_selected_groups_and_tests
         @all_selected_groups_and_tests ||= runnables_by_short_id + groups + tests
       end
@@ -147,7 +127,7 @@ module Inferno
       def run_one(runnable, test_run)
         verify_runnable(
           runnable,
-          thor_hash_to_inputs_array(all_inputs),
+          all_inputs,
           test_session.suite_options
         )
 
@@ -158,24 +138,17 @@ module Inferno
 
       def all_inputs
         if preset
-          # TODO use session and preset processor properly instead of reverse merge
-          processed_inputs = Inferno::Utils::PresetProcessor.new(preset, test_session).processed_inputs
+          test_sessions_repo.apply_preset(test_session, preset.id)
+          preset_inputs = session_data_repo.get_all_from_session(test_session.id)
 
-          preset_inputs = processed_inputs.map { |hash| [hash[:name], hash[:value]] }.to_h
-          
-          # XXX DEBUGGING
-          puts "====================="
-          pp preset_inputs
-          puts "====================="
-
-          # TODO use session and preset processor properly instead of reverse merge
-          options.fetch(:inputs, {}).reverse_merge(preset_inputs)
+          thor_hash_to_inputs_array(options.fetch(:inputs, {})) + preset_inputs.map(&:to_hash)
         else
-          options.fetch(:inputs, {})
+          thor_hash_to_inputs_array(options.fetch(:inputs, {}))
         end
       end
 
       def preset
+        load_preset_file_and_set_preset_id
         return unless options[:preset_id]
 
         @preset ||= presets_repo.find(options[:preset_id])
@@ -188,6 +161,15 @@ module Inferno
         end
 
         @preset
+      end
+
+      def load_preset_file_and_set_preset_id
+        return unless options[:preset_file]
+        raise StandardError, 'Cannot use `--preset-id` and `--preset-file` options together' if options[:preset_id]
+
+        raise StandardError, "File #{options[:preset_file]} not found" unless File.exist? options[:preset_file]
+
+        options[:preset_id] = presets_repo.insert_from_file(options[:preset_file]).id
       end
 
       def suite
@@ -245,7 +227,7 @@ module Inferno
         {
           test_session_id: test_session.id,
           runnable_id_key(runnable) => runnable.id,
-          inputs: thor_hash_to_inputs_array(all_inputs) # XXX
+          inputs: all_inputs
         }
       end
 
