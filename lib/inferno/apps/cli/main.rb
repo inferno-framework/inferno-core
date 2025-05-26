@@ -1,6 +1,7 @@
 require_relative 'console'
 require_relative 'evaluate'
 require_relative 'migration'
+require_relative 'requirements'
 require_relative 'services'
 require_relative 'suite'
 require_relative 'suites'
@@ -45,7 +46,7 @@ module Inferno
              type: :string,
              desc: 'Export evaluation result to outcome.json as an OperationOutcome'
       def evaluate(ig_path)
-        Evaluate.new.evaluate(ig_path, options[:data_path], Logger::INFO)
+        Evaluate.new.run(ig_path, options[:data_path], options)
       end
 
       desc 'console', 'Start an interactive console session with Inferno'
@@ -58,6 +59,9 @@ module Inferno
       def migrate
         Migration.new.run
       end
+
+      desc 'requirements SUBCOMMAND ...ARGS', 'Perform requirements operations'
+      subcommand 'requirements', Requirements
 
       desc 'start', 'Start Inferno'
       option :watch,
