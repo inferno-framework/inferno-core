@@ -72,12 +72,6 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
               <Box px={1} mb={1} sx={{ borderLeft: `4px solid ${grey[100]}` }}>
                 <Typography>{requirement.requirement}</Typography>
               </Box>
-              {/* <Typography ml={1.5} fontWeight="bold">
-                Test:{' '}
-                <Link href={`#${requirement.id}${viewOnlyUrl}`} color="secondary">
-                  test url placeholder
-                </Link>
-              </Typography> */}
               {/* Subrequirements */}
               {requirement.sub_requirements.length > 0 && (
                 <Box display="flex" px={1.5}>
@@ -87,6 +81,26 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
                       .map((subRequirement) => subRequirement.split('@').slice(-1))
                       .join(', ')}
                   </Typography>
+                  {/* {false ? (
+                    <Typography ml={1.5} variant="body2" fontWeight="bold">
+                      Test:{' '}
+                      <Link
+                        variant="body2"
+                        href={`#${requirement.id}${viewOnlyUrl}`}
+                        color="secondary"
+                      >
+                        test url placeholder
+                      </Link>
+                    </Typography>
+                  ) : (
+                    <Typography
+                      ml={1.5}
+                      variant="body2"
+                      sx={{ color: lightTheme.palette.common.orangeDark }}
+                    >
+                      Not tested
+                    </Typography>
+                  )} */}
                 </Box>
               )}
             </Stack>
