@@ -21,9 +21,11 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
   it 'serializes a group' do
     serialized_group = JSON.parse(described_class.render(group))
 
-    expected_keys = ['id', 'short_id', 'description', 'inputs', 'outputs', 'title',
-                     'test_count', 'test_groups', 'tests', 'run_as_group', 'user_runnable',
-                     'optional', 'short_title', 'short_description', 'input_instructions']
+    expected_keys = ['id', 'short_id', 'description', 'inputs', 'outputs',
+                     'title', 'test_count', 'test_groups', 'tests',
+                     'run_as_group', 'user_runnable', 'optional', 'short_title',
+                     'short_description', 'input_instructions',
+                     'verifies_requirements']
 
     expect(serialized_group.keys).to match_array(expected_keys)
     expect(serialized_group['id']).to eq(group.id.to_s)
@@ -38,6 +40,7 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
     expect(serialized_group['test_count']).to eq(group.tests.length)
     expect(serialized_group['test_groups']).to be_empty
     expect(serialized_group['tests'].length).to eq(group.tests.length)
+    expect(serialized_group['verifies_requirements'].length).to eq(group.verifies_requirements.length)
 
     group.available_inputs.each_value do |definition|
       raw_input = serialized_group['inputs']

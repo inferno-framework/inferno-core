@@ -27,7 +27,9 @@ module Inferno
             conformance: row[:conformance],
             actor: row[:actor],
             sub_requirements: sub_requirements,
-            conditionality: row[:conditionality]&.downcase
+            conditionality: row[:conditionality]&.downcase,
+            not_tested_reason: row[:not_tested_reason],
+            not_tested_details: row[:not_tested_details]
           }
         end
 
@@ -69,7 +71,9 @@ module Inferno
         requirement_sets.select(&:complete?)
           .flat_map do |requirement_set|
             all.select do |requirement|
-              requirement.requirement_set == requirement_set.identifier && requirement.actor == requirement_set.actor
+              requirement.requirement_set == requirement_set.identifier &&
+                requirement.actor == requirement_set.actor &&
+                requirement.tested?
             end
           end
       end

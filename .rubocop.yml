@@ -92,6 +92,9 @@ RSpec/DescribeClass:
 RSpec/ExampleLength:
   Enabled: false
 
+RSpec/IndexedLet:
+  Enabled: false
+
 RSpec/SkipBlockInsideExample:
   Enabled: false
 

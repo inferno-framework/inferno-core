@@ -52,6 +52,27 @@ module Inferno
 
         puts TTY::Markdown.parse(description)
       end
+
+      desc 'lock_short_ids SUITE_ID', 'Persist the current short_id map for a suite'
+      long_desc <<~LONGDESC
+        Loads the given suite and writes its current short_id map to its corresponding YAML file.
+      LONGDESC
+      def lock_short_ids(suite_id)
+        ENV['NO_DB'] = 'true'
+        Inferno::Application.start(:suites)
+
+        suite = Inferno::Repositories::TestSuites.new.find(suite_id)
+
+        if suite.blank?
+          message = "No suite found with id `#{suite_id}`. Run `inferno suites` to see a list of available suites"
+
+          puts TTY::Markdown.parse(message)
+          return
+        end
+
+        File.write(suite.short_id_file_path, suite.current_short_id_map.to_yaml)
+        puts "Short ID map saved to #{suite.short_id_file_path}"
+      end
     end
   end
 end
