@@ -1,8 +1,10 @@
 import React, { FC, useMemo } from 'react';
 import { Box, Card, Divider, Link, Typography } from '@mui/material';
+import { enqueueSnackbar } from 'notistack';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
+import { getSingleRequirement } from '~/api/RequirementsApi';
+import { TestGroup, RunnableType, TestSuite, Requirement } from '~/models/testSuiteModels';
 import {
   shouldShowDescription,
   shouldShowRequirementsButton,
@@ -24,6 +26,7 @@ interface TestGroupCardProps {
 const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, view }) => {
   const { classes } = useStyles();
   const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const [requirements, setRequirements] = React.useState<Requirement[]>([]);
   const [showRequirements, setShowRequirements] = React.useState(false);
 
   const buttonText = `${viewOnly ? 'View' : 'Run'}${runnable.run_as_group ? '' : ' All'}${viewOnly ? ' Inputs' : ' Tests'}`;
@@ -36,6 +39,22 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
   }, [runnable.description]);
 
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
+
+  const showRequirementsClick = () => {
+    const requirementIds = runnable.verifies_requirements;
+    if (requirementIds) {
+      Promise.all(requirementIds.map((requirementId) => getSingleRequirement(requirementId)))
+        .then((resolvedValues) => {
+          setRequirements(resolvedValues.filter((r) => !!r));
+          setShowRequirements(true);
+        })
+        .catch((e: Error) => {
+          enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
+            variant: 'error',
+          });
+        });
+    }
+  };
 
   const renderHeader = () => {
     return (
@@ -66,7 +85,6 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
   const renderDescription = () => {
     const showDescription = shouldShowDescription(runnable, description);
     const showRequirementsButton = shouldShowRequirementsButton(runnable);
-
     if (showDescription || showRequirementsButton) {
       return (
         <>
@@ -80,18 +98,20 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
               <Link
                 color="secondary"
                 className={classes.textButton}
-                onClick={() => setShowRequirements(true)}
+                onClick={showRequirementsClick}
               >
                 View Specification Requirements
               </Link>
             </Box>
           )}
           <Divider />
-          <RequirementsModal
-            runnable={runnable}
-            modalVisible={showRequirements}
-            hideModal={() => setShowRequirements(false)}
-          />
+          {requirements && showRequirementsButton && (
+            <RequirementsModal
+              requirements={requirements}
+              modalVisible={showRequirements}
+              hideModal={() => setShowRequirements(false)}
+            />
+          )}
         </>
       );
     }

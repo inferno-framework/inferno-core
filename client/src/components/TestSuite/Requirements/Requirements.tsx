@@ -3,8 +3,8 @@ import { Autocomplete, Box, Button, Card, Divider, TextField, Typography } from 
 import { enqueueSnackbar } from 'notistack';
 import { getTestSuiteRequirements } from '~/api/RequirementsApi';
 import { Requirement, TestSuite } from '~/models/testSuiteModels';
+import RequirementContent from '~/components/TestSuite/Requirements/RequirementContent';
 import useStyles from './styles';
-import RequirementContent from './RequirementContent';
 
 interface RequirementsProps {
   testSuite: TestSuite;

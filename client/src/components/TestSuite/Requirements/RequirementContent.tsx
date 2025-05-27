@@ -44,7 +44,7 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
     );
   };
 
-  return Object.entries(requirementsByUrl).map(([url, requirementsList]) => (
+  return Object.entries(requirementsByUrl).map(([url, requirementsList], index) => (
     <Box key={url}>
       <Box pb={2}>
         {requirementsList[0] && (
@@ -61,13 +61,8 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
           <Typography color={lightTheme.palette.common.gray}>(no link available)</Typography>
         )}
       </Box>
-      {requirementsList.map((requirement, i) => (
-        <Grid2
-          container
-          spacing={2}
-          mb={i !== requirementsList.length - 1 ? 2 : 0} // remove bottom margin if last item
-          key={requirement.id}
-        >
+      {requirementsList.map((requirement) => (
+        <Grid2 container spacing={2} mb={2} key={requirement.id}>
           <Grid2>
             <Typography fontWeight="bold">{requirement.id.split('@').slice(-1)}</Typography>
           </Grid2>
@@ -99,7 +94,7 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
         </Grid2>
       ))}
       {/* Empty URL is always last */}
-      {url && <Divider sx={{ mb: 2 }} />}
+      {url && index !== Object.keys(requirementsByUrl).length - 1 && <Divider sx={{ mb: 2 }} />}
     </Box>
   ));
 };

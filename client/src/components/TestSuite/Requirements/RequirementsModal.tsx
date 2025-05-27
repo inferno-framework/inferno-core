@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import {
   Button,
   Dialog,
@@ -8,41 +8,20 @@ import {
   Divider,
   Typography,
 } from '@mui/material';
-import { enqueueSnackbar } from 'notistack';
-import { getSingleRequirement } from '~/api/RequirementsApi';
-import { Requirement, Runnable } from '~/models/testSuiteModels';
-// import useStyles from './styles';
-import RequirementContent from './RequirementContent';
+import { Requirement } from '~/models/testSuiteModels';
+import RequirementContent from '~/components/TestSuite/Requirements/RequirementContent';
 
 interface RequirementsModalProps {
-  runnable: Runnable;
+  requirements: Requirement[];
   modalVisible: boolean;
   hideModal: () => void;
 }
 
-const RequirementsModal: FC<RequirementsModalProps> = ({ runnable, hideModal, modalVisible }) => {
-  // const { classes } = useStyles();
-  const [requirements, setRequirements] = React.useState<Requirement[]>([]);
-
-  // Fetch requirements from API
-  useEffect(() => {
-    runnable.verifies_requirements?.forEach((requirement) => {
-      getSingleRequirement(requirement)
-        .then((result) => {
-          if (result) {
-            setRequirements([...requirements, result]);
-          } else {
-            enqueueSnackbar('Failed to fetch specification requirements', { variant: 'error' });
-          }
-        })
-        .catch((e: Error) => {
-          enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
-            variant: 'error',
-          });
-        });
-    });
-  }, []);
-
+const RequirementsModal: FC<RequirementsModalProps> = ({
+  requirements,
+  hideModal,
+  modalVisible,
+}) => {
   return (
     <Dialog
       open={modalVisible}
