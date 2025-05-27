@@ -1,3 +1,20 @@
+## 0.6.10
+* FI-3950: Handle Error message in evaluator CLI when fhirpath service not running is unclear by @jhlee-mitre in https://github.com/inferno-framework/inferno-core/pull/667
+* FI-3790: Add ability to hide optional or locked inputs by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/647
+* Improve error handling on validator request by @chris-at-work in https://github.com/inferno-framework/inferno-core/pull/663
+* FI-3833: doc guidance by @edeyoung in https://github.com/inferno-framework/inferno-core/pull/661
+* FI-3599: Upgrade React Router to v7 by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/650
+* Bump react-router from 7.4.0 to 7.5.2 by @dependabot in https://github.com/inferno-framework/inferno-core/pull/675
+* Refine and Clean-up evaluator messages by @jhlee-mitre in https://github.com/inferno-framework/inferno-core/pull/672
+* FI-4047: Improve Requirement ID Expansion by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/676
+* FI-3869: Add help dialog by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/660
+* FI-3604: Run evaluate without test kit using tmp dir by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/674
+* FI-3942: Requirements CSV export command by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/678
+* FI-3816: Lock Short IDs by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/677
+* FI-4106: Handle not tested requirements by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/680
+* FI-4107: Serialize runnable requirement ids by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/681
+* FI-4115: Fix loading arbitrary data sets by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/682
+
 ## 0.6.9
 * FI-3867: Add new env var to validator dockerfile to disable presets by @dehall in https://github.com/inferno-framework/inferno-core/pull/664
 * FI-3600: Requirements Support by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/588
