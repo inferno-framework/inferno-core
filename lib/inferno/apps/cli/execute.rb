@@ -63,6 +63,7 @@ module Inferno
         self.options = options
 
         outputter.print_start_message(self.options)
+        load_preset_file_and_set_preset_id
 
         results = []
         outputter.print_around_run(self.options) do
@@ -148,7 +149,6 @@ module Inferno
       end
 
       def preset
-        load_preset_file_and_set_preset_id
         return unless options[:preset_id]
 
         @preset ||= presets_repo.find(options[:preset_id])
