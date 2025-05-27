@@ -61,8 +61,13 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
           <Typography color={lightTheme.palette.common.gray}>(no link available)</Typography>
         )}
       </Box>
-      {requirementsList.map((requirement) => (
-        <Grid2 container spacing={2} mb={2} key={requirement.id}>
+      {requirementsList.map((requirement, i) => (
+        <Grid2
+          container
+          spacing={2}
+          mb={i !== requirementsList.length - 1 ? 2 : 0} // remove bottom margin if last item
+          key={requirement.id}
+        >
           <Grid2>
             <Typography fontWeight="bold">{requirement.id.split('@').slice(-1)}</Typography>
           </Grid2>

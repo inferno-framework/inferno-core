@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import {
   Button,
   Dialog,
@@ -9,46 +9,39 @@ import {
   Typography,
 } from '@mui/material';
 import { enqueueSnackbar } from 'notistack';
-import { getTestSuiteRequirements } from '~/api/RequirementsApi';
-import { Requirement, TestSuite } from '~/models/testSuiteModels';
+import { getSingleRequirement } from '~/api/RequirementsApi';
+import { Requirement, Runnable } from '~/models/testSuiteModels';
 // import useStyles from './styles';
 import RequirementContent from './RequirementContent';
 
 interface RequirementsModalProps {
-  testSuite: TestSuite;
+  runnable: Runnable;
   modalVisible: boolean;
   hideModal: () => void;
 }
 
-const RequirementsModal: FC<RequirementsModalProps> = ({ testSuite, hideModal, modalVisible }) => {
+const RequirementsModal: FC<RequirementsModalProps> = ({ runnable, hideModal, modalVisible }) => {
   // const { classes } = useStyles();
-  // const [requirements, setRequirements] = React.useState<Requirement[]>([]);
-  const [filteredRequirements, setFilteredRequirements] = React.useState<Requirement[]>([]);
-  const [triedFetchRequirements, setTriedFetchRequirements] = React.useState<boolean>(false);
-
-  // const selectedValues = React.useMemo(
-  //   () => allValues.filter((v) => v.selected),
-  //   [allValues],
-  // );
+  const [requirements, setRequirements] = React.useState<Requirement[]>([]);
 
   // Fetch requirements from API
-  if (!triedFetchRequirements) {
-    getTestSuiteRequirements(testSuite.id)
-      .then((result) => {
-        if (result.length > 0) {
-          // setRequirements(result);
-          setFilteredRequirements(result);
-        } else {
-          enqueueSnackbar('Failed to fetch specification requirements', { variant: 'error' });
-        }
-      })
-      .catch((e: Error) => {
-        enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
-          variant: 'error',
+  useEffect(() => {
+    runnable.verifies_requirements?.forEach((requirement) => {
+      getSingleRequirement(requirement)
+        .then((result) => {
+          if (result) {
+            setRequirements([...requirements, result]);
+          } else {
+            enqueueSnackbar('Failed to fetch specification requirements', { variant: 'error' });
+          }
+        })
+        .catch((e: Error) => {
+          enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
+            variant: 'error',
+          });
         });
-      });
-    setTriedFetchRequirements(true);
-  }
+    });
+  }, []);
 
   return (
     <Dialog
@@ -63,11 +56,8 @@ const RequirementsModal: FC<RequirementsModalProps> = ({ testSuite, hideModal, m
       <Divider />
       <DialogContent>
         <Typography fontWeight="bold">These scenarios test the following requirements:</Typography>
-        <Typography variant="h5" component="p" fontWeight="bold" sx={{ mb: 2 }}>
-          test
-        </Typography>
-        {filteredRequirements.length > 0 ? (
-          <RequirementContent requirements={filteredRequirements} />
+        {requirements.length > 0 ? (
+          <RequirementContent requirements={requirements} />
         ) : (
           <Typography fontStyle="italic">No requirements found.</Typography>
         )}

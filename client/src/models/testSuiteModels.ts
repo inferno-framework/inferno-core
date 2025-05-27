@@ -186,6 +186,7 @@ export type Runnable = {
   optional?: boolean;
   input_instructions?: string;
   is_running?: boolean;
+  verifies_requirements?: string[];
 };
 
 export type Test = Runnable & {

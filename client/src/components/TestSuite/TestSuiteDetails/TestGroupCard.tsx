@@ -3,7 +3,10 @@ import { Box, Card, Divider, Link, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
-import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
+import {
+  shouldShowDescription,
+  shouldShowRequirementsButton,
+} from '~/components/TestSuite/TestSuiteUtilities';
 import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
 import RequirementsModal from '~/components/TestSuite/Requirements/RequirementsModal';
 import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
@@ -61,24 +64,31 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
   };
 
   const renderDescription = () => {
-    if (shouldShowDescription(runnable, description)) {
+    const showDescription = shouldShowDescription(runnable, description);
+    const showRequirementsButton = shouldShowRequirementsButton(runnable);
+
+    if (showDescription || showRequirementsButton) {
       return (
         <>
-          <Box mx={2.5} overflow="auto">
-            {description}
-          </Box>
-          <Box display="flex" justifyContent="end" minWidth="fit-content" pb={2} px={2}>
-            <Link
-              color="secondary"
-              className={classes.textButton}
-              onClick={() => setShowRequirements(true)}
-            >
-              View Specification Requirements
-            </Link>
-          </Box>
+          {showDescription && (
+            <Box mx={2.5} overflow="auto">
+              {description}
+            </Box>
+          )}
+          {showRequirementsButton && (
+            <Box display="flex" justifyContent="end" minWidth="fit-content" p={2}>
+              <Link
+                color="secondary"
+                className={classes.textButton}
+                onClick={() => setShowRequirements(true)}
+              >
+                View Specification Requirements
+              </Link>
+            </Box>
+          )}
           <Divider />
           <RequirementsModal
-            testSuite={runnable}
+            runnable={runnable}
             modalVisible={showRequirements}
             hideModal={() => setShowRequirements(false)}
           />
