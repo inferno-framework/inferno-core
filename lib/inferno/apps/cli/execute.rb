@@ -6,24 +6,7 @@ Dir[File.join(__dir__, 'execute', '*_outputter.rb')].each { |outputter| require 
 
 module Inferno
   module CLI
-    # Execute Inferno tests in the Command Line. A single instance
-    # of this class represents a test session, and a single +run+
-    # call queue's TestGroups and Tests for execution.
-    #
-    # The current implementation cannot handle waiting for client
-    # requests or SMART launch.
-    #
-    # @see Inferno::CLI::Main#execute for CLI usage.
-    #
-    # @example
-    #   Inferno::CLI::Execute.new.run({
-    #       suite: 'dev_validator_suite',
-    #       inputs: {
-    #           'patient_id' => '1234321',
-    #           'url' => 'https://hapi.fhir.org/baseR4'
-    #       },
-    #       outputter: 'plain'
-    #   })
+    # @private
     class Execute
       include ::Inferno::Utils::VerifyRunnable
       include ::Inferno::Utils::PersistInputs
