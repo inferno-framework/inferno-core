@@ -93,6 +93,22 @@ RSpec.describe Inferno::TestRunner do
         expect(output['type']).to be_present
       end
     end
+
+    it 'includes the is_large flag for output in the results' do
+      results = runner.start
+
+      result_outputs =
+        results
+          .map(&:output_json)
+          .compact
+          .map { |output_json| JSON.parse(output_json) }
+          .select(&:present?)
+          .flatten
+
+      result_outputs.each do |output|
+        expect(output['is_large']).to be(true).or be(false)
+      end
+    end
   end
 
   describe 'when running wait group' do
