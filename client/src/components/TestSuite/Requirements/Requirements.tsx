@@ -1,38 +1,20 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { Autocomplete, Box, Button, Card, Divider, TextField, Typography } from '@mui/material';
-import { enqueueSnackbar } from 'notistack';
-import { getTestSuiteRequirements } from '~/api/RequirementsApi';
-import { Requirement, TestSuite } from '~/models/testSuiteModels';
+import { Requirement } from '~/models/testSuiteModels';
+import RequirementContent from '~/components/TestSuite/Requirements/RequirementContent';
 import useStyles from './styles';
-import RequirementContent from './RequirementContent';
 
 interface RequirementsProps {
-  testSuite: TestSuite;
+  requirements: Requirement[];
+  testSuiteTitle: string;
 }
 
-const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
+const Requirements: FC<RequirementsProps> = ({ requirements, testSuiteTitle }) => {
   const { classes } = useStyles();
-  const [requirements, setRequirements] = React.useState<Requirement[]>([]);
   const [filters, setFilters] = React.useState<Record<string, string>>({});
   const [filteredRequirements, setFilteredRequirements] = React.useState<Requirement[]>([]);
 
   const conformances = ['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD', 'DEPRECATED'];
-
-  useEffect(() => {
-    // Fetch requirements from API
-    getTestSuiteRequirements(testSuite.id)
-      .then((result) => {
-        if (result.length > 0) {
-          setRequirements(result);
-          setFilteredRequirements(result);
-        }
-      })
-      .catch((e: Error) => {
-        enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
-          variant: 'error',
-        });
-      });
-  }, []);
 
   const filterRequirements = (filters: Record<string, string>) => {
     let requirementsCopy = requirements;
@@ -50,7 +32,7 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
       <Box className={classes.header}>
         <span className={classes.headerText}>
           <Typography color="text.primary" className={classes.currentItem} component="div">
-            {testSuite.title} Specification Requirements
+            {testSuiteTitle} Specification Requirements
           </Typography>
         </span>
       </Box>

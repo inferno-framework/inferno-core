@@ -17,9 +17,11 @@ import {
   SuiteOptionChoice,
   isTestGroup,
   isTest,
+  Requirement,
 } from '~/models/testSuiteModels';
 import { deleteTestRun, getTestRunWithResults, postTestRun } from '~/api/TestRunsApi';
 import { getCurrentTestSessionResults } from '~/api/TestSessionApi';
+import { getTestSuiteRequirements } from '~/api/RequirementsApi';
 import ActionModal from '~/components/_common/ActionModal';
 import InputsModal from '~/components/InputsModal/InputsModal';
 import TestRunProgressBar from '~/components/TestSuite/TestRunProgressBar/TestRunProgressBar';
@@ -85,6 +87,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const [testRunCancelled, setTestRunCancelled] = React.useState<boolean>(false);
   const [showProgressBar, setShowProgressBar] = React.useState<boolean>(false);
   const [testSessionPolling, setTestSessionPolling] = React.useState(true);
+  const [requirements, setRequirements] = React.useState<Requirement[]>([]);
 
   const poller = useTimeout();
   const runnableMap = React.useMemo(
@@ -115,6 +118,23 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       runnable.result = result;
     }
   });
+
+  // useEffect(() => {
+  //   // Fetch requirements from API
+  //   getTestSuiteRequirements(testSuite.id)
+  //     .then((result) => {
+  //       if (result.length > 0) {
+  //         setRequirements(result);
+  //       }
+  //     })
+  //     .catch((e: Error) => {
+  //       enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
+  //         variant: 'error',
+  //       });
+  //     });
+
+  //   // map runnable id to requirements
+  // }, []);
 
   useEffect(() => {
     // Poll for previous results
@@ -158,6 +178,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       sessionData.set(input.name, sessionData.get(input.name) || defaultValue);
     });
     setSessionData(new Map(sessionData));
+    fetchRequirements(testSession.test_suite_id);
   }, [testSession]);
 
   useEffect(() => {
@@ -255,6 +276,23 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   };
 
+  const fetchRequirements = (testSuiteId: string) => {
+    // Fetch requirements from API
+    getTestSuiteRequirements(testSuiteId)
+      .then((result) => {
+        if (result.length > 0) {
+          setRequirements(result);
+        }
+      })
+      .catch((e: Error) => {
+        enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
+          variant: 'error',
+        });
+      });
+
+    // map runnable id to requirements
+  };
+
   const runTests = (runnableType: RunnableType, runnableId: string) => {
     const runnable = runnableMap.get(runnableId);
     runnable?.inputs?.forEach((input: TestInput) => {
@@ -335,6 +373,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         selectedRunnable={selectedRunnable}
         view={view || 'run'}
         presets={testSession.test_suite.presets}
+        requirementsExist={requirements.length > 0}
         getSessionData={getSessionData}
         testSessionId={testSession.id}
       />
@@ -356,7 +395,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           />
         );
       case 'requirements':
-        return <Requirements testSuite={runnable as TestSuite} />;
+        return <Requirements requirements={requirements} testSuiteTitle={runnable.title} />;
       case 'config':
         // Config messages are only defined at the suite level.
         return <ConfigMessagesDetailsPanel testSuite={runnable as TestSuite} />;
