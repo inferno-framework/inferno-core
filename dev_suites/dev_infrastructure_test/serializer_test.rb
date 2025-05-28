@@ -17,6 +17,8 @@ module InfrastructureTest
 
     output :output1, :output2
 
+    verifies_requirements 'sample-criteria@1', 'sample-criteria@2'
+
     run { pass }
   end
 end

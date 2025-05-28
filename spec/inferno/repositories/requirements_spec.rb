@@ -9,6 +9,12 @@ RSpec.describe Inferno::Repositories::Requirements do
       actor: 'Server'
     )
   end
+  let(:not_tested_requirement_set) do
+    Inferno::DSL::RequirementSet.new(
+      identifier: 'sample-criteria-proposal-4',
+      actor: 'Client'
+    )
+  end
   let(:filtered_requriment_set) do
     Inferno::DSL::RequirementSet.new(
       identifier: 'sample-criteria-proposal',
@@ -34,7 +40,7 @@ RSpec.describe Inferno::Repositories::Requirements do
     let(:csv) do
       File.realpath(File.join(Dir.pwd, 'spec/fixtures/simple_requirements.csv'))
     end
-    let(:req_one) do
+    let(:req1) do
       Inferno::Entities::Requirement.new(
         {
           id: 'sample-criteria@1',
@@ -60,18 +66,38 @@ RSpec.describe Inferno::Repositories::Requirements do
         }
       )
     end
+    let(:req3) do
+      Inferno::Entities::Requirement.new(
+        {
+          id: 'sample-criteria@3',
+          requirement: 'requirement',
+          requirement_set: 'sample-criteria',
+          conformance: 'SHALL',
+          actor: 'Client',
+          sub_requirements: [],
+          conditionality: 'false',
+          not_tested_reason: 'Not Tested',
+          not_tested_details: 'NOT TESTED DETAILS'
+        }
+      )
+    end
 
     it 'creates and inserts all requirements from the csv file' do
-      expect { repo.insert_from_file(csv) }.to change { repo.all.size }.by(2)
-      expect(repo.find(req_one.id).to_hash).to eq(req_one.to_hash)
+      expect { repo.insert_from_file(csv) }.to change { repo.all.size }.by(3)
+      expect(repo.find(req1.id).to_hash).to eq(req1.to_hash)
       expect(repo.find(req2.id).to_hash).to eq(req2.to_hash)
+      expect(repo.find(req3.id).to_hash).to eq(req3.to_hash)
     end
   end
 
   describe '#complete_requirement_set_requirements' do
-    it 'returns all requirements matching the specified actor' do
+    it 'returns all tested requirements matching the specified actor' do
       expect(repo.complete_requirement_set_requirements([complete_requirement_set]).length).to eq(7)
       expect(repo.complete_requirement_set_requirements([empty_requirement_set]).length).to eq(0)
+    end
+
+    it 'excludes not-tested requirements' do
+      expect(repo.complete_requirement_set_requirements([not_tested_requirement_set]).length).to eq(1)
     end
   end
 

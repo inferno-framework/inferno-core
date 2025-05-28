@@ -13,7 +13,9 @@ module Inferno
         :conformance,
         :actor,
         :sub_requirements,
-        :conditionality
+        :conditionality,
+        :not_tested_reason,
+        :not_tested_details
       ].freeze
 
       include Inferno::Entities::Attributes
@@ -63,6 +65,10 @@ module Inferno
 
             requirement_ids.map { |id| "#{current_set}@#{id}" }
           end
+      end
+
+      def tested?
+        not_tested_reason.blank?
       end
     end
   end
