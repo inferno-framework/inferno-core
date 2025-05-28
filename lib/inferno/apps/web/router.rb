@@ -33,6 +33,9 @@ module Inferno
           get '/:id/results',
               to: Inferno::Web::Controllers::TestSessions::Results::Index,
               as: :results
+          get '/:id/results/:result_id/io/:type/:name',
+              to: Inferno::Web::Controllers::TestSessions::Results::IoValue,
+              as: :result_io_value
           get '/:id/session_data',
               to: Inferno::Web::Controllers::TestSessions::SessionData::Index
           put '/:id/session_data/apply_preset',

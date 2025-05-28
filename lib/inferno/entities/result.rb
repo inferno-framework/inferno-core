@@ -71,6 +71,14 @@ module Inferno
       def waiting?
         result == 'wait'
       end
+
+      def inputs
+        input_json.present? ? JSON.parse(input_json) : []
+      end
+
+      def outputs
+        output_json.present? ? JSON.parse(output_json) : []
+      end
     end
   end
 end
