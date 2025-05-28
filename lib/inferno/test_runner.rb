@@ -224,10 +224,16 @@ module Inferno
         {
           name: runnable.config.input_name(input_identifier),
           value: input_values[input_identifier],
-          type: runnable.config.input_type(input_identifier)
+          type: runnable.config.input_type(input_identifier),
+          is_large: io_is_large?(input_values[input_identifier])
         }
       end
       JSON.generate(inputs_array)
+    end
+
+    def io_is_large?(io_value)
+      size_in_char = io_value.is_a?(String) ? io_value.length : io_value.to_json.length
+      size_in_char > ENV.fetch('MAX_IO_DISPLAY_CHAR', 10000).to_i
     end
 
     def save_outputs(runnable_instance)
@@ -238,7 +244,8 @@ module Inferno
           {
             name: output_name,
             type: output_type,
-            value: value.to_s
+            value: value.to_s,
+            is_large: io_is_large?(value)
           }
         end
 
