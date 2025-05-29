@@ -105,6 +105,33 @@ RSpec.describe '/test_sessions' do
       expect(result['messages'].length).to eq(new_result.messages.length)
     end
 
+    context 'when large input/output present' do
+      let(:input_json) { [{ 'name' => 'input_name', 'value' => 'input' * 10_000 }].to_json }
+      let(:output_json) { [{ 'name' => 'output_name', 'value' => 'output' * 10_000 }].to_json }
+      let!(:result) do
+        repo_create(
+          :result, message_count: 2, input_json:, output_json:,
+                   created_at: 1.minute.ago, updated_at: 1.minute.ago
+        )
+      end
+
+      it 'flags large IO' do
+        get router.path(:api_test_sessions_results, id: result.test_session_id)
+
+        res = parsed_body.first
+        expect(res['inputs']).to all(include('is_large'))
+        expect(res['outputs']).to all(include('is_large'))
+      end
+
+      it 'replaces large IO value with a reference message' do
+        get router.path(:api_test_sessions_results, id: result.test_session_id)
+
+        res = parsed_body.first
+        expect(res['inputs'].first['value']).to match(/is too large to display/)
+        expect(res['outputs'].first['value']).to match(/is too large to display/)
+      end
+    end
+
     context 'when all=true' do
       it 'renders all results' do
         get "#{router.path(:api_test_sessions_results, id: new_result.test_session_id)}?all=true"
