@@ -1,36 +1,33 @@
 import React, { FC, useEffect } from 'react';
 import { Autocomplete, Box, Button, Card, Divider, TextField, Typography } from '@mui/material';
-import { enqueueSnackbar } from 'notistack';
-import { getTestSuiteRequirements } from '~/api/RequirementsApi';
-import { Requirement, TestSuite } from '~/models/testSuiteModels';
+import { Requirement } from '~/models/testSuiteModels';
 import RequirementContent from '~/components/TestSuite/Requirements/RequirementContent';
 import useStyles from './styles';
 
 interface RequirementsProps {
-  testSuite: TestSuite;
+  requirements: Requirement[];
+  requirementToTests: Map<string, string[]>;
+  testSuiteTitle: string;
 }
 
-const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
+const Requirements: FC<RequirementsProps> = ({
+  requirements,
+  requirementToTests,
+  testSuiteTitle,
+}) => {
   const { classes } = useStyles();
-  const [requirements, setRequirements] = React.useState<Requirement[]>([]);
   const [filters, setFilters] = React.useState<Record<string, string>>({});
-  const [filteredRequirements, setFilteredRequirements] = React.useState<Requirement[]>([]);
+  const [filteredRequirements, setFilteredRequirements] =
+    React.useState<Requirement[]>(requirements);
 
+  const conformances = ['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD', 'DEPRECATED'];
+
+  // Requirements should never change once the session has been loaded, but if it does,
+  // reset filters. This is also required to handle effects on session load.
   useEffect(() => {
-    // Fetch requirements from API
-    getTestSuiteRequirements(testSuite.id)
-      .then((result) => {
-        if (result.length > 0) {
-          setRequirements(result);
-          setFilteredRequirements(result);
-        }
-      })
-      .catch((e: Error) => {
-        enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
-          variant: 'error',
-        });
-      });
-  }, []);
+    setFilters({});
+    setFilteredRequirements(requirements);
+  }, [requirements]);
 
   const filterRequirements = (filters: Record<string, string>) => {
     let requirementsCopy = requirements;
@@ -48,7 +45,7 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
       <Box className={classes.header}>
         <span className={classes.headerText}>
           <Typography color="text.primary" className={classes.currentItem} component="div">
-            {testSuite.title} Specification Requirements
+            {testSuiteTitle} Specification Requirements
           </Typography>
         </span>
       </Box>
@@ -57,7 +54,7 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
         <Autocomplete
           value={filters.conformance ?? ''}
           size="small"
-          options={['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD', 'DEPRECATED']}
+          options={conformances}
           renderInput={(params) => (
             <TextField {...params} label="Conformance" variant="standard" color="secondary" />
           )}
@@ -82,7 +79,10 @@ const Requirements: FC<RequirementsProps> = ({ testSuite }) => {
       <Divider />
       <Box m={2} overflow="auto">
         {filteredRequirements.length > 0 ? (
-          <RequirementContent requirements={filteredRequirements} />
+          <RequirementContent
+            requirements={filteredRequirements}
+            requirementToTests={requirementToTests}
+          />
         ) : (
           <Typography fontStyle="italic">No requirements found.</Typography>
         )}

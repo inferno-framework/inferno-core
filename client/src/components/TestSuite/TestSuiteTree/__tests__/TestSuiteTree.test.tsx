@@ -139,3 +139,13 @@ test('Individual tests are not shown by default', () => {
     expect(testTitle).toBeNull();
   });
 });
+
+test('Requirements only shows in tree if they exist in the TestSuite', () => {
+  render(
+    <ThemeProvider>
+      <TestSuiteTree {...{ ...testSuiteTreeProps, requirementsExist: true }} />
+    </ThemeProvider>,
+  );
+  const requirementsLink = screen.queryByText('Specification Requirements');
+  expect(requirementsLink).toBeInTheDocument();
+});

@@ -3,13 +3,14 @@ import { Box, Chip, Divider, Grid2, Link, Stack, Typography } from '@mui/materia
 import { blue, grey, purple, red, teal } from '@mui/material/colors';
 import { Requirement } from '~/models/testSuiteModels';
 import lightTheme from '~/styles/theme';
-// import { useTestSessionStore } from '~/store/testSession';
+import { useTestSessionStore } from '~/store/testSession';
 
 interface RequirementContentProps {
   requirements: Requirement[];
+  requirementToTests?: Map<string, string[]>;
 }
 
-const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
+const RequirementContent: FC<RequirementContentProps> = ({ requirements, requirementToTests }) => {
   const requirementsByUrl = requirements.reduce(
     // Reduce list of requirements into map of url -> list of requirements
     (acc, current) => {
@@ -20,9 +21,15 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
     },
     {} as Record<string, Requirement[]>,
   );
-  // const viewOnly = useTestSessionStore((state) => state.viewOnly);
-  // const viewOnlyUrl = viewOnly ? '/view' : '';
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const viewOnlyUrl = viewOnly ? '/view' : '';
 
+  // Check if details exist
+  const subRequirementsExist = (requirement: Requirement) =>
+    requirement.sub_requirements.length > 0;
+  const testLinksExist = requirementToTests && requirementToTests?.size > 0;
+
+  // Nested components
   const conformanceChip = (text: string) => {
     const conformanceToColor: Record<string, string> = {
       shall: blue[50],
@@ -44,7 +51,51 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
     );
   };
 
-  return Object.entries(requirementsByUrl).map(([url, requirementsList], index) => (
+  /* Subrequirements and test links */
+  const requirementDetails = (requirement: Requirement) => {
+    if (subRequirementsExist(requirement) || testLinksExist)
+      return (
+        <Box display="flex" px={1.5}>
+          {subRequirementsExist(requirement) && (
+            <Typography variant="body2">
+              <b>Sub-requirements:</b>{' '}
+              {requirement.sub_requirements
+                .map((subRequirement) => subRequirement.split('@').slice(-1))
+                .join(', ')}
+            </Typography>
+          )}
+          {testLinksExist && testLinks(requirement)}
+        </Box>
+      );
+  };
+
+  const testLinks = (requirement: Requirement) => {
+    const testIds = requirementToTests?.get(requirement.id);
+    return testIds ? (
+      <Typography
+        ml={subRequirementsExist(requirement) ? 1.5 : 0}
+        variant="body2"
+        fontWeight="bold"
+      >
+        Test:{' '}
+        {testIds?.map((id) => (
+          <Link key={id} variant="body2" href={`#${id}${viewOnlyUrl}`} color="secondary">
+            {id}
+          </Link>
+        ))}
+      </Typography>
+    ) : (
+      <Typography
+        ml={subRequirementsExist(requirement) ? 1.5 : 0}
+        variant="body2"
+        sx={{ color: lightTheme.palette.common.orangeDark }}
+      >
+        Not tested
+      </Typography>
+    );
+  };
+
+  return Object.entries(requirementsByUrl).map(([url, requirementsList]) => (
     <Box key={url}>
       <Box pb={2}>
         {requirementsList[0] && (
@@ -72,29 +123,13 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
               <Box px={1} mb={1} sx={{ borderLeft: `4px solid ${grey[100]}` }}>
                 <Typography>{requirement.requirement}</Typography>
               </Box>
-              {/* <Typography ml={1.5} fontWeight="bold">
-                Test:{' '}
-                <Link href={`#${requirement.id}${viewOnlyUrl}`} color="secondary">
-                  test url placeholder
-                </Link>
-              </Typography> */}
-              {/* Subrequirements */}
-              {requirement.sub_requirements.length > 0 && (
-                <Box display="flex" px={1.5}>
-                  <Typography variant="body2">
-                    <b>Sub-requirements:</b>{' '}
-                    {requirement.sub_requirements
-                      .map((subRequirement) => subRequirement.split('@').slice(-1))
-                      .join(', ')}
-                  </Typography>
-                </Box>
-              )}
+              {requirementDetails(requirement)}
             </Stack>
           </Grid2>
         </Grid2>
       ))}
       {/* Empty URL is always last */}
-      {url && index !== Object.keys(requirementsByUrl).length - 1 && <Divider sx={{ mb: 2 }} />}
+      {url && <Divider sx={{ mb: 2 }} />}
     </Box>
   ));
 };

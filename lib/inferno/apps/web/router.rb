@@ -1,4 +1,5 @@
 require 'erb'
+require_relative '../../feature'
 
 Dir.glob(File.join(__dir__, 'controllers', '**', '*.rb')).each { |path| require_relative path }
 
@@ -47,13 +48,17 @@ module Inferno
           put '/:id/check_configuration',
               to: Inferno::Web::Controllers::TestSuites::CheckConfiguration,
               as: :check_configuration
-          get ':id/requirements',
-              to: Inferno::Web::Controllers::TestSuites::Requirements::Index,
-              as: :requirements
+          if Feature.requirements_enabled?
+            get ':id/requirements',
+                to: Inferno::Web::Controllers::TestSuites::Requirements::Index,
+                as: :requirements
+          end
         end
 
-        scope 'requirements' do
-          get '/:id', to: Inferno::Web::Controllers::Requirements::Show, as: :show
+        if Feature.requirements_enabled?
+          scope 'requirements' do
+            get '/:id', to: Inferno::Web::Controllers::Requirements::Show, as: :show
+          end
         end
 
         get '/requests/:id', to: Inferno::Web::Controllers::Requests::Show, as: :requests_show

@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 import Requirements from '~/components/TestSuite/Requirements/Requirements';
-import { testSuites } from '~/components/App/__mocked_data__/mockData';
+import { requirements, testSuites } from '~/components/App/__mocked_data__/mockData';
 import { expect, test } from 'vitest';
 
 test('renders Requirements', () => {
@@ -12,7 +12,11 @@ test('renders Requirements', () => {
     <BrowserRouter>
       <ThemeProvider>
         <SnackbarProvider>
-          <Requirements testSuite={testSuites[0]} />
+          <Requirements
+            requirements={requirements}
+            requirementToTests={new Map()}
+            testSuiteTitle={testSuites[0].title}
+          />
         </SnackbarProvider>
       </ThemeProvider>
     </BrowserRouter>,

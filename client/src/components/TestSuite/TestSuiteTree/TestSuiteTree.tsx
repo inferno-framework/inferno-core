@@ -23,6 +23,7 @@ export interface TestSuiteTreeProps {
   selectedRunnable: string;
   view: ViewType;
   presets?: PresetSummary[];
+  requirementsExist?: boolean;
   testSessionId?: string;
   getSessionData?: (testSessionId: string) => void;
 }
@@ -41,6 +42,7 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
   selectedRunnable,
   view,
   presets,
+  requirementsExist = false,
   testSessionId,
   getSessionData,
 }) => {
@@ -155,16 +157,19 @@ const TestSuiteTreeComponent: FC<TestSuiteTreeProps> = ({
             itemId={`${testSuite.id}/report`}
             label={<TreeItemLabel title={'Report'} />}
             slots={{ icon: FlagIcon }}
-            className={`${classes.treeItemTopBorder}`}
+            className={`${classes.treeItemTopBorder} 
+              ${!requirementsExist && classes.treeItemBottomBorder}`}
             ContentProps={{ testId: `${testSuite.id}/report` } as never}
           />
-          <CustomTreeItem
-            itemId={`${testSuite.id}/requirements`}
-            label={<TreeItemLabel title={'Specification Requirements'} />}
-            slots={{ icon: VerifiedOutlinedIcon }}
-            className={`${classes.treeItemTopBorder} ${classes.treeItemBottomBorder}`}
-            ContentProps={{ testId: `${testSuite.id}/requirements` } as never}
-          />
+          {requirementsExist && (
+            <CustomTreeItem
+              itemId={`${testSuite.id}/requirements`}
+              label={<TreeItemLabel title={'Specification Requirements'} />}
+              slots={{ icon: VerifiedOutlinedIcon }}
+              className={`${classes.treeItemTopBorder} ${classes.treeItemBottomBorder}`}
+              ContentProps={{ testId: `${testSuite.id}/requirements` } as never}
+            />
+          )}
           <Box display="flex" alignItems="flex-end" flexGrow={1} mt={windowIsSmall ? 0 : 8}>
             <Box width="100%">{renderConfigMessagesTreeItem()}</Box>
           </Box>

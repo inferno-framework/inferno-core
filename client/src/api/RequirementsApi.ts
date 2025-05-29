@@ -1,8 +1,13 @@
 import { Requirement } from 'models/testSuiteModels';
 import { getApiEndpoint } from './infernoApiService';
 
-export async function getTestSuiteRequirements(testSuiteId: string): Promise<Requirement[]> {
-  const testSuiteRequirementsEndpoint = getApiEndpoint(`/test_suites/${testSuiteId}/requirements`);
+export async function getTestSuiteRequirements(
+  testSuiteId: string,
+  testSessionId: string,
+): Promise<Requirement[]> {
+  const testSuiteRequirementsEndpoint = getApiEndpoint(
+    `/test_suites/${testSuiteId}/requirements?session_id=${testSessionId}`,
+  );
   try {
     const response = await fetch(testSuiteRequirementsEndpoint);
     const requirements = (await response.json()) as Requirement[];
