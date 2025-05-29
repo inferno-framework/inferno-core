@@ -149,6 +149,10 @@ module Inferno
           @options = suites.each_with_object({}) { |suite, hash| hash[suite.id] = suite.suite_options }
         end
 
+        def contains_test_suite?(test_suite_id)
+          suite_ids.map(&:to_sym).include? test_suite_id.to_sym
+        end
+
         # @private
         def add_self_to_repository
           repository.insert(self)
