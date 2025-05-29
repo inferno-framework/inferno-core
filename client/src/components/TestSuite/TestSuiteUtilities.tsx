@@ -36,9 +36,6 @@ const mapRequirementRecursive = (testGroup: TestGroup, map: Map<string, string[]
       map.set(requirement, [testGroup.short_id]);
     }
   });
-  testGroup.test_groups.forEach((subGroup: TestGroup) => {
-    mapRequirementRecursive(subGroup, map);
-  });
   testGroup.tests.forEach((test: Test) => {
     test.verifies_requirements?.forEach((requirement) => {
       if (map.get(requirement)) {
@@ -47,6 +44,9 @@ const mapRequirementRecursive = (testGroup: TestGroup, map: Map<string, string[]
         map.set(requirement, [test.short_id]);
       }
     });
+  });
+  testGroup.test_groups.forEach((subGroup: TestGroup) => {
+    mapRequirementRecursive(subGroup, map);
   });
 };
 

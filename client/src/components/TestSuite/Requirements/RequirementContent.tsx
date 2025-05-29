@@ -24,6 +24,12 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
   const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const viewOnlyUrl = viewOnly ? '/view' : '';
 
+  // Check if details exist
+  const subRequirementsExist = (requirement: Requirement) =>
+    requirement.sub_requirements.length > 0;
+  const testLinksExist = requirementToTests && requirementToTests?.size > 0;
+
+  // Nested components
   const conformanceChip = (text: string) => {
     const conformanceToColor: Record<string, string> = {
       shall: blue[50],
@@ -45,16 +51,46 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
     );
   };
 
+  /* Subrequirements and test links */
+  const requirementDetails = (requirement: Requirement) => {
+    if (subRequirementsExist(requirement) || testLinksExist)
+      return (
+        <Box display="flex" px={1.5}>
+          {subRequirementsExist(requirement) && (
+            <Typography variant="body2">
+              <b>Sub-requirements:</b>{' '}
+              {requirement.sub_requirements
+                .map((subRequirement) => subRequirement.split('@').slice(-1))
+                .join(', ')}
+            </Typography>
+          )}
+          {testLinksExist && testLinks(requirement)}
+        </Box>
+      );
+  };
+
   const testLinks = (requirement: Requirement) => {
     const testIds = requirementToTests?.get(requirement.id);
-    return (
-      <Typography ml={1.5} variant="body2" fontWeight="bold">
+    return testIds ? (
+      <Typography
+        ml={subRequirementsExist(requirement) ? 1.5 : 0}
+        variant="body2"
+        fontWeight="bold"
+      >
         Test:{' '}
         {testIds?.map((id) => (
           <Link key={id} variant="body2" href={`#${id}${viewOnlyUrl}`} color="secondary">
             {id}
           </Link>
         ))}
+      </Typography>
+    ) : (
+      <Typography
+        ml={subRequirementsExist(requirement) ? 1.5 : 0}
+        variant="body2"
+        sx={{ color: lightTheme.palette.common.orangeDark }}
+      >
+        Not tested
       </Typography>
     );
   };
@@ -87,28 +123,7 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
               <Box px={1} mb={1} sx={{ borderLeft: `4px solid ${grey[100]}` }}>
                 <Typography>{requirement.requirement}</Typography>
               </Box>
-              {/* Subrequirements */}
-              {requirement.sub_requirements.length > 0 && (
-                <Box display="flex" px={1.5}>
-                  <Typography variant="body2">
-                    <b>Sub-requirements:</b>{' '}
-                    {requirement.sub_requirements
-                      .map((subRequirement) => subRequirement.split('@').slice(-1))
-                      .join(', ')}
-                  </Typography>
-                  {requirementToTests && requirementToTests?.size > 0 ? (
-                    testLinks(requirement)
-                  ) : (
-                    <Typography
-                      ml={1.5}
-                      variant="body2"
-                      sx={{ color: lightTheme.palette.common.orangeDark }}
-                    >
-                      Not tested
-                    </Typography>
-                  )}
-                </Box>
-              )}
+              {requirementDetails(requirement)}
             </Stack>
           </Grid2>
         </Grid2>

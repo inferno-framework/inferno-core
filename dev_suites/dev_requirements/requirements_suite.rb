@@ -13,7 +13,7 @@ module RequirementsSuite
     )
 
     group do
-      title 'Goup 1'
+      title 'Group 1'
       group do
         title 'Test Requirements 1 and 2'
         verifies_requirements 'sample-criteria-proposal@1', 'sample-criteria-proposal@2'
