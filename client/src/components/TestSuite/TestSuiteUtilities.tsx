@@ -1,6 +1,7 @@
 import {
   isTestGroup,
   isTestSuite,
+  Requirement,
   Result,
   Runnable,
   Test,
@@ -23,6 +24,39 @@ export const mapRunnableToId = (testSuite: TestSuite): Map<string, Runnable> => 
   map.set(testSuite.id, testSuite);
   testSuite?.test_groups?.forEach((testGroup: TestGroup) => {
     mapRunnableRecursive(testGroup, map);
+  });
+  return map;
+};
+
+const mapRequirementRecursive = (testGroup: TestGroup, map: Map<string, string[]>) => {
+  testGroup.verifies_requirements?.forEach((requirement) => {
+    if (map.get(requirement)) {
+      map.set(requirement, [...(map.get(requirement) as string[]), testGroup.short_id]);
+    } else {
+      map.set(requirement, [testGroup.short_id]);
+    }
+  });
+  testGroup.test_groups.forEach((subGroup: TestGroup) => {
+    mapRequirementRecursive(subGroup, map);
+  });
+  testGroup.tests.forEach((test: Test) => {
+    test.verifies_requirements?.forEach((requirement) => {
+      if (map.get(requirement)) {
+        map.set(requirement, [...(map.get(requirement) as string[]), test.short_id]);
+      } else {
+        map.set(requirement, [test.short_id]);
+      }
+    });
+  });
+};
+
+export const mapRequirementToIds = (
+  requirements: Requirement[],
+  testSuite: TestSuite,
+): Map<string, string[]> => {
+  const map = new Map<string, string[]>();
+  testSuite?.test_groups?.forEach((testGroup: TestGroup) => {
+    mapRequirementRecursive(testGroup, map);
   });
   return map;
 };

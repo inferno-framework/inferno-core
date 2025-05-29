@@ -6,10 +6,15 @@ import useStyles from './styles';
 
 interface RequirementsProps {
   requirements: Requirement[];
+  requirementToTests: Map<string, string[]>;
   testSuiteTitle: string;
 }
 
-const Requirements: FC<RequirementsProps> = ({ requirements, testSuiteTitle }) => {
+const Requirements: FC<RequirementsProps> = ({
+  requirements,
+  requirementToTests,
+  testSuiteTitle,
+}) => {
   const { classes } = useStyles();
   const [filters, setFilters] = React.useState<Record<string, string>>({});
   const [filteredRequirements, setFilteredRequirements] =
@@ -76,7 +81,10 @@ const Requirements: FC<RequirementsProps> = ({ requirements, testSuiteTitle }) =
       <Divider />
       <Box m={2} overflow="auto">
         {filteredRequirements.length > 0 ? (
-          <RequirementContent requirements={filteredRequirements} />
+          <RequirementContent
+            requirements={filteredRequirements}
+            requirementToTests={requirementToTests}
+          />
         ) : (
           <Typography fontStyle="italic">No requirements found.</Typography>
         )}

@@ -12,7 +12,11 @@ test('renders Requirements', () => {
     <BrowserRouter>
       <ThemeProvider>
         <SnackbarProvider>
-          <Requirements requirements={requirements} testSuiteTitle={testSuites[0].title} />
+          <Requirements
+            requirements={requirements}
+            requirementToTests={new Map()}
+            testSuiteTitle={testSuites[0].title}
+          />
         </SnackbarProvider>
       </ThemeProvider>
     </BrowserRouter>,

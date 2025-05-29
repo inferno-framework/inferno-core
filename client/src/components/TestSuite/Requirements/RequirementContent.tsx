@@ -3,13 +3,14 @@ import { Box, Chip, Divider, Grid2, Link, Stack, Typography } from '@mui/materia
 import { blue, grey, purple, red, teal } from '@mui/material/colors';
 import { Requirement } from '~/models/testSuiteModels';
 import lightTheme from '~/styles/theme';
-// import { useTestSessionStore } from '~/store/testSession';
+import { useTestSessionStore } from '~/store/testSession';
 
 interface RequirementContentProps {
   requirements: Requirement[];
+  requirementToTests?: Map<string, string[]>;
 }
 
-const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
+const RequirementContent: FC<RequirementContentProps> = ({ requirements, requirementToTests }) => {
   const requirementsByUrl = requirements.reduce(
     // Reduce list of requirements into map of url -> list of requirements
     (acc, current) => {
@@ -20,8 +21,8 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
     },
     {} as Record<string, Requirement[]>,
   );
-  // const viewOnly = useTestSessionStore((state) => state.viewOnly);
-  // const viewOnlyUrl = viewOnly ? '/view' : '';
+  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const viewOnlyUrl = viewOnly ? '/view' : '';
 
   const conformanceChip = (text: string) => {
     const conformanceToColor: Record<string, string> = {
@@ -41,6 +42,20 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
           fontWeight: 'bolder',
         }}
       />
+    );
+  };
+
+  const testLinks = (requirement: Requirement) => {
+    const testIds = requirementToTests?.get(requirement.id);
+    return (
+      <Typography ml={1.5} variant="body2" fontWeight="bold">
+        Test:{' '}
+        {testIds?.map((id) => (
+          <Link key={id} variant="body2" href={`#${id}${viewOnlyUrl}`} color="secondary">
+            {id}
+          </Link>
+        ))}
+      </Typography>
     );
   };
 
@@ -81,17 +96,8 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
                       .map((subRequirement) => subRequirement.split('@').slice(-1))
                       .join(', ')}
                   </Typography>
-                  {/* {false ? (
-                    <Typography ml={1.5} variant="body2" fontWeight="bold">
-                      Test:{' '}
-                      <Link
-                        variant="body2"
-                        href={`#${requirement.id}${viewOnlyUrl}`}
-                        color="secondary"
-                      >
-                        test url placeholder
-                      </Link>
-                    </Typography>
+                  {requirementToTests && requirementToTests?.size > 0 ? (
+                    testLinks(requirement)
                   ) : (
                     <Typography
                       ml={1.5}
@@ -100,7 +106,7 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements }) => {
                     >
                       Not tested
                     </Typography>
-                  )} */}
+                  )}
                 </Box>
               )}
             </Stack>

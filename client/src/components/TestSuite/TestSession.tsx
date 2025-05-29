@@ -38,6 +38,7 @@ import { useTestSessionStore } from '~/store/testSession';
 import { useEffectOnce } from '~/hooks/useEffectOnce';
 import { useTimeout } from '~/hooks/useTimeout';
 import {
+  mapRequirementToIds,
   mapRunnableToId,
   resultsToMap,
   setIsRunning,
@@ -94,6 +95,10 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     () => mapRunnableToId(testSession.test_suite),
     [testSession.test_suite],
   );
+  const requirementToTests = React.useMemo(
+    () => mapRequirementToIds(requirements, testSession.test_suite),
+    [testSession.test_suite],
+  );
   const splitLocation = useLocation().hash.replace('#', '').split('/');
   let suiteName = splitLocation[0];
   const view = splitLocation[1] as ViewType;
@@ -118,23 +123,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       runnable.result = result;
     }
   });
-
-  // useEffect(() => {
-  //   // Fetch requirements from API
-  //   getTestSuiteRequirements(testSuite.id)
-  //     .then((result) => {
-  //       if (result.length > 0) {
-  //         setRequirements(result);
-  //       }
-  //     })
-  //     .catch((e: Error) => {
-  //       enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
-  //         variant: 'error',
-  //       });
-  //     });
-
-  //   // map runnable id to requirements
-  // }, []);
 
   useEffect(() => {
     // Poll for previous results
@@ -178,7 +166,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       sessionData.set(input.name, sessionData.get(input.name) || defaultValue);
     });
     setSessionData(new Map(sessionData));
-    fetchRequirements(testSession.test_suite_id);
+    fetchRequirements(testSession);
   }, [testSession]);
 
   useEffect(() => {
@@ -276,9 +264,9 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     }
   };
 
-  const fetchRequirements = (testSuiteId: string) => {
+  const fetchRequirements = (testSession: TestSession) => {
     // Fetch requirements from API
-    getTestSuiteRequirements(testSuiteId)
+    getTestSuiteRequirements(testSession.test_suite_id)
       .then((result) => {
         setRequirements(result);
       })
@@ -288,7 +276,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         });
       });
 
-    // map runnable id to requirements
+    // TODO: map runnable id to requirements
   };
 
   const runTests = (runnableType: RunnableType, runnableId: string) => {
@@ -393,7 +381,13 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           />
         );
       case 'requirements':
-        return <Requirements requirements={requirements} testSuiteTitle={runnable.title} />;
+        return (
+          <Requirements
+            requirements={requirements}
+            requirementToTests={requirementToTests}
+            testSuiteTitle={runnable.title}
+          />
+        );
       case 'config':
         // Config messages are only defined at the suite level.
         return <ConfigMessagesDetailsPanel testSuite={runnable as TestSuite} />;
