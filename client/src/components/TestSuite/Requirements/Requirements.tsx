@@ -29,8 +29,6 @@ const Requirements: FC<RequirementsProps> = ({
     setFilteredRequirements(requirements);
   }, [requirements]);
 
-  console.log(requirements);
-
   const filterRequirements = (filters: Record<string, string>) => {
     let requirementsCopy = requirements;
     Object.entries(filters).forEach(([filterName, value]) => {
