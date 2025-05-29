@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Autocomplete, Box, Button, Card, Divider, TextField, Typography } from '@mui/material';
 import { Requirement } from '~/models/testSuiteModels';
 import RequirementContent from '~/components/TestSuite/Requirements/RequirementContent';
@@ -12,9 +12,19 @@ interface RequirementsProps {
 const Requirements: FC<RequirementsProps> = ({ requirements, testSuiteTitle }) => {
   const { classes } = useStyles();
   const [filters, setFilters] = React.useState<Record<string, string>>({});
-  const [filteredRequirements, setFilteredRequirements] = React.useState<Requirement[]>([]);
+  const [filteredRequirements, setFilteredRequirements] =
+    React.useState<Requirement[]>(requirements);
 
   const conformances = ['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD', 'DEPRECATED'];
+
+  // Requirements should never change once the session has been loaded, but if it does,
+  // reset filters. This is also required to handle effects on session load.
+  useEffect(() => {
+    setFilters({});
+    setFilteredRequirements(requirements);
+  }, [requirements]);
+
+  console.log(requirements);
 
   const filterRequirements = (filters: Record<string, string>) => {
     let requirementsCopy = requirements;

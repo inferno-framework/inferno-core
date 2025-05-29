@@ -280,9 +280,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     // Fetch requirements from API
     getTestSuiteRequirements(testSuiteId)
       .then((result) => {
-        if (result.length > 0) {
-          setRequirements(result);
-        }
+        setRequirements(result);
       })
       .catch((e: Error) => {
         enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
