@@ -32,3 +32,29 @@ export const testSession: TestSession = {
   test_suite: singleTestSuite[0],
   test_suite_id: 'test-suite-id',
 };
+
+export const requirements = [
+  {
+    id: 'sample-criteria-proposal@1',
+    actor: 'Client',
+    conditionality: 'false',
+    conformance: 'SHALL',
+    requirement: 'Feugiat in ante metus dictum. Dignissim cras tincidunt lobortis feugiat.',
+    sub_requirements: [
+      'sample-criteria-proposal@2',
+      'sample-criteria-proposal@3',
+      'sample-criteria-proposal@4',
+      'sample-criteria-proposal@6',
+    ],
+    url: 'https://hl7.org/fhir/R4/',
+  },
+  {
+    id: 'sample-criteria-proposal@2',
+    actor: 'Client',
+    conditionality: 'false',
+    conformance: 'SHALL',
+    requirement: 'tempor incididunt ut labore et dolore magna aliqua',
+    sub_requirements: ['sample-criteria-proposal@3'],
+    url: 'https://hl7.org/fhir/R4/',
+  },
+];

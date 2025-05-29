@@ -48,8 +48,8 @@ const ConfigMessagesDetailsPanel: FC<ConfigDetailsPanelProps> = ({ testSuite: ru
 
   return (
     <Card variant="outlined">
-      <Box className={classes.configCardHeader}>
-        <span className={classes.configCardHeaderText}>
+      <Box className={classes.header}>
+        <span className={classes.headerText}>
           <Typography color="text.primary" className={classes.currentItem} component="div">
             Configuration Messages
           </Typography>
