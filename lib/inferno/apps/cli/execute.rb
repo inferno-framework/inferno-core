@@ -6,6 +6,7 @@ Dir[File.join(__dir__, 'execute', '*_outputter.rb')].each { |outputter| require 
 
 module Inferno
   module CLI
+    # @private
     class Execute
       include ::Inferno::Utils::VerifyRunnable
       include ::Inferno::Utils::PersistInputs
@@ -45,7 +46,6 @@ module Inferno
         self.options = options
 
         outputter.print_start_message(self.options)
-
         load_preset_file_and_set_preset_id
 
         results = []
@@ -104,18 +104,6 @@ module Inferno
         @outputter ||= OUTPUTTERS[options[:outputter]].new
       end
 
-      def load_preset_file_and_set_preset_id
-        return unless options[:preset_file]
-        raise StandardError, 'Cannot use `--preset-id` and `--preset-file` options together' if options[:preset_id]
-
-        raise StandardError, "File #{options[:preset_file]} not found" unless File.exist? options[:preset_file]
-
-        options[:preset_id] = JSON.parse(File.read(options[:preset_file]))['id']
-        raise StandardError, "Preset #{options[:preset_file]} is missing id" if options[:preset_id].nil?
-
-        presets_repo.insert_from_file(options[:preset_file])
-      end
-
       def all_selected_groups_and_tests
         @all_selected_groups_and_tests ||= runnables_by_short_id + groups + tests
       end
@@ -123,7 +111,7 @@ module Inferno
       def run_one(runnable, test_run)
         verify_runnable(
           runnable,
-          thor_hash_to_inputs_array(inputs_and_preset),
+          all_inputs,
           test_session.suite_options
         )
 
@@ -132,15 +120,14 @@ module Inferno
         dispatch_job(test_run)
       end
 
-      def inputs_and_preset
+      def all_inputs
         if preset
-          preset_inputs = preset.inputs.to_h do |preset_input|
-            [preset_input[:name], preset_input[:value]]
-          end
+          test_sessions_repo.apply_preset(test_session, preset.id)
+          preset_inputs = session_data_repo.get_all_from_session(test_session.id)
 
-          options.fetch(:inputs, {}).reverse_merge(preset_inputs)
+          thor_hash_to_inputs_array(options.fetch(:inputs, {})) + preset_inputs.map(&:to_hash)
         else
-          options.fetch(:inputs, {})
+          thor_hash_to_inputs_array(options.fetch(:inputs, {}))
         end
       end
 
@@ -157,6 +144,15 @@ module Inferno
         end
 
         @preset
+      end
+
+      def load_preset_file_and_set_preset_id
+        return unless options[:preset_file]
+        raise StandardError, 'Cannot use `--preset-id` and `--preset-file` options together' if options[:preset_id]
+
+        raise StandardError, "File #{options[:preset_file]} not found" unless File.exist? options[:preset_file]
+
+        options[:preset_id] = presets_repo.insert_from_file(options[:preset_file]).id
       end
 
       def suite
@@ -214,7 +210,7 @@ module Inferno
         {
           test_session_id: test_session.id,
           runnable_id_key(runnable) => runnable.id,
-          inputs: thor_hash_to_inputs_array(inputs_and_preset)
+          inputs: all_inputs
         }
       end
 

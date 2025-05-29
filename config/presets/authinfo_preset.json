@@ -1,0 +1,126 @@
+{
+  "title": "Preset for AuthInfo Suite",
+  "id": "dev_auth_info_preset",
+  "test_suite_id": "auth_info",
+  "inputs": [
+    {
+      "name": "public_auth_info",
+      "value": "{\"client_id\":\"SAMPLE_PUBLIC_CLIENT_ID\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\"}",
+      "_type": "auth_info",
+      "_options": {
+        "mode": "auth",
+        "components": [
+          {
+            "name": "auth_type",
+            "default": "public"
+          }
+        ]
+      }
+    },
+    {
+      "name": "symmetric_auth_info",
+      "value": "{\"token_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/token\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"client_secret\":\"SAMPLE_CONFIDENTIAL_CLIENT_SECRET\",\"auth_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/authorization\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"use_discovery\":\"false\"}",
+      "_type": "auth_info",
+      "_optional": true,
+      "_options": {
+        "mode": "auth",
+        "components": [
+          {
+            "name": "auth_type",
+            "default": "symmetric"
+          }
+        ]
+      }
+    },
+    {
+      "name": "asymmetric_auth_info",
+      "value": "{\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"pkce_support\":\"disabled\",\"auth_request_method\":\"POST\",\"encryption_algorithm\":\"ES384\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\"}",
+      "_type": "auth_info",
+      "_options": {
+        "mode": "auth",
+        "components": [
+          {
+            "name": "auth_type",
+            "default": "asymmetric",
+            "locked": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "backend_services_auth_info",
+      "value": "{\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"encryption_algorithm\":\"ES384\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\"}",
+      "_type": "auth_info",
+      "_options": {
+        "mode": "auth",
+        "components": [
+          {
+            "name": "auth_type",
+            "default": "backend_services",
+            "locked": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "public_access_auth_info",
+      "value": "{\"client_id\":\"SAMPLE_PUBLIC_CLIENT_ID\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"expires_in\":\"3600\"}",
+      "_type": "auth_info",
+      "_options": {
+        "mode": "access",
+        "components": [
+          {
+            "name": "auth_type",
+            "default": "public",
+            "locked": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "symmetric_access_auth_info",
+	"value": "{\"token_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/token\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"client_secret\":\"SAMPLE_CONFIDENTIAL_CLIENT_SECRET\",\"auth_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/authorization\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"use_discovery\":\"false\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"expires_in\":\"3600\"}",
+      "_type": "auth_info",
+      "_optional": true,
+      "_options": {
+        "mode": "access",
+        "components": [
+          {
+            "name": "auth_type",
+            "default": "symmetric"
+          }
+        ]
+      }
+    },
+    {
+      "name": "asymmetric_access_auth_info",
+      "value": "{\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"pkce_support\":\"disabled\",\"auth_request_method\":\"POST\",\"encryption_algorithm\":\"ES384\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"expires_in\":\"3600\"}",
+      "_type": "auth_info",
+      "_options": {
+        "mode": "access",
+        "components": [
+          {
+            "name": "auth_type",
+            "default": "asymmetric",
+            "locked": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "backend_services_access_auth_info",
+      "value": "{\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"encryption_algorithm\":\"ES384\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"expires_in\":\"3600\"}",
+      "_type": "auth_info",
+      "_options": {
+        "mode": "access",
+        "components": [
+          {
+            "name": "auth_type",
+            "default": "backend_services",
+            "locked": true
+          }
+        ]
+      }
+    }
+  ]
+}
