@@ -1,3 +1,4 @@
+require_relative 'requirements_coverage_checker'
 require_relative 'requirements_exporter'
 
 module Inferno
@@ -22,6 +23,16 @@ module Inferno
       def check
         ENV['NO_DB'] = 'true'
         RequirementsExporter.new.run_check
+      end
+
+      desc 'coverage TEST_SUITE_ID', "Check whether all of a test suite's requirements are tested"
+      long_desc <<~LONGDESC
+        Check whether the all of the requirements declared by a test suite are
+        tested by the tests in the test suite
+      LONGDESC
+      def coverage(test_suite_id)
+        ENV['NO_DB'] = 'true'
+        RequirementsCoverageChecker.new(test_suite_id).run
       end
     end
   end
