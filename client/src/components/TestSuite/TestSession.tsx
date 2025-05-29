@@ -266,7 +266,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const fetchRequirements = (testSession: TestSession) => {
     // Fetch requirements from API
-    getTestSuiteRequirements(testSession.test_suite_id)
+    getTestSuiteRequirements(testSession.test_suite_id, testSession.id)
       .then((result) => {
         setRequirements(result);
       })
