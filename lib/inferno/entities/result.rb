@@ -79,6 +79,37 @@ module Inferno
       def outputs
         output_json.present? ? JSON.parse(output_json) : []
       end
+
+      # Flags large inputs or outputs and replaces their values with a reference message.
+      #
+      # This method inspects either the `inputs` or `outputs` array and,
+      # for each item whose `value` exceeds the configured size threshold, sets `is_large: true`
+      # and replaces the `value` with a message pointing to the full content endpoint.
+      #
+      # @param io_type [String] Must be either `'inputs'` or `'outputs'`.
+      # @return [Array<Hash>] The mutated list of inputs or outputs.
+      def handle_large_io(io_type)
+        io_array = public_send(io_type)
+
+        io_array.each do |io|
+          next unless io_is_large?(io['value'])
+
+          io['is_large'] = true
+          io['value'] = <<~MESSAGE
+            #{io_type.singularize.capitalize} is too large to display, please visit
+            #{Inferno::Application['base_url']}/api/test_sessions/#{test_session_id}/results/#{id}/io/#{io_type}/#{io['name']}
+            for details
+          MESSAGE
+        end
+
+        io_array
+      end
+
+      # @private
+      def io_is_large?(io_value)
+        size_in_char = io_value.is_a?(String) ? io_value.length : io_value.to_json.length
+        size_in_char > ENV.fetch('MAX_IO_DISPLAY_CHAR', 10000).to_i
+      end
     end
   end
 end
