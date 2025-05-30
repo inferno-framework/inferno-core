@@ -57,7 +57,9 @@ module Inferno
           test_suite
             .requirement_sets
             .select do |set|
-              set.suite_options.all? { |set_option| selected_suite_options.include? set_option }
+              set.suite_options.all? do |set_option|
+                selected_suite_options.blank? || selected_suite_options.include?(set_option)
+              end
             end
 
         requirements =
