@@ -80,6 +80,16 @@ export type RequestHeader = {
   value: string;
 };
 
+export type Requirement = {
+  id: string;
+  requirement: string;
+  conformance: string;
+  actor: string;
+  conditionality: string;
+  url?: string;
+  sub_requirements: string[];
+};
+
 export interface Result {
   id: string;
   result: string;
@@ -153,7 +163,7 @@ export interface TestSession {
   suite_options?: SuiteOption[];
 }
 
-export type ViewType = 'run' | 'report' | 'config';
+export type ViewType = 'run' | 'report' | 'requirements' | 'config';
 
 // ==========================================
 // RUNNABLES
@@ -176,6 +186,7 @@ export type Runnable = {
   optional?: boolean;
   input_instructions?: string;
   is_running?: boolean;
+  verifies_requirements?: string[];
 };
 
 export type Test = Runnable & {

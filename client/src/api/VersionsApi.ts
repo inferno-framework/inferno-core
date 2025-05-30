@@ -5,7 +5,8 @@ export function getCoreVersion(): Promise<string> {
   return fetch(endpoint)
     .then((response) => response.json())
     .then((result) => {
-      return 'version' in result ? (result.version as string) : ''; // eslint-disable-line
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      return 'version' in result ? (result.version as string) : '';
     })
     .catch(() => {
       return '';

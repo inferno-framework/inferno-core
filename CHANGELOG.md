@@ -1,3 +1,9 @@
+## 0.6.11
+* FI-4120: Add requirements feature flag by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/685
+* FI-4022 Support complex presets in Execute CLI by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/684
+* FI-4120: Add requirements routes to feature flag by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/687
+* FI-3941: Add specification requirements page by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/679
+
 ## 0.6.10
 * FI-3950: Handle Error message in evaluator CLI when fhirpath service not running is unclear by @jhlee-mitre in https://github.com/inferno-framework/inferno-core/pull/667
 * FI-3790: Add ability to hide optional or locked inputs by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/647
