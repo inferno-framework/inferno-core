@@ -21,11 +21,11 @@ module Inferno
         field :optional?, name: :optional
 
         field :inputs do |result, _options|
-          result.input_json.present? ? JSON.parse(result.input_json) : []
+          result.handle_large_io('inputs')
         end
 
         field :outputs do |result, _options|
-          result.output_json.present? ? JSON.parse(result.output_json) : []
+          result.handle_large_io('outputs')
         end
 
         association :messages, blueprint: Message, if: :field_present?

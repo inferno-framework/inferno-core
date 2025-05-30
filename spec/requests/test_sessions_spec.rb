@@ -105,6 +105,33 @@ RSpec.describe '/test_sessions' do
       expect(result['messages'].length).to eq(new_result.messages.length)
     end
 
+    context 'when large input/output present' do
+      let(:input_json) { [{ 'name' => 'input_name', 'value' => 'input' * 10_000 }].to_json }
+      let(:output_json) { [{ 'name' => 'output_name', 'value' => 'output' * 10_000 }].to_json }
+      let!(:result) do
+        repo_create(
+          :result, message_count: 2, input_json:, output_json:,
+                   created_at: 1.minute.ago, updated_at: 1.minute.ago
+        )
+      end
+
+      it 'flags large IO' do
+        get router.path(:api_test_sessions_results, id: result.test_session_id)
+
+        res = parsed_body.first
+        expect(res['inputs']).to all(include('is_large'))
+        expect(res['outputs']).to all(include('is_large'))
+      end
+
+      it 'replaces large IO value with a reference message' do
+        get router.path(:api_test_sessions_results, id: result.test_session_id)
+
+        res = parsed_body.first
+        expect(res['inputs'].first['value']).to match(/is too large to display/)
+        expect(res['outputs'].first['value']).to match(/is too large to display/)
+      end
+    end
+
     context 'when all=true' do
       it 'renders all results' do
         get "#{router.path(:api_test_sessions_results, id: new_result.test_session_id)}?all=true"
@@ -118,6 +145,122 @@ RSpec.describe '/test_sessions' do
 
         expect(new_result_json['messages'].length).to eq(new_result.messages.length)
         expect(old_result_json['messages'].length).to eq(old_result.messages.length)
+      end
+    end
+  end
+
+  describe '/:id/results/:result_id/io/:type/:name' do
+    let(:io_name) { 'request_body' }
+    let(:io_value) { { foo: 'bar' } }
+    let(:input_json) { [{ 'name' => io_name, 'value' => io_value }].to_json }
+    let(:output_json) { [{ 'name' => io_name, 'value' => io_value }].to_json }
+    let!(:result) do
+      repo_create(
+        :result, message_count: 2, input_json:, output_json:,
+                 created_at: 1.minute.ago, updated_at: 1.minute.ago
+      )
+    end
+
+    context 'when retrieving a valid input' do
+      it 'returns the input value as JSON' do
+        get router.path(
+          :api_test_sessions_result_io_value, id: result.test_session_id,
+                                              result_id: result.id, type: 'inputs', name: io_name
+        )
+
+        expect(last_response.status).to eq(200)
+        expect(last_response.content_type).to include('application/json')
+        expect(last_response.body).to eq(io_value.to_json)
+      end
+    end
+
+    context 'when retrieving a valid output' do
+      it 'returns the output value as JSON' do
+        get router.path(
+          :api_test_sessions_result_io_value, id: result.test_session_id,
+                                              result_id: result.id, type: 'outputs', name: io_name
+        )
+
+        expect(last_response.status).to eq(200)
+        expect(last_response.content_type).to include('application/json')
+        expect(last_response.body).to eq(io_value.to_json)
+      end
+    end
+
+    context 'when the input name does not exist' do
+      it 'returns 404' do
+        get router.path(
+          :api_test_sessions_result_io_value, id: result.test_session_id,
+                                              result_id: result.id, type: 'inputs', name: 'missing_name'
+        )
+
+        expect(last_response.status).to eq(404)
+        expect(parsed_body['error']).to match(/not found/i)
+      end
+    end
+
+    context 'when the type is not "inputs" or "outputs"' do
+      it 'returns 400' do
+        get router.path(
+          :api_test_sessions_result_io_value, id: result.test_session_id,
+                                              result_id: result.id, type: 'input', name: io_name
+        )
+
+        expect(last_response.status).to eq(400)
+        expect(parsed_body['error']).to match(/Must be "inputs" or "outputs"/i)
+      end
+    end
+
+    context 'when the result is associated with the wrong test session' do
+      it 'returns 404' do
+        get router.path(
+          :api_test_sessions_result_io_value, id: 'wrong_session',
+                                              result_id: result.id, type: 'inputs', name: io_name
+        )
+
+        expect(last_response.status).to eq(404)
+      end
+    end
+
+    context 'when value is a plain string' do
+      let(:input_value) { 'This is a plain string' }
+      let(:input_json) { [{ 'name' => io_name, 'value' => input_value }].to_json }
+      let(:string_input_result) do
+        repo_create(
+          :result, message_count: 2, input_json:,
+                   created_at: 1.minute.ago, updated_at: 1.minute.ago
+        )
+      end
+
+      it 'returns Content-Type text/plain' do
+        get router.path(
+          :api_test_sessions_result_io_value, id: string_input_result.test_session_id,
+                                              result_id: string_input_result.id, type: 'inputs', name: io_name
+        )
+
+        expect(last_response.content_type).to include('text/plain')
+        expect(last_response.body).to eq(input_value)
+      end
+    end
+
+    context 'when value is an XML string' do
+      let(:input_value) { '<Patient><name>John</name></Patient>' }
+      let(:input_json) { [{ 'name' => io_name, 'value' => input_value }].to_json }
+      let(:string_input_result) do
+        repo_create(
+          :result, message_count: 2, input_json:,
+                   created_at: 1.minute.ago, updated_at: 1.minute.ago
+        )
+      end
+
+      it 'returns Content-Type application/xml' do
+        get router.path(
+          :api_test_sessions_result_io_value, id: string_input_result.test_session_id,
+                                              result_id: string_input_result.id, type: 'inputs', name: io_name
+        )
+
+        expect(last_response.content_type).to eq('application/xml')
+        expect(last_response.body).to eq(input_value)
       end
     end
   end
