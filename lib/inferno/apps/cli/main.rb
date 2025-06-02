@@ -6,8 +6,8 @@ require_relative 'services'
 require_relative 'suite'
 require_relative 'suites'
 require_relative 'new'
-require_relative '../../version'
 require_relative 'execute'
+require_relative '../../version'
 
 module Inferno
   module CLI
@@ -99,6 +99,10 @@ module Inferno
 
       desc 'suites', 'List available test suites'
       def suites
+        ENV['NO_DB'] = 'true'
+
+        require_relative '../../../inferno'
+
         Suites.new.run
       end
 
