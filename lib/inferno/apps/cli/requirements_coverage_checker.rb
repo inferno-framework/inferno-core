@@ -84,7 +84,7 @@ module Inferno
                 requirement.requirement,
                 requirement.conformance,
                 requirement.actor,
-                requirement.sub_requirements,
+                requirement.sub_requirements.presence&.join(', '),
                 requirement.conditionality,
                 requirement.not_tested_reason,
                 requirement.not_tested_details,
