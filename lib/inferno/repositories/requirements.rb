@@ -74,8 +74,7 @@ module Inferno
           .flat_map do |requirement_set|
             all.select do |requirement|
               requirement.requirement_set == requirement_set.identifier &&
-                requirement.actor == requirement_set.actor &&
-                requirement.tested?
+                requirement.actor == requirement_set.actor
             end
           end
       end
