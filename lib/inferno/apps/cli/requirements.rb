@@ -32,6 +32,11 @@ module Inferno
       LONGDESC
       def coverage(test_suite_id)
         ENV['NO_DB'] = 'true'
+
+        require_relative '../../../inferno'
+
+        Inferno::Application.start(:requirements)
+
         RequirementsCoverageChecker.new(test_suite_id).run
       end
     end

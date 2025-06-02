@@ -62,9 +62,9 @@ module Inferno
       def new_csv
         @new_csv ||=
           CSV.generate(+"\xEF\xBB\xBF") do |csv|
-            csv << OUTPUT_HEADERS
-            suite_requirements.each do |requirement|
+            csv << output_headers
 
+            suite_requirements.each do |requirement|
               if requirement.not_tested_reason.present?
                 long_ids = 'NA'
                 short_ids = 'NA'
@@ -79,7 +79,7 @@ module Inferno
 
               row = [
                 requirement.requirement_set,
-                requirement_id.delete_prefix("#{requirement_set}@"),
+                requirement.id.delete_prefix("#{requirement.requirement_set}@"),
                 requirement.url,
                 requirement.requirement,
                 requirement.conformance,
@@ -113,7 +113,7 @@ module Inferno
             suite_runnables.select { |runnable| runnable.verifies_requirements.include? requirement_id }
 
           runnables_for_requirement.map do |runnable|
-            [requirement_id, runnable.short_id, runnable,long_id]
+            [requirement_id, runnable.short_id, runnable.id]
           end
         end
       end
@@ -130,7 +130,7 @@ module Inferno
 
         if unmatched_requirement_ids.present?
           puts "WARNING: The following requirements indicated in the test suite are not present in the suite's requirement sets:"
-          output_requirements_map_table(unmatched_requirements_map)
+          output_requirements_map_table(unmatched_requirement_rows)
         end
 
         if File.exist?(output_file_path)

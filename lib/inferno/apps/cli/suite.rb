@@ -15,6 +15,9 @@ module Inferno
       option :filename, banner: '<filename>', aliases: [:f]
       def input_template(suite_id)
         ENV['NO_DB'] = 'true'
+
+        require_relative '../../../inferno'
+
         SuiteInputTemplate.new.run(suite_id, options)
       end
 
@@ -24,6 +27,9 @@ module Inferno
       LONGDESC
       def describe(suite_id)
         ENV['NO_DB'] = 'true'
+
+        require_relative '../../../inferno'
+
         Inferno::Application.start(:suites)
 
         suite = Inferno::Repositories::TestSuites.new.find(suite_id)
@@ -59,6 +65,9 @@ module Inferno
       LONGDESC
       def lock_short_ids(suite_id)
         ENV['NO_DB'] = 'true'
+
+        require_relative '../../../inferno'
+
         Inferno::Application.start(:suites)
 
         suite = Inferno::Repositories::TestSuites.new.find(suite_id)
