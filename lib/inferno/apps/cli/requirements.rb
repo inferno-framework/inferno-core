@@ -25,19 +25,29 @@ module Inferno
         RequirementsExporter.new.run_check
       end
 
-      desc 'coverage TEST_SUITE_ID', "Check whether all of a test suite's requirements are tested"
+      desc 'coverage [TEST_SUITE_ID]',
+           "Check whether all of a test suite's requirements are tested. If no test suite id is provided, " \
+           'all test suites in the current test kit will be checked.'
       long_desc <<~LONGDESC
         Check whether the all of the requirements declared by a test suite are
         tested by the tests in the test suite
       LONGDESC
-      def coverage(test_suite_id)
+      def coverage(test_suite_id = nil)
         ENV['NO_DB'] = 'true'
 
         require_relative '../../../inferno'
 
         Inferno::Application.start(:requirements)
 
-        RequirementsCoverageChecker.new(test_suite_id).run
+        if test_suite_id.present?
+          RequirementsCoverageChecker.new(test_suite_id).run
+        else
+          Inferno::Repositories::TestSuites.all.each do |test_suite|
+            if Object.const_source_location(test_suite.to_s).first.start_with? Dir.pwd
+              RequirementsCoverageChecker.new(test_suite.id).run
+            end
+          end
+        end
       end
     end
   end
