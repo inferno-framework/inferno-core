@@ -95,7 +95,7 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
     );
   };
 
-  return Object.entries(requirementsByUrl).map(([url, requirementsList]) => (
+  return Object.entries(requirementsByUrl).map(([url, requirementsList], index) => (
     <Box key={url}>
       <Box pb={2}>
         {requirementsList[0] && (
@@ -128,8 +128,8 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
           </Grid2>
         </Grid2>
       ))}
-      {/* Empty URL is always last */}
-      {url && <Divider sx={{ mb: 2 }} />}
+      {/* No divider if last section */}
+      {index !== Object.keys(requirementsByUrl).length - 1 && <Divider sx={{ mb: 2 }} />}
     </Box>
   ));
 };

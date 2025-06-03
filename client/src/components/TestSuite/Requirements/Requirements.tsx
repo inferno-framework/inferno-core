@@ -87,7 +87,6 @@ const Requirements: FC<RequirementsProps> = ({
           <Typography fontStyle="italic">No requirements found.</Typography>
         )}
       </Box>
-      <Divider />
     </Card>
   );
 };
