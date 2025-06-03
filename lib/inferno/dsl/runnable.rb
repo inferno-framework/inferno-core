@@ -210,20 +210,22 @@ module Inferno
       def id(new_id = nil)
         return @id if new_id.nil? && @id.present?
 
-        prefix =
-          if parent
-            "#{parent.id}-"
-          else
-            ''
-          end
+        prefix = parent ? "#{parent.id}-" : ''
 
         @base_id = new_id || @base_id || default_id
-
         final_id = "#{prefix}#{@base_id}"
+        @full_id = final_id
 
-        raise Exceptions::InvalidRunnableIdException, final_id if final_id.length > 255
+        if final_id.length > 255
+          hash = Digest::SHA1.hexdigest(final_id)[0...10]
+          final_id = "#{final_id[0...244]}-#{hash}"
+        end
 
         @id = final_id
+      end
+
+      def full_id
+        @full_id ||= id
       end
 
       # Set/Get a runnable's title
@@ -498,7 +500,7 @@ module Inferno
       #   reorder(:test3, 1) # Moves `test3` to index 1
       #
       def reorder(child_id, new_index)
-        index = children.find_index { |child| child.id.to_s.end_with? child_id.to_s }
+        index = children.find_index { |child| child.full_id.to_s.end_with? child_id.to_s }
         raise Exceptions::RunnableChildNotFoundException.new(child_id, self) unless index
 
         unless new_index.between?(0, children.length - 1)
@@ -527,7 +529,7 @@ module Inferno
       #     config(...)
       #   end
       def replace(id_to_replace, replacement_id, &)
-        index = children.find_index { |child| child.id.to_s.end_with? id_to_replace.to_s }
+        index = children.find_index { |child| child.full_id.to_s.end_with? id_to_replace.to_s }
         raise Exceptions::RunnableChildNotFoundException.new(id_to_replace, self) unless index
 
         if children[index] < Inferno::TestGroup
@@ -550,8 +552,8 @@ module Inferno
       #
       #   remove :test2
       def remove(id_to_remove)
-        removed = children.select { |child| child.id.to_s.end_with? id_to_remove.to_s }
-        children.reject! { |child| child.id.to_s.end_with? id_to_remove.to_s }
+        removed = children.select { |child| child.full_id.to_s.end_with? id_to_remove.to_s }
+        children.reject! { |child| child.full_id.to_s.end_with? id_to_remove.to_s }
         removed.each(&:remove_self_from_repository)
       end
 

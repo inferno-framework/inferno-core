@@ -40,7 +40,7 @@ RSpec.describe Inferno::ResultCollection do
 
       context 'when using partial ID' do
         it 'returns the result with the runnable ID ending with the partial ID' do
-          partial_id = suite_children.first.id.split('-').last
+          partial_id = suite_children.first.full_id.split('-').last
           expect(result_collection[partial_id]).to eq(child_results.first)
         end
       end

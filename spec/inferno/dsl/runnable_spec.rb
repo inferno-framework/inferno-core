@@ -190,10 +190,15 @@ RSpec.describe Inferno::DSL::Runnable do
   end
 
   describe '.id' do
-    it 'raises an error if the id is longer than 255 characters' do
-      expect do
-        Class.new(Inferno::Test).id('a' * 256)
-      end.to raise_error(Inferno::Exceptions::InvalidRunnableIdException, /length of 255 characters/)
+    it 'shortens the id and preserves the full_id if longer than 255 characters' do
+      long_id = 'a' * 256
+      test = Class.new(Inferno::Test) do
+        id long_id
+      end
+
+      expect(test.id.length).to be <= 255
+      expect(test.full_id).to eq(long_id)
+      expect(test.id).to_not eq(long_id)
     end
   end
 
@@ -267,25 +272,25 @@ RSpec.describe Inferno::DSL::Runnable do
 
     it 'replaces a child with a new one using its ID' do
       child = test_group.children.first
-      global_id = child.id.split('-').last
+      global_id = child.full_id.split('-').last
       test_group.replace global_id, 'DemoIG_STU1::DemoGroup'
 
       expect(test_group.children.length).to eq(2)
-      expect(test_group.children.none? { |c| c.id.to_s.end_with?('DEF') }).to be true
-      expect(test_group.children[0].id.to_s.end_with?('DemoIG_STU1::DemoGroup')).to be true
+      expect(test_group.children.none? { |c| c.full_id.to_s.end_with?('DEF') }).to be true
+      expect(test_group.children[0].full_id.to_s.end_with?('DemoIG_STU1::DemoGroup')).to be true
       expect(test_groups_repo.find(child.id)).to be_nil
       expect(child.children.filter_map { |c| tests_repo.find(c.id) }).to be_empty
     end
 
     it 'applies block configuration to the new child when block given' do
       child = test_group.children.first
-      global_id = child.id.split('-').last
+      global_id = child.full_id.split('-').last
       test_group.replace global_id, 'DemoIG_STU1::DemoGroup' do
         id :new_id
       end
 
       expect(test_group.children.length).to eq(2)
-      expect(test_group.children[0].id.to_s.end_with?('new_id')).to be true
+      expect(test_group.children[0].full_id.to_s.end_with?('new_id')).to be true
       expect(test_groups_repo.find(child.id)).to be_nil
       expect(child.children.filter_map { |c| tests_repo.find(c.id) }).to be_empty
     end
