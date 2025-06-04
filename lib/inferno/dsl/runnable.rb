@@ -39,6 +39,7 @@ module Inferno
       # @private
       VARIABLES_NOT_TO_COPY = [
         :@id, # New runnable will have a different id
+        :@database_id, # New runnable will have a different database_id
         :@parent, # New runnable unlikely to have the same parent
         :@all_children, # New subclasses have to be made for each child
         :@test_count, # Needs to be recalculated
@@ -207,24 +208,6 @@ module Inferno
       #
       # @param new_id [String,Symbol]
       # @return [String,Symbol] the id
-      # def id(new_id = nil)
-      #   return @id if new_id.nil? && @id.present?
-
-      #   prefix =
-      #     if parent
-      #       "#{parent.id}-"
-      #     else
-      #       ''
-      #     end
-
-      #   @base_id = new_id || @base_id || default_id
-
-      #   final_id = "#{prefix}#{@base_id}"
-
-      #   raise Exceptions::InvalidRunnableIdException, final_id if final_id.length > 255
-
-      #   @id = final_id
-      # end
       def id(new_id = nil)
         return @id if new_id.nil? && @id.present?
 
