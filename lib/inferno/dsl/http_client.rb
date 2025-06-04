@@ -46,12 +46,16 @@ module Inferno
       def http_client(client = :default)
         return http_clients[client] if http_clients[client]
 
-        definition = self.class.http_client_definitions[client]
+        definition = find_http_client_definition(client)
         return nil if definition.nil?
 
         tcp_exception_handler do
           http_clients[client] = HTTPClientBuilder.new.build(self, definition)
         end
+      end
+
+      def find_http_client_definition(client)
+        self.class.find_http_client_definition(client)
       end
 
       # @private
@@ -194,6 +198,10 @@ module Inferno
         # @private
         def http_client_definitions
           @http_client_definitions ||= {}
+        end
+
+        def find_http_client_definition(client)
+          http_client_definitions[client] || parent&.find_http_client_definition(client)
         end
 
         # Define a HTTP client to be used by a Runnable.
