@@ -97,9 +97,9 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
 
   return Object.entries(requirementsByUrl).map(([url, requirementsList], index) => (
     <Box key={url}>
-      <Box pb={2}>
+      <Box>
         {requirementsList[0] && (
-          <Typography variant="h5" component="p" fontWeight="bold" sx={{ mb: 1 }}>
+          <Typography variant="h5" component="p" fontWeight="bold" sx={{ mt: 1 }}>
             {/* Pull the specification out from the first requirement */}
             {requirementsList[0].id.split('@')[0]}
           </Typography>
@@ -113,7 +113,7 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
         )}
       </Box>
       {requirementsList.map((requirement) => (
-        <Grid2 container spacing={2} mb={2} key={requirement.id}>
+        <Grid2 container spacing={2} mt={2} key={requirement.id}>
           <Grid2>
             <Typography fontWeight="bold">{requirement.id.split('@').slice(-1)}</Typography>
           </Grid2>
@@ -129,7 +129,7 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
         </Grid2>
       ))}
       {/* No divider if last section */}
-      {index !== Object.keys(requirementsByUrl).length - 1 && <Divider sx={{ mb: 2 }} />}
+      {index !== Object.keys(requirementsByUrl).length - 1 && <Divider sx={{ mt: 2 }} />}
     </Box>
   ));
 };
