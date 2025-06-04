@@ -34,7 +34,7 @@ RSpec.shared_context('when testing a runnable') do
   # can include some ancestor context if needed to identify the
   # correct test. The first matching test found will be returned.
   def find_test(runnable, id_suffix)
-    return runnable if runnable.full_id.ends_with?(id_suffix)
+    return runnable if runnable.id.ends_with?(id_suffix)
 
     runnable.children.each do |entity|
       found = find_test(entity, id_suffix)
