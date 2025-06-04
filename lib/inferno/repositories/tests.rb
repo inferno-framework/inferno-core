@@ -1,9 +1,9 @@
-require_relative 'in_memory_repository'
+require_relative 'runnable_repository'
 
 module Inferno
   module Repositories
     # Repository that deals with persistence for the `Test` entity.
-    class Tests < InMemoryRepository
+    class Tests < RunnableRepository
     end
   end
 end
