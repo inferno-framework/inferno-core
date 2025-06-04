@@ -207,23 +207,41 @@ module Inferno
       #
       # @param new_id [String,Symbol]
       # @return [String,Symbol] the id
+      # def id(new_id = nil)
+      #   return @id if new_id.nil? && @id.present?
+
+      #   prefix =
+      #     if parent
+      #       "#{parent.id}-"
+      #     else
+      #       ''
+      #     end
+
+      #   @base_id = new_id || @base_id || default_id
+
+      #   final_id = "#{prefix}#{@base_id}"
+
+      #   raise Exceptions::InvalidRunnableIdException, final_id if final_id.length > 255
+
+      #   @id = final_id
+      # end
       def id(new_id = nil)
         return @id if new_id.nil? && @id.present?
 
-        prefix =
-          if parent
-            "#{parent.id}-"
-          else
-            ''
-          end
-
+        prefix = parent ? "#{parent.id}-" : ''
         @base_id = new_id || @base_id || default_id
+        @id = "#{prefix}#{@base_id}"
 
-        final_id = "#{prefix}#{@base_id}"
+        if @id.length > 255
+          hash = Digest::SHA1.hexdigest(@id)[0...10]
+          @database_id = "#{@id[0...244]}-#{hash}"
+        end
 
-        raise Exceptions::InvalidRunnableIdException, final_id if final_id.length > 255
+        @id
+      end
 
-        @id = final_id
+      def database_id
+        @database_id ||= id
       end
 
       # Set/Get a runnable's title
