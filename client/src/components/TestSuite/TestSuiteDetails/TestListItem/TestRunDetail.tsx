@@ -1,16 +1,29 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import { Box, Card, Divider, Tabs, Typography } from '@mui/material';
-import { Message, Request, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
-import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
-import CustomTab from '~/components/_common/CustomTab';
-import CustomTooltip from '~/components/_common/CustomTooltip';
-import TabPanel from '~/components/TestSuite/TestSuiteDetails/TestListItem/TabPanel';
-import MessageList from '~/components/TestSuite/TestSuiteDetails/TestListItem/MessageList';
-import RequestList from '~/components/TestSuite/TestSuiteDetails/TestListItem/RequestList';
-import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
-import useStyles from './styles';
+import { Box, Card, Divider, Link, Tabs, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { enqueueSnackbar } from 'notistack';
+import { getSingleRequirement } from '~/api/RequirementsApi';
+import {
+  Message,
+  Request,
+  Requirement,
+  Test,
+  TestInput,
+  TestOutput,
+} from '~/models/testSuiteModels';
+import {
+  shouldShowDescription,
+  shouldShowRequirementsButton,
+} from '~/components/TestSuite/TestSuiteUtilities';
+import CustomTab from '~/components/_common/CustomTab';
+import CustomTooltip from '~/components/_common/CustomTooltip';
+import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
+import MessageList from '~/components/TestSuite/TestSuiteDetails/TestListItem/MessageList';
+import RequestList from '~/components/TestSuite/TestSuiteDetails/TestListItem/RequestList';
+import RequirementsModal from '~/components/TestSuite/Requirements/RequirementsModal';
+import TabPanel from '~/components/TestSuite/TestSuiteDetails/TestListItem/TabPanel';
+import useStyles from './styles';
 
 interface TestRunDetailProps {
   test: Test;
@@ -33,6 +46,8 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
   tabs,
 }) => {
   const { classes } = useStyles();
+  const [requirements, setRequirements] = React.useState<Requirement[]>([]);
+  const [showRequirements, setShowRequirements] = React.useState(false);
 
   useEffect(() => {
     setTabIndex(currentTabIndex);
@@ -75,6 +90,22 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
         disabled={disableTab}
       />
     );
+  };
+
+  const showRequirementsClick = () => {
+    const requirementIds = test.verifies_requirements;
+    if (requirementIds) {
+      Promise.all(requirementIds.map((requirementId) => getSingleRequirement(requirementId)))
+        .then((resolvedValues) => {
+          setRequirements(resolvedValues.filter((r) => !!r));
+          setShowRequirements(true);
+        })
+        .catch((e: Error) => {
+          enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
+            variant: 'error',
+          });
+        });
+    }
   };
 
   return (
@@ -127,7 +158,21 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
             </Typography>
           </Box>
         )}
+        {shouldShowRequirementsButton(test) && (
+          <Box display="flex" justifyContent="end" minWidth="fit-content" px={2} pb={2}>
+            <Link color="secondary" className={classes.textButton} onClick={showRequirementsClick}>
+              View Specification Requirements
+            </Link>
+          </Box>
+        )}
       </TabPanel>
+      {requirements && shouldShowRequirementsButton(test) && (
+        <RequirementsModal
+          requirements={requirements}
+          modalVisible={showRequirements}
+          hideModal={() => setShowRequirements(false)}
+        />
+      )}
     </Card>
   );
 };

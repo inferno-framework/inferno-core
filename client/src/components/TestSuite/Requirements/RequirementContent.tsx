@@ -1,9 +1,12 @@
 import React, { FC } from 'react';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Box, Chip, Divider, Grid2, Link, Stack, Typography } from '@mui/material';
 import { blue, grey, purple, red, teal } from '@mui/material/colors';
 import { Requirement } from '~/models/testSuiteModels';
 import lightTheme from '~/styles/theme';
 import { useTestSessionStore } from '~/store/testSession';
+import useStyles from './styles';
 
 interface RequirementContentProps {
   requirements: Requirement[];
@@ -11,6 +14,7 @@ interface RequirementContentProps {
 }
 
 const RequirementContent: FC<RequirementContentProps> = ({ requirements, requirementToTests }) => {
+  const { classes } = useStyles();
   const requirementsByUrl = requirements.reduce(
     // Reduce list of requirements into map of url -> list of requirements
     (acc, current) => {
@@ -121,7 +125,9 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
           <Grid2 size="grow">
             <Stack>
               <Box px={1} mb={1} sx={{ borderLeft: `4px solid ${grey[100]}` }}>
-                <Typography>{requirement.requirement}</Typography>
+                <Markdown remarkPlugins={[remarkGfm]} className={classes.markdown}>
+                  {requirement.requirement}
+                </Markdown>
               </Box>
               {requirementDetails(requirement)}
             </Stack>
