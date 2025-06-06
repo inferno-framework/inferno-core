@@ -1,10 +1,6 @@
 require_relative '../../../lib/inferno/dsl/http_client_builder'
 
-class HTTPClientDSLTestClass
-  include Inferno::DSL::HTTPClient
-  extend Inferno::DSL::Configurable
-  include Inferno::DSL::Results
-
+class HTTPClientDSLTestClass < Inferno::Test
   def test_session_id
     nil
   end
