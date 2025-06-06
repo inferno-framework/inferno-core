@@ -60,6 +60,7 @@ module Inferno
 
         final_params = params.merge(suite_options:)
         add_non_db_entities(final_params)
+        update_non_db_entities_ids(final_params)
         entity_class.new(final_params)
       end
 
