@@ -165,22 +165,6 @@ module Inferno
           klass.output output_name
         end
 
-        new_fhir_client_definitions = klass.instance_variable_get(:@fhir_client_definitions) || {}
-        fhir_client_definitions.each do |name, definition|
-          next if new_fhir_client_definitions.include? name
-
-          new_fhir_client_definitions[name] = definition.dup
-        end
-        klass.instance_variable_set(:@fhir_client_definitions, new_fhir_client_definitions)
-
-        new_http_client_definitions = klass.instance_variable_get(:@http_client_definitions) || {}
-        http_client_definitions.each do |name, definition|
-          next if new_http_client_definitions.include? name
-
-          new_http_client_definitions[name] = definition.dup
-        end
-        klass.instance_variable_set(:@http_client_definitions, new_http_client_definitions)
-
         klass.config(config)
 
         klass.all_children.select!(&:required?) if hash_args.delete(:exclude_optional)
