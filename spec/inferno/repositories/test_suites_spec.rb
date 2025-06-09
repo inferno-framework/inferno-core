@@ -64,7 +64,8 @@ RSpec.describe Inferno::Repositories::TestSuites do
         repo.insert(suite1)
 
         expect { repo.insert(suite2) }.to raise_error(
-          Inferno::Exceptions::DuplicateEntityIdException, /database_id: `#{suite2.database_id}`' already exists/
+          Inferno::Exceptions::DuplicateEntityIdException,
+          /database_id: `#{suite2.database_id}` generated from original id: `#{suite2.id}`' already exists/
         )
       end
     end

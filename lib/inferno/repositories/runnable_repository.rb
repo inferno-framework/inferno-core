@@ -5,9 +5,11 @@ module Inferno
     class RunnableRepository < InMemoryRepository
       def insert(entity)
         raise Exceptions::DuplicateEntityIdException, entity.id if exists?(entity.id)
+
         # Safety check to prevent rare database_id collisions from overwriting entries
         if exists?(entity.database_id) && entity.database_id.to_s != entity.id.to_s
-          raise Exceptions::DuplicateEntityIdException, "database_id: `#{entity.database_id}`"
+          raise Exceptions::DuplicateEntityIdException,
+                "database_id: `#{entity.database_id}` generated from original id: `#{entity.id}`"
         end
 
         all << entity
