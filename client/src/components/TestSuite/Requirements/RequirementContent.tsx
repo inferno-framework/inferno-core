@@ -82,10 +82,13 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
         fontWeight="bold"
       >
         Test:{' '}
-        {testIds?.map((id) => (
-          <Link key={id} variant="body2" href={`#${id}${viewOnlyUrl}`} color="secondary">
-            {id}
-          </Link>
+        {testIds?.map((id, i) => (
+          <span key={id}>
+            <Link variant="body2" href={`#${id}${viewOnlyUrl}`} color="secondary">
+              {id}
+            </Link>
+            {i !== testIds.length - 1 ? ', ' : ''} {/* Separate values with commas */}
+          </span>
         ))}
       </Typography>
     ) : (
