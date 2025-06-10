@@ -38,6 +38,7 @@ module Inferno
       #     test_id: 'test_id'
       #   )
       def current_result_for_test_session(test_session_id, params)
+        update_non_db_entities_ids(params, use_database_id: true)
         self.class::Model
           .where({ test_session_id: }.merge(params))
           .order(Sequel.desc(:updated_at))
@@ -63,10 +64,12 @@ module Inferno
           else
             {}
           end
+        update_non_db_entities_ids(params)
         entity_class.new(params.merge(runnable))
       end
 
       def result_for_test_run(params)
+        update_non_db_entities_ids(params, use_database_id: true)
         result_hash =
           self.class::Model
             .find(params)
@@ -202,9 +205,9 @@ module Inferno
         end
 
         def self.current_results_for_test_session_and_runnables(test_session_id, runnables)
-          test_ids = runnables.select { |runnable| runnable < Entities::Test }.map!(&:id)
-          test_group_ids = runnables.select { |runnable| runnable < Entities::TestGroup }.map!(&:id)
-          test_suite_ids = runnables.select { |runnable| runnable < Entities::TestSuite }.map!(&:id)
+          test_ids = runnables.select { |runnable| runnable < Entities::Test }.map!(&:database_id)
+          test_group_ids = runnables.select { |runnable| runnable < Entities::TestGroup }.map!(&:database_id)
+          test_suite_ids = runnables.select { |runnable| runnable < Entities::TestSuite }.map!(&:database_id)
 
           fetch(
             current_results_sql(with_runnables_filter: true),
