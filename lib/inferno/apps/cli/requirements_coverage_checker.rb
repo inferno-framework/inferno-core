@@ -59,7 +59,7 @@ module Inferno
         @untested_requirements ||= []
       end
 
-      def new_csv
+      def new_csv # rubocop:disable Metrics/CyclomaticComplexity
         @new_csv ||=
           CSV.generate(+"\xEF\xBB\xBF") do |csv|
             csv << output_headers
@@ -129,7 +129,8 @@ module Inferno
         end
 
         if unmatched_requirement_ids.present?
-          puts "WARNING: The following requirements indicated in the test suite are not present in the suite's requirement sets:"
+          puts 'WARNING: The following requirements indicated in the test suite are not present in ' \
+               "the suite's requirement sets:"
           output_requirements_map_table(unmatched_requirement_rows)
         end
 
@@ -157,7 +158,8 @@ module Inferno
         end
 
         if unmatched_requirement_ids.any?
-          puts "WARNING: The following requirements indicated in the test suite are not present in the suite's requirement sets:"
+          puts 'WARNING: The following requirements indicated in the test suite are not present in ' \
+               "the suite's requirement sets:"
           output_requirements_map_table(unmatched_requirements_map)
         end
 
