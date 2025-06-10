@@ -20,6 +20,20 @@ const Requirements: FC<RequirementsProps> = ({
   const [filteredRequirements, setFilteredRequirements] =
     React.useState<Requirement[]>(requirements);
 
+  // Add specification to each requirement
+  requirements.forEach((requirement, i) => {
+    requirements[i] = { ...requirement, specification: requirement.id.split('@')[0] };
+  });
+
+  const specifications = Array.from(
+    // Remove duplicate values
+    new Set([
+      'Any',
+      ...requirements.map(
+        (requirement) => requirement.specification || requirement.id.split('@')[0],
+      ),
+    ]),
+  );
   const conformances = ['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD', 'DEPRECATED'];
 
   // Requirements should never change once the session has been loaded, but if it does,
@@ -40,6 +54,12 @@ const Requirements: FC<RequirementsProps> = ({
     setFilteredRequirements(requirementsCopy);
   };
 
+  const updateFilters = (value: string | null, field: string) => {
+    const newFilters = { ...filters, [field]: value || '' };
+    setFilters(newFilters);
+    filterRequirements(newFilters);
+  };
+
   return (
     <Card variant="outlined">
       <Box className={classes.header}>
@@ -51,20 +71,28 @@ const Requirements: FC<RequirementsProps> = ({
       </Box>
       {/* Filters */}
       <Box m={2} display="flex" justifyContent="space-between" overflow="auto">
-        <Autocomplete
-          value={filters.conformance ?? ''}
-          size="small"
-          options={conformances}
-          renderInput={(params) => (
-            <TextField {...params} label="Conformance" variant="standard" color="secondary" />
-          )}
-          onChange={(event, value) => {
-            const newFilters = { ...filters, conformance: value || '' };
-            setFilters(newFilters);
-            filterRequirements(newFilters);
-          }}
-          sx={{ width: 200 }}
-        />
+        <Box display="flex">
+          <Autocomplete
+            value={filters.specification ?? ''}
+            size="small"
+            options={specifications}
+            renderInput={(params) => (
+              <TextField {...params} label="Specification" variant="standard" color="secondary" />
+            )}
+            onChange={(event, value) => updateFilters(value, 'specification')}
+            sx={{ width: 150 }}
+          />
+          <Autocomplete
+            value={filters.conformance ?? ''}
+            size="small"
+            options={conformances}
+            renderInput={(params) => (
+              <TextField {...params} label="Conformance" variant="standard" color="secondary" />
+            )}
+            onChange={(event, value) => updateFilters(value, 'conformance')}
+            sx={{ width: 150, ml: 4 }}
+          />
+        </Box>
         <Button
           color="secondary"
           variant="outlined"

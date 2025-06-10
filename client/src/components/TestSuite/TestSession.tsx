@@ -275,8 +275,6 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
           variant: 'error',
         });
       });
-
-    // TODO: map runnable id to requirements
   };
 
   const runTests = (runnableType: RunnableType, runnableId: string) => {
