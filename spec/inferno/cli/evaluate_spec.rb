@@ -24,7 +24,7 @@ RSpec.describe Inferno::CLI::Evaluate do
     end
 
     context 'with custom configuration' do
-      let(:config_path) { './spec/fixtures/test_config.yml' }
+      let(:config_path) { './spec/fixtures/test_evaluator_config.yml' }
 
       it 'evaluates with custom configuration' do
         expect do
