@@ -84,7 +84,7 @@ export type Requirement = {
   id: string;
   requirement: string;
   conformance: string;
-  specification?: string;
+  specification?: string; // frontend only
   actor: string;
   conditionality: string;
   url?: string;
