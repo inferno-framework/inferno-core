@@ -29,8 +29,9 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
   const viewOnlyUrl = viewOnly ? '/view' : '';
 
   // Check if details exist
-  const subRequirementsExist = (requirement: Requirement) =>
-    requirement.sub_requirements.length > 0;
+  // TODO: Subrequirements are removed until further functionality is added (e.g. linking)
+  const subRequirementsExist = (_requirement: Requirement) => false;
+  // requirement.sub_requirements.length > 0;
   const testLinksExist = requirementToTests && requirementToTests?.size > 0;
 
   // Nested components
