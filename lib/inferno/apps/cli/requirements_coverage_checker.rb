@@ -52,7 +52,7 @@ module Inferno
       end
 
       def suite_runnables
-        @suite_runnables ||= test_suite.all_descendants
+        @suite_runnables ||= [test_suite] + test_suite.all_descendants
       end
 
       def untested_requirements
@@ -72,7 +72,10 @@ module Inferno
                 runnables_for_requirement =
                   suite_runnables.select { |runnable| runnable.verifies_requirements.include? requirement.id }
                 long_ids = runnables_for_requirement&.map(&:id)&.join(', ')
-                short_ids = runnables_for_requirement&.map(&:short_id)&.join(', ')
+                short_ids =
+                  runnables_for_requirement
+                    &.map { |runnable| runnable < Inferno::Entities::TestSuite ? 'suite' : runnable.short_id }
+                    &.join(', ')
               end
 
               untested_requirements << runnables_for_requirement if runnables_for_requirement.blank?
