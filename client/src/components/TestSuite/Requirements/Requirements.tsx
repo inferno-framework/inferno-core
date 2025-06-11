@@ -20,7 +20,7 @@ const Requirements: FC<RequirementsProps> = ({
   const [filteredRequirements, setFilteredRequirements] =
     React.useState<Requirement[]>(requirements);
 
-  const conformances = ['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD', 'DEPRECATED'];
+  const conformances = ['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD'];
 
   // Requirements should never change once the session has been loaded, but if it does,
   // reset filters. This is also required to handle effects on session load.
