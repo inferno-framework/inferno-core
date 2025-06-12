@@ -27,10 +27,11 @@ module Inferno
 
         ig_path = absolute_path_with_home_expansion(ig_path)
         data_path = absolute_path_with_home_expansion(data_path) if data_path
+        config_path = absolute_path_with_home_expansion(options[:config]) if options[:config]
 
         Dir.chdir(tmpdir) do
           Migration.new.run(Logger::FATAL) # Hide migration output for evaluator
-          evaluate(ig_path, data_path, options)
+          evaluate(ig_path, data_path, config_path, options)
         end
       ensure
         system("#{services_base_command} down #{services_names}")
@@ -57,14 +58,14 @@ module Inferno
       end
 
       # @see Inferno::CLI::Main#evaluate
-      def evaluate(ig_path, data_path, options)
+      def evaluate(ig_path, data_path, config_path, options)
         # NOTE: repositories is required here rather than at the top of the file because
         # the tree of requires means that this file and its requires get required by every CLI app.
         # Sequel::Model, used in some repositories, fetches the table schema at instantiation.
         # This breaks the `migrate` task by fetching a table before the task runs/creates it.
         require_relative '../../repositories'
 
-        validate_args(ig_path, data_path)
+        validate_args(ig_path, data_path, config_path)
         ig = Inferno::Repositories::IGs.new.find_or_load(ig_path)
 
         check_ig_version(ig)
@@ -80,17 +81,17 @@ module Inferno
 
         evaluator = Inferno::DSL::FHIREvaluation::Evaluator.new(ig, validator)
 
-        config = Inferno::DSL::FHIREvaluation::Config.new
+        config = Inferno::DSL::FHIREvaluation::Config.new(config_path)
         results = evaluator.evaluate(data, config)
         output_results(results, options[:output])
       end
 
-      def validate_args(ig_path, data_path)
+      def validate_args(ig_path, data_path, config_path)
         raise 'A path to an IG is required!' unless ig_path
 
-        return unless data_path && (!File.directory? data_path)
+        raise "Provided path '#{data_path}' is not a directory" if data_path && (!File.directory? data_path)
 
-        raise "Provided path '#{data_path}' is not a directory"
+        raise "Provided path '#{config_path}' does not exist" if config_path && (!File.exist? config_path)
       end
 
       def check_ig_version(ig)
