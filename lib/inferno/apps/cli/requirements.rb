@@ -49,6 +49,29 @@ module Inferno
           end
         end
       end
+
+      desc 'check_coverage [TEST_SUITE_ID]',
+           'Check whether the coverage CSV files are up to date'
+      long_desc <<~LONGDESC
+        Check whether the coverage CSV files are up to date
+      LONGDESC
+      def check_coverage(test_suite_id = nil)
+        ENV['NO_DB'] = 'true'
+
+        require_relative '../../../inferno'
+
+        Inferno::Application.start(:requirements)
+
+        if test_suite_id.present?
+          RequirementsCoverageChecker.new(test_suite_id).run_check
+        else
+          Inferno::Repositories::TestSuites.all.each do |test_suite|
+            if Object.const_source_location(test_suite.to_s).first.start_with? Dir.pwd
+              RequirementsCoverageChecker.new(test_suite.id).run_check
+            end
+          end
+        end
+      end
     end
   end
 end

@@ -135,7 +135,7 @@ module Inferno
         end
 
         if unmatched_requirement_ids.present?
-          puts 'WARNING: The following requirements indicated in the test suite are not present in ' \
+          puts "WARNING: The following requirements indicated in the test suite #{test_suite_id} are not present in " \
                "the suite's requirement sets:"
           output_requirements_map_table(unmatched_requirement_rows)
         end
@@ -164,21 +164,21 @@ module Inferno
         end
 
         if unmatched_requirement_ids.any?
-          puts 'WARNING: The following requirements indicated in the test suite are not present in ' \
+          puts "WARNING: The following requirements indicated in the test suite #{test_suite_id} are not present in " \
                "the suite's requirement sets:"
-          output_requirements_map_table(unmatched_requirements_map)
+          output_requirements_map_table(unmatched_requirement_rows)
         end
 
         if File.exist?(output_file_path)
           if old_csv == new_csv
             puts "'#{output_file_name}' file is up to date."
-            return unless unmatched_requirements_id.present?
+            return unless unmatched_requirement_ids.present?
           else
             puts <<~MESSAGE
               #{output_file_name} file is out of date.
               To regenerate the file, run:
 
-                  bundle exec inferno requirements coverage #{test_suite_id}
+                  bundle exec inferno requirements coverage
 
             MESSAGE
           end
@@ -187,7 +187,7 @@ module Inferno
             No existing #{output_file_name} file.
             To generate the file, run:
 
-                  bundle exec inferno requirements coverage #{test_suite_id}
+                  bundle exec inferno requirements coverage
 
           MESSAGE
         end
