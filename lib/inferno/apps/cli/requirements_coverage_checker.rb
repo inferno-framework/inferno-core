@@ -19,7 +19,11 @@ module Inferno
       end
 
       def output_headers
-        [*RequirementsExporter::REQUIREMENTS_OUTPUT_HEADERS, short_id_header, full_id_header]
+        [
+          *(RequirementsExporter::REQUIREMENTS_OUTPUT_HEADERS - ['Sub-Requirement(s)']),
+          short_id_header,
+          full_id_header
+        ]
       end
 
       def test_kit_name
@@ -87,7 +91,6 @@ module Inferno
                 requirement.requirement,
                 requirement.conformance,
                 requirement.actor,
-                requirement.sub_requirements.presence&.join(', '),
                 requirement.conditionality,
                 requirement.not_tested_reason,
                 requirement.not_tested_details,
