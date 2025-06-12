@@ -34,6 +34,9 @@ module Inferno
 
         # Loads the us core ig and evaluate the data included in the IG's example folder, with results redirected to outcome.json as an OperationOutcome
         `bundle exec inferno evaluate ./uscore.tgz --output outcome.json`
+
+        # Loads the us core ig and evaluate the data included in the IG's example folder using a custom configuration file
+        `bundle exec inferno evaluate ./uscore.tgz --config ./custom_config.yml`
       LONGDESC
       # TODO: Add options below as arguments
       option :data_path,
@@ -45,6 +48,10 @@ module Inferno
              aliases: ['-o'],
              type: :string,
              desc: 'Export evaluation result to outcome.json as an OperationOutcome'
+      option :config,
+             aliases: ['-c'],
+             type: :string,
+             desc: 'Path to a custom configuration file'
       def evaluate(ig_path)
         Evaluate.new.run(ig_path, options[:data_path], options)
       end
