@@ -28,12 +28,6 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
   const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const viewOnlyUrl = viewOnly ? '/view' : '';
 
-  // Check if details exist
-  // TODO: Subrequirements are removed until further functionality is added (e.g. linking)
-  const subRequirementsExist = (_requirement: Requirement) => false;
-  // requirement.sub_requirements.length > 0;
-  const testLinksExist = requirementToTests && requirementToTests?.size > 0;
-
   // Nested components
   const conformanceChip = (text: string) => {
     const conformanceToColor: Record<string, string> = {
@@ -58,48 +52,30 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
 
   /* Subrequirements and test links */
   const requirementDetails = (requirement: Requirement) => {
-    if (subRequirementsExist(requirement) || testLinksExist)
+    const testLinksExist = requirementToTests && requirementToTests?.size > 0;
+    const testIds = requirementToTests?.get(requirement.id);
+    if (testLinksExist && testIds)
       return (
         <Box display="flex" px={1.5}>
-          {subRequirementsExist(requirement) && (
-            <Typography variant="body2">
-              <b>Sub-requirements:</b>{' '}
-              {requirement.sub_requirements
-                .map((subRequirement) => subRequirement.split('@').slice(-1))
-                .join(', ')}
-            </Typography>
-          )}
-          {testLinksExist && testLinks(requirement)}
+          <Typography ml={0} variant="body2" fontWeight="bold">
+            Test:{' '}
+            {testIds?.map((id, i) => (
+              <span key={id}>
+                <Link variant="body2" href={`#${id}${viewOnlyUrl}`} color="secondary">
+                  {id}
+                </Link>
+                {i !== testIds.length - 1 ? ', ' : ''} {/* Separate values with commas */}
+              </span>
+            ))}
+          </Typography>
         </Box>
       );
-  };
-
-  const testLinks = (requirement: Requirement) => {
-    const testIds = requirementToTests?.get(requirement.id);
-    return testIds ? (
-      <Typography
-        ml={subRequirementsExist(requirement) ? 1.5 : 0}
-        variant="body2"
-        fontWeight="bold"
-      >
-        Test:{' '}
-        {testIds?.map((id, i) => (
-          <span key={id}>
-            <Link variant="body2" href={`#${id}${viewOnlyUrl}`} color="secondary">
-              {id}
-            </Link>
-            {i !== testIds.length - 1 ? ', ' : ''} {/* Separate values with commas */}
-          </span>
-        ))}
-      </Typography>
-    ) : (
-      <Typography
-        ml={subRequirementsExist(requirement) ? 1.5 : 0}
-        variant="body2"
-        sx={{ color: lightTheme.palette.common.orangeDark }}
-      >
-        Not tested
-      </Typography>
+    return (
+      <Box display="flex" px={1.5}>
+        <Typography ml={0} variant="body2" sx={{ color: lightTheme.palette.common.orangeDark }}>
+          Not tested
+        </Typography>
+      </Box>
     );
   };
 
