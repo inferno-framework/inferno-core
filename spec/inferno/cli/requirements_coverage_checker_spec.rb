@@ -6,9 +6,8 @@ RSpec.describe Inferno::CLI::RequirementsCoverageChecker do
 
   before do
     allow(checker).to receive_messages(
-                        # base_requirements_folder: 'spec/fixtures/requirements',
-                        output_file_path: 'spec/fixtures/requirements/ig_requirements_requirements_coverage.csv'
-                      )
+      output_file_path: 'spec/fixtures/requirements/ig_requirements_requirements_coverage.csv'
+    )
   end
 
   describe '#new_csv' do

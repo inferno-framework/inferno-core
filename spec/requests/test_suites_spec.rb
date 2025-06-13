@@ -65,7 +65,7 @@ RSpec.describe '/test_suites' do
         received_sets = parsed_body['requirement_sets']
 
         expect(received_sets).to be_present
-        expect(received_sets.length).to eq(1)
+        expect(received_sets.length).to eq(2)
         expect(received_sets.first['identifier']).to be_present
         expect(received_sets.first['title']).to be_present
       end
@@ -113,9 +113,10 @@ RSpec.describe '/test_suites' do
 
         requirements = parsed_body
         test_suite = repo.find(test_suite_id)
-        suite_requirements = test_suite.all_requirements(test_session.suite_options)
-        expect(requirements.length).to eq(suite_requirements.length)
-        expect(requirements.map { |req| req['id'] }).to include(*suite_requirements)
+        expected_requirements =
+          Inferno::Repositories::Requirements.new.requirements_for_suite(test_suite.id, test_session.id)
+        expect(requirements.length).to eq(expected_requirements.length)
+        expect(requirements.map { |req| req['id'] }).to include(*expected_requirements.map(&:id))
       end
 
       it 'renders a 404 when test suite does not exist' do
@@ -141,9 +142,9 @@ RSpec.describe '/test_suites' do
 
         requirements = parsed_body
         test_suite = repo.find(test_suite_id)
-        suite_requirements = test_suite.all_requirements
-        expect(requirements.length).to eq(suite_requirements.length)
-        expect(requirements.map { |req| req['id'] }).to include(*suite_requirements)
+        expected_requirements = Inferno::Repositories::Requirements.new.requirements_for_suite(test_suite.id)
+        expect(requirements.length).to eq(expected_requirements.length)
+        expect(requirements.map { |req| req['id'] }).to include(*expected_requirements.map(&:id))
       end
 
       it 'renders a 404 when test suite does not exist' do
