@@ -15,7 +15,6 @@ module RequirementsSuite
         title: 'Sample Criteria Proposal',
         actor: 'Client'
       }
-
     )
 
     group do

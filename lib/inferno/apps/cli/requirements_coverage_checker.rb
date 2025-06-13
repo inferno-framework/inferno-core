@@ -52,7 +52,7 @@ module Inferno
       end
 
       def tested_requirement_ids
-        @tested_requirement_ids ||= test_suite.all_requirements
+        @tested_requirement_ids ||= test_suite.all_verified_requirements
       end
 
       def suite_runnables
