@@ -23,4 +23,9 @@ export default makeStyles()((theme: Theme) => ({
   currentItem: {
     fontWeight: 600,
   },
+  markdown: {
+    p: {
+      margin: 0,
+    },
+  },
 }));

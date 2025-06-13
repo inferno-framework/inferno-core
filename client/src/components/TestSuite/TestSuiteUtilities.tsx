@@ -1,7 +1,6 @@
 import {
   isTestGroup,
   isTestSuite,
-  Requirement,
   Result,
   Runnable,
   Test,
@@ -50,11 +49,15 @@ const mapRequirementRecursive = (testGroup: TestGroup, map: Map<string, string[]
   });
 };
 
-export const mapRequirementToIds = (
-  requirements: Requirement[],
-  testSuite: TestSuite,
-): Map<string, string[]> => {
+export const mapRequirementToIds = (testSuite: TestSuite): Map<string, string[]> => {
   const map = new Map<string, string[]>();
+  testSuite.verifies_requirements?.forEach((requirement) => {
+    if (map.get(requirement)) {
+      map.set(requirement, [...(map.get(requirement) as string[]), testSuite.id]);
+    } else {
+      map.set(requirement, [testSuite.id]);
+    }
+  });
   testSuite?.test_groups?.forEach((testGroup: TestGroup) => {
     mapRequirementRecursive(testGroup, map);
   });
@@ -98,6 +101,9 @@ export const shouldShowDescription = (
   runnable: Runnable,
   description: JSX.Element | undefined,
 ): boolean => !!description && !!runnable.description && runnable.description.length > 0;
+
+export const shouldShowRequirementsButton = (runnable: Runnable): boolean =>
+  !!runnable.verifies_requirements && runnable.verifies_requirements.length > 0;
 
 export const testRunInProgress = (activeRunnables: Record<string, string>, location: string) => {
   // Get session ID from URL string

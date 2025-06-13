@@ -1,9 +1,12 @@
 import React, { FC } from 'react';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Box, Chip, Divider, Grid2, Link, Stack, Typography } from '@mui/material';
 import { blue, grey, purple, red, teal } from '@mui/material/colors';
 import { Requirement } from '~/models/testSuiteModels';
 import lightTheme from '~/styles/theme';
 import { useTestSessionStore } from '~/store/testSession';
+import useStyles from './styles';
 
 interface RequirementContentProps {
   requirements: Requirement[];
@@ -11,6 +14,7 @@ interface RequirementContentProps {
 }
 
 const RequirementContent: FC<RequirementContentProps> = ({ requirements, requirementToTests }) => {
+  const { classes } = useStyles();
   const requirementsByUrl = requirements.reduce(
     // Reduce list of requirements into map of url -> list of requirements
     (acc, current) => {
@@ -23,11 +27,6 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
   );
   const viewOnly = useTestSessionStore((state) => state.viewOnly);
   const viewOnlyUrl = viewOnly ? '/view' : '';
-
-  // Check if details exist
-  const subRequirementsExist = (requirement: Requirement) =>
-    requirement.sub_requirements.length > 0;
-  const testLinksExist = requirementToTests && requirementToTests?.size > 0;
 
   // Nested components
   const conformanceChip = (text: string) => {
@@ -53,53 +52,38 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
 
   /* Subrequirements and test links */
   const requirementDetails = (requirement: Requirement) => {
-    if (subRequirementsExist(requirement) || testLinksExist)
+    const testLinksExist = requirementToTests && requirementToTests?.size > 0;
+    const testIds = requirementToTests?.get(requirement.id);
+    if (testLinksExist && testIds)
       return (
         <Box display="flex" px={1.5}>
-          {subRequirementsExist(requirement) && (
-            <Typography variant="body2">
-              <b>Sub-requirements:</b>{' '}
-              {requirement.sub_requirements
-                .map((subRequirement) => subRequirement.split('@').slice(-1))
-                .join(', ')}
-            </Typography>
-          )}
-          {testLinksExist && testLinks(requirement)}
+          <Typography ml={0} variant="body2" fontWeight="bold">
+            Test:{' '}
+            {testIds?.map((id, i) => (
+              <span key={id}>
+                <Link variant="body2" href={`#${id}${viewOnlyUrl}`} color="secondary">
+                  {id}
+                </Link>
+                {i !== testIds.length - 1 ? ', ' : ''} {/* Separate values with commas */}
+              </span>
+            ))}
+          </Typography>
         </Box>
       );
-  };
-
-  const testLinks = (requirement: Requirement) => {
-    const testIds = requirementToTests?.get(requirement.id);
-    return testIds ? (
-      <Typography
-        ml={subRequirementsExist(requirement) ? 1.5 : 0}
-        variant="body2"
-        fontWeight="bold"
-      >
-        Test:{' '}
-        {testIds?.map((id) => (
-          <Link key={id} variant="body2" href={`#${id}${viewOnlyUrl}`} color="secondary">
-            {id}
-          </Link>
-        ))}
-      </Typography>
-    ) : (
-      <Typography
-        ml={subRequirementsExist(requirement) ? 1.5 : 0}
-        variant="body2"
-        sx={{ color: lightTheme.palette.common.orangeDark }}
-      >
-        Not tested
-      </Typography>
+    return (
+      <Box display="flex" px={1.5}>
+        <Typography ml={0} variant="body2" sx={{ color: lightTheme.palette.common.orangeDark }}>
+          Not tested
+        </Typography>
+      </Box>
     );
   };
 
-  return Object.entries(requirementsByUrl).map(([url, requirementsList]) => (
+  return Object.entries(requirementsByUrl).map(([url, requirementsList], index) => (
     <Box key={url}>
-      <Box pb={2}>
+      <Box>
         {requirementsList[0] && (
-          <Typography variant="h5" component="p" fontWeight="bold" sx={{ mb: 1 }}>
+          <Typography variant="h5" component="p" fontWeight="bold" sx={{ mt: 1 }}>
             {/* Pull the specification out from the first requirement */}
             {requirementsList[0].id.split('@')[0]}
           </Typography>
@@ -113,7 +97,7 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
         )}
       </Box>
       {requirementsList.map((requirement) => (
-        <Grid2 container spacing={2} mb={2} key={requirement.id}>
+        <Grid2 container spacing={2} mt={2} key={requirement.id}>
           <Grid2>
             <Typography fontWeight="bold">{requirement.id.split('@').slice(-1)}</Typography>
           </Grid2>
@@ -121,15 +105,17 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
           <Grid2 size="grow">
             <Stack>
               <Box px={1} mb={1} sx={{ borderLeft: `4px solid ${grey[100]}` }}>
-                <Typography>{requirement.requirement}</Typography>
+                <Markdown remarkPlugins={[remarkGfm]} className={classes.markdown}>
+                  {requirement.requirement}
+                </Markdown>
               </Box>
               {requirementDetails(requirement)}
             </Stack>
           </Grid2>
         </Grid2>
       ))}
-      {/* Empty URL is always last */}
-      {url && <Divider sx={{ mb: 2 }} />}
+      {/* No divider if last section */}
+      {index !== Object.keys(requirementsByUrl).length - 1 && <Divider sx={{ mt: 2 }} />}
     </Box>
   ));
 };

@@ -67,4 +67,8 @@ export default makeStyles()((theme: Theme) => ({
       cursor: 'pointer',
     },
   },
+  textButton: {
+    fontWeight: 'bolder',
+    cursor: 'pointer',
+  },
 }));

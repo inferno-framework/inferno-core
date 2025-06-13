@@ -197,9 +197,13 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         data-testid={`${testGroup.id}-detail`}
         className={classes.accordionDetailContainer}
       >
-        {testGroup.description && view === 'run' && (
-          <NestedDescriptionPanel testGroup={testGroup} />
-        )}
+        {/* Show description panel if the app is in 'run' view AND 
+        there's either a description or there are requirements */}
+        {view === 'run' &&
+          (testGroup.description ||
+            (testGroup.verifies_requirements && testGroup.verifies_requirements.length > 0)) && (
+            <NestedDescriptionPanel testGroup={testGroup} />
+          )}
         <Box className={classes.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}
           {'tests' in testGroup && renderTestListItems()}
