@@ -96,7 +96,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
     [testSession.test_suite],
   );
   const requirementToTests = React.useMemo(
-    () => mapRequirementToIds(requirements, testSession.test_suite),
+    () => mapRequirementToIds(testSession.test_suite),
     [testSession.test_suite],
   );
   const splitLocation = useLocation().hash.replace('#', '').split('/');

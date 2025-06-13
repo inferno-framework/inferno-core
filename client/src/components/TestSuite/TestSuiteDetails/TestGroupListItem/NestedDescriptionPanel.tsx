@@ -1,20 +1,26 @@
 import React, { FC } from 'react';
-import useStyles from './styles';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { enqueueSnackbar } from 'notistack';
+
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
   Box,
   Divider,
+  Link,
   List,
   ListItem,
   ListItemText,
   Typography,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { TestGroup } from '~/models/testSuiteModels';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { getSingleRequirement } from '~/api/RequirementsApi';
+import { Requirement, TestGroup } from '~/models/testSuiteModels';
+import useStyles from './styles';
+import { shouldShowRequirementsButton } from '~/components/TestSuite/TestSuiteUtilities';
+import RequirementsModal from '~/components/TestSuite/Requirements/RequirementsModal';
 
 interface NestedDescriptionPanelProps {
   testGroup: TestGroup;
@@ -22,7 +28,26 @@ interface NestedDescriptionPanelProps {
 
 const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) => {
   const { classes } = useStyles();
+  const [showRequirements, setShowRequirements] = React.useState(false);
+  const [requirements, setRequirements] = React.useState<Requirement[]>([]);
   const [descriptionMouseHover, setDescriptionMouseHover] = React.useState(false);
+  const showRequirementsButton = shouldShowRequirementsButton(testGroup);
+
+  const showRequirementsClick = () => {
+    const requirementIds = testGroup.verifies_requirements;
+    if (requirementIds) {
+      Promise.all(requirementIds.map((requirementId) => getSingleRequirement(requirementId)))
+        .then((resolvedValues) => {
+          setRequirements(resolvedValues.filter((r) => !!r));
+          setShowRequirements(true);
+        })
+        .catch((e: Error) => {
+          enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
+            variant: 'error',
+          });
+        });
+    }
+  };
 
   return (
     <Box py={1} className={classes.descriptionContainer}>
@@ -58,14 +83,29 @@ const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) 
           title={descriptionMouseHover ? '' : `${testGroup.id}-description-detail`}
           className={classes.descriptionDetailContainer}
         >
-          <Markdown
-            remarkPlugins={[remarkGfm]}
-            className={`${classes.accordionDetail} ${classes.description}`}
-          >
-            {testGroup.description as string}
-          </Markdown>
+          <Box className={`${classes.accordionDetail} ${classes.description}`}>
+            <Markdown remarkPlugins={[remarkGfm]}>{testGroup.description as string}</Markdown>
+            {showRequirementsButton && (
+              <Box display="flex" justifyContent="end" minWidth="fit-content" pt={1}>
+                <Link
+                  color="secondary"
+                  className={classes.textButton}
+                  onClick={showRequirementsClick}
+                >
+                  View Specification Requirements
+                </Link>
+              </Box>
+            )}
+          </Box>
         </AccordionDetails>
       </Accordion>
+      {requirements && showRequirementsButton && (
+        <RequirementsModal
+          requirements={requirements}
+          modalVisible={showRequirements}
+          hideModal={() => setShowRequirements(false)}
+        />
+      )}
     </Box>
   );
 };

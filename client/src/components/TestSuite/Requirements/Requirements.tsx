@@ -34,7 +34,7 @@ const Requirements: FC<RequirementsProps> = ({
       ),
     ]),
   );
-  const conformances = ['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD', 'DEPRECATED'];
+  const conformances = ['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD'];
 
   // Requirements should never change once the session has been loaded, but if it does,
   // reset filters. This is also required to handle effects on session load.
@@ -115,7 +115,6 @@ const Requirements: FC<RequirementsProps> = ({
           <Typography fontStyle="italic">No requirements found.</Typography>
         )}
       </Box>
-      <Divider />
     </Card>
   );
 };
