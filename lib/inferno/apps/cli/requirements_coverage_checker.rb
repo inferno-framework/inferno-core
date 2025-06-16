@@ -134,6 +134,8 @@ module Inferno
           exit(1)
         end
 
+        puts
+
         if unmatched_requirement_ids.present?
           puts "WARNING: The following requirements indicated in the test suite #{test_suite_id} are not present in " \
                "the suite's requirement sets:"
