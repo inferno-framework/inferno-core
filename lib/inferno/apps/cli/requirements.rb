@@ -29,7 +29,7 @@ module Inferno
            "Check whether all of a test suite's requirements are tested. If no test suite id is provided, " \
            'all test suites in the current test kit will be checked.'
       long_desc <<~LONGDESC
-        Check whether the all of the requirements declared by a test suite are
+        Check whether all of the requirements declared by a test suite are
         tested by the tests in the test suite
       LONGDESC
       def coverage(test_suite_id = nil)
