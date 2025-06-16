@@ -64,11 +64,8 @@ const TestListItem: FC<TestListItemProps> = ({
       (view === 'report' && showReportDetails && (messagesExist || requestsExist)) ||
         location === test.short_id,
     );
-  }, [showReportDetails]);
-
-  useEffect(() => {
     setTabIndex(findPopulatedTabIndex());
-  }, [open]);
+  }, [showReportDetails]);
 
   const resultIcon = (
     <Box display="inline-flex">
@@ -209,6 +206,7 @@ const TestListItem: FC<TestListItemProps> = ({
   const handleAccordionClick = () => {
     if (view !== 'report') {
       setOpen(!open);
+      setTabIndex(findPopulatedTabIndex());
     }
   };
 
