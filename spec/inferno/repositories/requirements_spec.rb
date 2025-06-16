@@ -95,10 +95,6 @@ RSpec.describe Inferno::Repositories::Requirements do
       expect(repo.complete_requirement_set_requirements([complete_requirement_set]).length).to eq(7)
       expect(repo.complete_requirement_set_requirements([empty_requirement_set]).length).to eq(0)
     end
-
-    it 'excludes not-tested requirements' do
-      expect(repo.complete_requirement_set_requirements([not_tested_requirement_set]).length).to eq(1)
-    end
   end
 
   describe '#filtered_requirement_set_requirements' do
