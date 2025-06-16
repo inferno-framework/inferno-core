@@ -73,7 +73,6 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
 
   const renderTab = (tab: TabProps, index: number) => {
     const disableTab = (!tab.value || tab.value.length === 0) && tab.label !== 'About';
-
     return (
       <CustomTab
         key={`${tab.label}-${index}`}
