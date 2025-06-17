@@ -81,6 +81,7 @@ const Requirements: FC<RequirementsProps> = ({
         {filteredRequirements.length > 0 ? (
           <RequirementContent
             requirements={filteredRequirements}
+            view="page"
             requirementToTests={requirementToTests}
           />
         ) : (

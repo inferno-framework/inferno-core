@@ -64,12 +64,12 @@ const RequirementContent: FC<RequirementContentProps> = ({
   const testLinks = (requirement: Requirement) => {
     const testLinksExist = requirementToTests && requirementToTests.size > 0;
     const testIds = requirementToTests?.get(requirement.id);
-    // If view is 'dialog,' then show nothing
-    if (testLinksExist && testIds && view === 'page') {
+    if (testLinksExist) {
       return (
         <Box display="flex" px={1.5}>
           <Typography ml={0} variant="body2" fontWeight="bold">
-            Test:{' '}
+            {/* If no test ids, show empty set symbol*/}
+            Tests: {(!testIds || testIds.length === 0) && '\u2205'}
             {testIds?.map((id, i) => {
               return (
                 <span key={id}>
@@ -79,7 +79,7 @@ const RequirementContent: FC<RequirementContentProps> = ({
                     </Link>
                   ) : (
                     <Typography
-                      ml={0}
+                      display="inherit"
                       variant="body2"
                       sx={{ color: lightTheme.palette.common.orangeDark }}
                     >
@@ -90,14 +90,6 @@ const RequirementContent: FC<RequirementContentProps> = ({
                 </span>
               );
             })}
-          </Typography>
-        </Box>
-      );
-    } else if (!testLinksExist) {
-      return (
-        <Box display="flex" px={1.5}>
-          <Typography ml={0} variant="body2" sx={{ color: lightTheme.palette.common.orangeDark }}>
-            Not tested
           </Typography>
         </Box>
       );
@@ -133,7 +125,8 @@ const RequirementContent: FC<RequirementContentProps> = ({
                       {requirement.requirement}
                     </Markdown>
                   </Box>
-                  {testLinks(requirement)}
+                  {/* If view is 'dialog,' then show nothing */}
+                  {view === 'page' && testLinks(requirement)}
                 </Stack>
               </Grid2>
             </Grid2>
