@@ -52,9 +52,10 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
 
   /* Subrequirements and test links */
   const requirementDetails = (requirement: Requirement) => {
-    const testLinksExist = requirementToTests && requirementToTests?.size > 0;
+    const testLinksExist = requirementToTests !== undefined && requirementToTests !== null;
     const testIds = requirementToTests?.get(requirement.id);
-    if (testLinksExist && testIds)
+    // If there are no testIds, then show nothing
+    if (testLinksExist && testIds) {
       return (
         <Box display="flex" px={1.5}>
           <Typography ml={0} variant="body2" fontWeight="bold">
@@ -70,13 +71,15 @@ const RequirementContent: FC<RequirementContentProps> = ({ requirements, require
           </Typography>
         </Box>
       );
-    return (
-      <Box display="flex" px={1.5}>
-        <Typography ml={0} variant="body2" sx={{ color: lightTheme.palette.common.orangeDark }}>
-          Not tested
-        </Typography>
-      </Box>
-    );
+    } else if (!testLinksExist) {
+      return (
+        <Box display="flex" px={1.5}>
+          <Typography ml={0} variant="body2" sx={{ color: lightTheme.palette.common.orangeDark }}>
+            Not tested
+          </Typography>
+        </Box>
+      );
+    }
   };
 
   return Object.entries(requirementsByUrl).map(([url, requirementsList], index) => (
