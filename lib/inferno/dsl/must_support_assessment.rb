@@ -234,6 +234,23 @@ module Inferno
 
         def resource_populates_element?(resource, element_definition)
           path = element_definition[:path]
+
+          # handle MustSupport element under extension: Ex: extension:supporting-info.value[x]
+          if path.start_with?('extension:')
+            path = path.delete_prefix('extension:')
+            extension_split = path.split('.')
+            extension_name = extension_split.first
+            extension_path = extension_split.last
+
+            found_extension_url = must_support_extensions.find { |ex| ex[:id].include?(extension_name) }[:url]
+            ms_element_extension = resource.extension.find { |ex| ex.url == found_extension_url }
+
+            if ms_element_extension.present?
+              resource = ms_element_extension
+              path = extension_path
+            end
+          end
+
           ms_extension_urls = must_support_extensions.select { |ex| ex[:path] == "#{path}.extension" }
             .map { |ex| ex[:url] }
 
