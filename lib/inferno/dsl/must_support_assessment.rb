@@ -250,8 +250,10 @@ module Inferno
         end
 
         def process_must_support_element_in_extension(resource, path)
-          path = path.delete_prefix('extension:')
-          extension_split = path.split('.')
+          return [resource, path] unless path.start_with?('extension:')
+
+          path_without_prefix = path.delete_prefix('extension:')
+          extension_split = path_without_prefix.split('.')
           extension_name = extension_split.first
           extension_path = extension_split.last
 
