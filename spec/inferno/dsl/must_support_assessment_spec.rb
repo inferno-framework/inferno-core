@@ -1,3 +1,5 @@
+require_relative '../../extract_tgz_helper'
+
 RSpec.describe Inferno::DSL::MustSupportAssessment do
   include ExtractTGZHelper
 
@@ -124,6 +126,71 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
 
       result = run(device_profile, [device], 'Device')
       expect(result).to include('distinctIdentifier')
+    end
+  end
+
+  describe 'must support test for element in extension' do
+    let(:observation_adi_metadata) { metadata_fixture('us_core_observation_adi_documentation_v800.yml') }
+
+    let(:observation_adi) do
+      FHIR::Observation.new(
+        status: 'final',
+        meta: {
+          profile: ['http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-adi-documentation|8.0.0-ballot']
+        },
+        extension: [{
+          url: 'http://hl7.org/fhir/StructureDefinition/workflow-supportingInfo',
+          valueReference: {
+            reference: 'DocumentReference/POLST'
+          }
+        }],
+        category: [
+          {
+            coding: [
+              {
+                system: 'http://hl7.org/fhir/us/core/CodeSystem/us-core-category',
+                code: 'observation-adi-documentation'
+              }
+            ]
+          }
+        ],
+        code: {
+          coding: [
+            {
+              system: 'http://loinc.org',
+              code: '45473-6'
+            }
+          ]
+        },
+        performer: [
+          {
+            reference: 'Practitioner/p2'
+          }
+        ],
+        subject: {
+          reference: 'Patient/902'
+        },
+        issued: '2013-04-23T21:07:05Z',
+        valueCodeableConcept: {
+          coding: [
+            {
+              system: 'http://snomed.info/sct',
+              code: '449868002'
+            }
+          ]
+        }
+      )
+    end
+
+    it 'passes if server support MustSupport element in extension' do
+      result = run_with_metadata([observation_adi], observation_adi_metadata)
+      expect(result).to be_empty
+    end
+
+    it 'fails if server does not support MustSupport element in extension' do
+      observation_adi.extension = []
+      result = run_with_metadata([observation_adi], observation_adi_metadata)
+      expect(result).to include('extension:supporting-info.value[x]')
     end
   end
 
