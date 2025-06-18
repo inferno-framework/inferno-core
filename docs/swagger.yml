@@ -846,4 +846,7 @@ definitions:
         type: "array"
         items:
           type: "string"
-
+      not_tested_reason:
+        type: "string"
+      not_tested_details:
+        type: "string"
