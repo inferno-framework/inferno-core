@@ -10,7 +10,7 @@ module Inferno
           'URL*',
           'Requirement*',
           'Conformance*',
-          'Actor*',
+          'Actors*',
           'Sub-Requirement(s)',
           'Conditionality',
           'Verifiable?',
