@@ -12,6 +12,8 @@ module Inferno
         field :sub_requirements
         field :conditionality
         field :url, if: :field_present?
+        field :not_tested_reason, if: :field_present?
+        field :not_tested_details, if: :field_present?
       end
     end
   end
