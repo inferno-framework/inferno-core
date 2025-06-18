@@ -77,6 +77,10 @@ module Inferno
           end
       end
 
+      def actor?(actor_to_check)
+        actor.any? { |actor| actor.casecmp? actor_to_check }
+      end
+
       def tested?
         not_tested_reason.blank?
       end

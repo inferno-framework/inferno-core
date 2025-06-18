@@ -25,7 +25,7 @@ module Inferno
             url: row[:url],
             requirement: row[:requirement],
             conformance: row[:conformance],
-            actor: row[:actor],
+            actor: row[:actor].split(',').map(&:strip),
             sub_requirements: sub_requirements,
             conditionality: row[:conditionality]&.downcase,
             not_tested_reason: row[:not_tested_reason],
@@ -41,7 +41,7 @@ module Inferno
       end
 
       def requirements_for_actor(requirement_set, actor)
-        all.select { |requirement| requirement.requirement_set == requirement_set && requirement.actor == actor }
+        all.select { |requirement| requirement.requirement_set == requirement_set && requirement.actor?(actor) }
       end
 
       def filter_requirements_by_ids(ids)
@@ -78,7 +78,7 @@ module Inferno
           .flat_map do |requirement_set|
             all.select do |requirement|
               requirement.requirement_set == requirement_set.identifier &&
-                requirement.actor == requirement_set.actor
+                requirement.actor?(requirement_set.actor)
             end
           end
       end
@@ -89,7 +89,7 @@ module Inferno
             requirement_set
               .expand_requirement_ids
               .map { |requirement_id| find(requirement_id) }
-              .select { |requirement| requirement.actor == requirement_set.actor }
+              .select { |requirement| requirement.actor?(requirement_set.actor) }
           end
       end
 
@@ -107,7 +107,7 @@ module Inferno
             .flat_map(&:sub_requirements)
             .select do |requirement_id|
               referenced_requirement_sets.any? do |set|
-                requirement_id.start_with?("#{set.identifier}@") && (find(requirement_id).actor == set.actor)
+                requirement_id.start_with?("#{set.identifier}@") && (find(requirement_id).actor?(set.actor))
               end
             end
 
