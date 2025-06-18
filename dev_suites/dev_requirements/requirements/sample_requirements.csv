@@ -17,3 +17,6 @@ sample-criteria-proposal-3,7,,text7,SHALL,Client,,FALSE,,
 sample-criteria-proposal-4,1,,text1,SHALL,Client,,FALSE,Not Tested,NOT TESTED DETAILS
 sample-criteria-proposal-4,2,,text2,SHALL,Client,,FALSE,Not Verifiable,NOT VERIFIABLE DETAILS
 sample-criteria-proposal-4,3,,text3,SHALL,Client,,FALSE,,
+sample-criteria-proposal-5,1,,text3,SHALL,Client,,FALSE,,
+sample-criteria-proposal-5,2,,text2,SHALL,Server,,FALSE,,
+sample-criteria-proposal-5,3,,text3,SHALL,Client,,FALSE,,
