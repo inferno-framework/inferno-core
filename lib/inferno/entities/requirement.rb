@@ -37,12 +37,14 @@ module Inferno
       #   used if none is included in the `requirement_id_string`
       #
       # @example
-      # expand_requirement_ids('example-ig@1,3,5-7')
-      # # => ['example-ig@1','example-ig@3','example-ig@5','example-ig@6','example-ig@7']
-      # expand_requirement_ids('example-ig')
-      # # => []
-      # expand_requirement_ids('1,3,5-7', 'example-ig')
-      # # => ['example-ig@1','example-ig@3','example-ig@5','example-ig@6','example-ig@7']
+      #   expand_requirement_ids('example-ig@1,3,5-7')
+      #   # => ['example-ig@1','example-ig@3','example-ig@5','example-ig@6','example-ig@7']
+      #   expand_requirement_ids('example-ig')
+      #   # => []
+      #   expand_requirement_ids('1,3,5-7', 'example-ig')
+      #   # => ['example-ig@1','example-ig@3','example-ig@5','example-ig@6','example-ig@7']
+      #   expand_requirement_ids('example-ig#actor1')
+      #   # => [all requirements for actor1 from example-ig]
       def self.expand_requirement_ids(requirement_id_string, default_set = nil) # rubocop:disable Metrics/CyclomaticComplexity
         return [] if requirement_id_string.blank?
 
