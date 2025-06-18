@@ -67,30 +67,30 @@ const RequirementContent: FC<RequirementContentProps> = ({
     if (testLinksExist) {
       return (
         <Box display="flex" px={1.5}>
-          <Typography ml={0} variant="body2" fontWeight="bold">
-            {/* If no test ids, show empty set symbol*/}
-            Tests: {(!testIds || testIds.length === 0) && '\u2205'}
-            {testIds?.map((id, i) => {
-              return (
-                <span key={id}>
-                  {id !== 'Not tested' ? (
+          {requirement.not_tested_reason ? (
+            <Typography
+              display="inherit"
+              variant="body2"
+              sx={{ color: lightTheme.palette.common.orangeDark }}
+            >
+              Not tested
+            </Typography>
+          ) : (
+            <Typography ml={0} variant="body2" fontWeight="bold">
+              {/* If no test ids, show empty set symbol */}
+              Tests: {(!testIds || testIds.length === 0) && '\u2205'}
+              {testIds?.map((id, i) => {
+                return (
+                  <span key={id}>
                     <Link variant="body2" href={`#${id}${viewOnlyUrl}`} color="secondary">
                       {id}
                     </Link>
-                  ) : (
-                    <Typography
-                      display="inherit"
-                      variant="body2"
-                      sx={{ color: lightTheme.palette.common.orangeDark }}
-                    >
-                      Not tested
-                    </Typography>
-                  )}
-                  {i !== testIds.length - 1 ? ', ' : ''} {/* Separate values with commas */}
-                </span>
-              );
-            })}
-          </Typography>
+                    {i !== testIds.length - 1 ? ', ' : ''} {/* Separate values with commas */}
+                  </span>
+                );
+              })}
+            </Typography>
+          )}
         </Box>
       );
     }
