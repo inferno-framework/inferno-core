@@ -11,7 +11,7 @@ module Inferno
         :url,
         :requirement,
         :conformance,
-        :actor,
+        :actors,
         :sub_requirements,
         :conditionality,
         :not_tested_reason,
@@ -78,7 +78,7 @@ module Inferno
       end
 
       def actor?(actor_to_check)
-        actor.any? { |actor| actor.casecmp? actor_to_check }
+        actors.any? { |actor| actor.casecmp? actor_to_check }
       end
 
       def tested?

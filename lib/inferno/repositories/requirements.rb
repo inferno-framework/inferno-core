@@ -25,7 +25,7 @@ module Inferno
             url: row[:url],
             requirement: row[:requirement],
             conformance: row[:conformance],
-            actor: row[:actor].split(',').map(&:strip),
+            actors: row[:actors].split(',').map(&:strip),
             sub_requirements: sub_requirements,
             conditionality: row[:conditionality]&.downcase,
             not_tested_reason: row[:not_tested_reason],
@@ -107,7 +107,7 @@ module Inferno
             .flat_map(&:sub_requirements)
             .select do |requirement_id|
               referenced_requirement_sets.any? do |set|
-                requirement_id.start_with?("#{set.identifier}@") && (find(requirement_id).actor?(set.actor))
+                requirement_id.start_with?("#{set.identifier}@") && find(requirement_id).actor?(set.actor)
               end
             end
 

@@ -1,4 +1,4 @@
-﻿Req Set,ID,URL,Requirement,Conformance,Actor,Conditionality,Not Tested Reason,Not Tested Details,Requirements Suite Short ID(s),Requirements Suite Full ID(s)
+﻿Req Set,ID,URL,Requirement,Conformance,Actors,Conditionality,Not Tested Reason,Not Tested Details,Requirements Suite Short ID(s),Requirements Suite Full ID(s)
 sample-criteria-proposal,1,https://hl7.org/fhir/R4/,Feugiat in ante metus dictum. Dignissim cras tincidunt lobortis feugiat.,SHALL,Client,false,,,1.1,ig_requirements-Group01-Group01
 sample-criteria-proposal,2,https://hl7.org/fhir/R4/,tempor incididunt ut labore et dolore magna aliqua,SHALL,Client,false,,,1.1,ig_requirements-Group01-Group01
 sample-criteria-proposal,3,https://hl7.org/fhir/R4/,"Lorem ipsum dolor sit amet, consectetur adipiscing elit",SHALL,Client,false,,,1.2,ig_requirements-Group01-Group02

@@ -3,7 +3,7 @@ require 'request_helper'
 RSpec.describe '/requirements' do
   let(:router) { Inferno::Web::Router }
   let(:repo) { Inferno::Repositories::Requirements.new }
-  let(:fields) { ['id', 'requirement', 'conformance', 'actor', 'conditionality', 'sub_requirements'] }
+  let(:fields) { ['id', 'requirement', 'conformance', 'actors', 'conditionality', 'sub_requirements'] }
   let(:requirement_id) { 'sample-criteria-proposal@4' }
 
   describe 'show' do

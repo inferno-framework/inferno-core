@@ -8,7 +8,7 @@ module Inferno
 
         field :requirement
         field :conformance
-        field :actor
+        field :actors
         field :sub_requirements
         field :conditionality
         field :url, if: :field_present?
