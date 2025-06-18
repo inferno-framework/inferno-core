@@ -1,0 +1,312 @@
+---
+:name: us_core_observation_adi_documentation
+:class_name: USCorev800ObservationAdiDocumentationSequence
+:version: v8.0.0
+:reformatted_version: v800
+:resource: Observation
+:profile_url: http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-adi-documentation
+:profile_name: US Core Observation ADI Documentation Profile
+:profile_version: 8.0.0-ballot
+:title: Observation ADI Documentation
+:short_description: Verify support for the server capabilities required by the US
+  Core Observation ADI Documentation Profile.
+:is_delayed: false
+:interactions:
+- :code: create
+  :expectation: MAY
+- :code: search-type
+  :expectation: SHALL
+- :code: read
+  :expectation: SHALL
+- :code: vread
+  :expectation: SHOULD
+- :code: update
+  :expectation: MAY
+- :code: patch
+  :expectation: MAY
+- :code: delete
+  :expectation: MAY
+- :code: history-instance
+  :expectation: SHOULD
+- :code: history-type
+  :expectation: MAY
+:operations: []
+:searches:
+- :expectation: SHALL
+  :names:
+  - patient
+  - code
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - code
+  - date
+  :names_not_must_support_or_mandatory:
+  - date
+  :must_support_or_mandatory: false
+- :expectation: SHALL
+  :names:
+  - patient
+  - category
+  - date
+  :names_not_must_support_or_mandatory:
+  - date
+  :must_support_or_mandatory: false
+- :expectation: SHOULD
+  :names:
+  - patient
+  - category
+  - _lastUpdated
+  :names_not_must_support_or_mandatory:
+  - _lastUpdated
+  :must_support_or_mandatory: false
+- :expectation: SHALL
+  :names:
+  - patient
+  - category
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :expectation: SHOULD
+  :names:
+  - patient
+  - category
+  - status
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+:search_definitions:
+  :patient:
+    :paths:
+    - subject
+    :full_paths:
+    - Observation.subject
+    :comparators: {}
+    :values: []
+    :type: Reference
+    :contains_multiple: false
+    :multiple_or: MAY
+  :code:
+    :paths:
+    - code
+    :full_paths:
+    - Observation.code
+    :comparators: {}
+    :values:
+    - 45473-6
+    :type: CodeableConcept
+    :contains_multiple: false
+    :multiple_or: SHOULD
+  :date:
+    :paths:
+    - effective
+    :full_paths:
+    - Observation.effective
+    :comparators:
+      :eq: MAY
+      :ne: MAY
+      :gt: SHALL
+      :ge: SHALL
+      :lt: SHALL
+      :le: SHALL
+      :sa: MAY
+      :eb: MAY
+      :ap: MAY
+    :values: []
+    :type: date
+    :contains_multiple: false
+    :multiple_or: MAY
+  :category:
+    :paths:
+    - category
+    :full_paths:
+    - Observation.category
+    :comparators: {}
+    :values:
+    - observation-adi-documentation
+    :type: CodeableConcept
+    :contains_multiple: true
+    :multiple_or: MAY
+  :_lastUpdated:
+    :paths:
+    - meta.lastUpdated
+    :full_paths:
+    - Observation.meta.lastUpdated
+    :comparators:
+      :eq: MAY
+      :ne: MAY
+      :gt: MAY
+      :ge: MAY
+      :lt: MAY
+      :le: MAY
+      :sa: MAY
+      :eb: MAY
+      :ap: MAY
+    :values: []
+    :type: date
+    :contains_multiple: false
+    :multiple_or: MAY
+  :status:
+    :paths:
+    - status
+    :full_paths:
+    - Observation.status
+    :comparators: {}
+    :values:
+    - registered
+    - preliminary
+    - final
+    - amended
+    - corrected
+    - cancelled
+    - entered-in-error
+    - unknown
+    :type: code
+    :contains_multiple: false
+    :multiple_or: SHALL
+:include_params: []
+:revincludes:
+- Provenance:target
+:required_concepts: []
+:must_supports:
+  :extensions:
+  - :id: Observation.extension:supporting-info
+    :path: extension
+    :url: http://hl7.org/fhir/StructureDefinition/workflow-supportingInfo
+  :slices:
+  - :slice_id: Observation.category:us-core
+    :slice_name: us-core
+    :path: category
+    :discriminator:
+      :type: patternCodeableConcept
+      :path: ''
+      :code: observation-adi-documentation
+      :system: http://hl7.org/fhir/us/core/CodeSystem/us-core-category
+  :elements:
+  - :path: extension:supporting-info.value[x]
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-adi-documentreference
+  - :path: status
+  - :path: category
+  - :path: code.coding.code
+    :fixed_value: 45473-6
+  - :path: subject
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+  - :path: issued
+  - :path: performer
+    :types:
+    - Reference
+    :target_profiles:
+    - http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
+  - :path: value[x]
+:mandatory_elements:
+- Observation.extension.url
+- Observation.extension.value[x]
+- Observation.status
+- Observation.code
+- Observation.subject
+- Observation.component.code
+:bindings:
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/observation-status
+  :path: status
+- :type: CodeableConcept
+  :strength: required
+  :system: http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1267.16
+  :path: value
+:references:
+- :path: Observation.extension.value[x]
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-adi-documentreference
+  - http://hl7.org/fhir/StructureDefinition/Resource
+- :path: Observation.basedOn
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/CarePlan
+  - http://hl7.org/fhir/StructureDefinition/DeviceRequest
+  - http://hl7.org/fhir/StructureDefinition/ImmunizationRecommendation
+  - http://hl7.org/fhir/StructureDefinition/MedicationRequest
+  - http://hl7.org/fhir/StructureDefinition/NutritionOrder
+  - http://hl7.org/fhir/StructureDefinition/ServiceRequest
+- :path: Observation.partOf
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/MedicationAdministration
+  - http://hl7.org/fhir/StructureDefinition/MedicationDispense
+  - http://hl7.org/fhir/StructureDefinition/MedicationStatement
+  - http://hl7.org/fhir/StructureDefinition/Procedure
+  - http://hl7.org/fhir/StructureDefinition/Immunization
+  - http://hl7.org/fhir/StructureDefinition/ImagingStudy
+- :path: Observation.subject
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+- :path: Observation.focus
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Resource
+- :path: Observation.encounter
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Encounter
+- :path: Observation.performer
+  :profiles:
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient
+  - http://hl7.org/fhir/StructureDefinition/PractitionerRole
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-careteam
+  - http://hl7.org/fhir/us/core/StructureDefinition/us-core-relatedperson
+- :path: Observation.specimen
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Specimen
+- :path: Observation.device
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Device
+  - http://hl7.org/fhir/StructureDefinition/DeviceMetric
+- :path: Observation.hasMember
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Observation
+  - http://hl7.org/fhir/StructureDefinition/QuestionnaireResponse
+  - http://hl7.org/fhir/StructureDefinition/MolecularSequence
+- :path: Observation.derivedFrom
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/DocumentReference
+  - http://hl7.org/fhir/StructureDefinition/ImagingStudy
+  - http://hl7.org/fhir/StructureDefinition/Media
+  - http://hl7.org/fhir/StructureDefinition/QuestionnaireResponse
+  - http://hl7.org/fhir/StructureDefinition/Observation
+  - http://hl7.org/fhir/StructureDefinition/MolecularSequence
+:tests:
+- :id: us_core_v800_observation_adi_documentation_patient_code_search_test
+  :file_name: observation_adi_documentation_patient_code_search_test.rb
+- :id: us_core_v800_observation_adi_documentation_patient_code_date_search_test
+  :file_name: observation_adi_documentation_patient_code_date_search_test.rb
+- :id: us_core_v800_observation_adi_documentation_patient_category_date_search_test
+  :file_name: observation_adi_documentation_patient_category_date_search_test.rb
+- :id: us_core_v800_observation_adi_documentation_patient_category__lastUpdated_search_test
+  :file_name: observation_adi_documentation_patient_category_lastupdated_search_test.rb
+- :id: us_core_v800_observation_adi_documentation_patient_category_search_test
+  :file_name: observation_adi_documentation_patient_category_search_test.rb
+- :id: us_core_v800_observation_adi_documentation_patient_category_status_search_test
+  :file_name: observation_adi_documentation_patient_category_status_search_test.rb
+- :id: us_core_v800_observation_adi_documentation_read_test
+  :file_name: observation_adi_documentation_read_test.rb
+- :id: us_core_v800_observation_adi_documentation_provenance_revinclude_search_test
+  :file_name: observation_adi_documentation_provenance_revinclude_search_test.rb
+- :id: us_core_v800_observation_adi_documentation_validation_test
+  :file_name: observation_adi_documentation_validation_test.rb
+- :id: us_core_v800_observation_adi_documentation_must_support_test
+  :file_name: observation_adi_documentation_must_support_test.rb
+- :id: us_core_v800_observation_adi_documentation_reference_resolution_test
+  :file_name: observation_adi_documentation_reference_resolution_test.rb
+:id: us_core_v800_observation_adi_documentation
+:file_name: observation_adi_documentation_group.rb
+:delayed_references:
+- :path: performer
+  :resources:
+  - Practitioner
+  - Organization
+  - RelatedPerson
+:resource_conformance_expectation: SHALL

@@ -9,6 +9,11 @@ module RequirementsSuite
         identifier: 'sample-criteria-proposal',
         title: 'Sample Criteria Proposal',
         actor: 'Client'
+      },
+      {
+        identifier: 'sample-criteria-proposal-4',
+        title: 'Sample Criteria Proposal',
+        actor: 'Client'
       }
     )
 

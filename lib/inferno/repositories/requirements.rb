@@ -40,6 +40,10 @@ module Inferno
         end
       end
 
+      def requirements_for_actor(requirement_set, actor)
+        all.select { |requirement| requirement.requirement_set == requirement_set && requirement.actor == actor }
+      end
+
       def filter_requirements_by_ids(ids)
         all.select { |requirement| ids.include?(requirement.id) }
       end
@@ -57,7 +61,9 @@ module Inferno
           test_suite
             .requirement_sets
             .select do |set|
-              set.suite_options.all? { |set_option| selected_suite_options.include? set_option }
+              set.suite_options.all? do |set_option|
+                selected_suite_options.blank? || selected_suite_options.include?(set_option)
+              end
             end
 
         requirements =
@@ -72,8 +78,7 @@ module Inferno
           .flat_map do |requirement_set|
             all.select do |requirement|
               requirement.requirement_set == requirement_set.identifier &&
-                requirement.actor == requirement_set.actor &&
-                requirement.tested?
+                requirement.actor == requirement_set.actor
             end
           end
       end

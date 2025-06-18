@@ -1,3 +1,11 @@
+## 0.6.12
+* FI-3909: Handle Large Inputs/Outputs in Results by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/686
+* FI-4050: Dynamically look up FHIR/HTTP clients by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/691
+* FI-4046: Support Long Runnable IDs Without DB Schema Change by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/689
+* FI-4117: Add Custom Configuration Support to CLI Evaluator by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/693
+* FI-3941: Create requirements dialog by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/690
+* FI-3943: Add requirements coverage command by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/692
+
 ## 0.6.11
 * FI-4120: Add requirements feature flag by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/685
 * FI-4022 Support complex presets in Execute CLI by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/684

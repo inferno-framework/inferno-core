@@ -556,10 +556,10 @@ module Inferno
       end
 
       # @private
-      def all_requirements(suite_options = [])
-        children(suite_options).flat_map do |child|
-          child.verifies_requirements + child.all_requirements(suite_options)
-        end
+      def all_verified_requirements(suite_options = [])
+        verifies_requirements + children(suite_options).flat_map do |child|
+          child.all_verified_requirements(suite_options)
+        end.uniq
       end
 
       # @private
