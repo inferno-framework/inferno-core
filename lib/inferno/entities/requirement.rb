@@ -23,7 +23,9 @@ module Inferno
       def initialize(params)
         super(params, ATTRIBUTES)
 
-        self.requirement_set = id.split('@').first if requirement_set.blank? && id&.include?('@')
+        return unless requirement_set.blank? && (id&.include?('@') || id&.include?('#'))
+
+        self.requirement_set = id.split(/[@#]/).first
       end
 
       # Expand a comma-delimited list of requirement id references into an Array
@@ -49,10 +51,16 @@ module Inferno
           .split(',')
           .map(&:strip)
           .flat_map do |requirement_string|
-            current_set, requirement_string = requirement_string.split('@') if requirement_string.include?('@')
+            if requirement_string.include? '@'
+              current_set, requirement_string = requirement_string.split('@')
+            elsif requirement_string.include? '#'
+              current_set, actor = requirement_string.split('#')
+            end
 
             requirement_ids =
-              if requirement_string.include? '-'
+              if actor.present?
+                return Repositories::Requirements.new.requirements_for_actor(current_set, actor).map(&:id)
+              elsif requirement_string.include? '-'
                 start_id, end_id = requirement_string.split('-')
                 if start_id.match?(/^\d+$/) && end_id.match?(/^\d+$/)
                   (start_id..end_id).to_a
