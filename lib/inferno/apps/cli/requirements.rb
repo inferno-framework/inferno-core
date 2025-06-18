@@ -43,7 +43,7 @@ module Inferno
           RequirementsCoverageChecker.new(test_suite_id).run
         else
           Inferno::Repositories::TestSuites.all.each do |test_suite|
-            if Object.const_source_location(test_suite.to_s).first.start_with? Dir.pwd
+            if Object.const_source_location(test_suite.to_s).first.start_with? File.join(Dir.pwd, 'lib')
               RequirementsCoverageChecker.new(test_suite.id).run
             end
           end
@@ -66,7 +66,7 @@ module Inferno
           RequirementsCoverageChecker.new(test_suite_id).run_check
         else
           Inferno::Repositories::TestSuites.all.each do |test_suite|
-            if Object.const_source_location(test_suite.to_s).first.start_with? Dir.pwd
+            if Object.const_source_location(test_suite.to_s).first.start_with?(Dir.pwd, 'lib')
               RequirementsCoverageChecker.new(test_suite.id).run_check
             end
           end
