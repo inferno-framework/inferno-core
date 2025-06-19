@@ -33,6 +33,8 @@ module Inferno
             not_tested_reason: row[:not_tested_reason],
             not_tested_details: row[:not_tested_details]
           }
+        rescue StandardError => e
+          Application[:logger].error("Unable to load requirement: #{combined_id}:\n#{e.full_message.lines.first}")
         end
 
         result.each do |raw_req|
@@ -109,7 +111,7 @@ module Inferno
             .flat_map(&:sub_requirements)
             .select do |requirement_id|
               referenced_requirement_sets.any? do |set|
-                requirement_id.start_with?("#{set.identifier}@") && find(requirement_id).actor?(set.actor)
+                requirement_id.start_with?("#{set.identifier}@") && find(requirement_id)&.actor?(set.actor)
               end
             end
 
