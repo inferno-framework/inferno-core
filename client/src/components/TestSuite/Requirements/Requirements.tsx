@@ -80,7 +80,7 @@ const Requirements: FC<RequirementsProps> = ({
               <TextField {...params} label="Specification" variant="standard" color="secondary" />
             )}
             onChange={(event, value) => updateFilters(value, 'specification')}
-            sx={{ width: 150 }}
+            sx={{ width: 250 }}
           />
           <Autocomplete
             value={filters.conformance ?? ''}
