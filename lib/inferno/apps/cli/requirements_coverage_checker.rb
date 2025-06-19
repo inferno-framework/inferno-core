@@ -90,7 +90,7 @@ module Inferno
                 requirement.url,
                 requirement.requirement,
                 requirement.conformance,
-                requirement.actor,
+                requirement.actors.join(','),
                 requirement.conditionality,
                 requirement.not_tested_reason,
                 requirement.not_tested_details,
