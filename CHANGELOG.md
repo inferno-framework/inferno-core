@@ -1,3 +1,11 @@
+## 0.6.13
+* FI-4167: Support MustSupport element in extension by @yunwwang in https://github.com/inferno-framework/inferno-core/pull/696
+* FI-4171: Fix requirements loading issues by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/698
+* FI-4172: Add not-tested requirement fields to JSON API by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/699
+* FI-4168: Support actor subrequirements by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/700
+* FI-4173: Allow requirements to have multiple actors by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/701
+* FI-4177: Add error handling to requirements loading by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/702
+
 ## 0.6.12
 * FI-3909: Handle Large Inputs/Outputs in Results by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/686
 * FI-4050: Dynamically look up FHIR/HTTP clients by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/691
