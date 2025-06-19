@@ -828,7 +828,7 @@ definitions:
     - "id"
     - "requirement"
     - "conformance"
-    - "actor"
+    - "actors"
     properties:
       id:
         type: "string"
@@ -836,8 +836,10 @@ definitions:
         type: "string"
       conformance:
         type: "string"
-      actor:
-        type: "string"
+      actors:
+        type: "array"
+        items:
+          type: "string"
       conditionality:
         type: "string"
       url:
