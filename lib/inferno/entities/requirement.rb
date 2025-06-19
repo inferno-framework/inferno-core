@@ -11,7 +11,7 @@ module Inferno
         :url,
         :requirement,
         :conformance,
-        :actor,
+        :actors,
         :sub_requirements,
         :conditionality,
         :not_tested_reason,
@@ -75,6 +75,10 @@ module Inferno
 
             requirement_ids.map { |id| "#{current_set}@#{id}" }
           end
+      end
+
+      def actor?(actor_to_check)
+        actors.any? { |actor| actor.casecmp? actor_to_check }
       end
 
       def tested?
