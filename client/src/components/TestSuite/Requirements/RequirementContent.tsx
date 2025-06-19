@@ -73,7 +73,8 @@ const RequirementContent: FC<RequirementContentProps> = ({
               variant="body2"
               sx={{ color: lightTheme.palette.common.orangeDark }}
             >
-              Not tested
+              {requirement.not_tested_reason}
+              {requirement.not_tested_details && `: ${requirement.not_tested_details}`}
             </Typography>
           ) : (
             <Typography ml={0} variant="body2" fontWeight="bold">
