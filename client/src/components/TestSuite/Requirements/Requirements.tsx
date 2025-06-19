@@ -100,6 +100,7 @@ const Requirements: FC<RequirementsProps> = ({
             setFilters({});
             setFilteredRequirements(requirements);
           }}
+          sx={{ ml: 4, flexShrink: 0 }}
         >
           Reset Filters
         </Button>
