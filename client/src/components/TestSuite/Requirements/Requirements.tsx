@@ -16,7 +16,7 @@ const Requirements: FC<RequirementsProps> = ({
   testSuiteTitle,
 }) => {
   const { classes } = useStyles();
-  const [filters, setFilters] = React.useState<Record<string, string>>({});
+  const [filters, setFilters] = React.useState<Record<string, string | null>>({});
   const [filteredRequirements, setFilteredRequirements] =
     React.useState<Requirement[]>(requirements);
 
@@ -43,7 +43,7 @@ const Requirements: FC<RequirementsProps> = ({
     setFilteredRequirements(requirements);
   }, [requirements]);
 
-  const filterRequirements = (filters: Record<string, string>) => {
+  const filterRequirements = (filters: Record<string, string | null>) => {
     let requirementsCopy = requirements;
     Object.entries(filters).forEach(([filterName, value]) => {
       if (!value || value === 'Any') return;
@@ -55,7 +55,7 @@ const Requirements: FC<RequirementsProps> = ({
   };
 
   const updateFilters = (value: string | null, field: string) => {
-    const newFilters = { ...filters, [field]: value || '' };
+    const newFilters = { ...filters, [field]: value || null };
     setFilters(newFilters);
     filterRequirements(newFilters);
   };
@@ -73,7 +73,7 @@ const Requirements: FC<RequirementsProps> = ({
       <Box m={2} display="flex" justifyContent="space-between" overflow="auto">
         <Box display="flex">
           <Autocomplete
-            value={filters.specification ?? ''}
+            value={filters.specification ?? null}
             size="small"
             options={specifications}
             renderInput={(params) => (
@@ -83,7 +83,7 @@ const Requirements: FC<RequirementsProps> = ({
             sx={{ width: 250 }}
           />
           <Autocomplete
-            value={filters.conformance ?? ''}
+            value={filters.conformance ?? null}
             size="small"
             options={conformances}
             renderInput={(params) => (
