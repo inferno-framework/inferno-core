@@ -1,5 +1,5 @@
 ## 0.6.13
-* FI-4167 Support MustSupport element in extension by @yunwwang in https://github.com/inferno-framework/inferno-core/pull/696
+* FI-4167: Support MustSupport element in extension by @yunwwang in https://github.com/inferno-framework/inferno-core/pull/696
 * FI-4171: Fix requirements loading issues by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/698
 * FI-4172: Add not-tested requirement fields to JSON API by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/699
 * FI-4168: Support actor subrequirements by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/700
