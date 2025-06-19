@@ -10,6 +10,8 @@ module Inferno
         result = []
 
         CSV.foreach(path, headers: true, header_converters: :symbol) do |row|
+          next if row[:conformance].casecmp? 'deprecated'
+
           req_set = row[:req_set]
           id = row[:id]
           sub_requirements_field = row[:subrequirements]
