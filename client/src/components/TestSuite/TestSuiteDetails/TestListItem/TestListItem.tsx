@@ -64,6 +64,7 @@ const TestListItem: FC<TestListItemProps> = ({
       (view === 'report' && showReportDetails && (messagesExist || requestsExist)) ||
         location === test.short_id,
     );
+    setTabIndex(findPopulatedTabIndex());
   }, [showReportDetails]);
 
   const resultIcon = (
@@ -90,7 +91,7 @@ const TestListItem: FC<TestListItemProps> = ({
           </Markdown>
         )
       }
-      secondaryTypographyProps={{ component: 'div' }}
+      slotProps={{ secondary: { component: 'div' } }}
       className={classes.testText}
     />
   );
@@ -196,7 +197,6 @@ const TestListItem: FC<TestListItemProps> = ({
     const firstTab = tabs.findIndex(
       (tab) => tab.label !== 'About' && tab.value && tab.value?.length > 0,
     );
-
     if (firstTab === -1) {
       return tabs.findIndex((tab) => tab.label === 'About');
     }
@@ -205,8 +205,8 @@ const TestListItem: FC<TestListItemProps> = ({
 
   const handleAccordionClick = () => {
     if (view !== 'report') {
-      setTabIndex(findPopulatedTabIndex());
       setOpen(!open);
+      setTabIndex(findPopulatedTabIndex());
     }
   };
 
@@ -244,8 +244,8 @@ const TestListItem: FC<TestListItemProps> = ({
         }
         className={classes.accordionSummary}
         onKeyDown={(e) => {
-          if (view !== 'report' && e.key === 'Enter') {
-            setOpen(!open);
+          if (e.key === 'Enter') {
+            handleAccordionClick();
           }
         }}
         sx={view === 'report' ? { cursor: 'default !important' } : {}}
