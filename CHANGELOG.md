@@ -1,3 +1,8 @@
+## 0.6.14
+* FI-4180: Prevent loading requirements from vendor directory by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/704
+* FI-4123: Fix requirements linking to wrong test tab by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/697
+* FI-4129: Add specification filter to requirements by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/694
+
 ## 0.6.13
 * FI-4167: Support MustSupport element in extension by @yunwwang in https://github.com/inferno-framework/inferno-core/pull/696
 * FI-4171: Fix requirements loading issues by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/698
