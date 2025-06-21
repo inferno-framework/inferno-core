@@ -14,9 +14,9 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { TestGroup } from '~/models/testSuiteModels';
-import useStyles from './styles';
 import { shouldShowRequirementsButton } from '~/components/TestSuite/TestSuiteUtilities';
 import RequirementsModalButton from '~/components/TestSuite/Requirements/RequirementsModalButton';
+import useStyles from './styles';
 
 interface NestedDescriptionPanelProps {
   testGroup: TestGroup;
@@ -25,7 +25,6 @@ interface NestedDescriptionPanelProps {
 const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) => {
   const { classes } = useStyles();
   const [descriptionMouseHover, setDescriptionMouseHover] = React.useState(false);
-  const showRequirementsButton = shouldShowRequirementsButton(testGroup);
 
   return (
     <Box py={1} className={classes.descriptionContainer}>
@@ -63,7 +62,9 @@ const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) 
         >
           <Box className={`${classes.accordionDetail} ${classes.description}`}>
             <Markdown remarkPlugins={[remarkGfm]}>{testGroup.description as string}</Markdown>
-            {showRequirementsButton && <RequirementsModalButton runnable={testGroup} />}
+            {shouldShowRequirementsButton(testGroup) && (
+              <RequirementsModalButton runnable={testGroup} />
+            )}
           </Box>
         </AccordionDetails>
       </Accordion>

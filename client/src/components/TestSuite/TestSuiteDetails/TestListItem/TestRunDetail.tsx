@@ -125,7 +125,7 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
           testDescription
         ) : (
           <Box p={2}>
-            <Typography variant="subtitle2" component="p">
+            <Typography variant="subtitle1" component="p">
               No Description
             </Typography>
           </Box>
