@@ -108,14 +108,14 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
       </TabPanel>
       <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={2}>
         <InputOutputList
-          inputOutputs={test.result?.inputs || []}
+          values={test.result?.inputs || []}
           noValuesMessage="No Inputs"
           headerName="Input"
         />
       </TabPanel>
       <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={3}>
         <InputOutputList
-          inputOutputs={test.result?.outputs || []}
+          values={test.result?.outputs || []}
           noValuesMessage="No Outputs"
           headerName="Output"
         />

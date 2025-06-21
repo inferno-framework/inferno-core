@@ -82,7 +82,7 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
 
   const renderInputOutputs = () => {
     if ((runnable as TestGroup).user_runnable && runnable.result && runnable.run_as_group) {
-      return <InputOutputList headerName="Input" inputOutputs={runnable.result?.inputs || []} />;
+      return <InputOutputList headerName="Input" values={runnable.result?.inputs || []} />;
     }
   };
 
