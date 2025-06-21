@@ -28,4 +28,8 @@ export default makeStyles()((theme: Theme) => ({
       margin: 0,
     },
   },
+  textButton: {
+    fontWeight: 'bolder',
+    cursor: 'pointer',
+  },
 }));

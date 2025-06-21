@@ -1,16 +1,14 @@
 import React, { FC, useMemo } from 'react';
-import { Box, Card, Divider, Link, Typography } from '@mui/material';
-import { enqueueSnackbar } from 'notistack';
+import { Box, Card, Divider, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { getSingleRequirement } from '~/api/RequirementsApi';
-import { TestGroup, RunnableType, TestSuite, Requirement } from '~/models/testSuiteModels';
+import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
 import {
   shouldShowDescription,
   shouldShowRequirementsButton,
 } from '~/components/TestSuite/TestSuiteUtilities';
 import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
-import RequirementsModal from '~/components/TestSuite/Requirements/RequirementsModal';
+import RequirementsModalButton from '~/components/TestSuite/Requirements/RequirementsModalButton';
 import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { useTestSessionStore } from '~/store/testSession';
@@ -26,8 +24,6 @@ interface TestGroupCardProps {
 const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, view }) => {
   const { classes } = useStyles();
   const viewOnly = useTestSessionStore((state) => state.viewOnly);
-  const [requirements, setRequirements] = React.useState<Requirement[]>([]);
-  const [showRequirements, setShowRequirements] = React.useState(false);
 
   const buttonText = `${viewOnly ? 'View' : 'Run'}${runnable.run_as_group ? '' : ' All'}${viewOnly ? ' Inputs' : ' Tests'}`;
 
@@ -39,22 +35,6 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
   }, [runnable.description]);
 
   const runnableType = 'tests' in runnable ? RunnableType.TestGroup : RunnableType.TestSuite;
-
-  const showRequirementsClick = () => {
-    const requirementIds = runnable.verifies_requirements;
-    if (requirementIds) {
-      Promise.all(requirementIds.map((requirementId) => getSingleRequirement(requirementId)))
-        .then((resolvedValues) => {
-          setRequirements(resolvedValues.filter((r) => !!r));
-          setShowRequirements(true);
-        })
-        .catch((e: Error) => {
-          enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
-            variant: 'error',
-          });
-        });
-    }
-  };
 
   const renderHeader = () => {
     return (
@@ -93,25 +73,8 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
               {description}
             </Box>
           )}
-          {showRequirementsButton && (
-            <Box display="flex" justifyContent="end" minWidth="fit-content" p={2}>
-              <Link
-                color="secondary"
-                className={classes.textButton}
-                onClick={showRequirementsClick}
-              >
-                View Specification Requirements
-              </Link>
-            </Box>
-          )}
+          {showRequirementsButton && <RequirementsModalButton runnable={runnable} />}
           <Divider />
-          {requirements && showRequirementsButton && (
-            <RequirementsModal
-              requirements={requirements}
-              modalVisible={showRequirements}
-              hideModal={() => setShowRequirements(false)}
-            />
-          )}
         </>
       );
     }

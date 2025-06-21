@@ -26,7 +26,7 @@ const RequirementContent: FC<RequirementContentProps> = ({
   // Reduce list of requirements into map of specification -> url -> list of requirements
   const requirementsByUrl = requirements.reduce(
     (acc, current) => {
-      const specification = current.id.split('@')[0];
+      const specification = current.specification || current.id.split('@')[0];
       const url = current.url ?? '';
       if (acc[specification]) {
         if (acc[specification][url]) acc[specification][url].push(current);
