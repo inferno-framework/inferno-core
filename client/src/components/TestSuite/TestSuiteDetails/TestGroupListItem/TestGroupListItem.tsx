@@ -190,7 +190,7 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         testGroup.run_as_group &&
         testGroup.user_runnable &&
         testGroup.result && (
-          <InputOutputList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
+          <InputOutputList headerName="Input" values={testGroup.result?.inputs || []} />
         )}
       <AccordionDetails
         title={groupMouseHover ? '' : `${testGroup.id}-detail`}

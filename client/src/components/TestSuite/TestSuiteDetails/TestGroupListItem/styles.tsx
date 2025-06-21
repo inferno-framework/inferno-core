@@ -18,10 +18,6 @@ export default makeStyles()((theme: Theme) => ({
   currentItem: {
     fontWeight: 600,
   },
-  textButton: {
-    fontWeight: 'bolder',
-    cursor: 'pointer',
-  },
   accordion: {
     '&:before': {
       display: 'none',

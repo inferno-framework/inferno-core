@@ -92,10 +92,6 @@ export default makeStyles()((theme: Theme) => ({
       padding: '0 16px',
     },
   },
-  textButton: {
-    fontWeight: 'bolder',
-    cursor: 'pointer',
-  },
   resultMessageMarkdown: {
     '& > *': {
       margin: 0,
