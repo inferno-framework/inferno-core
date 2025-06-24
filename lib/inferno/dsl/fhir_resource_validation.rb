@@ -1,4 +1,5 @@
 require_relative '../ext/fhir_models'
+require_relative '../feature'
 module Inferno
   module DSL
     # This module contains the methods needed to configure a validator to
@@ -270,8 +271,12 @@ module Inferno
 
           @session_id = validator_session_id if validator_session_id
 
+          # HL7 Validator Core 6.5.19+ renamed `cliContext` to `validationContext`.
+          # This allows backward compatibility until the validator-wrapper is updated.
+          context_key = Feature.use_validation_context_key? ? :validationContext : :cliContext
+
           wrapped_resource = {
-            validationContext: {
+            context_key => {
               **validation_context.definition,
               profiles: [profile_url]
             },
