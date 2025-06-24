@@ -27,7 +27,7 @@ module Inferno
             url: row[:url],
             requirement: row[:requirement],
             conformance: row[:conformance],
-            actors: row[:actors].split(',').map(&:strip),
+            actors: row[:actors]&.split(',')&.map(&:strip) || [],
             sub_requirements: sub_requirements,
             conditionality: row[:conditionality]&.downcase,
             not_tested_reason: row[:not_tested_reason],
