@@ -50,7 +50,7 @@ RSpec.describe Inferno::DSL::Assertions do
 
   def validation_body(resource, profile_url)
     {
-      cliContext: {
+      validatorContext: {
         sv: '4.0.1',
         doNative: false,
         extensions: ['any'],
