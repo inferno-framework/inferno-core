@@ -112,7 +112,7 @@ module Inferno
         Inferno::DSL::FHIRResourceValidation::Validator.new(:default, 'evaluator_cli') do
           igs(ig_path)
 
-          cli_context do
+          validator_context do
             # For our purposes, code display mismatches should be warnings and not affect profile conformance
             displayWarnings(true)
           end
