@@ -134,17 +134,17 @@ module Inferno
             repo = Inferno::Repositories::Requirements.new
             input_requirement_sets
               .each do |requirement_set, requirements|
-                requirements.each do |requirement_hash|
-                  missing_sub_requirements =
-                    Inferno::Entities::Requirement.expand_requirement_ids(requirement_hash['Sub-Requirement(s)'])
-                      .reject { |requirement_id| repo.exists? requirement_id }
+              requirements.each do |requirement_hash|
+                missing_sub_requirements =
+                  Inferno::Entities::Requirement.expand_requirement_ids(requirement_hash['Sub-Requirement(s)'])
+                    .reject { |requirement_id| repo.exists? requirement_id }
 
-                  next if missing_sub_requirements.blank?
+                next if missing_sub_requirements.blank?
 
-                  id = "#{requirement_set}@#{requirement_hash['ID*']}"
+                id = "#{requirement_set}@#{requirement_hash['ID*']}"
 
-                  missing_requirements[id] = missing_sub_requirements
-                end
+                missing_requirements[id] = missing_sub_requirements
+              end
             end
           end
       end
@@ -201,7 +201,7 @@ module Inferno
             false
           end
 
-        if !requirements_ok
+        unless requirements_ok
           puts <<~MESSAGE
             Check Failed. To resolve, run:
 
