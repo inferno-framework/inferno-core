@@ -102,7 +102,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
     let(:wrapped_resource_string) do
       {
-        validatorContext: {
+        validationContext: {
           sv: '4.0.1',
           doNative: false,
           extensions: ['any'],
@@ -301,47 +301,47 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
     end
   end
 
-  describe '.validator_context' do
-    it 'applies the correct settings to validator_context' do
+  describe '.validation_context' do
+    it 'applies the correct settings to validation_context' do
       v1 = Inferno::DSL::FHIRResourceValidation::Validator.new do
         url 'http://example.com'
-        validator_context do
+        validation_context do
           txServer nil
         end
       end
 
       v2 = Inferno::DSL::FHIRResourceValidation::Validator.new do
         url 'http://example.com'
-        validator_context({
-                            displayWarnings: true
-                          })
+        validation_context({
+                             displayWarnings: true
+                           })
       end
 
       v3 = Inferno::DSL::FHIRResourceValidation::Validator.new do
         url 'http://example.com'
-        validator_context({
-                            'igs' => ['hl7.fhir.us.core#1.0.1'],
-                            'extensions' => []
-                          })
+        validation_context({
+                             'igs' => ['hl7.fhir.us.core#1.0.1'],
+                             'extensions' => []
+                           })
       end
 
-      expect(v1.validator_context.definition.fetch(:txServer, :missing)).to be_nil
-      expect(v1.validator_context.definition.fetch(:displayWarnings, :missing)).to eq(:missing)
-      expect(v1.validator_context.txServer).to be_nil
+      expect(v1.validation_context.definition.fetch(:txServer, :missing)).to be_nil
+      expect(v1.validation_context.definition.fetch(:displayWarnings, :missing)).to eq(:missing)
+      expect(v1.validation_context.txServer).to be_nil
 
-      expect(v2.validator_context.definition.fetch(:txServer, :missing)).to eq(:missing)
-      expect(v2.validator_context.definition[:displayWarnings]).to be(true)
-      expect(v2.validator_context.displayWarnings).to be(true)
+      expect(v2.validation_context.definition.fetch(:txServer, :missing)).to eq(:missing)
+      expect(v2.validation_context.definition[:displayWarnings]).to be(true)
+      expect(v2.validation_context.displayWarnings).to be(true)
 
-      expect(v3.validator_context.igs).to eq(['hl7.fhir.us.core#1.0.1'])
-      expect(v3.validator_context.extensions).to eq([])
+      expect(v3.validation_context.igs).to eq(['hl7.fhir.us.core#1.0.1'])
+      expect(v3.validation_context.extensions).to eq([])
     end
 
-    it 'uses the right validator_context when submitting the validation request' do
+    it 'uses the right validation_context when submitting the validation request' do
       v4 = Inferno::DSL::FHIRResourceValidation::Validator.new do
         url 'http://example.com'
         igs 'hl7.fhir.us.core#1.0.1'
-        validator_context do
+        validation_context do
           txServer nil
           displayWarnings true
           doNative true
@@ -350,7 +350,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       end
 
       expected_request_body = {
-        validatorContext: {
+        validationContext: {
           sv: '4.0.1',
           doNative: true,
           extensions: ['any'],
@@ -391,13 +391,13 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         end
       end
 
-      expect(v5.validator_context.txServer).to be_nil
-      expect(v5.validator_context.displayWarnings).to be(true)
-      expect(v5.validator_context.doNative).to be(true)
-      expect(v5.validator_context.igs).to eq(['hl7.fhir.us.core#3.1.1'])
+      expect(v5.validation_context.txServer).to be_nil
+      expect(v5.validation_context.displayWarnings).to be(true)
+      expect(v5.validation_context.doNative).to be(true)
+      expect(v5.validation_context.igs).to eq(['hl7.fhir.us.core#3.1.1'])
 
       expected_request_body = {
-        validatorContext: {
+        validationContext: {
           sv: '4.0.1',
           doNative: true,
           extensions: ['any'],

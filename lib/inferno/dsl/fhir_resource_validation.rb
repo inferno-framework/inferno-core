@@ -19,7 +19,7 @@ module Inferno
     #         { type: 'info', message: 'everything is ok' }
     #       end
     #     end
-    #     validator_context do
+    #     validation_context do
     #       noExtensibleBindingMessages true
     #       allowExampleUrls true
     #       txServer nil
@@ -74,12 +74,12 @@ module Inferno
         #   igs("hl7.fhir.us.core#3.1.1", "hl7.fhir.us.core#6.0.0")
         # @param validator_igs [Array<String>]
         def igs(*validator_igs)
-          validator_context(igs: validator_igs) if validator_igs.any?
+          validation_context(igs: validator_igs) if validator_igs.any?
 
-          validator_context.igs
+          validation_context.igs
         end
 
-        # Set the validatorContext used as part of each validation request.
+        # Set the validationContext used as part of each validation request.
         # Fields may be passed as either a Hash or block.
         # Note that all fields included here will be sent directly in requests,
         # there is no check that the fields are correct.
@@ -88,7 +88,7 @@ module Inferno
         #   # Passing fields in a block
         #   fhir_resource_validator do
         #     url 'http://example.com/validator'
-        #     validator_context do
+        #     validation_context do
         #       noExtensibleBindingMessages true
         #       allowExampleUrls true
         #       txServer nil
@@ -99,7 +99,7 @@ module Inferno
         #   # Passing fields in a Hash
         #   fhir_resource_validator do
         #     url 'http://example.org/validator'
-        #     validator_context({
+        #     validation_context({
         #       noExtensibleBindingMessages: true,
         #       allowExampleUrls: true,
         #       txServer: nil
@@ -107,20 +107,20 @@ module Inferno
         #   end
         #
         # @param definition [Hash] raw fields to set, optional
-        def validator_context(definition = nil, &)
-          if @validator_context
+        def validation_context(definition = nil, &)
+          if @validation_context
             if definition
-              @validator_context.definition.merge!(definition.deep_symbolize_keys)
+              @validation_context.definition.merge!(definition.deep_symbolize_keys)
             elsif block_given?
-              @validator_context.instance_eval(&)
+              @validation_context.instance_eval(&)
             end
           else
-            @validator_context = ValidatorContext.new(definition || {}, &)
+            @validation_context = ValidationContext.new(definition || {}, &)
           end
-          @validator_context
+          @validation_context
         end
 
-        alias cli_context validator_context
+        alias cli_context validation_context
 
         # @private
         def additional_validations
@@ -271,8 +271,8 @@ module Inferno
           @session_id = validator_session_id if validator_session_id
 
           wrapped_resource = {
-            validatorContext: {
-              **validator_context.definition,
+            validationContext: {
+              **validation_context.definition,
               profiles: [profile_url]
             },
             filesToValidate: [
@@ -367,10 +367,10 @@ module Inferno
       end
 
       # @private
-      class ValidatorContext
+      class ValidationContext
         attr_reader :definition
 
-        VALIDATORCONTEXT_DEFAULTS = {
+        VALIDATIONCONTEXT_DEFAULTS = {
           sv: '4.0.1',
           doNative: false,
           extensions: ['any'],
@@ -379,13 +379,13 @@ module Inferno
 
         # @private
         def initialize(definition, &)
-          @definition = VALIDATORCONTEXT_DEFAULTS.merge(definition.deep_symbolize_keys)
+          @definition = VALIDATIONCONTEXT_DEFAULTS.merge(definition.deep_symbolize_keys)
           instance_eval(&) if block_given?
         end
 
         # @private
         def method_missing(method_name, *args)
-          # Interpret any other method as setting a field on validatorContext.
+          # Interpret any other method as setting a field on validationContext.
           # Follow the same format as `Validator.url` here:
           # only set the value if one is provided.
           # args will be an empty array if no value is provided.
