@@ -1,17 +1,8 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import { Box, Card, Divider, Link, Tabs, Typography } from '@mui/material';
+import { Box, Card, Divider, Tabs, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { enqueueSnackbar } from 'notistack';
-import { getSingleRequirement } from '~/api/RequirementsApi';
-import {
-  Message,
-  Request,
-  Requirement,
-  Test,
-  TestInput,
-  TestOutput,
-} from '~/models/testSuiteModels';
+import { Message, Request, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
 import {
   shouldShowDescription,
   shouldShowRequirementsButton,
@@ -21,7 +12,7 @@ import CustomTooltip from '~/components/_common/CustomTooltip';
 import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
 import MessageList from '~/components/TestSuite/TestSuiteDetails/TestListItem/MessageList';
 import RequestList from '~/components/TestSuite/TestSuiteDetails/TestListItem/RequestList';
-import RequirementsModal from '~/components/TestSuite/Requirements/RequirementsModal';
+import RequirementsModalButton from '~/components/TestSuite/Requirements/RequirementsModalButton';
 import TabPanel from '~/components/TestSuite/TestSuiteDetails/TestListItem/TabPanel';
 import useStyles from './styles';
 
@@ -46,8 +37,6 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
   tabs,
 }) => {
   const { classes } = useStyles();
-  const [requirements, setRequirements] = React.useState<Requirement[]>([]);
-  const [showRequirements, setShowRequirements] = React.useState(false);
 
   useEffect(() => {
     setTabIndex(currentTabIndex);
@@ -91,22 +80,6 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
     );
   };
 
-  const showRequirementsClick = () => {
-    const requirementIds = test.verifies_requirements;
-    if (requirementIds) {
-      Promise.all(requirementIds.map((requirementId) => getSingleRequirement(requirementId)))
-        .then((resolvedValues) => {
-          setRequirements(resolvedValues.filter((r) => !!r));
-          setShowRequirements(true);
-        })
-        .catch((e: Error) => {
-          enqueueSnackbar(`Error fetching specification requirements: ${e.message}`, {
-            variant: 'error',
-          });
-        });
-    }
-  };
-
   return (
     <Card data-testid="test-run-detail">
       <Tabs
@@ -135,14 +108,14 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
       </TabPanel>
       <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={2}>
         <InputOutputList
-          inputOutputs={test.result?.inputs || []}
+          values={test.result?.inputs || []}
           noValuesMessage="No Inputs"
           headerName="Input"
         />
       </TabPanel>
       <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={3}>
         <InputOutputList
-          inputOutputs={test.result?.outputs || []}
+          values={test.result?.outputs || []}
           noValuesMessage="No Outputs"
           headerName="Output"
         />
@@ -152,26 +125,13 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
           testDescription
         ) : (
           <Box p={2}>
-            <Typography variant="subtitle2" component="p">
+            <Typography variant="subtitle1" component="p">
               No Description
             </Typography>
           </Box>
         )}
-        {shouldShowRequirementsButton(test) && (
-          <Box display="flex" justifyContent="end" minWidth="fit-content" px={2} pb={2}>
-            <Link color="secondary" className={classes.textButton} onClick={showRequirementsClick}>
-              View Specification Requirements
-            </Link>
-          </Box>
-        )}
+        {shouldShowRequirementsButton(test) && <RequirementsModalButton runnable={test} />}
       </TabPanel>
-      {requirements && shouldShowRequirementsButton(test) && (
-        <RequirementsModal
-          requirements={requirements}
-          modalVisible={showRequirements}
-          hideModal={() => setShowRequirements(false)}
-        />
-      )}
     </Card>
   );
 };

@@ -17,7 +17,7 @@ describe('The InputOutputsList component', () => {
     render(
       <ThemeProvider>
         <SnackbarProvider>
-          <InputOutputList inputOutputs={inputs} noValuesMessage="No Inputs" headerName="Input" />
+          <InputOutputList values={inputs} noValuesMessage="No Inputs" headerName="Input" />
         </SnackbarProvider>
       </ThemeProvider>,
     );
@@ -35,11 +35,7 @@ describe('The InputOutputsList component', () => {
     render(
       <ThemeProvider>
         <SnackbarProvider>
-          <InputOutputList
-            inputOutputs={outputs}
-            noValuesMessage="No Outputs"
-            headerName="Output"
-          />
+          <InputOutputList values={outputs} noValuesMessage="No Outputs" headerName="Output" />
         </SnackbarProvider>
       </ThemeProvider>,
     );
