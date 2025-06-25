@@ -1,3 +1,9 @@
+## 0.6.15
+* Improve description of assert_valid_resource by @arscan in https://github.com/inferno-framework/inferno-core/pull/707
+* FI-4179: Refactor requirements button by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/706
+* FI-4181: Make unmatched requirement ids a warning rather than an error by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/710
+* FI-4178: Verify subrequirements by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/708
+
 ## 0.6.14
 * FI-4180: Prevent loading requirements from vendor directory by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/704
 * FI-4123: Fix requirements linking to wrong test tab by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/697
