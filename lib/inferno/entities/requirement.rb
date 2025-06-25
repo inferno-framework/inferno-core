@@ -62,7 +62,7 @@ module Inferno
             requirement_ids =
               if actor.present?
                 return Repositories::Requirements.new.requirements_for_actor(current_set, actor).map(&:id)
-              elsif requirement_string.include? '-'
+              elsif requirement_string.include?('-') && !requirement_string.match?(/[^\d\-]/)
                 start_id, end_id = requirement_string.split('-')
                 if start_id.match?(/^\d+$/) && end_id.match?(/^\d+$/)
                   (start_id..end_id).to_a
