@@ -6,7 +6,7 @@ module Inferno
   module Repositories
     # Repository that deals with persistence for the `Requirement` entity.
     class Requirements < InMemoryRepository
-      def insert_from_file(path)
+      def insert_from_file(path) # rubocop:disable Metrics/CyclomaticComplexity
         result = []
 
         CSV.foreach(path, headers: true, header_converters: :symbol) do |row|
@@ -27,7 +27,7 @@ module Inferno
             url: row[:url],
             requirement: row[:requirement],
             conformance: row[:conformance],
-            actors: row[:actors].split(',').map(&:strip),
+            actors: row[:actors]&.split(',')&.map(&:strip) || [],
             sub_requirements: sub_requirements,
             conditionality: row[:conditionality]&.downcase,
             not_tested_reason: row[:not_tested_reason],

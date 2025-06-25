@@ -12,6 +12,11 @@ module Inferno
       LONGDESC
       def export_csv
         ENV['NO_DB'] = 'true'
+
+        require_relative '../../../inferno'
+
+        Inferno::Application.start(:requirements)
+
         RequirementsExporter.new.run
       end
 
@@ -22,6 +27,11 @@ module Inferno
       LONGDESC
       def check
         ENV['NO_DB'] = 'true'
+
+        require_relative '../../../inferno'
+
+        Inferno::Application.start(:requirements)
+
         RequirementsExporter.new.run_check
       end
 
