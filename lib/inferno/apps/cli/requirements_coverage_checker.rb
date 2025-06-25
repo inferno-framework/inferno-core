@@ -176,7 +176,7 @@ module Inferno
         if File.exist?(output_file_path)
           if old_csv == new_csv
             puts "'#{output_file_name}' file is up to date."
-            return unless unmatched_requirement_ids.present?
+            return
           else
             puts <<~MESSAGE
               #{output_file_name} file is out of date.

@@ -70,21 +70,24 @@ module Inferno
       #   requirement_set_id_2: [row1, row2, row 3, ...]
       # }
       def input_requirement_sets
-        requirement_set_hash = Hash.new { |hash, key| hash[key] = [] }
-        available_input_worksheets.each_with_object(requirement_set_hash) do |worksheet_file, requirement_sets|
-          worksheet = Roo::Spreadsheet.open(worksheet_file)
-          set_identifier = requirement_set_id(worksheet)
+        @input_requirement_sets ||=
+          begin
+            requirement_set_hash = Hash.new { |hash, key| hash[key] = [] }
+            available_input_worksheets.each_with_object(requirement_set_hash) do |worksheet_file, requirement_sets|
+              worksheet = Roo::Spreadsheet.open(worksheet_file)
+              set_identifier = requirement_set_id(worksheet)
 
-          CSV.parse(
-            worksheet.sheet('Requirements').to_csv,
-            headers: true
-          ).each do |row|
-            row_hash = row.to_h.slice(*INPUT_HEADERS)
-            row_hash['Sub-Requirement(s)']&.delete_prefix!('mailto:')
+              CSV.parse(
+                worksheet.sheet('Requirements').to_csv,
+                headers: true
+              ).each do |row|
+                row_hash = row.to_h.slice(*INPUT_HEADERS)
+                row_hash['Sub-Requirement(s)']&.delete_prefix!('mailto:')
 
-            requirement_sets[set_identifier] << row_hash
+                requirement_sets[set_identifier] << row_hash
+              end
+            end
           end
-        end
       end
 
       def new_requirements_csv # rubocop:disable Metrics/CyclomaticComplexity
@@ -125,6 +128,52 @@ module Inferno
         @old_requirements_csv ||= File.read(requirements_output_file_path)
       end
 
+      def missing_sub_requirements
+        @missing_sub_requirements =
+          {}.tap do |missing_requirements|
+            repo = Inferno::Repositories::Requirements.new
+
+            input_requirement_sets
+              .each do |requirement_set, requirements|
+                requirements.each do |requirement_hash|
+                  missing_sub_requirements =
+                    Inferno::Entities::Requirement.expand_requirement_ids(requirement_hash['Sub-Requirement(s)'])
+                      .reject { |requirement_id| repo.exists? requirement_id }
+
+                  missing_sub_requirements += missing_actor_sub_requirements(requirement_hash['Sub-Requirement(s)'])
+
+                  next if missing_sub_requirements.blank?
+
+                  id = "#{requirement_set}@#{requirement_hash['ID*']}"
+
+                  missing_requirements[id] = missing_sub_requirements
+                end
+              end
+          end
+      end
+
+      def missing_actor_sub_requirements(sub_requirement_string)
+        return [] if sub_requirement_string.blank?
+
+        return [] unless sub_requirement_string.include? '#'
+
+        sub_requirement_string
+          .split(',')
+          .map(&:strip)
+          .select { |requirement_string| requirement_string.include? '#' }
+          .select do |requirement_string|
+            Inferno::Entities::Requirement.expand_requirement_ids(requirement_string).blank?
+          end
+      end
+
+      def check_sub_requirements
+        return if missing_sub_requirements.blank?
+
+        missing_sub_requirements.each do |id, sub_requirement_ids|
+          puts "#{id} is missing the following sub-requirements:\n  #{sub_requirement_ids.join(', ')}"
+        end
+      end
+
       def run
         check_presence_of_input_files
 
@@ -147,6 +196,8 @@ module Inferno
           File.write(requirements_output_file_path, new_requirements_csv, encoding: Encoding::UTF_8)
         end
 
+        check_sub_requirements
+
         puts 'Done.'
       end
 
@@ -167,14 +218,20 @@ module Inferno
             false
           end
 
-        return if requirements_ok
+        unless requirements_ok
+          puts <<~MESSAGE
+            Check Failed. To resolve, run:
 
-        puts <<~MESSAGE
-          Check Failed. To resolve, run:
+                  bundle exec inferno requirements export_csv
 
-                bundle exec inferno requirements export_csv
+          MESSAGE
+          exit(1)
+        end
 
-        MESSAGE
+        check_sub_requirements
+
+        return if missing_sub_requirements.blank?
+
         exit(1)
       end
 
