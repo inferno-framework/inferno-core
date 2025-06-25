@@ -132,20 +132,37 @@ module Inferno
         @missing_sub_requirements =
           {}.tap do |missing_requirements|
             repo = Inferno::Repositories::Requirements.new
+
             input_requirement_sets
               .each do |requirement_set, requirements|
-              requirements.each do |requirement_hash|
-                missing_sub_requirements =
-                  Inferno::Entities::Requirement.expand_requirement_ids(requirement_hash['Sub-Requirement(s)'])
-                    .reject { |requirement_id| repo.exists? requirement_id }
+                requirements.each do |requirement_hash|
+                  missing_sub_requirements =
+                    Inferno::Entities::Requirement.expand_requirement_ids(requirement_hash['Sub-Requirement(s)'])
+                      .reject { |requirement_id| repo.exists? requirement_id }
 
-                next if missing_sub_requirements.blank?
+                  missing_sub_requirements += missing_actor_sub_requirements(requirement_hash['Sub-Requirement(s)'])
 
-                id = "#{requirement_set}@#{requirement_hash['ID*']}"
+                  next if missing_sub_requirements.blank?
 
-                missing_requirements[id] = missing_sub_requirements
+                  id = "#{requirement_set}@#{requirement_hash['ID*']}"
+
+                  missing_requirements[id] = missing_sub_requirements
+                end
               end
-            end
+          end
+      end
+
+      def missing_actor_sub_requirements(sub_requirement_string)
+        return [] if sub_requirement_string.blank?
+
+        return [] unless sub_requirement_string.include? '#'
+
+        sub_requirement_string
+          .split(',')
+          .map(&:strip)
+          .select { |requirement_string| requirement_string.include? '#' }
+          .select do |requirement_string|
+            Inferno::Entities::Requirement.expand_requirement_ids(requirement_string).blank?
           end
       end
 
