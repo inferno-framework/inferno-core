@@ -14,12 +14,8 @@ module Inferno
 
           req_set = row[:req_set]
           id = row[:id]
-          sub_requirements_field = row[:subrequirements]
 
           combined_id = "#{req_set}@#{id}"
-
-          # Processing sub requirements: e.g. "170.315(g)(31)_hti-2-proposal@5,17,23,26,27,32,35,38-41"
-          sub_requirements = Inferno::Entities::Requirement.expand_requirement_ids(sub_requirements_field)
 
           result << {
             requirement_set: req_set,
@@ -28,7 +24,7 @@ module Inferno
             requirement: row[:requirement],
             conformance: row[:conformance],
             actors: row[:actors]&.split(',')&.map(&:strip) || [],
-            sub_requirements: sub_requirements,
+            sub_requirements_string: row[:subrequirements],
             conditionality: row[:conditionality]&.downcase,
             not_tested_reason: row[:not_tested_reason],
             not_tested_details: row[:not_tested_details]
