@@ -196,6 +196,8 @@ module Inferno
           File.write(requirements_output_file_path, new_requirements_csv, encoding: Encoding::UTF_8)
         end
 
+        Inferno::Repositories::Requirements.new.insert_from_file(requirements_output_file_path)
+
         check_sub_requirements
 
         puts 'Done.'
