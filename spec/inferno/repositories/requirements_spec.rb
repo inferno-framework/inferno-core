@@ -48,7 +48,7 @@ RSpec.describe Inferno::Repositories::Requirements do
           requirement_set: 'sample-criteria',
           conformance: 'SHALL',
           actors: ['Client'],
-          sub_requirements_string: 'sample-criteria@2',
+          subrequirements_string: 'sample-criteria@2',
           conditionality: 'false'
         }
       )

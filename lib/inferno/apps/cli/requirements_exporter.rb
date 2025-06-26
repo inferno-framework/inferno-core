@@ -128,36 +128,36 @@ module Inferno
         @old_requirements_csv ||= File.read(requirements_output_file_path)
       end
 
-      def missing_sub_requirements
-        @missing_sub_requirements =
+      def missing_subrequirements
+        @missing_subrequirements =
           {}.tap do |missing_requirements|
             repo = Inferno::Repositories::Requirements.new
 
             input_requirement_sets
               .each do |requirement_set, requirements|
                 requirements.each do |requirement_hash|
-                  missing_sub_requirements =
+                  missing_subrequirements =
                     Inferno::Entities::Requirement.expand_requirement_ids(requirement_hash['Sub-Requirement(s)'])
                       .reject { |requirement_id| repo.exists? requirement_id }
 
-                  missing_sub_requirements += missing_actor_sub_requirements(requirement_hash['Sub-Requirement(s)'])
+                  missing_subrequirements += missing_actor_subrequirements(requirement_hash['Sub-Requirement(s)'])
 
-                  next if missing_sub_requirements.blank?
+                  next if missing_subrequirements.blank?
 
                   id = "#{requirement_set}@#{requirement_hash['ID*']}"
 
-                  missing_requirements[id] = missing_sub_requirements
+                  missing_requirements[id] = missing_subrequirements
                 end
               end
           end
       end
 
-      def missing_actor_sub_requirements(sub_requirement_string)
-        return [] if sub_requirement_string.blank?
+      def missing_actor_subrequirements(subrequirement_string)
+        return [] if subrequirement_string.blank?
 
-        return [] unless sub_requirement_string.include? '#'
+        return [] unless subrequirement_string.include? '#'
 
-        sub_requirement_string
+        subrequirement_string
           .split(',')
           .map(&:strip)
           .select { |requirement_string| requirement_string.include? '#' }
@@ -166,11 +166,11 @@ module Inferno
           end
       end
 
-      def check_sub_requirements
-        return if missing_sub_requirements.blank?
+      def check_subrequirements
+        return if missing_subrequirements.blank?
 
-        missing_sub_requirements.each do |id, sub_requirement_ids|
-          puts "#{id} is missing the following sub-requirements:\n  #{sub_requirement_ids.join(', ')}"
+        missing_subrequirements.each do |id, subrequirement_ids|
+          puts "#{id} is missing the following sub-requirements:\n  #{subrequirement_ids.join(', ')}"
         end
       end
 
@@ -198,7 +198,7 @@ module Inferno
 
         Inferno::Repositories::Requirements.new.insert_from_file(requirements_output_file_path)
 
-        check_sub_requirements
+        check_subrequirements
 
         puts 'Done.'
       end
@@ -230,9 +230,9 @@ module Inferno
           exit(1)
         end
 
-        check_sub_requirements
+        check_subrequirements
 
-        return if missing_sub_requirements.blank?
+        return if missing_subrequirements.blank?
 
         exit(1)
       end
