@@ -35,9 +35,9 @@ RSpec.describe Inferno::Entities::Requirement do
       expect(described_class.expand_requirement_ids(ids.join(','))).to eq(expected_ids)
     end
 
-    it 'ignores invalid non-numeric range boundaries' do
+    it 'does not treat hyphens in non-numeric ids as ranges' do
       ids = ['criteria3@a-b', 'criteria4@2', 'example-ig']
-      expected_ids = ['criteria4@2']
+      expected_ids = ['criteria3@a-b', 'criteria4@2', 'criteria4@example-ig']
 
       expect(described_class.expand_requirement_ids(ids.join(','))).to eq(expected_ids)
     end
