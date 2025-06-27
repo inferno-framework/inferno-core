@@ -19,6 +19,7 @@ PATH
       fhir_models (>= 4.2.2)
       hanami-controller (= 2.0.0)
       hanami-router (= 2.0.0)
+      mutex_m (~> 0.3.0)
       oj (= 3.11.0)
       pastel (~> 0.8.0)
       pry
@@ -192,6 +193,7 @@ GEM
     mustermann-contrib (1.1.2)
       hansi (~> 0.2.0)
       mustermann (= 1.1.2)
+    mutex_m (0.3.0)
     netrc (0.11.0)
     nio4r (2.7.3)
     nokogiri (1.18.8-arm64-darwin)
