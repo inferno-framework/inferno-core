@@ -9,7 +9,7 @@ module Inferno
         field :requirement
         field :conformance
         field :actors
-        field :sub_requirements
+        field :subrequirements
         field :conditionality
         field :url, if: :field_present?
         field :not_tested_reason, if: :field_present?

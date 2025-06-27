@@ -88,7 +88,7 @@ export type Requirement = {
   actor: string;
   conditionality: string;
   url?: string;
-  sub_requirements: string[];
+  subrequirements: string[];
   not_tested_reason?: string;
   not_tested_details?: string;
 };
