@@ -1015,7 +1015,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         ],
         address: [
           {
-            line: [ 'Attn: Orange Medical Group' ],
+            line: ['Attn: Orange Medical Group'],
             city: 'Pittsburgh',
             state: 'PA',
             postalCode: '15222',
