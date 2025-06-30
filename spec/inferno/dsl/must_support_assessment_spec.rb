@@ -972,44 +972,6 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       end
     end
 
-    let(:organization_metadata) { metadata_fixture('us_core_organization_v800.yml') }
-    let(:organization) do
-      FHIR::Organization.new(
-        identifier: [
-          type: {
-            coding: [
-              {
-                system: 'http://terminology.hl7.org/CodeSystem/v2-0203',
-                code: 'NPI'
-              }
-            ]
-          },
-          system: 'http://hl7.org/fhir/sid/us-npi',
-          value: '9941339100'
-        ],
-        active: true,
-          name: 'Orange Medical Group',
-          telecom: [
-            {
-              system: 'phone',
-              value: '(555)555-5510',
-              rank: 1
-            }
-          ],
-        address: [
-          {
-            line: [
-              'Attn: Orange Medical Group'
-            ],
-            city: 'Pittsburgh',
-            state: 'PA',
-            postalCode: '15222',
-            country: 'USA'
-          }
-        ]
-      )
-    end
-
     it 'passes if resources cover all must support sub elements of slices' do
       result = run_with_metadata([coverage_with_two_classes], coverage_metadata)
       expect(result).to be_empty
@@ -1032,10 +994,48 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       result = run_with_metadata([coverage_with_two_classes], coverage_metadata)
       expect(result).to be_empty
     end
+  end
 
-    it 'passes if resources covers sliced identifier subelements for patternIdentifier' do
+  describe 'must support tests for sub elements of patternIdentifier slices' do
+    let(:organization_metadata) { metadata_fixture('us_core_organization_v800.yml') }
+    let(:organization) do
+      FHIR::Organization.new(
+        identifier: [
+          system: 'http://hl7.org/fhir/sid/us-npi',
+          value: '9941339100'
+        ],
+        active: true,
+        name: 'Orange Medical Group',
+        telecom: [
+          {
+            system: 'phone',
+            value: '(555)555-5510',
+            rank: 1
+          }
+        ],
+        address: [
+          {
+            line: [ 'Attn: Orange Medical Group' ],
+            city: 'Pittsburgh',
+            state: 'PA',
+            postalCode: '15222',
+            country: 'USA'
+          }
+        ]
+      )
+    end
+
+    it 'passes if resources cover all must support sub elements of slices' do
       result = run_with_metadata([organization], organization_metadata)
       expect(result).to be_empty
+    end
+
+    it 'fails if resources do not cover all must support sub elements of slices' do
+      organization_withou_npi = organization.dup
+      organization.identifier.first.system = 'http://example.com'
+
+      result = run_with_metadata([organization_withou_npi], organization_metadata)
+      expect(result).to include('identifier:NPI.system', 'identifier:NPI.value')
     end
   end
 
