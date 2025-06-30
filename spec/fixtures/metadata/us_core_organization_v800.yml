@@ -1,0 +1,167 @@
+---
+:name: us_core_organization
+:class_name: USCorev800OrganizationSequence
+:version: v8.0.0
+:reformatted_version: v800
+:resource: Organization
+:profile_url: http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization
+:profile_name: US Core Organization Profile
+:profile_version: 8.0.0
+:title: Organization
+:short_description: Verify support for the server capabilities required by the US
+  Core Organization Profile.
+:is_delayed: true
+:interactions:
+- :code: create
+  :expectation: MAY
+- :code: search-type
+  :expectation: SHALL
+- :code: read
+  :expectation: SHALL
+- :code: vread
+  :expectation: SHOULD
+- :code: update
+  :expectation: MAY
+- :code: patch
+  :expectation: MAY
+- :code: delete
+  :expectation: MAY
+- :code: history-instance
+  :expectation: SHOULD
+- :code: history-type
+  :expectation: MAY
+:operations: []
+:searches:
+- :names:
+  - address
+  :expectation: SHALL
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+- :names:
+  - name
+  :expectation: SHALL
+  :names_not_must_support_or_mandatory: []
+  :must_support_or_mandatory: true
+:search_definitions:
+  :address:
+    :paths:
+    - address
+    :full_paths:
+    - Organization.address
+    :comparators: {}
+    :values: []
+    :type: Address
+    :contains_multiple: true
+    :multiple_or: MAY
+  :name:
+    :paths:
+    - name
+    - alias
+    :full_paths:
+    - Organization.name
+    - Organization.alias
+    :comparators: {}
+    :values: []
+    :type: string
+    :contains_multiple: false
+    :multiple_or: MAY
+:include_params: []
+:revincludes: []
+:required_concepts: []
+:must_supports:
+  :extensions: []
+  :slices:
+  - :slice_id: Organization.identifier:NPI
+    :slice_name: NPI
+    :path: identifier
+    :discriminator:
+      :type: patternIdentifier
+      :path: ''
+      :system: http://hl7.org/fhir/sid/us-npi
+  :elements:
+  - :path: identifier
+  - :path: identifier.system
+  - :path: identifier.value
+  - :path: identifier:NPI.system
+  - :path: identifier:NPI.value
+  - :path: active
+  - :path: name
+  - :path: telecom
+  - :path: telecom.system
+  - :path: telecom.value
+  - :path: address
+  - :path: address.line
+  - :path: address.city
+  - :path: address.state
+  - :path: address.postalCode
+  - :path: address.country
+:mandatory_elements:
+- Organization.active
+- Organization.name
+:bindings:
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/identifier-use
+  :path: identifier.use
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/identifier-use
+  :path: identifier.use
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/identifier-use
+  :path: identifier.use
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/identifier-use
+  :path: identifier.use
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/contact-point-system
+  :path: telecom.system
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/contact-point-use
+  :path: telecom.use
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/address-use
+  :path: address.use
+- :type: code
+  :strength: required
+  :system: http://hl7.org/fhir/ValueSet/address-type
+  :path: address.type
+:references:
+- :path: Organization.identifier.assigner
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Organization
+- :path: Organization.identifier.assigner
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Organization
+- :path: Organization.identifier.assigner
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Organization
+- :path: Organization.identifier.assigner
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Organization
+- :path: Organization.partOf
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Organization
+- :path: Organization.endpoint
+  :profiles:
+  - http://hl7.org/fhir/StructureDefinition/Endpoint
+:tests:
+- :id: us_core_v800_organization_read_test
+  :file_name: organization_read_test.rb
+- :id: us_core_v800_organization_address_search_test
+  :file_name: organization_address_search_test.rb
+- :id: us_core_v800_organization_name_search_test
+  :file_name: organization_name_search_test.rb
+- :id: us_core_v800_organization_validation_test
+  :file_name: organization_validation_test.rb
+- :id: us_core_v800_organization_must_support_test
+  :file_name: organization_must_support_test.rb
+:id: us_core_v800_organization
+:file_name: organization_group.rb
+:delayed_references: []
+:resource_conformance_expectation: SHALL
