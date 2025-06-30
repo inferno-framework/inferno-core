@@ -147,7 +147,7 @@ module Inferno
       end
 
       def matching_pattern_identifier_slice?(slice, discriminator)
-        slice.identifier.system == discriminator[:system]
+        slice.system == discriminator[:system]
       end
 
       def matching_value_slice?(slice, discriminator)

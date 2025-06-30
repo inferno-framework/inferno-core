@@ -996,6 +996,49 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
     end
   end
 
+  describe 'must support tests for sub elements of patternIdentifier slices' do
+    let(:organization_metadata) { metadata_fixture('us_core_organization_v800.yml') }
+    let(:organization) do
+      FHIR::Organization.new(
+        identifier: [
+          system: 'http://hl7.org/fhir/sid/us-npi',
+          value: '9941339100'
+        ],
+        active: true,
+        name: 'Orange Medical Group',
+        telecom: [
+          {
+            system: 'phone',
+            value: '(555)555-5510',
+            rank: 1
+          }
+        ],
+        address: [
+          {
+            line: ['Attn: Orange Medical Group'],
+            city: 'Pittsburgh',
+            state: 'PA',
+            postalCode: '15222',
+            country: 'USA'
+          }
+        ]
+      )
+    end
+
+    it 'passes if resources cover all must support sub elements of slices' do
+      result = run_with_metadata([organization], organization_metadata)
+      expect(result).to be_empty
+    end
+
+    it 'fails if resources do not cover all must support sub elements of slices' do
+      organization_withou_npi = organization.dup
+      organization.identifier.first.system = 'http://example.com'
+
+      result = run_with_metadata([organization_withou_npi], organization_metadata)
+      expect(result).to include('identifier:NPI.system', 'identifier:NPI.value')
+    end
+  end
+
   describe 'must support tests for primitive extension' do
     let(:qr_metadata) { metadata_fixture('questionnaire_response_v610.yml') }
     let(:qr) { FHIR.from_contents(File.read('spec/fixtures/QuestionnaireResponse.json')) }
