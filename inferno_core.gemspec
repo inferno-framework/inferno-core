@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'base62-rb', '0.3.1'
   spec.add_dependency 'blueprinter', '0.25.2'
   spec.add_dependency 'concurrent-ruby', '1.3.4' # Fix activesupport https://github.com/rails/rails/issues/54272
+  spec.add_dependency 'csv', '~> 3.3.5'
   spec.add_dependency 'dotenv', '~> 2.7'
   spec.add_dependency 'dry-configurable', '1.0.0'
   spec.add_dependency 'dry-container', '0.10.0'
@@ -27,6 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'fhir_models', '>= 4.2.2'
   spec.add_dependency 'hanami-controller', '2.0.0'
   spec.add_dependency 'hanami-router', '2.0.0'
+  spec.add_dependency 'mutex_m', '~> 0.3.0'
   spec.add_dependency 'oj', '3.11.0'
   spec.add_dependency 'pastel', '~> 0.8.0'
   spec.add_dependency 'pry'
