@@ -102,7 +102,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
           setShowProgressBar(false);
         }
       }}
-      ClickAwayListenerProps={{ mouseEvent: false }}
+      slotProps={{ clickAwayListener: () => ({ mouseEvent: false }) }}
       style={{
         marginBottom: `${footerHeight}px`,
         zIndex: lightTheme.zIndex.snackbar,
