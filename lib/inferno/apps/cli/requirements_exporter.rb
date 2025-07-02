@@ -10,7 +10,7 @@ module Inferno
           'URL*',
           'Requirement*',
           'Conformance*',
-          'Actor*',
+          'Actors*',
           'Sub-Requirement(s)',
           'Conditionality',
           'Verifiable?',
@@ -25,7 +25,7 @@ module Inferno
           'URL',
           'Requirement',
           'Conformance',
-          'Actor',
+          'Actors',
           'Sub-Requirement(s)',
           'Conditionality',
           'Not Tested Reason',
@@ -70,21 +70,24 @@ module Inferno
       #   requirement_set_id_2: [row1, row2, row 3, ...]
       # }
       def input_requirement_sets
-        requirement_set_hash = Hash.new { |hash, key| hash[key] = [] }
-        available_input_worksheets.each_with_object(requirement_set_hash) do |worksheet_file, requirement_sets|
-          worksheet = Roo::Spreadsheet.open(worksheet_file)
-          set_identifier = requirement_set_id(worksheet)
+        @input_requirement_sets ||=
+          begin
+            requirement_set_hash = Hash.new { |hash, key| hash[key] = [] }
+            available_input_worksheets.each_with_object(requirement_set_hash) do |worksheet_file, requirement_sets|
+              worksheet = Roo::Spreadsheet.open(worksheet_file)
+              set_identifier = requirement_set_id(worksheet)
 
-          CSV.parse(
-            worksheet.sheet('Requirements').to_csv,
-            headers: true
-          ).each do |row|
-            row_hash = row.to_h.slice(*INPUT_HEADERS)
-            row_hash['Sub-Requirement(s)']&.delete_prefix!('mailto:')
+              CSV.parse(
+                worksheet.sheet('Requirements').to_csv,
+                headers: true
+              ).each do |row|
+                row_hash = row.to_h.slice(*INPUT_HEADERS)
+                row_hash['Sub-Requirement(s)']&.delete_prefix!('mailto:')
 
-            requirement_sets[set_identifier] << row_hash
+                requirement_sets[set_identifier] << row_hash
+              end
+            end
           end
-        end
       end
 
       def new_requirements_csv # rubocop:disable Metrics/CyclomaticComplexity
@@ -125,6 +128,52 @@ module Inferno
         @old_requirements_csv ||= File.read(requirements_output_file_path)
       end
 
+      def missing_subrequirements
+        @missing_subrequirements =
+          {}.tap do |missing_requirements|
+            repo = Inferno::Repositories::Requirements.new
+
+            input_requirement_sets
+              .each do |requirement_set, requirements|
+                requirements.each do |requirement_hash|
+                  missing_subrequirements =
+                    Inferno::Entities::Requirement.expand_requirement_ids(requirement_hash['Sub-Requirement(s)'])
+                      .reject { |requirement_id| repo.exists? requirement_id }
+
+                  missing_subrequirements += missing_actor_subrequirements(requirement_hash['Sub-Requirement(s)'])
+
+                  next if missing_subrequirements.blank?
+
+                  id = "#{requirement_set}@#{requirement_hash['ID*']}"
+
+                  missing_requirements[id] = missing_subrequirements
+                end
+              end
+          end
+      end
+
+      def missing_actor_subrequirements(subrequirement_string)
+        return [] if subrequirement_string.blank?
+
+        return [] unless subrequirement_string.include? '#'
+
+        subrequirement_string
+          .split(',')
+          .map(&:strip)
+          .select { |requirement_string| requirement_string.include? '#' }
+          .select do |requirement_string|
+            Inferno::Entities::Requirement.expand_requirement_ids(requirement_string).blank?
+          end
+      end
+
+      def check_subrequirements
+        return if missing_subrequirements.blank?
+
+        missing_subrequirements.each do |id, subrequirement_ids|
+          puts "#{id} is missing the following sub-requirements:\n  #{subrequirement_ids.join(', ')}"
+        end
+      end
+
       def run
         check_presence_of_input_files
 
@@ -147,6 +196,10 @@ module Inferno
           File.write(requirements_output_file_path, new_requirements_csv, encoding: Encoding::UTF_8)
         end
 
+        Inferno::Application.start(:requirements)
+
+        check_subrequirements
+
         puts 'Done.'
       end
 
@@ -167,14 +220,20 @@ module Inferno
             false
           end
 
-        return if requirements_ok
+        unless requirements_ok
+          puts <<~MESSAGE
+            Check Failed. To resolve, run:
 
-        puts <<~MESSAGE
-          Check Failed. To resolve, run:
+                  bundle exec inferno requirements export_csv
 
-                bundle exec inferno requirements export_csv
+          MESSAGE
+          exit(1)
+        end
 
-        MESSAGE
+        check_subrequirements
+
+        return if missing_subrequirements.blank?
+
         exit(1)
       end
 

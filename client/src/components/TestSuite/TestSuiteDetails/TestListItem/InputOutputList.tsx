@@ -4,16 +4,12 @@ import { Table, TableBody, TableRow, TableCell, Typography, TableHead, Box } fro
 import { TestInput, TestOutput } from '~/models/testSuiteModels';
 
 interface InputOutputListProps {
-  inputOutputs: TestInput[] | TestOutput[];
+  values: TestInput[] | TestOutput[];
   noValuesMessage?: string;
   headerName: string;
 }
 
-const InputOutputList: FC<InputOutputListProps> = ({
-  inputOutputs,
-  noValuesMessage,
-  headerName,
-}) => {
+const InputOutputList: FC<InputOutputListProps> = ({ values, noValuesMessage, headerName }) => {
   const { classes } = useStyles();
 
   const headerTitles = [headerName, 'Value'];
@@ -32,30 +28,28 @@ const InputOutputList: FC<InputOutputListProps> = ({
     </TableRow>
   );
 
-  const inputOutputsListItems = inputOutputs.map(
-    (inputOutputs: TestInput | TestOutput, index: number) => {
-      return (
-        <TableRow key={`inputOutputsRow-${index}`}>
-          <TableCell className={classes.noPrintSpacing}>
-            <Typography variant="subtitle2" component="p" className={classes.bolderText}>
-              {inputOutputs.name}
-            </Typography>
-          </TableCell>
-          <TableCell className={classes.inputOutputsValue}>
-            <Typography variant="subtitle2" component="p">
-              {(inputOutputs?.value as string) || ''}
-            </Typography>
-          </TableCell>
-        </TableRow>
-      );
-    },
-  );
+  const valuesListItems = values.map((value: TestInput | TestOutput, index: number) => {
+    return (
+      <TableRow key={`inputOutputsRow-${index}`}>
+        <TableCell className={classes.noPrintSpacing}>
+          <Typography variant="subtitle2" component="p" className={classes.bolderText}>
+            {value.name}
+          </Typography>
+        </TableCell>
+        <TableCell className={classes.inputOutputsValue}>
+          <Typography variant="subtitle2" component="p">
+            {(value?.value as string) || ''}
+          </Typography>
+        </TableCell>
+      </TableRow>
+    );
+  });
 
   const output =
-    inputOutputs.length > 0 ? (
+    values.length > 0 ? (
       <Table size="small">
         <TableHead>{inputOutputsListHeader}</TableHead>
-        <TableBody>{inputOutputsListItems}</TableBody>
+        <TableBody>{valuesListItems}</TableBody>
       </Table>
     ) : (
       noValuesMessage && (

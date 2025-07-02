@@ -1,0 +1,50 @@
+Environment:
+  ExternalValidator:
+    Enabled: false
+    Url: ''
+  VSAC:
+    Username: 'apikey'
+    Password: ''
+
+Rule:
+  AllReferencesResolve:
+    Description: 'All References in Examples resolve to each other'
+    Enabled: true
+  AllResourcesReachable:
+    Description: 'All resources in Examples are reachable'
+    Enabled: false
+  AllMustSupportsPresent:
+    Description: 'An instance of all MustSupport elements, extensions, and slices is present in the given resources'
+    Enabled: true
+    RequirementExtensionUrl: null
+    WriteMetadataForDebugging: true
+    ConformanceOptions:
+      considerMetaProfile: true
+      considerValidationResults: false
+      considerOnlyResourceType: false
+  AllExtensionsUsed:
+    Description: 'All extensions specified in profiles are represented in Examples'
+    Enabled: false
+  DifferentialContentHasExamples:
+    Enabled: false
+  ValueSetsDemonstrate:
+    Descripton: 'Examples demonstrate reasonable coverage of valuesets defines in an IG.'
+    Enabled: true
+    IgnoreUnloadableValueset: true
+    Exclude:
+      URN: true
+      Filter: true
+      SystemOnly: true
+  AllSearchParametersHaveExamples:
+    Description: 'Examples cover all search parameters defined in an IG'
+    Enabled: false
+  AllDefinedExtensionsHaveExamples:
+    Description: 'All defined extensions are represented in Examples'
+    Enabled: false
+  AllProfilesHaveExamples:
+    Description: 'All profiles defined in an IG have at least one example instance'
+    Enabled: true
+    ConformanceOptions:
+      considerMetaProfile: true
+      considerValidationResults: false
+      considerOnlyResourceType: false

@@ -47,8 +47,8 @@ RSpec.describe Inferno::Repositories::Requirements do
           requirement: 'requirement',
           requirement_set: 'sample-criteria',
           conformance: 'SHALL',
-          actor: 'Client',
-          sub_requirements: ['sample-criteria@2'],
+          actors: ['Client'],
+          subrequirements_string: 'sample-criteria@2',
           conditionality: 'false'
         }
       )
@@ -60,8 +60,7 @@ RSpec.describe Inferno::Repositories::Requirements do
           requirement: 'requirement',
           requirement_set: 'sample-criteria',
           conformance: 'SHALL',
-          actor: 'Client',
-          sub_requirements: [],
+          actors: ['Client', 'Server'],
           conditionality: 'false'
         }
       )
@@ -73,8 +72,7 @@ RSpec.describe Inferno::Repositories::Requirements do
           requirement: 'requirement',
           requirement_set: 'sample-criteria',
           conformance: 'SHALL',
-          actor: 'Client',
-          sub_requirements: [],
+          actors: ['Client'],
           conditionality: 'false',
           not_tested_reason: 'Not Tested',
           not_tested_details: 'NOT TESTED DETAILS'
@@ -94,10 +92,6 @@ RSpec.describe Inferno::Repositories::Requirements do
     it 'returns all tested requirements matching the specified actor' do
       expect(repo.complete_requirement_set_requirements([complete_requirement_set]).length).to eq(7)
       expect(repo.complete_requirement_set_requirements([empty_requirement_set]).length).to eq(0)
-    end
-
-    it 'excludes not-tested requirements' do
-      expect(repo.complete_requirement_set_requirements([not_tested_requirement_set]).length).to eq(1)
     end
   end
 

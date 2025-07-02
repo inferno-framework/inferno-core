@@ -52,7 +52,11 @@ module Inferno
       # @see Inferno::DSL::FHIRClientBuilder
       def fhir_client(client = :default)
         fhir_clients[client] ||=
-          FHIRClientBuilder.new.build(self, self.class.fhir_client_definitions[client])
+          FHIRClientBuilder.new.build(self, find_fhir_client_definition(client))
+      end
+
+      def find_fhir_client_definition(client)
+        self.class.find_fhir_client_definition(client)
       end
 
       # @private
@@ -441,6 +445,10 @@ module Inferno
         # @private
         def fhir_client_definitions
           @fhir_client_definitions ||= {}
+        end
+
+        def find_fhir_client_definition(client)
+          fhir_client_definitions[client] || parent&.find_fhir_client_definition(client)
         end
 
         # Define a FHIR client to be used by a Runnable.

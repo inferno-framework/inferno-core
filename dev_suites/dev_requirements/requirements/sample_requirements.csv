@@ -1,4 +1,4 @@
-﻿Req Set,ID,URL,Requirement,Conformance,Actor,Sub-Requirement(s),Conditionality,Not Tested Reason,Not Tested Details
+﻿Req Set,ID,URL,Requirement,Conformance,Actors,Sub-Requirement(s),Conditionality,Not Tested Reason,Not Tested Details
 sample-criteria-proposal,1,"https://hl7.org/fhir/R4/",Feugiat in ante metus dictum. Dignissim cras tincidunt lobortis feugiat.,SHALL,Client,"sample-criteria-proposal@2-3,4,6",FALSE,,
 sample-criteria-proposal,2,"https://hl7.org/fhir/R4/",tempor incididunt ut labore et dolore magna aliqua,SHALL,Client,sample-criteria-proposal@3,FALSE,,
 sample-criteria-proposal,3,"https://hl7.org/fhir/R4/","Lorem ipsum dolor sit amet, consectetur adipiscing elit",SHALL,Client,sample-criteria-proposal@5,FALSE,,
@@ -17,3 +17,6 @@ sample-criteria-proposal-3,7,,text7,SHALL,Client,,FALSE,,
 sample-criteria-proposal-4,1,,text1,SHALL,Client,,FALSE,Not Tested,NOT TESTED DETAILS
 sample-criteria-proposal-4,2,,text2,SHALL,Client,,FALSE,Not Verifiable,NOT VERIFIABLE DETAILS
 sample-criteria-proposal-4,3,,text3,SHALL,Client,,FALSE,,
+sample-criteria-proposal-5,1,,text3,SHALL,Client,,FALSE,,
+sample-criteria-proposal-5,2,,text2,SHALL,Server,,FALSE,,
+sample-criteria-proposal-5,3,,text3,SHALL,Client,,FALSE,,

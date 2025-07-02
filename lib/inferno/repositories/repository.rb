@@ -64,6 +64,22 @@ module Inferno
         end
       end
 
+      def update_non_db_entities_ids(hash, use_database_id: false)
+        key_map = {
+          test_id: Tests.new,
+          test_group_id: TestGroups.new,
+          test_suite_id: TestSuites.new
+        }
+
+        key_map.each do |key, repo|
+          next unless hash.key?(key)
+
+          entity = repo.find(hash[key])
+          hash[key] = use_database_id ? (entity&.database_id || hash[key]) : (entity&.id || hash[key])
+          break
+        end
+      end
+
       # Create a new record in the database.
       #
       # @param params [Hash]
@@ -76,7 +92,9 @@ module Inferno
       #     # handle error
       #   end
       def create(params)
+        update_non_db_entities_ids(params, use_database_id: true)
         result = self.class::Model.create(db_params(params))
+
         build_entity(result.to_hash.merge(handle_non_db_params(params)))
       end
 
@@ -100,6 +118,7 @@ module Inferno
       # @return [Object] an instance of `#entity_class`
       def build_entity(params)
         add_non_db_entities(params)
+        update_non_db_entities_ids(params)
         entity_class.new(params)
       end
 

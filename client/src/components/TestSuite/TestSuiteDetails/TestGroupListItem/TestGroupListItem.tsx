@@ -190,16 +190,20 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
         testGroup.run_as_group &&
         testGroup.user_runnable &&
         testGroup.result && (
-          <InputOutputList headerName="Input" inputOutputs={testGroup.result?.inputs || []} />
+          <InputOutputList headerName="Input" values={testGroup.result?.inputs || []} />
         )}
       <AccordionDetails
         title={groupMouseHover ? '' : `${testGroup.id}-detail`}
         data-testid={`${testGroup.id}-detail`}
         className={classes.accordionDetailContainer}
       >
-        {testGroup.description && view === 'run' && (
-          <NestedDescriptionPanel testGroup={testGroup} />
-        )}
+        {/* Show description panel if the app is in 'run' view AND 
+        there's either a description or there are requirements */}
+        {view === 'run' &&
+          (testGroup.description ||
+            (testGroup.verifies_requirements && testGroup.verifies_requirements.length > 0)) && (
+            <NestedDescriptionPanel testGroup={testGroup} />
+          )}
         <Box className={classes.accordionDetail}>
           {'test_groups' in testGroup && renderGroupListItems()}
           {'tests' in testGroup && renderTestListItems()}

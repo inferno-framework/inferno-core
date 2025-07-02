@@ -4,6 +4,7 @@ require_relative 'repositories/test_groups'
 require_relative 'repositories/test_suites'
 require_relative 'repositories/tests'
 require_relative 'repositories/test_kits'
+require_relative 'repositories/requirements'
 
 # Skip loading things which require the db when not necessary, such as CLI
 # commands which don't need the db

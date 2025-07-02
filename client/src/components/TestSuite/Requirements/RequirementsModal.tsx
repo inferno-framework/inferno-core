@@ -36,7 +36,7 @@ const RequirementsModal: FC<RequirementsModalProps> = ({
       <DialogContent>
         <Typography fontWeight="bold">These scenarios test the following requirements:</Typography>
         {requirements.length > 0 ? (
-          <RequirementContent requirements={requirements} />
+          <RequirementContent requirements={requirements} view="dialog" />
         ) : (
           <Typography fontStyle="italic">No requirements found.</Typography>
         )}

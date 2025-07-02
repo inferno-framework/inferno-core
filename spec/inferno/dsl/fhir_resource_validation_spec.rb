@@ -98,247 +98,297 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         }
       }.to_json
     end
+
     let(:resource2) { FHIR.from_contents(resource_string) }
 
-    let(:wrapped_resource_string) do
-      {
-        cliContext: {
-          sv: '4.0.1',
-          doNative: false,
-          extensions: ['any'],
-          disableDefaultResourceFetcher: true,
-          profiles: [profile_url]
-        },
-        filesToValidate: [
+    [true, false].each do |feature_flag|
+      context "when use_validation_context_key? feature flag is #{feature_flag}" do
+        let(:context_key) { feature_flag ? :validationContext : :cliContext }
+
+        let(:wrapped_resource_string) do
           {
-            fileName: 'Patient/0000.json',
-            fileContent: resource2.source_contents,
-            fileType: 'json'
-          }
-        ],
-        sessionId: nil
-      }.to_json
-    end
-
-    context 'with invalid resource' do
-      let(:invalid_outcome) do
-        {
-          outcomes: [
-            {
-              fileInfo: {
+            context_key => {
+              sv: '4.0.1',
+              doNative: false,
+              extensions: ['any'],
+              disableDefaultResourceFetcher: true,
+              profiles: [profile_url]
+            },
+            filesToValidate: [
+              {
                 fileName: 'Patient/0000.json',
-                fileContent: resource_string.to_json,
+                fileContent: resource2.source_contents,
                 fileType: 'json'
-              },
-              issues: [
+              }
+            ],
+            sessionId: nil
+          }.to_json
+        end
+
+        before do
+          allow(Inferno::Feature).to receive(:use_validation_context_key?).and_return(feature_flag)
+        end
+
+        context 'with invalid resource' do
+          let(:invalid_outcome) do
+            {
+              outcomes: [
                 {
-                  source: 'InstanceValidator',
-                  line: 4,
-                  col: 4,
-                  location: 'Patient.identifier[0]',
-                  message: 'Identifier.system must be an absolute reference, not a local reference',
-                  messageId: 'Type_Specific_Checks_DT_Identifier_System',
-                  type: 'CODEINVALID',
-                  level: 'ERROR',
-                  html: 'Identifier.system must be an absolute reference, not a local reference',
-                  display: 'ERROR: Patient.identifier[0]: Identifier.system must be an absolute reference, ',
-                  error: true
-                },
-                {
-                  source: 'InstanceValidator',
-                  line: 5,
-                  col: 5,
-                  location: 'Patient',
-                  message: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
-                  messageId: 'Patient_Profile',
-                  type: 'CODEINVALID',
-                  level: 'ERROR',
-                  html: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
-                  display: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
-                  error: true
+                  fileInfo: {
+                    fileName: 'Patient/0000.json',
+                    fileContent: resource_string.to_json,
+                    fileType: 'json'
+                  },
+                  issues: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 4,
+                      col: 4,
+                      location: 'Patient.identifier[0]',
+                      message: 'Identifier.system must be an absolute reference, not a local reference',
+                      messageId: 'Type_Specific_Checks_DT_Identifier_System',
+                      type: 'CODEINVALID',
+                      level: 'ERROR',
+                      html: 'Identifier.system must be an absolute reference, not a local reference',
+                      display: 'ERROR: Patient.identifier[0]: Identifier.system must be an absolute reference, ',
+                      error: true
+                    },
+                    {
+                      source: 'InstanceValidator',
+                      line: 5,
+                      col: 5,
+                      location: 'Patient',
+                      message: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
+                      messageId: 'Patient_Profile',
+                      type: 'CODEINVALID',
+                      level: 'ERROR',
+                      html: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
+                      display: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
+                      error: true
+                    }
+                  ]
                 }
-              ]
-            }
-          ],
-          sessionId: 'b8cf5547-1dc7-4714-a797-dc2347b93fe2'
-        }.to_json
-      end
-
-      before do
-        stub_request(:post, "#{validation_url}/validate")
-          .with(body: wrapped_resource_string)
-          .to_return(status: 200, body: invalid_outcome)
-      end
-
-      context 'when add_messages_to_runnable is set to true' do
-        it 'includes resourceType/id in error message' do
-          result = validator.resource_is_valid?(resource2, profile_url, runnable)
-
-          expect(result).to be(false)
-          expect(runnable.messages.first[:message]).to start_with("#{resource2.resourceType}/#{resource2.id}:")
-        end
-
-        it 'excludes the unresolved url message' do
-          result = validator.resource_is_valid?(resource2, profile_url, runnable)
-
-          expect(result).to be(false)
-          expect(runnable.messages)
-            .to all(satisfy { |message| !message[:message].match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) })
-        end
-      end
-
-      context 'when add_messages_to_runnable is set to false' do
-        it 'does not log messages' do
-          result = validator.resource_is_valid?(resource2, profile_url, runnable, add_messages_to_runnable: false)
-
-          expect(result).to be(false)
-          expect(runnable.messages).to be_empty
-        end
-      end
-
-      context 'when network errors happen' do
-        it 'handles connection failed or refused errors' do
-          # the string of the exception is from the OS - "Connection failed etc" or "Failed to open TCP ..."
-          # so we don't need to worry about over-testing our mock here, we are just invoking an exception
-          # but since inferno does add this text to the runnable message, we should expect() it
-          allow(validator).to receive(:call_validator).and_raise(
-            Faraday::ConnectionFailed.new('Connection failed: example.com:443')
-          )
-
-          begin
-            validator.resource_is_valid?(resource, profile_url, runnable)
-          rescue Inferno::Exceptions::ErrorInValidatorException => e
-            expect(e.message).to eq("Connection failed to validator at #{validation_url}.")
+              ],
+              sessionId: 'b8cf5547-1dc7-4714-a797-dc2347b93fe2'
+            }.to_json
           end
 
-          expect(runnable.messages.last[:message]).to include('Connection failed')
-        end
-
-        it 'handles timeout errors' do
-          allow(validator).to receive(:call_validator).and_raise(
-            Faraday::TimeoutError.new('Timeout error message')
-          )
-
-          begin
-            validator.resource_is_valid?(resource, profile_url, runnable)
-          rescue Inferno::Exceptions::ErrorInValidatorException => e
-            expect(e.message).to eq("Timeout while connecting to validator at #{validation_url}.")
+          before do
+            stub_request(:post, "#{validation_url}/validate")
+              .with(body: wrapped_resource_string)
+              .to_return(status: 200, body: invalid_outcome)
           end
 
-          expect(runnable.messages.last[:message]).to include('Timeout')
-        end
+          context 'when add_messages_to_runnable is set to true' do
+            it 'includes resourceType/id in error message' do
+              result = validator.resource_is_valid?(resource2, profile_url, runnable)
 
-        it 'handles SSL errors' do
-          allow(validator).to receive(:call_validator).and_raise(
-            Faraday::SSLError.new('Self-signed certificate in certificate chain')
-          )
+              expect(result).to be(false)
+              expect(runnable.messages.first[:message]).to start_with("#{resource2.resourceType}/#{resource2.id}:")
+            end
 
-          begin
-            validator.resource_is_valid?(resource, profile_url, runnable)
-          rescue Inferno::Exceptions::ErrorInValidatorException => e
-            expect(e.message).to eq("SSL error connecting to validator at #{validation_url}.")
+            it 'excludes the unresolved url message' do
+              result = validator.resource_is_valid?(resource2, profile_url, runnable)
+
+              expect(result).to be(false)
+              expect(runnable.messages)
+                .to all(
+                  satisfy do |message|
+                    !message[:message].match?(/\A\S+: [^:]+: URL value '.*' does not resolve/)
+                  end
+                )
+            end
           end
 
-          expect(runnable.messages.last[:message]).to include('Self-signed')
-        end
+          context 'when add_messages_to_runnable is set to false' do
+            it 'does not log messages' do
+              result = validator.resource_is_valid?(resource2, profile_url, runnable, add_messages_to_runnable: false)
 
-        it 'handles server 400s' do
-          allow(validator).to receive(:call_validator).and_raise(
-            Faraday::ClientError.new('404 Not Found')
-          )
-
-          begin
-            validator.resource_is_valid?(resource, profile_url, runnable)
-          rescue Inferno::Exceptions::ErrorInValidatorException => e
-            expect(e.message).to eq("Client error (4xx) connecting to validator at #{validation_url}.")
+              expect(result).to be(false)
+              expect(runnable.messages).to be_empty
+            end
           end
 
-          expect(runnable.messages.last[:message]).to include('404')
+          context 'when network errors happen' do
+            it 'handles connection failed or refused errors' do
+              allow(validator).to receive(:call_validator).and_raise(
+                Faraday::ConnectionFailed.new('Connection failed: example.com:443')
+              )
+
+              expect do
+                validator.resource_is_valid?(resource, profile_url, runnable)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Connection failed to validator/)
+
+              expect(runnable.messages.last[:message]).to include('Connection failed')
+            end
+
+            it 'handles timeout errors' do
+              allow(validator).to receive(:call_validator).and_raise(
+                Faraday::TimeoutError.new('Timeout error message')
+              )
+
+              expect do
+                validator.resource_is_valid?(resource, profile_url, runnable)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Timeout while connecting/)
+
+              expect(runnable.messages.last[:message]).to include('Timeout')
+            end
+
+            it 'handles SSL errors' do
+              allow(validator).to receive(:call_validator).and_raise(
+                Faraday::SSLError.new('Self-signed certificate in certificate chain')
+              )
+
+              expect do
+                validator.resource_is_valid?(resource, profile_url, runnable)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /SSL error/)
+
+              expect(runnable.messages.last[:message]).to include('Self-signed')
+            end
+
+            it 'handles server 400s' do
+              allow(validator).to receive(:call_validator).and_raise(
+                Faraday::ClientError.new('404 Not Found')
+              )
+
+              expect do
+                validator.resource_is_valid?(resource, profile_url, runnable)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Client error \(4xx\)/)
+
+              expect(runnable.messages.last[:message]).to include('404')
+            end
+
+            it 'handles server 500s' do
+              allow(validator).to receive(:call_validator).and_raise(
+                Faraday::ServerError.new('500 Server Error')
+              )
+
+              expect do
+                validator.resource_is_valid?(resource, profile_url, runnable)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Server error \(5xx\)/)
+
+              expect(runnable.messages.last[:message]).to include('500')
+            end
+          end
         end
 
-        it 'handles server 500s' do
-          allow(validator).to receive(:call_validator).and_raise(
-            Faraday::ServerError.new('500 Server Error')
-          )
+        it 'throws ErrorInValidatorException for non-JSON response' do
+          stub_request(:post, "#{validation_url}/validate")
+            .with(body: wrapped_resource_string)
+            .to_return(status: 500, body: '<html><body>Internal Server Error</body></html>')
 
-          begin
-            validator.resource_is_valid?(resource, profile_url, runnable)
-          rescue Inferno::Exceptions::ErrorInValidatorException => e
-            expect(e.message).to eq("Server error (5xx) from validator at #{validation_url}.")
-          end
+          expect do
+            validator.resource_is_valid?(resource2, profile_url, runnable)
+          end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
+        end
 
-          expect(runnable.messages.last[:message]).to include('500')
+        it 'removes non-printable characters from the response' do
+          stub_request(:post, "#{validation_url}/validate")
+            .with(body: wrapped_resource_string)
+            .to_return(
+              status: 500,
+              body: "<html><body>Internal Server Error: content#{0.chr} with non-printable#{1.chr} characters</body></html>" # rubocop:disable Layout/LineLength
+            )
+
+          expect do
+            validator.resource_is_valid?(resource2, profile_url, runnable)
+          end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
+
+          msg = runnable.messages.first[:message]
+          expect(msg).to_not include(0.chr)
+          expect(msg).to_not include(1.chr)
+          expect(msg).to match(/Internal Server Error: content with non-printable/)
         end
       end
-    end
-
-    it 'throws ErrorInValidatorException for non-JSON response' do
-      stub_request(:post, "#{validation_url}/validate")
-        .with(body: wrapped_resource_string)
-        .to_return(status: 500, body: '<html><body>Internal Server Error</body></html>')
-
-      expect do
-        validator.resource_is_valid?(resource2, profile_url, runnable)
-      end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
-    end
-
-    it 'removes non-printable characters from the response' do
-      stub_request(:post, "#{validation_url}/validate")
-        .with(body: wrapped_resource_string)
-        .to_return(
-          status: 500,
-          body: "<html><body>Internal Server Error: content#{0.chr} with non-printable#{1.chr} characters</body></html>"
-        )
-
-      expect do
-        validator.resource_is_valid?(resource2, profile_url, runnable)
-      end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
-
-      msg = runnable.messages.first[:message]
-      expect(msg).to_not include(0.chr)
-      expect(msg).to_not include(1.chr)
-      expect(msg).to match(/Internal Server Error: content with non-printable/)
     end
   end
 
-  describe '.cli_context' do
-    it 'applies the correct settings to cli_context' do
+  describe '.validation_context' do
+    it 'applies the correct settings to validation_context' do
       v1 = Inferno::DSL::FHIRResourceValidation::Validator.new do
         url 'http://example.com'
-        cli_context do
+        validation_context do
           txServer nil
         end
       end
 
       v2 = Inferno::DSL::FHIRResourceValidation::Validator.new do
         url 'http://example.com'
-        cli_context({
-                      displayWarnings: true
-                    })
+        validation_context({
+                             displayWarnings: true
+                           })
       end
 
       v3 = Inferno::DSL::FHIRResourceValidation::Validator.new do
         url 'http://example.com'
-        cli_context({
-                      'igs' => ['hl7.fhir.us.core#1.0.1'],
-                      'extensions' => []
-                    })
+        validation_context({
+                             'igs' => ['hl7.fhir.us.core#1.0.1'],
+                             'extensions' => []
+                           })
       end
 
-      expect(v1.cli_context.definition.fetch(:txServer, :missing)).to be_nil
-      expect(v1.cli_context.definition.fetch(:displayWarnings, :missing)).to eq(:missing)
-      expect(v1.cli_context.txServer).to be_nil
+      expect(v1.validation_context.definition.fetch(:txServer, :missing)).to be_nil
+      expect(v1.validation_context.definition.fetch(:displayWarnings, :missing)).to eq(:missing)
+      expect(v1.validation_context.txServer).to be_nil
 
-      expect(v2.cli_context.definition.fetch(:txServer, :missing)).to eq(:missing)
-      expect(v2.cli_context.definition[:displayWarnings]).to be(true)
-      expect(v2.cli_context.displayWarnings).to be(true)
+      expect(v2.validation_context.definition.fetch(:txServer, :missing)).to eq(:missing)
+      expect(v2.validation_context.definition[:displayWarnings]).to be(true)
+      expect(v2.validation_context.displayWarnings).to be(true)
 
-      expect(v3.cli_context.igs).to eq(['hl7.fhir.us.core#1.0.1'])
-      expect(v3.cli_context.extensions).to eq([])
+      expect(v3.validation_context.igs).to eq(['hl7.fhir.us.core#1.0.1'])
+      expect(v3.validation_context.extensions).to eq([])
     end
 
-    it 'uses the right cli_context when submitting the validation request' do
+    it 'uses the right validation_context when submitting the validation request' do
       v4 = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url 'http://example.com'
+        igs 'hl7.fhir.us.core#1.0.1'
+        validation_context do
+          txServer nil
+          displayWarnings true
+          doNative true
+          igs ['hl7.fhir.us.core#3.1.1']
+        end
+      end
+
+      [true, false].each do |feature_flag|
+        allow(Inferno::Feature).to receive(:use_validation_context_key?).and_return(feature_flag)
+
+        context_key = feature_flag ? :validationContext : :cliContext
+
+        expected_request_body = {
+          context_key => {
+            sv: '4.0.1',
+            doNative: true,
+            extensions: ['any'],
+            disableDefaultResourceFetcher: true,
+            igs: ['hl7.fhir.us.core#3.1.1'],
+            txServer: nil,
+            displayWarnings: true,
+            profiles: [profile_url]
+          },
+          filesToValidate: [
+            {
+              fileName: 'Patient/.json',
+              fileContent: resource.source_contents,
+              fileType: 'json'
+            }
+          ],
+          sessionId: nil
+        }.to_json
+
+        stub_request(:post, 'http://example.com/validate')
+          .with(body: expected_request_body)
+          .to_return(status: 200, body: '{}')
+
+        expect(v4.validate(resource, profile_url)).to eq('{}')
+        # if the request body doesn't match the stub,
+        # validate will throw an exception
+      end
+    end
+
+    it 'maintains backward compatibility with cli_context' do
+      v5 = Inferno::DSL::FHIRResourceValidation::Validator.new do
         url 'http://example.com'
         igs 'hl7.fhir.us.core#1.0.1'
         cli_context do
@@ -349,34 +399,43 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         end
       end
 
-      expected_request_body = {
-        cliContext: {
-          sv: '4.0.1',
-          doNative: true,
-          extensions: ['any'],
-          disableDefaultResourceFetcher: true,
-          igs: ['hl7.fhir.us.core#3.1.1'],
-          txServer: nil,
-          displayWarnings: true,
-          profiles: [profile_url]
-        },
-        filesToValidate: [
-          {
-            fileName: 'Patient/.json',
-            fileContent: resource.source_contents,
-            fileType: 'json'
-          }
-        ],
-        sessionId: nil
-      }.to_json
+      expect(v5.validation_context.txServer).to be_nil
+      expect(v5.validation_context.displayWarnings).to be(true)
+      expect(v5.validation_context.doNative).to be(true)
+      expect(v5.validation_context.igs).to eq(['hl7.fhir.us.core#3.1.1'])
 
-      stub_request(:post, 'http://example.com/validate')
-        .with(body: expected_request_body)
-        .to_return(status: 200, body: '{}')
+      [true, false].each do |feature_flag|
+        allow(Inferno::Feature).to receive(:use_validation_context_key?).and_return(feature_flag)
 
-      expect(v4.validate(resource, profile_url)).to eq('{}')
-      # if the request body doesn't match the stub,
-      # validate will throw an exception
+        context_key = feature_flag ? :validationContext : :cliContext
+
+        expected_request_body = {
+          context_key => {
+            sv: '4.0.1',
+            doNative: true,
+            extensions: ['any'],
+            disableDefaultResourceFetcher: true,
+            igs: ['hl7.fhir.us.core#3.1.1'],
+            txServer: nil,
+            displayWarnings: true,
+            profiles: [profile_url]
+          },
+          filesToValidate: [
+            {
+              fileName: 'Patient/.json',
+              fileContent: resource.source_contents,
+              fileType: 'json'
+            }
+          ],
+          sessionId: nil
+        }.to_json
+
+        stub_request(:post, 'http://example.com/validate')
+          .with(body: expected_request_body)
+          .to_return(status: 200, body: '{}')
+
+        expect(v5.validate(resource, profile_url)).to eq('{}')
+      end
     end
   end
 

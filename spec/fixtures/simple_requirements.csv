@@ -1,4 +1,4 @@
-﻿Req Set,ID,URL,Requirement,Conformance,Actor,Sub-Requirement(s),Conditionality,Not Tested Reason,Not Tested Details
+﻿Req Set,ID,URL,Requirement,Conformance,Actors,Sub-Requirement(s),Conditionality,Not Tested Reason,Not Tested Details
 sample-criteria,1,,requirement,SHALL,Client,sample-criteria@2,FALSE,,
-sample-criteria,2,,requirement,SHALL,Client,,FALSE,,
+sample-criteria,2,,requirement,SHALL,"Client,Server",,FALSE,,
 sample-criteria,3,,requirement,SHALL,Client,,FALSE,Not Tested,NOT TESTED DETAILS

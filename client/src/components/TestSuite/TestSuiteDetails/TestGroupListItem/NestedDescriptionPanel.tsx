@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
-import useStyles from './styles';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import {
   Accordion,
   AccordionDetails,
@@ -13,8 +14,9 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { TestGroup } from '~/models/testSuiteModels';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { shouldShowRequirementsButton } from '~/components/TestSuite/TestSuiteUtilities';
+import RequirementsModalButton from '~/components/TestSuite/Requirements/RequirementsModalButton';
+import useStyles from './styles';
 
 interface NestedDescriptionPanelProps {
   testGroup: TestGroup;
@@ -58,12 +60,12 @@ const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) 
           title={descriptionMouseHover ? '' : `${testGroup.id}-description-detail`}
           className={classes.descriptionDetailContainer}
         >
-          <Markdown
-            remarkPlugins={[remarkGfm]}
-            className={`${classes.accordionDetail} ${classes.description}`}
-          >
-            {testGroup.description as string}
-          </Markdown>
+          <Box className={`${classes.accordionDetail} ${classes.description}`}>
+            <Markdown remarkPlugins={[remarkGfm]}>{testGroup.description as string}</Markdown>
+            {shouldShowRequirementsButton(testGroup) && (
+              <RequirementsModalButton runnable={testGroup} />
+            )}
+          </Box>
         </AccordionDetails>
       </Accordion>
     </Box>

@@ -1,3 +1,37 @@
+## 0.6.16
+* FI-4033: Update validator context naming to match HL7 validator core 6.5.19 by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/709
+* FI-4169: Support non-numeric requirement ids by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/712
+* FI-4191: Fix requirements loading by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/713
+* Fix navigator issue for patternIdentifier slices by @yunwwang in https://github.com/inferno-framework/inferno-core/pull/715
+* FI-4192: Remove deprecation warnings by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/714
+
+## 0.6.15
+* Improve description of assert_valid_resource by @arscan in https://github.com/inferno-framework/inferno-core/pull/707
+* FI-4179: Refactor requirements button by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/706
+* FI-4181: Make unmatched requirement ids a warning rather than an error by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/710
+* FI-4178: Verify subrequirements by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/708
+
+## 0.6.14
+* FI-4180: Prevent loading requirements from vendor directory by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/704
+* FI-4123: Fix requirements linking to wrong test tab by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/697
+* FI-4129: Add specification filter to requirements by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/694
+
+## 0.6.13
+* FI-4167: Support MustSupport element in extension by @yunwwang in https://github.com/inferno-framework/inferno-core/pull/696
+* FI-4171: Fix requirements loading issues by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/698
+* FI-4172: Add not-tested requirement fields to JSON API by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/699
+* FI-4168: Support actor subrequirements by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/700
+* FI-4173: Allow requirements to have multiple actors by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/701
+* FI-4177: Add error handling to requirements loading by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/702
+
+## 0.6.12
+* FI-3909: Handle Large Inputs/Outputs in Results by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/686
+* FI-4050: Dynamically look up FHIR/HTTP clients by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/691
+* FI-4046: Support Long Runnable IDs Without DB Schema Change by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/689
+* FI-4117: Add Custom Configuration Support to CLI Evaluator by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/693
+* FI-3941: Create requirements dialog by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/690
+* FI-3943: Add requirements coverage command by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/692
+
 ## 0.6.11
 * FI-4120: Add requirements feature flag by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/685
 * FI-4022 Support complex presets in Execute CLI by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/684

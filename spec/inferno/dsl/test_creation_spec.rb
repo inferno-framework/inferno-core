@@ -158,8 +158,10 @@ RSpec.describe InfrastructureTest::Suite do
         expect(found_short_ids).to eq(expected_short_ids)
       end
 
-      it "contains its own fhir clients as well as its parents' fhir clients" do
-        expect(outer_inline_group.fhir_client_definitions.keys).to eq([:suite, :outer_inline_group])
+      it "has access to its own fhir clients as well as its parents' fhir clients" do
+        [:suite, :outer_inline_group].each do |client_name|
+          expect(outer_inline_group.find_fhir_client_definition(client_name)).to be_present
+        end
       end
 
       it 'passes' do
@@ -232,8 +234,9 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own fhir clients as well as its parents' fhir clients" do
-        expected_clients = [:suite, :outer_inline_group, :inner_inline_group]
-        expect(inner_inline_group.fhir_client_definitions.keys).to eq(expected_clients)
+        [:suite, :outer_inline_group, :inner_inline_group].each do |client_name|
+          expect(inner_inline_group.find_fhir_client_definition(client_name)).to be_present
+        end
       end
 
       it 'passes' do
@@ -293,8 +296,9 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own fhir clients as well as its parents' fhir clients" do
-        expected_clients = [:suite, :outer_inline_group, :inner_inline_group, :inline_test1]
-        expect(inline_test1.fhir_client_definitions.keys).to eq(expected_clients)
+        [:suite, :outer_inline_group, :inner_inline_group, :inline_test1].each do |client_name|
+          expect(inline_test1.find_fhir_client_definition(client_name)).to be_present
+        end
       end
 
       it 'passes' do
@@ -370,7 +374,9 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own fhir clients as well as its parents' fhir clients" do
-        expect(external_outer_group.fhir_client_definitions.keys).to contain_exactly(:suite, :external_outer_group)
+        [:suite, :external_outer_group].each do |client_name|
+          expect(external_outer_group.find_fhir_client_definition(client_name)).to be_present
+        end
       end
 
       it 'passes' do
@@ -431,8 +437,9 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own fhir clients as well as its parents' fhir clients" do
-        expected_clients = [:suite, :external_outer_group, :external_inner_group]
-        expect(external_inner_group.fhir_client_definitions.keys).to match_array(expected_clients)
+        [:suite, :external_outer_group, :external_inner_group].each do |client_name|
+          expect(external_inner_group.find_fhir_client_definition(client_name)).to be_present
+        end
       end
 
       it 'contains an externally defined test' do
@@ -516,8 +523,9 @@ RSpec.describe InfrastructureTest::Suite do
       end
 
       it "contains its own fhir clients as well as its parents' fhir clients" do
-        expected_clients = [:suite, :external_outer_group, :external_inner_group, :external_test1]
-        expect(external_test.fhir_client_definitions.keys).to match_array(expected_clients)
+        [:suite, :external_outer_group, :external_inner_group, :external_test1].each do |client_name|
+          expect(external_test.find_fhir_client_definition(client_name)).to be_present
+        end
       end
 
       it 'passes' do

@@ -6,18 +6,16 @@ module Inferno
   module Repositories
     # Repository that deals with persistence for the `Requirement` entity.
     class Requirements < InMemoryRepository
-      def insert_from_file(path)
+      def insert_from_file(path) # rubocop:disable Metrics/CyclomaticComplexity
         result = []
 
         CSV.foreach(path, headers: true, header_converters: :symbol) do |row|
+          next if row[:conformance].casecmp? 'deprecated'
+
           req_set = row[:req_set]
           id = row[:id]
-          sub_requirements_field = row[:subrequirements]
 
           combined_id = "#{req_set}@#{id}"
-
-          # Processing sub requirements: e.g. "170.315(g)(31)_hti-2-proposal@5,17,23,26,27,32,35,38-41"
-          sub_requirements = Inferno::Entities::Requirement.expand_requirement_ids(sub_requirements_field)
 
           result << {
             requirement_set: req_set,
@@ -25,12 +23,14 @@ module Inferno
             url: row[:url],
             requirement: row[:requirement],
             conformance: row[:conformance],
-            actor: row[:actor],
-            sub_requirements: sub_requirements,
+            actors: row[:actors]&.split(',')&.map(&:strip) || [],
+            subrequirements_string: row[:subrequirements],
             conditionality: row[:conditionality]&.downcase,
             not_tested_reason: row[:not_tested_reason],
             not_tested_details: row[:not_tested_details]
           }
+        rescue StandardError => e
+          Application[:logger].error("Unable to load requirement: #{combined_id}:\n#{e.full_message.lines.first}")
         end
 
         result.each do |raw_req|
@@ -38,6 +38,10 @@ module Inferno
 
           insert(requirement)
         end
+      end
+
+      def requirements_for_actor(requirement_set, actor)
+        all.select { |requirement| requirement.requirement_set == requirement_set && requirement.actor?(actor) }
       end
 
       def filter_requirements_by_ids(ids)
@@ -57,7 +61,9 @@ module Inferno
           test_suite
             .requirement_sets
             .select do |set|
-              set.suite_options.all? { |set_option| selected_suite_options.include? set_option }
+              set.suite_options.all? do |set_option|
+                selected_suite_options.blank? || selected_suite_options.include?(set_option)
+              end
             end
 
         requirements =
@@ -72,8 +78,7 @@ module Inferno
           .flat_map do |requirement_set|
             all.select do |requirement|
               requirement.requirement_set == requirement_set.identifier &&
-                requirement.actor == requirement_set.actor &&
-                requirement.tested?
+                requirement.actor?(requirement_set.actor)
             end
           end
       end
@@ -84,7 +89,7 @@ module Inferno
             requirement_set
               .expand_requirement_ids
               .map { |requirement_id| find(requirement_id) }
-              .select { |requirement| requirement.actor == requirement_set.actor }
+              .select { |requirement| requirement.actor?(requirement_set.actor) }
           end
       end
 
@@ -99,10 +104,10 @@ module Inferno
 
         referenced_requirement_ids =
           requirements_to_process
-            .flat_map(&:sub_requirements)
+            .flat_map(&:subrequirements)
             .select do |requirement_id|
               referenced_requirement_sets.any? do |set|
-                requirement_id.start_with?("#{set.identifier}@") && (find(requirement_id).actor == set.actor)
+                requirement_id.start_with?("#{set.identifier}@") && find(requirement_id)&.actor?(set.actor)
               end
             end
 

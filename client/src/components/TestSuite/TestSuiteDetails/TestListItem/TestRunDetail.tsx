@@ -1,16 +1,20 @@
 import React, { FC, useEffect, useMemo } from 'react';
 import { Box, Card, Divider, Tabs, Typography } from '@mui/material';
-import { Message, Request, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
-import { shouldShowDescription } from '~/components/TestSuite/TestSuiteUtilities';
-import CustomTab from '~/components/_common/CustomTab';
-import CustomTooltip from '~/components/_common/CustomTooltip';
-import TabPanel from '~/components/TestSuite/TestSuiteDetails/TestListItem/TabPanel';
-import MessageList from '~/components/TestSuite/TestSuiteDetails/TestListItem/MessageList';
-import RequestList from '~/components/TestSuite/TestSuiteDetails/TestListItem/RequestList';
-import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
-import useStyles from './styles';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Message, Request, Test, TestInput, TestOutput } from '~/models/testSuiteModels';
+import {
+  shouldShowDescription,
+  shouldShowRequirementsButton,
+} from '~/components/TestSuite/TestSuiteUtilities';
+import CustomTab from '~/components/_common/CustomTab';
+import CustomTooltip from '~/components/_common/CustomTooltip';
+import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
+import MessageList from '~/components/TestSuite/TestSuiteDetails/TestListItem/MessageList';
+import RequestList from '~/components/TestSuite/TestSuiteDetails/TestListItem/RequestList';
+import RequirementsModalButton from '~/components/TestSuite/Requirements/RequirementsModalButton';
+import TabPanel from '~/components/TestSuite/TestSuiteDetails/TestListItem/TabPanel';
+import useStyles from './styles';
 
 interface TestRunDetailProps {
   test: Test;
@@ -58,7 +62,6 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
 
   const renderTab = (tab: TabProps, index: number) => {
     const disableTab = (!tab.value || tab.value.length === 0) && tab.label !== 'About';
-
     return (
       <CustomTab
         key={`${tab.label}-${index}`}
@@ -105,14 +108,14 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
       </TabPanel>
       <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={2}>
         <InputOutputList
-          inputOutputs={test.result?.inputs || []}
+          values={test.result?.inputs || []}
           noValuesMessage="No Inputs"
           headerName="Input"
         />
       </TabPanel>
       <TabPanel id={test.id} currentTabIndex={currentTabIndex} index={3}>
         <InputOutputList
-          inputOutputs={test.result?.outputs || []}
+          values={test.result?.outputs || []}
           noValuesMessage="No Outputs"
           headerName="Output"
         />
@@ -122,11 +125,12 @@ const TestRunDetail: FC<TestRunDetailProps> = ({
           testDescription
         ) : (
           <Box p={2}>
-            <Typography variant="subtitle2" component="p">
+            <Typography variant="subtitle1" component="p">
               No Description
             </Typography>
           </Box>
         )}
+        {shouldShowRequirementsButton(test) && <RequirementsModalButton runnable={test} />}
       </TabPanel>
     </Card>
   );

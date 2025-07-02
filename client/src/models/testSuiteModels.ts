@@ -84,10 +84,13 @@ export type Requirement = {
   id: string;
   requirement: string;
   conformance: string;
+  specification?: string; // frontend only
   actor: string;
   conditionality: string;
   url?: string;
-  sub_requirements: string[];
+  subrequirements: string[];
+  not_tested_reason?: string;
+  not_tested_details?: string;
 };
 
 export interface Result {
