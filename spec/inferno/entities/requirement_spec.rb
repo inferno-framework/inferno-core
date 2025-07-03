@@ -1,6 +1,6 @@
 RSpec.describe Inferno::Entities::Requirement do
   describe '.expand_requirement_ids' do
-    it 'returns an empty array of there are no sub_requirements' do
+    it 'returns an empty array of there are no subrequirements' do
       expect(described_class.expand_requirement_ids(nil)).to eq([])
     end
 

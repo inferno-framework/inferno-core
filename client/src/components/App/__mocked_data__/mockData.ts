@@ -40,7 +40,7 @@ export const requirements = [
     conditionality: 'false',
     conformance: 'SHALL',
     requirement: 'Feugiat in ante metus dictum. Dignissim cras tincidunt lobortis feugiat.',
-    sub_requirements: [
+    subrequirements: [
       'sample-criteria-proposal@2',
       'sample-criteria-proposal@3',
       'sample-criteria-proposal@4',
@@ -54,7 +54,7 @@ export const requirements = [
     conditionality: 'false',
     conformance: 'SHALL',
     requirement: 'tempor incididunt ut labore et dolore magna aliqua',
-    sub_requirements: ['sample-criteria-proposal@3'],
+    subrequirements: ['sample-criteria-proposal@3'],
     url: 'https://hl7.org/fhir/R4/',
   },
 ];

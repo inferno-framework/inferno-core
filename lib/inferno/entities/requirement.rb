@@ -12,7 +12,8 @@ module Inferno
         :requirement,
         :conformance,
         :actors,
-        :sub_requirements,
+        :subrequirements,
+        :subrequirements_string,
         :conditionality,
         :not_tested_reason,
         :not_tested_details
@@ -26,6 +27,10 @@ module Inferno
         return unless requirement_set.blank? && (id&.include?('@') || id&.include?('#'))
 
         self.requirement_set = id.split(/[@#]/).first
+      end
+
+      def subrequirements
+        @subrequirements ||= self.class.expand_requirement_ids(subrequirements_string, requirement_set)
       end
 
       # Expand a comma-delimited list of requirement id references into an Array

@@ -844,7 +844,7 @@ definitions:
         type: "string"
       url:
         type: "string"
-      sub_requirements:
+      subrequirements:
         type: "array"
         items:
           type: "string"

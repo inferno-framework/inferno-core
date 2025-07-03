@@ -15,8 +15,6 @@ module Inferno
 
         require_relative '../../../inferno'
 
-        Inferno::Application.start(:requirements)
-
         RequirementsExporter.new.run
       end
 

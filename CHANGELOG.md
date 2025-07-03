@@ -1,3 +1,10 @@
+## 0.6.16
+* FI-4033: Update validator context naming to match HL7 validator core 6.5.19 by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/709
+* FI-4169: Support non-numeric requirement ids by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/712
+* FI-4191: Fix requirements loading by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/713
+* Fix navigator issue for patternIdentifier slices by @yunwwang in https://github.com/inferno-framework/inferno-core/pull/715
+* FI-4192: Remove deprecation warnings by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/714
+
 ## 0.6.15
 * Improve description of assert_valid_resource by @arscan in https://github.com/inferno-framework/inferno-core/pull/707
 * FI-4179: Refactor requirements button by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/706
