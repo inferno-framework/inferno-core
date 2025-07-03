@@ -50,6 +50,21 @@ export const mockedAuthInput = {
   },
 };
 
+export const mockedSymmetricAuthInput = {
+  name: 'mock_auth_input',
+  type: 'auth_info' as TestInput['type'],
+  optional: true,
+  options: {
+    mode: 'auth',
+    components: [
+      {
+        default: 'symmetric',
+        name: 'auth_type',
+      },
+    ],
+  },
+};
+
 export const mockedRequiredFilledAuthInput: TestInput = {
   name: 'mock_auth_input',
   type: 'auth_info' as TestInput['type'],
