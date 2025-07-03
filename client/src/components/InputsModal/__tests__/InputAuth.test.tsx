@@ -1,6 +1,7 @@
 import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { Auth, TestInput } from '~/models/testSuiteModels';
 import ThemeProvider from '~/components/ThemeProvider';
@@ -11,8 +12,8 @@ import {
   mockedAuthInput,
   mockedRequiredFilledAuthInput,
   mockedFullyFilledAuthInput,
+  mockedSymmetricAuthInput,
 } from '~/components/_common/__mocked_data__/mockData';
-import userEvent from '@testing-library/user-event';
 
 describe('InputAuth Component', () => {
   let inputsMap: Map<string, unknown> = new Map();
@@ -164,5 +165,49 @@ describe('InputAuth Component', () => {
         expect(value).not.toBe(undefined);
       }
     });
+  });
+
+  it('sets auth info presets correctly on rerender', () => {
+    const { rerender } = render(
+      <ThemeProvider>
+        <SnackbarProvider>
+          <>
+            <InputAuth
+              mode="auth"
+              input={mockedSymmetricAuthInput}
+              index={0}
+              inputsMap={inputsMap}
+              setInputsMap={setInputsMap}
+            />
+          </>
+        </SnackbarProvider>
+      </ThemeProvider>,
+    );
+
+    const authValuesJson: Auth = JSON.parse(inputsMap.get('mock_auth_input') as string);
+    expect(authValuesJson.client_secret).toBeUndefined();
+
+    inputsMap.set(mockedSymmetricAuthInput.name, '{"client_secret":"CLIENT_SECRET"}');
+    const authValuesJsonWithPreset: Auth = JSON.parse(inputsMap.get('mock_auth_input') as string);
+    expect(authValuesJsonWithPreset.client_secret).toBe('CLIENT_SECRET');
+
+    rerender(
+      <ThemeProvider>
+        <SnackbarProvider>
+          <>
+            <InputAuth
+              mode="auth"
+              input={mockedSymmetricAuthInput}
+              index={0}
+              inputsMap={inputsMap}
+              setInputsMap={setInputsMap}
+            />
+          </>
+        </SnackbarProvider>
+      </ThemeProvider>,
+    );
+
+    const inputElement = screen.getByDisplayValue('CLIENT_SECRET');
+    expect(inputElement).toBeInTheDocument();
   });
 });
