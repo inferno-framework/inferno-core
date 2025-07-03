@@ -6,10 +6,10 @@ import ThemeProvider from 'components/ThemeProvider';
 import { mockedTestRun, getMockedResultsMap } from '../__mocked_data__/mockData';
 import TestRunProgressBar from '../TestRunProgressBar';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('The TestRunProgressBar Component', () => {
-  test('renders TestRunProgressBar', () => {
+  it('renders TestRunProgressBar', () => {
     let showProgressBar = true;
     let testRunCancelled = false;
 
@@ -35,9 +35,14 @@ describe('The TestRunProgressBar Component', () => {
     expect(progressBarElement).toBeInTheDocument();
   });
 
-  test('clicking Cancel cancels the test run', async () => {
+  it('clicking Cancel cancels the test run', async () => {
     let showProgressBar = true;
     let testRunCancelled = false;
+    const setShowProgressBar = (toggleValue: boolean) => (showProgressBar = toggleValue);
+    const cancelTestRun = () => {
+      testRunCancelled = true;
+      setShowProgressBar(false);
+    };
 
     render(
       <BrowserRouter>
@@ -45,9 +50,9 @@ describe('The TestRunProgressBar Component', () => {
           <SnackbarProvider>
             <TestRunProgressBar
               showProgressBar={showProgressBar}
-              setShowProgressBar={() => (showProgressBar = !showProgressBar)}
+              setShowProgressBar={setShowProgressBar}
               cancelled={testRunCancelled}
-              cancelTestRun={() => (testRunCancelled = true)}
+              cancelTestRun={cancelTestRun}
               duration={500}
               testRun={mockedTestRun}
               resultsMap={getMockedResultsMap()}
@@ -60,10 +65,6 @@ describe('The TestRunProgressBar Component', () => {
     const cancelButton = screen.getByRole('button');
     await userEvent.click(cancelButton);
     expect(testRunCancelled).toEqual(true);
-
-    setTimeout(() => {
-      const progressBarElement = screen.queryByTestId('progress-bar');
-      expect(progressBarElement).toBeNull();
-    }, 500);
+    expect(showProgressBar).toEqual(false);
   });
 });
