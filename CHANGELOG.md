@@ -1,3 +1,9 @@
+## 0.6.17
+* FI-4158: Fix Auth Info inputs not setting presets by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/717
+* FI-4175: Revert not tested requirements to simple view by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/718
+* FI-4208: Look outside current working directory for short id map by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/720
+* FI-4199: Remove requirements feature flag by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/721
+
 ## 0.6.16
 * FI-4033: Update validator context naming to match HL7 validator core 6.5.19 by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/709
 * FI-4169: Support non-numeric requirement ids by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/712
