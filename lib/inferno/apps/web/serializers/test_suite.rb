@@ -38,7 +38,7 @@ module Inferno
             suite_options = options[:suite_options]
             Input.render_as_hash(suite.available_inputs(suite_options).values)
           end
-          field :requirement_sets, if: :field_present_and_requirements_enabled? do |suite, options|
+          field :requirement_sets, if: :field_present? do |suite, options|
             selected_options = options[:suite_options] || []
             requirement_sets = suite.requirement_sets.select do |requirement_set|
               requirement_set.suite_options.all? { |suite_option| selected_options.include? suite_option }
@@ -46,7 +46,7 @@ module Inferno
 
             RequirementSet.render_as_hash(requirement_sets)
           end
-          field :verifies_requirements, if: :field_present_and_requirements_enabled?
+          field :verifies_requirements, if: :field_present?
         end
       end
     end

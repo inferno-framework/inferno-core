@@ -76,6 +76,16 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
     setAuthValuesPopulated(true);
   }, []);
 
+  // Set internal inputsMap on InputAuth fields change (usually new preset)
+  useEffect(() => {
+    const inputsMapValues = parseJson(inputsMap.get(input.name));
+    const authValuesCopy = new Map(authValues);
+    Object.entries(inputsMapValues).forEach(([key, value]) => {
+      authValuesCopy.set(key, value);
+    });
+    setAuthValues(authValuesCopy);
+  }, [inputsMap.get(input.name)]);
+
   useEffect(() => {
     // Recalculate hidden fields
     setAuthFields(getAuthInputFields(mode));
