@@ -20,7 +20,7 @@ module Inferno
         field :input_instructions
         field :user_runnable?, name: :user_runnable
         field :optional?, name: :optional
-        field :verifies_requirements, if: :field_present_and_requirements_enabled?
+        field :verifies_requirements, if: :field_present?
       end
     end
   end

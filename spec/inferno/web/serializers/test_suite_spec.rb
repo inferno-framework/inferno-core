@@ -100,15 +100,4 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
 
     expect(serialized_suite['requirement_sets'].length).to eq(2)
   end
-
-  context 'when requirments feature flag is not set' do
-    it 'does not include requirements fields' do
-      allow(Inferno::Feature).to receive(:requirements_enabled?).and_return(false)
-
-      serialized_suite = JSON.parse(described_class.render(suite, view: :full))
-
-      expect(serialized_suite).to include('id')
-      expect(serialized_suite).to_not include('verifies_requirements')
-    end
-  end
 end
