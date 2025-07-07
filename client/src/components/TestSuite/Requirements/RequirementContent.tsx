@@ -67,18 +67,16 @@ const RequirementContent: FC<RequirementContentProps> = ({
     if (testLinksExist) {
       return (
         <Box display="flex" px={1.5}>
-          {requirement.not_tested_reason ? (
+          {requirement.not_tested_reason || !testIds || testIds.length === 0 ? (
             <Typography
               display="inherit"
               variant="body2"
               sx={{ color: lightTheme.palette.common.orangeDark }}
             >
-              {requirement.not_tested_reason}
+              Not tested
             </Typography>
           ) : (
             <Typography ml={0} variant="body2" fontWeight="bold">
-              {/* If no test ids, show empty set symbol */}
-              Tests: {(!testIds || testIds.length === 0) && '\u2205'}
               {testIds?.map((id, i) => {
                 return (
                   <span key={id}>
