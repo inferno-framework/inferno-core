@@ -27,8 +27,7 @@ rm -f ./inferno-template/Gemfile.lock
 
 bundle exec ../bin/inferno new inferno-template --author "Inferno Template" --force
 
-git -C ./inferno-template add --all
-git -C ./inferno-template commit --message "Update to $VERSION"
+git -C ./inferno-template commit --amend --message "Update to $VERSION"
 git -C ./inferno-template push --set-upstream origin $BRANCH
 mv ./inferno-template "./inferno-template-$BRANCH"
 cd -

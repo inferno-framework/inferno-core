@@ -1,6 +1,8 @@
-require:
+plugins:
+  - rubocop-rake
   - rubocop-rspec
-
+  - rubocop-sequel
+  
 AllCops:
   NewCops: enable
   SuggestExtensions: false
