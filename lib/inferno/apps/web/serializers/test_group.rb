@@ -32,7 +32,7 @@ module Inferno
           Input.render_as_hash(group.available_inputs(suite_options).values)
         end
         field :output_definitions, name: :outputs, extractor: HashValueExtractor
-        field :verifies_requirements, if: :field_present_and_requirements_enabled?
+        field :verifies_requirements, if: :field_present?
       end
     end
   end

@@ -51,17 +51,13 @@ module Inferno
           put '/:id/check_configuration',
               to: Inferno::Web::Controllers::TestSuites::CheckConfiguration,
               as: :check_configuration
-          if Feature.requirements_enabled?
-            get ':id/requirements',
-                to: Inferno::Web::Controllers::TestSuites::Requirements::Index,
-                as: :requirements
-          end
+          get ':id/requirements',
+              to: Inferno::Web::Controllers::TestSuites::Requirements::Index,
+              as: :requirements
         end
 
-        if Feature.requirements_enabled?
-          scope 'requirements' do
-            get '/:id', to: Inferno::Web::Controllers::Requirements::Show, as: :show
-          end
+        scope 'requirements' do
+          get '/:id', to: Inferno::Web::Controllers::Requirements::Show, as: :show
         end
 
         get '/requests/:id', to: Inferno::Web::Controllers::Requests::Show, as: :requests_show
