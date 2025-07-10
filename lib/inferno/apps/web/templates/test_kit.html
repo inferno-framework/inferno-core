@@ -20,6 +20,7 @@
 
   <!-- Internal scripts -->
   <script src="<%= Inferno::Application['public_path'] %>/common.js?v=<%= Inferno::VERSION %>"></script>
+  <script src="<%= Inferno::Application['public_path'] %>/session.js?v=<%= Inferno::VERSION %>"></script>
   <script src="<%= Inferno::Application['public_path'] %>/test_kits.js?v=<%= Inferno::VERSION %>"></script>
 
   <title><%= test_kit.title %></title>
@@ -87,13 +88,24 @@
                     <% option.list_options.each_with_index do |list_option, option_index| %>
                     <div class="form-check">
                       <% if option_index.zero? || list_option[:value] == option.default %>
-                      <input class="form-check-input" type="radio" name="<%= option.id %>" id="<%= "#{suite.id}-#{list_option[:value]}" %>-<%= list_option[:value] %>"
-                      value="<%= list_option[:value] %>" checked data-default="true">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="<%= option.id %>"
+                        id="<%= "#{suite.id}-#{list_option[:value]}" %>"
+                        value="<%= list_option[:value] %>"
+                        checked
+                        data-default="true">
                       <% else %>
-                      <input class="form-check-input" type="radio" name="<%= option.id %>" id="<%= "#{suite.id}-#{list_option[:value]}" %>-<%= list_option[:value] %>"
-                      value="<%= list_option[:value] %>">
+                      <input
+                        class="form-check-input"
+                        type="radio"
+                        name="<%= option.id %>"
+                        id="<%= "#{suite.id}-#{list_option[:value]}" %>"
+                        value="<%= list_option[:value] %>"
+                      >
                       <% end %>
-                      <label class="form-check-label" for="<%= "#{suite.id}-#{list_option[:value]}"%>>
+                      <label class="form-check-label" for="<%= "#{suite.id}-#{list_option[:value]}" %>">
                         <%= list_option[:label] %>
                       </label>
                     </div>
