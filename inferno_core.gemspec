@@ -59,7 +59,7 @@ Gem::Specification.new do |spec|
     'bin/inferno',
     Dir['lib/inferno/public/*.png'],
     Dir['lib/inferno/public/*.ico'],
-    Dir['lib/inferno/public/**/*.js'],
+    Dir['lib/inferno/public/*.js'],
     'lib/inferno/public/bundle.js.LICENSE.txt',
     'lib/inferno/public/assets.json',
     'spec/support/factory_bot.rb',

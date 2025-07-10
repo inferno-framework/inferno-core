@@ -4,6 +4,8 @@
 /data/redis
 /lib/inferno/public/assets*
 /lib/inferno/public/*.js
+!/lib/inferno/public/common.js
+!/lib/inferno/public/test_kits.js
 /lib/inferno/public/*.LICENSE.txt
 /lib/inferno/public/*.png
 !/lib/inferno/public/logo*.png

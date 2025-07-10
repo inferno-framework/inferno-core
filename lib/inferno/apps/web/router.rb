@@ -1,4 +1,6 @@
 require 'erb'
+require 'kramdown'
+require 'kramdown-parser-gfm'
 require_relative '../../feature'
 
 Dir.glob(File.join(__dir__, 'controllers', '**', '*.rb')).each { |path| require_relative path }
@@ -10,6 +12,8 @@ module Inferno
         File.join(Inferno::Application.root, 'lib', 'inferno', 'apps', 'web', 'index.html.erb')
       )
     ).result
+
+    test_kit_template = ERB.new(File.read(File.join(__dir__, 'templates', 'test_kit.html')))
     CLIENT_PAGE_RESPONSE = ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
 
     base_path = Application['base_path']&.delete_prefix('/')
@@ -88,6 +92,12 @@ module Inferno
       Inferno::Repositories::TestSuites.all.map { |suite| "/#{suite.id}" }.each do |suite_path|
         Application['logger'].info("Registering suite route: #{suite_path}")
         get suite_path, to: CLIENT_PAGE_RESPONSE
+      end
+
+      Inferno::Repositories::TestKits.all.map do |test_kit|
+        test_kit_fragment = test_kit.id.to_s.delete_suffix('_test_kit')
+        get "/#{test_kit_fragment}",
+            to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [test_kit_template.result_with_hash(test_kit:)]] }
       end
 
       get '/test_sessions/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow, as: :client_session_show
