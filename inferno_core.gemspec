@@ -29,6 +29,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'hanami-controller', '2.0.0'
   spec.add_dependency 'hanami-router', '2.0.0'
   spec.add_dependency 'mutex_m', '~> 0.3.0'
+  spec.add_dependency 'kramdown-parser-gfm', '~> 1.1.0'
+  spec.add_dependency 'kramdown', '~> 2.5.1'
   spec.add_dependency 'oj', '3.11.0'
   spec.add_dependency 'pastel', '~> 0.8.0'
   spec.add_dependency 'pry'
@@ -57,7 +59,7 @@ Gem::Specification.new do |spec|
     'bin/inferno',
     Dir['lib/inferno/public/*.png'],
     Dir['lib/inferno/public/*.ico'],
-    Dir['lib/inferno/public/*.js'],
+    Dir['lib/inferno/public/**/*.js'],
     'lib/inferno/public/bundle.js.LICENSE.txt',
     'lib/inferno/public/assets.json',
     'spec/support/factory_bot.rb',
