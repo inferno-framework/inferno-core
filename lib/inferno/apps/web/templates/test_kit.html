@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <body data-spy="scroll" data-target="#toc">
+    <div class="flex-wrapper">
+      <div>
+        <div class="container-fluid">
+          <h1 class="mt-4 mb-1"><%= test_kit.title %></h1>
+          <div class="col-8 date-version-header">
+            <% if test_kit.last_updated %>
+            <time datetime="<%= Date.new(test_kit.last_updated).strftime('%m/%d/%Y') %>" class="last-updated">
+              <b>Last Updated:</b> <%= Date.new(test_kit.last_updated).strftime('%B %-d, %Y') %>
+            </time>
+            <% end %>
+            <% if test_kit.version %>
+            <div class="version"><b>Test Kit Version:</b> <%= test_kit.version %></div>
+            <% end %>
+            <% if test_kit.maturity %>
+            <div class="maturity"><b>Maturity:</b> <%= test_kit.maturity %>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#maturity-info-modal" title="About Maturity"><i
+                                                                                                                class="bi bi-question-circle"></i></a>
+            </div>
+            <% end %>
+          </div>
+          <div>
+            <% if test_kit.tags.present? %>
+            <div class="tags mb-4">
+              <% test_kit.tags.each do |tag| %>
+              <div class="tag"><%= tag %></div>
+              <% end %>
+            </div>
+            <% end %>
+          </div>
+          <div class="row">
+            <div id="left-column">
+              <%= Kramdown::Document.new(test_kit.description, input: 'GFM').to_html %>
+            </div>
+            <div id="right-column">
+              <div class="form-container">
+                <form id="start-testing-form">
+                  <h2 class="text-center fw-normal text-muted">Start Testing</h2>
+                  <fieldset class="mb-3" <% if test_kit.suites.blank? || test_kit.suites.length < 2 %>style="display:none" <% end %>>
+                    <legend class="form-title fs-6">Test Suite</legend>
+                    <% test_kit.suites.each_with_index do |suite, index| %>
+                    <div class="form-check">
+                      <% if index.one? %>
+                      <input class="form-check-input" type="radio" name="suite" id="<%= suite.id %>" value="<%= suite.id %>"
+                             checked>
+                      <% else %>
+                      <input class="form-check-input" type="radio" name="suite" id="<%= suite.id %>" value="<%= suite.id %>">
+                      <% end %>
+                      <label class="form-check-label" for="<%= suite.id %>">
+                        <%= suite.title %>
+                      </label>
+                    </div>
+                    <% end %>
+                  </fieldset>
+                  <!-- TODO -->
+                  <% for option_group in test_kit.option_groups %>
+                  <fieldset class="option-group mb-3" style="display: none"
+                            data-option-group-for-suites="<%= option_group.suites | join: " ," %>">
+                    <legend class="form-title fs-6"><%= option_group.title %></legend>
+                    <% for option in option_group.options %>
+                    <% assign option_group_suites_id = option_group.suites | join: "-" | append: "-" | append: option_group.id %>
+                    <div class="form-check">
+                      <% if forloop.first or option.value == option_group.default %>
+                      <input class="form-check-input" type="radio" name="<%= option_group.id %>" id="<%= option_group_suites_id %>-<%= option.value %>"
+                             value="<%= option.value %>" checked data-default="true">
+                      <% else %>
+                      <input class="form-check-input" type="radio" name="<%= option_group.id %>" id="<%= option_group_suites_id %>-<%= option.value %>"
+                             value="<%= option.value %>">
+                      <% end %>
+                      <label class="form-check-label" for="<%= option_group_suites_id %>-<%= option.value %>">
+                        <%= option.label %>
+                      </label>
+                    </div>
+                    <% end %>
+                  </fieldset>
+                  <% end %>
+
+                  <!-- Submit Button -->
+                  <a class="btn btn-primary start-testing-button w-100" id="start-testing-button">
+                    <i class="bi bi-plus-circle"></i>
+                    Create Test Session
+                  </a>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <% include maturity_info.html %>
+
+        <script>
+         // Hook up the start testing button with the function
+         $('#start-testing-button').click(() => {
+           createSession();
+         });
+
+         // Handle hiding/unhiding the options depending on which suite is selected
+         // Note that if there is only 1 suite, it won't show up for users
+         // but it is still there.
+         // Also force triggering this on load so if initial suite select has
+         // options, those get opened.
+         // And finally, if a suites share the same option names, as is common for
+         // multiple versions of suites, this will auto-select the default option when
+         // switching between suites.
+
+         $('#start-testing-form input[type=radio][name=suite]').change(function () {
+           const newSuite = this.value;
+
+           $("#start-testing-form .option-group").css("display", "none");
+
+           $("#start-testing-form .option-group").filter((index, el) => {
+             const forSuites = $(el).data('option-group-for-suites');
+             return forSuites.length === 0 || forSuites.split(",").indexOf(newSuite) > -1;
+
+           }).css("display", "").find('input[data-default="true"]').prop('checked', true);
+
+         }).filter(":checked").trigger('change');
+
+         /* Full page vs narrow page styles */
+         const leftColumn = document.getElementById('left-column');
+         const rightColumn = document.getElementById('right-column');
+
+         const updateStyles = () => {
+           let fullView = window.innerWidth >= 500; // narrow view width threshold
+
+           if (fullView) {
+             leftColumn.classList.add('col-8');
+             rightColumn.classList.add('col-4');
+
+             leftColumn.classList.remove('second');
+             rightColumn.classList.remove('first');
+           } else {
+             leftColumn.classList.remove('col-8');
+             rightColumn.classList.remove('col-4');
+
+             leftColumn.classList.add('second');
+             rightColumn.classList.add('first');
+           }
+         };
+
+         // Debounce resize listener
+         let timeout = false; // holder for timeout id
+         let delay = 200; // delay after event is "complete" to run callback
+
+         addEventListener('resize', (event) => {
+           // clear the timeout
+           clearTimeout(timeout);
+           // start timing for event "completion"
+           timeout = setTimeout(updateStyles, delay);
+         });
+
+         updateStyles();
+        </script>
+
+        <style>
+         .first {
+           order: 1;
+         }
+
+         .second {
+           order: 2;
+         }
+
+         .form-container {
+           border: 1px solid #e0e0e0;
+           border-radius: 10px;
+           padding: 10px 20px 20px;
+           /* Reduced top padding from 20px to 10px */
+         }
+
+         .form-title {
+           font-size: 1.25rem;
+           font-weight: 500;
+           color: #777;
+           margin-bottom: 10px;
+         }
+
+         .tag {
+           font-size: 0.9rem;
+           margin-right: 10px;
+           padding: 2px 5px;
+           background-color: #f2f2f2;
+           border-radius: 4px;
+           display: inline-block;
+         }
+
+         .date-version-header {
+           display: flex;
+           justify-content: space-between;
+           flex-wrap: wrap;
+           font-style: italic;
+           padding-bottom: 10px;
+         }
+
+         .flex-wrapper {
+           display: flex;
+           min-height: 100vh;
+           flex-direction: column;
+           justify-content: space-between;
+         }
+        </style>
+      </div>
+    </div>
+  </body>
+</html>
