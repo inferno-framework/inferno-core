@@ -55,22 +55,21 @@
                     <% end %>
                   </fieldset>
                   <!-- TODO -->
-                  <% for option_group in test_kit.option_groups %>
+                  <% suite.options.each do |option| %>
                   <fieldset class="option-group mb-3" style="display: none"
-                            data-option-group-for-suites="<%= option_group.suites | join: " ," %>">
-                    <legend class="form-title fs-6"><%= option_group.title %></legend>
-                    <% for option in option_group.options %>
-                    <% assign option_group_suites_id = option_group.suites | join: "-" | append: "-" | append: option_group.id %>
+                            data-option-group-for-suites="<%= suite.id %>">
+                    <legend class="form-title fs-6"><%= option.title %></legend>
+                    <% option.list_options.each_with_index do |list_option, option_index| %>
                     <div class="form-check">
-                      <% if forloop.first or option.value == option_group.default %>
-                      <input class="form-check-input" type="radio" name="<%= option_group.id %>" id="<%= option_group_suites_id %>-<%= option.value %>"
-                             value="<%= option.value %>" checked data-default="true">
+                      <% if option_index.zero? || list_option[:value] == option.default %>
+                      <input class="form-check-input" type="radio" name="<%= option.id %>" id="<%= "#{suite.id}-#{list_option[:value]}" %>-<%= list_option[:value] %>"
+                             value="<%= list_option[:value] %>" checked data-default="true">
                       <% else %>
-                      <input class="form-check-input" type="radio" name="<%= option_group.id %>" id="<%= option_group_suites_id %>-<%= option.value %>"
-                             value="<%= option.value %>">
+                      <input class="form-check-input" type="radio" name="<%= option.id %>" id="<%= "#{suite.id}-#{list_option[:value]}" %>-<%= list_option[:value] %>"
+                             value="<%= list_option[:value] %>">
                       <% end %>
-                      <label class="form-check-label" for="<%= option_group_suites_id %>-<%= option.value %>">
-                        <%= option.label %>
+                      <label class="form-check-label" for="<%= "#{suite.id}-#{list_option[:value]}">
+                        <%= list_option[:label] %>
                       </label>
                     </div>
                     <% end %>
@@ -88,7 +87,41 @@
           </div>
         </div>
 
-        <% include maturity_info.html %>
+        <div class="modal fade" id="maturity-info-modal" tabindex="-1" aria-labelledby="maturity-info-modal-label" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="maturity-info-modal-label">About Test Kit Maturity</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p>
+                  Test Kits are broadly grouped into three levels of maturity:
+                  <strong>High</strong>, <strong>Moderate</strong>, and
+                  <strong>Low</strong>.  This is intended to provide guidance to users
+                  on the level of confidence they should place in the accuracy and
+                  completeness of these tests.
+                </p>
+                <p>
+                  <strong>High</strong> maturity Test Kits typically have been
+                  used to test many different systems against a stable specification
+                  that has limited ambiguity.
+                </p>
+                <p>
+                  <strong>Moderate</strong> and <strong>Low</strong> maturity Test Kits typically have
+                  not had widespread usage and/or are targeting less mature
+                  specifications that contain ambiguous or conflicting information.
+                  These Test Kits are still of value to implementers, but they should be
+                  aware of potential issues and are encouraged to contact the team with
+                  problems as they arise.
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <script>
          // Hook up the start testing button with the function
