@@ -78,9 +78,8 @@ module Inferno
           to: lambda { |env|
             local_test_kit = Inferno::Repositories::TestKits.new.local_test_kit
             if local_test_kit.present?
-              test_kit_fragment = local_test_kit.id.to_s.delete_suffix('_test_kit')
               base = Inferno::Application['base_path'].present? ? "/#{Inferno::Application['base_path']}" : ''
-              [301, { 'Location' => "#{base}/#{test_kit_fragment}" }, []]
+              [301, { 'Location' => "#{base}/#{test_kit.url_fragment}" }, []]
             else
               CLIENT_PAGE_RESPONSE.call(env)
             end
@@ -106,8 +105,7 @@ module Inferno
       end
 
       Inferno::Repositories::TestKits.all.map do |test_kit|
-        test_kit_fragment = test_kit.id.to_s.delete_suffix('_test_kit')
-        get "/#{test_kit_fragment}",
+        get "/#{test_kit.url_fragment}",
             to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [test_kit_template.result_with_hash(test_kit:)]] }
       end
 
