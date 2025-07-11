@@ -1,5 +1,8 @@
 require 'erb'
+require 'kramdown'
+require 'kramdown-parser-gfm'
 require_relative '../../feature'
+require_relative '../../repositories/test_kits'
 
 Dir.glob(File.join(__dir__, 'controllers', '**', '*.rb')).each { |path| require_relative path }
 
@@ -10,6 +13,8 @@ module Inferno
         File.join(Inferno::Application.root, 'lib', 'inferno', 'apps', 'web', 'index.html.erb')
       )
     ).result
+
+    test_kit_template = ERB.new(File.read(File.join(__dir__, 'templates', 'test_kit.html')))
     CLIENT_PAGE_RESPONSE = ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
 
     base_path = Application['base_path']&.delete_prefix('/')
@@ -69,7 +74,16 @@ module Inferno
 
       # Should not need Content-Type header but GitHub Codespaces will not work without them.
       # This could be investigated and likely removed if addressed properly elsewhere.
-      get '/', to: CLIENT_PAGE_RESPONSE
+      get '/',
+          to: lambda { |env|
+            local_test_kit = Inferno::Repositories::TestKits.new.local_test_kit
+            if local_test_kit.present?
+              base = Inferno::Application['base_path'].present? ? "/#{Inferno::Application['base_path']}" : ''
+              [301, { 'Location' => "#{base}/#{test_kit.url_fragment}" }, []]
+            else
+              CLIENT_PAGE_RESPONSE.call(env)
+            end
+          }
       get '/jwks.json', to: lambda { |_env|
                               [200, { 'Content-Type' => 'application/json' }, [Inferno::JWKS.jwks_json]]
                             }, as: :jwks
@@ -88,6 +102,11 @@ module Inferno
       Inferno::Repositories::TestSuites.all.map { |suite| "/#{suite.id}" }.each do |suite_path|
         Application['logger'].info("Registering suite route: #{suite_path}")
         get suite_path, to: CLIENT_PAGE_RESPONSE
+      end
+
+      Inferno::Repositories::TestKits.all.map do |test_kit|
+        get "/#{test_kit.url_fragment}",
+            to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [test_kit_template.result_with_hash(test_kit:)]] }
       end
 
       get '/test_sessions/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow, as: :client_session_show

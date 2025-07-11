@@ -153,6 +153,10 @@ module Inferno
           suite_ids.map(&:to_sym).include? test_suite_id.to_sym
         end
 
+        def url_fragment
+          id.to_s.delete_suffix('_test_kit')
+        end
+
         # @private
         def add_self_to_repository
           repository.insert(self)
