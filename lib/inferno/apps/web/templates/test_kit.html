@@ -58,6 +58,15 @@
           <div class="row">
             <div id="left-column">
               <%= Kramdown::Document.new(test_kit.description, input: 'GFM', hard_wrap: false).to_html %>
+              <% if Inferno::Repositories::TestKits.all.length > 1 && test_kit == Inferno::Repositories::TestKits.new.local_test_kit %>
+              <h2>Imported Test Kits</h2>
+              <p><%= test_kit.title %> depends on the following imported test kits.</p>
+              <ul>
+                <% (Inferno::Repositories::TestKits.all - [test_kit]).each do |other_test_kit| %>
+                <li><a href="<%= other_test_kit.url_fragment %>"><%= other_test_kit.title %></a></li>
+                <% end %>
+              </ul>
+              <% end %>
             </div>
             <div id="right-column">
               <div class="form-container">
