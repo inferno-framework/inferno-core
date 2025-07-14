@@ -61,6 +61,8 @@
               <% if Inferno::Repositories::TestKits.all.length > 1 && test_kit == Inferno::Repositories::TestKits.new.local_test_kit %>
               <h2>Imported Test Kits</h2>
               <p><%= test_kit.title %> depends on the following imported test kits.</p>
+              <% elsif Inferno::Repositories::TestKits.all.length > 1 %>
+              <h2>Other Test Kits</h2>
               <ul>
                 <% (Inferno::Repositories::TestKits.all - [test_kit]).each do |other_test_kit| %>
                 <li><a href="<%= other_test_kit.url_fragment %>"><%= other_test_kit.title %></a></li>

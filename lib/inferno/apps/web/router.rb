@@ -101,7 +101,14 @@ module Inferno
 
       Inferno::Repositories::TestSuites.all.map { |suite| "/#{suite.id}" }.each do |suite_path|
         Application['logger'].info("Registering suite route: #{suite_path}")
-        get suite_path, to: CLIENT_PAGE_RESPONSE
+        get suite_path, to: lambda { |env|
+          test_kit = Inferno::Repositories::TestKits.new.test_kit_for_suite(suite_path.delete_prefix('/'))
+          if test_kit.present?
+            [200, { 'Content-Type' => 'text/html' }, [test_kit_template.result_with_hash(test_kit:)]]
+          else
+            CLIENT_PAGE_RESPONSE.call(env)
+          end
+        }
       end
 
       Inferno::Repositories::TestKits.all.map do |test_kit|
