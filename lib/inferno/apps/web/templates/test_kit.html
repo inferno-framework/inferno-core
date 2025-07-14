@@ -71,7 +71,7 @@
             <div id="right-column">
               <div class="form-container">
                 <form id="start-testing-form">
-                  <h2 class="text-center fw-normal text-muted">Start Testing</h2>
+                  <h2 class="text-center fw-normal text-muted">Options</h2>
                   <fieldset class="mb-3" <% if test_kit.suites.blank? || test_kit.suites.length < 2 %>style="display:none" <% end %>>
                     <legend class="form-title fs-6">Test Suite</legend>
                     <% test_kit.suites.each_with_index do |suite, index| %>
@@ -125,8 +125,7 @@
 
                   <!-- Submit Button -->
                   <a class="btn btn-primary start-testing-button w-100" id="start-testing-button">
-                    <i class="bi bi-plus-circle"></i>
-                    Create Test Session
+                    Start Testing
                   </a>
                 </form>
               </div>
@@ -279,6 +278,33 @@
            min-height: 100vh;
            flex-direction: column;
            justify-content: space-between;
+         }
+
+         .btn-primary {
+           background-color: rgb(247, 122, 37);
+           border: none;
+           border-radius: 4px;
+           box-shador: rgba(0, 0, 0, 0.2) 0px 2px 4px -1px, rgba(0, 0, 0, 0.14) 0px 4px 5px 0px, rgba(0, 0, 0, 0.12) 0px 1px 10px 0px;
+           color: white;
+           outline-style: none;
+           text-transform: uppercase;
+         }
+
+         .btn-primary:hover {
+           background-color: rgb(172, 85, 25);
+         }
+
+         .btn-primary:active {
+           background-color: rgb(172, 85, 25);
+         }
+
+         .btn-primary:focus {
+           background-color: rgb(247, 122, 37);
+         }
+
+         .form-check-input:checked {
+           border-color: rgb(247, 122, 37);
+           background-color: rgb(247, 122, 37);
          }
         </style>
       </div>
