@@ -13,7 +13,7 @@ module Inferno
       end
 
       def test_kit_for_suite(suite_id)
-        self.class.all.find { |test_kit| test_kit.suite_ids.include? suite_id.to_sym }
+        self.class.all.find { |test_kit| test_kit.contains_test_suite? suite_id }
       end
     end
   end
