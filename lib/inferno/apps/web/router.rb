@@ -10,11 +10,11 @@ module Inferno
   module Web
     client_page = ERB.new(
       File.read(
-        File.join(Inferno::Application.root, 'lib', 'inferno', 'apps', 'web', 'index.html.erb')
+        File.join(Inferno::Application.root, 'lib', 'inferno', 'apps', 'web', 'templates', 'client_index.html.erb')
       )
     ).result
 
-    test_kit_template = ERB.new(File.read(File.join(__dir__, 'templates', 'test_kit.html')))
+    test_kit_template = ERB.new(File.read(File.join(__dir__, 'templates', 'test_kit.html.erb')))
     CLIENT_PAGE_RESPONSE = ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
 
     base_path = Application['base_path']&.delete_prefix('/')

@@ -7,7 +7,7 @@ module Inferno
             ERB.new(
               File.read(
                 File.join(
-                  Inferno::Application.root, 'lib', 'inferno', 'apps', 'web', 'index.html.erb'
+                  Inferno::Application.root, 'lib', 'inferno', 'apps', 'web', 'templates', 'client_index.html.erb'
                 )
               )
             ).result.freeze
