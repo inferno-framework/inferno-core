@@ -154,7 +154,7 @@ module Inferno
         end
 
         def url_fragment
-          id.to_s.delete_suffix('_test_kit').tr('_', '-')
+          id.to_s.delete_suffix('_test_kit')
         end
 
         # @private
