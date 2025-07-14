@@ -112,6 +112,7 @@ module Inferno
       end
 
       Inferno::Repositories::TestKits.all.map do |test_kit|
+        Application['logger'].info("Registering test kit route: /#{test_kit.url_fragment}")
         get "/#{test_kit.url_fragment}",
             to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [test_kit_template.result_with_hash(test_kit:)]] }
       end
