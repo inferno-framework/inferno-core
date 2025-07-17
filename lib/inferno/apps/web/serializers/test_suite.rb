@@ -36,7 +36,8 @@ module Inferno
 
           field :test_groups do |suite, options|
             suite_options = options[:suite_options]
-            TestGroup.render_as_hash(suite.groups(suite_options), suite_options:)
+            suite_requirement_ids = options[:suite_requirement_ids]
+            TestGroup.render_as_hash(suite.groups(suite_options), suite_options:, suite_requirement_ids:)
           end
           field :configuration_messages
           field :requirement_sets, if: :field_present? do |suite, options|
@@ -47,7 +48,15 @@ module Inferno
 
             RequirementSet.render_as_hash(requirement_sets)
           end
-          field :verifies_requirements, if: :field_present?
+          field :verifies_requirements, if: :field_present? do |suite, options|
+            if options[:suite_requirement_ids].blank?
+              suite.verifies_requirements
+            else
+              suite.verifies_requirements.select do |requirement_id|
+                suite_requirement_ids.include? requirement_id
+              end
+            end
+          end
         end
       end
     end
