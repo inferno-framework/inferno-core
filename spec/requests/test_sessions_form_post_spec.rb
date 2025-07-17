@@ -8,6 +8,7 @@ RSpec.describe 'POST /:test_suite_id' do
 
   context 'with valid params' do
     let(:test_suite_id) { 'options' }
+    let(:session_data_repo) { Inferno::Repositories::SessionData.new }
 
     it 'redirects the user to the created test session' do
       post router.path(:session_form_post, test_suite_id:)
@@ -64,10 +65,32 @@ RSpec.describe 'POST /:test_suite_id' do
 
       expect(session).to be_present
 
-      session_data_repo = Inferno::Repositories::SessionData.new
-
       expect(session_data_repo.load(test_session_id: session.id, name: 'patient_id')).to eq('85')
       expect(session_data_repo.load(test_session_id: session.id, name: 'bearer_token')).to eq('SAMPLE_TOKEN')
+    end
+
+    it 'applies supplied inputs' do
+      inputs = [
+        { name: 'v1_input', value: '1', type: 'text' },
+        { name: 'v2_input', value: '2', type: 'text' },
+        { name: 'all_versions_input', value: '3', type: 'text' }
+      ]
+
+      post_json(
+        router.path(:session_form_post, test_suite_id:),
+        { inputs: }
+      )
+
+      expect(last_response.status).to eq(302)
+
+      location = last_response.headers['Location']
+      session_id = location.split('/').last
+
+      inputs.each do |input|
+        expect(
+          session_data_repo.load(test_session_id: session_id, name: input[:name])
+        ).to eq(input[:value])
+      end
     end
   end
 
@@ -88,6 +111,21 @@ RSpec.describe 'POST /:test_suite_id' do
       )
 
       expect(last_response.status).to eq(422)
+    end
+
+    it 'returns a 422 when missing required inputs' do
+      inputs = [
+        { name: 'v1_input', value: '1', type: 'text' },
+        { name: 'v2_input', value: '2', type: 'text' }
+      ]
+
+      post_json(
+        router.path(:session_form_post, test_suite_id: 'options'),
+        { inputs: }
+      )
+
+      expect(last_response.status).to eq(422)
+      expect(parsed_body['errors']).to match(/Missing the following required inputs/)
     end
   end
 end

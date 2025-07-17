@@ -1,12 +1,16 @@
+require_relative '../../../utils/verify_runnable'
+
 module Inferno
   module Web
     module Controllers
       class TestSessionFormPostController < Hanami::Action
+        include ::Inferno::Utils::VerifyRunnable
+
         def self.call(...)
           new.call(...)
         end
 
-        def handle(req, res)
+        def handle(req, res) # rubocop:disable Metrics/CyclomaticComplexity
           test_suite_id = req.params[:test_suite_id]
 
           test_suite = Inferno::Repositories::TestSuites.new.find(test_suite_id)
@@ -31,7 +35,28 @@ module Inferno
             repo.apply_preset(session, preset_id)
           end
 
+          inputs = req.params[:inputs]
+
+          if inputs.present?
+            verify_runnable(
+              test_suite,
+              inputs,
+              session.suite_options
+            )
+
+            session_data_repo = Inferno::Repositories::SessionData.new
+            inputs.each do |input|
+              session_data_repo.save(input.merge(test_session_id: session.id))
+            end
+
+          end
+
           res.redirect_to "#{Inferno::Application['base_url']}/#{test_suite_id}/#{session.id}"
+        rescue Inferno::Exceptions::RequiredInputsNotFound, Inferno::Exceptions::NotUserRunnableException => e
+          halt 422, { errors: e.message }.to_json
+        rescue StandardError => e
+          Application['logger'].error(e.full_message)
+          halt 500, { errors: e.message }.to_json
         end
       end
     end
