@@ -6,7 +6,6 @@ Gem::Specification.new do |spec|
   spec.name          = 'inferno_core'
   spec.version       = Inferno::VERSION
   spec.authors       = ['Stephen MacVicar', 'Robert Scanlon', 'Chase Zhou']
-  spec.email         = ['inferno@groups.mitre.org']
   spec.summary       = 'Inferno Core is an open source tool for testing data exchanges enabled by the FHIR standand'
   spec.description   = 'Inferno Core is an open source tool for testing data exchanges enabled by the FHIR standand'
   spec.homepage      = 'https://github.com/inferno-framework/inferno-core'
