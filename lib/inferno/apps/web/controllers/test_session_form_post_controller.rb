@@ -1,10 +1,12 @@
 require_relative '../../../utils/verify_runnable'
+require_relative '../../../utils/persist_inputs'
 
 module Inferno
   module Web
     module Controllers
       class TestSessionFormPostController < Hanami::Action
         include ::Inferno::Utils::VerifyRunnable
+        include ::Inferno::Utils::PersistInputs
 
         def self.call(...)
           new.call(...)
@@ -44,10 +46,10 @@ module Inferno
               session.suite_options
             )
 
+            params.merge!(inputs:, test_session_id: session.id)
+
             session_data_repo = Inferno::Repositories::SessionData.new
-            inputs.each do |input|
-              session_data_repo.save(input.merge(test_session_id: session.id))
-            end
+            persist_inputs(session_data_repo, params, test_suite)
 
           end
 
