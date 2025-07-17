@@ -7,9 +7,7 @@ gemspec
 group :development, :test do
   gem 'debug'
   gem 'rubocop', '~> 1.9'
-  gem 'rubocop-rake', require: false
   gem 'rubocop-rspec', require: false
-  gem 'rubocop-sequel', require: false
 end
 
 group :test do
