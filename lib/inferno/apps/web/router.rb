@@ -1,5 +1,8 @@
 require 'erb'
+require 'kramdown'
+require 'kramdown-parser-gfm'
 require_relative '../../feature'
+require_relative '../../repositories/test_kits'
 
 Dir.glob(File.join(__dir__, 'controllers', '**', '*.rb')).each { |path| require_relative path }
 
@@ -7,9 +10,11 @@ module Inferno
   module Web
     client_page = ERB.new(
       File.read(
-        File.join(Inferno::Application.root, 'lib', 'inferno', 'apps', 'web', 'index.html.erb')
+        File.join(Inferno::Application.root, 'lib', 'inferno', 'apps', 'web', 'templates', 'client_index.html.erb')
       )
     ).result
+
+    test_kit_template = ERB.new(File.read(File.join(__dir__, 'templates', 'test_kit.html.erb')))
     CLIENT_PAGE_RESPONSE = ->(_env) { [200, { 'Content-Type' => 'text/html' }, [client_page]] }
 
     base_path = Application['base_path']&.delete_prefix('/')
@@ -69,7 +74,16 @@ module Inferno
 
       # Should not need Content-Type header but GitHub Codespaces will not work without them.
       # This could be investigated and likely removed if addressed properly elsewhere.
-      get '/', to: CLIENT_PAGE_RESPONSE
+      get '/',
+          to: lambda { |env|
+            local_test_kit = Inferno::Repositories::TestKits.new.local_test_kit
+            if local_test_kit.present?
+              base = Inferno::Application['base_path'].present? ? "/#{Inferno::Application['base_path']}" : ''
+              [301, { 'Location' => "#{base}/#{local_test_kit.url_fragment}" }, []]
+            else
+              CLIENT_PAGE_RESPONSE.call(env)
+            end
+          }
       get '/jwks.json', to: lambda { |_env|
                               [200, { 'Content-Type' => 'application/json' }, [Inferno::JWKS.jwks_json]]
                             }, as: :jwks
@@ -87,7 +101,20 @@ module Inferno
 
       Inferno::Repositories::TestSuites.all.map { |suite| "/#{suite.id}" }.each do |suite_path|
         Application['logger'].info("Registering suite route: #{suite_path}")
-        get suite_path, to: CLIENT_PAGE_RESPONSE
+        get suite_path, to: lambda { |env|
+          test_kit = Inferno::Repositories::TestKits.new.test_kit_for_suite(suite_path.delete_prefix('/'))
+          if test_kit.present?
+            [200, { 'Content-Type' => 'text/html' }, [test_kit_template.result_with_hash(test_kit:)]]
+          else
+            CLIENT_PAGE_RESPONSE.call(env)
+          end
+        }
+      end
+
+      Inferno::Repositories::TestKits.all.each do |test_kit|
+        Application['logger'].info("Registering test kit route: /#{test_kit.url_fragment}")
+        get "/#{test_kit.url_fragment}",
+            to: ->(_env) { [200, { 'Content-Type' => 'text/html' }, [test_kit_template.result_with_hash(test_kit:)]] }
       end
 
       get '/test_sessions/:id', to: Inferno::Web::Controllers::TestSessions::ClientShow, as: :client_session_show
