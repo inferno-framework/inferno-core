@@ -25,7 +25,7 @@ module Inferno
             test.verifies_requirements
           else
             test.verifies_requirements.select do |requirement_id|
-              test_requirement_ids.include? requirement_id
+              options[:suite_requirement_ids].include? requirement_id
             end
           end
         end

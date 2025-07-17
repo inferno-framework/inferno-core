@@ -39,7 +39,7 @@ module Inferno
             group.verifies_requirements
           else
             group.verifies_requirements.select do |requirement_id|
-              group_requirement_ids.include? requirement_id
+              options[:suite_requirement_ids].include? requirement_id
             end
           end
         end
