@@ -26,7 +26,7 @@ RSpec.describe Inferno::Utils::PersistInputs do
         ]
       }
 
-      dummy.persist_inputs(session_data_repo, params, test_run)
+      dummy.persist_inputs(session_data_repo, params, test_run.runnable)
       persisted_data = session_data_repo.load(test_session_id: test_run.test_session_id, name: 'input1')
 
       expect(persisted_data).to eq('persist me')
@@ -47,7 +47,7 @@ RSpec.describe Inferno::Utils::PersistInputs do
         ]
       }
 
-      expect { dummy.persist_inputs(session_data_repo, params, test_run) }.to_not raise_error
+      expect { dummy.persist_inputs(session_data_repo, params, test_run.runnable) }.to_not raise_error
 
       persisted_data = session_data_repo.load(test_session_id: test_run.test_session_id, name: 'input1')
       expect(persisted_data).to eq('persist me')

@@ -2,8 +2,8 @@ module Inferno
   module Utils
     # @private
     module PersistInputs
-      def persist_inputs(session_data_repo, params, test_run)
-        available_inputs = test_run.runnable.available_inputs
+      def persist_inputs(session_data_repo, params, runnable)
+        available_inputs = runnable.available_inputs
         params[:inputs]&.each do |input_params|
           input =
             available_inputs
@@ -12,13 +12,13 @@ module Inferno
 
           if input.nil?
             Inferno::Application['logger'].warn(
-              "Unknown input `#{input_params[:name]}` for #{test_run.runnable.id}: #{test_run.runnable.title}"
+              "Unknown input `#{input_params[:name]}` for #{runnable.id}: #{runnable.title}"
             )
             next
           end
 
           session_data_repo.save(
-            test_session_id: test_run.test_session_id,
+            test_session_id: params[:test_session_id],
             name: input.name,
             value: input_params[:value],
             type: input.type
