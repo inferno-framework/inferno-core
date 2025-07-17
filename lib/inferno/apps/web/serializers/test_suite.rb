@@ -39,10 +39,6 @@ module Inferno
             TestGroup.render_as_hash(suite.groups(suite_options), suite_options:)
           end
           field :configuration_messages
-          field :inputs do |suite, options|
-            suite_options = options[:suite_options]
-            Input.render_as_hash(suite.available_inputs(suite_options).values)
-          end
           field :requirement_sets, if: :field_present? do |suite, options|
             selected_options = options[:suite_options] || []
             requirement_sets = suite.requirement_sets.select do |requirement_set|
