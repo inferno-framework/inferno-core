@@ -35,7 +35,7 @@ module Inferno
 
             res.body = serialize(test_run, suite_options: test_session.suite_options)
 
-            persist_inputs(session_data_repo, req.params, test_run)
+            persist_inputs(session_data_repo, req.params, test_run.runnable)
 
             Jobs.perform(Jobs::ExecuteTestRun, test_run.id)
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation,
