@@ -20,7 +20,15 @@ module Inferno
         field :input_instructions
         field :user_runnable?, name: :user_runnable
         field :optional?, name: :optional
-        field :verifies_requirements, if: :field_present?
+        field :verifies_requirements, if: :field_present? do |test, options|
+          if options[:suite_requirement_ids].blank?
+            test.verifies_requirements
+          else
+            test.verifies_requirements.select do |requirement_id|
+              test_requirement_ids.include? requirement_id
+            end
+          end
+        end
       end
     end
   end
