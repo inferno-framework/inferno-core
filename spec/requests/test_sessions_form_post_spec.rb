@@ -76,9 +76,14 @@ RSpec.describe 'POST /:test_suite_id' do
         { name: 'all_versions_input', value: '3', type: 'text' }
       ]
 
-      post_json(
+      form_data = inputs.flat_map do |input|
+        input.map { |k, v| ["inputs[][#{k}]", v] }
+      end
+
+      post(
         router.path(:session_form_post, test_suite_id:),
-        { inputs: }
+        URI.encode_www_form(form_data),
+        'Content-Type' => 'application/x-www-form-urlencoded'
       )
 
       expect(last_response.status).to eq(302)
@@ -118,10 +123,14 @@ RSpec.describe 'POST /:test_suite_id' do
         { name: 'v1_input', value: '1', type: 'text' },
         { name: 'v2_input', value: '2', type: 'text' }
       ]
+      form_data = inputs.flat_map do |input|
+        input.map { |k, v| ["inputs[][#{k}]", v] }
+      end
 
-      post_json(
+      post(
         router.path(:session_form_post, test_suite_id: 'options'),
-        { inputs: }
+        URI.encode_www_form(form_data),
+        'Content-Type' => 'application/x-www-form-urlencoded'
       )
 
       expect(last_response.status).to eq(422)
