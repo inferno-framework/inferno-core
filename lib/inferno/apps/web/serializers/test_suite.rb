@@ -1,4 +1,5 @@
 require_relative 'preset'
+require_relative 'requirements_filtering_extractor'
 require_relative 'requirement_set'
 require_relative 'suite_option'
 require_relative 'test_group'
@@ -48,15 +49,7 @@ module Inferno
 
             RequirementSet.render_as_hash(requirement_sets)
           end
-          field :verifies_requirements, if: :field_present? do |suite, options|
-            if options[:suite_requirement_ids].blank?
-              suite.verifies_requirements
-            else
-              suite.verifies_requirements.select do |requirement_id|
-                options[:suite_requirement_ids].include? requirement_id
-              end
-            end
-          end
+          field :verifies_requirements, if: :field_present?, extractor: RequirementsFilteringExtractor
         end
       end
     end
