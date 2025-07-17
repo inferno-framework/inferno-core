@@ -1,5 +1,6 @@
 require_relative 'hash_value_extractor'
 require_relative 'input'
+require_relative 'requirements_filtering_extractor'
 
 module Inferno
   module Web
@@ -20,15 +21,7 @@ module Inferno
         field :input_instructions
         field :user_runnable?, name: :user_runnable
         field :optional?, name: :optional
-        field :verifies_requirements, if: :field_present? do |test, options|
-          if options[:suite_requirement_ids].blank?
-            test.verifies_requirements
-          else
-            test.verifies_requirements.select do |requirement_id|
-              options[:suite_requirement_ids].include? requirement_id
-            end
-          end
-        end
+        field :verifies_requirements, if: :field_present?, extractor: RequirementsFilteringExtractor
       end
     end
   end

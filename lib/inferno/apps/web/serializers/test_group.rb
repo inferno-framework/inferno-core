@@ -1,3 +1,5 @@
+require_relative 'hash_value_extractor'
+require_relative 'requirements_filtering_extractor'
 require_relative 'test'
 
 module Inferno
@@ -34,15 +36,7 @@ module Inferno
           Input.render_as_hash(group.available_inputs(suite_options).values)
         end
         field :output_definitions, name: :outputs, extractor: HashValueExtractor
-        field :verifies_requirements, if: :field_present? do |group, options|
-          if options[:suite_requirement_ids].blank?
-            group.verifies_requirements
-          else
-            group.verifies_requirements.select do |requirement_id|
-              options[:suite_requirement_ids].include? requirement_id
-            end
-          end
-        end
+        field :verifies_requirements, if: :field_present?, extractor: RequirementsFilteringExtractor
       end
     end
   end
