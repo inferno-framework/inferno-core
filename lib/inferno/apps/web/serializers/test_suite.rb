@@ -22,6 +22,11 @@ module Inferno
             suite.test_count(options[:suite_options])
           end
 
+          field :inputs do |suite, options|
+            suite_options = options[:suite_options]
+            Input.render_as_hash(suite.available_inputs(suite_options).values)
+          end
+
           association :suite_options, blueprint: SuiteOption
           association :presets, view: :summary, blueprint: Preset
         end
