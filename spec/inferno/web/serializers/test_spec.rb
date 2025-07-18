@@ -44,4 +44,20 @@ RSpec.describe Inferno::Web::Serializers::Test do
       end
     end
   end
+
+  context 'when part of a session' do
+    let(:test) { RequirementsSuite::Suite.groups.last.tests.first }
+    let(:session) { repo_create(:test_session, test_suite_id: RequirementsSuite::Suite.id) }
+    let(:suite_requirement_ids) do
+      Inferno::Repositories::Requirements.new
+        .requirements_for_suite(session.test_suite_id, session.id)
+        .map(&:id)
+    end
+
+    it 'excludes requirements which not in the suite requirement sets' do
+      serialized_test = JSON.parse(described_class.render(test, suite_requirement_ids:))
+
+      expect(serialized_test['verifies_requirements']).to eq(['sample-criteria-proposal@6'])
+    end
+  end
 end

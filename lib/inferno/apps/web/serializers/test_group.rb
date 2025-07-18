@@ -1,3 +1,5 @@
+require_relative 'hash_value_extractor'
+require_relative 'requirements_filtering_extractor'
 require_relative 'test'
 
 module Inferno
@@ -21,18 +23,20 @@ module Inferno
         end
         field :test_groups do |group, options|
           suite_options = options[:suite_options]
-          TestGroup.render_as_hash(group.groups(suite_options), suite_options:)
+          suite_requirement_ids = options[:suite_requirement_ids]
+          TestGroup.render_as_hash(group.groups(suite_options), suite_options:, suite_requirement_ids:)
         end
         field :tests do |group, options|
           suite_options = options[:suite_options]
-          Test.render_as_hash(group.tests(suite_options), suite_options:)
+          suite_requirement_ids = options[:suite_requirement_ids]
+          Test.render_as_hash(group.tests(suite_options), suite_options:, suite_requirement_ids:)
         end
         field :inputs do |group, options|
           suite_options = options[:suite_options]
           Input.render_as_hash(group.available_inputs(suite_options).values)
         end
         field :output_definitions, name: :outputs, extractor: HashValueExtractor
-        field :verifies_requirements, if: :field_present?
+        field :verifies_requirements, if: :field_present?, extractor: RequirementsFilteringExtractor
       end
     end
   end
