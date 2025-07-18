@@ -17,6 +17,8 @@ module RequirementsSuite
       }
     )
 
+    verifies_requirements 'sample-criteria-proposal-5@3'
+
     group do
       title 'Group 1'
       group do
@@ -68,6 +70,20 @@ module RequirementsSuite
 
       test do
         title 'Requirement 7'
+        run { pass }
+      end
+    end
+
+    group do
+      title 'Requirements not in requirement sets'
+
+      verifies_requirements 'sample-criteria-proposal-5@2'
+
+      test do
+        title 'Requirement 6'
+
+        verifies_requirements 'sample-criteria-proposal@6', 'sample-criteria-proposal-5@1'
+
         run { pass }
       end
     end
