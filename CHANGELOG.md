@@ -1,3 +1,11 @@
+## 1.0.0
+* FI-3815: Add rspec enhancements to `inferno new` template by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/719
+* FI-4133: Update test suite pages by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/724
+* FI-4226: Update front end dependencies by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/725
+* Fix publish template script by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/723
+* FI-2596: Provide Inputs at Session Creation by @vanessuniq in https://github.com/inferno-framework/inferno-core/pull/726
+* FI-4242: Filter runnable requirements in serializers by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/727
+
 ## 0.6.17
 * FI-4158: Fix Auth Info inputs not setting presets by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/717
 * FI-4175: Revert not tested requirements to simple view by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/718
