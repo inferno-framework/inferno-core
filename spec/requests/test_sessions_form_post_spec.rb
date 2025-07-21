@@ -97,6 +97,33 @@ RSpec.describe 'POST /:test_suite_id' do
         ).to eq(input[:value])
       end
     end
+
+    it 'creates the session even when required inputs are missing' do
+      inputs = [
+        { name: 'v1_input', value: '1', type: 'text' },
+        { name: 'v2_input', value: '2', type: 'text' }
+      ]
+      form_data = inputs.flat_map do |input|
+        input.map { |k, v| ["inputs[][#{k}]", v] }
+      end
+
+      post(
+        router.path(:session_form_post, test_suite_id:),
+        URI.encode_www_form(form_data),
+        'Content-Type' => 'application/x-www-form-urlencoded'
+      )
+
+      expect(last_response.status).to eq(302)
+
+      location = last_response.headers['Location']
+      session_id = location.split('/').last
+
+      inputs.each do |input|
+        expect(
+          session_data_repo.load(test_session_id: session_id, name: input[:name])
+        ).to eq(input[:value])
+      end
+    end
   end
 
   context 'with invalid params' do
@@ -116,25 +143,6 @@ RSpec.describe 'POST /:test_suite_id' do
       )
 
       expect(last_response.status).to eq(422)
-    end
-
-    it 'returns a 422 when missing required inputs' do
-      inputs = [
-        { name: 'v1_input', value: '1', type: 'text' },
-        { name: 'v2_input', value: '2', type: 'text' }
-      ]
-      form_data = inputs.flat_map do |input|
-        input.map { |k, v| ["inputs[][#{k}]", v] }
-      end
-
-      post(
-        router.path(:session_form_post, test_suite_id: 'options'),
-        URI.encode_www_form(form_data),
-        'Content-Type' => 'application/x-www-form-urlencoded'
-      )
-
-      expect(last_response.status).to eq(422)
-      expect(parsed_body['errors']).to match(/Missing the following required inputs/)
     end
   end
 end

@@ -40,11 +40,15 @@ module Inferno
           inputs = req.params[:inputs]
 
           if inputs.present?
-            verify_runnable(
-              test_suite,
-              inputs,
-              session.suite_options
-            )
+            begin
+              verify_runnable(
+                test_suite,
+                inputs,
+                session.suite_options
+              )
+            rescue Inferno::Exceptions::RequiredInputsNotFound => e
+              Application['logger'].info("#{e.message}. Can be added later at test run creation.")
+            end
 
             params.merge!(inputs:, test_session_id: session.id)
 
@@ -54,7 +58,7 @@ module Inferno
           end
 
           res.redirect_to "#{Inferno::Application['base_url']}/#{test_suite_id}/#{session.id}"
-        rescue Inferno::Exceptions::RequiredInputsNotFound, Inferno::Exceptions::NotUserRunnableException => e
+        rescue Inferno::Exceptions::NotUserRunnableException => e
           halt 422, { errors: e.message }.to_json
         rescue StandardError => e
           Application['logger'].error(e.full_message)
