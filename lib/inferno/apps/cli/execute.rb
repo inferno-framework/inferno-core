@@ -115,7 +115,7 @@ module Inferno
           test_session.suite_options
         )
 
-        persist_inputs(session_data_repo, create_params(test_session, suite), test_run)
+        persist_inputs(session_data_repo, create_params(test_session, suite), runnable)
 
         dispatch_job(test_run)
       end
