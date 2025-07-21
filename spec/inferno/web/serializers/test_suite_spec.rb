@@ -101,4 +101,20 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
 
     expect(serialized_suite['requirement_sets'].length).to eq(2)
   end
+
+  context 'when part of a session' do
+    let(:suite) { RequirementsSuite::Suite }
+    let(:session) { repo_create(:test_session, test_suite_id: suite.id) }
+    let(:suite_requirement_ids) do
+      Inferno::Repositories::Requirements.new
+        .requirements_for_suite(session.test_suite_id, session.id)
+        .map(&:id)
+    end
+
+    it 'excludes requirements which not in the suite requirement sets' do
+      serialized_suite = JSON.parse(described_class.render(suite, suite_requirement_ids:, view: :full))
+
+      expect(serialized_suite['verifies_requirements']).to eq([])
+    end
+  end
 end

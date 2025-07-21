@@ -82,4 +82,20 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
     expect(recieved_groups).to eq(expected_groups)
     expect(serialized_group['test_count']).to eq(4)
   end
+
+  context 'when part of a session' do
+    let(:group) { RequirementsSuite::Suite.groups.last }
+    let(:session) { repo_create(:test_session, test_suite_id: RequirementsSuite::Suite.id) }
+    let(:suite_requirement_ids) do
+      Inferno::Repositories::Requirements.new
+        .requirements_for_suite(session.test_suite_id, session.id)
+        .map(&:id)
+    end
+
+    it 'excludes requirements which not in the suite requirement sets' do
+      serialized_group = JSON.parse(described_class.render(group, suite_requirement_ids:))
+
+      expect(serialized_group['verifies_requirements']).to eq([])
+    end
+  end
 end
