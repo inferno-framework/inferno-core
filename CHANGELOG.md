@@ -1,3 +1,6 @@
+## 1.0.2
+* Add css to gemspec by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/731
+
 ## 1.0.1
 * Fix a gem publishing issue by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/729
 
