@@ -3,7 +3,6 @@ require_relative 'example_suite/patient_group'
 
 module <%= module_name %>
   class ExampleSuite < Inferno::TestSuite
-
     id :<%= test_suite_id %>
     title '<%= title_name %>'
     short_title '<%= title_name %>'
