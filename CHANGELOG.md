@@ -1,3 +1,6 @@
+## 1.0.1
+* Fix a gem publishing issue by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/729
+
 ## 1.0.0
 * FI-3815: Add rspec enhancements to `inferno new` template by @Shaumik-Ashraf in https://github.com/inferno-framework/inferno-core/pull/719
 * FI-4133: Update test suite pages by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/724
