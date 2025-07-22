@@ -1,3 +1,6 @@
+## 1.0.3
+* FI-4252: Use a temporary redirect for root test kit page by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/733
+
 ## 1.0.2
 * Add css to gemspec by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/731
 
