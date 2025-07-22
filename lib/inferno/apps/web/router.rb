@@ -79,7 +79,7 @@ module Inferno
             local_test_kit = Inferno::Repositories::TestKits.new.local_test_kit
             if local_test_kit.present?
               base = Inferno::Application['base_path'].present? ? "/#{Inferno::Application['base_path']}" : ''
-              [301, { 'Location' => "#{base}/#{local_test_kit.url_fragment}" }, []]
+              [302, { 'Location' => "#{base}/#{local_test_kit.url_fragment}" }, []]
             else
               CLIENT_PAGE_RESPONSE.call(env)
             end
