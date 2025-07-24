@@ -147,6 +147,12 @@ GET http://localhost:4567/inferno/api/test_sessions/TEST_SESSION_ID/results
 ## Development in a Ruby console
 To get to an interactive console, run `bundle exec bin/inferno console`
 
+## Updating the FHIR Resource Validator
+Inferno relies on a java service to validate FHIR resources. [The validator
+directory](https://github.com/inferno-framework/inferno-core/tree/main/validator)
+contains the Dockerfile used to build this validator and instructions for
+updating it.
+
 ## Documentation
 Inferno Core documentation has primarily moved to the
 [Inferno Framework documentation site](https://github.com/inferno-framework/inferno-framework.github.io/).
