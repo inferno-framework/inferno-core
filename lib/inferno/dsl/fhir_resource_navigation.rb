@@ -2,16 +2,21 @@ require_relative 'primitive_type'
 
 module Inferno
   module DSL
-    # The FHIRResourceNavigation module is used to pick values from a FHIR resource, based on a profile.
-    # Originally intended for use for verifying the presence of Must Support elements on a resource.
-    # This module expects pre-processed metadata defining the elements of the profile
-    #  to be present in the attribute `metadata` in the including class.
+    # The FHIRResourceNavigation module is used to pick values from a FHIR
+    # resource, based on a profile. Originally intended for use for verifying
+    # the presence of Must Support elements on a resource and finding values to
+    # use for search parameters. The methods in this module related to slices
+    # expects pre-processed metadata defining the elements of the profile to be
+    # present in the attribute `metadata` in the including class.
+    #
     # @see Inferno::DSL::MustSupportMetadataExtractor
     module FHIRResourceNavigation
       DAR_EXTENSION_URL = 'http://hl7.org/fhir/StructureDefinition/data-absent-reason'.freeze
       PRIMITIVE_DATA_TYPES = FHIR::PRIMITIVES.keys
 
-      # Get a value from the given FHIR element(s) by walking the given path through the element.
+      # Get a value from the given FHIR element(s) by walking the given path
+      # through the element.
+      #
       # @param elements [FHIR::Model, Array<FHIR::Model>]
       # @param path [String]
       # @return [Array<FHIR::Model>]
@@ -29,9 +34,11 @@ module Inferno
         end.compact
       end
 
-      # Get a value from the given FHIR element(s), by navigating through the resource to the given path.
-      # Fields with a DataAbsentReason extension present may be selected if include_dar is true.
-      # To filter the resulting elements, a block may be passed in.
+      # Get a value from the given FHIR element(s), by navigating through the
+      # resource to the given path. Fields with a DataAbsentReason extension
+      # present will be excluded unless include_dar is true. To filter the
+      # resulting elements, a block may be passed in.
+      #
       # @param given_element [FHIR::Model, Array<FHIR::Model>]
       # @param path [String]
       # @param include_dar [Boolean]
