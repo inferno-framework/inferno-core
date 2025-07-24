@@ -1,6 +1,8 @@
+## 1.0.5
+* FI-4190: Add requirements spreadsheet template by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/735
+
 ## 1.0.4
 * FI-4253: Fix test suite API performance issue by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/736
-
 
 ## 1.0.3
 * FI-4252: Use a temporary redirect for root test kit page by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/733
