@@ -41,7 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sequel', '~> 5.42.0'
   spec.add_dependency 'sidekiq', '~> 7.2.4'
   spec.add_dependency 'sqlite3', '~> 1.4'
-  spec.add_dependency 'thor', '~> 1.2.1'
+  spec.add_dependency 'thor', '~> 1.4'
   spec.add_dependency 'tty-markdown', '~> 0.7.1'
   spec.required_ruby_version = Gem::Requirement.new('~> 3.3.6')
   spec.metadata['homepage_uri'] = spec.homepage
