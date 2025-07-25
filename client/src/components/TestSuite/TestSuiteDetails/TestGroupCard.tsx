@@ -23,9 +23,9 @@ interface TestGroupCardProps {
 
 const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, view }) => {
   const { classes } = useStyles();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
 
-  const buttonText = `${viewOnly ? 'View' : 'Run'}${runnable.run_as_group ? '' : ' All'}${viewOnly ? ' Inputs' : ' Tests'}`;
+  const buttonText = `${readOnly ? 'View' : 'Run'}${runnable.run_as_group ? '' : ' All'}${readOnly ? ' Inputs' : ' Tests'}`;
 
   // render markdown once on mount - it's too slow with re-rendering
   const description = useMemo(() => {

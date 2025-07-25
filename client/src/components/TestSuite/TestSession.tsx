@@ -76,7 +76,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
   const currentRunnables = useTestSessionStore((state) => state.currentRunnables);
   const setCurrentRunnables = useTestSessionStore((state) => state.setCurrentRunnables);
   const setTestRunId = useTestSessionStore((state) => state.setTestRunId);
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
 
   const [inputModalVisible, setInputModalVisible] = React.useState(false);
   const [waitingTestId, setWaitingTestId] = React.useState<string | null>();
@@ -287,7 +287,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
       createTestRun(runnableType, runnableId, runnable?.inputs);
     } else if (runnable?.inputs && runnable.inputs.length > 0) {
       showInputsModal(runnable, runnableType);
-    } else if (viewOnly) {
+    } else if (readOnly) {
       enqueueSnackbar(`${runnable?.title} has no inputs`, { variant: 'info' });
     } else {
       createTestRun(runnableType, runnableId, []);

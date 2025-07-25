@@ -20,8 +20,8 @@ const RequirementContent: FC<RequirementContentProps> = ({
   requirementToTests,
 }) => {
   const { classes } = useStyles();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
-  const viewOnlyUrl = viewOnly ? '/view' : '';
+  const readOnly = useTestSessionStore((state) => state.readOnly);
+  const readOnlyUrl = readOnly ? '/view' : '';
 
   // Reduce list of requirements into map of specification -> url -> list of requirements
   const requirementsByUrl = requirements.reduce(
@@ -80,7 +80,7 @@ const RequirementContent: FC<RequirementContentProps> = ({
               {testIds?.map((id, i) => {
                 return (
                   <span key={id}>
-                    <Link variant="body2" href={`#${id}${viewOnlyUrl}`} color="secondary">
+                    <Link variant="body2" href={`#${id}${readOnlyUrl}`} color="secondary">
                       {id}
                     </Link>
                     {i !== testIds.length - 1 ? ', ' : ''} {/* Separate values with commas */}

@@ -62,7 +62,7 @@ const InputsModal: FC<InputsModalProps> = ({
   createTestRun,
 }) => {
   const { classes } = useStyles();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
   const [inputsEdited, setInputsEdited] = React.useState<boolean>(false);
   const [inputsMap, setInputsMap] = React.useState<Map<string, unknown>>(new Map());
   const [inputType, setInputType] = React.useState<string>('Field');
@@ -176,9 +176,9 @@ const InputsModal: FC<InputsModalProps> = ({
         <Box display="flex" justifyContent="space-between">
           <Typography component="h1" variant="h6">
             {runnable?.title || 'Test'}
-            {viewOnly ? ' (View Only)' : ''}
+            {readOnly ? ' (Read Only)' : ''}
           </Typography>
-          <CustomTooltip title={`Cancel${viewOnly ? '' : ' - Inputs will be lost'}`}>
+          <CustomTooltip title={`Cancel${readOnly ? '' : ' - Inputs will be lost'}`}>
             <IconButton
               onClick={() => closeModal()}
               aria-label="cancel"
@@ -209,7 +209,7 @@ const InputsModal: FC<InputsModalProps> = ({
                 value={serialInput}
                 error={invalidInput}
                 label={invalidInput ? `ERROR: INVALID ${inputType}` : inputType}
-                disabled={viewOnly}
+                disabled={readOnly}
                 slotProps={{
                   input: {
                     classes: {
@@ -272,7 +272,7 @@ const InputsModal: FC<InputsModalProps> = ({
             variant="contained"
             disableElevation
             onClick={submitClicked}
-            disabled={missingRequiredInput || invalidInput || viewOnly}
+            disabled={missingRequiredInput || invalidInput || readOnly}
             sx={{ fontWeight: 'bold' }}
           >
             Submit

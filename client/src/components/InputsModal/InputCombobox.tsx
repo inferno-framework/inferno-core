@@ -23,7 +23,7 @@ const InputCombobox: FC<InputComboboxProps> = ({
   disableClear,
 }) => {
   const { classes } = useStyles();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
 
   const getDefaultValue = (): InputOption | null => {
     const options = input.options?.list_options;
@@ -43,8 +43,8 @@ const InputCombobox: FC<InputComboboxProps> = ({
         component="fieldset"
         id={`input${index}_control`}
         tabIndex={0}
-        disabled={input.locked || viewOnly}
-        aria-disabled={input.locked || viewOnly}
+        disabled={input.locked || readOnly}
+        aria-disabled={input.locked || readOnly}
         required={!input.optional}
         fullWidth
         className={classes.inputField}
@@ -62,8 +62,8 @@ const InputCombobox: FC<InputComboboxProps> = ({
           options={input.options?.list_options || []}
           defaultValue={getDefaultValue()}
           tabIndex={0}
-          disabled={input.locked || viewOnly}
-          aria-disabled={input.locked || viewOnly}
+          disabled={input.locked || readOnly}
+          aria-disabled={input.locked || readOnly}
           disableClearable={disableClear}
           isOptionEqualToValue={(option, value) => option.value === value.value}
           renderInput={(params) => (

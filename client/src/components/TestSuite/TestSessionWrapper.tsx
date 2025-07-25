@@ -32,8 +32,8 @@ const TestSessionWrapper: FC<unknown> = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const testSuites = useAppStore((state) => state.testSuites);
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
-  const setViewOnlySession = useTestSessionStore((state) => state.setViewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
+  const setReadOnlySession = useTestSessionStore((state) => state.setReadOnly);
   const [testRun, setTestRun] = React.useState<TestRun | null>(null);
   const [testSession, setTestSession] = React.useState<TestSession>();
   const [testResults, setTestResults] = React.useState<Result[]>();
@@ -46,10 +46,10 @@ const TestSessionWrapper: FC<unknown> = () => {
   const [coreVersion, setCoreVersion] = React.useState<string>('');
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
-  // Set view-only session status based on URL ending
+  // Set read-only session status based on URL ending
   const locationHash = useLocation().hash;
   const splitLocation = locationHash.replace('#', '').split('/');
-  const viewOnlyUrl = viewOnly ? '/view' : '';
+  const readOnlyUrl = readOnly ? '/view' : '';
 
   useEffect(() => {
     getCoreVersion()
@@ -59,13 +59,13 @@ const TestSessionWrapper: FC<unknown> = () => {
       .catch(() => {
         setCoreVersion('');
       });
-    setViewOnlySession(splitLocation.includes('view'));
+    setReadOnlySession(splitLocation.includes('view'));
   }, []);
 
   useEffect(() => {
     // If navigating to a test session URL with no suite ID value, add suite ID
     if (!locationHash && testSession) {
-      void navigate(`#${testSession?.test_suite_id}${viewOnlyUrl}`);
+      void navigate(`#${testSession?.test_suite_id}${readOnlyUrl}`);
     }
   }, [testSession]);
 

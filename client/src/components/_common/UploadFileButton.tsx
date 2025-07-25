@@ -9,7 +9,7 @@ export interface UploadFileButtonProps {
 }
 
 const UploadFileButton: FC<UploadFileButtonProps> = ({ onUpload }) => {
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
   const [fileName, setFileName] = React.useState<string>('');
 
   const uploadFile = (e: ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +46,7 @@ const UploadFileButton: FC<UploadFileButtonProps> = ({ onUpload }) => {
         component="label"
         color="secondary"
         aria-label="file-upload"
-        disabled={viewOnly}
+        disabled={readOnly}
         startIcon={<FileUploadOutlined />}
         disableElevation
         sx={{ flexShrink: 0 }}

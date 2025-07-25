@@ -13,7 +13,7 @@ interface NavigableGroupListItemProps {
 
 const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) => {
   const { classes } = useStyles();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
 
   return (
     <>
@@ -36,7 +36,7 @@ const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) 
                   <Link
                     color="secondary.dark"
                     fontWeight="bold"
-                    href={`${location.pathname}#${testGroup.id}${viewOnly ? '/view' : ''}`}
+                    href={`${location.pathname}#${testGroup.id}${readOnly ? '/view' : ''}`}
                     data-testid="navigable-group-item"
                   >
                     {testGroup.title}

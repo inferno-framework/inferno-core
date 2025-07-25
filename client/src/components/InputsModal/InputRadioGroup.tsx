@@ -23,7 +23,7 @@ export interface InputRadioGroupProps {
 
 const InputRadioGroup: FC<InputRadioGroupProps> = ({ input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
   const firstOptionValue =
     input.options?.list_options && input.options?.list_options?.length > 0
       ? input.options?.list_options[0]?.value
@@ -43,8 +43,8 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({ input, index, inputsMap, se
         component="fieldset"
         id={`input${index}_control`}
         tabIndex={0}
-        disabled={input.locked || viewOnly}
-        aria-disabled={input.locked || viewOnly}
+        disabled={input.locked || readOnly}
+        aria-disabled={input.locked || readOnly}
         fullWidth
         className={classes.inputField}
       >
@@ -73,7 +73,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({ input, index, inputsMap, se
               label={option.label}
               key={`radio-button-${i}`}
               tabIndex={0}
-              aria-disabled={input.locked || viewOnly}
+              aria-disabled={input.locked || readOnly}
             />
           ))}
         </RadioGroup>

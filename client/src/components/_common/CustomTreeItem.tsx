@@ -45,8 +45,8 @@ const CustomContent = React.forwardRef(function CustomContent(
   } = useTreeItemState(itemId);
 
   const navigate = useNavigate();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
-  const viewOnlyUrl = viewOnly ? '/view' : '';
+  const readOnly = useTestSessionStore((state) => state.readOnly);
+  const readOnlyUrl = readOnly ? '/view' : '';
 
   const icon = iconProp || expansionIcon || displayIcon;
 
@@ -75,7 +75,7 @@ const CustomContent = React.forwardRef(function CustomContent(
     event: React.MouseEvent<HTMLDivElement, MouseEvent> | React.KeyboardEvent<HTMLDivElement>,
   ) => {
     handleSelection(event as React.MouseEvent<HTMLDivElement, MouseEvent>);
-    if (testId) void navigate(`#${testId}${viewOnlyUrl}`);
+    if (testId) void navigate(`#${testId}${readOnlyUrl}`);
   };
 
   return (

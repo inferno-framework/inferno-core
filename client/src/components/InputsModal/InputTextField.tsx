@@ -16,7 +16,7 @@ export interface InputTextFieldProps {
 
 const InputTextField: FC<InputTextFieldProps> = ({ input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
   const [hasBeenModified, setHasBeenModified] = React.useState(false);
 
   const isMissingInput = hasBeenModified && !input.optional && !inputsMap.get(input.name);
@@ -27,8 +27,8 @@ const InputTextField: FC<InputTextFieldProps> = ({ input, index, inputsMap, setI
         component="fieldset"
         id={`input${index}_control`}
         tabIndex={0}
-        disabled={input.locked || viewOnly}
-        aria-disabled={input.locked || viewOnly}
+        disabled={input.locked || readOnly}
+        aria-disabled={input.locked || readOnly}
         required={!input.optional}
         error={isMissingInput}
         fullWidth
@@ -44,8 +44,8 @@ const InputTextField: FC<InputTextFieldProps> = ({ input, index, inputsMap, setI
         )}
         <Input
           tabIndex={0}
-          disabled={input.locked || viewOnly}
-          aria-disabled={input.locked || viewOnly}
+          disabled={input.locked || readOnly}
+          aria-disabled={input.locked || readOnly}
           required={!input.optional}
           error={isMissingInput}
           id={`input${index}_text`}
