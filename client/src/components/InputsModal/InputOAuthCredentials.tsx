@@ -8,7 +8,6 @@ import {
   InputLabel,
   List,
   ListItem,
-  ListItemButton,
   Typography,
 } from '@mui/material';
 import Markdown from 'react-markdown';
@@ -122,12 +121,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     );
 
     return (
-      <ListItemButton
-        disabled={field.locked || viewOnly}
-        key={field.name}
-        component="li"
-        className={classes.inputField}
-      >
+      <ListItem key={field.name} component="li" className={classes.inputField}>
         <FormControl
           component="fieldset"
           id={`input${index}_input`}
@@ -166,7 +160,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
             onChange={(event) => updateInputsMap(field, event.target.value)}
           />
         </FormControl>
-      </ListItemButton>
+      </ListItem>
     );
   };
 

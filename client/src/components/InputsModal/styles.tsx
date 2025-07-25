@@ -16,9 +16,6 @@ export default makeStyles()((theme: Theme) => ({
     '& > label.Mui-focused': {
       color: theme.palette.secondary.main,
     },
-    '& > label.Mui-disabled': {
-      color: theme.palette.common.gray,
-    },
     '& > label.Mui-error': {
       color: theme.palette.error.main,
     },
