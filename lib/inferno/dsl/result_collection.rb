@@ -30,7 +30,6 @@ module Inferno
     #
     #   # Get optional results
     #   optional_results = result_collection.optional_results
-    # @private
     class ResultCollection
       include Enumerable
 
@@ -40,6 +39,12 @@ module Inferno
         @results = results
       end
 
+      # If given an integer, returns the result at that index. If given a string
+      # or symbol, it will return the result for the runnable whose id matches
+      # the provided string/symbol.
+      #
+      # @param key [Integer, String, Symbol]
+      # @return [Inferno::DSL::Result]
       def [](key)
         key.is_a?(Integer) ? results[key] : lookup_by_runnable_id(key)
       end
@@ -56,10 +61,16 @@ module Inferno
         self
       end
 
+      # Returns the results for required runnables
+      #
+      # @return Array<Inferno::Entities::Result>
       def required_results
         results.select(&:required?)
       end
 
+      # Returns the results for optional runnables
+      #
+      # @return Array<Inferno::Entities::Result>
       def optional_results
         results.select(&:optional?)
       end
