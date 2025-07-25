@@ -1,4 +1,5 @@
-require_relative 'result_collection'
+require_relative 'dsl/result_collection'
+
 module Inferno
   # @private
   # This class takes an array of results and determines the overall result. This

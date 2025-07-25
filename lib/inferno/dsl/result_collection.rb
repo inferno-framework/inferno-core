@@ -12,7 +12,7 @@ module Inferno
     #     Result.new(test_group_id: 'group_id3', result: 'pass')
     #   ]
     #
-    #   result_collection = Inferno::ResultCollection.new(results)
+    #   result_collection = Inferno::DSL::ResultCollection.new(results)
     #
     #   # Access by index
     #   result = result_collection[0]
@@ -71,4 +71,7 @@ module Inferno
       end
     end
   end
+
+  # For backwards compatibility
+  ResultCollection = DSL::ResultCollection
 end

@@ -1,6 +1,6 @@
 require_relative '../dsl'
 require_relative '../repositories/test_groups'
-require_relative '../result_collection'
+require_relative '../dsl/result_collection'
 
 module Inferno
   module Entities
@@ -21,7 +21,7 @@ module Inferno
 
       # @private
       def initialize
-        @results = Inferno::ResultCollection.new
+        @results = Inferno::DSL::ResultCollection.new
       end
 
       # @private

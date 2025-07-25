@@ -6,7 +6,7 @@ require_relative '../dsl/messages'
 require_relative '../dsl/links'
 require_relative '../repositories/test_groups'
 require_relative '../repositories/test_suites'
-require_relative '../result_collection'
+require_relative '../dsl/result_collection'
 require_relative '../dsl/short_id_manager'
 
 module Inferno
@@ -33,7 +33,7 @@ module Inferno
 
       # @private
       def initialize
-        @results = Inferno::ResultCollection.new
+        @results = Inferno::DSL::ResultCollection.new
       end
 
       class << self
