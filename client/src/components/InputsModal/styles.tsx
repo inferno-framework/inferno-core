@@ -49,10 +49,6 @@ export default makeStyles()((theme: Theme) => ({
   },
   authCard: {
     width: '100%',
-    borderColor: theme.palette.common.gray,
-    '& :focus-within': {
-      borderColor: theme.palette.secondary.main,
-    },
   },
   serialInput: {
     height: 'max-content',

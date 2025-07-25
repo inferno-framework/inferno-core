@@ -13,6 +13,7 @@ import FieldLabel from '~/components/InputsModal/FieldLabel';
 import InputFields from '~/components/InputsModal/InputFields';
 import { isJsonString } from '~/components/InputsModal/InputHelpers';
 import { useTestSessionStore } from '~/store/testSession';
+import lightTheme from '~/styles/theme';
 import useStyles from '../styles';
 
 export interface InputAuthProps {
@@ -173,7 +174,12 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
 
   return (
     <ListItem>
-      <Card variant="outlined" tabIndex={0} className={classes.authCard}>
+      <Card
+        variant="outlined"
+        tabIndex={0}
+        className={classes.authCard}
+        sx={input.locked || viewOnly ? {} : { borderColor: lightTheme.palette.common.gray }}
+      >
         <CardContent>
           <InputLabel
             tabIndex={0}

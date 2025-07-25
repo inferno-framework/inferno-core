@@ -17,6 +17,7 @@ import { OAuthCredentials, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from '~/components/InputsModal/FieldLabel';
 import RequiredInputWarning from '~/components/InputsModal/RequiredInputWarning';
 import { useTestSessionStore } from '~/store/testSession';
+import lightTheme from '~/styles/theme';
 import useStyles from './styles';
 
 export interface InputOAuthCredentialsProps {
@@ -171,7 +172,11 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
 
   return (
     <ListItem>
-      <Card variant="outlined" className={classes.authCard}>
+      <Card
+        variant="outlined"
+        className={classes.authCard}
+        sx={input.locked || viewOnly ? {} : { borderColor: lightTheme.palette.common.gray }}
+      >
         <CardContent>
           <InputLabel
             required={!input.optional}
