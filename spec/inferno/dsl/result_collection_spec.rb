@@ -1,6 +1,6 @@
-require_relative '../../lib/inferno/result_collection'
+require_relative '../../../lib/inferno/dsl/result_collection'
 
-RSpec.describe Inferno::ResultCollection do
+RSpec.describe Inferno::DSL::ResultCollection do
   let(:runner) { Inferno::TestRunner.new(test_session:, test_run:) }
   let(:test_session) { repo_create(:test_session, test_suite_id: 'custom_result_suite') }
   let(:results_repo) { Inferno::Repositories::Results.new }
