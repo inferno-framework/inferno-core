@@ -86,7 +86,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
 }) => {
   const { classes } = useStyles();
   const footerHeight = useAppStore((state) => state.footerHeight);
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
   const cancellable = testRun?.status !== 'cancelling' && testRun?.status !== 'done';
   const statusIndicator = StatusIndicator(testRun?.status);
   const testCount = testRun?.test_count || 0;
@@ -137,7 +137,7 @@ const TestRunProgressBar: FC<TestRunProgressBarProps> = ({
         <CustomTooltip title="Cancel Test Run">
           <IconButton
             aria-label="cancel"
-            disabled={!cancellable || viewOnly}
+            disabled={!cancellable || readOnly}
             color="primary"
             onClick={cancelTestRun}
             className={classes.cancelButton}

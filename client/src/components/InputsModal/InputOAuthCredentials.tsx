@@ -33,7 +33,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
   const [hasBeenModified, setHasBeenModified] = React.useState({});
 
   // Convert OAuth string to Object
@@ -122,7 +122,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
 
     return (
       <ListItemButton
-        disabled={field.locked || viewOnly}
+        disabled={field.locked || readOnly}
         key={field.name}
         component="li"
         className={classes.inputField}
@@ -131,8 +131,8 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           component="fieldset"
           id={`input${index}_input`}
           tabIndex={0}
-          disabled={input.locked || viewOnly}
-          aria-disabled={input.locked || viewOnly}
+          disabled={input.locked || readOnly}
+          aria-disabled={input.locked || readOnly}
           required={!input.optional}
           error={getIsMissingInput(field)}
           fullWidth
@@ -148,8 +148,8 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           )}
           <Input
             tabIndex={0}
-            disabled={input.locked || viewOnly}
-            aria-disabled={input.locked || viewOnly}
+            disabled={input.locked || readOnly}
+            aria-disabled={input.locked || readOnly}
             required={!field.optional}
             error={getIsMissingInput(field)}
             id={`input${index}_${field.name}`}
@@ -176,8 +176,8 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
           <InputLabel
             required={!input.optional}
             tabIndex={0}
-            disabled={input.locked || viewOnly}
-            aria-disabled={input.locked || viewOnly}
+            disabled={input.locked || readOnly}
+            aria-disabled={input.locked || readOnly}
             className={classes.inputLabel}
           >
             <FieldLabel input={input} />
