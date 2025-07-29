@@ -22,7 +22,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
   buttonText,
 }) => {
   const currentRunnables = useTestSessionStore((state) => state.currentRunnables);
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
   const showRunButton = (runnable as TestGroup).user_runnable !== false;
   const inProgress = testRunInProgress(currentRunnables, useLocation().pathname);
 
@@ -36,7 +36,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
       onClick={() => {
         runTests(runnableType, runnable.id);
       }}
-      startIcon={viewOnly ? <Visibility /> : <PlayArrow />}
+      startIcon={readOnly ? <Visibility /> : <PlayArrow />}
       data-testid={`runButton-${runnable.id}`}
     >
       {buttonText}
@@ -109,7 +109,7 @@ const TestRunButton: FC<TestRunButtonProps> = ({
   if (!showRunButton) {
     return <></>;
   } else if (!buttonText) {
-    return viewOnly ? viewIconButton : runIconButton;
+    return readOnly ? viewIconButton : runIconButton;
   } else {
     return textButton;
   }
