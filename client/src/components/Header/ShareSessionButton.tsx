@@ -24,31 +24,31 @@ const ShareSessionButton: FC<unknown> = () => {
   const openShareMenu = Boolean(anchorEl);
 
   // Adds and removes '/view' from the URL when necessary
-  const composeUrl = (viewOnly?: boolean): string => {
-    let viewOnlyUrlEnding = location.hash;
+  const composeUrl = (readOnly?: boolean): string => {
+    let readOnlyUrlEnding = location.hash;
     // Remove trailing /
-    while (viewOnlyUrlEnding.endsWith('/')) {
-      viewOnlyUrlEnding = viewOnlyUrlEnding.slice(0, -1);
+    while (readOnlyUrlEnding.endsWith('/')) {
+      readOnlyUrlEnding = readOnlyUrlEnding.slice(0, -1);
     }
-    if (viewOnly && !viewOnlyUrlEnding.includes('/view')) {
-      viewOnlyUrlEnding += '/view';
+    if (readOnly && !readOnlyUrlEnding.includes('/view')) {
+      readOnlyUrlEnding += '/view';
     }
-    if (!viewOnly && viewOnlyUrlEnding.includes('/view')) {
-      const viewStringIndex = viewOnlyUrlEnding.indexOf('/view');
-      viewOnlyUrlEnding = viewOnlyUrlEnding.substring(0, viewStringIndex);
+    if (!readOnly && readOnlyUrlEnding.includes('/view')) {
+      const viewStringIndex = readOnlyUrlEnding.indexOf('/view');
+      readOnlyUrlEnding = readOnlyUrlEnding.substring(0, viewStringIndex);
     }
     // Adding a trailing slash causes re-render
-    return `${window.location.origin}${(window.location.pathname + '/').replace(/\/\/$/, '')}${viewOnlyUrlEnding}`;
+    return `${window.location.origin}${(window.location.pathname + '/').replace(/\/\/$/, '')}${readOnlyUrlEnding}`;
   };
 
-  const copyLink = (viewOnly?: boolean) => {
+  const copyLink = (readOnly?: boolean) => {
     handleMenuClose();
-    const url = composeUrl(viewOnly);
+    const url = composeUrl(readOnly);
     void navigator.clipboard
       .writeText(url)
       .then(() => {
         setCopySuccess({ ...copySuccess, [url]: true });
-        enqueueSnackbar(`Successfully copied ${viewOnly ? 'read-only ' : ''}session link`, {
+        enqueueSnackbar(`Successfully copied ${readOnly ? 'read-only ' : ''}session link`, {
           variant: 'success',
         });
         setTimeout(() => {

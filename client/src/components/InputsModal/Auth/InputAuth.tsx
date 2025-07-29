@@ -26,7 +26,7 @@ export interface InputAuthProps {
 
 const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInputsMap }) => {
   const { classes } = useStyles();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
   // authValues is a version of inputsMap used exclusively in this component
   const [authValues, setAuthValues] = React.useState<Map<string, unknown>>(new Map());
   const [authValuesPopulated, setAuthValuesPopulated] = React.useState<boolean>(false);
@@ -178,14 +178,14 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
         variant="outlined"
         tabIndex={0}
         className={classes.authCard}
-        sx={input.locked || viewOnly ? {} : { borderColor: lightTheme.palette.common.gray }}
+        sx={input.locked || readOnly ? {} : { borderColor: lightTheme.palette.common.gray }}
       >
         <CardContent>
           <InputLabel
             tabIndex={0}
             required={!input.optional}
-            disabled={input.locked || viewOnly}
-            aria-disabled={input.locked || viewOnly}
+            disabled={input.locked || readOnly}
+            aria-disabled={input.locked || readOnly}
             className={classes.inputLabel}
           >
             <FieldLabel input={input} />

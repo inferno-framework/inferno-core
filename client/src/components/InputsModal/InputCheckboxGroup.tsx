@@ -28,7 +28,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
   const [hasBeenModified, setHasBeenModified] = React.useState(false);
 
   const [values, setValues] = React.useState<CheckboxValues>(() => {
@@ -101,8 +101,8 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
         component="fieldset"
         id={`requirement${index}_input`}
         tabIndex={0}
-        disabled={input.locked || viewOnly}
-        aria-disabled={input.locked || viewOnly}
+        disabled={input.locked || readOnly}
+        aria-disabled={input.locked || readOnly}
         required={!input.optional}
         error={isMissingInput}
         fullWidth
@@ -125,8 +125,8 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
                   color="secondary"
                   name={option.value}
                   tabIndex={0}
-                  disabled={input.locked || !!option.locked || viewOnly}
-                  aria-disabled={input.locked || viewOnly}
+                  disabled={input.locked || !!option.locked || readOnly}
+                  aria-disabled={input.locked || readOnly}
                   checked={values[option.value as keyof CheckboxValues] || false}
                   onBlur={(e) => {
                     if (e.currentTarget === e.target) {

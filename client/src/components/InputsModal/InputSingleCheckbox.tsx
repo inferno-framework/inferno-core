@@ -21,7 +21,7 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
   setInputsMap,
 }) => {
   const { classes } = useStyles();
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
   const [hasBeenModified, setHasBeenModified] = React.useState(false);
   const [value, setValue] = React.useState<boolean>(false);
 
@@ -55,8 +55,8 @@ const InputSingleCheckbox: FC<InputSingleCheckboxProps> = ({
         component="fieldset"
         id={`input${index}_control`}
         tabIndex={0}
-        disabled={input.locked || viewOnly}
-        aria-disabled={input.locked || viewOnly}
+        disabled={input.locked || readOnly}
+        aria-disabled={input.locked || readOnly}
         required={!input.optional}
         error={isMissingInput}
         fullWidth

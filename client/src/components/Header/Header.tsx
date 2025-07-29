@@ -34,7 +34,7 @@ const Header: FC<HeaderProps> = ({
   const { classes } = useStyles();
   const headerHeight = useAppStore((state) => state.headerHeight);
   const windowIsSmall = useAppStore((state) => state.windowIsSmall);
-  const viewOnly = useTestSessionStore((state) => state.viewOnly);
+  const readOnly = useTestSessionStore((state) => state.readOnly);
   const [showHelpModal, setShowHelpModal] = React.useState(false);
 
   // Use window navigation instead of React router to trigger new page request
@@ -99,13 +99,13 @@ const Header: FC<HeaderProps> = ({
                 className={classes.homeLink}
               >
                 {suiteTitle}
-                {viewOnly ? ' (View Only)' : ''}
+                {readOnly ? ' (Read Only)' : ''}
               </RouterLink>
             </Typography>
             {suiteVersion && (
               <Typography variant="overline" className={classes.version}>
                 {`v.${suiteVersion}`}
-                {viewOnly ? ' (Read-Only Mode)' : ''}
+                {readOnly ? ' (Read-Only Mode)' : ''}
               </Typography>
             )}
           </Box>
