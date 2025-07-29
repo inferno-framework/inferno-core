@@ -8,7 +8,6 @@ import {
   InputLabel,
   List,
   ListItem,
-  ListItemButton,
   Typography,
 } from '@mui/material';
 import Markdown from 'react-markdown';
@@ -17,6 +16,7 @@ import { OAuthCredentials, TestInput } from '~/models/testSuiteModels';
 import FieldLabel from '~/components/InputsModal/FieldLabel';
 import RequiredInputWarning from '~/components/InputsModal/RequiredInputWarning';
 import { useTestSessionStore } from '~/store/testSession';
+import lightTheme from '~/styles/theme';
 import useStyles from './styles';
 
 export interface InputOAuthCredentialsProps {
@@ -121,12 +121,7 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
     );
 
     return (
-      <ListItemButton
-        disabled={field.locked || readOnly}
-        key={field.name}
-        component="li"
-        className={classes.inputField}
-      >
+      <ListItem key={field.name} component="li" className={classes.inputField}>
         <FormControl
           component="fieldset"
           id={`input${index}_input`}
@@ -165,13 +160,17 @@ const InputOAuthCredentials: FC<InputOAuthCredentialsProps> = ({
             onChange={(event) => updateInputsMap(field, event.target.value)}
           />
         </FormControl>
-      </ListItemButton>
+      </ListItem>
     );
   };
 
   return (
     <ListItem>
-      <Card variant="outlined" className={classes.authCard}>
+      <Card
+        variant="outlined"
+        className={classes.authCard}
+        sx={input.locked || readOnly ? {} : { borderColor: lightTheme.palette.common.gray }}
+      >
         <CardContent>
           <InputLabel
             required={!input.optional}

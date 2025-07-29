@@ -16,9 +16,6 @@ export default makeStyles()((theme: Theme) => ({
     '& > label.Mui-focused': {
       color: theme.palette.secondary.main,
     },
-    '& > label.Mui-disabled': {
-      color: theme.palette.common.gray,
-    },
     '& > label.Mui-error': {
       color: theme.palette.error.main,
     },
@@ -49,10 +46,6 @@ export default makeStyles()((theme: Theme) => ({
   },
   authCard: {
     width: '100%',
-    borderColor: theme.palette.common.gray,
-    '& :focus-within': {
-      borderColor: theme.palette.secondary.main,
-    },
   },
   serialInput: {
     height: 'max-content',
