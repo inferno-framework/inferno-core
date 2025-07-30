@@ -83,8 +83,6 @@ module <%= module_name %>
           optional: true
 
     # All FHIR requests in this suite will use this FHIR client
-
-    # All FHIR requests in this suite will use this FHIR client
     fhir_client do
       url :url
       auth_info :credentials
