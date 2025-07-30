@@ -1,3 +1,10 @@
+## 1.0.6
+* FI-4235: Add link to validator in readme by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/739
+* FI-4258: Update fhir resource navigation by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/740
+* FI-4259: ResultCollection clean up by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/741
+* FI-3819: Rename view only to read only by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/743
+* FI-3819: Update view only color by @AlyssaWang in https://github.com/inferno-framework/inferno-core/pull/742
+
 ## 1.0.5
 * FI-4190: Add requirements spreadsheet template by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/735
 
