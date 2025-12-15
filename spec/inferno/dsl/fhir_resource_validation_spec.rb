@@ -165,6 +165,19 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
                       html: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
                       display: "URL value 'http://example.com/fhir/StructureDefinition/patient' does not resolve",
                       error: true
+                    },
+                    {
+                      source: 'InstanceValidator',
+                      line: 6,
+                      col: 6,
+                      location: 'Patient.meta.profile[0]',
+                      message: "No definition could be found for URL value 'http://example.com/fhir/StructureDefinition/another-profile'",
+                      messageId: 'Profile_Not_Found',
+                      type: 'CODEINVALID',
+                      level: 'ERROR',
+                      html: "No definition could be found for URL value 'http://example.com/fhir/StructureDefinition/another-profile'",
+                      display: "No definition could be found for URL value 'http://example.com/fhir/StructureDefinition/another-profile'",
+                      error: true
                     }
                   ]
                 }
@@ -187,16 +200,21 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
               expect(runnable.messages.first[:message]).to start_with("#{resource2.resourceType}/#{resource2.id}:")
             end
 
-            it 'excludes the unresolved url message' do
+            it 'excludes both types of unresolved url messages' do
               result = validator.resource_is_valid?(resource2, profile_url, runnable)
 
               expect(result).to be(false)
+              # Verify both types of unresolved URL messages are filtered out
               expect(runnable.messages)
                 .to all(
                   satisfy do |message|
-                    !message[:message].match?(/\A\S+: [^:]+: URL value '.*' does not resolve/)
+                    !message[:message].match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) &&
+                      !message[:message].match?(/\A\S+: [^:]+: No definition could be found for URL value '.*'/)
                   end
                 )
+              # Verify only the non-URL-related error message remains
+              expect(runnable.messages.length).to eq(1)
+              expect(runnable.messages.first[:message]).to include('Identifier.system must be an absolute reference')
             end
           end
 
