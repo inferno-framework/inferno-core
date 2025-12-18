@@ -210,7 +210,10 @@ module Inferno
 
         # @private
         def exclude_unresolved_url_message
-          proc { |message| message.message.match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) }
+          proc do |message|
+            message.message.match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) ||
+              message.message.match?(/\A\S+: [^:]+: No definition could be found for URL value '.*'/)
+          end
         end
 
         # @private
