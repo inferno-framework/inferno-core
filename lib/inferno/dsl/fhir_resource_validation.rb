@@ -326,7 +326,8 @@ module Inferno
             @session_id = response_hash['sessionId']
           end
 
-          # Process issues with slice info consideration
+          # Preprocess issues using slice validation details, combining slice-related reference errors
+          # and filtering out suppressible/internal slice-detail messages before building the outcome.
           raw_issues = process_issues_with_slice_info(response_hash.dig('outcomes', 0, 'issues') || [])
           # Convert raw validator format to FHIR OperationOutcome.issue format
           issues = raw_issues.map do |i|
