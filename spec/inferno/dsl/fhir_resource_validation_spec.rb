@@ -482,4 +482,617 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       expect(v2_validator.url).to eq('https://example.com/v2_validator')
     end
   end
+
+  describe 'slice info processing' do
+    let(:resource_string) do
+      {
+        resourceType: 'Coverage',
+        id: '6b28604e-5574-46d9-8f7a-68055baa55ab'
+      }.to_json
+    end
+
+    let(:coverage_resource) { FHIR.from_contents(resource_string) }
+
+    context 'when Reference_REF_CantMatchChoice error has sliceInfo with only suppressible errors' do
+      let(:outcome_with_suppressible_slice_errors) do
+        {
+          outcomes: [
+            {
+              fileInfo: {
+                fileName: 'Coverage/6b28604e-5574-46d9-8f7a-68055baa55ab.json',
+                fileContent: resource_string,
+                fileType: 'json'
+              },
+              issues: [
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Unable to find a profile match for #2 among choices: http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization',
+                  messageId: 'Reference_REF_CantMatchChoice',
+                  type: 'STRUCTURE',
+                  level: 'ERROR',
+                  html: 'Unable to find a profile match for #2'
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching against profile http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization|6.1.0',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details for #2 matching',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 773,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[1].type.coding[0].system',
+                      message: "No definition could be found for URL value 'http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType'",
+                      messageId: 'Type_Specific_Checks_DT_URL_Resolve',
+                      type: 'INVALID',
+                      level: 'ERROR',
+                      html: 'No definition could be found'
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          sessionId: '861f9cc3-688f-4fda-8cf8-4b8640432b5e'
+        }.to_json
+      end
+
+      before do
+        stub_request(:post, "#{validation_url}/validate")
+          .to_return(status: 200, body: outcome_with_suppressible_slice_errors)
+      end
+
+      it 'suppresses both the main Reference error and detail issue when all slice errors are suppressible' do
+        result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
+
+        expect(result).to be(true)
+        expect(runnable.messages).to be_empty
+      end
+    end
+
+    context 'when Reference_REF_CantMatchChoice error has sliceInfo with mixed suppressible and real errors' do
+      let(:outcome_with_mixed_slice_errors) do
+        {
+          outcomes: [
+            {
+              fileInfo: {
+                fileName: 'Coverage/6b28604e-5574-46d9-8f7a-68055baa55ab.json',
+                fileContent: resource_string,
+                fileType: 'json'
+              },
+              issues: [
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Unable to find a profile match for #2 among choices',
+                  messageId: 'Reference_REF_CantMatchChoice',
+                  type: 'STRUCTURE',
+                  level: 'ERROR',
+                  html: 'Unable to find a profile match'
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching against profile',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details for #2',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 773,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[1].type.coding[0].system',
+                      message: "No definition could be found for URL value 'http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType'",
+                      messageId: 'Type_Specific_Checks_DT_URL_Resolve',
+                      type: 'INVALID',
+                      level: 'ERROR',
+                      html: 'No definition could be found'
+                    },
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 663,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[0]',
+                      message: 'Identifier.system must be an absolute reference',
+                      messageId: 'Real_Validation_Error',
+                      type: 'STRUCTURE',
+                      level: 'ERROR',
+                      html: 'Real validation error'
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          sessionId: '861f9cc3-688f-4fda-8cf8-4b8640432b5e'
+        }.to_json
+      end
+
+      before do
+        stub_request(:post, "#{validation_url}/validate")
+          .to_return(status: 200, body: outcome_with_mixed_slice_errors)
+      end
+
+      it 'keeps the Reference error as ERROR when real errors remain in sliceInfo' do
+        result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
+
+        expect(result).to be(false)
+        expect(runnable.messages.length).to eq(2)
+        expect(runnable.messages[0][:type]).to eq('error')
+        expect(runnable.messages[0][:message]).to include('Unable to find a profile match')
+        expect(runnable.messages[1][:type]).to eq('info')
+        expect(runnable.messages[1][:message]).to include('Details for #2')
+      end
+    end
+
+    context 'when Reference_REF_CantMatchChoice error has sliceInfo with only warnings' do
+      let(:outcome_with_warning_slice_errors) do
+        {
+          outcomes: [
+            {
+              fileInfo: {
+                fileName: 'Coverage/6b28604e-5574-46d9-8f7a-68055baa55ab.json',
+                fileContent: resource_string,
+                fileType: 'json'
+              },
+              issues: [
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Unable to find a profile match for #2',
+                  messageId: 'Reference_REF_CantMatchChoice',
+                  type: 'STRUCTURE',
+                  level: 'ERROR',
+                  html: 'Unable to find a profile match'
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details for #2',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'TerminologyEngine',
+                      line: 1,
+                      col: 793,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[1].type',
+                      message: 'None of the codings provided are in the value set',
+                      messageId: 'Terminology_TX_NoValid_2_CC',
+                      type: 'CODEINVALID',
+                      level: 'WARNING',
+                      html: 'None of the codings provided'
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          sessionId: '861f9cc3-688f-4fda-8cf8-4b8640432b5e'
+        }.to_json
+      end
+
+      before do
+        stub_request(:post, "#{validation_url}/validate")
+          .to_return(status: 200, body: outcome_with_warning_slice_errors)
+      end
+
+      it 'downgrades the Reference error to WARNING when only warnings remain' do
+        result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
+
+        expect(result).to be(true)
+        expect(runnable.messages.length).to eq(2)
+        expect(runnable.messages[0][:type]).to eq('warning')
+        expect(runnable.messages[0][:message]).to include('Unable to find a profile match')
+        expect(runnable.messages[1][:type]).to eq('info')
+        expect(runnable.messages[1][:message]).to include('Details for #2')
+      end
+    end
+
+    context 'when Reference_REF_CantMatchChoice error has nested sliceInfo' do
+      let(:outcome_with_nested_slice_info) do
+        {
+          outcomes: [
+            {
+              fileInfo: {
+                fileName: 'Coverage/6b28604e-5574-46d9-8f7a-68055baa55ab.json',
+                fileContent: resource_string,
+                fileType: 'json'
+              },
+              issues: [
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Unable to find a profile match',
+                  messageId: 'Reference_REF_CantMatchChoice',
+                  type: 'STRUCTURE',
+                  level: 'ERROR',
+                  html: 'Unable to find a profile match'
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 810,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[1]',
+                      message: 'This element does not match any known slice',
+                      messageId: 'Details_for__matching_against_Profile_',
+                      type: 'INFORMATIONAL',
+                      level: 'INFORMATION',
+                      html: 'Does not match slice',
+                      slicingHint: true,
+                      sliceInfo: [
+                        {
+                          source: 'InstanceValidator',
+                          line: 1,
+                          col: 773,
+                          location: 'Coverage.contained[1]/*Organization/2*/.identifier[1].type.coding[0].system',
+                          message: "No definition could be found for URL value 'http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType'",
+                          messageId: 'Type_Specific_Checks_DT_URL_Resolve',
+                          type: 'INVALID',
+                          level: 'ERROR',
+                          html: 'No definition found'
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          sessionId: '861f9cc3-688f-4fda-8cf8-4b8640432b5e'
+        }.to_json
+      end
+
+      before do
+        stub_request(:post, "#{validation_url}/validate")
+          .to_return(status: 200, body: outcome_with_nested_slice_info)
+      end
+
+      it 'recursively processes nested sliceInfo and suppresses when all nested errors are suppressible' do
+        result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
+
+        expect(result).to be(true)
+        expect(runnable.messages).to be_empty
+      end
+    end
+
+    context 'when Reference_REF_CantMatchChoice and Details have mismatched locations' do
+      let(:outcome_with_mismatched_locations) do
+        {
+          outcomes: [
+            {
+              fileInfo: {
+                fileName: 'Coverage/6b28604e-5574-46d9-8f7a-68055baa55ab.json',
+                fileContent: resource_string,
+                fileType: 'json'
+              },
+              issues: [
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Unable to find a profile match',
+                  messageId: 'Reference_REF_CantMatchChoice',
+                  type: 'STRUCTURE',
+                  level: 'ERROR',
+                  html: 'Unable to find a profile match'
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 3000,
+                  location: 'Coverage.payor[1]',
+                  message: 'Details for #3 matching',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 773,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[1].type.coding[0].system',
+                      message: "No definition could be found for URL value 'http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType'",
+                      messageId: 'Type_Specific_Checks_DT_URL_Resolve',
+                      type: 'INVALID',
+                      level: 'ERROR',
+                      html: 'No definition found'
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          sessionId: '861f9cc3-688f-4fda-8cf8-4b8640432b5e'
+        }.to_json
+      end
+
+      before do
+        stub_request(:post, "#{validation_url}/validate")
+          .to_return(status: 200, body: outcome_with_mismatched_locations)
+      end
+
+      it 'does not apply special processing when locations do not match' do
+        result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
+
+        expect(result).to be(false)
+        # The Reference error should remain as ERROR since the Details issue location doesn't match
+        expect(runnable.messages.length).to eq(2)
+        expect(runnable.messages[0][:type]).to eq('error')
+        expect(runnable.messages[0][:message]).to include('Coverage.payor[0]')
+      end
+    end
+
+    context 'when regular issues with sliceInfo are present' do
+      let(:outcome_with_regular_slice_info) do
+        {
+          outcomes: [
+            {
+              fileInfo: {
+                fileName: 'Coverage/6b28604e-5574-46d9-8f7a-68055baa55ab.json',
+                fileContent: resource_string,
+                fileType: 'json'
+              },
+              issues: [
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 773,
+                  location: 'Coverage.contained[1]/*Organization/2*/.identifier[1].type.coding[0].system',
+                  message: "No definition could be found for URL value 'http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType'",
+                  messageId: 'Type_Specific_Checks_DT_URL_Resolve',
+                  type: 'INVALID',
+                  level: 'ERROR',
+                  html: 'No definition found',
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 800,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[1]',
+                      message: 'Additional slice info',
+                      messageId: 'Some_Other_Message',
+                      type: 'INFORMATIONAL',
+                      level: 'INFORMATION',
+                      html: 'Slice info'
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          sessionId: '861f9cc3-688f-4fda-8cf8-4b8640432b5e'
+        }.to_json
+      end
+
+      before do
+        stub_request(:post, "#{validation_url}/validate")
+          .to_return(status: 200, body: outcome_with_regular_slice_info)
+      end
+
+      it 'does not expose sliceInfo details to the user' do
+        result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
+
+        expect(result).to be(true)
+        # The URL resolution error should be suppressed
+        expect(runnable.messages).to be_empty
+      end
+    end
+
+    context 'when suppressible Reference error is present alongside other base-level errors' do
+      let(:outcome_with_suppressed_reference_and_other_errors) do
+        {
+          outcomes: [
+            {
+              fileInfo: {
+                fileName: 'Coverage/6b28604e-5574-46d9-8f7a-68055baa55ab.json',
+                fileContent: resource_string,
+                fileType: 'json'
+              },
+              issues: [
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 1500,
+                  location: 'Coverage.status',
+                  message: 'The value provided is not in the value set',
+                  messageId: 'Terminology_PassThrough_TX_Message',
+                  type: 'CODEINVALID',
+                  level: 'ERROR',
+                  html: 'Invalid status value'
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Unable to find a profile match for #2',
+                  messageId: 'Reference_REF_CantMatchChoice',
+                  type: 'STRUCTURE',
+                  level: 'ERROR',
+                  html: 'Unable to find a profile match'
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 773,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[1].type.coding[0].system',
+                      message: "No definition could be found for URL value 'http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType'",
+                      messageId: 'Type_Specific_Checks_DT_URL_Resolve',
+                      type: 'INVALID',
+                      level: 'ERROR',
+                      html: 'No definition found'
+                    }
+                  ]
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2200,
+                  location: 'Coverage.beneficiary',
+                  message: 'Referenced resource does not exist',
+                  messageId: 'REF_CANT_RESOLVE',
+                  type: 'STRUCTURE',
+                  level: 'ERROR',
+                  html: 'Cannot resolve reference'
+                }
+              ]
+            }
+          ],
+          sessionId: '861f9cc3-688f-4fda-8cf8-4b8640432b5e'
+        }.to_json
+      end
+
+      before do
+        stub_request(:post, "#{validation_url}/validate")
+          .to_return(status: 200, body: outcome_with_suppressed_reference_and_other_errors)
+      end
+
+      it 'fails validation due to other base-level errors even when Reference error is suppressed' do
+        result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
+
+        expect(result).to be(false)
+        # Should have 2 errors: the status error and the beneficiary reference error
+        # The Reference_REF_CantMatchChoice and its Details should be suppressed
+        expect(runnable.messages.length).to eq(2)
+        expect(runnable.messages[0][:type]).to eq('error')
+        expect(runnable.messages[0][:message]).to include('Coverage.status')
+        expect(runnable.messages[1][:type]).to eq('error')
+        expect(runnable.messages[1][:message]).to include('Coverage.beneficiary')
+      end
+    end
+
+    context 'when custom exclude_message filter is applied to slice issues' do
+      let(:validator_with_custom_filter) do
+        Inferno::DSL::FHIRResourceValidation::Validator.new('test_validator', 'test_suite') do
+          url 'http://example.com'
+          exclude_message do |message|
+            # Filter that matches raw message patterns (without resource/location prefix)
+            # This simulates filtering specific validation errors in slices
+            message.message.match?(/could not be found, so the code cannot be validated/)
+          end
+        end
+      end
+
+      let(:outcome_with_custom_filterable_slice_errors) do
+        {
+          outcomes: [
+            {
+              fileInfo: {
+                fileName: 'Coverage/6b28604e-5574-46d9-8f7a-68055baa55ab.json',
+                fileContent: resource_string,
+                fileType: 'json'
+              },
+              issues: [
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Unable to find a profile match for #2',
+                  messageId: 'Reference_REF_CantMatchChoice',
+                  type: 'STRUCTURE',
+                  level: 'ERROR',
+                  html: 'Unable to find a profile match'
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'TerminologyEngine',
+                      line: 1,
+                      col: 793,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[1].type.coding[0].system',
+                      message: "A definition for CodeSystem 'http://example.com/custom' could not be found, so the code cannot be validated",
+                      messageId: 'UNKNOWN_CODESYSTEM',
+                      type: 'NOTFOUND',
+                      level: 'ERROR',
+                      html: 'Code system not found'
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          sessionId: '861f9cc3-688f-4fda-8cf8-4b8640432b5e'
+        }.to_json
+      end
+
+      before do
+        stub_request(:post, "#{validation_url}/validate")
+          .to_return(status: 200, body: outcome_with_custom_filterable_slice_errors)
+      end
+
+      it 'applies custom exclude_message filter to slice issues' do
+        result = validator_with_custom_filter.resource_is_valid?(coverage_resource, profile_url, runnable)
+
+        expect(result).to be(true)
+        # The custom filter should suppress the CodeSystem error in sliceInfo
+        # which should cause both the Reference error and Details to be suppressed
+        expect(runnable.messages).to be_empty
+      end
+    end
+  end
 end

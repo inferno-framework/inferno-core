@@ -326,12 +326,182 @@ module Inferno
             @session_id = response_hash['sessionId']
           end
 
-          # assume for now that one resource -> one request
-          issues = (response_hash.dig('outcomes', 0, 'issues') || []).map do |i|
+          # Process issues with slice info consideration
+          raw_issues = process_issues_with_slice_info(response_hash.dig('outcomes', 0, 'issues') || [])
+          # Convert raw validator format to FHIR OperationOutcome.issue format
+          issues = raw_issues.map do |i|
             { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
           end
-          # this is circuitous, ideally we would map this response directly to message_hashes
           FHIR::OperationOutcome.new(issue: issues)
+        end
+
+        # @private
+        # Main processing loop that handles the validator response issues.
+        # Looks for Reference_REF_CantMatchChoice errors that have slice details
+        # and processes them specially to handle URL resolution errors in slices.
+        def process_issues_with_slice_info(issues_array)
+          processed_issues = []
+          i = 0
+
+          while i < issues_array.length
+            issue = issues_array[i]
+
+            # Check if this is a reference error with slice details that need special processing
+            if reference_error_with_slice_details?(issue, issues_array, i)
+              slice_detail_issue = issues_array[i + 1]
+              # Process both the main error and its slice details together
+              processed_count = process_reference_error_with_slices(issue, slice_detail_issue, processed_issues)
+              i += processed_count # Skip processed issues
+            else
+              # Regular issue - add as-is without exposing internal slice details
+              processed_issues << issue
+              i += 1
+            end
+          end
+
+          processed_issues
+        end
+
+        # @private
+        # Identifies the specific pattern where a Reference_REF_CantMatchChoice error
+        # is immediately followed by Details_for__matching_against_Profile_ with sliceInfo.
+        # This pattern indicates that the reference failed because of slice validation issues
+        # that may contain suppressible URL resolution errors.
+        # Validates that both issues have the same location to ensure they're related.
+        def reference_error_with_slice_details?(issue, issues_array, index)
+          return false unless issue['messageId'] == 'Reference_REF_CantMatchChoice'
+          return false unless index + 1 < issues_array.length
+
+          next_issue = issues_array[index + 1]
+          next_issue['messageId'] == 'Details_for__matching_against_Profile_' &&
+            next_issue['sliceInfo'] &&
+            next_issue['location'] == issue['location']
+        end
+
+        # @private
+        # Processes a Reference_REF_CantMatchChoice error by examining its slice details.
+        # If all errors in the slices can be suppressed (e.g., URL resolution errors),
+        # then the main reference error is either removed or downgraded accordingly.
+        # Returns the number of issues processed (1 or 2) to advance the main loop.
+        def process_reference_error_with_slices(issue, slice_detail_issue, processed_issues)
+          # Analyze what severity level remains after suppressing URL resolution errors in slices
+          remaining_severity = process_slice_info_and_get_remaining_severity(slice_detail_issue['sliceInfo'])
+
+          case remaining_severity
+          when nil
+            # All slice errors were suppressed - remove both the main error and detail
+            2
+          when 'warning'
+            # Only warnings remain - downgrade main error to warning, preserve detail's original level
+            issue['level'] = 'WARNING'
+            processed_issues << issue << slice_detail_issue
+            2
+          when 'info'
+            # Only info messages remain - downgrade main error to informational, preserve detail's original level
+            issue['level'] = 'INFORMATION'
+            processed_issues << issue << slice_detail_issue
+            2
+          else
+            # Still has real errors - keep the main error as-is, detail will be processed next
+            processed_issues << issue
+            1
+          end
+        end
+
+        # @private
+        # Recursively processes slice info to determine what severity level remains
+        # after applying suppression filters (like exclude_unresolved_url_message).
+        # This is the core logic that enables removing URL resolution errors from slices
+        # while preserving legitimate structural validation errors.
+        def process_slice_info_and_get_remaining_severity(slice_info_array)
+          remaining_errors = []
+          remaining_warnings = []
+          remaining_info = []
+
+          slice_info_array.each do |slice_issue|
+            # Skip issues that should be suppressed (URL resolution errors, custom exclusions)
+            next if should_suppress_slice_issue?(slice_issue)
+
+            # If this issue has nested sliceInfo, only consider the nested content
+            # Otherwise, categorize it by its own severity level
+            if slice_issue['sliceInfo']&.any?
+              process_nested_slice_info(slice_issue, remaining_errors, remaining_warnings, remaining_info)
+            else
+              categorize_slice_issue(slice_issue, remaining_errors, remaining_warnings, remaining_info)
+            end
+          end
+
+          # Return the highest remaining severity level after suppression
+          determine_final_severity(remaining_errors, remaining_warnings, remaining_info)
+        end
+
+        # @private
+        # Determines if a slice issue should be suppressed by applying the same
+        # exclusion filters used for top-level issues. Converts the slice issue
+        # to the same prefixed format that base-level issues use before checking.
+        def should_suppress_slice_issue?(slice_issue)
+          mock_message = create_mock_message_for_slice(slice_issue)
+
+          exclude_unresolved_url_message.call(mock_message) ||
+            exclude_message&.call(mock_message)
+        end
+
+        # @private
+        # Creates a mock message object with the same prefix format used by issue_message
+        # for base-level issues: "ResourceType/id: location: message"
+        def create_mock_message_for_slice(slice_issue)
+          message_type = case slice_issue['level']
+                         when 'ERROR'
+                           'error'
+                         when 'WARNING'
+                           'warning'
+                         else
+                           'info'
+                         end
+
+          formatted_message = "Resource/id: #{slice_issue['location']}: #{slice_issue['message']}"
+
+          Entities::Message.new({
+                                  type: message_type,
+                                  message: formatted_message
+                                })
+        end
+
+        # @private
+        def categorize_slice_issue(slice_issue, remaining_errors, remaining_warnings, remaining_info)
+          case slice_issue['level']
+          when 'ERROR', 'FATAL'
+            remaining_errors << slice_issue
+          when 'WARNING'
+            remaining_warnings << slice_issue
+          else
+            remaining_info << slice_issue
+          end
+        end
+
+        # @private
+        def process_nested_slice_info(slice_issue, remaining_errors, remaining_warnings, remaining_info)
+          return unless slice_issue['sliceInfo']&.any?
+
+          nested_severity = process_slice_info_and_get_remaining_severity(slice_issue['sliceInfo'])
+
+          case nested_severity
+          when 'error'
+            remaining_errors << slice_issue
+          when 'warning'
+            remaining_warnings << slice_issue
+          when 'info'
+            remaining_info << slice_issue
+          end
+        end
+
+        # @private
+        def determine_final_severity(remaining_errors, remaining_warnings, remaining_info)
+          return 'error' if remaining_errors.any?
+          return 'warning' if remaining_warnings.any?
+          return 'info' if remaining_info.any?
+
+          nil # All suppressed
         end
 
         # @private
