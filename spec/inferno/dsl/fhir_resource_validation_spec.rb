@@ -857,7 +857,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
 
         expect(result).to be(false)
-        # The Reference error should remain as ERROR since the Details issue location doesn't match
+        # The reference error should remain as ERROR since the Details issue location doesn't match
         expect(runnable.messages.length).to eq(2)
         expect(runnable.messages[0][:type]).to eq('error')
         expect(runnable.messages[0][:message]).to include('Coverage.payor[0]')
