@@ -1065,7 +1065,8 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
                       line: 1,
                       col: 793,
                       location: 'Coverage.contained[1]/*Organization/2*/.identifier[1].type.coding[0].system',
-                      message: "A definition for CodeSystem 'http://example.com/custom' could not be found, so the code cannot be validated",
+                      message: "A definition for CodeSystem 'http://example.com/custom' could not be found, " \
+                               'so the code cannot be validated',
                       messageId: 'UNKNOWN_CODESYSTEM',
                       type: 'NOTFOUND',
                       level: 'ERROR',
