@@ -1261,16 +1261,15 @@ RSpec.describe Inferno::DSL::FHIRClient do
         )
       end
 
-      it 'does not crash and ignores the nil entry' do
-        expect do
-          resources =
-            group.fetch_all_bundled_resources(
-              resource_type: resource.resourceType,
-              bundle: bundle_with_nil_entry
-            )
+      it 'logs a warning and ignores the nil entry' do
+        expect(group).to receive(:warning).with(/detected one or more bundle entries with missing resources/)
 
-          expect(resources).to contain_exactly(resource)
-        end.not_to raise_error
+        resources = group.fetch_all_bundled_resources(
+          resource_type: resource.resourceType,
+          bundle: bundle_with_nil_entry
+        )
+
+        expect(resources).to contain_exactly(resource)
       end
     end
   end
