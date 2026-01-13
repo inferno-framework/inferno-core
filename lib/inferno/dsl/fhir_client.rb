@@ -368,7 +368,7 @@ module Inferno
         valid_resource_types = [resource_type, 'OperationOutcome'].concat(additional_resource_types)
 
         invalid_resource_types =
-          resources.reject { |entry| valid_resource_types.include? entry.resourceType }
+          resources.compact.reject { |entry| valid_resource_types.include? entry.resourceType }
             .map(&:resourceType)
             .uniq
         if invalid_resource_types.any?
@@ -377,10 +377,10 @@ module Inferno
                'This is unusual but allowed if the server believes additional resource types are relevant.'
         end
 
-        resources
+        resources.compact
       rescue JSON::ParserError
         Inferno::Application[:logger].error "Could not resolve next bundle: #{next_bundle_link(bundle)}"
-        resources
+        resources.compact
       end
 
       # @todo Make this a FHIR class method? Something like
