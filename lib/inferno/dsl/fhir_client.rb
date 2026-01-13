@@ -367,7 +367,7 @@ module Inferno
 
         if resources.any?(&:nil?)
           warning 'Inferno detected one or more bundle entries with missing resources. ' \
-                    'This is unusual and may indicate a server issue.'
+                  'This is unusual and may indicate a server issue.'
         end
 
         valid_resource_types = [resource_type, 'OperationOutcome'].concat(additional_resource_types)
