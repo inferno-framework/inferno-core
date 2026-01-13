@@ -1,3 +1,6 @@
+## 1.0.7
+* ID-20: Add new format for known URL Unresolved Message to suppression list by @ljtucker in https://github.com/inferno-framework/inferno-core/pull/752
+
 ## 1.0.6
 * FI-4235: Add link to validator in readme by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/739
 * FI-4258: Update fhir resource navigation by @Jammjammjamm in https://github.com/inferno-framework/inferno-core/pull/740
