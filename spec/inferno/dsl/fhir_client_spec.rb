@@ -1249,6 +1249,31 @@ RSpec.describe Inferno::DSL::FHIRClient do
         expect(message[:message]).to match(/This is unusual but allowed if the server believes/)
       end
     end
+
+    context 'when bundle contains an entry with a nil resource' do
+      let(:bundle_with_nil_entry) do
+        FHIR::Bundle.new(
+          type: 'searchset',
+          entry: [
+            { resource: resource },
+            { resource: nil }
+          ]
+        )
+      end
+
+      it 'logs a warning and ignores the nil entry' do
+        allow(group).to receive(:warning)
+
+        resources = group.fetch_all_bundled_resources(
+          resource_type: resource.resourceType,
+          bundle: bundle_with_nil_entry
+        )
+
+        expect(group).to have_received(:warning).with(/no `resource` element.*not allowed for a FHIR Bundle/)
+
+        expect(resources).to contain_exactly(resource)
+      end
+    end
   end
 
   describe '#requests' do

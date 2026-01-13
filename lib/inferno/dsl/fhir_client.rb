@@ -365,7 +365,14 @@ module Inferno
           page_count += 1
         end
 
+        if resources.any?(&:nil?)
+          warning 'Inferno detected one or more bundle entries with no `resource` element, ' \
+                  'which is not allowed for a FHIR Bundle with `type` = "searchset".'
+        end
+
         valid_resource_types = [resource_type, 'OperationOutcome'].concat(additional_resource_types)
+
+        resources.compact!
 
         invalid_resource_types =
           resources.reject { |entry| valid_resource_types.include? entry.resourceType }
