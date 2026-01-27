@@ -225,39 +225,41 @@ module Inferno
         # @private
         def filter_sliced_messages(message_hashes)
           indices_to_remove = []
-          
+
           message_hashes.each_with_index do |message_hash, index|
             next unless message_hash[:slices]
             next unless message_hash[:type] == 'error' || message_hash[:type] == 'warning'
 
-            # Filter slices and determine remaining severity
             remaining_severity = process_slice_info_and_get_remaining_severity(message_hash[:slices])
-
-            case remaining_severity
-            when nil
-              # All slice errors were suppressed - remove this message
-              indices_to_remove << index
-
-              # Also remove the next message if it's a Details message
-              next_message = message_hashes[index + 1]
-              if next_message && next_message[:message].include?('Details for #')
-                indices_to_remove << (index + 1)
-              end
-
-            when 'warning'
-              # Only warnings remain - downgrade to warning
-              message_hash[:type] = 'warning'
-              
-            when 'info'
-              # Only info messages remain - downgrade to info
-              message_hash[:type] = 'info'
-            end
+            handle_remaining_severity(remaining_severity, message_hash, message_hashes, index, indices_to_remove)
           end
 
           # Remove indices in reverse order to maintain correct positions
           indices_to_remove.uniq.sort.reverse.each do |index|
             message_hashes.delete_at(index)
           end
+        end
+
+        # @private
+        def handle_remaining_severity(remaining_severity, message_hash, message_hashes, index, indices_to_remove)
+          case remaining_severity
+          when nil
+            # All slice errors were suppressed - remove this message
+            indices_to_remove << index
+            mark_details_for_removal(message_hashes, index, indices_to_remove)
+          when 'warning'
+            # Only warnings remain - downgrade to warning
+            message_hash[:type] = 'warning'
+          when 'info'
+            # Only info messages remain - downgrade to info
+            message_hash[:type] = 'info'
+          end
+        end
+
+        # @private
+        def mark_details_for_removal(message_hashes, index, indices_to_remove)
+          next_message = message_hashes[index + 1]
+          indices_to_remove << (index + 1) if next_message && next_message[:message].include?('Details for #')
         end
 
         # @private
@@ -301,20 +303,28 @@ module Inferno
 
         # @private
         def issue_message(issue, resource)
-          location = if issue.is_a?(Hash)
-                       expr = issue[:expression]
-                       expr.is_a?(Array) ? expr.join(', ') : expr
-                     elsif issue.respond_to?(:expression)
-                       issue.expression&.join(', ')
-                     else
-                       issue.location&.join(', ')
-                     end
-
+          location = extract_issue_location(issue)
           location_prefix = resource.id ? "#{resource.resourceType}/#{resource.id}" : resource.resourceType
-          
-          details_text = issue.is_a?(Hash) ? issue.dig(:details, :text) : issue&.details&.text
+          details_text = extract_issue_details(issue)
 
           "#{location_prefix}: #{location}: #{details_text}"
+        end
+
+        # @private
+        def extract_issue_location(issue)
+          if issue.is_a?(Hash)
+            expr = issue[:expression]
+            expr.is_a?(Array) ? expr.join(', ') : expr
+          elsif issue.respond_to?(:expression)
+            issue.expression&.join(', ')
+          else
+            issue.location&.join(', ')
+          end
+        end
+
+        # @private
+        def extract_issue_details(issue)
+          issue.is_a?(Hash) ? issue.dig(:details, :text) : issue&.details&.text
         end
 
         # @private
@@ -433,8 +443,6 @@ module Inferno
             next_issue['sliceInfo'] &&
             next_issue['location'] == issue['location']
         end
-
-
 
         # @private
         # Recursively processes slice info to determine what severity level remains
