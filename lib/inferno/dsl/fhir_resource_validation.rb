@@ -223,27 +223,73 @@ module Inferno
         end
 
         # @private
+        def filter_sliced_messages(message_hashes)
+          indices_to_remove = []
+          
+          message_hashes.each_with_index do |message_hash, index|
+            next unless message_hash[:slices]
+            next unless message_hash[:type] == 'error' || message_hash[:type] == 'warning'
+
+            # Filter slices and determine remaining severity
+            remaining_severity = process_slice_info_and_get_remaining_severity(message_hash[:slices])
+
+            case remaining_severity
+            when nil
+              # All slice errors were suppressed - remove this message
+              indices_to_remove << index
+
+              # Also remove the next message if it's a Details message
+              next_message = message_hashes[index + 1]
+              if next_message && next_message[:message].include?('Details for #')
+                indices_to_remove << (index + 1)
+              end
+
+            when 'warning'
+              # Only warnings remain - downgrade to warning
+              message_hash[:type] = 'warning'
+              
+            when 'info'
+              # Only info messages remain - downgrade to info
+              message_hash[:type] = 'info'
+            end
+          end
+
+          # Remove indices in reverse order to maintain correct positions
+          indices_to_remove.uniq.sort.reverse.each do |index|
+            message_hashes.delete_at(index)
+          end
+        end
+
+        # @private
         def message_hashes_from_outcome(outcome, resource, profile_url)
-          message_hashes = outcome.issue&.map { |issue| message_hash_from_issue(issue, resource) } || []
+          message_hashes = outcome.map do |issue|
+            message_hash_from_issue(issue, resource)
+          end
 
           message_hashes.concat(additional_validation_messages(resource, profile_url))
 
           filter_messages(message_hashes)
+          filter_sliced_messages(message_hashes)
 
           message_hashes
         end
 
         # @private
         def message_hash_from_issue(issue, resource)
-          {
+          message_hash = {
             type: issue_severity(issue),
             message: issue_message(issue, resource)
           }
+
+          message_hash[:slices] = issue[:slices] if issue[:slices]
+
+          message_hash
         end
 
         # @private
         def issue_severity(issue)
-          case issue.severity
+          severity = issue.is_a?(Hash) ? issue[:severity] : issue.severity
+          case severity
           when 'warning'
             'warning'
           when 'information'
@@ -255,15 +301,20 @@ module Inferno
 
         # @private
         def issue_message(issue, resource)
-          location = if issue.respond_to?(:expression)
+          location = if issue.is_a?(Hash)
+                       expr = issue[:expression]
+                       expr.is_a?(Array) ? expr.join(', ') : expr
+                     elsif issue.respond_to?(:expression)
                        issue.expression&.join(', ')
                      else
                        issue.location&.join(', ')
                      end
 
           location_prefix = resource.id ? "#{resource.resourceType}/#{resource.id}" : resource.resourceType
+          
+          details_text = issue.is_a?(Hash) ? issue.dig(:details, :text) : issue&.details&.text
 
-          "#{location_prefix}: #{location}: #{issue&.details&.text}"
+          "#{location_prefix}: #{location}: #{details_text}"
         end
 
         # @private
@@ -326,20 +377,21 @@ module Inferno
             @session_id = response_hash['sessionId']
           end
 
-          # Preprocess issues using slice validation details, combining slice-related reference errors
-          # and filtering out suppressible/internal slice-detail messages before building the outcome.
+          # Preprocess issues using slice validation details, linking slice-related reference errors
+          # with their slice info for later filtering.
           raw_issues = process_issues_with_slice_info(response_hash.dig('outcomes', 0, 'issues') || [])
-          # Convert raw validator format to FHIR OperationOutcome.issue format
-          issues = raw_issues.map do |i|
-            { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
+          # Convert raw validator format to issue hash format, including slices
+          raw_issues.map do |i|
+            issue_hash = { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
+            issue_hash[:slices] = i['slices'] if i['slices']
+            issue_hash
           end
-          FHIR::OperationOutcome.new(issue: issues)
         end
 
         # @private
         # Main processing loop that handles the validator response issues.
         # Looks for Reference_REF_CantMatchChoice errors that have slice details
-        # and processes them specially to handle URL resolution errors in slices.
+        # and links them together for later filtering.
         def process_issues_with_slice_info(issues_array)
           processed_issues = []
           i = 0
@@ -347,14 +399,17 @@ module Inferno
           while i < issues_array.length
             issue = issues_array[i]
 
-            # Check if this is a reference error with slice details that need special processing
+            # Check if this is a reference error with slice details that need linking
             if reference_error_with_slice_details?(issue, issues_array, i)
               slice_detail_issue = issues_array[i + 1]
-              # Process both the main error and its slice details together
-              processed_count = process_reference_error_with_slices(issue, slice_detail_issue, processed_issues)
-              i += processed_count # Skip processed issues
+              # Link the slice info to the main error for later filtering
+              issue['slices'] = slice_detail_issue['sliceInfo']
+              processed_issues << issue
+              # Keep the Details issue as well, but mark it so we can adjust it later
+              processed_issues << slice_detail_issue
+              i += 2
             else
-              # Regular issue - add as-is without exposing internal slice details
+              # Regular issue - add as-is
               processed_issues << issue
               i += 1
             end
@@ -379,35 +434,7 @@ module Inferno
             next_issue['location'] == issue['location']
         end
 
-        # @private
-        # Processes a Reference_REF_CantMatchChoice error by examining its slice details.
-        # If all errors in the slices can be suppressed (e.g., URL resolution errors),
-        # then the main reference error is either removed or downgraded accordingly.
-        # Returns the number of issues processed (1 or 2) to advance the main loop.
-        def process_reference_error_with_slices(issue, slice_detail_issue, processed_issues)
-          # Analyze what severity level remains after suppressing URL resolution errors in slices
-          remaining_severity = process_slice_info_and_get_remaining_severity(slice_detail_issue['sliceInfo'])
 
-          case remaining_severity
-          when nil
-            # All slice errors were suppressed - remove both the main error and detail
-            2
-          when 'warning'
-            # Only warnings remain - downgrade main error to warning, preserve detail's original level
-            issue['level'] = 'WARNING'
-            processed_issues << issue << slice_detail_issue
-            2
-          when 'info'
-            # Only info messages remain - downgrade main error to informational, preserve detail's original level
-            issue['level'] = 'INFORMATION'
-            processed_issues << issue << slice_detail_issue
-            2
-          else
-            # Still has real errors - keep the main error as-is, detail will be processed next
-            processed_issues << issue
-            1
-          end
-        end
 
         # @private
         # Recursively processes slice info to determine what severity level remains
