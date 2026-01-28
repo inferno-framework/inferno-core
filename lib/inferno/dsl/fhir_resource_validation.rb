@@ -184,7 +184,7 @@ module Inferno
             raise Inferno::Exceptions::ErrorInValidatorException, validator_error_message(e)
           end
 
-          outcome = operation_outcome_from_validator_response(response, runnable)
+          outcome = issue_hash_from_validator_response(response, runnable)
 
           message_hashes = message_hashes_from_outcome(outcome, resource, profile_url)
 
@@ -375,7 +375,7 @@ module Inferno
         end
 
         # @private
-        def operation_outcome_from_hl7_wrapped_response(response_hash)
+        def issue_hash_from_hl7_wrapped_response(response_hash)
           # This is a workaround for some test kits which for legacy reasons
           # call this method directly with a String instead of a Hash.
           # See FI-3178.
@@ -546,10 +546,10 @@ module Inferno
         end
 
         # @private
-        def operation_outcome_from_validator_response(response, runnable)
+        def issue_hash_from_validator_response(response, runnable)
           sanitized_body = remove_invalid_characters(response.body)
 
-          operation_outcome_from_hl7_wrapped_response(JSON.parse(sanitized_body))
+          issue_hash_from_hl7_wrapped_response(JSON.parse(sanitized_body))
         rescue JSON::ParserError
           runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{sanitized_body}")
           raise Inferno::Exceptions::ErrorInValidatorException,
