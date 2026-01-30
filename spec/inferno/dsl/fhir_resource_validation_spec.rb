@@ -701,15 +701,11 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           .to_return(status: 200, body: outcome_with_warning_slice_errors)
       end
 
-      it 'downgrades the Reference error to WARNING when only warnings remain' do
+      it 'suppresses the Reference error when only warnings remain in sliceInfo' do
         result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
 
         expect(result).to be(true)
-        expect(runnable.messages.length).to eq(2)
-        expect(runnable.messages[0][:type]).to eq('warning')
-        expect(runnable.messages[0][:message]).to include('Unable to find a profile match')
-        expect(runnable.messages[1][:type]).to eq('info')
-        expect(runnable.messages[1][:message]).to include('Details for #2')
+        expect(runnable.messages).to be_empty
       end
     end
 

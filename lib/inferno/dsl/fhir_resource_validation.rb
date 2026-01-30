@@ -231,28 +231,17 @@ module Inferno
             next unless message_hash[:type] == 'error' || message_hash[:type] == 'warning'
 
             remaining_severity = process_slice_info_and_get_remaining_severity(message_hash[:slices])
-            handle_remaining_severity(remaining_severity, message_hash, message_hashes, index, indices_to_remove)
+
+            # Only remove if all errors were suppressed
+            if remaining_severity.nil?
+              indices_to_remove << index
+              mark_details_for_removal(message_hashes, index, indices_to_remove)
+            end
           end
 
           # Remove indices in reverse order to maintain correct positions
           indices_to_remove.uniq.sort.reverse.each do |index|
             message_hashes.delete_at(index)
-          end
-        end
-
-        # @private
-        def handle_remaining_severity(remaining_severity, message_hash, message_hashes, index, indices_to_remove)
-          case remaining_severity
-          when nil
-            # All slice errors were suppressed - remove this message
-            indices_to_remove << index
-            mark_details_for_removal(message_hashes, index, indices_to_remove)
-          when 'warning'
-            # Only warnings remain - downgrade to warning
-            message_hash[:type] = 'warning'
-          when 'info'
-            # Only info messages remain - downgrade to info
-            message_hash[:type] = 'info'
           end
         end
 
@@ -532,12 +521,12 @@ module Inferno
         end
 
         # @private
-        def determine_final_severity(remaining_errors, remaining_warnings, remaining_info)
+        def determine_final_severity(remaining_errors, _remaining_warnings, _remaining_info)
+          # Only keep the base-level error if there are still errors in the slices
+          # If only warnings/info remain, treat as fully suppressed
           return 'error' if remaining_errors.any?
-          return 'warning' if remaining_warnings.any?
-          return 'info' if remaining_info.any?
 
-          nil # All suppressed
+          nil # All errors suppressed
         end
 
         # @private
