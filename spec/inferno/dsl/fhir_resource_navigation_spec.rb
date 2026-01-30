@@ -187,6 +187,6 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
       )
       discriminator = { code: 'Patient', path: 'resource' }
       expect(matcher).to_not be_matching_type_slice(slice, discriminator)
-    end    
+    end
   end
 end
