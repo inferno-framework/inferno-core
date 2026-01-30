@@ -174,7 +174,7 @@ module Inferno
 
       # @private
       def matching_type_slice?(slice, discriminator)
-        slice_value = discriminator[:path].present? ? slice.send(discriminator[:path]) : slice
+        slice_value = resolve_path(slice, discriminator[:path]).first
 
         case discriminator[:code]
         when 'Date'
