@@ -184,7 +184,7 @@ module Inferno
             raise Inferno::Exceptions::ErrorInValidatorException, validator_error_message(e)
           end
 
-          outcome = operation_outcome_from_validator_response(response, runnable)
+          outcome = issue_hash_from_validator_response(response, runnable)
 
           message_hashes = message_hashes_from_outcome(outcome, resource, profile_url)
 
@@ -223,27 +223,64 @@ module Inferno
         end
 
         # @private
+        def filter_sliced_messages(message_hashes)
+          indices_to_remove = []
+
+          message_hashes.each_with_index do |message_hash, index|
+            next unless message_hash[:slices]
+            next unless message_hash[:type] == 'error' || message_hash[:type] == 'warning'
+
+            remaining_severity = process_slice_info_and_get_remaining_severity(message_hash[:slices])
+
+            # Only remove if all errors were suppressed
+            if remaining_severity.nil?
+              indices_to_remove << index
+              mark_details_for_removal(message_hashes, index, indices_to_remove)
+            end
+          end
+
+          # Remove indices in reverse order to maintain correct positions
+          indices_to_remove.uniq.sort.reverse.each do |index|
+            message_hashes.delete_at(index)
+          end
+        end
+
+        # @private
+        def mark_details_for_removal(message_hashes, index, indices_to_remove)
+          next_message = message_hashes[index + 1]
+          indices_to_remove << (index + 1) if next_message && next_message[:message].include?('Details for #')
+        end
+
+        # @private
         def message_hashes_from_outcome(outcome, resource, profile_url)
-          message_hashes = outcome.issue&.map { |issue| message_hash_from_issue(issue, resource) } || []
+          message_hashes = outcome.map do |issue|
+            message_hash_from_issue(issue, resource)
+          end
 
           message_hashes.concat(additional_validation_messages(resource, profile_url))
 
           filter_messages(message_hashes)
+          filter_sliced_messages(message_hashes)
 
           message_hashes
         end
 
         # @private
         def message_hash_from_issue(issue, resource)
-          {
+          message_hash = {
             type: issue_severity(issue),
             message: issue_message(issue, resource)
           }
+
+          message_hash[:slices] = issue[:slices] if issue[:slices]
+
+          message_hash
         end
 
         # @private
         def issue_severity(issue)
-          case issue.severity
+          severity = issue.is_a?(Hash) ? issue[:severity] : issue.severity
+          case severity
           when 'warning'
             'warning'
           when 'information'
@@ -255,15 +292,28 @@ module Inferno
 
         # @private
         def issue_message(issue, resource)
-          location = if issue.respond_to?(:expression)
-                       issue.expression&.join(', ')
-                     else
-                       issue.location&.join(', ')
-                     end
-
+          location = extract_issue_location(issue)
           location_prefix = resource.id ? "#{resource.resourceType}/#{resource.id}" : resource.resourceType
+          details_text = extract_issue_details(issue)
 
-          "#{location_prefix}: #{location}: #{issue&.details&.text}"
+          "#{location_prefix}: #{location}: #{details_text}"
+        end
+
+        # @private
+        def extract_issue_location(issue)
+          if issue.is_a?(Hash)
+            expr = issue[:expression]
+            expr.is_a?(Array) ? expr.join(', ') : expr
+          elsif issue.respond_to?(:expression)
+            issue.expression&.join(', ')
+          else
+            issue.location&.join(', ')
+          end
+        end
+
+        # @private
+        def extract_issue_details(issue)
+          issue.is_a?(Hash) ? issue.dig(:details, :text) : issue&.details&.text
         end
 
         # @private
@@ -314,7 +364,7 @@ module Inferno
         end
 
         # @private
-        def operation_outcome_from_hl7_wrapped_response(response_hash)
+        def issue_hash_from_hl7_wrapped_response(response_hash)
           # This is a workaround for some test kits which for legacy reasons
           # call this method directly with a String instead of a Hash.
           # See FI-3178.
@@ -326,12 +376,157 @@ module Inferno
             @session_id = response_hash['sessionId']
           end
 
-          # assume for now that one resource -> one request
-          issues = (response_hash.dig('outcomes', 0, 'issues') || []).map do |i|
-            { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
+          # Preprocess issues using slice validation details, linking slice-related reference errors
+          # with their slice info for later filtering.
+          raw_issues = process_issues_with_slice_info(response_hash.dig('outcomes', 0, 'issues') || [])
+          # Convert raw validator format to issue hash format, including slices
+          raw_issues.map do |i|
+            issue_hash = { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
+            issue_hash[:slices] = i['slices'] if i['slices']
+            issue_hash
           end
-          # this is circuitous, ideally we would map this response directly to message_hashes
-          FHIR::OperationOutcome.new(issue: issues)
+        end
+
+        # @private
+        # Main processing loop that handles the validator response issues.
+        # Looks for Reference_REF_CantMatchChoice errors that have slice details
+        # and links them together for later filtering.
+        def process_issues_with_slice_info(issues_array)
+          processed_issues = []
+          i = 0
+
+          while i < issues_array.length
+            issue = issues_array[i]
+
+            # Check if this is a reference error with slice details that need linking
+            if reference_error_with_slice_details?(issue, issues_array, i)
+              slice_detail_issue = issues_array[i + 1]
+              # Link the slice info to the main error for later filtering
+              issue['slices'] = slice_detail_issue['sliceInfo']
+              processed_issues << issue
+              # Keep the Details issue as well, but mark it so we can adjust it later
+              processed_issues << slice_detail_issue
+              i += 2
+            else
+              # Regular issue - add as-is
+              processed_issues << issue
+              i += 1
+            end
+          end
+
+          processed_issues
+        end
+
+        # @private
+        # Identifies the specific pattern where a Reference_REF_CantMatchChoice error
+        # is immediately followed by Details_for__matching_against_Profile_ with sliceInfo.
+        # This pattern indicates that the reference failed because of slice validation issues
+        # that may contain suppressible URL resolution errors.
+        # Validates that both issues have the same location to ensure they're related.
+        def reference_error_with_slice_details?(issue, issues_array, index)
+          return false unless issue['messageId'] == 'Reference_REF_CantMatchChoice'
+          return false unless index + 1 < issues_array.length
+
+          next_issue = issues_array[index + 1]
+          next_issue['messageId'] == 'Details_for__matching_against_Profile_' &&
+            next_issue['sliceInfo'] &&
+            next_issue['location'] == issue['location']
+        end
+
+        # @private
+        # Recursively processes slice info to determine what severity level remains
+        # after applying suppression filters (like exclude_unresolved_url_message).
+        # This is the core logic that enables removing URL resolution errors from slices
+        # while preserving legitimate structural validation errors.
+        def process_slice_info_and_get_remaining_severity(slice_info_array)
+          remaining_errors = []
+          remaining_warnings = []
+          remaining_info = []
+
+          slice_info_array.each do |slice_issue|
+            # Skip issues that should be suppressed (URL resolution errors, custom exclusions)
+            next if should_suppress_slice_issue?(slice_issue)
+
+            # If this issue has nested sliceInfo, only consider the nested content
+            # Otherwise, categorize it by its own severity level
+            if slice_issue['sliceInfo']&.any?
+              process_nested_slice_info(slice_issue, remaining_errors, remaining_warnings, remaining_info)
+            else
+              categorize_slice_issue(slice_issue, remaining_errors, remaining_warnings, remaining_info)
+            end
+          end
+
+          # Return the highest remaining severity level after suppression
+          determine_final_severity(remaining_errors, remaining_warnings, remaining_info)
+        end
+
+        # @private
+        # Determines if a slice issue should be suppressed by applying the same
+        # exclusion filters used for top-level issues. Converts the slice issue
+        # to the same prefixed format that base-level issues use before checking.
+        def should_suppress_slice_issue?(slice_issue)
+          mock_message = create_mock_message_for_slice(slice_issue)
+
+          exclude_unresolved_url_message.call(mock_message) ||
+            exclude_message&.call(mock_message)
+        end
+
+        # @private
+        # Creates a mock message object with the same prefix format used by issue_message
+        # for base-level issues: "ResourceType/id: location: message"
+        def create_mock_message_for_slice(slice_issue)
+          message_type = case slice_issue['level']
+                         when 'ERROR'
+                           'error'
+                         when 'WARNING'
+                           'warning'
+                         else
+                           'info'
+                         end
+
+          formatted_message = "Resource/id: #{slice_issue['location']}: #{slice_issue['message']}"
+
+          Entities::Message.new({
+                                  type: message_type,
+                                  message: formatted_message
+                                })
+        end
+
+        # @private
+        def categorize_slice_issue(slice_issue, remaining_errors, remaining_warnings, remaining_info)
+          case slice_issue['level']
+          when 'ERROR', 'FATAL'
+            remaining_errors << slice_issue
+          when 'WARNING'
+            remaining_warnings << slice_issue
+          else
+            remaining_info << slice_issue
+          end
+        end
+
+        # @private
+        def process_nested_slice_info(slice_issue, remaining_errors, remaining_warnings, remaining_info)
+          return unless slice_issue['sliceInfo']&.any?
+
+          nested_severity = process_slice_info_and_get_remaining_severity(slice_issue['sliceInfo'])
+
+          case nested_severity
+          when 'error'
+            remaining_errors << slice_issue
+          when 'warning'
+            remaining_warnings << slice_issue
+          when 'info'
+            remaining_info << slice_issue
+          end
+        end
+
+        # @private
+        def determine_final_severity(remaining_errors, _remaining_warnings, _remaining_info)
+          # Only keep the base-level error if there are still errors in the slices
+          # If only warnings/info remain, treat as fully suppressed
+          return 'error' if remaining_errors.any?
+
+          nil # All errors suppressed
         end
 
         # @private
@@ -340,10 +535,10 @@ module Inferno
         end
 
         # @private
-        def operation_outcome_from_validator_response(response, runnable)
+        def issue_hash_from_validator_response(response, runnable)
           sanitized_body = remove_invalid_characters(response.body)
 
-          operation_outcome_from_hl7_wrapped_response(JSON.parse(sanitized_body))
+          issue_hash_from_hl7_wrapped_response(JSON.parse(sanitized_body))
         rescue JSON::ParserError
           runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{sanitized_body}")
           raise Inferno::Exceptions::ErrorInValidatorException,
