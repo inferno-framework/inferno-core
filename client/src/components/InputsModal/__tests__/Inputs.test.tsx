@@ -186,19 +186,22 @@ describe('Input Components', () => {
     const constructInput = (props: Partial<TestInput>): TestInput => {
       return {
         name: props?.name || '',
-        type: props?.type || 'text' as TestInput['type'],
+        type: (props?.type || 'text') as TestInput['type'],
         title: props?.title,
         optional: props?.optional,
         show_if: props?.show_if,
+        hidden: props?.hidden,
         value: props?.value,
-      }
-    }
-    const contructInputMap = (inputs: TestInput[]): Map<string, string> => {
+      };
+    };
+
+    const constructInputsMap = (inputs: TestInput[]): Map<string, string> => {
       return inputs.reduce((acc, input) => {
         acc.set(input.name, input.value as string);
         return acc;
       }, new Map<string, string>());
-    }
+    };
+
     const renderInputFields = (inputs: TestInput[], inputsMap: Map<string, string>) => {
       render(
         <ThemeProvider>
@@ -207,55 +210,121 @@ describe('Input Components', () => {
           </SnackbarProvider>
         </ThemeProvider>,
       );
-    }
-    const assertInputRendersCorrect = (inputs: Partial<TestInput>[], expected: boolean[]) => {
+    };
+
+    const assertInputVisibility = (
+      inputs: Partial<TestInput>[],
+      expectedVisible: boolean[],
+    ) => {
       const constructedInputs: TestInput[] = inputs.map((input) => constructInput(input));
-      const inputsMap = contructInputMap(constructedInputs);
+      const inputsMap = constructInputsMap(constructedInputs);
       renderInputFields(constructedInputs, inputsMap);
 
       constructedInputs.forEach((input, index) => {
-        const targetInput = screen.queryByLabelText(input.title as string, { exact: false });
-        if (expected[index]) {
-          expect(targetInput).toBeInTheDocument();
+        const label = input.title as string;
+        const shouldBeVisible = expectedVisible[index];
+        if (shouldBeVisible) {
+          expect(screen.getByLabelText(label, { exact: false })).toBeVisible();
         } else {
-          expect(targetInput).not.toBeInTheDocument();
+          expect(screen.queryByLabelText(label, { exact: false })).not.toBeInTheDocument();
         }
       });
-    }
-    it('should skip render of the field if target value is undefined', () => {
-      const name1 = (crypto.randomUUID());
-      const name2 = (crypto.randomUUID());
-      const title1 = (crypto.randomUUID());
-      const title2 = (crypto.randomUUID());
-      const value1 = (crypto.randomUUID());
-      assertInputRendersCorrect([
-        { name: name1, title: title1 },
-        { name: name2, title: title2, show_if: { input_name: name1, value: value1 } },
-      ], [true, false]);
-    });
-    it('Skip render if target value is not equal to existing one', () => {
-      const name1 = (crypto.randomUUID());
-      const name2 = (crypto.randomUUID());
-      const title1 = (crypto.randomUUID());
-      const title2 = (crypto.randomUUID());
-      const value1 = (crypto.randomUUID());
-      const value2 = (crypto.randomUUID());
-      assertInputRendersCorrect([
-        { name: name1, title: title1, value: value1 },
-        { name: name2, title: title2, show_if: { input_name: name1, value: value2 } },
-      ], [true, false]);
-    })
+    };
 
-    it('Render the field if target value is equal to existing one', () => {
-      const name1 = (crypto.randomUUID());
-      const name2 = (crypto.randomUUID());
-      const title1 = (crypto.randomUUID());
-      const title2 = (crypto.randomUUID());
-      const value1 = (crypto.randomUUID());
-      assertInputRendersCorrect([
-        { name: name1, title: title1, value: value1 },
-        { name: name2, title: title2, show_if: { input_name: name1, value: value1 } },
-      ], [true, true]);
-    })
+    it('renders field when it has no show_if (always visible)', () => {
+      assertInputVisibility(
+        [
+          { name: 'standalone', title: 'Standalone field' },
+        ],
+        [true],
+      );
+    });
+
+    it('skips rendering dependent field when controlling value is undefined', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            show_if: { input_name: 'trigger', value: 'yes' },
+          },
+        ],
+        [true, false],
+      );
+    });
+
+    it('skips rendering when controlling value does not match show_if', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger', value: 'no' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            show_if: { input_name: 'trigger', value: 'yes' },
+          },
+        ],
+        [true, false],
+      );
+    });
+
+    it('renders dependent field when controlling value matches show_if', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger', value: 'yes' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            show_if: { input_name: 'trigger', value: 'yes' },
+          },
+        ],
+        [true, true],
+      );
+    });
+
+    it('hides field when hidden is true even if show_if would pass', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger', value: 'yes' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            show_if: { input_name: 'trigger', value: 'yes' },
+            hidden: true,
+          },
+        ],
+        [true, false],
+      );
+    });
+
+    it('renders dependent field when controlling value (array) equals show_if array value', () => {
+      // When ref value in map is an array, show_if.value as string[] matches via isEqual (same elements)
+      const refValue = ['a', 'b'];
+      const inputs: TestInput[] = [
+        constructInput({
+          name: 'trigger',
+          title: 'Trigger',
+          type: 'checkbox',
+          value: refValue,
+        }),
+        constructInput({
+          name: 'dependent',
+          title: 'Dependent',
+          show_if: { input_name: 'trigger', value: ['a', 'b'] },
+        }),
+      ];
+      const inputsMap = new Map<string, unknown>();
+      inputsMap.set('trigger', refValue);
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputFields inputs={inputs} inputsMap={inputsMap} setInputsMap={() => {}} />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      expect(screen.getByRole('checkbox', { name: /Trigger/i })).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: /Dependent/i })).toBeVisible();
+    });
   })
 });

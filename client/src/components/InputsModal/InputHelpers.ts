@@ -189,18 +189,13 @@ const normalizeValue = (value: unknown): string => {
 
 /**
  * Sorts and normalizes an array of values.
- * - If value is an array, sorts the array and returns a normalized string representation of each element.
- * - Otherwise, returns a single normalized string representation of the value.
+ * - Sorts the array and returns a normalized string representation of each element.
  *
  * @param value - The value to sort and normalize.
  * @returns The sorted and normalized array of strings.
  */
-const sortAndNormalizeArray = (value: unknown): string[] => {
-  if (Array.isArray(value)) {
-    return value.sort().map((item) => normalizeValue(item));
-  }
-
-  return [normalizeValue(value)];
+const sortAndNormalizeArray = (value: unknown[]): string[] => {
+  return value.sort().map((item) => normalizeValue(item));
 };
 
 /**
