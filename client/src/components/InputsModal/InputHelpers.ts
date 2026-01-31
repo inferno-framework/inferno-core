@@ -171,3 +171,74 @@ export const isJsonString = (str: unknown) => {
   }
   return !!value && typeof value === 'object';
 };
+
+/**
+ * Converts a value to its string representation.
+ * - If value is null or undefined, returns an empty string.
+ * - Otherwise, returns the string representation of the value.
+ *
+ * @param value - The value to normalize.
+ * @returns The normalized string value.
+ */
+const normalizeValue = (value: unknown): string => {
+  if (value === null || value === undefined) {
+    return '';
+  }
+  return value.toString();
+};
+
+/**
+ * Sorts and normalizes an array of values.
+ * - If value is an array, sorts the array and returns a normalized string representation of each element.
+ * - Otherwise, returns a single normalized string representation of the value.
+ *
+ * @param value - The value to sort and normalize.
+ * @returns The sorted and normalized array of strings.
+ */
+const sortAndNormalizeArray = (value: unknown): string[] => {
+  if (Array.isArray(value)) {
+    return value.sort().map((item) => normalizeValue(item));
+  }
+
+  return [normalizeValue(value)];
+};
+
+/**
+ * Compares two values for equality.
+ * - If both values are arrays, sorts and normalizes them and then compares each element.
+ * - Otherwise, normalizes them and compares the string representations.
+ *
+ * @param value1 - The first value to compare.
+ * @param value2 - The second value to compare.
+ * @returns True if the values are equal, false otherwise.
+ */
+const isEqual = (value1: unknown, value2: unknown) => {
+  if (Array.isArray(value1) && Array.isArray(value2)) {
+    return sortAndNormalizeArray(value1).every((item, index) => item === sortAndNormalizeArray(value2)[index]);
+  }
+
+  return normalizeValue(value1) === normalizeValue(value2);
+};
+
+/**
+ * Returns true if the input field should be displayed based on its `show_if` condition and the values in inputsMap.
+ * - No `show_if` → always show.
+ * - Referenced input missing or no `input_name` → hide.
+ * - When `show_if.value` is a string: show when referenced value equals it.
+ * - When `show_if.value` is string[]: show when referenced value equals any element.
+ */
+export const conditionalShowInput = (input: TestInput, inputsMap: Map<string, unknown>): boolean => {
+  const showIf = input.show_if;
+  if (!showIf?.input_name) {
+    return true;
+  }
+  const inputValue = inputsMap.get(showIf.input_name);
+  if (inputValue === undefined) {
+    return false;
+  }
+  return isEqual(inputValue, showIf.value as string | string[]);
+};
+
+export const showInput = (input: TestInput, inputsMap: Map<string, unknown>): boolean => {
+  return !input.hidden && conditionalShowInput(input, inputsMap);
+};

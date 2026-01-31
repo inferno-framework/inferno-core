@@ -140,6 +140,10 @@ export interface TestInput {
     list_options?: InputOption[];
     mode?: string;
   };
+  show_if?: {
+    input_name: string;
+    value: string | string[];
+  }
 }
 
 export interface TestOutput {

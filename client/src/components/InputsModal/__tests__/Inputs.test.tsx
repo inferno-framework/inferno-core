@@ -9,6 +9,7 @@ import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputTextField from '~/components/InputsModal/InputTextField';
 import { isJsonString } from '~/components/InputsModal/InputHelpers';
 import ThemeProvider from '~/components/ThemeProvider';
+import InputFields from '../InputFields';
 
 describe('Input Components', () => {
   it('renders InputCheckboxGroup', () => {
@@ -180,4 +181,81 @@ describe('Input Components', () => {
       expect(isJsonString(string)).toEqual(true);
     });
   });
+
+  describe('renders conditional fields correctly', () => {
+    const constructInput = (props: Partial<TestInput>): TestInput => {
+      return {
+        name: props?.name || '',
+        type: props?.type || 'text' as TestInput['type'],
+        title: props?.title,
+        optional: props?.optional,
+        show_if: props?.show_if,
+        value: props?.value,
+      }
+    }
+    const contructInputMap = (inputs: TestInput[]): Map<string, string> => {
+      return inputs.reduce((acc, input) => {
+        acc.set(input.name, input.value as string);
+        return acc;
+      }, new Map<string, string>());
+    }
+    const renderInputFields = (inputs: TestInput[], inputsMap: Map<string, string>) => {
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputFields inputs={inputs} inputsMap={inputsMap} setInputsMap={() => {}} />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+    }
+    const assertInputRendersCorrect = (inputs: Partial<TestInput>[], expected: boolean[]) => {
+      const constructedInputs: TestInput[] = inputs.map((input) => constructInput(input));
+      const inputsMap = contructInputMap(constructedInputs);
+      renderInputFields(constructedInputs, inputsMap);
+
+      constructedInputs.forEach((input, index) => {
+        const targetInput = screen.queryByLabelText(input.title as string, { exact: false });
+        if (expected[index]) {
+          expect(targetInput).toBeInTheDocument();
+        } else {
+          expect(targetInput).not.toBeInTheDocument();
+        }
+      });
+    }
+    it('should skip render of the field if target value is undefined', () => {
+      const name1 = (crypto.randomUUID());
+      const name2 = (crypto.randomUUID());
+      const title1 = (crypto.randomUUID());
+      const title2 = (crypto.randomUUID());
+      const value1 = (crypto.randomUUID());
+      assertInputRendersCorrect([
+        { name: name1, title: title1 },
+        { name: name2, title: title2, show_if: { input_name: name1, value: value1 } },
+      ], [true, false]);
+    });
+    it('Skip render if target value is not equal to existing one', () => {
+      const name1 = (crypto.randomUUID());
+      const name2 = (crypto.randomUUID());
+      const title1 = (crypto.randomUUID());
+      const title2 = (crypto.randomUUID());
+      const value1 = (crypto.randomUUID());
+      const value2 = (crypto.randomUUID());
+      assertInputRendersCorrect([
+        { name: name1, title: title1, value: value1 },
+        { name: name2, title: title2, show_if: { input_name: name1, value: value2 } },
+      ], [true, false]);
+    })
+
+    it('Render the field if target value is equal to existing one', () => {
+      const name1 = (crypto.randomUUID());
+      const name2 = (crypto.randomUUID());
+      const title1 = (crypto.randomUUID());
+      const title2 = (crypto.randomUUID());
+      const value1 = (crypto.randomUUID());
+      assertInputRendersCorrect([
+        { name: name1, title: title1, value: value1 },
+        { name: name2, title: title2, show_if: { input_name: name1, value: value1 } },
+      ], [true, true]);
+    })
+  })
 });
