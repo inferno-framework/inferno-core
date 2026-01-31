@@ -16,6 +16,7 @@ module Inferno
       # @option input_params [Hash] :options Possible input option formats based on input type
       # @option options [Array] :list_options Array of options for input formats
       #   that require a list of possible values (radio and checkbox)
+      # @option input_params [Hash] :show_if Conditions for showing the input
       # @return [void]
       # @example
       #   input :patient_id, title: 'Patient ID', description: 'The ID of the patient being searched for',
