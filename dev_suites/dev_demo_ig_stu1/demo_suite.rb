@@ -79,6 +79,32 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     group do
+      id 'conditional_group'
+      title 'Conditional Inputs Group'
+      optional
+
+      test 'Conditional, optional, empty input test' do
+        input :get_type, title: 'How to get Bundle', type: 'radio', options: {
+          list_options: [
+            { value: 'copy_paste', label: 'Paste JSON' },
+            { value: 'url', label: 'URL to FHIR Bundle' },
+            { value: 'summary_op', label: '$summary Operation' }
+          ]
+        }
+        input :bundle_copy_paste, title: 'Paste JSON', type: 'textarea', optional: true,
+                                  show_if: { input_name: 'get_type', value: 'copy_paste' }
+        input :bundle_url, title: 'URL to FHIR Bundle', type: 'text', optional: true,
+                           show_if: { input_name: 'get_type', value: 'url' }
+        input :fhir_server_url, title: 'FHIR Server URL', type: 'text', optional: true,
+                                show_if: { input_name: 'get_type', value: 'summary_op' }
+        input :patient_id, title: 'Patient ID', type: 'text', optional: true,
+                           show_if: { input_name: 'get_type', value: 'summary_op' }
+
+        run { pass }
+      end
+    end
+
+    group do
       id 'locked_group'
       title 'Locked Inputs Group'
       optional
