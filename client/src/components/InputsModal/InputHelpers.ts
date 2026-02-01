@@ -184,7 +184,20 @@ const normalizeValue = (value: unknown): string => {
   if (value === null || value === undefined) {
     return '';
   }
-  return value.toString();
+  if (typeof value === 'object') {
+    return JSON.stringify(value);
+  }
+  switch (typeof value) {
+    case 'string':
+      return value;
+    case 'number':
+    case 'boolean':
+    case 'bigint':
+    case 'symbol':
+      return String(value);
+    default:
+      return '';
+  }
 };
 
 /**
@@ -209,20 +222,26 @@ const sortAndNormalizeArray = (value: unknown[]): string[] => {
  */
 const isEqual = (value1: unknown, value2: unknown) => {
   if (Array.isArray(value1) && Array.isArray(value2)) {
-    return sortAndNormalizeArray(value1).every((item, index) => item === sortAndNormalizeArray(value2)[index]);
+    return sortAndNormalizeArray(value1).every(
+      (item, index) => item === sortAndNormalizeArray(value2)[index],
+    );
   }
 
   return normalizeValue(value1) === normalizeValue(value2);
 };
 
 /**
- * Returns true if the input field should be displayed based on its `show_if` condition and the values in inputsMap.
+ * Returns true if the input field should be displayed based on its `show_if`
+ * condition and the values in inputsMap.
  * - No `show_if` → always show.
  * - Referenced input missing or no `input_name` → hide.
  * - When `show_if.value` is a string: show when referenced value equals it.
  * - When `show_if.value` is string[]: show when referenced value equals any element.
  */
-export const conditionalShowInput = (input: TestInput, inputsMap: Map<string, unknown>): boolean => {
+export const conditionalShowInput = (
+  input: TestInput,
+  inputsMap: Map<string, unknown>,
+): boolean => {
   const showIf = input.show_if;
   if (!showIf?.input_name) {
     return true;
@@ -231,7 +250,7 @@ export const conditionalShowInput = (input: TestInput, inputsMap: Map<string, un
   if (inputValue === undefined) {
     return false;
   }
-  return isEqual(inputValue, showIf.value as string | string[]);
+  return isEqual(inputValue, showIf.value);
 };
 
 export const showInput = (input: TestInput, inputsMap: Map<string, unknown>): boolean => {

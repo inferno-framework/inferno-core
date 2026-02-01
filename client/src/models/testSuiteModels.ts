@@ -143,7 +143,7 @@ export interface TestInput {
   show_if?: {
     input_name: string;
     value: string | string[];
-  }
+  };
 }
 
 export interface TestOutput {

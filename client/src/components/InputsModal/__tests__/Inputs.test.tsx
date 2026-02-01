@@ -212,10 +212,7 @@ describe('Input Components', () => {
       );
     };
 
-    const assertInputVisibility = (
-      inputs: Partial<TestInput>[],
-      expectedVisible: boolean[],
-    ) => {
+    const assertInputVisibility = (inputs: Partial<TestInput>[], expectedVisible: boolean[]) => {
       const constructedInputs: TestInput[] = inputs.map((input) => constructInput(input));
       const inputsMap = constructInputsMap(constructedInputs);
       renderInputFields(constructedInputs, inputsMap);
@@ -232,12 +229,7 @@ describe('Input Components', () => {
     };
 
     it('renders field when it has no show_if (always visible)', () => {
-      assertInputVisibility(
-        [
-          { name: 'standalone', title: 'Standalone field' },
-        ],
-        [true],
-      );
+      assertInputVisibility([{ name: 'standalone', title: 'Standalone field' }], [true]);
     });
 
     it('skips rendering dependent field when controlling value is undefined', () => {
@@ -298,7 +290,6 @@ describe('Input Components', () => {
     });
 
     it('renders dependent field when controlling value (array) equals show_if array value', () => {
-      // When ref value in map is an array, show_if.value as string[] matches via isEqual (same elements)
       const refValue = ['a', 'b'];
       const inputs: TestInput[] = [
         constructInput({
@@ -326,5 +317,5 @@ describe('Input Components', () => {
       expect(screen.getByRole('checkbox', { name: /Trigger/i })).toBeInTheDocument();
       expect(screen.getByRole('textbox', { name: /Dependent/i })).toBeVisible();
     });
-  })
+  });
 });
