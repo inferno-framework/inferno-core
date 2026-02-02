@@ -139,7 +139,21 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
         { name: 'cancel_pause_time', _type: 'text', value: '30' },
         { name: 'url1', _type: 'text', value: nil },
         { name: 'custom_bearer_token', _type: 'text',
-          _description: 'This bearer token will be used to identify the incoming request', value: nil }
+          _description: 'This bearer token will be used to identify the incoming request', value: nil },
+        { name: 'get_type', _type: 'radio', _title: 'How to get Bundle',
+          _options: { list_options: [
+            { value: 'copy_paste', label: 'Paste JSON' },
+            { value: 'url', label: 'URL to FHIR Bundle' },
+            { value: 'summary_op', label: '$summary Operation' }
+          ] }, value: nil },
+        { name: 'bundle_copy_paste', _type: 'textarea', _title: 'Paste JSON',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type', value: 'copy_paste' } },
+        { name: 'bundle_url', _type: 'text', _title: 'URL to FHIR Bundle',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type', value: 'url' } },
+        { name: 'fhir_server_url', _type: 'text', _title: 'FHIR Server URL',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type', value: 'summary_op' } },
+        { name: 'patient_identifier', _type: 'text', _title: 'Patient ID',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type', value: 'summary_op' } }
       ] }
   end
 
