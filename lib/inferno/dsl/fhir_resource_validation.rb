@@ -248,14 +248,27 @@ module Inferno
         # @private
         def mark_details_for_removal(message_hashes, index, indices_to_remove)
           # Mark all consecutive Details messages following this base message
+          # that match the base message's location
+          base_location = extract_location_from_message(message_hashes[index][:message])
           j = index + 1
           while j < message_hashes.length
             next_message = message_hashes[j]
-            break unless next_message[:message].include?('Details for #')
+            next_location = extract_location_from_message(next_message[:message])
+
+            # Only mark if it's a Details message AND location matches
+            break unless next_message[:message].include?('Details for #') && next_location == base_location
 
             indices_to_remove << j
             j += 1
           end
+        end
+
+        # @private
+        # Extract location from a formatted message like "Resource/id: location: message"
+        def extract_location_from_message(message)
+          # Format is "ResourceType/id: location: message" or "ResourceType: location: message"
+          parts = message.split(': ', 3)
+          parts[1] if parts.length >= 2
         end
 
         # @private
