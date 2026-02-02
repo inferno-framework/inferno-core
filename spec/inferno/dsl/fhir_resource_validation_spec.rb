@@ -1011,6 +1011,248 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       end
     end
 
+    context 'when Reference_REF_CantMatchChoice error has multiple Details messages with all suppressible errors' do
+      let(:outcome_with_multiple_suppressible_details) do
+        {
+          outcomes: [
+            {
+              fileInfo: {
+                fileName: 'Coverage/6b28604e-5574-46d9-8f7a-68055baa55ab.json',
+                fileContent: resource_string,
+                fileType: 'json'
+              },
+              issues: [
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Unable to find a profile match for #2',
+                  messageId: 'Reference_REF_CantMatchChoice',
+                  type: 'STRUCTURE',
+                  level: 'ERROR',
+                  html: 'Unable to find a profile match'
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching against profile http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization|6.1.0',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details for #2 matching profile 1',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 773,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[1].type.coding[0].system',
+                      message: "No definition could be found for URL value 'http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType'",
+                      messageId: 'Type_Specific_Checks_DT_URL_Resolve',
+                      type: 'INVALID',
+                      level: 'ERROR',
+                      html: 'No definition could be found for URL 1'
+                    }
+                  ]
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching against profile http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner|6.1.0',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details for #2 matching profile 2',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 850,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[2].system',
+                      message: "No definition could be found for URL value 'http://terminology.hl7.org/CodeSystem/v2-0203'",
+                      messageId: 'Type_Specific_Checks_DT_URL_Resolve',
+                      type: 'INVALID',
+                      level: 'ERROR',
+                      html: 'No definition could be found for URL 2'
+                    }
+                  ]
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching against profile http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient|6.1.0',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details for #2 matching profile 3',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 920,
+                      location: 'Coverage.contained[1]/*Organization/2*/.type.coding[0].system',
+                      message: "URL value 'http://example.org/unknown-codesystem' does not resolve",
+                      messageId: 'Type_Specific_Checks_DT_URL_Resolve',
+                      type: 'INVALID',
+                      level: 'ERROR',
+                      html: 'URL does not resolve'
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          sessionId: '861f9cc3-688f-4fda-8cf8-4b8640432b5e'
+        }.to_json
+      end
+
+      before do
+        stub_request(:post, "#{validation_url}/validate")
+          .to_return(status: 200, body: outcome_with_multiple_suppressible_details)
+      end
+
+      it 'suppresses the Reference error and all Details when all errors across all Details are suppressible' do
+        result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
+
+        expect(result).to be(true)
+        expect(runnable.messages).to be_empty
+      end
+    end
+
+    context 'when Reference_REF_CantMatchChoice error has multiple Details with one containing real errors' do
+      let(:outcome_with_multiple_details_with_real_error) do
+        {
+          outcomes: [
+            {
+              fileInfo: {
+                fileName: 'Coverage/6b28604e-5574-46d9-8f7a-68055baa55ab.json',
+                fileContent: resource_string,
+                fileType: 'json'
+              },
+              issues: [
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Unable to find a profile match for #2',
+                  messageId: 'Reference_REF_CantMatchChoice',
+                  type: 'STRUCTURE',
+                  level: 'ERROR',
+                  html: 'Unable to find a profile match'
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching against profile http://hl7.org/fhir/us/core/StructureDefinition/us-core-organization|6.1.0',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details for #2 matching profile 1',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 773,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[1].type.coding[0].system',
+                      message: "No definition could be found for URL value 'http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType'",
+                      messageId: 'Type_Specific_Checks_DT_URL_Resolve',
+                      type: 'INVALID',
+                      level: 'ERROR',
+                      html: 'No definition could be found for URL'
+                    }
+                  ]
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching against profile http://hl7.org/fhir/us/core/StructureDefinition/us-core-practitioner|6.1.0',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details for #2 matching profile 2',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 850,
+                      location: 'Coverage.contained[1]/*Organization/2*/.identifier[0]',
+                      message: 'Identifier.system must be an absolute reference, not a local reference',
+                      messageId: 'Validation_VAL_Profile_Minimum',
+                      type: 'STRUCTURE',
+                      level: 'ERROR',
+                      html: 'Real validation error in profile 2'
+                    }
+                  ]
+                },
+                {
+                  source: 'InstanceValidator',
+                  line: 1,
+                  col: 2096,
+                  location: 'Coverage.payor[0]',
+                  message: 'Details for #2 matching against profile http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient|6.1.0',
+                  messageId: 'Details_for__matching_against_Profile_',
+                  type: 'STRUCTURE',
+                  level: 'INFORMATION',
+                  html: 'Details for #2 matching profile 3',
+                  slicingHint: true,
+                  sliceInfo: [
+                    {
+                      source: 'InstanceValidator',
+                      line: 1,
+                      col: 920,
+                      location: 'Coverage.contained[1]/*Organization/2*/.type.coding[0].system',
+                      message: "URL value 'http://example.org/unknown-codesystem' does not resolve",
+                      messageId: 'Type_Specific_Checks_DT_URL_Resolve',
+                      type: 'INVALID',
+                      level: 'ERROR',
+                      html: 'URL does not resolve'
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          sessionId: '861f9cc3-688f-4fda-8cf8-4b8640432b5e'
+        }.to_json
+      end
+
+      before do
+        stub_request(:post, "#{validation_url}/validate")
+          .to_return(status: 200, body: outcome_with_multiple_details_with_real_error)
+      end
+
+      it 'keeps the Reference error as ERROR when any Details contains real validation errors' do
+        result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
+
+        expect(result).to be(false)
+        expect(runnable.messages.length).to eq(4)
+        expect(runnable.messages[0][:type]).to eq('error')
+        expect(runnable.messages[0][:message]).to include('Unable to find a profile match')
+        expect(runnable.messages[1][:message]).to include('Details for #2 matching against profile')
+        expect(runnable.messages[1][:message]).to include('us-core-organization')
+        expect(runnable.messages[2][:message]).to include('Details for #2 matching against profile')
+        expect(runnable.messages[2][:message]).to include('us-core-practitioner')
+        expect(runnable.messages[3][:message]).to include('Details for #2 matching against profile')
+        expect(runnable.messages[3][:message]).to include('us-core-patient')
+      end
+    end
+
     context 'when custom exclude_message filter is applied to slice issues' do
       let(:validator_with_custom_filter) do
         Inferno::DSL::FHIRResourceValidation::Validator.new('test_validator', 'test_suite') do

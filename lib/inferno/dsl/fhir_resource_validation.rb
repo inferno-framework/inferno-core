@@ -247,8 +247,15 @@ module Inferno
 
         # @private
         def mark_details_for_removal(message_hashes, index, indices_to_remove)
-          next_message = message_hashes[index + 1]
-          indices_to_remove << (index + 1) if next_message && next_message[:message].include?('Details for #')
+          # Mark all consecutive Details messages following this base message
+          j = index + 1
+          while j < message_hashes.length
+            next_message = message_hashes[j]
+            break unless next_message[:message].include?('Details for #')
+
+            indices_to_remove << j
+            j += 1
+          end
         end
 
         # @private
@@ -388,9 +395,33 @@ module Inferno
         end
 
         # @private
+        # Finds all consecutive Details messages following a Reference error at the given index.
+        # Returns an array of Details issues that match the location and have sliceInfo.
+        def find_slice_info(issues_array, base_issue, start_index)
+          details_issues = []
+          j = start_index
+
+          while j < issues_array.length
+            next_issue = issues_array[j]
+            if next_issue['messageId'] == 'Details_for__matching_against_Profile_' &&
+               next_issue['sliceInfo'] &&
+               next_issue['location'] == base_issue['location']
+              details_issues << next_issue
+              j += 1
+            else
+              break
+            end
+          end
+
+          details_issues
+        end
+
+        # @private
         # Main processing loop that handles the validator response issues.
         # Looks for Reference_REF_CantMatchChoice errors that have slice details
-        # and links them together for later filtering.
+        # and links them together for later filtering. Collects ALL consecutive
+        # Details messages (for resources matching multiple profiles) and merges
+        # all their sliceInfo arrays into a single slices array.
         def process_issues_with_slice_info(issues_array)
           processed_issues = []
           i = 0
@@ -398,15 +429,24 @@ module Inferno
           while i < issues_array.length
             issue = issues_array[i]
 
-            # Check if this is a reference error with slice details that need linking
-            if reference_error_with_slice_details?(issue, issues_array, i)
-              slice_detail_issue = issues_array[i + 1]
-              # Link the slice info to the main error for later filtering
-              issue['slices'] = slice_detail_issue['sliceInfo']
-              processed_issues << issue
-              # Keep the Details issue as well, but mark it so we can adjust it later
-              processed_issues << slice_detail_issue
-              i += 2
+            # Check if this is a reference error that may have slice details
+            if issue['messageId'] == 'Reference_REF_CantMatchChoice'
+              # Collect all consecutive Details messages with matching location
+              details_issues = find_slice_info(issues_array, issue, i + 1)
+
+              # If we found Details messages, merge all their sliceInfo into the base error
+              if details_issues.any?
+                combined_slices = details_issues.flat_map { |details| details['sliceInfo'] }
+                issue['slices'] = combined_slices
+                processed_issues << issue
+                # Keep all the Details issues as well
+                processed_issues.concat(details_issues)
+                i += (1 + details_issues.length) # Skip past all processed issues
+              else
+                # No Details found, add as regular issue
+                processed_issues << issue
+                i += 1
+              end
             else
               # Regular issue - add as-is
               processed_issues << issue
@@ -415,22 +455,6 @@ module Inferno
           end
 
           processed_issues
-        end
-
-        # @private
-        # Identifies the specific pattern where a Reference_REF_CantMatchChoice error
-        # is immediately followed by Details_for__matching_against_Profile_ with sliceInfo.
-        # This pattern indicates that the reference failed because of slice validation issues
-        # that may contain suppressible URL resolution errors.
-        # Validates that both issues have the same location to ensure they're related.
-        def reference_error_with_slice_details?(issue, issues_array, index)
-          return false unless issue['messageId'] == 'Reference_REF_CantMatchChoice'
-          return false unless index + 1 < issues_array.length
-
-          next_issue = issues_array[index + 1]
-          next_issue['messageId'] == 'Details_for__matching_against_Profile_' &&
-            next_issue['sliceInfo'] &&
-            next_issue['location'] == issue['location']
         end
 
         # @private
