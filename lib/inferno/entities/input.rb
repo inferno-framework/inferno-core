@@ -16,7 +16,7 @@ module Inferno
         :locked,
         :hidden,
         :value,
-        :show_if
+        :enable_when
       ].freeze
       include Entities::Attributes
 
@@ -27,13 +27,13 @@ module Inferno
         # they are applied. Consider:
         # - ParentGroup
         #   - Group 1, input :a
-        #   - Group 2, input :a, locked: true, hidden: true, show_if: {...}, optional: true
+        #   - Group 2, input :a, locked: true, hidden: true, enable_when: {...}, optional: true
         # The input 'a' should only be locked, hidden, or conditionally shown when
         # running Group 2 in isolation. It should not inherit those when running
         # Group 1 or the ParentGroup.
         :locked,
         :hidden,
-        :show_if,
+        :enable_when,
         # Input type is sometimes only a UI concern (e.g. text vs. textarea), so
         # it is common to not redeclare the type everywhere it's used and needs
         # special handling to avoid clobbering the type with the default (text)

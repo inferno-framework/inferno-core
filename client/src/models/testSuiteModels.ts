@@ -140,7 +140,7 @@ export interface TestInput {
     list_options?: InputOption[];
     mode?: string;
   };
-  show_if?: {
+  enable_when?: {
     input_name: string;
     value: string | string[];
   };

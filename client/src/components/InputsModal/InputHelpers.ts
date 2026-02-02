@@ -231,26 +231,26 @@ const isEqual = (value1: unknown, value2: unknown) => {
 };
 
 /**
- * Returns true if the input field should be displayed based on its `show_if`
+ * Returns true if the input field should be displayed based on its `enable_when`
  * condition and the values in inputsMap.
- * - No `show_if` → always show.
+ * - No `enable_when` → always show.
  * - Referenced input missing or no `input_name` → hide.
- * - When `show_if.value` is a string: show when referenced value equals it.
- * - When `show_if.value` is string[]: show when referenced value equals any element.
+ * - When `enable_when.value` is a string: show when referenced value equals it.
+ * - When `enable_when.value` is string[]: show when referenced value equals any element.
  */
 export const conditionalShowInput = (
   input: TestInput,
   inputsMap: Map<string, unknown>,
 ): boolean => {
-  const showIf = input.show_if;
-  if (!showIf?.input_name) {
+  const enableWhen = input.enable_when;
+  if (!enableWhen?.input_name) {
     return true;
   }
-  const inputValue = inputsMap.get(showIf.input_name);
+  const inputValue = inputsMap.get(enableWhen.input_name);
   if (inputValue === undefined) {
     return false;
   }
-  return isEqual(inputValue, showIf.value);
+  return isEqual(inputValue, enableWhen.value);
 };
 
 export const showInput = (input: TestInput, inputsMap: Map<string, unknown>): boolean => {

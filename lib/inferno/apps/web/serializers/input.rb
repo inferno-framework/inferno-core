@@ -16,7 +16,7 @@ module Inferno
         field :locked, if: :field_present?
         field :hidden, if: :field_present?
         field :value, if: :field_present?
-        field :show_if, if: :field_present?
+        field :enable_when, if: :field_present?
       end
     end
   end

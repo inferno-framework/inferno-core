@@ -189,7 +189,7 @@ describe('Input Components', () => {
         type: (props?.type || 'text') as TestInput['type'],
         title: props?.title,
         optional: props?.optional,
-        show_if: props?.show_if,
+        enable_when: props?.enable_when,
         hidden: props?.hidden,
         value: props?.value,
       };
@@ -228,7 +228,7 @@ describe('Input Components', () => {
       });
     };
 
-    it('renders field when it has no show_if (always visible)', () => {
+    it('renders field when it has no enable_when (always visible)', () => {
       assertInputVisibility([{ name: 'standalone', title: 'Standalone field' }], [true]);
     });
 
@@ -239,49 +239,49 @@ describe('Input Components', () => {
           {
             name: 'dependent',
             title: 'Dependent',
-            show_if: { input_name: 'trigger', value: 'yes' },
+            enable_when: { input_name: 'trigger', value: 'yes' },
           },
         ],
         [true, false],
       );
     });
 
-    it('skips rendering when controlling value does not match show_if', () => {
+    it('skips rendering when controlling value does not match enable_when', () => {
       assertInputVisibility(
         [
           { name: 'trigger', title: 'Trigger', value: 'no' },
           {
             name: 'dependent',
             title: 'Dependent',
-            show_if: { input_name: 'trigger', value: 'yes' },
+            enable_when: { input_name: 'trigger', value: 'yes' },
           },
         ],
         [true, false],
       );
     });
 
-    it('renders dependent field when controlling value matches show_if', () => {
+    it('renders dependent field when controlling value matches enable_when', () => {
       assertInputVisibility(
         [
           { name: 'trigger', title: 'Trigger', value: 'yes' },
           {
             name: 'dependent',
             title: 'Dependent',
-            show_if: { input_name: 'trigger', value: 'yes' },
+            enable_when: { input_name: 'trigger', value: 'yes' },
           },
         ],
         [true, true],
       );
     });
 
-    it('hides field when hidden is true even if show_if would pass', () => {
+    it('hides field when hidden is true even if enable_when would pass', () => {
       assertInputVisibility(
         [
           { name: 'trigger', title: 'Trigger', value: 'yes' },
           {
             name: 'dependent',
             title: 'Dependent',
-            show_if: { input_name: 'trigger', value: 'yes' },
+            enable_when: { input_name: 'trigger', value: 'yes' },
             hidden: true,
           },
         ],
@@ -289,7 +289,7 @@ describe('Input Components', () => {
       );
     });
 
-    it('renders dependent field when controlling value (array) equals show_if array value', () => {
+    it('renders dependent field when controlling value (array) equals enable_when array value', () => {
       const refValue = ['a', 'b'];
       const inputs: TestInput[] = [
         constructInput({
@@ -301,7 +301,7 @@ describe('Input Components', () => {
         constructInput({
           name: 'dependent',
           title: 'Dependent',
-          show_if: { input_name: 'trigger', value: ['a', 'b'] },
+          enable_when: { input_name: 'trigger', value: ['a', 'b'] },
         }),
       ];
       const inputsMap = new Map<string, unknown>();

@@ -92,13 +92,13 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
           ]
         }
         input :bundle_copy_paste, title: 'Paste JSON', type: 'textarea', optional: true,
-                                  show_if: { input_name: 'get_type', value: 'copy_paste' }
+                                  enable_when: { input_name: 'get_type', value: 'copy_paste' }
         input :bundle_url, title: 'URL to FHIR Bundle', type: 'text', optional: true,
-                           show_if: { input_name: 'get_type', value: 'url' }
+                           enable_when: { input_name: 'get_type', value: 'url' }
         input :fhir_server_url, title: 'FHIR Server URL', type: 'text', optional: true,
-                                show_if: { input_name: 'get_type', value: 'summary_op' }
+                                enable_when: { input_name: 'get_type', value: 'summary_op' }
         input :patient_id, title: 'Patient ID', type: 'text', optional: true,
-                           show_if: { input_name: 'get_type', value: 'summary_op' }
+                           enable_when: { input_name: 'get_type', value: 'summary_op' }
 
         run { pass }
       end
