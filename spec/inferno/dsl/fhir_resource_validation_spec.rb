@@ -1334,4 +1334,241 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       end
     end
   end
+
+  describe 'helper method unit tests' do
+    describe '#extract_issue_location' do
+      it 'extracts location from a Hash with expression as String' do
+        issue = { expression: 'Patient.name' }
+        location = validator.send(:extract_issue_location, issue)
+        expect(location).to eq('Patient.name')
+      end
+
+      it 'extracts location from a Hash with expression as Array' do
+        issue = { expression: ['Patient.name', 'Patient.identifier'] }
+        location = validator.send(:extract_issue_location, issue)
+        expect(location).to eq('Patient.name, Patient.identifier')
+      end
+
+      it 'extracts location from an object with expression method' do
+        issue = OpenStruct.new(expression: ['Observation.value'])
+        allow(issue).to receive(:respond_to?).with(:expression).and_return(true)
+        location = validator.send(:extract_issue_location, issue)
+        expect(location).to eq('Observation.value')
+      end
+
+      it 'extracts location from an object with location method when expression not available' do
+        issue = OpenStruct.new(location: ['Coverage.payor[0]', 'Coverage.subscriber'])
+        allow(issue).to receive(:respond_to?).with(:expression).and_return(false)
+        location = validator.send(:extract_issue_location, issue)
+        expect(location).to eq('Coverage.payor[0], Coverage.subscriber')
+      end
+
+      it 'handles nil expression gracefully' do
+        issue = OpenStruct.new(expression: nil)
+        allow(issue).to receive(:respond_to?).with(:expression).and_return(true)
+        location = validator.send(:extract_issue_location, issue)
+        expect(location).to be_nil
+      end
+    end
+
+    describe '#categorize_slice_issue' do
+      let(:remaining_errors) { [] }
+      let(:remaining_warnings) { [] }
+      let(:remaining_info) { [] }
+
+      it 'categorizes ERROR level issues correctly' do
+        slice_issue = { 'level' => 'ERROR', 'message' => 'Test error' }
+        validator.send(:categorize_slice_issue, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+
+        expect(remaining_errors).to eq([slice_issue])
+        expect(remaining_warnings).to be_empty
+        expect(remaining_info).to be_empty
+      end
+
+      it 'categorizes FATAL level issues as errors' do
+        slice_issue = { 'level' => 'FATAL', 'message' => 'Fatal error' }
+        validator.send(:categorize_slice_issue, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+
+        expect(remaining_errors).to eq([slice_issue])
+        expect(remaining_warnings).to be_empty
+        expect(remaining_info).to be_empty
+      end
+
+      it 'categorizes WARNING level issues correctly' do
+        slice_issue = { 'level' => 'WARNING', 'message' => 'Test warning' }
+        validator.send(:categorize_slice_issue, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+
+        expect(remaining_errors).to be_empty
+        expect(remaining_warnings).to eq([slice_issue])
+        expect(remaining_info).to be_empty
+      end
+
+      it 'categorizes INFORMATION level issues correctly' do
+        slice_issue = { 'level' => 'INFORMATION', 'message' => 'Test info' }
+        validator.send(:categorize_slice_issue, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+
+        expect(remaining_errors).to be_empty
+        expect(remaining_warnings).to be_empty
+        expect(remaining_info).to eq([slice_issue])
+      end
+
+      it 'categorizes unknown level issues as info' do
+        slice_issue = { 'level' => 'DEBUG', 'message' => 'Test debug' }
+        validator.send(:categorize_slice_issue, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+
+        expect(remaining_errors).to be_empty
+        expect(remaining_warnings).to be_empty
+        expect(remaining_info).to eq([slice_issue])
+      end
+    end
+
+    describe '#process_nested_slice_info' do
+      let(:remaining_errors) { [] }
+      let(:remaining_warnings) { [] }
+      let(:remaining_info) { [] }
+
+      it 'adds slice issue to errors when nested severity is error' do
+        slice_issue = {
+          'level' => 'INFORMATION',
+          'message' => 'Parent issue',
+          'sliceInfo' => [
+            {
+              'level' => 'ERROR',
+              'location' => 'Patient.name',
+              'message' => 'Real error'
+            }
+          ]
+        }
+
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+
+        expect(remaining_errors).to eq([slice_issue])
+        expect(remaining_warnings).to be_empty
+        expect(remaining_info).to be_empty
+      end
+
+      it 'does nothing when nested severity is warning (treated as suppressed)' do
+        slice_issue = {
+          'level' => 'INFORMATION',
+          'message' => 'Parent issue',
+          'sliceInfo' => [
+            {
+              'level' => 'WARNING',
+              'location' => 'Patient.name',
+              'message' => 'Warning message'
+            }
+          ]
+        }
+
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+
+        # determine_final_severity only returns 'error' or nil, so warnings are treated as nil (suppressed)
+        expect(remaining_errors).to be_empty
+        expect(remaining_warnings).to be_empty
+        expect(remaining_info).to be_empty
+      end
+
+      it 'does nothing when nested severity is info (treated as suppressed)' do
+        slice_issue = {
+          'level' => 'INFORMATION',
+          'message' => 'Parent issue',
+          'sliceInfo' => [
+            {
+              'level' => 'INFORMATION',
+              'location' => 'Patient.name',
+              'message' => 'Info message'
+            }
+          ]
+        }
+
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+
+        # determine_final_severity only returns 'error' or nil, so info is treated as nil (suppressed)
+        expect(remaining_errors).to be_empty
+        expect(remaining_warnings).to be_empty
+        expect(remaining_info).to be_empty
+      end
+
+      it 'does nothing when nested severity is nil (all suppressed)' do
+        slice_issue = {
+          'level' => 'INFORMATION',
+          'message' => 'Parent issue',
+          'sliceInfo' => [
+            {
+              'level' => 'ERROR',
+              'location' => 'Patient.identifier.system',
+              'message' => "No definition could be found for URL value 'http://example.org'",
+              'messageId' => 'Type_Specific_Checks_DT_URL_Resolve'
+            }
+          ]
+        }
+
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+
+        expect(remaining_errors).to be_empty
+        expect(remaining_warnings).to be_empty
+        expect(remaining_info).to be_empty
+      end
+
+      it 'returns early when sliceInfo is nil' do
+        slice_issue = {
+          'level' => 'ERROR',
+          'message' => 'Issue without sliceInfo'
+        }
+
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+
+        expect(remaining_errors).to be_empty
+        expect(remaining_warnings).to be_empty
+        expect(remaining_info).to be_empty
+      end
+
+      it 'returns early when sliceInfo is empty array' do
+        slice_issue = {
+          'level' => 'ERROR',
+          'message' => 'Issue with empty sliceInfo',
+          'sliceInfo' => []
+        }
+
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+
+        expect(remaining_errors).to be_empty
+        expect(remaining_warnings).to be_empty
+        expect(remaining_info).to be_empty
+      end
+    end
+
+    describe '#extract_location_from_message' do
+      it 'extracts location from message with resource ID' do
+        message = 'Patient/123: Patient.name: Name is required'
+        location = validator.send(:extract_location_from_message, message)
+        expect(location).to eq('Patient.name')
+      end
+
+      it 'extracts location from message without resource ID' do
+        message = 'Coverage: Coverage.payor[0]: Unable to find profile match'
+        location = validator.send(:extract_location_from_message, message)
+        expect(location).to eq('Coverage.payor[0]')
+      end
+
+      it 'returns nil for malformed message with no colons' do
+        message = 'Invalid message format'
+        location = validator.send(:extract_location_from_message, message)
+        expect(location).to be_nil
+      end
+
+      it 'extracts second part from message with only one colon' do
+        message = 'Patient/123: No location part'
+        location = validator.send(:extract_location_from_message, message)
+        # With only one colon, parts[1] will be the second part even though there's no third part
+        expect(location).to eq('No location part')
+      end
+
+      it 'handles complex location paths correctly' do
+        message = 'Claim/abc: Claim.supportingInfo[0].value.ofType(Reference): Reference error'
+        location = validator.send(:extract_location_from_message, message)
+        expect(location).to eq('Claim.supportingInfo[0].value.ofType(Reference)')
+      end
+    end
+  end
 end
