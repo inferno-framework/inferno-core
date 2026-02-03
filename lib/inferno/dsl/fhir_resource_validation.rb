@@ -477,8 +477,6 @@ module Inferno
         # while preserving legitimate structural validation errors.
         def process_slice_info_and_get_remaining_severity(slice_info_array)
           remaining_errors = []
-          remaining_warnings = []
-          remaining_info = []
 
           slice_info_array.each do |slice_issue|
             # Skip issues that should be suppressed (URL resolution errors, custom exclusions)
@@ -487,14 +485,14 @@ module Inferno
             # If this issue has nested sliceInfo, only consider the nested content
             # Otherwise, categorize it by its own severity level
             if slice_issue['sliceInfo']&.any?
-              process_nested_slice_info(slice_issue, remaining_errors, remaining_warnings, remaining_info)
+              process_nested_slice_info(slice_issue, remaining_errors)
             else
-              categorize_slice_issue(slice_issue, remaining_errors, remaining_warnings, remaining_info)
+              categorize_error_slice(slice_issue, remaining_errors)
             end
           end
 
           # Return the highest remaining severity level after suppression
-          determine_final_severity(remaining_errors, remaining_warnings, remaining_info)
+          determine_final_severity(remaining_errors)
         end
 
         # @private
@@ -530,35 +528,23 @@ module Inferno
         end
 
         # @private
-        def categorize_slice_issue(slice_issue, remaining_errors, remaining_warnings, remaining_info)
-          case slice_issue['level']
-          when 'ERROR', 'FATAL'
-            remaining_errors << slice_issue
-          when 'WARNING'
-            remaining_warnings << slice_issue
-          else
-            remaining_info << slice_issue
-          end
+        def categorize_error_slice(slice_issue, remaining_errors)
+          # Only track errors since warnings/info are treated as suppressed
+          remaining_errors << slice_issue if ['ERROR', 'FATAL'].include?(slice_issue['level'])
         end
 
         # @private
-        def process_nested_slice_info(slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        def process_nested_slice_info(slice_issue, remaining_errors)
           return unless slice_issue['sliceInfo']&.any?
 
           nested_severity = process_slice_info_and_get_remaining_severity(slice_issue['sliceInfo'])
 
-          case nested_severity
-          when 'error'
-            remaining_errors << slice_issue
-          when 'warning'
-            remaining_warnings << slice_issue
-          when 'info'
-            remaining_info << slice_issue
-          end
+          # Only 'error' or nil are possible return values from determine_final_severity
+          remaining_errors << slice_issue if nested_severity == 'error'
         end
 
         # @private
-        def determine_final_severity(remaining_errors, _remaining_warnings, _remaining_info)
+        def determine_final_severity(remaining_errors)
           # Only keep the base-level error if there are still errors in the slices
           # If only warnings/info remain, treat as fully suppressed
           return 'error' if remaining_errors.any?

@@ -1371,61 +1371,47 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       end
     end
 
-    describe '#categorize_slice_issue' do
+    describe '#categorize_error_slice' do
       let(:remaining_errors) { [] }
-      let(:remaining_warnings) { [] }
-      let(:remaining_info) { [] }
 
       it 'categorizes ERROR level issues correctly' do
         slice_issue = { 'level' => 'ERROR', 'message' => 'Test error' }
-        validator.send(:categorize_slice_issue, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        validator.send(:categorize_error_slice, slice_issue, remaining_errors)
 
         expect(remaining_errors).to eq([slice_issue])
-        expect(remaining_warnings).to be_empty
-        expect(remaining_info).to be_empty
       end
 
       it 'categorizes FATAL level issues as errors' do
         slice_issue = { 'level' => 'FATAL', 'message' => 'Fatal error' }
-        validator.send(:categorize_slice_issue, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        validator.send(:categorize_error_slice, slice_issue, remaining_errors)
 
         expect(remaining_errors).to eq([slice_issue])
-        expect(remaining_warnings).to be_empty
-        expect(remaining_info).to be_empty
       end
 
-      it 'categorizes WARNING level issues correctly' do
+      it 'does not categorize WARNING level issues as errors' do
         slice_issue = { 'level' => 'WARNING', 'message' => 'Test warning' }
-        validator.send(:categorize_slice_issue, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        validator.send(:categorize_error_slice, slice_issue, remaining_errors)
 
         expect(remaining_errors).to be_empty
-        expect(remaining_warnings).to eq([slice_issue])
-        expect(remaining_info).to be_empty
       end
 
-      it 'categorizes INFORMATION level issues correctly' do
+      it 'does not categorize INFORMATION level issues as errors' do
         slice_issue = { 'level' => 'INFORMATION', 'message' => 'Test info' }
-        validator.send(:categorize_slice_issue, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        validator.send(:categorize_error_slice, slice_issue, remaining_errors)
 
         expect(remaining_errors).to be_empty
-        expect(remaining_warnings).to be_empty
-        expect(remaining_info).to eq([slice_issue])
       end
 
-      it 'categorizes unknown level issues as info' do
+      it 'does not categorize unknown level issues as errors' do
         slice_issue = { 'level' => 'DEBUG', 'message' => 'Test debug' }
-        validator.send(:categorize_slice_issue, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        validator.send(:categorize_error_slice, slice_issue, remaining_errors)
 
         expect(remaining_errors).to be_empty
-        expect(remaining_warnings).to be_empty
-        expect(remaining_info).to eq([slice_issue])
       end
     end
 
     describe '#process_nested_slice_info' do
       let(:remaining_errors) { [] }
-      let(:remaining_warnings) { [] }
-      let(:remaining_info) { [] }
 
       it 'adds slice issue to errors when nested severity is error' do
         slice_issue = {
@@ -1440,11 +1426,9 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           ]
         }
 
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
 
         expect(remaining_errors).to eq([slice_issue])
-        expect(remaining_warnings).to be_empty
-        expect(remaining_info).to be_empty
       end
 
       it 'does nothing when nested severity is warning (treated as suppressed)' do
@@ -1460,12 +1444,10 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           ]
         }
 
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
 
         # determine_final_severity only returns 'error' or nil, so warnings are treated as nil (suppressed)
         expect(remaining_errors).to be_empty
-        expect(remaining_warnings).to be_empty
-        expect(remaining_info).to be_empty
       end
 
       it 'does nothing when nested severity is info (treated as suppressed)' do
@@ -1481,12 +1463,10 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           ]
         }
 
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
 
         # determine_final_severity only returns 'error' or nil, so info is treated as nil (suppressed)
         expect(remaining_errors).to be_empty
-        expect(remaining_warnings).to be_empty
-        expect(remaining_info).to be_empty
       end
 
       it 'does nothing when nested severity is nil (all suppressed)' do
@@ -1503,11 +1483,9 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           ]
         }
 
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
 
         expect(remaining_errors).to be_empty
-        expect(remaining_warnings).to be_empty
-        expect(remaining_info).to be_empty
       end
 
       it 'returns early when sliceInfo is nil' do
@@ -1516,11 +1494,9 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           'message' => 'Issue without sliceInfo'
         }
 
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
 
         expect(remaining_errors).to be_empty
-        expect(remaining_warnings).to be_empty
-        expect(remaining_info).to be_empty
       end
 
       it 'returns early when sliceInfo is empty array' do
@@ -1530,11 +1506,9 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           'sliceInfo' => []
         }
 
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors, remaining_warnings, remaining_info)
+        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
 
         expect(remaining_errors).to be_empty
-        expect(remaining_warnings).to be_empty
-        expect(remaining_info).to be_empty
       end
     end
 
