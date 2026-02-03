@@ -198,5 +198,11 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
       discriminator = { code: 'Patient', path: 'entry.resource' }
       expect(matcher).to be_matching_type_slice(slice, discriminator)
     end
+
+    it 'matches type slice with complex path for appropriate type' do
+      slice = FHIR::Bundle.new
+      discriminator = { code: 'Patient', path: 'entry.resource' }
+      expect(matcher).to be_matching_type_slice(slice, discriminator)
+    end    
   end
 end
