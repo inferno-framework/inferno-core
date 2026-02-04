@@ -240,9 +240,10 @@ module Inferno
 
         # @private
         # Filters messages that have slice information. For messages with errors that are
-        # entirely suppressible (e.g., URL resolution errors), removes both the base message
-        # and any associated Details messages. Indices are removed in reverse order to
-        # maintain correct positions during deletion.
+        # entirely suppressible in at least one profile (e.g., all URL resolution errors),
+        # removes both the base message and any associated Details messages. A resource is
+        # considered valid if it matches at least one profile successfully. Indices are
+        # removed in reverse order to maintain correct positions during deletion.
         def filter_sliced_messages(message_hashes)
           indices_to_remove = []
 
@@ -250,9 +251,11 @@ module Inferno
             next unless message_hash[:slices]
             next unless message_hash[:type] == 'error' || message_hash[:type] == 'warning'
 
-            remaining_severity = process_slice_info_and_get_remaining_severity(message_hash[:slices])
+            has_valid_profile = message_hash[:slices].any? do |slice_info_array|
+              process_slice_info_and_get_remaining_severity(slice_info_array).nil?
+            end
 
-            if remaining_severity.nil?
+            if has_valid_profile
               indices_to_remove << index
               mark_details_for_removal(message_hashes, index, indices_to_remove)
             end
@@ -460,8 +463,9 @@ module Inferno
         # Main processing loop that handles the validator response issues.
         # Looks for Reference_REF_CantMatchChoice errors that have slice details
         # and links them together for later filtering. Collects ALL consecutive
-        # Details messages (for resources matching multiple profiles) and merges
-        # all their sliceInfo arrays into a single slices array. Regular issues
+        # Details messages (for resources matching multiple profiles) and stores
+        # each profile's sliceInfo as a separate array. This allows checking if
+        # the resource validates against at least one profile. Regular issues
         # without slice information are passed through unchanged.
         def process_issues_with_slice_info(issues_array)
           processed_issues = []
@@ -474,8 +478,7 @@ module Inferno
               details_issues = find_slice_info(issues_array, issue, index + 1)
 
               if details_issues.any?
-                combined_slices = details_issues.flat_map { |details| details['sliceInfo'] }
-                issue['slices'] = combined_slices
+                issue['slices'] = details_issues.map { |details| details['sliceInfo'] }
                 processed_issues << issue
                 processed_issues.concat(details_issues)
                 index += (1 + details_issues.length)

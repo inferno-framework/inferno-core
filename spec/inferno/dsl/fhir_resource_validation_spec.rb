@@ -1237,19 +1237,14 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           .to_return(status: 200, body: outcome_with_multiple_details_with_real_error)
       end
 
-      it 'keeps the Reference error as ERROR when any Details contains real validation errors' do
+      it 'suppresses the Reference error when at least one profile validates, even if others have real errors' do
         result = validator.resource_is_valid?(coverage_resource, profile_url, runnable)
 
-        expect(result).to be(false)
-        expect(runnable.messages.length).to eq(4)
-        expect(runnable.messages[0][:type]).to eq('error')
-        expect(runnable.messages[0][:message]).to include('Unable to find a profile match')
-        expect(runnable.messages[1][:message]).to include('Details for #2 matching against profile')
-        expect(runnable.messages[1][:message]).to include('us-core-organization')
-        expect(runnable.messages[2][:message]).to include('Details for #2 matching against profile')
-        expect(runnable.messages[2][:message]).to include('us-core-practitioner')
-        expect(runnable.messages[3][:message]).to include('Details for #2 matching against profile')
-        expect(runnable.messages[3][:message]).to include('us-core-patient')
+        # With the new logic, since profile 1 (us-core-organization) and profile 3 (us-core-patient)
+        # only have suppressible errors, they validate successfully. Since at least one profile validates,
+        # the Reference error is suppressed even though profile 2 (us-core-practitioner) has real errors.
+        expect(result).to be(true)
+        expect(runnable.messages).to be_empty
       end
     end
 
