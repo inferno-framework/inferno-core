@@ -184,9 +184,9 @@ module Inferno
             raise Inferno::Exceptions::ErrorInValidatorException, validator_error_message(e)
           end
 
-          issue_hash = issue_hash_from_validator_response(response, runnable)
+          issue_hashes = issue_hashes_from_validator_response(response, runnable)
 
-          message_hashes = message_hashes_from_issues(issue_hash, resource, profile_url)
+          message_hashes = message_hashes_from_issues(issue_hashes, resource, profile_url)
 
           if add_messages_to_runnable
             message_hashes
@@ -218,7 +218,7 @@ module Inferno
 
         # @private
         def filter_messages(message_hashes)
-          message_hashes.reject! { |message| should_filter_message(Entities::Message.new(message)) }
+          message_hashes.reject! { |message| should_filter_message?(Entities::Message.new(message)) }
         end
 
         # @private
@@ -227,13 +227,13 @@ module Inferno
         # to the same prefixed format that base-level issues use before checking.
         def should_suppress_slice_issue?(slice_issue)
           mock_message = create_mock_message_for_slice(slice_issue)
-          should_filter_message(mock_message)
+          should_filter_message?(mock_message)
         end
 
         # @private
         # Determines if a message should be filtered based on exclusion rules.
         # Applies both the unresolved URL filter and any custom exclude_message filter.
-        def should_filter_message(message)
+        def should_filter_message?(message)
           exclude_unresolved_url_message.call(message) ||
             exclude_message&.call(message)
         end
@@ -291,8 +291,8 @@ module Inferno
         end
 
         # @private
-        def message_hashes_from_issues(issue_hash, resource, profile_url)
-          message_hashes = issue_hash.map do |issue|
+        def message_hashes_from_issues(issue_hashes, resource, profile_url)
+          message_hashes = issue_hashes.map do |issue|
             message_hash_from_issue(issue, resource)
           end
 
@@ -410,7 +410,7 @@ module Inferno
         end
 
         # @private
-        def issue_hash_from_hl7_wrapped_response(response_hash)
+        def issue_hashes_from_hl7_wrapped_response(response_hash)
           # This is a workaround for some test kits which for legacy reasons
           # call this method directly with a String instead of a Hash.
           # See FI-3178.
@@ -574,10 +574,10 @@ module Inferno
         end
 
         # @private
-        def issue_hash_from_validator_response(response, runnable)
+        def issue_hashes_from_validator_response(response, runnable)
           sanitized_body = remove_invalid_characters(response.body)
 
-          issue_hash_from_hl7_wrapped_response(JSON.parse(sanitized_body))
+          issue_hashes_from_hl7_wrapped_response(JSON.parse(sanitized_body))
         rescue JSON::ParserError
           runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{sanitized_body}")
           raise Inferno::Exceptions::ErrorInValidatorException,
