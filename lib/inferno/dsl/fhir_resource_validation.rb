@@ -248,8 +248,7 @@ module Inferno
           indices_to_remove = []
 
           message_hashes.each_with_index do |message_hash, index|
-            next unless message_hash[:slices]
-            next unless message_hash[:type] == 'error' || message_hash[:type] == 'warning'
+            next unless should_process_sliced_message?(message_hash)
 
             has_valid_profile = message_hash[:slices].any? do |slice_info_array|
               process_slice_info_and_get_remaining_severity(slice_info_array).nil?
@@ -264,6 +263,16 @@ module Inferno
           indices_to_remove.uniq.sort.reverse.each do |index|
             message_hashes.delete_at(index)
           end
+        end
+
+        # @private
+        # Determines if a message should be processed for slice-based filtering.
+        # Only messages with slices and error/warning severity are candidates for filtering.
+        def should_process_sliced_message?(message_hash)
+          return false unless message_hash[:slices]
+          return false unless message_hash[:type] == 'error' || message_hash[:type] == 'warning'
+
+          true
         end
 
         # @private
