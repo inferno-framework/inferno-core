@@ -180,12 +180,9 @@ export const isJsonString = (str: unknown) => {
  * @param value - The value to normalize.
  * @returns The normalized string value.
  */
-const normalizeValue = (value: unknown): string => {
-  if (value === null || value === undefined) {
+export const normalizeValue = (value: unknown): string => {
+  if (value === null) {
     return '';
-  }
-  if (typeof value === 'object') {
-    return JSON.stringify(value);
   }
   switch (typeof value) {
     case 'string':
@@ -195,6 +192,8 @@ const normalizeValue = (value: unknown): string => {
     case 'bigint':
     case 'symbol':
       return String(value);
+    case 'object':
+      return JSON.stringify(value);
     default:
       return '';
   }
