@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Inferno::DSL::RequirementSet
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Inferno::DSL::RequirementSet";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span>
+     &raquo; 
+    <span class="title">RequirementSet</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Inferno::DSL::RequirementSet
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Inferno::DSL::RequirementSet</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/inferno/dsl/requirement_set.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>A <code>RequirementSet</code> represents the set of requirements which are tested by
+a TestSuite.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="SuiteRequirements.html#requirement_sets-instance_method" title="Inferno::DSL::SuiteRequirements#requirement_sets (method)">SuiteRequirements#requirement_sets</a></span></li>
+    
+  </ul>
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="ATTRIBUTES-constant" class="">ATTRIBUTES =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbracket'>[</span>
+  <span class='symbol'>:identifier</span><span class='comma'>,</span>
+  <span class='symbol'>:title</span><span class='comma'>,</span>
+  <span class='symbol'>:actor</span><span class='comma'>,</span>
+  <span class='symbol'>:requirements</span><span class='comma'>,</span>
+  <span class='symbol'>:suite_options</span>
+<span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#actor-instance_method" title="#actor (instance method)">#<strong>actor</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The actor whose requirements are included in this <code>RequirementSet</code>.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#identifier-instance_method" title="#identifier (instance method)">#<strong>identifier</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The unique identifier for the source of requirements included in this <code>RequirementSet</code>.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#requirements-instance_method" title="#requirements (instance method)">#<strong>requirements</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>There are three options: * <code>"all"</code> (default) - Include all of the requirements for the specified   actor from the requirement source * <code>"referenced"</code> - Only include requirements from this source if they   are referenced by other included requirements * <code>"1,3,5-8"</code> - Only include the requirements from a comma-delimited   list.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#suite_options-instance_method" title="#suite_options (instance method)">#<strong>suite_options</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A set of suite options which must be selected in order for this <code>RequirementSet</code> to be included.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#title-instance_method" title="#title (instance method)">#<strong>title</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A human-readable title for this <code>RequirementSet</code>.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#complete%3F-instance_method" title="#complete? (instance method)">#<strong>complete?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns true when the <code>RequirementSet</code> includes all of the requirements from the source for the specified actor.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#expand_requirement_ids-instance_method" title="#expand_requirement_ids (instance method)">#<strong>expand_requirement_ids</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Expands the compressed comma-separated requirements list into an Array of full ids.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#filtered%3F-instance_method" title="#filtered? (instance method)">#<strong>filtered?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns true when the <code>RequirementSet</code> only includes requirements specified in a list.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(raw_attributes_hash)  &#x21d2; RequirementSet </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A new instance of RequirementSet.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#referenced%3F-instance_method" title="#referenced? (instance method)">#<strong>referenced?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns true when the <code>RequirementSet</code> only includes requirements referenced by other <code>RequirementSet</code>s.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(raw_attributes_hash)  &#x21d2; <tt><span class='object_link'><a href="" title="Inferno::DSL::RequirementSet (class)">RequirementSet</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a new instance of RequirementSet.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html" title="Inferno::Exceptions::UnknownAttributeException (class)">Exceptions::UnknownAttributeException</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/requirement_set.rb', line 33</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_attributes_hash'>attributes_hash</span> <span class='op'>=</span> <span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_symbolize_keys'>symbolize_keys</span>
+
+  <span class='id identifier rubyid_invalid_keys'>invalid_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='op'>-</span> <span class='const'><span class='object_link'><a href="#ATTRIBUTES-constant" title="Inferno::DSL::RequirementSet::ATTRIBUTES (constant)">ATTRIBUTES</a></span></span>
+
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html" title="Inferno::Exceptions::UnknownAttributeException (class)">UnknownAttributeException</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html#initialize-instance_method" title="Inferno::Exceptions::UnknownAttributeException#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='comma'>,</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_name'>name</span> <span class='op'>==</span> <span class='symbol'>:suite_options</span>
+      <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="SuiteOption.html" title="Inferno::DSL::SuiteOption (class)">SuiteOption</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+    <span class='kw'>end</span>
+
+    <span class='id identifier rubyid_instance_variable_set'>instance_variable_set</span><span class='lparen'>(</span><span class='symbol'>:&quot;@</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_suite_options'>suite_options</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="actor=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="actor-instance_method">
+  
+    #<strong>actor</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The actor whose requirements are included in this
+<code>RequirementSet</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/requirement_set.rb', line 22</span>
+
+<span class='kw'>class</span> <span class='const'><span class='object_link'><a href="" title="Inferno::DSL::RequirementSet (class)">RequirementSet</a></span></span>
+  <span class='const'><span class='object_link'><a href="#ATTRIBUTES-constant" title="Inferno::DSL::RequirementSet::ATTRIBUTES (constant)">ATTRIBUTES</a></span></span> <span class='op'>=</span> <span class='lbracket'>[</span>
+    <span class='symbol'>:identifier</span><span class='comma'>,</span>
+    <span class='symbol'>:title</span><span class='comma'>,</span>
+    <span class='symbol'>:actor</span><span class='comma'>,</span>
+    <span class='symbol'>:requirements</span><span class='comma'>,</span>
+    <span class='symbol'>:suite_options</span>
+  <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'>Attributes</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_attributes_hash'>attributes_hash</span> <span class='op'>=</span> <span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_symbolize_keys'>symbolize_keys</span>
+
+    <span class='id identifier rubyid_invalid_keys'>invalid_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='op'>-</span> <span class='const'><span class='object_link'><a href="#ATTRIBUTES-constant" title="Inferno::DSL::RequirementSet::ATTRIBUTES (constant)">ATTRIBUTES</a></span></span>
+
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html" title="Inferno::Exceptions::UnknownAttributeException (class)">UnknownAttributeException</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html#initialize-instance_method" title="Inferno::Exceptions::UnknownAttributeException#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='comma'>,</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+    <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_name'>name</span> <span class='op'>==</span> <span class='symbol'>:suite_options</span>
+        <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="SuiteOption.html" title="Inferno::DSL::SuiteOption (class)">SuiteOption</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_instance_variable_set'>instance_variable_set</span><span class='lparen'>(</span><span class='symbol'>:&quot;@</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_suite_options'>suite_options</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` includes all of the requirements
+</span>  <span class='comment'># from the source for the specified actor
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_complete?'>complete?</span>
+    <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span> <span class='op'>||</span> <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>all</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` only includes requirements
+</span>  <span class='comment'># referenced by other `RequirementSet`s
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_referenced?'>referenced?</span>
+    <span class='id identifier rubyid_requirements'>requirements</span><span class='op'>&amp;.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>referenced</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` only includes requirements
+</span>  <span class='comment'># specified in a list
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_filtered?'>filtered?</span>
+    <span class='op'>!</span><span class='id identifier rubyid_complete?'>complete?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_referenced?'>referenced?</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Expands the compressed comma-separated requirements list into an Array
+</span>  <span class='comment'># of full ids
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_expand_requirement_ids'>expand_requirement_ids</span>
+    <span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Entities/Requirement.html" title="Inferno::Entities::Requirement (class)">Requirement</a></span></span><span class='period'>.</span><span class='id identifier rubyid_expand_requirement_ids'><span class='object_link'><a href="../Entities/Requirement.html#expand_requirement_ids-class_method" title="Inferno::Entities::Requirement.expand_requirement_ids (method)">expand_requirement_ids</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_requirements'>requirements</span><span class='comma'>,</span> <span class='id identifier rubyid_identifier'>identifier</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="identifier=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="identifier-instance_method">
+  
+    #<strong>identifier</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The unique identifier for the source of
+requirements included in this <code>RequirementSet</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/requirement_set.rb', line 22</span>
+
+<span class='kw'>class</span> <span class='const'><span class='object_link'><a href="" title="Inferno::DSL::RequirementSet (class)">RequirementSet</a></span></span>
+  <span class='const'><span class='object_link'><a href="#ATTRIBUTES-constant" title="Inferno::DSL::RequirementSet::ATTRIBUTES (constant)">ATTRIBUTES</a></span></span> <span class='op'>=</span> <span class='lbracket'>[</span>
+    <span class='symbol'>:identifier</span><span class='comma'>,</span>
+    <span class='symbol'>:title</span><span class='comma'>,</span>
+    <span class='symbol'>:actor</span><span class='comma'>,</span>
+    <span class='symbol'>:requirements</span><span class='comma'>,</span>
+    <span class='symbol'>:suite_options</span>
+  <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'>Attributes</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_attributes_hash'>attributes_hash</span> <span class='op'>=</span> <span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_symbolize_keys'>symbolize_keys</span>
+
+    <span class='id identifier rubyid_invalid_keys'>invalid_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='op'>-</span> <span class='const'><span class='object_link'><a href="#ATTRIBUTES-constant" title="Inferno::DSL::RequirementSet::ATTRIBUTES (constant)">ATTRIBUTES</a></span></span>
+
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html" title="Inferno::Exceptions::UnknownAttributeException (class)">UnknownAttributeException</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html#initialize-instance_method" title="Inferno::Exceptions::UnknownAttributeException#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='comma'>,</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+    <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_name'>name</span> <span class='op'>==</span> <span class='symbol'>:suite_options</span>
+        <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="SuiteOption.html" title="Inferno::DSL::SuiteOption (class)">SuiteOption</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_instance_variable_set'>instance_variable_set</span><span class='lparen'>(</span><span class='symbol'>:&quot;@</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_suite_options'>suite_options</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` includes all of the requirements
+</span>  <span class='comment'># from the source for the specified actor
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_complete?'>complete?</span>
+    <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span> <span class='op'>||</span> <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>all</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` only includes requirements
+</span>  <span class='comment'># referenced by other `RequirementSet`s
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_referenced?'>referenced?</span>
+    <span class='id identifier rubyid_requirements'>requirements</span><span class='op'>&amp;.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>referenced</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` only includes requirements
+</span>  <span class='comment'># specified in a list
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_filtered?'>filtered?</span>
+    <span class='op'>!</span><span class='id identifier rubyid_complete?'>complete?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_referenced?'>referenced?</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Expands the compressed comma-separated requirements list into an Array
+</span>  <span class='comment'># of full ids
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_expand_requirement_ids'>expand_requirement_ids</span>
+    <span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Entities/Requirement.html" title="Inferno::Entities::Requirement (class)">Requirement</a></span></span><span class='period'>.</span><span class='id identifier rubyid_expand_requirement_ids'><span class='object_link'><a href="../Entities/Requirement.html#expand_requirement_ids-class_method" title="Inferno::Entities::Requirement.expand_requirement_ids (method)">expand_requirement_ids</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_requirements'>requirements</span><span class='comma'>,</span> <span class='id identifier rubyid_identifier'>identifier</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="requirements=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="requirements-instance_method">
+  
+    #<strong>requirements</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>There are three options:
+* <code>"all"</code> (default) - Include all of the requirements for the specified
+  actor from the requirement source
+* <code>"referenced"</code> - Only include requirements from this source if they
+  are referenced by other included requirements
+* <code>"1,3,5-8"</code> - Only include the requirements from a comma-delimited
+  list</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/requirement_set.rb', line 22</span>
+
+<span class='kw'>class</span> <span class='const'><span class='object_link'><a href="" title="Inferno::DSL::RequirementSet (class)">RequirementSet</a></span></span>
+  <span class='const'><span class='object_link'><a href="#ATTRIBUTES-constant" title="Inferno::DSL::RequirementSet::ATTRIBUTES (constant)">ATTRIBUTES</a></span></span> <span class='op'>=</span> <span class='lbracket'>[</span>
+    <span class='symbol'>:identifier</span><span class='comma'>,</span>
+    <span class='symbol'>:title</span><span class='comma'>,</span>
+    <span class='symbol'>:actor</span><span class='comma'>,</span>
+    <span class='symbol'>:requirements</span><span class='comma'>,</span>
+    <span class='symbol'>:suite_options</span>
+  <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'>Attributes</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_attributes_hash'>attributes_hash</span> <span class='op'>=</span> <span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_symbolize_keys'>symbolize_keys</span>
+
+    <span class='id identifier rubyid_invalid_keys'>invalid_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='op'>-</span> <span class='const'><span class='object_link'><a href="#ATTRIBUTES-constant" title="Inferno::DSL::RequirementSet::ATTRIBUTES (constant)">ATTRIBUTES</a></span></span>
+
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html" title="Inferno::Exceptions::UnknownAttributeException (class)">UnknownAttributeException</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html#initialize-instance_method" title="Inferno::Exceptions::UnknownAttributeException#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='comma'>,</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+    <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_name'>name</span> <span class='op'>==</span> <span class='symbol'>:suite_options</span>
+        <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="SuiteOption.html" title="Inferno::DSL::SuiteOption (class)">SuiteOption</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_instance_variable_set'>instance_variable_set</span><span class='lparen'>(</span><span class='symbol'>:&quot;@</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_suite_options'>suite_options</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` includes all of the requirements
+</span>  <span class='comment'># from the source for the specified actor
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_complete?'>complete?</span>
+    <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span> <span class='op'>||</span> <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>all</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` only includes requirements
+</span>  <span class='comment'># referenced by other `RequirementSet`s
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_referenced?'>referenced?</span>
+    <span class='id identifier rubyid_requirements'>requirements</span><span class='op'>&amp;.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>referenced</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` only includes requirements
+</span>  <span class='comment'># specified in a list
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_filtered?'>filtered?</span>
+    <span class='op'>!</span><span class='id identifier rubyid_complete?'>complete?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_referenced?'>referenced?</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Expands the compressed comma-separated requirements list into an Array
+</span>  <span class='comment'># of full ids
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_expand_requirement_ids'>expand_requirement_ids</span>
+    <span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Entities/Requirement.html" title="Inferno::Entities::Requirement (class)">Requirement</a></span></span><span class='period'>.</span><span class='id identifier rubyid_expand_requirement_ids'><span class='object_link'><a href="../Entities/Requirement.html#expand_requirement_ids-class_method" title="Inferno::Entities::Requirement.expand_requirement_ids (method)">expand_requirement_ids</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_requirements'>requirements</span><span class='comma'>,</span> <span class='id identifier rubyid_identifier'>identifier</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="suite_options=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="suite_options-instance_method">
+  
+    #<strong>suite_options</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>A set of suite options which must be
+selected in order for this <code>RequirementSet</code> to be included</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/requirement_set.rb', line 22</span>
+
+<span class='kw'>class</span> <span class='const'><span class='object_link'><a href="" title="Inferno::DSL::RequirementSet (class)">RequirementSet</a></span></span>
+  <span class='const'><span class='object_link'><a href="#ATTRIBUTES-constant" title="Inferno::DSL::RequirementSet::ATTRIBUTES (constant)">ATTRIBUTES</a></span></span> <span class='op'>=</span> <span class='lbracket'>[</span>
+    <span class='symbol'>:identifier</span><span class='comma'>,</span>
+    <span class='symbol'>:title</span><span class='comma'>,</span>
+    <span class='symbol'>:actor</span><span class='comma'>,</span>
+    <span class='symbol'>:requirements</span><span class='comma'>,</span>
+    <span class='symbol'>:suite_options</span>
+  <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'>Attributes</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_attributes_hash'>attributes_hash</span> <span class='op'>=</span> <span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_symbolize_keys'>symbolize_keys</span>
+
+    <span class='id identifier rubyid_invalid_keys'>invalid_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='op'>-</span> <span class='const'><span class='object_link'><a href="#ATTRIBUTES-constant" title="Inferno::DSL::RequirementSet::ATTRIBUTES (constant)">ATTRIBUTES</a></span></span>
+
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html" title="Inferno::Exceptions::UnknownAttributeException (class)">UnknownAttributeException</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html#initialize-instance_method" title="Inferno::Exceptions::UnknownAttributeException#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='comma'>,</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+    <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_name'>name</span> <span class='op'>==</span> <span class='symbol'>:suite_options</span>
+        <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="SuiteOption.html" title="Inferno::DSL::SuiteOption (class)">SuiteOption</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_instance_variable_set'>instance_variable_set</span><span class='lparen'>(</span><span class='symbol'>:&quot;@</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_suite_options'>suite_options</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` includes all of the requirements
+</span>  <span class='comment'># from the source for the specified actor
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_complete?'>complete?</span>
+    <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span> <span class='op'>||</span> <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>all</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` only includes requirements
+</span>  <span class='comment'># referenced by other `RequirementSet`s
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_referenced?'>referenced?</span>
+    <span class='id identifier rubyid_requirements'>requirements</span><span class='op'>&amp;.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>referenced</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` only includes requirements
+</span>  <span class='comment'># specified in a list
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_filtered?'>filtered?</span>
+    <span class='op'>!</span><span class='id identifier rubyid_complete?'>complete?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_referenced?'>referenced?</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Expands the compressed comma-separated requirements list into an Array
+</span>  <span class='comment'># of full ids
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_expand_requirement_ids'>expand_requirement_ids</span>
+    <span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Entities/Requirement.html" title="Inferno::Entities::Requirement (class)">Requirement</a></span></span><span class='period'>.</span><span class='id identifier rubyid_expand_requirement_ids'><span class='object_link'><a href="../Entities/Requirement.html#expand_requirement_ids-class_method" title="Inferno::Entities::Requirement.expand_requirement_ids (method)">expand_requirement_ids</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_requirements'>requirements</span><span class='comma'>,</span> <span class='id identifier rubyid_identifier'>identifier</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="title=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="title-instance_method">
+  
+    #<strong>title</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>A human-readable title for this <code>RequirementSet</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/requirement_set.rb', line 22</span>
+
+<span class='kw'>class</span> <span class='const'><span class='object_link'><a href="" title="Inferno::DSL::RequirementSet (class)">RequirementSet</a></span></span>
+  <span class='const'><span class='object_link'><a href="#ATTRIBUTES-constant" title="Inferno::DSL::RequirementSet::ATTRIBUTES (constant)">ATTRIBUTES</a></span></span> <span class='op'>=</span> <span class='lbracket'>[</span>
+    <span class='symbol'>:identifier</span><span class='comma'>,</span>
+    <span class='symbol'>:title</span><span class='comma'>,</span>
+    <span class='symbol'>:actor</span><span class='comma'>,</span>
+    <span class='symbol'>:requirements</span><span class='comma'>,</span>
+    <span class='symbol'>:suite_options</span>
+  <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+
+  <span class='id identifier rubyid_include'>include</span> <span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'>Attributes</span>
+
+  <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_attributes_hash'>attributes_hash</span> <span class='op'>=</span> <span class='id identifier rubyid_raw_attributes_hash'>raw_attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_symbolize_keys'>symbolize_keys</span>
+
+    <span class='id identifier rubyid_invalid_keys'>invalid_keys</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='op'>-</span> <span class='const'><span class='object_link'><a href="#ATTRIBUTES-constant" title="Inferno::DSL::RequirementSet::ATTRIBUTES (constant)">ATTRIBUTES</a></span></span>
+
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html" title="Inferno::Exceptions::UnknownAttributeException (class)">UnknownAttributeException</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Exceptions/UnknownAttributeException.html#initialize-instance_method" title="Inferno::Exceptions::UnknownAttributeException#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='comma'>,</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_invalid_keys'>invalid_keys</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+    <span class='id identifier rubyid_attributes_hash'>attributes_hash</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_name'>name</span> <span class='op'>==</span> <span class='symbol'>:suite_options</span>
+        <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="SuiteOption.html" title="Inferno::DSL::SuiteOption (class)">SuiteOption</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='id identifier rubyid_option_id'>option_id</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='id identifier rubyid_option_value'>option_value</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+      <span class='kw'>end</span>
+
+      <span class='id identifier rubyid_instance_variable_set'>instance_variable_set</span><span class='lparen'>(</span><span class='symbol'>:&quot;@</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_suite_options'>suite_options</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` includes all of the requirements
+</span>  <span class='comment'># from the source for the specified actor
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_complete?'>complete?</span>
+    <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span> <span class='op'>||</span> <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>all</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` only includes requirements
+</span>  <span class='comment'># referenced by other `RequirementSet`s
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_referenced?'>referenced?</span>
+    <span class='id identifier rubyid_requirements'>requirements</span><span class='op'>&amp;.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>referenced</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Returns true when the `RequirementSet` only includes requirements
+</span>  <span class='comment'># specified in a list
+</span>  <span class='comment'>#
+</span>  <span class='comment'># @return [Boolean]
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_filtered?'>filtered?</span>
+    <span class='op'>!</span><span class='id identifier rubyid_complete?'>complete?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_referenced?'>referenced?</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Expands the compressed comma-separated requirements list into an Array
+</span>  <span class='comment'># of full ids
+</span>  <span class='kw'>def</span> <span class='id identifier rubyid_expand_requirement_ids'>expand_requirement_ids</span>
+    <span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Entities/Requirement.html" title="Inferno::Entities::Requirement (class)">Requirement</a></span></span><span class='period'>.</span><span class='id identifier rubyid_expand_requirement_ids'><span class='object_link'><a href="../Entities/Requirement.html#expand_requirement_ids-class_method" title="Inferno::Entities::Requirement.expand_requirement_ids (method)">expand_requirement_ids</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_requirements'>requirements</span><span class='comma'>,</span> <span class='id identifier rubyid_identifier'>identifier</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="complete?-instance_method">
+  
+    #<strong>complete?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns true when the <code>RequirementSet</code> includes all of the requirements
+from the source for the specified actor</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+55
+56
+57</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/requirement_set.rb', line 55</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_complete?'>complete?</span>
+  <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span> <span class='op'>||</span> <span class='id identifier rubyid_requirements'>requirements</span><span class='period'>.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>all</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="expand_requirement_ids-instance_method">
+  
+    #<strong>expand_requirement_ids</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Expands the compressed comma-separated requirements list into an Array
+of full ids</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+77
+78
+79</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/requirement_set.rb', line 77</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_expand_requirement_ids'>expand_requirement_ids</span>
+  <span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Entities/Requirement.html" title="Inferno::Entities::Requirement (class)">Requirement</a></span></span><span class='period'>.</span><span class='id identifier rubyid_expand_requirement_ids'><span class='object_link'><a href="../Entities/Requirement.html#expand_requirement_ids-class_method" title="Inferno::Entities::Requirement.expand_requirement_ids (method)">expand_requirement_ids</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_requirements'>requirements</span><span class='comma'>,</span> <span class='id identifier rubyid_identifier'>identifier</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="filtered?-instance_method">
+  
+    #<strong>filtered?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns true when the <code>RequirementSet</code> only includes requirements
+specified in a list</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+71
+72
+73</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/requirement_set.rb', line 71</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_filtered?'>filtered?</span>
+  <span class='op'>!</span><span class='id identifier rubyid_complete?'>complete?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_referenced?'>referenced?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="referenced?-instance_method">
+  
+    #<strong>referenced?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns true when the <code>RequirementSet</code> only includes requirements
+referenced by other <code>RequirementSet</code>s</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+63
+64
+65</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/requirement_set.rb', line 63</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_referenced?'>referenced?</span>
+  <span class='id identifier rubyid_requirements'>requirements</span><span class='op'>&amp;.</span><span class='id identifier rubyid_casecmp?'>casecmp?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>referenced</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Feb  6 15:52:12 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.3.6).
+</div>
+
+    </div>
+  </body>
+</html>

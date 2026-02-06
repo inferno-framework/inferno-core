@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Inferno::DSL::FHIRResourceValidation::Validator
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="../../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Inferno::DSL::FHIRResourceValidation::Validator";
+  relpath = '../../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../../_index.html">Index (V)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../../Inferno.html" title="Inferno (module)">Inferno</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../FHIRResourceValidation.html" title="Inferno::DSL::FHIRResourceValidation (module)">FHIRResourceValidation</a></span></span>
+     &raquo; 
+    <span class="title">Validator</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Inferno::DSL::FHIRResourceValidation::Validator
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Inferno::DSL::FHIRResourceValidation::Validator</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/inferno/dsl/fhir_resource_validation.rb</dd>
+  </dl>
+  
+</div>
+
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#name-instance_method" title="#name (instance method)">#<strong>name</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute name.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#requirements-instance_method" title="#requirements (instance method)">#<strong>requirements</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute requirements.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#session_id-instance_method" title="#session_id (instance method)">#<strong>session_id</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute session_id.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#test_suite_id-instance_method" title="#test_suite_id (instance method)">#<strong>test_suite_id</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute test_suite_id.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#exclude_message-instance_method" title="#exclude_message (instance method)">#<strong>exclude_message</strong> {|message| ... } &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Filter out unwanted validation messages.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#igs-instance_method" title="#igs (instance method)">#<strong>igs</strong>(*validator_igs)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set the IGs that the validator will need to load.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#perform_additional_validation-instance_method" title="#perform_additional_validation (instance method)">#<strong>perform_additional_validation</strong> {|resource, profile_url| ... } &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Perform validation steps in addition to FHIR validation.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#resource_is_valid%3F-instance_method" title="#resource_is_valid? (instance method)">#<strong>resource_is_valid?</strong>(resource, profile_url, runnable, add_messages_to_runnable: true)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#url-instance_method" title="#url (instance method)">#<strong>url</strong>(validator_url = nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set the url of the validator service.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#validate-instance_method" title="#validate (instance method)">#<strong>validate</strong>(resource, profile_url)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Post a resource to the validation service for validating.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#validation_context-instance_method" title="#validation_context (instance method)">#<strong>validation_context</strong>(definition = nil)  &#x21d2; Object </a>
+    
+
+    
+      (also: #cli_context)
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set the validationContext used as part of each validation request.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#validator_session_repo-instance_method" title="#validator_session_repo (instance method)">#<strong>validator_session_repo</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="name=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="name-instance_method">
+  
+    #<strong>name</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute name.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+43
+44
+45</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 43</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_name'>name</span>
+  <span class='ivar'>@name</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="requirements-instance_method">
+  
+    #<strong>requirements</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute requirements.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+42
+43
+44</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 42</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_requirements'>requirements</span>
+  <span class='ivar'>@requirements</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="session_id=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="session_id-instance_method">
+  
+    #<strong>session_id</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute session_id.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+43
+44
+45</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 43</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_session_id'>session_id</span>
+  <span class='ivar'>@session_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="test_suite_id=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="test_suite_id-instance_method">
+  
+    #<strong>test_suite_id</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute test_suite_id.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+43
+44
+45</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 43</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_test_suite_id'>test_suite_id</span>
+  <span class='ivar'>@test_suite_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="exclude_message-instance_method">
+  
+    #<strong>exclude_message</strong> {|message| ... } &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Filter out unwanted validation messages. Any messages for which the
+block evalutates to a truthy value will be excluded.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_validator'>validator</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_exclude_message'>exclude_message</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_message'>message</span><span class='op'>|</span> <span class='id identifier rubyid_message'>message</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>info</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></code></pre>
+    
+  </div>
+
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>message</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Entities/Message.html" title="Inferno::Entities::Message (class)">Inferno::Entities::Message</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+169
+170
+171
+172</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 169</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_exclude_message'>exclude_message</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='ivar'>@exclude_message</span> <span class='op'>=</span> <span class='id identifier rubyid_block'>block</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+  <span class='ivar'>@exclude_message</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="igs-instance_method">
+  
+    #<strong>igs</strong>(*validator_igs)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set the IGs that the validator will need to load</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_igs'>igs</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>hl7.fhir.us.core#4.0.0</span><span class='tstring_end'>&quot;</span></span></code></pre>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_igs'>igs</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>hl7.fhir.us.core#3.1.1</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>hl7.fhir.us.core#6.0.0</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>validator_igs</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+77
+78
+79
+80
+81</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 77</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_igs'>igs</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_validator_igs'>validator_igs</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_validation_context'>validation_context</span><span class='lparen'>(</span><span class='label'>igs:</span> <span class='id identifier rubyid_validator_igs'>validator_igs</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_validator_igs'>validator_igs</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span>
+
+  <span class='id identifier rubyid_validation_context'>validation_context</span><span class='period'>.</span><span class='id identifier rubyid_igs'>igs</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="perform_additional_validation-instance_method">
+  
+    #<strong>perform_additional_validation</strong> {|resource, profile_url| ... } &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Perform validation steps in addition to FHIR validation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_perform_additional_validation'>perform_additional_validation</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_profile_url'>profile_url</span><span class='op'>|</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_something_is_wrong'>something_is_wrong</span>
+    <span class='lbrace'>{</span> <span class='label'>type:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>error</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>message:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>something is wrong</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span>
+  <span class='kw'>else</span>
+    <span class='lbrace'>{</span> <span class='label'>type:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>info</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>message:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>everything is ok</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></code></pre>
+    
+  </div>
+
+<p class="tag_title">Yield Parameters:</p>
+<ul class="yieldparam">
+  
+    <li>
+      
+        <span class='name'>resource</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../FHIR/Model.html" title="FHIR::Model (class)">FHIR::Model</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the resource being validated</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>profile_url</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the profile the resource is being
+validated against</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Yield Returns:</p>
+<ul class="yieldreturn">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&lt;Symbol, String&gt;&gt;</tt>, <tt>Hash&lt;Symbol, String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The
+block should return a Hash or an Array of Hashes if any validation
+messages should be added. The Hash must contain two keys: <code>:type</code>
+and <code>:message</code>. <code>:type</code> can have a value of <code>'info'</code>, <code>'warning'</code>,
+or <code>'error'</code>. A type of <code>'error'</code> means the resource is invalid.
+<code>:message</code> contains the message string itself.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+150
+151
+152</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 150</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_perform_additional_validation'>perform_additional_validation</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_additional_validations'>additional_validations</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_block'>block</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="resource_is_valid?-instance_method">
+  
+    #<strong>resource_is_valid?</strong>(resource, profile_url, runnable, add_messages_to_runnable: true)  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>Inferno::DSL::FHIRResourceValidation#resource_is_valid?</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 175</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_resource_is_valid?'>resource_is_valid?</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_profile_url'>profile_url</span><span class='comma'>,</span> <span class='id identifier rubyid_runnable'>runnable</span><span class='comma'>,</span> <span class='label'>add_messages_to_runnable:</span> <span class='kw'>true</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Metrics/CyclomaticComplexity
+</span>  <span class='id identifier rubyid_profile_url'>profile_url</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../../../FHIR.html" title="FHIR (module)">FHIR</a></span></span><span class='op'>::</span><span class='const'>Definitions</span><span class='period'>.</span><span class='id identifier rubyid_resource_definition'>resource_definition</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='period'>.</span><span class='id identifier rubyid_resourceType'>resourceType</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_url'>url</span>
+
+  <span class='kw'>begin</span>
+    <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='id identifier rubyid_call_validator'>call_validator</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_profile_url'>profile_url</span><span class='rparen'>)</span>
+  <span class='kw'>rescue</span> <span class='const'>StandardError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+    <span class='id identifier rubyid_runnable'>runnable</span><span class='period'>.</span><span class='id identifier rubyid_add_message'>add_message</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>error</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
+    <span class='const'><span class='object_link'><a href="../../Application.html" title="Inferno::Application (class)">Application</a></span></span><span class='lbracket'>[</span><span class='symbol'>:logger</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span><span class='lparen'>(</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Exceptions/ErrorInValidatorException.html" title="Inferno::Exceptions::ErrorInValidatorException (class)">ErrorInValidatorException</a></span></span><span class='comma'>,</span> <span class='id identifier rubyid_validator_error_message'>validator_error_message</span><span class='lparen'>(</span><span class='id identifier rubyid_e'>e</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_outcome'>outcome</span> <span class='op'>=</span> <span class='id identifier rubyid_operation_outcome_from_validator_response'>operation_outcome_from_validator_response</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='comma'>,</span> <span class='id identifier rubyid_runnable'>runnable</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_message_hashes'>message_hashes</span> <span class='op'>=</span> <span class='id identifier rubyid_message_hashes_from_outcome'>message_hashes_from_outcome</span><span class='lparen'>(</span><span class='id identifier rubyid_outcome'>outcome</span><span class='comma'>,</span> <span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_profile_url'>profile_url</span><span class='rparen'>)</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_add_messages_to_runnable'>add_messages_to_runnable</span>
+    <span class='id identifier rubyid_message_hashes'>message_hashes</span>
+      <span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_message_hash'>message_hash</span><span class='op'>|</span> <span class='id identifier rubyid_runnable'>runnable</span><span class='period'>.</span><span class='id identifier rubyid_add_message'>add_message</span><span class='lparen'>(</span><span class='id identifier rubyid_message_hash'>message_hash</span><span class='lbracket'>[</span><span class='symbol'>:type</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_message_hash'>message_hash</span><span class='lbracket'>[</span><span class='symbol'>:message</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span> <span class='op'>==</span> <span class='int'>200</span>
+    <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Exceptions/ErrorInValidatorException.html" title="Inferno::Exceptions::ErrorInValidatorException (class)">ErrorInValidatorException</a></span></span><span class='comma'>,</span>
+          <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Error occurred in the validator. Review Messages tab or validator service logs for more information.</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_message_hashes'>message_hashes</span>
+    <span class='period'>.</span><span class='id identifier rubyid_none?'>none?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_message_hash'>message_hash</span><span class='op'>|</span> <span class='id identifier rubyid_message_hash'>message_hash</span><span class='lbracket'>[</span><span class='symbol'>:type</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>error</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span>
+<span class='kw'>rescue</span> <span class='const'><span class='object_link'><a href="../../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Exceptions/ErrorInValidatorException.html" title="Inferno::Exceptions::ErrorInValidatorException (class)">ErrorInValidatorException</a></span></span>
+  <span class='id identifier rubyid_raise'>raise</span>
+<span class='kw'>rescue</span> <span class='const'>StandardError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='id identifier rubyid_runnable'>runnable</span><span class='period'>.</span><span class='id identifier rubyid_add_message'>add_message</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>error</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Exceptions/ErrorInValidatorException.html" title="Inferno::Exceptions::ErrorInValidatorException (class)">ErrorInValidatorException</a></span></span><span class='comma'>,</span>
+        <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Error occurred in the validator. Review Messages tab or validator service logs for more information.</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="url-instance_method">
+  
+    #<strong>url</strong>(validator_url = nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set the url of the validator service</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>validator_url</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+65
+66
+67
+68
+69</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 65</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_url'>url</span><span class='lparen'>(</span><span class='id identifier rubyid_validator_url'>validator_url</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@url</span> <span class='op'>=</span> <span class='id identifier rubyid_validator_url'>validator_url</span> <span class='kw'>if</span> <span class='id identifier rubyid_validator_url'>validator_url</span>
+  <span class='ivar'>@url</span> <span class='op'>||=</span> <span class='id identifier rubyid_default_validator_url'>default_validator_url</span>
+  <span class='ivar'>@url</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="validate-instance_method">
+  
+    #<strong>validate</strong>(resource, profile_url)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Post a resource to the validation service for validating.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>resource</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../../FHIR/Model.html" title="FHIR::Model (class)">FHIR::Model</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>profile_url</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the body of the validation response</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+303
+304
+305</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 303</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_validate'>validate</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_profile_url'>profile_url</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_call_validator'>call_validator</span><span class='lparen'>(</span><span class='id identifier rubyid_resource'>resource</span><span class='comma'>,</span> <span class='id identifier rubyid_profile_url'>profile_url</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="validation_context-instance_method">
+  
+    #<strong>validation_context</strong>(definition = nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='cli_context-instance_method'>cli_context</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set the validationContext used as part of each validation request.
+Fields may be passed as either a Hash or block.
+Note that all fields included here will be sent directly in requests,
+there is no check that the fields are correct.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='comment'># Passing fields in a block
+</span><span class='id identifier rubyid_fhir_resource_validator'>fhir_resource_validator</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_url'>url</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http://example.com/validator</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_validation_context'>validation_context</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_noExtensibleBindingMessages'>noExtensibleBindingMessages</span> <span class='kw'>true</span>
+    <span class='id identifier rubyid_allowExampleUrls'>allowExampleUrls</span> <span class='kw'>true</span>
+    <span class='id identifier rubyid_txServer'>txServer</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></code></pre>
+    
+      
+      <pre class="example code"><code><span class='comment'># Passing fields in a Hash
+</span><span class='id identifier rubyid_fhir_resource_validator'>fhir_resource_validator</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_url'>url</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http://example.org/validator</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_validation_context'>validation_context</span><span class='lparen'>(</span><span class='lbrace'>{</span>
+    <span class='label'>noExtensibleBindingMessages:</span> <span class='kw'>true</span><span class='comma'>,</span>
+    <span class='label'>allowExampleUrls:</span> <span class='kw'>true</span><span class='comma'>,</span>
+    <span class='label'>txServer:</span> <span class='kw'>nil</span>
+  <span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>end</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>definition</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>raw fields to set, optional</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 111</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_validation_context'>validation_context</span><span class='lparen'>(</span><span class='id identifier rubyid_definition'>definition</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='ivar'>@validation_context</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_definition'>definition</span>
+      <span class='ivar'>@validation_context</span><span class='period'>.</span><span class='id identifier rubyid_definition'>definition</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_definition'>definition</span><span class='period'>.</span><span class='id identifier rubyid_deep_symbolize_keys'>deep_symbolize_keys</span><span class='rparen'>)</span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+      <span class='ivar'>@validation_context</span><span class='period'>.</span><span class='id identifier rubyid_instance_eval'>instance_eval</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>else</span>
+    <span class='ivar'>@validation_context</span> <span class='op'>=</span> <span class='const'>ValidationContext</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_definition'>definition</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='ivar'>@validation_context</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="validator_session_repo-instance_method">
+  
+    #<strong>validator_session_repo</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+58
+59
+60</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/fhir_resource_validation.rb', line 58</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_validator_session_repo'>validator_session_repo</span>
+  <span class='ivar'>@validator_session_repo</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Repositories.html" title="Inferno::Repositories (module)">Repositories</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Repositories/ValidatorSessions.html" title="Inferno::Repositories::ValidatorSessions (class)">ValidatorSessions</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Feb  6 15:52:14 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.3.6).
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Inferno::DSL::MustSupportAssessment
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Inferno::DSL::MustSupportAssessment";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (M)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span>
+     &raquo; 
+    <span class="title">MustSupportAssessment</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: Inferno::DSL::MustSupportAssessment
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="FHIREvaluation/Rules/AllMustSupportsPresent.html" title="Inferno::DSL::FHIREvaluation::Rules::AllMustSupportsPresent (class)">FHIREvaluation::Rules::AllMustSupportsPresent</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/inferno/dsl/must_support_assessment.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>The MustSupportAssessment module contains the logic for tests
+that check “All Must Support elements are present”.
+Generally, test authors should use <code>assert_must_support_elements_present</code>
+or <code>missing_must_support_elements</code> DSL methods.
+A few additional methods are exposed to support the transition of existing tests that
+call into these methods directly.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#find_missing_elements-instance_method" title="#find_missing_elements (instance method)">#<strong>find_missing_elements</strong>(resources, must_support_elements)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#missing_element_string-instance_method" title="#missing_element_string (instance method)">#<strong>missing_element_string</strong>(element_definition)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#missing_must_support_elements-instance_method" title="#missing_must_support_elements (instance method)">#<strong>missing_must_support_elements</strong>(resources, profile_url, validator_name: :default, metadata: nil, requirement_extension: nil) {|Metadata| ... } &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Find any Must Support elements defined on the given profile that are missing in the given resources.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#perform_must_support_assessment-instance_method" title="#perform_must_support_assessment (instance method)">#<strong>perform_must_support_assessment</strong>(profile, resources, ig, debug_metadata: false, requirement_extension: nil) {|Metadata| ... } &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>perform_must_support_assessment allows customizing the metadata with a block.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="find_missing_elements-instance_method">
+  
+    #<strong>find_missing_elements</strong>(resources, must_support_elements)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+54
+55
+56</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/must_support_assessment.rb', line 54</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_find_missing_elements'>find_missing_elements</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_must_support_elements'>must_support_elements</span><span class='rparen'>)</span>
+  <span class='const'>InternalMustSupportLogic</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_metadata'>metadata</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_find_missing_elements'>find_missing_elements</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_must_support_elements'>must_support_elements</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="missing_element_string-instance_method">
+  
+    #<strong>missing_element_string</strong>(element_definition)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+58
+59
+60</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/must_support_assessment.rb', line 58</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_missing_element_string'>missing_element_string</span><span class='lparen'>(</span><span class='id identifier rubyid_element_definition'>element_definition</span><span class='rparen'>)</span>
+  <span class='const'>InternalMustSupportLogic</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_missing_element_string'>missing_element_string</span><span class='lparen'>(</span><span class='id identifier rubyid_element_definition'>element_definition</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="missing_must_support_elements-instance_method">
+  
+    #<strong>missing_must_support_elements</strong>(resources, profile_url, validator_name: :default, metadata: nil, requirement_extension: nil) {|Metadata| ... } &#x21d2; <tt>Array&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Find any Must Support elements defined on the given profile that are missing in the given resources.
+Must Support elements are identified on the profile StructureDefinition and pre-parsed into metadata,
+which may be customized prior to the check by passing a block. Alternate metadata may be provided directly.
+Set test suite config flag debug_must_support_metadata: true to log the metadata to a file for debugging.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>resources</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;FHIR::Resource&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>profile_url</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>validator_name</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>:default</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Name of the FHIR Validator that references the IG the profile is in</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>metadata</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>MustSupport Metadata (optional),
+if provided the check will use this instead of re-generating metadata from the profile</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>requirement_extension</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Extension URL that implies “required” as an alternative to the MS flag</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Metadata</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Customize the metadata before running the test</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>List of missing elements</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/must_support_assessment.rb', line 23</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_missing_must_support_elements'>missing_must_support_elements</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_profile_url'>profile_url</span><span class='comma'>,</span> <span class='label'>validator_name:</span> <span class='symbol'>:default</span><span class='comma'>,</span> <span class='label'>metadata:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+                                  <span class='label'>requirement_extension:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_debug_metadata'>debug_metadata</span> <span class='op'>=</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:debug_must_support_metadata</span><span class='rbracket'>]</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_metadata'>metadata</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='const'>InternalMustSupportLogic</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_perform_must_support_test_with_metadata'>perform_must_support_test_with_metadata</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_metadata'>metadata</span><span class='comma'>,</span> <span class='label'>debug_metadata:</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_ig'>ig</span><span class='comma'>,</span> <span class='id identifier rubyid_profile'>profile</span> <span class='op'>=</span> <span class='id identifier rubyid_find_ig_and_profile'>find_ig_and_profile</span><span class='lparen'>(</span><span class='id identifier rubyid_profile_url'>profile_url</span><span class='comma'>,</span> <span class='id identifier rubyid_validator_name'>validator_name</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_perform_must_support_assessment'>perform_must_support_assessment</span><span class='lparen'>(</span><span class='id identifier rubyid_profile'>profile</span><span class='comma'>,</span> <span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_ig'>ig</span><span class='comma'>,</span> <span class='label'>debug_metadata:</span><span class='comma'>,</span> <span class='label'>requirement_extension:</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="perform_must_support_assessment-instance_method">
+  
+    #<strong>perform_must_support_assessment</strong>(profile, resources, ig, debug_metadata: false, requirement_extension: nil) {|Metadata| ... } &#x21d2; <tt>Array&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>perform_must_support_assessment allows customizing the metadata with a block.
+Customizing the metadata may add, modify, or remove items.
+For instance, US Core 3.1.1 Patient “Previous Name” is defined as MS only in narrative.
+Choices are also defined only in narrative.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>profile</span>
+      
+      
+        <span class='type'>(<tt>FHIR::StructureDefinition</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>resources</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../../FHIR/Model.html" title="FHIR::Model (class)">FHIR::Model</a></span>&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>ig</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Entities/IG.html" title="Inferno::Entities::IG (class)">Inferno::Entities::IG</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>debug_metadata</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>if true, write out the final metadata used to a temporary file</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>requirement_extension</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>Extension URL that implies “required” as an alternative to the MS flag</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Metadata</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Customize the metadata before running the test</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>list of elements that were not found in the provided resources</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+46
+47
+48
+49
+50
+51
+52</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/must_support_assessment.rb', line 46</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_perform_must_support_assessment'>perform_must_support_assessment</span><span class='lparen'>(</span><span class='id identifier rubyid_profile'>profile</span><span class='comma'>,</span> <span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_ig'>ig</span><span class='comma'>,</span> <span class='label'>debug_metadata:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>requirement_extension:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_test_impl'>test_impl</span> <span class='op'>=</span> <span class='const'>InternalMustSupportLogic</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+  <span class='id identifier rubyid_profile_metadata'>profile_metadata</span> <span class='op'>=</span> <span class='id identifier rubyid_test_impl'>test_impl</span><span class='period'>.</span><span class='id identifier rubyid_extract_metadata'>extract_metadata</span><span class='lparen'>(</span><span class='id identifier rubyid_profile'>profile</span><span class='comma'>,</span> <span class='id identifier rubyid_ig'>ig</span><span class='comma'>,</span> <span class='label'>requirement_extension:</span><span class='rparen'>)</span>
+  <span class='kw'>yield</span> <span class='id identifier rubyid_profile_metadata'>profile_metadata</span> <span class='kw'>if</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+
+  <span class='id identifier rubyid_test_impl'>test_impl</span><span class='period'>.</span><span class='id identifier rubyid_perform_must_support_test_with_metadata'>perform_must_support_test_with_metadata</span><span class='lparen'>(</span><span class='id identifier rubyid_resources'>resources</span><span class='comma'>,</span> <span class='id identifier rubyid_profile_metadata'>profile_metadata</span><span class='comma'>,</span> <span class='label'>debug_metadata:</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Feb  6 15:52:11 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.3.6).
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Inferno::CLI::RequirementsCoverageChecker
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Inferno::CLI::RequirementsCoverageChecker";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../CLI.html" title="Inferno::CLI (module)">CLI</a></span></span>
+     &raquo; 
+    <span class="title">RequirementsCoverageChecker</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Inferno::CLI::RequirementsCoverageChecker
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Inferno::CLI::RequirementsCoverageChecker</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/inferno/apps/cli/requirements_coverage_checker.rb</dd>
+  </dl>
+  
+</div>
+
+
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#test_suite-instance_method" title="#test_suite (instance method)">#<strong>test_suite</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute test_suite.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#test_suite_id-instance_method" title="#test_suite_id (instance method)">#<strong>test_suite_id</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute test_suite_id.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#base_requirements_folder-instance_method" title="#base_requirements_folder (instance method)">#<strong>base_requirements_folder</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#full_id_header-instance_method" title="#full_id_header (instance method)">#<strong>full_id_header</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(test_suite_id)  &#x21d2; RequirementsCoverageChecker </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>A new instance of RequirementsCoverageChecker.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#input_requirement_ids-instance_method" title="#input_requirement_ids (instance method)">#<strong>input_requirement_ids</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#new_csv-instance_method" title="#new_csv (instance method)">#<strong>new_csv</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>rubocop:disable Metrics/CyclomaticComplexity.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#old_csv-instance_method" title="#old_csv (instance method)">#<strong>old_csv</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#output_file_name-instance_method" title="#output_file_name (instance method)">#<strong>output_file_name</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#output_file_path-instance_method" title="#output_file_path (instance method)">#<strong>output_file_path</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#output_folder-instance_method" title="#output_folder (instance method)">#<strong>output_folder</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#output_headers-instance_method" title="#output_headers (instance method)">#<strong>output_headers</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#output_requirements_map_table-instance_method" title="#output_requirements_map_table (instance method)">#<strong>output_requirements_map_table</strong>(requirements_rows)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Output the requirements in the map like so:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#output_requirements_map_table_contents-instance_method" title="#output_requirements_map_table_contents (instance method)">#<strong>output_requirements_map_table_contents</strong>(requirements_rows, col_widths)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#run-instance_method" title="#run (instance method)">#<strong>run</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#run_check-instance_method" title="#run_check (instance method)">#<strong>run_check</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#short_id_header-instance_method" title="#short_id_header (instance method)">#<strong>short_id_header</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#suite_requirements-instance_method" title="#suite_requirements (instance method)">#<strong>suite_requirements</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#suite_runnables-instance_method" title="#suite_runnables (instance method)">#<strong>suite_runnables</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#test_kit_name-instance_method" title="#test_kit_name (instance method)">#<strong>test_kit_name</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#tested_requirement_ids-instance_method" title="#tested_requirement_ids (instance method)">#<strong>tested_requirement_ids</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#unmatched_requirement_ids-instance_method" title="#unmatched_requirement_ids (instance method)">#<strong>unmatched_requirement_ids</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The requirements present in Inferno that aren’t in the input spreadsheet.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#unmatched_requirement_rows-instance_method" title="#unmatched_requirement_rows (instance method)">#<strong>unmatched_requirement_rows</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#untested_requirements-instance_method" title="#untested_requirements (instance method)">#<strong>untested_requirements</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(test_suite_id)  &#x21d2; <tt><span class='object_link'><a href="" title="Inferno::CLI::RequirementsCoverageChecker (class)">RequirementsCoverageChecker</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns a new instance of RequirementsCoverageChecker.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+8
+9
+10
+11</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 8</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_test_suite_id'>test_suite_id</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_test_suite_id'>test_suite_id</span> <span class='op'>=</span> <span class='id identifier rubyid_test_suite_id'>test_suite_id</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_test_suite'>test_suite</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Repositories.html" title="Inferno::Repositories (module)">Repositories</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Repositories/TestSuites.html" title="Inferno::Repositories::TestSuites (class)">TestSuites</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_find'><span class='object_link'><a href="../Repositories/InMemoryRepository.html#find-instance_method" title="Inferno::Repositories::InMemoryRepository#find (method)">find</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_test_suite_id'>test_suite_id</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="test_suite=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="test_suite-instance_method">
+  
+    #<strong>test_suite</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute test_suite.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+6
+7
+8</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 6</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_test_suite'>test_suite</span>
+  <span class='ivar'>@test_suite</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="test_suite_id=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="test_suite_id-instance_method">
+  
+    #<strong>test_suite_id</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute test_suite_id.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+6
+7
+8</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 6</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_test_suite_id'>test_suite_id</span>
+  <span class='ivar'>@test_suite_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="base_requirements_folder-instance_method">
+  
+    #<strong>base_requirements_folder</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+33
+34
+35</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 33</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_base_requirements_folder'>base_requirements_folder</span>
+  <span class='const'><span class='object_link'><a href="RequirementsExporter.html" title="Inferno::CLI::RequirementsExporter (class)">RequirementsExporter</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_base_requirements_folder'><span class='object_link'><a href="RequirementsExporter.html#base_requirements_folder-instance_method" title="Inferno::CLI::RequirementsExporter#base_requirements_folder (method)">base_requirements_folder</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="full_id_header-instance_method">
+  
+    #<strong>full_id_header</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+17
+18
+19</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 17</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_full_id_header'>full_id_header</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_test_suite'>test_suite</span><span class='period'>.</span><span class='id identifier rubyid_title'>title</span><span class='embexpr_end'>}</span><span class='tstring_content'> Full ID(s)</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="input_requirement_ids-instance_method">
+  
+    #<strong>input_requirement_ids</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+106
+107
+108</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 106</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_input_requirement_ids'>input_requirement_ids</span>
+  <span class='ivar'>@input_requirement_ids</span> <span class='op'>||=</span> <span class='id identifier rubyid_input_rows'>input_rows</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_row'>row</span><span class='op'>|</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_row'>row</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Req Set</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>@</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_row'>row</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ID</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="new_csv-instance_method">
+  
+    #<strong>new_csv</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>rubocop:disable Metrics/CyclomaticComplexity</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 66</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_new_csv'>new_csv</span> <span class='comment'># rubocop:disable Metrics/CyclomaticComplexity
+</span>  <span class='ivar'>@new_csv</span> <span class='op'>||=</span>
+    <span class='const'>CSV</span><span class='period'>.</span><span class='id identifier rubyid_generate'>generate</span><span class='lparen'>(</span><span class='op'>+</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\xEF\xBB\xBF</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_csv'>csv</span><span class='op'>|</span>
+      <span class='id identifier rubyid_csv'>csv</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_output_headers'>output_headers</span>
+
+      <span class='id identifier rubyid_suite_requirements'>suite_requirements</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_requirement'>requirement</span><span class='op'>|</span>
+        <span class='kw'>if</span> <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_not_tested_reason'>not_tested_reason</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+          <span class='id identifier rubyid_long_ids'>long_ids</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>NA</span><span class='tstring_end'>&#39;</span></span>
+          <span class='id identifier rubyid_short_ids'>short_ids</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>NA</span><span class='tstring_end'>&#39;</span></span>
+        <span class='kw'>else</span>
+          <span class='id identifier rubyid_runnables_for_requirement'>runnables_for_requirement</span> <span class='op'>=</span>
+            <span class='id identifier rubyid_suite_runnables'>suite_runnables</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_runnable'>runnable</span><span class='op'>|</span> <span class='id identifier rubyid_runnable'>runnable</span><span class='period'>.</span><span class='id identifier rubyid_verifies_requirements'>verifies_requirements</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='rbrace'>}</span>
+          <span class='id identifier rubyid_long_ids'>long_ids</span> <span class='op'>=</span> <span class='id identifier rubyid_runnables_for_requirement'>runnables_for_requirement</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:id</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_short_ids'>short_ids</span> <span class='op'>=</span>
+            <span class='id identifier rubyid_runnables_for_requirement'>runnables_for_requirement</span>
+              <span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_runnable'>runnable</span><span class='op'>|</span> <span class='id identifier rubyid_runnable'>runnable</span> <span class='op'>&lt;</span> <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Entities.html" title="Inferno::Entities (module)">Entities</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Entities/TestSuite.html" title="Inferno::Entities::TestSuite (class)">TestSuite</a></span></span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>suite</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='id identifier rubyid_runnable'>runnable</span><span class='period'>.</span><span class='id identifier rubyid_short_id'>short_id</span> <span class='rbrace'>}</span>
+              <span class='op'>&amp;.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+        <span class='kw'>end</span>
+
+        <span class='id identifier rubyid_untested_requirements'>untested_requirements</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_runnables_for_requirement'>runnables_for_requirement</span> <span class='kw'>if</span> <span class='id identifier rubyid_runnables_for_requirement'>runnables_for_requirement</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+
+        <span class='id identifier rubyid_row'>row</span> <span class='op'>=</span> <span class='lbracket'>[</span>
+          <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_requirement_set'>requirement_set</span><span class='comma'>,</span>
+          <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_delete_prefix'>delete_prefix</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_requirement_set'>requirement_set</span><span class='embexpr_end'>}</span><span class='tstring_content'>@</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='comma'>,</span>
+          <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_url'>url</span><span class='comma'>,</span>
+          <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_requirement'>requirement</span><span class='comma'>,</span>
+          <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_conformance'>conformance</span><span class='comma'>,</span>
+          <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_actors'>actors</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>,</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='comma'>,</span>
+          <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_conditionality'>conditionality</span><span class='comma'>,</span>
+          <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_not_tested_reason'>not_tested_reason</span><span class='comma'>,</span>
+          <span class='id identifier rubyid_requirement'>requirement</span><span class='period'>.</span><span class='id identifier rubyid_not_tested_details'>not_tested_details</span><span class='comma'>,</span>
+          <span class='id identifier rubyid_short_ids'>short_ids</span><span class='comma'>,</span>
+          <span class='id identifier rubyid_long_ids'>long_ids</span>
+        <span class='rbracket'>]</span>
+
+        <span class='id identifier rubyid_csv'>csv</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_row'>row</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="old_csv-instance_method">
+  
+    #<strong>old_csv</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+127
+128
+129</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 127</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_old_csv'>old_csv</span>
+  <span class='ivar'>@old_csv</span> <span class='op'>||=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='id identifier rubyid_output_file_path'>output_file_path</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="output_file_name-instance_method">
+  
+    #<strong>output_file_name</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+41
+42
+43</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 41</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_output_file_name'>output_file_name</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_test_suite_id'>test_suite_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>_requirements_coverage.csv</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="output_file_path-instance_method">
+  
+    #<strong>output_file_path</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+45
+46
+47</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 45</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_output_file_path'>output_file_path</span>
+  <span class='ivar'>@output_file_path</span> <span class='op'>||=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_output_folder'>output_folder</span><span class='comma'>,</span> <span class='id identifier rubyid_output_file_name'>output_file_name</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="output_folder-instance_method">
+  
+    #<strong>output_folder</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+37
+38
+39</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 37</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_output_folder'>output_folder</span>
+  <span class='ivar'>@output_folder</span> <span class='op'>||=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_base_requirements_folder'>base_requirements_folder</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>generated</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="output_headers-instance_method">
+  
+    #<strong>output_headers</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+21
+22
+23
+24
+25
+26
+27</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 21</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_output_headers'>output_headers</span>
+  <span class='lbracket'>[</span>
+    <span class='op'>*</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="RequirementsExporter.html" title="Inferno::CLI::RequirementsExporter (class)">RequirementsExporter</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="RequirementsExporter.html#REQUIREMENTS_OUTPUT_HEADERS-constant" title="Inferno::CLI::RequirementsExporter::REQUIREMENTS_OUTPUT_HEADERS (constant)">REQUIREMENTS_OUTPUT_HEADERS</a></span></span> <span class='op'>-</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Sub-Requirement(s)</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_short_id_header'>short_id_header</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_full_id_header'>full_id_header</span>
+  <span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="output_requirements_map_table-instance_method">
+  
+    #<strong>output_requirements_map_table</strong>(requirements_rows)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Output the requirements in the map like so:</p>
+
+<p>requirement_id | short_id   | full_id
+—————+————+———-
+req-id-1       | short-id-1 | full-id-1
+req-id-2       | short-id-2 | full-id-2</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 210</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_output_requirements_map_table'>output_requirements_map_table</span><span class='lparen'>(</span><span class='id identifier rubyid_requirements_rows'>requirements_rows</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_headers'>headers</span> <span class='op'>=</span> <span class='qwords_beg'>%w[</span><span class='tstring_content'>requirement_id</span><span class='words_sep'> </span><span class='tstring_content'>short_id</span><span class='words_sep'> </span><span class='tstring_content'>full_id</span><span class='tstring_end'>]</span></span>
+  <span class='id identifier rubyid_col_widths'>col_widths</span> <span class='op'>=</span> <span class='id identifier rubyid_headers'>headers</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:length</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_requirements_rows'>requirements_rows</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_row'>row</span><span class='op'>|</span> <span class='id identifier rubyid_row'>row</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='rbrace'>}</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_max'>max</span>
+  <span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_requirements_rows'>requirements_rows</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_row'>row</span><span class='op'>|</span> <span class='id identifier rubyid_row'>row</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='rbrace'>}</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_max'>max</span>
+  <span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_requirements_rows'>requirements_rows</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_row'>row</span><span class='op'>|</span> <span class='id identifier rubyid_row'>row</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='rbrace'>}</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_max'>max</span>
+  <span class='id identifier rubyid_col_widths'>col_widths</span><span class='period'>.</span><span class='id identifier rubyid_map!'>map!</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_width'>width</span><span class='op'>|</span> <span class='id identifier rubyid_width'>width</span> <span class='op'>+</span> <span class='int'>3</span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_puts'>puts</span> <span class='lbracket'>[</span>
+    <span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_ljust'>ljust</span><span class='lparen'>(</span><span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_ljust'>ljust</span><span class='lparen'>(</span><span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_ljust'>ljust</span><span class='lparen'>(</span><span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> | </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_col_widths'>col_widths</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_width'>width</span><span class='op'>|</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span> <span class='op'>*</span> <span class='id identifier rubyid_width'>width</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-+-</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_output_requirements_map_table_contents'>output_requirements_map_table_contents</span><span class='lparen'>(</span><span class='id identifier rubyid_requirements_rows'>requirements_rows</span><span class='comma'>,</span> <span class='id identifier rubyid_col_widths'>col_widths</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="output_requirements_map_table_contents-instance_method">
+  
+    #<strong>output_requirements_map_table_contents</strong>(requirements_rows, col_widths)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+227
+228
+229
+230
+231
+232
+233
+234
+235</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 227</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_output_requirements_map_table_contents'>output_requirements_map_table_contents</span><span class='lparen'>(</span><span class='id identifier rubyid_requirements_rows'>requirements_rows</span><span class='comma'>,</span> <span class='id identifier rubyid_col_widths'>col_widths</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_requirements_rows'>requirements_rows</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_requirements_row'>requirements_row</span><span class='op'>|</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='lbracket'>[</span>
+      <span class='id identifier rubyid_requirements_row'>requirements_row</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_ljust'>ljust</span><span class='lparen'>(</span><span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_requirements_row'>requirements_row</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_ljust'>ljust</span><span class='lparen'>(</span><span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>1</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_requirements_row'>requirements_row</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_ljust'>ljust</span><span class='lparen'>(</span><span class='id identifier rubyid_col_widths'>col_widths</span><span class='lbracket'>[</span><span class='int'>2</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> | </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="run-instance_method">
+  
+    #<strong>run</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 131</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_run'>run</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_test_suite'>test_suite</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Could not find test suite: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_test_suite_id'>test_suite_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>. Aborting requirements coverage generation...</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_exit'>exit</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_puts'>puts</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_unmatched_requirement_ids'>unmatched_requirement_ids</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>WARNING: The following requirements indicated in the test suite </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_test_suite_id'>test_suite_id</span><span class='embexpr_end'>}</span><span class='tstring_content'> are not present in </span><span class='tstring_end'>&quot;</span></span> \
+         <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>the suite&#39;s requirement sets:</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_output_requirements_map_table'>output_requirements_map_table</span><span class='lparen'>(</span><span class='id identifier rubyid_unmatched_requirement_rows'>unmatched_requirement_rows</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exist?'>exist?</span><span class='lparen'>(</span><span class='id identifier rubyid_output_file_path'>output_file_path</span><span class='rparen'>)</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_old_csv'>old_csv</span> <span class='op'>==</span> <span class='id identifier rubyid_new_csv'>new_csv</span>
+      <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_output_file_name'>output_file_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; file is up to date.</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>return</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Requirements coverage has changed.</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>No existing </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_output_file_name'>output_file_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Writing to file </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_output_file_path'>output_file_path</span><span class='embexpr_end'>}</span><span class='tstring_content'>...</span><span class='tstring_end'>&quot;</span></span>
+  <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_mkdir_p'>mkdir_p</span><span class='lparen'>(</span><span class='id identifier rubyid_output_folder'>output_folder</span><span class='rparen'>)</span>
+  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span><span class='lparen'>(</span><span class='id identifier rubyid_output_file_path'>output_file_path</span><span class='comma'>,</span> <span class='id identifier rubyid_new_csv'>new_csv</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Done.</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="run_check-instance_method">
+  
+    #<strong>run_check</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 162</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_run_check'>run_check</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_test_suite'>test_suite</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Could not find test suite: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_test_suite_id'>test_suite_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>. Aborting requirements coverage generation...</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_exit'>exit</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_puts'>puts</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_unmatched_requirement_ids'>unmatched_requirement_ids</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>WARNING: The following requirements indicated in the test suite </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_test_suite_id'>test_suite_id</span><span class='embexpr_end'>}</span><span class='tstring_content'> are not present in </span><span class='tstring_end'>&quot;</span></span> \
+         <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>the suite&#39;s requirement sets:</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_output_requirements_map_table'>output_requirements_map_table</span><span class='lparen'>(</span><span class='id identifier rubyid_unmatched_requirement_rows'>unmatched_requirement_rows</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exist?'>exist?</span><span class='lparen'>(</span><span class='id identifier rubyid_output_file_path'>output_file_path</span><span class='rparen'>)</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_old_csv'>old_csv</span> <span class='op'>==</span> <span class='id identifier rubyid_new_csv'>new_csv</span>
+      <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_output_file_name'>output_file_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; file is up to date.</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>return</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_puts'>puts</span> <span class='heredoc_beg'>&lt;&lt;~MESSAGE</span>
+<span class='tstring_content'>        </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_output_file_name'>output_file_name</span><span class='embexpr_end'>}</span><span class='tstring_content'> file is out of date.
+</span><span class='tstring_content'>        To regenerate the file, run:
+</span><span class='tstring_content'>
+</span><span class='tstring_content'>            bundle exec inferno requirements coverage
+</span><span class='tstring_content'>
+</span><span class='heredoc_end'>      MESSAGE
+</span>    <span class='kw'>end</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='heredoc_beg'>&lt;&lt;~MESSAGE</span>
+<span class='tstring_content'>      No existing </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_output_file_name'>output_file_name</span><span class='embexpr_end'>}</span><span class='tstring_content'> file.
+</span><span class='tstring_content'>      To generate the file, run:
+</span><span class='tstring_content'>
+</span><span class='tstring_content'>            bundle exec inferno requirements coverage
+</span><span class='tstring_content'>
+</span><span class='heredoc_end'>    MESSAGE
+</span>  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Check failed.</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_exit'>exit</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="short_id_header-instance_method">
+  
+    #<strong>short_id_header</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+13
+14
+15</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 13</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_short_id_header'>short_id_header</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_test_suite'>test_suite</span><span class='period'>.</span><span class='id identifier rubyid_title'>title</span><span class='embexpr_end'>}</span><span class='tstring_content'> Short ID(s)</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="suite_requirements-instance_method">
+  
+    #<strong>suite_requirements</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+49
+50
+51
+52</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 49</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_suite_requirements'>suite_requirements</span>
+  <span class='ivar'>@suite_requirements</span> <span class='op'>||=</span>
+    <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Repositories.html" title="Inferno::Repositories (module)">Repositories</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Repositories/Requirements.html" title="Inferno::Repositories::Requirements (class)">Requirements</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_requirements_for_suite'><span class='object_link'><a href="../Repositories/Requirements.html#requirements_for_suite-instance_method" title="Inferno::Repositories::Requirements#requirements_for_suite (method)">requirements_for_suite</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_test_suite_id'>test_suite_id</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="suite_runnables-instance_method">
+  
+    #<strong>suite_runnables</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+58
+59
+60</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 58</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_suite_runnables'>suite_runnables</span>
+  <span class='ivar'>@suite_runnables</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_test_suite'>test_suite</span><span class='rbracket'>]</span> <span class='op'>+</span> <span class='id identifier rubyid_test_suite'>test_suite</span><span class='period'>.</span><span class='id identifier rubyid_all_descendants'>all_descendants</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="test_kit_name-instance_method">
+  
+    #<strong>test_kit_name</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+29
+30
+31</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 29</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_test_kit_name'>test_kit_name</span>
+  <span class='id identifier rubyid_local_test_kit_gem'>local_test_kit_gem</span><span class='period'>.</span><span class='id identifier rubyid_name'>name</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="tested_requirement_ids-instance_method">
+  
+    #<strong>tested_requirement_ids</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+54
+55
+56</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 54</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_tested_requirement_ids'>tested_requirement_ids</span>
+  <span class='ivar'>@tested_requirement_ids</span> <span class='op'>||=</span> <span class='id identifier rubyid_test_suite'>test_suite</span><span class='period'>.</span><span class='id identifier rubyid_all_verified_requirements'>all_verified_requirements</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="unmatched_requirement_ids-instance_method">
+  
+    #<strong>unmatched_requirement_ids</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The requirements present in Inferno that aren’t in the input spreadsheet</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+111
+112
+113
+114</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 111</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_unmatched_requirement_ids'>unmatched_requirement_ids</span>
+  <span class='ivar'>@unmatched_requirement_ids</span> <span class='op'>||=</span>
+    <span class='id identifier rubyid_tested_requirement_ids'>tested_requirement_ids</span> <span class='op'>-</span> <span class='id identifier rubyid_suite_requirements'>suite_requirements</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:id</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="unmatched_requirement_rows-instance_method">
+  
+    #<strong>unmatched_requirement_rows</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 116</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_unmatched_requirement_rows'>unmatched_requirement_rows</span>
+  <span class='id identifier rubyid_unmatched_requirement_ids'>unmatched_requirement_ids</span><span class='period'>.</span><span class='id identifier rubyid_flat_map'>flat_map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_requirement_id'>requirement_id</span><span class='op'>|</span>
+    <span class='id identifier rubyid_runnables_for_requirement'>runnables_for_requirement</span> <span class='op'>=</span>
+      <span class='id identifier rubyid_suite_runnables'>suite_runnables</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_runnable'>runnable</span><span class='op'>|</span> <span class='id identifier rubyid_runnable'>runnable</span><span class='period'>.</span><span class='id identifier rubyid_verifies_requirements'>verifies_requirements</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span> <span class='id identifier rubyid_requirement_id'>requirement_id</span> <span class='rbrace'>}</span>
+
+    <span class='id identifier rubyid_runnables_for_requirement'>runnables_for_requirement</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_runnable'>runnable</span><span class='op'>|</span>
+      <span class='lbracket'>[</span><span class='id identifier rubyid_requirement_id'>requirement_id</span><span class='comma'>,</span> <span class='id identifier rubyid_runnable'>runnable</span><span class='period'>.</span><span class='id identifier rubyid_short_id'>short_id</span><span class='comma'>,</span> <span class='id identifier rubyid_runnable'>runnable</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="untested_requirements-instance_method">
+  
+    #<strong>untested_requirements</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+62
+63
+64</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/requirements_coverage_checker.rb', line 62</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_untested_requirements'>untested_requirements</span>
+  <span class='ivar'>@untested_requirements</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Feb  6 15:52:14 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.3.6).
+</div>
+
+    </div>
+  </body>
+</html>

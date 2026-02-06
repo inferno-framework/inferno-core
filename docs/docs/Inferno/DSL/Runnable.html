@@ -1,0 +1,2531 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Inferno::DSL::Runnable
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Inferno::DSL::Runnable";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span>
+     &raquo; 
+    <span class="title">Runnable</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: Inferno::DSL::Runnable
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="../Entities/TestGroup.html" title="Inferno::Entities::TestGroup (class)">Entities::TestGroup</a></span>, <span class='object_link'><a href="../Entities/TestSuite.html" title="Inferno::Entities::TestSuite (class)">Entities::TestSuite</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/inferno/dsl/runnable.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>This module contains the DSL for defining child entities in the test
+definition framework.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#parent-instance_method" title="#parent (instance method)">#<strong>parent</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute parent.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#suite_option_requirements-instance_method" title="#suite_option_requirements (instance method)">#<strong>suite_option_requirements</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the value of attribute suite_option_requirements.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#block-instance_method" title="#block (instance method)">#<strong>block</strong>(&amp;block)  &#x21d2; Proc </a>
+    
+
+    
+      (also: #run)
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set/Get the block that is executed when a runnable is run.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#database_id-instance_method" title="#database_id (instance method)">#<strong>database_id</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#deep_dup-instance_method" title="#deep_dup (instance method)">#<strong>deep_dup</strong>(value)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Recursively duplicate arrays/hashes to prevent them from being shared across different runnables.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#description-instance_method" title="#description (instance method)">#<strong>description</strong>(new_description = nil)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set/Get a runnable’s description.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#id-instance_method" title="#id (instance method)">#<strong>id</strong>(new_id = nil)  &#x21d2; String, Symbol </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set/Get a runnable’s id.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#input_instructions-instance_method" title="#input_instructions (instance method)">#<strong>input_instructions</strong>(new_input_instructions = nil)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set/Get a runnable’s input instructions.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#optional-instance_method" title="#optional (instance method)">#<strong>optional</strong>(optional = true)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Mark as optional.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#optional%3F-instance_method" title="#optional? (instance method)">#<strong>optional?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The test or group is optional if true.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#remove-instance_method" title="#remove (instance method)">#<strong>remove</strong>(id_to_remove)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Remove a child test/group.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#reorder-instance_method" title="#reorder (instance method)">#<strong>reorder</strong>(child_id, new_index)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Move a child test/group to a new position within the children list.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#replace-instance_method" title="#replace (instance method)">#<strong>replace</strong>(id_to_replace, replacement_id) {|Inferno::TestGroup, Inferno::Test| ... } &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Replace a child test/group.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#required-instance_method" title="#required (instance method)">#<strong>required</strong>(required = true)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Mark as required.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#required%3F-instance_method" title="#required? (instance method)">#<strong>required?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>The test or group is required if true.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#required_suite_options-instance_method" title="#required_suite_options (instance method)">#<strong>required_suite_options</strong>(suite_option_requirements)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set/get suite options required for this runnable to be executed.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#resume_test_route-instance_method" title="#resume_test_route (instance method)">#<strong>resume_test_route</strong>(method, path, tags: [], result: &#39;pass&#39;) { ... } &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Create a route which will resume a test run when a request is received.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#route-instance_method" title="#route (instance method)">#<strong>route</strong>(method, path, handler)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Create a route to handle a request.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#short_description-instance_method" title="#short_description (instance method)">#<strong>short_description</strong>(new_short_description = nil)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set/Get a runnable’s short one-sentence description.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#short_title-instance_method" title="#short_title (instance method)">#<strong>short_title</strong>(new_short_title = nil)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set/Get a runnable’s short title.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#suite_endpoint-instance_method" title="#suite_endpoint (instance method)">#<strong>suite_endpoint</strong>(method, path, endpoint_class)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Create an endpoint to receive incoming requests during a Test Run.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#title-instance_method" title="#title (instance method)">#<strong>title</strong>(new_title = nil)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set/Get a runnable’s title.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#verifies_requirements-instance_method" title="#verifies_requirements (instance method)">#<strong>verifies_requirements</strong>(*requirement_ids)  &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Set/Get the IDs of requirements verified by this runnable Set with [] to clear the list.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="parent=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="parent-instance_method">
+  
+    #<strong>parent</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute parent.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+12
+13
+14</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 12</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_parent'>parent</span>
+  <span class='ivar'>@parent</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="suite_option_requirements-instance_method">
+  
+    #<strong>suite_option_requirements</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the value of attribute suite_option_requirements.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+13
+14
+15</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 13</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_suite_option_requirements'>suite_option_requirements</span>
+  <span class='ivar'>@suite_option_requirements</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="block-instance_method">
+  
+    #<strong>block</strong>(&amp;block)  &#x21d2; <tt>Proc</tt> 
+  
+
+  
+    <span class="aliases">Also known as:
+    <span class="names"><span id='run-instance_method'>run</span></span>
+    </span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set/Get the block that is executed when a runnable is run</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>block</span>
+      
+      
+        <span class='type'>(<tt>Proc</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Proc</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the block that is executed when a runnable is run</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+321
+322
+323
+324
+325</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 321</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_block'>block</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='ivar'>@block</span> <span class='kw'>unless</span> <span class='id identifier rubyid_block_given?'>block_given?</span>
+
+  <span class='ivar'>@block</span> <span class='op'>=</span> <span class='id identifier rubyid_block'>block</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="database_id-instance_method">
+  
+    #<strong>database_id</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+210
+211
+212</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 210</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_database_id'>database_id</span>
+  <span class='ivar'>@database_id</span> <span class='op'>||=</span> <span class='id identifier rubyid_id'>id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="deep_dup-instance_method">
+  
+    #<strong>deep_dup</strong>(value)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Recursively duplicate arrays/hashes to prevent them from being shared
+across different runnables</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+53
+54
+55
+56
+57
+58
+59
+60
+61</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 53</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_deep_dup'>deep_dup</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Array</span>
+    <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_element'>element</span><span class='op'>|</span> <span class='id identifier rubyid_deep_dup'>deep_dup</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span> <span class='const'>Hash</span>
+    <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_transform_values'>transform_values</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_element'>element</span><span class='op'>|</span> <span class='id identifier rubyid_deep_dup'>deep_dup</span><span class='lparen'>(</span><span class='id identifier rubyid_element'>element</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="description-instance_method">
+  
+    #<strong>description</strong>(new_description = nil)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set/Get a runnable’s description</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>new_description</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the description</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+238
+239
+240
+241
+242</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 238</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_description'>description</span><span class='lparen'>(</span><span class='id identifier rubyid_new_description'>new_description</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='ivar'>@description</span> <span class='kw'>if</span> <span class='id identifier rubyid_new_description'>new_description</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
+  <span class='ivar'>@description</span> <span class='op'>=</span> <span class='id identifier rubyid_format_markdown'>format_markdown</span><span class='lparen'>(</span><span class='id identifier rubyid_new_description'>new_description</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="id-instance_method">
+  
+    #<strong>id</strong>(new_id = nil)  &#x21d2; <tt>String</tt>, <tt>Symbol</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set/Get a runnable’s id</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>new_id</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Symbol</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the id</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 195</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_id'>id</span><span class='lparen'>(</span><span class='id identifier rubyid_new_id'>new_id</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='ivar'>@id</span> <span class='kw'>if</span> <span class='id identifier rubyid_new_id'>new_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='ivar'>@id</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='id identifier rubyid_prefix'>prefix</span> <span class='op'>=</span> <span class='id identifier rubyid_parent'>parent</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_parent'>parent</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>-</span><span class='tstring_end'>&quot;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
+  <span class='ivar'>@base_id</span> <span class='op'>=</span> <span class='id identifier rubyid_new_id'>new_id</span> <span class='op'>||</span> <span class='ivar'>@base_id</span> <span class='op'>||</span> <span class='id identifier rubyid_default_id'>default_id</span>
+  <span class='ivar'>@id</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_prefix'>prefix</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='ivar'>@base_id</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+
+  <span class='kw'>if</span> <span class='ivar'>@id</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>&gt;</span> <span class='int'>255</span>
+    <span class='id identifier rubyid_hash'>hash</span> <span class='op'>=</span> <span class='const'>Digest</span><span class='op'>::</span><span class='const'>SHA1</span><span class='period'>.</span><span class='id identifier rubyid_hexdigest'>hexdigest</span><span class='lparen'>(</span><span class='ivar'>@id</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='int'>0</span><span class='op'>...</span><span class='int'>10</span><span class='rbracket'>]</span>
+    <span class='ivar'>@database_id</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@id</span><span class='lbracket'>[</span><span class='int'>0</span><span class='op'>...</span><span class='int'>244</span><span class='rbracket'>]</span><span class='embexpr_end'>}</span><span class='tstring_content'>-</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_hash'>hash</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='ivar'>@id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="input_instructions-instance_method">
+  
+    #<strong>input_instructions</strong>(new_input_instructions = nil)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set/Get a runnable’s input instructions</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>new_input_instructions</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the input instructions</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+258
+259
+260
+261
+262</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 258</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_input_instructions'>input_instructions</span><span class='lparen'>(</span><span class='id identifier rubyid_new_input_instructions'>new_input_instructions</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='ivar'>@input_instructions</span> <span class='kw'>if</span> <span class='id identifier rubyid_new_input_instructions'>new_input_instructions</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
+  <span class='ivar'>@input_instructions</span> <span class='op'>=</span> <span class='id identifier rubyid_format_markdown'>format_markdown</span><span class='lparen'>(</span><span class='id identifier rubyid_new_input_instructions'>new_input_instructions</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="optional-instance_method">
+  
+    #<strong>optional</strong>(optional = true)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Mark as optional. Tests are required by default.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>optional</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+283
+284
+285</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 283</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_optional'>optional</span><span class='lparen'>(</span><span class='id identifier rubyid_optional'>optional</span> <span class='op'>=</span> <span class='kw'>true</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Style/OptionalBooleanParameter
+</span>  <span class='ivar'>@optional</span> <span class='op'>=</span> <span class='id identifier rubyid_optional'>optional</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="optional?-instance_method">
+  
+    #<strong>optional?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The test or group is optional if true</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+301
+302
+303</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 301</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_optional?'>optional?</span>
+  <span class='op'>!</span><span class='op'>!</span><span class='ivar'>@optional</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="remove-instance_method">
+  
+    #<strong>remove</strong>(id_to_remove)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Remove a child test/group</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_test'>test</span> <span class='label'>from:</span> <span class='symbol'>:test1</span>
+<span class='id identifier rubyid_test'>test</span> <span class='label'>from:</span> <span class='symbol'>:test2</span>
+<span class='id identifier rubyid_test'>test</span> <span class='label'>from:</span> <span class='symbol'>:test3</span>
+
+<span class='id identifier rubyid_remove'>remove</span> <span class='symbol'>:test2</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>id_to_remove</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+537
+538
+539
+540
+541</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 537</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_remove'>remove</span><span class='lparen'>(</span><span class='id identifier rubyid_id_to_remove'>id_to_remove</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_removed'>removed</span> <span class='op'>=</span> <span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_child'>child</span><span class='op'>|</span> <span class='id identifier rubyid_child'>child</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_end_with?'>end_with?</span> <span class='id identifier rubyid_id_to_remove'>id_to_remove</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_reject!'>reject!</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_child'>child</span><span class='op'>|</span> <span class='id identifier rubyid_child'>child</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_end_with?'>end_with?</span> <span class='id identifier rubyid_id_to_remove'>id_to_remove</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_removed'>removed</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:remove_self_from_repository</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="reorder-instance_method">
+  
+    #<strong>reorder</strong>(child_id, new_index)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Move a child test/group to a new position within the children list.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_reorder'>reorder</span><span class='lparen'>(</span><span class='symbol'>:test3</span><span class='comma'>,</span> <span class='int'>1</span><span class='rparen'>)</span> <span class='comment'># Moves `test3` to index 1</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>child_id</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The ID of the child to be moved.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>new_index</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The new position for the child.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Exceptions/RunnableChildNotFoundException.html" title="Inferno::Exceptions::RunnableChildNotFoundException (class)">Exceptions::RunnableChildNotFoundException</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 485</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_reorder'>reorder</span><span class='lparen'>(</span><span class='id identifier rubyid_child_id'>child_id</span><span class='comma'>,</span> <span class='id identifier rubyid_new_index'>new_index</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_index'>index</span> <span class='op'>=</span> <span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_find_index'>find_index</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_child'>child</span><span class='op'>|</span> <span class='id identifier rubyid_child'>child</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_end_with?'>end_with?</span> <span class='id identifier rubyid_child_id'>child_id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Exceptions/RunnableChildNotFoundException.html" title="Inferno::Exceptions::RunnableChildNotFoundException (class)">RunnableChildNotFoundException</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Exceptions/RunnableChildNotFoundException.html#initialize-instance_method" title="Inferno::Exceptions::RunnableChildNotFoundException#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_child_id'>child_id</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_index'>index</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_new_index'>new_index</span><span class='period'>.</span><span class='id identifier rubyid_between?'>between?</span><span class='lparen'>(</span><span class='int'>0</span><span class='comma'>,</span> <span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>-</span> <span class='int'>1</span><span class='rparen'>)</span>
+    <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Application.html" title="Inferno::Application (class)">Application</a></span></span><span class='lbracket'>[</span><span class='symbol'>:logger</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span> <span class='heredoc_beg'>&lt;&lt;~ERROR</span>
+<span class='tstring_content'>      Error trying to reorder children for </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='embexpr_end'>}</span><span class='tstring_content'>:
+</span><span class='tstring_content'>      new_index </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_new_index'>new_index</span><span class='embexpr_end'>}</span><span class='tstring_content'> for </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_child_id'>child_id</span><span class='embexpr_end'>}</span><span class='tstring_content'> is out of range
+</span><span class='tstring_content'>      (must be between 0 and </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>-</span> <span class='int'>1</span><span class='embexpr_end'>}</span><span class='tstring_content'>)
+</span><span class='heredoc_end'>    ERROR
+</span>    <span class='kw'>return</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_child'>child</span> <span class='op'>=</span> <span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_delete_at'>delete_at</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_insert'>insert</span><span class='lparen'>(</span><span class='id identifier rubyid_new_index'>new_index</span><span class='comma'>,</span> <span class='id identifier rubyid_child'>child</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="replace-instance_method">
+  
+    #<strong>replace</strong>(id_to_replace, replacement_id) {|Inferno::TestGroup, Inferno::Test| ... } &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Replace a child test/group</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code>replace :test2, :test4 do
+  id :new_test_id
+  config(...)
+end</code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>id_to_replace</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The ID of the child to be replaced.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>replacement_id</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>The global ID of the group/test that will take the
+place of the child being replaced.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../Inferno.html#TestGroup-constant" title="Inferno::TestGroup (constant)">Inferno::TestGroup</a></span></tt>, <tt><span class='object_link'><a href="../../Inferno.html#Test-constant" title="Inferno::Test (constant)">Inferno::Test</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>Optional block executed in the
+context of the replacement child for additional configuration.</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Exceptions/RunnableChildNotFoundException.html" title="Inferno::Exceptions::RunnableChildNotFoundException (class)">Exceptions::RunnableChildNotFoundException</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+514
+515
+516
+517
+518
+519
+520
+521
+522
+523
+524
+525
+526</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 514</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_replace'>replace</span><span class='lparen'>(</span><span class='id identifier rubyid_id_to_replace'>id_to_replace</span><span class='comma'>,</span> <span class='id identifier rubyid_replacement_id'>replacement_id</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_index'>index</span> <span class='op'>=</span> <span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_find_index'>find_index</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_child'>child</span><span class='op'>|</span> <span class='id identifier rubyid_child'>child</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_end_with?'>end_with?</span> <span class='id identifier rubyid_id_to_replace'>id_to_replace</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Exceptions.html" title="Inferno::Exceptions (module)">Exceptions</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Exceptions/RunnableChildNotFoundException.html" title="Inferno::Exceptions::RunnableChildNotFoundException (class)">RunnableChildNotFoundException</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../Exceptions/RunnableChildNotFoundException.html#initialize-instance_method" title="Inferno::Exceptions::RunnableChildNotFoundException#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_id_to_replace'>id_to_replace</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_index'>index</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_children'>children</span><span class='lbracket'>[</span><span class='id identifier rubyid_index'>index</span><span class='rbracket'>]</span> <span class='op'>&lt;</span> <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Inferno.html#TestGroup-constant" title="Inferno::TestGroup (constant)">TestGroup</a></span></span>
+    <span class='id identifier rubyid_group'>group</span><span class='lparen'>(</span><span class='label'>from:</span> <span class='id identifier rubyid_replacement_id'>replacement_id</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_test'>test</span><span class='lparen'>(</span><span class='label'>from:</span> <span class='id identifier rubyid_replacement_id'>replacement_id</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_remove'>remove</span><span class='lparen'>(</span><span class='id identifier rubyid_id_to_replace'>id_to_replace</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_insert'>insert</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='comma'>,</span> <span class='id identifier rubyid_children'>children</span><span class='period'>.</span><span class='id identifier rubyid_pop'>pop</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="required-instance_method">
+  
+    #<strong>required</strong>(required = true)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Mark as required</p>
+
+<p>Tests are required by default. This method is provided to make an
+existing optional test required.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>required</span>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+294
+295
+296</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 294</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_required'>required</span><span class='lparen'>(</span><span class='id identifier rubyid_required'>required</span> <span class='op'>=</span> <span class='kw'>true</span><span class='rparen'>)</span> <span class='comment'># rubocop:disable Style/OptionalBooleanParameter
+</span>  <span class='ivar'>@optional</span> <span class='op'>=</span> <span class='op'>!</span><span class='id identifier rubyid_required'>required</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="required?-instance_method">
+  
+    #<strong>required?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>The test or group is required if true</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+308
+309
+310</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 308</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_required?'>required?</span>
+  <span class='op'>!</span><span class='id identifier rubyid_optional?'>optional?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="required_suite_options-instance_method">
+  
+    #<strong>required_suite_options</strong>(suite_option_requirements)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Set/get suite options required for this runnable to be executed.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_suite_option'>suite_option</span> <span class='symbol'>:ig_version</span><span class='comma'>,</span>
+            <span class='label'>list_options:</span> <span class='lbracket'>[</span>
+              <span class='lbrace'>{</span>
+                <span class='label'>label:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>IG v1</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>value:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ig_v1</span><span class='tstring_end'>&#39;</span></span>
+              <span class='rbrace'>}</span><span class='comma'>,</span>
+              <span class='lbrace'>{</span>
+                <span class='label'>label:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>IG v2</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+                <span class='label'>value:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ig_v2</span><span class='tstring_end'>&#39;</span></span>
+              <span class='rbrace'>}</span>
+            <span class='rbracket'>]</span>
+
+<span class='id identifier rubyid_group'>group</span> <span class='label'>from:</span> <span class='symbol'>:ig_v1_group</span><span class='comma'>,</span>
+      <span class='label'>required_suite_options:</span> <span class='lbrace'>{</span> <span class='label'>ig_version:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ig_v1</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span>
+
+<span class='id identifier rubyid_group'>group</span> <span class='label'>from:</span> <span class='symbol'>:ig_v2_group</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_required_suite_options'>required_suite_options</span> <span class='label'>ig_version:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ig_v2</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>suite_option_requirements</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+471
+472
+473
+474
+475
+476</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 471</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_required_suite_options'>required_suite_options</span><span class='lparen'>(</span><span class='id identifier rubyid_suite_option_requirements'>suite_option_requirements</span><span class='rparen'>)</span>
+  <span class='ivar'>@suite_option_requirements</span> <span class='op'>=</span>
+    <span class='id identifier rubyid_suite_option_requirements'>suite_option_requirements</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+      <span class='const'><span class='object_link'><a href="../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="SuiteOption.html" title="Inferno::DSL::SuiteOption (class)">SuiteOption</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='label'>value:</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="resume_test_route-instance_method">
+  
+    #<strong>resume_test_route</strong>(method, path, tags: [], result: &#39;pass&#39;) { ... } &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Create a route which will resume a test run when a request is received</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_resume_test_route'>resume_test_route</span> <span class='symbol'>:get</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/launch</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>tags:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>launch</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_query_parameters'>query_parameters</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>iss</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+<span class='kw'>end</span>
+
+<span class='id identifier rubyid_test'>test</span> <span class='kw'>do</span>
+  <span class='id identifier rubyid_input'>input</span> <span class='symbol'>:issuer</span>
+  <span class='id identifier rubyid_receives_request'>receives_request</span> <span class='symbol'>:launch</span>
+
+  <span class='id identifier rubyid_run'>run</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_wait'>wait</span><span class='lparen'>(</span>
+      <span class='label'>identifier:</span> <span class='id identifier rubyid_issuer'>issuer</span><span class='comma'>,</span>
+      <span class='label'>message:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Wating to receive a request with an issuer of </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_issuer'>issuer</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>method</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the HTTP request type (:get, :post, etc.) for the
+incoming request</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>path</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the path for this request. The route will be served
+with a prefix of <code>/custom/TEST_SUITE_ID</code> to prevent path conflicts.
+<a href="https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#a-beautiful-dsl">Any of the path options available in Hanami
+Router</a>
+can be used here.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>tags</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>[]</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>a list of tags to assign to the request</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>result</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;pass&#39;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'><p>the result for the waiting test. Must be one of:
+‘pass’, ‘fail’, ‘skip’, ‘omit’, ‘cancel’</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'></span>
+      
+      
+      
+        
+        <div class='inline'><p>This method takes a block which must return the identifier
+defined when a test was set to wait for the test run that hit this
+route. The block has access to the <code>request</code> method which returns a
+<span class='object_link'><a href="../Entities/Request.html" title="Inferno::Entities::Request (class)">Entities::Request</a></span> object with the information for the
+incoming request.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Results.html#wait-instance_method" title="Inferno::DSL::Results#wait (method)">Inferno::DSL::Results#wait</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+382
+383
+384
+385
+386
+387
+388
+389
+390</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 382</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_resume_test_route'>resume_test_route</span><span class='lparen'>(</span><span class='id identifier rubyid_method'>method</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='label'>tags:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>result:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>pass</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_route_class'>route_class</span> <span class='op'>=</span> <span class='const'>Class</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>ResumeTestRoute</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_klass'>klass</span><span class='op'>|</span>
+    <span class='id identifier rubyid_klass'>klass</span><span class='period'>.</span><span class='id identifier rubyid_singleton_class'>singleton_class</span><span class='period'>.</span><span class='id identifier rubyid_instance_variable_set'>instance_variable_set</span><span class='lparen'>(</span><span class='symbol'>:@test_run_identifier_block</span><span class='comma'>,</span> <span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_klass'>klass</span><span class='period'>.</span><span class='id identifier rubyid_singleton_class'>singleton_class</span><span class='period'>.</span><span class='id identifier rubyid_instance_variable_set'>instance_variable_set</span><span class='lparen'>(</span><span class='symbol'>:@tags</span><span class='comma'>,</span> <span class='id identifier rubyid_tags'>tags</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_klass'>klass</span><span class='period'>.</span><span class='id identifier rubyid_singleton_class'>singleton_class</span><span class='period'>.</span><span class='id identifier rubyid_instance_variable_set'>instance_variable_set</span><span class='lparen'>(</span><span class='symbol'>:@result</span><span class='comma'>,</span> <span class='id identifier rubyid_result'>result</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_route'>route</span><span class='lparen'>(</span><span class='id identifier rubyid_method'>method</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_route_class'>route_class</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="route-instance_method">
+  
+    #<strong>route</strong>(method, path, handler)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Create a route to handle a request</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>method</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the HTTP request type (:get, :post, etc.) for the
+incoming request. <code>:all</code> will accept all HTTP request types.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>path</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the path for this request. The route will be served
+with a prefix of <code>/custom/TEST_SUITE_ID</code> to prevent path conflicts.
+<a href="https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#a-beautiful-dsl">Any of the path options available in Hanami
+Router</a>
+can be used here.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>handler</span>
+      
+      
+        <span class='type'>(<tt>#call</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the route handler. This can be any Rack
+compatible object (e.g. a <code>Proc</code> object, a <a href="http://sinatrarb.com/">Sinatra
+app</a>) as described in the <a href="https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#mount-rack-applications">Hanami Router
+documentation.</a></p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+424
+425
+426</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 424</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_route'>route</span><span class='lparen'>(</span><span class='id identifier rubyid_method'>method</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_handler'>handler</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='period'>.</span><span class='id identifier rubyid_routes'>routes</span> <span class='op'>&lt;&lt;</span> <span class='lbrace'>{</span> <span class='label'>method:</span><span class='comma'>,</span> <span class='label'>path:</span><span class='comma'>,</span> <span class='label'>handler:</span><span class='comma'>,</span> <span class='label'>suite:</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="short_description-instance_method">
+  
+    #<strong>short_description</strong>(new_short_description = nil)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set/Get a runnable’s short one-sentence description</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>new_short_description</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the one-sentence description</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+248
+249
+250
+251
+252</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 248</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_short_description'>short_description</span><span class='lparen'>(</span><span class='id identifier rubyid_new_short_description'>new_short_description</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='ivar'>@short_description</span> <span class='kw'>if</span> <span class='id identifier rubyid_new_short_description'>new_short_description</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
+  <span class='ivar'>@short_description</span> <span class='op'>=</span> <span class='id identifier rubyid_format_markdown'>format_markdown</span><span class='lparen'>(</span><span class='id identifier rubyid_new_short_description'>new_short_description</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="short_title-instance_method">
+  
+    #<strong>short_title</strong>(new_short_title = nil)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set/Get a runnable’s short title</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>new_short_title</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the short title</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+228
+229
+230
+231
+232</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 228</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_short_title'>short_title</span><span class='lparen'>(</span><span class='id identifier rubyid_new_short_title'>new_short_title</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='ivar'>@short_title</span> <span class='kw'>if</span> <span class='id identifier rubyid_new_short_title'>new_short_title</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
+  <span class='ivar'>@short_title</span> <span class='op'>=</span> <span class='id identifier rubyid_new_short_title'>new_short_title</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="suite_endpoint-instance_method">
+  
+    #<strong>suite_endpoint</strong>(method, path, endpoint_class)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p><p>Create an endpoint to receive incoming requests during a Test Run.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h4 class="tag_title">Examples:</h4>
+    
+      
+      <pre class="example code"><code><span class='id identifier rubyid_suite_endpoint'>suite_endpoint</span> <span class='symbol'>:post</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/my_suite_endpoint</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='const'>MySuiteEndpoint</span></code></pre>
+    
+  </div>
+<p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>method</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the HTTP request type (:get, :post, etc.) for the
+incoming request</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>path</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the path for this request. The route will be served
+with a prefix of <code>/custom/TEST_SUITE_ID</code> to prevent path conflicts.
+<a href="https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#a-beautiful-dsl">Any of the path options available in Hanami
+Router</a>
+can be used here.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>a</span>
+      
+      
+        <span class='type'>(<tt>Class</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>subclass of Inferno::DSL::SuiteEndpoint</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="SuiteEndpoint.html" title="Inferno::DSL::SuiteEndpoint (class)">SuiteEndpoint</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+406
+407
+408</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 406</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_suite_endpoint'>suite_endpoint</span><span class='lparen'>(</span><span class='id identifier rubyid_method'>method</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_endpoint_class'>endpoint_class</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_route'>route</span><span class='lparen'>(</span><span class='id identifier rubyid_method'>method</span><span class='comma'>,</span> <span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_endpoint_class'>endpoint_class</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="title-instance_method">
+  
+    #<strong>title</strong>(new_title = nil)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set/Get a runnable’s title</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>new_title</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the title</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+218
+219
+220
+221
+222</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 218</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_title'>title</span><span class='lparen'>(</span><span class='id identifier rubyid_new_title'>new_title</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='ivar'>@title</span> <span class='kw'>if</span> <span class='id identifier rubyid_new_title'>new_title</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
+  <span class='ivar'>@title</span> <span class='op'>=</span> <span class='id identifier rubyid_new_title'>new_title</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="verifies_requirements-instance_method">
+  
+    #<strong>verifies_requirements</strong>(*requirement_ids)  &#x21d2; <tt>Array&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Set/Get the IDs of requirements verified by this runnable
+Set with [] to clear the list</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>requirements</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>the requirement IDs</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+269
+270
+271
+272
+273
+274
+275
+276
+277</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/runnable.rb', line 269</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_verifies_requirements'>verifies_requirements</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_requirement_ids'>requirement_ids</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_requirement_ids'>requirement_ids</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+    <span class='ivar'>@requirement_ids</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_requirement_ids'>requirement_ids</span> <span class='op'>==</span> <span class='lbracket'>[</span><span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rbracket'>]</span>
+    <span class='ivar'>@requirement_ids</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='ivar'>@requirement_ids</span> <span class='op'>=</span> <span class='id identifier rubyid_requirement_ids'>requirement_ids</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Feb  6 15:52:10 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.3.6).
+</div>
+
+    </div>
+  </body>
+</html>

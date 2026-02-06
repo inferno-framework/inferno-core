@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Inferno::DSL::RequestStorage
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Inferno::DSL::RequestStorage";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span>
+     &raquo; 
+    <span class="title">RequestStorage</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: Inferno::DSL::RequestStorage
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/inferno/dsl/request_storage.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>This module handles storing and retrieving requests/responses made by
+FHIR/HTTP clients</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="RequestStorage/ClassMethods.html" title="Inferno::DSL::RequestStorage::ClassMethods (module)">ClassMethods</a></span>
+    
+  
+    
+  
+</p>
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#load_tagged_requests-instance_method" title="#load_tagged_requests (instance method)">#<strong>load_tagged_requests</strong>(*tags)  &#x21d2; Inferno::Entities::Request </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns requests which match all of the given tags.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#request-instance_method" title="#request (instance method)">#<strong>request</strong>  &#x21d2; Inferno::Entities::Request<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the most recent FHIR/HTTP request.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#requests-instance_method" title="#requests (instance method)">#<strong>requests</strong>  &#x21d2; Array&lt;Inferno::Entities::Request&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the FHIR/HTTP requests that have been made in this <code>Test</code>.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#resource-instance_method" title="#resource (instance method)">#<strong>resource</strong>  &#x21d2; FHIR::Model<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the FHIR resource from the response to the most recent FHIR request.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#response-instance_method" title="#response (instance method)">#<strong>response</strong>  &#x21d2; Hash<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'><p>Returns the response from the most recent FHIR/HTTP request.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="load_tagged_requests-instance_method">
+  
+    #<strong>load_tagged_requests</strong>(*tags)  &#x21d2; <tt><span class='object_link'><a href="../Entities/Request.html" title="Inferno::Entities::Request (class)">Inferno::Entities::Request</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns requests which match all of the given tags</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>tags</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Entities/Request.html" title="Inferno::Entities::Request (class)">Inferno::Entities::Request</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+43
+44
+45
+46
+47
+48
+49</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/request_storage.rb', line 43</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_load_tagged_requests'>load_tagged_requests</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_tags'>tags</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='lbracket'>[</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_tags'>tags</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+
+  <span class='const'><span class='object_link'><a href="../Repositories.html" title="Inferno::Repositories (module)">Repositories</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Repositories/Requests.html" title="Inferno::Repositories::Requests (class)">Requests</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_tagged_requests'><span class='object_link'><a href="../Repositories/Requests.html#tagged_requests-instance_method" title="Inferno::Repositories::Requests#tagged_requests (method)">tagged_requests</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_test_session_id'>test_session_id</span><span class='comma'>,</span> <span class='id identifier rubyid_tags'>tags</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_tagged_requests'>tagged_requests</span><span class='op'>|</span>
+    <span class='id identifier rubyid_requests'>requests</span><span class='period'>.</span><span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span><span class='id identifier rubyid_tagged_requests'>tagged_requests</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="request-instance_method">
+  
+    #<strong>request</strong>  &#x21d2; <tt><span class='object_link'><a href="../Entities/Request.html" title="Inferno::Entities::Request (class)">Inferno::Entities::Request</a></span></tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the most recent FHIR/HTTP request</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Entities/Request.html" title="Inferno::Entities::Request (class)">Inferno::Entities::Request</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+20
+21
+22</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/request_storage.rb', line 20</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_request'>request</span>
+  <span class='id identifier rubyid_requests'>requests</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="requests-instance_method">
+  
+    #<strong>requests</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="../Entities/Request.html" title="Inferno::Entities::Request (class)">Inferno::Entities::Request</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the FHIR/HTTP requests that have been made in this <code>Test</code></p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../Entities/Request.html" title="Inferno::Entities::Request (class)">Inferno::Entities::Request</a></span>&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+13
+14
+15</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/request_storage.rb', line 13</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_requests'>requests</span>
+  <span class='ivar'>@requests</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="resource-instance_method">
+  
+    #<strong>resource</strong>  &#x21d2; <tt><span class='object_link'><a href="../../FHIR/Model.html" title="FHIR::Model (class)">FHIR::Model</a></span></tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the FHIR resource from the response to the most recent FHIR
+request</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../FHIR/Model.html" title="FHIR::Model (class)">FHIR::Model</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+35
+36
+37</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/request_storage.rb', line 35</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_resource'>resource</span>
+  <span class='id identifier rubyid_request'>request</span><span class='op'>&amp;.</span><span class='id identifier rubyid_resource'>resource</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="response-instance_method">
+  
+    #<strong>response</strong>  &#x21d2; <tt>Hash</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p>Returns the response from the most recent FHIR/HTTP request</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+27
+28
+29</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/dsl/request_storage.rb', line 27</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_response'>response</span>
+  <span class='id identifier rubyid_request'>request</span><span class='op'>&amp;.</span><span class='id identifier rubyid_response'>response</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Feb  6 15:52:11 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.3.6).
+</div>
+
+    </div>
+  </body>
+</html>

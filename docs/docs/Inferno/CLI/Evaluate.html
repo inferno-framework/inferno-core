@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Inferno::CLI::Evaluate
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Inferno::CLI::Evaluate";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (E)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../CLI.html" title="Inferno::CLI (module)">CLI</a></span></span>
+     &raquo; 
+    <span class="title">Evaluate</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Inferno::CLI::Evaluate
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Inferno::CLI::Evaluate</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/inferno/apps/cli/evaluate.rb</dd>
+  </dl>
+  
+</div>
+
+
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#check_ig_version-instance_method" title="#check_ig_version (instance method)">#<strong>check_ig_version</strong>(ig)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#evaluate-instance_method" title="#evaluate (instance method)">#<strong>evaluate</strong>(ig_path, data_path, config_path, options)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#output_results-instance_method" title="#output_results (instance method)">#<strong>output_results</strong>(results, output)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#pad-instance_method" title="#pad (instance method)">#<strong>pad</strong>(string, length)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#print-instance_method" title="#print (instance method)">#<strong>print</strong>(output_fields, title)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#run-instance_method" title="#run (instance method)">#<strong>run</strong>(ig_path, data_path, options)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#services_base_command-instance_method" title="#services_base_command (instance method)">#<strong>services_base_command</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#services_names-instance_method" title="#services_names (instance method)">#<strong>services_names</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#setup_validator-instance_method" title="#setup_validator (instance method)">#<strong>setup_validator</strong>(ig_path)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#validate_args-instance_method" title="#validate_args (instance method)">#<strong>validate_args</strong>(ig_path, data_path, config_path)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="check_ig_version-instance_method">
+  
+    #<strong>check_ig_version</strong>(ig)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+97
+98
+99
+100
+101
+102
+103</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/evaluate.rb', line 97</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_check_ig_version'>check_ig_version</span><span class='lparen'>(</span><span class='id identifier rubyid_ig'>ig</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_versions'>versions</span> <span class='op'>=</span> <span class='id identifier rubyid_ig'>ig</span><span class='period'>.</span><span class='id identifier rubyid_ig_resource'>ig_resource</span><span class='period'>.</span><span class='id identifier rubyid_fhirVersion'>fhirVersion</span>
+
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_versions'>versions</span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span> <span class='op'>&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>4.0.1</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>**WARNING** The selected IG targets a FHIR version higher than 4.0.1, which is not supported by Inferno.</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="evaluate-instance_method">
+  
+    #<strong>evaluate</strong>(ig_path, data_path, config_path, options)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Main.html#evaluate-instance_method" title="Inferno::CLI::Main#evaluate (method)">Main#evaluate</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/evaluate.rb', line 61</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_evaluate'>evaluate</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='comma'>,</span> <span class='id identifier rubyid_data_path'>data_path</span><span class='comma'>,</span> <span class='id identifier rubyid_config_path'>config_path</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='comment'># NOTE: repositories is required here rather than at the top of the file because
+</span>  <span class='comment'># the tree of requires means that this file and its requires get required by every CLI app.
+</span>  <span class='comment'># Sequel::Model, used in some repositories, fetches the table schema at instantiation.
+</span>  <span class='comment'># This breaks the `migrate` task by fetching a table before the task runs/creates it.
+</span>  <span class='id identifier rubyid_require_relative'>require_relative</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>../../repositories</span><span class='tstring_end'>&#39;</span></span>
+
+  <span class='id identifier rubyid_validate_args'>validate_args</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='comma'>,</span> <span class='id identifier rubyid_data_path'>data_path</span><span class='comma'>,</span> <span class='id identifier rubyid_config_path'>config_path</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_ig'>ig</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Repositories.html" title="Inferno::Repositories (module)">Repositories</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Repositories/IGs.html" title="Inferno::Repositories::IGs (class)">IGs</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_find_or_load'><span class='object_link'><a href="../Repositories/IGs.html#find_or_load-instance_method" title="Inferno::Repositories::IGs#find_or_load (method)">find_or_load</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_check_ig_version'>check_ig_version</span><span class='lparen'>(</span><span class='id identifier rubyid_ig'>ig</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_data_path'>data_path</span>
+      <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL/FHIREvaluation.html" title="Inferno::DSL::FHIREvaluation (module)">FHIREvaluation</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL/FHIREvaluation/DatasetLoader.html" title="Inferno::DSL::FHIREvaluation::DatasetLoader (module)">DatasetLoader</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_path'><span class='object_link'><a href="../DSL/FHIREvaluation/DatasetLoader.html#from_path-class_method" title="Inferno::DSL::FHIREvaluation::DatasetLoader.from_path (method)">from_path</a></span></span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid___dir__'>__dir__</span><span class='comma'>,</span> <span class='id identifier rubyid_data_path'>data_path</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_ig'>ig</span><span class='period'>.</span><span class='id identifier rubyid_examples'>examples</span>
+    <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_validator'>validator</span> <span class='op'>=</span> <span class='id identifier rubyid_setup_validator'>setup_validator</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_evaluator'>evaluator</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL/FHIREvaluation.html" title="Inferno::DSL::FHIREvaluation (module)">FHIREvaluation</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL/FHIREvaluation/Evaluator.html" title="Inferno::DSL::FHIREvaluation::Evaluator (class)">Evaluator</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../DSL/FHIREvaluation/Evaluator.html#initialize-instance_method" title="Inferno::DSL::FHIREvaluation::Evaluator#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_ig'>ig</span><span class='comma'>,</span> <span class='id identifier rubyid_validator'>validator</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_config'>config</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL/FHIREvaluation.html" title="Inferno::DSL::FHIREvaluation (module)">FHIREvaluation</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL/FHIREvaluation/Config.html" title="Inferno::DSL::FHIREvaluation::Config (class)">Config</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../DSL/FHIREvaluation/Config.html#initialize-instance_method" title="Inferno::DSL::FHIREvaluation::Config#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_config_path'>config_path</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_results'>results</span> <span class='op'>=</span> <span class='id identifier rubyid_evaluator'>evaluator</span><span class='period'>.</span><span class='id identifier rubyid_evaluate'>evaluate</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid_config'>config</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_output_results'>output_results</span><span class='lparen'>(</span><span class='id identifier rubyid_results'>results</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:output</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="output_results-instance_method">
+  
+    #<strong>output_results</strong>(results, output)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/evaluate.rb', line 122</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_output_results'>output_results</span><span class='lparen'>(</span><span class='id identifier rubyid_results'>results</span><span class='comma'>,</span> <span class='id identifier rubyid_output'>output</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_output'>output</span><span class='op'>&amp;.</span><span class='id identifier rubyid_end_with?'>end_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>json</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_oo'>oo</span> <span class='op'>=</span> <span class='const'>FhirEvaluator</span><span class='op'>::</span><span class='const'>EvaluationResult</span><span class='period'>.</span><span class='id identifier rubyid_to_operation_outcome'>to_operation_outcome</span><span class='lparen'>(</span><span class='id identifier rubyid_results'>results</span><span class='rparen'>)</span>
+    <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span><span class='lparen'>(</span><span class='id identifier rubyid_output'>output</span><span class='comma'>,</span> <span class='id identifier rubyid_oo'>oo</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Results written to </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_output'>output</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_counts'>counts</span> <span class='op'>=</span> <span class='id identifier rubyid_results'>results</span><span class='period'>.</span><span class='id identifier rubyid_group_by'>group_by</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:severity</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_transform_values'>transform_values</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:count</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_print'>print</span><span class='lparen'>(</span><span class='id identifier rubyid_counts'>counts</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Result Count</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_puts'>puts</span> <span class='id identifier rubyid_results'>results</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="pad-instance_method">
+  
+    #<strong>pad</strong>(string, length)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+148
+149
+150</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/evaluate.rb', line 148</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_pad'>pad</span><span class='lparen'>(</span><span class='id identifier rubyid_string'>string</span><span class='comma'>,</span> <span class='id identifier rubyid_length'>length</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_format'>format</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>%</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_length'>length</span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_length'>length</span><span class='embexpr_end'>}</span><span class='tstring_content'>s</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_string'>string</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="print-instance_method">
+  
+    #<strong>print</strong>(output_fields, title)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/evaluate.rb', line 135</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_print'>print</span><span class='lparen'>(</span><span class='id identifier rubyid_output_fields'>output_fields</span><span class='comma'>,</span> <span class='id identifier rubyid_title'>title</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>╔══════════════ </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_title'>title</span><span class='embexpr_end'>}</span><span class='tstring_content'> ═══════════════╗</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>║ ╭────────────────┬──────────────────────╮ ║</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_output_fields'>output_fields</span><span class='period'>.</span><span class='id identifier rubyid_each_with_index'>each_with_index</span> <span class='kw'>do</span> <span class='op'>|</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_i'>i</span><span class='op'>|</span>
+    <span class='id identifier rubyid_field_name'>field_name</span> <span class='op'>=</span> <span class='id identifier rubyid_pad'>pad</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='int'>14</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_field_value'>field_value</span> <span class='op'>=</span> <span class='id identifier rubyid_pad'>pad</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='comma'>,</span> <span class='int'>20</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>║ │ </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_field_name'>field_name</span><span class='embexpr_end'>}</span><span class='tstring_content'> │ </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_field_value'>field_value</span><span class='embexpr_end'>}</span><span class='tstring_content'> │ ║</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>║ ├────────────────┼──────────────────────┤ ║</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_i'>i</span> <span class='op'>==</span> <span class='id identifier rubyid_output_fields'>output_fields</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>-</span> <span class='int'>1</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>║ ╰────────────────┴──────────────────────╯ ║</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_puts'>puts</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>╚═══════════════════════════════════════════╝</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="run-instance_method">
+  
+    #<strong>run</strong>(ig_path, data_path, options)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Main.html#evaluate-instance_method" title="Inferno::CLI::Main#evaluate (method)">Main#evaluate</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/evaluate.rb', line 14</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_run'>run</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='comma'>,</span> <span class='id identifier rubyid_data_path'>data_path</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_tmpdir'>tmpdir</span> <span class='op'>=</span> <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_mktmpdir'>mktmpdir</span>
+  <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_mkdir'>mkdir</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_tmpdir'>tmpdir</span><span class='embexpr_end'>}</span><span class='tstring_content'>/data</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_mkdir'>mkdir</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_tmpdir'>tmpdir</span><span class='embexpr_end'>}</span><span class='tstring_content'>/data/igs</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_mkdir'>mkdir</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_tmpdir'>tmpdir</span><span class='embexpr_end'>}</span><span class='tstring_content'>/config</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_cp'>cp</span><span class='lparen'>(</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_expand_path'>expand_path</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>evaluate/database.yml</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid___dir__'>__dir__</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_tmpdir'>tmpdir</span><span class='embexpr_end'>}</span><span class='tstring_content'>/config/database.yml</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+  <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>TMPDIR</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_tmpdir'>tmpdir</span>
+  <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>FHIRPATH_URL</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http://localhost:6790</span><span class='tstring_end'>&#39;</span></span>
+  <span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>FHIR_RESOURCE_VALIDATOR_URL</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>http://localhost:3501</span><span class='tstring_end'>&#39;</span></span>
+
+  <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Starting Inferno Evaluator Services...</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_system'>system</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_services_base_command'>services_base_command</span><span class='embexpr_end'>}</span><span class='tstring_content'> up -d </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_services_names'>services_names</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_ig_path'>ig_path</span> <span class='op'>=</span> <span class='id identifier rubyid_absolute_path_with_home_expansion'>absolute_path_with_home_expansion</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_data_path'>data_path</span> <span class='op'>=</span> <span class='id identifier rubyid_absolute_path_with_home_expansion'>absolute_path_with_home_expansion</span><span class='lparen'>(</span><span class='id identifier rubyid_data_path'>data_path</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_data_path'>data_path</span>
+  <span class='id identifier rubyid_config_path'>config_path</span> <span class='op'>=</span> <span class='id identifier rubyid_absolute_path_with_home_expansion'>absolute_path_with_home_expansion</span><span class='lparen'>(</span><span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:config</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_options'>options</span><span class='lbracket'>[</span><span class='symbol'>:config</span><span class='rbracket'>]</span>
+
+  <span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_chdir'>chdir</span><span class='lparen'>(</span><span class='id identifier rubyid_tmpdir'>tmpdir</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='const'><span class='object_link'><a href="Migration.html" title="Inferno::CLI::Migration (class)">Migration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_run'><span class='object_link'><a href="Migration.html#run-instance_method" title="Inferno::CLI::Migration#run (method)">run</a></span></span><span class='lparen'>(</span><span class='const'>Logger</span><span class='op'>::</span><span class='const'>FATAL</span><span class='rparen'>)</span> <span class='comment'># Hide migration output for evaluator
+</span>    <span class='id identifier rubyid_evaluate'>evaluate</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='comma'>,</span> <span class='id identifier rubyid_data_path'>data_path</span><span class='comma'>,</span> <span class='id identifier rubyid_config_path'>config_path</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>ensure</span>
+  <span class='id identifier rubyid_system'>system</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_services_base_command'>services_base_command</span><span class='embexpr_end'>}</span><span class='tstring_content'> down </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_services_names'>services_names</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Stopped Inferno Evaluator Services</span><span class='tstring_end'>&#39;</span></span>
+
+  <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_remove_entry_secure'>remove_entry_secure</span> <span class='id identifier rubyid_tmpdir'>tmpdir</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="services_base_command-instance_method">
+  
+    #<strong>services_base_command</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+43
+44
+45</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/evaluate.rb', line 43</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_services_base_command'>services_base_command</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>docker compose -f </span><span class='embexpr_beg'>#{</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid___dir__'>__dir__</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>evaluate</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>docker-compose.evaluate.yml</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="services_names-instance_method">
+  
+    #<strong>services_names</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+47
+48
+49</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/evaluate.rb', line 47</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_services_names'>services_names</span>
+  <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>hl7_validator_service fhirpath</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="setup_validator-instance_method">
+  
+    #<strong>setup_validator</strong>(ig_path)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/evaluate.rb', line 105</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_setup_validator'>setup_validator</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_igs_directory'>igs_directory</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='const'>Dir</span><span class='period'>.</span><span class='id identifier rubyid_pwd'>pwd</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>igs</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exist?'>exist?</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_realpath'>realpath</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='id identifier rubyid_igs_directory'>igs_directory</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_destination_file_path'>destination_file_path</span> <span class='op'>=</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_igs_directory'>igs_directory</span><span class='comma'>,</span> <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_basename'>basename</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='const'>FileUtils</span><span class='period'>.</span><span class='id identifier rubyid_copy_file'>copy_file</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='comma'>,</span> <span class='id identifier rubyid_destination_file_path'>destination_file_path</span><span class='comma'>,</span> <span class='kw'>true</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_ig_path'>ig_path</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>igs/</span><span class='embexpr_beg'>#{</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_basename'>basename</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='rparen'>)</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+  <span class='const'><span class='object_link'><a href="../../Inferno.html" title="Inferno (module)">Inferno</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL.html" title="Inferno::DSL (module)">DSL</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL/FHIRResourceValidation.html" title="Inferno::DSL::FHIRResourceValidation (module)">FHIRResourceValidation</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../DSL/FHIRResourceValidation/Validator.html" title="Inferno::DSL::FHIRResourceValidation::Validator (class)">Validator</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='symbol'>:default</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>evaluator_cli</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_igs'>igs</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_validation_context'>validation_context</span> <span class='kw'>do</span>
+      <span class='comment'># For our purposes, code display mismatches should be warnings and not affect profile conformance
+</span>      <span class='id identifier rubyid_displayWarnings'>displayWarnings</span><span class='lparen'>(</span><span class='kw'>true</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="validate_args-instance_method">
+  
+    #<strong>validate_args</strong>(ig_path, data_path, config_path)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+89
+90
+91
+92
+93
+94
+95</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/inferno/apps/cli/evaluate.rb', line 89</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_validate_args'>validate_args</span><span class='lparen'>(</span><span class='id identifier rubyid_ig_path'>ig_path</span><span class='comma'>,</span> <span class='id identifier rubyid_data_path'>data_path</span><span class='comma'>,</span> <span class='id identifier rubyid_config_path'>config_path</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>A path to an IG is required!</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_ig_path'>ig_path</span>
+
+  <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Provided path &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_data_path'>data_path</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; is not a directory</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_data_path'>data_path</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='op'>!</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_directory?'>directory?</span> <span class='id identifier rubyid_data_path'>data_path</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Provided path &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_config_path'>config_path</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; does not exist</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_config_path'>config_path</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='op'>!</span><span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_exist?'>exist?</span> <span class='id identifier rubyid_config_path'>config_path</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Feb  6 15:52:12 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.3.6).
+</div>
+
+    </div>
+  </body>
+</html>

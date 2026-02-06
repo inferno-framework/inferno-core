@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Inferno::Repositories
+  
+    &mdash; Documentation by YARD 0.9.37
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Inferno::Repositories";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Inferno.html" title="Inferno (module)">Inferno</a></span></span>
+     &raquo; 
+    <span class="title">Repositories</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: Inferno::Repositories
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/inferno/repositories.rb<span class="defines">,<br />
+  lib/inferno/repositories/igs.rb,<br /> lib/inferno/repositories/tags.rb,<br /> lib/inferno/repositories/tests.rb,<br /> lib/inferno/repositories/headers.rb,<br /> lib/inferno/repositories/presets.rb,<br /> lib/inferno/repositories/results.rb,<br /> lib/inferno/repositories/messages.rb,<br /> lib/inferno/repositories/requests.rb,<br /> lib/inferno/repositories/test_kits.rb,<br /> lib/inferno/repositories/test_runs.rb,<br /> lib/inferno/repositories/repository.rb,<br /> lib/inferno/repositories/test_groups.rb,<br /> lib/inferno/repositories/test_suites.rb,<br /> lib/inferno/repositories/requirements.rb,<br /> lib/inferno/repositories/session_data.rb,<br /> lib/inferno/repositories/test_sessions.rb,<br /> lib/inferno/repositories/validator_sessions.rb,<br /> lib/inferno/repositories/runnable_repository.rb,<br /> lib/inferno/repositories/in_memory_repository.rb,<br /> lib/inferno/repositories/validate_runnable_reference.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    <p>Repositories provide an abstraction layer for dealing with entity
+persistence. All code for interacting with the database lives in
+repositories. The rest of the codebase interacts with the database through a
+public api provided by various repositories.</p>
+
+<p><strong>Naming Convention:</strong> A repository should be named the plural version of
+the entity name. For example:</p>
+
+<ul>
+  <li><code>TestSessions</code> is the repsitory for the <code>TestSession</code> entity</li>
+  <li><code>TestGroups</code> is the repository for the <code>TestGroup</code> entity</li>
+</ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Repositories/ValidateRunnableReference.html" title="Inferno::Repositories::ValidateRunnableReference (module)">ValidateRunnableReference</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Repositories/Headers.html" title="Inferno::Repositories::Headers (class)">Headers</a></span>, <span class='object_link'><a href="Repositories/IGs.html" title="Inferno::Repositories::IGs (class)">IGs</a></span>, <span class='object_link'><a href="Repositories/InMemoryRepository.html" title="Inferno::Repositories::InMemoryRepository (class)">InMemoryRepository</a></span>, <span class='object_link'><a href="Repositories/Messages.html" title="Inferno::Repositories::Messages (class)">Messages</a></span>, <span class='object_link'><a href="Repositories/Presets.html" title="Inferno::Repositories::Presets (class)">Presets</a></span>, <span class='object_link'><a href="Repositories/Repository.html" title="Inferno::Repositories::Repository (class)">Repository</a></span>, <span class='object_link'><a href="Repositories/Requests.html" title="Inferno::Repositories::Requests (class)">Requests</a></span>, <span class='object_link'><a href="Repositories/Requirements.html" title="Inferno::Repositories::Requirements (class)">Requirements</a></span>, <span class='object_link'><a href="Repositories/Results.html" title="Inferno::Repositories::Results (class)">Results</a></span>, <span class='object_link'><a href="Repositories/RunnableRepository.html" title="Inferno::Repositories::RunnableRepository (class)">RunnableRepository</a></span>, <span class='object_link'><a href="Repositories/SessionData.html" title="Inferno::Repositories::SessionData (class)">SessionData</a></span>, <span class='object_link'><a href="Repositories/Tags.html" title="Inferno::Repositories::Tags (class)">Tags</a></span>, <span class='object_link'><a href="Repositories/TestGroups.html" title="Inferno::Repositories::TestGroups (class)">TestGroups</a></span>, <span class='object_link'><a href="Repositories/TestKits.html" title="Inferno::Repositories::TestKits (class)">TestKits</a></span>, <span class='object_link'><a href="Repositories/TestRuns.html" title="Inferno::Repositories::TestRuns (class)">TestRuns</a></span>, <span class='object_link'><a href="Repositories/TestSessions.html" title="Inferno::Repositories::TestSessions (class)">TestSessions</a></span>, <span class='object_link'><a href="Repositories/TestSuites.html" title="Inferno::Repositories::TestSuites (class)">TestSuites</a></span>, <span class='object_link'><a href="Repositories/Tests.html" title="Inferno::Repositories::Tests (class)">Tests</a></span>, <span class='object_link'><a href="Repositories/ValidatorSessions.html" title="Inferno::Repositories::ValidatorSessions (class)">ValidatorSessions</a></span>
+    
+  
+</p>
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Fri Feb  6 15:52:10 2026 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.37 (ruby-3.3.6).
+</div>
+
+    </div>
+  </body>
+</html>
