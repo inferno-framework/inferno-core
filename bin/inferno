@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'bundler/setup'
 require 'pry'
 require_relative '../lib/inferno/config/application'
 require_relative '../lib/inferno/apps/cli'
