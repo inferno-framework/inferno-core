@@ -1,3 +1,7 @@
+## 1.0.8
+* Add path to matching_type_slice by @yunwwang in https://github.com/inferno-framework/inferno-core/pull/757
+* ID-2 Handle Bundle entries missing resource safely by @abhinandan2012 in https://github.com/inferno-framework/inferno-core/pull/756
+
 ## 1.0.7
 * ID-20: Add new format for known URL Unresolved Message to suppression list by @ljtucker in https://github.com/inferno-framework/inferno-core/pull/752
 
