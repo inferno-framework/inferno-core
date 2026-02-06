@@ -171,3 +171,68 @@ export const isJsonString = (str: unknown) => {
   }
   return !!value && typeof value === 'object';
 };
+
+/**
+ * Converts a value to its string representation.
+ * - If value is null or undefined, returns an empty string.
+ * - Otherwise, returns the string representation of the value.
+ *
+ * @param value - The value to normalize.
+ * @returns The normalized string value.
+ */
+export const normalizeValue = (value: unknown): string => {
+  if (value === null) {
+    return '';
+  }
+  switch (typeof value) {
+    case 'string':
+      return value;
+    case 'number':
+    case 'boolean':
+    case 'bigint':
+    case 'symbol':
+      return String(value);
+    case 'object':
+      return JSON.stringify(value);
+    default:
+      return '';
+  }
+};
+
+/**
+ * Sorts and normalizes an array of values.
+ * - Sorts the array and returns a normalized string representation of each element.
+ *
+ * @param value - The value to sort and normalize.
+ * @returns The sorted and normalized array of strings.
+ */
+const sortAndNormalizeArray = (value: unknown[]): string[] => {
+  return value.sort().map((item) => normalizeValue(item));
+};
+
+/**
+ * Returns true if the input field should be displayed based on its `enable_when`
+ * condition and the values in inputsMap.
+ * - No `enable_when` → always show.
+ * - Referenced input missing or no `input_name` → hide.
+ * - When `enable_when.value` is a string: show when referenced value equals it.
+ * - When `enable_when.value` is string[]: show when referenced value equals any element.
+ */
+export const conditionalShowInput = (
+  input: TestInput,
+  inputsMap: Map<string, unknown>,
+): boolean => {
+  const enableWhen = input.enable_when;
+  if (!enableWhen?.input_name) {
+    return true;
+  }
+  const inputValue = inputsMap.get(enableWhen.input_name);
+  if (inputValue === undefined) {
+    return false;
+  }
+  return normalizeValue(inputValue) === normalizeValue(enableWhen.value);
+};
+
+export const showInput = (input: TestInput, inputsMap: Map<string, unknown>): boolean => {
+  return !input.hidden && conditionalShowInput(input, inputsMap);
+};

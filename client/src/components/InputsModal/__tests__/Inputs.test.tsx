@@ -9,6 +9,7 @@ import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputTextField from '~/components/InputsModal/InputTextField';
 import { isJsonString } from '~/components/InputsModal/InputHelpers';
 import ThemeProvider from '~/components/ThemeProvider';
+import InputFields from '../InputFields';
 
 describe('Input Components', () => {
   it('renders InputCheckboxGroup', () => {
@@ -178,6 +179,143 @@ describe('Input Components', () => {
 
     passStrings.forEach((string) => {
       expect(isJsonString(string)).toEqual(true);
+    });
+  });
+
+  describe('renders conditional fields correctly', () => {
+    const constructInput = (props: Partial<TestInput>): TestInput => {
+      return {
+        name: props?.name || '',
+        type: (props?.type || 'text') as TestInput['type'],
+        title: props?.title,
+        optional: props?.optional,
+        enable_when: props?.enable_when,
+        hidden: props?.hidden,
+        value: props?.value,
+      };
+    };
+
+    const constructInputsMap = (inputs: TestInput[]): Map<string, string> => {
+      return inputs.reduce((acc, input) => {
+        acc.set(input.name, input.value as string);
+        return acc;
+      }, new Map<string, string>());
+    };
+
+    const renderInputFields = (inputs: TestInput[], inputsMap: Map<string, string>) => {
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputFields inputs={inputs} inputsMap={inputsMap} setInputsMap={() => {}} />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+    };
+
+    const assertInputVisibility = (inputs: Partial<TestInput>[], expectedVisible: boolean[]) => {
+      const constructedInputs: TestInput[] = inputs.map((input) => constructInput(input));
+      const inputsMap = constructInputsMap(constructedInputs);
+      renderInputFields(constructedInputs, inputsMap);
+
+      constructedInputs.forEach((input, index) => {
+        const label = input.title as string;
+        const shouldBeVisible = expectedVisible[index];
+        if (shouldBeVisible) {
+          expect(screen.getByLabelText(label, { exact: false })).toBeVisible();
+        } else {
+          expect(screen.queryByLabelText(label, { exact: false })).not.toBeInTheDocument();
+        }
+      });
+    };
+
+    it('renders field when it has no enable_when (always visible)', () => {
+      assertInputVisibility([{ name: 'standalone', title: 'Standalone field' }], [true]);
+    });
+
+    it('skips rendering dependent field when controlling value is undefined', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            enable_when: { input_name: 'trigger', value: 'yes' },
+          },
+        ],
+        [true, false],
+      );
+    });
+
+    it('skips rendering when controlling value does not match enable_when', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger', value: 'no' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            enable_when: { input_name: 'trigger', value: 'yes' },
+          },
+        ],
+        [true, false],
+      );
+    });
+
+    it('renders dependent field when controlling value matches enable_when', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger', value: 'yes' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            enable_when: { input_name: 'trigger', value: 'yes' },
+          },
+        ],
+        [true, true],
+      );
+    });
+
+    it('hides field when hidden is true even if enable_when would pass', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger', value: 'yes' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            enable_when: { input_name: 'trigger', value: 'yes' },
+            hidden: true,
+          },
+        ],
+        [true, false],
+      );
+    });
+
+    it('renders dependent field when controlling value (array) equals enable_when array value', () => {
+      const refValue = ['a', 'b'];
+      const inputs: TestInput[] = [
+        constructInput({
+          name: 'trigger',
+          title: 'Trigger',
+          type: 'checkbox',
+          value: refValue,
+        }),
+        constructInput({
+          name: 'dependent',
+          title: 'Dependent',
+          enable_when: { input_name: 'trigger', value: ['a', 'b'] },
+        }),
+      ];
+      const inputsMap = new Map<string, unknown>();
+      inputsMap.set('trigger', refValue);
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputFields inputs={inputs} inputsMap={inputsMap} setInputsMap={() => {}} />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      expect(screen.getByRole('checkbox', { name: /Trigger/i })).toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: /Dependent/i })).toBeVisible();
     });
   });
 });

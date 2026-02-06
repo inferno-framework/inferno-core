@@ -15,22 +15,25 @@ module Inferno
         :options,
         :locked,
         :hidden,
-        :value
+        :value,
+        :enable_when
       ].freeze
       include Entities::Attributes
 
       # These attributes require special handling when merging input
       # definitions.
       UNINHERITABLE_ATTRIBUTES = [
-        # Locking or hiding an input only has meaning at the level it is applied.
-        # Consider:
+        # Locking, hiding, or conditional display only have meaning at the level
+        # they are applied. Consider:
         # - ParentGroup
         #   - Group 1, input :a
-        #   - Group 2, input :a, locked: true, hidden: true, optional: true
-        # The input 'a' should only be locked or hidden when running Group 2 in isolation.
-        # It should not be locked or hidden when running Group 1 or the ParentGroup.
+        #   - Group 2, input :a, locked: true, hidden: true, enable_when: {...}, optional: true
+        # The input 'a' should only be locked, hidden, or conditionally shown when
+        # running Group 2 in isolation. It should not inherit those when running
+        # Group 1 or the ParentGroup.
         :locked,
         :hidden,
+        :enable_when,
         # Input type is sometimes only a UI concern (e.g. text vs. textarea), so
         # it is common to not redeclare the type everywhere it's used and needs
         # special handling to avoid clobbering the type with the default (text)
