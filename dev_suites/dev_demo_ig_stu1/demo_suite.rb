@@ -423,23 +423,42 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       title 'Conditional Inputs Group'
       optional
 
-      test 'Conditional, optional, empty input test' do
-        input :get_type, title: 'How to get Bundle', type: 'radio', options: {
-          list_options: [
-            { value: 'copy_paste', label: 'Paste JSON' },
-            { value: 'url', label: 'URL to FHIR Bundle' },
-            { value: 'summary_op', label: '$summary Operation' }
-          ]
-        }
-        input :bundle_copy_paste, title: 'Paste JSON', type: 'textarea', optional: true,
-                                  enable_when: { input_name: 'get_type', value: 'copy_paste' }
-        input :bundle_url, title: 'URL to FHIR Bundle', type: 'text', optional: true,
-                           enable_when: { input_name: 'get_type', value: 'url' }
-        input :fhir_server_url, title: 'FHIR Server URL', type: 'text', optional: true,
-                                enable_when: { input_name: 'get_type', value: 'summary_op' }
-        input :patient_identifier, title: 'Patient ID', type: 'text', optional: true,
-                                   enable_when: { input_name: 'get_type', value: 'summary_op' }
+      def list_options
+        [
+          { value: 'copy_paste', label: 'Paste JSON' },
+          { value: 'url', label: 'URL to FHIR Bundle' },
+          { value: 'summary_op', label: '$summary Operation' }
+        ]
+      end
 
+      test 'Conditional, optional, empty input test (Radio)' do
+        input :get_type_radio, title: 'How to get Bundle (Radio)', type: 'radio', options: {
+          list_options: list_options
+        }
+        input :bundle_copy_paste_radio, title: 'Paste JSON (Radio)', type: 'textarea', optional: true,
+                                        enable_when: { input_name: 'get_type_radio', value: 'copy_paste' }
+        input :bundle_url_radio, title: 'URL to FHIR Bundle (Radio)', type: 'text', optional: true,
+                                 enable_when: { input_name: 'get_type_radio', value: 'url' }
+        input :fhir_server_url_radio, title: 'FHIR Server URL (Radio)', type: 'text', optional: true,
+                                      enable_when: { input_name: 'get_type_radio', value: 'summary_op' }
+        input :patient_identifier_radio, title: 'Patient ID (Radio)', type: 'text', optional: true,
+                                         enable_when: { input_name: 'get_type_radio', value: 'summary_op' }
+
+        run { pass }
+      end
+
+      test 'Conditional, optional, empty input test (Select)' do
+        input :get_type_select, title: 'How to get Bundle (Select)', type: 'select', default: 'copy_paste', options: {
+          list_options: list_options
+        }
+        input :bundle_copy_paste_select, title: 'Paste JSON (Select)', type: 'textarea', optional: true,
+                                         enable_when: { input_name: 'get_type_select', value: 'copy_paste' }
+        input :bundle_url_select, title: 'URL to FHIR Bundle (Select)', type: 'text', optional: true,
+                                  enable_when: { input_name: 'get_type_select', value: 'url' }
+        input :fhir_server_url_select, title: 'FHIR Server URL (Select)', type: 'text', optional: true,
+                                       enable_when: { input_name: 'get_type_select', value: 'summary_op' }
+        input :patient_identifier_select, title: 'Patient ID (Select)', type: 'text', optional: true,
+                                          enable_when: { input_name: 'get_type_select', value: 'summary_op' }
         run { pass }
       end
     end

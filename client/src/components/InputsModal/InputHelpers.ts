@@ -212,25 +212,6 @@ const sortAndNormalizeArray = (value: unknown[]): string[] => {
 };
 
 /**
- * Compares two values for equality.
- * - If both values are arrays, sorts and normalizes them and then compares each element.
- * - Otherwise, normalizes them and compares the string representations.
- *
- * @param value1 - The first value to compare.
- * @param value2 - The second value to compare.
- * @returns True if the values are equal, false otherwise.
- */
-const isEqual = (value1: unknown, value2: unknown) => {
-  if (Array.isArray(value1) && Array.isArray(value2)) {
-    return sortAndNormalizeArray(value1).every(
-      (item, index) => item === sortAndNormalizeArray(value2)[index],
-    );
-  }
-
-  return normalizeValue(value1) === normalizeValue(value2);
-};
-
-/**
  * Returns true if the input field should be displayed based on its `enable_when`
  * condition and the values in inputsMap.
  * - No `enable_when` → always show.
@@ -250,7 +231,7 @@ export const conditionalShowInput = (
   if (inputValue === undefined) {
     return false;
   }
-  return isEqual(inputValue, enableWhen.value);
+  return normalizeValue(inputValue) === normalizeValue(enableWhen.value);
 };
 
 export const showInput = (input: TestInput, inputsMap: Map<string, unknown>): boolean => {

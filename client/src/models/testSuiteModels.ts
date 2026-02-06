@@ -142,7 +142,7 @@ export interface TestInput {
   };
   enable_when?: {
     input_name: string;
-    value: string | string[];
+    value: string;
   };
 }
 
