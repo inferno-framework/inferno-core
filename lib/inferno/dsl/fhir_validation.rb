@@ -32,12 +32,14 @@ module Inferno
       # @param profile_url [String]
       # @param validator [Symbol] the name of the validator to use
       # @param add_messages_to_runnable [Boolean] whether to add validation messages to runnable or not
+      # @param validator_response_details [Object, nil] if not nil, the service will seed the object provided with the detailed response message from the validator service. Can be used by test kits to perform custom handling of error messages.
       # @return [Boolean] whether the resource is valid
       def resource_is_valid?(
         resource: self.resource, profile_url: nil,
-        validator: :default, add_messages_to_runnable: true
+        validator: :default, add_messages_to_runnable: true,
+        validator_response_details: nil
       )
-        find_validator(validator).resource_is_valid?(resource, profile_url, self, add_messages_to_runnable:)
+        find_validator(validator).resource_is_valid?(resource, profile_url, self, add_messages_to_runnable:, validator_response_details: validator_response_details)
       end
 
       # Find a particular validator. Looks through a runnable's parents up to

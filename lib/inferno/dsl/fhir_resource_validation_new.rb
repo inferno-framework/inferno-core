@@ -336,7 +336,7 @@ module Inferno
           filter_individual_messages(issues)
 
           # Perform conditional filtering based on special cases
-          conditional_filtering(issues)
+          apply_relationship_filters(issues)
         end
 
         # @private
@@ -354,7 +354,7 @@ module Inferno
               # Create a synthetic raw_issue for additional validation messages
               synthetic_raw_issue = {
                 'level' => message_hash[:type].upcase,
-                'location' => ['additional_validation'],
+                'location' => 'additional_validation',
                 'message' => message_hash[:message]
               }
               ValidatorIssue.new(
@@ -389,8 +389,9 @@ module Inferno
         # @param message [Inferno::Entities::Message] the message to check
         # @return [Boolean] true if the message should be filtered out
         def should_filter_message?(message)
-          exclude_unresolved_url_message.call(message) ||
-            exclude_message&.call(message)
+          should_filter = exclude_unresolved_url_message.call(message) ||
+                          exclude_message&.call(message)
+          should_filter || false
         end
 
         # @private
@@ -404,17 +405,20 @@ module Inferno
           end
         end
 
-        # Performs conditional filtering on base-level issues for special cases.
-        # Iterates through base level issues and applies specialized filtering rules.
+        # Performs conditional filtering on issues for special cases.
+        # Recursively processes issues and their nested slice_info in depth-first order.
         #
         # @param issues [Array<ValidatorIssue>] the list of validator issues
-        def conditional_filtering(issues)
+        def apply_relationship_filters(issues)
           issues.each_with_index do |issue, index|
             next if issue.filtered # Skip if already filtered
 
             # Apply conditional filters.
             # As more are needed, split with a "next if issue.filtered" pattern and add the new filter.
             filter_contained_resource(issues, issue, index)
+
+            # Recursively process nested slice_info
+            apply_relationship_filters(issue.slice_info) if issue.slice_info.any?
           end
         end
 
@@ -434,12 +438,19 @@ module Inferno
           return if details_issues.empty?
 
           recursively_process_slice_info_of_details(details_issues)
-          base_issue.filtered = true if at_least_one_valid_detail?(details_issues)
+
+          return unless at_least_one_valid_detail?(details_issues)
+
+          base_issue.filtered = true
+          # Also filter all the Details messages
+          details_issues.each { |details_issue| details_issue.filtered = true }
         end
 
         # @private
         # Checks if a base issue should be processed for contained resource filtering
         def should_filter_contained_resource?(base_issue)
+          return false if base_issue.filtered # Skip if already filtered
+
           message_id = base_issue.raw_issue['messageId']
           return false unless message_id == 'Reference_REF_CantMatchChoice'
           return false unless base_issue.severity == 'error' || base_issue.severity == 'warning'
@@ -591,8 +602,12 @@ module Inferno
         # @return [String] the formatted message
         def format_message
           location_value = extract_location
-          location_prefix = resource.id ? "#{resource.resourceType}/#{resource.id}" : resource.resourceType
           details_text = raw_issue['message']
+
+          # Don't add prefix for additional validation messages
+          return details_text if location_value == 'additional_validation'
+
+          location_prefix = resource.id ? "#{resource.resourceType}/#{resource.id}" : resource.resourceType
           "#{location_prefix}: #{location_value}: #{details_text}"
         end
 
@@ -613,12 +628,7 @@ module Inferno
         # Extracts the location from the raw issue
         # @return [String] the location string
         def extract_location
-          location = raw_issue['location']
-          if location&.any?
-            location.is_a?(Array) ? location.first : location
-          else
-            'unknown'
-          end
+          raw_issue['location'] || 'unknown'
         end
       end
 

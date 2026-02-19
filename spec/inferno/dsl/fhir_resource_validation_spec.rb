@@ -235,7 +235,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Connection failed to validator/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Unable to connect to validator/)
 
               expect(runnable.messages.last[:message]).to include('Connection failed')
             end
@@ -247,7 +247,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Timeout while connecting/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /timed out/)
 
               expect(runnable.messages.last[:message]).to include('Timeout')
             end
@@ -259,7 +259,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /SSL error/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Error occurred in the validator/)
 
               expect(runnable.messages.last[:message]).to include('Self-signed')
             end
@@ -271,7 +271,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Client error \(4xx\)/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Error occurred in the validator/)
 
               expect(runnable.messages.last[:message]).to include('404')
             end
@@ -283,7 +283,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Server error \(5xx\)/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Error occurred in the validator/)
 
               expect(runnable.messages.last[:message]).to include('500')
             end
@@ -301,21 +301,35 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         end
 
         it 'removes non-printable characters from the response' do
+          # Create JSON string with actual non-printable characters (not escaped)
+          response_json = <<~JSON
+            {
+              "outcomes": [{
+                "fileInfo": {
+                  "fileName": "Patient/0000.json",
+                  "fileContent": #{resource_string.to_json},
+                  "fileType": "json"
+                },
+                "issues": [{
+                  "location": "Patient.name",
+                  "message": "Error with non-printable#{0.chr} characters#{1.chr}",
+                  "level": "ERROR"
+                }]
+              }],
+              "sessionId": "5c7f903b-7e46-4e83-bdc9-0248ad2ba5f5"
+            }
+          JSON
+
           stub_request(:post, "#{validation_url}/validate")
             .with(body: wrapped_resource_string)
-            .to_return(
-              status: 500,
-              body: "<html><body>Internal Server Error: content#{0.chr} with non-printable#{1.chr} characters</body></html>" # rubocop:disable Layout/LineLength
-            )
+            .to_return(status: 200, body: response_json)
 
-          expect do
-            validator.resource_is_valid?(resource2, profile_url, runnable)
-          end.to raise_error(Inferno::Exceptions::ErrorInValidatorException)
+          validator.resource_is_valid?(resource2, profile_url, runnable)
 
           msg = runnable.messages.first[:message]
           expect(msg).to_not include(0.chr)
           expect(msg).to_not include(1.chr)
-          expect(msg).to match(/Internal Server Error: content with non-printable/)
+          expect(msg).to match(/Error with non-printable characters/)
         end
       end
     end
@@ -1331,212 +1345,575 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
   end
 
   describe 'helper method unit tests' do
-    describe '#extract_issue_location' do
-      it 'extracts location from a Hash with expression as String' do
-        issue = { expression: 'Patient.name' }
-        location = validator.send(:extract_issue_location, issue)
-        expect(location).to eq('Patient.name')
-      end
-
-      it 'extracts location from a Hash with expression as Array' do
-        issue = { expression: ['Patient.name', 'Patient.identifier'] }
-        location = validator.send(:extract_issue_location, issue)
-        expect(location).to eq('Patient.name, Patient.identifier')
-      end
-
-      it 'extracts location from an object with expression method' do
-        issue = OpenStruct.new(expression: ['Observation.value'])
-        allow(issue).to receive(:respond_to?).with(:expression).and_return(true)
-        location = validator.send(:extract_issue_location, issue)
-        expect(location).to eq('Observation.value')
-      end
-
-      it 'extracts location from an object with location method when expression not available' do
-        issue = OpenStruct.new(location: ['Coverage.payor[0]', 'Coverage.subscriber'])
-        allow(issue).to receive(:respond_to?).with(:expression).and_return(false)
-        location = validator.send(:extract_issue_location, issue)
-        expect(location).to eq('Coverage.payor[0], Coverage.subscriber')
-      end
-
-      it 'handles nil expression gracefully' do
-        issue = OpenStruct.new(expression: nil)
-        allow(issue).to receive(:respond_to?).with(:expression).and_return(true)
-        location = validator.send(:extract_issue_location, issue)
-        expect(location).to be_nil
-      end
-    end
-
-    describe '#categorize_error_slice' do
-      let(:remaining_errors) { [] }
-
-      it 'categorizes ERROR level issues correctly' do
-        slice_issue = { 'level' => 'ERROR', 'message' => 'Test error' }
-        validator.send(:categorize_error_slice, slice_issue, remaining_errors)
-
-        expect(remaining_errors).to eq([slice_issue])
-      end
-
-      it 'categorizes FATAL level issues as errors' do
-        slice_issue = { 'level' => 'FATAL', 'message' => 'Fatal error' }
-        validator.send(:categorize_error_slice, slice_issue, remaining_errors)
-
-        expect(remaining_errors).to eq([slice_issue])
-      end
-
-      it 'does not categorize WARNING level issues as errors' do
-        slice_issue = { 'level' => 'WARNING', 'message' => 'Test warning' }
-        validator.send(:categorize_error_slice, slice_issue, remaining_errors)
-
-        expect(remaining_errors).to be_empty
-      end
-
-      it 'does not categorize INFORMATION level issues as errors' do
-        slice_issue = { 'level' => 'INFORMATION', 'message' => 'Test info' }
-        validator.send(:categorize_error_slice, slice_issue, remaining_errors)
-
-        expect(remaining_errors).to be_empty
-      end
-
-      it 'does not categorize unknown level issues as errors' do
-        slice_issue = { 'level' => 'DEBUG', 'message' => 'Test debug' }
-        validator.send(:categorize_error_slice, slice_issue, remaining_errors)
-
-        expect(remaining_errors).to be_empty
-      end
-    end
-
-    describe '#process_nested_slice_info' do
-      let(:remaining_errors) { [] }
-
-      it 'adds slice issue to errors when nested severity is error' do
-        slice_issue = {
-          'level' => 'INFORMATION',
-          'message' => 'Parent issue',
-          'sliceInfo' => [
-            {
-              'level' => 'ERROR',
-              'location' => 'Patient.name',
-              'message' => 'Real error'
-            }
-          ]
+    describe '#convert_raw_issue_to_validator_issue' do
+      it 'converts a basic raw issue to ValidatorIssue' do
+        raw_issue = {
+          'level' => 'ERROR',
+          'location' => 'Patient.name',
+          'message' => 'Name is required'
         }
 
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
+        result = validator.convert_raw_issue_to_validator_issue(raw_issue, resource)
 
-        expect(remaining_errors).to eq([slice_issue])
+        expect(result).to be_a(Inferno::DSL::FHIRResourceValidation::ValidatorIssue)
+        expect(result.severity).to eq('error')
+        expect(result.location).to eq('Patient.name')
+        expect(result.message).to include('Name is required')
+        expect(result.slice_info).to be_empty
       end
 
-      it 'does nothing when nested severity is warning (treated as suppressed)' do
-        slice_issue = {
-          'level' => 'INFORMATION',
-          'message' => 'Parent issue',
-          'sliceInfo' => [
-            {
-              'level' => 'WARNING',
-              'location' => 'Patient.name',
-              'message' => 'Warning message'
-            }
-          ]
-        }
-
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
-
-        # determine_final_severity only returns 'error' or nil, so warnings are treated as nil (suppressed)
-        expect(remaining_errors).to be_empty
-      end
-
-      it 'does nothing when nested severity is info (treated as suppressed)' do
-        slice_issue = {
-          'level' => 'INFORMATION',
-          'message' => 'Parent issue',
+      it 'recursively processes nested sliceInfo' do
+        raw_issue = {
+          'level' => 'ERROR',
+          'location' => 'Coverage.payor[0]',
+          'message' => 'Cannot match profile',
           'sliceInfo' => [
             {
               'level' => 'INFORMATION',
-              'location' => 'Patient.name',
-              'message' => 'Info message'
+              'location' => 'Coverage.payor[0]',
+              'message' => 'Details for matching',
+              'sliceInfo' => [
+                {
+                  'level' => 'ERROR',
+                  'location' => 'Coverage.contained[1].identifier',
+                  'message' => 'Nested error'
+                }
+              ]
             }
           ]
         }
 
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
+        result = validator.convert_raw_issue_to_validator_issue(raw_issue, resource)
 
-        # determine_final_severity only returns 'error' or nil, so info is treated as nil (suppressed)
-        expect(remaining_errors).to be_empty
+        expect(result.slice_info.length).to eq(1)
+        expect(result.slice_info[0].severity).to eq('info')
+        expect(result.slice_info[0].slice_info.length).to eq(1)
+        expect(result.slice_info[0].slice_info[0].severity).to eq('error')
+        expect(result.slice_info[0].slice_info[0].message).to include('Nested error')
       end
 
-      it 'does nothing when nested severity is nil (all suppressed)' do
-        slice_issue = {
-          'level' => 'INFORMATION',
-          'message' => 'Parent issue',
-          'sliceInfo' => [
-            {
-              'level' => 'ERROR',
-              'location' => 'Patient.identifier.system',
-              'message' => "No definition could be found for URL value 'http://example.org'",
-              'messageId' => 'Type_Specific_Checks_DT_URL_Resolve'
-            }
-          ]
+      it 'handles raw issues without sliceInfo' do
+        raw_issue = {
+          'level' => 'WARNING',
+          'location' => 'Patient.gender',
+          'message' => 'Gender code not in value set'
         }
 
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
+        result = validator.convert_raw_issue_to_validator_issue(raw_issue, resource)
 
-        expect(remaining_errors).to be_empty
-      end
-
-      it 'returns early when sliceInfo is nil' do
-        slice_issue = {
-          'level' => 'ERROR',
-          'message' => 'Issue without sliceInfo'
-        }
-
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
-
-        expect(remaining_errors).to be_empty
-      end
-
-      it 'returns early when sliceInfo is empty array' do
-        slice_issue = {
-          'level' => 'ERROR',
-          'message' => 'Issue with empty sliceInfo',
-          'sliceInfo' => []
-        }
-
-        validator.send(:process_nested_slice_info, slice_issue, remaining_errors)
-
-        expect(remaining_errors).to be_empty
+        expect(result.slice_info).to be_empty
+        expect(result.severity).to eq('warning')
       end
     end
 
-    describe '#extract_location_from_message' do
-      it 'extracts location from message with resource ID' do
-        message = 'Patient/123: Patient.name: Name is required'
-        location = validator.send(:extract_location_from_message, message)
-        expect(location).to eq('Patient.name')
+    describe '#filter_individual_messages' do
+      let(:unfiltered_issue) do
+        Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'ERROR', 'location' => 'Patient.name', 'message' => 'Name required' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
       end
 
-      it 'extracts location from message without resource ID' do
-        message = 'Coverage: Coverage.payor[0]: Unable to find profile match'
-        location = validator.send(:extract_location_from_message, message)
-        expect(location).to eq('Coverage.payor[0]')
+      let(:url_resolve_issue) do
+        Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'ERROR',
+            'location' => 'Patient.extension',
+            'message' => "URL value 'http://example.com/bad' does not resolve"
+          },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
       end
 
-      it 'returns nil for malformed message with no colons' do
-        message = 'Invalid message format'
-        location = validator.send(:extract_location_from_message, message)
-        expect(location).to be_nil
+      it 'marks unresolved URL messages as filtered' do
+        issues = [url_resolve_issue]
+        validator.filter_individual_messages(issues)
+
+        expect(url_resolve_issue.filtered).to be(true)
       end
 
-      it 'extracts second part from message with only one colon' do
-        message = 'Patient/123: No location part'
-        location = validator.send(:extract_location_from_message, message)
-        # With only one colon, parts[1] will be the second part even though there's no third part
-        expect(location).to eq('No location part')
+      it 'does not filter regular error messages' do
+        issues = [unfiltered_issue]
+        validator.filter_individual_messages(issues)
+
+        expect(unfiltered_issue.filtered).to be(false)
       end
 
-      it 'handles complex location paths correctly' do
-        message = 'Claim/abc: Claim.supportingInfo[0].value.ofType(Reference): Reference error'
-        location = validator.send(:extract_location_from_message, message)
-        expect(location).to eq('Claim.supportingInfo[0].value.ofType(Reference)')
+      it 'recursively filters nested slice_info' do
+        nested_url_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'ERROR',
+            'location' => 'Coverage.extension',
+            'message' => "URL value 'http://bad.url' does not resolve"
+          },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        parent_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Parent error' },
+          resource: resource,
+          slice_info: [nested_url_issue],
+          filtered: false
+        )
+
+        issues = [parent_issue]
+        validator.filter_individual_messages(issues)
+
+        expect(parent_issue.filtered).to be(false)
+        expect(nested_url_issue.filtered).to be(true)
+      end
+
+      it 'applies custom exclude_message filter' do
+        validator.exclude_message { |message| message.message.include?('custom filter') }
+
+        custom_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'ERROR', 'location' => 'Patient', 'message' => 'custom filter applied' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        issues = [custom_issue]
+        validator.filter_individual_messages(issues)
+
+        expect(custom_issue.filtered).to be(true)
+      end
+    end
+
+    describe '#apply_relationship_filters' do
+      it 'processes Reference_REF_CantMatchChoice errors' do
+        base_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'ERROR',
+            'location' => 'Coverage.payor[0]',
+            'message' => 'Unable to find profile match',
+            'messageId' => 'Reference_REF_CantMatchChoice'
+          },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        details_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'INFORMATION',
+            'location' => 'Coverage.payor[0]',
+            'message' => 'Details for # matching'
+          },
+          resource: resource,
+          slice_info: [
+            Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+              raw_issue: {
+                'level' => 'ERROR',
+                'location' => 'Coverage.contained',
+                'message' => "URL value 'http://bad.url' does not resolve"
+              },
+              resource: resource,
+              slice_info: [],
+              filtered: true # Already filtered by filter_individual_messages
+            )
+          ],
+          filtered: false
+        )
+
+        issues = [base_issue, details_issue]
+        validator.apply_relationship_filters(issues)
+
+        expect(base_issue.filtered).to be(true)
+        expect(details_issue.filtered).to be(true)
+      end
+
+      it 'skips already filtered issues' do
+        already_filtered = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'ERROR',
+            'location' => 'Patient',
+            'message' => 'Already filtered',
+            'messageId' => 'Reference_REF_CantMatchChoice'
+          },
+          resource: resource,
+          slice_info: [],
+          filtered: true
+        )
+
+        issues = [already_filtered]
+        # Should not raise error or change state
+        expect { validator.apply_relationship_filters(issues) }.to_not raise_error
+        expect(already_filtered.filtered).to be(true)
+      end
+
+      it 'recursively processes nested slice_info in depth-first order' do
+        deeply_nested_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'ERROR',
+            'location' => 'Coverage.contained[2]',
+            'message' => 'Deep nested Reference error',
+            'messageId' => 'Reference_REF_CantMatchChoice'
+          },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        middle_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => 'Coverage.contained[1]', 'message' => 'Middle' },
+          resource: resource,
+          slice_info: [deeply_nested_issue],
+          filtered: false
+        )
+
+        parent_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Parent' },
+          resource: resource,
+          slice_info: [middle_issue],
+          filtered: false
+        )
+
+        # Mock find_following_details_issues to return empty for nested call
+        allow(validator).to receive(:find_following_details_issues).and_return([])
+
+        issues = [parent_issue]
+        validator.apply_relationship_filters(issues)
+
+        # Verify recursion reached deeply nested issue
+        expect(deeply_nested_issue.filtered).to be(false) # No details found, so not filtered
+      end
+    end
+
+    describe '#should_filter_contained_resource?' do
+      it 'returns false if issue is already filtered' do
+        issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'ERROR',
+            'location' => 'Coverage.payor[0]',
+            'message' => 'Cannot match',
+            'messageId' => 'Reference_REF_CantMatchChoice'
+          },
+          resource: resource,
+          slice_info: [],
+          filtered: true
+        )
+
+        expect(validator.should_filter_contained_resource?(issue)).to be(false)
+      end
+
+      it 'returns false if messageId is not Reference_REF_CantMatchChoice' do
+        issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'ERROR',
+            'location' => 'Patient.name',
+            'message' => 'Name required',
+            'messageId' => 'SomeOtherMessageId'
+          },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        expect(validator.should_filter_contained_resource?(issue)).to be(false)
+      end
+
+      it 'returns false if severity is info' do
+        issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'INFORMATION',
+            'location' => 'Coverage.payor[0]',
+            'message' => 'Cannot match',
+            'messageId' => 'Reference_REF_CantMatchChoice'
+          },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        expect(validator.should_filter_contained_resource?(issue)).to be(false)
+      end
+
+      it 'returns true for valid Reference_REF_CantMatchChoice error' do
+        issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'ERROR',
+            'location' => 'Coverage.payor[0]',
+            'message' => 'Cannot match',
+            'messageId' => 'Reference_REF_CantMatchChoice'
+          },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        expect(validator.should_filter_contained_resource?(issue)).to be(true)
+      end
+
+      it 'returns true for valid Reference_REF_CantMatchChoice warning' do
+        issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'WARNING',
+            'location' => 'Coverage.payor[0]',
+            'message' => 'Cannot match',
+            'messageId' => 'Reference_REF_CantMatchChoice'
+          },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        expect(validator.should_filter_contained_resource?(issue)).to be(true)
+      end
+    end
+
+    describe '#at_least_one_valid_detail?' do
+      it 'returns true when one detail has all error slices filtered' do
+        valid_detail = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Detail' },
+          resource: resource,
+          slice_info: [
+            Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+              raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Error' },
+              resource: resource,
+              slice_info: [],
+              filtered: true
+            ),
+            Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+              raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Error2' },
+              resource: resource,
+              slice_info: [],
+              filtered: true
+            )
+          ],
+          filtered: false
+        )
+
+        details_issues = [valid_detail]
+        expect(validator.at_least_one_valid_detail?(details_issues)).to be(true)
+      end
+
+      it 'returns false when all details have unfiltered errors' do
+        invalid_detail1 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Detail1' },
+          resource: resource,
+          slice_info: [
+            Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+              raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Error' },
+              resource: resource,
+              slice_info: [],
+              filtered: false
+            )
+          ],
+          filtered: false
+        )
+
+        invalid_detail2 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Detail2' },
+          resource: resource,
+          slice_info: [
+            Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+              raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Error2' },
+              resource: resource,
+              slice_info: [],
+              filtered: false
+            )
+          ],
+          filtered: false
+        )
+
+        details_issues = [invalid_detail1, invalid_detail2]
+        expect(validator.at_least_one_valid_detail?(details_issues)).to be(false)
+      end
+
+      it 'returns true when detail has only warnings (no error slices)' do
+        warning_detail = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Detail' },
+          resource: resource,
+          slice_info: [
+            Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+              raw_issue: { 'level' => 'WARNING', 'location' => 'Coverage', 'message' => 'Warning' },
+              resource: resource,
+              slice_info: [],
+              filtered: false
+            )
+          ],
+          filtered: false
+        )
+
+        details_issues = [warning_detail]
+        expect(validator.at_least_one_valid_detail?(details_issues)).to be(true)
+      end
+
+      it 'returns true when at least one detail is valid among multiple' do
+        valid_detail = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Valid' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        invalid_detail = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Invalid' },
+          resource: resource,
+          slice_info: [
+            Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+              raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Error' },
+              resource: resource,
+              slice_info: [],
+              filtered: false
+            )
+          ],
+          filtered: false
+        )
+
+        details_issues = [invalid_detail, valid_detail]
+        expect(validator.at_least_one_valid_detail?(details_issues)).to be(true)
+      end
+    end
+
+    describe '#find_following_details_issues' do
+      let(:base_location) { 'Coverage.payor[0]' }
+
+      it 'finds consecutive Details messages at the same location' do
+        base_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: {
+            'level' => 'ERROR',
+            'location' => base_location,
+            'message' => 'Base error',
+            'messageId' => 'Reference_REF_CantMatchChoice'
+          },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        details1 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => base_location, 'message' => 'Details for #1' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        details2 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => base_location, 'message' => 'Details for #2' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        issues = [base_issue, details1, details2]
+        result = validator.find_following_details_issues(issues, 0, base_location)
+
+        expect(result.length).to eq(2)
+        expect(result).to include(details1, details2)
+      end
+
+      it 'stops at first non-Details message' do
+        base_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'ERROR', 'location' => base_location, 'message' => 'Base',
+                       'messageId' => 'Reference_REF_CantMatchChoice' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        details1 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => base_location, 'message' => 'Details for #1' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        other_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'ERROR', 'location' => base_location, 'message' => 'Other error' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        details2 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => base_location, 'message' => 'Details for #2' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        issues = [base_issue, details1, other_issue, details2]
+        result = validator.find_following_details_issues(issues, 0, base_location)
+
+        expect(result.length).to eq(1)
+        expect(result).to include(details1)
+        expect(result).to_not include(details2)
+      end
+
+      it 'stops at Details message with different location' do
+        base_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'ERROR', 'location' => base_location, 'message' => 'Base',
+                       'messageId' => 'Reference_REF_CantMatchChoice' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        details1 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => base_location, 'message' => 'Details for #1' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        details_other_location = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'INFO', 'location' => 'Coverage.payor[1]', 'message' => 'Details for #2' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        issues = [base_issue, details1, details_other_location]
+        result = validator.find_following_details_issues(issues, 0, base_location)
+
+        expect(result.length).to eq(1)
+        expect(result).to include(details1)
+        expect(result).to_not include(details_other_location)
+      end
+
+      it 'returns empty array when no following Details issues exist' do
+        base_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'ERROR', 'location' => base_location, 'message' => 'Base',
+                       'messageId' => 'Reference_REF_CantMatchChoice' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        other_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'ERROR', 'location' => 'Patient.name', 'message' => 'Other' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        issues = [base_issue, other_issue]
+        result = validator.find_following_details_issues(issues, 0, base_location)
+
+        expect(result).to be_empty
+      end
+
+      it 'returns empty array when base issue is last in array' do
+        base_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
+          raw_issue: { 'level' => 'ERROR', 'location' => base_location, 'message' => 'Base',
+                       'messageId' => 'Reference_REF_CantMatchChoice' },
+          resource: resource,
+          slice_info: [],
+          filtered: false
+        )
+
+        issues = [base_issue]
+        result = validator.find_following_details_issues(issues, 0, base_location)
+
+        expect(result).to be_empty
       end
     end
   end
