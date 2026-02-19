@@ -157,14 +157,17 @@ module Inferno
 
           type_code = type_element.type.first.code
 
+          type_discriminator = {
+            type: 'type',
+            code: type_code.upcase_first
+          }
+          discriminator[:path] = type_path unless type_path.empty?
+
           {
             slice_id: current_element.id,
             slice_name: current_element.sliceName,
             path: current_element.path.gsub("#{resource}.", ''),
-            discriminator: {
-              type: 'type',
-              code: type_code.upcase_first
-            }
+            discriminator: type_discriminator
           }.tap do |metadata|
             metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(current_element)
           end
