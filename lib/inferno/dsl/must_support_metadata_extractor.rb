@@ -161,7 +161,7 @@ module Inferno
             type: 'type',
             code: type_code.upcase_first
           }
-          discriminator[:path] = type_path unless type_path.empty?
+          type_discriminator[:path] = type_path unless type_path.empty?
 
           {
             slice_id: current_element.id,
