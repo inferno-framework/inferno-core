@@ -247,7 +247,8 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Timeout while connecting to validator/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException,
+                                 /Timeout while connecting to validator/)
 
               expect(runnable.messages.last[:message]).to include('Timeout')
             end
@@ -271,7 +272,8 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Client error \(4xx\) connecting to validator/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException,
+                                 /Client error \(4xx\) connecting to validator/)
 
               expect(runnable.messages.last[:message]).to include('404')
             end

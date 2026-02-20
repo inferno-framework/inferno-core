@@ -628,7 +628,7 @@ module Inferno
         # Converts the validator's severity level to our standard format
         # @return [String] 'error', 'warning', or 'info'
         def calculate_severity
-          level = raw_issue['level']
+          level = raw_issue['level']&.upcase
           case level
           when 'ERROR', 'FATAL'
             'error'
