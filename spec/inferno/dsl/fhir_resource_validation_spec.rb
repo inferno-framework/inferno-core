@@ -235,7 +235,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Unable to connect to validator/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Connection failed to validator/)
 
               expect(runnable.messages.last[:message]).to include('Connection failed')
             end
@@ -247,7 +247,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /timed out/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Timeout while connecting to validator/)
 
               expect(runnable.messages.last[:message]).to include('Timeout')
             end
@@ -259,7 +259,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Error occurred in the validator/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /SSL error connecting to validator/)
 
               expect(runnable.messages.last[:message]).to include('Self-signed')
             end
@@ -271,7 +271,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Error occurred in the validator/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Client error \(4xx\) connecting to validator/)
 
               expect(runnable.messages.last[:message]).to include('404')
             end
@@ -283,7 +283,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect do
                 validator.resource_is_valid?(resource, profile_url, runnable)
-              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Error occurred in the validator/)
+              end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, /Server error \(5xx\) from validator/)
 
               expect(runnable.messages.last[:message]).to include('500')
             end

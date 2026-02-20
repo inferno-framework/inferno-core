@@ -166,6 +166,9 @@ module Inferno
         # @param profile_url [String] the profile URL to validate against
         # @param runnable [Object] the runnable context (test/group/suite)
         # @param add_messages_to_runnable [Boolean] whether to add messages to the runnable
+        # @param validator_response_details [Object, nil] if not nil, the service will seed the object provided with
+        #   the detailed response message from the validator service. Can be used by test kits to perform custom
+        #   handling of error messages.
         # @return [Boolean] true if the resource is valid
         def resource_is_valid?(resource, profile_url, runnable, add_messages_to_runnable: true,
                                validator_response_details: nil)
@@ -248,6 +251,12 @@ module Inferno
           response_body = remove_invalid_characters(response.body)
           response_hash = JSON.parse(response_body)
 
+          if response_hash['sessionId'].present? && response_hash['sessionId'] != @session_id
+            validator_session_repo.save(test_suite_id:, validator_session_id: response_hash['sessionId'],
+                                        validator_name: name.to_s, suite_options: requirements)
+            @session_id = response_hash['sessionId']
+          end
+
           raw_issues = response_hash.dig('outcomes', 0, 'issues') || []
 
           raw_issues.map do |raw_issue|
@@ -294,14 +303,19 @@ module Inferno
         # @param error [Exception] An error exception that happened during evaluator connection
         # @return [String] A readable error message describing the specific network problem
         def validator_error_message(error)
-          if error.is_a?(Faraday::ConnectionFailed)
-            'Unable to connect to validator at ' \
-              "#{url}. Please make sure the validator is running and the URL is correct."
-          elsif error.is_a?(Faraday::TimeoutError)
-            'Connection to validator at ' \
-              "#{url} timed out. Please verify the validator is functioning properly."
+          case error
+          when Faraday::ConnectionFailed
+            "Connection failed to validator at #{url}."
+          when Faraday::TimeoutError
+            "Timeout while connecting to validator at #{url}."
+          when Faraday::SSLError
+            "SSL error connecting to validator at #{url}."
+          when Faraday::ClientError  # these are 400s
+            "Client error (4xx) connecting to validator at #{url}."
+          when Faraday::ServerError  # these are 500s
+            "Server error (5xx) from validator at #{url}."
           else
-            'Error occurred in the validator. Review Messages tab or validator service logs for more information.'
+            "Unable to connect to validator at #{url}."
           end
         end
 
