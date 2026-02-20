@@ -174,23 +174,25 @@ module Inferno
 
       # @private
       def matching_type_slice?(slice, discriminator)
+        slice_value = resolve_path(slice, discriminator[:path]).first
+
         case discriminator[:code]
         when 'Date'
           begin
-            Date.parse(slice)
+            Date.parse(slice_value)
           rescue ArgumentError
             false
           end
         when 'DateTime'
           begin
-            DateTime.parse(slice)
+            DateTime.parse(slice_value)
           rescue ArgumentError
             false
           end
         when 'String'
-          slice.is_a? String
+          slice_value.is_a? String
         else
-          slice.is_a? FHIR.const_get(discriminator[:code])
+          slice_value.is_a? FHIR.const_get(discriminator[:code])
         end
       end
 
