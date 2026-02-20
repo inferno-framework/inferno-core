@@ -120,6 +120,12 @@ module Inferno
       end
     end
 
+    class UnknownPreset < RuntimeError
+      def initialize(preset_id, suite_id)
+        super("Preset '#{preset_id}' not found for suite '#{suite_id}'")
+      end
+    end
+
     class InvalidRunnableIdException < StandardError
       def initialize(id)
         super("ID '#{id}' exceeds the maximum id length of 255 characters")

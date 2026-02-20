@@ -1,6 +1,7 @@
 require 'base62-rb'
 require_relative 'repository'
 require_relative '../utils/preset_processor'
+require_relative '../exceptions'
 
 module Inferno
   module Repositories
@@ -46,6 +47,8 @@ module Inferno
 
       def apply_preset(test_session, preset_id)
         preset = presets_repo.find(preset_id)
+        raise Exceptions::UnknownPreset.new(preset_id, test_session.test_suite_id) unless preset.present?
+
         Utils::PresetProcessor.new(preset, test_session).processed_inputs.each do |input|
           session_data_repo.save(input.merge(test_session_id: test_session.id))
         end
