@@ -42,17 +42,11 @@ module Inferno
         attr_reader :requirements
         attr_accessor :session_id, :name, :test_suite_id
 
-        # @private
         def initialize(name = nil, test_suite_id = nil, requirements = nil, &)
           @name = name
           @test_suite_id = test_suite_id
           instance_eval(&)
           @requirements = requirements
-        end
-
-        # @private
-        def default_validator_url
-          ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL')
         end
 
         def validator_session_repo
@@ -64,7 +58,7 @@ module Inferno
         # @param validator_url [String]
         def url(validator_url = nil)
           @url = validator_url if validator_url
-          @url ||= default_validator_url
+          @url ||= ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL')
           @url
         end
 
@@ -123,7 +117,7 @@ module Inferno
 
         alias cli_context validation_context
 
-        # @private
+        # Used internally by perform_additional_validation
         def additional_validations
           @additional_validations ||= []
         end
@@ -151,13 +145,6 @@ module Inferno
           additional_validations << block
         end
 
-        # @private
-        def additional_validation_messages(resource, profile_url)
-          additional_validations
-            .flat_map { |step| step.call(resource, profile_url) }
-            .select { |message| message.is_a? Hash }
-        end
-
         # Filter out unwanted validation messages. Any messages for which the
         # block evalutates to a truthy value will be excluded.
         #
@@ -171,35 +158,41 @@ module Inferno
           @exclude_message
         end
 
+        # Validate a FHIR resource and determine if it's valid.
+        # Adds validation messages to the runnable if add_messages_to_runnable is true.
+        #
         # @see Inferno::DSL::FHIRResourceValidation#resource_is_valid?
-        def resource_is_valid?(resource, profile_url, runnable, add_messages_to_runnable: true) # rubocop:disable Metrics/CyclomaticComplexity
+        # @param resource [FHIR::Model] the resource to validate
+        # @param profile_url [String] the profile URL to validate against
+        # @param runnable [Object] the runnable context (test/group/suite)
+        # @param add_messages_to_runnable [Boolean] whether to add messages to the runnable
+        # @param validator_response_details [Object, nil] if not nil, the service will seed the object provided with
+        #   the detailed response message from the validator service. Can be used by test kits to perform custom
+        #   handling of error messages.
+        # @return [Boolean] true if the resource is valid
+        def resource_is_valid?(resource, profile_url, runnable, add_messages_to_runnable: true,
+                               validator_response_details: nil)
           profile_url ||= FHIR::Definitions.resource_definition(resource.resourceType).url
 
-          begin
-            response = call_validator(resource, profile_url)
-          rescue StandardError => e
-            runnable.add_message('error', e.message)
-            Application[:logger].error(e.message)
+          # 1. Get raw content from validator
+          response = get_raw_validator_content(resource, profile_url, runnable)
 
-            raise Inferno::Exceptions::ErrorInValidatorException, validator_error_message(e)
-          end
+          # 2. Convert to validation issues
+          issues = get_issues_from_validator_response(response, resource)
 
-          outcome = operation_outcome_from_validator_response(response, runnable)
+          # 3. Add additional validation messages
+          issues = join_additional_validation_messages(issues, resource, profile_url)
 
-          message_hashes = message_hashes_from_outcome(outcome, resource, profile_url)
+          # 4. Mark resources as filtered
+          mark_issues_for_filtering(issues)
 
-          if add_messages_to_runnable
-            message_hashes
-              .each { |message_hash| runnable.add_message(message_hash[:type], message_hash[:message]) }
-          end
+          # 5. Add error messages to runnable
+          filtered_issues = issues.reject(&:filtered)
+          add_validation_messages_to_runnable(runnable, filtered_issues) if add_messages_to_runnable
+          validator_response_details[:issues] = issues if validator_response_details
 
-          unless response.status == 200
-            raise Inferno::Exceptions::ErrorInValidatorException,
-                  'Error occurred in the validator. Review Messages tab or validator service logs for more information.'
-          end
-
-          message_hashes
-            .none? { |message_hash| message_hash[:type] == 'error' }
+          # 6. Return validity
+          filtered_issues.none? { |issue| issue.severity == 'error' }
         rescue Inferno::Exceptions::ErrorInValidatorException
           raise
         rescue StandardError => e
@@ -209,6 +202,216 @@ module Inferno
         end
 
         # @private
+        # Gets raw content from validator including error handling
+        # @param resource [FHIR::Model] the resource to validate
+        # @param profile_url [String] the profile URL to validate against
+        # @param runnable [Object] the runnable context
+        # @return [Faraday::Response] the HTTP response from the validator
+        def get_raw_validator_content(resource, profile_url, runnable)
+          response = call_validator(resource, profile_url)
+
+          unless response.status == 200
+            raise Inferno::Exceptions::ErrorInValidatorException,
+                  'Error occurred in the validator. Review Messages tab or validator service logs for more information.'
+          end
+
+          response
+        rescue StandardError => e
+          runnable.add_message('error', e.message)
+          Application[:logger].error(e.message)
+          raise Inferno::Exceptions::ErrorInValidatorException, validator_error_message(e)
+        end
+
+        # @private
+        # Adds validation messages to the runnable
+        def add_validation_messages_to_runnable(runnable, filtered_issues)
+          filtered_issues.each do |issue|
+            runnable.add_message(issue.severity, issue.message)
+          end
+        end
+
+        # Post a resource to the validation service for validating.
+        # Returns the raw validator response body.
+        #
+        # @param resource [FHIR::Model]
+        # @param profile_url [String]
+        # @return [String] the body of the validation response
+        def validate(resource, profile_url)
+          call_validator(resource, profile_url).body
+        end
+
+        # @private
+        # Converts raw validator response into a list of ValidatorIssue objects.
+        # Recursively processes slice information.
+        #
+        # @param response [Faraday::Response] the HTTP response from the validator
+        # @param resource [FHIR::Model] the resource being validated
+        # @return [Array<ValidatorIssue>] list of validator issues
+        def get_issues_from_validator_response(response, resource)
+          response_body = remove_invalid_characters(response.body)
+          response_hash = JSON.parse(response_body)
+
+          if response_hash['sessionId'].present? && response_hash['sessionId'] != @session_id
+            validator_session_repo.save(test_suite_id:, validator_session_id: response_hash['sessionId'],
+                                        validator_name: name.to_s, suite_options: requirements)
+            @session_id = response_hash['sessionId']
+          end
+
+          raw_issues = response_hash.dig('outcomes', 0, 'issues') || []
+
+          raw_issues.map do |raw_issue|
+            convert_raw_issue_to_validator_issue(raw_issue, resource)
+          end
+        end
+
+        # @private
+        # Converts a single raw issue hash to a ValidatorIssue object.
+        # Recursively processes sliceInfo if present.
+        #
+        # @param raw_issue [Hash] the raw issue from validator response
+        # @param resource [FHIR::Model] the resource being validated
+        # @return [ValidatorIssue] the converted validator issue
+        def convert_raw_issue_to_validator_issue(raw_issue, resource)
+          # Recursively process sliceInfo
+          slice_info = []
+          if raw_issue['sliceInfo']&.any?
+            slice_info = raw_issue['sliceInfo'].map do |slice_issue|
+              convert_raw_issue_to_validator_issue(slice_issue, resource)
+            end
+          end
+
+          ValidatorIssue.new(
+            raw_issue: raw_issue,
+            resource: resource,
+            slice_info: slice_info,
+            filtered: false
+          )
+        end
+
+        # @private
+        def call_validator(resource, profile_url)
+          request_body = wrap_resource_for_hl7_wrapper(resource, profile_url)
+          Faraday.new(
+            url,
+            request: { timeout: 600 }
+          ).post('validate', request_body, content_type: 'application/json')
+        end
+
+        # Add a specific error message for specific network problems to help the user
+        #
+        # @private
+        # @param error [Exception] An error exception that happened during evaluator connection
+        # @return [String] A readable error message describing the specific network problem
+        def validator_error_message(error)
+          case error
+          when Faraday::ConnectionFailed
+            "Connection failed to validator at #{url}."
+          when Faraday::TimeoutError
+            "Timeout while connecting to validator at #{url}."
+          when Faraday::SSLError
+            "SSL error connecting to validator at #{url}."
+          when Faraday::ClientError  # these are 400s
+            "Client error (4xx) connecting to validator at #{url}."
+          when Faraday::ServerError  # these are 500s
+            "Server error (5xx) from validator at #{url}."
+          else
+            "Unable to connect to validator at #{url}."
+          end
+        end
+
+        # @private
+        # Removes invalid characters from a string to prepare for JSON parsing
+        #
+        # @param string [String] the string to clean
+        # @return [String] the cleaned string
+        def remove_invalid_characters(string)
+          string.gsub(/[^[:print:]\r\n]+/, '')
+        end
+
+        # @private
+        # Joins additional validation messages to the issues list
+        #
+        # @param issues [Array<ValidatorIssue>] the list of validator issues
+        # @param resource [FHIR::Model] the resource being validated
+        # @param profile_url [String] the profile URL being validated against
+        # @return [Array<ValidatorIssue>] the complete list of issues including additional messages
+        def join_additional_validation_messages(issues, resource, profile_url)
+          additional_issues = additional_validation_messages(resource, profile_url)
+          issues + additional_issues
+        end
+
+        # @private
+        # Marks validation issues for filtering by setting the filtered flag on issues that should be excluded.
+        # Recursively marks issues in slice_info.
+        #
+        # @param issues [Array<ValidatorIssue>] the list of validator issues
+        def mark_issues_for_filtering(issues)
+          # Recursively mark all issues for filtering
+          filter_individual_messages(issues)
+
+          # Perform conditional filtering based on special cases
+          apply_relationship_filters(issues)
+        end
+
+        # @private
+        # Gets additional validation messages from custom validation blocks.
+        # Converts the message hashes to ValidatorIssue objects.
+        #
+        # @param resource [FHIR::Model] the resource being validated
+        # @param profile_url [String] the profile URL being validated against
+        # @return [Array<ValidatorIssue>] list of additional validator issues
+        def additional_validation_messages(resource, profile_url)
+          additional_validations
+            .flat_map { |step| step.call(resource, profile_url) }
+            .select { |message| message.is_a? Hash }
+            .map do |message_hash|
+              # Create a synthetic raw_issue for additional validation messages
+              synthetic_raw_issue = {
+                'level' => message_hash[:type].upcase,
+                'location' => 'additional_validation',
+                'message' => message_hash[:message]
+              }
+              ValidatorIssue.new(
+                raw_issue: synthetic_raw_issue,
+                resource: resource,
+                slice_info: [],
+                filtered: false
+              )
+            end
+        end
+
+        # @private
+        # Recursively filters validation issues by setting the filtered flag.
+        # Applies filtering to both the issue itself and all nested slice_info.
+        #
+        # @param issues [Array<ValidatorIssue>] the issues to filter
+        def filter_individual_messages(issues)
+          issues.each do |issue|
+            # Create a mock message entity to check filtering rules
+            mock_message = Entities::Message.new(type: issue.severity, message: issue.message)
+            issue.filtered = should_filter_message?(mock_message)
+
+            # Recursively filter slice_info
+            filter_individual_messages(issue.slice_info) if issue.slice_info.any?
+          end
+        end
+
+        # @private
+        # Determines if a message should be filtered based on exclusion rules.
+        # Applies both the unresolved URL filter and any custom exclude_message filter.
+        #
+        # @param message [Inferno::Entities::Message] the message to check
+        # @return [Boolean] true if the message should be filtered out
+        def should_filter_message?(message)
+          should_filter = exclude_unresolved_url_message.call(message) ||
+                          exclude_message&.call(message)
+          should_filter || false
+        end
+
+        # @private
+        # Filter for excluding unresolved URL validation messages
+        #
+        # @return [Proc] a proc that checks if a message is an unresolved URL message
         def exclude_unresolved_url_message
           proc do |message|
             message.message.match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) ||
@@ -216,54 +419,100 @@ module Inferno
           end
         end
 
-        # @private
-        def filter_messages(message_hashes)
-          message_hashes.reject! { |message| exclude_unresolved_url_message.call(Entities::Message.new(message)) }
-          message_hashes.reject! { |message| exclude_message.call(Entities::Message.new(message)) } if exclude_message
-        end
+        # Performs conditional filtering on issues for special cases.
+        # Recursively processes issues and their nested slice_info in depth-first order.
+        #
+        # @param issues [Array<ValidatorIssue>] the list of validator issues
+        def apply_relationship_filters(issues)
+          issues.each_with_index do |issue, index|
+            next if issue.filtered # Skip if already filtered
 
-        # @private
-        def message_hashes_from_outcome(outcome, resource, profile_url)
-          message_hashes = outcome.issue&.map { |issue| message_hash_from_issue(issue, resource) } || []
+            # Apply conditional filters.
+            # As more are needed, split with a "next if issue.filtered" pattern and add the new filter.
+            filter_contained_resource(issues, issue, index)
 
-          message_hashes.concat(additional_validation_messages(resource, profile_url))
-
-          filter_messages(message_hashes)
-
-          message_hashes
-        end
-
-        # @private
-        def message_hash_from_issue(issue, resource)
-          {
-            type: issue_severity(issue),
-            message: issue_message(issue, resource)
-          }
-        end
-
-        # @private
-        def issue_severity(issue)
-          case issue.severity
-          when 'warning'
-            'warning'
-          when 'information'
-            'info'
-          else
-            'error'
+            # Recursively process nested slice_info
+            apply_relationship_filters(issue.slice_info) if issue.slice_info.any?
           end
         end
 
         # @private
-        def issue_message(issue, resource)
-          location = if issue.respond_to?(:expression)
-                       issue.expression&.join(', ')
-                     else
-                       issue.location&.join(', ')
-                     end
+        # Filters Reference_REF_CantMatchChoice errors for contained resources.
+        # If a resource matches at least one profile (all slices filtered), marks the base error as filtered.
+        #
+        # @param issues [Array<ValidatorIssue>] the complete list of issues
+        # @param base_issue [ValidatorIssue] the issue to potentially filter
+        # @param base_index [Integer] the index of the base issue in the issues array
+        def filter_contained_resource(issues, base_issue, base_index)
+          return unless should_filter_contained_resource?(base_issue)
 
-          location_prefix = resource.id ? "#{resource.resourceType}/#{resource.id}" : resource.resourceType
+          base_location = base_issue.location
+          details_issues = find_following_details_issues(issues, base_index, base_location)
 
-          "#{location_prefix}: #{location}: #{issue&.details&.text}"
+          return if details_issues.empty?
+
+          recursively_process_slice_info_of_details(details_issues)
+
+          return unless at_least_one_valid_detail?(details_issues)
+
+          base_issue.filtered = true
+          # Also filter all the Details messages
+          details_issues.each { |details_issue| details_issue.filtered = true }
+        end
+
+        # @private
+        # Checks if a base issue should be processed for contained resource filtering
+        def should_filter_contained_resource?(base_issue)
+          return false if base_issue.filtered # Skip if already filtered
+
+          message_id = base_issue.raw_issue['messageId']
+          return false unless message_id == 'Reference_REF_CantMatchChoice'
+          return false unless base_issue.severity == 'error' || base_issue.severity == 'warning'
+
+          true
+        end
+
+        # @private
+        # Recursively processes slice info within details issues
+        def recursively_process_slice_info_of_details(details_issues)
+          details_issues.each do |details_issue|
+            details_issue.slice_info.each_with_index do |slice_issue, slice_index|
+              filter_contained_resource(details_issue.slice_info, slice_issue, slice_index)
+            end
+          end
+        end
+
+        # @private
+        # Checks if any profile is valid (all error-level slices are filtered)
+        def at_least_one_valid_detail?(details_issues)
+          details_issues.any? do |details_issue|
+            error_level_slices = details_issue.slice_info.select { |s| s.severity == 'error' }
+            error_level_slices.all?(&:filtered)
+          end
+        end
+
+        # @private
+        # Finds consecutive Details messages following a base issue at the same location.
+        #
+        # @param issues [Array<ValidatorIssue>] the complete list of issues
+        # @param start_index [Integer] the index to start searching from
+        # @param base_location [String] the location to match
+        # @return [Array<ValidatorIssue>] the list of Details issues
+        def find_following_details_issues(issues, start_index, base_location)
+          details_issues = []
+          index = start_index + 1
+
+          while index < issues.length
+            issue = issues[index]
+
+            # Check if this is a Details message for the same location
+            break unless issue.message.include?('Details for #') && issue.location == base_location
+
+            details_issues << issue
+            index += 1
+          end
+
+          details_issues
         end
 
         # @private
@@ -294,87 +543,8 @@ module Inferno
           }
           wrapped_resource.to_json
         end
-
-        # Post a resource to the validation service for validating.
-        #
-        # @param resource [FHIR::Model]
-        # @param profile_url [String]
-        # @return [String] the body of the validation response
-        def validate(resource, profile_url)
-          call_validator(resource, profile_url).body
-        end
-
-        # @private
-        def call_validator(resource, profile_url)
-          request_body = wrap_resource_for_hl7_wrapper(resource, profile_url)
-          Faraday.new(
-            url,
-            request: { timeout: 600 }
-          ).post('validate', request_body, content_type: 'application/json')
-        end
-
-        # @private
-        def operation_outcome_from_hl7_wrapped_response(response_hash)
-          # This is a workaround for some test kits which for legacy reasons
-          # call this method directly with a String instead of a Hash.
-          # See FI-3178.
-          response_hash = JSON.parse(remove_invalid_characters(response_hash)) if response_hash.is_a? String
-
-          if response_hash['sessionId'] && response_hash['sessionId'] != @session_id
-            validator_session_repo.save(test_suite_id:, validator_session_id: response_hash['sessionId'],
-                                        validator_name: name.to_s, suite_options: requirements)
-            @session_id = response_hash['sessionId']
-          end
-
-          # assume for now that one resource -> one request
-          issues = (response_hash.dig('outcomes', 0, 'issues') || []).map do |i|
-            { severity: i['level'].downcase, expression: i['location'], details: { text: i['message'] } }
-          end
-          # this is circuitous, ideally we would map this response directly to message_hashes
-          FHIR::OperationOutcome.new(issue: issues)
-        end
-
-        # @private
-        def remove_invalid_characters(string)
-          string.gsub(/[^[:print:]\r\n]+/, '')
-        end
-
-        # @private
-        def operation_outcome_from_validator_response(response, runnable)
-          sanitized_body = remove_invalid_characters(response.body)
-
-          operation_outcome_from_hl7_wrapped_response(JSON.parse(sanitized_body))
-        rescue JSON::ParserError
-          runnable.add_message('error', "Validator Response: HTTP #{response.status}\n#{sanitized_body}")
-          raise Inferno::Exceptions::ErrorInValidatorException,
-                'Validator response was an unexpected format. ' \
-                'Review Messages tab or validator service logs for more information.'
-        end
-
-        # Add a specific error message for specific network problems to help the user
-        #
-        # @private
-        # @param error [Exception] An error exception that happened during evaluator connection
-        # @return [String] A readable error message describing the specific network problem
-        def validator_error_message(error)
-          case error
-          when Faraday::ConnectionFailed
-            "Connection failed to validator at #{url}."
-          when Faraday::TimeoutError
-            "Timeout while connecting to validator at #{url}."
-          when Faraday::SSLError
-            "SSL error connecting to validator at #{url}."
-          when Faraday::ClientError  # these are 400s
-            "Client error (4xx) connecting to validator at #{url}."
-          when Faraday::ServerError  # these are 500s
-            "Server error (5xx) from validator at #{url}."
-          else
-            "Unable to connect to validator at #{url}."
-          end
-        end
       end
 
-      # @private
       class ValidationContext
         attr_reader :definition
 
@@ -385,13 +555,11 @@ module Inferno
           disableDefaultResourceFetcher: true
         }.freeze
 
-        # @private
         def initialize(definition, &)
           @definition = VALIDATIONCONTEXT_DEFAULTS.merge(definition.deep_symbolize_keys)
           instance_eval(&) if block_given?
         end
 
-        # @private
         def method_missing(method_name, *args)
           # Interpret any other method as setting a field on validationContext.
           # Follow the same format as `Validator.url` here:
@@ -402,14 +570,83 @@ module Inferno
           definition[method_name]
         end
 
-        # @private
         def respond_to_missing?(_method_name, _include_private = false)
           true
         end
       end
 
+      # ValidatorIssue represents a single validation issue returned from the FHIR validator
+      class ValidatorIssue
+        attr_accessor :filtered, :raw_issue, :slice_info
+        attr_reader :resource
+
+        # Creates a new ValidatorIssue
+        # @param raw_issue [Hash] the raw issue hash from the validator response
+        # @param resource [FHIR::Model] the resource being validated
+        # @param slice_info [Array<ValidatorIssue>] nested slice information as ValidatorIssue objects
+        # @param filtered [Boolean] whether this issue has been filtered out
+        def initialize(raw_issue:, resource:, slice_info: [], filtered: false)
+          @raw_issue = raw_issue
+          @resource = resource
+          @slice_info = slice_info
+          @filtered = filtered
+        end
+
+        # Lazily calculated formatted message
+        # @return [String] the formatted message for the issue
+        def message
+          @message ||= format_message
+        end
+
+        # Lazily calculated severity level
+        # @return [String] 'error', 'warning', or 'info'
+        def severity
+          @severity ||= calculate_severity
+        end
+
+        # Extracted location from the issue
+        # @return [String] the location string
+        def location
+          @location ||= extract_location
+        end
+
+        private
+
+        # Formats the issue message with location prefix
+        # @return [String] the formatted message
+        def format_message
+          location_value = extract_location
+          details_text = raw_issue['message']
+
+          # Don't add prefix for additional validation messages
+          return details_text if location_value == 'additional_validation'
+
+          location_prefix = resource.id ? "#{resource.resourceType}/#{resource.id}" : resource.resourceType
+          "#{location_prefix}: #{location_value}: #{details_text}"
+        end
+
+        # Converts the validator's severity level to our standard format
+        # @return [String] 'error', 'warning', or 'info'
+        def calculate_severity
+          level = raw_issue['level']&.upcase
+          case level
+          when 'ERROR', 'FATAL'
+            'error'
+          when 'WARNING'
+            'warning'
+          else
+            'info'
+          end
+        end
+
+        # Extracts the location from the raw issue
+        # @return [String] the location string
+        def extract_location
+          raw_issue['location'] || 'unknown'
+        end
+      end
+
       module ClassMethods
-        # @private
         def fhir_validators
           @fhir_validators ||= {}
         end
@@ -443,7 +680,14 @@ module Inferno
           fhir_validators[name] = current_validators
         end
 
-        # @private
+        # Find a particular profile StructureDefinition and the IG it belongs to.
+        # Looks through validators to find the profile by looking through their defined igs.
+        #
+        # Note: Requires find_validator method which is defined elsewhere in the codebase
+        #
+        # @param profile_url [String] the profile URL to find
+        # @param validator_name [Symbol] the name of the validator to search
+        # @return [Array] the IG and profile
         def find_ig_and_profile(profile_url, validator_name)
           validator = find_validator(validator_name)
           if validator.is_a? Inferno::DSL::FHIRResourceValidation::Validator
