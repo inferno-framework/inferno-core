@@ -1,0 +1,175 @@
+{
+    "resourceType": "Bundle",
+    "type": "collection",
+    "entry": [
+        {
+            "fullUrl": "Coverage/id-1.1.8386.BB.1",
+            "resource": {
+                "resourceType": "Coverage",
+                "id": "id-1.1.8386.BB.1",
+                "contained": [
+        {
+            "resourceType": "RelatedPerson",
+            "id": "1",
+            "patient": {
+                "reference": "Patient/85"
+            },
+            "name": [
+                {
+                    "text": "HOLBERG HTI-1",
+                    "family": "HOLBERG",
+                    "given": [
+                        "HTI-1"
+                    ]
+                }
+            ],
+            "gender": "female",
+            "birthDate": "2020-04-01",
+            "address": [
+                {
+                    "line": [
+                        "PO BOX 1233"
+                    ],
+                    "city": "MOBILE",
+                    "state": "AL",
+                    "postalCode": "36695"
+                }
+            ]
+        },
+        {
+            "resourceType": "Organization",
+            "id": "2",
+            "identifier": [
+                {
+                    "use": "official",
+                    "type": {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                "code": "TAX"
+                            }
+                        ]
+                    },
+                    "system": "urn:oid:2.16.840.1.113883.4.4",
+                    "value": "460391067"
+                },
+                {
+                    "use": "official",
+                    "type": {
+                        "coding": [
+                            {
+                                "system": "http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType",
+                                "code": "payerid"
+                            }
+                        ]
+                    },
+                    "value": "00350"
+                },
+                {
+                    "system": "http://cpsi.com/identifiers/organization/financial-class",
+                    "value": "BB"
+                }
+            ],
+            "active": true,
+            "name": "BLUECROSSBOFCALA-O/P-LONGNAMETEST",
+            "telecom": [
+                {
+                    "system": "phone",
+                    "value": "2055544321"
+                }
+            ],
+            "address": [
+                {
+                    "line": [
+                        "123 TEST ST"
+                    ],
+                    "state": "AL",
+                    "postalCode": "12345678",
+                    "country": "US"
+                }
+            ]
+        }
+    ],
+    "identifier": [
+        {
+            "type": {
+                "coding": [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code": "MB",
+                        "display": "Member Number"
+                    }
+                ]
+            },
+            "system": "http://trubridge.com/identifiers/coverage/member-number",
+            "value": "1234567"
+        }
+    ],
+    "status": "active",
+    "type": {
+        "coding": [
+            {
+                "system": "https://nahdo.org/sopt",
+                "code": "3223",
+                "display": "Children of Women Vietnam Veterans (CWVV)"
+            },
+            {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                "code": "HIP",
+                "display": "health insurance plan policy"
+            }
+        ],
+        "text": "Children of Women Vietnam Veterans (CWVV)"
+    },
+    "subscriber": {
+        "reference": "#1"
+    },
+    "subscriberId": "123456702",
+    "beneficiary": {
+        "reference": "Patient/85"
+    },
+    "relationship": {
+        "coding": [
+            {
+                "system": "http://terminology.hl7.org/CodeSystem/subscriber-relationship",
+                "code": "self",
+                "display": "self"
+            },
+            {
+                "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                "code": "NIENE",
+                "display": "niece/nephew"
+            },
+            {
+                "system": "http://cpsi.com/CodeSystem/subscriber-relationship",
+                "code": "18",
+                "display": "self"
+            }
+        ],
+        "text": "self"
+    },
+    "payor": [
+        {
+            "reference": "#2"
+        }
+    ],
+    "class": [
+        {
+            "type": {
+                "coding": [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/coverage-class",
+                        "code": "group",
+                        "display": "Group"
+                    }
+                ]
+            },
+            "value": "Grpnumber",
+            "name": "Grpname"
+        }
+    ],
+    "order": 1
+            }
+        }
+    ]
+}
