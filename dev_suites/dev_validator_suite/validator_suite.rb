@@ -6,6 +6,13 @@ module DevValidatorSuite
     id :dev_validator
     description 'Inferno Core Developer Suite that makes calls to the HL7 Validator.'
 
+    input :is_spec_test,
+          title: 'Spec Test Mode',
+          description: 'Internal flag used only by spec tests to skip certain test groups. ' \
+                       'Do NOT set this when running the suite normally.',
+          type: 'checkbox',
+          optional: true
+
     fhir_resource_validator :default do
       url ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL', 'http://localhost/hl7validatorapi')
       igs 'hl7.fhir.us.core#6.1.0'
@@ -59,12 +66,15 @@ module DevValidatorSuite
     group do
       title 'Contained Resource Test Group'
       id :contained_resource_group
+      optional
 
       test do
         title 'Coverage Resource with Contained Resources Test'
         id :coverage_contained_resources_test
 
         run do
+          omit_if is_spec_test.present?, 'Skipping contained resource tests in spec test mode'
+
           # Read the JSON file
           json_file_path = File.join(__dir__, 'fixtures', 'coverage_contained_resource.json')
           json_content = File.read(json_file_path)
@@ -99,6 +109,8 @@ module DevValidatorSuite
         )
 
         run do
+          omit_if is_spec_test.present?, 'Skipping contained resource tests in spec test mode'
+
           # Read the JSON file
           json_file_path = File.join(__dir__, 'fixtures', 'coverage_contained_resource.json')
           json_content = File.read(json_file_path)
@@ -144,7 +156,7 @@ module DevValidatorSuite
             # Check if this is an unresolved URL error (these are normally filtered by Inferno)
             is_unresolved_url = issue.message.match?(/URL value '.*' does not resolve/) ||
                                 issue.message.match?(/No definition could be found for URL value '.*'/)
-            
+
             if issue.raw_issue['messageId'] == 'Reference_REF_CantMatchChoice'
               issue.raw_issue['level'] = 'WARNING'
               # Clear the memoized severity so it recalculates
@@ -176,9 +188,11 @@ module DevValidatorSuite
           end
 
           info_msg = "Successfully processed #{ref_cant_match_count} Reference_REF_CantMatchChoice error(s) " \
-                     "and downgraded to warning(s)"
+                     'and downgraded to warning(s)'
           info_msg += ", suppressed #{other_warning_count} other warning(s)" if other_warning_count.positive?
-          info_msg += ", and filtered out #{unresolved_url_count} unresolved URL error(s)" if unresolved_url_count.positive?
+          if unresolved_url_count.positive?
+            info_msg += ", and filtered out #{unresolved_url_count} unresolved URL error(s)"
+          end
           info_msg += '.'
           info info_msg
         end

@@ -236,7 +236,7 @@ RSpec.describe Inferno::CLI::Execute do
       }
     end
 
-    let(:inputs) { { 'url' => 'https://example.com', 'patient_id' => '1' } }
+    let(:inputs) { { 'url' => 'https://example.com', 'patient_id' => '1', 'is_spec_test' => 'true' } }
     let(:preset_id) { 'dev_validator_preset' }
     let(:preset_file) { Inferno::Application.root.join('spec/fixtures/dev_validator_preset_2.json').to_s }
 

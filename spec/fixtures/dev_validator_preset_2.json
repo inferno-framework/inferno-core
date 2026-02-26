@@ -21,6 +21,13 @@
       "value": "1234321",
       "_title": "Patient ID",
       "_type": "text"
+    },
+    {
+      "name": "is_spec_test",
+      "value": "true",
+      "_title": "Spec Test Mode",
+      "_type": "checkbox",
+      "_optional": true
     }
   ]
 }
