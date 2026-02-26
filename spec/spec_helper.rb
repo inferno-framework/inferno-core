@@ -14,6 +14,7 @@ SimpleCov.start do
   add_filter '/lib/inferno/db/schema.rb'
   add_filter '/lib/inferno/apps/cli'
   add_filter '/lib/inferno/ext/rack.rb'
+  add_filter '/dev_suites/dev_validator_suite/validator_suite.rb'
 end
 
 if ENV['GITHUB_ACTIONS']
