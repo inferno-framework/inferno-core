@@ -117,11 +117,13 @@ module Inferno
 
         alias cli_context validation_context
 
+        # @private
         # Used internally by perform_additional_validation
         def additional_validations
           @additional_validations ||= []
         end
 
+        # @private
         # Perform validation steps in addition to FHIR validation.
         #
         # @example
@@ -166,7 +168,7 @@ module Inferno
         # @param profile_url [String] the profile URL to validate against
         # @param runnable [Object] the runnable context (test/group/suite)
         # @param add_messages_to_runnable [Boolean] whether to add messages to the runnable
-        # @param validator_response_details [Object, nil] if not nil, the service will seed the object provided with
+        # @param validator_response_details [Array, nil] if not nil, the service will populate this array with
         #   the detailed response message from the validator service. Can be used by test kits to perform custom
         #   handling of error messages.
         # @return [Boolean] true if the resource is valid
@@ -189,7 +191,7 @@ module Inferno
           # 5. Add error messages to runnable
           filtered_issues = issues.reject(&:filtered)
           add_validation_messages_to_runnable(runnable, filtered_issues) if add_messages_to_runnable
-          validator_response_details[:issues] = issues if validator_response_details
+          validator_response_details&.concat(issues)
 
           # 6. Return validity
           filtered_issues.none? { |issue| issue.severity == 'error' }
@@ -419,6 +421,7 @@ module Inferno
           end
         end
 
+        # @private
         # Performs conditional filtering on issues for special cases.
         # Recursively processes issues and their nested slice_info in depth-first order.
         #

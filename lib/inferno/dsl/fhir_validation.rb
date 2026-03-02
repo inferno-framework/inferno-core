@@ -32,16 +32,18 @@ module Inferno
       # @param profile_url [String]
       # @param validator [Symbol] the name of the validator to use
       # @param add_messages_to_runnable [Boolean] whether to add validation messages to runnable or not
-      # @param _validator_response_details [Object, nil] accepted for compatibility but not used by this
+      # @param validator_response_details [Object, nil] accepted for compatibility but not used by this
       #   deprecated validator
       # @return [Boolean] whether the resource is valid
+      # rubocop:disable Lint/UnusedMethodArgument
       def resource_is_valid?(
         resource: self.resource, profile_url: nil,
         validator: :default, add_messages_to_runnable: true,
-        _validator_response_details: nil
+        validator_response_details: nil
       )
         find_validator(validator).resource_is_valid?(resource, profile_url, self, add_messages_to_runnable:)
       end
+      # rubocop:enable Lint/UnusedMethodArgument
 
       # Find a particular validator. Looks through a runnable's parents up to
       # the suite to find a validator with a particular name
@@ -121,9 +123,9 @@ module Inferno
         end
 
         # @see Inferno::DSL::FHIRValidation#resource_is_valid?
-        # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Metrics/CyclomaticComplexity, Lint/UnusedMethodArgument
         def resource_is_valid?(resource, profile_url, runnable, add_messages_to_runnable: true,
-                               _validator_response_details: nil)
+                               validator_response_details: nil)
           profile_url ||= FHIR::Definitions.resource_definition(resource.resourceType).url
 
           begin
@@ -157,7 +159,7 @@ module Inferno
           raise Inferno::Exceptions::ErrorInValidatorException,
                 'Error occurred in the validator. Review Messages tab or validator service logs for more information.'
         end
-        # rubocop:enable Metrics/CyclomaticComplexity
+        # rubocop:enable Metrics/CyclomaticComplexity, Lint/UnusedMethodArgument
 
         # @private
         def exclude_unresolved_url_message
