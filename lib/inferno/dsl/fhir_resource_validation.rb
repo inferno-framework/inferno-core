@@ -123,7 +123,6 @@ module Inferno
           @additional_validations ||= []
         end
 
-        # @private
         # Perform validation steps in addition to FHIR validation.
         #
         # @example
