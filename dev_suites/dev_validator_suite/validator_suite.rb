@@ -6,23 +6,6 @@ module DevValidatorSuite
     id :dev_validator
     description 'Inferno Core Developer Suite that makes calls to the HL7 Validator.'
 
-    input :is_spec_test,
-          title: 'Spec Test Mode',
-          description: 'Internal flag used only by spec tests to skip certain test groups. ' \
-                       'Do NOT set this when running the suite normally.',
-          type: 'checkbox',
-          optional: true
-
-    input :coverage_json,
-          title: 'Coverage Resource JSON',
-          description: 'JSON content of a Coverage resource with contained resources for validation testing.',
-          type: 'textarea',
-          locked: true,
-          optional: true,
-          # rubocop:disable Layout/LineLength
-          default: '{"resourceType":"Bundle","type":"collection","entry":[{"fullUrl":"Coverage/id-1.1.8386.BB.1","resource":{"resourceType":"Coverage","id":"id-1.1.8386.BB.1","contained":[{"resourceType":"RelatedPerson","id":"1","patient":{"reference":"Patient/85"},"name":[{"text":"HOLBERG HTI-1","family":"HOLBERG","given":["HTI-1"]}],"gender":"female","birthDate":"2020-04-01","address":[{"line":["PO BOX 1233"],"city":"MOBILE","state":"AL","postalCode":"36695"}]},{"resourceType":"Organization","id":"2","identifier":[{"use":"official","type":{"coding":[{"system":"http://terminology.hl7.org/CodeSystem/v2-0203","code":"TAX"}]},"system":"urn:oid:2.16.840.1.113883.4.4","value":"460391067"},{"use":"official","type":{"coding":[{"system":"http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType","code":"payerid"}]},"value":"00350"},{"system":"http://cpsi.com/identifiers/organization/financial-class","value":"BB"}],"active":true,"name":"BLUECROSSBOFCALA-O/P-LONGNAMETEST","telecom":[{"system":"phone","value":"2055544321"}],"address":[{"line":["123 TEST ST"],"state":"AL","postalCode":"12345678","country":"US"}]}],"identifier":[{"type":{"coding":[{"system":"http://terminology.hl7.org/CodeSystem/v2-0203","code":"MB","display":"Member Number"}]},"system":"http://trubridge.com/identifiers/coverage/member-number","value":"1234567"}],"status":"active","type":{"coding":[{"system":"https://nahdo.org/sopt","code":"3223","display":"Children of Women Vietnam Veterans (CWVV)"},{"system":"http://terminology.hl7.org/CodeSystem/v3-ActCode","code":"HIP","display":"health insurance plan policy"}],"text":"Children of Women Vietnam Veterans (CWVV)"},"subscriber":{"reference":"#1"},"subscriberId":"123456702","beneficiary":{"reference":"Patient/85"},"relationship":{"coding":[{"system":"http://terminology.hl7.org/CodeSystem/subscriber-relationship","code":"self","display":"self"},{"system":"http://terminology.hl7.org/CodeSystem/v3-RoleCode","code":"NIENE","display":"niece/nephew"},{"system":"http://cpsi.com/CodeSystem/subscriber-relationship","code":"18","display":"self"}],"text":"self"},"payor":[{"reference":"#2"}],"class":[{"type":{"coding":[{"system":"http://terminology.hl7.org/CodeSystem/coverage-class","code":"group","display":"Group"}]},"value":"Grpnumber","name":"Grpname"}],"order":1}}]}'
-    # rubocop:enable Layout/LineLength
-
     fhir_resource_validator do
       url ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL', 'http://localhost/hl7validatorapi')
       igs 'hl7.fhir.us.core#6.1.0'
@@ -78,15 +61,23 @@ module DevValidatorSuite
       id :contained_resource_group
       optional
 
+      input :coverage_json,
+            title: 'Coverage Resource JSON',
+            description: 'JSON content of a Coverage resource with contained resources for validation testing.',
+            type: 'textarea',
+            locked: true,
+            optional: true,
+            # rubocop:disable Layout/LineLength
+            default: '{"resourceType":"Bundle","type":"collection","entry":[{"fullUrl":"Coverage/id-1.1.8386.BB.1","resource":{"resourceType":"Coverage","id":"id-1.1.8386.BB.1","contained":[{"resourceType":"RelatedPerson","id":"1","patient":{"reference":"Patient/85"},"name":[{"text":"HOLBERG HTI-1","family":"HOLBERG","given":["HTI-1"]}],"gender":"female","birthDate":"2020-04-01","address":[{"line":["PO BOX 1233"],"city":"MOBILE","state":"AL","postalCode":"36695"}]},{"resourceType":"Organization","id":"2","identifier":[{"use":"official","type":{"coding":[{"system":"http://terminology.hl7.org/CodeSystem/v2-0203","code":"TAX"}]},"system":"urn:oid:2.16.840.1.113883.4.4","value":"460391067"},{"use":"official","type":{"coding":[{"system":"http://hl7.org/fhir/us/carin-bb/CodeSystem/C4BBIdentifierType","code":"payerid"}]},"value":"00350"},{"system":"http://cpsi.com/identifiers/organization/financial-class","value":"BB"}],"active":true,"name":"BLUECROSSBOFCALA-O/P-LONGNAMETEST","telecom":[{"system":"phone","value":"2055544321"}],"address":[{"line":["123 TEST ST"],"state":"AL","postalCode":"12345678","country":"US"}]}],"identifier":[{"type":{"coding":[{"system":"http://terminology.hl7.org/CodeSystem/v2-0203","code":"MB","display":"Member Number"}]},"system":"http://trubridge.com/identifiers/coverage/member-number","value":"1234567"}],"status":"active","type":{"coding":[{"system":"https://nahdo.org/sopt","code":"3223","display":"Children of Women Vietnam Veterans (CWVV)"},{"system":"http://terminology.hl7.org/CodeSystem/v3-ActCode","code":"HIP","display":"health insurance plan policy"}],"text":"Children of Women Vietnam Veterans (CWVV)"},"subscriber":{"reference":"#1"},"subscriberId":"123456702","beneficiary":{"reference":"Patient/85"},"relationship":{"coding":[{"system":"http://terminology.hl7.org/CodeSystem/subscriber-relationship","code":"self","display":"self"},{"system":"http://terminology.hl7.org/CodeSystem/v3-RoleCode","code":"NIENE","display":"niece/nephew"},{"system":"http://cpsi.com/CodeSystem/subscriber-relationship","code":"18","display":"self"}],"text":"self"},"payor":[{"reference":"#2"}],"class":[{"type":{"coding":[{"system":"http://terminology.hl7.org/CodeSystem/coverage-class","code":"group","display":"Group"}]},"value":"Grpnumber","name":"Grpname"}],"order":1}}]}'
+      # rubocop:enable Layout/LineLength
+
       test do
         title 'Coverage Resource with Contained Resources Test'
         id :coverage_contained_resources_test
 
-        input :coverage_json,
-              :is_spec_test
+        input :coverage_json
 
         run do
-          omit_if is_spec_test.present?, 'Skipping contained resource tests in spec test mode'
           omit_if coverage_json.blank?, 'Coverage JSON input is not provided'
 
           # Parse the JSON content
@@ -120,11 +111,9 @@ module DevValidatorSuite
           5. Expected output: A passing test with a single warning about contained resource reference matching
         )
 
-        input :coverage_json,
-              :is_spec_test
+        input :coverage_json
 
         run do
-          omit_if is_spec_test.present?, 'Skipping contained resource tests in spec test mode'
           omit_if coverage_json.blank?, 'Coverage JSON input is not provided'
 
           # Parse the JSON content

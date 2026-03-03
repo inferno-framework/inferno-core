@@ -333,6 +333,37 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           expect(msg).to_not include(1.chr)
           expect(msg).to match(/Error with non-printable characters/)
         end
+
+        it 'reraises ErrorInValidatorException without modification' do
+          allow(validator).to receive(:get_raw_validator_content)
+            .and_raise(Inferno::Exceptions::ErrorInValidatorException, 'Validator connection error')
+
+          expect do
+            validator.resource_is_valid?(resource2, profile_url, runnable)
+          end.to raise_error(Inferno::Exceptions::ErrorInValidatorException, 'Validator connection error')
+        end
+
+        it 'handles StandardError in validation pipeline by adding message and raising ErrorInValidatorException' do
+          # Stub the HTTP request to succeed
+          stub_request(:post, "#{validation_url}/validate")
+            .with(body: wrapped_resource_string)
+            .to_return(status: 200, body: { outcomes: [{ issues: [] }] }.to_json)
+
+          error_message = 'Unexpected JSON parsing error'
+          # Mock an error in get_issues_from_validator_response (not in get_raw_validator_content)
+          allow(validator).to receive(:get_issues_from_validator_response)
+            .and_raise(StandardError, error_message)
+          allow(runnable).to receive(:add_message)
+
+          expect do
+            validator.resource_is_valid?(resource2, profile_url, runnable)
+          end.to raise_error(
+            Inferno::Exceptions::ErrorInValidatorException,
+            'Error occurred in the validator. Review Messages tab or validator service logs for more information.'
+          )
+
+          expect(runnable).to have_received(:add_message).with('error', error_message)
+        end
       end
     end
   end
