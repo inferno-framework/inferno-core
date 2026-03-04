@@ -243,7 +243,7 @@ module Inferno
           validator_session_repo.save(test_suite_id:, validator_session_id: session_id,
                                       validator_name: name.to_s, suite_options: requirements)
           self.session_id = session_id
-        rescue JSON::ParserError => e
+        rescue JSON::ParserError
           Application[:logger]
             .error("Validator warm_up - error unexpected response format from validator: #{response_body}")
         end
@@ -464,7 +464,7 @@ module Inferno
         # @param base_issue [ValidatorIssue] the issue to potentially filter
         # @param base_index [Integer] the index of the base issue in the issues array
         def filter_contained_resource(issues, base_issue, base_index)
-          return unless is_contained_resource_profile_issue?(base_issue)
+          return unless contained_resource_profile_issue?(base_issue)
 
           base_location = base_issue.location
           profile_detail_issues = find_following_profile_details_issues(issues, base_index, base_location)
@@ -482,7 +482,7 @@ module Inferno
 
         # @private
         # Checks if a base issue should be processed for contained resource filtering
-        def is_contained_resource_profile_issue?(base_issue)
+        def contained_resource_profile_issue?(base_issue)
           return false if base_issue.filtered # Skip if already filtered
 
           message_id = base_issue.raw_issue['messageId']

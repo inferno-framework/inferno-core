@@ -1619,7 +1619,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       end
     end
 
-    describe '#is_contained_resource_profile_issue?' do
+    describe '#contained_resource_profile_issue?' do
       it 'returns false if issue is already filtered' do
         issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: {
@@ -1633,7 +1633,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           filtered: true
         )
 
-        expect(validator.is_contained_resource_profile_issue?(issue)).to be(false)
+        expect(validator.contained_resource_profile_issue?(issue)).to be(false)
       end
 
       it 'returns false if messageId is not Reference_REF_CantMatchChoice' do
@@ -1649,7 +1649,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           filtered: false
         )
 
-        expect(validator.is_contained_resource_profile_issue?(issue)).to be(false)
+        expect(validator.contained_resource_profile_issue?(issue)).to be(false)
       end
 
       it 'returns false if severity is info' do
@@ -1665,7 +1665,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           filtered: false
         )
 
-        expect(validator.is_contained_resource_profile_issue?(issue)).to be(false)
+        expect(validator.contained_resource_profile_issue?(issue)).to be(false)
       end
 
       it 'returns true for valid Reference_REF_CantMatchChoice error' do
@@ -1681,7 +1681,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           filtered: false
         )
 
-        expect(validator.is_contained_resource_profile_issue?(issue)).to be(true)
+        expect(validator.contained_resource_profile_issue?(issue)).to be(true)
       end
 
       it 'returns true for valid Reference_REF_CantMatchChoice warning' do
@@ -1697,7 +1697,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           filtered: false
         )
 
-        expect(validator.is_contained_resource_profile_issue?(issue)).to be(true)
+        expect(validator.contained_resource_profile_issue?(issue)).to be(true)
       end
     end
 
