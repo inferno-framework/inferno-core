@@ -1608,8 +1608,8 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           filtered: false
         )
 
-        # Mock find_following_details_issues to return empty for nested call
-        allow(validator).to receive(:find_following_details_issues).and_return([])
+        # Mock find_following_profile_details_issues to return empty for nested call
+        allow(validator).to receive(:find_following_profile_details_issues).and_return([])
 
         issues = [parent_issue]
         validator.apply_relationship_filters(issues)
@@ -1619,7 +1619,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       end
     end
 
-    describe '#should_filter_contained_resource?' do
+    describe '#is_contained_resource_profile_issue?' do
       it 'returns false if issue is already filtered' do
         issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: {
@@ -1633,7 +1633,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           filtered: true
         )
 
-        expect(validator.should_filter_contained_resource?(issue)).to be(false)
+        expect(validator.is_contained_resource_profile_issue?(issue)).to be(false)
       end
 
       it 'returns false if messageId is not Reference_REF_CantMatchChoice' do
@@ -1649,7 +1649,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           filtered: false
         )
 
-        expect(validator.should_filter_contained_resource?(issue)).to be(false)
+        expect(validator.is_contained_resource_profile_issue?(issue)).to be(false)
       end
 
       it 'returns false if severity is info' do
@@ -1665,7 +1665,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           filtered: false
         )
 
-        expect(validator.should_filter_contained_resource?(issue)).to be(false)
+        expect(validator.is_contained_resource_profile_issue?(issue)).to be(false)
       end
 
       it 'returns true for valid Reference_REF_CantMatchChoice error' do
@@ -1681,7 +1681,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           filtered: false
         )
 
-        expect(validator.should_filter_contained_resource?(issue)).to be(true)
+        expect(validator.is_contained_resource_profile_issue?(issue)).to be(true)
       end
 
       it 'returns true for valid Reference_REF_CantMatchChoice warning' do
@@ -1697,11 +1697,11 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           filtered: false
         )
 
-        expect(validator.should_filter_contained_resource?(issue)).to be(true)
+        expect(validator.is_contained_resource_profile_issue?(issue)).to be(true)
       end
     end
 
-    describe '#at_least_one_valid_detail?' do
+    describe '#at_least_one_profile_without_errors?' do
       it 'returns true when one detail has all error slices filtered' do
         valid_detail = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Detail' },
@@ -1724,7 +1724,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         )
 
         details_issues = [valid_detail]
-        expect(validator.at_least_one_valid_detail?(details_issues)).to be(true)
+        expect(validator.at_least_one_profile_without_errors?(details_issues)).to be(true)
       end
 
       it 'returns false when all details have unfiltered errors' do
@@ -1757,7 +1757,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         )
 
         details_issues = [invalid_detail1, invalid_detail2]
-        expect(validator.at_least_one_valid_detail?(details_issues)).to be(false)
+        expect(validator.at_least_one_profile_without_errors?(details_issues)).to be(false)
       end
 
       it 'returns true when detail has only warnings (no error slices)' do
@@ -1776,7 +1776,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         )
 
         details_issues = [warning_detail]
-        expect(validator.at_least_one_valid_detail?(details_issues)).to be(true)
+        expect(validator.at_least_one_profile_without_errors?(details_issues)).to be(true)
       end
 
       it 'returns true when at least one detail is valid among multiple' do
@@ -1802,11 +1802,11 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         )
 
         details_issues = [invalid_detail, valid_detail]
-        expect(validator.at_least_one_valid_detail?(details_issues)).to be(true)
+        expect(validator.at_least_one_profile_without_errors?(details_issues)).to be(true)
       end
     end
 
-    describe '#find_following_details_issues' do
+    describe '#find_following_profile_details_issues' do
       let(:base_location) { 'Coverage.payor[0]' }
 
       it 'finds consecutive Details messages at the same location' do
@@ -1837,7 +1837,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         )
 
         issues = [base_issue, details1, details2]
-        result = validator.find_following_details_issues(issues, 0, base_location)
+        result = validator.find_following_profile_details_issues(issues, 0, base_location)
 
         expect(result.length).to eq(2)
         expect(result).to include(details1, details2)
@@ -1874,7 +1874,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         )
 
         issues = [base_issue, details1, other_issue, details2]
-        result = validator.find_following_details_issues(issues, 0, base_location)
+        result = validator.find_following_profile_details_issues(issues, 0, base_location)
 
         expect(result.length).to eq(1)
         expect(result).to include(details1)
@@ -1905,7 +1905,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         )
 
         issues = [base_issue, details1, details_other_location]
-        result = validator.find_following_details_issues(issues, 0, base_location)
+        result = validator.find_following_profile_details_issues(issues, 0, base_location)
 
         expect(result.length).to eq(1)
         expect(result).to include(details1)
@@ -1929,7 +1929,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         )
 
         issues = [base_issue, other_issue]
-        result = validator.find_following_details_issues(issues, 0, base_location)
+        result = validator.find_following_profile_details_issues(issues, 0, base_location)
 
         expect(result).to be_empty
       end
@@ -1944,7 +1944,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         )
 
         issues = [base_issue]
-        result = validator.find_following_details_issues(issues, 0, base_location)
+        result = validator.find_following_profile_details_issues(issues, 0, base_location)
 
         expect(result).to be_empty
       end

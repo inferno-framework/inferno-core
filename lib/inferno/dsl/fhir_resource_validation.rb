@@ -231,14 +231,21 @@ module Inferno
           end
         end
 
-        # Post a resource to the validation service for validating.
-        # Returns the raw validator response body.
+        # Warm up the validator session by sending a test validation request.
+        # This initializes the validator session and persists it for future use.
         #
-        # @param resource [FHIR::Model]
-        # @param profile_url [String]
-        # @return [String] the body of the validation response
-        def validate(resource, profile_url)
-          call_validator(resource, profile_url).body
+        # @param resource [FHIR::Model] the resource to validate
+        # @param profile_url [String] the profile URL to validate against
+        def warm_up(resource, profile_url)
+          response_body = validate(resource, profile_url)
+          res = JSON.parse(response_body)
+          session_id = res['sessionId']
+          validator_session_repo.save(test_suite_id:, validator_session_id: session_id,
+                                      validator_name: name.to_s, suite_options: requirements)
+          self.session_id = session_id
+        rescue JSON::ParserError => e
+          Application[:logger]
+            .error("Validator warm_up - error unexpected response format from validator: #{response_body}")
         end
 
         # @private
@@ -296,6 +303,17 @@ module Inferno
             url,
             request: { timeout: 600 }
           ).post('validate', request_body, content_type: 'application/json')
+        end
+
+        # @private
+        # Post a resource to the validation service for validating.
+        # Returns the raw validator response body.
+        #
+        # @param resource [FHIR::Model]
+        # @param profile_url [String]
+        # @return [String] the body of the validation response
+        def validate(resource, profile_url)
+          call_validator(resource, profile_url).body
         end
 
         # Add a specific error message for specific network problems to help the user
@@ -414,7 +432,7 @@ module Inferno
         #
         # @return [Proc] a proc that checks if a message is an unresolved URL message
         def exclude_unresolved_url_message
-          proc do |message|
+          @exclude_unresolved_url_message ||= proc do |message|
             message.message.match?(/\A\S+: [^:]+: URL value '.*' does not resolve/) ||
               message.message.match?(/\A\S+: [^:]+: No definition could be found for URL value '.*'/)
           end
@@ -429,12 +447,12 @@ module Inferno
           issues.each_with_index do |issue, index|
             next if issue.filtered # Skip if already filtered
 
+            # Recursively process nested slice_info first (depth-first)
+            apply_relationship_filters(issue.slice_info) if issue.slice_info.any?
+
             # Apply conditional filters.
             # As more are needed, split with a "next if issue.filtered" pattern and add the new filter.
             filter_contained_resource(issues, issue, index)
-
-            # Recursively process nested slice_info
-            apply_relationship_filters(issue.slice_info) if issue.slice_info.any?
           end
         end
 
@@ -446,25 +464,25 @@ module Inferno
         # @param base_issue [ValidatorIssue] the issue to potentially filter
         # @param base_index [Integer] the index of the base issue in the issues array
         def filter_contained_resource(issues, base_issue, base_index)
-          return unless should_filter_contained_resource?(base_issue)
+          return unless is_contained_resource_profile_issue?(base_issue)
 
           base_location = base_issue.location
-          details_issues = find_following_details_issues(issues, base_index, base_location)
+          profile_detail_issues = find_following_profile_details_issues(issues, base_index, base_location)
 
-          return if details_issues.empty?
+          return if profile_detail_issues.empty?
 
-          recursively_process_slice_info_of_details(details_issues)
+          recursively_process_slice_info_of_details(profile_detail_issues)
 
-          return unless at_least_one_valid_detail?(details_issues)
+          return unless at_least_one_profile_without_errors?(profile_detail_issues)
 
           base_issue.filtered = true
           # Also filter all the Details messages
-          details_issues.each { |details_issue| details_issue.filtered = true }
+          profile_detail_issues.each { |details_issue| details_issue.filtered = true }
         end
 
         # @private
         # Checks if a base issue should be processed for contained resource filtering
-        def should_filter_contained_resource?(base_issue)
+        def is_contained_resource_profile_issue?(base_issue)
           return false if base_issue.filtered # Skip if already filtered
 
           message_id = base_issue.raw_issue['messageId']
@@ -486,7 +504,7 @@ module Inferno
 
         # @private
         # Checks if any profile is valid (all error-level slices are filtered)
-        def at_least_one_valid_detail?(details_issues)
+        def at_least_one_profile_without_errors?(details_issues)
           details_issues.any? do |details_issue|
             error_level_slices = details_issue.slice_info.select { |s| s.severity == 'error' }
             error_level_slices.all?(&:filtered)
@@ -500,7 +518,7 @@ module Inferno
         # @param start_index [Integer] the index to start searching from
         # @param base_location [String] the location to match
         # @return [Array<ValidatorIssue>] the list of Details issues
-        def find_following_details_issues(issues, start_index, base_location)
+        def find_following_profile_details_issues(issues, start_index, base_location)
           details_issues = []
           index = start_index + 1
 
@@ -617,7 +635,7 @@ module Inferno
         # Formats the issue message with location prefix
         # @return [String] the formatted message
         def format_message
-          location_value = extract_location
+          location_value = location
           details_text = raw_issue['message']
 
           # Don't add prefix for additional validation messages
