@@ -1377,6 +1377,57 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
     end
   end
 
+  describe '#warm_up' do
+    let(:test_resource) { FHIR::Patient.new }
+    let(:test_profile_url) { 'http://hl7.org/fhir/StructureDefinition/Patient' }
+    let(:session_id) { 'test-session-id-12345' }
+    let(:valid_response_body) do
+      {
+        sessionId: session_id,
+        outcomes: [{
+          issues: []
+        }]
+      }.to_json
+    end
+
+    before do
+      validator.test_suite_id = 'test_suite_id'
+      validator.name = 'test_validator'
+      allow(validator).to receive(:requirements).and_return({ option: 'value' })
+    end
+
+    context 'when validation succeeds with valid JSON' do
+      it 'parses the response and saves the session ID' do
+        allow(validator).to receive(:validate).and_return(valid_response_body)
+        allow(validator.validator_session_repo).to receive(:save)
+
+        validator.warm_up(test_resource, test_profile_url)
+
+        expect(validator.validator_session_repo).to have_received(:save).with(
+          test_suite_id: 'test_suite_id',
+          validator_session_id: session_id,
+          validator_name: 'test_validator',
+          suite_options: { option: 'value' }
+        )
+        expect(validator.session_id).to eq(session_id)
+      end
+    end
+
+    context 'when JSON parsing fails' do
+      let(:invalid_response_body) { 'not valid json' }
+
+      it 'logs an error and does not raise an exception' do
+        allow(validator).to receive(:validate).and_return(invalid_response_body)
+        allow(Inferno::Application[:logger]).to receive(:error)
+
+        expect { validator.warm_up(test_resource, test_profile_url) }.to_not raise_error
+
+        expect(Inferno::Application[:logger]).to have_received(:error)
+          .with("Validator warm_up - error unexpected response format from validator: #{invalid_response_body}")
+      end
+    end
+  end
+
   describe 'helper method unit tests' do
     describe '#convert_raw_issue_to_validator_issue' do
       it 'converts a basic raw issue to ValidatorIssue' do
