@@ -439,20 +439,33 @@ module Inferno
         end
 
         # @private
-        # Performs conditional filtering on issues for special cases.
-        # Recursively processes issues and their nested slice_info in depth-first order.
+        # Performs filtering based on relationships between issues.
+        # Processes sub-issues of each issue before processing the top-level issues.
         #
         # @param issues [Array<ValidatorIssue>] the list of validator issues
         def apply_relationship_filters(issues)
+          apply_relationship_filters_to_children(issues)
+
           issues.each_with_index do |issue, index|
             next if issue.filtered # Skip if already filtered
-
-            # Recursively process nested slice_info first (depth-first)
-            apply_relationship_filters(issue.slice_info) if issue.slice_info.any?
 
             # Apply conditional filters.
             # As more are needed, split with a "next if issue.filtered" pattern and add the new filter.
             filter_contained_resource(issues, issue, index)
+          end
+        end
+
+        # @private
+        # Performs filtering based on relationships between issues on the sub-issues
+        # of a list of issues.
+        #
+        # @param issues [Array<ValidatorIssue>] the list of validator issues
+        def apply_relationship_filters_to_children(issues)
+          issues.each do |issue|
+            next if issue.filtered # Skip if already filtered
+
+            # Recursively process nested slice_info first (depth-first)
+            apply_relationship_filters(issue.slice_info) if issue.slice_info.any?
           end
         end
 
@@ -470,9 +483,6 @@ module Inferno
           profile_detail_issues = find_following_profile_details_issues(issues, base_index, base_location)
 
           return if profile_detail_issues.empty?
-
-          recursively_process_slice_info_of_details(profile_detail_issues)
-
           return unless at_least_one_profile_without_errors?(profile_detail_issues)
 
           base_issue.filtered = true
@@ -490,16 +500,6 @@ module Inferno
           return false unless base_issue.severity == 'error' || base_issue.severity == 'warning'
 
           true
-        end
-
-        # @private
-        # Recursively processes slice info within details issues
-        def recursively_process_slice_info_of_details(details_issues)
-          details_issues.each do |details_issue|
-            details_issue.slice_info.each_with_index do |slice_issue, slice_index|
-              filter_contained_resource(details_issue.slice_info, slice_issue, slice_index)
-            end
-          end
         end
 
         # @private
