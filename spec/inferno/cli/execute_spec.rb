@@ -251,7 +251,7 @@ RSpec.describe Inferno::CLI::Execute do
         .to_return(status: 200, body: FHIR::Patient.new({ name: { given: 'Smith' } }).to_json)
 
       expect do
-        expect { instance.run({ suite:, inputs:, outputter: 'plain', verbose: true }) }
+        expect { instance.run({ suite:, inputs:, outputter: 'plain', verbose: true, groups: ['1'] }) }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
       end.to output(/.+/).to_stdout
     end
@@ -261,7 +261,7 @@ RSpec.describe Inferno::CLI::Execute do
         .to_return(status: 200, body: FHIR::Patient.new({ name: { given: 'Smith' } }).to_json)
 
       expect do
-        expect { instance.run({ suite:, preset_id:, outputter: 'plain', verbose: true }) }
+        expect { instance.run({ suite:, preset_id:, outputter: 'plain', verbose: true, groups: ['1'] }) }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
       end.to output(/.+/).to_stdout
     end
@@ -271,7 +271,7 @@ RSpec.describe Inferno::CLI::Execute do
         .to_return(status: 200, body: FHIR::Patient.new({ name: { given: 'Smith' } }).to_json)
 
       expect do
-        expect { instance.run({ suite:, preset_file:, outputter: 'plain', verbose: true }) }
+        expect { instance.run({ suite:, preset_file:, outputter: 'plain', verbose: true, groups: ['1'] }) }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
       end.to output(/.+/).to_stdout
     end

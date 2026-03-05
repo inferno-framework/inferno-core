@@ -32,12 +32,17 @@ module Inferno
       # @param profile_url [String]
       # @param validator [Symbol] the name of the validator to use
       # @param add_messages_to_runnable [Boolean] whether to add validation messages to runnable or not
+      # @param validator_response_details [Array, nil] if not nil, the service will populate this array with
+      #   the detailed response message from the validator service
       # @return [Boolean] whether the resource is valid
       def resource_is_valid?(
         resource: self.resource, profile_url: nil,
-        validator: :default, add_messages_to_runnable: true
+        validator: :default, add_messages_to_runnable: true,
+        validator_response_details: nil
       )
-        find_validator(validator).resource_is_valid?(resource, profile_url, self, add_messages_to_runnable:)
+        find_validator(validator).resource_is_valid?(resource, profile_url, self,
+                                                     add_messages_to_runnable:,
+                                                     validator_response_details:)
       end
 
       # Find a particular validator. Looks through a runnable's parents up to
@@ -118,7 +123,9 @@ module Inferno
         end
 
         # @see Inferno::DSL::FHIRValidation#resource_is_valid?
-        def resource_is_valid?(resource, profile_url, runnable, add_messages_to_runnable: true) # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable Metrics/CyclomaticComplexity, Lint/UnusedMethodArgument
+        def resource_is_valid?(resource, profile_url, runnable, add_messages_to_runnable: true,
+                               validator_response_details: nil)
           profile_url ||= FHIR::Definitions.resource_definition(resource.resourceType).url
 
           begin
@@ -152,6 +159,7 @@ module Inferno
           raise Inferno::Exceptions::ErrorInValidatorException,
                 'Error occurred in the validator. Review Messages tab or validator service logs for more information.'
         end
+        # rubocop:enable Metrics/CyclomaticComplexity, Lint/UnusedMethodArgument
 
         # @private
         def exclude_unresolved_url_message
