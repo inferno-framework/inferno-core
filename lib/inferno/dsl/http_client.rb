@@ -126,6 +126,34 @@ module Inferno
         end
       end
 
+      # Perform an HTTP PUT request
+      #
+      # @param url [String] if this request is using a defined client, this will
+      #   be appended to the client's url. Must be an absolute url for requests
+      #   made without a defined client
+      # @param body [String]
+      # @param client [Symbol]
+      # @param name [Symbol] Name for this request to allow it to be used by
+      #   other tests
+      # @param headers [Hash] Input headers here
+      # @param tags [Array<String>] a list of tags to assign to the request
+      # @return [Inferno::Entities::Request]
+      def put(url = '', body: nil, client: :default, name: nil, headers: nil, tags: [])
+        store_request('outgoing', name:, tags:) do
+          tcp_exception_handler do
+            client = http_client(client)
+
+            if client
+              client.put(url, body, headers)
+            elsif url.match?(%r{\Ahttps?://})
+              connection.put(url, body, headers)
+            else
+              raise StandardError, 'Must use an absolute url or define an HTTP client with a base url'
+            end
+          end
+        end
+      end
+
       # Perform an HTTP DELETE request
       #
       # @param url [String] if this request is using a defined client, this will
