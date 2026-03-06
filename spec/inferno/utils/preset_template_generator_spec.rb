@@ -139,7 +139,35 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
         { name: 'cancel_pause_time', _type: 'text', value: '30' },
         { name: 'url1', _type: 'text', value: nil },
         { name: 'custom_bearer_token', _type: 'text',
-          _description: 'This bearer token will be used to identify the incoming request', value: nil }
+          _description: 'This bearer token will be used to identify the incoming request', value: nil },
+        { name: 'get_type_radio', _type: 'radio', _title: 'How to get Bundle (Radio)',
+          _options: { list_options: [
+            { value: 'copy_paste', label: 'Paste JSON' },
+            { value: 'url', label: 'URL to FHIR Bundle' },
+            { value: 'summary_op', label: '$summary Operation' }
+          ] }, value: nil },
+        { name: 'bundle_copy_paste_radio', _type: 'textarea', _title: 'Paste JSON (Radio)',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type_radio', value: 'copy_paste' } },
+        { name: 'bundle_url_radio', _type: 'text', _title: 'URL to FHIR Bundle (Radio)',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type_radio', value: 'url' } },
+        { name: 'fhir_server_url_radio', _type: 'text', _title: 'FHIR Server URL (Radio)',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type_radio', value: 'summary_op' } },
+        { name: 'patient_identifier_radio', _type: 'text', _title: 'Patient ID (Radio)',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type_radio', value: 'summary_op' } },
+        { name: 'get_type_select', _type: 'select', _title: 'How to get Bundle (Select)',
+          _options: { list_options: [
+            { value: 'copy_paste', label: 'Paste JSON' },
+            { value: 'url', label: 'URL to FHIR Bundle' },
+            { value: 'summary_op', label: '$summary Operation' }
+          ] }, value: 'copy_paste' },
+        { name: 'bundle_copy_paste_select', _type: 'textarea', _title: 'Paste JSON (Select)',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type_select', value: 'copy_paste' } },
+        { name: 'bundle_url_select', _type: 'text', _title: 'URL to FHIR Bundle (Select)',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type_select', value: 'url' } },
+        { name: 'fhir_server_url_select', _type: 'text', _title: 'FHIR Server URL (Select)',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type_select', value: 'summary_op' } },
+        { name: 'patient_identifier_select', _type: 'text', _title: 'Patient ID (Select)',
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type_select', value: 'summary_op' } }
       ] }
   end
 
