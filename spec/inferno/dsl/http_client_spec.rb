@@ -556,6 +556,196 @@ RSpec.describe Inferno::DSL::HTTPClient do
     end
   end
 
+  describe '#put' do
+    let(:request_body) { 'REQUEST_BODY' }
+
+    context 'with a default client defined' do
+      before do
+        setup_default_client
+      end
+
+      context 'with a url argument that causes a TCP error' do
+        before do
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:put)
+            .and_raise(Faraday::ConnectionFailed, 'Failed to open TCP')
+        end
+
+        it 'raises a test failure exception' do
+          expect do
+            group.put
+          end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
+        end
+      end
+
+      context 'with a url argument that causes a non-TCP error' do
+        before do
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:put)
+            .and_raise(Faraday::ConnectionFailed, 'not a TCP error')
+        end
+
+        it 'raises the error' do
+          expect do
+            group.put
+          end.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+        end
+      end
+
+      context 'without a url argument' do
+        it "performs a HTTP PUT to the default client's base url" do
+          stubbed_request =
+            stub_request(:put, base_url)
+              .to_return(status: 200, body: response_body)
+
+          group.put
+
+          expect(stubbed_request).to have_been_made.once
+        end
+
+        it 'sends the provided body' do
+          stubbed_request =
+            stub_request(:put, base_url)
+              .with(body: request_body)
+              .to_return(status: 200, body: response_body)
+
+          group.put(body: request_body)
+
+          expect(stubbed_request).to have_been_made.once
+        end
+
+        it 'returns an Inferno::Entities::Request' do
+          stub_request(:put, base_url)
+            .to_return(status: 200, body: response_body)
+
+          result = group.put
+
+          expect(result).to be_a(Inferno::Entities::Request)
+        end
+
+        it 'adds the request to the list of requests' do
+          stub_request(:put, base_url)
+            .to_return(status: 200, body: response_body)
+
+          result = group.put
+
+          expect(group.requests).to include(result)
+          expect(group.request).to eq(result)
+        end
+      end
+
+      context 'with a url argument' do
+        it 'performs a PUT to the base_url + url' do
+          path = 'abc'
+          stubbed_request =
+            stub_request(:put, "#{base_url}/#{path}")
+              .to_return(status: 200, body: response_body)
+
+          group.put(path)
+
+          expect(stubbed_request).to have_been_made.once
+        end
+      end
+
+      context 'with custom headers' do
+        it "performs a HTTP PUT to the default client's base url" do
+          stub_put_header_request =
+            stub_request(:put, base_url)
+              .with(headers: { 'Warning' => 'Placeholder warning' })
+              .to_return(status: 200, body: '', headers: {})
+
+          group.put(headers: { 'Warning' => 'Placeholder warning' })
+          expect(stub_put_header_request).to have_been_made.once
+        end
+
+        it "perfoms a HTTP PUT that includes the default client's existing headers" do
+          stub_put_header_request =
+            stub_request(:put, base_url)
+              .with(headers: { 'ClientHeader' => 'DefaultHeader', 'CustomHeader' => 'MergedCustom' })
+              .to_return(status: 200, body: '', headers: {})
+
+          group.http_clients[:client_with_header] = client_with_header
+          group.put(client: :client_with_header, headers: { 'CustomHeader' => 'MergedCustom' })
+
+          expect(stub_put_header_request).to have_been_made.once
+        end
+      end
+
+      context 'with the client parameter' do
+        it 'uses that client' do
+          stubbed_request =
+            stub_request(:put, other_url)
+              .to_return(status: 200, body: response_body)
+
+          group.http_clients[:other_client] = other_client
+
+          group.put(client: :other_client)
+
+          expect(stubbed_request).to have_been_made.once
+        end
+
+        it 'uses that client and its headers' do
+          stub_put_header_request =
+            stub_request(:put, base_url)
+              .with(headers: { 'ClientHeader' => 'DefaultHeader' })
+              .to_return(status: 200, body: '', headers: {})
+
+          group.http_clients[:client_with_header] = client_with_header
+          group.put(client: :client_with_header)
+
+          expect(stub_put_header_request).to have_been_made.once
+        end
+      end
+    end
+
+    context 'without a default client defined' do
+      it 'makes a request to an absolute url' do
+        url = 'https://example.com/abc'
+        stubbed_request =
+          stub_request(:put, url)
+            .to_return(status: 200, body: response_body)
+
+        group.put(url)
+
+        expect(stubbed_request).to have_been_made.once
+      end
+
+      it 'raises an error if given a relative url' do
+        url = 'abc'
+
+        expect { group.put(url) }.to raise_error(/absolute url/)
+      end
+
+      context 'with a url argument that causes a TCP error' do
+        before do
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:put)
+            .and_raise(Faraday::ConnectionFailed, 'Failed to open TCP')
+        end
+
+        it 'raises a test failure exception' do
+          expect do
+            group.put 'https://example.com/abc'
+          end.to raise_error(Inferno::Exceptions::AssertionException, 'Failed to open TCP')
+        end
+      end
+
+      context 'with a url argument that causes a non-TCP error' do
+        before do
+          allow_any_instance_of(Faraday::Connection)
+            .to receive(:put)
+            .and_raise(Faraday::ConnectionFailed, 'not a TCP error')
+        end
+
+        it 'raises the error' do
+          expect do
+            group.put 'https://example.com/abc'
+          end.to raise_error(Faraday::ConnectionFailed, 'not a TCP error')
+        end
+      end
+    end
+  end
+
   describe '#stream' do
     let(:generic_block) { proc { |chunk| chunk } }
     let(:streamed) { [] }
