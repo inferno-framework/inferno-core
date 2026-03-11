@@ -55,7 +55,7 @@ module Inferno
 
         def last_test_executed(run_id)
           results = run_results(run_id)
-          results.reverse.find { |result| result['test_id'].present? }
+          results.sort_by { |r| r['updated_at'] }.reverse.find { |result| result['test_id'].present? }
         end
 
         def run_results(run_id)
