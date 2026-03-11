@@ -2,8 +2,8 @@ sessions:
   - suite_id: options
     preset_id: options
     suite_options:
-      ig_version: 2
-      other_option: 3
+      IG Version: v2
+      Another option: option 3
 
 steps:
   - status: created
