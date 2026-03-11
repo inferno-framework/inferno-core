@@ -25,6 +25,20 @@ More information about what is included in this repository can be [found here](h
 - [Ruby API documentation](https://inferno-framework.github.io/inferno-core/docs/)
 - [JSON API documentation](https://inferno-framework.github.io/inferno-core/api-docs/)
 
+## Verifying Test Kit Logic
+
+This template test kit includes examples for two tools that can be used to verify Inferno test kit logic:
+- Unit tests written in rspec: test kit code is verified in isolation from other components. Examples
+  of these can be found in the `spec` directory. Those examples and any others defined in that directory
+  will be executed by the ruby.yml workflow (`.github/workflows/ruby.yml`)
+  if this test kit is committed to a Github repository.
+- Execution scripts: test kit code is verified against previous results in a deployed Inferno
+  environment including the associated services. See [CI/CD Usage](https://inferno-framework.github.io/docs/ci-cd-usage.html)
+  in the Inferno documentation for more details on creating execution scripts. Examples of
+  these can be found in the `execution_scripts` directory. Those examples and any other defined in that directory
+  will be executed by the run_inferno_execution_scripts.yml workflow (`.github/workflows/run_inferno_execution_scripts.yml`)
+  if this test kit is committed to a Github repository.
+
 ## Example Inferno Test Kits
 
 A list of all Test Kits registered with the Inferno Team can be found on the [Test Kit Registry](https://inferno-framework.github.io/community/test-kits.html) page.
