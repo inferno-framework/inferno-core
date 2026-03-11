@@ -1,0 +1,10 @@
+session:
+  suite_id: demo
+
+rules:
+  - status: created
+    command: "bundle exec inferno session start_run '{session_id}' -r 5"
+  
+  - status: done
+    last_test: demo-wait_group-Test03
+    command: "END_SCRIPT"
