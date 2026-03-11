@@ -1,5 +1,5 @@
-session:
-  suite_id: demo
+sessions:
+  - suite_id: demo
 
 rules:
   - status: created
