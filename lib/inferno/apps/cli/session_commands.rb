@@ -36,23 +36,18 @@ module Inferno
           CancelRun.new(session_id, options).run
         end
 
-        desc 'start_run SESSION_ID', 'Initiate a test run on a session.'
+        desc 'start_run SESSION_ID RUNNABLE_ID', 'Initiate a test run on a session.'
         option :inferno_base_url,
                aliases: ['-I'],
                type: :string,
                desc: 'URL of the target Inferno service.'
-        option :runnable,
-               aliases: ['-r'],
-               type: :string,
-               desc: 'Which runnable to execute. Must be a single group or test id (can be short or internal). ' \
-                     'If not present, the whole suite will be executed.'
         option :inputs,
                aliases: ['-i'],
                type: :hash,
                desc: 'Inputs (i.e: --inputs=foo:bar goo:baz); will merge and override current session inputs ' \
                      '(from preset or previous runs)'
-        def start_run(session_id)
-          StartRun.new(session_id, options).run
+        def start_run(session_id, runnable_id)
+          StartRun.new(session_id, options.merge(runnable: runnable_id)).run
         end
 
         desc 'status SESSION_ID', 'Get the current run status of a session.'
@@ -107,9 +102,10 @@ module Inferno
                default: false,
                desc: 'Compare result_message when comparing results.'
         option :normalized_strings,
-               aliases: ['-N'],
+               aliases: ['-n'],
                type: :array,
-               desc: 'Literal strings to normalize away before comparing (URL-encoded form is also replaced).'
+               desc: 'Literal strings or regexes to normalize away before comparing ' \
+                     '(URL-encoded form of literal strings will also be normalized).'
         def compare(session_id)
           SessionCompare.new(session_id, options).run
         end

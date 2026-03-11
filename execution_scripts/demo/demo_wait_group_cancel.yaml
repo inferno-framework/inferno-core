@@ -7,5 +7,5 @@ steps:
       runnable: 5
   
   - status: done
-    last_test: 5.03
-    command: "END_SCRIPT"
+    last_completed: 5
+    action: END_SCRIPT

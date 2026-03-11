@@ -34,23 +34,23 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
     let(:steps) do
       [
-        { 'status' => 'done', 'last_test' => '', 'command' => 'END_SCRIPT' },
-        { 'status' => 'waiting', 'last_test' => 'test-1', 'command' => 'NOOP' },
-        { 'status' => 'done', 'last_test' => 'test-2', 'session' => 'session-b', 'command' => 'do_b' }
+        { 'status' => 'done', 'last_completed' => '', 'action' => 'END_SCRIPT' },
+        { 'status' => 'waiting', 'last_completed' => 'test-1', 'action' => 'NOOP' },
+        { 'status' => 'done', 'last_completed' => 'test-2', 'session' => 'session-b', 'command' => 'do_b' }
       ]
     end
     let(:config) { { 'sessions' => [{ 'suite_id' => suite_id }], 'steps' => steps } }
 
-    it 'matches by status and last_test' do
+    it 'matches by status and last_completed' do
       result = instance.send(:find_matching_step, 'done', '', 'primary')
-      expect(result['command']).to eq('END_SCRIPT')
+      expect(result['action']).to eq('END_SCRIPT')
     end
 
     it 'returns nil when no step matches the status' do
       expect(instance.send(:find_matching_step, 'running', '', 'primary')).to be_nil
     end
 
-    it 'returns nil when last_test does not match' do
+    it 'returns nil when last_completed does not match' do
       expect(instance.send(:find_matching_step, 'done', 'other-test', 'primary')).to be_nil
     end
 
@@ -65,7 +65,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
     it 'matches a step with no session filter for any session key' do
       result = instance.send(:find_matching_step, 'waiting', 'test-1', 'any-session')
-      expect(result['command']).to eq('NOOP')
+      expect(result['action']).to eq('NOOP')
     end
   end
 
@@ -155,7 +155,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     let(:config) do
       {
         'sessions' => [{ 'suite_id' => suite_id }],
-        'steps' => [{ 'status' => 'done', 'last_test' => '', 'command' => 'END_SCRIPT' }]
+        'steps' => [{ 'status' => 'done', 'last_completed' => '', 'action' => 'END_SCRIPT' }]
       }
     end
 
@@ -166,7 +166,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         .to_return(status: 200, body: [].to_json)
     end
 
-    it 'exits 0 when END_SCRIPT is matched and comparison passes' do
+    it 'exits 0 when END_SCRIPT action is matched and comparison passes' do
       instance = build_instance(config)
       allow(instance).to receive(:compare_or_save_results).and_return(0)
       stub_status_done
@@ -182,7 +182,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect { instance.run }.to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
     end
 
-    it 'exits 3 when END_SCRIPT is matched but comparison fails' do
+    it 'exits 3 when END_SCRIPT action is matched but comparison fails' do
       instance = build_instance(config)
       allow(instance).to receive(:compare_or_save_results).and_return(3)
       stub_status_done

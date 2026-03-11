@@ -7,11 +7,11 @@ steps:
       runnable: 5
   
   - status: waiting
-    last_test: 5.02
+    last_completed: 5.02
     command: "curl -o /dev/null -s 'http://inferno.healthit.gov/'"
     action_description: demonstrate loop detection and ending
   
   - status: done
-    last_test: 5.03
-    command: "END_SCRIPT"
+    last_completed: 5
+    action: END_SCRIPT
 

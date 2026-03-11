@@ -10,7 +10,8 @@ normalized_strings:
 steps:
   - status: created
     start_run:
+      runnable: suite
 
   - status: done
-    last_test: 1.2.04 # auth_info-auth_info_demo-Group02-backend_services_auth
-    command: "END_SCRIPT"
+    last_completed: suite
+    action: END_SCRIPT

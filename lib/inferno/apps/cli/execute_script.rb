@@ -32,31 +32,38 @@ module Inferno
     #     - suite_id: my_suite
     #       name: my_name                          # optional; used as key in multi-session
     #       preset_id: my-preset                   # optional
-    #       suite_options:                         # optional
-    #         option_key: option_value
-    #       expected_results_file: expected.json   # optional; relative to yaml file
+    #       suite_options:                         # optional; option_key and option_value can be the
+    #         option_key: option_value             #           internal values or the displayed titles
+    #       expected_results_file: expected.json   # optional; relative to yaml file, if not provided
+    #                                              #           defaults to <name of yaml file>_expected.json
     #
     #   steps:
-    #     - status: created|done|waiting
-    #       last_test: ""                          # optional; full ID or short ID (e.g. "1.01")
-    #       session: my_name                       # optional; multi-session routing
-    #       command: "bundle exec ..."             # arbitrary shell command
+    #     - status: created|done|waiting           # required; other status values cannot be matched on
+    #       last_completed: ""                     # optional; required unless the status is created
+    #                                              #           can be a full ID, short ID (e.g. "1.01"), or 'suite'
+    #       session: my_name                       # optional; required when multiple sessions to indicate which session
+    #                                              #           can match this step
+    #       action: end_script|noop|wait           # optional; built-in action
+    #                                              #           (mutually exclusive with command/start_run)
+    #       # OR
+    #       command: "bundle exec ..."             # optional; arbitrary shell command
     #       # OR
     #       start_run:
     #         session: "{session_id}"              # optional; defaults to current session
-    #         runnable: "1.01"                     # optional
-    #         inputs:                              # optional
-    #           input_name: "value"
+    #         runnable: "1.01"                     # required; can be a short id from the UI,
+    #                                              #           an internal long id, or 'suite'
+    #         inputs:                              # optional; the key must be the internal name
+    #           input_name: "value"                #           for the input
     #       timeout: 300                           # optional; seconds to wait for next match
     #       next_poll_session: other_name          # optional; switch polling target after command
-    #       state_description: "..."              # optional; logged when step is matched
-    #       action_description: "..."             # optional; logged when step is matched
+    #       state_description: "..."               # optional; logged when step is matched
+    #       action_description: "..."              # optional; logged when step is matched
     #
-    # Special command values:
-    #   "END_SCRIPT"  — terminate script successfully
-    #   "NOOP"        — no-op; keep polling with (optionally updated) timeout
-    #   "WAIT"        — keep polling without breaking out of the current poll loop
-    #                   (unlike NOOP, does not restart the loop with a new timeout)
+    # Built-in action values:
+    #   END_SCRIPT  — terminate script successfully
+    #   NOOP        — no-op; keep polling with (optionally updated) timeout or session
+    #   WAIT        — keep polling without breaking out of the current poll loop
+    #                 (unlike noop, does not restart the loop with a new timeout or session)
     #
     # Template tokens in command strings and start_run input values:
     #   {session_id}              — current session's Inferno session ID
@@ -174,6 +181,7 @@ module Inferno
 
       def extract_short_ids_from_session_details(session_details)
         results = {}
+        results['suite'] = session_details['test_suite_id']
         suite_details = session_details['test_suite']
         suite_details['test_groups']&.each do |group|
           extract_short_ids(group, results)
@@ -197,33 +205,36 @@ module Inferno
       end
 
       # ---------------------------------------------------------------------------
-      # Extract Steps - resolve short ids in the last_test entries
+      # Extract Steps - resolve short ids in the last_completed entries
       # ---------------------------------------------------------------------------
 
       def scripted_steps
         script_config['steps']&.map do |step|
-          last_test = step['last_test'].to_s
-          next step unless last_test.match?(SHORT_ID_PATTERN)
+          last_completed = step['last_completed'].to_s
+          next step unless last_completed.match?(SHORT_ID_PATTERN) || last_completed == 'suite'
 
-          resolved_test_id = resolve_short_id(last_test, step['session'])
-          warn "Resolved short ID \"#{last_test}\" -> \"#{resolved_test_id}\""
-          step.merge('last_test' => resolved_test_id)
+          resolved_test_id = resolve_short_id(last_completed, step['session'])
+          warn "Resolved short ID \"#{last_completed}\" -> \"#{resolved_test_id}\""
+          step.merge('last_completed' => resolved_test_id)
         end
       end
 
       def resolve_short_id(short_id, session_name)
         if multi_session_script? && session_name.blank?
           puts JSON.pretty_generate(
-            { errors: "Short ID '#{short_id}' used in step 'last_test' without a 'session' in a multi-session script." }
+            {
+              errors: "Short ID '#{short_id}' used in step 'last_completed' " \
+                      "without a 'session' in a multi-session script."
+            }
           )
           exit(3)
         end
 
         target_session = session_for_name(session_name)
-        test_id = target_session&.short_id_map&.[](short_id)
+        test_id = target_session&.short_id_map&.dig(short_id)
         unless test_id
           puts JSON.pretty_generate(
-            { errors: "Short ID '#{short_id}' not found in session '#{session.key}'" }
+            { errors: "Short ID '#{short_id}' not found in session '#{target_session.key}'" }
           )
           exit(3)
         end
@@ -365,12 +376,12 @@ module Inferno
 
           return verify_step(matched_step, status, session, timeout)
         elsif run_status == 'waiting'
-          last_test = format_last_test(status['last_test_executed'].to_s, session.key)
-          warn "UNHANDLED WAIT - Canceling: session=#{session.key} last_test=#{last_test}"
+          last_completed = format_last_completed(last_completed_from_status(status), session.key)
+          warn "UNHANDLED WAIT - Canceling: session=#{session.key} last_completed=#{last_completed}"
           attempt_cancel(session.session_id, status)
         else
-          last_test = format_last_test(status['last_test_executed'].to_s, session.key)
-          warn "UNMATCHED: session=#{session.key} status=#{run_status} last_test=#{last_test}"
+          last_completed = format_last_completed(last_completed_from_status(status), session.key)
+          warn "UNMATCHED: session=#{session.key} status=#{run_status} last_completed=#{last_completed}"
           return { command: nil, timeout: timeout, next_poll_session: nil }
         end
 
@@ -380,16 +391,17 @@ module Inferno
       # Checks for a repeated steps that aren't NOOPs; returns nil to keep polling or the step to act on.
       def verify_step(matched_step, status, session, timeout)
         run_status = status['status']
-        step_sig = [run_status, status['last_test_executed'].to_s]
+        last_completed = last_completed_from_status(status)
+        step_sig = [run_status, last_completed]
 
         if step_sig == execution_status.last_step_signatures[session.key] && matched_step[:command] != 'NOOP'
           if run_status == 'waiting'
-            warn "Loop detected - Canceling: session=#{session.key} last_test=#{status['last_test_executed']}"
+            warn "Loop detected - Canceling: session=#{session.key} last_completed=#{last_completed}"
             attempt_cancel(session.session_id, status)
             return nil
           else
             warn "Loop detected: session=#{session.key} status=#{run_status} " \
-                 "last_test=#{status['last_test_executed']}"
+                 "last_completed=#{last_completed}"
             return { command: nil, timeout: timeout, next_poll_session: nil }
           end
         end
@@ -401,8 +413,9 @@ module Inferno
       def log_poll_if_needed(status, session_key)
         return unless Time.now - execution_status.last_log_time >= 30
 
+        last_completed = last_completed_from_status(status)
         poll_status_last_test =
-          status['last_test_executed'].present? ? " - last test: #{status['last_test_executed']}" : ''
+          last_completed.present? ? " - last test: #{format_last_completed(last_completed, session_key)}" : ''
         warn "  [#{session_key}] #{status['status']}#{poll_status_last_test}"
         execution_status.last_log_time = Time.now
       end
@@ -421,12 +434,12 @@ module Inferno
 
       def match_step(status, session_key)
         run_status = status['status']
-        last_test  = status['last_test_executed'].to_s
+        last_completed = last_completed_from_status(status)
 
-        matched = find_matching_step(run_status, last_test, session_key)
+        matched = find_matching_step(run_status, last_completed, session_key)
         return nil unless matched
 
-        log_matched_rule(matched, last_test, session_key)
+        log_matched_rule(matched, last_completed, session_key)
         step_details = resolve_command(matched, status, session_key)
         step_details[:timeout] = matched['timeout'].to_i if matched['timeout'].present?
         step_details[:next_poll_session] = matched['next_poll_session'] if matched['next_poll_session'].present?
@@ -434,10 +447,20 @@ module Inferno
         step_details
       end
 
-      def log_matched_rule(matched, last_test, session_key)
+      # when status['status'] is done, return the executed runnable that was completed
+      # otherwise, return last_test_executed
+      def last_completed_from_status(status)
+        if status['status'] == 'done'
+          (status['test_id'] || status['test_group_id'] || status['test_suite_id']).to_s
+        else
+          status['last_test_executed'].to_s
+        end
+      end
+
+      def log_matched_rule(matched, last_completed, session_key)
         warn 'Matched rule:'
         warn "  State: #{matched['state_description']}" if matched['state_description'].present?
-        warn "  status=#{matched['status']} last_test=#{format_last_test(last_test, session_key)}"
+        warn "  status=#{matched['status']} last_completed=#{format_last_completed(last_completed, session_key)}"
         warn "  Command: #{step_command_description(matched)}"
         matched_rule_optional_lines(matched)
       end
@@ -448,17 +471,17 @@ module Inferno
         warn "  Timeout: #{matched['timeout']}" if matched['timeout'].present?
       end
 
-      def format_last_test(last_test, session_key)
-        return '(none)' if last_test.empty?
+      def format_last_completed(last_completed, session_key)
+        return '(none)' if last_completed.empty?
 
-        short_id = session_for_name(session_key)&.short_id_map&.key(last_test)
-        short_id ? "#{last_test} (#{short_id})" : last_test
+        short_id = session_for_name(session_key)&.short_id_map&.key(last_completed)
+        short_id ? "#{last_completed} (#{short_id})" : last_completed
       end
 
-      def find_matching_step(run_status, last_test, session_key)
+      def find_matching_step(run_status, last_completed, session_key)
         steps.find do |step|
           step['status'] == run_status &&
-            step['last_test'].to_s == last_test &&
+            step['last_completed'].to_s == last_completed &&
             (step['session'].blank? || step['session'] == session_key)
         end
       end
@@ -471,6 +494,8 @@ module Inferno
       def step_command_description(step)
         if step.key?('start_run')
           start_run_description(step['start_run'] || {})
+        elsif step.key?('action')
+          "action: #{step['action']}"
         else
           step['command'].to_s
         end
@@ -485,8 +510,8 @@ module Inferno
           else
             '{session_id}'
           end
-        parts = ["bundle exec inferno session start_run '#{session_token}'"]
-        parts << "-r #{start_run_details['runnable']}" if start_run_details['runnable'].present?
+        runnable_token = start_run_details['runnable'].present? ? " '#{start_run_details['runnable']}'" : ''
+        parts = ["bundle exec inferno session start_run '#{session_token}'#{runnable_token}"]
         if start_run_details['inputs'].present?
           parts << "-i #{start_run_details['inputs'].map do |k, v|
             "#{k}:#{v}"
@@ -499,6 +524,8 @@ module Inferno
         if step.key?('start_run')
           start_run = apply_templates_to_start_run(step['start_run'] || {}, status, session_key)
           { command: 'START_RUN', start_run: }
+        elsif step.key?('action')
+          { command: step['action'].upcase }
         else
           cmd = step['command'].to_s
           { command: cmd.include?('{') ? apply_templates(cmd, status, session_key) : cmd }

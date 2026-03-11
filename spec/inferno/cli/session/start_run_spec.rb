@@ -3,7 +3,7 @@ require_relative '../../../../lib/inferno/apps/cli/session/start_run'
 RSpec.describe Inferno::CLI::Session::StartRun do
   let(:session_id) { 'test-session-id' }
   let(:inferno_host) { 'https://inferno.healthit.gov/suites' }
-  let(:options) { { inferno_base_url: inferno_host } }
+  let(:options) { { inferno_base_url: inferno_host, runnable: 'suite' } }
   let(:session_details_url) { "#{inferno_host}/api/test_sessions/#{session_id}" }
   let(:session_data_url) { "#{inferno_host}/api/test_sessions/#{session_id}/session_data" }
   let(:test_runs_url) { "#{inferno_host}/api/test_runs" }
@@ -57,7 +57,7 @@ RSpec.describe Inferno::CLI::Session::StartRun do
   end
 
   describe '#run' do
-    it 'runs the whole suite when no runnable option is given, outputs the run data, and exits 0' do
+    it 'runs the whole suite when runnable is "suite", outputs the run data, and exits 0' do
       stub_session_details
       stub_session_data
       run_request = stub_request(:post, test_runs_url)
@@ -65,11 +65,21 @@ RSpec.describe Inferno::CLI::Session::StartRun do
         .to_return(status: 200, body: run_response.to_json)
 
       expect do
-        expect { described_class.new(session_id, options).run }
+        expect { described_class.new(session_id, options.merge(runnable: 'suite')).run }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
       end.to output("#{JSON.pretty_generate(run_response)}\n").to_stdout
 
       expect(run_request).to have_been_made.once
+    end
+
+    it 'exits 3 and prints an error when no runnable is given' do
+      stub_session_details
+
+      expected_error = { errors: 'No runnable specified. Use a group/test id or "suite" to run the whole suite.' }
+      expect do
+        expect { described_class.new(session_id, { inferno_base_url: inferno_host }).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output("#{expected_error.to_json}\n").to_stdout
     end
 
     it 'runs a group when the runnable option is a suffix of a group id' do

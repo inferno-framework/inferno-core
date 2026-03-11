@@ -3,8 +3,9 @@ sessions:
 
 steps:
   - status: created
-    start_run: 
-      inputs: 
+    start_run:
+      runnable: suite
+      inputs:
         suite_input: 1
         outer_group_input: 2
         inner_group_input: 3
@@ -14,5 +15,5 @@ steps:
         external_outer_group_input: 7
 
   - status: done
-    last_test: 6.1.01 # infra_test-external_outer_group-external_inner_group-external_test1
-    command: "END_SCRIPT"
+    last_completed: suite # infra_test-external_outer_group-external_inner_group-external_test1
+    action: END_SCRIPT

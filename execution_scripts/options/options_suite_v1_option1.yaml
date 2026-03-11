@@ -9,10 +9,11 @@ steps:
   - status: created
     state_description: created
     action_description: run the suite
-    start_run: 
-      inputs: 
+    start_run:
+      runnable: suite
+      inputs:
         v1_input: unused
 
   - status: done
-    last_test: 2.01 # options-v1_group-v1_test
-    command: "END_SCRIPT"
+    last_completed: suite # options-v1_group-v1_test
+    action: END_SCRIPT

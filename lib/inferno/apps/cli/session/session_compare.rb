@@ -154,8 +154,8 @@ module Inferno
           def parse_normalize_entry(entry)
             if entry.is_a?(Hash)
               replacement = entry.fetch('replacement', '<NORMALIZED>')
-              Array(entry['patterns'] || entry['pattern']).map do |p|
-                [parse_pattern_string(p.to_s), replacement]
+              Array(entry['patterns'] || entry['pattern']).map do |pattern|
+                [parse_pattern_string(pattern.to_s), replacement]
               end
             else
               [[parse_pattern_string(entry.to_s), '<NORMALIZED>']]
@@ -163,13 +163,13 @@ module Inferno
           end
 
           def parse_pattern_string(str)
-            return str unless (m = str.match(%r{\A/(.+)/([imx]*)\z}m))
+            return str unless (parsed_regex = str.match(%r{\A/(.+)/([imx]*)\z}m))
 
             flags = 0
-            flags |= Regexp::IGNORECASE if m[2].include?('i')
-            flags |= Regexp::MULTILINE  if m[2].include?('m')
-            flags |= Regexp::EXTENDED   if m[2].include?('x')
-            Regexp.new(m[1], flags)
+            flags |= Regexp::IGNORECASE if parsed_regex[2].include?('i')
+            flags |= Regexp::MULTILINE  if parsed_regex[2].include?('m')
+            flags |= Regexp::EXTENDED   if parsed_regex[2].include?('x')
+            Regexp.new(parsed_regex[1], flags)
           end
 
           def normalize_string(str)

@@ -74,9 +74,16 @@ module Inferno
           @runnable_inputs ||= calculate_inputs
         end
 
-        # runnable_to_find can be a complete internal id, an internal id suffix, or short id displayed in the UI
+        # runnable_to_find can be a complete internal id, an internal id suffix, or short id displayed in the UI.
+        # Use 'suite' to run the whole suite.
         def find_target_runnable
-          target_runnable = options[:runnable].present? ? options[:runnable] : session_details['test_suite_id']
+          if options[:runnable].blank?
+            error_object = { errors: 'No runnable specified. Use a group/test id or "suite" to run the whole suite.' }
+            puts error_object.to_json
+            exit(3)
+          end
+
+          target_runnable = options[:runnable] == 'suite' ? session_details['test_suite_id'] : options[:runnable]
           target_runnable = target_runnable.to_s unless target_runnable.is_a?(String)
 
           candidates = []

@@ -7,10 +7,10 @@ steps:
       runnable: 5.01
 
   - status: done
-    last_test: 5.01
+    last_completed: 5.01
     start_run: 
       runnable: 5.03
 
   - status: done
-    last_test: 5.03
-    command: "END_SCRIPT"
+    last_completed: 5.03
+    action: END_SCRIPT
