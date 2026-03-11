@@ -365,10 +365,12 @@ module Inferno
 
           return verify_step(matched_step, status, session, timeout)
         elsif run_status == 'waiting'
-          warn "UNHANDLED WAIT - Canceling: session=#{session.key} last_test=#{status['last_test_executed']}"
+          last_test = format_last_test(status['last_test_executed'].to_s, session.key)
+          warn "UNHANDLED WAIT - Canceling: session=#{session.key} last_test=#{last_test}"
           attempt_cancel(session.session_id, status)
         else
-          warn "UNMATCHED: session=#{session.key} status=#{run_status} last_test=#{status['last_test_executed']}"
+          last_test = format_last_test(status['last_test_executed'].to_s, session.key)
+          warn "UNMATCHED: session=#{session.key} status=#{run_status} last_test=#{last_test}"
           return { command: nil, timeout: timeout, next_poll_session: nil }
         end
 
@@ -424,7 +426,7 @@ module Inferno
         matched = find_matching_step(run_status, last_test, session_key)
         return nil unless matched
 
-        log_matched_rule(matched, last_test)
+        log_matched_rule(matched, last_test, session_key)
         step_details = resolve_command(matched, status, session_key)
         step_details[:timeout] = matched['timeout'].to_i if matched['timeout'].present?
         step_details[:next_poll_session] = matched['next_poll_session'] if matched['next_poll_session'].present?
@@ -432,15 +434,25 @@ module Inferno
         step_details
       end
 
-      def log_matched_rule(matched, last_test)
-        last_test_display = last_test.empty? ? '(none)' : last_test
+      def log_matched_rule(matched, last_test, session_key)
         warn 'Matched rule:'
         warn "  State: #{matched['state_description']}" if matched['state_description'].present?
-        warn "  status=#{matched['status']} last_test=#{last_test_display}"
+        warn "  status=#{matched['status']} last_test=#{format_last_test(last_test, session_key)}"
         warn "  Command: #{step_command_description(matched)}"
+        matched_rule_optional_lines(matched)
+      end
+
+      def matched_rule_optional_lines(matched)
         warn "  Action: #{matched['action_description']}" if matched['action_description'].present?
         warn "  Next poll session: #{matched['next_poll_session']}" if matched['next_poll_session'].present?
         warn "  Timeout: #{matched['timeout']}" if matched['timeout'].present?
+      end
+
+      def format_last_test(last_test, session_key)
+        return '(none)' if last_test.empty?
+
+        short_id = session_for_name(session_key)&.short_id_map&.key(last_test)
+        short_id ? "#{last_test} (#{short_id})" : last_test
       end
 
       def find_matching_step(run_status, last_test, session_key)
@@ -626,7 +638,7 @@ module Inferno
         if File.exist?(session.expected_results_file)
           cmp = Session::SessionCompare.new(session.session_id, compare_options(session))
           matched = cmp.results_match?
-          warn "Compare results (#{session.key}): matched=#{matched}"
+          warn "Compare results (#{session.key} / #{session.session_id}): matched=#{matched}"
           unless matched
             cmp.save_actual_results_to_file
             cmp.save_comparison_csv_to_file
