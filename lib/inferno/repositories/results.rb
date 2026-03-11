@@ -176,10 +176,9 @@ module Inferno
               LIMIT 1
             )
           SQL
-          order = 'ORDER BY a.updated_at ASC'
-          return "#{query} #{runnables_filter} #{subquery} #{order}" if with_runnables_filter
+          return "#{query} #{runnables_filter} #{subquery}" if with_runnables_filter
 
-          "#{query} #{subquery} #{order}"
+          "#{query} #{subquery}"
         end
 
         one_to_many :messages, class: 'Inferno::Repositories::Messages::Model', key: :result_id
