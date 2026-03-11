@@ -165,19 +165,26 @@ module Inferno
             true
           end
 
+          def message_comparisons
+            @message_comparisons ||= build_message_comparisons
+          end
+
+          def build_message_comparisons
+            expected_msgs = Array(expected_result&.dig('messages'))
+            actual_msgs = Array(actual_result&.dig('messages'))
+            max_length = [expected_msgs.size, actual_msgs.size].max
+            (0...max_length).map { |i| messages_match?(expected_msgs[i], actual_msgs[i]) }
+          end
+
+          def messages_match?(expected_message, actual_message)
+            expected_message.present? && actual_message.present? && same_message?(expected_message, actual_message)
+          end
+
           def same_messages?
             return false unless expected_result['messages']&.size == actual_result['messages']&.size
             return true unless expected_result['messages'].present?
 
-            (0...expected_result['messages'].size).each do |message_index|
-              expected_message = expected_result['messages'][message_index]
-              actual_message = actual_result['messages'][message_index]
-              next if same_message?(expected_message, actual_message)
-
-              return false
-            end
-
-            true
+            message_comparisons.all?
           end
 
           def same_message?(expected_message, actual_message)
@@ -254,13 +261,21 @@ module Inferno
           end
 
           def format_messages_for_csv(results)
-            return '' unless results['messages'].present?
+            return '' unless results&.dig('messages').present?
 
-            combined_messages = results['messages'].map do |message|
-              "(#{message['type']}) #{message['message']}"
-            end.join("\n- ")
+            results['messages'].each_with_index.map do |message, index|
+              message_text_for_csv(message, index)
+            end.join("\n")
+          end
 
-            "- #{combined_messages}"
+          def message_text_for_csv(message, index)
+            prefix = message_comparisons[index] ? '- ' : '! '
+            text = message['message'].to_s
+              .gsub("\r\n", '\n')
+              .gsub("\n", '\n')
+              .gsub("\r", '\r')
+              .gsub("\t", '\t')
+            "#{prefix}(#{message['type']}) \"#{text}\""
           end
         end
       end
