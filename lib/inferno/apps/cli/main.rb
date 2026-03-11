@@ -71,7 +71,19 @@ module Inferno
       desc 'requirements SUBCOMMAND ...ARGS', 'Perform requirements operations'
       subcommand 'requirements', Requirements
 
-      desc 'session SUBCOMMAND ...ARGS', 'Perform requirements operations'
+      desc 'execute_script YAML_FILE',
+           'Run a session orchestration script defined by a YAML config file.'
+      option :inferno_base_url,
+             aliases: ['-I'],
+             type: :string,
+             desc: 'URL of the target Inferno service (sets INFERNO_URL for the script).'
+      def execute_script(yaml_file)
+        ENV['INFERNO_URL'] = options[:inferno_base_url] if options[:inferno_base_url].present?
+        exec('bash', File.expand_path('../../../../execution_scripts/session_runner.sh', __dir__),
+             yaml_file)
+      end
+
+      desc 'session SUBCOMMAND ...ARGS', 'Perform session operations'
       subcommand 'session', Session::SessionCommands
 
       desc 'start', 'Start Inferno'

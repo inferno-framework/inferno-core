@@ -62,7 +62,7 @@ jobs:
           echo "Inferno is ready"
 
       - name: Run execution script
-        run: bash execution_scripts/session_runner.sh "${{ matrix.config }}"
+        run: bundle exec inferno execute_script "${{ matrix.config }}"
 
       - name: Compute debug artifact paths
         if: failure()

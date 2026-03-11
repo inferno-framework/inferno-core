@@ -2,9 +2,12 @@
 
 # Inferno session CLI orchestration library (requires yq >= 4, jq).
 #
-# Can be run directly with a YAML config file:
+# Preferred invocation (always uses the gem's copy of this script):
+#   bundle exec inferno execute_script my_suite.yaml
+#
+# Can also be run directly or sourced as a library:
 #   bash session_runner.sh my_suite.yaml
-# Or sourced as a library; call run_sessions_from_yaml (auto-detects single vs multi).
+#   source session_runner.sh; run_sessions_from_yaml my_suite.yaml
 #
 # YAML config format:
 #   sessions:                                  # list; first entry used for single-session runs
