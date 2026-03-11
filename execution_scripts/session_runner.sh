@@ -53,7 +53,7 @@
 #   created (no rule matched)        → warn, run comparison, exit non-zero
 
 POLL_INTERVAL="${POLL_INTERVAL:-5}"              # seconds between status checks
-DEFAULT_POLL_TIMEOUT="${DEFAULT_POLL_TIMEOUT:-600}"  # default timeout for poll_until_action
+DEFAULT_POLL_TIMEOUT="${DEFAULT_POLL_TIMEOUT:-30}"  # default timeout for poll_until_action
 # 'session compare' flags – all enabled by default; set to empty to disable:
 #   COMPARE_NORMALIZE        – -n: normalize UUIDs and base64 values before comparing (default: on)
 #   COMPARE_MESSAGES         – -m: compare messages array (default: on)
