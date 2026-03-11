@@ -36,7 +36,8 @@ module Inferno
         end
 
         def last_test_run
-          response = connection.get("api/test_sessions/#{session_id}/last_test_run", nil, content_type: 'application/json')
+          response = connection.get("api/test_sessions/#{session_id}/last_test_run", nil,
+                                    content_type: 'application/json')
           handle_web_api_error(response, :last_session_run) if response.status != 200
           return JSON.parse(response.body) if response.body.present?
 
