@@ -6,5 +6,5 @@ steps:
     start_run:
 
   - status: done
-    last_test: custom_result_suite-passing_custom_result_group_with_nested_groups-Group03-Test01
+    last_test: 3.3.01 # custom_result_suite-passing_custom_result_group_with_nested_groups-Group03-Test01
     command: "END_SCRIPT"

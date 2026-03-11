@@ -4,8 +4,8 @@ sessions:
 steps:
   - status: created
     start_run: 
-      runnable: "5"
+      runnable: 5
   
   - status: done
-    last_test: demo-wait_group-Test03
+    last_test: 5.03
     command: "END_SCRIPT"

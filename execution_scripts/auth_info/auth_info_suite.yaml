@@ -6,5 +6,5 @@ steps:
     start_run:
 
   - status: done
-    last_test: auth_info-auth_info_demo-Group02-backend_services_auth
+    last_test: 1.2.04 # auth_info-auth_info_demo-Group02-backend_services_auth
     command: "END_SCRIPT"

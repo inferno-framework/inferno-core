@@ -12,5 +12,5 @@ steps:
         v1_input: unused
 
   - status: done
-    last_test: options-v1_group-v1_test
+    last_test: 2.01 # options-v1_group-v1_test
     command: "END_SCRIPT"

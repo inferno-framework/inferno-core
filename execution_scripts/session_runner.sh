@@ -18,16 +18,17 @@
 #   steps:                                     # ordered; first match wins
 #     - status: created                        # created, done, or waiting;
 #                                              # running/queued/cancelling handled automatically
-#       last_test: ""                          # optional; absent treated as ""; must match exactly
+#       last_test: ""                          # optional; absent treated as ""; full ID or short ID
+#                                              # short IDs (e.g. "1.01") resolved at startup; fail if ambiguous
 #       session: my_name                       # optional; in multi-session, scopes step to named session
 #       command: "bundle exec inferno session start_run '{session_id}' -r 5"
 #                                              # 'command' OR 'start_run' is required;
 #                                              # eval used to execute as the next step
 #       start_run:                             # YAML alternative to 'command' for start_run calls
-#         session: "{session_id}"             # optional; default: {session_id}; supports tokens
-#         runnable: "1.01"                    # optional; maps to -r flag
-#         inputs:                             # optional; key/value map for -i flag
-#           input_name: "value"              # template tokens (e.g. {wait_outputs.key}) supported
+#         session: "{session_id}"              # optional; default: {session_id}; supports tokens
+#         runnable: "1.01"                     # optional; maps to -r flag
+#         inputs:                              # optional; key/value map for -i flag
+#           input_name: "value"                # template tokens (e.g. {wait_outputs.key}) supported
 #       timeout: 300                           # optional; seconds before execution stops waiting
 #       next_poll_session: other_name          # optional; switch polling to named session after command
 #       state_description: "..."               # optional; logged when step is matched
@@ -205,6 +206,86 @@ build_start_run_command() {
   printf '%s' "$cmd"
 }
 
+# Extract a {short_id: full_id} map from a full session JSON response
+# (as returned by 'bundle exec inferno session create').
+# Uses jq recursive descent over the entire document.
+# Prints JSON to stdout.
+#
+# Usage: extract_short_ids_from_json SESSION_JSON
+extract_short_ids_from_json() {
+  printf '%s' "$1" | jq '[.. | objects
+    | select(has("short_id") and has("id") and (.short_id != null) and (.id != null))
+    | {(.short_id): .id}] | add // {}'
+}
+
+# Resolve short-form last_test IDs (^[0-9][0-9.]*$) in steps to full IDs.
+# For steps with a 'session:' key, only that session's short_id_map is used.
+# For steps without 'session:', fails if the short ID appears in multiple sessions.
+# Short ID maps are read from the 'short_id_map' field in each SESSIONS_JSON entry.
+# Prints modified YAML JSON to stdout; writes informational messages to stderr.
+#
+# Usage: resolve_step_last_tests YAML_JSON SESSIONS_JSON
+resolve_step_last_tests() {
+  local yaml_json="$1"
+  local sessions_json="$2"
+
+  # Build per-session short_id map from sessions_json entries
+  local session_maps="{}"
+  local entry
+  while IFS= read -r entry; do
+    local key short_id_map
+    key=$(printf '%s' "$entry" | jq -r '.key')
+    short_id_map=$(printf '%s' "$entry" | jq '.short_id_map // {}')
+    session_maps=$(printf '%s' "$session_maps" | \
+      jq --arg key "$key" --argjson map "$short_id_map" '. + {($key): $map}')
+  done < <(printf '%s' "$sessions_json" | jq -c '.[]')
+
+  local step_count i
+  step_count=$(printf '%s' "$yaml_json" | jq '.steps | length')
+  for (( i=0; i<step_count; i++ )); do
+    local last_test
+    last_test=$(printf '%s' "$yaml_json" | jq -r ".steps[$i].last_test // \"\"")
+    [[ ! "$last_test" =~ ^[0-9][0-9.]*$ ]] && continue
+
+    local step_session resolved_id
+    step_session=$(printf '%s' "$yaml_json" | jq -r ".steps[$i].session // \"\"")
+
+    if [[ -n "$step_session" ]]; then
+      resolved_id=$(printf '%s' "$session_maps" | \
+        jq -r --arg key "$step_session" --arg sid "$last_test" '.[$key][$sid] // ""')
+      if [[ -z "$resolved_id" ]]; then
+        printf 'resolve_step_last_tests: short ID "%s" not found in session "%s"\n' \
+          "$last_test" "$step_session" >&2
+        return 1
+      fi
+    else
+      local matches=()
+      while IFS= read -r session_key; do
+        local candidate
+        candidate=$(printf '%s' "$session_maps" | \
+          jq -r --arg key "$session_key" --arg sid "$last_test" '.[$key][$sid] // ""')
+        [[ -n "$candidate" ]] && matches+=("$candidate")
+      done < <(printf '%s' "$session_maps" | jq -r 'keys[]')
+
+      if (( ${#matches[@]} == 0 )); then
+        printf 'resolve_step_last_tests: short ID "%s" not found in any session\n' "$last_test" >&2
+        return 1
+      elif (( ${#matches[@]} > 1 )); then
+        printf 'resolve_step_last_tests: short ID "%s" is ambiguous across multiple sessions; add a "session:" key to the step\n' \
+          "$last_test" >&2
+        return 1
+      fi
+      resolved_id="${matches[0]}"
+    fi
+
+    printf 'Resolved short ID "%s" -> "%s"\n' "$last_test" "$resolved_id" >&2
+    yaml_json=$(printf '%s' "$yaml_json" | \
+      jq --argjson i "$i" --arg resolved "$resolved_id" '.steps[$i].last_test = $resolved')
+  done
+
+  printf '%s' "$yaml_json"
+}
+
 # Default implementation – reads steps from a YAML config file via yq + jq.
 # Override by defining next_action_from_status after sourcing this file.
 # Usage: next_action_from_status STATUS_JSON [SESSION_NAME [ALL_SESSIONS_JSON]]
@@ -212,11 +293,19 @@ next_action_from_status() {
   local status_json="$1"
   local session_name="${2:-}"
   local all_sessions_json="${3:-}"
-  local config_file="${ACTIONS_FILE:-$(dirname "$0")/$(basename "$0" .sh).yaml}"
 
-  if [[ ! -f "$config_file" ]]; then
-    printf 'next_action_from_status: config file not found: %s\n' "$config_file" >&2
-    return 1
+  # Prefer resolved JSON (with short IDs already substituted) if available;
+  # otherwise fall back to reading and parsing the YAML config file.
+  local config_data
+  if [[ -n "${ACTIONS_JSON:-}" ]]; then
+    config_data="$ACTIONS_JSON"
+  else
+    local config_file="${ACTIONS_FILE:-$(dirname "$0")/$(basename "$0" .sh).yaml}"
+    if [[ ! -f "$config_file" ]]; then
+      printf 'next_action_from_status: config file not found: %s\n' "$config_file" >&2
+      return 1
+    fi
+    config_data=$(yq -o=json "$config_file")
   fi
 
   local status session_id last_test
@@ -225,7 +314,7 @@ next_action_from_status() {
   last_test=$(printf '%s' "$status_json" | jq -r '.last_test_executed // ""')
 
   local rule
-  rule=$(yq -o=json "$config_file" | jq \
+  rule=$(printf '%s' "$config_data" | jq \
     --arg status "$status" \
     --arg last_test "$last_test" \
     --arg session_name "$session_name" \
@@ -509,7 +598,7 @@ run_sessions() {
 }
 
 # Create an Inferno session from a single YAML sessions[] entry.
-# Prints a JSON object {"key":...,"id":...,"expected_results_file":...} to stdout.
+# Prints a JSON object {"key":...,"id":...,"expected_results_file":...,"short_id_map":{...}} to stdout.
 # Set INFERNO_URL to pass -I to the create call.
 #
 # Usage: create_session_from_yaml_config SESSION_CONFIG YAML_FILE SESSION_COUNT
@@ -541,8 +630,26 @@ create_session_from_yaml_config() {
     jq -r '.suite_options // {} | to_entries[] | "\(.key):\(.value)"')
   [[ ${#opts_array[@]} -gt 0 ]] && create_args+=(-o "${opts_array[@]}")
 
+  # Call the create CLI directly to capture the full session JSON (which includes
+  # the test_suite tree with short_id fields used later by resolve_step_last_tests).
+  local create_cmd=(bundle exec inferno session create "${create_args[@]}")
+  [[ -n "$INFERNO_URL" ]] && create_cmd+=(-I "$INFERNO_URL")
+
+  printf "Creating '%s' session...\n" "$suite_id" >&2
+  local full_session_json
+  if ! full_session_json=$("${create_cmd[@]}"); then
+    printf 'create_session_from_yaml_config: session create failed for suite %s:\n' "$suite_id" >&2
+    printf '%s\n' "$full_session_json" >&2
+    return 1
+  fi
   local session_id
-  session_id=$(create_session "${create_args[@]}") || return 1
+  session_id=$(printf '%s' "$full_session_json" | jq -r '.id')
+  if [[ -z "$session_id" || "$session_id" == "null" ]]; then
+    printf 'create_session_from_yaml_config: session create returned no id (suite %s):\n' "$suite_id" >&2
+    printf '%s\n' "$full_session_json" >&2
+    return 1
+  fi
+  printf 'Session created: %s\n' "$session_id" >&2
 
   # Expected results file; relative paths resolved relative to the yaml file
   local expected_results_file
@@ -556,8 +663,11 @@ create_session_from_yaml_config() {
     expected_results_file="$(dirname "$yaml_file")/$(basename "$yaml_file" .yaml)_${session_key}_expected.json"
   fi
 
+  local short_id_map
+  short_id_map=$(extract_short_ids_from_json "$full_session_json")
   jq -n --arg key "$session_key" --arg id "$session_id" --arg ef "$expected_results_file" \
-    '{"key": $key, "id": $id, "expected_results_file": $ef}'
+    --argjson sim "$short_id_map" \
+    '{"key": $key, "id": $id, "expected_results_file": $ef, "short_id_map": $sim}'
 }
 
 # Run sessions defined entirely by a YAML config file (session configs + steps).
@@ -599,6 +709,12 @@ run_sessions_from_yaml() {
       "$yaml_file" "$session_count") || return 1
     sessions_array=$(printf '%s' "$sessions_array" | jq --argjson e "$entry" '. + [$e]')
   done
+
+  # Resolve any short-form last_test IDs (^[0-9][0-9.]*$) to full IDs using
+  # the short_id maps captured from each session's create response.
+  local resolved_json
+  resolved_json=$(resolve_step_last_tests "$yaml_json" "$sessions_array") || return 1
+  export ACTIONS_JSON="$resolved_json"
 
   run_sessions "$sessions_array"
 }

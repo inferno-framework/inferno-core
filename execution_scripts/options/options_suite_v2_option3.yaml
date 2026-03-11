@@ -12,5 +12,5 @@ steps:
         v2_input: unused
 
   - status: done
-    last_test: options-v2_group-v2_test2
+    last_test: 3.02 # options-v2_group-v2_test2
     command: "END_SCRIPT"
