@@ -40,6 +40,15 @@ RSpec.describe Inferno::CLI::Session::CreateSession do
         { id: 'us_core_version', value: '6.1.0' },
         { id: 'smart_app_launch_version', value: '2.0.0' }
       ]
+      suite_definition = {
+        id: suite_id,
+        suite_options: [
+          { id: 'us_core_version', title: 'US Core Version' },
+          { id: 'smart_app_launch_version', title: 'SMART App Launch Version' }
+        ]
+      }
+      stub_request(:get, "#{inferno_host}/api/test_suites/#{suite_id}")
+        .to_return(status: 200, body: suite_definition.to_json)
       create_request = stub_request(:post, create_url)
         .with(body: { test_suite_id: suite_id, suite_options: expected_opts_list })
         .to_return(status: 200, body: session_response.to_json)
