@@ -48,6 +48,7 @@ module Inferno
     #   {NAME.result_message}     — named session's wait_result_message (shell-quoted)
     #   {wait_outputs.KEY}        — current session's wait output by name (shell-quoted)
     #   {NAME.wait_outputs.KEY}   — named session's wait output by name (shell-quoted)
+    #   {inferno_base_url}        — the Inferno base URL (--inferno-base-url option)
     class ExecuteScript
       SHORT_ID_PATTERN = /\A[0-9][0-9.]*\z/
 
@@ -482,6 +483,9 @@ module Inferno
       # Returns the resolved string or exits 3 if a token cannot be resolved.
       def apply_templates(str, status, session_key)
         result = str.dup
+
+        # {inferno_base_url} — the Inferno base URL
+        result.gsub!('{inferno_base_url}') { options[:inferno_base_url] }
 
         # {session_id} — current session
         result.gsub!('{session_id}') { session_name_to_id_map[session_key] }
