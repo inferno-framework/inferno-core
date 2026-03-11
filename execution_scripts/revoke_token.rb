@@ -1,7 +1,7 @@
 require 'selenium-webdriver'
 
 def revoke_token(session_id, inferno_host)
-  inputs_cli_command = "bundle exec inferno session data #{session_id}#{inferno_host.nil? ? '' : " -I #{inferno_host}"}"
+  inputs_cli_command = "bundle exec inferno session data #{session_id}#{" -I #{inferno_host}" unless inferno_host.nil?}"
   inputs = JSON.parse(`#{inputs_cli_command}`)
 
   token_to_revoke = token_to_revoke(inputs)

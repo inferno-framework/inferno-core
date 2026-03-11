@@ -141,7 +141,7 @@ module Inferno
             @expected_result = expected_result
             @actual_result = actual_result
             @options = options
-            @same = calculate_result
+            @same = same_results?
           end
 
           def normalize_string(str)
@@ -152,7 +152,7 @@ module Inferno
             end
           end
 
-          def calculate_result
+          def same_results?
             return false unless type == 'Compared'
             return false unless expected_result['result'] == actual_result['result']
 
