@@ -351,7 +351,7 @@ create_session() {
 
 # For each session in SESSIONS_JSON, compare results against the expected file
 # (if it exists) or write results to the expected file path (if it doesn't).
-# Returns the highest non-zero exit code from any compare call, or 0.
+# Returns the lowest non-zero exit code from any compare call, or 0.
 # Usage: compare_or_save_sessions SESSIONS_JSON
 compare_or_save_sessions() {
   local sessions_json="$1"
@@ -373,7 +373,7 @@ compare_or_save_sessions() {
       compare_exit=$?
       printf 'Compare results (%s): matched=%s\n' \
         "$session_key" "$(printf '%s' "$compare_output" | jq -r '.matched')"
-      [[ $compare_exit -ne 0 ]] && compare_result=$compare_exit
+      (( compare_exit != 0 && (compare_result == 0 || compare_exit < compare_result) )) && compare_result=$compare_exit
     elif [[ -n "$ef" ]]; then
       echo "Expected results file not found; writing results to '$ef'..."
       bundle exec inferno session results "$sid" \
@@ -537,5 +537,6 @@ run_sessions_from_yaml() {
 
 # When executed directly (not sourced), run the YAML file passed as the first argument
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-  run_sessions_from_yaml "$1" || exit 1
+  run_sessions_from_yaml "$1"
+  exit $?
 fi
