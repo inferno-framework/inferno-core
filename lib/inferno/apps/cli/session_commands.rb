@@ -109,7 +109,7 @@ module Inferno
         option :normalized_strings,
                aliases: ['-N'],
                type: :array,
-               desc: 'Literal strings to normalize away before comparing (URL-encoded form is also replaced automatically).'
+               desc: 'Literal strings to normalize away before comparing (URL-encoded form is also replaced).'
         def compare(session_id)
           SessionCompare.new(session_id, options).run
         end

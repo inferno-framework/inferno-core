@@ -30,6 +30,8 @@ RSpec.describe Inferno::CLI::ExecuteScript do
   end
 
   describe '#find_matching_step' do
+    subject(:instance) { build_instance(config) }
+
     let(:steps) do
       [
         { 'status' => 'done', 'last_test' => '', 'command' => 'END_SCRIPT' },
@@ -38,8 +40,6 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       ]
     end
     let(:config) { { 'sessions' => [{ 'suite_id' => suite_id }], 'steps' => steps } }
-
-    subject(:instance) { build_instance(config) }
 
     it 'matches by status and last_test' do
       result = instance.send(:find_matching_step, 'done', '', 'primary')
@@ -70,9 +70,9 @@ RSpec.describe Inferno::CLI::ExecuteScript do
   end
 
   describe '#apply_templates' do
-    let(:config) { { 'sessions' => [{ 'suite_id' => suite_id, 'name' => 'primary' }], 'steps' => [] } }
-
     subject(:instance) { build_instance(config) }
+
+    let(:config) { { 'sessions' => [{ 'suite_id' => suite_id, 'name' => 'primary' }], 'steps' => [] } }
 
     let(:session_key) { 'primary' }
     let(:status) { {} }
@@ -149,7 +149,6 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       opts = instance.send(:compare_options, session)
       expect(opts[:normalized_strings]).to eq([])
     end
-
   end
 
   describe 'orchestration' do

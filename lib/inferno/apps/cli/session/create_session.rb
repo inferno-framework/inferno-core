@@ -69,23 +69,29 @@ module Inferno
 
         def resolve_suite_option_value(option_id, provided_value)
           provided_value = provided_value.to_s
-          definition = suite_option_definitions.find { |d| d['id'] == option_id }
-          list_options = definition&.fetch('list_options', nil)
+          list_options = suite_option_list_options(option_id)
 
           return provided_value if list_options.blank?
           return provided_value if list_options.any? { |o| o['value'] == provided_value }
 
+          resolve_suite_option_value_by_label(option_id, provided_value, list_options)
+        end
+
+        def suite_option_list_options(option_id)
+          definition = suite_option_definitions.find { |d| d['id'] == option_id }
+          definition&.fetch('list_options', nil)
+        end
+
+        def resolve_suite_option_value_by_label(option_id, provided_value, list_options)
           matched = list_options.find { |o| o['label'] == provided_value }
-          if matched
-            matched['value']
-          else
-            valid_options = list_options.map { |o| "#{o['value']} (#{o['label']})" }.join(', ')
-            puts JSON.pretty_generate({
-                                        errors: "Invalid value '#{provided_value}' for suite option '#{option_id}'. " \
-                                                "Valid values: #{valid_options}"
-                                      })
-            exit(3)
-          end
+          return matched['value'] if matched
+
+          valid_options = list_options.map { |o| "#{o['value']} (#{o['label']})" }.join(', ')
+          puts JSON.pretty_generate({
+                                      errors: "Invalid value '#{provided_value}' for suite option '#{option_id}'. " \
+                                              "Valid values: #{valid_options}"
+                                    })
+          exit(3)
         end
       end
     end
