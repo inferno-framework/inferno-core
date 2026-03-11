@@ -28,7 +28,7 @@ module Inferno
         end
 
         def data_for_session(id)
-          response = connection.get("api/test_sessions/#{id}/session_data", nil, content_type: 'application/json')
+          response = get("api/test_sessions/#{id}/session_data", nil, content_type: 'application/json')
           handle_web_api_error(response, :session_data) if response.status != 200
 
           JSON.parse(response.body)

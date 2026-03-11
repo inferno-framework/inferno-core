@@ -29,7 +29,7 @@ module Inferno
             exit(3)
           end
 
-          response = connection.delete("api/test_runs/#{run_id}")
+          response = delete("api/test_runs/#{run_id}")
           handle_web_api_error(response, :cancel_run) if response.status != 204
           puts JSON.pretty_generate({ run_id: run_id, cancelled: true })
           exit(0)

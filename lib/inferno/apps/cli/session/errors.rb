@@ -7,7 +7,7 @@ module Inferno
             JSON.parse(response.body)
           rescue JSON::ParserError
             text_error =
-              if response.body == 'Not Found'
+              if response.body == 'Not Found' || response.status == 404
                 case api
                 when :session_create, :run_create
                   "Running Inferno host not found at '#{base_url}'"

@@ -24,7 +24,7 @@ module Inferno
             inputs: runnable_inputs
           }
 
-          response = connection.post('api/test_runs', request_body.to_json, content_type: 'application/json')
+          response = post('api/test_runs', request_body.to_json, content_type: 'application/json')
 
           handle_web_api_error(response, :start_run) if response.status != 200
 
@@ -34,7 +34,7 @@ module Inferno
 
         def session_details
           @session_details ||= begin
-            response = connection.get("api/test_sessions/#{session_id}", nil, content_type: 'application/json')
+            response = get("api/test_sessions/#{session_id}", nil, content_type: 'application/json')
             handle_web_api_error(response, :session_details) if response.status != 200
             JSON.parse(response.body)
           end

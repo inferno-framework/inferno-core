@@ -63,6 +63,39 @@ RSpec.describe Inferno::CLI::Session::CreateSession do
       end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
     end
 
+    it 'exits 3 and prints a not-found error when the server returns a 404 with a non-JSON body' do
+      stub_request(:post, create_url)
+        .to_return(status: 404, body: '<html><body>404 Not Found</body></html>')
+
+      expected_error = { errors: "Running Inferno host not found at '#{inferno_host}'" }
+      expect do
+        expect { described_class.new(suite_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
+    end
+
+    it 'exits 3 and prints a connection error when Inferno is not reachable' do
+      stub_request(:post, create_url)
+        .to_raise(Faraday::ConnectionFailed.new('Connection refused'))
+
+      expected_error = { errors: "Could not connect to Inferno at '#{inferno_host}': Connection refused" }
+      expect do
+        expect { described_class.new(suite_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
+    end
+
+    it 'exits 3 and prints a connection error when the request times out' do
+      stub_request(:post, create_url)
+        .to_raise(Faraday::TimeoutError.new('timeout'))
+
+      expected_error = { errors: "Could not connect to Inferno at '#{inferno_host}': timeout" }
+      expect do
+        expect { described_class.new(suite_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
+    end
+
     it 'exits 3 and prints the error body when the create request fails with a server error' do
       error_body = { errors: 'Internal server error' }
       stub_request(:post, create_url)

@@ -89,6 +89,27 @@ RSpec.describe Inferno::CLI::Session::SessionStatus do
       end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
     end
 
+    it 'exits 3 and prints a not-found error when the server returns a 404 with a non-JSON body' do
+      stub_last_test_run(body: '<html><body>404 Not Found</body></html>', status: 404)
+
+      expected_error = { errors: "Session '#{session_id}' not found on Inferno host at '#{inferno_host}'" }
+      expect do
+        expect { described_class.new(session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
+    end
+
+    it 'exits 3 and prints a connection error when Inferno is not reachable' do
+      stub_request(:get, last_test_run_url)
+        .to_raise(Faraday::ConnectionFailed.new('Connection refused'))
+
+      expected_error = { errors: "Could not connect to Inferno at '#{inferno_host}': Connection refused" }
+      expect do
+        expect { described_class.new(session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
+    end
+
     it 'exits 3 and prints the error body when the last_test_run request fails with a server error' do
       error_body = { errors: 'Internal server error' }
       stub_last_test_run(body: error_body.to_json, status: 500)

@@ -21,7 +21,7 @@ module Inferno
           request_body[:preset_id] = options[:preset_id] if options[:preset_id].present?
           request_body[:suite_options] = suite_options_list if options[:suite_options].present?
 
-          response = connection.post('api/test_sessions', request_body.to_json, content_type: 'application/json')
+          response = post('api/test_sessions', request_body.to_json, content_type: 'application/json')
 
           handle_web_api_error(response, :session_create) if response.status != 200
 
