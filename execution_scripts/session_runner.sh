@@ -362,12 +362,18 @@ compare_or_save_sessions() {
     sid=$(printf '%s' "$entry" | jq -r '.id')
     ef=$(printf '%s' "$entry" | jq -r '.expected_results_file // empty')
     if [[ -f "$ef" ]]; then
-      bundle exec inferno session compare "$sid" \
+      local session_key compare_output compare_exit
+      session_key=$(printf '%s' "$entry" | jq -r '.key // empty')
+      compare_output=$(bundle exec inferno session compare "$sid" \
         -f "$ef" \
         ${COMPARE_NORMALIZE:+-n} \
         ${COMPARE_MESSAGES:+-m} \
         ${COMPARE_RESULT_MESSAGE:+-r} \
-        ${INFERNO_URL:+-I "$INFERNO_URL"} || compare_result=$?
+        ${INFERNO_URL:+-I "$INFERNO_URL"})
+      compare_exit=$?
+      printf 'Compare results (%s): matched=%s\n' \
+        "$session_key" "$(printf '%s' "$compare_output" | jq -r '.matched')"
+      [[ $compare_exit -ne 0 ]] && compare_result=$compare_exit
     elif [[ -n "$ef" ]]; then
       echo "Expected results file not found; writing results to '$ef'..."
       bundle exec inferno session results "$sid" \
