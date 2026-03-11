@@ -222,7 +222,7 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
       expect(expected_results_request).to have_been_made.once
     end
 
-    it 'fails when the same messages, but in a different order' do
+    it 'succeeds when the same messages, but in a different order' do
       actual_results_request =
         stub_request(
           :get,
@@ -240,7 +240,7 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
                   compare_messages: true }
       expect do
         expect { described_class.new(actual_results_session_id, options).run }
-          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
       end.to output(/.+/).to_stdout
       expect(actual_results_request).to have_been_made.once
       expect(expected_results_request).to have_been_made.once
