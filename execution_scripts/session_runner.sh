@@ -4,11 +4,9 @@
 #
 # Can be run directly with a YAML config file:
 #   bash session_runner.sh my_suite.yaml
-#
-# Or sourced as a library; call run_session or run_session_from_yaml.
+# Or sourced as a library; call run_session_from_yaml (auto-detects single vs multi).
 #
 # YAML config format:
-#
 #   session:
 #     suite_id: my_suite                       # required
 #     preset_id: my-preset                     # optional
@@ -17,21 +15,23 @@
 #     expected_results_file: expected.json     # optional; relative to yaml file
 #                                              # default: <yaml_name>_expected.json
 #   rules:                                     # ordered; first match wins
-#     - status: created                        # created, done, or waiting; running/queued/cancelling handled automatically
-#       last_test: ""                          # optional; absent treated as ""; must match exactly (not applicable to created)
+#     - status: created                        # created, done, or waiting;
+#                                              # running/queued/cancelling handled automatically
+#       last_test: ""                          # optional; absent treated as ""; must match exactly
 #       command: "bundle exec inferno session start_run '{session_id}' -r 5"
 #                                              # required; eval used to execute as the next step
 #       timeout: 300                           # optional; seconds before execution stops waiting
 #
-# Template tokens in 'command':
-#   {session_id}        – test session id
+
+# ── Template tokens in 'command' ─────────────────────────────────────────────
+#   {session_id}        – ID of the session the rule is scoped to
 #   {result_message}    – wait result message (only set when status is waiting)
 #   {wait_outputs.KEY}  – value of KEY from the wait_outputs array
 #
-# Special command values:
-#   "END_SCRIPT"       – end execution immediately (explicit terminal rule)
+# ── Special command values ────────────────────────────────────────────────────
+#   "END_SCRIPT"       – end execution for this session (explicit terminal rule)
 #
-# Automatic status handling (no rules needed):
+# ── Automatic status handling (no rules needed) ───────────────────────────────
 #   running/queued/cancelling        → poll again
 #   done (no rule matched)           → warn, run comparison, exit non-zero
 #   waiting (no rule matched)        → cancel run and continue polling
@@ -40,9 +40,17 @@
 SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POLL_INTERVAL="${POLL_INTERVAL:-5}"              # seconds between status checks
 DEFAULT_POLL_TIMEOUT="${DEFAULT_POLL_TIMEOUT:-600}"  # default timeout for poll_until_action
+# 'session compare' flags – all enabled by default; set to empty to disable:
+#   COMPARE_NORMALIZE        – -n: normalize UUIDs and base64 values before comparing (default: on)
+#   COMPARE_MESSAGES         – -m: compare messages array (default: on)
+#   COMPARE_RESULT_MESSAGE   – -r: compare result_message string (default: on)
+COMPARE_NORMALIZE="${COMPARE_NORMALIZE:-true}"
+COMPARE_MESSAGES="${COMPARE_MESSAGES:-true}"
+COMPARE_RESULT_MESSAGE="${COMPARE_RESULT_MESSAGE:-true}"
 
 # Default implementation – reads rules from a YAML config file via yq + jq.
 # Override by defining next_action_from_status after sourcing this file.
+# Usage: next_action_from_status STATUS_JSON
 next_action_from_status() {
   local status_json="$1"
   local config_file="${ACTIONS_FILE:-$(dirname "$0")/$(basename "$0" .sh).yaml}"
@@ -67,16 +75,16 @@ next_action_from_status() {
     )] | .[0]')
 
   if [[ -z "$rule" || "$rule" == "null" ]]; then
-    # No rule matched – return empty; session_runner applies defaults:
-    #   done    → emit UNMATCHED
-    #   waiting → cancel run and emit UNMATCHED
+    # No rule matched – return empty; caller applies defaults:
+    #   done/created → emit UNMATCHED
+    #   waiting      → cancel run and continue polling
     return 0
   fi
 
   local cmd
   cmd=$(printf '%s' "$rule" | jq -r '.command // empty')
 
-  # No command field – delegate to session_runner (poll again / UNMATCHED / cancel)
+  # No command field – delegate to caller (poll again / UNMATCHED / cancel)
   [[ -z "$cmd" ]] && return 0
 
   # Template substitution
@@ -262,6 +270,9 @@ run_session() {
   if [[ -f "$expected_results_file" ]]; then
     bundle exec inferno session compare "$session_id" \
       -f "$expected_results_file" \
+      ${COMPARE_NORMALIZE:+-n} \
+      ${COMPARE_MESSAGES:+-m} \
+      ${COMPARE_RESULT_MESSAGE:+-r} \
       ${INFERNO_URL:+-I "$INFERNO_URL"} || compare_result=$?
   elif [[ "$unmatched_done" == "false" ]]; then
     echo "Expected results file not found; writing results to '$expected_results_file'..."
@@ -292,6 +303,7 @@ run_session_from_yaml() {
 
   # Resolve to absolute path so relative paths inside the YAML resolve correctly
   yaml_file="$(cd "$(dirname "$yaml_file")" && pwd)/$(basename "$yaml_file")"
+
   export ACTIONS_FILE="$yaml_file"
 
   local session_config
