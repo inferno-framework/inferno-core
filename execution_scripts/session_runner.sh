@@ -402,13 +402,15 @@ create_session() {
   printf "Creating '%s' session...\n" "$suite_id" >&2
   local session_json
   if ! session_json=$("${create_cmd[@]}"); then
-    printf 'create_session: session create failed for suite %s\n' "$suite_id" >&2
+    printf 'create_session: session create failed for suite %s:\n' "$suite_id" >&2
+    printf '%s\n' "$session_json" >&2
     return 1
   fi
   local session_id
   session_id=$(printf '%s' "$session_json" | jq -r '.id')
   if [[ -z "$session_id" || "$session_id" == "null" ]]; then
-    printf 'create_session: session create returned no id (suite %s)\n' "$suite_id" >&2
+    printf 'create_session: session create returned no id (suite %s):\n' "$suite_id" >&2
+    printf '%s\n' "$session_json" >&2
     return 1
   fi
   printf 'Session created: %s\n' "$session_id" >&2
