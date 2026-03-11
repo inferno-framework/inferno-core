@@ -88,12 +88,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-smart_discovery_stu2-well_known_capabilities_stu2",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -112,12 +108,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-smart_discovery_stu2-g10_smart_well_known_capabilities",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -166,12 +158,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-smart_standalone_launch_stu2-standalone_auth_tls",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -222,9 +210,7 @@
         "value": "JG_d8Ksb0jpjix4BfcaMEEYko2MjgwQ9JkJCmnsGMjY"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-smart_standalone_launch_stu2-smart_app_redirect_stu2",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -251,12 +237,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_standalone_patient_app-smart_discovery_stu2",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -266,9 +248,7 @@
   {
     "id": "6c0a5903-98a9-44b0-9a01-b060213be3ae",
     "created_at": "2026-02-21T01:09:27.647-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -337,12 +317,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-smart_standalone_launch_stu2-standalone_token_tls",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -494,13 +470,9 @@
   {
     "id": "9fc93564-bec2-4174-9617-e7db39da1313",
     "created_at": "2026-02-21T01:09:28.257-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "fe783361-df99-421c-898c-1827f3bda2e2",
@@ -535,9 +507,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "fe783361-df99-421c-898c-1827f3bda2e2",
@@ -572,9 +542,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "fe783361-df99-421c-898c-1827f3bda2e2",
@@ -624,9 +592,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "27c155da-e021-4596-99de-ab7745da108c",
@@ -665,12 +631,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_standalone_patient_app-smart_standalone_launch_stu2",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -700,9 +662,7 @@
         "value": "{\"alg\":\"RS256\",\"typ\":\"JWT\"}"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-smart_openid_connect_stu2-smart_openid_decode_id_token",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -768,9 +728,7 @@
         "value": "https://inferno.healthit.gov/reference-server/r4/.well-known/jwk"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-smart_openid_connect_stu2-smart_openid_required_configuration_fields",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -841,9 +799,7 @@
         "value": "{\"kty\":\"RSA\",\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"RS256\",\"n\":\"AIHUBZRebKtjubhIN0AbPWYVsCnNaT1rksFU6ufgAdgjCyfA5Em2Jl3ev97dq5af1kOBGLqVJT90JypFfIvWRYEDYRefMmJS7ReZInstnD8kMVx5N_6UHxdX6hHNsg31DI6BxZMg-jFfXOOlQpA78EVIZnH1JP0S1GEnwIatMM_fWHs-XeiS3AFxjyNqpJvGlNtlqpqcGz7en0yEjzdLpLrZ1HNwfzmQwYHmy4oxeC1q9lS34iH4vMmKdBXfwrV-92OzP9o-k8x1gi5196qj60sDiza-oDARJILAEaL1iKVAY4ywtjWb_k7-Va6GXXeAbgXiZ8t040uQDlZQEyLDHWc=\"}"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-smart_openid_connect_stu2-smart_openid_token_header",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -876,12 +832,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-smart_openid_connect_stu2-smart_openid_token_payload",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -961,12 +913,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_standalone_patient_app-smart_openid_connect_stu2",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -1228,9 +1176,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "c95d0627-1175-478d-9cb6-237cc8e90e7f",
@@ -1275,9 +1221,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "c2629164-b3c7-4f3b-b86d-7d984474f723",
@@ -1330,12 +1274,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_standalone_patient_app-g10_smart_standalone_token_refresh",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -1368,12 +1308,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "result_message": "Scopes received indicate access to all necessary resources.",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-g10_unrestricted_resource_type_access-Test01",
@@ -1407,9 +1343,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8beec85a-6228-4d24-8545-77efbd429e23",
@@ -1455,9 +1389,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8c15ca62-2105-4045-8142-bc2f035aca7d",
@@ -1503,9 +1435,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "703d9a80-2bd5-44e5-949c-9158122b1368",
@@ -1551,9 +1481,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "16038da5-8861-4930-b45f-d61dafa310c5",
@@ -1599,9 +1527,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d3982614-a2f9-4ed5-aaa8-7eeac5b8afe9",
@@ -1647,9 +1573,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "45cb044a-37f0-4e1c-a003-c9ad9bb2e055",
@@ -1695,9 +1619,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8d2a88f8-ba55-425b-8539-e7095615423a",
@@ -1743,9 +1665,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "7ed050a1-c7eb-44ad-8020-281480ea8fa7",
@@ -1791,9 +1711,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1a73d345-0fc0-4049-8f37-891f8891f738",
@@ -1839,9 +1757,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "a2543131-a2a6-41d5-94e6-3e9bd7316084",
@@ -1887,9 +1803,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "35cbb289-cf48-45c7-9bb3-f4b343da487b",
@@ -1935,9 +1849,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "7fefc2e1-b5f9-4dc6-a0ca-d8a754424791",
@@ -1983,9 +1895,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "a685906f-d0a9-4899-bccc-820379e3d2b3",
@@ -2031,9 +1941,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2bddadea-e126-485c-8192-6841a847c3cd",
@@ -2079,9 +1987,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ee1d8d61-73e0-44cd-82ec-a6c1afc2f5a1",
@@ -2127,9 +2033,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "0b8679be-6507-4450-a92a-4998938389a4",
@@ -2175,9 +2079,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2b094851-8323-4f54-a206-9b6bb049da2f",
@@ -2231,12 +2133,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_standalone_patient_app-g10_unrestricted_resource_type_access",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -2271,9 +2169,7 @@
         "value": "85"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-g10_standalone_credentials_export",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -2291,12 +2187,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-g10_auth_incorrectly_permitted_tls_versions_messages_setup",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -2314,12 +2206,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_standalone_patient_app-g10_token_incorrectly_permitted_tls_versions_messages_setup",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -2346,12 +2234,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_standalone_patient_app",
     "test_run_id": "f04b5566-54f3-463b-a6a4-783c9741eaa0",
@@ -2405,12 +2289,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_limited_app-smart_standalone_launch_stu2-standalone_auth_tls",
     "test_run_id": "b91e9dfe-16c1-491c-b02b-a0907f00e617",
@@ -2466,9 +2346,7 @@
         "value": "OhEoXRApxLw3wxQIcyd2cR1QwywobFgoAFLy-Df8p-E"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_limited_app-smart_standalone_launch_stu2-smart_app_redirect_stu2",
     "test_run_id": "b91e9dfe-16c1-491c-b02b-a0907f00e617",
@@ -2558,12 +2436,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_limited_app-smart_standalone_launch_stu2-standalone_token_tls",
     "test_run_id": "b91e9dfe-16c1-491c-b02b-a0907f00e617",
@@ -2733,9 +2607,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f5385df2-0ac0-42fe-81a0-7eaf6e836d67",
@@ -2780,9 +2652,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6acbc253-7b21-4937-b15f-9b362600cb45",
@@ -2817,12 +2687,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "result_message": "Resources to be denied: AllergyIntolerance, CarePlan, CareTeam, Device, DiagnosticReport, DocumentReference, Goal, Immunization, MedicationRequest, Procedure, Encounter, ServiceRequest, Specimen, Coverage, MedicationDispense",
     "test_id": "g10_certification-g10_smart_limited_app-smart_standalone_launch_stu2-g10_limited_scope_grant",
@@ -2857,12 +2723,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_limited_app-smart_standalone_launch_stu2",
     "test_run_id": "b91e9dfe-16c1-491c-b02b-a0907f00e617",
@@ -2900,9 +2762,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f1962301-28b1-4b45-a736-a4076ec48c35",
@@ -2953,9 +2813,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "c2d5ffca-a4d8-41cf-af4c-0d3abccf6aaa",
@@ -3005,9 +2863,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "74491073-1a48-413f-9d55-8b408c120ee3",
@@ -3057,9 +2913,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "5a82fad5-c573-4b5a-b7d6-702e328f926c",
@@ -3109,9 +2963,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ed47b6b8-1c81-433a-b4c2-eab045cce344",
@@ -3162,9 +3014,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ba481f52-46c2-43c2-a50a-09850679d06c",
@@ -3214,9 +3064,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b97ffcd3-b090-4c6e-a1a9-fc74e1622b4c",
@@ -3266,9 +3114,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "529dc60d-2c11-4146-ab85-a224c14e4014",
@@ -3318,9 +3164,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "53ae6077-2201-4cd1-84dd-ed0c70a8d60b",
@@ -3370,9 +3214,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8ad99ebd-167e-4884-b65a-71bb77cd9a71",
@@ -3422,9 +3264,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "225cc2cb-771d-4fac-871e-a1b6d1a75d58",
@@ -3474,9 +3314,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ea24067f-5d85-42c2-a72a-7be8070f6607",
@@ -3527,9 +3365,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "4b2d421b-fc1a-4e23-aed0-374c5c6f8e90",
@@ -3579,9 +3415,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "65ab16f5-ecea-445d-8af2-28b0e9a5c3f3",
@@ -3631,9 +3465,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "e5a49b88-deb8-4f82-b428-493f1a61c641",
@@ -3683,9 +3515,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "65224cfa-25cf-432e-9a65-a07519c3f5ea",
@@ -3735,9 +3565,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "41cb1285-1bcb-4fa0-8599-ee54491b546a",
@@ -3797,12 +3625,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_limited_app-g10_restricted_resource_type_access",
     "test_run_id": "b91e9dfe-16c1-491c-b02b-a0907f00e617",
@@ -3836,12 +3660,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_limited_app",
     "test_run_id": "b91e9dfe-16c1-491c-b02b-a0907f00e617",
@@ -3937,12 +3757,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_discovery_stu2-well_known_capabilities_stu2",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -3961,12 +3777,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_discovery_stu2-g10_smart_well_known_capabilities",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -3984,12 +3796,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_ehr_launch_stu2-smart_app_launch",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -3999,9 +3807,7 @@
   {
     "id": "80113388-683a-4188-ad5c-767a4ad3601b",
     "created_at": "2026-02-21T01:09:58.567-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -4070,12 +3876,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_ehr_launch_stu2-ehr_auth_tls",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -4131,9 +3933,7 @@
         "value": "pZT1ETZbdZedP8gbwWeVBU7Hoy9r5CgRKT91qkRluP8"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_ehr_launch_stu2-smart_app_redirect_stu2",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -4160,12 +3960,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_discovery_stu2",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -4175,9 +3971,7 @@
   {
     "id": "27b2f90d-c098-43e1-9787-d294c7ebf3e9",
     "created_at": "2026-02-21T01:10:05.421-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -4246,12 +4040,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_ehr_launch_stu2-ehr_token_tls",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -4403,13 +4193,9 @@
   {
     "id": "049c750f-f44c-41c9-9955-a33f6fe12fdc",
     "created_at": "2026-02-21T01:10:06.046-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9345cd9f-8470-4b05-864e-c13d8faf70ff",
@@ -4444,9 +4230,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9345cd9f-8470-4b05-864e-c13d8faf70ff",
@@ -4481,9 +4265,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9345cd9f-8470-4b05-864e-c13d8faf70ff",
@@ -4533,9 +4315,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "49e2c5d6-a31b-4d82-b06d-347d08ff7616",
@@ -4575,9 +4355,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1e2937ee-e292-4431-bc26-7fa11e375a26",
@@ -4599,13 +4377,9 @@
   {
     "id": "13246a52-cde3-44a3-b0eb-02cdd31a0ef7",
     "created_at": "2026-02-21T01:10:06.615-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9345cd9f-8470-4b05-864e-c13d8faf70ff",
@@ -4637,13 +4411,9 @@
   {
     "id": "3d4b8468-49b2-4f17-8b51-456bb615bc59",
     "created_at": "2026-02-21T01:10:06.622-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9345cd9f-8470-4b05-864e-c13d8faf70ff",
@@ -4682,12 +4452,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_ehr_launch_stu2",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -4717,9 +4483,7 @@
         "value": "{\"alg\":\"RS256\",\"typ\":\"JWT\"}"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_openid_connect_stu2-smart_openid_decode_id_token",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -4785,9 +4549,7 @@
         "value": "https://inferno.healthit.gov/reference-server/r4/.well-known/jwk"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_openid_connect_stu2-smart_openid_required_configuration_fields",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -4858,9 +4620,7 @@
         "value": "{\"kty\":\"RSA\",\"e\":\"AQAB\",\"use\":\"sig\",\"alg\":\"RS256\",\"n\":\"AIHUBZRebKtjubhIN0AbPWYVsCnNaT1rksFU6ufgAdgjCyfA5Em2Jl3ev97dq5af1kOBGLqVJT90JypFfIvWRYEDYRefMmJS7ReZInstnD8kMVx5N_6UHxdX6hHNsg31DI6BxZMg-jFfXOOlQpA78EVIZnH1JP0S1GEnwIatMM_fWHs-XeiS3AFxjyNqpJvGlNtlqpqcGz7en0yEjzdLpLrZ1HNwfzmQwYHmy4oxeC1q9lS34iH4vMmKdBXfwrV-92OzP9o-k8x1gi5196qj60sDiza-oDARJILAEaL1iKVAY4ywtjWb_k7-Va6GXXeAbgXiZ8t040uQDlZQEyLDHWc=\"}"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_openid_connect_stu2-smart_openid_token_header",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -4893,12 +4653,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_openid_connect_stu2-smart_openid_token_payload",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -4978,12 +4734,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_ehr_practitioner_app-smart_openid_connect_stu2",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -5245,9 +4997,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "97f07334-cb64-4aef-b305-4ca9da1d2bae",
@@ -5292,9 +5042,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d88d4470-30fa-4f1e-9cd9-5977be61700f",
@@ -5347,12 +5095,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_ehr_practitioner_app-g10_smart_ehr_token_refresh",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -5387,9 +5131,7 @@
         "value": "85"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-g10_ehr_credentials_export",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -5407,12 +5149,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-g10_auth_incorrectly_permitted_tls_versions_messages_setup",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -5430,12 +5168,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_smart_ehr_practitioner_app-g10_token_incorrectly_permitted_tls_versions_messages_setup",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -5462,12 +5196,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_smart_ehr_practitioner_app",
     "test_run_id": "ae4ad33c-691d-4332-9259-265b226571ab",
@@ -5517,9 +5247,7 @@
         "value": "85,355,907"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-g10_patient_id_setup",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -5578,12 +5306,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_capability_statement-standalone_auth_tls",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -5616,9 +5340,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1652f696-4f43-4eae-8dbc-5ad843262711",
@@ -5663,12 +5385,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_capability_statement-us_core_fhir_version",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -5701,9 +5419,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1652f696-4f43-4eae-8dbc-5ad843262711",
@@ -5748,9 +5464,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1652f696-4f43-4eae-8dbc-5ad843262711",
@@ -5795,9 +5509,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1652f696-4f43-4eae-8dbc-5ad843262711",
@@ -5850,12 +5562,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_capability_statement",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -5893,9 +5601,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "5e63ab59-4c70-4950-86e9-aebc06f47766",
@@ -5970,9 +5676,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6fff3e95-e70d-4c15-8ad0-799379601d2d",
@@ -6027,9 +5731,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d11bf7ce-fdb7-404a-b870-5efdc3b205d3",
@@ -6074,9 +5776,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "14a64e29-5d3e-4076-bec4-4d0ebd279ad9",
@@ -6121,9 +5821,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "18a152f5-f2c5-4bed-87ee-025f11ed3f73",
@@ -6168,9 +5866,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "cc08cd0f-0867-420a-a9b5-d5e6a34eb077",
@@ -6220,9 +5916,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "c01bb1d8-e461-4a32-b59f-439748781793",
@@ -6357,12 +6051,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_patient-us_core_v610_patient_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -6395,12 +6085,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_patient-us_core_v610_patient_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -6448,12 +6134,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_patient",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -6491,9 +6173,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "96a0f719-7a88-443a-b5eb-abbdc7f91ec8",
@@ -6578,9 +6258,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "5518786c-95e6-44fe-961e-dcc7bc07e433",
@@ -6630,9 +6308,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "a05c697d-6636-44b6-a8a3-90dda39269c7",
@@ -6899,12 +6575,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_allergy_intolerance-us_core_v610_allergy_intolerance_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -6937,12 +6609,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_allergy_intolerance-us_core_v610_allergy_intolerance_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -6975,9 +6643,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b013e3ad-5045-4bac-b94e-64f025466719",
@@ -7037,12 +6703,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_allergy_intolerance",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -7080,9 +6742,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f00aa22f-9a0a-4e36-872f-914e3d14cac6",
@@ -7187,9 +6847,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "e68507c2-8dbd-4b80-b82f-d91240b36a2d",
@@ -7239,9 +6897,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9a40b767-277e-45ca-8d83-ac5ae4a6f658",
@@ -7734,12 +7390,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_care_plan-us_core_v610_care_plan_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -7772,12 +7424,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_care_plan-us_core_v610_care_plan_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -7810,9 +7458,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "73bf6156-d8e1-491e-bf70-cd2cec16404a",
@@ -7872,12 +7518,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_care_plan",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -7915,9 +7557,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "401ee89c-42db-4a2e-994c-240b4daafd1e",
@@ -8132,9 +7772,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d5c23c3d-e00a-41a1-b751-ae2548ff42d9",
@@ -8184,9 +7822,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "89aeb24b-3448-4bce-8033-eceb137fc9d4",
@@ -8487,12 +8123,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_care_team-us_core_v610_care_team_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -8525,12 +8157,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_care_team-us_core_v610_care_team_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -8563,9 +8191,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b095d815-3fc0-4469-9649-bb6b94674844",
@@ -8645,12 +8271,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_care_team",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -8688,9 +8310,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9ce29457-d053-4371-8a05-2b8f85abdaae",
@@ -8850,9 +8470,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "edd880a6-2a0c-4bba-b5c5-3601f758a571",
@@ -8957,9 +8575,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ea0eba95-1b76-4ba5-94cb-8a69a59dd921",
@@ -9009,9 +8625,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "c2e80130-e5be-430b-9be7-b76b08eb1e2b",
@@ -9436,12 +9050,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_condition_encounter_diagnosis-us_core_v610_condition_encounter_diagnosis_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -9474,12 +9084,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_condition_encounter_diagnosis-us_core_v610_condition_encounter_diagnosis_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -9512,9 +9118,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "50f9a91e-b35b-4d36-a3a3-4c3ca3eeff9d",
@@ -9574,12 +9178,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_condition_encounter_diagnosis",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -9617,9 +9217,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2e053518-62b5-4614-a65d-8113a98c6584",
@@ -9749,9 +9347,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6db0c2b2-85a3-412f-b6e7-c0f1e08ff331",
@@ -9856,9 +9452,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "0122fc1b-64c4-404a-87c2-5d69cb27ec0a",
@@ -9908,9 +9502,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f4e71222-f9d0-465f-b96f-0ac711b82563",
@@ -10031,12 +9623,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_condition_problems_health_concerns-us_core_v610_condition_problems_health_concerns_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -10069,12 +9657,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_condition_problems_health_concerns-us_core_v610_condition_problems_health_concerns_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -10107,12 +9691,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_condition_problems_health_concerns-us_core_v610_condition_problems_health_concerns_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -10160,12 +9740,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_condition_problems_health_concerns",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -10203,9 +9779,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "493b78eb-9d97-4f2e-8005-836138a0d08c",
@@ -10290,9 +9864,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f3792c34-1020-496c-b4fb-96bbd1003bfa",
@@ -10342,9 +9914,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b0e45f58-823e-44eb-a921-08eb3ad4f916",
@@ -10415,12 +9985,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_coverage-us_core_v610_coverage_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -10453,12 +10019,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_coverage-us_core_v610_coverage_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -10491,9 +10053,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "21e290fd-b2be-4d89-8d8e-e2759153f566",
@@ -10553,12 +10113,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_coverage",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -10601,9 +10157,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d3cda320-1e46-4296-b377-ecefae7af067",
@@ -10688,9 +10242,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "011ae6b8-f996-4b98-a6a7-33a7f62a364a",
@@ -10740,9 +10292,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1cb981a0-3dd8-4a40-a209-23172f09686f",
@@ -10825,12 +10375,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_device-us_core_v610_device_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -10863,12 +10409,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_device-us_core_v610_device_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -10901,12 +10443,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_device-us_core_v610_device_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -10961,12 +10499,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_device",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -11004,9 +10538,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "dd040051-b947-4f6f-9220-2f9d3a4f076f",
@@ -11166,9 +10698,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8524c5c4-9c1f-4dea-bcf1-6d29d8bf744a",
@@ -11268,9 +10798,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "c7433e93-bd74-4b39-8771-57440e784e43",
@@ -11380,9 +10908,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "a6c92ae8-0724-43d7-9b54-b6c4b3a41e41",
@@ -11447,9 +10973,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "05e53f13-ee8b-49dd-9a1b-0516a0504ab6",
@@ -11499,9 +11023,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "4641064e-caab-4da2-9b85-233e4ecaeeea",
@@ -11788,12 +11310,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_diagnostic_report_note-us_core_v610_diagnostic_report_note_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -11826,12 +11344,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_diagnostic_report_note-us_core_v610_diagnostic_report_note_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -11864,9 +11378,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d2bac7f6-b642-4aa5-89b3-2f326d0a67f6",
@@ -11966,12 +11478,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_diagnostic_report_note",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -12009,9 +11517,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "e3f2b87a-b246-47d6-a2f0-b00ec19127de",
@@ -12111,9 +11617,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1c3f8620-3264-49b0-a3ef-ce6d30e76915",
@@ -12213,9 +11717,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "5a010044-6ceb-4f5c-9b12-d8d1a5d827db",
@@ -12315,9 +11817,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "c771966a-339f-4fe7-9172-a48a636352eb",
@@ -12372,9 +11872,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "4236278b-852d-42b0-9432-3f0d26107aa9",
@@ -12424,9 +11922,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b897384d-0898-4559-9d5e-17556f1facf2",
@@ -12501,12 +11997,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_diagnostic_report_lab-us_core_v610_diagnostic_report_lab_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -12539,12 +12031,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_diagnostic_report_lab-us_core_v610_diagnostic_report_lab_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -12577,9 +12065,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "31bb81c4-fa7e-4e64-8154-11490ff2473b",
@@ -12649,12 +12135,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_diagnostic_report_lab",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -12692,9 +12174,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1c2ba669-37de-4e74-b56a-5ec99f43ee1f",
@@ -12859,9 +12339,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d03e8d6b-9a4a-47f8-a2a0-54fd4a73d5e5",
@@ -12911,9 +12389,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "44467c9e-6eb4-4ba0-8f00-318daf1fb239",
@@ -12983,9 +12459,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "85219600-bbdf-4f62-bfc1-5076ccf0d476",
@@ -13135,9 +12609,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b45c3bbd-5eff-4163-b473-a952e5f26659",
@@ -13262,9 +12734,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "0c324da6-920d-4c4c-ab26-1435b501db59",
@@ -13314,9 +12784,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "cec6a6d9-f4a6-4cab-9ddc-b3dc60d48d95",
@@ -13982,9 +13450,7 @@
         "value": "true"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_document_reference-us_core_v610_document_reference_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -14017,12 +13483,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_document_reference-us_core_v610_document_reference_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -14055,12 +13517,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_document_reference-us_core_v610_document_reference_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -14093,12 +13551,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_document_reference-us_core_v400_document_reference_custodian_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -14146,12 +13600,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_document_reference",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -14189,9 +13639,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2b2d2976-1c54-4445-80fa-491f2b40b53f",
@@ -14546,9 +13994,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "80c40656-09bd-40ae-88f5-b7d6db62b890",
@@ -14598,9 +14044,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2b9b05d7-940f-482e-9a49-e2072a01205b",
@@ -14965,9 +14409,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "516aafb1-bd3e-4586-9721-7649c2be7754",
@@ -15017,9 +14459,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8ae99b9f-53e7-4bd2-8c9f-2cecb0fb26c0",
@@ -16772,12 +16212,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_encounter-us_core_v610_encounter_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -16810,12 +16246,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_encounter-us_core_v610_encounter_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -16848,9 +16280,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "0567a8f3-9aee-42b1-9c53-d0acf79a9cac",
@@ -16910,12 +16340,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_encounter",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -16953,9 +16379,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "77b52e34-ffbd-422b-aeb7-99ac3fd1b980",
@@ -17040,9 +16464,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2e18197e-fbd0-45ea-b420-4c87a25ba710",
@@ -17092,9 +16514,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "eb458859-4c9d-4ad0-8ff9-3a2347ad0577",
@@ -17165,12 +16585,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_goal-us_core_v610_goal_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -17203,12 +16619,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_goal-us_core_v610_goal_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -17241,12 +16653,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_goal-us_core_v610_goal_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -17294,12 +16702,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_goal",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -17337,9 +16741,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ebd0da32-bcdc-420b-b4fb-1ec855ded5ae",
@@ -17464,9 +16866,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b0be7cac-86a4-40b8-8845-35dfbbc080d9",
@@ -17516,9 +16916,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "24a7b272-3aac-4001-baf2-9b599ba37680",
@@ -17772,9 +17170,7 @@
         "value": "true"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_immunization-us_core_v610_immunization_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -17807,12 +17203,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_immunization-us_core_v610_immunization_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -17845,12 +17237,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_immunization-us_core_v610_immunization_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -17898,12 +17286,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_immunization",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -17941,9 +17325,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ea3a87aa-65df-490a-baa9-2a17ea56f228",
@@ -18038,9 +17420,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "545dd05e-eb44-40f9-aca0-43212be0ce62",
@@ -18090,9 +17470,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "79a78e3e-59eb-4f43-a459-62431c55b9e9",
@@ -18167,12 +17545,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_medication_dispense-us_core_v610_medication_dispense_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -18205,12 +17579,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_medication_dispense-us_core_v610_medication_dispense_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -18243,9 +17613,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b0f1e6d2-6982-4ac2-9379-694dbe53f1ff",
@@ -18315,12 +17683,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_medication_dispense",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -18358,9 +17722,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "7aa97052-48ef-45ea-ae91-91bca5a5a26d",
@@ -18740,9 +18102,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d3949633-52a7-4f1f-9642-c9be54dc5405",
@@ -18827,9 +18187,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "695a25d9-c4fa-4846-9a0d-b58404848be0",
@@ -18879,9 +18237,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b45f8bfc-13f0-4d43-a18a-66f632778279",
@@ -19442,12 +18798,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_medication_request-us_core_v610_medication_request_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -19490,12 +18842,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_medication_request-us_core_v610_medication_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -19528,12 +18876,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_medication_request-us_core_v610_medication_request_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -19566,9 +18910,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "975821ce-be26-4fb5-955b-029b95c737d6",
@@ -19638,12 +18980,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_medication_request",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -19681,9 +19019,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "bdce130f-20df-4106-b28f-cf3d8040065e",
@@ -19783,9 +19119,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "70ec6ccb-2b3d-4286-937e-e20e3ab65aa4",
@@ -19895,9 +19229,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2b4166d5-73cf-482f-843d-e2d3d4d711aa",
@@ -19962,9 +19294,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "dfbcb151-0fc1-47a5-89ad-ac15815bf536",
@@ -20014,9 +19344,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8f6f30d7-7576-4adf-9f6f-e543f12c1e76",
@@ -20179,12 +19507,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_lab-us_core_v610_observation_lab_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -20217,12 +19541,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_lab-us_core_v610_observation_lab_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -20255,9 +19575,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "0ec6e476-ed64-413b-8aa7-b1070631ee78",
@@ -20317,12 +19635,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_lab",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -20360,9 +19674,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "99a8e316-3714-47cb-9c2b-90344c74772c",
@@ -20462,9 +19774,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "78c77c25-dced-42b4-926e-99c3feb95e43",
@@ -20644,9 +19954,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "27b055c8-f48b-4215-a732-2cf4f2938b71",
@@ -20781,9 +20089,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6634f713-e6e5-432c-a921-bcab8a2ed4cc",
@@ -20833,9 +20139,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "601dea46-24fc-491d-b42f-efc178fb1354",
@@ -20906,12 +20210,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_pregnancystatus-us_core_v610_observation_pregnancystatus_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -20944,12 +20244,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_pregnancystatus-us_core_v610_observation_pregnancystatus_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -20982,12 +20278,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_pregnancystatus-us_core_v610_observation_pregnancystatus_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -21035,12 +20327,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_pregnancystatus",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -21078,9 +20366,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "16db14e4-4b80-4b43-ad3b-f479ca156981",
@@ -21180,9 +20466,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "92ad9313-c9fe-4f12-aba7-1ae1c2e149d8",
@@ -21362,9 +20646,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "a9a58748-a8c9-4b16-932b-c5d438192943",
@@ -21499,9 +20781,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "fde7891d-55cc-450d-abd9-f5183c417972",
@@ -21551,9 +20831,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b8a68c8d-6cd9-465d-ab41-d3ce2271000f",
@@ -21624,12 +20902,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_pregnancyintent-us_core_v610_observation_pregnancyintent_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -21662,12 +20936,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_pregnancyintent-us_core_v610_observation_pregnancyintent_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -21700,12 +20970,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_pregnancyintent-us_core_v610_observation_pregnancyintent_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -21753,12 +21019,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_pregnancyintent",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -21796,9 +21058,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "49aba1aa-4576-4742-8ac3-e1b769bb2e0f",
@@ -21898,9 +21158,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "a96b18e2-1d0c-400c-b4ff-0d8426110ce5",
@@ -22060,9 +21318,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "0d357aae-89de-42b2-9080-8e0bfb30e4da",
@@ -22197,9 +21453,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "66c220cd-feb0-4434-8ece-7f4f853661c7",
@@ -22249,9 +21503,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1f6c3aff-eca3-4efd-9328-992d4461831d",
@@ -22322,12 +21574,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_occupation-us_core_v610_observation_occupation_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -22360,12 +21608,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_occupation-us_core_v610_observation_occupation_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -22398,12 +21642,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_occupation-us_core_v610_observation_occupation_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -22451,12 +21691,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_occupation",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -22494,9 +21730,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "12b0ef85-acae-4cf4-b812-426e459d7db8",
@@ -22596,9 +21830,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "af1c376e-aef3-4e38-9444-4dd63caeb60a",
@@ -22738,9 +21970,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8de71bae-421f-449c-b006-a5c32f7de2ae",
@@ -22835,9 +22065,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f95da6f4-55fb-4ab5-9074-f9fb0624706c",
@@ -22887,9 +22115,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "63713c9c-3793-4837-8660-8675762f7dcc",
@@ -22968,12 +22194,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_respiratory_rate-us_core_v610_respiratory_rate_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -23006,12 +22228,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_respiratory_rate-us_core_v610_respiratory_rate_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -23044,12 +22262,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_respiratory_rate-us_core_v610_respiratory_rate_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -23097,12 +22311,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_respiratory_rate",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -23140,9 +22350,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "af8b2c8e-6af7-4601-9c08-c92ca466f5f3",
@@ -23242,9 +22450,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "50e8a5a2-753f-4267-a15f-21dff17a8040",
@@ -23384,9 +22590,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6eb73157-cb7c-4a24-8d5e-e3262a958527",
@@ -23481,9 +22685,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "357f0d3e-2602-4a90-9875-32429bc36c96",
@@ -23533,9 +22735,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "7e28b7d0-f2ea-4954-a969-f9e834132c0a",
@@ -23614,12 +22814,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_heart_rate-us_core_v610_heart_rate_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -23652,12 +22848,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_heart_rate-us_core_v610_heart_rate_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -23690,12 +22882,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_heart_rate-us_core_v610_heart_rate_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -23743,12 +22931,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_heart_rate",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -23786,9 +22970,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ce612529-6e8b-45a2-94ba-6746d9ac7872",
@@ -23888,9 +23070,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b487982f-d64b-4eb6-943b-474f32404b7c",
@@ -24030,9 +23210,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "4d278c6e-3544-49c2-81a3-d2418310fe59",
@@ -24127,9 +23305,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "cd724576-6289-49f9-8329-bdca0f67fa03",
@@ -24179,9 +23355,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "34908596-6182-41a0-bf42-5fa6fa6d6926",
@@ -24268,12 +23442,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_temperature-us_core_v610_body_temperature_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -24306,12 +23476,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_temperature-us_core_v610_body_temperature_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -24344,12 +23510,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_temperature-us_core_v610_body_temperature_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -24397,12 +23559,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_temperature",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -24440,9 +23598,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f611a93c-a072-4d85-9861-a8f2c2e4817b",
@@ -24542,9 +23698,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1cd29fec-ed75-4d97-9989-33d13b3eb10f",
@@ -24684,9 +23838,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ba389994-1c2c-4fe1-a0e7-cb4db1c3d4d7",
@@ -24781,9 +23933,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "7a6f76b1-a698-43d3-9025-02f80210c991",
@@ -24833,9 +23983,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "3a5a16d3-ad0f-4fb0-bb07-f2fb113b253c",
@@ -24910,12 +24058,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pediatric_weight_for_height-us_core_v610_pediatric_weight_for_height_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -24948,12 +24092,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pediatric_weight_for_height-us_core_v610_pediatric_weight_for_height_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -24986,12 +24126,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pediatric_weight_for_height-us_core_v610_pediatric_weight_for_height_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -25039,12 +24175,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pediatric_weight_for_height",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -25082,9 +24214,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "68bc2377-849e-4f6e-9cc7-f2666f738527",
@@ -25214,9 +24344,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f9cac1ea-22db-4352-8961-5d3d607e5458",
@@ -25316,9 +24444,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "28871845-f144-4c23-abd8-8b4ba620aa7a",
@@ -25373,9 +24499,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8fef98c3-8ee6-4b51-a001-a3c2001d28ff",
@@ -25425,9 +24549,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d79a8dc6-65c2-4ad3-8c0a-fe755385bd61",
@@ -25540,12 +24662,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pulse_oximetry-us_core_v610_pulse_oximetry_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -25578,12 +24696,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pulse_oximetry-us_core_v610_pulse_oximetry_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -25616,12 +24730,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pulse_oximetry-us_core_v610_pulse_oximetry_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -25669,12 +24779,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pulse_oximetry",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -25712,9 +24818,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "019c1273-65fb-4b59-b7f5-ef10519126ea",
@@ -26024,9 +25128,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "421b8f81-31a2-42dc-b635-a94d1c3ee1a4",
@@ -26216,9 +25318,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "570d2297-32e5-4926-b859-880834c32820",
@@ -26453,9 +25553,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ae0e4b93-8082-4e6b-960f-8f102083571c",
@@ -26505,9 +25603,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "478d91a4-93e1-4914-8057-9e7211a6cba8",
@@ -27226,12 +26322,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_smokingstatus-us_core_v610_smokingstatus_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -27264,12 +26356,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_smokingstatus-us_core_v610_smokingstatus_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -27302,12 +26390,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_smokingstatus-us_core_v610_smokingstatus_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -27355,12 +26439,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_smokingstatus",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -27398,9 +26478,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "5329109c-b2a4-452b-a8b2-bf7461e7c672",
@@ -27500,9 +26578,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6be8d6a9-c136-4cb7-80ec-8864dcc35586",
@@ -27602,9 +26678,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "e35086b4-6037-40ec-9e9f-fa865434f75a",
@@ -27659,9 +26733,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8cf4b3e7-cd89-4108-974c-775287f8dca8",
@@ -27711,9 +26783,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "63a5da37-4d69-424e-8953-971d51136959",
@@ -27788,12 +26858,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_head_circumference-us_core_v610_head_circumference_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -27826,12 +26892,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_head_circumference-us_core_v610_head_circumference_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -27864,12 +26926,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_head_circumference-us_core_v610_head_circumference_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -27917,12 +26975,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_head_circumference",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -27960,9 +27014,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "fa36c7a3-29db-4238-a601-647ee39a42f0",
@@ -28062,9 +27114,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "dcddce3d-6a85-470e-a803-db09e506766f",
@@ -28184,9 +27234,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "62b1d9dc-d904-418b-99b2-d7de1e4f77a8",
@@ -28281,9 +27329,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f2e6ff94-bee1-46db-a749-b3eff591192a",
@@ -28333,9 +27379,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "12332665-3b63-4ece-93f4-c74c4937e286",
@@ -28422,12 +27466,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_height-us_core_v610_body_height_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -28460,12 +27500,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_height-us_core_v610_body_height_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -28498,12 +27534,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_height-us_core_v610_body_height_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -28551,12 +27583,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_height",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -28594,9 +27622,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8ca2db37-3c0f-4d06-9e82-e6e8a7faa33f",
@@ -28696,9 +27722,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "a9efa486-0849-4886-9ffa-ab1e3dd832f4",
@@ -28838,9 +27862,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6f53171b-4c3e-4f13-a96d-524c463d9b2c",
@@ -28935,9 +27957,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d659b5ea-92bc-4b68-b03c-a283a9f3f04f",
@@ -28987,9 +28007,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "177459cb-9c43-4680-8aca-12b0e5f13b3e",
@@ -29060,12 +28078,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_bmi-us_core_v610_bmi_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -29098,12 +28112,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_bmi-us_core_v610_bmi_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -29136,12 +28146,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_bmi-us_core_v610_bmi_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -29189,12 +28195,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_bmi",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -29232,9 +28234,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "01d58fba-ce0e-4e60-ad92-06f8d1849851",
@@ -29334,9 +28334,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2ff18459-bad9-42a6-8de9-956870be1345",
@@ -29446,9 +28444,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "329d851e-a2a6-49bf-99a8-3ad8c97e601d",
@@ -29513,9 +28509,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "747f1eda-eb7c-43ce-9442-163721fb3cde",
@@ -29565,9 +28559,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "60880a75-0976-4319-88c4-b71cafe5e27b",
@@ -29670,12 +28662,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_screening_assessment-us_core_v610_observation_screening_assessment_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -29708,12 +28696,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_screening_assessment-us_core_v610_observation_screening_assessment_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -29746,9 +28730,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2f011de6-7c64-443f-8d1e-9a987df04b7f",
@@ -29828,12 +28810,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_screening_assessment",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -29871,9 +28849,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6429ef8b-6cb0-4f05-89c6-caf63fe9de65",
@@ -29973,9 +28949,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "a12c6f71-613a-41ba-9f59-41e39b8648c6",
@@ -30115,9 +29089,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "4393ee07-54c4-477e-99c3-86c165b97133",
@@ -30212,9 +29184,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8f9ec4e1-1841-4735-a2a0-8f95e1a638c7",
@@ -30264,9 +29234,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f7affb9d-6abe-4a0b-abf3-98dc14662e7b",
@@ -30349,12 +29317,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_blood_pressure-us_core_v610_blood_pressure_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -30387,12 +29351,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_blood_pressure-us_core_v610_blood_pressure_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -30425,12 +29385,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_blood_pressure-us_core_v610_blood_pressure_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -30478,12 +29434,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_blood_pressure",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -30521,9 +29473,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "bf1a4422-68be-4d8d-9581-445ce4005347",
@@ -30823,9 +29773,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "679888d4-0f18-4b6d-9b1c-9834386f12d2",
@@ -30935,9 +29883,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2217eca6-6ba7-48ab-ac57-ed17ed4fc863",
@@ -31002,9 +29948,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d3f3ca26-a3f8-4489-8ea3-803477503c02",
@@ -31054,9 +29998,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "72984358-5ff4-4cb3-aa0a-391fe9c10494",
@@ -31519,12 +30461,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_clinical_result-us_core_v610_observation_clinical_result_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -31557,12 +30495,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_clinical_result-us_core_v610_observation_clinical_result_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -31595,12 +30529,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_clinical_result-us_core_v610_observation_clinical_result_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -31648,12 +30578,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_observation_clinical_result",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -31691,9 +30617,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9405a3c7-5d04-4266-b507-cb1cd7d2f9fe",
@@ -31793,9 +30717,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "a78d87eb-39cf-4934-b135-8ff2bfe6e72a",
@@ -31935,9 +30857,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d1594704-9e95-49d7-9c09-fa290e0a03c0",
@@ -32032,9 +30952,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d0aea401-428f-44b0-bfb8-c8257e37acaa",
@@ -32084,9 +31002,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b653044f-ea51-4f31-b364-344da14fffa6",
@@ -32161,12 +31077,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pediatric_bmi_for_age-us_core_v610_pediatric_bmi_for_age_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -32199,12 +31111,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pediatric_bmi_for_age-us_core_v610_pediatric_bmi_for_age_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -32237,12 +31145,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pediatric_bmi_for_age-us_core_v610_pediatric_bmi_for_age_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -32290,12 +31194,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_pediatric_bmi_for_age",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -32333,9 +31233,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "37baa42a-308e-47e0-a605-8b037ce3b3eb",
@@ -32435,9 +31333,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6efc4590-bc86-4203-bf07-7994ba49d3dd",
@@ -32577,9 +31473,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "fb95f2d2-8a5e-4845-ab9e-965be56fdbd8",
@@ -32674,9 +31568,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "4418c1d2-0486-42d9-b26d-a9b178449309",
@@ -32726,9 +31618,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "143b3d8d-b5e5-4285-b391-36359eb706af",
@@ -32807,12 +31697,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_head_circumference_percentile-us_core_v610_head_circumference_percentile_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -32845,12 +31731,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_head_circumference_percentile-us_core_v610_head_circumference_percentile_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -32883,12 +31765,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_head_circumference_percentile-us_core_v610_head_circumference_percentile_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -32936,12 +31814,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_head_circumference_percentile",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -32979,9 +31853,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "384efbe1-9ea7-4614-94b1-4ac553529bba",
@@ -33081,9 +31953,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "cda884f5-1b0a-45f4-8054-198181ec2887",
@@ -33223,9 +32093,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ce05926a-18c6-4b24-b385-35054f7b802d",
@@ -33320,9 +32188,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "268aabc7-005b-4791-809f-a0a0d2ee8c80",
@@ -33372,9 +32238,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "50eca0d5-4fa5-47a9-8e88-ca99312406b9",
@@ -33461,12 +32325,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_weight-us_core_v610_body_weight_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -33499,12 +32359,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_weight-us_core_v610_body_weight_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -33537,12 +32393,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_weight-us_core_v610_body_weight_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -33590,12 +32442,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_body_weight",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -33633,9 +32481,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "727986b9-14b6-473c-b034-f95bbc3c79e8",
@@ -33765,9 +32611,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "75411fc2-50c5-4f09-bbf9-076e48682ef2",
@@ -33892,9 +32736,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "73d5534a-0b7a-4457-bb0d-deefe6d8de8b",
@@ -33944,9 +32786,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6ae9b78f-72bc-4433-9d5f-a06c73676416",
@@ -34193,12 +33033,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_procedure-us_core_v610_procedure_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -34231,12 +33067,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_procedure-us_core_v610_procedure_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -34269,9 +33101,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "433c05a9-4d31-472b-886f-8bc5cbfd6350",
@@ -34331,12 +33161,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_procedure",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -34374,9 +33200,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9dff8367-74ce-42ca-8789-75217d75c9e2",
@@ -34461,9 +33285,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9620bedd-81f5-4d49-834d-f6b005194279",
@@ -34513,9 +33335,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ca28b48b-0a8d-41cb-ae82-87b230450c16",
@@ -34615,9 +33435,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "fe1d2fdd-4177-4469-b28d-14cafc93b582",
@@ -34677,9 +33495,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b44ab8f2-14c1-4041-916e-ef1f96fd3adf",
@@ -34734,9 +33550,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "c01071c1-b432-4f2f-8995-930eac741b17",
@@ -34786,9 +33600,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "43d7e384-b889-4939-a6cc-f9fb42974e8a",
@@ -34871,12 +33683,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_service_request-us_core_v610_service_request_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -34909,12 +33717,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_service_request-us_core_v610_service_request_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -34947,9 +33751,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "dd4b40fb-6c54-4a70-98e7-90167c58b981",
@@ -35009,12 +33811,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_service_request",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35053,9 +33851,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "85d748b2-789f-4a51-a8ae-dc05c3ba5c6b",
@@ -35162,12 +33958,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_organization-us_core_v610_organization_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35200,12 +33992,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_organization-us_core_v610_organization_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35246,12 +34034,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_organization",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35290,9 +34074,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b7874fca-5cb9-4ab0-ac0e-f1c4195fe657",
@@ -35439,12 +34221,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_practitioner-us_core_v610_practitioner_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35477,12 +34255,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_practitioner-us_core_v610_practitioner_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35515,9 +34289,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "681cbc8e-9c55-48ba-9387-1dc1f1bd3fa9",
@@ -35570,12 +34342,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_practitioner",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35608,9 +34376,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "bc16933e-c0fa-4243-9af0-7f4718d3fa78",
@@ -35675,12 +34441,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_provenance-us_core_v610_provenance_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35713,12 +34475,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_provenance-us_core_v610_provenance_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35751,12 +34509,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_provenance-us_core_v610_provenance_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35797,12 +34551,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_provenance",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35841,9 +34591,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "95548625-09ef-4abb-ab61-3b567835fa74",
@@ -35888,12 +34636,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_related_person-us_core_v610_related_person_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35926,12 +34670,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_related_person-us_core_v610_related_person_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -35964,12 +34704,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_related_person-us_core_v610_related_person_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36010,12 +34746,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_related_person",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36054,9 +34786,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "0f566693-3a57-4d4a-b876-826fdf0ff3a3",
@@ -36101,12 +34831,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_specimen-us_core_v610_specimen_validation_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36139,12 +34865,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_specimen-us_core_v610_specimen_must_support_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36177,12 +34899,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_specimen-us_core_v610_specimen_reference_resolution_test",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36223,12 +34941,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_specimen",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36266,9 +34980,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f4b58057-3bf4-4263-9ff6-59f43a644dc3",
@@ -36433,12 +35145,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v400_clinical_notes_guidance-us_core_clinical_note_attachments",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36486,12 +35194,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v400_clinical_notes_guidance",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36529,9 +35233,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "a8d8dff2-1113-4a1e-bffd-aea6b6f10da9",
@@ -36631,12 +35333,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_v610_screening_assessment",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36674,12 +35372,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_311_data_absent_reason-us_core_311_data_absent_reason_extension",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36717,12 +35411,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_311_data_absent_reason-us_core_311_data_absent_reason_code_system",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36777,12 +35467,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api-us_core_311_data_absent_reason",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36820,12 +35506,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_single_patient_us_core_6_api-g10_incorrectly_permitted_tls_versions_messages_setup",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36873,12 +35555,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_single_patient_us_core_6_api",
     "test_run_id": "e45e0f8a-c178-4353-9864-b7c327a22b8f",
@@ -36932,12 +35610,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-multi_patient_api-bulk_data_authorization-g10_bulk_token_tls_version",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -36960,9 +35634,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "87fe8f4b-59c8-4d36-ba73-681b46ccc05b",
@@ -36997,9 +35669,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "870a9e1a-9e65-4a4d-a8b5-a6a152246088",
@@ -37034,9 +35704,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "3321656f-481e-4771-bc3f-f2531315e038",
@@ -37139,9 +35807,7 @@
         "value": "system/*.r"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-multi_patient_api-bulk_data_authorization-smart_backend_services_auth_response_body",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -37168,12 +35834,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-multi_patient_api-bulk_data_authorization",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -37191,12 +35853,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-multi_patient_api-g10_bulk_auth_tls_messages_setup",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -37260,12 +35918,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-multi_patient_api-bulk_data_group_export-g10_bulk_data_server_tls_version",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -37298,9 +35952,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "0adf13ca-5fd8-43db-b61d-7f87ba0a1679",
@@ -37345,9 +35997,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "17b5561d-9673-4725-8542-718d33b420b6",
@@ -37521,9 +36171,7 @@
         "value": "https://inferno.healthit.gov/reference-server/r4/Binary/X0nqjI4gePHawtQvw644bs7jPPrciSTT"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-multi_patient_api-bulk_data_group_export-Test06",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -37564,12 +36212,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-multi_patient_api-bulk_data_group_export",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -37587,12 +36231,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-multi_patient_api-g10_bulk_group_export_tls_messages_setup",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -37671,12 +36311,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-multi_patient_api-bulk_data_group_export_validation-g10_bulk_file_server_tls_version",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -37739,9 +36375,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "55e528d4-1af1-45ea-8cec-e090c4ecefc0",
@@ -37871,9 +36505,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "a6ad7000-1069-4d29-a836-0c2b6df956dc",
@@ -37934,12 +36566,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-multi_patient_api-bulk_data_group_export_validation-Test04",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -37987,12 +36615,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-multi_patient_api-bulk_data_group_export_validation-Test05",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -38242,9 +36866,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "88452af1-9f28-4997-88a0-d7a2b31534d1",
@@ -38723,9 +37345,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "bfa5f118-f2e1-4379-909a-d4d4533de5ff",
@@ -38892,9 +37512,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "0f36da61-9092-4af1-8700-2af39cdd8bd5",
@@ -39309,9 +37927,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "efb47e5b-5d0a-47ea-8c09-a14e70d5358b",
@@ -39390,9 +38006,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9cc3d02a-321f-4c30-b4e2-90e0d1ed555e",
@@ -39627,9 +38241,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "28a1e140-45cc-45c6-8f1f-339901af3722",
@@ -40244,9 +38856,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "abc270db-50aa-4a25-8ac4-5871b2f57481",
@@ -40313,9 +38923,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "e5f77fa1-0189-4af5-8ef9-8d9b2263b025",
@@ -40538,9 +39146,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "438efba4-a6e9-46fc-a84e-bbc45552b24b",
@@ -40867,9 +39473,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b1366552-b18f-4a9b-b0c9-cad9c697ba13",
@@ -41960,9 +40564,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6b5bcc65-4ea4-4f05-999a-6c071498dcbb",
@@ -42195,9 +40797,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b32b3750-ddaf-4d5a-8e41-7c8358c0515c",
@@ -43776,9 +42376,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b1ad6893-b9f9-4732-a3d1-5f7ca7d54db2",
@@ -43861,9 +42459,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1880620c-baef-4b55-877e-4779ee5cc1e8",
@@ -43986,9 +42582,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2121cfac-3e88-45ae-a053-7f1f64cf9c2c",
@@ -44049,9 +42643,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d4adf4a3-8692-405d-8e52-fa6a99ac2a9e",
@@ -44112,9 +42704,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "44686ab4-19a0-4fe7-a9c6-8b5b6baf619d",
@@ -44175,12 +42765,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "omit",
     "result_message": "No Medication resource file item returned by server. Medication resources are optional.",
     "test_id": "g10_certification-multi_patient_api-bulk_data_group_export_validation-Test26",
@@ -44247,9 +42833,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "783a8f89-088f-4d77-b9c9-10cc1d44f575",
@@ -44310,9 +42894,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "d3a3270b-0eb6-4f3e-9f69-b7cdb4982087",
@@ -44373,12 +42955,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "omit",
     "result_message": "No QuestionnaireResponse resource file item returned by server. QuestionnaireResponse resources are optional.",
     "test_id": "g10_certification-multi_patient_api-bulk_data_group_export_validation-g10_us_core_6_bulk_questionnaire_response_validation",
@@ -44427,12 +43005,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "omit",
     "result_message": "No PractitionerRole resource file item returned by server. PractitionerRole resources are optional.",
     "test_id": "g10_certification-multi_patient_api-bulk_data_group_export_validation-g10_us_core_6_bulk_practitioner_role_validation",
@@ -44487,9 +43061,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "45e64d04-0483-438b-99dd-7c1067f6706d",
@@ -44560,9 +43132,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ba6efc0f-5d8d-4c27-8de0-777c00035f02",
@@ -44623,9 +43193,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "87ace33a-a2a3-40b6-b2f8-d095af449067",
@@ -44700,12 +43268,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-multi_patient_api-bulk_data_group_export_validation",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -44723,12 +43287,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-multi_patient_api-g10_bulk_group_export_validation_messages_setup",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -44818,12 +43378,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-multi_patient_api-g10_bulk_data_export_cancel_stu1",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -44885,12 +43441,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-multi_patient_api",
     "test_run_id": "804fb945-a618-4fcc-99a2-f590b407be18",
@@ -45016,12 +43568,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_public_standalone_launch_stu2-standalone_auth_tls",
     "test_run_id": "8e922e88-4014-4f3a-a359-2bc66d2b79b0",
@@ -45072,9 +43620,7 @@
         "value": "vviFSWn0mMd4iELIk_UT5GgvDLDZHtJBhrPMH4G4_Ug"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_public_standalone_launch_stu2-smart_app_redirect_stu2",
     "test_run_id": "8e922e88-4014-4f3a-a359-2bc66d2b79b0",
@@ -45084,9 +43630,7 @@
   {
     "id": "4f1ca2d0-3590-4bf2-8f66-103e825ca756",
     "created_at": "2026-02-21T01:17:53.480-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -45155,12 +43699,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_public_standalone_launch_stu2-standalone_token_tls",
     "test_run_id": "8e922e88-4014-4f3a-a359-2bc66d2b79b0",
@@ -45312,13 +43852,9 @@
   {
     "id": "26d8bc26-1deb-4617-9f5d-e1878ffffec7",
     "created_at": "2026-02-21T01:17:54.046-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "59860e17-5c43-4d5e-b277-5b68d4739f27",
@@ -45358,9 +43894,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "1eb2de1b-4393-4be9-bae9-69df4bdb849d",
@@ -45390,12 +43924,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_public_standalone_launch_stu2-g10_public_launch_id_token",
     "test_run_id": "8e922e88-4014-4f3a-a359-2bc66d2b79b0",
@@ -45422,12 +43952,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_public_standalone_launch_stu2",
     "test_run_id": "8e922e88-4014-4f3a-a359-2bc66d2b79b0",
@@ -45450,12 +43976,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_token_revocation-Test01",
     "test_run_id": "e0b029f1-900b-4305-bcba-7421c3fe0486",
@@ -45483,9 +44005,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "73a3c8e2-5be7-44e0-ae5e-4c44ee496468",
@@ -45515,9 +44035,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "224254e3-2a0b-40ad-8b53-f249b0eb5f0f",
@@ -45577,12 +44095,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_token_revocation",
     "test_run_id": "e0b029f1-900b-4305-bcba-7421c3fe0486",
@@ -45633,9 +44147,7 @@
         "value": "LmtfKJGJx-62bRfLdOV-BONJk9e_QK2G2gkTrRosZgI"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_invalid_aud-smart_app_redirect_stu2",
     "test_run_id": "426ecb4c-5edb-412f-a440-e34f8f706f6e",
@@ -45645,13 +44157,9 @@
   {
     "id": "426a61ac-c3e5-416f-be25-249f4a8b5680",
     "created_at": "2026-02-21T01:18:09.231-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "261a8961-a385-4fa6-98e1-202c9b24f5b3",
@@ -45691,12 +44199,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_invalid_aud",
     "test_run_id": "426ecb4c-5edb-412f-a440-e34f8f706f6e",
@@ -45824,9 +44328,7 @@
         "value": "j1BghDL0g7c0FGnL6I1WtxqFO9rYASgCRNbr3sZL3hE"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_invalid_token_request_stu2-smart_app_redirect_stu2",
     "test_run_id": "a4fcd1b9-98ec-4a8e-bb9d-b2bc2e91e813",
@@ -45836,9 +44338,7 @@
   {
     "id": "6ad55bd9-436f-4563-9882-39f71bc85d72",
     "created_at": "2026-02-21T01:18:17.181-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -45881,9 +44381,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "702ce320-b2db-4dc5-b2dc-7e7ec03552a5",
@@ -45933,9 +44431,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "702ce320-b2db-4dc5-b2dc-7e7ec03552a5",
@@ -45984,12 +44480,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_invalid_token_request_stu2",
     "test_run_id": "a4fcd1b9-98ec-4a8e-bb9d-b2bc2e91e813",
@@ -46117,9 +44609,7 @@
         "value": "I-4cXm76t2VEgr5wEkhUHlC1M_qE8xuT-amOgbCK6Kg"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_invalid_pkce_code_verifier_group-smart_no_code_verifier_redirect",
     "test_run_id": "a9651546-2bba-4cd3-adf6-d58a782fa971",
@@ -46183,9 +44673,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "64d28293-79e6-45b8-a486-87d6d3554c91",
@@ -46258,9 +44746,7 @@
         "value": "erud8VSJAHQAKIBlkTIpaNZcR3dAPTAnvFn2yvW54AY"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_invalid_pkce_code_verifier_group-smart_blank_code_verifier_redirect",
     "test_run_id": "a9651546-2bba-4cd3-adf6-d58a782fa971",
@@ -46324,9 +44810,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f67b2820-98ff-413c-ae9d-4c695dbc9981",
@@ -46399,9 +44883,7 @@
         "value": "d68Zo8cZPCMbKyG3iiutOV3PoazMPe_5dFiwtyhb8-E"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_invalid_pkce_code_verifier_group-smart_bad_code_verifier_redirect",
     "test_run_id": "a9651546-2bba-4cd3-adf6-d58a782fa971",
@@ -46465,9 +44947,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "bdac24f6-a2c0-4cbf-b70a-e778216bc512",
@@ -46540,9 +45020,7 @@
         "value": "KDYGkUVaH4rpvwM5CPHSyGd17yjEvgo-8qv5Z_DQT4s"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_invalid_pkce_code_verifier_group-smart_plain_code_verifier_redirect",
     "test_run_id": "a9651546-2bba-4cd3-adf6-d58a782fa971",
@@ -46611,9 +45089,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ac1008db-0689-4545-b9e8-cabcc27a2571",
@@ -46662,12 +45138,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_invalid_pkce_code_verifier_group",
     "test_run_id": "a9651546-2bba-4cd3-adf6-d58a782fa971",
@@ -46762,12 +45234,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_ehr_patient_launch_stu2-smart_app_launch",
     "test_run_id": "0b3b518a-8266-46ac-9578-2274b3250579",
@@ -46777,9 +45245,7 @@
   {
     "id": "49024824-412d-4a5a-b797-bd87b778c89a",
     "created_at": "2026-02-21T01:18:46.028-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -46848,12 +45314,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_ehr_patient_launch_stu2-ehr_auth_tls",
     "test_run_id": "0b3b518a-8266-46ac-9578-2274b3250579",
@@ -46909,9 +45371,7 @@
         "value": "xPd2J_oGkRUD27ULD5zFeEATJuJUpMTFxRCa1G7IOvU"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_ehr_patient_launch_stu2-smart_app_redirect_stu2",
     "test_run_id": "0b3b518a-8266-46ac-9578-2274b3250579",
@@ -46921,9 +45381,7 @@
   {
     "id": "14a0a17d-8a76-428e-a350-8119dc20dfa3",
     "created_at": "2026-02-21T01:18:53.312-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -46992,12 +45450,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_ehr_patient_launch_stu2-ehr_token_tls",
     "test_run_id": "0b3b518a-8266-46ac-9578-2274b3250579",
@@ -47149,13 +45603,9 @@
   {
     "id": "7d0962e6-2a78-473c-b723-3e01602d8486",
     "created_at": "2026-02-21T01:18:53.878-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "38a7b564-d3a3-4cff-af4c-64b98c28ce19",
@@ -47195,9 +45645,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "cc242d07-c992-43c8-8465-d6c75d3a2e45",
@@ -47227,12 +45675,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_ehr_patient_launch_stu2-g10_patient_scope",
     "test_run_id": "0b3b518a-8266-46ac-9578-2274b3250579",
@@ -47259,12 +45703,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_ehr_patient_launch_stu2",
     "test_run_id": "0b3b518a-8266-46ac-9578-2274b3250579",
@@ -47370,12 +45810,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_token_introspection-smart_token_introspection_access_token_group-smart_discovery_stu2-well_known_capabilities_stu2",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -47429,12 +45865,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_token_introspection-smart_token_introspection_access_token_group-smart_standalone_launch_stu2-standalone_auth_tls",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -47490,9 +45922,7 @@
         "value": "uoz0pVVAkZJc_V1mqGjeg_SiO8AGUpgPR2-3JotBDm8"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_token_introspection-smart_token_introspection_access_token_group-smart_standalone_launch_stu2-smart_app_redirect_stu2",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -47526,12 +45956,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_token_introspection-smart_token_introspection_access_token_group-smart_discovery_stu2",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -47621,12 +46047,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_token_introspection-smart_token_introspection_access_token_group-smart_standalone_launch_stu2-standalone_token_tls",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -47796,9 +46218,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "dbfdea44-7cdf-4fe2-be9e-76a07e9d615f",
@@ -47844,12 +46264,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_token_introspection-smart_token_introspection_access_token_group-smart_standalone_launch_stu2",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -47883,12 +46299,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_token_introspection-smart_token_introspection_access_token_group",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -48026,12 +46438,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_token_introspection-smart_token_introspection_request_group",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -48079,12 +46487,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_token_introspection-smart_token_introspection_response_group-Test01",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -48107,12 +46511,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_token_introspection-smart_token_introspection_response_group-Test02",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -48181,12 +46581,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_token_introspection-smart_token_introspection_response_group",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -48234,12 +46630,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_token_introspection",
     "test_run_id": "a8310430-54dc-46de-9928-8e892faa034a",
@@ -48335,12 +46727,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_asymmetric_launch-smart_discovery_stu2-well_known_capabilities_stu2",
     "test_run_id": "309f7d79-a155-4463-ba7f-48926f332bff",
@@ -48389,12 +46777,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_asymmetric_launch-smart_standalone_launch_stu2-standalone_auth_tls",
     "test_run_id": "309f7d79-a155-4463-ba7f-48926f332bff",
@@ -48445,9 +46829,7 @@
         "value": "2elVwDUZ-Du3lw-TLfVGKWz7BcgoUTeGjtIFt8IcJgM"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_asymmetric_launch-smart_standalone_launch_stu2-smart_app_redirect_stu2",
     "test_run_id": "309f7d79-a155-4463-ba7f-48926f332bff",
@@ -48474,12 +46856,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_asymmetric_launch-smart_discovery_stu2",
     "test_run_id": "309f7d79-a155-4463-ba7f-48926f332bff",
@@ -48489,9 +46867,7 @@
   {
     "id": "7329c752-c5c7-4d77-8e7a-e1555d22049f",
     "created_at": "2026-02-21T01:19:09.366-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -48560,12 +46936,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_asymmetric_launch-smart_standalone_launch_stu2-standalone_token_tls",
     "test_run_id": "309f7d79-a155-4463-ba7f-48926f332bff",
@@ -48717,13 +47089,9 @@
   {
     "id": "49dea8ca-8eea-465e-9429-1e80f5c4f111",
     "created_at": "2026-02-21T01:19:10.029-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "e227ff74-dc88-4fca-88f6-ecd43c86315a",
@@ -48763,9 +47131,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f5ddee21-7476-4f70-9e03-38f822efa9c0",
@@ -48795,12 +47161,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_asymmetric_launch-smart_standalone_launch_stu2-g10_asymmetric_launch_id_token",
     "test_run_id": "309f7d79-a155-4463-ba7f-48926f332bff",
@@ -48827,12 +47189,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_asymmetric_launch-smart_standalone_launch_stu2",
     "test_run_id": "309f7d79-a155-4463-ba7f-48926f332bff",
@@ -49104,9 +47462,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "6af94924-03ca-4ab8-80bd-80380e14cf4e",
@@ -49151,9 +47507,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "ce143e35-6ca5-43bd-8dd4-880d5b8fd3fa",
@@ -49206,12 +47560,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_asymmetric_launch-g10_smart_asymmetric_token_refresh",
     "test_run_id": "309f7d79-a155-4463-ba7f-48926f332bff",
@@ -49238,12 +47588,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_asymmetric_launch",
     "test_run_id": "309f7d79-a155-4463-ba7f-48926f332bff",
@@ -49339,12 +47685,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_v1_scopes-smart_discovery_stu2-well_known_capabilities_stu2",
     "test_run_id": "4b64fce5-e0f2-4ed2-a258-1003a7d07c0e",
@@ -49363,12 +47705,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_v1_scopes-smart_discovery_stu2-g10_smart_well_known_capabilities",
     "test_run_id": "4b64fce5-e0f2-4ed2-a258-1003a7d07c0e",
@@ -49417,12 +47755,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_v1_scopes-smart_standalone_launch_stu2-standalone_auth_tls",
     "test_run_id": "4b64fce5-e0f2-4ed2-a258-1003a7d07c0e",
@@ -49473,9 +47807,7 @@
         "value": "5UmpSpOg9laB0HJ87O_V-2mIO7LMmHRKrgsvI6BqsLU"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_v1_scopes-smart_standalone_launch_stu2-smart_app_redirect_stu2",
     "test_run_id": "4b64fce5-e0f2-4ed2-a258-1003a7d07c0e",
@@ -49502,12 +47834,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_v1_scopes-smart_discovery_stu2",
     "test_run_id": "4b64fce5-e0f2-4ed2-a258-1003a7d07c0e",
@@ -49517,9 +47845,7 @@
   {
     "id": "f16d52e9-9b23-4c15-8547-3a09ac55ab96",
     "created_at": "2026-02-21T01:19:17.443-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -49588,12 +47914,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_v1_scopes-smart_standalone_launch_stu2-standalone_token_tls",
     "test_run_id": "4b64fce5-e0f2-4ed2-a258-1003a7d07c0e",
@@ -49745,13 +48067,9 @@
   {
     "id": "84c7fa0f-7463-493a-88bd-ea4f2a116310",
     "created_at": "2026-02-21T01:19:18.024-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "3d3860a3-b19d-4c08-8102-5091a2962a4e",
@@ -49786,9 +48104,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "3d3860a3-b19d-4c08-8102-5091a2962a4e",
@@ -49823,9 +48139,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "3d3860a3-b19d-4c08-8102-5091a2962a4e",
@@ -49875,9 +48189,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "3bc1965d-27c3-46ac-a1b7-52cd259a0af1",
@@ -49916,12 +48228,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_v1_scopes-smart_standalone_launch_stu2",
     "test_run_id": "4b64fce5-e0f2-4ed2-a258-1003a7d07c0e",
@@ -49954,12 +48262,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "result_message": "Scopes received indicate access to all necessary resources.",
     "test_id": "g10_certification-Group06-g10_smart_v1_scopes-g10_unrestricted_resource_type_access-Test01",
@@ -49993,9 +48297,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9eb1e1bc-3229-4528-bfa6-059bab71a1b6",
@@ -50041,9 +48343,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "cce2adc2-c59c-4b6a-8e91-02e2e6e283ca",
@@ -50089,9 +48389,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "b3d86873-8de3-4322-a8ae-8fda82dca869",
@@ -50137,9 +48435,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "0adfd1ef-4848-4a00-b225-81c0b49a6597",
@@ -50185,9 +48481,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "969ad269-c330-496e-95f9-7451a4eb3ca4",
@@ -50233,9 +48527,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "e3374f3e-aee9-498a-8cc5-0d41f2cfabbe",
@@ -50281,9 +48573,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "5c32b6d7-35b1-4bbc-9996-3c1d7641c09b",
@@ -50329,9 +48619,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "e0f9d022-9e5c-4fdf-9bc5-45d5eefd4315",
@@ -50377,9 +48665,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "4b0154ce-e7c9-436b-9aad-4d4b6629973e",
@@ -50425,9 +48711,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f719cb29-5fe9-4c32-8d0c-536d53a75d28",
@@ -50473,9 +48757,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "f678c4b5-f325-4b07-80da-b895f4a2b705",
@@ -50521,9 +48803,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "0f7ae218-8091-4cee-8fb2-35e9d100734a",
@@ -50569,9 +48849,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "5f7f70f2-367b-4510-a0b1-c84dfe15c836",
@@ -50617,9 +48895,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "8c97b9af-c20b-4bbf-b2cf-5c8a56d0445e",
@@ -50665,9 +48941,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "46ea7d62-b66c-4c5f-8c41-0bc4438de0e9",
@@ -50713,9 +48987,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "77b06956-d19b-4a6a-9d4e-b0d18153471b",
@@ -50761,9 +49033,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "26f10eef-9c1b-422c-b191-eba6059d82ae",
@@ -50817,12 +49087,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_v1_scopes-g10_unrestricted_resource_type_access",
     "test_run_id": "4b64fce5-e0f2-4ed2-a258-1003a7d07c0e",
@@ -50840,12 +49106,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_v1_scopes-g10_auth_incorrectly_permitted_tls_versions_messages_setup",
     "test_run_id": "4b64fce5-e0f2-4ed2-a258-1003a7d07c0e",
@@ -50863,12 +49125,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_v1_scopes-g10_token_incorrectly_permitted_tls_versions_messages_setup",
     "test_run_id": "4b64fce5-e0f2-4ed2-a258-1003a7d07c0e",
@@ -50895,12 +49153,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_v1_scopes",
     "test_run_id": "4b64fce5-e0f2-4ed2-a258-1003a7d07c0e",
@@ -51001,12 +49255,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group01-us_core_smart_standalone_launch_stu2-smart_discovery_stu2-well_known_capabilities_stu2",
     "test_run_id": "f406774a-01e2-43e8-8121-0e6faeaaa499",
@@ -51055,12 +49305,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group01-us_core_smart_standalone_launch_stu2-smart_standalone_launch_stu2-standalone_auth_tls",
     "test_run_id": "f406774a-01e2-43e8-8121-0e6faeaaa499",
@@ -51111,9 +49357,7 @@
         "value": "ig78SoHx3pAQ7GQnTql3BMNOdaUj0kgtorLVX1Lxdik"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group01-us_core_smart_standalone_launch_stu2-smart_standalone_launch_stu2-smart_app_redirect_stu2",
     "test_run_id": "f406774a-01e2-43e8-8121-0e6faeaaa499",
@@ -51140,12 +49384,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group01-us_core_smart_standalone_launch_stu2-smart_discovery_stu2",
     "test_run_id": "f406774a-01e2-43e8-8121-0e6faeaaa499",
@@ -51230,12 +49470,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group01-us_core_smart_standalone_launch_stu2-smart_standalone_launch_stu2-standalone_token_tls",
     "test_run_id": "f406774a-01e2-43e8-8121-0e6faeaaa499",
@@ -51405,9 +49641,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "cb97bfb6-76b4-47c9-b94a-f79162563471",
@@ -51442,12 +49676,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group01-us_core_smart_standalone_launch_stu2-smart_standalone_launch_stu2-us_core_granted_granular_scopes",
     "test_run_id": "f406774a-01e2-43e8-8121-0e6faeaaa499",
@@ -51474,12 +49704,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group01-us_core_smart_standalone_launch_stu2-smart_standalone_launch_stu2",
     "test_run_id": "f406774a-01e2-43e8-8121-0e6faeaaa499",
@@ -51506,12 +49732,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group01-us_core_smart_standalone_launch_stu2",
     "test_run_id": "f406774a-01e2-43e8-8121-0e6faeaaa499",
@@ -51544,9 +49766,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9ce29457-d053-4371-8a05-2b8f85abdaae",
@@ -51941,9 +50161,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "edd880a6-2a0c-4bba-b5c5-3601f758a571",
@@ -52233,9 +50451,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9ce29457-d053-4371-8a05-2b8f85abdaae",
@@ -52488,12 +50704,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group01-us_core_v610_condition_granular_scope_1_group",
     "test_run_id": "f406774a-01e2-43e8-8121-0e6faeaaa499",
@@ -52526,9 +50738,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "bdce130f-20df-4106-b28f-cf3d8040065e",
@@ -55123,9 +53333,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "70ec6ccb-2b3d-4286-937e-e20e3ab65aa4",
@@ -58500,9 +56708,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2b4166d5-73cf-482f-843d-e2d3d4d711aa",
@@ -60732,9 +58938,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "bdce130f-20df-4106-b28f-cf3d8040065e",
@@ -62297,12 +60501,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group01-us_core_v610_observation_granular_scope_1_group",
     "test_run_id": "f406774a-01e2-43e8-8121-0e6faeaaa499",
@@ -62336,12 +60536,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group01",
     "test_run_id": "f406774a-01e2-43e8-8121-0e6faeaaa499",
@@ -62442,12 +60638,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group02-us_core_smart_standalone_launch_stu2-smart_discovery_stu2-well_known_capabilities_stu2",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -62496,12 +60688,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group02-us_core_smart_standalone_launch_stu2-smart_standalone_launch_stu2-standalone_auth_tls",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -62552,9 +60740,7 @@
         "value": "L8oaI1UKZ_vWlj2I4sXU4Qz2qTpJsMZY-HHjDpJBDVs"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group02-us_core_smart_standalone_launch_stu2-smart_standalone_launch_stu2-smart_app_redirect_stu2",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -62581,12 +60767,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group02-us_core_smart_standalone_launch_stu2-smart_discovery_stu2",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -62671,12 +60853,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group02-us_core_smart_standalone_launch_stu2-smart_standalone_launch_stu2-standalone_token_tls",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -62846,9 +61024,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "eaaf6ed1-46a7-4121-b05a-d60b4eaf3eec",
@@ -62883,12 +61059,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group02-us_core_smart_standalone_launch_stu2-smart_standalone_launch_stu2-us_core_granted_granular_scopes",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -62915,12 +61087,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group02-us_core_smart_standalone_launch_stu2-smart_standalone_launch_stu2",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -62947,12 +61115,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group02-us_core_smart_standalone_launch_stu2",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -62985,9 +61149,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9ce29457-d053-4371-8a05-2b8f85abdaae",
@@ -63332,9 +61494,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "edd880a6-2a0c-4bba-b5c5-3601f758a571",
@@ -63564,9 +61724,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9ce29457-d053-4371-8a05-2b8f85abdaae",
@@ -63809,12 +61967,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group02-us_core_v610_condition_granular_scope_2_group",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -63847,9 +62001,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "bdce130f-20df-4106-b28f-cf3d8040065e",
@@ -66454,9 +64606,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "70ec6ccb-2b3d-4286-937e-e20e3ab65aa4",
@@ -69911,9 +68061,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "2b4166d5-73cf-482f-843d-e2d3d4d711aa",
@@ -71963,9 +70111,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "bdce130f-20df-4106-b28f-cf3d8040065e",
@@ -73538,12 +71684,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group02-us_core_v610_observation_granular_scope_2_group",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -73553,16 +71695,10 @@
   {
     "id": "68b9122e-5d48-4ac6-8b69-708f44936e92",
     "created_at": "2026-02-21T01:22:22.191-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -73596,12 +71732,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_fine_grained_scopes-Group02",
     "test_run_id": "b30a0ca2-d9c4-4ff4-9fdd-e345a5fcde7b",
@@ -73697,12 +71829,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_granular_scope_selection-smart_discovery_stu2-well_known_capabilities_stu2",
     "test_run_id": "2b3ebd08-3b82-41a3-9f18-94f09759a416",
@@ -73751,12 +71879,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_granular_scope_selection-g10_granular_scope_selection_v2_scopes-standalone_auth_tls",
     "test_run_id": "2b3ebd08-3b82-41a3-9f18-94f09759a416",
@@ -73807,9 +71931,7 @@
         "value": "p3G8d2WPbKreOBcadzFE8C1wfOO8AyFXCHuKZ0jdhTs"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_granular_scope_selection-g10_granular_scope_selection_v2_scopes-smart_app_redirect_stu2",
     "test_run_id": "2b3ebd08-3b82-41a3-9f18-94f09759a416",
@@ -73836,12 +71958,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_granular_scope_selection-smart_discovery_stu2",
     "test_run_id": "2b3ebd08-3b82-41a3-9f18-94f09759a416",
@@ -73851,9 +71969,7 @@
   {
     "id": "9388ca57-341c-4cb7-a45b-5615d95b1e57",
     "created_at": "2026-02-21T01:22:35.334-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -73922,12 +72038,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_granular_scope_selection-g10_granular_scope_selection_v2_scopes-standalone_token_tls",
     "test_run_id": "2b3ebd08-3b82-41a3-9f18-94f09759a416",
@@ -74079,13 +72191,9 @@
   {
     "id": "f837575e-d0c3-4662-a088-c33aaa0d2fd6",
     "created_at": "2026-02-21T01:22:35.917-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9193f709-c7d2-4336-a914-35ce7bf77094",
@@ -74120,9 +72228,7 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "9193f709-c7d2-4336-a914-35ce7bf77094",
@@ -74157,12 +72263,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-Group06-g10_smart_granular_scope_selection-g10_granular_scope_selection_v2_scopes-g10_smart_granular_scope_selection",
     "test_run_id": "2b3ebd08-3b82-41a3-9f18-94f09759a416",
@@ -74189,12 +72291,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_granular_scope_selection-g10_granular_scope_selection_v2_scopes",
     "test_run_id": "2b3ebd08-3b82-41a3-9f18-94f09759a416",
@@ -74204,16 +72302,10 @@
   {
     "id": "ea1cef18-0cc7-4a89-954c-287f3d8cd2b2",
     "created_at": "2026-02-21T01:22:35.962-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06",
     "test_run_id": "2b3ebd08-3b82-41a3-9f18-94f09759a416",
@@ -74240,12 +72332,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-Group06-g10_smart_granular_scope_selection",
     "test_run_id": "2b3ebd08-3b82-41a3-9f18-94f09759a416",
@@ -74268,12 +72356,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-Test01",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74296,12 +72380,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-Test02",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74324,12 +72404,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-Test03",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74352,12 +72428,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-Test04",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74380,12 +72452,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-Test05",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74408,12 +72476,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-Test07",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74436,12 +72500,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-Test08",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74464,12 +72524,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-Test09",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74492,12 +72548,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-Test10",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74520,12 +72572,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-Test13",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74548,12 +72596,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-g10_public_url_attestation",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74581,12 +72625,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-g10_tls_version_attestation",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74609,12 +72649,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-g10_refresh_token_refresh_attestation",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74637,12 +72673,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "g10_certification-g10_visual_inspection_and_attestations-g10_clinical_test_scope_attestation",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74900,12 +72932,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "g10_certification-g10_visual_inspection_and_attestations",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
@@ -74915,16 +72943,10 @@
   {
     "id": "24026640-091e-4241-b1eb-b5d77ba526bf",
     "created_at": "2026-02-21T01:25:04.690-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_run_id": "054ad7bb-f5c2-4079-9199-dc380ed7cd64",
     "test_session_id": "bQb5fWBFvDd",

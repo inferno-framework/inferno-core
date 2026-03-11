@@ -2,16 +2,10 @@
   {
     "id": "32190e99-1af1-46ec-adc3-017a45a4c047",
     "created_at": "2026-02-20T15:50:39.846-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "demo-wait_group-Test01",
     "test_run_id": "a9247da4-0909-471f-9612-f7ce986a8716",
@@ -21,9 +15,7 @@
   {
     "id": "7dbe9923-c833-473a-9274-d54afd65e30c",
     "created_at": "2026-02-20T15:50:39.851-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -52,9 +44,7 @@
         "value": "http://localhost:4567/inferno/custom/demo/resume_cancel?xyz=abc"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "pass",
     "test_id": "demo-wait_group-Test02",
     "test_run_id": "a9247da4-0909-471f-9612-f7ce986a8716",
@@ -64,13 +54,9 @@
   {
     "id": "ae6d741c-0fe2-4c97-a340-ba8c98befc72",
     "created_at": "2026-02-20T15:50:41.502-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
+    "outputs": [],
     "requests": [
       {
         "id": "df52bce2-304b-45de-8d51-a83726d7abb6",
@@ -92,16 +78,10 @@
   {
     "id": "7916320c-302b-4b8c-9c8d-e3daf9816137",
     "created_at": "2026-02-20T15:50:41.505-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "demo-wait_group",
     "test_run_id": "a9247da4-0909-471f-9612-f7ce986a8716",

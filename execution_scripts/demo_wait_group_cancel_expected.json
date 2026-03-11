@@ -2,16 +2,10 @@
   {
     "id": "9fde5cf0-79ee-4776-b3bc-7fbc78d69621",
     "created_at": "2026-02-20T15:12:59.146-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "demo-wait_group-Test01",
     "test_run_id": "ec4a40f3-6059-40be-9056-a04d2a589356",
@@ -21,9 +15,7 @@
   {
     "id": "c5214e0a-4aca-4806-9553-cda7cf3b81bf",
     "created_at": "2026-02-20T15:12:59.151-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
     "outputs": [
       {
@@ -52,9 +44,7 @@
         "value": "http://localhost:4567/inferno/custom/demo/resume_cancel?xyz=abc"
       }
     ],
-    "requests": [
-
-    ],
+    "requests": [],
     "result": "cancel",
     "result_message": "Test cancelled by user",
     "test_id": "demo-wait_group-Test02",
@@ -65,16 +55,10 @@
   {
     "id": "970ed13f-f465-4e99-9f3e-9842538498c9",
     "created_at": "2026-02-20T15:13:02.230-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "cancel",
     "result_message": "Test cancelled by user",
     "test_id": "demo-wait_group-Test03",
@@ -85,16 +69,10 @@
   {
     "id": "f7fd1171-979c-4a8a-b08d-3f8e71701ae5",
     "created_at": "2026-02-20T15:13:02.231-05:00",
-    "inputs": [
-
-    ],
+    "inputs": [],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "cancel",
     "test_group_id": "demo-wait_group",
     "test_run_id": "ec4a40f3-6059-40be-9056-a04d2a589356",
