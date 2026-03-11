@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - id: list
         run: |
-          scripts=$(find execution_scripts/my_suite_dir -name '*.yaml' | sort | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          scripts=$(find execution_scripts/demo -name '*.yaml' | sort | jq -R -s -c 'split("\n") | map(select(length > 0))')
           echo "scripts=$scripts" >> "$GITHUB_OUTPUT"
 
   test:
