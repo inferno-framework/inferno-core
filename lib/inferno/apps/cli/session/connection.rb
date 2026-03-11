@@ -16,6 +16,11 @@ module Inferno
                           Inferno::Application['base_url']
                         end
         end
+
+        def check_session_exists
+          response = connection.get("api/test_sessions/#{session_id}", nil, content_type: 'application/json')
+          handle_web_api_error(response, :session_details) if response.status != 200
+        end
       end
     end
   end

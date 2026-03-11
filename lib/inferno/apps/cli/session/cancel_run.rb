@@ -1,6 +1,7 @@
 require 'faraday'
 require_relative 'connection'
 require_relative 'errors'
+require_relative 'session_status'
 
 module Inferno
   module CLI
@@ -22,21 +23,19 @@ module Inferno
           run_id = current_run['id']
 
           unless CANCELLABLE_STATUSES.include?(current_run['status'])
-            puts "Run #{run_id} has status '#{current_run['status']}' and cannot be cancelled."
+            error = { errors: "Run '#{run_id}' cannot be cancelled: status is '#{current_run['status']}'" }
+            puts JSON.pretty_generate(error)
             exit(3)
           end
 
           response = connection.delete("api/test_runs/#{run_id}")
           handle_web_api_error(response, :cancel_run) if response.status != 204
-          puts "Run #{run_id} cancelled."
+          puts JSON.pretty_generate({ run_id: run_id, cancelled: true })
           exit(0)
         end
 
         def last_test_run
-          response = connection.get("api/test_sessions/#{session_id}/last_test_run",
-                                    content_type: 'application/json')
-          handle_web_api_error(response, :last_session_run) if response.status != 200
-          JSON.parse(response.body)
+          SessionStatus.new(session_id, options).last_test_run
         end
       end
     end

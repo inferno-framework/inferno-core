@@ -33,11 +33,6 @@ module Inferno
           JSON.parse(response.body)
         end
 
-        def check_session_exists
-          session_details_response = connection.get("api/test_sessions/#{session_id}", nil,
-                                                    content_type: 'application/json')
-          handle_web_api_error(session_details_response, :session_details) if session_details_response.status != 200
-        end
       end
     end
   end

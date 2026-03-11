@@ -1,6 +1,7 @@
 require 'faraday'
 require_relative 'connection'
 require_relative 'errors'
+require_relative 'session_data'
 
 module Inferno
   module CLI
@@ -57,12 +58,7 @@ module Inferno
         end
 
         def session_inputs
-          @session_inputs ||= begin
-            response = connection.get("api/test_sessions/#{session_id}/session_data", nil,
-                                      content_type: 'application/json')
-            handle_web_api_error(response, :session_data) if response.status != 200
-            JSON.parse(response.body)
-          end
+          @session_inputs ||= SessionData.new(session_id, options).data_for_session(session_id)
         end
 
         def user_inputs

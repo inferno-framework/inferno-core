@@ -64,7 +64,7 @@ module Inferno
           SessionStatus.new(session_id, options).run
         end
 
-        desc 'data SESSION_ID', 'Get the current run status of a session.'
+        desc 'data SESSION_ID', 'Get the current session data (inputs) for a session.'
         option :inferno_base_url,
                aliases: ['-I'],
                type: :string,
@@ -82,7 +82,8 @@ module Inferno
           SessionResults.new(session_id, options).run
         end
 
-        desc 'compare SESSION_ID', 'Compare the results of a session to another session\'s results.'
+        desc 'compare SESSION_ID',
+             'Compare the results of a session to expected results (from file or another session).'
         option :inferno_base_url,
                aliases: ['-I'],
                type: :string,
@@ -95,30 +96,21 @@ module Inferno
                aliases: ['-f'],
                type: :string,
                desc: 'Path to a file that contains the expected results.'
-        option :results_directory,
-               aliases: ['-d'],
-               type: :string,
-               desc: 'Optional directory to write results to.'
-        option :save_results,
-               aliases: ['-S'],
-               type: :boolean,
-               default: false,
-               desc: 'Save results and comparison to file for debugging.'
         option :compare_messages,
                aliases: ['-m'],
                type: :boolean,
                default: false,
                desc: 'Compare messages when comparing results.'
         option :compare_result_message,
-               aliases: ['-M'],
+               aliases: ['-r'],
                type: :boolean,
                default: false,
                desc: 'Compare result_message when comparing results.'
-        option :csv_output_all_tests,
-               aliases: ['-a'],
+        option :normalize,
+               aliases: ['-n'],
                type: :boolean,
                default: false,
-               desc: 'Include results for tests that are the same in the csv comparison output.'
+               desc: 'Normalize dynamic values (UUIDs, base64url strings) before comparing strings.'
         def compare(session_id)
           SessionCompare.new(session_id, options).run
         end

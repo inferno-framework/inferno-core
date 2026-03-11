@@ -6,7 +6,7 @@ module Inferno
       class SessionCompare < SessionResults
         def run
           display_compared_results
-          if options[:results_directory].present? && options[:save_results]
+          if output_directory.present? && !results_match?
             save_actual_results_to_file
             save_comparison_csv_to_file
           end
@@ -22,35 +22,64 @@ module Inferno
           @results_timestamp = Time.now.strftime('%Y%m%d_%H%M%S')
         end
 
+        # Output directory is the dirname of the expected results file (-f).
+        # Returns nil when -f is not provided (e.g. session-to-session comparison),
+        # in which case no output files are written on mismatch.
+        def output_directory
+          options[:expected_results_file].present? && File.dirname(options[:expected_results_file])
+        end
+
+        def output_file_prefix
+          return '' unless options[:expected_results_file].present?
+
+          basename = File.basename(options[:expected_results_file])
+          basename.end_with?('expected.json') ? basename.sub(/expected\.json$/, '') : ''
+        end
+
         def save_actual_results_to_file
-          actual_results_file_name = "actual_results_#{results_timestamp}.json"
-          File.write(File.join(options[:results_directory], actual_results_file_name), session_results.to_json)
+          actual_results_file_name = "#{output_file_prefix}actual_results_#{results_timestamp}.json"
+          File.write(File.join(output_directory, actual_results_file_name), session_results.to_json)
         end
 
         def save_comparison_csv_to_file
-          compared_csv_file_name = "compared_results_#{results_timestamp}.csv"
-          File.write(File.join(options[:results_directory], compared_csv_file_name),
+          compared_csv_file_name = "#{output_file_prefix}compared_results_#{results_timestamp}.csv"
+          File.write(File.join(output_directory, compared_csv_file_name),
                      compared_results_as_csv)
         end
 
         def display_compared_results
-          puts "Comparing results: #{results_match? ? 'Matched!' : 'Failed!'}"
-          puts ''
-          puts 'Test Details:'
-          compared_results.map do |comparison|
-            puts "  - #{comparison.display_string}"
-          end
+          output = {
+            matched: results_match?,
+            results: compared_results.map(&:to_h)
+          }
+          puts JSON.pretty_generate(output)
         end
 
         def compared_results_as_csv
           CSV.generate do |csv|
-            csv << ['id', 'expected', 'actual', 'different?']
+            csv << comparison_csv_header_row
             compared_results.each do |result|
-              next unless options[:csv_output_all_tests] && result.different_result?
+              next unless result.different_result?
 
               csv << result.comparison_csv_row
             end
           end
+        end
+
+        def comparison_csv_header_row
+          header_row = ['id', 'different?', 'expected result', 'actual result']
+          if options[:compare_result_message]
+            header_row << 'result_message different?'
+            header_row << "expected result_message#{' (normalized)' if options[:normalize]}"
+            header_row << "actual result_message#{' (normalized)' if options[:normalize]}"
+          end
+          if options[:compare_messages]
+            header_row << 'messages different?'
+            header_row << "expected messages#{' (normalized)' if options[:normalize]}"
+            header_row << "actual messages#{' (normalized)' if options[:normalize]}"
+          end
+
+          header_row
         end
 
         def results_match?
@@ -62,12 +91,8 @@ module Inferno
                                   results_for_session(options[:expected_results_session])
                                 elsif options[:expected_results_file].present?
                                   JSON.parse(File.read(options[:expected_results_file]))
-                                elsif options[:results_directory].present? &&
-                                      File.exist?(File.join(options[:results_directory], 'expected_results.json'))
-                                  JSON.parse(File.read(File.join(options[:results_directory], 'expected_results.json')))
                                 else
-                                  error = { errors: 'No expected results provided.' }
-                                  puts error.to_json
+                                  puts({ errors: 'No expected results provided.' }.to_json)
                                   exit(3)
                                 end
         end
@@ -98,6 +123,17 @@ module Inferno
         end
 
         class ComparedTestResult
+          # Matches UUIDs and base64/base64url strings of 20+ characters that contain
+          # at least one uppercase letter, one lowercase letter, and one digit —
+          # the hallmark of randomly generated values (PKCE challenges/verifiers,
+          # state parameters, authorization codes, opaque tokens, etc.).
+          BASE64_CHARS = '[A-Za-z0-9+\/=_-]'.freeze
+          DYNAMIC_VALUE_PATTERNS = [
+            [/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i, '<uuid>'],
+            [/(?=#{BASE64_CHARS}*[A-Z])(?=#{BASE64_CHARS}*[a-z])(?=#{BASE64_CHARS}*[0-9])#{BASE64_CHARS}{20,}/,
+             '<base64>']
+          ].freeze
+
           attr_reader :id, :expected_result, :actual_result, :options
 
           def initialize(id, expected_result, actual_result, options)
@@ -108,11 +144,20 @@ module Inferno
             @same = calculate_result
           end
 
+          def normalize_string(str)
+            return str unless options[:normalize] && str.present?
+
+            DYNAMIC_VALUE_PATTERNS.reduce(str) do |s, (pattern, placeholder)|
+              s.gsub(pattern, placeholder)
+            end
+          end
+
           def calculate_result
             return false unless type == 'Compared'
             return false unless expected_result['result'] == actual_result['result']
 
-            if options[:compare_result_message] && expected_result['result_message'] != actual_result['result_message']
+            if options[:compare_result_message] &&
+               normalize_string(expected_result['result_message']) != normalize_string(actual_result['result_message'])
               return false
             end
             return false if options[:compare_messages] && !same_messages?
@@ -137,7 +182,7 @@ module Inferno
 
           def same_message?(expected_message, actual_message)
             expected_message['type'] == actual_message['type'] &&
-              expected_message['message'] == actual_message['message']
+              normalize_string(expected_message['message']) == normalize_string(actual_message['message'])
           end
 
           def same_result?
@@ -148,45 +193,50 @@ module Inferno
             !same_result?
           end
 
-          def display_string
-            "#{id}: #{comparison_string}"
+          def different_result_message?
+            return false unless type == 'Compared'
+
+            normalize_string(expected_result['result_message']) != normalize_string(actual_result['result_message'])
           end
 
-          def comparison_string
-            if type == 'Compared'
-              if same_result?
-                "Got '#{expected_result['result']}' as expected"
-              else
-                "Expected '#{expected_result['result']}', got '#{actual_result['result']}'"
-              end
-            elsif type == 'Additional'
-              "Unexpected '#{actual_result['result']}'"
-            else
-              "Missing '#{expected_result['result']}'"
-            end
+          def different_messages?
+            return false unless type == 'Compared'
+
+            !same_messages?
           end
 
-          def comparison_csv_header_row
-            header_row = ['id', 'different?', 'expected result', 'actual result']
+          def to_h
+            {
+              id: id,
+              type: type,
+              matched: same_result?,
+              expected_result: expected_result&.dig('result'),
+              actual_result: actual_result&.dig('result')
+            }.merge(optional_to_h_fields)
+          end
+
+          def optional_to_h_fields
+            fields = {}
             if options[:compare_result_message]
-              header_row << 'expected result_message'
-              header_row << 'actual result_message'
+              fields[:expected_result_message] = expected_result&.dig('result_message')
+              fields[:actual_result_message] = actual_result&.dig('result_message')
             end
             if options[:compare_messages]
-              header_row << 'expected messages'
-              header_row << 'actual messages'
+              fields[:expected_messages] = expected_result&.dig('messages')
+              fields[:actual_messages] = actual_result&.dig('messages')
             end
-
-            header_row
+            fields
           end
 
           def comparison_csv_row
             row = [id, different_result?, expected_result&.dig('result'), actual_result&.dig('result')]
             if options[:compare_result_message]
+              row << different_result_message?
               row << expected_result&.dig('result_message')
               row << actual_result&.dig('result_message')
             end
             if options[:compare_messages]
+              row << different_messages?
               row << format_messages_for_csv(expected_result)
               row << format_messages_for_csv(actual_result)
             end
