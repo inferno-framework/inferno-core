@@ -9,17 +9,17 @@
 # YAML config format:
 #   sessions:                                  # list; first entry used for single-session runs
 #     - suite_id: my_suite                     # required
-#       name: my_name                          # optional; used to scope rules in multi-session runs
+#       name: my_name                          # optional; used to scope steps in multi-session runs
 #       preset_id: my-preset                   # optional
 #       suite_options:                         # optional
 #         option_key: option_value
 #       expected_results_file: expected.json   # optional; relative to yaml file
 #                                              # default: <yaml_name>_expected.json
-#   rules:                                     # ordered; first match wins
+#   steps:                                     # ordered; first match wins
 #     - status: created                        # created, done, or waiting;
 #                                              # running/queued/cancelling handled automatically
 #       last_test: ""                          # optional; absent treated as ""; must match exactly
-#       session: my_name                       # optional; in multi-session, scopes rule to named session
+#       session: my_name                       # optional; in multi-session, scopes step to named session
 #       command: "bundle exec inferno session start_run '{session_id}' -r 5"
 #                                              # 'command' OR 'start_run' is required;
 #                                              # eval used to execute as the next step
@@ -30,7 +30,7 @@
 #           input_name: "value"              # template tokens (e.g. {wait_outputs.key}) supported
 #       timeout: 300                           # optional; seconds before execution stops waiting
 #       next_poll_session: other_name          # optional; switch polling to named session after command
-#       state_description: "..."               # optional; logged when rule is matched
+#       state_description: "..."               # optional; logged when step is matched
 #       action_description: "..."              # optional; logged after state_description
 #
 
@@ -43,14 +43,14 @@
 #   {NAME.wait_outputs.KEY}  – wait output KEY from the named session (triggers a status call)
 #
 # ── Special command values ────────────────────────────────────────────────────
-#   "END_SCRIPT"       – end execution for this session (explicit terminal rule)
-#   "NOOP"             – rule matched but take no action; keep polling with unchanged timeout
+#   "END_SCRIPT"       – end execution for this session (explicit terminal step)
+#   "NOOP"             – step matched but take no action; keep polling with unchanged timeout
 #
-# ── Automatic status handling (no rules needed) ───────────────────────────────
+# ── Automatic status handling (no steps needed) ───────────────────────────────
 #   running/queued/cancelling        → poll again
-#   done (no rule matched)           → warn, run comparison, exit non-zero
-#   waiting (no rule matched)        → cancel run and continue polling
-#   created (no rule matched)        → warn, run comparison, exit non-zero
+#   done (no step matched)           → warn, run comparison, exit non-zero
+#   waiting (no step matched)        → cancel run and continue polling
+#   created (no step matched)        → warn, run comparison, exit non-zero
 
 POLL_INTERVAL="${POLL_INTERVAL:-5}"              # seconds between status checks
 DEFAULT_POLL_TIMEOUT="${DEFAULT_POLL_TIMEOUT:-30}"  # default timeout for poll_until_action
@@ -205,7 +205,7 @@ build_start_run_command() {
   printf '%s' "$cmd"
 }
 
-# Default implementation – reads rules from a YAML config file via yq + jq.
+# Default implementation – reads steps from a YAML config file via yq + jq.
 # Override by defining next_action_from_status after sourcing this file.
 # Usage: next_action_from_status STATUS_JSON [SESSION_NAME [ALL_SESSIONS_JSON]]
 next_action_from_status() {
@@ -229,14 +229,14 @@ next_action_from_status() {
     --arg status "$status" \
     --arg last_test "$last_test" \
     --arg session_name "$session_name" \
-    '[.rules[] | select(
+    '[.steps[] | select(
       ($session_name == "" or (.session // "") == "" or .session == $session_name) and
       .status == $status and
       (.last_test // "") == $last_test
     )] | .[0]')
 
   if [[ -z "$rule" || "$rule" == "null" ]]; then
-    # No rule matched – return empty; caller applies defaults:
+    # No step matched – return empty; caller applies defaults:
     #   done/created → emit UNMATCHED
     #   waiting      → cancel run and continue polling
     return 0
@@ -560,7 +560,7 @@ create_session_from_yaml_config() {
     '{"key": $key, "id": $id, "expected_results_file": $ef}'
 }
 
-# Run sessions defined entirely by a YAML config file (session configs + rules).
+# Run sessions defined entirely by a YAML config file (session configs + steps).
 # Creates all sessions listed under 'sessions:' and runs the poll loop.
 # Set INFERNO_URL to pass -I to every API call.
 #

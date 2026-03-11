@@ -5,7 +5,7 @@ sessions:
       ig_version: 2
       other_option: 3
 
-rules:
+steps:
   - status: created
     start_run: 
       inputs: 

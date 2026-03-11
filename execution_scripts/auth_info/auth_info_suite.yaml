@@ -1,7 +1,7 @@
 sessions:
   - suite_id: auth_info
 
-rules:
+steps:
   - status: created
     start_run:
 

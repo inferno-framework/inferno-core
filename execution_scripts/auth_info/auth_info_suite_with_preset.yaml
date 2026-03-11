@@ -3,7 +3,7 @@ sessions:
     preset_id: dev_auth_info_preset
     # NOTE: preset use introduces issue time skew that causes faiures - these are expected
 
-rules:
+steps:
   - status: created
     start_run:
 

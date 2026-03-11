@@ -1,7 +1,7 @@
 sessions:
   - suite_id: infra_test
 
-rules:
+steps:
   - status: created
     start_run: 
       inputs: 

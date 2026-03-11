@@ -1,7 +1,7 @@
 sessions:
   - suite_id: demo
 
-rules:
+steps:
   - status: created
     start_run: 
       runnable: "5.01"

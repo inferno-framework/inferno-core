@@ -1,7 +1,7 @@
 sessions:
   - suite_id: custom_result_suite
 
-rules:
+steps:
   - status: created
     start_run:
 
