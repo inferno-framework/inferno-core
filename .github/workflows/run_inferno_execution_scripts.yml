@@ -58,7 +58,27 @@ jobs:
 
       - name: Run execution script
         run: bash execution_scripts/session_runner.sh "${{ matrix.config }}"
-      
+
+      - name: Compute debug artifact paths
+        if: failure()
+        id: debug-paths
+        run: |
+          dir=$(dirname "${{ matrix.config }}")
+          prefix=$(basename "${{ matrix.config }}" .yaml)
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+          echo "prefix=$prefix" >> "$GITHUB_OUTPUT"
+          echo "name=debug-$(basename $dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload debug artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.debug-paths.outputs.name }}
+          path: |
+            ${{ steps.debug-paths.outputs.dir }}/${{ steps.debug-paths.outputs.prefix }}_actual_results_*.json
+            ${{ steps.debug-paths.outputs.dir }}/${{ steps.debug-paths.outputs.prefix }}_compared_results_*.csv
+          if-no-files-found: ignore
+
       - name: Stop Inferno
         if: ${{ always() }}
         run: |
