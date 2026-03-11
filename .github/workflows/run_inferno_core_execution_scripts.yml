@@ -1,4 +1,4 @@
-name: Run Inferno Execution Scripts
+name: Run Inferno Core Execution Scripts
 
 on:
   push:
