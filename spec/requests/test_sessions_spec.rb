@@ -36,6 +36,15 @@ RSpec.describe '/test_sessions' do
 
           expect(last_response.status).to eq(200)
         end
+
+        it 'fails for an unknown preset' do
+          allow_any_instance_of(Inferno::Repositories::Presets).to receive(:find).and_return(nil)
+
+          post_json create_path, input.merge(preset_id: 'PRESET_ID')
+
+          expect(last_response.status).to eq(500)
+          expect(last_response.body).to match(/Preset 'PRESET_ID' not found for suite '#{test_suite_id}'/)
+        end
       end
 
       context 'with suite options' do
