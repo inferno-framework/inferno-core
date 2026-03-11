@@ -8,6 +8,7 @@ module Inferno
       class SessionStatus
         include Connection
         include Errors
+
         attr_accessor :session_id, :options
 
         def initialize(session_id, options)
@@ -21,10 +22,12 @@ module Inferno
           if session_status['id'].present?
             run_id = session_status['id']
             last_test_executed = last_test_executed(run_id)
-            session_status['last_test_executed'] = last_test_executed['test_id']
-            if session_status['status'] == 'waiting'
-              session_status['wait_outputs'] = last_test_executed['outputs']
-              session_status['wait_result_message'] = last_test_executed['result_message']
+            if last_test_executed.present?
+              session_status['last_test_executed'] = last_test_executed['test_id']
+              if session_status['status'] == 'waiting'
+                session_status['wait_outputs'] = last_test_executed['outputs']
+                session_status['wait_result_message'] = last_test_executed['result_message']
+              end
             end
           end
 

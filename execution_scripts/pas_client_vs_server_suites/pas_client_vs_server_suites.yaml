@@ -1,0 +1,210 @@
+sessions:
+  - suite_id: davinci_pas_client_suite_v201
+    name: client
+    preset_id: pas-client-v220-run-against-pas-server-tests
+    suite_options:
+      client_type: other_auth
+  - suite_id: davinci_pas_server_suite_v201
+    name: server
+    preset_id: pas-server-v220-run-against-pas-client-tests
+
+rules:
+  - state_description: client session created
+    session: client
+    status: created
+    command: "bundle exec inferno session start_run '{session_id.client}' -r davinci_pas_client_suite_v201-pas_client_v201_registration"
+    action_description: Run Client Group 1 Client Registration
+
+  - state_description: Wait at Client test 1.06 (attestation)
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_registration-pas_client_v201_reg_other_auth_attest
+    command: "curl -o /dev/null -s '{wait_outputs.attest_true_url}'"
+    action_description: GET the attestation URL
+
+  - state_description: Wait at Client test 1.07 (confirm configuration)
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_registration-pas_client_v201_reg_config_other_display
+    command: "curl -o /dev/null -s '{wait_outputs.confirmation_url}'"
+    action_description: GET the confirmation URL
+
+  - state_description: Finished Client Group 1 Client Registration
+    session: client
+    status: done
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_registration-pas_client_v201_reg_config_other_display
+    command: "bundle exec inferno session start_run '{session_id.client}' -r davinci_pas_client_suite_v201-pas_client_v201_subscription_setup_no_auth"
+    action_description: Run Client Group 8 Subscription Setup
+
+  - state_description: Wait at Client test 8.01 Client submits a Subscription Creation Request
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_subscription_setup_no_auth-pas_client_v201_subscription_create_test
+    command: "bundle exec inferno session start_run '{session_id.server}' -r davinci_pas_server_suite_v201-pas_server_v201_subscription_setup"
+    next_poll_session: server
+    action_description: Run Server Group 1 Subscription Setup
+
+  - state_description: Wait at Server test 1.03
+    session: server
+    status: waiting
+    last_test: davinci_pas_server_suite_v201-pas_server_v201_subscription_setup-subscriptions_r4_server_notification_delivery
+    command: NOOP
+    next_poll_session: client
+    action_description: Wait for client to finish
+
+  - state_description: Finished Client Group 8 Subscription Setup
+    session: client
+    status: done
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_subscription_setup_no_auth-subscriptions_r4_client_handshake_notification_verification
+    command: "curl -o /dev/null -s '{server.wait_outputs.confirmation_url}'"
+    next_poll_session: server
+    action_description: Indicate requests to the server suite are complete
+
+  - state_description: Finished Server Group 1 Subscription Setup
+    session: server
+    status: done
+    last_test: davinci_pas_server_suite_v201-pas_server_v201_subscription_setup-subscriptions_r4_server_handshake_conformance
+    command: "bundle exec inferno session start_run '{session_id.client}' -r davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_approval_group"
+    next_poll_session: client
+    action_description: Run Client Group 9.1 Approval Workflow
+
+  - state_description: Wait at Client test 9.1.01 Client submits a claim using the $submit operation
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_approval_group-pas_client_v201_approval_submit_test
+    command: "bundle exec inferno session start_run '{session_id.server}' -r davinci_pas_server_suite_v201-Group02-pas_server_v201_approval_use_case"
+    next_poll_session: server
+    action_description: Run Server Group 2.1 Successful Approval Workflow
+
+  - state_description: Finished Server Group 2.1 Successful Approval Workflow
+    session: server
+    status: done
+    last_test: davinci_pas_server_suite_v201-Group02-pas_server_v201_approval_use_case-Group01-pas_server_v201_decision_validation_test_approval
+    command: NOOP
+    next_poll_session: client
+    action_description: Wait for client to finish
+
+  - state_description: Wait at Client test 9.1.04 (attestation)
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_approval_group-pas_client_v201_response_attest
+    command: "curl -o /dev/null -s '{wait_outputs.attest_true_url}'"
+    action_description: GET attestation URL
+
+  - state_description: Finished Client Group 9.1 Approval Workflow
+    session: client
+    status: done
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_approval_group-pas_client_v201_response_attest
+    command: "bundle exec inferno session start_run '{session_id.client}' -r davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_denial_group"
+    action_description: Run Client Group 9.2 Denial Workflow
+
+  - state_description: Wait at Client test 9.2.01 Client submits a claim using the $submit operation
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_denial_group-pas_client_v201_denial_submit_test
+    command: "bundle exec inferno session start_run '{session_id.server}' -r davinci_pas_server_suite_v201-Group02-pas_server_v201_denial_use_case"
+    next_poll_session: server
+    action_description: Run Server Group 2.2 Successful Denial Workflow
+
+  - state_description: Finished Server Group 2.2 Successful Denial Workflow
+    session: server
+    status: done
+    last_test: davinci_pas_server_suite_v201-Group02-pas_server_v201_denial_use_case-Group01-pas_server_v201_decision_validation_test_denial
+    command: NOOP
+    next_poll_session: client
+    action_description: Wait for client to finish
+
+  - state_description: Wait at Client test 9.2.04 (attestation)
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_denial_group-pas_client_v201_response_attest
+    command: "curl -o /dev/null -s '{wait_outputs.attest_true_url}'"
+    action_description: GET attestation URL
+
+  - state_description: Finished Client Group 9.2 Denial Workflow
+    session: client
+    status: done
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_denial_group-pas_client_v201_response_attest
+    command: "bundle exec inferno session start_run '{session_id.client}' -r davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_pended_group"
+    action_description: Run Client Group 9.3 Pended Workflow
+
+  - state_description: Wait at Client test 9.3.01 (submit requests)
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_pended_group-Group01-pas_client_v201_pended_submit_test
+    command: "bundle exec inferno session start_run '{session_id.server}' -r davinci_pas_server_suite_v201-Group02-pas_server_v201_pended_use_case"
+    next_poll_session: server
+    action_description: Run Server Group 2.3 Successful Pended Workflow
+
+  - state_description: Wait at Server test 2.3.2.01
+    session: server
+    status: waiting
+    last_test: davinci_pas_server_suite_v201-Group02-pas_server_v201_pended_use_case-Group02-pas_server_v201_subscription_notification_wait_pended
+    command: NOOP
+    action_description: Continue waiting until it completes
+
+  - state_description: Finished Server Group 2.3 Successful Pended Workflow
+    session: server
+    status: done
+    last_test: davinci_pas_server_suite_v201-Group02-pas_server_v201_pended_use_case-Group02-pas_server_v201_pas_inquire_response_bundle_validation_test_pended
+    command: "curl -o /dev/null -s '{client.wait_outputs.confirmation_url}'"
+    next_poll_session: client
+    action_description: confirm in Client session that all requests have been sent
+
+  - state_description: Wait at Client test 9.3.2.03 (attestation)
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_pended_group-Group02-pas_client_v201_response_attest
+    command: "curl -o /dev/null -s '{wait_outputs.attest_true_url}'"
+    action_description: GET attestation URL
+
+  - state_description: Wait at Client test 9.3.4.03 (attestation)
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_pended_group-Group04-pas_client_v201_response_attest
+    command: "curl -o /dev/null -s '{wait_outputs.attest_true_url}'"
+    action_description: GET attestation URL
+
+  - state_description: Finished Client Group 9.3 Pended Workflow
+    session: client
+    status: done
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_workflows_no_auth-pas_client_v201_pended_group-Group04-pas_client_v201_response_attest
+    command: "bundle exec inferno session start_run '{session_id.client}' -r davinci_pas_client_suite_v201-pas_client_v201_must_support_no_auth"
+    action_description: Run Client Group 10 Must Support Elements
+
+  - state_description: Wait at Client test 10.1.? (submit requests)
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_must_support_no_auth-pas_client_v201_submit_must_support-pas_client_v201_submit_gather_must_support
+    command: "bundle exec inferno session start_run '{session_id.server}' -r davinci_pas_server_suite_v201-pas_server_v201_must_support"
+    next_poll_session: server
+    action_description: Run Server Group 3 Demonstrate Element Support
+
+  - state_description: Finished Server Group 3 Demonstrate Element Support
+    session: server
+    status: done
+    last_test: davinci_pas_server_suite_v201-pas_server_v201_must_support-Group02-Group03-pas_server_v201_inquire_response_must_support_task
+    command: "bundle exec inferno session start_run '{session_id.server}' -r davinci_pas_server_suite_v201-pas_v201_error_group"
+    action_description: Run Server Group 4 Demonstrate Error Handling
+
+  - state_description: Finished Server Group 4 Demonstrate Error Handling
+    session: server
+    status: done
+    last_test: davinci_pas_server_suite_v201-pas_v201_error_group-pas_server_v201_prior_auth_inquiry_error
+    command: "curl -o /dev/null -s '{client.wait_outputs.confirmation_url}'"
+    next_poll_session: client
+    action_description: confirm in Client session that all requests have been sent
+
+  - state_description: Wait at Client test 10.2.? (inquire requests)
+    session: client
+    status: waiting
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_must_support_no_auth-pas_client_v201_inquire_must_support-pas_client_v201_inquire_gather_must_support
+    command: "curl -o /dev/null -s '{wait_outputs.confirmation_url}'"
+    action_description: confirm in Client session that all requests have been sent
+
+  - state_description: Finished Client Group 10 Must Support Elements
+    session: client
+    status: done
+    last_test: davinci_pas_client_suite_v201-pas_client_v201_must_support_no_auth-pas_client_v201_inquire_must_support-pas_client_v201_inquire_request_must_support_practitioner_role
+    command: END_SCRIPT
+    action_description: Script Completed
