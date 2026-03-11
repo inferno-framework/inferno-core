@@ -106,11 +106,10 @@ module Inferno
                type: :boolean,
                default: false,
                desc: 'Compare result_message when comparing results.'
-        option :normalize,
-               aliases: ['-n'],
-               type: :boolean,
-               default: false,
-               desc: 'Normalize dynamic values (UUIDs, base64url strings) before comparing strings.'
+        option :normalized_strings,
+               aliases: ['-N'],
+               type: :array,
+               desc: 'Literal strings to normalize away before comparing (URL-encoded form is also replaced automatically).'
         def compare(session_id)
           SessionCompare.new(session_id, options).run
         end

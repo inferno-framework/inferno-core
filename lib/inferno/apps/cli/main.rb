@@ -78,11 +78,6 @@ module Inferno
              aliases: ['-I'],
              type: :string,
              desc: 'URL of the target Inferno service.'
-      option :normalize,
-             aliases: ['-n'],
-             type: :boolean,
-             default: true,
-             desc: 'Normalize dynamic values (UUIDs, timestamps, base64) when comparing results.'
       option :compare_messages,
              aliases: ['-m'],
              type: :boolean,

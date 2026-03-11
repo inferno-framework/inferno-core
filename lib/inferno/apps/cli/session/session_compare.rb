@@ -1,3 +1,4 @@
+require 'cgi'
 require_relative 'session_results'
 
 module Inferno
@@ -66,17 +67,22 @@ module Inferno
           end
         end
 
+        def normalizing?
+          options[:normalized_strings].present?
+        end
+
         def comparison_csv_header_row
+          normalized_suffix = normalizing? ? ' (normalized)' : ''
           header_row = ['id', 'different?', 'expected result', 'actual result']
           if options[:compare_result_message]
             header_row << 'result_message different?'
-            header_row << "expected result_message#{' (normalized)' if options[:normalize]}"
-            header_row << "actual result_message#{' (normalized)' if options[:normalize]}"
+            header_row << "expected result_message#{normalized_suffix}"
+            header_row << "actual result_message#{normalized_suffix}"
           end
           if options[:compare_messages]
             header_row << 'messages different?'
-            header_row << "expected messages#{' (normalized)' if options[:normalize]}"
-            header_row << "actual messages#{' (normalized)' if options[:normalize]}"
+            header_row << "expected messages#{normalized_suffix}"
+            header_row << "actual messages#{normalized_suffix}"
           end
 
           header_row
@@ -123,21 +129,6 @@ module Inferno
         end
 
         class ComparedTestResult
-          # Matches UUIDs and base64/base64url strings of 20+ characters that contain
-          # at least one uppercase letter, one lowercase letter, and one digit —
-          # the hallmark of randomly generated values (PKCE challenges/verifiers,
-          # state parameters, authorization codes, opaque tokens, etc.).
-          BASE64_CHARS = '[A-Za-z0-9+\/=_-]'.freeze
-          DYNAMIC_VALUE_PATTERNS = [
-            # ISO 8601 datetimes with a time component and explicit timezone (e.g. issue_time,
-            # token expiry). Must come before the base64 pattern since timestamps contain
-            # base64-safe characters.
-            [/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})/, '<timestamp>'],
-            [/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i, '<uuid>'],
-            [/(?=#{BASE64_CHARS}*[A-Z])(?=#{BASE64_CHARS}*[a-z])(?=#{BASE64_CHARS}*[0-9])#{BASE64_CHARS}{20,}/,
-             '<base64>']
-          ].freeze
-
           attr_reader :id, :expected_result, :actual_result, :options
 
           def initialize(id, expected_result, actual_result, options)
@@ -148,12 +139,55 @@ module Inferno
             @same = same_results?
           end
 
-          def normalize_string(str)
-            return str unless options[:normalize] && str.present?
-
-            DYNAMIC_VALUE_PATTERNS.reduce(str) do |s, (pattern, placeholder)|
-              s.gsub(pattern, placeholder)
+          # Parses a normalize entry into an array of [pattern, replacement] pairs.
+          # Entries may be:
+          #   - A plain string: literal match, replacement defaults to '<NORMALIZED>'
+          #   - A "/pattern/[flags]" string: compiled to Regexp, replacement defaults to '<NORMALIZED>'
+          #   - A hash with 'pattern' or 'patterns' and optional 'replacement' keys (from YAML):
+          #       pattern: '/code_challenge=[A-Za-z0-9+\/=_-]{20,}/'
+          #       replacement: '<CODE_CHALLENGE>'
+          #     Or multiple patterns sharing one replacement:
+          #       patterns:
+          #         - '/code_challenge=[A-Za-z0-9+\/=_-]{20,}/'
+          #         - '/code_verifier=[A-Za-z0-9+\/=_-]{20,}/'
+          #       replacement: '<PKCE_VALUE>'
+          def parse_normalize_entry(entry)
+            if entry.is_a?(Hash)
+              replacement = entry.fetch('replacement', '<NORMALIZED>')
+              Array(entry['patterns'] || entry['pattern']).map do |p|
+                [parse_pattern_string(p.to_s), replacement]
+              end
+            else
+              [[parse_pattern_string(entry.to_s), '<NORMALIZED>']]
             end
+          end
+
+          def parse_pattern_string(str)
+            return str unless (m = str.match(%r{\A/(.+)/([imx]*)\z}m))
+
+            flags = 0
+            flags |= Regexp::IGNORECASE if m[2].include?('i')
+            flags |= Regexp::MULTILINE  if m[2].include?('m')
+            flags |= Regexp::EXTENDED   if m[2].include?('x')
+            Regexp.new(m[1], flags)
+          end
+
+          def normalize_string(str)
+            return str unless str.present?
+
+            Array(options[:normalized_strings]).reduce(str) do |s, entry|
+              parse_normalize_entry(entry).reduce(s) do |s2, (pattern, replacement)|
+                if pattern.is_a?(Regexp)
+                  s2.gsub(pattern, replacement)
+                else
+                  s2.gsub(pattern, replacement).gsub(CGI.escape(pattern), replacement)
+                end
+              end
+            end
+          end
+
+          def normalizing?
+            options[:normalized_strings].present?
           end
 
           def same_results?
@@ -173,11 +207,19 @@ module Inferno
             @message_comparisons ||= build_message_comparisons
           end
 
+          MESSAGE_TYPE_ORDER = { 'error' => 0, 'warning' => 1, 'info' => 2 }.freeze
+
           def build_message_comparisons
-            expected_msgs = Array(expected_result&.dig('messages'))
-            actual_msgs = Array(actual_result&.dig('messages'))
+            expected_msgs = sorted_messages(expected_result)
+            actual_msgs = sorted_messages(actual_result)
             max_length = [expected_msgs.size, actual_msgs.size].max
             (0...max_length).map { |i| messages_match?(expected_msgs[i], actual_msgs[i]) }
+          end
+
+          def sorted_messages(result)
+            Array(result&.dig('messages')).sort_by do |m|
+              [MESSAGE_TYPE_ORDER.fetch(m['type'].to_s, 99), m['message'].to_s]
+            end
           end
 
           def messages_match?(expected_message, actual_message)
@@ -243,8 +285,8 @@ module Inferno
             row = [id, different_result?, expected_result&.dig('result'), actual_result&.dig('result')]
             if options[:compare_result_message]
               row << different_result_message?
-              row << expected_result&.dig('result_message')
-              row << actual_result&.dig('result_message')
+              row << normalize_string(expected_result&.dig('result_message'))
+              row << normalize_string(actual_result&.dig('result_message'))
             end
             if options[:compare_messages]
               row << different_messages?
@@ -267,14 +309,14 @@ module Inferno
           def format_messages_for_csv(results)
             return '' unless results&.dig('messages').present?
 
-            results['messages'].each_with_index.map do |message, index|
+            sorted_messages(results).each_with_index.map do |message, index|
               message_text_for_csv(message, index)
             end.join("\n")
           end
 
           def message_text_for_csv(message, index)
             prefix = message_comparisons[index] ? '- ' : '! '
-            text = message['message'].to_s
+            text = normalize_string(message['message'].to_s)
               .gsub("\r\n", '\n')
               .gsub("\n", '\n')
               .gsub("\r", '\r')

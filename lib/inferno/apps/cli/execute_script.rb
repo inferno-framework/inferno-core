@@ -13,6 +13,21 @@ module Inferno
     #
     # YAML format:
     #
+    #   normalized_strings:                        # optional; top-level
+    #     - "http://my-server.example.com"         # plain string: replaced with <NORMALIZED>
+    #     - "http://other-value.example.com"       # in both expected and actual before comparing;
+    #                                              # URL-encoded form is also replaced automatically.
+    #     - "/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/"  # regex string (wrapped in /…/): compiled
+    #                                              # to a Regexp and replaced with <NORMALIZED>.
+    #                                              # Supports flags: /pattern/i, /pattern/m, etc.
+    #                                              # URL-encoded form is NOT auto-replaced for regex.
+    #     - pattern: '/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/'  # hash form: use when you need
+    #       replacement: '<CODE_CHALLENGE>'        # a named placeholder instead of <NORMALIZED>.
+    #     - patterns:                              # 'patterns' (plural) shares one replacement
+    #         - '/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/'  # across multiple patterns.
+    #         - '/code_verifier=[A-Za-z0-9+\\/=_-]{20,}/'
+    #       replacement: '<PKCE_VALUE>'
+    #
     #   sessions:
     #     - suite_id: my_suite
     #       name: my_name                          # optional; used as key in multi-session
@@ -40,6 +55,8 @@ module Inferno
     # Special command values:
     #   "END_SCRIPT"  — terminate script successfully
     #   "NOOP"        — no-op; keep polling with (optionally updated) timeout
+    #   "WAIT"        — keep polling without breaking out of the current poll loop
+    #                   (unlike NOOP, does not restart the loop with a new timeout)
     #
     # Template tokens in command strings and start_run input values:
     #   {session_id}              — current session's Inferno session ID
@@ -344,7 +361,9 @@ module Inferno
         matched_step = match_step(status, session.key)
 
         if matched_step
-          return matched_step # verify_step(matched_step, status, session, timeout)
+          return nil if matched_step[:command] == 'WAIT'
+
+          return verify_step(matched_step, status, session, timeout)
         elsif run_status == 'waiting'
           warn "UNHANDLED WAIT - Canceling: session=#{session.key} last_test=#{status['last_test_executed']}"
           attempt_cancel(session.session_id, status)
@@ -380,8 +399,9 @@ module Inferno
       def log_poll_if_needed(status, session_key)
         return unless Time.now - execution_status.last_log_time >= 30
 
-        poll_status_at_test = status['status'] == 'queued' ? '' : " at test #{status['last_test_executed']}"
-        warn "  [#{session_key}] #{status['status']}#{poll_status_at_test}"
+        poll_status_last_test =
+          status['last_test_executed'].present? ? " - last test: #{status['last_test_executed']}" : ''
+        warn "  [#{session_key}] #{status['status']}#{poll_status_last_test}"
         execution_status.last_log_time = Time.now
       end
 
@@ -437,8 +457,8 @@ module Inferno
 
       # Returns a human-readable description of the step's command for logging.
       def step_command_description(step)
-        if step['start_run'].present?
-          start_run_description(step['start_run'])
+        if step.key?('start_run')
+          start_run_description(step['start_run'] || {})
         else
           step['command'].to_s
         end
@@ -464,8 +484,9 @@ module Inferno
       end
 
       def resolve_command(step, status, session_key)
-        if step['start_run'].present?
-          { command: 'START_RUN', start_run: apply_templates_to_start_run(step['start_run'], status, session_key) }
+        if step.key?('start_run')
+          start_run = apply_templates_to_start_run(step['start_run'] || {}, status, session_key)
+          { command: 'START_RUN', start_run: }
         else
           cmd = step['command'].to_s
           { command: cmd.include?('{') ? apply_templates(cmd, status, session_key) : cmd }
@@ -576,7 +597,7 @@ module Inferno
           start_run['session'] = apply_templates(start_run['session'], status, session_key)
         end
         start_run['inputs']&.each_key do |input_name|
-          start_run['inputs'][input_name] = apply_templates(start_run['inputs'][input_name], status, session_key)
+          start_run['inputs'][input_name] = apply_templates(start_run['inputs'][input_name].to_s, status, session_key)
         end
 
         start_run
@@ -622,10 +643,10 @@ module Inferno
       def compare_options(session)
         {
           expected_results_file: session.expected_results_file,
-          normalize: options[:normalize],
           compare_messages: options[:compare_messages],
           compare_result_message: options[:compare_result_message],
-          inferno_base_url: options[:inferno_base_url]
+          inferno_base_url: options[:inferno_base_url],
+          normalized_strings: Array(script_config['normalized_strings'])
         }
       end
     end
