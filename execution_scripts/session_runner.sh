@@ -241,11 +241,15 @@ next_action_from_status() {
   local cmd
   cmd=$(printf '%s' "$rule" | jq -r '.command // empty')
 
-  # No 'command' field – check for structured 'start_run:' block
+  # No 'command' field – check for structured 'start_run:' block.
+  # Use has() so a bare 'start_run:' (parsed as null by yq) is still recognised;
+  # coerce null → {} so build_start_run_command gets a valid empty object.
   if [[ -z "$cmd" ]]; then
-    local start_run_json
-    start_run_json=$(printf '%s' "$rule" | jq '.start_run // empty')
-    [[ -n "$start_run_json" ]] && cmd=$(build_start_run_command "$start_run_json")
+    if printf '%s' "$rule" | jq -e 'has("start_run")' > /dev/null 2>&1; then
+      local start_run_json
+      start_run_json=$(printf '%s' "$rule" | jq '.start_run // {}')
+      cmd=$(build_start_run_command "$start_run_json")
+    fi
   fi
 
   # Neither field present – delegate to caller (poll again / UNMATCHED / cancel)
@@ -338,7 +342,7 @@ poll_until_action() {
       printf 'Unhandled wait state (last_test=%s); cancelling current run for session %s\n' \
         "$wait_last_test" "$session_id" >&2
       bundle exec inferno session cancel_run "$session_id" \
-        ${INFERNO_URL:+-I "$INFERNO_URL"} >&2 || return 1
+        ${INFERNO_URL:+-I "$INFERNO_URL"} > /dev/null || return 1
       sleep "$POLL_INTERVAL"
       (( elapsed += POLL_INTERVAL ))
       if (( elapsed - last_logged >= 30 )); then

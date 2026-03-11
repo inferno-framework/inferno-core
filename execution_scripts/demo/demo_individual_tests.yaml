@@ -3,11 +3,13 @@ sessions:
 
 rules:
   - status: created
-    command: "bundle exec inferno session start_run '{session_id}' -r 5.01"
+    start_run: 
+      runnable: "5.01"
 
   - status: done
     last_test: demo-wait_group-Test01
-    command: "bundle exec inferno session start_run '{session_id}' -r 5.03"
+    start_run: 
+      runnable: "5.03"
 
   - status: done
     last_test: demo-wait_group-Test03

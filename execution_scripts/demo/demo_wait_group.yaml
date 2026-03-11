@@ -3,7 +3,8 @@ sessions:
 
 rules:
   - status: created
-    command: "bundle exec inferno session start_run '{session_id}' -r 5"
+    start_run: 
+      runnable: "5"
   
   - status: waiting
     last_test: demo-wait_group-Test02
