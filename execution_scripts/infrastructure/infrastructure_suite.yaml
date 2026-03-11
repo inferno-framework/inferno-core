@@ -3,7 +3,15 @@ sessions:
 
 rules:
   - status: created
-    command: "bundle exec inferno session start_run '{session_id}' -i suite_input:1 outer_group_input:2 inner_group_input:3 test_input:4 external_test1_input:5 external_inner_group_input:6 external_outer_group_input:7"
+    start_run: 
+      inputs: 
+        suite_input: 1
+        outer_group_input: 2
+        inner_group_input: 3
+        test_input: 4
+        external_test1_input: 5
+        external_inner_group_input: 6
+        external_outer_group_input: 7
 
   - status: done
     last_test: infra_test-external_outer_group-external_inner_group-external_test1

@@ -21,7 +21,13 @@
 #       last_test: ""                          # optional; absent treated as ""; must match exactly
 #       session: my_name                       # optional; in multi-session, scopes rule to named session
 #       command: "bundle exec inferno session start_run '{session_id}' -r 5"
-#                                              # required; eval used to execute as the next step
+#                                              # 'command' OR 'start_run' is required;
+#                                              # eval used to execute as the next step
+#       start_run:                             # YAML alternative to 'command' for start_run calls
+#         session: "{session_id}"             # optional; default: {session_id}; supports tokens
+#         runnable: "1.01"                    # optional; maps to -r flag
+#         inputs:                             # optional; key/value map for -i flag
+#           input_name: "value"              # template tokens (e.g. {wait_outputs.key}) supported
 #       timeout: 300                           # optional; seconds before execution stops waiting
 #       next_poll_session: other_name          # optional; switch polling to named session after command
 #       state_description: "..."               # optional; logged when rule is matched
@@ -150,6 +156,51 @@ apply_command_templates() {
   printf '%s' "$cmd"
 }
 
+# Build a 'bundle exec inferno session start_run' command string from a
+# structured start_run JSON block (parsed from the 'start_run:' YAML key).
+# Values containing template tokens (e.g. {wait_outputs.key}) are embedded
+# unquoted so apply_command_templates can substitute them; all other values
+# are shell-quoted so spaces and special characters are handled correctly.
+#
+# Usage: build_start_run_command START_RUN_JSON
+build_start_run_command() {
+  local start_run_json="$1"
+
+  local session_token
+  session_token=$(printf '%s' "$start_run_json" | jq -r '.session // "{session_id}"')
+  local cmd="bundle exec inferno session start_run '$session_token'"
+
+  local runnable
+  runnable=$(printf '%s' "$start_run_json" | jq -r '.runnable // empty')
+  if [[ -n "$runnable" ]]; then
+    if [[ "$runnable" == *"{"* ]]; then
+      cmd+=" -r $runnable"
+    else
+      cmd+=" -r $(printf '%q' "$runnable")"
+    fi
+  fi
+
+  local inputs_length
+  inputs_length=$(printf '%s' "$start_run_json" | jq '.inputs // {} | length')
+  if (( inputs_length > 0 )); then
+    cmd+=" -i"
+    while IFS= read -r pair_json; do
+      local key value
+      key=$(printf '%s' "$pair_json" | jq -r '.key')
+      value=$(printf '%s' "$pair_json" | jq -r '.value')
+      # Leave values that contain template tokens unquoted so
+      # apply_command_templates can resolve them later.
+      if [[ "$value" == *"{"* ]]; then
+        cmd+=" ${key}:${value}"
+      else
+        cmd+=" $(printf '%q' "${key}:${value}")"
+      fi
+    done < <(printf '%s' "$start_run_json" | jq -c '.inputs | to_entries[]')
+  fi
+
+  printf '%s' "$cmd"
+}
+
 # Default implementation – reads rules from a YAML config file via yq + jq.
 # Override by defining next_action_from_status after sourcing this file.
 # Usage: next_action_from_status STATUS_JSON [SESSION_NAME [ALL_SESSIONS_JSON]]
@@ -190,7 +241,14 @@ next_action_from_status() {
   local cmd
   cmd=$(printf '%s' "$rule" | jq -r '.command // empty')
 
-  # No command field – delegate to caller (poll again / UNMATCHED / cancel)
+  # No 'command' field – check for structured 'start_run:' block
+  if [[ -z "$cmd" ]]; then
+    local start_run_json
+    start_run_json=$(printf '%s' "$rule" | jq '.start_run // empty')
+    [[ -n "$start_run_json" ]] && cmd=$(build_start_run_command "$start_run_json")
+  fi
+
+  # Neither field present – delegate to caller (poll again / UNMATCHED / cancel)
   [[ -z "$cmd" ]] && return 0
 
   local rule_session rule_state_description rule_action_description rule_next_poll_session rule_timeout
