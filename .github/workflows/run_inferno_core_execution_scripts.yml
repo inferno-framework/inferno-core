@@ -42,8 +42,13 @@ jobs:
       - name: Start Inferno
         run: |
           gem install foreman
-          bundle exec inferno migrate
+          mkdir -p data/redis && chmod 777 data/redis
           bundle exec inferno services start
+          timeout 30 bash -c \
+            'until docker compose -f docker-compose.background.yml exec -T redis redis-cli ping 2>/dev/null; do
+              echo "Waiting for Redis..."; sleep 2
+            done'
+          bundle exec inferno migrate
           bundle exec inferno start &> /tmp/inferno.log &
           echo $! > /tmp/inferno.pid
           echo "Inferno PID: $(cat /tmp/inferno.pid)"
@@ -68,6 +73,10 @@ jobs:
           echo "dir=$dir" >> "$GITHUB_OUTPUT"
           echo "prefix=$prefix" >> "$GITHUB_OUTPUT"
           echo "name=debug-$(basename $dir)" >> "$GITHUB_OUTPUT"
+          mkdir -p /tmp/docker_logs
+          for service in $(docker compose -f docker-compose.background.yml config --services 2>/dev/null || true); do
+            docker compose -f docker-compose.background.yml logs "$service" > "/tmp/docker_logs/${service}.log" 2>&1 || true
+          done
 
       - name: Upload debug artifacts on failure
         if: failure()
@@ -77,6 +86,8 @@ jobs:
           path: |
             ${{ steps.debug-paths.outputs.dir }}/${{ steps.debug-paths.outputs.prefix }}_actual_results_*.json
             ${{ steps.debug-paths.outputs.dir }}/${{ steps.debug-paths.outputs.prefix }}_compared_results_*.csv
+            /tmp/inferno.log
+            /tmp/docker_logs/*.log
           if-no-files-found: ignore
 
       - name: Stop Inferno
