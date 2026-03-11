@@ -19,9 +19,13 @@
 #     - status: created                        # created, done, or waiting;
 #                                              # running/queued/cancelling handled automatically
 #       last_test: ""                          # optional; absent treated as ""; must match exactly
+#       session: my_name                       # optional; in multi-session, scopes rule to named session
 #       command: "bundle exec inferno session start_run '{session_id}' -r 5"
 #                                              # required; eval used to execute as the next step
 #       timeout: 300                           # optional; seconds before execution stops waiting
+#       next_poll_session: other_name          # optional; switch polling to named session after command
+#       state_description: "..."               # optional; logged when rule is matched
+#       action_description: "..."              # optional; logged after state_description
 #
 
 # ── Template tokens in 'command' ─────────────────────────────────────────────
@@ -42,7 +46,6 @@
 #   waiting (no rule matched)        → cancel run and continue polling
 #   created (no rule matched)        → warn, run comparison, exit non-zero
 
-SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 POLL_INTERVAL="${POLL_INTERVAL:-5}"              # seconds between status checks
 DEFAULT_POLL_TIMEOUT="${DEFAULT_POLL_TIMEOUT:-600}"  # default timeout for poll_until_action
 # 'session compare' flags – all enabled by default; set to empty to disable:
@@ -53,76 +56,17 @@ COMPARE_NORMALIZE="${COMPARE_NORMALIZE:-true}"
 COMPARE_MESSAGES="${COMPARE_MESSAGES:-true}"
 COMPARE_RESULT_MESSAGE="${COMPARE_RESULT_MESSAGE:-true}"
 
-# Default implementation – reads rules from a YAML config file via yq + jq.
-# Override by defining next_action_from_status after sourcing this file.
-# Usage: next_action_from_status STATUS_JSON [SESSION_NAME [SESSION_SUITE_ID [ALL_SESSIONS_JSON]]]
-next_action_from_status() {
-  local status_json="$1"
-  local session_name="${2:-}"
-  local session_suite_id="${3:-}"
+# Substitute all template tokens in CMD and print the result to stdout.
+# Returns 1 (with a message to stderr) if any token cannot be resolved.
+# Set INFERNO_URL to pass -I to cross-session status calls.
+#
+# Usage: apply_command_templates CMD SESSION_ID STATUS_JSON [ALL_SESSIONS_JSON]
+apply_command_templates() {
+  local cmd="$1"
+  local session_id="$2"
+  local status_json="$3"
   local all_sessions_json="${4:-}"
-  local config_file="${ACTIONS_FILE:-$(dirname "$0")/$(basename "$0" .sh).yaml}"
 
-  if [[ ! -f "$config_file" ]]; then
-    printf 'next_action_from_status: config file not found: %s\n' "$config_file" >&2
-    return 1
-  fi
-
-  local status session_id last_test
-  status=$(printf '%s' "$status_json" | jq -r '.status')
-  session_id=$(printf '%s' "$status_json" | jq -r '.test_session_id')
-  last_test=$(printf '%s' "$status_json" | jq -r '.last_test_executed // ""')
-
-  local rule
-  if [[ -n "$session_name" ]]; then
-    rule=$(yq -o=json "$config_file" | jq \
-      --arg status "$status" \
-      --arg last_test "$last_test" \
-      --arg session_name "$session_name" \
-      --arg session_suite_id "$session_suite_id" \
-      '[.rules[] | select(
-        ((.session // "") == "" or .session == $session_name or .session == $session_suite_id) and
-        .status == $status and
-        (.last_test // "") == $last_test
-      )] | .[0]')
-  else
-    rule=$(yq -o=json "$config_file" | jq \
-      --arg status "$status" \
-      --arg last_test "$last_test" \
-      '[.rules[] | select(
-        .status == $status and
-        (.last_test // "") == $last_test
-      )] | .[0]')
-  fi
-
-  if [[ -z "$rule" || "$rule" == "null" ]]; then
-    # No rule matched – return empty; caller applies defaults:
-    #   done/created → emit UNMATCHED
-    #   waiting      → cancel run and continue polling
-    return 0
-  fi
-
-  local cmd
-  cmd=$(printf '%s' "$rule" | jq -r '.command // empty')
-
-  # No command field – delegate to caller (poll again / UNMATCHED / cancel)
-  [[ -z "$cmd" ]] && return 0
-
-  local rule_session rule_state_description rule_action_description rule_next_poll_session
-  rule_session=$(printf '%s' "$rule" | jq -r '.session // empty')
-  rule_state_description=$(printf '%s' "$rule" | jq -r '.state_description // empty')
-  rule_action_description=$(printf '%s' "$rule" | jq -r '.action_description // empty')
-  rule_next_poll_session=$(printf '%s' "$rule" | jq -r '.next_poll_session // empty')
-  printf '\nMatched rule:%s\n  status=%s last_test=%s%s\n  Command: %s%s%s\n' \
-    "${rule_state_description:+ $rule_state_description}" \
-    "$status" \
-    "${last_test:-(none)}" \
-    "${rule_session:+ session=$rule_session}" \
-    "$cmd" \
-    "${rule_action_description:+$'\n  Action: '$rule_action_description}" \
-    "${rule_next_poll_session:+$'\n  Next poll session: '$rule_next_poll_session}" >&2
-
-  # Template substitution
   cmd="${cmd//\{session_id\}/$session_id}"
   while [[ "$cmd" =~ \{session_id\.([^}]+)\} ]]; do
     local sname="${BASH_REMATCH[1]}"
@@ -134,6 +78,7 @@ next_action_from_status() {
     fi
     cmd="${cmd//\{session_id.$sname\}/$sid}"
   done
+
   local result_message result_message_q
   result_message=$(printf '%s' "$status_json" | jq -r '.wait_result_message // ""')
   if [[ "$cmd" == *"{result_message}"* && -z "$result_message" ]]; then
@@ -142,6 +87,7 @@ next_action_from_status() {
   fi
   result_message_q=$(printf '%q' "$result_message")
   cmd="${cmd//\{result_message\}/$result_message_q}"
+
   while [[ "$cmd" =~ \{wait_outputs\.([^}]+)\} ]]; do
     local key="${BASH_REMATCH[1]}"
     local value
@@ -174,6 +120,7 @@ next_action_from_status() {
     other_msg_q=$(printf '%q' "$other_msg")
     cmd="${cmd//\{$sname.result_message\}/$other_msg_q}"
   done
+
   while [[ "$cmd" =~ \{([^}.]+)\.wait_outputs\.([^}]+)\} ]]; do
     local sname="${BASH_REMATCH[1]}"
     local key="${BASH_REMATCH[2]}"
@@ -200,11 +147,70 @@ next_action_from_status() {
   [[ "$cmd" == *"bundle exec inferno"* && -n "$INFERNO_URL" ]] && \
     cmd+=" -I '$INFERNO_URL'"
 
-  local timeout next_session
-  timeout=$(printf '%s' "$rule" | jq -r '.timeout // empty')
-  next_session=$(printf '%s' "$rule" | jq -r '.next_poll_session // empty')
+  printf '%s' "$cmd"
+}
 
-  printf '%s\n%s\n%s\n' "$cmd" "${timeout}" "${next_session}"
+# Default implementation – reads rules from a YAML config file via yq + jq.
+# Override by defining next_action_from_status after sourcing this file.
+# Usage: next_action_from_status STATUS_JSON [SESSION_NAME [ALL_SESSIONS_JSON]]
+next_action_from_status() {
+  local status_json="$1"
+  local session_name="${2:-}"
+  local all_sessions_json="${3:-}"
+  local config_file="${ACTIONS_FILE:-$(dirname "$0")/$(basename "$0" .sh).yaml}"
+
+  if [[ ! -f "$config_file" ]]; then
+    printf 'next_action_from_status: config file not found: %s\n' "$config_file" >&2
+    return 1
+  fi
+
+  local status session_id last_test
+  status=$(printf '%s' "$status_json" | jq -r '.status')
+  session_id=$(printf '%s' "$status_json" | jq -r '.test_session_id')
+  last_test=$(printf '%s' "$status_json" | jq -r '.last_test_executed // ""')
+
+  local rule
+  rule=$(yq -o=json "$config_file" | jq \
+    --arg status "$status" \
+    --arg last_test "$last_test" \
+    --arg session_name "$session_name" \
+    '[.rules[] | select(
+      ($session_name == "" or (.session // "") == "" or .session == $session_name) and
+      .status == $status and
+      (.last_test // "") == $last_test
+    )] | .[0]')
+
+  if [[ -z "$rule" || "$rule" == "null" ]]; then
+    # No rule matched – return empty; caller applies defaults:
+    #   done/created → emit UNMATCHED
+    #   waiting      → cancel run and continue polling
+    return 0
+  fi
+
+  local cmd
+  cmd=$(printf '%s' "$rule" | jq -r '.command // empty')
+
+  # No command field – delegate to caller (poll again / UNMATCHED / cancel)
+  [[ -z "$cmd" ]] && return 0
+
+  local rule_session rule_state_description rule_action_description rule_next_poll_session rule_timeout
+  rule_session=$(printf '%s' "$rule" | jq -r '.session // empty')
+  rule_state_description=$(printf '%s' "$rule" | jq -r '.state_description // empty')
+  rule_action_description=$(printf '%s' "$rule" | jq -r '.action_description // empty')
+  rule_next_poll_session=$(printf '%s' "$rule" | jq -r '.next_poll_session // empty')
+  rule_timeout=$(printf '%s' "$rule" | jq -r '.timeout // empty')
+  printf '\nMatched rule:%s\n  status=%s last_test=%s%s\n  Command: %s%s%s%s\n' \
+    "${rule_state_description:+ $rule_state_description}" \
+    "$status" \
+    "${last_test:-(none)}" \
+    "${rule_session:+ session=$rule_session}" \
+    "$cmd" \
+    "${rule_action_description:+$'\n  Action: '$rule_action_description}" \
+    "${rule_next_poll_session:+$'\n  Next poll session: '$rule_next_poll_session}" \
+    "${rule_timeout:+$'\n  Timeout: '$rule_timeout}" >&2
+
+  cmd=$(apply_command_templates "$cmd" "$session_id" "$status_json" "$all_sessions_json") || return 1
+  printf '%s\n%s\n%s\n' "$cmd" "${rule_timeout}" "${rule_next_poll_session}"
 }
 
 # Poll 'session status' every $POLL_INTERVAL seconds until the run leaves the
@@ -227,6 +233,7 @@ poll_until_action() {
   local all_sessions_json="${3:-}"
   local session_key="${4:-}"
   local elapsed=0
+  local last_logged=0
 
   while (( elapsed < timeout )); do
     local status_json run_status
@@ -238,17 +245,22 @@ poll_until_action() {
     if [[ "$run_status" == "running" || "$run_status" == "queued" || "$run_status" == "cancelling" ]]; then
       sleep "$POLL_INTERVAL"
       (( elapsed += POLL_INTERVAL ))
+      if (( elapsed - last_logged >= 30 )); then
+        local poll_last_test
+        poll_last_test=$(printf '%s' "$status_json" | jq -r '.last_test_executed // "(none)"')
+        printf '  [polling] elapsed=%ds  status=%s  last_test=%s\n' \
+          "$elapsed" "$run_status" "$poll_last_test" >&2
+        last_logged=$elapsed
+      fi
       continue
     fi
 
     local action
-    action=$(next_action_from_status "$status_json" "$session_key" "" "$all_sessions_json") || return 1
+    action=$(next_action_from_status "$status_json" "$session_key" "$all_sessions_json") || return 1
 
     if [[ -n "$action" ]]; then
       local cmd next_timeout next_session
-      cmd=$(printf '%s' "$action" | head -1)
-      next_timeout=$(printf '%s' "$action" | sed -n '2p')
-      next_session=$(printf '%s' "$action" | sed -n '3p')
+      { IFS= read -r cmd; IFS= read -r next_timeout; IFS= read -r next_session; } <<< "$action"
       printf '%s\n%s\n%s\n' "$cmd" "${next_timeout:-$DEFAULT_POLL_TIMEOUT}" "${next_session}"
       return 0
     fi
@@ -271,6 +283,11 @@ poll_until_action() {
         ${INFERNO_URL:+-I "$INFERNO_URL"} >&2 || return 1
       sleep "$POLL_INTERVAL"
       (( elapsed += POLL_INTERVAL ))
+      if (( elapsed - last_logged >= 30 )); then
+        printf '  [polling] elapsed=%ds  status=%s  last_test=%s\n' \
+          "$elapsed" "$run_status" "${wait_last_test:-(none)}" >&2
+        last_logged=$elapsed
+      fi
       continue
     fi
 
@@ -332,8 +349,36 @@ create_session() {
   echo "$session_id"
 }
 
+# For each session in SESSIONS_JSON, compare results against the expected file
+# (if it exists) or write results to the expected file path (if it doesn't).
+# Returns the highest non-zero exit code from any compare call, or 0.
+# Usage: compare_or_save_sessions SESSIONS_JSON
+compare_or_save_sessions() {
+  local sessions_json="$1"
+  local compare_result=0
+  local entry
+  while IFS= read -r entry; do
+    local sid ef
+    sid=$(printf '%s' "$entry" | jq -r '.id')
+    ef=$(printf '%s' "$entry" | jq -r '.expected_results_file // empty')
+    if [[ -f "$ef" ]]; then
+      bundle exec inferno session compare "$sid" \
+        -f "$ef" \
+        ${COMPARE_NORMALIZE:+-n} \
+        ${COMPARE_MESSAGES:+-m} \
+        ${COMPARE_RESULT_MESSAGE:+-r} \
+        ${INFERNO_URL:+-I "$INFERNO_URL"} || compare_result=$?
+    elif [[ -n "$ef" ]]; then
+      echo "Expected results file not found; writing results to '$ef'..."
+      bundle exec inferno session results "$sid" \
+        ${INFERNO_URL:+-I "$INFERNO_URL"} > "$ef"
+    fi
+  done < <(printf '%s' "$sessions_json" | jq -c '.[]')
+  return $compare_result
+}
+
 # Run the poll loop across one or more pre-created sessions until all runs are done.
-# Polling starts at the first entry and switches whenever a rule returns next_polling_session.
+# Polling starts at the first entry and switches whenever a rule returns next_poll_session.
 # Set INFERNO_URL to pass -I to every API call.
 #
 # Usage: run_sessions SESSIONS_JSON
@@ -357,10 +402,13 @@ run_sessions() {
     session_id=$(printf '%s' "$sessions_json" | jq -r --arg key "$current_key" \
       '.[] | select(.key == $key) | .id')
 
-    printf '\nPolling session: %s (%s)\n' "$current_key" "$session_id" >&2
-    local output cmd
+    printf '\nPolling session: %s (%s) timeout=%s\n' "$current_key" "$session_id" "$timeout" >&2
+    local output
     output=$(poll_until_action "$session_id" "$timeout" "$all_sessions_map" "$current_key") || return 1
-    cmd=$(printf '%s' "$output" | head -1)
+    local cmd next_session
+    # Read all three fields up front so NOOP can update timeout and current_key
+    # before continuing the loop (UNMATCHED/END_SCRIPT don't need them).
+    { IFS= read -r cmd; IFS= read -r timeout; IFS= read -r next_session; } <<< "$output"
     if [[ "$cmd" == "UNMATCHED" ]]; then
       unmatched_done=true
       break
@@ -368,9 +416,6 @@ run_sessions() {
     if [[ "$cmd" == "END_SCRIPT" ]]; then
       break
     fi
-    timeout=$(printf '%s' "$output" | sed -n '2p')
-    local next_session
-    next_session=$(printf '%s' "$output" | sed -n '3p')
     [[ -n "$next_session" ]] && current_key="$next_session"
     if [[ "$cmd" == "NOOP" ]]; then
       continue
@@ -385,30 +430,60 @@ run_sessions() {
 
   echo "All runs complete."
 
-  local compare_result=0
-  if [[ "$unmatched_done" == "false" ]]; then
-    local entry
-    while IFS= read -r entry; do
-      local sid ef
-      sid=$(printf '%s' "$entry" | jq -r '.id')
-      ef=$(printf '%s' "$entry" | jq -r '.expected_results_file // empty')
-      if [[ -f "$ef" ]]; then
-        bundle exec inferno session compare "$sid" \
-          -f "$ef" \
-          ${COMPARE_NORMALIZE:+-n} \
-          ${COMPARE_MESSAGES:+-m} \
-          ${COMPARE_RESULT_MESSAGE:+-r} \
-          ${INFERNO_URL:+-I "$INFERNO_URL"} || compare_result=$?
-      elif [[ -n "$ef" ]]; then
-        echo "Expected results file not found; writing results to '$ef'..."
-        bundle exec inferno session results "$sid" \
-          ${INFERNO_URL:+-I "$INFERNO_URL"} > "$ef"
-      fi
-    done < <(printf '%s' "$sessions_json" | jq -c '.[]')
+  [[ "$unmatched_done" == "true" ]] && return 1
+  compare_or_save_sessions "$sessions_json"
+}
+
+# Create an Inferno session from a single YAML sessions[] entry.
+# Prints a JSON object {"key":...,"id":...,"expected_results_file":...} to stdout.
+# Set INFERNO_URL to pass -I to the create call.
+#
+# Usage: create_session_from_yaml_config SESSION_CONFIG YAML_FILE SESSION_COUNT
+create_session_from_yaml_config() {
+  local session_config="$1"
+  local yaml_file="$2"
+  local session_count="$3"
+
+  local suite_id
+  suite_id=$(printf '%s' "$session_config" | jq -r '.suite_id')
+  if [[ -z "$suite_id" || "$suite_id" == "null" ]]; then
+    printf 'create_session_from_yaml_config: suite_id is required\n' >&2
+    return 1
   fi
 
-  [[ "$unmatched_done" == "true" ]] && return 1
-  return $compare_result
+  local session_name
+  session_name=$(printf '%s' "$session_config" | jq -r '.name // empty')
+  local session_key="${session_name:-$suite_id}"
+
+  local create_args=("$suite_id")
+  local preset_id
+  preset_id=$(printf '%s' "$session_config" | jq -r '.preset_id // empty')
+  [[ -n "$preset_id" ]] && create_args+=(-p "$preset_id")
+
+  local opts_array=()
+  while IFS= read -r opt; do
+    [[ -n "$opt" ]] && opts_array+=("$opt")
+  done < <(printf '%s' "$session_config" | \
+    jq -r '.suite_options // {} | to_entries[] | "\(.key):\(.value)"')
+  [[ ${#opts_array[@]} -gt 0 ]] && create_args+=(-o "${opts_array[@]}")
+
+  local session_id
+  session_id=$(create_session "${create_args[@]}") || return 1
+
+  # Expected results file; relative paths resolved relative to the yaml file
+  local expected_results_file
+  expected_results_file=$(printf '%s' "$session_config" | jq -r '.expected_results_file // empty')
+  if [[ -n "$expected_results_file" ]]; then
+    [[ "$expected_results_file" != /* ]] && \
+      expected_results_file="$(dirname "$yaml_file")/$expected_results_file"
+  elif [[ "$session_count" -eq 1 ]]; then
+    expected_results_file="$(dirname "$yaml_file")/$(basename "$yaml_file" .yaml)_expected.json"
+  else
+    expected_results_file="$(dirname "$yaml_file")/$(basename "$yaml_file" .yaml)_${session_key}_expected.json"
+  fi
+
+  jq -n --arg key "$session_key" --arg id "$session_id" --arg ef "$expected_results_file" \
+    '{"key": $key, "id": $id, "expected_results_file": $ef}'
 }
 
 # Run sessions defined entirely by a YAML config file (session configs + rules).
@@ -434,58 +509,21 @@ run_sessions_from_yaml() {
 
   export ACTIONS_FILE="$yaml_file"
 
+  local yaml_json
+  yaml_json=$(yq -o=json "$yaml_file")
+
   local session_count
-  session_count=$(yq -o=json "$yaml_file" | jq '.sessions | length')
+  session_count=$(printf '%s' "$yaml_json" | jq '.sessions | length')
 
   # Create all sessions and build the sessions array
   local sessions_array="[]"
   local i
   for (( i=0; i<session_count; i++ )); do
-    local session_config
-    session_config=$(yq -o=json "$yaml_file" | jq ".sessions[$i]")
-
-    local suite_id
-    suite_id=$(printf '%s' "$session_config" | jq -r '.suite_id')
-    if [[ -z "$suite_id" || "$suite_id" == "null" ]]; then
-      printf 'run_sessions_from_yaml: sessions[%d].suite_id is required in %s\n' "$i" "$yaml_file" >&2
-      return 1
-    fi
-
-    local session_name
-    session_name=$(printf '%s' "$session_config" | jq -r '.name // empty')
-    local session_key="${session_name:-$suite_id}"
-
-    # Build create_session args
-    local create_args=("$suite_id")
-    local preset_id
-    preset_id=$(printf '%s' "$session_config" | jq -r '.preset_id // empty')
-    [[ -n "$preset_id" ]] && create_args+=(-p "$preset_id")
-
-    local opts_array=()
-    while IFS= read -r opt; do
-      [[ -n "$opt" ]] && opts_array+=("$opt")
-    done < <(printf '%s' "$session_config" | \
-      jq -r '.suite_options // {} | to_entries[] | "\(.key):\(.value)"')
-    [[ ${#opts_array[@]} -gt 0 ]] && create_args+=(-o "${opts_array[@]}")
-
-    local session_id
-    session_id=$(create_session "${create_args[@]}") || return 1
-
-    # Expected results file; relative paths are resolved relative to the yaml file
-    local expected_results_file
-    expected_results_file=$(printf '%s' "$session_config" | jq -r '.expected_results_file // empty')
-    if [[ -n "$expected_results_file" ]]; then
-      [[ "$expected_results_file" != /* ]] && \
-        expected_results_file="$(dirname "$yaml_file")/$expected_results_file"
-    elif [[ "$session_count" -eq 1 ]]; then
-      expected_results_file="$(dirname "$yaml_file")/$(basename "$yaml_file" .yaml)_expected.json"
-    else
-      expected_results_file="$(dirname "$yaml_file")/$(basename "$yaml_file" .yaml)_${session_key}_expected.json"
-    fi
-
-    sessions_array=$(printf '%s' "$sessions_array" | \
-      jq --arg key "$session_key" --arg id "$session_id" --arg ef "$expected_results_file" \
-      '. + [{"key": $key, "id": $id, "expected_results_file": $ef}]')
+    local entry
+    entry=$(create_session_from_yaml_config \
+      "$(printf '%s' "$yaml_json" | jq ".sessions[$i]")" \
+      "$yaml_file" "$session_count") || return 1
+    sessions_array=$(printf '%s' "$sessions_array" | jq --argjson e "$entry" '. + [$e]')
   done
 
   run_sessions "$sessions_array"
