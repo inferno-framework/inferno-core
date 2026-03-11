@@ -1,0 +1,11 @@
+sessions:
+  - suite: demo
+
+steps:
+  - status: created
+    start_run: 
+      runnable: 5
+  
+  - status: done
+    last_completed: 5
+    action: END_SCRIPT

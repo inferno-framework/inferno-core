@@ -1,0 +1,20 @@
+sessions:
+  - suite_id: <%= test_suite_id %>
+
+steps:
+  - state_description: Session Created
+    status: created
+    start_run:
+      runnable: suite
+      inputs:
+        url: https://inferno.healthit.gov/reference-server/r4
+        credentials: '{"access_token": "SAMPLE_TOKEN"}'
+        patient_id: 85
+    timeout: 60 # account for validator profile loading
+    action_description: Run the entire suite
+
+  - state_description: Suite executed (The second (last) test in the patient (last) group has just finished)
+    status: done
+    last_completed: 2.02 # short id for test <%= test_suite_id %>-patient_group-Test02
+    action: END_SCRIPT
+    action_description: Complete the script

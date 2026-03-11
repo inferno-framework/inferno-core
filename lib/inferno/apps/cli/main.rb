@@ -3,10 +3,12 @@ require_relative 'evaluate'
 require_relative 'migration'
 require_relative 'requirements'
 require_relative 'services'
+require_relative 'session_commands'
 require_relative 'suite'
 require_relative 'suites'
 require_relative 'new'
 require_relative 'execute'
+require_relative 'execute_script'
 require_relative '../../version'
 
 module Inferno
@@ -69,6 +71,39 @@ module Inferno
 
       desc 'requirements SUBCOMMAND ...ARGS', 'Perform requirements operations'
       subcommand 'requirements', Requirements
+
+      desc 'execute_script YAML_FILE',
+           'Run a session orchestration script defined by a YAML config file.'
+      option :inferno_base_url,
+             aliases: ['-I'],
+             type: :string,
+             desc: 'URL of the target Inferno service.'
+      option :compare_messages,
+             aliases: ['-m'],
+             type: :boolean,
+             default: true,
+             desc: 'Compare messages array when comparing results.'
+      option :compare_result_message,
+             aliases: ['-r'],
+             type: :boolean,
+             default: true,
+             desc: 'Compare result_message field when comparing results.'
+      option :poll_interval,
+             aliases: ['-p'],
+             type: :numeric,
+             default: 3,
+             desc: 'Seconds between status polls.'
+      option :default_poll_timeout,
+             aliases: ['-t'],
+             type: :numeric,
+             default: 30,
+             desc: 'Default seconds to wait for a matching step before timing out.'
+      def execute_script(yaml_file)
+        ExecuteScript.new(yaml_file, options).run
+      end
+
+      desc 'session SUBCOMMAND ...ARGS', 'Perform session operations'
+      subcommand 'session', Session::SessionCommands
 
       desc 'start', 'Start Inferno'
       option :watch,

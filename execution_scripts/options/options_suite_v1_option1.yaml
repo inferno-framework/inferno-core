@@ -1,0 +1,19 @@
+sessions:
+  - suite: options
+    preset: options
+    suite_options:
+      ig_version: 1
+      other_option: 1
+
+steps:
+  - status: created
+    state_description: created
+    action_description: run the suite
+    start_run:
+      runnable: suite
+      inputs:
+        v1_input: unused
+
+  - status: done
+    last_completed: suite # options-v1_group-v1_test
+    action: END_SCRIPT

@@ -1,0 +1,426 @@
+[
+  {
+    "id": "cfa780e5-7386-4061-91e7-a353abbeb413",
+    "created_at": "2026-02-27T08:57:15.758-05:00",
+    "inputs": [
+      {
+        "name": "public_auth_info",
+        "value": "{\"auth_type\":\"public\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_PUBLIC_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"name\":\"public_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "auth_info-auth_info_demo-Group01-public_auth",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "updated_at": "2026-02-27T08:57:15.758-05:00"
+  },
+  {
+    "id": "deaa9791-8f6d-468b-a211-ca8da7714127",
+    "created_at": "2026-02-27T08:57:15.761-05:00",
+    "inputs": [
+      {
+        "name": "symmetric_auth_info",
+        "value": "{\"auth_type\":\"symmetric\",\"use_discovery\":\"false\",\"token_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/token\",\"auth_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/authorization\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"client_secret\":\"SAMPLE_CONFIDENTIAL_CLIENT_SECRET\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"name\":\"symmetric_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "auth_info-auth_info_demo-Group01-symmetric_auth",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "updated_at": "2026-02-27T08:57:15.761-05:00"
+  },
+  {
+    "id": "34d1a530-3d34-4178-aa7e-d1ced2b0c203",
+    "created_at": "2026-02-27T08:57:15.762-05:00",
+    "inputs": [
+      {
+        "name": "asymmetric_auth_info",
+        "value": "{\"auth_type\":\"asymmetric\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"disabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"name\":\"asymmetric_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "auth_info-auth_info_demo-Group01-asymmetric_auth",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "updated_at": "2026-02-27T08:57:15.762-05:00"
+  },
+  {
+    "id": "631e5864-a205-4768-8aa1-d98acdde3434",
+    "created_at": "2026-02-27T08:57:15.765-05:00",
+    "inputs": [
+      {
+        "name": "backend_services_auth_info",
+        "value": "{\"auth_type\":\"backend_services\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"name\":\"backend_services_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "auth_info-auth_info_demo-Group01-backend_services_auth",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "updated_at": "2026-02-27T08:57:15.765-05:00"
+  },
+  {
+    "id": "6aa17989-3c7b-48be-8f9f-1191a467abeb",
+    "created_at": "2026-02-27T08:57:15.766-05:00",
+    "inputs": [
+      {
+        "name": "public_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"public\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_PUBLIC_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"name\":\"public_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "symmetric_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"symmetric\",\"use_discovery\":\"false\",\"token_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/token\",\"auth_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/authorization\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"client_secret\":\"SAMPLE_CONFIDENTIAL_CLIENT_SECRET\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"name\":\"symmetric_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "asymmetric_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"asymmetric\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"disabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"name\":\"asymmetric_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "backend_services_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"backend_services\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"name\":\"backend_services_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "auth_info-auth_info_demo-Group01",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "updated_at": "2026-02-27T08:57:15.766-05:00"
+  },
+  {
+    "id": "a34e3c02-2450-462d-a8cd-646a1c467278",
+    "created_at": "2026-02-27T08:57:15.769-05:00",
+    "inputs": [
+      {
+        "name": "public_access_auth_info",
+        "value": "{\"auth_type\":\"public\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_PUBLIC_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"public_access_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "auth_info-auth_info_demo-Group02-public_auth",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "updated_at": "2026-02-27T08:57:15.769-05:00"
+  },
+  {
+    "id": "32d08ffa-c324-4961-8590-21ba9b8512bd",
+    "created_at": "2026-02-27T08:57:15.771-05:00",
+    "inputs": [
+      {
+        "name": "symmetric_access_auth_info",
+        "value": "{\"auth_type\":\"symmetric\",\"use_discovery\":\"false\",\"token_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/token\",\"auth_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/authorization\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"client_secret\":\"SAMPLE_CONFIDENTIAL_CLIENT_SECRET\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"symmetric_access_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "auth_info-auth_info_demo-Group02-symmetric_auth",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "updated_at": "2026-02-27T08:57:15.771-05:00"
+  },
+  {
+    "id": "9d904fb9-7da8-48c3-880f-57cf920bb3c8",
+    "created_at": "2026-02-27T08:57:15.773-05:00",
+    "inputs": [
+      {
+        "name": "asymmetric_access_auth_info",
+        "value": "{\"auth_type\":\"asymmetric\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"disabled\",\"auth_request_method\":\"POST\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"asymmetric_access_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "auth_info-auth_info_demo-Group02-asymmetric_auth",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "updated_at": "2026-02-27T08:57:15.773-05:00"
+  },
+  {
+    "id": "f2d80734-c3c0-4382-b8e6-1ecb9db2a967",
+    "created_at": "2026-02-27T08:57:15.775-05:00",
+    "inputs": [
+      {
+        "name": "backend_services_access_auth_info",
+        "value": "{\"auth_type\":\"backend_services\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"backend_services_access_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "auth_info-auth_info_demo-Group02-backend_services_auth",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "updated_at": "2026-02-27T08:57:15.775-05:00"
+  },
+  {
+    "id": "1f6b89d0-4428-456e-a527-df0dba678a30",
+    "created_at": "2026-02-27T08:57:15.776-05:00",
+    "inputs": [
+      {
+        "name": "public_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"public\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_PUBLIC_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"public_access_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "symmetric_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"symmetric\",\"use_discovery\":\"false\",\"token_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/token\",\"auth_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/authorization\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"client_secret\":\"SAMPLE_CONFIDENTIAL_CLIENT_SECRET\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"symmetric_access_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "asymmetric_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"asymmetric\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"disabled\",\"auth_request_method\":\"POST\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"asymmetric_access_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "backend_services_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"backend_services\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"backend_services_access_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "auth_info-auth_info_demo-Group02",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "updated_at": "2026-02-27T08:57:15.776-05:00"
+  },
+  {
+    "id": "662efb35-ed6a-4e83-9796-219d83cb6b11",
+    "created_at": "2026-02-27T08:57:15.782-05:00",
+    "inputs": [
+      {
+        "name": "public_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"public\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_PUBLIC_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"name\":\"public_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "symmetric_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"symmetric\",\"use_discovery\":\"false\",\"token_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/token\",\"auth_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/authorization\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"client_secret\":\"SAMPLE_CONFIDENTIAL_CLIENT_SECRET\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"name\":\"symmetric_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "asymmetric_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"asymmetric\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"disabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"name\":\"asymmetric_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "backend_services_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"backend_services\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"name\":\"backend_services_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "public_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"public\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_PUBLIC_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"public_access_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "symmetric_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"symmetric\",\"use_discovery\":\"false\",\"token_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/token\",\"auth_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/authorization\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"client_secret\":\"SAMPLE_CONFIDENTIAL_CLIENT_SECRET\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"symmetric_access_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "asymmetric_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"asymmetric\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"disabled\",\"auth_request_method\":\"POST\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"asymmetric_access_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "backend_services_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"backend_services\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"backend_services_access_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "auth_info-auth_info_demo",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "updated_at": "2026-02-27T08:57:15.782-05:00"
+  },
+  {
+    "id": "f8629a0f-1f8c-4274-ac78-bca039607d19",
+    "created_at": "2026-02-27T08:57:15.785-05:00",
+    "inputs": [
+      {
+        "name": "public_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"public\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_PUBLIC_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"name\":\"public_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "symmetric_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"symmetric\",\"use_discovery\":\"false\",\"token_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/token\",\"auth_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/authorization\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"client_secret\":\"SAMPLE_CONFIDENTIAL_CLIENT_SECRET\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"name\":\"symmetric_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "asymmetric_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"asymmetric\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"disabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"name\":\"asymmetric_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "backend_services_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"backend_services\",\"use_discovery\":\"true\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"name\":\"backend_services_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "public_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"public\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_PUBLIC_CLIENT_ID\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"GET\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"public_access_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "symmetric_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"symmetric\",\"use_discovery\":\"false\",\"token_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/token\",\"auth_url\":\"https://inferno-qa.healthit.gov/reference-server/oauth/authorization\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"client_secret\":\"SAMPLE_CONFIDENTIAL_CLIENT_SECRET\",\"pkce_support\":\"enabled\",\"pkce_code_challenge_method\":\"S256\",\"auth_request_method\":\"POST\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"symmetric_access_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "asymmetric_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"asymmetric\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"pkce_support\":\"disabled\",\"auth_request_method\":\"POST\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"asymmetric_access_auth_info\"}",
+        "type": "auth_info"
+      },
+      {
+        "name": "backend_services_access_auth_info",
+        "label": null,
+        "description": null,
+        "value": "{\"auth_type\":\"backend_services\",\"requested_scopes\":\"launch/patient openid fhirUser patient/*.*\",\"client_id\":\"SAMPLE_CONFIDENTIAL_CLIENT_ID\",\"encryption_algorithm\":\"ES384\",\"kid\":\"4b49a739d1eb115b3225f4cf9beb6d1b\",\"jwks\":\"{\\\"keys\\\":[{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"use\\\":\\\"sig\\\",\\\"key_ops\\\":[\\\"verify\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"},{\\\"kty\\\":\\\"EC\\\",\\\"crv\\\":\\\"P-384\\\",\\\"d\\\":\\\"kDkn55p7gryKk2tj6z2ij7ExUnhi0ngxXosvqa73y7epwgthFqaJwApmiXXU2yhK\\\",\\\"x\\\":\\\"JQKTsV6PT5Szf4QtDA1qrs0EJ1pbimQmM2SKvzOlIAqlph3h1OHmZ2i7MXahIF2C\\\",\\\"y\\\":\\\"bRWWQRJBgDa6CTgwofYrHjVGcO-A7WNEnu4oJA5OUJPPPpczgx1g2NsfinK-D2Rw\\\",\\\"key_ops\\\":[\\\"sign\\\"],\\\"ext\\\":true,\\\"kid\\\":\\\"4b49a739d1eb115b3225f4cf9beb6d1b\\\",\\\"alg\\\":\\\"ES384\\\"}]}\",\"access_token\":\"SAMPLE_TOKEN\",\"refresh_token\":\"SAMPLE_REFRESH_TOKEN\",\"issue_time\":\"2026-02-27T00:08:07-05:00\",\"expires_in\":\"3600\",\"name\":\"backend_services_access_auth_info\"}",
+        "type": "auth_info"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
+    "test_session_id": "e78qHJtARIq",
+    "test_suite_id": "auth_info",
+    "updated_at": "2026-02-27T08:57:15.785-05:00"
+  }
+]

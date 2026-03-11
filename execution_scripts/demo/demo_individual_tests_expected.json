@@ -1,0 +1,29 @@
+[
+  {
+    "id": "a2f10407-e48b-4401-aa8a-16e2fe4d394b",
+    "created_at": "2026-02-21T10:40:33.269-05:00",
+    "inputs": [],
+    "optional": false,
+    "outputs": [],
+    "requests": [],
+    "result": "pass",
+    "test_id": "demo-wait_group-Test01",
+    "test_run_id": "18a2ca3a-fbe3-49ec-ac9f-8c47311a9553",
+    "test_session_id": "hZ8xSo8RUzC",
+    "updated_at": "2026-02-21T10:40:33.269-05:00"
+  },
+  {
+    "id": "a2f4437b-d71d-4761-b3c3-2f994052edd5",
+    "created_at": "2026-02-21T10:40:36.529-05:00",
+    "inputs": [],
+    "optional": false,
+    "outputs": [],
+    "requests": [],
+    "result": "skip",
+    "result_message": "Request `resume` was not made in a previous test as expected.",
+    "test_id": "demo-wait_group-Test03",
+    "test_run_id": "bff7b820-f123-4261-a96c-71e31e8eeb2b",
+    "test_session_id": "hZ8xSo8RUzC",
+    "updated_at": "2026-02-21T10:40:36.529-05:00"
+  }
+]

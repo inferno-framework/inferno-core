@@ -1,0 +1,11 @@
+sessions:
+  - suite: custom_result_suite
+
+steps:
+  - status: created
+    start_run:
+      runnable: suite
+
+  - status: done
+    last_completed: suite
+    action: END_SCRIPT
