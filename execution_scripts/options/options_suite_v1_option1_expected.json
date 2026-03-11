@@ -1,0 +1,160 @@
+[
+  {
+    "id": "a6fbba34-d7ad-4b3f-819f-a14e18bccc42",
+    "created_at": "2026-02-27T10:10:37.171-05:00",
+    "inputs": [
+      {
+        "name": "all_versions_input",
+        "value": "v1 & other option 1 selected",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "options-all_versions_group-all_versions_test1",
+    "test_run_id": "20338739-6cea-4d2d-818c-44e3172081d7",
+    "test_session_id": "jYydovfv7r5",
+    "updated_at": "2026-02-27T10:10:37.171-05:00"
+  },
+  {
+    "id": "911f4960-9845-4093-a91e-53d0be58a1f2",
+    "created_at": "2026-02-27T10:10:37.174-05:00",
+    "inputs": [
+      {
+        "name": "all_versions_input",
+        "value": "v1 & other option 1 selected",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "options-all_versions_group-all_versions_test2",
+    "test_run_id": "20338739-6cea-4d2d-818c-44e3172081d7",
+    "test_session_id": "jYydovfv7r5",
+    "updated_at": "2026-02-27T10:10:37.174-05:00"
+  },
+  {
+    "id": "cf7d5fd4-6d62-46df-a985-9824c9574adb",
+    "created_at": "2026-02-27T10:10:37.175-05:00",
+    "inputs": [
+      {
+        "name": "all_versions_input",
+        "label": null,
+        "description": null,
+        "value": "v1 & other option 1 selected",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "options-all_versions_group",
+    "test_run_id": "20338739-6cea-4d2d-818c-44e3172081d7",
+    "test_session_id": "jYydovfv7r5",
+    "updated_at": "2026-02-27T10:10:37.175-05:00"
+  },
+  {
+    "id": "6496c0c1-c769-4f36-8f7e-66cfacdcce9a",
+    "created_at": "2026-02-27T10:10:37.179-05:00",
+    "inputs": [
+      {
+        "name": "v1_input",
+        "value": "unused",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "options-v1_group-v1_test",
+    "test_run_id": "20338739-6cea-4d2d-818c-44e3172081d7",
+    "test_session_id": "jYydovfv7r5",
+    "updated_at": "2026-02-27T10:10:37.179-05:00"
+  },
+  {
+    "id": "bccfdfd7-d868-42c4-b873-97d91da1010b",
+    "created_at": "2026-02-27T10:10:37.180-05:00",
+    "inputs": [
+      {
+        "name": "v1_input",
+        "label": null,
+        "description": null,
+        "value": "unused",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "options-v1_group",
+    "test_run_id": "20338739-6cea-4d2d-818c-44e3172081d7",
+    "test_session_id": "jYydovfv7r5",
+    "updated_at": "2026-02-27T10:10:37.180-05:00"
+  },
+  {
+    "id": "e0a561f9-28de-481b-8cdf-6f89b74f4df6",
+    "created_at": "2026-02-27T10:10:37.183-05:00",
+    "inputs": [
+      {
+        "name": "all_versions_input",
+        "label": null,
+        "description": null,
+        "value": "v1 & other option 1 selected",
+        "type": "text"
+      },
+      {
+        "name": "v1_input",
+        "label": null,
+        "description": null,
+        "value": "unused",
+        "type": "text"
+      },
+      {
+        "name": "v2_input",
+        "label": null,
+        "description": null,
+        "value": null,
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_run_id": "20338739-6cea-4d2d-818c-44e3172081d7",
+    "test_session_id": "jYydovfv7r5",
+    "test_suite_id": "options",
+    "updated_at": "2026-02-27T10:10:37.183-05:00"
+  }
+]

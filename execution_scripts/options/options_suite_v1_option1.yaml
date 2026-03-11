@@ -1,0 +1,16 @@
+sessions:
+  - suite_id: options
+    preset_id: options
+    suite_options:
+      ig_version: 1
+      other_option: 1
+
+rules:
+  - status: created
+    start_run: 
+      inputs: 
+        v1_input: unused
+
+  - status: done
+    last_test: options-v1_group-v1_test
+    command: "END_SCRIPT"
