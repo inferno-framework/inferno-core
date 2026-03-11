@@ -96,7 +96,7 @@ module Inferno
       option :poll_interval,
              aliases: ['-p'],
              type: :numeric,
-             default: 1,
+             default: 3,
              desc: 'Seconds between status polls.'
       option :default_poll_timeout,
              aliases: ['-t'],

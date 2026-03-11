@@ -343,7 +343,7 @@ module Inferno
         matched_step = match_step(status, session.key)
 
         if matched_step
-          return verify_step(matched_step, status, session, timeout)
+          return matched_step # verify_step(matched_step, status, session, timeout)
         elsif run_status == 'waiting'
           warn "UNHANDLED WAIT - Canceling: session=#{session.key} last_test=#{status['last_test_executed']}"
           attempt_cancel(session.session_id, status)
@@ -355,12 +355,12 @@ module Inferno
         nil
       end
 
-      # Checks for a repeated step; returns nil to keep polling or the step to act on.
+      # Checks for a repeated steps that aren't NOOPs; returns nil to keep polling or the step to act on.
       def verify_step(matched_step, status, session, timeout)
         run_status = status['status']
         step_sig = [run_status, status['last_test_executed'].to_s]
 
-        if step_sig == execution_status.last_step_signatures[session.key]
+        if step_sig == execution_status.last_step_signatures[session.key] && matched_step[:command] != 'NOOP'
           if run_status == 'waiting'
             warn "Loop detected - Canceling: session=#{session.key} last_test=#{status['last_test_executed']}"
             attempt_cancel(session.session_id, status)
