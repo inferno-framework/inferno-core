@@ -1,0 +1,12 @@
+sessions:
+  - suite_id: auth_info
+    preset_id: dev_auth_info_preset
+    # NOTE: preset use introduces issue time skew that causes faiures - these are expected
+
+rules:
+  - status: created
+    command: "bundle exec inferno session start_run '{session_id}'"
+
+  - status: done
+    last_test: auth_info-auth_info_demo-Group02-backend_services_auth
+    command: "END_SCRIPT"
