@@ -3,6 +3,7 @@ require_relative 'session/create_session'
 require_relative 'session/start_run'
 require_relative 'session/session_status'
 require_relative 'session/session_results'
+require_relative 'session/session_data'
 require_relative 'session/session_compare'
 
 module Inferno
@@ -61,6 +62,15 @@ module Inferno
                desc: 'URL of the target Inferno service.'
         def status(session_id)
           SessionStatus.new(session_id, options).run
+        end
+
+        desc 'data SESSION_ID', 'Get the current run status of a session.'
+        option :inferno_base_url,
+               aliases: ['-I'],
+               type: :string,
+               desc: 'URL of the target Inferno service.'
+        def data(session_id)
+          SessionData.new(session_id, options).run
         end
 
         desc 'results SESSION_ID', 'Get the results for a session.'

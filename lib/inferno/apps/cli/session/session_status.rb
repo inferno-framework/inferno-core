@@ -40,7 +40,7 @@ module Inferno
           # no execution has started yet for this session
           {
             test_session_id: session_id,
-            status: 'done'
+            status: 'created'
           }
         end
 
