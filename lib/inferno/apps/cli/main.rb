@@ -3,6 +3,7 @@ require_relative 'evaluate'
 require_relative 'migration'
 require_relative 'requirements'
 require_relative 'services'
+require_relative 'session_commands'
 require_relative 'suite'
 require_relative 'suites'
 require_relative 'new'
@@ -69,6 +70,9 @@ module Inferno
 
       desc 'requirements SUBCOMMAND ...ARGS', 'Perform requirements operations'
       subcommand 'requirements', Requirements
+
+      desc 'session SUBCOMMAND ...ARGS', 'Perform requirements operations'
+      subcommand 'session', Session::SessionCommands
 
       desc 'start', 'Start Inferno'
       option :watch,

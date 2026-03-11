@@ -1,0 +1,104 @@
+[
+  {
+    "id": "2b52e1ee-8f8c-43d4-ac14-ca1db2621159",
+    "created_at": "2026-02-19T20:26:13.317-05:00",
+    "inputs": [],
+    "optional": false,
+    "outputs": [],
+    "requests": [],
+    "result": "pass",
+    "test_id": "demo-wait_group-Test01",
+    "test_run_id": "89f39dfa-45b7-4652-b5ce-eaca30bd8213",
+    "test_session_id": "1p2MmTUPe1M",
+    "updated_at": "2026-02-19T20:26:13.317-05:00"
+  },
+  {
+    "id": "943ba0bd-222f-4752-ae96-7ac811151ea2",
+    "created_at": "2026-02-19T20:26:13.319-05:00",
+    "inputs": [],
+    "optional": false,
+    "outputs": [
+      {
+        "name": "wait_test_url",
+        "type": "text",
+        "value": "http://localhost:4567/inferno/custom/demo/resume?xyz=abc"
+      },
+      {
+        "name": "wait_test_fail_url",
+        "type": "text",
+        "value": "http://localhost:4567/inferno/custom/demo/resume_fail?xyz=abc"
+      },
+      {
+        "name": "wait_test_skip_url",
+        "type": "text",
+        "value": "http://localhost:4567/inferno/custom/demo/resume_skip?xyz=abc"
+      },
+      {
+        "name": "wait_test_omit_url",
+        "type": "text",
+        "value": "http://localhost:4567/inferno/custom/demo/resume_omit?xyz=abc"
+      },
+      {
+        "name": "wait_test_cancel_url",
+        "type": "text",
+        "value": "http://localhost:4567/inferno/custom/demo/resume_cancel?xyz=abc"
+      }
+    ],
+    "requests": [],
+    "result": "pass",
+    "test_id": "demo-wait_group-Test02",
+    "test_run_id": "89f39dfa-45b7-4652-b5ce-eaca30bd8213",
+    "test_session_id": "1p2MmTUPe1M",
+    "updated_at": "2026-02-19T20:26:25.547-05:00"
+  },
+  {
+    "id": "03cd4a47-3e8e-4e43-8f8e-7a49fb7b1427",
+    "created_at": "2026-02-19T20:26:25.581-05:00",
+    "inputs": [],
+    "optional": false,
+    "outputs": [],
+    "requests": [
+      {
+        "id": "3cc4b550-86a6-47c0-bfda-fddcbcc6f8ec",
+        "direction": "incoming",
+        "index": 313,
+        "result_id": "943ba0bd-222f-4752-ae96-7ac811151ea2",
+        "status": null,
+        "timestamp": "2026-02-19T20:26:25.549-05:00",
+        "url": "http://localhost:4567/inferno/custom/demo/resume?xyz=abc",
+        "verb": "get"
+      }
+    ],
+    "result": "pass",
+    "test_id": "demo-wait_group-Test03",
+    "test_run_id": "89f39dfa-45b7-4652-b5ce-eaca30bd8213",
+    "test_session_id": "1p2MmTUPe1M",
+    "updated_at": "2026-02-19T20:26:25.581-05:00"
+  },
+  {
+    "id": "ed357521-e499-4c8f-af59-3705682a570f",
+    "created_at": "2026-02-19T20:26:25.584-05:00",
+    "inputs": [],
+    "optional": false,
+    "outputs": [],
+    "requests": [],
+    "result": "pass",
+    "test_group_id": "demo-wait_group",
+    "test_run_id": "89f39dfa-45b7-4652-b5ce-eaca30bd8213",
+    "test_session_id": "1p2MmTUPe1M",
+    "updated_at": "2026-02-19T20:26:25.584-05:00"
+  },
+  {
+    "id": "ed357521-e499-4c8f-af59-3705682a570f",
+    "created_at": "2026-02-19T20:26:25.584-05:00",
+    "inputs": [],
+    "optional": false,
+    "outputs": [],
+    "requests": [],
+    "result": "pass",
+    "test_group_id": "demo",
+    "test_run_id": "89f39dfa-45b7-4652-b5ce-eaca30bd8213",
+    "test_session_id": "1p2MmTUPe1M",
+    "updated_at": "2026-02-19T20:26:25.584-05:00"
+  }
+]
