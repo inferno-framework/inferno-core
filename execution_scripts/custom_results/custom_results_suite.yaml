@@ -1,0 +1,10 @@
+sessions:
+  - suite_id: custom_result_suite
+
+rules:
+  - status: created
+    command: "bundle exec inferno session start_run '{session_id}'"
+
+  - status: done
+    last_test: custom_result_suite-passing_custom_result_group_with_nested_groups-Group03-Test01
+    command: "END_SCRIPT"

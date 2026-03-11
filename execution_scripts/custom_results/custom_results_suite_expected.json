@@ -1,0 +1,320 @@
+[
+  {
+    "id": "bc85dd43-18cf-40fc-9ebf-2781d139b24d",
+    "created_at": "2026-02-27T09:25:59.349-05:00",
+    "inputs": [
+
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "custom_result_suite-passing_custom_result_group-Test01",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.349-05:00"
+  },
+  {
+    "id": "f60c30a5-b18b-4a53-a8b5-1ab9fae0efd8",
+    "created_at": "2026-02-27T09:25:59.352-05:00",
+    "inputs": [
+
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "custom_result_suite-passing_custom_result_group-Test02",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.352-05:00"
+  },
+  {
+    "id": "100d33ff-ddad-462b-a0b9-1b4a8dfa2e53",
+    "created_at": "2026-02-27T09:25:59.353-05:00",
+    "inputs": [
+
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "fail",
+    "test_id": "custom_result_suite-passing_custom_result_group-Test03",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.353-05:00"
+  },
+  {
+    "id": "733b2b5f-1e72-498f-99cb-4e88d6e762b6",
+    "created_at": "2026-02-27T09:25:59.355-05:00",
+    "inputs": [
+
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "result_message": "Test 1 passed",
+    "test_group_id": "custom_result_suite-passing_custom_result_group",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.355-05:00"
+  },
+  {
+    "id": "f7643a18-cd76-49cb-a4ad-fdb6114ef88c",
+    "created_at": "2026-02-27T09:25:59.357-05:00",
+    "inputs": [
+
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "fail",
+    "test_id": "custom_result_suite-non_passing_custom_result_group-Test01",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.357-05:00"
+  },
+  {
+    "id": "166eb62f-d46f-4abd-8d70-c9e0fc3ecb86",
+    "created_at": "2026-02-27T09:25:59.358-05:00",
+    "inputs": [
+
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "custom_result_suite-non_passing_custom_result_group-Test02",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.358-05:00"
+  },
+  {
+    "id": "328601d0-bf9b-4ebd-acc1-95f22d42632a",
+    "created_at": "2026-02-27T09:25:59.359-05:00",
+    "inputs": [
+
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "skip",
+    "test_id": "custom_result_suite-non_passing_custom_result_group-Test03",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.359-05:00"
+  },
+  {
+    "id": "70e5d6e3-d5fd-4dfe-83cc-7052eb8a460d",
+    "created_at": "2026-02-27T09:25:59.360-05:00",
+    "inputs": [
+
+    ],
+    "messages": [
+      {
+        "message": "Test 1 did not pass",
+        "type": "info"
+      }
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "fail",
+    "result_message": "Either test 1, or test 2 and test 3 must pass",
+    "test_group_id": "custom_result_suite-non_passing_custom_result_group",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.360-05:00"
+  },
+  {
+    "id": "8eb2cb74-fa9c-4c10-9d77-d313cd6b73bb",
+    "created_at": "2026-02-27T09:25:59.364-05:00",
+    "inputs": [
+
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "fail",
+    "test_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group01-Test01",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.364-05:00"
+  },
+  {
+    "id": "c3cc4392-c74a-49c1-bc36-6ddbad2bc0c7",
+    "created_at": "2026-02-27T09:25:59.366-05:00",
+    "inputs": [
+
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "fail",
+    "test_group_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group01",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.366-05:00"
+  },
+  {
+    "id": "1c49fa97-44db-4f1f-b4c7-2d384d7377a9",
+    "created_at": "2026-02-27T09:25:59.367-05:00",
+    "inputs": [
+
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group02-Test01",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.367-05:00"
+  },
+  {
+    "id": "14de177a-d630-4701-9a35-22519e197ba7",
+    "created_at": "2026-02-27T09:25:59.368-05:00",
+    "inputs": [
+
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group02",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.368-05:00"
+  },
+  {
+    "id": "8e3d8009-90da-4b3f-af82-7066227d74e9",
+    "created_at": "2026-02-27T09:25:59.370-05:00",
+    "inputs": [
+
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group03-Test01",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.370-05:00"
+  },
+  {
+    "id": "a9055917-870e-470b-a8e2-4bd5c5b8dc54",
+    "created_at": "2026-02-27T09:25:59.371-05:00",
+    "inputs": [
+
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group03",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.371-05:00"
+  },
+  {
+    "id": "574ae44d-05da-463e-a75e-799016946553",
+    "created_at": "2026-02-27T09:25:59.380-05:00",
+    "inputs": [
+
+    ],
+    "messages": [
+      {
+        "message": "Inner Group 1 did not pass.",
+        "type": "info"
+      }
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "custom_result_suite-passing_custom_result_group_with_nested_groups",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "updated_at": "2026-02-27T09:25:59.380-05:00"
+  },
+  {
+    "id": "619c9d5e-4768-41d8-afa5-c333f988b719",
+    "created_at": "2026-02-27T09:25:59.383-05:00",
+    "inputs": [
+
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_run_id": "d2396af6-ec86-447a-be0f-7109e667635b",
+    "test_session_id": "cix6BkvJ5EA",
+    "test_suite_id": "custom_result_suite",
+    "updated_at": "2026-02-27T09:25:59.383-05:00"
+  }
+]
