@@ -18,6 +18,11 @@ module Inferno
         end
 
         def run
+          puts JSON.pretty_generate(start_run)
+          exit(0)
+        end
+
+        def start_run
           request_body = {
             test_session_id: session_id,
             "#{target_runnable_key}": target_runnable_id,
@@ -28,8 +33,7 @@ module Inferno
 
           handle_web_api_error(response, :start_run) if response.status != 200
 
-          puts JSON.pretty_generate(JSON.parse(response.body))
-          exit(0)
+          JSON.parse(response.body)
         end
 
         def session_details
@@ -73,7 +77,7 @@ module Inferno
         # runnable_to_find can be a complete internal id, an internal id suffix, or short id displayed in the UI
         def find_target_runnable
           target_runnable = options[:runnable].present? ? options[:runnable] : session_details['test_suite_id']
-          target_runnable.to_s unless target_runnable.is_a?(String)
+          target_runnable = target_runnable.to_s unless target_runnable.is_a?(String)
 
           candidates = []
           runnable_search(session_details['test_suite'], target_runnable, candidates)

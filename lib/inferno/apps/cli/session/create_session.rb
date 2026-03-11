@@ -17,6 +17,11 @@ module Inferno
         end
 
         def run
+          puts JSON.pretty_generate(create_session)
+          exit(0)
+        end
+
+        def create_session
           request_body = { test_suite_id: suite_id }
           request_body[:preset_id] = options[:preset_id] if options[:preset_id].present?
           request_body[:suite_options] = suite_options_list if options[:suite_options].present?
@@ -25,8 +30,7 @@ module Inferno
 
           handle_web_api_error(response, :session_create) if response.status != 200
 
-          puts JSON.pretty_generate(JSON.parse(response.body))
-          exit(0)
+          JSON.parse(response.body)
         end
 
         def suite_option_definitions
@@ -64,6 +68,7 @@ module Inferno
         end
 
         def resolve_suite_option_value(option_id, provided_value)
+          provided_value = provided_value.to_s
           definition = suite_option_definitions.find { |d| d['id'] == option_id }
           list_options = definition&.fetch('list_options', nil)
 

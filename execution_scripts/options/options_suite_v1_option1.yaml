@@ -7,6 +7,8 @@ sessions:
 
 steps:
   - status: created
+    state_description: created
+    action_description: run the suite
     start_run: 
       inputs: 
         v1_input: unused

@@ -20,7 +20,11 @@ module Inferno
         end
 
         def run
-          current_run = last_test_run
+          puts JSON.pretty_generate(cancel_run(last_test_run))
+          exit(0)
+        end
+
+        def cancel_run(current_run)
           run_id = current_run['id']
 
           unless CANCELLABLE_STATUSES.include?(current_run['status'])
@@ -31,8 +35,7 @@ module Inferno
 
           response = delete("api/test_runs/#{run_id}")
           handle_web_api_error(response, :cancel_run) if response.status != 204
-          puts JSON.pretty_generate({ run_id: run_id, cancelled: true })
-          exit(0)
+          { run_id: run_id, cancelled: true }
         end
 
         def last_test_run

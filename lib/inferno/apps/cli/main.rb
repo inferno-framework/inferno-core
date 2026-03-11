@@ -8,6 +8,7 @@ require_relative 'suite'
 require_relative 'suites'
 require_relative 'new'
 require_relative 'execute'
+require_relative 'execute_script'
 require_relative '../../version'
 
 module Inferno
@@ -76,11 +77,34 @@ module Inferno
       option :inferno_base_url,
              aliases: ['-I'],
              type: :string,
-             desc: 'URL of the target Inferno service (sets INFERNO_URL for the script).'
+             desc: 'URL of the target Inferno service.'
+      option :normalize,
+             aliases: ['-n'],
+             type: :boolean,
+             default: true,
+             desc: 'Normalize dynamic values (UUIDs, timestamps, base64) when comparing results.'
+      option :compare_messages,
+             aliases: ['-m'],
+             type: :boolean,
+             default: true,
+             desc: 'Compare messages array when comparing results.'
+      option :compare_result_message,
+             aliases: ['-r'],
+             type: :boolean,
+             default: true,
+             desc: 'Compare result_message field when comparing results.'
+      option :poll_interval,
+             aliases: ['-p'],
+             type: :numeric,
+             default: 1,
+             desc: 'Seconds between status polls.'
+      option :default_poll_timeout,
+             aliases: ['-t'],
+             type: :numeric,
+             default: 30,
+             desc: 'Default seconds to wait for a matching step before timing out.'
       def execute_script(yaml_file)
-        ENV['INFERNO_URL'] = options[:inferno_base_url] if options[:inferno_base_url].present?
-        exec('bash', File.expand_path('../../../../execution_scripts/session_runner.sh', __dir__),
-             yaml_file)
+        ExecuteScript.new(yaml_file, options).run
       end
 
       desc 'session SUBCOMMAND ...ARGS', 'Perform session operations'

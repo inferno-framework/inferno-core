@@ -17,6 +17,12 @@ module Inferno
         end
 
         def run
+          session_status = status_for_session
+          puts JSON.pretty_generate(session_status)
+          exit(0)
+        end
+
+        def status_for_session
           session_status = last_test_run
 
           if session_status['id'].present?
@@ -31,8 +37,7 @@ module Inferno
             end
           end
 
-          puts JSON.pretty_generate(session_status)
-          exit(0)
+          session_status
         end
 
         def last_test_run
@@ -43,8 +48,8 @@ module Inferno
 
           # no execution has started yet for this session
           {
-            test_session_id: session_id,
-            status: 'created'
+            'test_session_id' => session_id,
+            'status' => 'created'
           }
         end
 
