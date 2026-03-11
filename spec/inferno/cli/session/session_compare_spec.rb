@@ -246,6 +246,88 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
     end
   end
 
+  describe 'when normalizing timestamps' do
+    def stub_results(actual:, expected:)
+      stub_request(:get, "#{inferno_host}/api/test_sessions/#{actual_results_session_id}/results")
+        .to_return(status: 200, body: [actual].to_json)
+      stub_request(:get, "#{inferno_host}/api/test_sessions/#{expected_results_session_id}/results")
+        .to_return(status: 200, body: [expected].to_json)
+    end
+
+    let(:test_result_base) do
+      { result: 'pass', test_id: 'test-id-1' }
+    end
+
+    it 'fails when result_messages contain different timestamps and normalize is off' do
+      actual = test_result_base.merge(result_message: 'Token issued at 2024-06-01T12:00:00Z')
+      expected = test_result_base.merge(result_message: 'Token issued at 2023-01-15T08:30:00Z')
+      stub_results(actual:, expected:)
+
+      options = { inferno_base_url: inferno_host, expected_results_session: expected_results_session_id,
+                  compare_result_message: true, normalize: false }
+      expect do
+        expect { described_class.new(actual_results_session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output(/.+/).to_stdout
+    end
+
+    it 'passes when result_messages differ only in ISO 8601 timestamps and normalize is on' do
+      actual = test_result_base.merge(result_message: 'Token issued at 2024-06-01T12:00:00Z')
+      expected = test_result_base.merge(result_message: 'Token issued at 2023-01-15T08:30:00Z')
+      stub_results(actual:, expected:)
+
+      options = { inferno_base_url: inferno_host, expected_results_session: expected_results_session_id,
+                  compare_result_message: true, normalize: true }
+      expect do
+        expect { described_class.new(actual_results_session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
+      end.to output(/.+/).to_stdout
+    end
+
+    it 'normalizes timestamps with fractional seconds and timezone offsets' do
+      actual = test_result_base.merge(result_message: 'Expires: 2024-06-01T12:00:00.000Z')
+      expected = test_result_base.merge(result_message: 'Expires: 2023-01-15T08:30:45.123+05:30')
+      stub_results(actual:, expected:)
+
+      options = { inferno_base_url: inferno_host, expected_results_session: expected_results_session_id,
+                  compare_result_message: true, normalize: true }
+      expect do
+        expect { described_class.new(actual_results_session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
+      end.to output(/.+/).to_stdout
+    end
+
+    it 'passes when messages differ only in timestamps and normalize is on' do
+      actual = test_result_base.merge(
+        messages: [{ message: 'Token issued at 2024-06-01T12:00:00Z', type: 'info' }]
+      )
+      expected = test_result_base.merge(
+        messages: [{ message: 'Token issued at 2023-01-15T08:30:00+00:00', type: 'info' }]
+      )
+      stub_results(actual:, expected:)
+
+      options = { inferno_base_url: inferno_host, expected_results_session: expected_results_session_id,
+                  compare_messages: true, normalize: true }
+      expect do
+        expect { described_class.new(actual_results_session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
+      end.to output(/.+/).to_stdout
+    end
+
+    it 'does not normalize bare dates without a time component' do
+      actual = test_result_base.merge(result_message: 'Birthdate: 2024-06-01')
+      expected = test_result_base.merge(result_message: 'Birthdate: 2023-01-15')
+      stub_results(actual:, expected:)
+
+      options = { inferno_base_url: inferno_host, expected_results_session: expected_results_session_id,
+                  compare_result_message: true, normalize: true }
+      expect do
+        expect { described_class.new(actual_results_session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output(/.+/).to_stdout
+    end
+  end
+
   describe 'when comparing result_message' do
     let(:result_with_result_messages) do
       {

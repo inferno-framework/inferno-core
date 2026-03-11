@@ -129,6 +129,10 @@ module Inferno
           # state parameters, authorization codes, opaque tokens, etc.).
           BASE64_CHARS = '[A-Za-z0-9+\/=_-]'.freeze
           DYNAMIC_VALUE_PATTERNS = [
+            # ISO 8601 datetimes with a time component and explicit timezone (e.g. issue_time,
+            # token expiry). Must come before the base64 pattern since timestamps contain
+            # base64-safe characters.
+            [/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})/, '<timestamp>'],
             [/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i, '<uuid>'],
             [/(?=#{BASE64_CHARS}*[A-Z])(?=#{BASE64_CHARS}*[a-z])(?=#{BASE64_CHARS}*[0-9])#{BASE64_CHARS}{20,}/,
              '<base64>']
