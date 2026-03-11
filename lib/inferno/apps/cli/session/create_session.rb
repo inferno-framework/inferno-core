@@ -29,9 +29,57 @@ module Inferno
           exit(0)
         end
 
+        def suite_option_definitions
+          @suite_option_definitions ||= begin
+            response = get("api/test_suites/#{suite_id}")
+            if response.status != 200
+              puts JSON.pretty_generate({ errors: "Suite '#{suite_id}' not found at '#{base_url}'" })
+              exit(3)
+            end
+            JSON.parse(response.body)['suite_options'] || []
+          end
+        end
+
         def suite_options_list
-          options[:suite_options].keys.map do |option|
-            { id: option, value: options[:suite_options][option] }
+          options[:suite_options].keys.map do |option_key|
+            option_id = resolve_suite_option_key(option_key)
+            { id: option_id, value: resolve_suite_option_value(option_id, options[:suite_options][option_key]) }
+          end
+        end
+
+        def resolve_suite_option_key(option_key)
+          return option_key if suite_option_definitions.any? { |d| d['id'] == option_key }
+
+          matched = suite_option_definitions.find { |d| d['title'] == option_key }
+          if matched
+            matched['id']
+          else
+            valid_options = suite_option_definitions.map { |d| "#{d['id']} (#{d['title']})" }.join(', ')
+            puts JSON.pretty_generate({
+                                        errors: "Unknown suite option '#{option_key}' for suite '#{suite_id}'. " \
+                                                "Valid options: #{valid_options}"
+                                      })
+            exit(3)
+          end
+        end
+
+        def resolve_suite_option_value(option_id, provided_value)
+          definition = suite_option_definitions.find { |d| d['id'] == option_id }
+          list_options = definition&.fetch('list_options', nil)
+
+          return provided_value if list_options.blank?
+          return provided_value if list_options.any? { |o| o['value'] == provided_value }
+
+          matched = list_options.find { |o| o['label'] == provided_value }
+          if matched
+            matched['value']
+          else
+            valid_options = list_options.map { |o| "#{o['value']} (#{o['label']})" }.join(', ')
+            puts JSON.pretty_generate({
+                                        errors: "Invalid value '#{provided_value}' for suite option '#{option_id}'. " \
+                                                "Valid values: #{valid_options}"
+                                      })
+            exit(3)
           end
         end
       end
