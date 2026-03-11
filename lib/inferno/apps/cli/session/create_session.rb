@@ -9,10 +9,11 @@ module Inferno
         include Connection
         include Errors
 
-        attr_accessor :suite_id, :options
+        attr_accessor :options
+        attr_reader :suite
 
-        def initialize(suite_id, options)
-          self.suite_id = suite_id
+        def initialize(suite, options)
+          @suite = suite
           self.options = options
         end
 
@@ -23,7 +24,7 @@ module Inferno
 
         def create_session
           request_body = { test_suite_id: suite_id }
-          request_body[:preset_id] = options[:preset_id] if options[:preset_id].present?
+          request_body[:preset_id] = preset_id if options[:preset].present?
           request_body[:suite_options] = suite_options_list if options[:suite_options].present?
 
           response = post('api/test_sessions', request_body.to_json, content_type: 'application/json')
@@ -33,15 +34,63 @@ module Inferno
           JSON.parse(response.body)
         end
 
-        def suite_option_definitions
-          @suite_option_definitions ||= begin
-            response = get("api/test_suites/#{suite_id}")
+        def suite_id
+          @suite_id ||= resolve_suite_identifier
+        end
+
+        def all_suite_definitions
+          @all_suite_definitions ||= begin
+            response = get('api/test_suites')
             if response.status != 200
-              puts JSON.pretty_generate({ errors: "Suite '#{suite_id}' not found at '#{base_url}'" })
+              puts JSON.pretty_generate({ errors: "Could not fetch test suites list from '#{base_url}'" })
               exit(3)
             end
-            JSON.parse(response.body)['suite_options'] || []
+            JSON.parse(response.body)
           end
+        end
+
+        def resolve_suite_identifier
+          matched = all_suite_definitions.find { |s| s['id'] == suite }
+          return matched['id'] if matched.present?
+
+          matched = all_suite_definitions.find { |s| s['title'] == suite || s['short_title'] == suite }
+          return matched['id'] if matched.present?
+
+          valid_suites = all_suite_definitions.map { |s| "#{s['id']} (#{s['title']})" }.join(', ')
+          puts JSON.pretty_generate(
+            { errors: "Suite '#{suite}' not found. Valid suites: #{valid_suites}" }
+          )
+          exit(3)
+        end
+
+        def preset_id
+          @preset_id ||= resolve_preset_identifier
+        end
+
+        def suite_presets
+          suite_def = all_suite_definitions.find { |s| s['id'] == suite_id }
+          suite_def&.fetch('presets', []) || []
+        end
+
+        def resolve_preset_identifier
+          return unless options[:preset].present?
+
+          preset = options[:preset]
+          return preset if suite_presets.any? { |p| p['id'] == preset }
+
+          matched = suite_presets.find { |p| p['title'] == preset }
+          return matched['id'] if matched.present?
+
+          valid_presets = suite_presets.map { |p| "#{p['id']} (#{p['title']})" }.join(', ')
+          puts JSON.pretty_generate(
+            { errors: "Preset '#{preset}' not found for suite '#{suite_id}'. Valid presets: #{valid_presets}" }
+          )
+          exit(3)
+        end
+
+        def suite_option_definitions
+          suite_def = all_suite_definitions.find { |s| s['id'] == suite_id }
+          suite_def&.fetch('suite_options', []) || []
         end
 
         def suite_options_list
@@ -55,16 +104,14 @@ module Inferno
           return option_key if suite_option_definitions.any? { |d| d['id'] == option_key }
 
           matched = suite_option_definitions.find { |d| d['title'] == option_key }
-          if matched
-            matched['id']
-          else
-            valid_options = suite_option_definitions.map { |d| "#{d['id']} (#{d['title']})" }.join(', ')
-            puts JSON.pretty_generate({
-                                        errors: "Unknown suite option '#{option_key}' for suite '#{suite_id}'. " \
-                                                "Valid options: #{valid_options}"
-                                      })
-            exit(3)
-          end
+          return matched['id'] if matched.present?
+
+          valid_options = suite_option_definitions.map { |d| "#{d['id']} (#{d['title']})" }.join(', ')
+          puts JSON.pretty_generate({
+                                      errors: "Unknown suite option '#{option_key}' for suite '#{suite_id}'. " \
+                                              "Valid options: #{valid_options}"
+                                    })
+          exit(3)
         end
 
         def resolve_suite_option_value(option_id, provided_value)

@@ -1,5 +1,5 @@
 sessions:
-  - suite_id: custom_result_suite
+  - suite: custom_result_suite
 
 steps:
   - status: created

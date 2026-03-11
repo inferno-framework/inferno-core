@@ -1,5 +1,5 @@
 sessions:
-  - suite_id: infra_test
+  - suite: infra_test
 
 steps:
   - status: created

@@ -10,7 +10,7 @@ module Inferno
   module CLI
     module Session
       class SessionCommands < Thor
-        desc 'create SUITE_ID', 'Create a new session for a suite.'
+        desc 'create SUITE', 'Create a new session for a suite (internal ID, title, or short title).'
         option :inferno_base_url,
                aliases: ['-I'],
                type: :string,
@@ -19,10 +19,10 @@ module Inferno
                aliases: ['-o'],
                type: :hash,
                desc: 'Suite options used to initialize the session.'
-        option :preset_id,
+        option :preset,
                aliases: ['-p'],
                type: :string,
-               desc: 'Preset to apply when creating the session.'
+               desc: 'Preset to apply when creating the session (internal ID or title).'
         def create(suite_id)
           CreateSession.new(suite_id, options).run
         end

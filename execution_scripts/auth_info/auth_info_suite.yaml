@@ -1,5 +1,5 @@
 sessions:
-  - suite_id: auth_info
+  - suite: auth_info
 
 steps:
   - status: created

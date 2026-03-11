@@ -1,6 +1,6 @@
 sessions:
-  - suite_id: auth_info
-    preset_id: dev_auth_info_preset
+  - suite: auth_info
+    preset: dev_auth_info_preset
     # NOTE: preset use introduces issue time skew that causes faiures - these are expected
 
 normalized_strings:

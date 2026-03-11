@@ -1,6 +1,6 @@
 sessions:
-  - suite_id: options
-    preset_id: options
+  - suite: options
+    preset: options
     suite_options:
       IG Version: v2
       Another option: option 3

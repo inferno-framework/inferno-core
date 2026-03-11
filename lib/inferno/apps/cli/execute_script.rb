@@ -29,9 +29,9 @@ module Inferno
     #       replacement: '<PKCE_VALUE>'
     #
     #   sessions:
-    #     - suite_id: my_suite
+    #     - suite: my_suite                        # internal ID, title, or short title
     #       name: my_name                          # optional; used as key in multi-session
-    #       preset_id: my-preset                   # optional
+    #       preset: my-preset                      # optional; internal ID or title
     #       suite_options:                         # optional; option_key and option_value can be the
     #         option_key: option_value             #           internal values or the displayed titles
     #       expected_results_file: expected.json   # optional; relative to yaml file, if not provided
@@ -67,7 +67,7 @@ module Inferno
     #
     # Template tokens in command strings and start_run input values:
     #   {session_id}              — current session's Inferno session ID
-    #   {session_id.NAME}         — named session's ID
+    #   {NAME.session_id}         — named session's ID
     #   {result_message}          — current session's wait_result_message (shell-quoted)
     #   {NAME.result_message}     — named session's wait_result_message (shell-quoted)
     #   {wait_outputs.KEY}        — current session's wait output by name (shell-quoted)
@@ -147,14 +147,15 @@ module Inferno
       end
 
       def create_session_from_config(session_config)
-        warn "Creating '#{session_config['suite_id']}' session..."
-        creator = Session::CreateSession.new(session_config['suite_id'], session_create_options(session_config))
+        suite = session_config['suite']
+        warn "Creating '#{suite}' session..."
+        creator = Session::CreateSession.new(suite, session_create_options(session_config))
         session_details = creator.create_session
-        key = session_config['name'] || session_config['suite_id']
+        key = session_config['name'] || suite
         warn "Session created: #{session_details['id']}"
         ScriptSession.new(
           key: key,
-          suite_id: session_config['suite_id'],
+          suite_id: session_details['test_suite_id'],
           session_id: session_details['id'],
           expected_results_file: resolve_expected_file(session_config, key),
           short_id_map: extract_short_ids_from_session_details(session_details)
@@ -163,7 +164,7 @@ module Inferno
 
       def session_create_options(session_config)
         {
-          preset_id: session_config['preset_id'],
+          preset: session_config['preset'],
           suite_options: session_config['suite_options'],
           inferno_base_url: options[:inferno_base_url]
         }
@@ -506,7 +507,7 @@ module Inferno
           if session_id.present?
             session_id
           elsif start_run_details['session'].present?
-            "{session_id.#{start_run_details['session']}}"
+            "{#{start_run_details['session']}.session_id}"
           else
             '{session_id}'
           end
@@ -550,12 +551,12 @@ module Inferno
         # {session_id} — current session
         result.gsub!('{session_id}') { session_name_to_id_map[session_key] }
 
-        # {session_id.NAME} — named session
-        result.gsub!(/\{session_id\.([^}]+)\}/) do
+        # {NAME.session_id} — named session
+        result.gsub!(/\{([^}.]+)\.session_id\}/) do
           name = Regexp.last_match(1)
           id   = session_name_to_id_map[name]
           unless id
-            puts JSON.pretty_generate({ errors: "Unknown session name '#{name}' in token {session_id.#{name}}" })
+            puts JSON.pretty_generate({ errors: "Unknown session name '#{name}' in token {#{name}.session_id}" })
             exit(3)
           end
           id
@@ -675,7 +676,7 @@ module Inferno
           warn "Expected results file not found; writing actual results to #{session.expected_results_file}"
           results = Session::SessionResults.new(session.session_id, options).results_for_session(session.session_id)
           File.write(session.expected_results_file, results.to_json)
-          0
+          3
         end
       end
 

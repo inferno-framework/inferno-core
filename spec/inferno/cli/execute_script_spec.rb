@@ -25,6 +25,8 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
   def build_instance(config, opts = base_options)
     allow(YAML).to receive(:safe_load_file).and_return(config)
+    stub_request(:get, "#{inferno_host}/api/test_suites")
+      .to_return(status: 200, body: [{ 'id' => suite_id, 'title' => suite_id }].to_json)
     stub_request(:post, create_url).to_return(status: 200, body: session_response.to_json)
     described_class.new('script.yaml', opts)
   end
@@ -39,7 +41,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         { 'status' => 'done', 'last_completed' => 'test-2', 'session' => 'session-b', 'command' => 'do_b' }
       ]
     end
-    let(:config) { { 'sessions' => [{ 'suite_id' => suite_id }], 'steps' => steps } }
+    let(:config) { { 'sessions' => [{ 'suite' => suite_id }], 'steps' => steps } }
 
     it 'matches by status and last_completed' do
       result = instance.send(:find_matching_step, 'done', '', 'primary')
@@ -72,7 +74,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
   describe '#apply_templates' do
     subject(:instance) { build_instance(config) }
 
-    let(:config) { { 'sessions' => [{ 'suite_id' => suite_id, 'name' => 'primary' }], 'steps' => [] } }
+    let(:config) { { 'sessions' => [{ 'suite' => suite_id, 'name' => 'primary' }], 'steps' => [] } }
 
     let(:session_key) { 'primary' }
     let(:status) { {} }
@@ -105,14 +107,14 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       end.to output(/.+/).to_stdout
     end
 
-    it 'substitutes {session_id.NAME} with the named session id' do
-      result = instance.send(:apply_templates, 'id={session_id.primary}', status, session_key)
+    it 'substitutes {NAME.session_id} with the named session id' do
+      result = instance.send(:apply_templates, 'id={primary.session_id}', status, session_key)
       expect(result).to eq("id=#{session_id}")
     end
 
-    it 'exits 3 when {session_id.NAME} refers to an unknown session' do
+    it 'exits 3 when {NAME.session_id} refers to an unknown session' do
       expect do
-        expect { instance.send(:apply_templates, '{session_id.unknown}', status, session_key) }
+        expect { instance.send(:apply_templates, '{unknown.session_id}', status, session_key) }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
       end.to output(/.+/).to_stdout
     end
@@ -132,8 +134,64 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
+  describe '#compare_session' do
+    subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
+
+    let(:expected_file) { '/tmp/expected_results.json' }
+    let(:session) do
+      Inferno::CLI::ExecuteScript::ScriptSession.new(
+        key: 'primary',
+        suite_id:,
+        session_id:,
+        expected_results_file: expected_file,
+        short_id_map: {}
+      )
+    end
+    let(:mock_compare) { instance_double(Inferno::CLI::Session::SessionCompare) }
+    let(:mock_results) { instance_double(Inferno::CLI::Session::SessionResults) }
+
+    before do
+      allow(Inferno::CLI::Session::SessionCompare).to receive(:new).and_return(mock_compare)
+      allow(Inferno::CLI::Session::SessionResults).to receive(:new).and_return(mock_results)
+    end
+
+    it 'returns nil when expected_results_file is blank' do
+      blank_session = Inferno::CLI::ExecuteScript::ScriptSession.new(
+        key: 'primary', suite_id:, session_id:, expected_results_file: nil, short_id_map: {}
+      )
+      expect(instance.send(:compare_session, blank_session)).to be_nil
+    end
+
+    it 'returns 0 when the expected file exists and results match' do
+      allow(File).to receive(:exist?).with(expected_file).and_return(true)
+      allow(mock_compare).to receive(:results_match?).and_return(true)
+
+      expect(instance.send(:compare_session, session)).to eq(0)
+    end
+
+    it 'returns 3 and saves files when the expected file exists but results do not match' do
+      allow(File).to receive(:exist?).with(expected_file).and_return(true)
+      allow(mock_compare).to receive(:results_match?).and_return(false)
+      allow(mock_compare).to receive(:save_actual_results_to_file)
+      allow(mock_compare).to receive(:save_comparison_csv_to_file)
+
+      expect(instance.send(:compare_session, session)).to eq(3)
+      expect(mock_compare).to have_received(:save_actual_results_to_file)
+      expect(mock_compare).to have_received(:save_comparison_csv_to_file)
+    end
+
+    it 'returns 3 and writes actual results when the expected file does not exist' do
+      allow(File).to receive(:exist?).with(expected_file).and_return(false)
+      allow(mock_results).to receive(:results_for_session).with(session_id).and_return([{ 'result' => 'pass' }])
+      allow(File).to receive(:write).with(expected_file, anything)
+
+      expect(instance.send(:compare_session, session)).to eq(3)
+      expect(File).to have_received(:write).with(expected_file, anything)
+    end
+  end
+
   describe '#compare_options' do
-    let(:base_config) { { 'sessions' => [{ 'suite_id' => suite_id }], 'steps' => [] } }
+    let(:base_config) { { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] } }
 
     it 'includes normalized_strings from the YAML config' do
       config = base_config.merge('normalized_strings' => ['http://old.server.com', 'http://other.com'])
@@ -154,7 +212,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
   describe 'orchestration' do
     let(:config) do
       {
-        'sessions' => [{ 'suite_id' => suite_id }],
+        'sessions' => [{ 'suite' => suite_id }],
         'steps' => [{ 'status' => 'done', 'last_completed' => '', 'action' => 'END_SCRIPT' }]
       }
     end
