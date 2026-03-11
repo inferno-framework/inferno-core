@@ -1,3 +1,4 @@
+require_relative 'session/cancel_run'
 require_relative 'session/create_session'
 require_relative 'session/start_run'
 require_relative 'session/session_status'
@@ -23,6 +24,15 @@ module Inferno
                desc: 'Preset to apply when creating the session.'
         def create(suite_id)
           CreateSession.new(suite_id, options).run
+        end
+
+        desc 'cancel_run SESSION_ID', 'Cancel the current in-progress run for a session.'
+        option :inferno_base_url,
+               aliases: ['-I'],
+               type: :string,
+               desc: 'URL of the target Inferno service.'
+        def cancel_run(session_id)
+          CancelRun.new(session_id, options).run
         end
 
         desc 'start_run SESSION_ID', 'Initiate a test run on a session.'
