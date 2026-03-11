@@ -73,7 +73,8 @@ module Inferno
         one_to_many :results,
                     eager: [:messages, :requests],
                     class: 'Inferno::Repositories::Results::Model',
-                    key: :test_session_id
+                    key: :test_session_id,
+                    order: Sequel.asc(:updated_at)
         one_to_many :test_runs, class: 'Inferno::Repositories::TestRuns::Model', key: :test_session_id
 
         def before_create
