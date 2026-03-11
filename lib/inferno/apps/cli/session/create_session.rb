@@ -8,6 +8,7 @@ module Inferno
       class CreateSession
         include Connection
         include Errors
+
         attr_accessor :suite_id, :options
 
         def initialize(suite_id, options)

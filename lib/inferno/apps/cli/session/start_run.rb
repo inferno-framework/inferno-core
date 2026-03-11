@@ -9,6 +9,7 @@ module Inferno
       class StartRun
         include Connection
         include Errors
+
         attr_accessor :session_id, :options
 
         def initialize(session_id, options)

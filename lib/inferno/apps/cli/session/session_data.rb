@@ -7,6 +7,7 @@ module Inferno
       class SessionData
         include Connection
         include Errors
+
         attr_accessor :session_id, :options
 
         def initialize(session_id, options)
@@ -32,7 +33,6 @@ module Inferno
 
           JSON.parse(response.body)
         end
-
       end
     end
   end

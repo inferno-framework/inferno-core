@@ -9,6 +9,7 @@ module Inferno
       class CancelRun
         include Connection
         include Errors
+
         attr_accessor :session_id, :options
 
         CANCELLABLE_STATUSES = %w[queued running waiting].freeze
