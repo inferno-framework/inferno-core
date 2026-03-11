@@ -173,7 +173,9 @@ build_start_run_command() {
   local runnable
   runnable=$(printf '%s' "$start_run_json" | jq -r '.runnable // empty')
   if [[ -n "$runnable" ]]; then
-    if [[ "$runnable" == *"{"* ]]; then
+    # Template tokens start with { followed by a letter/underscore (e.g. {session_id}).
+    # Use unquoted passthrough so apply_command_templates can substitute them later.
+    if [[ "$runnable" =~ \{[a-zA-Z_] ]]; then
       cmd+=" -r $runnable"
     else
       cmd+=" -r $(printf '%q' "$runnable")"
@@ -190,7 +192,9 @@ build_start_run_command() {
       value=$(printf '%s' "$pair_json" | jq -r '.value')
       # Leave values that contain template tokens unquoted so
       # apply_command_templates can resolve them later.
-      if [[ "$value" == *"{"* ]]; then
+      # Template tokens match {letter...}; JSON objects ({") and other
+      # values with literal braces go through printf %q for safe quoting.
+      if [[ "$value" =~ \{[a-zA-Z_] ]]; then
         cmd+=" ${key}:${value}"
       else
         cmd+=" $(printf '%q' "${key}:${value}")"
