@@ -10,6 +10,12 @@ module Inferno
   module CLI
     module Session
       class SessionCommands < Thor
+        def initialize(args = [], local_options = {}, config = {})
+          super
+          return unless @options[:inferno_base_url]
+
+          @options = @options.merge(inferno_base_url: @options[:inferno_base_url].delete_suffix('/') + '/')
+        end
         desc 'create SUITE', 'Create a new session for a suite (internal ID, title, or short title).'
         option :inferno_base_url,
                aliases: ['-I'],

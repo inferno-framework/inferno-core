@@ -667,6 +667,7 @@ module Inferno
           cmp = Session::SessionCompare.new(session.session_id, compare_options(session))
           matched = cmp.results_match?
           warn "Compare results (#{session.key} / #{session.session_id}): matched=#{matched}"
+          warn "  View session at #{session_display_url(session)}"
           unless matched
             cmp.save_actual_results_to_file
             cmp.save_comparison_csv_to_file
@@ -678,6 +679,11 @@ module Inferno
           File.write(session.expected_results_file, results.to_json)
           3
         end
+      end
+
+      def session_display_url(session)
+        base_url = (options[:inferno_base_url].presence || Inferno::Application['base_url']).to_s.delete_suffix('/')
+        "#{base_url}/#{session.suite_id}/#{session.session_id}"
       end
 
       def compare_options(session)

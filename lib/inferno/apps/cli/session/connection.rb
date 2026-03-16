@@ -10,11 +10,8 @@ module Inferno
         end
 
         def base_url
-          @base_url ||= if options[:inferno_base_url].present?
-                          options[:inferno_base_url]
-                        else
-                          Inferno::Application['base_url']
-                        end
+          @base_url ||=
+            "#{(options[:inferno_base_url].presence || Inferno::Application['base_url']).to_s.delete_suffix('/')}/"
         end
 
         def get(path, params = nil, headers = {})

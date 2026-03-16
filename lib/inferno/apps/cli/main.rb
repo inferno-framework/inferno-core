@@ -14,6 +14,12 @@ require_relative '../../version'
 module Inferno
   module CLI
     class Main < Thor
+      def initialize(args = [], local_options = {}, config = {})
+        super
+        return unless @options[:inferno_base_url]
+
+        @options = @options.merge(inferno_base_url: @options[:inferno_base_url].delete_suffix('/') + '/')
+      end
       desc 'evaluate', 'Run a FHIR Data Evaluator.'
       long_desc <<-LONGDESC
         Evaluate FHIR data in the context of a given Implementation Guide,
