@@ -1,0 +1,238 @@
+sessions:
+  - suite: davinci_pas_client_suite_v201
+    name: client
+    preset: pas-client-v201-run-against-pas-server-tests
+    suite_options:
+      client_type: other_auth
+  - suite: davinci_pas_server_suite_v201
+    name: server
+    preset: pas-server-v201-run-against-pas-client-tests
+
+normalized_strings:
+  - replacement: <UUID>
+    pattern: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+
+steps:
+  - state_description: client session created
+    session: client
+    status: created
+    start_run:
+      session: client
+      runnable: 1
+    action_description: Run Client Group 1 Client Registration
+
+  - state_description: Wait at Client test 1.06 (attestation)
+    session: client
+    status: waiting
+    last_completed: 1.06
+    command: "curl -o /dev/null -s '{wait_outputs.attest_true_url}'"
+    action_description: GET the attestation URL
+
+  - state_description: Wait at Client test 1.07 (confirm configuration)
+    session: client
+    status: waiting
+    last_completed: 1.07
+    command: "curl -o /dev/null -s '{wait_outputs.confirmation_url}'"
+    action_description: GET the confirmation URL
+
+  - state_description: Finished Client Group 1 Client Registration
+    session: client
+    status: done
+    last_completed: 1
+    start_run:
+      session: client
+      runnable: 8
+    action_description: Run Client Group 8 Subscription Setup
+
+  - state_description: Wait at Client test 8.01 Client submits a Subscription Creation Request
+    session: client
+    status: waiting
+    last_completed: 8.01
+    start_run:
+      session: server
+      runnable: 1
+    next_poll_session: server
+    action_description: Run Server Group 1 Subscription Setup
+
+  - state_description: Wait at Server test 1.03
+    session: server
+    status: waiting
+    last_completed: 1.03
+    action: NOOP
+    next_poll_session: client
+    action_description: Wait for client to finish
+
+  - state_description: Finished Client Group 8 Subscription Setup
+    session: client
+    status: done
+    last_completed: 8
+    command: "curl -o /dev/null -s '{server.wait_outputs.confirmation_url}'"
+    next_poll_session: server
+    action_description: Indicate requests to the server suite are complete
+
+  - state_description: Finished Server Group 1 Subscription Setup
+    session: server
+    status: done
+    last_completed: 1
+    start_run:
+      session: client
+      runnable: 9.1
+    next_poll_session: client
+    action_description: Run Client Group 9.1 Approval Workflow
+
+  - state_description: Wait at Client test 9.1.01 Client submits a claim using the $submit operation
+    session: client
+    status: waiting
+    last_completed: 9.1.01
+    start_run:
+      session: server
+      runnable: 2.1
+    next_poll_session: server
+    action_description: Run Server Group 2.1 Successful Approval Workflow
+
+  - state_description: Finished Server Group 2.1 Successful Approval Workflow
+    session: server
+    status: done
+    last_completed: 2.1
+    action: NOOP
+    next_poll_session: client
+    action_description: Wait for client to finish
+
+  - state_description: Wait at Client test 9.1.04 (attestation)
+    session: client
+    status: waiting
+    last_completed: 9.1.04
+    command: "curl -o /dev/null -s '{wait_outputs.attest_true_url}'"
+    action_description: GET attestation URL
+
+  - state_description: Finished Client Group 9.1 Approval Workflow
+    session: client
+    status: done
+    last_completed: 9.1
+    start_run:
+      session: client
+      runnable: 9.2
+    action_description: Run Client Group 9.2 Denial Workflow
+
+  - state_description: Wait at Client test 9.2.01 Client submits a claim using the $submit operation
+    session: client
+    status: waiting
+    last_completed: 9.2.01
+    start_run:
+      session: server
+      runnable: 2.2
+    next_poll_session: server
+    action_description: Run Server Group 2.2 Successful Denial Workflow
+
+  - state_description: Finished Server Group 2.2 Successful Denial Workflow
+    session: server
+    status: done
+    last_completed: 2.2
+    action: NOOP
+    next_poll_session: client
+    action_description: Wait for client to finish
+
+  - state_description: Wait at Client test 9.2.04 (attestation)
+    session: client
+    status: waiting
+    last_completed: 9.2.04
+    command: "curl -o /dev/null -s '{wait_outputs.attest_true_url}'"
+    action_description: GET attestation URL
+
+  - state_description: Finished Client Group 9.2 Denial Workflow
+    session: client
+    status: done
+    last_completed: 9.2
+    start_run:
+      session: client
+      runnable: 9.3
+    action_description: Run Client Group 9.3 Pended Workflow
+
+  - state_description: Wait at Client test 9.3.1.01 (submit requests)
+    session: client
+    status: waiting
+    last_completed: 9.3.1.01
+    start_run:
+      session: server
+      runnable: 2.3
+    next_poll_session: server
+    action_description: Run Server Group 2.3 Successful Pended Workflow
+
+  - state_description: Wait at Server test 2.3.2.01
+    session: server
+    status: waiting
+    last_completed: 2.3.2.01
+    action: WAIT
+    action_description: Continue waiting until it completes
+
+  - state_description: Finished Server Group 2.3 Successful Pended Workflow
+    session: server
+    status: done
+    last_completed: 2.3
+    command: "curl -o /dev/null -s '{client.wait_outputs.confirmation_url}'"
+    next_poll_session: client
+    action_description: confirm in Client session that all requests have been sent
+
+  - state_description: Wait at Client test 9.3.2.03 (attestation)
+    session: client
+    status: waiting
+    last_completed: 9.3.2.03
+    command: "curl -o /dev/null -s '{wait_outputs.attest_true_url}'"
+    action_description: GET attestation URL
+
+  - state_description: Wait at Client test 9.3.4.03 (attestation)
+    session: client
+    status: waiting
+    last_completed: 9.3.4.03
+    command: "curl -o /dev/null -s '{wait_outputs.attest_true_url}'"
+    action_description: GET attestation URL
+
+  - state_description: Finished Client Group 9.3 Pended Workflow
+    session: client
+    status: done
+    last_completed: 9.3
+    start_run:
+      session: client
+      runnable: 10
+    action_description: Run Client Group 10 Must Support Elements
+
+  - state_description: Wait at Client test 10.1.01 (submit requests)
+    session: client
+    status: waiting
+    last_completed: 10.1.01
+    start_run:
+      session: server
+      runnable: 3
+    next_poll_session: server
+    action_description: Run Server Group 3 Demonstrate Element Support
+
+  - state_description: Finished Server Group 3 Demonstrate Element Support
+    session: server
+    status: done
+    last_completed: 3
+    start_run:
+      session: server
+      runnable: 4
+    action_description: Run Server Group 4 Demonstrate Error Handling
+
+  - state_description: Finished Server Group 4 Demonstrate Error Handling
+    session: server
+    status: done
+    last_completed: 4
+    command: "curl -o /dev/null -s '{client.wait_outputs.confirmation_url}'"
+    next_poll_session: client
+    action_description: confirm in Client session that all requests have been sent
+
+  - state_description: Wait at Client test 10.2.01 (inquire requests)
+    session: client
+    status: waiting
+    last_completed: 10.2.01
+    command: "curl -o /dev/null -s '{wait_outputs.confirmation_url}'"
+    action_description: confirm in Client session that all requests have been sent
+
+  - state_description: Finished Client Group 10 Must Support Elements
+    session: client
+    status: done
+    last_completed: 10
+    action: END_SCRIPT
+    action_description: Script Completed
