@@ -183,7 +183,7 @@ RSpec.describe Inferno::CLI::Session::StartRun do
     it 'exits 3 and prints a not-found error when the session is not found' do
       stub_session_details(body: 'Not Found', status: 404)
 
-      expected_error = { errors: "Session '#{session_id}' not found on Inferno host at '#{inferno_host}'" }
+      expected_error = { errors: "Session '#{session_id}' not found on Inferno host at '#{inferno_host}/'" }
       expect do
         expect { described_class.new(session_id, options).run }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))

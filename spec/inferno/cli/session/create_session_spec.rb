@@ -76,7 +76,7 @@ RSpec.describe Inferno::CLI::Session::CreateSession do
       stub_request(:post, create_url)
         .to_return(status: 404, body: 'Not Found')
 
-      expected_error = { errors: "Running Inferno host not found at '#{inferno_host}'" }
+      expected_error = { errors: "Running Inferno host not found at '#{inferno_host}/'" }
       expect do
         expect { described_class.new(suite_id, options).run }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
@@ -87,7 +87,7 @@ RSpec.describe Inferno::CLI::Session::CreateSession do
       stub_request(:post, create_url)
         .to_return(status: 404, body: '<html><body>404 Not Found</body></html>')
 
-      expected_error = { errors: "Running Inferno host not found at '#{inferno_host}'" }
+      expected_error = { errors: "Running Inferno host not found at '#{inferno_host}/'" }
       expect do
         expect { described_class.new(suite_id, options).run }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
@@ -98,7 +98,7 @@ RSpec.describe Inferno::CLI::Session::CreateSession do
       stub_request(:post, create_url)
         .to_raise(Faraday::ConnectionFailed.new('Connection refused'))
 
-      expected_error = { errors: "Could not connect to Inferno at '#{inferno_host}': Connection refused" }
+      expected_error = { errors: "Could not connect to Inferno at '#{inferno_host}/': Connection refused" }
       expect do
         expect { described_class.new(suite_id, options).run }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
@@ -109,7 +109,7 @@ RSpec.describe Inferno::CLI::Session::CreateSession do
       stub_request(:post, create_url)
         .to_raise(Faraday::TimeoutError.new('timeout'))
 
-      expected_error = { errors: "Could not connect to Inferno at '#{inferno_host}': timeout" }
+      expected_error = { errors: "Could not connect to Inferno at '#{inferno_host}/': timeout" }
       expect do
         expect { described_class.new(suite_id, options).run }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))

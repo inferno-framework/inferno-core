@@ -155,37 +155,37 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       allow(Inferno::CLI::Session::SessionResults).to receive(:new).and_return(mock_results)
     end
 
-    it 'returns nil when expected_results_file is blank' do
+    it 'returns true when expected_results_file is blank' do
       blank_session = Inferno::CLI::ExecuteScript::ScriptSession.new(
         key: 'primary', suite_id:, session_id:, expected_results_file: nil, short_id_map: {}
       )
-      expect(instance.send(:compare_session, blank_session)).to be_nil
+      expect(instance.send(:compare_session, blank_session)).to eq(true)
     end
 
-    it 'returns 0 when the expected file exists and results match' do
+    it 'returns true when the expected file exists and results match' do
       allow(File).to receive(:exist?).with(expected_file).and_return(true)
       allow(mock_compare).to receive(:results_match?).and_return(true)
 
-      expect(instance.send(:compare_session, session)).to eq(0)
+      expect(instance.send(:compare_session, session)).to eq(true)
     end
 
-    it 'returns 3 and saves files when the expected file exists but results do not match' do
+    it 'returns false and saves files when the expected file exists but results do not match' do
       allow(File).to receive(:exist?).with(expected_file).and_return(true)
       allow(mock_compare).to receive(:results_match?).and_return(false)
       allow(mock_compare).to receive(:save_actual_results_to_file)
       allow(mock_compare).to receive(:save_comparison_csv_to_file)
 
-      expect(instance.send(:compare_session, session)).to eq(3)
+      expect(instance.send(:compare_session, session)).to eq(false)
       expect(mock_compare).to have_received(:save_actual_results_to_file)
       expect(mock_compare).to have_received(:save_comparison_csv_to_file)
     end
 
-    it 'returns 3 and writes actual results when the expected file does not exist' do
+    it 'returns false and writes actual results when the expected file does not exist' do
       allow(File).to receive(:exist?).with(expected_file).and_return(false)
       allow(mock_results).to receive(:results_for_session).with(session_id).and_return([{ 'result' => 'pass' }])
       allow(File).to receive(:write).with(expected_file, anything)
 
-      expect(instance.send(:compare_session, session)).to eq(3)
+      expect(instance.send(:compare_session, session)).to eq(false)
       expect(File).to have_received(:write).with(expected_file, anything)
     end
   end
@@ -226,23 +226,23 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
     it 'exits 0 when END_SCRIPT action is matched and comparison passes' do
       instance = build_instance(config)
-      allow(instance).to receive(:compare_or_save_results).and_return(0)
+      allow(instance).to receive(:results_match_expected?).and_return(true)
       stub_status_done
 
       expect { instance.run }.to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
     end
 
-    it 'exits 1 when the status does not match any step' do
+    it 'exits 3 when the status does not match any step' do
       instance = build_instance(config.merge('steps' => []))
-      allow(instance).to receive(:compare_or_save_results).and_return(0)
+      allow(instance).to receive(:results_match_expected?).and_return(true)
       stub_status_done
 
-      expect { instance.run }.to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+      expect { instance.run }.to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
     end
 
     it 'exits 3 when END_SCRIPT action is matched but comparison fails' do
       instance = build_instance(config)
-      allow(instance).to receive(:compare_or_save_results).and_return(3)
+      allow(instance).to receive(:results_match_expected?).and_return(false)
       stub_status_done
 
       expect { instance.run }.to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))

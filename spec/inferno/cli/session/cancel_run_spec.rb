@@ -64,7 +64,7 @@ RSpec.describe Inferno::CLI::Session::CancelRun do
       stub_request(:get, last_test_run_url)
         .to_return(status: 404, body: 'Not Found')
 
-      expected_error = { errors: "Session '#{session_id}' not found on Inferno host at '#{inferno_host}'" }
+      expected_error = { errors: "Session '#{session_id}' not found on Inferno host at '#{inferno_host}/'" }
       expect do
         expect { described_class.new(session_id, options).run }
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))

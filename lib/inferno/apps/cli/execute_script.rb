@@ -266,8 +266,12 @@ module Inferno
 
         warn ''
         warn 'All runs complete.'
-        compare_exit = compare_or_save_results(sessions)
-        execution_status.failed ? [1, compare_exit].max : compare_exit
+
+        if results_match_expected?(sessions)
+          execution_status.failed ? 3 : 0
+        else
+          3
+        end
       end
 
       # check if the step indicates the script is done
@@ -653,37 +657,55 @@ module Inferno
       end
 
       # ---------------------------------------------------------------------------
-      # Compare / save results
+      # check results
       # ---------------------------------------------------------------------------
 
-      def compare_or_save_results(sessions)
-        sessions.filter_map { |s| compare_session(s) }.max || 0
-      end
-
-      def compare_session(session)
-        return nil if session.expected_results_file.blank?
-
-        if File.exist?(session.expected_results_file)
-          cmp = Session::SessionCompare.new(session.session_id, compare_options(session))
-          matched = cmp.results_match?
-          warn "Compare results (#{session.key} / #{session.session_id}): matched=#{matched}"
+      def results_match_expected?(sessions)
+        sessions.map do |session|
+          warn "Checking results for #{session.key} session (#{session.session_id})"
           warn "  View session at #{session_display_url(session)}"
-          unless matched
-            cmp.save_actual_results_to_file
-            cmp.save_comparison_csv_to_file
+
+          if any_error_results?(session)
+            warn '  Session contained execution errors - skipping comparison'
+            false
+          else
+            compare_session(session)
           end
-          matched ? 0 : 3
-        else
-          warn "Expected results file not found; writing actual results to #{session.expected_results_file}"
-          results = Session::SessionResults.new(session.session_id, options).results_for_session(session.session_id)
-          File.write(session.expected_results_file, results.to_json)
-          3
-        end
+        end.all?
       end
 
       def session_display_url(session)
         base_url = (options[:inferno_base_url].presence || Inferno::Application['base_url']).to_s.delete_suffix('/')
         "#{base_url}/#{session.suite_id}/#{session.session_id}"
+      end
+
+      def any_error_results?(session)
+        results = Session::SessionResults.new(session.session_id, options).results_for_session(session.session_id)
+        results.any? { |result| result['result'] == 'error' }
+      end
+
+      # ---------------------------------------------------------------------------
+      # Compare / save results
+      # ---------------------------------------------------------------------------
+
+      def compare_session(session)
+        return true if session.expected_results_file.blank?
+
+        if File.exist?(session.expected_results_file)
+          cmp = Session::SessionCompare.new(session.session_id, compare_options(session))
+          matched = cmp.results_match?
+          warn "  Actual results matched expected results? #{matched}"
+          unless matched
+            cmp.save_actual_results_to_file
+            cmp.save_comparison_csv_to_file
+          end
+          matched
+        else
+          warn "  Expected results file not found; writing actual results to #{session.expected_results_file}"
+          results = Session::SessionResults.new(session.session_id, options).results_for_session(session.session_id)
+          File.write(session.expected_results_file, results.to_json)
+          false
+        end
       end
 
       def compare_options(session)
