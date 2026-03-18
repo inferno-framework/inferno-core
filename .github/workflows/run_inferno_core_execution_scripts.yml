@@ -63,8 +63,7 @@ jobs:
 
       - name: Run execution script
         run: |
-          bundle exec inferno execute_script "${{ matrix.config }}"
-          rc=$?
+          bundle exec inferno execute_script "${{ matrix.config }}" && rc=0 || rc=$?
           if [[ "${{ matrix.config }}" == *_failure.yaml && $rc -eq 3 ]]; then
             echo "Script exited with 3 as expected for known-failure script"
             exit 0
