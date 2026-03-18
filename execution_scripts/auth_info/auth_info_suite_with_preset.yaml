@@ -3,9 +3,10 @@ sessions:
     preset: dev_auth_info_preset
     # NOTE: preset use introduces issue time skew that causes faiures - these are expected
 
-normalized_strings:
-  - replacement: <TIMESTAMP>
-    pattern: /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})/
+comparison_config:
+  normalized_strings:
+    - replacement: <TIMESTAMP>
+      pattern: /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})/
 
 steps:
   - status: created

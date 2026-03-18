@@ -8,9 +8,10 @@ sessions:
     name: server
     preset: pas-server-v201-run-against-pas-client-tests
 
-normalized_strings:
-  - replacement: <UUID>
-    pattern: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+comparison_config:
+  normalized_strings:
+    - replacement: <UUID>
+      pattern: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
 
 steps:
   - state_description: client session created

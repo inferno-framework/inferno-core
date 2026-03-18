@@ -6,21 +6,30 @@ sessions:
       smart_app_launch_version: smart_app_launch_2
       multi_patient_version: multi_patient_api_stu1
 
-normalized_strings:
-  - replacement: <INFERNO_HOST>
-    patterns:
-      - http://localhost:4567 # local ruby
-      - http://localhost # local docker
-      - https://inferno.healthit.gov/suites # prod
-      - https://inferno-qa.healthit.gov/suites # qa
-  - replacement: <REFERENCE_SERVER_URL>
-    patterns:
-      - https://inferno.healthit.gov/reference-server # prod reference server
-      - https://inferno-qa.healthit.gov/reference-server # qa reference server
-  - replacement: code_challenge=<CODE_CHALLENGE>
-    pattern: /code_challenge=[A-Za-z0-9+\/=_-]{43}/
-  - replacement: <UUID>
-    pattern: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+comparison_config:
+  normalized_strings:
+    - replacement: <INFERNO_HOST>
+      patterns:
+        - http://localhost:4567/inferno # local inferno core ruby
+        - http://localhost:4567 # local ruby
+        - http://localhost # local docker
+        - https://inferno.healthit.gov/suites # prod
+        - https://inferno-qa.healthit.gov/suites # qa
+    - replacement: <REFERENCE_SERVER_URL>
+      patterns:
+        - https://inferno.healthit.gov/reference-server # prod reference server
+        - https://inferno-qa.healthit.gov/reference-server # qa reference server
+    - replacement: code_challenge=<CODE_CHALLENGE>
+      pattern: /code_challenge=[A-Za-z0-9+\/=_-]{43}/
+    - replacement: <UUID>
+      pattern: /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i
+  alternate_expected_files:
+    - file: g10_ref_server_usc6_smart2_bulk1_no_terminology_expected.json
+      when:
+        - field: inferno_base_url
+          not_matches: inferno(-qa)?\.healthit\.gov
+        - field: configuration_messages
+          matches: ^There is a problem with the terminology resources
 
 steps:
   - state_description: Session Created
