@@ -2,6 +2,7 @@ require 'faraday'
 require_relative 'connection'
 require_relative 'errors'
 require_relative 'session_data'
+require_relative 'session_details'
 
 module Inferno
   module CLI
@@ -46,11 +47,7 @@ module Inferno
         end
 
         def session_details
-          @session_details ||= begin
-            response = get("api/test_sessions/#{session_id}", nil, content_type: 'application/json')
-            handle_web_api_error(response, :session_details) if response.status != 200
-            JSON.parse(response.body)
-          end
+          @session_details ||= SessionDetails.new(session_id, options).details_for_session
         end
 
         def target_runnable_details

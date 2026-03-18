@@ -1,4 +1,5 @@
 require 'cgi'
+require_relative 'session_details'
 require_relative 'session_results'
 
 module Inferno
@@ -103,7 +104,7 @@ module Inferno
 
         def comparison_csv_header_row
           normalized_suffix = normalizing? ? ' (normalized)' : ''
-          header_row = ['id', 'different?', 'expected result', 'actual result']
+          header_row = ['id', 'short_id', 'type', 'different?', 'expected result', 'actual result']
           if options[:compare_result_message]
             header_row << 'result_message different?'
             header_row << "expected result_message#{normalized_suffix}"
@@ -137,15 +138,32 @@ module Inferno
           @compared_results = match_result_ids(expected_results, session_results)
         end
 
+        def session_details
+          @session_details ||= SessionDetails.new(session_id, options).details_for_session
+        end
+
+        def short_id_map
+          @short_id_map ||= build_short_id_map(session_details['test_suite'])
+        end
+
+        def build_short_id_map(runnable, map = {})
+          return map unless runnable.is_a?(Hash)
+
+          map[runnable['id']] = runnable['short_id'] if runnable['id'].present?
+          runnable['test_groups']&.each { |group| build_short_id_map(group, map) }
+          runnable['tests']&.each { |test| build_short_id_map(test, map) }
+          map
+        end
+
         def match_result_ids(expected, actual)
           expected_hash = results_hash_by_id(expected)
           actual_hash = results_hash_by_id(actual)
 
           compared_results = expected_hash.map do |id, result|
-            ComparedTestResult.new(id, result, actual_hash[id], options)
+            ComparedTestResult.new(id, result, actual_hash[id], options, short_id_map)
           end
           actual_hash.keys.reject { |id| expected_hash.key?(id) }.each do |id|
-            compared_results << ComparedTestResult.new(id, nil, actual_hash[id], options)
+            compared_results << ComparedTestResult.new(id, nil, actual_hash[id], options, short_id_map)
           end
 
           compared_results
@@ -159,15 +177,19 @@ module Inferno
         end
 
         class ComparedTestResult
-          attr_reader :id, :expected_result, :actual_result, :options
+          attr_reader :id, :expected_result, :actual_result, :options, :short_id_map
 
-          def initialize(id, expected_result, actual_result, options)
+          def initialize(id, expected_result, actual_result, options, short_id_map = {})
             @id = id
             @expected_result = expected_result
             @actual_result = actual_result
             @options = options
-            @excluded = check_excluded?
-            @same = excluded? ? true : same_results?
+            @short_id_map = short_id_map
+            @same = same_results?
+          end
+
+          def short_id
+            short_id_map[id]
           end
 
           # Parses a normalize entry into an array of [pattern, replacement] pairs.
@@ -219,43 +241,6 @@ module Inferno
 
           def normalizing?
             options[:normalized_strings].present?
-          end
-
-          def check_excluded?
-            return false if actual_result.nil? # Missing — no actual result to evaluate conditions against
-
-            Array(options[:comparison_exclusions]).any? do |exclusion|
-              next false unless Array(exclusion['test_ids']).include?(id)
-
-              conditions = Array(exclusion['when'])
-              conditions.empty? || conditions.all? { |cond| condition_matches?(cond) }
-            end
-          end
-
-          def excluded?
-            @excluded
-          end
-
-          def condition_matches?(condition)
-            field = condition['field']
-            pattern = condition['matches']
-            return false unless field && pattern
-
-            value = resolve_field(field, actual_result)
-            return false if value.nil?
-
-            Regexp.new(pattern).match?(value.to_s)
-          end
-
-          def resolve_field(field, result)
-            return nil unless result
-
-            if field.start_with?('inputs.')
-              input_name = field.delete_prefix('inputs.')
-              Array(result['inputs']).find { |i| i['name'] == input_name }&.dig('value')
-            else
-              result[field]
-            end
           end
 
           def same_results?
@@ -327,15 +312,13 @@ module Inferno
           end
 
           def to_h
-            h = {
+            {
               id: id,
               type: type,
               matched: same_result?,
               expected_result: expected_result&.dig('result'),
               actual_result: actual_result&.dig('result')
-            }
-            h[:excluded] = true if excluded?
-            h.merge(optional_to_h_fields)
+            }.merge(optional_to_h_fields)
           end
 
           def optional_to_h_fields
@@ -352,7 +335,7 @@ module Inferno
           end
 
           def comparison_csv_row
-            row = [id, different_result?, expected_result&.dig('result'), actual_result&.dig('result')]
+            row = [id, short_id, type, different_result?, expected_result&.dig('result'), actual_result&.dig('result')]
             if options[:compare_result_message]
               row << different_result_message?
               row << normalize_string(expected_result&.dig('result_message'))

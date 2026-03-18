@@ -6,6 +6,7 @@ require_relative 'session/cancel_run'
 require_relative 'session/session_status'
 require_relative 'session/session_results'
 require_relative 'session/session_compare'
+require_relative 'session/session_details'
 
 module Inferno
   module CLI
@@ -13,10 +14,10 @@ module Inferno
     #
     # YAML format:
     #
-    #   comparison_config:                         # optional; top-level
-    #     normalized_strings:                      # optional; list of normalization rules applied
-    #       - "http://my-server.example.com"       # plain string: replaced with <NORMALIZED>
-    #       - "http://other-value.example.com"     # in both expected and actual before comparing;
+    #   comparison_config:                         # optional
+    #     normalized_strings:                      # optional; global normalization rules applied to
+    #       - "http://my-server.example.com"       # both expected and actual before comparing.
+    #       - "http://other-value.example.com"     # plain string: replaced with <NORMALIZED>;
     #                                              # URL-encoded form is also replaced automatically.
     #       - "/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/"  # regex string (wrapped in /…/): compiled
     #                                              # to a Regexp and replaced with <NORMALIZED>.
@@ -29,13 +30,25 @@ module Inferno
     #           - '/code_verifier=[A-Za-z0-9+\\/=_-]{20,}/'
     #         replacement: '<PKCE_VALUE>'
     #
-    #     comparison_exclusions:                   # optional; list of exclusion rules
-    #       - test_ids:                            # required; test IDs to exclude from comparison
-    #           - some_test_id                     # excluded tests always count as matched
-    #         when:                                # optional; if omitted, exclusion is unconditional
-    #           - field: inputs.url               # scalar field or inputs.<name> for input lookup
-    #             matches: ^http://               # regex matched against the actual result's field value
-    #         reason: "Known to fail without TLS" # optional; human-readable note
+    #     # Single-session scripts: expected file config lives directly under comparison_config.
+    #     expected_results_file: expected.json     # optional; relative to yaml file; defaults to
+    #                                              #   <yaml basename>_expected.json
+    #     alternate_expected_files:                # optional; tried in order; first matching wins
+    #       - file: alt_expected.json             # required; relative to yaml file
+    #         when:                               # required; all conditions must match (AND logic)
+    #           - field: inputs.url              # inputs.<name> looks up a session input by name;
+    #             matches: ^http://              # other values are top-level session detail fields.
+    #                                            # Evaluated against GET api/test_sessions/{id}.
+    #
+    #     # Multi-session scripts: per-session config is nested under sessions.<name>.
+    #     sessions:
+    #       my_name:                               # matches session name key (sessions[*].name or suite)
+    #         expected_results_file: expected.json # optional; defaults to <yaml basename>_<name>_expected.json
+    #         alternate_expected_files:            # optional; same structure as single-session above
+    #           - file: alt_expected.json
+    #             when:
+    #               - field: inputs.url
+    #                 matches: ^http://
     #
     #   sessions:
     #     - suite: my_suite                        # internal ID, title, or short title
@@ -43,8 +56,6 @@ module Inferno
     #       preset: my-preset                      # optional; internal ID or title
     #       suite_options:                         # optional; option_key and option_value can be the
     #         option_key: option_value             #           internal values or the displayed titles
-    #       expected_results_file: expected.json   # optional; relative to yaml file, if not provided
-    #                                              #           defaults to <name of yaml file>_expected.json
     #
     #   steps:
     #     - status: created|done|waiting           # required; other status values cannot be matched on
@@ -86,7 +97,7 @@ module Inferno
       SHORT_ID_PATTERN = /\A[0-9][0-9.]*\z/
 
       ScriptSession = Struct.new(
-        :key, :suite_id, :session_id, :expected_results_file, :short_id_map,
+        :key, :suite_id, :session_id, :short_id_map,
         keyword_init: true
       )
 
@@ -166,7 +177,6 @@ module Inferno
           key: key,
           suite_id: session_details['test_suite_id'],
           session_id: session_details['id'],
-          expected_results_file: resolve_expected_file(session_config, key),
           short_id_map: extract_short_ids_from_session_details(session_details)
         )
       end
@@ -177,16 +187,6 @@ module Inferno
           suite_options: session_config['suite_options'],
           inferno_base_url: options[:inferno_base_url]
         }
-      end
-
-      def resolve_expected_file(session_config, key)
-        if session_config['expected_results_file'].present?
-          File.expand_path(session_config['expected_results_file'], yaml_directory)
-        elsif multi_session_script?
-          File.join(yaml_directory, "#{yaml_basename}_#{key}_expected.json")
-        else
-          File.join(yaml_directory, "#{yaml_basename}_expected.json")
-        end
       end
 
       def extract_short_ids_from_session_details(session_details)
@@ -690,12 +690,32 @@ module Inferno
       # Compare / save results
       # ---------------------------------------------------------------------------
 
-      def compare_session(session)
-        return true if session.expected_results_file.blank?
+      def resolve_expected_file(key)
+        session_cfg = comparison_session_config(key)
+        if session_cfg['expected_results_file'].present?
+          File.expand_path(session_cfg['expected_results_file'], yaml_directory)
+        elsif multi_session_script?
+          File.join(yaml_directory, "#{yaml_basename}_#{key}_expected.json")
+        else
+          File.join(yaml_directory, "#{yaml_basename}_expected.json")
+        end
+      end
 
-        if File.exist?(session.expected_results_file)
-          cmp = Session::SessionCompare.new(session.session_id, compare_options(session))
+      def comparison_session_config(key)
+        if multi_session_script?
+          (comparison_config['sessions'] || {})[key] || {}
+        else
+          comparison_config
+        end
+      end
+
+      def compare_session(session)
+        expected_file = resolve_expected_file_for_comparison(session)
+
+        if File.exist?(expected_file)
+          cmp = Session::SessionCompare.new(session.session_id, compare_options(expected_file))
           matched = cmp.results_match?
+          warn "  Comparing against #{File.basename(expected_file)}"
           warn "  Actual results matched expected results? #{matched}"
           unless matched
             cmp.save_actual_results_to_file
@@ -703,25 +723,93 @@ module Inferno
           end
           matched
         else
-          warn "  Expected results file not found; writing actual results to #{session.expected_results_file}"
+          warn "  Expected results file not found; writing actual results to #{expected_file}"
           results = Session::SessionResults.new(session.session_id, options).results_for_session(session.session_id)
-          File.write(session.expected_results_file, results.to_json)
+          File.write(expected_file, results.to_json)
           false
         end
+      end
+
+      def resolve_expected_file_for_comparison(session)
+        default_file = resolve_expected_file(session.key)
+        alternates = Array(comparison_session_config(session.key)['alternate_expected_files'])
+        return default_file if alternates.empty?
+
+        session_details = Session::SessionDetails.new(session.session_id, options).details_for_session
+
+        alternates.each do |alt|
+          conditions = Array(alt['when'])
+          next if conditions.empty?
+          next unless conditions.all? { |cond| session_detail_condition_matches?(cond, session_details) }
+
+          file = File.expand_path(alt['file'], yaml_directory)
+          return file
+        end
+
+        default_file
+      end
+
+      def session_detail_condition_matches?(condition, session_details)
+        return false unless condition_has_field_and_pattern?(condition)
+
+        field = condition['field']
+        matches_pattern = condition['matches']
+        not_matches_pattern = condition['not_matches']
+        test_suite = session_details['test_suite'] || {}
+
+        if field == 'configuration_messages'
+          configuration_messages_match?(test_suite, matches_pattern, not_matches_pattern)
+        elsif field == 'inferno_base_url'
+          string_matches?(options[:inferno_base_url].to_s, matches_pattern, not_matches_pattern)
+        elsif field.start_with?('inputs.')
+          input_name = field.delete_prefix('inputs.')
+          test_suite_input_matches?(test_suite, input_name, matches_pattern, not_matches_pattern)
+        else
+          false
+        end
+      end
+
+      def condition_has_field_and_pattern?(condition)
+        condition['field'].present? && (condition['matches'].present? || condition['not_matches'].present?)
+      end
+
+      def string_matches?(value, matches_pattern, not_matches_pattern)
+        return false if matches_pattern && !Regexp.new(matches_pattern).match?(value)
+        return false if not_matches_pattern && Regexp.new(not_matches_pattern).match?(value)
+
+        true
+      end
+
+      def configuration_messages_match?(test_suite, matches_pattern, not_matches_pattern)
+        messages = Array(test_suite['configuration_messages'])
+        if matches_pattern && messages.none? { |msg| Regexp.new(matches_pattern).match?(msg['message'].to_s) }
+          return false
+        end
+        if not_matches_pattern && messages.any? { |msg| Regexp.new(not_matches_pattern).match?(msg['message'].to_s) }
+          return false
+        end
+
+        true
+      end
+
+      def test_suite_input_matches?(test_suite, input_name, matches_pattern, not_matches_pattern)
+        value = Array(test_suite['inputs']).find { |i| i['name'] == input_name }&.dig('value')
+        return false if value.nil?
+
+        string_matches?(value.to_s, matches_pattern, not_matches_pattern)
       end
 
       def comparison_config
         @comparison_config ||= script_config['comparison_config'] || {}
       end
 
-      def compare_options(session)
+      def compare_options(expected_file)
         {
-          expected_results_file: session.expected_results_file,
+          expected_results_file: expected_file,
           compare_messages: options[:compare_messages],
           compare_result_message: options[:compare_result_message],
           inferno_base_url: options[:inferno_base_url],
-          normalized_strings: Array(comparison_config['normalized_strings'] || script_config['normalized_strings']),
-          comparison_exclusions: Array(comparison_config['comparison_exclusions'])
+          normalized_strings: Array(comparison_config['normalized_strings'])
         }
       end
     end
