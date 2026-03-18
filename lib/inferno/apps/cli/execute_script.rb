@@ -13,20 +13,29 @@ module Inferno
     #
     # YAML format:
     #
-    #   normalized_strings:                        # optional; top-level
-    #     - "http://my-server.example.com"         # plain string: replaced with <NORMALIZED>
-    #     - "http://other-value.example.com"       # in both expected and actual before comparing;
+    #   comparison_config:                         # optional; top-level
+    #     normalized_strings:                      # optional; list of normalization rules applied
+    #       - "http://my-server.example.com"       # plain string: replaced with <NORMALIZED>
+    #       - "http://other-value.example.com"     # in both expected and actual before comparing;
     #                                              # URL-encoded form is also replaced automatically.
-    #     - "/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/"  # regex string (wrapped in /…/): compiled
+    #       - "/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/"  # regex string (wrapped in /…/): compiled
     #                                              # to a Regexp and replaced with <NORMALIZED>.
     #                                              # Supports flags: /pattern/i, /pattern/m, etc.
     #                                              # URL-encoded form is NOT auto-replaced for regex.
-    #     - pattern: '/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/'  # hash form: use when you need
-    #       replacement: '<CODE_CHALLENGE>'        # a named placeholder instead of <NORMALIZED>.
-    #     - patterns:                              # 'patterns' (plural) shares one replacement
-    #         - '/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/'  # across multiple patterns.
-    #         - '/code_verifier=[A-Za-z0-9+\\/=_-]{20,}/'
-    #       replacement: '<PKCE_VALUE>'
+    #       - pattern: '/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/'  # hash form: use when you need
+    #         replacement: '<CODE_CHALLENGE>'      # a named placeholder instead of <NORMALIZED>.
+    #       - patterns:                            # 'patterns' (plural) shares one replacement
+    #           - '/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/'  # across multiple patterns.
+    #           - '/code_verifier=[A-Za-z0-9+\\/=_-]{20,}/'
+    #         replacement: '<PKCE_VALUE>'
+    #
+    #     comparison_exclusions:                   # optional; list of exclusion rules
+    #       - test_ids:                            # required; test IDs to exclude from comparison
+    #           - some_test_id                     # excluded tests always count as matched
+    #         when:                                # optional; if omitted, exclusion is unconditional
+    #           - field: inputs.url               # scalar field or inputs.<name> for input lookup
+    #             matches: ^http://               # regex matched against the actual result's field value
+    #         reason: "Known to fail without TLS" # optional; human-readable note
     #
     #   sessions:
     #     - suite: my_suite                        # internal ID, title, or short title
@@ -257,7 +266,7 @@ module Inferno
       def orchestrate
         loop do
           matched_step = poll_for_next_step
-          check_step(matched_step)
+          execution_status.done = true if [nil, 'END_SCRIPT'].include?(matched_step[:command])
           break if execution_status.done
 
           take_step(matched_step)
@@ -265,23 +274,12 @@ module Inferno
         end
 
         warn ''
-        warn 'All runs complete.'
+        warn "All runs complete #{execution_status.failed ? 'with errors' : 'successfully'}."
 
         if results_match_expected?(sessions)
           execution_status.failed ? 3 : 0
         else
           3
-        end
-      end
-
-      # check if the step indicates the script is done
-      def check_step(matched_step)
-        case matched_step[:command]
-        when nil # UNMATCHED or timeout
-          execution_status.failed = true
-          execution_status.done = true
-        when 'END_SCRIPT'
-          execution_status.done = true
         end
       end
 
@@ -364,6 +362,7 @@ module Inferno
 
           if Time.now >= deadline
             warn "Timeout after #{timeout}s: session=#{session.key} status=#{run_status}"
+            execution_status.failed = true
             return { command: nil, timeout: timeout, next_poll_session: nil }
           end
 
@@ -383,10 +382,12 @@ module Inferno
         elsif run_status == 'waiting'
           last_completed = format_last_completed(last_completed_from_status(status), session.key)
           warn "UNHANDLED WAIT - Canceling: session=#{session.key} last_completed=#{last_completed}"
+          execution_status.failed = true
           attempt_cancel(session.session_id, status)
         else
           last_completed = format_last_completed(last_completed_from_status(status), session.key)
           warn "UNMATCHED: session=#{session.key} status=#{run_status} last_completed=#{last_completed}"
+          execution_status.failed = true
           return { command: nil, timeout: timeout, next_poll_session: nil }
         end
 
@@ -400,6 +401,7 @@ module Inferno
         step_sig = [run_status, last_completed]
 
         if step_sig == execution_status.last_step_signatures[session.key] && matched_step[:command] != 'NOOP'
+          execution_status.failed = true
           if run_status == 'waiting'
             warn "Loop detected - Canceling: session=#{session.key} last_completed=#{last_completed}"
             attempt_cancel(session.session_id, status)
@@ -708,13 +710,18 @@ module Inferno
         end
       end
 
+      def comparison_config
+        @comparison_config ||= script_config['comparison_config'] || {}
+      end
+
       def compare_options(session)
         {
           expected_results_file: session.expected_results_file,
           compare_messages: options[:compare_messages],
           compare_result_message: options[:compare_result_message],
           inferno_base_url: options[:inferno_base_url],
-          normalized_strings: Array(script_config['normalized_strings'])
+          normalized_strings: Array(comparison_config['normalized_strings'] || script_config['normalized_strings']),
+          comparison_exclusions: Array(comparison_config['comparison_exclusions'])
         }
       end
     end

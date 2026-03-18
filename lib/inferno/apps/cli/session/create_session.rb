@@ -9,6 +9,19 @@ module Inferno
         include Connection
         include Errors
 
+        COMMAND_OPTIONS = {
+          suite_options: {
+            aliases: ['-o'],
+            type: :hash,
+            desc: 'Suite options used to initialize the session.'
+          },
+          preset: {
+            aliases: ['-p'],
+            type: :string,
+            desc: 'Preset to apply when creating the session (internal ID or title).'
+          }
+        }.freeze
+
         attr_accessor :options
         attr_reader :suite
 

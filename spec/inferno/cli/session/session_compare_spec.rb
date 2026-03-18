@@ -371,6 +371,160 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
     end
   end
 
+  describe 'when using comparison_exclusions' do
+    def stub_results(actual:, expected:)
+      stub_request(:get, "#{inferno_host}/api/test_sessions/#{actual_results_session_id}/results")
+        .to_return(status: 200, body: [actual].to_json)
+      stub_request(:get, "#{inferno_host}/api/test_sessions/#{expected_results_session_id}/results")
+        .to_return(status: 200, body: [expected].to_json)
+    end
+
+    def expect_exit(status:, options:, actual: nil, expected: nil)
+      stub_results(actual: actual || base_actual, expected: expected || base_expected)
+      expect do
+        expect { described_class.new(actual_results_session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status:)))
+      end.to output(/.+/).to_stdout
+    end
+
+    let(:test_id) { 'suite-group-test_id' }
+    let(:base_actual) { { test_id:, result: 'fail' } }
+    let(:base_expected) { { test_id:, result: 'pass' } }
+    let(:base_options) do
+      { inferno_base_url: inferno_host, expected_results_session: expected_results_session_id }
+    end
+
+    it 'unconditionally excludes a listed test when no when clause is present' do
+      options = base_options.merge(comparison_exclusions: [{ 'test_ids' => [test_id] }])
+      expect_exit(status: 0, options:)
+    end
+
+    it 'does not exclude tests not listed in test_ids' do
+      options = base_options.merge(comparison_exclusions: [{ 'test_ids' => ['other-test-id'] }])
+      expect_exit(status: 3, options:)
+    end
+
+    it 'excludes based on a matching scalar field condition' do
+      actual = base_actual.merge(result_message: 'TLS error occurred')
+      options = base_options.merge(
+        comparison_exclusions: [{
+          'test_ids' => [test_id],
+          'when' => [{ 'field' => 'result_message', 'matches' => 'TLS' }]
+        }]
+      )
+      expect_exit(status: 0, options:, actual:)
+    end
+
+    it 'does not exclude when the scalar field condition does not match' do
+      actual = base_actual.merge(result_message: 'other error')
+      options = base_options.merge(
+        comparison_exclusions: [{
+          'test_ids' => [test_id],
+          'when' => [{ 'field' => 'result_message', 'matches' => 'TLS' }]
+        }]
+      )
+      expect_exit(status: 3, options:, actual:)
+    end
+
+    it 'excludes based on a matching input value condition' do
+      actual = base_actual.merge(inputs: [{ 'name' => 'url', 'value' => 'http://example.com' }])
+      options = base_options.merge(
+        comparison_exclusions: [{
+          'test_ids' => [test_id],
+          'when' => [{ 'field' => 'inputs.url', 'matches' => '^http://' }]
+        }]
+      )
+      expect_exit(status: 0, options:, actual:)
+    end
+
+    it 'does not exclude when the input value does not match' do
+      actual = base_actual.merge(inputs: [{ 'name' => 'url', 'value' => 'https://example.com' }])
+      options = base_options.merge(
+        comparison_exclusions: [{
+          'test_ids' => [test_id],
+          'when' => [{ 'field' => 'inputs.url', 'matches' => '^http://' }]
+        }]
+      )
+      expect_exit(status: 3, options:, actual:)
+    end
+
+    it 'does not exclude when the named input is not present in the actual result' do
+      actual = base_actual.merge(inputs: [{ 'name' => 'other_input', 'value' => 'http://example.com' }])
+      options = base_options.merge(
+        comparison_exclusions: [{
+          'test_ids' => [test_id],
+          'when' => [{ 'field' => 'inputs.url', 'matches' => '^http://' }]
+        }]
+      )
+      expect_exit(status: 3, options:, actual:)
+    end
+
+    it 'requires all when conditions to match (AND logic)' do
+      actual = base_actual.merge(inputs: [{ 'name' => 'url', 'value' => 'http://example.com' }])
+      options = base_options.merge(
+        comparison_exclusions: [{
+          'test_ids' => [test_id],
+          'when' => [
+            { 'field' => 'inputs.url', 'matches' => '^http://' },
+            { 'field' => 'result', 'matches' => 'error' } # 'fail' will not match
+          ]
+        }]
+      )
+      expect_exit(status: 3, options:, actual:)
+    end
+
+    it 'excludes when all when conditions match' do
+      actual = base_actual.merge(inputs: [{ 'name' => 'url', 'value' => 'http://example.com' }])
+      options = base_options.merge(
+        comparison_exclusions: [{
+          'test_ids' => [test_id],
+          'when' => [
+            { 'field' => 'inputs.url', 'matches' => '^http://' },
+            { 'field' => 'result', 'matches' => 'fail' }
+          ]
+        }]
+      )
+      expect_exit(status: 0, options:, actual:)
+    end
+
+    it 'does not exclude Missing results (test present in expected but absent in actual)' do
+      stub_request(:get, "#{inferno_host}/api/test_sessions/#{actual_results_session_id}/results")
+        .to_return(status: 200, body: [].to_json)
+      stub_request(:get, "#{inferno_host}/api/test_sessions/#{expected_results_session_id}/results")
+        .to_return(status: 200, body: [base_expected].to_json)
+      options = base_options.merge(comparison_exclusions: [{ 'test_ids' => [test_id] }])
+      expect do
+        expect { described_class.new(actual_results_session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output(/.+/).to_stdout
+    end
+
+    it 'sets excluded: true in to_h output for excluded results' do
+      options = { comparison_exclusions: [{ 'test_ids' => [test_id] }] }
+      result = described_class::ComparedTestResult.new(
+        test_id,
+        { 'test_id' => test_id, 'result' => 'pass' },
+        { 'test_id' => test_id, 'result' => 'fail' },
+        options
+      )
+      expect(result.excluded?).to be true
+      expect(result.same_result?).to be true
+      expect(result.to_h[:excluded]).to be true
+    end
+
+    it 'does not set excluded in to_h output for non-excluded results' do
+      options = { comparison_exclusions: [{ 'test_ids' => ['other-test-id'] }] }
+      result = described_class::ComparedTestResult.new(
+        test_id,
+        { 'test_id' => test_id, 'result' => 'pass' },
+        { 'test_id' => test_id, 'result' => 'pass' },
+        options
+      )
+      expect(result.excluded?).to be false
+      expect(result.to_h).to_not have_key(:excluded)
+    end
+  end
+
   describe 'when using normalized_strings' do
     def stub_results(actual:, expected:)
       stub_request(:get, "#{inferno_host}/api/test_sessions/#{actual_results_session_id}/results")

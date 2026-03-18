@@ -5,6 +5,36 @@ module Inferno
   module CLI
     module Session
       class SessionCompare < SessionResults
+        COMMAND_OPTIONS = {
+          expected_results_session: {
+            aliases: ['-s'],
+            type: :string,
+            desc: 'Session id on the same server that contains the expected results.'
+          },
+          expected_results_file: {
+            aliases: ['-f'],
+            type: :string,
+            desc: 'Path to a file that contains the expected results.'
+          },
+          compare_messages: {
+            aliases: ['-m'],
+            type: :boolean,
+            default: false,
+            desc: 'Compare messages when comparing results.'
+          },
+          compare_result_message: {
+            aliases: ['-r'],
+            type: :boolean,
+            default: false,
+            desc: 'Compare result_message when comparing results.'
+          },
+          normalized_strings: {
+            aliases: ['-n'],
+            type: :array,
+            desc: 'Literal strings or regexes to normalize away before comparing ' \
+                  '(URL-encoded form of literal strings will also be normalized).'
+          }
+        }.freeze
         def run
           display_compared_results
           if output_directory.present? && !results_match?
@@ -136,7 +166,8 @@ module Inferno
             @expected_result = expected_result
             @actual_result = actual_result
             @options = options
-            @same = same_results?
+            @excluded = check_excluded?
+            @same = excluded? ? true : same_results?
           end
 
           # Parses a normalize entry into an array of [pattern, replacement] pairs.
@@ -188,6 +219,43 @@ module Inferno
 
           def normalizing?
             options[:normalized_strings].present?
+          end
+
+          def check_excluded?
+            return false if actual_result.nil? # Missing — no actual result to evaluate conditions against
+
+            Array(options[:comparison_exclusions]).any? do |exclusion|
+              next false unless Array(exclusion['test_ids']).include?(id)
+
+              conditions = Array(exclusion['when'])
+              conditions.empty? || conditions.all? { |cond| condition_matches?(cond) }
+            end
+          end
+
+          def excluded?
+            @excluded
+          end
+
+          def condition_matches?(condition)
+            field = condition['field']
+            pattern = condition['matches']
+            return false unless field && pattern
+
+            value = resolve_field(field, actual_result)
+            return false if value.nil?
+
+            Regexp.new(pattern).match?(value.to_s)
+          end
+
+          def resolve_field(field, result)
+            return nil unless result
+
+            if field.start_with?('inputs.')
+              input_name = field.delete_prefix('inputs.')
+              Array(result['inputs']).find { |i| i['name'] == input_name }&.dig('value')
+            else
+              result[field]
+            end
           end
 
           def same_results?
@@ -259,13 +327,15 @@ module Inferno
           end
 
           def to_h
-            {
+            h = {
               id: id,
               type: type,
               matched: same_result?,
               expected_result: expected_result&.dig('result'),
               actual_result: actual_result&.dig('result')
-            }.merge(optional_to_h_fields)
+            }
+            h[:excluded] = true if excluded?
+            h.merge(optional_to_h_fields)
           end
 
           def optional_to_h_fields

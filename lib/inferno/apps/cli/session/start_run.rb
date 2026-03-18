@@ -10,6 +10,15 @@ module Inferno
         include Connection
         include Errors
 
+        COMMAND_OPTIONS = {
+          inputs: {
+            aliases: ['-i'],
+            type: :hash,
+            desc: 'Inputs (i.e: --inputs=foo:bar goo:baz); will merge and override current session inputs ' \
+                  '(from preset or previous runs)'
+          }
+        }.freeze
+
         attr_accessor :session_id, :options
 
         def initialize(session_id, options)

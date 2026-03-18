@@ -18,7 +18,7 @@ module Inferno
         super
         return unless @options[:inferno_base_url]
 
-        @options = @options.merge(inferno_base_url: @options[:inferno_base_url].delete_suffix('/') + '/')
+        @options = @options.merge(inferno_base_url: "#{@options[:inferno_base_url].delete_suffix('/')}/")
       end
       desc 'evaluate', 'Run a FHIR Data Evaluator.'
       long_desc <<-LONGDESC

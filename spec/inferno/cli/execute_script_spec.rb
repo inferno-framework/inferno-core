@@ -159,14 +159,14 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       blank_session = Inferno::CLI::ExecuteScript::ScriptSession.new(
         key: 'primary', suite_id:, session_id:, expected_results_file: nil, short_id_map: {}
       )
-      expect(instance.send(:compare_session, blank_session)).to eq(true)
+      expect(instance.send(:compare_session, blank_session)).to be(true)
     end
 
     it 'returns true when the expected file exists and results match' do
       allow(File).to receive(:exist?).with(expected_file).and_return(true)
       allow(mock_compare).to receive(:results_match?).and_return(true)
 
-      expect(instance.send(:compare_session, session)).to eq(true)
+      expect(instance.send(:compare_session, session)).to be(true)
     end
 
     it 'returns false and saves files when the expected file exists but results do not match' do
@@ -175,7 +175,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       allow(mock_compare).to receive(:save_actual_results_to_file)
       allow(mock_compare).to receive(:save_comparison_csv_to_file)
 
-      expect(instance.send(:compare_session, session)).to eq(false)
+      expect(instance.send(:compare_session, session)).to be(false)
       expect(mock_compare).to have_received(:save_actual_results_to_file)
       expect(mock_compare).to have_received(:save_comparison_csv_to_file)
     end
@@ -185,7 +185,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       allow(mock_results).to receive(:results_for_session).with(session_id).and_return([{ 'result' => 'pass' }])
       allow(File).to receive(:write).with(expected_file, anything)
 
-      expect(instance.send(:compare_session, session)).to eq(false)
+      expect(instance.send(:compare_session, session)).to be(false)
       expect(File).to have_received(:write).with(expected_file, anything)
     end
   end
@@ -193,7 +193,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
   describe '#compare_options' do
     let(:base_config) { { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] } }
 
-    it 'includes normalized_strings from the YAML config' do
+    it 'includes normalized_strings from the top-level YAML config (legacy fallback)' do
       config = base_config.merge('normalized_strings' => ['http://old.server.com', 'http://other.com'])
       instance = build_instance(config)
       session = instance.send(:sessions).first
@@ -206,6 +206,41 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       session = instance.send(:sessions).first
       opts = instance.send(:compare_options, session)
       expect(opts[:normalized_strings]).to eq([])
+    end
+
+    it 'reads normalized_strings from comparison_config' do
+      config = base_config.merge('comparison_config' => { 'normalized_strings' => ['http://new.server.com'] })
+      instance = build_instance(config)
+      session = instance.send(:sessions).first
+      opts = instance.send(:compare_options, session)
+      expect(opts[:normalized_strings]).to eq(['http://new.server.com'])
+    end
+
+    it 'prefers comparison_config.normalized_strings over the top-level key' do
+      config = base_config.merge(
+        'normalized_strings' => ['http://old.server.com'],
+        'comparison_config' => { 'normalized_strings' => ['http://new.server.com'] }
+      )
+      instance = build_instance(config)
+      session = instance.send(:sessions).first
+      opts = instance.send(:compare_options, session)
+      expect(opts[:normalized_strings]).to eq(['http://new.server.com'])
+    end
+
+    it 'includes comparison_exclusions from comparison_config' do
+      exclusions = [{ 'test_ids' => ['some-test'], 'reason' => 'known flaky' }]
+      config = base_config.merge('comparison_config' => { 'comparison_exclusions' => exclusions })
+      instance = build_instance(config)
+      session = instance.send(:sessions).first
+      opts = instance.send(:compare_options, session)
+      expect(opts[:comparison_exclusions]).to eq(exclusions)
+    end
+
+    it 'returns an empty array for comparison_exclusions when not configured' do
+      instance = build_instance(base_config)
+      session = instance.send(:sessions).first
+      opts = instance.send(:compare_options, session)
+      expect(opts[:comparison_exclusions]).to eq([])
     end
   end
 
@@ -246,6 +281,78 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       stub_status_done
 
       expect { instance.run }.to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+    end
+
+    it 'exits 3 on poll timeout' do
+      instance = build_instance(config, base_options.merge(default_poll_timeout: -1))
+      allow(instance).to receive(:results_match_expected?).and_return(true)
+      stub_request(:get, last_test_run_url)
+        .to_return(status: 200, body: { 'id' => run_id, 'status' => 'running' }.to_json)
+      stub_request(:get, run_results_url)
+        .to_return(status: 200, body: [].to_json)
+
+      expect { instance.run }.to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+    end
+  end
+
+  describe '#handle_actionable_status' do
+    subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
+
+    let(:session) { instance.send(:sessions).first }
+    let(:timeout) { 5 }
+
+    it 'sets failed and returns command nil on unmatched done status' do
+      status = { 'status' => 'done' }
+      result = instance.send(:handle_actionable_status, status, session, timeout)
+      expect(result).to eq({ command: nil, timeout: timeout, next_poll_session: nil })
+      expect(instance.execution_status.failed).to be true
+    end
+
+    it 'sets failed, cancels, and returns nil on unmatched waiting status' do
+      status = { 'status' => 'waiting', 'last_test_executed' => 'some-test-id', 'id' => run_id }
+      stub_request(:delete, "#{inferno_host}/api/test_runs/#{run_id}").to_return(status: 204)
+      result = instance.send(:handle_actionable_status, status, session, timeout)
+      expect(result).to be_nil
+      expect(instance.execution_status.failed).to be true
+      expect(a_request(:delete, "#{inferno_host}/api/test_runs/#{run_id}")).to have_been_made
+    end
+  end
+
+  describe '#verify_step' do
+    subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
+
+    let(:session) { instance.send(:sessions).first }
+    let(:timeout) { 5 }
+    let(:matched_step) { { command: 'some_command' } }
+
+    it 'sets failed and returns command nil on loop detection for done status' do
+      status = { 'status' => 'done' }
+      instance.execution_status.last_step_signatures[session.key] = ['done', '']
+
+      result = instance.send(:verify_step, matched_step, status, session, timeout)
+      expect(result).to eq({ command: nil, timeout: timeout, next_poll_session: nil })
+      expect(instance.execution_status.failed).to be true
+    end
+
+    it 'sets failed, cancels, and returns nil on loop detection for waiting status' do
+      status = { 'status' => 'waiting', 'last_test_executed' => 'test-id', 'id' => run_id }
+      instance.execution_status.last_step_signatures[session.key] = ['waiting', 'test-id']
+      stub_request(:delete, "#{inferno_host}/api/test_runs/#{run_id}").to_return(status: 204)
+
+      result = instance.send(:verify_step, matched_step, status, session, timeout)
+      expect(result).to be_nil
+      expect(instance.execution_status.failed).to be true
+      expect(a_request(:delete, "#{inferno_host}/api/test_runs/#{run_id}")).to have_been_made
+    end
+
+    it 'does not set failed when a NOOP step repeats' do
+      noop_step = { command: 'NOOP' }
+      status = { 'status' => 'done' }
+      instance.execution_status.last_step_signatures[session.key] = ['done', '']
+
+      result = instance.send(:verify_step, noop_step, status, session, timeout)
+      expect(result).to eq(noop_step)
+      expect(instance.execution_status.failed).to be false
     end
   end
 end
