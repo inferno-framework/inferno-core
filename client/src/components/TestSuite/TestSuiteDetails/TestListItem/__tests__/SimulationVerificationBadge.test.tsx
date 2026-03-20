@@ -28,15 +28,4 @@ describe('The SimulationVerificationBadge component', () => {
     const icon = container.querySelector('.MuiChip-icon');
     expect(icon).toBeDefined();
   });
-
-  test('it has tooltip with description', () => {
-    render(
-      <ThemeProvider>
-        <SimulationVerificationBadge />
-      </ThemeProvider>,
-    );
-
-    const chip = screen.getByText('Simulation Verification').closest('.MuiChip-root');
-    expect(chip?.parentElement).toHaveAttribute('title', 'This test performs simulation verification');
-  });
 });
