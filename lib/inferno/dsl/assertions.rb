@@ -228,7 +228,8 @@ module Inferno
       # Check that there are no messages associated with the current runnable with a type of 'error'
       #
       # @param message [String] failure message
-      # @param messages [Array] (optional) list of messages to check for errors, if different from the runnable
+      # @param message_list [Array] (optional) list of messages to check for errors,
+      #        if different from the runnable's messages
       # @return [void]
       def assert_no_error_messages(message = '', message_list: messages)
         assert message_list.none? { |msg| msg[:type] == 'error' },
