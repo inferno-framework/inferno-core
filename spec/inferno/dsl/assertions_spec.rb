@@ -562,23 +562,23 @@ RSpec.describe Inferno::DSL::Assertions do
   describe '#assert_no_error_messages' do
     it 'does not raise an exception when there are no messages' do
       expect do
-        klass.assert_no_error_messages('', messages: [])
+        klass.assert_no_error_messages('', message_list: [])
       end.to_not raise_error
     end
 
     it 'does not raise an exception when there is only a warning message' do
       expect do
         klass.assert_no_error_messages('',
-                                       messages: [{ type: 'warning', message: 'This is not an error' },
-                                                  { type: 'info', message: 'This is also not an error' }])
+                                       message_list: [{ type: 'warning', message: 'This is not an error' },
+                                                      { type: 'info', message: 'This is also not an error' }])
       end.to_not raise_error
     end
 
     it 'raises an exception if there is an error with a default message' do
       expect do
         klass.assert_no_error_messages('',
-                                       messages: [{ type: 'warning', message: 'This is not an error' },
-                                                  { type: 'error', message: 'This is also not an error' }])
+                                       message_list: [{ type: 'warning', message: 'This is not an error' },
+                                                      { type: 'error', message: 'This is also not an error' }])
       end.to(
         raise_error(assertion_exception, 'Errors found - see Messages for details.')
       )
@@ -587,8 +587,8 @@ RSpec.describe Inferno::DSL::Assertions do
     it 'raises an exception if there is an error with a custom message' do
       expect do
         klass.assert_no_error_messages('custom error message',
-                                       messages: [{ type: 'warning', message: 'This is not an error' },
-                                                  { type: 'error', message: 'This is an error' }])
+                                       message_list: [{ type: 'warning', message: 'This is not an error' },
+                                                      { type: 'error', message: 'This is an error' }])
       end.to(
         raise_error(assertion_exception, 'custom error message')
       )

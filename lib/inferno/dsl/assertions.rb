@@ -230,8 +230,8 @@ module Inferno
       # @param message [String] failure message
       # @param messages [Array] (optional) list of messages to check for errors, if different from the runnable
       # @return [void]
-      def assert_no_error_messages(message = '', messages:)
-        assert messages.none? { |msg| msg[:type] == 'error' },
+      def assert_no_error_messages(message = '', message_list: messages)
+        assert message_list.none? { |msg| msg[:type] == 'error' },
                message.present? ? message : 'Errors found - see Messages for details.'
       end
     end
