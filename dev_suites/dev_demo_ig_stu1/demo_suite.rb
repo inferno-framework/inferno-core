@@ -442,7 +442,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
           run do
             parsed = parsed_json_if_valid('NOT JSON')
             assert parsed.present?,
-                   'This will be the second error because json did not get return but the test continued'
+                   'There will be a message because parsed json did not get return since it was invalid but the test continued'
           end
         end
 
