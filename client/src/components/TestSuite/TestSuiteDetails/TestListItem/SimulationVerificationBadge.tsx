@@ -11,7 +11,7 @@ const SimulationVerificationBadge: FC = () => {
   return (
     <CustomTooltip title="This test performs simulation verification">
       <Chip
-        icon={<img src={infernoIcon} alt="Inferno" style={{ width: 18, height: 18 }} />}
+        icon={<img src={String(infernoIcon)} alt="Inferno" style={{ width: 18, height: 18 }} />}
         label="Simulation Verification"
         size="small"
         className={classes.simulationVerificationChip}
