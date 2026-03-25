@@ -419,47 +419,83 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     group do
-      title 'assertions'
+      title 'Assertions Group'
       description %(
         This group demonstrates some common assertsion.
       )
 
-      test do
-        title 'Pass because no error messages'
+      group do
+        title 'parsed_json_if_valid'
 
-        run do
-          add_message('warning', 'this is not an error.')
-          assert_no_error_messages('See error messages.')
+        test do
+          title 'Pass on valid json'
+
+          run do
+            parsed = parsed_json_if_valid('{ "valid": "json" }')
+            assert parsed.present?, 'not an error'
+          end
+        end
+
+        test do
+          title 'Log an error on invalid json, but continue'
+
+          run do
+            parsed = parsed_json_if_valid('NOT JSON')
+            assert parsed.present?,
+                   'This will be the second error because json did not get return but the test continued'
+          end
+        end
+
+        test do
+          title 'Fail on invalid json and end the test'
+
+          run do
+            parsed = parsed_json_if_valid('NOT JSON', continue: false)
+            assert parsed.present?, 'This error will not show up because continue was set to false'
+          end
         end
       end
 
-      test do
-        title 'Fail because error messages'
+      group do
+        title 'assert_no_error_messages'
 
-        run do
-          add_message('warning', 'this is not an error.')
-          add_message('error', 'but this is an error.')
-          assert_no_error_messages('See error messages.')
+        test do
+          title 'Pass because no error messages'
+
+          run do
+            add_message('warning', 'this is not an error.')
+            assert_no_error_messages('See error messages.')
+          end
         end
-      end
 
-      test do
-        title 'Do not skip because no error messages'
+        test do
+          title 'Fail because error messages'
 
-        run do
-          add_message('warning', 'this is not an error.')
-          skip_if error_messages?, 'See error messages.'
+          run do
+            add_message('warning', 'this is not an error.')
+            add_message('error', 'but this is an error.')
+            assert_no_error_messages('See error messages.')
+          end
         end
-      end
 
-      test do
-        title 'skip because error messages'
+        test do
+          title 'Do not skip because no error messages'
 
-        run do
-          add_message('warning', 'this is not an error.')
-          add_message('error', 'but this is an error.')
-          add_message('warning', 'this is not an error.')
-          skip_if error_messages?, 'See error messages.'
+          run do
+            add_message('warning', 'this is not an error.')
+            skip_if error_messages?, 'See error messages.'
+          end
+        end
+
+        test do
+          title 'skip because error messages'
+
+          run do
+            add_message('warning', 'this is not an error.')
+            add_message('error', 'but this is an error.')
+            add_message('warning', 'this is not an error.')
+            skip_if error_messages?, 'See error messages.'
+          end
         end
       end
     end

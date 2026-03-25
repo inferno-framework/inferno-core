@@ -166,7 +166,7 @@ module Inferno
         parsed_json_if_valid(maybe_json_string, message, continue: false)
       end
 
-      # Return parsed json Hash if valid, or indicate an error with a failed assert
+      # Return parsed json Hash if valid, or indicate an error with an error message or a failed assert
       #
       # @param maybe_json_string [String]
       # @param message [String] extra failure message
