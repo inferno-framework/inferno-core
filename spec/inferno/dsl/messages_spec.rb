@@ -9,6 +9,10 @@ RSpec.describe Inferno::DSL::Messages do
       expect(klass.error_messages?).to be(false)
     end
 
+    it 'returns false if no messages using a custom list' do
+      expect(klass.error_messages?(message_list: [])).to be(false)
+    end
+
     it 'returns false if only warning and info messages' do
       klass.add_message('info', 'this is not an error')
       klass.add_message('warning', 'this is also not an error')

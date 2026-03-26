@@ -1,4 +1,5 @@
 require_relative '../exceptions'
+require_relative 'messages'
 
 module Inferno
   module DSL
@@ -7,6 +8,7 @@ module Inferno
     # immediately stop execution and receive a `fail` result. Additional
     # assertions added to this module will be available in all tests.
     module Assertions
+      include Messages
       # Make an assertion
       #
       # @param test a value whose truthiness will determine whether the
@@ -182,9 +184,25 @@ module Inferno
       # @param message [String] extra failure message
       # @return [void]
       def assert_valid_json(maybe_json_string, message = '')
-        assert JSON.parse(maybe_json_string)
+        parsed_json_if_valid(maybe_json_string, message, continue: false)
+      end
+
+      # Return parsed json Hash if valid, or indicate an error with an error message or a failed assert
+      #
+      # @param maybe_json_string [String]
+      # @param message [String] extra failure message
+      # @param continue [Boolean] if true will log an error message and continue,
+      #        otherwise will raise an assert exception
+      # @return [void]
+      def parsed_json_if_valid(maybe_json_string, message = '', continue: true)
+        JSON.parse(maybe_json_string)
       rescue JSON::ParserError
-        assert false, "Invalid JSON. #{message}"
+        if continue
+          add_message(:error, "Invalid JSON. #{message}")
+          nil
+        else
+          assert false, "Invalid JSON. #{message}"
+        end
       end
 
       # Check for a valid http/https uri
@@ -253,8 +271,7 @@ module Inferno
       #        if different from the runnable's messages
       # @return [void]
       def assert_no_error_messages(message = '', message_list: messages)
-        assert message_list.none? { |msg| msg[:type] == 'error' },
-               message.present? ? message : 'Errors found - see Messages for details.'
+        assert !error_messages?(message_list:), message.present? ? message : 'Errors found - see Messages for details.'
       end
     end
   end

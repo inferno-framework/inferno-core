@@ -194,4 +194,74 @@ describe('The TestListItem component', () => {
       expect(requestsTab.getAttribute('tabindex')).toBe('0');
     });
   });
+
+  describe('Simulation Verification Badge', () => {
+    const outputs: TestOutput[] = [{ name: 'One', value: 'one' }];
+    const inputs: TestInput[] = [{ name: 'two', value: 'two' }];
+
+    it('renders the badge when is_simulation_verification is true', () => {
+      const test: Test = {
+        id: 'test_id',
+        title: 'Test Title',
+        inputs: inputs,
+        short_id: 'short_id',
+        outputs: outputs,
+        user_runnable: false,
+        is_simulation_verification: true,
+      };
+
+      render(
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>,
+      );
+
+      expect(screen.getByText('Simulation Verification')).toBeInTheDocument();
+    });
+
+    it('does not render the badge when is_simulation_verification is false', () => {
+      const test: Test = {
+        id: 'test_id',
+        title: 'Test Title',
+        inputs: inputs,
+        short_id: 'short_id',
+        outputs: outputs,
+        user_runnable: false,
+        is_simulation_verification: false,
+      };
+
+      render(
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>,
+      );
+
+      expect(screen.queryByText('Simulation Verification')).not.toBeInTheDocument();
+    });
+
+    it('does not render the badge when is_simulation_verification is undefined', () => {
+      const test: Test = {
+        id: 'test_id',
+        title: 'Test Title',
+        inputs: inputs,
+        short_id: 'short_id',
+        outputs: outputs,
+        user_runnable: false,
+      };
+
+      render(
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>,
+      );
+
+      expect(screen.queryByText('Simulation Verification')).not.toBeInTheDocument();
+    });
+  });
 });

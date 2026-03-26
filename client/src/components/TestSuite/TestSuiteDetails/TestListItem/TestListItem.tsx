@@ -22,6 +22,7 @@ import MessageList from './MessageList';
 import RequestList from './RequestList';
 import ResultIcon from '../ResultIcon';
 import ProblemBadge from './ProblemBadge';
+import SimulationVerificationBadge from './SimulationVerificationBadge';
 import TestRunDetail from './TestRunDetail';
 import type { TabProps } from './TestRunDetail';
 import { MessageCounts, countMessageTypes } from './helper';
@@ -78,6 +79,7 @@ const TestListItem: FC<TestListItemProps> = ({
       {test.short_id && <Typography className={classes.shortId}>{`${test.short_id} `}</Typography>}
       {test.optional && <Typography className={classes.optionalLabel}>{'Optional '}</Typography>}
       <Typography className={classes.labelText}>{test.title}</Typography>
+      {test.is_simulation_verification && <SimulationVerificationBadge />}
     </>
   );
 

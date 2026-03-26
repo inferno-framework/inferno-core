@@ -309,6 +309,21 @@ module Inferno
         !optional?
       end
 
+      # Mark as simulation verification. Tests are not simulation verification by default.
+      #
+      # @param simulation_verification [Boolean]
+      # @return [void]
+      def simulation_verification(simulation_verification = true) # rubocop:disable Style/OptionalBooleanParameter
+        @is_simulation_verification = simulation_verification
+      end
+
+      # The test is simulation verification if true
+      #
+      # @return [Boolean]
+      def simulation_verification?
+        !!@is_simulation_verification
+      end
+
       # @private
       def default_id
         to_s
