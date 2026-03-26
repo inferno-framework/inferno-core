@@ -10,6 +10,13 @@ module Inferno
         @messages ||= []
       end
 
+      # Returns true if an error message was logged to the runnable
+      #
+      # @return [Boolean]
+      def error_messages?
+        messages.any? { |msg| msg[:type] == 'error' }
+      end
+
       # Add a message to the result.
       #
       # @param type [String] error, warning, or info

@@ -224,6 +224,17 @@ module Inferno
         "Could not find #{missing_elements.join(', ')} in the #{resources.length} " \
           'provided resource(s)'
       end
+
+      # Check that there are no messages associated with the current runnable with a type of 'error'
+      #
+      # @param message [String] failure message
+      # @param message_list [Array] (optional) list of messages to check for errors,
+      #        if different from the runnable's messages
+      # @return [void]
+      def assert_no_error_messages(message = '', message_list: messages)
+        assert message_list.none? { |msg| msg[:type] == 'error' },
+               message.present? ? message : 'Errors found - see Messages for details.'
+      end
     end
   end
 end

@@ -417,5 +417,51 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         end
       end
     end
+
+    group do
+      title 'assertions'
+      description %(
+        This group demonstrates some common assertsion.
+      )
+
+      test do
+        title 'Pass because no error messages'
+
+        run do
+          add_message('warning', 'this is not an error.')
+          assert_no_error_messages('See error messages.')
+        end
+      end
+
+      test do
+        title 'Fail because error messages'
+
+        run do
+          add_message('warning', 'this is not an error.')
+          add_message('error', 'but this is an error.')
+          assert_no_error_messages('See error messages.')
+        end
+      end
+
+      test do
+        title 'Do not skip because no error messages'
+
+        run do
+          add_message('warning', 'this is not an error.')
+          skip_if error_messages?, 'See error messages.'
+        end
+      end
+
+      test do
+        title 'skip because error messages'
+
+        run do
+          add_message('warning', 'this is not an error.')
+          add_message('error', 'but this is an error.')
+          add_message('warning', 'this is not an error.')
+          skip_if error_messages?, 'See error messages.'
+        end
+      end
+    end
   end
 end
