@@ -648,6 +648,29 @@ RSpec.describe Inferno::DSL::Assertions do
 
         expect(validation_requests).to all(have_been_made.once)
       end
+
+      it 'logs messages with the provided prefix' do
+        patient_validation_body =
+          validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url)
+        care_plan_validation_body =
+          validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url)
+        validation_requests =
+          [
+            stub_request(:post, validation_url)
+              .with(body: patient_validation_body)
+              .to_return(status: 200, body: success_response.to_json),
+            stub_request(:post, validation_url)
+              .with(body: care_plan_validation_body)
+              .to_return(status: 200, body: error_response.to_json)
+          ]
+
+        expect { klass.assert_valid_bundle_entries(bundle:, message_prefix: 'context - ') }.to(
+          raise_error(assertion_exception, klass.invalid_bundle_entries_message([care_plan_resource]))
+        )
+
+        expect(validation_requests).to all(have_been_made.once)
+        expect(klass.messages.first[:message]).to start_with('context - ')
+      end
     end
 
     context 'when no bundle is provided' do
