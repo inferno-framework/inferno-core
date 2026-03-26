@@ -61,6 +61,7 @@ module Inferno
       # @private
       def invalid_resource_message(resource, profile_url)
         return "Resource does not conform to the profile: #{profile_url}" if profile_url.present?
+        return 'No resource to validate.' unless resource.present?
 
         "Resource does not conform to the base #{resource&.resourceType} profile."
       end
@@ -72,10 +73,29 @@ module Inferno
       #   may include a version separated by a vertical bar (|),
       #   and defaults to validating against the base FHIR resource type
       # @param validator [Symbol] the name of the validator to use
+      # @param message_prefix [String] Prefix to add to the start of logged messages
       # @return [void]
-      def assert_valid_resource(resource: self.resource, profile_url: nil, validator: :default)
-        assert resource_is_valid?(resource:, profile_url:, validator:),
+      def assert_valid_resource(resource: self.resource, profile_url: nil, validator: :default, message_prefix: '')
+        assert resource_is_valid?(resource:, profile_url:, validator:, message_prefix:),
                invalid_resource_message(resource, profile_url)
+      end
+
+      # @private
+      def invalid_object_message(model_url)
+        "Object does not conform to the logical model: #{model_url}"
+      end
+
+      # Validate an object against a logical model
+      #
+      # @param object [Hash]
+      # @param model_url [String] canonical url of the model to validate against,
+      #   may include a version separated by a vertical bar (|),
+      # @param validator [Symbol] the name of the validator to use
+      # @param message_prefix [String] Prefix to add to the start of logged messages
+      # @return [void]
+      def assert_conformance_to_logical_model(object, model_url, validator: :default, message_prefix: '')
+        assert conforms_to_logical_model?(object, model_url, validator:, message_prefix:),
+               invalid_object_message(model_url)
       end
 
       # Validate each entry of a Bundle
@@ -89,6 +109,7 @@ module Inferno
       #   types as keys and profile urls (or nil) as values, only those resource
       #   types will be validated against the provided profile url or the base
       #   resource if nil.
+      # @param message_prefix [String] Prefix to add to the start of logged messages
       # @example
       #   # Only validate Patient bundle entries
       #   assert_valid_bundle_entries(resource_types: 'Patient')
@@ -106,7 +127,7 @@ module Inferno
       #     }
       #   )
       # @return [void]
-      def assert_valid_bundle_entries(bundle: resource, resource_types: {})
+      def assert_valid_bundle_entries(bundle: resource, resource_types: {}, message_prefix: '')
         assert_resource_type('Bundle', resource: bundle)
 
         types_to_check = normalize_types_to_check(resource_types)
@@ -117,7 +138,7 @@ module Inferno
             .map(&:resource)
             .select { |resource| types_to_check.empty? || types_to_check.include?(resource.resourceType) }
             .reject do |resource|
-              validation_params = { resource: }
+              validation_params = { resource:, message_prefix: }
               profile = types_to_check[resource.resourceType]
               validation_params[:profile_url] = profile if profile
 
