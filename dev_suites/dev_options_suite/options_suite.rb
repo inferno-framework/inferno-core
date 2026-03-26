@@ -72,6 +72,26 @@ module OptionsSuite
     end
   end
 
+  class DisplayOptionsGroup < Inferno::TestGroup
+    title 'Display Options Group'
+    id :display_options_group
+
+    test do
+      title 'Test with Simulation Verification Badge'
+      id :simulation_verification_test
+      simulation_verification # <-- This line creates the badge for this test
+
+      run { pass }
+    end
+
+    test do
+      title 'Regular Test without Badge'
+      id :regular_test
+
+      run { pass }
+    end
+  end
+
   class Suite < Inferno::TestSuite
     title 'Options Suite'
     id :options
@@ -179,6 +199,8 @@ module OptionsSuite
     )
 
     group from: :all_versions_group
+
+    group from: :display_options_group
 
     group from: :v1_group,
           required_suite_options: { ig_version: '1' }

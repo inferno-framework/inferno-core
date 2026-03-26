@@ -87,7 +87,7 @@ RSpec.describe Inferno::Web::Serializers::TestSuite do
     received_groups = serialized_suite['test_groups'].collect { |group| group['id'] }
 
     expect(received_groups).to eq(expected_groups)
-    expect(serialized_suite['test_count']).to eq(3)
+    expect(serialized_suite['test_count']).to eq(5)
     expect(serialized_suite['requirement_sets'].length).to eq(2)
   end
 

@@ -160,4 +160,14 @@ export default makeStyles()((theme: Theme) => ({
       border: `1px solid ${theme.palette.info.dark}`,
     },
   },
+  simulationVerificationChip: {
+    backgroundColor: theme.palette.common.orangeLight,
+    color: theme.palette.common.orangeDark,
+    fontWeight: 'bold',
+    marginLeft: '8px',
+    height: '24px',
+    '& .MuiChip-icon': {
+      color: theme.palette.common.orangeDark,
+    },
+  },
 }));

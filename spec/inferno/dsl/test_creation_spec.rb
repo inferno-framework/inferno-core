@@ -177,6 +177,22 @@ RSpec.describe InfrastructureTest::Suite do
           "#{r.runnable.title}: #{r.result_message}"
         }.join("\n")
       end
+
+      it 'sets simulation_verification when declared on a test' do
+        sim_group = Class.new(Inferno::TestGroup) do
+          id 'sim_group'
+
+          test do
+            title 'Simulation verification test'
+            id 'sim_test'
+            simulation_verification
+
+            run { pass }
+          end
+        end
+
+        expect(sim_group.tests.first.simulation_verification?).to be(true)
+      end
     end
 
     describe 'inner inline group' do

@@ -196,6 +196,7 @@ export type Test = Runnable & {
   short_id: string;
   outputs: TestOutput[];
   user_runnable?: boolean;
+  is_simulation_verification?: boolean;
 };
 
 export type TestGroup = Runnable & {
