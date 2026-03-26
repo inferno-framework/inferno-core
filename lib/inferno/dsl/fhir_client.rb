@@ -1,6 +1,7 @@
 require_relative 'fhir_client_builder'
 require_relative 'request_storage'
 require_relative 'tcp_exception_handler'
+require_relative 'messages'
 
 module Inferno
   module DSL
@@ -37,6 +38,8 @@ module Inferno
     # @see Inferno::DSL::FHIRClientBuilder Documentation for the client
     #   configuration DSL
     module FHIRClient
+      include Messages
+
       # @private
       def self.included(klass)
         klass.extend ClassMethods

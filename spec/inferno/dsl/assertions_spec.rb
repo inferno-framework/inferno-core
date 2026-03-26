@@ -559,6 +559,74 @@ RSpec.describe Inferno::DSL::Assertions do
     end
   end
 
+  describe '#assert_valid_json' do
+    it 'does not raise an exception when the json is valid' do
+      expect do
+        klass.assert_valid_json('{ "valid": "json" }')
+      end.to_not raise_error
+    end
+
+    it 'raises an exception when the json is not valid' do
+      expect do
+        klass.assert_valid_json('NOT JSON')
+      end.to(
+        raise_error(assertion_exception, 'Invalid JSON. ')
+      )
+    end
+
+    it 'raises an exception with additional message details when the json is not valid' do
+      expect do
+        klass.assert_valid_json('', 'Extra message.')
+      end.to(
+        raise_error(assertion_exception, 'Invalid JSON. Extra message.')
+      )
+    end
+  end
+
+  describe '#parsed_json_if_valid' do
+    it 'returns the parsed json hash when the json is valid' do
+      result = klass.parsed_json_if_valid('{ "valid": "json" }')
+      expect(result).to eq({ 'valid' => 'json' })
+    end
+
+    it 'raises an exception when the json is not valid and continue is false' do
+      expect do
+        klass.parsed_json_if_valid('NOT JSON', continue: false)
+      end.to(
+        raise_error(assertion_exception, 'Invalid JSON. ')
+      )
+    end
+
+    it 'adds an error message and returns nil when the json is not valid and continue is true' do
+      result = klass.parsed_json_if_valid('', continue: true)
+      expect(result).to be_nil
+      expect(klass.messages.size).to eq(1)
+      expect(klass.messages[0][:message]).to eq('Invalid JSON. ')
+    end
+
+    it 'adds an error message and returns nil when the json is not valid and continue not provided' do
+      result = klass.parsed_json_if_valid('')
+      expect(result).to be_nil
+      expect(klass.messages.size).to eq(1)
+      expect(klass.messages[0][:message]).to eq('Invalid JSON. ')
+    end
+
+    it 'raises an exception with extra details when the json is not valid and continue is false' do
+      expect do
+        klass.parsed_json_if_valid('NOT JSON', 'details', continue: false)
+      end.to(
+        raise_error(assertion_exception, 'Invalid JSON. details')
+      )
+    end
+
+    it 'adds an error message with extra details and returns nil when the json is not valid and continue is true' do
+      result = klass.parsed_json_if_valid('', 'details', continue: true)
+      expect(result).to be_nil
+      expect(klass.messages.size).to eq(1)
+      expect(klass.messages[0][:message]).to eq('Invalid JSON. details')
+    end
+  end
+
   describe '#assert_no_error_messages' do
     it 'does not raise an exception when there are no messages' do
       expect do
@@ -589,6 +657,15 @@ RSpec.describe Inferno::DSL::Assertions do
         klass.assert_no_error_messages('custom error message',
                                        message_list: [{ type: 'warning', message: 'This is not an error' },
                                                       { type: 'error', message: 'This is an error' }])
+      end.to(
+        raise_error(assertion_exception, 'custom error message')
+      )
+    end
+
+    it 'raises an exception if there is an error in the local message list' do
+      expect do
+        klass.add_message(:error, 'This is an error')
+        klass.assert_no_error_messages('custom error message')
       end.to(
         raise_error(assertion_exception, 'custom error message')
       )
