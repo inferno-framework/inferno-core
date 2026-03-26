@@ -207,6 +207,7 @@ export type TestGroup = Runnable & {
   tests: Test[];
   run_as_group?: boolean;
   user_runnable?: boolean;
+  is_simulation_verification?: boolean;
   test_count?: number;
   expanded?: boolean;
 };

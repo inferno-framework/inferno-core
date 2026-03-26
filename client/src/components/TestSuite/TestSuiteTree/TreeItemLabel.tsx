@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
-import { TestGroup, TestSuite } from '~/models/testSuiteModels';
+import { TestGroup, TestSuite, isTestGroup } from '~/models/testSuiteModels';
 import { Typography, Box } from '@mui/material';
+import SimulationVerificationBadge from '~/components/TestSuite/TestSuiteDetails/TestListItem/SimulationVerificationBadge';
 import useStyles from './styles';
 
 export interface TreeItemLabelProps {
@@ -26,6 +27,9 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, title }) => {
           <Typography className={classes.optionalLabel} variant="body2">
             Optional
           </Typography>
+        )}
+        {runnable && isTestGroup(runnable) && runnable.is_simulation_verification && (
+          <SimulationVerificationBadge />
         )}
       </Box>
     </Box>
