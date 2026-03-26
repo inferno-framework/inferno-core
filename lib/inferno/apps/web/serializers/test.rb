@@ -21,6 +21,7 @@ module Inferno
         field :input_instructions
         field :user_runnable?, name: :user_runnable
         field :optional?, name: :optional
+        field :simulation_verification?, name: :is_simulation_verification
         field :verifies_requirements, if: :field_present?, extractor: RequirementsFilteringExtractor
       end
     end
