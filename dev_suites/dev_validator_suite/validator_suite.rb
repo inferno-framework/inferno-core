@@ -11,6 +11,11 @@ module DevValidatorSuite
       igs 'hl7.fhir.us.core#6.1.0'
     end
 
+    fhir_resource_validator :logical do
+      url ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL', 'http://localhost/hl7validatorapi')
+      igs 'hl7.fhir.uv.tools#1.1.2'
+    end
+
     group do
       title 'Patient Test Group'
       id :patient_group
@@ -52,6 +57,48 @@ module DevValidatorSuite
         run do
           assert_resource_type(:patient)
           assert_valid_resource
+        end
+      end
+    end
+
+    group do
+      title 'Logical Models'
+      id :logical_models
+
+      test do
+        title 'conforms to logical model'
+        id :conform_to_logical_model
+
+        run do
+          object = {
+            hook: 'encounter-start',
+            hookInstance: '753593b6-8fa1-45e3-a108-978256af0f5c',
+            context: {
+              userId: 'Practitioner/example',
+              patientId: 'example'
+            }
+          }
+          profile = 'http://hl7.org/fhir/tools/StructureDefinition/CDSHooksRequest'
+          result = conforms_to_logical_model?(object, profile, validator: :logical)
+          assert result, 'Will not display - conforms!'
+        end
+      end
+
+      test do
+        title 'does not conform to logical model'
+        id :not_conform_to_logical_model
+
+        run do
+          object = {
+            hook: 'encounter-start',
+            context: {
+              userId: 'Practitioner/example',
+              patientId: 'example'
+            }
+          }
+          profile = 'http://hl7.org/fhir/tools/StructureDefinition/CDSHooksRequest'
+          assert_conformance_to_logical_model(object, profile, validator: :logical,
+                                                               message_prefix: 'Additional Context - ')
         end
       end
     end

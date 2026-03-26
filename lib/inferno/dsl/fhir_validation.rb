@@ -1,4 +1,5 @@
 require_relative '../ext/fhir_models'
+require_relative '../exceptions'
 module Inferno
   module DSL
     # This module contains the methods needed to configure a validator to
@@ -32,17 +33,40 @@ module Inferno
       # @param profile_url [String]
       # @param validator [Symbol] the name of the validator to use
       # @param add_messages_to_runnable [Boolean] whether to add validation messages to runnable or not
+      # @param message_prefix [String] Prefix to add to the start of logged messages
       # @param validator_response_details [Array, nil] if not nil, the service will populate this array with
       #   the detailed response message from the validator service
       # @return [Boolean] whether the resource is valid
       def resource_is_valid?(
         resource: self.resource, profile_url: nil,
-        validator: :default, add_messages_to_runnable: true,
+        validator: :default, add_messages_to_runnable: true, message_prefix: '',
         validator_response_details: nil
       )
         find_validator(validator).resource_is_valid?(resource, profile_url, self,
                                                      add_messages_to_runnable:,
+                                                     message_prefix:,
                                                      validator_response_details:)
+      end
+
+      # Perform validation, and add validation messages to the runnable
+      #
+      # @param object [Hash] json to verify against the model, as a Hash
+      # @param model_url [String]
+      # @param validator [Symbol] the name of the validator to use
+      # @param add_messages_to_runnable [Boolean] whether to add validation messages to runnable or not
+      # @param message_prefix [String] Prefix to add to the start of logged messages
+      # @param validator_response_details [Array, nil] if not nil, the service will populate this array with
+      #   the detailed response message from the validator service
+      # @return [Boolean] whether the resource is valid
+      def conforms_to_logical_model?(
+        object, model_url,
+        validator: :default, add_messages_to_runnable: true, message_prefix: '',
+        validator_response_details: nil
+      )
+        find_validator(validator).conforms_to_logical_model?(object, model_url, self,
+                                                             add_messages_to_runnable:,
+                                                             message_prefix:,
+                                                             validator_response_details:)
       end
 
       # Find a particular validator. Looks through a runnable's parents up to
@@ -122,10 +146,21 @@ module Inferno
           @exclude_message
         end
 
+        # rubocop:disable Lint/UnusedMethodArgument
+        def conforms_to_logical_model?(resource, profile_url, runnable, add_messages_to_runnable: true,
+                                       message_prefix: '', validator_response_details: nil)
+
+          raise Exceptions::TestSuiteImplementationException.new(
+            'Logical Model Validation',
+            'Logical model validation not implemented for legacy fhir_validation.'
+          )
+        end
+        # rubocop:enable Lint/UnusedMethodArgument
+
         # @see Inferno::DSL::FHIRValidation#resource_is_valid?
         # rubocop:disable Metrics/CyclomaticComplexity, Lint/UnusedMethodArgument
         def resource_is_valid?(resource, profile_url, runnable, add_messages_to_runnable: true,
-                               validator_response_details: nil)
+                               message_prefix: '', validator_response_details: nil)
           profile_url ||= FHIR::Definitions.resource_definition(resource.resourceType).url
 
           begin
