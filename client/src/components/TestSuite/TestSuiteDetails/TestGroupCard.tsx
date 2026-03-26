@@ -47,7 +47,9 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
               <Typography className={classes.shortId}>{`${runnable.short_id} `}</Typography>
             )}
             {runnable.title}
-            {isTestGroup(runnable) && runnable.is_simulation_verification && <SimulationVerificationBadge />}
+            {isTestGroup(runnable) && runnable.is_simulation_verification && (
+              <SimulationVerificationBadge />
+            )}
           </Typography>
         </span>
         <span className={classes.testGroupCardHeaderButton}>

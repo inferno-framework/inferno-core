@@ -42,7 +42,7 @@ const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) 
                   >
                     {testGroup.title}
                   </Link>
-                    {testGroup.is_simulation_verification && <SimulationVerificationBadge />}
+                  {testGroup.is_simulation_verification && <SimulationVerificationBadge />}
                 </>
               }
               secondary={testGroup.result?.result_message}
