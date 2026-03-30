@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { TestGroup, TestSuite, isTestGroup } from '~/models/testSuiteModels';
+import { TestGroup, TestSuite } from '~/models/testSuiteModels';
 import { Typography, Box } from '@mui/material';
 // Simulation verification badge intentionally omitted from sidebar tree labels
 import useStyles from './styles';

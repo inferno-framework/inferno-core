@@ -7,7 +7,7 @@ import TreeItemLabel from '../TreeItemLabel';
 import { TestGroup } from '~/models/testSuiteModels';
 
 describe('TreeItemLabel', () => {
-  test('shows simulation verification badge for groups', () => {
+  test('does not show simulation verification badge for sidebar tree labels', () => {
     const tg: TestGroup = {
       id: 'tg-1',
       title: 'Nested Group',
@@ -25,6 +25,6 @@ describe('TreeItemLabel', () => {
       </ThemeProvider>,
     );
 
-    expect(screen.getByText('Simulation Verification')).toBeInTheDocument();
+    expect(screen.queryByText('Simulation Verification')).toBeNull();
   });
 });
