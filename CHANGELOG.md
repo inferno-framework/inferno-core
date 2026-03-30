@@ -1,3 +1,6 @@
+## 1.1.2
+* Add simulation verification flag to groups by @ljtucker in https://github.com/inferno-framework/inferno-core/pull/768
+
 ## 1.1.1
 * ID-64: Add PUT request method to HTTP client DSL by @abhinandan2012 in https://github.com/inferno-framework/inferno-core/pull/761
 * ID-84: Add "no error messages" assertion by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/764
