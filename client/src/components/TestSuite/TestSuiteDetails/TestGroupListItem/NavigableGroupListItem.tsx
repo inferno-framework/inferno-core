@@ -6,6 +6,7 @@ import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
 import { useTestSessionStore } from '~/store/testSession';
 import theme from '~/styles/theme';
 import useStyles from './styles';
+import SimulationVerificationBadge from '~/components/TestSuite/TestSuiteDetails/TestListItem/SimulationVerificationBadge';
 
 interface NavigableGroupListItemProps {
   testGroup: TestGroup;
@@ -41,6 +42,7 @@ const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) 
                   >
                     {testGroup.title}
                   </Link>
+                  {testGroup.is_simulation_verification && <SimulationVerificationBadge />}
                 </>
               }
               secondary={testGroup.result?.result_message}

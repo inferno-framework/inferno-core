@@ -75,20 +75,27 @@ module OptionsSuite
   class DisplayOptionsGroup < Inferno::TestGroup
     title 'Display Options Group'
     id :display_options_group
+    simulation_verification # <-- This line creates the badge for this group
 
-    test do
-      title 'Test with Simulation Verification Badge'
-      id :simulation_verification_test
-      simulation_verification # <-- This line creates the badge for this test
+    group do
+      title 'Group with Simulation Verification Badge'
+      id :simulation_verification_group
+      simulation_verification # <-- This line creates the badge for this group
 
-      run { pass }
-    end
+      test do
+        title 'Test with Simulation Verification Badge'
+        id :simulation_verification_test
+        simulation_verification # <-- This line creates the badge for this test
 
-    test do
-      title 'Regular Test without Badge'
-      id :regular_test
+        run { pass }
+      end
 
-      run { pass }
+      test do
+        title 'Regular Test without Badge'
+        id :regular_test
+
+        run { pass }
+      end
     end
   end
 

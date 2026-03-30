@@ -2,7 +2,7 @@ import React, { FC, useMemo } from 'react';
 import { Box, Card, Divider, Typography } from '@mui/material';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { TestGroup, RunnableType, TestSuite } from '~/models/testSuiteModels';
+import { TestGroup, RunnableType, TestSuite, isTestGroup } from '~/models/testSuiteModels';
 import {
   shouldShowDescription,
   shouldShowRequirementsButton,
@@ -13,6 +13,7 @@ import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { useTestSessionStore } from '~/store/testSession';
 import useStyles from './styles';
+import SimulationVerificationBadge from '~/components/TestSuite/TestSuiteDetails/TestListItem/SimulationVerificationBadge';
 
 interface TestGroupCardProps {
   children: React.ReactNode;
@@ -46,6 +47,9 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
               <Typography className={classes.shortId}>{`${runnable.short_id} `}</Typography>
             )}
             {runnable.title}
+            {isTestGroup(runnable) && runnable.is_simulation_verification && (
+              <SimulationVerificationBadge />
+            )}
           </Typography>
         </span>
         <span className={classes.testGroupCardHeaderButton}>

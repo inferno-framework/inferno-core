@@ -21,6 +21,7 @@ import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
 import TestListItem from '~/components/TestSuite/TestSuiteDetails/TestListItem/TestListItem';
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import useStyles from './styles';
+import SimulationVerificationBadge from '~/components/TestSuite/TestSuiteDetails/TestListItem/SimulationVerificationBadge';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
@@ -145,7 +146,10 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
                         className={classes.shortId}
                       >{`${testGroup.short_id} `}</Typography>
                     )}
-                    <Typography className={classes.labelText}>{testGroup.title}</Typography>
+                    <Typography className={classes.labelText}>
+                      {testGroup.title}
+                      {testGroup.is_simulation_verification && <SimulationVerificationBadge />}
+                    </Typography>
                   </>
                 }
                 secondary={testGroup.result?.result_message}
