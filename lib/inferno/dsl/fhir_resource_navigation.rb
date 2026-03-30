@@ -124,6 +124,8 @@ module Inferno
         slice_name = local_field_name(property.to_s.split(':')[1])
 
         slice_by_name = metadata.must_supports[:slices].find { |slice| slice[:slice_name] == slice_name }
+        return nil if slice_by_name.blank?
+
         discriminator = slice_by_name[:discriminator]
         slices = Array.wrap(element.send(element_name))
         slices.find { |slice| matching_slice?(slice, discriminator) }
@@ -192,6 +194,7 @@ module Inferno
         when 'String'
           slice_value.is_a? String
         else
+          slice_value = slice_value.resource if slice_value.is_a?(FHIR::Bundle::Entry)
           slice_value.is_a? FHIR.const_get(discriminator[:code])
         end
       end

@@ -422,6 +422,51 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       end
     end
 
+    context 'with type slicing on a Bundle with slice sub-elements' do
+      let(:pas_inquiry_bundle_metadata) do
+        metadata_fixture('pas_inquiry_request_bundle_v220.yml')
+      end
+
+      let(:pas_inquiry_bundle) do
+        FHIR::Bundle.new(
+          identifier: {
+            system: 'http://example.org/SUBMITTER_TRANSACTION_IDENTIFIER',
+            value: '16139462398'
+          },
+          type: 'collection',
+          timestamp: '2025-06-24T07:34:00+05:00',
+          entry: [
+            {
+              fullUrl: 'http://example.com/Claim/123',
+              resource: FHIR::Claim.new
+            }
+          ]
+        )
+      end
+
+      it 'passes when slice sub-elements fullUrl and resource are present' do
+        result = run_with_metadata([pas_inquiry_bundle], pas_inquiry_bundle_metadata)
+        expect(result).to be_empty
+      end
+
+      it 'reports entry:Claim.fullUrl missing when fullUrl is absent' do
+        pas_inquiry_bundle.entry.first.fullUrl = nil
+
+        result = run_with_metadata([pas_inquiry_bundle], pas_inquiry_bundle_metadata)
+        expect(result).to include('entry:Claim.fullUrl')
+        expect(result).to_not include('entry:Claim.resource')
+      end
+
+      it 'reports both slice and sub-elements missing when no Claim entry exists' do
+        pas_inquiry_bundle.entry.clear
+
+        result = run_with_metadata([pas_inquiry_bundle], pas_inquiry_bundle_metadata)
+        expect(result).to include('Bundle.entry:Claim')
+        expect(result).to include('entry:Claim.fullUrl')
+        expect(result).to include('entry:Claim.resource')
+      end
+    end
+
     context 'with requiredBinding slicing' do
       context 'when Condition ProblemsHealthConcerns' do
         let(:condition_problems_health_concerns_metadata) do
