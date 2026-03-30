@@ -10,7 +10,7 @@ const SimulationVerificationBadge: FC = () => {
   const { classes } = useStyles();
 
   return (
-    <CustomTooltip title="This test performs simulation verification">
+    <CustomTooltip title="This test verifies the behavior of Inferno's simulation">
       <Chip
         icon={
           <img
