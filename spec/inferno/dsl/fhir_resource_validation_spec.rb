@@ -116,7 +116,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             },
             filesToValidate: [
               {
-                fileName: 'Patient/0000.json',
+                fileName: 'PROFILE.json',
                 fileContent: resource2.source_contents,
                 fileType: 'json'
               }
@@ -135,7 +135,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
               outcomes: [
                 {
                   fileInfo: {
-                    fileName: 'Patient/0000.json',
+                    fileName: 'PROFILE.json',
                     fileContent: resource_string.to_json,
                     fileType: 'json'
                   },
@@ -198,6 +198,14 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
               expect(result).to be(false)
               expect(runnable.messages.first[:message]).to start_with("#{resource2.resourceType}/#{resource2.id}:")
+            end
+
+            it 'adds a prefix to error messages when requested' do
+              prefix = 'context: '
+              result = validator.resource_is_valid?(resource2, profile_url, runnable, message_prefix: prefix)
+
+              expect(result).to be(false)
+              expect(runnable.messages.first[:message]).to start_with(prefix)
             end
 
             it 'excludes both types of unresolved url messages' do
@@ -292,6 +300,35 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           end
         end
 
+        context 'when the resource is nil' do
+          it 'returns false and logs a message when add_messages_to_runnable is true' do
+            result = validator.resource_is_valid?(nil, nil, runnable)
+            expect(result).to be(false)
+            expect(runnable.messages.size).to eq(1)
+            expect(runnable.messages.first[:message]).to eq('No resource to validate.')
+          end
+
+          it 'returns false and logs a message with a prefix when add_messages_to_runnable is true' do
+            result = validator.resource_is_valid?(nil, nil, runnable, message_prefix: 'context - ')
+            expect(result).to be(false)
+            expect(runnable.messages.size).to eq(1)
+            expect(runnable.messages.first[:message]).to eq('context - No resource to validate.')
+          end
+
+          it 'returns false and logs no message with a prefix when add_messages_to_runnable is false' do
+            result = validator.resource_is_valid?(nil, nil, runnable, add_messages_to_runnable: false,
+                                                                      message_prefix: 'context - ')
+            expect(result).to be(false)
+            expect(runnable.messages.size).to eq(0)
+          end
+        end
+
+        it 'raises and exception when the resource is not a FHIR::Model' do
+          expect do
+            validator.resource_is_valid?({ 'resourceType' => 'Patient' }, profile_url, runnable)
+          end.to raise_error(Inferno::Exceptions::TestSuiteImplementationException, /Expected a FHIR::Model/)
+        end
+
         it 'throws ErrorInValidatorException for non-JSON response' do
           stub_request(:post, "#{validation_url}/validate")
             .with(body: wrapped_resource_string)
@@ -308,7 +345,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             {
               "outcomes": [{
                 "fileInfo": {
-                  "fileName": "Patient/0000.json",
+                  "fileName": "PROFILE.json",
                   "fileContent": #{resource_string.to_json},
                   "fileType": "json"
                 },
@@ -365,6 +402,166 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           expect(runnable).to have_received(:add_message).with('error', error_message)
         end
       end
+    end
+  end
+
+  describe '#conforms_to_logical_model?' do
+    let(:model_url) { 'MODEL' }
+    let(:object) { { 'JSON' => 'data' } }
+    let(:wrapped_target_string) do
+      {
+        cliContext: {
+          sv: '4.0.1',
+          doNative: false,
+          extensions: ['any'],
+          disableDefaultResourceFetcher: true,
+          profiles: [model_url]
+        },
+        filesToValidate: [
+          {
+            fileName: 'MODEL.json',
+            fileContent: object.to_json,
+            fileType: 'json'
+          }
+        ],
+        sessionId: nil
+      }.to_json
+    end
+    let(:conformant_outcome) do
+      {
+        outcomes: [{
+          issues: []
+        }]
+      }.to_json
+    end
+    let(:invalid_outcome) do
+      {
+        outcomes: [
+          {
+            fileInfo: {
+              fileName: 'MODEL.json',
+              fileContent: object.to_json,
+              fileType: 'json'
+            },
+            issues: [
+              {
+                source: 'InstanceValidator',
+                line: 4,
+                col: 4,
+                location: 'CDSHooksRequest',
+                message: 'CDSHooksRequest.context: Identifier.system must be an absolute ref, not a local ref',
+                messageId: 'Type_Specific_Checks_DT_Identifier_System',
+                type: 'CODEINVALID',
+                level: 'ERROR',
+                html: 'Identifier.system must be an absolute reference, not a local reference',
+                display: 'ERROR: Patient.identifier[0]: Identifier.system must be an absolute reference, ',
+                error: true
+              },
+              {
+                source: 'InstanceValidator',
+                line: 5,
+                col: 5,
+                location: 'CDSHooksRequest',
+                message: 'CDSHooksRequest.context: Identifier.system must be an absolute ref, not a local ref',
+                messageId: 'Type_Specific_Checks_DT_Identifier_System',
+                type: 'CODEINVALID',
+                level: 'ERROR',
+                html: 'Identifier.system must be an absolute reference, not a local reference',
+                display: 'ERROR: Patient.identifier[1]: Identifier.system must be an absolute reference, ',
+                error: true
+              },
+              {
+                source: 'InstanceValidator',
+                line: 6,
+                col: 6,
+                location: 'CDSHooksRequest',
+                message: "Patient.meta.profile[0]: No definition could be found for URL value 'http://example.com/fhir/StructureDefinition/another-profile'",
+                messageId: 'Profile_Not_Found',
+                type: 'CODEINVALID',
+                level: 'ERROR',
+                html: "No definition could be found for URL value 'http://example.com/fhir/StructureDefinition/another-profile'",
+                display: "No definition could be found for URL value 'http://example.com/fhir/StructureDefinition/another-profile'",
+                error: true
+              }
+            ]
+          }
+        ],
+        sessionId: 'b8cf5547-1dc7-4714-a797-dc2347b93fe2'
+      }.to_json
+    end
+
+    it 'makes a request to the validator and passes when no errors' do
+      stub_request(:post, "#{validation_url}/validate")
+        .with(body: wrapped_target_string)
+        .to_return(status: 200, body: conformant_outcome)
+
+      result = validator.conforms_to_logical_model?(object, model_url, runnable)
+      expect(result).to be(true)
+    end
+
+    context 'when the object is nil' do
+      it 'returns false and logs a message when add_messages_to_runnable is true' do
+        result = validator.conforms_to_logical_model?(nil, model_url, runnable)
+        expect(result).to be(false)
+        expect(runnable.messages.size).to eq(1)
+        expect(runnable.messages.first[:message]).to eq('No object to check for conformance.')
+      end
+
+      it 'returns false and logs a message with a prefix when add_messages_to_runnable is true' do
+        result = validator.conforms_to_logical_model?(nil, model_url, runnable, message_prefix: 'context - ')
+        expect(result).to be(false)
+        expect(runnable.messages.size).to eq(1)
+        expect(runnable.messages.first[:message]).to eq('context - No object to check for conformance.')
+      end
+
+      it 'returns false and logs no message with a prefix when add_messages_to_runnable is false' do
+        result = validator.conforms_to_logical_model?(nil, model_url, runnable, add_messages_to_runnable: false,
+                                                                                message_prefix: 'context - ')
+        expect(result).to be(false)
+        expect(runnable.messages.size).to eq(0)
+      end
+    end
+
+    context 'with invalid models' do
+      before do
+        stub_request(:post, "#{validation_url}/validate")
+          .with(body: wrapped_target_string)
+          .to_return(status: 200, body: invalid_outcome)
+      end
+
+      it 'filters errors and errors start with the location when no prefix provided' do
+        result = validator.conforms_to_logical_model?(object, model_url, runnable)
+
+        expect(result).to be(false)
+        expect(runnable.messages.size).to eq(2)
+        runnable.messages.each do |message|
+          expect(message[:message]).to start_with('CDSHooksRequest')
+        end
+      end
+
+      it 'filters errors and errors start with the prefix when provided' do
+        prefix = 'context: '
+        result = validator.conforms_to_logical_model?(object, model_url, runnable, message_prefix: prefix)
+
+        expect(result).to be(false)
+        expect(runnable.messages.size).to eq(2)
+        runnable.messages.each do |message|
+          expect(message[:message]).to start_with(prefix)
+        end
+      end
+    end
+
+    it 'raises an exception when the object is not a hash' do
+      expect do
+        validator.conforms_to_logical_model?('{ "valid": "JSON" }', profile_url, runnable)
+      end.to raise_error(Inferno::Exceptions::TestSuiteImplementationException, /Expected a Hash/)
+    end
+
+    it 'raises and exception when no profile url is provided' do
+      expect do
+        validator.conforms_to_logical_model?({ 'valid' => 'JSON' }, '', runnable)
+      end.to raise_error(Inferno::Exceptions::TestSuiteImplementationException,
+                         /The profile of the logical model must be provided./)
     end
   end
 
@@ -434,7 +631,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           },
           filesToValidate: [
             {
-              fileName: 'Patient/.json',
+              fileName: "#{profile_url}.json",
               fileContent: resource.source_contents,
               fileType: 'json'
             }
@@ -487,7 +684,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           },
           filesToValidate: [
             {
-              fileName: 'Patient/.json',
+              fileName: "#{profile_url}.json",
               fileContent: resource.source_contents,
               fileType: 'json'
             }
@@ -1494,7 +1691,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       let(:unfiltered_issue) do
         Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'ERROR', 'location' => 'Patient.name', 'message' => 'Name required' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1507,7 +1704,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'location' => 'Patient.extension',
             'message' => "URL value 'http://example.com/bad' does not resolve"
           },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1534,14 +1731,14 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'location' => 'Coverage.extension',
             'message' => "URL value 'http://bad.url' does not resolve"
           },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
 
         parent_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Parent error' },
-          resource: resource,
+          target: resource,
           slice_info: [nested_url_issue],
           filtered: false
         )
@@ -1558,7 +1755,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
         custom_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'ERROR', 'location' => 'Patient', 'message' => 'custom filter applied' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1579,7 +1776,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'message' => 'Unable to find profile match',
             'messageId' => 'Reference_REF_CantMatchChoice'
           },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1590,7 +1787,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'location' => 'Coverage.payor[0]',
             'message' => 'Details for # matching'
           },
-          resource: resource,
+          target: resource,
           slice_info: [
             Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
               raw_issue: {
@@ -1598,7 +1795,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
                 'location' => 'Coverage.contained',
                 'message' => "URL value 'http://bad.url' does not resolve"
               },
-              resource: resource,
+              target: resource,
               slice_info: [],
               filtered: true # Already filtered by filter_individual_messages
             )
@@ -1621,7 +1818,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'message' => 'Already filtered',
             'messageId' => 'Reference_REF_CantMatchChoice'
           },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: true
         )
@@ -1640,21 +1837,21 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'message' => 'Deep nested Reference error',
             'messageId' => 'Reference_REF_CantMatchChoice'
           },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
 
         middle_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => 'Coverage.contained[1]', 'message' => 'Middle' },
-          resource: resource,
+          target: resource,
           slice_info: [deeply_nested_issue],
           filtered: false
         )
 
         parent_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Parent' },
-          resource: resource,
+          target: resource,
           slice_info: [middle_issue],
           filtered: false
         )
@@ -1679,7 +1876,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'message' => 'Cannot match',
             'messageId' => 'Reference_REF_CantMatchChoice'
           },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: true
         )
@@ -1695,7 +1892,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'message' => 'Name required',
             'messageId' => 'SomeOtherMessageId'
           },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1711,7 +1908,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'message' => 'Cannot match',
             'messageId' => 'Reference_REF_CantMatchChoice'
           },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1727,7 +1924,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'message' => 'Cannot match',
             'messageId' => 'Reference_REF_CantMatchChoice'
           },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1743,7 +1940,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'message' => 'Cannot match',
             'messageId' => 'Reference_REF_CantMatchChoice'
           },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1756,17 +1953,17 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       it 'returns true when one detail has all error slices filtered' do
         valid_detail = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Detail' },
-          resource: resource,
+          target: resource,
           slice_info: [
             Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
               raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Error' },
-              resource: resource,
+              target: resource,
               slice_info: [],
               filtered: true
             ),
             Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
               raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Error2' },
-              resource: resource,
+              target: resource,
               slice_info: [],
               filtered: true
             )
@@ -1781,11 +1978,11 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       it 'returns false when all details have unfiltered errors' do
         invalid_detail1 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Detail1' },
-          resource: resource,
+          target: resource,
           slice_info: [
             Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
               raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Error' },
-              resource: resource,
+              target: resource,
               slice_info: [],
               filtered: false
             )
@@ -1795,11 +1992,11 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
 
         invalid_detail2 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Detail2' },
-          resource: resource,
+          target: resource,
           slice_info: [
             Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
               raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Error2' },
-              resource: resource,
+              target: resource,
               slice_info: [],
               filtered: false
             )
@@ -1814,11 +2011,11 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       it 'returns true when detail has only warnings (no error slices)' do
         warning_detail = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Detail' },
-          resource: resource,
+          target: resource,
           slice_info: [
             Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
               raw_issue: { 'level' => 'WARNING', 'location' => 'Coverage', 'message' => 'Warning' },
-              resource: resource,
+              target: resource,
               slice_info: [],
               filtered: false
             )
@@ -1833,18 +2030,18 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       it 'returns true when at least one detail is valid among multiple' do
         valid_detail = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Valid' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
 
         invalid_detail = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => 'Coverage', 'message' => 'Invalid' },
-          resource: resource,
+          target: resource,
           slice_info: [
             Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
               raw_issue: { 'level' => 'ERROR', 'location' => 'Coverage', 'message' => 'Error' },
-              resource: resource,
+              target: resource,
               slice_info: [],
               filtered: false
             )
@@ -1868,21 +2065,21 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             'message' => 'Base error',
             'messageId' => 'Reference_REF_CantMatchChoice'
           },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
 
         details1 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => base_location, 'message' => 'Details for #1' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
 
         details2 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => base_location, 'message' => 'Details for #2' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1898,28 +2095,28 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         base_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'ERROR', 'location' => base_location, 'message' => 'Base',
                        'messageId' => 'Reference_REF_CantMatchChoice' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
 
         details1 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => base_location, 'message' => 'Details for #1' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
 
         other_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'ERROR', 'location' => base_location, 'message' => 'Other error' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
 
         details2 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => base_location, 'message' => 'Details for #2' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1936,21 +2133,21 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         base_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'ERROR', 'location' => base_location, 'message' => 'Base',
                        'messageId' => 'Reference_REF_CantMatchChoice' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
 
         details1 = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => base_location, 'message' => 'Details for #1' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
 
         details_other_location = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'INFO', 'location' => 'Coverage.payor[1]', 'message' => 'Details for #2' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1967,14 +2164,14 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         base_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'ERROR', 'location' => base_location, 'message' => 'Base',
                        'messageId' => 'Reference_REF_CantMatchChoice' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
 
         other_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'ERROR', 'location' => 'Patient.name', 'message' => 'Other' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )
@@ -1989,7 +2186,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         base_issue = Inferno::DSL::FHIRResourceValidation::ValidatorIssue.new(
           raw_issue: { 'level' => 'ERROR', 'location' => base_location, 'message' => 'Base',
                        'messageId' => 'Reference_REF_CantMatchChoice' },
-          resource: resource,
+          target: resource,
           slice_info: [],
           filtered: false
         )

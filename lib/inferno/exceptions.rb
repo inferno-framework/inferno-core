@@ -143,5 +143,12 @@ module Inferno
         super("Could not find a child with an ID ending in '#{id}' for '#{runnable}'.")
       end
     end
+
+    class TestSuiteImplementationException < StandardError
+      def initialize(feature, details)
+        super("This test suite incorrectly used the #{feature}. " \
+              "Contact the developer with the following details: #{details}")
+      end
+    end
   end
 end

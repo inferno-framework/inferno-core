@@ -1,6 +1,7 @@
 import React, { FC } from 'react';
 import { TestGroup, TestSuite } from '~/models/testSuiteModels';
 import { Typography, Box } from '@mui/material';
+// Simulation verification badge intentionally omitted from sidebar tree labels
 import useStyles from './styles';
 
 export interface TreeItemLabelProps {
@@ -27,6 +28,7 @@ const TreeItemLabel: FC<TreeItemLabelProps> = ({ runnable, title }) => {
             Optional
           </Typography>
         )}
+        {/* Simulation verification badge intentionally omitted from sidebar tree labels */}
       </Box>
     </Box>
   );

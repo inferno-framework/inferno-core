@@ -25,7 +25,7 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
                      'title', 'test_count', 'test_groups', 'tests',
                      'run_as_group', 'user_runnable', 'optional', 'short_title',
                      'short_description', 'input_instructions',
-                     'verifies_requirements']
+                     'verifies_requirements', 'is_simulation_verification']
 
     expect(serialized_group.keys).to match_array(expected_keys)
     expect(serialized_group['id']).to eq(group.id.to_s)

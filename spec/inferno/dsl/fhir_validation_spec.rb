@@ -73,6 +73,14 @@ RSpec.describe Inferno::DSL::FHIRValidation do
     end
   end
 
+  describe '#conforms_to_logical_model?' do
+    it 'Raises and implementation error' do
+      expect do
+        validator.conforms_to_logical_model?(nil, nil, runnable)
+      end.to raise_error(Inferno::Exceptions::TestSuiteImplementationException)
+    end
+  end
+
   describe '#resource_is_valid?' do
     let(:resource_string) do
       {

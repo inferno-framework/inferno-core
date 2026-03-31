@@ -1,4 +1,5 @@
 require_relative '../utils/markdown_formatter'
+require_relative '../exceptions'
 
 module Inferno
   module DSL
@@ -8,6 +9,15 @@ module Inferno
       # @private
       def messages
         @messages ||= []
+      end
+
+      # Returns true if an error message was logged to the runnable
+      #
+      # @param message_list [Array] (optional) list of messages to check for error,
+      #        if not provided, the runnable's current list of messages will be checked
+      # @return [Boolean]
+      def error_messages?(message_list: messages)
+        message_list.any? { |msg| msg[:type] == 'error' }
       end
 
       # Add a message to the result.

@@ -8,7 +8,7 @@ RSpec.describe Inferno::Web::Serializers::Test do
 
     expected_keys = ['id', 'short_id', 'description', 'inputs', 'outputs', 'title',
                      'user_runnable', 'optional', 'short_description', 'short_title',
-                     'input_instructions', 'verifies_requirements']
+                     'input_instructions', 'verifies_requirements', 'is_simulation_verification']
 
     expect(serialized_test.keys).to match_array(expected_keys)
     expect(serialized_test['id']).to eq(test.id.to_s)

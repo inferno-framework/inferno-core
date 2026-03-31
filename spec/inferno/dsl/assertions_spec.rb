@@ -21,6 +21,21 @@ RSpec.describe Inferno::DSL::Assertions do
       ]
     }
   end
+  let(:model_error_response) do
+    {
+      outcomes: [
+        {
+          issues: [
+            {
+              level: 'error',
+              location: 'MODEL',
+              message: 'ELEMENT: TEXT'
+            }
+          ]
+        }
+      ]
+    }
+  end
   let(:success_response) { { outcomes: [{}] } }
   let(:response_with_messages) do
     {
@@ -42,13 +57,40 @@ RSpec.describe Inferno::DSL::Assertions do
       ]
     }
   end
+  let(:model_response_with_messages) do
+    {
+      outcomes: [
+        {
+          issues: [
+            {
+              level: 'warning',
+              location: 'W_MODEL',
+              message: 'ELEMENT: W_TEXT'
+            },
+            {
+              level: 'information',
+              location: 'I_MODEL',
+              message: 'ELEMENT: I_TEXT'
+            }
+          ]
+        }
+      ]
+    }
+  end
   let(:assertion_exception) { Inferno::Exceptions::AssertionException }
+  let(:implementation_exception) { Inferno::Exceptions::TestSuiteImplementationException }
   let(:validation_url) { "#{ENV.fetch('FHIR_RESOURCE_VALIDATOR_URL')}/validate" }
   let(:patient_resource) { FHIR::Patient.new(id: SecureRandom.uuid) }
   let(:care_plan_resource) { FHIR::CarePlan.new(id: SecureRandom.uuid) }
   let(:profile_url) { 'PROFILE_URL' }
 
   def validation_body(resource, profile_url)
+    contents =
+      if resource.is_a?(Hash)
+        resource.to_json
+      else
+        resource.source_contents
+      end
     {
       cliContext: {
         sv: '4.0.1',
@@ -59,8 +101,8 @@ RSpec.describe Inferno::DSL::Assertions do
       },
       filesToValidate: [
         {
-          fileName: "#{resource.resourceType}/#{resource.id}.json",
-          fileContent: resource.source_contents,
+          fileName: "#{profile_url.split('/').last}.json",
+          fileContent: contents,
           fileType: 'json'
         }
       ],
@@ -177,7 +219,7 @@ RSpec.describe Inferno::DSL::Assertions do
     end
 
     context 'when no resource is provided' do
-      it 'uses its own resource' do
+      it 'uses its own resource if available' do
         allow(klass).to receive(:resource).and_return(patient_resource)
         validation_request =
           stub_request(:post, validation_url)
@@ -187,6 +229,26 @@ RSpec.describe Inferno::DSL::Assertions do
         klass.assert_valid_resource
 
         expect(validation_request).to have_been_made.once
+      end
+
+      it 'fails if no resource available on the runnable' do
+        allow(klass).to receive(:resource).and_return(nil)
+
+        expect { klass.assert_valid_resource }.to(
+          raise_error(assertion_exception, 'No resource to validate.')
+        )
+        expect(klass.messages.size).to eq(1)
+        expect(klass.messages.first[:message]).to eq('No resource to validate.')
+      end
+    end
+
+    context 'when a non-fhir resource is provided' do
+      it 'fails with an implementation error' do
+        allow(klass).to receive(:resource).and_return(nil)
+
+        expect { klass.assert_valid_resource(resource: { 'resourceType' => 'Patient' }) }.to(
+          raise_error(implementation_exception, /Expected a FHIR::Model, got a Hash/)
+        )
       end
     end
 
@@ -247,6 +309,21 @@ RSpec.describe Inferno::DSL::Assertions do
         expect(error_message).to be_present
         expect(error_message[:message]).to eq("Patient/#{patient_resource.id}: EXPRESSION: TEXT")
       end
+
+      it 'can add a prefix to the error message' do
+        stub_request(:post, validation_url)
+          .to_return(status: 200, body: error_response.to_json)
+
+        expect do
+          klass.assert_valid_resource(resource: patient_resource, profile_url:, message_prefix: 'context - ')
+        end.to(
+          raise_error(assertion_exception, klass.invalid_resource_message(patient_resource, profile_url))
+        )
+
+        error_message = klass.messages.find { |message| message[:type] == 'error' }
+        expect(error_message).to be_present
+        expect(error_message[:message]).to eq("context - Patient/#{patient_resource.id}: EXPRESSION: TEXT")
+      end
     end
 
     context 'when non-error issues are present' do
@@ -277,6 +354,23 @@ RSpec.describe Inferno::DSL::Assertions do
         expect(info_message[:message]).to eq("Patient/#{patient_resource.id}: I_EXPRESSION: I_TEXT")
       end
 
+      it 'adds warning/info messages with provided prefix' do
+        stub_request(:post, validation_url)
+          .to_return(status: 200, body: response_with_messages.to_json)
+
+        klass.assert_valid_resource(resource: patient_resource, profile_url:, message_prefix: 'context - ')
+
+        warning_message = klass.messages.find { |message| message[:type] == 'warning' }
+
+        expect(warning_message).to be_present
+        expect(warning_message[:message]).to eq("context - Patient/#{patient_resource.id}: W_EXPRESSION: W_TEXT")
+
+        info_message = klass.messages.find { |message| message[:type] == 'info' }
+
+        expect(info_message).to be_present
+        expect(info_message[:message]).to eq("context - Patient/#{patient_resource.id}: I_EXPRESSION: I_TEXT")
+      end
+
       it 'filters messages based on the exclude_message block' do
         filter = proc { |message| message.type == 'info' }
         allow(klass.class.find_validator(:default)).to receive(:exclude_message).and_return(filter)
@@ -290,6 +384,226 @@ RSpec.describe Inferno::DSL::Assertions do
 
         expect(warning_message).to be_present
         expect(warning_message[:message]).to eq("Patient/#{patient_resource.id}: W_EXPRESSION: W_TEXT")
+
+        info_message = klass.messages.find { |message| message[:type] == 'info' }
+
+        expect(info_message).to be_nil
+      end
+
+      it 'message filtering not impacted by message_prefix' do
+        filter = proc { |message| message.type == 'info' }
+        allow(klass.class.find_validator(:default)).to receive(:exclude_message).and_return(filter)
+
+        stub_request(:post, validation_url)
+          .to_return(status: 200, body: response_with_messages.to_json)
+
+        klass.assert_valid_resource(resource: patient_resource, profile_url:, message_prefix: 'context - ')
+
+        warning_message = klass.messages.find { |message| message[:type] == 'warning' }
+
+        expect(warning_message).to be_present
+        expect(warning_message[:message]).to eq("context - Patient/#{patient_resource.id}: W_EXPRESSION: W_TEXT")
+
+        info_message = klass.messages.find { |message| message[:type] == 'info' }
+
+        expect(info_message).to be_nil
+      end
+    end
+  end
+
+  describe '#assert_conformance_to_logical_model' do
+    let(:object) do
+      {
+        hook: 'encounter-start',
+        hookInstance: '753593b6-8fa1-45e3-a108-978256af0f5c',
+        context: {
+          userId: 'Practitioner/example',
+          patientId: 'example'
+        }
+      }
+    end
+    let(:model_url) { 'http://hl7.org/fhir/tools/StructureDefinition/CDSHooksRequest' }
+
+    context 'when an object is provided' do
+      it 'does not raise an exception if the object is conformant' do
+        validation_request =
+          stub_request(:post, validation_url)
+            .with(body: validation_body(object, model_url))
+            .to_return(status: 200, body: success_response.to_json)
+
+        klass.assert_conformance_to_logical_model(object, model_url)
+
+        expect(validation_request).to have_been_made.once
+      end
+    end
+
+    context 'when no object is provided' do
+      it 'fails with an assertion exception' do
+        validation_request =
+          stub_request(:post, validation_url)
+            .with(body: validation_body(object, model_url))
+            .to_return(status: 200, body: success_response.to_json)
+
+        expect { klass.assert_conformance_to_logical_model(nil, model_url) }.to(
+          raise_error(assertion_exception, "Object does not conform to the logical model: #{model_url}")
+        )
+
+        expect(validation_request).to_not have_been_made
+      end
+    end
+
+    context 'when a non-hash is provided' do
+      it 'fails with an implementation exception' do
+        validation_request =
+          stub_request(:post, validation_url)
+            .with(body: validation_body(object, model_url))
+            .to_return(status: 200, body: success_response.to_json)
+
+        expect { klass.assert_conformance_to_logical_model(FHIR::Patient.new, model_url) }.to(
+          raise_error(implementation_exception, /Expected a Hash, got a FHIR::R4::Patient/)
+        )
+
+        expect(validation_request).to_not have_been_made
+      end
+    end
+
+    context 'when no profile_url is provided' do
+      it 'fails with an implementation exception' do
+        expect { klass.assert_conformance_to_logical_model(object, nil) }.to(
+          raise_error(implementation_exception, /The profile of the logical model must be provided./)
+        )
+      end
+    end
+
+    context 'when a profile_url is provided' do
+      it 'uses the provided profile_url' do
+        validation_request =
+          stub_request(:post, validation_url)
+            .with(body: validation_body(object, model_url))
+            .to_return(status: 200, body: success_response.to_json)
+
+        klass.assert_conformance_to_logical_model(object, model_url)
+
+        expect(validation_request).to have_been_made.once
+      end
+    end
+
+    context 'when the resource is invalid' do
+      it 'raises an exception' do
+        stub_request(:post, validation_url)
+          .to_return(status: 200, body: model_error_response.to_json)
+
+        expect { klass.assert_conformance_to_logical_model(object, model_url) }.to(
+          raise_error(assertion_exception, klass.invalid_object_message(model_url))
+        )
+      end
+
+      it 'adds an error message' do
+        stub_request(:post, validation_url)
+          .to_return(status: 200, body: model_error_response.to_json)
+
+        expect { klass.assert_conformance_to_logical_model(object, model_url) }.to(
+          raise_error(assertion_exception, klass.invalid_object_message(model_url))
+        )
+
+        error_message = klass.messages.find { |message| message[:type] == 'error' }
+        expect(error_message).to be_present
+        expect(error_message[:message]).to eq('MODEL: ELEMENT: TEXT')
+      end
+
+      it 'can add a prefix to the error message' do
+        stub_request(:post, validation_url)
+          .to_return(status: 200, body: model_error_response.to_json)
+
+        expect do
+          klass.assert_conformance_to_logical_model(object, model_url, message_prefix: 'context - ')
+        end.to(
+          raise_error(assertion_exception, klass.invalid_object_message(model_url))
+        )
+
+        error_message = klass.messages.find { |message| message[:type] == 'error' }
+        expect(error_message).to be_present
+        expect(error_message[:message]).to eq('context - MODEL: ELEMENT: TEXT')
+      end
+    end
+
+    context 'when non-error issues are present' do
+      it 'does not raise an exception' do
+        validation_request =
+          stub_request(:post, validation_url)
+            .to_return(status: 200, body: model_response_with_messages.to_json)
+
+        klass.assert_conformance_to_logical_model(object, model_url)
+
+        expect(validation_request).to have_been_made.once
+      end
+
+      it 'adds warning/info messages' do
+        stub_request(:post, validation_url)
+          .to_return(status: 200, body: model_response_with_messages.to_json)
+
+        klass.assert_conformance_to_logical_model(object, model_url)
+
+        warning_message = klass.messages.find { |message| message[:type] == 'warning' }
+
+        expect(warning_message).to be_present
+        expect(warning_message[:message]).to eq('W_MODEL: ELEMENT: W_TEXT')
+
+        info_message = klass.messages.find { |message| message[:type] == 'info' }
+
+        expect(info_message).to be_present
+        expect(info_message[:message]).to eq('I_MODEL: ELEMENT: I_TEXT')
+      end
+
+      it 'adds warning/info messages with provided prefix' do
+        stub_request(:post, validation_url)
+          .to_return(status: 200, body: model_response_with_messages.to_json)
+
+        klass.assert_conformance_to_logical_model(object, model_url, message_prefix: 'context - ')
+
+        warning_message = klass.messages.find { |message| message[:type] == 'warning' }
+
+        expect(warning_message).to be_present
+        expect(warning_message[:message]).to eq('context - W_MODEL: ELEMENT: W_TEXT')
+
+        info_message = klass.messages.find { |message| message[:type] == 'info' }
+
+        expect(info_message).to be_present
+        expect(info_message[:message]).to eq('context - I_MODEL: ELEMENT: I_TEXT')
+      end
+
+      it 'filters messages based on the exclude_message block' do
+        filter = proc { |message| message.type == 'info' }
+        allow(klass.class.find_validator(:default)).to receive(:exclude_message).and_return(filter)
+
+        stub_request(:post, validation_url)
+          .to_return(status: 200, body: model_response_with_messages.to_json)
+
+        klass.assert_conformance_to_logical_model(object, model_url)
+
+        warning_message = klass.messages.find { |message| message[:type] == 'warning' }
+
+        expect(warning_message).to be_present
+        expect(warning_message[:message]).to eq('W_MODEL: ELEMENT: W_TEXT')
+
+        info_message = klass.messages.find { |message| message[:type] == 'info' }
+
+        expect(info_message).to be_nil
+      end
+
+      it 'filtering not impacted by message_prefix' do
+        filter = proc { |message| message.type == 'info' }
+        allow(klass.class.find_validator(:default)).to receive(:exclude_message).and_return(filter)
+
+        stub_request(:post, validation_url)
+          .to_return(status: 200, body: model_response_with_messages.to_json)
+
+        klass.assert_conformance_to_logical_model(object, model_url, message_prefix: 'context - ')
+
+        warning_message = klass.messages.find { |message| message[:type] == 'warning' }
+
+        expect(warning_message).to be_present
+        expect(warning_message[:message]).to eq('context - W_MODEL: ELEMENT: W_TEXT')
 
         info_message = klass.messages.find { |message| message[:type] == 'info' }
 
@@ -333,6 +647,29 @@ RSpec.describe Inferno::DSL::Assertions do
         )
 
         expect(validation_requests).to all(have_been_made.once)
+      end
+
+      it 'logs messages with the provided prefix' do
+        patient_validation_body =
+          validation_body(patient_resource, FHIR::Definitions.resource_definition('Patient').url)
+        care_plan_validation_body =
+          validation_body(care_plan_resource, FHIR::Definitions.resource_definition('CarePlan').url)
+        validation_requests =
+          [
+            stub_request(:post, validation_url)
+              .with(body: patient_validation_body)
+              .to_return(status: 200, body: success_response.to_json),
+            stub_request(:post, validation_url)
+              .with(body: care_plan_validation_body)
+              .to_return(status: 200, body: error_response.to_json)
+          ]
+
+        expect { klass.assert_valid_bundle_entries(bundle:, message_prefix: 'context - ') }.to(
+          raise_error(assertion_exception, klass.invalid_bundle_entries_message([care_plan_resource]))
+        )
+
+        expect(validation_requests).to all(have_been_made.once)
+        expect(klass.messages.first[:message]).to start_with('context - ')
       end
     end
 
@@ -555,6 +892,119 @@ RSpec.describe Inferno::DSL::Assertions do
       profile_url = 'http://example.com/badprofile'
       expect { test_klass.assert_must_support_elements_present([], profile_url) }.to(
         raise_error(RuntimeError, "Unable to find profile #{profile_url} in any IG defined for validator default")
+      )
+    end
+  end
+
+  describe '#assert_valid_json' do
+    it 'does not raise an exception when the json is valid' do
+      expect do
+        klass.assert_valid_json('{ "valid": "json" }')
+      end.to_not raise_error
+    end
+
+    it 'raises an exception when the json is not valid' do
+      expect do
+        klass.assert_valid_json('NOT JSON')
+      end.to(
+        raise_error(assertion_exception, 'Invalid JSON. ')
+      )
+    end
+
+    it 'raises an exception with additional message details when the json is not valid' do
+      expect do
+        klass.assert_valid_json('', 'Extra message.')
+      end.to(
+        raise_error(assertion_exception, 'Invalid JSON. Extra message.')
+      )
+    end
+  end
+
+  describe '#parsed_json_if_valid' do
+    it 'returns the parsed json hash when the json is valid' do
+      result = klass.parsed_json_if_valid('{ "valid": "json" }')
+      expect(result).to eq({ 'valid' => 'json' })
+    end
+
+    it 'raises an exception when the json is not valid and continue is false' do
+      expect do
+        klass.parsed_json_if_valid('NOT JSON', continue: false)
+      end.to(
+        raise_error(assertion_exception, 'Invalid JSON. ')
+      )
+    end
+
+    it 'adds an error message and returns nil when the json is not valid and continue is true' do
+      result = klass.parsed_json_if_valid('', continue: true)
+      expect(result).to be_nil
+      expect(klass.messages.size).to eq(1)
+      expect(klass.messages[0][:message]).to eq('Invalid JSON. ')
+    end
+
+    it 'adds an error message and returns nil when the json is not valid and continue not provided' do
+      result = klass.parsed_json_if_valid('')
+      expect(result).to be_nil
+      expect(klass.messages.size).to eq(1)
+      expect(klass.messages[0][:message]).to eq('Invalid JSON. ')
+    end
+
+    it 'raises an exception with extra details when the json is not valid and continue is false' do
+      expect do
+        klass.parsed_json_if_valid('NOT JSON', 'details', continue: false)
+      end.to(
+        raise_error(assertion_exception, 'Invalid JSON. details')
+      )
+    end
+
+    it 'adds an error message with extra details and returns nil when the json is not valid and continue is true' do
+      result = klass.parsed_json_if_valid('', 'details', continue: true)
+      expect(result).to be_nil
+      expect(klass.messages.size).to eq(1)
+      expect(klass.messages[0][:message]).to eq('Invalid JSON. details')
+    end
+  end
+
+  describe '#assert_no_error_messages' do
+    it 'does not raise an exception when there are no messages' do
+      expect do
+        klass.assert_no_error_messages('', message_list: [])
+      end.to_not raise_error
+    end
+
+    it 'does not raise an exception when there is only a warning message' do
+      expect do
+        klass.assert_no_error_messages('',
+                                       message_list: [{ type: 'warning', message: 'This is not an error' },
+                                                      { type: 'info', message: 'This is also not an error' }])
+      end.to_not raise_error
+    end
+
+    it 'raises an exception if there is an error with a default message' do
+      expect do
+        klass.assert_no_error_messages('',
+                                       message_list: [{ type: 'warning', message: 'This is not an error' },
+                                                      { type: 'error', message: 'This is also not an error' }])
+      end.to(
+        raise_error(assertion_exception, 'Errors found - see Messages for details.')
+      )
+    end
+
+    it 'raises an exception if there is an error with a custom message' do
+      expect do
+        klass.assert_no_error_messages('custom error message',
+                                       message_list: [{ type: 'warning', message: 'This is not an error' },
+                                                      { type: 'error', message: 'This is an error' }])
+      end.to(
+        raise_error(assertion_exception, 'custom error message')
+      )
+    end
+
+    it 'raises an exception if there is an error in the local message list' do
+      expect do
+        klass.add_message(:error, 'This is an error')
+        klass.assert_no_error_messages('custom error message')
+      end.to(
+        raise_error(assertion_exception, 'custom error message')
       )
     end
   end

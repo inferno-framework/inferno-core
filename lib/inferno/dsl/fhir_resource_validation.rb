@@ -1,5 +1,6 @@
 require_relative '../ext/fhir_models'
 require_relative '../feature'
+require_relative '../exceptions'
 module Inferno
   module DSL
     # This module contains the methods needed to configure a validator to
@@ -161,35 +162,88 @@ module Inferno
 
         # Validate a FHIR resource and determine if it's valid.
         # Adds validation messages to the runnable if add_messages_to_runnable is true.
+        def conforms_to_logical_model?(object, model_url, runnable, add_messages_to_runnable: true,
+                                       message_prefix: '', validator_response_details: nil)
+
+          unless model_url.present?
+            raise Inferno::Exceptions::TestSuiteImplementationException.new(
+              'Logical Model Validation',
+              'The profile of the logical model must be provided.'
+            )
+          end
+
+          unless object.present?
+            if add_messages_to_runnable
+              runnable.add_message(:error,
+                                   "#{message_prefix}No object to check for conformance.")
+            end
+            return false
+          end
+
+          unless object.is_a?(Hash)
+            raise Inferno::Exceptions::TestSuiteImplementationException.new(
+              'Logical Model Validation',
+              "Expected a Hash, got a #{object.class}."
+            )
+          end
+
+          conformant?(object, model_url, runnable, add_messages_to_runnable:, message_prefix:,
+                                                   validator_response_details:)
+        end
+
+        # Validate a FHIR resource and determine if it's valid.
+        # Adds validation messages to the runnable if add_messages_to_runnable is true.
         #
         # @see Inferno::DSL::FHIRResourceValidation#resource_is_valid?
         # @param resource [FHIR::Model] the resource to validate
         # @param profile_url [String] the profile URL to validate against
         # @param runnable [Object] the runnable context (test/group/suite)
         # @param add_messages_to_runnable [Boolean] whether to add messages to the runnable
+        # @param message_prefix [String] Prefix to add to the start of logged messages
         # @param validator_response_details [Array, nil] if not nil, the service will populate this array with
         #   the detailed response message from the validator service. Can be used by test kits to perform custom
         #   handling of error messages.
         # @return [Boolean] true if the resource is valid
         def resource_is_valid?(resource, profile_url, runnable, add_messages_to_runnable: true,
-                               validator_response_details: nil)
+                               message_prefix: '', validator_response_details: nil)
+
+          unless resource.present?
+            runnable.add_message(:error, "#{message_prefix}No resource to validate.") if add_messages_to_runnable
+            return false
+          end
+
+          unless resource.is_a?(FHIR::Model)
+            raise Inferno::Exceptions::TestSuiteImplementationException.new(
+              'FHIR Resource Validation',
+              "Expected a FHIR::Model, got a #{resource.class}."
+            )
+
+          end
           profile_url ||= FHIR::Definitions.resource_definition(resource.resourceType).url
 
+          conformant?(resource, profile_url, runnable, add_messages_to_runnable:, message_prefix:,
+                                                       validator_response_details:)
+        end
+
+        # @private
+        def conformant?(target, profile_url, runnable, add_messages_to_runnable: true,
+                        message_prefix: '', validator_response_details: nil)
+
           # 1. Get raw content from validator
-          response = get_raw_validator_content(resource, profile_url, runnable)
+          response = get_raw_validator_content(target, profile_url, runnable)
 
           # 2. Convert to validation issues
-          issues = get_issues_from_validator_response(response, resource)
+          issues = get_issues_from_validator_response(response, target)
 
           # 3. Add additional validation messages
-          issues = join_additional_validation_messages(issues, resource, profile_url)
+          issues = join_additional_validation_messages(issues, target, profile_url)
 
           # 4. Mark resources as filtered
           mark_issues_for_filtering(issues)
 
           # 5. Add error messages to runnable
           filtered_issues = issues.reject(&:filtered)
-          add_validation_messages_to_runnable(runnable, filtered_issues) if add_messages_to_runnable
+          add_validation_messages_to_runnable(runnable, filtered_issues, message_prefix:) if add_messages_to_runnable
           validator_response_details&.concat(issues)
 
           # 6. Return validity
@@ -204,12 +258,12 @@ module Inferno
 
         # @private
         # Gets raw content from validator including error handling
-        # @param resource [FHIR::Model] the resource to validate
+        # @param target [FHIR::Model, Hash] the object to validate
         # @param profile_url [String] the profile URL to validate against
         # @param runnable [Object] the runnable context
         # @return [Faraday::Response] the HTTP response from the validator
-        def get_raw_validator_content(resource, profile_url, runnable)
-          response = call_validator(resource, profile_url)
+        def get_raw_validator_content(target, profile_url, runnable)
+          response = call_validator(target, profile_url)
 
           unless response.status == 200
             raise Inferno::Exceptions::ErrorInValidatorException,
@@ -225,19 +279,19 @@ module Inferno
 
         # @private
         # Adds validation messages to the runnable
-        def add_validation_messages_to_runnable(runnable, filtered_issues)
+        def add_validation_messages_to_runnable(runnable, filtered_issues, message_prefix: '')
           filtered_issues.each do |issue|
-            runnable.add_message(issue.severity, issue.message)
+            runnable.add_message(issue.severity, "#{message_prefix}#{issue.message}")
           end
         end
 
         # Warm up the validator session by sending a test validation request.
         # This initializes the validator session and persists it for future use.
         #
-        # @param resource [FHIR::Model] the resource to validate
+        # @param target [FHIR::Model, Hash] the object to validate
         # @param profile_url [String] the profile URL to validate against
-        def warm_up(resource, profile_url)
-          response_body = validate(resource, profile_url)
+        def warm_up(target, profile_url)
+          response_body = validate(target, profile_url)
           res = JSON.parse(response_body)
           session_id = res['sessionId']
           validator_session_repo.save(test_suite_id:, validator_session_id: session_id,
@@ -253,9 +307,9 @@ module Inferno
         # Recursively processes slice information.
         #
         # @param response [Faraday::Response] the HTTP response from the validator
-        # @param resource [FHIR::Model] the resource being validated
+        # @param target [FHIR::Model, Hash] the object being validated
         # @return [Array<ValidatorIssue>] list of validator issues
-        def get_issues_from_validator_response(response, resource)
+        def get_issues_from_validator_response(response, target)
           response_body = remove_invalid_characters(response.body)
           response_hash = JSON.parse(response_body)
 
@@ -268,7 +322,7 @@ module Inferno
           raw_issues = response_hash.dig('outcomes', 0, 'issues') || []
 
           raw_issues.map do |raw_issue|
-            convert_raw_issue_to_validator_issue(raw_issue, resource)
+            convert_raw_issue_to_validator_issue(raw_issue, target)
           end
         end
 
@@ -277,28 +331,28 @@ module Inferno
         # Recursively processes sliceInfo if present.
         #
         # @param raw_issue [Hash] the raw issue from validator response
-        # @param resource [FHIR::Model] the resource being validated
+        # @param target [FHIR::Model, Hash] the object being validated
         # @return [ValidatorIssue] the converted validator issue
-        def convert_raw_issue_to_validator_issue(raw_issue, resource)
+        def convert_raw_issue_to_validator_issue(raw_issue, target)
           # Recursively process sliceInfo
           slice_info = []
           if raw_issue['sliceInfo']&.any?
             slice_info = raw_issue['sliceInfo'].map do |slice_issue|
-              convert_raw_issue_to_validator_issue(slice_issue, resource)
+              convert_raw_issue_to_validator_issue(slice_issue, target)
             end
           end
 
           ValidatorIssue.new(
             raw_issue: raw_issue,
-            resource: resource,
+            target: target,
             slice_info: slice_info,
             filtered: false
           )
         end
 
         # @private
-        def call_validator(resource, profile_url)
-          request_body = wrap_resource_for_hl7_wrapper(resource, profile_url)
+        def call_validator(target, profile_url)
+          request_body = wrap_target_for_hl7_wrapper(target, profile_url)
           Faraday.new(
             url,
             request: { timeout: 600 }
@@ -306,14 +360,14 @@ module Inferno
         end
 
         # @private
-        # Post a resource to the validation service for validating.
+        # Post an object to the validation service for validating.
         # Returns the raw validator response body.
         #
-        # @param resource [FHIR::Model]
+        # @param target [FHIR::Model, Hash]
         # @param profile_url [String]
         # @return [String] the body of the validation response
-        def validate(resource, profile_url)
-          call_validator(resource, profile_url).body
+        def validate(target, profile_url)
+          call_validator(target, profile_url).body
         end
 
         # Add a specific error message for specific network problems to help the user
@@ -351,11 +405,11 @@ module Inferno
         # Joins additional validation messages to the issues list
         #
         # @param issues [Array<ValidatorIssue>] the list of validator issues
-        # @param resource [FHIR::Model] the resource being validated
+        # @param target [FHIR::Model] the object being validated
         # @param profile_url [String] the profile URL being validated against
         # @return [Array<ValidatorIssue>] the complete list of issues including additional messages
-        def join_additional_validation_messages(issues, resource, profile_url)
-          additional_issues = additional_validation_messages(resource, profile_url)
+        def join_additional_validation_messages(issues, target, profile_url)
+          additional_issues = additional_validation_messages(target, profile_url)
           issues + additional_issues
         end
 
@@ -376,12 +430,12 @@ module Inferno
         # Gets additional validation messages from custom validation blocks.
         # Converts the message hashes to ValidatorIssue objects.
         #
-        # @param resource [FHIR::Model] the resource being validated
+        # @param target [FHIR::Model, Hash] the object being validated
         # @param profile_url [String] the profile URL being validated against
         # @return [Array<ValidatorIssue>] list of additional validator issues
-        def additional_validation_messages(resource, profile_url)
+        def additional_validation_messages(target, profile_url)
           additional_validations
-            .flat_map { |step| step.call(resource, profile_url) }
+            .flat_map { |step| step.call(target, profile_url) }
             .select { |message| message.is_a? Hash }
             .map do |message_hash|
               # Create a synthetic raw_issue for additional validation messages
@@ -392,7 +446,7 @@ module Inferno
               }
               ValidatorIssue.new(
                 raw_issue: synthetic_raw_issue,
-                resource: resource,
+                target: target,
                 slice_info: [],
                 filtered: false
               )
@@ -536,7 +590,7 @@ module Inferno
         end
 
         # @private
-        def wrap_resource_for_hl7_wrapper(resource, profile_url)
+        def wrap_target_for_hl7_wrapper(target, profile_url)
           validator_session_id =
             validator_session_repo.find_validator_session_id(test_suite_id,
                                                              name.to_s, requirements)
@@ -547,6 +601,13 @@ module Inferno
           # This allows backward compatibility until the validator-wrapper is updated.
           context_key = Feature.use_validation_context_key? ? :validationContext : :cliContext
 
+          file_contents =
+            if target.is_a?(Hash)
+              target.to_json
+            else
+              target.source_contents
+            end
+
           wrapped_resource = {
             context_key => {
               **validation_context.definition,
@@ -554,8 +615,8 @@ module Inferno
             },
             filesToValidate: [
               {
-                fileName: "#{resource.resourceType}/#{resource.id}.json",
-                fileContent: resource.source_contents,
+                fileName: "#{profile_url.split('/').last}.json",
+                fileContent: file_contents,
                 fileType: 'json'
               }
             ],
@@ -598,16 +659,16 @@ module Inferno
       # ValidatorIssue represents a single validation issue returned from the FHIR validator
       class ValidatorIssue
         attr_accessor :filtered, :raw_issue, :slice_info
-        attr_reader :resource
+        attr_reader :target
 
         # Creates a new ValidatorIssue
         # @param raw_issue [Hash] the raw issue hash from the validator response
-        # @param resource [FHIR::Model] the resource being validated
+        # @param target [FHIR::Model, Hash] the object being validated
         # @param slice_info [Array<ValidatorIssue>] nested slice information as ValidatorIssue objects
         # @param filtered [Boolean] whether this issue has been filtered out
-        def initialize(raw_issue:, resource:, slice_info: [], filtered: false)
+        def initialize(raw_issue:, target:, slice_info: [], filtered: false)
           @raw_issue = raw_issue
-          @resource = resource
+          @target = target
           @slice_info = slice_info
           @filtered = filtered
         end
@@ -641,8 +702,15 @@ module Inferno
           # Don't add prefix for additional validation messages
           return details_text if location_value == 'additional_validation'
 
-          location_prefix = resource.id ? "#{resource.resourceType}/#{resource.id}" : resource.resourceType
-          "#{location_prefix}: #{location_value}: #{details_text}"
+          "#{location_prefix}#{location_value}: #{details_text}"
+        end
+
+        def location_prefix
+          if target.is_a?(Hash)
+            ''
+          else
+            "#{target.id ? "#{target.resourceType}/#{target.id}" : target.resourceType}: "
+          end
         end
 
         # Converts the validator's severity level to our standard format
