@@ -822,8 +822,6 @@ module Inferno
 
       def test_suite_input_matches?(test_suite, input_name, matches_pattern, not_matches_pattern)
         value = Array(test_suite['inputs']).find { |i| i['name'] == input_name }&.dig('value')
-        return false if value.nil?
-
         string_matches?(value.to_s, matches_pattern, not_matches_pattern)
       end
 
