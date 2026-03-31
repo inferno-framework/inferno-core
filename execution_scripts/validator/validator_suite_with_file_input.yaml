@@ -1,0 +1,18 @@
+sessions:
+  - suite: dev_validator
+
+steps:
+  - status: created
+    state_description: created
+    action_description: run the suite
+    start_run:
+      runnable: suite
+      inputs:
+        url: http://inferno.healthit.gov/reference-server/r4
+        access_token: SAMPLE_TOKEN
+        patient_id: 85
+        coverage_json: '@coverage_json_input.json'
+
+  - status: done
+    last_completed: suite
+    action: END_SCRIPT

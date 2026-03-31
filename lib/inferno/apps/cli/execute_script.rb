@@ -74,6 +74,9 @@ module Inferno
     #                                              #           an internal long id, or 'suite'
     #         inputs:                              # optional; the key must be the internal name
     #           input_name: "value"                #           for the input
+    #           input_name: "@path/to/file.txt"    #           prefix value with @ to read from a file;
+    #                                              #           relative paths are resolved from the
+    #                                              #           directory containing this script file
     #       timeout: 300                           # optional; seconds to wait for next match
     #       next_poll_session: other_name          # optional; switch polling target after command
     #       state_description: "..."               # optional; logged when step is matched
@@ -643,10 +646,20 @@ module Inferno
           start_run['session'] = apply_templates(start_run['session'], status, session_key)
         end
         start_run['inputs']&.each_key do |input_name|
-          start_run['inputs'][input_name] = apply_templates(start_run['inputs'][input_name].to_s, status, session_key)
+          value = apply_templates(start_run['inputs'][input_name].to_s, status, session_key)
+          start_run['inputs'][input_name] = expand_file_input_path(value)
         end
 
         start_run
+      end
+
+      def expand_file_input_path(value)
+        return value unless value.start_with?('@')
+
+        path = value[1..]
+        return value if Pathname.new(path).absolute?
+
+        "@#{File.expand_path(path, File.dirname(yaml_file))}"
       end
 
       # ---------------------------------------------------------------------------

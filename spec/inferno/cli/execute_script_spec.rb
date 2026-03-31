@@ -134,6 +134,67 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
+  describe '#expand_file_input_path' do
+    subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
+
+    it 'leaves non-@ values unchanged' do
+      expect(instance.send(:expand_file_input_path, 'plain value')).to eq('plain value')
+    end
+
+    it 'leaves absolute @paths unchanged' do
+      expect(instance.send(:expand_file_input_path, '@/absolute/path/file.json')).to eq('@/absolute/path/file.json')
+    end
+
+    it 'expands a relative @path to absolute using the yaml_file directory' do
+      # build_instance passes 'script.yaml' as yaml_file; dirname is '.'
+      expected = "@#{File.expand_path('data.json', '.')}"
+      expect(instance.send(:expand_file_input_path, '@data.json')).to eq(expected)
+    end
+
+    it 'expands a relative @path with subdirectory components' do
+      expected = "@#{File.expand_path('subdir/data.json', '.')}"
+      expect(instance.send(:expand_file_input_path, '@subdir/data.json')).to eq(expected)
+    end
+  end
+
+  describe '#apply_templates_to_start_run' do
+    subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
+
+    let(:status) { {} }
+    let(:session_key) { suite_id }
+
+    it 'expands relative @paths in inputs to absolute paths after template substitution' do
+      start_run = { 'runnable' => 'suite', 'inputs' => { 'coverage_json' => '@data.json' } }
+      result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+      expected_path = "@#{File.expand_path('data.json', '.')}"
+      expect(result['inputs']['coverage_json']).to eq(expected_path)
+    end
+
+    it 'leaves non-@ input values unchanged' do
+      start_run = { 'runnable' => 'suite', 'inputs' => { 'url' => 'https://example.com' } }
+      result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+      expect(result['inputs']['url']).to eq('https://example.com')
+    end
+
+    it 'does not apply template substitution to @path contents (file content is verbatim)' do
+      # Template substitution runs on the raw YAML value before file expansion.
+      # A plain string with a token is substituted; an @path is expanded but its
+      # content (read at run time by start_run) is never touched by apply_templates.
+      start_run = { 'runnable' => 'suite', 'inputs' => { 'url' => '{inferno_base_url}', 'data' => '@data.json' } }
+      result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+      # The plain token is substituted
+      expect(result['inputs']['url']).to eq(inferno_host)
+      # The @path is expanded but still an @path (file content not read here)
+      expect(result['inputs']['data']).to start_with('@/')
+    end
+
+    it 'leaves absolute @paths unchanged' do
+      start_run = { 'runnable' => 'suite', 'inputs' => { 'cert' => '@/etc/ssl/cert.pem' } }
+      result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+      expect(result['inputs']['cert']).to eq('@/etc/ssl/cert.pem')
+    end
+  end
+
   describe '#compare_session' do
     subject(:instance) do
       build_instance({

@@ -203,6 +203,40 @@ RSpec.describe Inferno::CLI::Session::StartRun do
       end.to output("#{JSON.pretty_generate(error_body)}\n").to_stdout
     end
 
+    context 'when an input value is a @file reference' do
+      it 'reads the file content and uses it as the input value' do
+        Tempfile.create(['input', '.json']) do |f|
+          f.write('{"resourceType":"Coverage"}')
+          f.flush
+
+          stub_session_details
+          stub_session_data(body: [{ 'name' => 'url', 'value' => '', 'type' => 'text' }].to_json)
+          run_request = stub_request(:post, test_runs_url)
+            .with(body: hash_including(inputs: [{ 'name' => 'url', 'value' => '{"resourceType":"Coverage"}' }]))
+            .to_return(status: 200, body: run_response.to_json)
+
+          expect do
+            expect { described_class.new(session_id, options.merge(inputs: { 'url' => "@#{f.path}" })).run }
+              .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
+          end.to output(/.+/).to_stdout
+
+          expect(run_request).to have_been_made.once
+        end
+      end
+
+      it 'exits 3 and prints an error when the referenced file does not exist' do
+        path = '/nonexistent/path/file.json'
+        stub_session_details
+        stub_session_data
+        expected_error = { errors: "File input not found: #{path}" }
+
+        expect do
+          expect { described_class.new(session_id, options.merge(inputs: { 'url' => "@#{path}" })).run }
+            .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+        end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
+      end
+    end
+
     context 'when processing auth_info inputs' do
       let(:auth_input_name) { 'smart_credentials' }
 

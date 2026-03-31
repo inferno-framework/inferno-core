@@ -73,7 +73,20 @@ module Inferno
         end
 
         def user_inputs
-          @user_inputs ||= options[:inputs] || {}
+          @user_inputs ||= resolve_file_inputs(options[:inputs] || {})
+        end
+
+        def resolve_file_inputs(inputs)
+          inputs.transform_values do |value|
+            next value unless value.to_s.start_with?('@')
+
+            path = File.expand_path(value[1..])
+            unless File.exist?(path)
+              puts JSON.pretty_generate({ errors: "File input not found: #{path}" })
+              exit(3)
+            end
+            File.read(path)
+          end
         end
 
         def runnable_inputs
