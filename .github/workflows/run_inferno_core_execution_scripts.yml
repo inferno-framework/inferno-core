@@ -86,7 +86,7 @@ jobs:
           prefix=$(basename "${{ matrix.config }}" .yaml)
           echo "dir=$dir" >> "$GITHUB_OUTPUT"
           echo "prefix=$prefix" >> "$GITHUB_OUTPUT"
-          echo "name=debug-$(basename $dir)" >> "$GITHUB_OUTPUT"
+          echo "name=debug-$prefix" >> "$GITHUB_OUTPUT"
           mkdir -p /tmp/docker_logs
           for service in $(docker compose -f docker-compose.background.yml config --services 2>/dev/null || true); do
             docker compose -f docker-compose.background.yml logs "$service" > "/tmp/docker_logs/${service}.log" 2>&1 || true
@@ -98,8 +98,8 @@ jobs:
         with:
           name: ${{ steps.debug-paths.outputs.name }}
           path: |
-            ${{ steps.debug-paths.outputs.dir }}/${{ steps.debug-paths.outputs.prefix }}_actual_results_*.json
-            ${{ steps.debug-paths.outputs.dir }}/${{ steps.debug-paths.outputs.prefix }}_compared_results_*.csv
+            ${{ steps.debug-paths.outputs.dir }}/${{ steps.debug-paths.outputs.prefix }}*_actual_results_*.json
+            ${{ steps.debug-paths.outputs.dir }}/${{ steps.debug-paths.outputs.prefix }}*_compared_results_*.csv
             /tmp/inferno.log
             /tmp/docker_logs/*.log
           if-no-files-found: ignore
