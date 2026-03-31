@@ -59,6 +59,23 @@ module DevValidatorSuite
           assert_valid_resource
         end
       end
+
+      test do
+        title 'Validate Patient from File'
+        id :patient_validate_from_file_test
+
+        input :patient_json,
+              title: 'Patient Resource JSON',
+              description: 'JSON content of a US Core 6.1.0 Patient resource.',
+              type: 'textarea'
+
+        run do
+          assert_valid_json(patient_json)
+          patient = FHIR.from_contents(patient_json)
+          assert_resource_type(:patient, resource: patient)
+          assert_valid_resource(resource: patient, profile_url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-patient')
+        end
+      end
     end
 
     group do
