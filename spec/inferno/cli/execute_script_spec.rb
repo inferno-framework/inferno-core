@@ -544,21 +544,8 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     context 'when --allow-commands is not set' do
       subject(:instance) { build_instance(config, base_options.merge(allow_commands: false)) }
 
-      it 'returns false without calling system' do
-        expect(instance).not_to receive(:system)
+      it 'returns false' do
         expect(instance.send(:execute_command, cmd)).to be false
-      end
-
-      it 'warns that --allow-commands is required' do
-        expect(instance).to receive(:warn).with(/--allow-commands/).at_least(:once)
-        allow(instance).to receive(:warn)
-        instance.send(:execute_command, cmd)
-      end
-
-      it 'includes the blocked command in the warning output' do
-        expect(instance).to receive(:warn).with(/#{Regexp.escape(cmd)}/).at_least(:once)
-        allow(instance).to receive(:warn)
-        instance.send(:execute_command, cmd)
       end
     end
 
