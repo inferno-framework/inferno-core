@@ -67,9 +67,11 @@ module DevValidatorSuite
         input :patient_json,
               title: 'Patient Resource JSON',
               description: 'JSON content of a US Core 6.1.0 Patient resource.',
-              type: 'textarea'
+              type: 'textarea',
+              optional: true
 
         run do
+          omit_if patient_json.blank?, 'No patient to validate.'
           assert_valid_json(patient_json)
           patient = FHIR.from_contents(patient_json)
           assert_resource_type(:patient, resource: patient)
