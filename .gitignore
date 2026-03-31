@@ -23,6 +23,7 @@
 .settings/org.eclipse.wst.jsdt.ui.superType.name
 .idea
 .byebug_history
+.claude/*
 
 /coverage
 /spec/examples.txt

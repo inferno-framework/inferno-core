@@ -12,6 +12,7 @@ steps:
         access_token: SAMPLE_TOKEN
         patient_id: 85
         coverage_json: '@coverage_json_input.json'
+    timeout: 600 # allow for validator startup
 
   - status: done
     last_completed: suite
