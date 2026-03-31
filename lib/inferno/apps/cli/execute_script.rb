@@ -66,7 +66,8 @@ module Inferno
     #       action: end_script|noop|wait           # optional; built-in action
     #                                              #           (mutually exclusive with command/start_run)
     #       # OR
-    #       command: "bundle exec ..."             # optional; arbitrary shell command
+    #       command: "bundle exec ..."             # optional; arbitrary shell command (requires
+    #                                              #           --allow-commands CLI flag)
     #       # OR
     #       start_run:
     #         session: "{session_id}"              # optional; defaults to current session
@@ -87,6 +88,13 @@ module Inferno
     #   NOOP        — no-op; keep polling with (optionally updated) timeout or session
     #   WAIT        — keep polling without breaking out of the current poll loop
     #                 (unlike noop, does not restart the loop with a new timeout or session)
+    #
+    # Security note:
+    #   Steps using command: execute arbitrary shell commands via the system() call. This is
+    #   intentional for use cases like browser automation (e.g. Selenium) that must interact
+    #   with Inferno's waiting state mid-test. Because of this risk, command: steps are blocked
+    #   by default and require the --allow-commands CLI flag to run. Scripts that contain no
+    #   command: steps are unaffected and do not need the flag.
     #
     # Template tokens in command strings and start_run input values:
     #   {session_id}              — current session's Inferno session ID
@@ -667,6 +675,13 @@ module Inferno
       # ---------------------------------------------------------------------------
 
       def execute_command(cmd)
+        unless options[:allow_commands]
+          warn "Error: script contains a 'command' step but --allow-commands was not set."
+          warn "  command: #{cmd}"
+          warn 'Re-run with --allow-commands to permit arbitrary shell command execution.'
+          return false
+        end
+
         system(cmd)
         $CHILD_STATUS.success?
       end

@@ -63,9 +63,11 @@ jobs:
 
       - name: Run execution script
         run: |
-          output=$(bundle exec inferno execute_script "${{ matrix.config }}" 2>&1) && rc=0 || rc=$?
+          flags=""
+          [[ "${{ matrix.config }}" == *_with_commands.yaml || "${{ matrix.config }}" == *_with_commands_failure.yaml ]] && flags="--allow-commands"
+          output=$(bundle exec inferno execute_script $flags "${{ matrix.config }}" 2>&1) && rc=0 || rc=$?
           echo "$output"
-          if [[ "${{ matrix.config }}" == *_failure.yaml && $rc -eq 3 ]]; then
+          if [[ "${{ matrix.config }}" == *_failure* && $rc -eq 3 ]]; then
             if echo "$output" | grep -qF "Actual results matched expected results? true"; then
               echo "Script exited with 3 and results matched expected; known-failure script passed"
               exit 0

@@ -104,6 +104,11 @@ module Inferno
              type: :numeric,
              default: 30,
              desc: 'Default seconds to wait for a matching step before timing out.'
+      option :allow_commands,
+             type: :boolean,
+             default: false,
+             desc: 'Allow execution script steps that run arbitrary shell commands. ' \
+                   'Scripts with command: steps will fail unless this flag is set.'
       def execute_script(yaml_file)
         ExecuteScript.new(yaml_file, options).run
       end

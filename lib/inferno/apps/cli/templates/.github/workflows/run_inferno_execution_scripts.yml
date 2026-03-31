@@ -62,7 +62,10 @@ jobs:
           echo "Inferno is ready"
 
       - name: Run execution script
-        run: bundle exec inferno execute_script "${{ matrix.config }}"
+        run: |
+          flags=""
+          [[ "${{ matrix.config }}" == *_with_commands.yaml ]] && flags="--allow-commands"
+          bundle exec inferno execute_script $flags "${{ matrix.config }}"
 
       - name: Compute debug artifact paths
         if: failure()

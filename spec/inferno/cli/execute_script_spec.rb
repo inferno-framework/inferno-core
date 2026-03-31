@@ -537,6 +537,44 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
+  describe '#execute_command' do
+    let(:config) { { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] } }
+    let(:cmd) { 'bundle exec ruby my_script.rb' }
+
+    context 'when --allow-commands is not set' do
+      subject(:instance) { build_instance(config, base_options.merge(allow_commands: false)) }
+
+      it 'returns false without calling system' do
+        expect(instance).not_to receive(:system)
+        expect(instance.send(:execute_command, cmd)).to be false
+      end
+
+      it 'warns that --allow-commands is required' do
+        expect(instance).to receive(:warn).with(/--allow-commands/).at_least(:once)
+        allow(instance).to receive(:warn)
+        instance.send(:execute_command, cmd)
+      end
+
+      it 'includes the blocked command in the warning output' do
+        expect(instance).to receive(:warn).with(/#{Regexp.escape(cmd)}/).at_least(:once)
+        allow(instance).to receive(:warn)
+        instance.send(:execute_command, cmd)
+      end
+    end
+
+    context 'when --allow-commands is set' do
+      subject(:instance) { build_instance(config, base_options.merge(allow_commands: true)) }
+
+      it 'returns true when the command succeeds' do
+        expect(instance.send(:execute_command, 'true')).to be true
+      end
+
+      it 'returns false when the command fails' do
+        expect(instance.send(:execute_command, 'false')).to be false
+      end
+    end
+  end
+
   describe '#verify_step' do
     subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
 
