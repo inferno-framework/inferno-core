@@ -73,11 +73,12 @@ module Inferno
         end
 
         def user_inputs
-          @user_inputs ||= resolve_file_inputs(options[:inputs] || {})
+          @user_inputs ||= normalize_inputs(options[:inputs] || {})
         end
 
-        def resolve_file_inputs(inputs)
+        def normalize_inputs(inputs)
           inputs.transform_values do |value|
+            next value.to_json if value.is_a?(Array) || value.is_a?(Hash)
             next value unless value.to_s.start_with?('@')
 
             path = File.expand_path(value[1..])

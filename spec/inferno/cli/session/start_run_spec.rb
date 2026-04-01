@@ -203,6 +203,40 @@ RSpec.describe Inferno::CLI::Session::StartRun do
       end.to output("#{JSON.pretty_generate(error_body)}\n").to_stdout
     end
 
+    context 'when an input value is an Array or Hash' do
+      it 'JSON-serializes an Array input value' do
+        stub_session_details
+        stub_session_data(body: [{ 'name' => 'url', 'value' => '', 'type' => 'text' }].to_json)
+        array_value = ['item1', 'item2']
+        run_request = stub_request(:post, test_runs_url)
+          .with(body: hash_including(inputs: [{ 'name' => 'url', 'value' => array_value.to_json }]))
+          .to_return(status: 200, body: run_response.to_json)
+
+        expect do
+          expect { described_class.new(session_id, options.merge(inputs: { 'url' => array_value })).run }
+            .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
+        end.to output(/.+/).to_stdout
+
+        expect(run_request).to have_been_made.once
+      end
+
+      it 'JSON-serializes a Hash input value' do
+        stub_session_details
+        stub_session_data(body: [{ 'name' => 'url', 'value' => '', 'type' => 'text' }].to_json)
+        hash_value = { 'key' => 'value' }
+        run_request = stub_request(:post, test_runs_url)
+          .with(body: hash_including(inputs: [{ 'name' => 'url', 'value' => hash_value.to_json }]))
+          .to_return(status: 200, body: run_response.to_json)
+
+        expect do
+          expect { described_class.new(session_id, options.merge(inputs: { 'url' => hash_value })).run }
+            .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
+        end.to output(/.+/).to_stdout
+
+        expect(run_request).to have_been_made.once
+      end
+    end
+
     context 'when an input value is a @file reference' do
       it 'reads the file content and uses it as the input value' do
         Tempfile.create(['input', '.json']) do |f|

@@ -669,7 +669,9 @@ module Inferno
           start_run['session'] = apply_templates(start_run['session'], status, session_key)
         end
         start_run['inputs']&.each_key do |input_name|
-          value = apply_templates(start_run['inputs'][input_name].to_s, status, session_key)
+          raw = start_run['inputs'][input_name]
+          raw = raw.to_json if raw.is_a?(Array) || raw.is_a?(Hash)
+          value = apply_templates(raw.to_s, status, session_key)
           start_run['inputs'][input_name] = expand_file_input_path(value)
         end
 

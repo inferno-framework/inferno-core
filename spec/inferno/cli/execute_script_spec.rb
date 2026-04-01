@@ -221,6 +221,21 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['cert']).to eq('@/etc/ssl/cert.pem')
     end
+
+    it 'JSON-serializes a Hash input value rather than using Ruby to_s format' do
+      hash_value = { 'access_token' => 'TOKEN', 'auth_type' => 'public' }
+      start_run = { 'runnable' => 'suite', 'inputs' => { 'auth_info' => hash_value } }
+      result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+      expect(result['inputs']['auth_info']).to eq(hash_value.to_json)
+      expect(result['inputs']['auth_info']).not_to include('=>')
+    end
+
+    it 'JSON-serializes an Array input value rather than using Ruby to_s format' do
+      array_value = ['item1', 'item2']
+      start_run = { 'runnable' => 'suite', 'inputs' => { 'list_input' => array_value } }
+      result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+      expect(result['inputs']['list_input']).to eq(array_value.to_json)
+    end
   end
 
   describe '#compare_session' do
