@@ -55,7 +55,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       stub_request(:get, "#{inferno_host}/api/test_suites")
         .to_return(status: 200, body: [{ 'id' => suite_id, 'title' => suite_id }].to_json)
       stub_request(:post, create_url).to_return(status: 200, body: session_response.to_json)
-      expect { described_class.new('script.yml', base_options) }.not_to raise_error
+      expect { described_class.new('script.yml', base_options) }.to_not raise_error
     end
   end
 
@@ -227,7 +227,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       start_run = { 'runnable' => 'suite', 'inputs' => { 'auth_info' => hash_value } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['auth_info']).to eq(hash_value.to_json)
-      expect(result['inputs']['auth_info']).not_to include('=>')
+      expect(result['inputs']['auth_info']).to_not include('=>')
     end
 
     it 'JSON-serializes an Array input value rather than using Ruby to_s format' do
