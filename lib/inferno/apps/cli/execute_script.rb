@@ -34,11 +34,12 @@ module Inferno
     #     expected_results_file: expected.json     # optional; relative to yaml file; defaults to
     #                                              #   <yaml basename>_expected.json
     #     alternate_expected_files:                # optional; tried in order; first matching wins
-    #       - file: alt_expected.json             # required; relative to yaml file
-    #         when:                               # required; all conditions must match (AND logic)
-    #           - field: inputs.url              # inputs.<name> looks up a session input by name;
-    #             matches: ^http://              # other values are top-level session detail fields.
-    #                                            # Evaluated against GET api/test_sessions/{id}.
+    #       - file: alt_expected.json              # required; relative to yaml file
+    #         when:                                # required; all conditions must match (AND logic)
+    #           - field: inputs.url                # required: can be inputs.<name>, configuration_messages,
+    #                                              #   or inferno_base_url
+    #             matches: ^http://                # other values are top-level session detail fields.
+    #                                              # Evaluated against GET api/test_sessions/{id}.
     #
     #     # Multi-session scripts: per-session config is nested under sessions.<name>.
     #     sessions:
@@ -78,7 +79,7 @@ module Inferno
     #           input_name: "@path/to/file.txt"    #           prefix value with @ to read from a file;
     #                                              #           relative paths are resolved from the
     #                                              #           directory containing this script file
-    #       timeout: 300                           # optional; seconds to wait for next match
+    #       timeout: 300                           # optional; seconds to wait for next match (Default is 120)
     #       next_poll_session: other_name          # optional; switch polling target after command
     #       state_description: "..."               # optional; logged when step is matched
     #       action_description: "..."              # optional; logged when step is matched
@@ -122,6 +123,7 @@ module Inferno
       def initialize(yaml_file, options)
         self.yaml_file = yaml_file
         self.options = options
+        validate_yaml_file!
         self.execution_status = ExecutionStatus.new(
           done: false,
           failed: false,
@@ -165,6 +167,19 @@ module Inferno
 
       def yaml_basename
         @yaml_basename ||= File.basename(yaml_file, '.yaml')
+      end
+
+      def validate_yaml_file!
+        unless File.exist?(yaml_file)
+          puts JSON.pretty_generate({ errors: "File not found: #{yaml_file}" })
+          exit(1)
+        end
+        return if yaml_file.end_with?('.yaml', '.yml')
+
+        puts JSON.pretty_generate(
+          { errors: "'#{yaml_file}' does not appear to be a YAML file (.yaml or .yml extension required)." }
+        )
+        exit(1)
       end
 
       # ---------------------------------------------------------------------------

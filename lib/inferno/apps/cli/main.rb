@@ -102,7 +102,7 @@ module Inferno
       option :default_poll_timeout,
              aliases: ['-t'],
              type: :numeric,
-             default: 30,
+             default: 120,
              desc: 'Default seconds to wait for a matching step before timing out.'
       option :allow_commands,
              type: :boolean,

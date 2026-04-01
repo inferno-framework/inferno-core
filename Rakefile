@@ -17,11 +17,13 @@ end
 
 namespace :execute_scripts do
   desc 'Run all execution script YAML files against a local Inferno instance (already running). ' \
-       'Optional FILTER env var restricts by File.fnmatch pattern, e.g. FILTER="execution_scripts/demo/*"'
+       'Optional FILTER env var restricts by File.fnmatch pattern, e.g. FILTER="execution_scripts/demo/*". ' \
+       'Optional INFERNO_BASE_URL env var sets the target Inferno URL, e.g. INFERNO_BASE_URL="http://localhost:4567/"'
   task :run_all do
     require 'open3'
 
     pattern = ENV.fetch('FILTER', 'execution_scripts/**/*.yaml')
+    inferno_base_url = ENV.fetch('INFERNO_BASE_URL', nil)
     scripts = Dir.glob(pattern)
 
     if scripts.empty?
@@ -35,11 +37,20 @@ namespace :execute_scripts do
     failed = []
 
     scripts.each do |config|
+      unless config.end_with?('.yaml', '.yml')
+        warn "Skipping non-YAML file: #{config}"
+        next
+      end
+
       puts '=' * 60
       puts "Running: #{config}"
       puts '=' * 60
 
-      output, status = Open3.capture2e('bundle', 'exec', 'inferno', 'execute_script', config)
+      allow_commands = File.basename(config, '.yaml').include?('_with_commands')
+      cmd = ['bundle', 'exec', 'inferno', 'execute_script', config]
+      cmd += ['--inferno-base-url', inferno_base_url] if inferno_base_url
+      cmd += ['--allow-commands'] if allow_commands
+      output, status = Open3.capture2e(*cmd)
       print output
       rc = status.exitstatus
 

@@ -25,10 +25,38 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
   def build_instance(config, opts = base_options)
     allow(YAML).to receive(:safe_load_file).and_return(config)
+    allow(File).to receive(:exist?).with('script.yaml').and_return(true)
     stub_request(:get, "#{inferno_host}/api/test_suites")
       .to_return(status: 200, body: [{ 'id' => suite_id, 'title' => suite_id }].to_json)
     stub_request(:post, create_url).to_return(status: 200, body: session_response.to_json)
     described_class.new('script.yaml', opts)
+  end
+
+  describe '#validate_yaml_file!' do
+    it 'exits 1 with an error message when the file does not exist' do
+      allow(File).to receive(:exist?).with('missing.yaml').and_return(false)
+      expect do
+        expect { described_class.new('missing.yaml', base_options) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+      end.to output(/File not found/).to_stdout
+    end
+
+    it 'exits 1 with an error message when the file does not have a yaml or yml extension' do
+      allow(File).to receive(:exist?).with('script.txt').and_return(true)
+      expect do
+        expect { described_class.new('script.txt', base_options) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+      end.to output(/does not appear to be a YAML file/).to_stdout
+    end
+
+    it 'accepts a .yml extension' do
+      allow(YAML).to receive(:safe_load_file).and_return({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] })
+      allow(File).to receive(:exist?).with('script.yml').and_return(true)
+      stub_request(:get, "#{inferno_host}/api/test_suites")
+        .to_return(status: 200, body: [{ 'id' => suite_id, 'title' => suite_id }].to_json)
+      stub_request(:post, create_url).to_return(status: 200, body: session_response.to_json)
+      expect { described_class.new('script.yml', base_options) }.not_to raise_error
+    end
   end
 
   describe '#find_matching_step' do
