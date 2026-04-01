@@ -1,5 +1,11 @@
 sessions:
   - suite: auth_info
+   # NOTE: input use introduces issue time skew that causes faiures - these are expected
+
+comparison_config:
+  normalized_strings:
+    - replacement: <TIMESTAMP>
+      pattern: /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})/
 
 steps:
   - status: created
