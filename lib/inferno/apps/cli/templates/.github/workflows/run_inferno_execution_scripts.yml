@@ -73,13 +73,13 @@ jobs:
         run: |
           dir=$(dirname "${{ matrix.config }}")
           prefix=$(basename "${{ matrix.config }}" .yaml)
-          echo "dir=$dir" >> "$GITHUB_OUTPUT"
-          echo "prefix=$prefix" >> "$GITHUB_OUTPUT"
           echo "name=debug-$prefix" >> "$GITHUB_OUTPUT"
-          mkdir -p /tmp/docker_logs
+          mkdir -p /tmp/docker_logs /tmp/debug_results
           for service in $(docker compose -f docker-compose.background.yml config --services 2>/dev/null || true); do
             docker compose -f docker-compose.background.yml logs "$service" > "/tmp/docker_logs/${service}.log" 2>&1 || true
           done
+          find "$dir" -maxdepth 1 \( -name "${prefix}*_actual_results_*.json" -o -name "${prefix}*_compared_results_*.csv" \) \
+            -exec cp {} /tmp/debug_results/ \; 2>/dev/null || true
 
       - name: Upload debug artifacts on failure
         if: failure()
@@ -87,8 +87,7 @@ jobs:
         with:
           name: ${{ steps.debug-paths.outputs.name }}
           path: |
-            ${{ steps.debug-paths.outputs.dir }}/${{ steps.debug-paths.outputs.prefix }}*_actual_results_*.json
-            ${{ steps.debug-paths.outputs.dir }}/${{ steps.debug-paths.outputs.prefix }}*_compared_results_*.csv
+            /tmp/debug_results/*
             /tmp/inferno.log
             /tmp/docker_logs/*.log
           if-no-files-found: ignore
