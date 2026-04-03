@@ -22,15 +22,19 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
 
     context 'when all scripts pass' do
       it 'does not exit' do
-        expect { described_class.run_all }.not_to raise_error
+        expect { described_class.run_all }.to_not raise_error
       end
 
       it 'invokes the execute_script CLI command for each script' do
-        expect(Open3).to receive(:capture2e).with(
+        allow(Open3).to receive(:capture2e).with(
           'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml'
         ).and_return(['', passing_status])
 
         described_class.run_all
+
+        expect(Open3).to have_received(:capture2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml'
+        )
       end
     end
 
@@ -46,34 +50,50 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
 
     context 'when inferno_base_url is provided' do
       it 'passes --inferno-base-url to the command' do
-        expect(Open3).to receive(:capture2e).with(
+        allow(Open3).to receive(:capture2e).with(
           'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
           '--inferno-base-url', 'http://localhost:4567'
         ).and_return(['', passing_status])
 
         described_class.run_all(inferno_base_url: 'http://localhost:4567')
+
+        expect(Open3).to have_received(:capture2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--inferno-base-url', 'http://localhost:4567'
+        )
       end
     end
 
     context 'when the script filename includes _with_commands' do
-      before { allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test_with_commands.yaml']) }
+      before do
+        allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test_with_commands.yaml'])
+      end
 
       it 'passes --allow-commands to the command' do
-        expect(Open3).to receive(:capture2e).with(
+        allow(Open3).to receive(:capture2e).with(
           'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test_with_commands.yaml',
           '--allow-commands'
         ).and_return(['', passing_status])
 
         described_class.run_all
+
+        expect(Open3).to have_received(:capture2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test_with_commands.yaml',
+          '--allow-commands'
+        )
       end
     end
 
     context 'when a non-YAML file is in the glob results' do
-      before { allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test.yaml', 'execution_scripts/notes.txt']) }
+      before do
+        allow(Dir).to receive(:glob)
+          .and_return(['execution_scripts/my_test.yaml', 'execution_scripts/notes.txt'])
+      end
 
       it 'skips the non-YAML file' do
-        expect(Open3).to receive(:capture2e).once.and_return(['', passing_status])
         described_class.run_all
+
+        expect(Open3).to have_received(:capture2e).once
       end
     end
 
@@ -102,7 +122,7 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
         end
 
         it 'treats it as a pass' do
-          expect { described_class.run_all(allow_known_failures: true) }.not_to raise_error
+          expect { described_class.run_all(allow_known_failures: true) }.to_not raise_error
         end
       end
 
@@ -113,7 +133,8 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
         end
 
         it 'treats it as a failure' do
-          expect { described_class.run_all(allow_known_failures: true) }.to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          expect { described_class.run_all(allow_known_failures: true) }
+            .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
         end
       end
 
@@ -124,7 +145,8 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
         end
 
         it 'treats it as a failure' do
-          expect { described_class.run_all(allow_known_failures: true) }.to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+          expect { described_class.run_all(allow_known_failures: true) }
+            .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
         end
       end
     end
