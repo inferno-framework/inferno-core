@@ -472,7 +472,7 @@ module Inferno
         matched = find_matching_step(run_status, last_completed, session_key)
         return nil unless matched
 
-        log_matched_rule(matched, last_completed, session_key)
+        log_matched_step(matched, last_completed, session_key)
         step_details = resolve_command(matched, status, session_key)
         step_details[:timeout] = matched['timeout'].to_i if matched['timeout'].present?
         step_details[:next_poll_session] = matched['next_poll_session'] if matched['next_poll_session'].present?
@@ -490,15 +490,15 @@ module Inferno
         end
       end
 
-      def log_matched_rule(matched, last_completed, session_key)
-        warn 'Matched rule:'
+      def log_matched_step(matched, last_completed, session_key)
+        warn 'Matched step:'
         warn "  State: #{matched['state_description']}" if matched['state_description'].present?
         warn "  status=#{matched['status']} last_completed=#{format_last_completed(last_completed, session_key)}"
         warn "  Command: #{step_command_description(matched)}"
-        matched_rule_optional_lines(matched)
+        matched_step_optional_lines(matched)
       end
 
-      def matched_rule_optional_lines(matched)
+      def matched_step_optional_lines(matched)
         warn "  Action: #{matched['action_description']}" if matched['action_description'].present?
         warn "  Next poll session: #{matched['next_poll_session']}" if matched['next_poll_session'].present?
         warn "  Timeout: #{matched['timeout']}" if matched['timeout'].present?
