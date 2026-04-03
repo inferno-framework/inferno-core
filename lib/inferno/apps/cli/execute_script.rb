@@ -7,6 +7,7 @@ require_relative 'session/session_status'
 require_relative 'session/session_results'
 require_relative 'session/session_compare'
 require_relative 'session/session_details'
+require_relative 'session/session_data'
 
 module Inferno
   module CLI
@@ -781,11 +782,14 @@ module Inferno
         return default_file if alternates.empty?
 
         session_details = Session::SessionDetails.new(session.session_id, options).details_for_session
+        session_inputs = Session::SessionData.new(session.session_id, options).session_data
 
         alternates.each do |alt|
           conditions = Array(alt['when'])
           next if conditions.empty?
-          next unless conditions.all? { |cond| session_detail_condition_matches?(cond, session_details) }
+          unless conditions.all? { |cond| session_detail_condition_matches?(cond, session_details, session_inputs) }
+            next
+          end
 
           file = File.expand_path(alt['file'], yaml_directory)
           return file
@@ -794,21 +798,20 @@ module Inferno
         default_file
       end
 
-      def session_detail_condition_matches?(condition, session_details)
+      def session_detail_condition_matches?(condition, session_details, session_inputs)
         return false unless condition_has_field_and_pattern?(condition)
 
         field = condition['field']
         matches_pattern = condition['matches']
         not_matches_pattern = condition['not_matches']
-        test_suite = session_details['test_suite'] || {}
 
         if field == 'configuration_messages'
-          configuration_messages_match?(test_suite, matches_pattern, not_matches_pattern)
+          configuration_messages_match?(session_details['test_suite'] || {}, matches_pattern, not_matches_pattern)
         elsif field == 'inferno_base_url'
           string_matches?(options[:inferno_base_url].to_s, matches_pattern, not_matches_pattern)
         elsif field.start_with?('inputs.')
           input_name = field.delete_prefix('inputs.')
-          test_suite_input_matches?(test_suite, input_name, matches_pattern, not_matches_pattern)
+          test_suite_input_matches?(session_inputs || [], input_name, matches_pattern, not_matches_pattern)
         else
           false
         end
@@ -837,8 +840,8 @@ module Inferno
         true
       end
 
-      def test_suite_input_matches?(test_suite, input_name, matches_pattern, not_matches_pattern)
-        value = Array(test_suite['inputs']).find { |i| i['name'] == input_name }&.dig('value')
+      def test_suite_input_matches?(suite_data, input_name, matches_pattern, not_matches_pattern)
+        value = suite_data.find { |input| input['name'] == input_name }&.dig('value')
         string_matches?(value.to_s, matches_pattern, not_matches_pattern)
       end
 

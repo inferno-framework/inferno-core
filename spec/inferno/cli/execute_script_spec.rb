@@ -314,6 +314,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
   describe '#resolve_expected_file_for_comparison' do
     let(:session_details_url) { "#{inferno_host}/api/test_sessions/#{session_id}" }
+    let(:session_data_url) { "#{inferno_host}/api/test_sessions/#{session_id}/session_data" }
 
     let(:default_file) { '/tmp/default_expected.json' }
     let(:base_comparison_config) { { 'expected_results_file' => default_file } }
@@ -345,10 +346,9 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         key: suite_id, suite_id:, session_id:, short_id_map: {}
       )
       stub_request(:get, session_details_url)
-        .to_return(status: 200,
-                   body: { 'test_suite' => {
-                     'inputs' => [{ 'name' => 'url', 'value' => 'https://example.com' }]
-                   } }.to_json)
+        .to_return(status: 200, body: { 'test_suite' => {} }.to_json)
+      stub_request(:get, session_data_url)
+        .to_return(status: 200, body: [{ 'name' => 'url', 'value' => 'https://example.com' }].to_json)
 
       expect(instance.send(:resolve_expected_file_for_comparison, session)).to eq(default_file)
     end
@@ -368,10 +368,9 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         key: suite_id, suite_id:, session_id:, short_id_map: {}
       )
       stub_request(:get, session_details_url)
-        .to_return(status: 200,
-                   body: { 'test_suite' => {
-                     'inputs' => [{ 'name' => 'url', 'value' => 'http://example.com' }]
-                   } }.to_json)
+        .to_return(status: 200, body: { 'test_suite' => {} }.to_json)
+      stub_request(:get, session_data_url)
+        .to_return(status: 200, body: [{ 'name' => 'url', 'value' => 'http://example.com' }].to_json)
 
       expect(instance.send(:resolve_expected_file_for_comparison, session)).to end_with('alt_expected.json')
     end
@@ -389,7 +388,9 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         key: suite_id, suite_id:, session_id:, short_id_map: {}
       )
       stub_request(:get, session_details_url)
-        .to_return(status: 200, body: {}.to_json)
+        .to_return(status: 200, body: { 'test_suite' => {} }.to_json)
+      stub_request(:get, session_data_url)
+        .to_return(status: 200, body: [].to_json)
 
       expect(instance.send(:resolve_expected_file_for_comparison, session)).to eq(default_file)
     end
@@ -398,22 +399,22 @@ RSpec.describe Inferno::CLI::ExecuteScript do
   describe '#session_detail_condition_matches?' do
     subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
 
-    it 'matches an input by name from test_suite.inputs' do
-      details = { 'test_suite' => { 'inputs' => [{ 'name' => 'url', 'value' => 'http://example.com' }] } }
+    it 'matches an input by name from session inputs' do
+      session_inputs = [{ 'name' => 'url', 'value' => 'http://example.com' }]
       cond = { 'field' => 'inputs.url', 'matches' => '^http://' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be true
+      expect(instance.send(:session_detail_condition_matches?, cond, {}, session_inputs)).to be true
     end
 
     it 'does not match when the input value does not satisfy the pattern' do
-      details = { 'test_suite' => { 'inputs' => [{ 'name' => 'url', 'value' => 'https://example.com' }] } }
+      session_inputs = [{ 'name' => 'url', 'value' => 'https://example.com' }]
       cond = { 'field' => 'inputs.url', 'matches' => '^http://' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be false
+      expect(instance.send(:session_detail_condition_matches?, cond, {}, session_inputs)).to be false
     end
 
     it 'does not match when the named input is absent' do
-      details = { 'test_suite' => { 'inputs' => [{ 'name' => 'other', 'value' => 'http://example.com' }] } }
+      session_inputs = [{ 'name' => 'other', 'value' => 'http://example.com' }]
       cond = { 'field' => 'inputs.url', 'matches' => '^http://' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be false
+      expect(instance.send(:session_detail_condition_matches?, cond, {}, session_inputs)).to be false
     end
 
     it 'matches configuration_messages when any message field matches the pattern' do
@@ -426,7 +427,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         }
       }
       cond = { 'field' => 'configuration_messages', 'matches' => 'unavailable' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be true
+      expect(instance.send(:session_detail_condition_matches?, cond, details, [])).to be true
     end
 
     it 'does not match configuration_messages when no message field matches the pattern' do
@@ -438,19 +439,19 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         }
       }
       cond = { 'field' => 'configuration_messages', 'matches' => 'unavailable' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be false
+      expect(instance.send(:session_detail_condition_matches?, cond, details, [])).to be false
     end
 
     it 'does not match configuration_messages when the array is empty' do
       details = { 'test_suite' => { 'configuration_messages' => [] } }
       cond = { 'field' => 'configuration_messages', 'matches' => '.*' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be false
+      expect(instance.send(:session_detail_condition_matches?, cond, details, [])).to be false
     end
 
     it 'matches using not_matches when no message matches the pattern' do
       details = { 'test_suite' => { 'configuration_messages' => [{ 'type' => 'info', 'message' => 'All good' }] } }
       cond = { 'field' => 'configuration_messages', 'not_matches' => 'unavailable' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be true
+      expect(instance.send(:session_detail_condition_matches?, cond, details, [])).to be true
     end
 
     it 'does not match using not_matches when any message matches the pattern' do
@@ -460,49 +461,43 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         }
       }
       cond = { 'field' => 'configuration_messages', 'not_matches' => 'unavailable' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be false
+      expect(instance.send(:session_detail_condition_matches?, cond, details, [])).to be false
     end
 
     it 'matches an input using not_matches when the value does not match the pattern' do
-      details = { 'test_suite' => { 'inputs' => [{ 'name' => 'url', 'value' => 'https://example.com' }] } }
+      session_inputs = [{ 'name' => 'url', 'value' => 'https://example.com' }]
       cond = { 'field' => 'inputs.url', 'not_matches' => '^http://' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be true
+      expect(instance.send(:session_detail_condition_matches?, cond, {}, session_inputs)).to be true
     end
 
     it 'matches inferno_base_url against the configured base URL' do
-      details = {}
       cond = { 'field' => 'inferno_base_url', 'matches' => 'inferno\.example\.com' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be true
+      expect(instance.send(:session_detail_condition_matches?, cond, {}, [])).to be true
     end
 
     it 'does not match inferno_base_url when the pattern does not match' do
-      details = {}
       cond = { 'field' => 'inferno_base_url', 'matches' => 'other\.example\.com' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be false
+      expect(instance.send(:session_detail_condition_matches?, cond, {}, [])).to be false
     end
 
     it 'matches inferno_base_url using not_matches' do
-      details = {}
       cond = { 'field' => 'inferno_base_url', 'not_matches' => 'other\.example\.com' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be true
+      expect(instance.send(:session_detail_condition_matches?, cond, {}, [])).to be true
     end
 
     it 'returns false for unsupported field names' do
-      details = { 'test_suite_id' => 'my_suite' }
       cond = { 'field' => 'test_suite_id', 'matches' => 'my_' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be false
+      expect(instance.send(:session_detail_condition_matches?, cond, { 'test_suite_id' => 'my_suite' }, [])).to be false
     end
 
     it 'returns false when field is missing from condition' do
-      details = { 'test_suite' => { 'inputs' => [] } }
       cond = { 'matches' => 'my_' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be false
+      expect(instance.send(:session_detail_condition_matches?, cond, {}, [])).to be false
     end
 
     it 'returns false when both matches and not_matches are missing from condition' do
-      details = { 'test_suite' => { 'inputs' => [] } }
       cond = { 'field' => 'inputs.url' }
-      expect(instance.send(:session_detail_condition_matches?, cond, details)).to be false
+      expect(instance.send(:session_detail_condition_matches?, cond, {}, [])).to be false
     end
   end
 
