@@ -701,6 +701,19 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
                                          })
         end
 
+        context 'with no extracted values' do
+          it 'passes if any coding is present on the slice path' do
+            result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
+            expect(result).to be_empty
+          end
+
+          it 'fails if server does not support total:adjudicationamounttype slice' do
+            eob_inpatient_inst.total.clear
+            result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
+            expect(result).to include('ExplanationOfBenefit.total:adjudicationamounttype')
+          end
+        end
+
         context 'with string values' do
           before do
             eob_inpatient_inst_metadata.must_supports[:slices][0][:discriminator][:values] << 'paidtoprovider'
@@ -733,6 +746,225 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
             result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
             expect(result).to include('ExplanationOfBenefit.total:adjudicationamounttype')
           end
+        end
+      end
+
+      context 'with requiredBinding slices on Coding elements' do
+        let(:coverage_metadata) do
+          OpenStruct.new({
+                           must_supports: {
+                             extensions: [],
+                             slices: [{
+                               slice_id: 'Coverage.relationship.coding:X12Code',
+                               slice_name: 'X12Code',
+                               path: 'relationship.coding',
+                               discriminator: {
+                                 type: 'requiredBinding',
+                                 path: '',
+                                 values: []
+                               }
+                             }],
+                             elements: []
+                           }
+                         })
+        end
+        let(:coverage) do
+          FHIR::Coverage.new(
+            relationship: {
+              coding: [
+                {
+                  system: 'https://valueset.x12.org/x217/005010/request/2000D/INS/1/02/00/1069',
+                  code: '18'
+                }
+              ]
+            }
+          )
+        end
+
+        it 'passes when the coding slice is present' do
+          result = run_with_metadata([coverage], coverage_metadata)
+          expect(result).to be_empty
+        end
+      end
+
+      context 'with value slicing on extension choice types' do
+        let(:extension_url) { 'http://example.org/StructureDefinition/careTeamClaimScope' }
+        let(:claim_metadata) do
+          OpenStruct.new({
+                           must_supports: {
+                             extensions: [],
+                             slices: [{
+                               slice_id: 'Claim.careTeam:ItemClaimMember',
+                               slice_name: 'ItemClaimMember',
+                               path: 'careTeam',
+                               discriminator: {
+                                 type: 'value',
+                                 values: [{
+                                   path: "extension.where(url='#{extension_url}').valueBoolean",
+                                   value: false
+                                 }]
+                               }
+                             }],
+                             elements: [
+                               { path: 'careTeam:ItemClaimMember.sequence' }
+                             ]
+                           }
+                         })
+        end
+        let(:claim) do
+          FHIR::Claim.new(
+            careTeam: [
+              {
+                extension: [
+                  {
+                    url: extension_url,
+                    valueBoolean: false
+                  }
+                ],
+                sequence: 1
+              }
+            ]
+          )
+        end
+
+        it 'passes when the slice is found through an extension choice discriminator' do
+          result = run_with_metadata([claim], claim_metadata)
+          expect(result).to be_empty
+        end
+
+        it 'fails when the discriminator value does not match' do
+          claim.careTeam.first.extension.first.valueBoolean = true
+
+          result = run_with_metadata([claim], claim_metadata)
+          expect(result).to include('Claim.careTeam:ItemClaimMember')
+          expect(result).to include('careTeam:ItemClaimMember.sequence')
+        end
+      end
+
+      context 'with must support elements under nested extension slices' do
+        let(:care_team_scope_url) { 'http://example.org/StructureDefinition/careTeamClaimScope' }
+        let(:nursing_home_url) { 'http://example.org/StructureDefinition/nursingHomeResidentialStatus' }
+        let(:claim_metadata) do
+          OpenStruct.new({
+                           must_supports: {
+                             extensions: [
+                               {
+                                 id: 'Claim.careTeam:ItemClaimMember.extension:careTeamClaimScope',
+                                 path: 'careTeam.extension',
+                                 url: care_team_scope_url
+                               },
+                               {
+                                 id: 'Claim.item.extension:nursingHomeResidentialStatus',
+                                 path: 'item.extension',
+                                 url: nursing_home_url
+                               }
+                             ],
+                             slices: [{
+                               slice_id: 'Claim.careTeam:ItemClaimMember',
+                               slice_name: 'ItemClaimMember',
+                               path: 'careTeam',
+                               discriminator: {
+                                 type: 'value',
+                                 values: [{
+                                   path: "extension.where(url='#{care_team_scope_url}').valueBoolean",
+                                   value: false
+                                 }]
+                               }
+                             }],
+                             elements: [
+                               {
+                                 path: 'careTeam:ItemClaimMember.extension:careTeamClaimScope.value[x]',
+                                 fixed_value: false
+                               },
+                               {
+                                 path: 'item.extension:nursingHomeResidentialStatus.value[x]'
+                               }
+                             ]
+                           }
+                         })
+        end
+        let(:claim) do
+          FHIR::Claim.new(
+            careTeam: [
+              {
+                extension: [
+                  {
+                    url: care_team_scope_url,
+                    valueBoolean: false
+                  }
+                ],
+                sequence: 1
+              }
+            ],
+            item: [
+              {
+                extension: [
+                  {
+                    url: nursing_home_url,
+                    valueCodeableConcept: {
+                      text: 'Skilled nursing facility'
+                    }
+                  }
+                ]
+              }
+            ]
+          )
+        end
+
+        it 'passes when nested extension slice paths are populated' do
+          result = run_with_metadata([claim], claim_metadata)
+          expect(result).to be_empty
+        end
+      end
+
+      context 'with sliced choice elements' do
+        let(:claim_metadata) do
+          OpenStruct.new({
+                           must_supports: {
+                             extensions: [],
+                             slices: [{
+                               slice_id: 'Claim.supportingInfo:PatientEvent',
+                               slice_name: 'PatientEvent',
+                               path: 'supportingInfo',
+                               discriminator: {
+                                 type: 'patternCodeableConcept',
+                                 path: 'category',
+                                 code: 'patientEvent',
+                                 system: 'http://hl7.org/fhir/us/davinci-pas/CodeSystem/PASTempCodes'
+                               }
+                             }],
+                             elements: [
+                               { path: 'supportingInfo:PatientEvent.timing[x]' },
+                               { path: 'supportingInfo:PatientEvent.timing[x]:timingPeriod.start' }
+                             ]
+                           }
+                         })
+        end
+        let(:claim) do
+          FHIR::Claim.new(
+            supportingInfo: [
+              {
+                sequence: 1,
+                category: {
+                  coding: [
+                    {
+                      system: 'http://hl7.org/fhir/us/davinci-pas/CodeSystem/PASTempCodes',
+                      code: 'patientEvent'
+                    }
+                  ]
+                },
+                timingPeriod: {
+                  start: '2024-01-01',
+                  end: '2024-01-02'
+                }
+              }
+            ]
+          )
+        end
+
+        it 'passes when a populated choice field satisfies timing[x]' do
+          result = run_with_metadata([claim], claim_metadata)
+          expect(result).to be_empty
         end
       end
 

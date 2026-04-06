@@ -237,12 +237,10 @@ module Inferno
         end
 
         def resource_populates_element?(resource, element_definition)
-          path = element_definition[:path]
+          raw_path = element_definition[:path]
+          path = navigation_compatible_must_support_path(raw_path)
 
-          # handle MustSupport element under extension: Ex: extension:supporting-info.value[x]
-          resource, path = process_must_support_element_in_extension(resource, path) if path.start_with?('extension:')
-
-          ms_extension_urls = must_support_extensions.select { |ex| ex[:path] == "#{path}.extension" }
+          ms_extension_urls = must_support_extensions.select { |ex| ex[:path] == "#{raw_path}.extension" }
             .map { |ex| ex[:url] }
           include_dar = normalized_extension_urls(ms_extension_urls).include?(FHIRResourceNavigation::DAR_EXTENSION_URL)
 
@@ -252,6 +250,47 @@ module Inferno
 
           # Note that false.present? => false, which is why we need to add this extra check
           value_found.present? || value_found == false
+        end
+
+        def navigation_compatible_must_support_path(path)
+          logical_segments = []
+
+          path_segments(path).map do |segment|
+            normalized_segment = normalized_must_support_path_segment(segment, logical_segments)
+            logical_segments << segment.split(':').first
+            normalized_segment
+          end.join('.')
+        end
+
+        def normalized_must_support_path_segment(segment, logical_segments)
+          extension_type, extension_name = segment.match(/\A(modifierExtension|extension):(.+)\z/)&.captures
+          return segment if extension_type.blank?
+
+          extension_path = [logical_segments.join('.'), extension_type].reject(&:blank?).join('.')
+          extension_definition = must_support_extension_definition(extension_path, extension_type, extension_name)
+          return segment if extension_definition.blank?
+
+          "#{extension_type}.where(url='#{normalized_extension_url(extension_definition[:url])}')"
+        end
+
+        def must_support_extension_definition(extension_path, extension_type, extension_name)
+          suffix = "#{extension_type}:#{extension_name}"
+          path_matching_extensions = must_support_extensions.select { |definition| definition[:path] == extension_path }
+
+          extension_definition_candidates(path_matching_extensions).each do |definitions, matcher|
+            match = definitions.find { |definition| definition[:id].public_send(matcher, suffix) }
+            return match if match.present?
+          end
+
+          nil
+        end
+
+        def extension_definition_candidates(path_matching_extensions)
+          [
+            [path_matching_extensions, :end_with?],
+            [path_matching_extensions, :include?],
+            [must_support_extensions, :end_with?]
+          ]
         end
 
         def process_must_support_element_in_extension(resource, path)
@@ -370,7 +409,7 @@ module Inferno
         end
 
         def find_value_slice(element, discriminator)
-          values = discriminator[:values].map { |value| value.merge(path: value[:path].split('.')) }
+          values = discriminator[:values].map { |value| value.merge(path: path_segments(value[:path])) }
           find_slice_by_values(element, values)
         end
 
@@ -401,22 +440,32 @@ module Inferno
         end
 
         def find_required_binding_slice(element, discriminator)
+          if element.is_a?(FHIR::Coding) && required_binding_value_match?(element, discriminator[:values])
+            return element
+          end
+
           coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : 'coding'
 
           find_a_value_at(element, coding_path) do |coding|
-            discriminator[:values].any? do |value|
-              case value
-              when String
-                value == coding.code
-              when Hash
-                value[:system] == coding.system && value[:code] == coding.code
-              end
-            end
+            required_binding_value_match?(coding, discriminator[:values])
           end
         end
 
         def find_slice_by_values(element, value_definitions)
           Array.wrap(element).find { |el| verify_slice_by_values(el, value_definitions) }
+        end
+
+        def required_binding_value_match?(coding, values)
+          return true if values.blank?
+
+          values.any? do |value|
+            case value
+            when String
+              value == coding.code
+            when Hash
+              value[:system] == coding.system && value[:code] == coding.code
+            end
+          end
         end
       end
     end

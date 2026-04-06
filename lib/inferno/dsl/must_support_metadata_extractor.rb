@@ -46,7 +46,7 @@ module Inferno
       end
 
       def must_support_extension_elements
-        all_must_support_elements.select { |element| element.path.end_with? 'extension' }
+        all_must_support_elements.select { |element| element.path.end_with? 'xtension' }
       end
 
       def must_support_extensions
@@ -54,7 +54,8 @@ module Inferno
           {
             id: element.id,
             path: element.path.gsub("#{resource}.", ''),
-            url: canonical_url_without_version(element.type.first.profile.first)
+            url: canonical_url_without_version(element.type.first.profile.first),
+            modifier_extension: element.path.end_with?('modifierExtension')
           }.tap do |metadata|
             metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(element)
           end
@@ -66,8 +67,10 @@ module Inferno
       end
 
       def must_support_slice_elements
-        all_must_support_elements.select do |element|
-          !element.path.end_with?('extension') && element.sliceName.present?
+        profile_elements.select do |element|
+          next false if element.sliceName.blank? || element.path.end_with?('xtension')
+
+          all_must_support_elements.include?(element) || slice_has_must_support_descendants?(element)
         end
       end
 
@@ -81,47 +84,136 @@ module Inferno
         slice&.slicing&.discriminator
       end
 
-      def find_element_by_discriminator_path(current_element, discriminator_path)
-        if discriminator_path.present?
-          profile_elements.find { |element| element.id == "#{current_element.id}.#{discriminator_path}" } ||
-            profile_elements.find { |element| element.id == "#{current_element.path}.#{discriminator_path}" }
-        else
-          current_element
+      def slice_has_must_support_descendants?(slice)
+        all_must_support_elements.any? do |element|
+          element.id.start_with?("#{slice.id}.")
         end
       end
 
+      def find_element_by_discriminator_path(current_element, discriminator_path)
+        target_element = current_element
+        remaining_path = discriminator_path
+
+        while remaining_path.present?
+          target_element, remaining_path = take_discriminator_step(target_element, remaining_path)
+          return nil if target_element.nil?
+        end
+
+        target_element
+      end
+
+      def take_discriminator_step(current_element, path)
+        return take_extension_discriminator_step(current_element, path) if extension_discriminator_step?(path)
+
+        take_standard_discriminator_step(current_element, path)
+      end
+
+      def extension_discriminator_step?(path)
+        path.start_with?('extension(') || path.start_with?('modifierExtension(')
+      end
+
+      def take_extension_discriminator_step(current_element, path)
+        extension_type = path.start_with?('modifierExtension(') ? 'modifierExtension' : 'extension'
+        ext_url, remaining_path = path.delete_prefix("#{extension_type}('").split("')", 2)
+        next_element = profile_elements.find do |element|
+          element.path == "#{current_element.path}.#{extension_type}" &&
+            element.id.start_with?("#{current_element.id}.#{extension_type}:") &&
+            element.type.any? { |type| extension_profile_matches?(type, ext_url) }
+        end
+
+        [next_element, remaining_path&.delete_prefix('.')]
+      end
+
+      def extension_profile_matches?(type, ext_url)
+        type.code == 'Extension' && type.profile.any? { |profile| profile.start_with?(ext_url) }
+      end
+
+      def take_standard_discriminator_step(current_element, path)
+        step_path, remaining_path = path.split('.', 2)
+        if remaining_path&.start_with?('ofType(')
+          return take_choice_discriminator_step(current_element, step_path, remaining_path)
+        end
+        if legacy_choice_discriminator_step?(step_path)
+          return take_legacy_choice_discriminator_step(current_element, step_path, remaining_path)
+        end
+
+        next_element =
+          profile_elements.find { |element| element.id == "#{current_element.id}.#{step_path}" } ||
+          profile_elements.find { |element| element.id == "#{current_element.path}.#{step_path}" }
+
+        [next_element, remaining_path&.delete_prefix('.')]
+      end
+
+      def legacy_choice_discriminator_step?(path)
+        path.match?(/\A.+\s+as\s+[[:word:]]+\z/)
+      end
+
+      def take_choice_discriminator_step(current_element, step_path, remaining_path)
+        target_element = "#{step_path}[x]"
+        target_type, remaining_path = remaining_path.delete_prefix('ofType(').split(')', 2)
+        next_element = profile_elements.find do |element|
+          element.id == "#{current_element.id}.#{target_element}" &&
+            element.type.any? { |type| type.code.casecmp?(target_type) }
+        end
+
+        [next_element, remaining_path&.delete_prefix('.')]
+      end
+
+      def take_legacy_choice_discriminator_step(current_element, step_path, remaining_path)
+        target_element, target_type = step_path.split(/\s+as\s+/, 2)
+        target_element = "#{target_element}[x]" unless target_element.end_with?('[x]')
+        next_element = find_choice_element(current_element, target_element, target_type)
+
+        [next_element, remaining_path&.delete_prefix('.')]
+      end
+
+      def find_choice_element(current_element, target_element, target_type)
+        [current_element.id, current_element.path].filter_map do |base_path|
+          profile_elements.find do |element|
+            element_matches_choice_type?(element, "#{base_path}.#{target_element}", target_type)
+          end
+        end.first
+      end
+
+      def element_matches_choice_type?(element, target_path, target_type)
+        [element.id, element.path].include?(target_path) &&
+          element.type.any? { |type| type.code.casecmp?(target_type) }
+      end
+
       def save_pattern_slice(pattern_element, discriminator_path, metadata)
+        runtime_path = navigation_compatible_discriminator_path(discriminator_path)
+
         if pattern_element.patternCodeableConcept
           {
             type: 'patternCodeableConcept',
-            path: discriminator_path,
+            path: runtime_path,
             code: pattern_element.patternCodeableConcept.coding.first.code,
             system: pattern_element.patternCodeableConcept.coding.first.system
           }
         elsif pattern_element.patternCoding
           {
             type: 'patternCoding',
-            path: discriminator_path,
+            path: runtime_path,
             code: pattern_element.patternCoding.code,
             system: pattern_element.patternCoding.system
           }
         elsif pattern_element.patternIdentifier
           {
             type: 'patternIdentifier',
-            path: discriminator_path,
+            path: runtime_path,
             system: pattern_element.patternIdentifier.system
           }
         elsif required_binding_pattern?(pattern_element)
           {
             type: 'requiredBinding',
-            path: discriminator_path,
+            path: runtime_path,
             values: extract_required_binding_values(pattern_element, metadata)
           }
         else
           # prevent errors in case an IG does something different
           {
             type: 'unsupported',
-            path: discriminator_path
+            path: runtime_path
           }
         end
       end
@@ -140,6 +232,16 @@ module Inferno
       def must_support_type_slice_elements
         must_support_slice_elements.select do |element|
           discriminators(sliced_element(element))&.first&.type == 'type'
+        end
+      end
+
+      def navigation_compatible_discriminator_path(discriminator_path)
+        normalized_path = discriminator_path&.gsub(/(modifierExtension|extension)\('([^']+)'\)/, "\\1.where(url='\\2')")
+        normalized_path = normalized_path&.gsub(/([[:word:]\[\]]+)\.ofType\(([^)]+)\)/) do
+          "#{Regexp.last_match(1).delete_suffix('[x]')}#{Regexp.last_match(2).upcase_first}"
+        end
+        normalized_path&.gsub(/([[:word:]\[\]]+)\s+as\s+([[:word:]]+)/) do
+          "#{Regexp.last_match(1).delete_suffix('[x]')}#{Regexp.last_match(2).upcase_first}"
         end
       end
 
@@ -164,7 +266,8 @@ module Inferno
             type: 'type',
             code: type_code.upcase_first
           }
-          discriminator_metadata[:path] = type_path if type_path.present?
+          runtime_path = navigation_compatible_discriminator_path(type_path)
+          discriminator_metadata[:path] = runtime_path if runtime_path.present?
 
           {
             slice_id: current_element.id,
@@ -231,9 +334,14 @@ module Inferno
               # and in subsequent versions of the profile, the bad discriminator was removed.
               next if pattern_element.nil? && element_discriminators.length > 1
 
-              if pattern_element.fixed.present?
+              if pattern_element.nil?
+                pattern_value = {
+                  type: 'unsupported',
+                  path: navigation_compatible_discriminator_path(discriminator_path)
+                }
+              elsif !pattern_element.fixed.nil?
                 fixed_values << {
-                  path: discriminator_path,
+                  path: navigation_compatible_discriminator_path(discriminator_path),
                   value: pattern_element.fixed
                 }
               elsif pattern_value.present?
@@ -270,7 +378,7 @@ module Inferno
       end
 
       def handle_fixed_values(metadata, element)
-        if element.fixed.present?
+        if !element.fixed.nil?
           metadata[:fixed_value] = element.fixed
         elsif element.patternCodeableConcept.present? && !element_part_of_slice_discrimination?(element)
           metadata[:fixed_value] = element.patternCodeableConcept.coding.first.code

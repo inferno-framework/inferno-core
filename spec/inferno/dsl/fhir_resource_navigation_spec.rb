@@ -120,6 +120,22 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
       expect(must_support_heartrate_test.find_a_value_at(heartrate_by_value,
                                                          'value[x]:valueQuantity.code')).to eq('/min')
     end
+
+    it 'can find a populated choice element when the type is not explicit' do
+      supporting_info = FHIR::Claim::SupportingInfo.new(timingDate: '2024-01-01')
+
+      expect(must_support_coverage_test.find_a_value_at(supporting_info, 'timing[x]')).to eq('2024-01-01')
+    end
+
+    it 'can find a populated choice element when the type is explicit' do
+      supporting_info = FHIR::Claim::SupportingInfo.new(
+        timingPeriod: FHIR::Period.new(start: '2024-01-01')
+      )
+
+      result = must_support_coverage_test.find_a_value_at(supporting_info, 'timing[x]:timingPeriod.start')
+
+      expect(result).to eq('2024-01-01')
+    end
   end
 
   describe '#matching_type_slice?' do
@@ -213,6 +229,34 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
       )
       discriminator = { code: 'Patient', path: 'entry.resource' }
       expect(matcher).to be_matching_type_slice(slice, discriminator)
+    end
+  end
+
+  describe '#matching_required_binding_slice?' do
+    let(:matcher) { including_class.new }
+
+    it 'matches when any coding is present and no values were extracted' do
+      slice = FHIR::CodeableConcept.new(
+        coding: [
+          FHIR::Coding.new(
+            system: 'http://example.org/system',
+            code: 'example'
+          )
+        ]
+      )
+      discriminator = { path: '', values: [] }
+
+      expect(matcher).to be_matching_required_binding_slice(slice, discriminator)
+    end
+
+    it 'matches a Coding slice when any coding is present and no values were extracted' do
+      slice = FHIR::Coding.new(
+        system: 'http://example.org/system',
+        code: 'example'
+      )
+      discriminator = { path: '', values: [] }
+
+      expect(matcher).to be_matching_required_binding_slice(slice, discriminator)
     end
   end
 end
