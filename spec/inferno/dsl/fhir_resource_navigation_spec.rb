@@ -173,15 +173,15 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
       expect(matcher).to_not be_matching_type_slice(slice, discriminator)
     end
 
-    it 'matches a Bundle::Entry by unwrapping resource when no discriminator path' do
+    it 'does not match a Bundle::Entry without a discriminator path' do
       slice = FHIR::Bundle::Entry.new(
         resource: FHIR::Claim.new
       )
       discriminator = { code: 'Claim' }
-      expect(matcher).to be_matching_type_slice(slice, discriminator)
+      expect(matcher).to_not be_matching_type_slice(slice, discriminator)
     end
 
-    it 'does not match a Bundle::Entry with wrong resource type when no discriminator path' do
+    it 'does not match a Bundle::Entry with the wrong resource type when no discriminator path' do
       slice = FHIR::Bundle::Entry.new(
         resource: FHIR::Patient.new
       )

@@ -210,6 +210,92 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
     end
   end
 
+  describe 'must support test for versioned extension canonicals' do
+    let(:communication_request_metadata) do
+      OpenStruct.new(
+        must_supports: {
+          extensions: [
+            {
+              id: 'CommunicationRequest.extension:serviceLineNumber',
+              path: 'extension',
+              url: 'http://hl7.org/fhir/us/davinci-pas/StructureDefinition/extension-serviceLineNumber|2.2.0'
+            },
+            {
+              id: 'CommunicationRequest.payload.extension:contentModifier',
+              path: 'payload.extension',
+              url: 'http://hl7.org/fhir/us/davinci-pas/StructureDefinition/extension-contentModifier|2.2.0'
+            }
+          ],
+          slices: [],
+          elements: []
+        }
+      )
+    end
+
+    let(:communication_request) do
+      FHIR::CommunicationRequest.new(
+        extension: [
+          {
+            url: 'http://hl7.org/fhir/us/davinci-pas/StructureDefinition/extension-serviceLineNumber',
+            valuePositiveInt: 1
+          }
+        ],
+        payload: [
+          {
+            extension: [
+              {
+                url: 'http://hl7.org/fhir/us/davinci-pas/StructureDefinition/extension-contentModifier',
+                valueCodeableConcept: { text: 'modifier' }
+              }
+            ],
+            contentString: 'Need additional documentation'
+          }
+        ]
+      )
+    end
+
+    it 'matches resource extensions when metadata canonical urls include a version' do
+      result = run_with_metadata([communication_request], communication_request_metadata)
+      expect(result).to be_empty
+    end
+  end
+
+  describe 'must support test for non-primitive elements with must support extensions' do
+    let(:claim_response_metadata) do
+      OpenStruct.new(
+        must_supports: {
+          extensions: [
+            {
+              id: 'ClaimResponse.request.extension:DataAbsentReason',
+              path: 'request.extension',
+              url: 'http://hl7.org/fhir/StructureDefinition/data-absent-reason|5.2.0'
+            }
+          ],
+          slices: [],
+          elements: [{ path: 'request' }]
+        }
+      )
+    end
+
+    let(:claim_response) do
+      FHIR::ClaimResponse.new(
+        request: {
+          extension: [
+            {
+              url: 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
+              valueCode: 'unknown'
+            }
+          ]
+        }
+      )
+    end
+
+    it 'treats a DAR-only reference as populated when the extension is must support' do
+      result = run_with_metadata([claim_response], claim_response_metadata)
+      expect(result).to be_empty
+    end
+  end
+
   describe 'must support test for slices' do
     context 'with patternCodeableConcept slicing' do
       let(:careplan_profile) { fixture('StructureDefinition-us-core-careplan.json') }

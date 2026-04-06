@@ -1,3 +1,4 @@
+require_relative '../../extract_tgz_helper'
 require_relative '../../../lib/inferno/dsl/must_support_metadata_extractor'
 
 RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
@@ -29,6 +30,20 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
 
   before do
     allow(profile_element).to receive_messages(mustSupport: true, path: 'foo.extension', id: 'id', type: [type])
+  end
+
+  describe '#must_support_extensions' do
+    let(:type) do
+      type = double
+      allow(type).to receive(:profile).and_return(['http://example.org/StructureDefinition/example-extension|1.2.3'])
+      type
+    end
+
+    it 'removes canonical version suffixes from extension urls' do
+      expect(extractor.must_support_extensions).to eq(
+        [{ id: 'id', path: 'foo.extension', url: 'http://example.org/StructureDefinition/example-extension' }]
+      )
+    end
   end
 
   describe '#get_type_must_support_metadata' do
@@ -86,6 +101,65 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
       expect(slices[0][:path]).to eq('target.due[x]')
       expect(slices[0][:discriminator][:type]).to eq('type')
       expect(slices[0][:discriminator][:code]).to eq('Date')
+    end
+
+    it 'extracts the discriminator path when the sliced type is on Bundle.entry.resource' do
+      discriminator = FHIR::ElementDefinition::Slicing::Discriminator.new(type: 'type', path: '$this')
+      slicing = FHIR::ElementDefinition::Slicing.new(discriminator: [discriminator])
+
+      backbone_type = instance_double(FHIR::ElementDefinition::Type, code: 'BackboneElement')
+      claim_type = instance_double(FHIR::ElementDefinition::Type, code: 'Claim')
+      bundle_profile = instance_double(
+        FHIR::StructureDefinition,
+        baseDefinition: 'baseDefinition',
+        name: 'bundle',
+        type: 'Bundle',
+        version: '2.2.0'
+      )
+      profile_elements = [
+        instance_double(
+          FHIR::ElementDefinition,
+          id: 'Bundle.entry',
+          path: 'Bundle.entry',
+          sliceName: nil,
+          mustSupport: false,
+          slicing:,
+          type: [backbone_type]
+        ),
+        instance_double(
+          FHIR::ElementDefinition,
+          id: 'Bundle.entry:Claim',
+          path: 'Bundle.entry',
+          sliceName: 'Claim',
+          mustSupport: true,
+          slicing: nil,
+          type: [backbone_type]
+        ),
+        instance_double(
+          FHIR::ElementDefinition,
+          id: 'Bundle.entry:Claim.resource',
+          path: 'Bundle.entry.resource',
+          sliceName: nil,
+          mustSupport: false,
+          slicing: nil,
+          type: [claim_type]
+        )
+      ]
+
+      slices = described_class.new(profile_elements, bundle_profile, 'Bundle', ig_resources).type_slices
+
+      expect(slices).to contain_exactly(
+        {
+          slice_id: 'Bundle.entry:Claim',
+          slice_name: 'Claim',
+          path: 'entry',
+          discriminator: {
+            type: 'type',
+            code: 'Claim',
+            path: 'resource'
+          }
+        }
+      )
     end
   end
 

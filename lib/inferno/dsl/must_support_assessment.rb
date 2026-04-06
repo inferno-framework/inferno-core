@@ -202,14 +202,18 @@ module Inferno
         def missing_extensions(resources = [])
           @missing_extensions ||=
             must_support_extensions.select do |extension_definition|
+              expected_url = normalized_extension_url(extension_definition[:url])
+
               resources.none? do |resource|
                 path = extension_definition[:path]
 
                 if path == 'extension'
-                  resource.extension.any? { |extension| extension.url == extension_definition[:url] }
+                  Array.wrap(resource.extension).any? do |extension|
+                    normalized_extension_url(extension.url) == expected_url
+                  end
                 else
                   extension = find_a_value_at(resource, path) do |el|
-                    el.url == extension_definition[:url]
+                    normalized_extension_url(el.url) == expected_url
                   end
 
                   extension.present?
@@ -240,8 +244,9 @@ module Inferno
 
           ms_extension_urls = must_support_extensions.select { |ex| ex[:path] == "#{path}.extension" }
             .map { |ex| ex[:url] }
+          include_dar = normalized_extension_urls(ms_extension_urls).include?(FHIRResourceNavigation::DAR_EXTENSION_URL)
 
-          value_found = find_a_value_at(resource, path) do |potential_value|
+          value_found = find_a_value_at(resource, path, include_dar:) do |potential_value|
             matching_without_extensions?(potential_value, ms_extension_urls, element_definition[:fixed_value])
           end
 
@@ -257,8 +262,11 @@ module Inferno
           extension_name = extension_split.first
           extension_path = extension_split.last
 
-          found_extension_url = must_support_extensions.find { |ex| ex[:id].include?(extension_name) }[:url]
-          ms_element_extension = resource.extension.find { |ex| ex.url == found_extension_url }
+          found_extension_url =
+            normalized_extension_url(must_support_extensions.find { |ex| ex[:id].include?(extension_name) }[:url])
+          ms_element_extension = resource.extension.find do |extension|
+            normalized_extension_url(extension.url) == found_extension_url
+          end
 
           if ms_element_extension.present?
             resource = ms_element_extension
@@ -269,15 +277,31 @@ module Inferno
         end
 
         def matching_without_extensions?(value, ms_extension_urls, fixed_value)
-          if value.instance_of?(Inferno::DSL::PrimitiveType)
-            urls = value.extension&.map(&:url)
-            has_ms_extension = (urls & ms_extension_urls).present?
-            value = value.value
-          end
+          has_ms_extension = must_support_extension_present?(value, ms_extension_urls)
+
+          value = value.value if value.instance_of?(Inferno::DSL::PrimitiveType)
 
           return false unless has_ms_extension || value_without_extensions?(value)
 
           matches_fixed_value?(value, fixed_value)
+        end
+
+        def must_support_extension_present?(value, ms_extension_urls)
+          return false unless value.respond_to?(:extension)
+
+          (extension_urls(value) & normalized_extension_urls(ms_extension_urls)).present?
+        end
+
+        def extension_urls(value)
+          Array.wrap(value.extension).map { |extension| normalized_extension_url(extension.url) }
+        end
+
+        def normalized_extension_urls(urls)
+          Array.wrap(urls).map { |url| normalized_extension_url(url) }
+        end
+
+        def normalized_extension_url(url)
+          url&.split('|')&.first
         end
 
         def matches_fixed_value?(value, fixed_value)

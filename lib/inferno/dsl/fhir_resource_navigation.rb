@@ -194,7 +194,6 @@ module Inferno
         when 'String'
           slice_value.is_a? String
         else
-          slice_value = slice_value.resource if slice_value.is_a?(FHIR::Bundle::Entry)
           slice_value.is_a? FHIR.const_get(discriminator[:code])
         end
       end

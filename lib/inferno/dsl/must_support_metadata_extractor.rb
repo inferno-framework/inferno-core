@@ -54,11 +54,15 @@ module Inferno
           {
             id: element.id,
             path: element.path.gsub("#{resource}.", ''),
-            url: element.type.first.profile.first
+            url: canonical_url_without_version(element.type.first.profile.first)
           }.tap do |metadata|
             metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(element)
           end
         end
+      end
+
+      def canonical_url_without_version(url)
+        url&.split('|')&.first
       end
 
       def must_support_slice_elements
@@ -153,21 +157,46 @@ module Inferno
         must_support_type_slice_elements.map do |current_element|
           discriminator = discriminators(sliced_element(current_element)).first
           type_path = discriminator_path(discriminator)
-          type_element = find_element_by_discriminator_path(current_element, type_path)
+          type_element, type_path = find_type_slice_target(current_element, type_path)
 
           type_code = type_element.type.first.code
+          discriminator_metadata = {
+            type: 'type',
+            code: type_code.upcase_first
+          }
+          discriminator_metadata[:path] = type_path if type_path.present?
 
           {
             slice_id: current_element.id,
             slice_name: current_element.sliceName,
             path: current_element.path.gsub("#{resource}.", ''),
-            discriminator: {
-              type: 'type',
-              code: type_code.upcase_first
-            }
+            discriminator: discriminator_metadata
           }.tap do |metadata|
             metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(current_element)
           end
+        end
+      end
+
+      def find_type_slice_target(current_element, type_path)
+        type_element = find_element_by_discriminator_path(current_element, type_path)
+
+        return [type_element, type_path] unless type_slice_requires_resource_path?(type_path, type_element)
+
+        resource_element = type_slice_resource_element(current_element)
+
+        return [type_element, type_path] unless resource_element.present?
+
+        [resource_element, resource_element.path.delete_prefix("#{current_element.path}.")]
+      end
+
+      def type_slice_requires_resource_path?(type_path, type_element)
+        type_path.blank? &&
+          type_element&.type&.all? { |type| type.code == 'BackboneElement' }
+      end
+
+      def type_slice_resource_element(current_element)
+        profile_elements.find do |element|
+          element.id == "#{current_element.id}.resource" && element.type.present?
         end
       end
 
