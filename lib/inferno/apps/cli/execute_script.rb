@@ -72,7 +72,8 @@ module Inferno
     #                                              #           --allow-commands CLI flag)
     #       # OR
     #       start_run:
-    #         session: "{session_id}"              # optional; defaults to current session
+    #         session: "my_name"                   # optional; session name or template token
+    #                                              #           (e.g. {session_id}); defaults to current session
     #         runnable: "1.01"                     # required; can be a short id from the UI,
     #                                              #           an internal long id, or 'suite'
     #         inputs:                              # optional; the key must be the internal name

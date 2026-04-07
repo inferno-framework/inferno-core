@@ -19,7 +19,6 @@ group :development, :test do
   gem 'rubocop-rake', require: false
   gem 'rubocop-rspec', require: false
   gem 'rubocop-sequel', require: false
-  gem 'selenium-webdriver'
 end
 
 group :development do
