@@ -230,12 +230,13 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         receives_request :resume
 
         run do
+          msg = 'message=User%20clicked%20fail'
           wait(
             identifier: 'abc',
             message: %(
               [Follow this link to pass the test and proceed](#{config.options[:wait_test_url]}?xyz=abc).
 
-              [Follow this link to fail the test and proceed](#{config.options[:wait_test_fail_url]}?xyz=abc).
+              [Follow this link to fail the test and proceed](#{config.options[:wait_test_fail_url]}?xyz=abc&#{msg}).
 
               [Follow this link to skip the test and proceed](#{config.options[:wait_test_skip_url]}?xyz=abc).
 
@@ -247,7 +248,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
               ```#{config.options[:wait_test_url]}?xyz=abc```,
 
-              ```#{config.options[:wait_test_fail_url]}?xyz=abc```,
+              ```#{config.options[:wait_test_fail_url]}?xyz=abc&#{msg}```,
 
               ```#{config.options[:wait_test_skip_url]}?xyz=abc```,
 
