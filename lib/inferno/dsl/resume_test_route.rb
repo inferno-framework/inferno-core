@@ -44,8 +44,8 @@ module Inferno
       end
 
       # @private
-      def update_result(waiting_result)
-        results_repo.update_result(waiting_result.id, result)
+      def update_result(waiting_result, message)
+        results_repo.update_result(waiting_result.id, result, message)
       end
 
       # @private
@@ -80,6 +80,7 @@ module Inferno
         request = Inferno::Entities::Request.from_hanami_request(req)
 
         test_run_identifier = instance_exec(request, &test_run_identifier_block)
+        result_message = request.query_parameters['message']
 
         test_run = find_test_run(test_run_identifier)
 
@@ -90,7 +91,7 @@ module Inferno
         waiting_result = find_waiting_result(test_run)
         test = find_test(waiting_result)
 
-        update_result(waiting_result)
+        update_result(waiting_result, result_message)
         persist_request(request, test_run, waiting_result, test)
 
         Jobs.perform(Jobs::ResumeTestRun, test_run.id)
