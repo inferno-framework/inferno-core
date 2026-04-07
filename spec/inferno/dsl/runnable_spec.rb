@@ -109,6 +109,15 @@ RSpec.describe Inferno::DSL::Runnable do
 
         expect(updated_result.result).to eq('cancel')
       end
+
+      it 'includes a result_message when specified' do
+        get '/custom/demo/resume_fail?xyz=IDENTIFIER&message=failure%20reason'
+
+        updated_result = Inferno::Repositories::Results.new.find(result.id)
+
+        expect(updated_result.result).to eq('fail')
+        expect(updated_result.result_message).to eq('failure reason')
+      end
     end
   end
 
