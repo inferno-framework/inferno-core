@@ -239,7 +239,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
           identifier = 'abc'
           url_suffix = "?xyz=#{identifier}"
           wait_test_url = "#{config.options[:wait_test_url]}#{url_suffix}"
-          wait_test_fail_url = "#{config.options[:wait_test_fail_url]}#{url_suffix}"
+          wait_test_fail_url = "#{config.options[:wait_test_fail_url]}#{url_suffix}&message=User%20clicked%20fail"
           wait_test_skip_url = "#{config.options[:wait_test_skip_url]}#{url_suffix}"
           wait_test_omit_url = "#{config.options[:wait_test_omit_url]}#{url_suffix}"
           wait_test_cancel_url = "#{config.options[:wait_test_cancel_url]}#{url_suffix}"
