@@ -220,7 +220,7 @@ module Inferno
       def create_sessions
         script_config['sessions']&.map do |session_config|
           create_session_from_config(session_config)
-        end
+        end || []
       end
 
       def create_session_from_config(session_config)
@@ -298,7 +298,14 @@ module Inferno
         end
 
         target_session = session_for_name(session_name)
-        test_id = target_session&.short_id_map&.dig(short_id)
+        unless target_session
+          puts JSON.pretty_generate(
+            { errors: "Session '#{session_name}' not found in script sessions" }
+          )
+          exit(3)
+        end
+
+        test_id = target_session.short_id_map&.dig(short_id)
         unless test_id
           puts JSON.pretty_generate(
             { errors: "Short ID '#{short_id}' not found in session '#{target_session.key}'" }

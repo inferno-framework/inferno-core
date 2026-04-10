@@ -99,6 +99,38 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
+  describe '#resolve_short_id' do
+    # resolve_short_id is called lazily via scripted_steps when `steps` is first accessed.
+
+    it 'exits 3 when last_completed is a short ID referencing a session name that does not exist' do
+      step = { 'status' => 'done', 'last_completed' => '1.01', 'session' => 'nonexistent', 'action' => 'END_SCRIPT' }
+      config = { 'sessions' => [{ 'suite' => suite_id, 'name' => 'primary' }], 'steps' => [step] }
+      instance = build_instance(config)
+      expected_error = { errors: "Session 'nonexistent' not found in script sessions" }
+
+      expect do
+        expect { instance.send(:steps) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
+    end
+
+    it 'exits 3 when last_completed is a short ID referencing an unknown session name in a multi-session script' do
+      step = { 'status' => 'done', 'last_completed' => '1.01', 'session' => 'wrong', 'action' => 'END_SCRIPT' }
+      config = {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 'primary' }, { 'suite' => suite_id, 'name' => 'secondary' }],
+        'steps' => [step]
+      }
+      stub_request(:post, create_url).to_return(status: 200, body: session_response.to_json)
+      instance = build_instance(config)
+      expected_error = { errors: "Session 'wrong' not found in script sessions" }
+
+      expect do
+        expect { instance.send(:steps) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
+    end
+  end
+
   describe '#apply_templates' do
     subject(:instance) { build_instance(config) }
 
