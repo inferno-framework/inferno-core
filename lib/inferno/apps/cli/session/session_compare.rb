@@ -1,3 +1,4 @@
+require 'csv'
 require 'cgi'
 require_relative 'session_details'
 require_relative 'session_results'
@@ -15,7 +16,9 @@ module Inferno
           expected_results_file: {
             aliases: ['-f'],
             type: :string,
-            desc: 'Path to a file that contains the expected results.'
+            desc: 'Path to a file that contains the expected results. When the session ' \
+                  'results do not match the expected results in the file, generated ' \
+                  'comparison files will be placed in the same directory.'
           },
           compare_messages: {
             aliases: ['-m'],
@@ -261,6 +264,7 @@ module Inferno
           end
 
           MESSAGE_TYPE_ORDER = { 'error' => 0, 'warning' => 1, 'info' => 2 }.freeze
+          UNKNOWN_MESSAGE_TYPE_ORDER = 99
 
           def build_message_comparisons
             expected_msgs = sorted_messages(expected_result)
@@ -271,7 +275,7 @@ module Inferno
 
           def sorted_messages(result)
             Array(result&.dig('messages')).sort_by do |m|
-              [MESSAGE_TYPE_ORDER.fetch(m['type'].to_s, 99), m['message'].to_s]
+              [MESSAGE_TYPE_ORDER.fetch(m['type'].to_s, UNKNOWN_MESSAGE_TYPE_ORDER), m['message'].to_s]
             end
           end
 

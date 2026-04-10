@@ -173,14 +173,13 @@ module Inferno
           elsif ['access', 'auth'].include?(mode)
             mode
           else
-            "Failed to create run: unknown auth_info mode '#{mode}'."
+            puts JSON.pretty_generate({ errors: "Failed to create run: unknown auth_info mode '#{mode}'." })
+            exit(3)
           end
         end
 
         def default_component_from_definitions(component_object, mode)
-          if component_object['auth_type'].blank? || component_object['auth_type'] == ''
-            component_object['auth_type'] = 'public'
-          end
+          component_object['auth_type'] = 'public' if component_object['auth_type'].blank?
           auth_type = component_object['auth_type']
           components_to_default = components_to_default(mode)
 

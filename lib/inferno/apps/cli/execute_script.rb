@@ -15,7 +15,28 @@ module Inferno
     #
     # YAML format:
     #
-    #   comparison_config:                         # optional
+    #   sessions:                                  # Controls the creation of Inferno sessions for the execution
+    #                                              #   a session for each indicated suite will be created and
+    #                                              #   a successful run will have the expected results for all sessions.
+    #     - suite: my_suite                        # internal ID, title, or short title
+    #       name: my_name                          # optional; used as key in multi-session
+    #       preset: my-preset                      # optional; internal ID or title
+    #       suite_options:                         # optional; option_key and option_value can be the
+    #         option_key: option_value             #           internal values or the displayed titles
+    #
+    #
+    #   comparison_config:                         # optional; Controls the comparison of actual results during a run
+    #                                              #    to the expected results for each created Inferno session.
+    #                                              #    When the configured expected results file for a session does
+    #                                              #    not exist, the run will be considered a failure and the expected
+    #                                              #    results file will be generated using the results from the run.
+    #                                              #    Developers are responsible for verifying that the results match
+    #                                              #    their expectations before committing those expected results.
+    #                                              #    When expected results are present, they must match for the run
+    #                                              #    to be successful. When the results for a session do not match
+    #                                              #    the expected results, an actual results JSON file and a CSV diff
+    #                                              #    are written to the directory of the expected results file for
+    #                                              #    use in evaluating the failure.
     #     normalized_strings:                      # optional; global normalization rules applied to
     #       - "http://my-server.example.com"       # both expected and actual before comparing.
     #       - "http://other-value.example.com"     # plain string: replaced with <NORMALIZED>;
@@ -52,20 +73,13 @@ module Inferno
     #               - field: inputs.url
     #                 matches: ^http://
     #
-    #   sessions:
-    #     - suite: my_suite                        # internal ID, title, or short title
-    #       name: my_name                          # optional; used as key in multi-session
-    #       preset: my-preset                      # optional; internal ID or title
-    #       suite_options:                         # optional; option_key and option_value can be the
-    #         option_key: option_value             #           internal values or the displayed titles
-    #
-    #   steps:
+    #   steps:                                     # Details the steps taken in the execution of the script
     #     - status: created|done|waiting           # required; other status values cannot be matched on
-    #       last_completed: ""                     # optional; required unless the status is created
+    #       last_completed: "1.01"                 # optional; required unless the status is created
     #                                              #           can be a full ID, short ID (e.g. "1.01"), or 'suite'
     #       session: my_name                       # optional; required when multiple sessions to indicate which session
     #                                              #           can match this step
-    #       action: end_script|noop|wait           # optional; built-in action
+    #       action: END_SCRIPT|NOOP|WAIT           # optional; built-in action (case-insensitive)
     #                                              #           (mutually exclusive with command/start_run)
     #       # OR
     #       command: "bundle exec ..."             # optional; arbitrary shell command (requires
@@ -102,13 +116,16 @@ module Inferno
     # Template tokens in command strings and start_run input values:
     #   {session_id}              — current session's Inferno session ID
     #   {NAME.session_id}         — named session's ID
-    #   {result_message}          — current session's wait_result_message (shell-quoted)
-    #   {NAME.result_message}     — named session's wait_result_message (shell-quoted)
-    #   {wait_outputs.KEY}        — current session's wait output by name (shell-quoted)
-    #   {NAME.wait_outputs.KEY}   — named session's wait output by name (shell-quoted)
+    #   {result_message}          — current session's wait_result_message
+    #   {NAME.result_message}     — named session's wait_result_message
+    #   {wait_outputs.KEY}        — current session's wait output by name
+    #   {NAME.wait_outputs.KEY}   — named session's wait output by name
     #   {inferno_base_url}        — the Inferno base URL (--inferno-base-url option)
     class ExecuteScript
       SHORT_ID_PATTERN = /\A[0-9][0-9.]*\z/
+      # Seconds subtracted from the initial last_log_time so the first
+      # active-status line is logged immediately rather than after one interval.
+      LOG_INTERVAL_SECONDS = 30
 
       ScriptSession = Struct.new(
         :key, :suite_id, :session_id, :short_id_map,
@@ -126,6 +143,7 @@ module Inferno
         self.yaml_file = yaml_file
         self.options = options
         validate_yaml_file!
+        validate_commands_allowed!
         self.execution_status = ExecutionStatus.new(
           done: false,
           failed: false,
@@ -180,6 +198,17 @@ module Inferno
 
         puts JSON.pretty_generate(
           { errors: "'#{yaml_file}' does not appear to be a YAML file (.yaml or .yml extension required)." }
+        )
+        exit(1)
+      end
+
+      def validate_commands_allowed!
+        return if options[:allow_commands]
+        return if Array(script_config['steps']).none? { |step| step['command'].present? }
+
+        puts JSON.pretty_generate(
+          { errors: "Script contains 'command' steps but --allow-commands was not set. " \
+                    'Re-run with --allow-commands to permit arbitrary shell command execution.' }
         )
         exit(1)
       end
@@ -372,7 +401,7 @@ module Inferno
         warn ''
         warn "Polling session: #{session.key} (#{session.session_id}) timeout=#{timeout}s"
         deadline = Time.now + timeout
-        execution_status.last_log_time = Time.now - 30 # ensure first active-status line is logged immediately
+        execution_status.last_log_time = Time.now - LOG_INTERVAL_SECONDS
 
         loop do
           status = fetch_session_status(session.session_id)
@@ -400,26 +429,37 @@ module Inferno
 
       # Returns a step hash to act on, or nil to keep polling.
       def handle_actionable_status(status, session, timeout)
-        run_status = status['status']
         matched_step = match_step(status, session.key)
 
         if matched_step
-          return nil if matched_step[:command] == 'WAIT'
-
-          return verify_step(matched_step, status, session, timeout)
-        elsif run_status == 'waiting'
-          last_completed = format_last_completed(last_completed_from_status(status), session.key)
-          warn "UNHANDLED WAIT - Canceling: session=#{session.key} last_completed=#{last_completed}"
-          execution_status.failed = true
-          attempt_cancel(session.session_id, status)
+          handle_matched_step(matched_step, status, session, timeout)
+        elsif status['status'] == 'waiting'
+          handle_unmatched_wait(status, session)
         else
-          last_completed = format_last_completed(last_completed_from_status(status), session.key)
-          warn "UNMATCHED: session=#{session.key} status=#{run_status} last_completed=#{last_completed}"
-          execution_status.failed = true
-          return { command: nil, timeout: timeout, next_poll_session: nil }
+          handle_unmatched_status(status, session, timeout)
         end
+      end
 
+      def handle_matched_step(matched_step, status, session, timeout)
+        return nil if matched_step[:command] == 'WAIT'
+
+        verify_step(matched_step, status, session, timeout)
+      end
+
+      def handle_unmatched_wait(status, session)
+        last_completed = format_last_completed(last_completed_from_status(status), session.key)
+        warn "UNHANDLED WAIT - Canceling: session=#{session.key} last_completed=#{last_completed}"
+        execution_status.failed = true
+        attempt_cancel(session.session_id, status)
         nil
+      end
+
+      def handle_unmatched_status(status, session, timeout)
+        run_status = status['status']
+        last_completed = format_last_completed(last_completed_from_status(status), session.key)
+        warn "UNMATCHED: session=#{session.key} status=#{run_status} last_completed=#{last_completed}"
+        execution_status.failed = true
+        { command: nil, timeout: timeout, next_poll_session: nil }
       end
 
       # Checks for a repeated steps that aren't NOOPs; returns nil to keep polling or the step to act on.
@@ -684,9 +724,14 @@ module Inferno
         return value unless value.start_with?('@')
 
         path = value[1..]
-        return value if Pathname.new(path).absolute?
+        expanded = Pathname.new(path).absolute? ? path : File.expand_path(path, File.dirname(yaml_file))
 
-        "@#{File.expand_path(path, File.dirname(yaml_file))}"
+        unless File.exist?(expanded)
+          puts JSON.pretty_generate({ errors: "File input not found: #{expanded}" })
+          exit(3)
+        end
+
+        "@#{expanded}"
       end
 
       # ---------------------------------------------------------------------------
@@ -694,13 +739,6 @@ module Inferno
       # ---------------------------------------------------------------------------
 
       def execute_command(cmd)
-        unless options[:allow_commands]
-          warn "Error: script contains a 'command' step but --allow-commands was not set."
-          warn "  command: #{cmd}"
-          warn 'Re-run with --allow-commands to permit arbitrary shell command execution.'
-          return false
-        end
-
         system(cmd)
         $CHILD_STATUS.success?
       end

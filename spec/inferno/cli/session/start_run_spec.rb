@@ -361,6 +361,19 @@ RSpec.describe Inferno::CLI::Session::StartRun do
         expect(run_request).to have_been_made.once
       end
 
+      it 'exits 3 and prints an error when options.mode is an unknown value' do
+        auth_input = { 'name' => auth_input_name, 'type' => 'auth_info', 'options' => { 'mode' => 'custom' } }
+        details = session_details.merge('test_suite' => suite_details.merge('inputs' => [auth_input]))
+        stub_session_details(body: details.to_json)
+        stub_session_data(body: [{ 'name' => auth_input_name, 'value' => '', 'type' => 'auth_info' }].to_json)
+
+        expected_error = { errors: "Failed to create run: unknown auth_info mode 'custom'." }
+        expect do
+          expect { described_class.new(session_id, options).run }
+            .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+        end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
+      end
+
       it 'does not override an existing component value with the runnable input options default' do
         session_value = { 'client_id' => 'existing-client-id' }.to_json
         auth_input_options = { 'components' => [{ 'name' => 'client_id', 'default' => 'my-client-id' }] }

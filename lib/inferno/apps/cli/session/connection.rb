@@ -16,19 +16,19 @@ module Inferno
 
         def get(path, params = nil, headers = {})
           connection.get(path, params, headers)
-        rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
+        rescue Faraday::Error => e
           handle_connection_error(e)
         end
 
         def post(path, body = nil, headers = {})
           connection.post(path, body, headers)
-        rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
+        rescue Faraday::Error => e
           handle_connection_error(e)
         end
 
         def delete(path, params = nil, headers = {})
           connection.delete(path, params, headers)
-        rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
+        rescue Faraday::Error => e
           handle_connection_error(e)
         end
 

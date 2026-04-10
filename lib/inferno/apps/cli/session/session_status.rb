@@ -63,12 +63,6 @@ module Inferno
           handle_web_api_error(response, :test_run_results) if response.status != 200
           JSON.parse(response.body)
         end
-
-        def suite_options_list
-          options[:suite_options].keys.map do |option|
-            { id: option, value: options[:suite_options][option] }
-          end
-        end
       end
     end
   end

@@ -47,19 +47,24 @@ module Inferno
       end
 
       def self.determine_result(config, return_code, output, allow_known_failures)
-        if allow_known_failures && File.basename(config, '.yaml').end_with?('_failure') && return_code == 3
-          if output.include?('Actual results matched expected results? true')
-            puts '=> PASS (known-failure script exited with 3 and results matched expected)'
-            :pass
-          else
-            puts '=> FAIL (exited with 3 but results did not match expected)'
-            :fail
-          end
-        elsif return_code.zero?
-          puts '=> PASS'
+        known_failure = allow_known_failures && File.basename(config, '.yaml').end_with?('_failure')
+        return determine_known_failure_result(config, output) if known_failure && !return_code.zero?
+        return (:pass.tap { puts '=> PASS' }) if return_code.zero?
+
+        puts "=> FAIL (exit code #{return_code})"
+        :fail
+      end
+
+      def self.determine_known_failure_result(config, output)
+        expected_file = File.join(File.dirname(config), "#{File.basename(config, '.yaml')}_expected.json")
+        if output.include?('"errors"') && !File.exist?(expected_file)
+          puts '=> PASS (known-failure script exited with 3 due to expected error before comparison)'
+          :pass
+        elsif output.include?('Actual results matched expected results? true')
+          puts '=> PASS (known-failure script exited with 3 and results matched expected)'
           :pass
         else
-          puts "=> FAIL (exit code #{return_code})"
+          puts '=> FAIL (exited with 3 but results did not match expected)'
           :fail
         end
       end

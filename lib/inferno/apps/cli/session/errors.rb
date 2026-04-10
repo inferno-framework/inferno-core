@@ -37,7 +37,7 @@ module Inferno
 
         def test_run_not_found_message(response)
           test_run_id = response.env.url.to_s.split('/')[-2]
-          "Test Run '#{test_run_id}' for session '#{session_id} not found on Inferno host at '#{base_url}"
+          "Test Run '#{test_run_id}' for session '#{session_id}' not found on Inferno host at '#{base_url}'"
         end
       end
     end

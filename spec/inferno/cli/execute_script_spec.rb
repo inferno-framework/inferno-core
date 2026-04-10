@@ -60,7 +60,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
   end
 
   describe '#find_matching_step' do
-    subject(:instance) { build_instance(config) }
+    subject(:instance) { build_instance(config, base_options.merge(allow_commands: true)) }
 
     let(:steps) do
       [
@@ -169,19 +169,42 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(instance.send(:expand_file_input_path, 'plain value')).to eq('plain value')
     end
 
-    it 'leaves absolute @paths unchanged' do
+    it 'leaves absolute @paths unchanged when the file exists' do
+      allow(File).to receive(:exist?).with('/absolute/path/file.json').and_return(true)
       expect(instance.send(:expand_file_input_path, '@/absolute/path/file.json')).to eq('@/absolute/path/file.json')
     end
 
     it 'expands a relative @path to absolute using the yaml_file directory' do
       # build_instance passes 'script.yaml' as yaml_file; dirname is '.'
-      expected = "@#{File.expand_path('data.json', '.')}"
-      expect(instance.send(:expand_file_input_path, '@data.json')).to eq(expected)
+      expected_path = File.expand_path('data.json', '.')
+      allow(File).to receive(:exist?).with(expected_path).and_return(true)
+      expect(instance.send(:expand_file_input_path, '@data.json')).to eq("@#{expected_path}")
     end
 
     it 'expands a relative @path with subdirectory components' do
-      expected = "@#{File.expand_path('subdir/data.json', '.')}"
-      expect(instance.send(:expand_file_input_path, '@subdir/data.json')).to eq(expected)
+      expected_path = File.expand_path('subdir/data.json', '.')
+      allow(File).to receive(:exist?).with(expected_path).and_return(true)
+      expect(instance.send(:expand_file_input_path, '@subdir/data.json')).to eq("@#{expected_path}")
+    end
+
+    it 'exits 3 and prints an error when an absolute @path file does not exist' do
+      path = '/nonexistent/path/file.json'
+      allow(File).to receive(:exist?).with(path).and_return(false)
+      expected_error = { errors: "File input not found: #{path}" }
+      expect do
+        expect { instance.send(:expand_file_input_path, "@#{path}") }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
+    end
+
+    it 'exits 3 and prints an error when a relative @path file does not exist' do
+      expanded_path = File.expand_path('missing.json', '.')
+      allow(File).to receive(:exist?).with(expanded_path).and_return(false)
+      expected_error = { errors: "File input not found: #{expanded_path}" }
+      expect do
+        expect { instance.send(:expand_file_input_path, '@missing.json') }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output("#{JSON.pretty_generate(expected_error)}\n").to_stdout
     end
   end
 
@@ -192,10 +215,11 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     let(:session_key) { suite_id }
 
     it 'expands relative @paths in inputs to absolute paths after template substitution' do
+      expected_path = File.expand_path('data.json', '.')
+      allow(File).to receive(:exist?).with(expected_path).and_return(true)
       start_run = { 'runnable' => 'suite', 'inputs' => { 'coverage_json' => '@data.json' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
-      expected_path = "@#{File.expand_path('data.json', '.')}"
-      expect(result['inputs']['coverage_json']).to eq(expected_path)
+      expect(result['inputs']['coverage_json']).to eq("@#{expected_path}")
     end
 
     it 'leaves non-@ input values unchanged' do
@@ -208,6 +232,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       # Template substitution runs on the raw YAML value before file expansion.
       # A plain string with a token is substituted; an @path is expanded but its
       # content (read at run time by start_run) is never touched by apply_templates.
+      allow(File).to receive(:exist?).with(File.expand_path('data.json', '.')).and_return(true)
       start_run = { 'runnable' => 'suite', 'inputs' => { 'url' => '{inferno_base_url}', 'data' => '@data.json' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       # The plain token is substituted
@@ -216,7 +241,8 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(result['inputs']['data']).to start_with('@/')
     end
 
-    it 'leaves absolute @paths unchanged' do
+    it 'leaves absolute @paths unchanged when the file exists' do
+      allow(File).to receive(:exist?).with('/etc/ssl/cert.pem').and_return(true)
       start_run = { 'runnable' => 'suite', 'inputs' => { 'cert' => '@/etc/ssl/cert.pem' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['cert']).to eq('@/etc/ssl/cert.pem')
@@ -575,28 +601,40 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
-  describe '#execute_command' do
-    let(:config) { { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] } }
-    let(:cmd) { 'bundle exec ruby my_script.rb' }
-
-    context 'when --allow-commands is not set' do
-      subject(:instance) { build_instance(config, base_options.merge(allow_commands: false)) }
-
-      it 'returns false' do
-        expect(instance.send(:execute_command, cmd)).to be false
-      end
+  describe '#validate_commands_allowed!' do
+    let(:config_with_command) do
+      { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [{ 'command' => 'bundle exec ruby my_script.rb' }] }
     end
 
-    context 'when --allow-commands is set' do
-      subject(:instance) { build_instance(config, base_options.merge(allow_commands: true)) }
+    it 'exits 1 with an error when the script has command steps but --allow-commands is not set' do
+      expect do
+        expect { build_instance(config_with_command, base_options.merge(allow_commands: false)) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+      end.to output(/allow-commands/).to_stdout
+    end
 
-      it 'returns true when the command succeeds' do
-        expect(instance.send(:execute_command, 'true')).to be true
-      end
+    it 'does not exit when the script has command steps and --allow-commands is set' do
+      expect { build_instance(config_with_command, base_options.merge(allow_commands: true)) }.to_not raise_error
+    end
 
-      it 'returns false when the command fails' do
-        expect(instance.send(:execute_command, 'false')).to be false
-      end
+    it 'does not exit when the script has no command steps and --allow-commands is not set' do
+      config = { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }
+      expect { build_instance(config, base_options.merge(allow_commands: false)) }.to_not raise_error
+    end
+  end
+
+  describe '#execute_command' do
+    subject(:instance) do
+      build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] },
+                     base_options.merge(allow_commands: true))
+    end
+
+    it 'returns true when the command succeeds' do
+      expect(instance.send(:execute_command, 'true')).to be true
+    end
+
+    it 'returns false when the command fails' do
+      expect(instance.send(:execute_command, 'false')).to be false
     end
   end
 
