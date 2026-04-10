@@ -26,7 +26,7 @@
       {
         "name": "wait_test_fail_url",
         "type": "text",
-        "value": "http://localhost:4567/inferno/custom/demo/resume_fail?xyz=abc"
+        "value": "http://localhost:4567/inferno/custom/demo/resume_fail?xyz=abc&message=User%20clicked%20fail"
       },
       {
         "name": "wait_test_skip_url",
@@ -45,7 +45,8 @@
       }
     ],
     "requests": [],
-    "result": "pass",
+    "result": "fail",
+    "result_message": "User clicked fail",
     "test_id": "demo-wait_group-Test02",
     "test_run_id": "a9247da4-0909-471f-9612-f7ce986a8716",
     "test_session_id": "gPKQ5VMcPoZ",
@@ -82,7 +83,7 @@
     "optional": false,
     "outputs": [],
     "requests": [],
-    "result": "pass",
+    "result": "fail",
     "test_group_id": "demo-wait_group",
     "test_run_id": "a9247da4-0909-471f-9612-f7ce986a8716",
     "test_session_id": "gPKQ5VMcPoZ",

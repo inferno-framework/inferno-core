@@ -8,7 +8,7 @@ steps:
   
   - status: waiting
     last_completed: 5.02
-    command: "curl -o /dev/null -s '{wait_outputs.wait_test_url}'"
+    command: "curl -o /dev/null -s '{wait_outputs.wait_test_fail_url}'"
   
   - status: done
     last_completed: 5
