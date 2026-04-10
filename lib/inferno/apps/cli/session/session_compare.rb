@@ -11,7 +11,10 @@ module Inferno
           expected_results_session: {
             aliases: ['-s'],
             type: :string,
-            desc: 'Session id on the same server that contains the expected results.'
+            desc: 'Session ID on the same server. The results of this indicated ' \
+                  'session will be used as the expected results. When the compared ' \
+                  "session's results do not match, comparison details will not be " \
+                  'written to file (use the `-f` option).'
           },
           expected_results_file: {
             aliases: ['-f'],
