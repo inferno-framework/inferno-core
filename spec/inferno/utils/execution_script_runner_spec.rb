@@ -115,6 +115,37 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
 
       before { allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test_failure.yaml']) }
 
+      context 'when a _failure script exits with an error before comparison and no expected file exists' do
+        before do
+          allow(Open3).to receive(:capture2e)
+            .and_return(["{\"errors\": \"something went wrong\"}\n", exit_3_status])
+          allow(File).to receive(:exist?).and_call_original
+          allow(File).to receive(:exist?)
+            .with('execution_scripts/my_test_failure_expected.json')
+            .and_return(false)
+        end
+
+        it 'treats it as a pass' do
+          expect { described_class.run_all(allow_known_failures: true) }.to_not raise_error
+        end
+      end
+
+      context 'when a _failure script exits with an error before comparison but an expected file exists' do
+        before do
+          allow(Open3).to receive(:capture2e)
+            .and_return(["{\"errors\": \"something went wrong\"}\n", exit_3_status])
+          allow(File).to receive(:exist?).and_call_original
+          allow(File).to receive(:exist?)
+            .with('execution_scripts/my_test_failure_expected.json')
+            .and_return(true)
+        end
+
+        it 'treats it as a failure' do
+          expect { described_class.run_all(allow_known_failures: true) }
+            .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
+        end
+      end
+
       context 'when a _failure script exits 3 and results matched expected' do
         before do
           allow(Open3).to receive(:capture2e)

@@ -286,10 +286,13 @@ paths:
               type: "string"
             test_suite_id:
               type: "string"
+              description: "ID of the suite to run. Exactly one of test_suite_id, test_group_id, or test_id must be provided."
             test_group_id:
               type: "string"
+              description: "ID of the group to run. Exactly one of test_suite_id, test_group_id, or test_id must be provided."
             test_id:
               type: "string"
+              description: "ID of the test to run. Exactly one of test_suite_id, test_group_id, or test_id must be provided."
             inputs:
               type: "array"
               items:

@@ -174,6 +174,67 @@ RSpec.describe Inferno::CLI::Session::CreateSession do
     end
   end
 
+  describe '#suite_options_list' do
+    let(:suite_options_suite_list) do
+      [{ id: suite_id, title: suite_title, short_title: suite_short_title,
+         presets: [],
+         suite_options: [
+           { 'id' => 'ig_version', 'title' => 'IG Version',
+             'list_options' => [{ 'value' => '1', 'label' => 'v1' }, { 'value' => '2', 'label' => 'v2' }] },
+           { 'id' => 'another_option', 'title' => 'Another option',
+             'list_options' => [{ 'value' => 'a', 'label' => 'option a' }, { 'value' => 'b', 'label' => 'option b' }] }
+         ] }].to_json
+    end
+
+    before do
+      stub_request(:get, suites_url).to_return(status: 200, body: suite_options_suite_list)
+    end
+
+    it 'resolves a suite option key provided as a display title to its internal id' do
+      create_request = stub_request(:post, create_url)
+        .with(body: { test_suite_id: suite_id, suite_options: [{ id: 'ig_version', value: '1' }] })
+        .to_return(status: 200, body: session_response.to_json)
+
+      described_class.new(suite_id, options.merge(suite_options: { 'IG Version' => '1' })).create_session
+
+      expect(create_request).to have_been_made.once
+    end
+
+    it 'resolves a suite option value provided as a display label to its internal value' do
+      create_request = stub_request(:post, create_url)
+        .with(body: { test_suite_id: suite_id, suite_options: [{ id: 'ig_version', value: '2' }] })
+        .to_return(status: 200, body: session_response.to_json)
+
+      described_class.new(suite_id, options.merge(suite_options: { 'ig_version' => 'v2' })).create_session
+
+      expect(create_request).to have_been_made.once
+    end
+
+    it 'resolves both key by title and value by label in the same call' do
+      create_request = stub_request(:post, create_url)
+        .with(body: { test_suite_id: suite_id, suite_options: [{ id: 'another_option', value: 'b' }] })
+        .to_return(status: 200, body: session_response.to_json)
+
+      described_class.new(suite_id, options.merge(suite_options: { 'Another option' => 'option b' })).create_session
+
+      expect(create_request).to have_been_made.once
+    end
+
+    it 'exits 3 when the suite option key does not match any id or title' do
+      expect do
+        expect { described_class.new(suite_id, options.merge(suite_options: { 'unknown_opt' => '1' })).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output(/Unknown suite option 'unknown_opt'/).to_stdout
+    end
+
+    it 'exits 3 when the suite option value does not match any value or label' do
+      expect do
+        expect { described_class.new(suite_id, options.merge(suite_options: { 'ig_version' => 'v99' })).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+      end.to output(/Invalid value 'v99' for suite option 'ig_version'/).to_stdout
+    end
+  end
+
   describe '#resolve_suite_identifier' do
     it 'leaves suite_id unchanged when it matches an existing suite id' do
       create_request = stub_request(:post, create_url)
