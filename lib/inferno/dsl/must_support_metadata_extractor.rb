@@ -259,7 +259,7 @@ module Inferno
         must_support_type_slice_elements.map do |current_element|
           discriminator = discriminators(sliced_element(current_element)).first
           type_path = discriminator_path(discriminator)
-          type_element, type_path = find_type_slice_target(current_element, type_path)
+          type_element = find_element_by_discriminator_path(current_element, type_path)
 
           type_code = type_element.type.first.code
           discriminator_metadata = {
@@ -277,29 +277,6 @@ module Inferno
           }.tap do |metadata|
             metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(current_element)
           end
-        end
-      end
-
-      def find_type_slice_target(current_element, type_path)
-        type_element = find_element_by_discriminator_path(current_element, type_path)
-
-        return [type_element, type_path] unless type_slice_requires_resource_path?(type_path, type_element)
-
-        resource_element = type_slice_resource_element(current_element)
-
-        return [type_element, type_path] unless resource_element.present?
-
-        [resource_element, resource_element.path.delete_prefix("#{current_element.path}.")]
-      end
-
-      def type_slice_requires_resource_path?(type_path, type_element)
-        type_path.blank? &&
-          type_element&.type&.all? { |type| type.code == 'BackboneElement' }
-      end
-
-      def type_slice_resource_element(current_element)
-        profile_elements.find do |element|
-          element.id == "#{current_element.id}.resource" && element.type.present?
         end
       end
 
@@ -339,7 +316,7 @@ module Inferno
                   type: 'unsupported',
                   path: navigation_compatible_discriminator_path(discriminator_path)
                 }
-              elsif !pattern_element.fixed.nil?
+              elsif value_not_empty?(pattern_element.fixed)
                 fixed_values << {
                   path: navigation_compatible_discriminator_path(discriminator_path),
                   value: pattern_element.fixed
@@ -377,8 +354,12 @@ module Inferno
         must_support_slice_elements.any? { |ms_slice| element.id.include?(ms_slice.id) }
       end
 
+      def value_not_empty?(value)
+        value.present? || value == false
+      end
+
       def handle_fixed_values(metadata, element)
-        if !element.fixed.nil?
+        if value_not_empty?(element.fixed)
           metadata[:fixed_value] = element.fixed
         elsif element.patternCodeableConcept.present? && !element_part_of_slice_discrimination?(element)
           metadata[:fixed_value] = element.patternCodeableConcept.coding.first.code

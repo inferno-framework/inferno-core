@@ -121,13 +121,13 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
                                                          'value[x]:valueQuantity.code')).to eq('/min')
     end
 
-    it 'can find a populated choice element when the type is not explicit' do
+    it 'can find a populated choice element on an unsliced choice path' do
       supporting_info = FHIR::Claim::SupportingInfo.new(timingDate: '2024-01-01')
 
       expect(must_support_coverage_test.find_a_value_at(supporting_info, 'timing[x]')).to eq('2024-01-01')
     end
 
-    it 'can find a populated choice element when the type is explicit' do
+    it 'can find a populated choice element on a sliced choice path' do
       supporting_info = FHIR::Claim::SupportingInfo.new(
         timingPeriod: FHIR::Period.new(start: '2024-01-01')
       )

@@ -42,7 +42,7 @@ module Inferno
       # @param given_element [FHIR::Model, Array<FHIR::Model>]
       # @param path [String]
       # @param include_dar [Boolean]
-      # @return [Array<FHIR::Model>]
+      # @return [FHIR::Model, Object, false, nil] a single matching value, `false`, or `nil` if not found
       def find_a_value_at(given_element, path, include_dar: false, &block)
         return nil if given_element.nil?
 
@@ -81,8 +81,8 @@ module Inferno
         property = property.to_s
         extension_url = property[/(?<=where\(url=').*(?='\))/]
         return extension_filter_value(element, extension_url) if extension_url.present?
-        return typed_choice_value(element, property) if explicit_choice_path?(property)
-        return populated_choice_value(element, property) if implicit_choice_path?(property)
+        return sliced_choice_value(element, property) if sliced_choice_path?(property)
+        return populated_choice_value(element, property) if choice_path?(property)
         return find_slice_via_discriminator(element, property) if slice_path?(property)
 
         field_value(element, property)
@@ -96,12 +96,12 @@ module Inferno
       end
 
       # @private
-      def explicit_choice_path?(property)
+      def sliced_choice_path?(property)
         property.include?('[x]:')
       end
 
       # @private
-      def implicit_choice_path?(property)
+      def choice_path?(property)
         property.end_with?('[x]')
       end
 
@@ -111,9 +111,9 @@ module Inferno
       end
 
       # @private
-      def typed_choice_value(element, property)
-        _choice_path, typed_field = property.split(':', 2)
-        field_value(element, typed_field)
+      def sliced_choice_value(element, property)
+        _choice_path, sliced_field = property.split(':', 2)
+        field_value(element, sliced_field)
       end
 
       # @private
@@ -123,7 +123,7 @@ module Inferno
           Array.wrap(element.to_hash&.keys)
             .map(&:to_s)
             .find do |field_name|
-              field_name.start_with?(choice_prefix) && value_present?(field_value(element, field_name))
+              field_name.start_with?(choice_prefix) && value_not_empty?(field_value(element, field_name))
             end
 
         return nil if populated_field.blank?
@@ -355,11 +355,11 @@ module Inferno
       # @private
       def value_at_path_matches?(element, path, include_dar: false, &)
         value_found = find_a_value_at(element, path, include_dar:, &)
-        value_present?(value_found)
+        value_not_empty?(value_found)
       end
 
       # @private
-      def value_present?(value)
+      def value_not_empty?(value)
         value.present? || value == false
       end
 

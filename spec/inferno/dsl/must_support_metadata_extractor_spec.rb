@@ -111,7 +111,7 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
     end
 
     it 'extracts the discriminator path when the sliced type is on Bundle.entry.resource' do
-      discriminator = FHIR::ElementDefinition::Slicing::Discriminator.new(type: 'type', path: '$this')
+      discriminator = FHIR::ElementDefinition::Slicing::Discriminator.new(type: 'type', path: 'resource')
       slicing = FHIR::ElementDefinition::Slicing.new(discriminator: [discriminator])
 
       backbone_type = instance_double(FHIR::ElementDefinition::Type, code: 'BackboneElement')
