@@ -95,6 +95,10 @@ module Inferno
     #           input_name: "@path/to/file.txt"    #           prefix value with @ to read from a file;
     #                                              #           relative paths are resolved from the
     #                                              #           directory containing this script file
+    #           input_name:                        #           YAML mappings and sequences are
+    #             key: value                       #           automatically JSON-serialized, useful
+    #           input_name:                        #           for auth_info and other JSON inputs
+    #             - item1
     #       timeout: 300                           # optional; seconds to wait for next match (Default is 120)
     #       next_poll_session: other_name          # optional; switch polling target after command
     #       state_description: "..."               # optional; logged when step is matched
