@@ -3,7 +3,7 @@ require 'open3'
 module Inferno
   module Utils
     module ExecutionScriptRunner
-      def self.run_all(pattern: 'execution_scripts/**/*.yaml', inferno_base_url: nil, allow_known_failures: false)
+      def self.run_all(pattern: 'execution_scripts/**/*.yaml', inferno_base_url: nil, allow_known_errors: false)
         scripts = Dir.glob(pattern)
 
         if scripts.empty?
@@ -22,7 +22,7 @@ module Inferno
             next
           end
 
-          result = run_script(config, inferno_base_url:, allow_known_failures:)
+          result = run_script(config, inferno_base_url:, allow_known_errors:)
           (result == :pass ? passed : failed) << config
 
           puts
@@ -31,7 +31,7 @@ module Inferno
         print_summary(passed, failed)
       end
 
-      def self.run_script(config, inferno_base_url:, allow_known_failures:)
+      def self.run_script(config, inferno_base_url:, allow_known_errors:)
         puts '=' * 60
         puts "Running: #{config}"
         puts '=' * 60
@@ -43,25 +43,25 @@ module Inferno
         output, status = Open3.capture2e(*cmd)
         puts output
 
-        determine_result(config, status.exitstatus, output, allow_known_failures)
+        determine_result(config, status.exitstatus, output, allow_known_errors)
       end
 
-      def self.determine_result(config, return_code, output, allow_known_failures)
-        known_failure = allow_known_failures && File.basename(config, '.yaml').end_with?('_failure')
-        return determine_known_failure_result(config, output) if known_failure && !return_code.zero?
+      def self.determine_result(config, return_code, output, allow_known_errors)
+        known_error = allow_known_errors && File.basename(config, '.yaml').end_with?('_error')
+        return determine_known_error_result(config, output) if known_error && !return_code.zero?
         return (:pass.tap { puts '=> PASS' }) if return_code.zero?
 
         puts "=> FAIL (exit code #{return_code})"
         :fail
       end
 
-      def self.determine_known_failure_result(config, output)
+      def self.determine_known_error_result(config, output)
         expected_file = File.join(File.dirname(config), "#{File.basename(config, '.yaml')}_expected.json")
         if output.include?('"errors"') && !File.exist?(expected_file)
-          puts '=> PASS (known-failure script exited with 3 due to expected error before comparison)'
+          puts '=> PASS (known-error script exited with 3 due to expected error before comparison)'
           :pass
         elsif output.include?('Actual results matched expected results? true')
-          puts '=> PASS (known-failure script exited with 3 and results matched expected)'
+          puts '=> PASS (known-error script exited with 3 and results matched expected)'
           :pass
         else
           puts '=> FAIL (exited with 3 but results did not match expected)'

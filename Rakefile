@@ -24,7 +24,7 @@ namespace :execute_scripts do
     Inferno::Utils::ExecutionScriptRunner.run_all(
       pattern: ENV.fetch('FILTER', 'execution_scripts/**/*.yaml'),
       inferno_base_url: ENV.fetch('INFERNO_BASE_URL', nil),
-      allow_known_failures: true
+      allow_known_errors: true
     )
   end
 end

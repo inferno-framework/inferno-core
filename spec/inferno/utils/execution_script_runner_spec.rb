@@ -97,86 +97,86 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
       end
     end
 
-    context 'with allow_known_failures: false (default)' do
+    context 'with allow_known_errors: false (default)' do
       let(:exit_3_status) { instance_double(Process::Status, exitstatus: 3) }
 
       before do
-        allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test_failure.yaml'])
+        allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test_error.yaml'])
         allow(Open3).to receive(:capture2e).and_return(['', exit_3_status])
       end
 
-      it 'treats exit code 3 on a _failure script as failure' do
+      it 'treats exit code 3 on a _error script as failure' do
         expect { described_class.run_all }.to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
       end
     end
 
-    context 'with allow_known_failures: true' do
+    context 'with allow_known_errors: true' do
       let(:exit_3_status) { instance_double(Process::Status, exitstatus: 3) }
 
-      before { allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test_failure.yaml']) }
+      before { allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test_error.yaml']) }
 
-      context 'when a _failure script exits with an error before comparison and no expected file exists' do
+      context 'when a _error script exits with an error before comparison and no expected file exists' do
         before do
           allow(Open3).to receive(:capture2e)
             .and_return(["{\"errors\": \"something went wrong\"}\n", exit_3_status])
           allow(File).to receive(:exist?).and_call_original
           allow(File).to receive(:exist?)
-            .with('execution_scripts/my_test_failure_expected.json')
+            .with('execution_scripts/my_test_error_expected.json')
             .and_return(false)
         end
 
         it 'treats it as a pass' do
-          expect { described_class.run_all(allow_known_failures: true) }.to_not raise_error
+          expect { described_class.run_all(allow_known_errors: true) }.to_not raise_error
         end
       end
 
-      context 'when a _failure script exits with an error before comparison but an expected file exists' do
+      context 'when a _error script exits with an error before comparison but an expected file exists' do
         before do
           allow(Open3).to receive(:capture2e)
             .and_return(["{\"errors\": \"something went wrong\"}\n", exit_3_status])
           allow(File).to receive(:exist?).and_call_original
           allow(File).to receive(:exist?)
-            .with('execution_scripts/my_test_failure_expected.json')
+            .with('execution_scripts/my_test_error_expected.json')
             .and_return(true)
         end
 
         it 'treats it as a failure' do
-          expect { described_class.run_all(allow_known_failures: true) }
+          expect { described_class.run_all(allow_known_errors: true) }
             .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
         end
       end
 
-      context 'when a _failure script exits 3 and results matched expected' do
+      context 'when a _error script exits 3 and results matched expected' do
         before do
           allow(Open3).to receive(:capture2e)
             .and_return(["Actual results matched expected results? true\n", exit_3_status])
         end
 
         it 'treats it as a pass' do
-          expect { described_class.run_all(allow_known_failures: true) }.to_not raise_error
+          expect { described_class.run_all(allow_known_errors: true) }.to_not raise_error
         end
       end
 
-      context 'when a _failure script exits 3 but results did not match expected' do
+      context 'when a _error script exits 3 but results did not match expected' do
         before do
           allow(Open3).to receive(:capture2e)
             .and_return(["Actual results matched expected results? false\n", exit_3_status])
         end
 
         it 'treats it as a failure' do
-          expect { described_class.run_all(allow_known_failures: true) }
+          expect { described_class.run_all(allow_known_errors: true) }
             .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
         end
       end
 
-      context 'when a non-_failure script exits 3' do
+      context 'when a non-_error script exits 3' do
         before do
           allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test.yaml'])
           allow(Open3).to receive(:capture2e).and_return(['', exit_3_status])
         end
 
         it 'treats it as a failure' do
-          expect { described_class.run_all(allow_known_failures: true) }
+          expect { described_class.run_all(allow_known_errors: true) }
             .to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
         end
       end
