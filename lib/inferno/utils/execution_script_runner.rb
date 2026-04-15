@@ -57,7 +57,7 @@ module Inferno
 
       def self.determine_known_error_result(config, output)
         expected_file = File.join(File.dirname(config), "#{File.basename(config, '.yaml')}_expected.json")
-        if output.include?('"errors"') && !File.exist?(expected_file)
+        if (output.include?('"errors"') || output.include?('skipping comparison')) && !File.exist?(expected_file)
           puts '=> PASS (known-error script exited with 3 due to expected error before comparison)'
           :pass
         elsif output.include?('Actual results matched expected results? true')

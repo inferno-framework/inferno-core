@@ -137,7 +137,7 @@ module Inferno
       )
 
       ExecutionStatus = Struct.new(
-        :done, :failed, :current_session, :current_timeout, :last_log_time,
+        :done, :failed, :timed_out, :current_session, :current_timeout, :last_log_time,
         :cross_session_status, :last_step_signatures
       )
 
@@ -151,6 +151,7 @@ module Inferno
         self.execution_status = ExecutionStatus.new(
           done: false,
           failed: false,
+          timed_out: false,
           current_session: sessions.first,
           current_timeout: options[:default_poll_timeout],
           cross_session_status: {},
@@ -431,6 +432,7 @@ module Inferno
           if Time.now >= deadline
             warn "Timeout after #{timeout}s: session=#{session.key} status=#{run_status}"
             execution_status.failed = true
+            execution_status.timed_out = true
             return { command: nil, timeout: timeout, next_poll_session: nil }
           end
 
@@ -763,7 +765,10 @@ module Inferno
           warn "Checking results for #{session.key} session (#{session.session_id})"
           warn "  View session at #{session_display_url(session)}"
 
-          if any_error_results?(session)
+          if execution_status.timed_out
+            warn '  Session timed out - skipping comparison'
+            false
+          elsif any_error_results?(session)
             warn '  Session contained execution errors - skipping comparison'
             false
           else

@@ -439,6 +439,17 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
     end
 
     group do
+      id 'uncaught_exception_group'
+      title 'Uncaught Exception Group'
+      description 'This group contains a test that raises an uncaught exception, producing an error result.'
+
+      test do
+        title 'Raises an uncaught exception'
+        run { raise 'This is an intentional uncaught exception for testing error handling' }
+      end
+    end
+
+    group do
       title 'Assertions Group'
       description %(
         This group demonstrates some common assertsion.

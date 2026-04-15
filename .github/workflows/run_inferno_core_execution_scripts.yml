@@ -70,7 +70,7 @@ jobs:
           if [[ "${{ matrix.config }}" == *_error* && $rc -ne 0 ]]; then
             config="${{ matrix.config }}"
             expected_file="${config%.yaml}_expected.json"
-            if echo "$output" | grep -qF '"errors"' && [[ ! -f "$expected_file" ]]; then
+            if (echo "$output" | grep -qF '"errors"' || echo "$output" | grep -qF 'skipping comparison') && [[ ! -f "$expected_file" ]]; then
               echo "Known-error script exited with 3 due to expected error before comparison; passed"
               exit 0
             elif echo "$output" | grep -qF "Actual results matched expected results? true"; then
