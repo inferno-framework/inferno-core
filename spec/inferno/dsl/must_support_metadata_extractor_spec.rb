@@ -1,3 +1,4 @@
+require_relative '../../extract_tgz_helper'
 require_relative '../../../lib/inferno/dsl/must_support_metadata_extractor'
 
 RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
@@ -29,6 +30,27 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
 
   before do
     allow(profile_element).to receive_messages(mustSupport: true, path: 'foo.extension', id: 'id', type: [type])
+  end
+
+  describe '#must_support_extensions' do
+    let(:type) do
+      type = double
+      allow(type).to receive(:profile).and_return(['http://example.org/StructureDefinition/example-extension|1.2.3'])
+      type
+    end
+
+    it 'removes canonical version suffixes from extension urls' do
+      expect(extractor.must_support_extensions).to eq(
+        [
+          {
+            id: 'id',
+            path: 'foo.extension',
+            url: 'http://example.org/StructureDefinition/example-extension',
+            modifier_extension: false
+          }
+        ]
+      )
+    end
   end
 
   describe '#get_type_must_support_metadata' do
@@ -87,6 +109,65 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
       expect(slices[0][:discriminator][:type]).to eq('type')
       expect(slices[0][:discriminator][:code]).to eq('Date')
     end
+
+    it 'extracts the discriminator path when the sliced type is on Bundle.entry.resource' do
+      discriminator = FHIR::ElementDefinition::Slicing::Discriminator.new(type: 'type', path: 'resource')
+      slicing = FHIR::ElementDefinition::Slicing.new(discriminator: [discriminator])
+
+      backbone_type = instance_double(FHIR::ElementDefinition::Type, code: 'BackboneElement')
+      claim_type = instance_double(FHIR::ElementDefinition::Type, code: 'Claim')
+      bundle_profile = instance_double(
+        FHIR::StructureDefinition,
+        baseDefinition: 'baseDefinition',
+        name: 'bundle',
+        type: 'Bundle',
+        version: '2.2.0'
+      )
+      profile_elements = [
+        instance_double(
+          FHIR::ElementDefinition,
+          id: 'Bundle.entry',
+          path: 'Bundle.entry',
+          sliceName: nil,
+          mustSupport: false,
+          slicing:,
+          type: [backbone_type]
+        ),
+        instance_double(
+          FHIR::ElementDefinition,
+          id: 'Bundle.entry:Claim',
+          path: 'Bundle.entry',
+          sliceName: 'Claim',
+          mustSupport: true,
+          slicing: nil,
+          type: [backbone_type]
+        ),
+        instance_double(
+          FHIR::ElementDefinition,
+          id: 'Bundle.entry:Claim.resource',
+          path: 'Bundle.entry.resource',
+          sliceName: nil,
+          mustSupport: false,
+          slicing: nil,
+          type: [claim_type]
+        )
+      ]
+
+      slices = described_class.new(profile_elements, bundle_profile, 'Bundle', ig_resources).type_slices
+
+      expect(slices).to contain_exactly(
+        {
+          slice_id: 'Bundle.entry:Claim',
+          slice_name: 'Claim',
+          path: 'entry',
+          discriminator: {
+            type: 'type',
+            code: 'Claim',
+            path: 'resource'
+          }
+        }
+      )
+    end
   end
 
   describe '#value_slices' do
@@ -122,6 +203,186 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
       expect(slices[3][:path]).to eq('component')
       expect(slices[3][:discriminator][:type]).to eq('patternCodeableConcept')
       expect(slices[3][:discriminator][:code]).to eq('3150-0')
+    end
+
+    it 'extracts slices needed to navigate must support descendants' do
+      discriminator = FHIR::ElementDefinition::Slicing::Discriminator.new(type: 'value', path: 'category')
+      slicing = FHIR::ElementDefinition::Slicing.new(discriminator: [discriminator])
+      profile_elements = [
+        FHIR::ElementDefinition.new(
+          id: 'Claim.supportingInfo',
+          path: 'Claim.supportingInfo',
+          mustSupport: false,
+          slicing:
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Claim.supportingInfo:PatientEvent',
+          path: 'Claim.supportingInfo',
+          sliceName: 'PatientEvent',
+          mustSupport: false
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Claim.supportingInfo:PatientEvent.category',
+          path: 'Claim.supportingInfo.category',
+          patternCodeableConcept: FHIR::CodeableConcept.new(
+            coding: [FHIR::Coding.new(system: 'http://example.org/system', code: 'patientEvent')]
+          )
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Claim.supportingInfo:PatientEvent.timing[x]',
+          path: 'Claim.supportingInfo.timing[x]',
+          mustSupport: true
+        )
+      ]
+      claim_profile = instance_double(
+        FHIR::StructureDefinition,
+        baseDefinition: 'baseDefinition',
+        name: 'claim',
+        type: 'Claim',
+        version: '2.2.0'
+      )
+
+      slices = described_class.new(profile_elements, claim_profile, 'Claim', ig_resources).must_supports[:slices]
+
+      expect(slices).to contain_exactly(
+        {
+          slice_id: 'Claim.supportingInfo:PatientEvent',
+          slice_name: 'PatientEvent',
+          path: 'supportingInfo',
+          discriminator: {
+            type: 'patternCodeableConcept',
+            path: 'category',
+            code: 'patientEvent',
+            system: 'http://example.org/system'
+          }
+        }
+      )
+    end
+
+    it 'preserves fixed false discriminator values and normalizes discriminator paths' do
+      extension_url = 'http://example.org/StructureDefinition/careTeamClaimScope'
+      discriminator = FHIR::ElementDefinition::Slicing::Discriminator.new(
+        type: 'value',
+        path: "extension('#{extension_url}').value.ofType(boolean)"
+      )
+      slicing = FHIR::ElementDefinition::Slicing.new(discriminator: [discriminator])
+      extension_type = FHIR::ElementDefinition::Type.new(code: 'Extension', profile: [extension_url])
+      boolean_type = FHIR::ElementDefinition::Type.new(code: 'boolean')
+      profile_elements = [
+        FHIR::ElementDefinition.new(
+          id: 'Claim.careTeam',
+          path: 'Claim.careTeam',
+          mustSupport: false,
+          slicing:
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Claim.careTeam:ItemClaimMember',
+          path: 'Claim.careTeam',
+          sliceName: 'ItemClaimMember',
+          mustSupport: true
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Claim.careTeam:ItemClaimMember.extension:careTeamClaimScope',
+          path: 'Claim.careTeam.extension',
+          sliceName: 'careTeamClaimScope',
+          type: [extension_type]
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Claim.careTeam:ItemClaimMember.extension:careTeamClaimScope.value[x]',
+          path: 'Claim.careTeam.extension.value[x]',
+          type: [boolean_type],
+          fixedBoolean: false
+        )
+      ]
+      claim_profile = instance_double(
+        FHIR::StructureDefinition,
+        baseDefinition: 'baseDefinition',
+        name: 'claim',
+        type: 'Claim',
+        version: '2.2.0'
+      )
+
+      slices = described_class.new(profile_elements, claim_profile, 'Claim', ig_resources).value_slices
+
+      expect(slices).to contain_exactly(
+        {
+          slice_id: 'Claim.careTeam:ItemClaimMember',
+          slice_name: 'ItemClaimMember',
+          path: 'careTeam',
+          discriminator: {
+            type: 'value',
+            values: [
+              {
+                path: "extension.where(url='#{extension_url}').valueBoolean",
+                value: false
+              }
+            ]
+          }
+        }
+      )
+    end
+
+    it 'normalizes legacy choice discriminator syntax using "value as boolean"' do
+      extension_url = 'http://example.org/StructureDefinition/careTeamClaimScope'
+      discriminator = FHIR::ElementDefinition::Slicing::Discriminator.new(
+        type: 'value',
+        path: "extension('#{extension_url}').value as boolean"
+      )
+      slicing = FHIR::ElementDefinition::Slicing.new(discriminator: [discriminator])
+      extension_type = FHIR::ElementDefinition::Type.new(code: 'Extension', profile: [extension_url])
+      boolean_type = FHIR::ElementDefinition::Type.new(code: 'boolean')
+      profile_elements = [
+        FHIR::ElementDefinition.new(
+          id: 'Claim.careTeam',
+          path: 'Claim.careTeam',
+          mustSupport: false,
+          slicing:
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Claim.careTeam:OverallClaimMember',
+          path: 'Claim.careTeam',
+          sliceName: 'OverallClaimMember',
+          mustSupport: true
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Claim.careTeam:OverallClaimMember.extension:careTeamClaimScope',
+          path: 'Claim.careTeam.extension',
+          sliceName: 'careTeamClaimScope',
+          type: [extension_type]
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Claim.careTeam:OverallClaimMember.extension:careTeamClaimScope.value[x]',
+          path: 'Claim.careTeam.extension.value[x]',
+          type: [boolean_type],
+          fixedBoolean: true
+        )
+      ]
+      claim_profile = instance_double(
+        FHIR::StructureDefinition,
+        baseDefinition: 'baseDefinition',
+        name: 'claim',
+        type: 'Claim',
+        version: '2.0.1'
+      )
+
+      slices = described_class.new(profile_elements, claim_profile, 'Claim', ig_resources).value_slices
+
+      expect(slices).to contain_exactly(
+        {
+          slice_id: 'Claim.careTeam:OverallClaimMember',
+          slice_name: 'OverallClaimMember',
+          path: 'careTeam',
+          discriminator: {
+            type: 'value',
+            values: [
+              {
+                path: "extension.where(url='#{extension_url}').valueBoolean",
+                value: true
+              }
+            ]
+          }
+        }
+      )
     end
   end
 

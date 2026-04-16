@@ -120,6 +120,22 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
       expect(must_support_heartrate_test.find_a_value_at(heartrate_by_value,
                                                          'value[x]:valueQuantity.code')).to eq('/min')
     end
+
+    it 'can find a populated choice element on an unsliced choice path' do
+      supporting_info = FHIR::Claim::SupportingInfo.new(timingDate: '2024-01-01')
+
+      expect(must_support_coverage_test.find_a_value_at(supporting_info, 'timing[x]')).to eq('2024-01-01')
+    end
+
+    it 'can find a populated choice element on a sliced choice path' do
+      supporting_info = FHIR::Claim::SupportingInfo.new(
+        timingPeriod: FHIR::Period.new(start: '2024-01-01')
+      )
+
+      result = must_support_coverage_test.find_a_value_at(supporting_info, 'timing[x]:timingPeriod.start')
+
+      expect(result).to eq('2024-01-01')
+    end
   end
 
   describe '#matching_type_slice?' do
@@ -170,6 +186,22 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
     it 'does not match on other type for the wrong type' do
       slice = FHIR::Period.new
       discriminator = { code: 'Quantity' }
+      expect(matcher).to_not be_matching_type_slice(slice, discriminator)
+    end
+
+    it 'does not match a Bundle::Entry without a discriminator path' do
+      slice = FHIR::Bundle::Entry.new(
+        resource: FHIR::Claim.new
+      )
+      discriminator = { code: 'Claim' }
+      expect(matcher).to_not be_matching_type_slice(slice, discriminator)
+    end
+
+    it 'does not match a Bundle::Entry with the wrong resource type when no discriminator path' do
+      slice = FHIR::Bundle::Entry.new(
+        resource: FHIR::Patient.new
+      )
+      discriminator = { code: 'Claim' }
       expect(matcher).to_not be_matching_type_slice(slice, discriminator)
     end
 

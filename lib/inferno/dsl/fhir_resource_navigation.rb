@@ -24,7 +24,7 @@ module Inferno
         elements = Array.wrap(elements)
         return elements if path.blank?
 
-        paths = path.split(/(?<!hl7)\./)
+        paths = path_segments(path)
         segment = paths.first
         remaining_path = paths.drop(1).join('.')
 
@@ -42,22 +42,22 @@ module Inferno
       # @param given_element [FHIR::Model, Array<FHIR::Model>]
       # @param path [String]
       # @param include_dar [Boolean]
-      # @return [Array<FHIR::Model>]
+      # @return a single matching value (which can include `false`) or `nil` if not found
       def find_a_value_at(given_element, path, include_dar: false, &block)
         return nil if given_element.nil?
 
         elements = Array.wrap(given_element)
         return find_in_elements(elements, include_dar:, &block) if path.empty?
 
-        path_segments = path.split(/(?<!hl7)\./)
+        path_segments = path_segments(path)
 
-        segment = path_segments.shift.delete_suffix('[x]').gsub(/^class$/, 'local_class').gsub('[x]:', ':').to_sym
+        segment = path_segments.shift
 
         remaining_path = path_segments.join('.')
         elements.each do |element|
           child = get_next_value(element, segment)
           element_found = find_a_value_at(child, remaining_path, include_dar:, &block)
-          return element_found if element_found.present? || element_found == false
+          return element_found if value_not_empty?(element_found)
         end
 
         nil
@@ -78,25 +78,75 @@ module Inferno
 
       # @private
       def get_next_value(element, property)
+        property = property.to_s
         extension_url = property[/(?<=where\(url=').*(?='\))/]
-        if extension_url.present?
-          element.url == extension_url ? element : nil
-        elsif property.to_s.include?(':') && !property.to_s.include?('url')
-          find_slice_via_discriminator(element, property)
+        return extension_filter_value(element, extension_url) if extension_url.present?
+        return sliced_choice_value(element, property) if sliced_choice_path?(property)
+        return populated_choice_value(element, property) if choice_path?(property)
+        return find_slice_via_discriminator(element, property) if slice_path?(property)
 
-        else
-          local_name = local_field_name(property)
-          value = element.send(local_name)
-          primitive_value = get_primitive_type_value(element, property, value)
-          primitive_value.present? ? primitive_value : value
-        end
+        field_value(element, property)
       rescue NoMethodError
         nil
       end
 
       # @private
+      def extension_filter_value(element, extension_url)
+        element.url == extension_url ? element : nil
+      end
+
+      # @private
+      def sliced_choice_path?(property)
+        property.include?('[x]:')
+      end
+
+      # @private
+      def choice_path?(property)
+        property.end_with?('[x]')
+      end
+
+      # @private
+      def slice_path?(property)
+        property.include?(':') && !property.include?('url')
+      end
+
+      # @private
+      def sliced_choice_value(element, property)
+        _choice_path, sliced_field = property.split(':', 2)
+        field_value(element, sliced_field)
+      end
+
+      # @private
+      def populated_choice_value(element, property)
+        choice_prefix = property.delete_suffix('[x]')
+        populated_field =
+          Array.wrap(element.to_hash&.keys)
+            .map(&:to_s)
+            .find do |field_name|
+              field_name.start_with?(choice_prefix) && value_not_empty?(field_value(element, field_name))
+            end
+
+        return nil if populated_field.blank?
+
+        field_value(element, populated_field)
+      end
+
+      # @private
+      def field_value(element, field_name)
+        local_name = local_field_name(field_name)
+        value = element.send(local_name)
+        primitive_value = get_primitive_type_value(element, field_name, value)
+        primitive_value.present? ? primitive_value : value
+      end
+
+      # @private
       def get_primitive_type_value(element, property, value)
-        source_value = element.source_hash["_#{property}"]
+        return nil unless element.respond_to?(:source_hash)
+
+        source_hash = element.source_hash
+        return nil unless source_hash.present?
+
+        source_value = source_hash["_#{property}"]
 
         return nil unless source_value.present?
 
@@ -117,6 +167,47 @@ module Inferno
       end
 
       # @private
+      def path_segments(path)
+        state = { current_segment: +'', segments: [], parentheses_depth: 0, in_quotes: false }
+        path.each_char { |char| update_path_segment_state(state, char) }
+        state[:segments] << state[:current_segment] unless state[:current_segment].empty?
+        state[:segments]
+      end
+
+      # @private
+      def update_path_segment_state(state, char)
+        case char
+        when "'"
+          state[:current_segment] << char
+          state[:in_quotes] = !state[:in_quotes]
+        when '('
+          append_path_character(state, char, depth_change: 1)
+        when ')'
+          append_path_character(state, char, depth_change: -1)
+        when '.'
+          split_path_segment_or_append(state, char)
+        else
+          state[:current_segment] << char
+        end
+      end
+
+      # @private
+      def append_path_character(state, char, depth_change:)
+        state[:current_segment] << char
+        state[:parentheses_depth] += depth_change unless state[:in_quotes]
+      end
+
+      # @private
+      def split_path_segment_or_append(state, char)
+        if state[:parentheses_depth].zero? && !state[:in_quotes]
+          state[:segments] << state[:current_segment].dup
+          state[:current_segment].clear
+        else
+          state[:current_segment] << char
+        end
+      end
+
+      # @private
       def find_slice_via_discriminator(element, property)
         return unless metadata.present?
 
@@ -124,6 +215,8 @@ module Inferno
         slice_name = local_field_name(property.to_s.split(':')[1])
 
         slice_by_name = metadata.must_supports[:slices].find { |slice| slice[:slice_name] == slice_name }
+        return nil if slice_by_name.blank?
+
         discriminator = slice_by_name[:discriminator]
         slices = Array.wrap(element.send(element_name))
         slices.find { |slice| matching_slice?(slice, discriminator) }
@@ -168,7 +261,7 @@ module Inferno
 
       # @private
       def matching_value_slice?(slice, discriminator)
-        values = discriminator[:values].map { |value| value.merge(path: value[:path].split('.')) }
+        values = discriminator[:values].map { |value| value.merge(path: path_segments(value[:path])) }
         verify_slice_by_values(slice, values)
       end
 
@@ -198,15 +291,29 @@ module Inferno
 
       # @private
       def matching_required_binding_slice?(slice, discriminator)
-        slice_coding = discriminator[:path].present? ? slice.send((discriminator[:path]).to_s).coding : slice.coding
-        slice_coding.any? do |coding|
-          discriminator[:values].any? do |value|
-            case value
-            when String
-              value == coding.code
-            when Hash
-              value[:system] == coding.system && value[:code] == coding.code
-            end
+        slice_coding = required_binding_codings(slice, discriminator)
+        slice_coding.any? { |coding| required_binding_value_match?(coding, discriminator[:values]) }
+      end
+
+      # @private
+      def required_binding_codings(slice, discriminator)
+        if discriminator[:path].present?
+          Array.wrap(resolve_path(slice, discriminator[:path])).flat_map { |value| Array.wrap(value&.coding) }
+        elsif slice.is_a?(FHIR::Coding)
+          [slice]
+        else
+          Array.wrap(slice.coding)
+        end
+      end
+
+      # @private
+      def required_binding_value_match?(coding, values)
+        values.any? do |value|
+          case value
+          when String
+            value == coding.code
+          when Hash
+            value[:system] == coding.system && value[:code] == coding.code
           end
         end
       end
@@ -219,7 +326,7 @@ module Inferno
             value_definitions
               .select { |value_definition| value_definition[:path].first == path_prefix }
               .each { |value_definition| value_definition[:path].shift }
-          find_a_value_at(element, path_prefix) do |el_found|
+          value_at_path_matches?(element, path_prefix) do |el_found|
             current_and_child_values_match?(el_found, value_definitions_for_path)
           end
         end
@@ -241,6 +348,17 @@ module Inferno
             true
           end
         current_element_values_match && child_element_values_match
+      end
+
+      # @private
+      def value_at_path_matches?(element, path, include_dar: false, &)
+        value_found = find_a_value_at(element, path, include_dar:, &)
+        value_not_empty?(value_found)
+      end
+
+      # @private
+      def value_not_empty?(value)
+        value.present? || value == false
       end
 
       # @private
