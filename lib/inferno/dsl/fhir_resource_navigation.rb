@@ -42,7 +42,7 @@ module Inferno
       # @param given_element [FHIR::Model, Array<FHIR::Model>]
       # @param path [String]
       # @param include_dar [Boolean]
-      # @return [FHIR::Model, Object, false, nil] a single matching value, `false`, or `nil` if not found
+      # @return a single matching value (which can include `false`) or `nil` if not found
       def find_a_value_at(given_element, path, include_dar: false, &block)
         return nil if given_element.nil?
 
@@ -57,7 +57,7 @@ module Inferno
         elements.each do |element|
           child = get_next_value(element, segment)
           element_found = find_a_value_at(child, remaining_path, include_dar:, &block)
-          return element_found if element_found.present? || element_found == false
+          return element_found if value_not_empty?(element_found)
         end
 
         nil
@@ -292,8 +292,6 @@ module Inferno
       # @private
       def matching_required_binding_slice?(slice, discriminator)
         slice_coding = required_binding_codings(slice, discriminator)
-        return slice_coding.present? if discriminator[:values].blank?
-
         slice_coding.any? { |coding| required_binding_value_match?(coding, discriminator[:values]) }
       end
 

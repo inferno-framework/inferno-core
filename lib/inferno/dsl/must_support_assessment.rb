@@ -242,9 +242,8 @@ module Inferno
 
           ms_extension_urls = must_support_extensions.select { |ex| ex[:path] == "#{raw_path}.extension" }
             .map { |ex| ex[:url] }
-          include_dar = normalized_extension_urls(ms_extension_urls).include?(FHIRResourceNavigation::DAR_EXTENSION_URL)
 
-          value_found = find_a_value_at(resource, path, include_dar:) do |potential_value|
+          value_found = find_a_value_at(resource, path) do |potential_value|
             matching_without_extensions?(potential_value, ms_extension_urls, element_definition[:fixed_value])
           end
 
@@ -456,8 +455,6 @@ module Inferno
         end
 
         def required_binding_value_match?(coding, values)
-          return true if values.blank?
-
           values.any? do |value|
             case value
             when String

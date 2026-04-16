@@ -231,32 +231,4 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
       expect(matcher).to be_matching_type_slice(slice, discriminator)
     end
   end
-
-  describe '#matching_required_binding_slice?' do
-    let(:matcher) { including_class.new }
-
-    it 'matches when any coding is present and no values were extracted' do
-      slice = FHIR::CodeableConcept.new(
-        coding: [
-          FHIR::Coding.new(
-            system: 'http://example.org/system',
-            code: 'example'
-          )
-        ]
-      )
-      discriminator = { path: '', values: [] }
-
-      expect(matcher).to be_matching_required_binding_slice(slice, discriminator)
-    end
-
-    it 'matches a Coding slice when any coding is present and no values were extracted' do
-      slice = FHIR::Coding.new(
-        system: 'http://example.org/system',
-        code: 'example'
-      )
-      discriminator = { path: '', values: [] }
-
-      expect(matcher).to be_matching_required_binding_slice(slice, discriminator)
-    end
-  end
 end

@@ -260,42 +260,6 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
     end
   end
 
-  describe 'must support test for non-primitive elements with must support extensions' do
-    let(:claim_response_metadata) do
-      OpenStruct.new(
-        must_supports: {
-          extensions: [
-            {
-              id: 'ClaimResponse.request.extension:DataAbsentReason',
-              path: 'request.extension',
-              url: 'http://hl7.org/fhir/StructureDefinition/data-absent-reason|5.2.0'
-            }
-          ],
-          slices: [],
-          elements: [{ path: 'request' }]
-        }
-      )
-    end
-
-    let(:claim_response) do
-      FHIR::ClaimResponse.new(
-        request: {
-          extension: [
-            {
-              url: 'http://hl7.org/fhir/StructureDefinition/data-absent-reason',
-              valueCode: 'unknown'
-            }
-          ]
-        }
-      )
-    end
-
-    it 'treats a DAR-only reference as populated when the extension is must support' do
-      result = run_with_metadata([claim_response], claim_response_metadata)
-      expect(result).to be_empty
-    end
-  end
-
   describe 'must support test for slices' do
     context 'with patternCodeableConcept slicing' do
       let(:careplan_profile) { fixture('StructureDefinition-us-core-careplan.json') }
@@ -701,19 +665,6 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
                                          })
         end
 
-        context 'with no extracted values' do
-          it 'passes if any coding is present on the slice path' do
-            result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
-            expect(result).to be_empty
-          end
-
-          it 'fails if server does not support total:adjudicationamounttype slice' do
-            eob_inpatient_inst.total.clear
-            result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
-            expect(result).to include('ExplanationOfBenefit.total:adjudicationamounttype')
-          end
-        end
-
         context 'with string values' do
           before do
             eob_inpatient_inst_metadata.must_supports[:slices][0][:discriminator][:values] << 'paidtoprovider'
@@ -746,44 +697,6 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
             result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
             expect(result).to include('ExplanationOfBenefit.total:adjudicationamounttype')
           end
-        end
-      end
-
-      context 'with requiredBinding slices on Coding elements' do
-        let(:coverage_metadata) do
-          OpenStruct.new({
-                           must_supports: {
-                             extensions: [],
-                             slices: [{
-                               slice_id: 'Coverage.relationship.coding:X12Code',
-                               slice_name: 'X12Code',
-                               path: 'relationship.coding',
-                               discriminator: {
-                                 type: 'requiredBinding',
-                                 path: '',
-                                 values: []
-                               }
-                             }],
-                             elements: []
-                           }
-                         })
-        end
-        let(:coverage) do
-          FHIR::Coverage.new(
-            relationship: {
-              coding: [
-                {
-                  system: 'https://valueset.x12.org/x217/005010/request/2000D/INS/1/02/00/1069',
-                  code: '18'
-                }
-              ]
-            }
-          )
-        end
-
-        it 'passes when the coding slice is present' do
-          result = run_with_metadata([coverage], coverage_metadata)
-          expect(result).to be_empty
         end
       end
 
