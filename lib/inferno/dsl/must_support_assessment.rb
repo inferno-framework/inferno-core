@@ -202,14 +202,18 @@ module Inferno
         def missing_extensions(resources = [])
           @missing_extensions ||=
             must_support_extensions.select do |extension_definition|
+              expected_url = normalized_extension_url(extension_definition[:url])
+
               resources.none? do |resource|
                 path = extension_definition[:path]
 
                 if path == 'extension'
-                  resource.extension.any? { |extension| extension.url == extension_definition[:url] }
+                  Array.wrap(resource.extension).any? do |extension|
+                    normalized_extension_url(extension.url) == expected_url
+                  end
                 else
                   extension = find_a_value_at(resource, path) do |el|
-                    el.url == extension_definition[:url]
+                    normalized_extension_url(el.url) == expected_url
                   end
 
                   extension.present?
@@ -233,12 +237,10 @@ module Inferno
         end
 
         def resource_populates_element?(resource, element_definition)
-          path = element_definition[:path]
+          raw_path = element_definition[:path]
+          path = navigation_compatible_must_support_path(raw_path)
 
-          # handle MustSupport element under extension: Ex: extension:supporting-info.value[x]
-          resource, path = process_must_support_element_in_extension(resource, path) if path.start_with?('extension:')
-
-          ms_extension_urls = must_support_extensions.select { |ex| ex[:path] == "#{path}.extension" }
+          ms_extension_urls = must_support_extensions.select { |ex| ex[:path] == "#{raw_path}.extension" }
             .map { |ex| ex[:url] }
 
           value_found = find_a_value_at(resource, path) do |potential_value|
@@ -249,6 +251,47 @@ module Inferno
           value_found.present? || value_found == false
         end
 
+        def navigation_compatible_must_support_path(path)
+          logical_segments = []
+
+          path_segments(path).map do |segment|
+            normalized_segment = normalized_must_support_path_segment(segment, logical_segments)
+            logical_segments << segment.split(':').first
+            normalized_segment
+          end.join('.')
+        end
+
+        def normalized_must_support_path_segment(segment, logical_segments)
+          extension_type, extension_name = segment.match(/\A(modifierExtension|extension):(.+)\z/)&.captures
+          return segment if extension_type.blank?
+
+          extension_path = [logical_segments.join('.'), extension_type].reject(&:blank?).join('.')
+          extension_definition = must_support_extension_definition(extension_path, extension_type, extension_name)
+          return segment if extension_definition.blank?
+
+          "#{extension_type}.where(url='#{normalized_extension_url(extension_definition[:url])}')"
+        end
+
+        def must_support_extension_definition(extension_path, extension_type, extension_name)
+          suffix = "#{extension_type}:#{extension_name}"
+          path_matching_extensions = must_support_extensions.select { |definition| definition[:path] == extension_path }
+
+          extension_definition_candidates(path_matching_extensions).each do |definitions, matcher|
+            match = definitions.find { |definition| definition[:id].public_send(matcher, suffix) }
+            return match if match.present?
+          end
+
+          nil
+        end
+
+        def extension_definition_candidates(path_matching_extensions)
+          [
+            [path_matching_extensions, :end_with?],
+            [path_matching_extensions, :include?],
+            [must_support_extensions, :end_with?]
+          ]
+        end
+
         def process_must_support_element_in_extension(resource, path)
           return [resource, path] unless path.start_with?('extension:')
 
@@ -257,8 +300,11 @@ module Inferno
           extension_name = extension_split.first
           extension_path = extension_split.last
 
-          found_extension_url = must_support_extensions.find { |ex| ex[:id].include?(extension_name) }[:url]
-          ms_element_extension = resource.extension.find { |ex| ex.url == found_extension_url }
+          found_extension_url =
+            normalized_extension_url(must_support_extensions.find { |ex| ex[:id].include?(extension_name) }[:url])
+          ms_element_extension = resource.extension.find do |extension|
+            normalized_extension_url(extension.url) == found_extension_url
+          end
 
           if ms_element_extension.present?
             resource = ms_element_extension
@@ -269,15 +315,31 @@ module Inferno
         end
 
         def matching_without_extensions?(value, ms_extension_urls, fixed_value)
-          if value.instance_of?(Inferno::DSL::PrimitiveType)
-            urls = value.extension&.map(&:url)
-            has_ms_extension = (urls & ms_extension_urls).present?
-            value = value.value
-          end
+          has_ms_extension = must_support_extension_present?(value, ms_extension_urls)
+
+          value = value.value if value.instance_of?(Inferno::DSL::PrimitiveType)
 
           return false unless has_ms_extension || value_without_extensions?(value)
 
           matches_fixed_value?(value, fixed_value)
+        end
+
+        def must_support_extension_present?(value, ms_extension_urls)
+          return false unless value.respond_to?(:extension)
+
+          (extension_urls(value) & normalized_extension_urls(ms_extension_urls)).present?
+        end
+
+        def extension_urls(value)
+          Array.wrap(value.extension).map { |extension| normalized_extension_url(extension.url) }
+        end
+
+        def normalized_extension_urls(urls)
+          Array.wrap(urls).map { |url| normalized_extension_url(url) }
+        end
+
+        def normalized_extension_url(url)
+          url&.split('|')&.first
         end
 
         def matches_fixed_value?(value, fixed_value)
@@ -346,7 +408,7 @@ module Inferno
         end
 
         def find_value_slice(element, discriminator)
-          values = discriminator[:values].map { |value| value.merge(path: value[:path].split('.')) }
+          values = discriminator[:values].map { |value| value.merge(path: path_segments(value[:path])) }
           find_slice_by_values(element, values)
         end
 
@@ -377,22 +439,30 @@ module Inferno
         end
 
         def find_required_binding_slice(element, discriminator)
+          if element.is_a?(FHIR::Coding) && required_binding_value_match?(element, discriminator[:values])
+            return element
+          end
+
           coding_path = discriminator[:path].present? ? "#{discriminator[:path]}.coding" : 'coding'
 
           find_a_value_at(element, coding_path) do |coding|
-            discriminator[:values].any? do |value|
-              case value
-              when String
-                value == coding.code
-              when Hash
-                value[:system] == coding.system && value[:code] == coding.code
-              end
-            end
+            required_binding_value_match?(coding, discriminator[:values])
           end
         end
 
         def find_slice_by_values(element, value_definitions)
           Array.wrap(element).find { |el| verify_slice_by_values(el, value_definitions) }
+        end
+
+        def required_binding_value_match?(coding, values)
+          values.any? do |value|
+            case value
+            when String
+              value == coding.code
+            when Hash
+              value[:system] == coding.system && value[:code] == coding.code
+            end
+          end
         end
       end
     end
