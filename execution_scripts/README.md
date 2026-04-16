@@ -1,9 +1,14 @@
 # Using Core Execution Scripts
 
-This directory contains inferno-core execution scripts that
-demonstrate and validate the behavior of script execution
+This directory contains inferno-core [execution scripts](https://inferno-framework.github.io/docs/advanced-test-features/scripting-execution.html)
+that demonstrate and validate the behavior of script execution
 as well as the functionality with in the suites in the
-sibling `dev_suites` folder.
+sibling `dev_suites` folder. Execution scripts defined here will
+be [executed](https://inferno-framework.github.io/docs/advanced-test-features/scripting-execution.html#execution)
+automatically on pull requests as a part of the github
+workflows and can also be executed locally using the
+[`execute_script` CLI](https://inferno-framework.github.io/docs/getting-started/inferno-cli.html#complex-scripted-execution)
+on individual scripts or the `execute_scripts:run_all` rake task.
 
 Unlike test kit execution scripts, these scripts can be expected
 to error in order to demonstrate particular features of
