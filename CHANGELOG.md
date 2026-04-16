@@ -1,3 +1,8 @@
+## 1.2.0
+* ID-97: allow a result_message to be provided on resume routes by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/773
+* Fix must support navigation for Bundle entry type slice sub-elements by @abhinandan2012 in https://github.com/inferno-framework/inferno-core/pull/770
+* ID-45: Session CLI and Scripted Execution by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/760
+
 ## 1.1.2
 * Add simulation verification flag to groups by @ljtucker in https://github.com/inferno-framework/inferno-core/pull/768
 
