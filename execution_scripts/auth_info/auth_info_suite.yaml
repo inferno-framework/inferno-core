@@ -1,0 +1,11 @@
+sessions:
+  - suite: auth_info
+
+steps:
+  - status: created
+    start_run:
+      runnable: auth_info
+
+  - status: done
+    last_completed: auth_info
+    action: END_SCRIPT

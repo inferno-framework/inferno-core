@@ -1,0 +1,25 @@
+sessions:
+  - suite: dev_validator
+
+comparison_config:
+  alternate_expected_files:
+    - file: validator_suite_alternate_expected_file_alt_expected.json
+      when:
+        - field: inputs.patient_json
+          not_matches: '.+'
+
+steps:
+  - status: created
+    state_description: created
+    action_description: run the suite
+    start_run:
+      runnable: 1
+      inputs:
+        url: http://inferno.healthit.gov/reference-server/r4
+        access_token: SAMPLE_TOKEN
+        patient_id: 85
+    timeout: 600 # allow for validator startup
+
+  - status: done
+    last_completed: 1
+    action: END_SCRIPT

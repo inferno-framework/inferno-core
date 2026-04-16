@@ -1,0 +1,30 @@
+sessions:
+  - suite: auth_info
+   # NOTE: input use introduces issue time skew that causes faiures - these are expected
+
+comparison_config:
+  normalized_strings:
+    - replacement: <TIMESTAMP>
+      pattern: /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})/
+
+steps:
+  - status: created
+    start_run:
+      runnable: 1.2.01
+      inputs:
+        public_access_auth_info:
+          access_token: SAMPLE_TOKEN
+          refresh_token: SAMPLE_REFRESH_TOKEN
+          client_id: SAMPLE_PUBLIC_CLIENT_ID
+          token_url: ''
+          issue_time: '2026-03-30T23:59:12-04:00'
+          expires_in: '3600'
+          requested_scopes: launch/patient openid fhirUser patient/*.*
+          pkce_support: enabled
+          pkce_code_challenge_method: S256
+          auth_request_method: GET
+          auth_type: public
+
+  - status: done
+    last_completed: 1.2.01
+    action: END_SCRIPT

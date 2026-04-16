@@ -1,0 +1,19 @@
+sessions:
+  - suite: dev_validator
+
+steps:
+  - status: created
+    state_description: created
+    action_description: run the suite
+    start_run:
+      runnable: 1
+      inputs:
+        url: http://inferno.healthit.gov/reference-server/r4
+        access_token: SAMPLE_TOKEN
+        patient_id: 85
+        patient_json: '@validator_suite_with_file_input_patient_json_input.json'
+    timeout: 600 # allow for validator startup
+
+  - status: done
+    last_completed: 1
+    action: END_SCRIPT

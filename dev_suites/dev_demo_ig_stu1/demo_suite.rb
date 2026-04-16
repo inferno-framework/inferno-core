@@ -229,32 +229,51 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         title 'Wait test'
         receives_request :resume
 
+        output :wait_test_url
+        output :wait_test_fail_url
+        output :wait_test_skip_url
+        output :wait_test_omit_url
+        output :wait_test_cancel_url
+
         run do
-          msg = 'message=User%20clicked%20fail'
+          identifier = 'abc'
+          url_suffix = "?xyz=#{identifier}"
+          wait_test_url = "#{config.options[:wait_test_url]}#{url_suffix}"
+          wait_test_fail_url = "#{config.options[:wait_test_fail_url]}#{url_suffix}&message=User%20clicked%20fail"
+          wait_test_skip_url = "#{config.options[:wait_test_skip_url]}#{url_suffix}"
+          wait_test_omit_url = "#{config.options[:wait_test_omit_url]}#{url_suffix}"
+          wait_test_cancel_url = "#{config.options[:wait_test_cancel_url]}#{url_suffix}"
+
+          output(wait_test_url:)
+          output(wait_test_fail_url:)
+          output(wait_test_skip_url:)
+          output(wait_test_omit_url:)
+          output(wait_test_cancel_url:)
+
           wait(
-            identifier: 'abc',
+            identifier:,
             message: %(
-              [Follow this link to pass the test and proceed](#{config.options[:wait_test_url]}?xyz=abc).
+              [Follow this link to pass the test and proceed](#{wait_test_url}).
 
-              [Follow this link to fail the test and proceed](#{config.options[:wait_test_fail_url]}?xyz=abc&#{msg}).
+              [Follow this link to fail the test and proceed](#{wait_test_fail_url}).
 
-              [Follow this link to skip the test and proceed](#{config.options[:wait_test_skip_url]}?xyz=abc).
+              [Follow this link to skip the test and proceed](#{wait_test_skip_url}).
 
-              [Follow this link to omit the test and proceed](#{config.options[:wait_test_omit_url]}?xyz=abc).
+              [Follow this link to omit the test and proceed](#{wait_test_omit_url}).
 
-              [Follow this link to cancel the test and proceed](#{config.options[:wait_test_cancel_url]}?xyz=abc).
+              [Follow this link to cancel the test and proceed](#{wait_test_cancel_url}).
 
               Waiting to receive a request at one of:
 
-              ```#{config.options[:wait_test_url]}?xyz=abc```,
+              ```#{wait_test_url}```,
 
-              ```#{config.options[:wait_test_fail_url]}?xyz=abc&#{msg}```,
+              ```#{wait_test_fail_url}```,
 
-              ```#{config.options[:wait_test_skip_url]}?xyz=abc```,
+              ```#{wait_test_skip_url}```,
 
-              ```#{config.options[:wait_test_omit_url]}?xyz=abc```,
+              ```#{wait_test_omit_url}```,
 
-              ```#{config.options[:wait_test_cancel_url]}?xyz=abc```.
+              ```#{wait_test_cancel_url}```.
             )
           )
         end
@@ -416,6 +435,17 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
           load_tagged_requests('abc', 'def')
           assert request.present?, 'Tagged request not found'
         end
+      end
+    end
+
+    group do
+      id 'uncaught_exception_group'
+      title 'Uncaught Exception Group'
+      description 'This group contains a test that raises an uncaught exception, producing an error result.'
+
+      test do
+        title 'Raises an uncaught exception'
+        run { raise 'This is an intentional uncaught exception for testing error handling' }
       end
     end
 

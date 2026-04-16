@@ -1,0 +1,69 @@
+sessions:
+  - suite: paired_suite_a
+    name: receiver
+  - suite: paired_suite_b
+    name: sender
+
+steps:
+  - state_description: Suite A (Receiver) session created
+    session: receiver
+    status: created
+    start_run:
+      session: receiver
+      runnable: 1
+    action_description: Start Suite A (Receiver) Group 1
+
+  - state_description: Wait at Suite A (Receiver) Test 1.01
+    session: receiver
+    status: waiting
+    last_completed: 1.01
+    start_run:
+      session: sender
+      runnable: 1
+    next_poll_session: sender
+    action_description: Run Suite B (Sender) Group 1
+
+  - state_description: Wait at Suite B (Sender) Test 1.02
+    session: sender
+    status: waiting
+    last_completed: 1.02
+    command: "curl -o /dev/null -s '{sender.wait_outputs.wait_test_url}'"
+    next_poll_session: receiver
+    action_description: Confirm receipt of Signal One, start waiting for Signal Two
+
+  - state_description: Wait at Suite A (Receiver) Test 1.02
+    session: receiver
+    status: waiting
+    last_completed: 1.02
+    action: WAIT
+    action_description: Wait for Suite B (Sender) to send Signal Two
+
+  - state_description: Wait at Suite A (Receiver) Test 1.03
+    session: receiver
+    status: waiting
+    last_completed: 1.03
+    action: NOOP
+    next_poll_session: sender
+    action_description: Switch to Poll Suite B (Sender)
+
+  - state_description: Wait at Suite B (Sender) Test 1.04
+    session: sender
+    status: waiting
+    last_completed: 1.04
+    command: "curl -o /dev/null -s '{sender.wait_outputs.wait_test_url}'"
+    action_description: Confirm receipt of Signal Two
+
+  - state_description: Finished Suite B (Sender) Group 1
+    session: sender
+    status: done
+    last_completed: 1
+    action: NOOP
+    next_poll_session: receiver
+    action_description: Switch to Poll Suite A (Receiver)
+
+  - state_description: Finished Suite A (Receiver) Group 1
+    session: receiver
+    status: done
+    last_completed: 1
+    action: END_SCRIPT
+    action_description: Script Completed

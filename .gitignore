@@ -23,6 +23,7 @@
 .settings/org.eclipse.wst.jsdt.ui.superType.name
 .idea
 .byebug_history
+.claude/*
 
 /coverage
 /spec/examples.txt
@@ -32,3 +33,7 @@ node_modules
 
 # webpack-bundle-analyzer report
 /report.html
+
+# execution script failed run artifacts
+execution_scripts/**/*_actual_results*.json
+execution_scripts/**/*_compared_results*.csv

@@ -17,6 +17,8 @@ module Inferno
       # Returns the list of inputs which need to be persisted, with options
       # applied.
       def processed_inputs
+        return [] unless preset.present?
+
         preset.inputs
           .map { |input| input_for_options(input) }
           .compact

@@ -1,0 +1,621 @@
+[
+  {
+    "id": "a4837e70-3874-45fa-a50d-6afa58bf3e3a",
+    "created_at": "2026-02-27T09:50:24.209-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "value": "1",
+        "type": "text"
+      },
+      {
+        "name": "outer_group_input",
+        "value": "2",
+        "type": "text"
+      },
+      {
+        "name": "inner_group_input",
+        "value": "3",
+        "type": "text"
+      },
+      {
+        "name": "test_input",
+        "value": "4",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_1",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.209-05:00"
+  },
+  {
+    "id": "ad0ebe68-0c00-4fdc-a0da-92667de0eb6b",
+    "created_at": "2026-02-27T09:50:24.213-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "value": "1",
+        "type": "text"
+      },
+      {
+        "name": "outer_group_input",
+        "value": "2",
+        "type": "text"
+      },
+      {
+        "name": "inner_group_input",
+        "value": "3",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_2",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.213-05:00"
+  },
+  {
+    "id": "11ee6b63-d2f8-49f3-9790-72ddbea196d8",
+    "created_at": "2026-02-27T09:50:24.214-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "value": "1",
+        "type": "text"
+      },
+      {
+        "name": "outer_group_input",
+        "value": "2",
+        "type": "text"
+      },
+      {
+        "name": "inner_group_input",
+        "value": "3",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_3",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.214-05:00"
+  },
+  {
+    "id": "a103604a-aa8e-4692-bf1f-ee3b655f8059",
+    "created_at": "2026-02-27T09:50:24.217-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "value": "1",
+        "type": "text"
+      },
+      {
+        "name": "outer_group_input",
+        "value": "2",
+        "type": "text"
+      },
+      {
+        "name": "inner_group_input",
+        "value": "3",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_4",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.217-05:00"
+  },
+  {
+    "id": "2e933091-c5e2-4841-8b7b-38421e5892cd",
+    "created_at": "2026-02-27T09:50:24.218-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "label": null,
+        "description": null,
+        "value": "1",
+        "type": "text"
+      },
+      {
+        "name": "outer_group_input",
+        "label": null,
+        "description": null,
+        "value": "2",
+        "type": "text"
+      },
+      {
+        "name": "inner_group_input",
+        "label": null,
+        "description": null,
+        "value": "3",
+        "type": "text"
+      },
+      {
+        "name": "test_input",
+        "label": null,
+        "description": null,
+        "value": "4",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "infra_test-outer_inline_group-inner_inline_group",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.218-05:00"
+  },
+  {
+    "id": "aa55b939-5642-495a-b22e-027334af4259",
+    "created_at": "2026-02-27T09:50:24.223-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "label": null,
+        "description": null,
+        "value": "1",
+        "type": "text"
+      },
+      {
+        "name": "outer_group_input",
+        "label": null,
+        "description": null,
+        "value": "2",
+        "type": "text"
+      },
+      {
+        "name": "inner_group_input",
+        "label": null,
+        "description": null,
+        "value": "3",
+        "type": "text"
+      },
+      {
+        "name": "test_input",
+        "label": null,
+        "description": null,
+        "value": "4",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "infra_test-outer_inline_group",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.223-05:00"
+  },
+  {
+    "id": "ffd9b16b-93d8-47b4-a35f-519accac7d36",
+    "created_at": "2026-02-27T09:50:24.226-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "value": "1",
+        "type": "text"
+      }
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "infra_test-passing_optional_group-Test01",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.226-05:00"
+  },
+  {
+    "id": "bc8632e7-82bf-4ea8-8690-38fdacbf2c8b",
+    "created_at": "2026-02-27T09:50:24.227-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "value": "1",
+        "type": "text"
+      }
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "fail",
+    "test_id": "infra_test-passing_optional_group-Test02",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.227-05:00"
+  },
+  {
+    "id": "38859aa6-bdd6-45d0-84da-d224c93b8080",
+    "created_at": "2026-02-27T09:50:24.229-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "label": null,
+        "description": null,
+        "value": "1",
+        "type": "text"
+      }
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "infra_test-passing_optional_group",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.229-05:00"
+  },
+  {
+    "id": "db95e9a2-62ac-4b77-b802-569e58b84d44",
+    "created_at": "2026-02-27T09:50:24.231-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "value": "1",
+        "type": "text"
+      }
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "fail",
+    "test_id": "infra_test-failing_optional_group-Test01",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.231-05:00"
+  },
+  {
+    "id": "4da81e7f-4025-48fb-b922-75ce7fb3d167",
+    "created_at": "2026-02-27T09:50:24.233-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "label": null,
+        "description": null,
+        "value": "1",
+        "type": "text"
+      }
+    ],
+    "optional": true,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "fail",
+    "test_group_id": "infra_test-failing_optional_group",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.233-05:00"
+  },
+  {
+    "id": "25eafdb6-9916-432c-b11a-1f82af36dec5",
+    "created_at": "2026-02-27T09:50:24.235-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "value": "1",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "infra_test-mixed_optional_group-Test02",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.235-05:00"
+  },
+  {
+    "id": "c57bf8bc-0753-4df2-8ac5-7e3cd81029fd",
+    "created_at": "2026-02-27T09:50:24.236-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "label": null,
+        "description": null,
+        "value": "1",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "infra_test-mixed_optional_group",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.236-05:00"
+  },
+  {
+    "id": "c3457a05-79b7-4338-b42f-0a680b61b062",
+    "created_at": "2026-02-27T09:50:24.241-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "label": null,
+        "description": null,
+        "value": "1",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "omit",
+    "result_message": "No tests defined",
+    "test_group_id": "infra_test-empty_group",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.241-05:00"
+  },
+  {
+    "id": "a3de5e24-9213-40ff-9c8a-97d759bea5b7",
+    "created_at": "2026-02-27T09:50:24.245-05:00",
+    "inputs": [
+      {
+        "name": "external_test1_input",
+        "value": "5",
+        "type": "text"
+      },
+      {
+        "name": "external_inner_group_input",
+        "value": "6",
+        "type": "text"
+      },
+      {
+        "name": "external_outer_group_input",
+        "value": "7",
+        "type": "text"
+      },
+      {
+        "name": "suite_input",
+        "value": "1",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_id": "infra_test-external_outer_group-external_inner_group-external_test1",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.245-05:00"
+  },
+  {
+    "id": "60ebb5ef-3e71-4b54-ac61-adfd004a5d77",
+    "created_at": "2026-02-27T09:50:24.245-05:00",
+    "inputs": [
+      {
+        "name": "external_test1_input",
+        "label": null,
+        "description": null,
+        "value": "5",
+        "type": "text"
+      },
+      {
+        "name": "external_inner_group_input",
+        "label": null,
+        "description": null,
+        "value": "6",
+        "type": "text"
+      },
+      {
+        "name": "external_outer_group_input",
+        "label": null,
+        "description": null,
+        "value": "7",
+        "type": "text"
+      },
+      {
+        "name": "suite_input",
+        "label": null,
+        "description": null,
+        "value": "1",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "infra_test-external_outer_group-external_inner_group",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.245-05:00"
+  },
+  {
+    "id": "e562f6ad-3bfc-42e7-9b4e-da252aee6581",
+    "created_at": "2026-02-27T09:50:24.251-05:00",
+    "inputs": [
+      {
+        "name": "external_test1_input",
+        "label": null,
+        "description": null,
+        "value": "5",
+        "type": "text"
+      },
+      {
+        "name": "external_inner_group_input",
+        "label": null,
+        "description": null,
+        "value": "6",
+        "type": "text"
+      },
+      {
+        "name": "external_outer_group_input",
+        "label": null,
+        "description": null,
+        "value": "7",
+        "type": "text"
+      },
+      {
+        "name": "suite_input",
+        "label": null,
+        "description": null,
+        "value": "1",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_group_id": "infra_test-external_outer_group",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "updated_at": "2026-02-27T09:50:24.251-05:00"
+  },
+  {
+    "id": "62b63e2f-aa36-4e6b-a44e-10eac770d65a",
+    "created_at": "2026-02-27T09:50:24.254-05:00",
+    "inputs": [
+      {
+        "name": "suite_input",
+        "label": null,
+        "description": null,
+        "value": "1",
+        "type": "text"
+      },
+      {
+        "name": "outer_group_input",
+        "label": null,
+        "description": null,
+        "value": "2",
+        "type": "text"
+      },
+      {
+        "name": "inner_group_input",
+        "label": null,
+        "description": null,
+        "value": "3",
+        "type": "text"
+      },
+      {
+        "name": "test_input",
+        "label": null,
+        "description": null,
+        "value": "4",
+        "type": "text"
+      },
+      {
+        "name": "external_test1_input",
+        "label": null,
+        "description": null,
+        "value": "5",
+        "type": "text"
+      },
+      {
+        "name": "external_inner_group_input",
+        "label": null,
+        "description": null,
+        "value": "6",
+        "type": "text"
+      },
+      {
+        "name": "external_outer_group_input",
+        "label": null,
+        "description": null,
+        "value": "7",
+        "type": "text"
+      }
+    ],
+    "optional": false,
+    "outputs": [
+
+    ],
+    "requests": [
+
+    ],
+    "result": "pass",
+    "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
+    "test_session_id": "gsjaJJAEUhu",
+    "test_suite_id": "infra_test",
+    "updated_at": "2026-02-27T09:50:24.254-05:00"
+  }
+]

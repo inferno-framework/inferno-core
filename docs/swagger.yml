@@ -17,8 +17,14 @@ tags:
   description: "An individual testing session"
 - name: "Test Run"
   description: "An individual test run"
+- name: "Result"
+  description: "The outcome of an individual test, group, or suite"
+- name: "Session Data"
+  description: "Input and output values stored in a test session"
 - name: "Request"
   description: "Details of HTTP Requests"
+- name: "Requirement"
+  description: "A testable requirement"
 - name: "Version"
   description: "Inferno version"
 schemes:
@@ -39,7 +45,7 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/TestSuite"
+              $ref: "#/definitions/TestSuiteSummary"
   /test_suites/{test_suite_id}:
     get:
       tags:
@@ -116,27 +122,52 @@ paths:
       tags:
       - "Test Session"
       summary: "Start a new test session"
-      description: ""
+      description: "Parameters may be passed as query parameters or as a JSON request body."
       produces:
+      - "application/json"
+      consumes:
       - "application/json"
       parameters:
       - in: "query"
         type: "string"
         name: "test_suite_id"
         description: "ID of the test suite being run in this test session"
-        required: true
+        required: false
       - in: "query"
         type: "string"
         name: "preset_id"
         description: "ID of a preset to use with this test session"
         required: false
+      - in: "body"
+        name: "body"
+        description: "Session parameters as a JSON body (alternative to query parameters)"
+        required: false
+        schema:
+          type: "object"
+          properties:
+            test_suite_id:
+              type: "string"
+              description: "ID of the test suite being run in this test session"
+            preset_id:
+              type: "string"
+              description: "ID of a preset to use with this test session"
+            suite_options:
+              type: "array"
+              description: "Suite option selections for this session"
+              items:
+                type: "object"
+                properties:
+                  id:
+                    type: "string"
+                  value:
+                    type: "string"
       responses:
-        "201":
+        "200":
           description: "Success"
           schema:
             $ref: "#/definitions/TestSession"
-        "400":
-          description: "Invalid test_suite_id"
+        "422":
+          description: "Invalid parameters"
   /test_sessions/{test_session_id}:
     get:
       tags:
@@ -210,7 +241,7 @@ paths:
         "404":
           description: "Test session not found"
   /test_sessions/{test_session_id}/session_data/apply_preset:
-    get:
+    put:
       tags:
       - "Session Data"
       summary: "Apply preset inputs to a test session"
@@ -239,18 +270,42 @@ paths:
       description: ""
       produces:
       - "application/json"
+      consumes:
+      - "application/json"
       parameters:
       - in: "body"
         name: "body"
         description: "Test suite, group, or test and inputs to execute."
         required: true
         schema:
-          $ref: "#/definitions/TestRun"
+          type: "object"
+          required:
+          - "test_session_id"
+          properties:
+            test_session_id:
+              type: "string"
+            test_suite_id:
+              type: "string"
+              description: "ID of the suite to run. Exactly one of test_suite_id, test_group_id, or test_id must be provided."
+            test_group_id:
+              type: "string"
+              description: "ID of the group to run. Exactly one of test_suite_id, test_group_id, or test_id must be provided."
+            test_id:
+              type: "string"
+              description: "ID of the test to run. Exactly one of test_suite_id, test_group_id, or test_id must be provided."
+            inputs:
+              type: "array"
+              items:
+                $ref: "#/definitions/Input"
       responses:
         "200":
           description: "Success"
-        "400":
-          description: "Invalid test_group_id, test_suite_id, test_id or inputs"
+          schema:
+            $ref: "#/definitions/TestRun"
+        "409":
+          description: "Another test run is already in progress for this session"
+        "422":
+          description: "Invalid test_group_id, test_suite_id, test_id, or inputs"
   /test_runs/{test_run_id}:
     get:
       tags:
@@ -282,14 +337,12 @@ paths:
           schema:
             $ref: "#/definitions/TestRun"
         "404":
-          description: "Test session not found"
+          description: "Test run not found"
     delete:
       tags:
       - "Test Run"
       summary: "Cancel an existing test run"
-      description: ""
-      produces:
-      - "application/json"
+      description: "Cancels the test run if it is in progress or waiting. Returns 204 with no body in all non-error cases, including when the run does not exist or has already finished."
       parameters:
       - in: "path"
         type: "string"
@@ -297,12 +350,10 @@ paths:
         description: "ID of the test run"
         required: true
       responses:
-        "200":
+        "204":
           description: "Success"
-          schema:
-            $ref: "#/definitions/TestRun"
-        "404":
-          description: "Test session not found"
+        "500":
+          description: "Unexpected error"
   /test_sessions/{test_session_id}/last_test_run:
     get:
       tags:
@@ -319,11 +370,48 @@ paths:
         required: true
       responses:
         "200":
-          description: "Success"
+          description: "Success, or null if no test run exists for this session"
           schema:
             $ref: "#/definitions/TestRun"
+  /test_sessions/{test_session_id}/results/{result_id}/io/{type}/{name}:
+    get:
+      tags:
+      - "Result"
+      summary: "Get the value of a specific input or output for a result"
+      description: "Returns the raw value of the named input or output from a result. The response Content-Type will be application/json, application/xml, or text/plain depending on the value."
+      produces:
+      - "application/json"
+      - "application/xml"
+      - "text/plain"
+      parameters:
+      - in: "path"
+        type: "string"
+        name: "test_session_id"
+        description: "ID of the test session"
+        required: true
+      - in: "path"
+        type: "string"
+        name: "result_id"
+        description: "ID of the result"
+        required: true
+      - in: "path"
+        type: "string"
+        name: "type"
+        description: "Whether to retrieve an input or output value"
+        required: true
+        enum: ["inputs", "outputs"]
+      - in: "path"
+        type: "string"
+        name: "name"
+        description: "Name of the input or output"
+        required: true
+      responses:
+        "200":
+          description: "Success"
+        "400":
+          description: "Invalid type parameter"
         "404":
-          description: "Test session not found"
+          description: "Test session, result, or named value not found"
   /test_runs/{test_run_id}/results:
     get:
       tags:
@@ -347,7 +435,7 @@ paths:
               $ref: "#/definitions/Result"
         "404":
           description: "Test run not found"
-  /request/{request_id}:
+  /requests/{request_id}:
     get:
       tags:
       - "Request"
@@ -367,7 +455,7 @@ paths:
           schema:
             $ref: "#/definitions/Request"
         "404":
-          description: "HTTP request not found"
+          description: "Request not found"
   /requirements/{requirement_id}:
     get:
       tags:
@@ -410,15 +498,10 @@ definitions:
       id:
         type: "string"
         readOnly: true
+      test_suite_id:
+        type: "string"
       test_suite:
         $ref: "#/definitions/TestSuite"
-      test_run:
-        $ref: "#/definitions/TestRun"
-      results:
-        readOnly: true
-        type: "array"
-        items:
-          $ref: "#/definitions/Result"
       suite_options:
         type: "array"
         items:
@@ -431,24 +514,24 @@ definitions:
       id:
         type: "string"
         readOnly: true
+      test_session_id:
+        type: "string"
+      status:
+        type: "string"
+        readOnly: true
       test_count:
         type: "number"
         readOnly: true
-      test_session_id:
-        type: "string"
       test_suite_id:
         type: "string"
       test_group_id:
         type: "string"
       test_id:
         type: "string"
-      inputs:
-        type: "array"
-        items:
-          $ref: "#/definitions/Input"
       results:
         type: "array"
         readOnly: true
+        description: "Only populated on GET /test_runs/:id when include_results=true"
         items:
           $ref: "#/definitions/Result"
   Result:
@@ -469,6 +552,8 @@ definitions:
         enum: [pass, fail, skip, omit, error, running, wait, cancel]
       test_run_id:
         type: "string"
+      test_session_id:
+        type: "string"
       result_message:
         type: "string"
       created_at:
@@ -485,6 +570,10 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/RequestSummary"
+      inputs:
+        type: "array"
+        items:
+          $ref: "#/definitions/SessionData"
       outputs:
         type: "array"
         items:
@@ -496,7 +585,7 @@ definitions:
     required:
     - "id"
     - "index"
-    - "created_at"
+    - "timestamp"
     - "verb"
     - "url"
     - "direction"
@@ -506,7 +595,7 @@ definitions:
         type: "string"
       index:
         type: "integer"
-      created_at:
+      timestamp:
         type: "string"
       verb:
         type: "string"
@@ -524,7 +613,7 @@ definitions:
     required:
     - "id"
     - "index"
-    - "created_at"
+    - "timestamp"
     - "verb"
     - "url"
     - "direction"
@@ -534,7 +623,7 @@ definitions:
         type: "string"
       index:
         type: "integer"
-      created_at:
+      timestamp:
         type: "string"
       verb:
         type: "string"
@@ -590,11 +679,10 @@ definitions:
         type: "string"
       title:
         type: "string"
-  TestSuite:
+  TestSuiteSummary:
     type: "object"
     required:
     - "id"
-    - "name"
     properties:
       id:
         type: "string"
@@ -619,23 +707,11 @@ definitions:
               type: "string"
             url:
               type: "string"
-      test_groups:
-        type: "array"
-        items:
-          $ref: "#/definitions/TestGroup"
-      inputs:
-        type: "array"
-        items:
-          $ref: "#/definitions/Input"
       test_count:
         type: "number"
         readOnly: true
       version:
         type: "string"
-      configuration_messages:
-        type: "array"
-        items:
-          $ref: "#/definitions/Message"
       presets:
         type: "array"
         items:
@@ -646,17 +722,44 @@ definitions:
           $ref: "#/definitions/SuiteOption"
       suite_summary:
         type: "string"
-      verifies_requirements:
-        type: "array"
-        readOnly: true,
-        items:
-          type: "string"
-  SuiteOption:
+  TestSuite:
+    allOf:
+    - $ref: "#/definitions/TestSuiteSummary"
+    - type: "object"
+      properties:
+        test_groups:
+          type: "array"
+          items:
+            $ref: "#/definitions/TestGroup"
+        inputs:
+          type: "array"
+          items:
+            $ref: "#/definitions/Input"
+        configuration_messages:
+          type: "array"
+          items:
+            $ref: "#/definitions/Message"
+        requirement_sets:
+          type: "array"
+          readOnly: true
+          items:
+            $ref: "#/definitions/RequirementSet"
+        verifies_requirements:
+          type: "array"
+          readOnly: true
+          items:
+            type: "string"
+  RequirementSet:
     type: "object"
     required:
-    - "id"
-    - "title"
-    - "list_options"
+    - "identifier"
+    properties:
+      identifier:
+        type: "string"
+      title:
+        type: "string"
+  SuiteOption:
+    type: "object"
     properties:
       id:
         type: "string"
@@ -715,6 +818,11 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Input"
+      outputs:
+        type: "array"
+        readOnly: true
+        items:
+          type: "object"
       test_count:
         type: "number"
         readOnly: true
@@ -726,14 +834,13 @@ definitions:
         readOnly: true
       verifies_requirements:
         type: "array"
-        readOnly: true,
+        readOnly: true
         items:
           type: "string"
   Test:
     type: "object"
     required:
     - "id"
-    - "name"
     properties:
       id:
         type: "string"
@@ -753,6 +860,11 @@ definitions:
         type: "array"
         items:
           $ref: "#/definitions/Input"
+      outputs:
+        type: "array"
+        readOnly: true
+        items:
+          type: "object"
       user_runnable:
         type: "boolean"
         readOnly: true
@@ -761,7 +873,7 @@ definitions:
         readOnly: true
       verifies_requirements:
         type: "array"
-        readOnly: true,
+        readOnly: true
         items:
           type: "string"
   Input:
@@ -791,21 +903,26 @@ definitions:
       hidden:
         type: "boolean"
         readOnly: true
-      options:
-        type: "array"
+      default:
+        type: "string"
         readOnly: true
-        items:
-          type: "object"
-          properties:
-            list_options:
-              type: "array"
-              items:
-                type: "object"
-                properties:
-                  label:
-                    type: "string"
-                  value:
-                    type: "string"
+      options:
+        type: "object"
+        readOnly: true
+        properties:
+          list_options:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                label:
+                  type: "string"
+                value:
+                  type: "string"
+          components:
+            type: "array"
+            items:
+              type: "object"
   SessionData:
     type: "object"
     required:

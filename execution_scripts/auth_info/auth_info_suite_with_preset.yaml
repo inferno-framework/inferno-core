@@ -1,0 +1,18 @@
+sessions:
+  - suite: auth_info
+    preset: dev_auth_info_preset
+    # NOTE: preset use introduces issue time skew that causes faiures - these are expected
+
+comparison_config:
+  normalized_strings:
+    - replacement: <TIMESTAMP>
+      pattern: /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})/
+
+steps:
+  - status: created
+    start_run:
+      runnable: suite
+
+  - status: done
+    last_completed: suite
+    action: END_SCRIPT
