@@ -1,3 +1,6 @@
+## 1.2.1
+* ID-45: session compare - sort based on normalized messages (fix) by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/775
+
 ## 1.2.0
 * ID-97: allow a result_message to be provided on resume routes by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/773
 * Fix must support navigation for Bundle entry type slice sub-elements by @abhinandan2012 in https://github.com/inferno-framework/inferno-core/pull/770
