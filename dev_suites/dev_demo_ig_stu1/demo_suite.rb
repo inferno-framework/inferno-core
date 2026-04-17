@@ -530,5 +530,29 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         end
       end
     end
+    group do
+      id 'message_normalization_sort_group'
+      title 'Execute Script Message Normalization Sort Group'
+      description %(
+        This group demonstrates that messages are sorted based on their normalized
+        content when comparing runs within a script execution.
+      )
+
+      test do
+        title 'Messages where normalized sort order differs from raw sort order'
+        input :normalization_sort_url,
+              title: 'Normalization Sort URL',
+              description: 'A URL included in messages. Use http://aaa.example.com for ' \
+                           'expected results and http://zzz.example.com for the comparison ' \
+                           'run to exercise normalization-based sort ordering.',
+              default: 'http://aaa.example.com'
+
+        run do
+          add_message('info', "#{normalization_sort_url}: response received")
+          add_message('info', 'http://middle.example.com: fixed message')
+          pass
+        end
+      end
+    end
   end
 end

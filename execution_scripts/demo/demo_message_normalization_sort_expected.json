@@ -1,0 +1,44 @@
+[
+  {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "created_at": "2026-01-01T00:00:00.000-05:00",
+    "inputs": [
+      {
+        "name": "normalization_sort_url",
+        "type": "text",
+        "value": "http://aaa.example.com"
+      }
+    ],
+    "messages": [
+      {
+        "message": "http://aaa.example.com: response received",
+        "type": "info"
+      },
+      {
+        "message": "http://middle.example.com: fixed message",
+        "type": "info"
+      }
+    ],
+    "optional": false,
+    "outputs": [],
+    "requests": [],
+    "result": "pass",
+    "test_id": "demo-message_normalization_sort_group-Test01",
+    "test_run_id": "00000000-0000-0000-0000-000000000002",
+    "test_session_id": "AAAAAAAAA",
+    "updated_at": "2026-01-01T00:00:00.000-05:00"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000003",
+    "created_at": "2026-01-01T00:00:00.000-05:00",
+    "inputs": [],
+    "optional": false,
+    "outputs": [],
+    "requests": [],
+    "result": "pass",
+    "test_group_id": "demo-message_normalization_sort_group",
+    "test_run_id": "00000000-0000-0000-0000-000000000002",
+    "test_session_id": "AAAAAAAAA",
+    "updated_at": "2026-01-01T00:00:00.000-05:00"
+  }
+]
