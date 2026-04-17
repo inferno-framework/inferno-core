@@ -278,7 +278,8 @@ module Inferno
 
           def sorted_messages(result)
             Array(result&.dig('messages')).sort_by do |m|
-              [MESSAGE_TYPE_ORDER.fetch(m['type'].to_s, UNKNOWN_MESSAGE_TYPE_ORDER), m['message'].to_s]
+              [MESSAGE_TYPE_ORDER.fetch(m['type'].to_s, UNKNOWN_MESSAGE_TYPE_ORDER),
+               normalize_string(m['message'].to_s)]
             end
           end
 
