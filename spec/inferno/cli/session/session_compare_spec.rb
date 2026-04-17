@@ -461,5 +461,30 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
           .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
       end.to output(/.+/).to_stdout
     end
+
+    it 'passes when messages only differ in normalized strings but would sort differently without normalization' do
+      # 'aaa_server' sorts before the fixed message alphabetically ('a' < 'm')
+      # 'zzz_server' sorts after the fixed message alphabetically ('z' > 'm')
+      # Both normalize to '<NORMALIZED>' which sorts before the fixed message ('<' < 'm'),
+      # so normalization-based sorting produces the same order for expected and actual.
+      # Without normalization in sorting, the pairs are mismatched and the comparison fails.
+      fixed_msg = 'Msg: m_something'
+      expected = test_result_base.merge(messages: [
+                                          { message: 'Msg: aaa_server/path', type: 'info' },
+                                          { message: fixed_msg, type: 'info' }
+                                        ])
+      actual = test_result_base.merge(messages: [
+                                        { message: 'Msg: zzz_server/path', type: 'info' },
+                                        { message: fixed_msg, type: 'info' }
+                                      ])
+      stub_results(actual:, expected:)
+
+      options = { inferno_base_url: inferno_host, expected_results_session: expected_results_session_id,
+                  compare_messages: true, normalized_strings: ['aaa_server', 'zzz_server'] }
+      expect do
+        expect { described_class.new(actual_results_session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
+      end.to output(/.+/).to_stdout
+    end
   end
 end

@@ -1,0 +1,32 @@
+# Exercises normalization-based message sort ordering.
+#
+# The test adds two messages:
+#   1. "#{normalization_sort_url}: response received"  (varies by run)
+#   2. "http://middle.example.com: fixed message"      (constant)
+#
+# With the expected URL (http://aaa.example.com), message 1 sorts before message 2
+# in raw alphabetical order ('a' < 'm' after "http://"). With the URL used here
+# (http://zzz.example.com), message 1 sorts after message 2 ('z' > 'm'). After
+# normalization both URLs become '<NORMALIZED>', which sorts before "http://middle..."
+# ('<' < 'h'), so the normalized order is the same in both runs.
+#
+# Run with --compare-messages to exercise this behavior.
+
+sessions:
+  - suite: demo
+
+comparison_config:
+  normalized_strings:
+    - 'http://aaa.example.com'
+    - 'http://zzz.example.com'
+
+steps:
+  - status: created
+    start_run:
+      runnable: 12
+      inputs:
+        normalization_sort_url: 'http://zzz.example.com'
+
+  - status: done
+    last_completed: 12
+    action: END_SCRIPT
