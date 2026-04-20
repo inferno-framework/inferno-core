@@ -2,7 +2,7 @@
 # https://github.com/hapifhir/org.hl7.fhir.validator-wrapper/blob/master/Dockerfile
 # with the following differences:
 # 1. It fetches the built JAR from GitHub instead of locally, or building from source
-# 2. It adds MITRE certs, for ease of use by the MITRE development team
+# 2. It adds MITRE certs, for ease of use by the MITRE development team (DEPRECATED)
 # 3. It uses an Ubuntu-based base image instead of Alpine to support both AMD64 and ARM architectures
 # 4. It defaults the following environment variables:
 #    - SESSION_CACHE_IMPLEMENTATION=PassiveExpiringSessionCache
@@ -11,10 +11,10 @@
 #
 # The software release to use is based on the PROJECT_VERSION build argument (required)
 
-FROM eclipse-temurin:11-jre-jammy
+FROM eclipse-temurin:17-jre-jammy
 
-RUN wget https://gitlab.mitre.org/mitre-scripts/mitre-pki/-/raw/master/os_scripts/install_certs.sh -O - | MODE=ubuntu sh \
- && wget https://gitlab.mitre.org/mitre-scripts/mitre-pki/-/raw/master/tool_scripts/install_certs.sh -O - | MODE=java sh
+# RUN wget https://gitlab.mitre.org/mitre-scripts/mitre-pki/-/raw/master/os_scripts/install_certs.sh -O - | MODE=ubuntu sh \
+#  && wget https://gitlab.mitre.org/mitre-scripts/mitre-pki/-/raw/master/tool_scripts/install_certs.sh -O - | MODE=java sh
 
 ARG PROJECT_VERSION
 RUN echo "Project version set to -> ${PROJECT_VERSION}"
@@ -32,7 +32,7 @@ USER $APPLICATION_USER
 
 # These lines copy the packaged application into the Docker image and sets the working directory to where it was copied.
 WORKDIR /app
-RUN wget -O validator-wrapper.jar "https://github.com/hapifhir/org.hl7.fhir.validator-wrapper/releases/download/${PROJECT_VERSION}/validator_cli.jar"
+RUN wget -O validator-wrapper.jar "https://github.com/hapifhir/org.hl7.fhir.validator-wrapper/releases/download/${PROJECT_VERSION}/validator-wrapper.jar"
 
 # Environment vars here
 ENV ENVIRONMENT=prod
