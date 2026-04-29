@@ -4,6 +4,9 @@ ruby '3.3.6'
 
 gemspec
 
+gem 'fhir_models', git: 'https://github.com/FlexonyoPizza/fhir_models', branch: 'master'
+gem 'fhir_client', git: 'https://github.com/FlexonyoPizza/fhir_client', branch: 'master'
+
 # To test with the g10 test kit (this also adds the US Core, SMART, and TLS test
 # kits):
 # - Uncomment this line (and change test kit gem as necessary):
