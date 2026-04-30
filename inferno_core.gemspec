@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'faraday', '~> 1.2'
   spec.add_dependency 'faraday_middleware', '~> 1.2'
   spec.add_dependency 'fhir_client', '>= 5.0.3'
-  spec.add_dependency 'fhir_models', '>= 4.2.2'
+  spec.add_dependency 'fhir_models', '>= 5.1.0'
   spec.add_dependency 'hanami-controller', '2.0.0'
   spec.add_dependency 'hanami-router', '2.0.0'
   spec.add_dependency 'kramdown', '~> 2.5.1'

@@ -15,17 +15,6 @@ GIT
       rest-client (~> 2.0)
       tilt (>= 1.1)
 
-GIT
-  remote: https://github.com/FlexonyoPizza/fhir_models
-  revision: 6ce11f8ee832ef69c8aeb5fd6d47a5efb6151e0b
-  branch: master
-  specs:
-    fhir_models (5.0.0)
-      bcp47 (>= 0.3)
-      date_time_precision (>= 0.8)
-      mime-types (>= 3.0)
-      nokogiri (>= 1.19.1)
-
 PATH
   remote: .
   specs:
@@ -44,7 +33,7 @@ PATH
       faraday (~> 1.2)
       faraday_middleware (~> 1.2)
       fhir_client (>= 5.0.3)
-      fhir_models (>= 4.2.2)
+      fhir_models (>= 5.1.0)
       hanami-controller (= 2.0.0)
       hanami-router (= 2.0.0)
       kramdown (~> 2.5.1)
@@ -156,6 +145,11 @@ GEM
       date_time_precision (>= 0.8)
       mime-types (>= 3.0)
       nokogiri (>= 1.11.4)
+    fhir_models (5.1.0)
+      bcp47 (>= 0.3)
+      date_time_precision (>= 0.8)
+      mime-types (>= 3.0)
+      nokogiri (>= 1.19.1)
     fhir_stu3_models (3.2.0)
       bcp47 (>= 0.3)
       date_time_precision (>= 0.8)
@@ -380,7 +374,6 @@ DEPENDENCIES
   debug
   factory_bot (~> 6.1)
   fhir_client!
-  fhir_models!
   inferno_core!
   rack-test
   rspec (~> 3.10)
