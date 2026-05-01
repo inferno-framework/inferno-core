@@ -22,6 +22,7 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
+gem 'activesupport', '>= 8.0.4.1'
 gem 'addressable', '>= 2.9.0'
 gem 'faraday', '>= 2.14.1'
 gem 'nokogiri', '>= 1.19.1'
