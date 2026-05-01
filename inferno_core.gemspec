@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.description   = 'Inferno Core is an open source tool for testing data exchanges enabled by the FHIR standand'
   spec.homepage      = 'https://github.com/inferno-framework/inferno-core'
   spec.license       = 'Apache-2.0'
-  spec.add_dependency 'activesupport', '~> 6.1.7.5'
+  spec.add_dependency 'activesupport', '~> 7.2.3.1'
   spec.add_dependency 'base62-rb', '0.3.1'
   spec.add_dependency 'blueprinter', '0.25.2'
   spec.add_dependency 'concurrent-ruby', '1.3.4' # Fix activesupport https://github.com/rails/rails/issues/54272
