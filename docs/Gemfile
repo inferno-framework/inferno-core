@@ -24,3 +24,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'webrick', '~> 1.7'
 gem 'nokogiri', '>= 1.19.1'
+gem 'addressable', '>= 2.9.0'
+gem "uri", ">= 1.0.4"
+gem "faraday", ">= 2.14.1"
+gem "rexml", ">= 3.4.2"
