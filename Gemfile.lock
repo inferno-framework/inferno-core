@@ -19,7 +19,7 @@ PATH
       fhir_models (>= 5.1.0)
       hanami-controller (= 2.0.0)
       hanami-router (= 2.0.0)
-      kramdown (~> 2.5.1)
+      kramdown (~> 2.5.2)
       kramdown-parser-gfm (~> 1.1.0)
       mutex_m (~> 0.3.0)
       oj (= 3.11.0)
@@ -28,7 +28,6 @@ PATH
       pry-byebug
       puma (~> 5.6.7)
       rake (~> 13.0)
-      rexml (>= 3.4.2)
       roo (~> 2.10.1)
       sequel (~> 5.42.0)
       sidekiq (~> 7.2.4)
@@ -187,8 +186,8 @@ GEM
     json (2.7.2)
     jwt (3.1.2)
       base64
-    kramdown (2.5.1)
-      rexml (>= 3.3.9)
+    kramdown (2.5.2)
+      rexml (>= 3.4.4)
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
     language_server-protocol (3.17.0.3)
