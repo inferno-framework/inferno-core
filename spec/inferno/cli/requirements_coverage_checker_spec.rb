@@ -18,4 +18,24 @@ RSpec.describe Inferno::CLI::RequirementsCoverageChecker do
       expect(generated_csv).to eq(expected_csv)
     end
   end
+
+  describe '#run' do
+    let(:mock_exporter) do
+      instance_double(Inferno::CLI::RequirementsExporter, base_requirements_folder: 'tmp/requirements')
+    end
+
+    before do
+      allow(Inferno::CLI::RequirementsExporter).to receive(:new).and_return(mock_exporter)
+      allow(checker).to receive(:puts)
+      allow(File).to receive(:exist?).with(checker.output_file_path).and_return(false)
+      allow(File).to receive(:read).with(checker.output_file_path)
+      allow(FileUtils).to receive(:mkdir_p)
+      allow(File).to receive(:write)
+    end
+
+    it 'runs to completion' do
+      expect { checker.run }.to_not raise_error
+      expect(File).to have_received(:write).with(checker.output_file_path, checker.new_csv)
+    end
+  end
 end
