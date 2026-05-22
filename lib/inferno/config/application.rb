@@ -1,3 +1,4 @@
+require 'logger'
 require 'active_support/all'
 require 'dotenv'
 require 'dry/system'
