@@ -16,7 +16,7 @@ ARG PROJECT_VERSION
 RUN echo "Project version set to -> ${PROJECT_VERSION}"
 
 ENV APPLICATION_USER=ktor
-RUN adduser -D -g '' $APPLICATION_USER
+RUN adduser $APPLICATION_USER
 
 RUN mkdir /app
 RUN chown -R $APPLICATION_USER /app
