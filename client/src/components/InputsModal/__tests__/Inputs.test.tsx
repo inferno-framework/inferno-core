@@ -9,6 +9,7 @@ import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputTextField from '~/components/InputsModal/InputTextField';
 import { isJsonString } from '~/components/InputsModal/InputHelpers';
 import ThemeProvider from '~/components/ThemeProvider';
+import InputFields from '../InputFields';
 
 describe('Input Components', () => {
   it('renders InputCheckboxGroup', () => {
@@ -178,6 +179,149 @@ describe('Input Components', () => {
 
     passStrings.forEach((string) => {
       expect(isJsonString(string)).toEqual(true);
+    });
+  });
+
+  describe('renders conditional fields correctly', () => {
+    const constructInput = (props: Partial<TestInput>): TestInput => ({
+      name: '',
+      type: 'text',
+      ...props,
+    });
+
+    const constructInputsMap = (inputs: TestInput[]): Map<string, unknown> => {
+      return inputs.reduce((acc, input) => {
+        acc.set(input.name, input.value);
+        return acc;
+      }, new Map<string, unknown>());
+    };
+
+    const renderInputFields = (inputs: TestInput[], inputsMap: Map<string, unknown>) => {
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputFields inputs={inputs} inputsMap={inputsMap} setInputsMap={() => {}} />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+    };
+
+    const assertInputVisibility = (inputs: Partial<TestInput>[], expectedVisible: boolean[]) => {
+      const constructedInputs: TestInput[] = inputs.map((input) => constructInput(input));
+      const inputsMap = constructInputsMap(constructedInputs);
+      renderInputFields(constructedInputs, inputsMap);
+
+      constructedInputs.forEach((input, index) => {
+        const label = input.title as string;
+        const shouldBeVisible = expectedVisible[index];
+        if (shouldBeVisible) {
+          expect(screen.getByLabelText(label, { exact: false })).toBeVisible();
+        } else {
+          expect(screen.queryByLabelText(label, { exact: false })).not.toBeInTheDocument();
+        }
+      });
+    };
+
+    const assertDependentVisibilityForCheckboxEnableWhen = (
+      refValue: string[],
+      enableWhenValue: string,
+      expectedVisible: boolean,
+    ) => {
+      const inputs: TestInput[] = [
+        constructInput({
+          name: 'trigger',
+          title: 'Trigger',
+          type: 'checkbox',
+          value: refValue,
+        }),
+        constructInput({
+          name: 'dependent',
+          title: 'Dependent',
+          enable_when: { input_name: 'trigger', value: enableWhenValue },
+        }),
+      ];
+      const inputsMap = new Map<string, unknown>([['trigger', refValue]]);
+      renderInputFields(inputs, inputsMap);
+
+      expect(screen.getByRole('checkbox', { name: /Trigger/i })).toBeInTheDocument();
+      if (expectedVisible) {
+        expect(screen.getByRole('textbox', { name: /Dependent/i })).toBeInTheDocument();
+      } else {
+        expect(screen.queryByRole('textbox', { name: /Dependent/i })).not.toBeInTheDocument();
+      }
+    };
+
+    it('renders field when it has no enable_when (always visible)', () => {
+      assertInputVisibility([{ name: 'standalone', title: 'Standalone field' }], [true]);
+    });
+
+    it('skips rendering dependent field when controlling value is undefined', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            enable_when: { input_name: 'trigger', value: 'yes' },
+          },
+        ],
+        [true, false],
+      );
+    });
+
+    it('skips rendering when controlling value does not match enable_when', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger', value: 'no' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            enable_when: { input_name: 'trigger', value: 'yes' },
+          },
+        ],
+        [true, false],
+      );
+    });
+
+    it('renders dependent field when controlling value matches enable_when', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger', value: 'yes' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            enable_when: { input_name: 'trigger', value: 'yes' },
+          },
+        ],
+        [true, true],
+      );
+    });
+
+    it('hides field when hidden is true even if enable_when would pass', () => {
+      assertInputVisibility(
+        [
+          { name: 'trigger', title: 'Trigger', value: 'yes' },
+          {
+            name: 'dependent',
+            title: 'Dependent',
+            enable_when: { input_name: 'trigger', value: 'yes' },
+            hidden: true,
+          },
+        ],
+        [true, false],
+      );
+    });
+
+    it('renders dependent field when controlling value (array) equals enable_when array value', () => {
+      assertDependentVisibilityForCheckboxEnableWhen(['a', 'b'], '["a","b"]', true);
+    });
+
+    it('renders dependent field regardless of checkbox selection order', () => {
+      assertDependentVisibilityForCheckboxEnableWhen(['b', 'a'], '["a","b"]', true);
+    });
+
+    it('hides dependent field when controlling value (array) does not match enable_when array value', () => {
+      assertDependentVisibilityForCheckboxEnableWhen(['a', 'b'], '["a","c"]', false);
     });
   });
 });

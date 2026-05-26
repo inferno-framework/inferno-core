@@ -171,3 +171,64 @@ export const isJsonString = (str: unknown) => {
   }
   return !!value && typeof value === 'object';
 };
+
+/**
+ * Converts a value to its string representation.
+ * - If value is null or undefined, returns an empty string.
+ * - Arrays are sorted before JSON-stringifying so that selection order does not
+ *   affect equality (e.g. checkbox values `['b','a']` and `['a','b']` are equal).
+ * - Other objects are JSON-stringified as-is.
+ *
+ * @param value - The value to normalize.
+ * @returns The normalized string value.
+ */
+export const normalizeValue = (value: unknown): string => {
+  if (value === null) {
+    return '';
+  }
+  switch (typeof value) {
+    case 'string':
+      return value;
+    case 'number':
+    case 'boolean':
+    case 'bigint':
+    case 'symbol':
+      return String(value);
+    case 'object':
+      if (Array.isArray(value)) {
+        return JSON.stringify([...(value as unknown[])].sort());
+      }
+      return JSON.stringify(value);
+    default:
+      return '';
+  }
+};
+
+/**
+ * Returns whether the input should be shown from its `enable_when` rule and `inputsMap`.
+ *
+ * - No `enable_when`, or no `input_name` on it → always show (rule ignored).
+ * - With `input_name`: hide when the referenced key is absent from `inputsMap` (`undefined`).
+ *   A console warning is emitted in this case to help catch authoring mistakes (e.g. typos).
+ * - Otherwise show when {@link normalizeValue} of the referenced value equals
+ *   {@link normalizeValue} of `enable_when.value` (arrays are sorted before comparison, so
+ *   checkbox selection order does not matter; other objects are compared via JSON.stringify).
+ */
+export const conditionalShowInput = (
+  input: TestInput,
+  inputsMap: Map<string, unknown>,
+): boolean => {
+  const enableWhen = input.enable_when;
+  if (!enableWhen?.input_name || input.type === 'checkbox') {
+    return true;
+  }
+  const inputValue = inputsMap.get(enableWhen.input_name);
+  if (inputValue === undefined) {
+    return false;
+  }
+  return normalizeValue(inputValue) === normalizeValue(enableWhen.value);
+};
+
+export const showInput = (input: TestInput, inputsMap: Map<string, unknown>): boolean => {
+  return !input.hidden && conditionalShowInput(input, inputsMap);
+};

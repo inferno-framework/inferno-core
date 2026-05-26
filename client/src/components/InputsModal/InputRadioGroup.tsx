@@ -60,7 +60,7 @@ const InputRadioGroup: FC<InputRadioGroupProps> = ({ input, index, inputsMap, se
           row
           aria-label={`${input.name}-radio-buttons-group`}
           name={`${input.name}-radio-buttons-group`}
-          value={inputsMap.get(input.name) || (input.default as string) || firstOptionValue}
+          value={inputsMap.get(input.name) || input.default || firstOptionValue}
           onChange={(event) => {
             inputsMap.set(input.name, event.target.value);
             setInputsMap(new Map(inputsMap));
