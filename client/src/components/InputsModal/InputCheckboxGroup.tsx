@@ -63,7 +63,7 @@ const InputCheckboxGroup: FC<InputCheckboxGroupProps> = ({
         {} as CheckboxValues,
       );
     }
-    return startingValues as CheckboxValues;
+    return startingValues;
   });
 
   const isMissingInput = hasBeenModified && !input.optional && inputsMap.get(input.name) === '[]';

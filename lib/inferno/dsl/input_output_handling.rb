@@ -16,6 +16,10 @@ module Inferno
       # @option input_params [Hash] :options Possible input option formats based on input type
       # @option options [Array] :list_options Array of options for input formats
       #   that require a list of possible values (radio and checkbox)
+      # @option input_params [Hash] :enable_when Conditions for showing the input. Must be a Hash
+      #   with String :input_name (the name of the controlling input) and String :value (the value
+      #   that triggers visibility). For checkbox inputs the value must be a JSON-encoded sorted
+      #   array, e.g. '["a","b"]'.
       # @return [void]
       # @example
       #   input :patient_id, title: 'Patient ID', description: 'The ID of the patient being searched for',

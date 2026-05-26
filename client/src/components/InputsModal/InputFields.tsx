@@ -8,6 +8,7 @@ import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredential
 import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputSingleCheckbox from '~/components/InputsModal/InputSingleCheckbox';
 import InputTextField from '~/components/InputsModal/InputTextField';
+import { showInput } from './InputHelpers';
 
 export interface InputFieldsProps {
   inputs: TestInput[];
@@ -19,7 +20,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
   return (
     <List>
       {inputs.map((input: TestInput, index: number) => {
-        if (!input.hidden) {
+        if (showInput(input, inputsMap)) {
           switch (input.type) {
             case 'auth_info':
               if (input.options?.mode === 'auth') {
