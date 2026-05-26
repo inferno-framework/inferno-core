@@ -487,4 +487,66 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
       end.to output(/.+/).to_stdout
     end
   end
+
+  describe described_class::ComparedTestResult do
+    let(:base_result) do
+      { 'result' => 'pass', 'test_id' => 'test-id-1' }
+    end
+
+    def make_result(messages)
+      base_result.merge('messages' => messages)
+    end
+
+    def compared(expected, actual, options = {})
+      described_class.new('test-id-1', expected, actual, options)
+    end
+
+    describe '#format_messages_for_csv' do
+      context 'when messages repeat' do
+        it 'collapses consecutive identical messages into a single line with a count' do
+          msg = { 'message' => 'something wrong', 'type' => 'warning' }
+          result = make_result([msg, msg, msg])
+          r = compared(result, result)
+          expect(r.format_messages_for_csv(result)).to eq('(3) - (warning) "something wrong"')
+        end
+
+        it 'does not add a count for a single occurrence' do
+          msg = { 'message' => 'something wrong', 'type' => 'warning' }
+          result = make_result([msg])
+          r = compared(result, result)
+          expect(r.format_messages_for_csv(result)).to eq('- (warning) "something wrong"')
+        end
+
+        it 'collapses runs independently' do
+          msg_a = { 'message' => 'aaa issue', 'type' => 'info' }
+          msg_b = { 'message' => 'bbb issue', 'type' => 'info' }
+          result = make_result([msg_a, msg_a, msg_b, msg_b, msg_b])
+          r = compared(result, result)
+          expect(r.format_messages_for_csv(result)).to eq("(2) - (info) \"aaa issue\"\n(3) - (info) \"bbb issue\"")
+        end
+      end
+
+      context 'with only_different_messages option' do
+        it 'hides matching messages' do
+          matching = { 'message' => 'fine', 'type' => 'info' }
+          extra    = { 'message' => 'aaa extra', 'type' => 'info' }
+          expected = make_result([matching])
+          actual   = make_result([extra, matching])
+          r = compared(expected, actual, { only_different_messages: true })
+          expect(r.format_messages_for_csv(expected)).to eq('')
+          expect(r.format_messages_for_csv(actual)).to eq('! (info) "aaa extra"')
+        end
+
+        it 'still shows mismatched messages' do
+          msg_a = { 'message' => 'aaa message', 'type' => 'info' }
+          msg_b = { 'message' => 'bbb message', 'type' => 'info' }
+          expected = make_result([msg_a])
+          actual   = make_result([msg_b])
+          r = compared(expected, actual, { only_different_messages: true })
+          expect(r.format_messages_for_csv(expected)).to eq('! (info) "aaa message"')
+          expect(r.format_messages_for_csv(actual)).to eq('! (info) "bbb message"')
+        end
+      end
+    end
+  end
 end

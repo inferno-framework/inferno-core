@@ -40,6 +40,13 @@ module Inferno
             type: :array,
             desc: 'Literal strings or regexes to normalize away before comparing ' \
                   '(URL-encoded form of literal strings will also be normalized).'
+          },
+          only_different_messages: {
+            aliases: ['-d'],
+            type: :boolean,
+            default: false,
+            desc: 'When displaying messages in CSV output, only show mismatched messages ' \
+                  '(hide matching ones).'
           }
         }.freeze
         def run
@@ -270,10 +277,66 @@ module Inferno
           UNKNOWN_MESSAGE_TYPE_ORDER = 99
 
           def build_message_comparisons
-            expected_msgs = sorted_messages(expected_result)
-            actual_msgs = sorted_messages(actual_result)
-            max_length = [expected_msgs.size, actual_msgs.size].max
-            (0...max_length).map { |i| messages_match?(expected_msgs[i], actual_msgs[i]) }
+            lcs_align(sorted_messages(expected_result), sorted_messages(actual_result))
+          end
+
+          def lcs_align(expected, actual)
+            lcs_backtrack(lcs_matrix(expected, actual), expected, actual)
+          end
+
+          def lcs_matrix(expected, actual)
+            matrix = Array.new(expected.size + 1) { Array.new(actual.size + 1, 0) }
+            (1..expected.size).each do |expected_index|
+              (1..actual.size).each do |actual_index|
+                matrix[expected_index][actual_index] =
+                  if same_message?(expected[expected_index - 1], actual[actual_index - 1])
+                    matrix[expected_index - 1][actual_index - 1] + 1
+                  else
+                    [matrix[expected_index - 1][actual_index],
+                     matrix[expected_index][actual_index - 1]].max
+                  end
+              end
+            end
+            matrix
+          end
+
+          def lcs_backtrack(matrix, expected, actual)
+            alignment = []
+            expected_index = expected.size
+            actual_index = actual.size
+
+            while expected_index.positive? || actual_index.positive?
+              step = lcs_backtrack_step(matrix, expected, actual, expected_index, actual_index)
+              alignment.unshift(step[:entry])
+              expected_index = step[:next_expected_index]
+              actual_index = step[:next_actual_index]
+            end
+            alignment
+          end
+
+          # Each step returns { entry:, next_expected_index:, next_actual_index: }.
+          # entry is { expected: msg_or_nil, actual: msg_or_nil, match: bool }.
+          def lcs_backtrack_step(matrix, expected, actual, expected_index, actual_index)
+            if expected_index.positive? &&
+               actual_index.positive? &&
+               same_message?(expected[expected_index - 1], actual[actual_index - 1])
+
+              # Items match: consume both
+              entry = { expected: expected[expected_index - 1], actual: actual[actual_index - 1], match: true }
+              { entry:, next_expected_index: expected_index - 1, next_actual_index: actual_index - 1 }
+            elsif actual_index.positive? &&
+                  (expected_index.zero? ||
+                   matrix[expected_index][actual_index - 1] >= matrix[expected_index - 1][actual_index])
+              # Item in actual is "Additional": consume only actual
+              { entry: { expected: nil, actual: actual[actual_index - 1], match: false },
+                next_expected_index: expected_index,
+                next_actual_index: actual_index - 1 }
+            else
+              # Item in expected is "Missing": consume only expected
+              { entry: { expected: expected[expected_index - 1], actual: nil, match: false },
+                next_expected_index: expected_index - 1,
+                next_actual_index: actual_index }
+            end
           end
 
           def sorted_messages(result)
@@ -283,15 +346,8 @@ module Inferno
             end
           end
 
-          def messages_match?(expected_message, actual_message)
-            expected_message.present? && actual_message.present? && same_message?(expected_message, actual_message)
-          end
-
           def same_messages?
-            return false unless expected_result['messages']&.size == actual_result['messages']&.size
-            return true unless expected_result['messages'].present?
-
-            message_comparisons.all?
+            message_comparisons.all? { |entry| entry[:match] }
           end
 
           def same_message?(expected_message, actual_message)
@@ -370,13 +426,28 @@ module Inferno
           def format_messages_for_csv(results)
             return '' unless results&.dig('messages').present?
 
-            sorted_messages(results).each_with_index.map do |message, index|
-              message_text_for_csv(message, index)
-            end.join("\n")
+            is_expected = results == expected_result
+            lines = message_comparisons.filter_map { |entry| message_line_for_csv(entry, is_expected) }
+            collapse_message_lines(lines).join("\n")
           end
 
-          def message_text_for_csv(message, index)
-            prefix = message_comparisons[index] ? '- ' : '! '
+          def message_line_for_csv(entry, is_expected)
+            return if options[:only_different_messages] && entry[:match]
+
+            msg = is_expected ? entry[:expected] : entry[:actual]
+            return if msg.nil?
+
+            message_text_for_csv(msg, entry[:match])
+          end
+
+          def collapse_message_lines(lines)
+            lines.chunk_while { |a, b| a == b }.map do |group|
+              group.size > 1 ? "(#{group.size}) #{group.first}" : group.first
+            end
+          end
+
+          def message_text_for_csv(message, matches)
+            prefix = matches ? '- ' : '! '
             text = normalize_string(message['message'].to_s)
               .gsub("\r\n", '\n')
               .gsub("\n", '\n')

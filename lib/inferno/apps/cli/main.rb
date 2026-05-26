@@ -104,6 +104,11 @@ module Inferno
              type: :numeric,
              default: 120,
              desc: 'Default seconds to wait for a matching step before timing out.'
+      option :only_different_messages,
+             aliases: ['-d'],
+             type: :boolean,
+             default: true,
+             desc: 'Only show messages that differ when comparing results.'
       option :allow_commands,
              type: :boolean,
              default: false,
