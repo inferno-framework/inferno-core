@@ -1,3 +1,7 @@
+## 1.3.0
+* Add enable_when attribute to the input by @projkov in https://github.com/inferno-framework/inferno-core/pull/758
+* ID-45: Improve session compare csv file by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/780
+
 ## 1.2.2
 * Bunp dependency versions by @FlexonyoPizza in https://github.com/inferno-framework/inferno-core/pull/778
 
