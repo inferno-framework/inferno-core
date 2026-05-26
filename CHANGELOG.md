@@ -1,3 +1,6 @@
+## 1.2.2
+* Bunp dependency versions by @FlexonyoPizza in https://github.com/inferno-framework/inferno-core/pull/778
+
 ## 1.2.1
 * ID-45: session compare - sort based on normalized messages (fix) by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/775
 

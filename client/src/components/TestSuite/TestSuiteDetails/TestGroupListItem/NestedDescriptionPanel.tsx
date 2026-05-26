@@ -61,7 +61,7 @@ const NestedDescriptionPanel: FC<NestedDescriptionPanelProps> = ({ testGroup }) 
           className={classes.descriptionDetailContainer}
         >
           <Box className={`${classes.accordionDetail} ${classes.description}`}>
-            <Markdown remarkPlugins={[remarkGfm]}>{testGroup.description as string}</Markdown>
+            <Markdown remarkPlugins={[remarkGfm]}>{testGroup.description}</Markdown>
             {shouldShowRequirementsButton(testGroup) && (
               <RequirementsModalButton runnable={testGroup} />
             )}

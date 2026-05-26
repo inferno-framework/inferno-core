@@ -909,6 +909,7 @@ module Inferno
           expected_results_file: expected_file,
           compare_messages: options[:compare_messages],
           compare_result_message: options[:compare_result_message],
+          only_different_messages: options[:only_different_messages],
           inferno_base_url: options[:inferno_base_url],
           normalized_strings: Array(comparison_config['normalized_strings'])
         }
