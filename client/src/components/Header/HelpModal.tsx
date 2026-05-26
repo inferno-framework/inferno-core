@@ -16,7 +16,6 @@ import {
   Typography,
 } from '@mui/material';
 import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
-import { Result } from '~/models/testSuiteModels';
 import lightTheme from '~/styles/theme';
 
 export interface HelpModalProps {
@@ -138,7 +137,7 @@ const HelpModal: FC<HelpModalProps> = ({ hideModal, modalVisible }) => {
                             updated_at: '',
                             outputs: [],
                             optional: row.optional,
-                          } as Result
+                          }
                         }
                         isRunning={row.pending}
                       />

@@ -15,22 +15,25 @@ module Inferno
         :options,
         :locked,
         :hidden,
-        :value
+        :value,
+        :enable_when
       ].freeze
       include Entities::Attributes
 
       # These attributes require special handling when merging input
       # definitions.
       UNINHERITABLE_ATTRIBUTES = [
-        # Locking or hiding an input only has meaning at the level it is applied.
-        # Consider:
+        # Locking, hiding, or conditional display only have meaning at the level
+        # they are applied. Consider:
         # - ParentGroup
         #   - Group 1, input :a
-        #   - Group 2, input :a, locked: true, hidden: true, optional: true
-        # The input 'a' should only be locked or hidden when running Group 2 in isolation.
-        # It should not be locked or hidden when running Group 1 or the ParentGroup.
+        #   - Group 2, input :a, locked: true, hidden: true, enable_when: {...}, optional: true
+        # The input 'a' should only be locked, hidden, or conditionally shown when
+        # running Group 2 in isolation. It should not inherit those when running
+        # Group 1 or the ParentGroup.
         :locked,
         :hidden,
+        :enable_when,
         # Input type is sometimes only a UI concern (e.g. text vs. textarea), so
         # it is common to not redeclare the type everywhere it's used and needs
         # special handling to avoid clobbering the type with the default (text)
@@ -59,11 +62,33 @@ module Inferno
           )
         end
 
+        assert_enable_when_shape!(params)
+
         params
           .compact
           .each { |key, value| send("#{key}=", value) }
 
         self.name = name.to_s if params[:name].present?
+      end
+
+      def assert_enable_when_shape!(params)
+        enable_when = params[:enable_when]
+        return if enable_when.blank?
+        return if enable_when_valid?(enable_when)
+
+        raise Exceptions::InvalidAttributeException.new(
+          :enable_when,
+          self.class,
+          'must be a Hash with a non-empty String :input_name and a String :value'
+        )
+      end
+
+      def enable_when_valid?(enable_when)
+        type_is_hash = enable_when.is_a?(Hash)
+        input_name_string_exists = enable_when[:input_name].is_a?(String) && enable_when[:input_name].present?
+        value_string_exists = enable_when.key?(:value) && enable_when[:value].is_a?(String)
+
+        type_is_hash && input_name_string_exists && value_string_exists
       end
 
       # @private

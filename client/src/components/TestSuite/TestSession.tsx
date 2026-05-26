@@ -9,8 +9,6 @@ import {
   TestRun,
   Result,
   TestSession,
-  TestGroup,
-  TestSuite,
   Request,
   TestOutput,
   ViewType,
@@ -296,7 +294,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
 
   const createTestRun = (runnableType: RunnableType, runnableId: string, inputs: TestInput[]) => {
     inputs.forEach((input: TestInput) => {
-      sessionData.set(input.name, input.value as string);
+      sessionData.set(input.name, input.value);
     });
     setSessionData(new Map(sessionData));
     postTestRun(testSession.id, runnableType, runnableId, inputs)
@@ -373,7 +371,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         // at the suite level right now for simplicity.
         return (
           <TestSuiteReport
-            testSuite={runnable as TestSuite}
+            testSuite={runnable}
             suiteOptions={suiteOptions}
             updateRequest={updateRequest}
           />
@@ -388,11 +386,11 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
         );
       case 'config':
         // Config messages are only defined at the suite level.
-        return <ConfigMessagesDetailsPanel testSuite={runnable as TestSuite} />;
+        return <ConfigMessagesDetailsPanel testSuite={runnable} />;
       default:
         return (
           <TestSuiteDetailsPanel
-            runnable={runnable as TestSuite | TestGroup}
+            runnable={runnable}
             runTests={runTests}
             updateRequest={updateRequest}
             testSuiteId={testSession.test_suite.id}

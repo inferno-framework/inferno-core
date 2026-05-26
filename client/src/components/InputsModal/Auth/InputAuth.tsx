@@ -133,7 +133,7 @@ const InputAuth: FC<InputAuthProps> = ({ mode, input, index, inputsMap, setInput
       ...inputDefaultValues,
       ...inputStartingValues,
       ...inputsMapValues,
-    } as Auth;
+    };
   };
 
   const updateAuthType = (map: Map<string, unknown>) => {
