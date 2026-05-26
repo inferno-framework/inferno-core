@@ -99,6 +99,15 @@ describe('conditionalShowInput', () => {
     const input = makeInput({ enable_when: { input_name: 'ctrl', value: '["a","b"]' } });
     expect(conditionalShowInput(input, new Map([['ctrl', ['b', 'a']]]))).toBe(true);
   });
+
+  it('respects enable_when when the input itself is type checkbox', () => {
+    const input = makeInput({
+      type: 'checkbox',
+      enable_when: { input_name: 'ctrl', value: 'yes' },
+    });
+    expect(conditionalShowInput(input, new Map([['ctrl', 'no']]))).toBe(false);
+    expect(conditionalShowInput(input, new Map([['ctrl', 'yes']]))).toBe(true);
+  });
 });
 
 describe('showInput', () => {

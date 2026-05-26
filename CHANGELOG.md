@@ -1,3 +1,6 @@
+## 1.3.1
+* Allow checkbox inputs to be suppressed by the enable_when feature by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/784
+
 ## 1.3.0
 * Add enable_when attribute to the input by @projkov in https://github.com/inferno-framework/inferno-core/pull/758
 * ID-45: Improve session compare csv file by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/780
