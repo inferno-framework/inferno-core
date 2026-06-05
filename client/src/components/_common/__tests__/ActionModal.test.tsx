@@ -111,7 +111,7 @@ describe('Countdown timer', () => {
     expect(boldEl.tagName).toBe('STRONG');
   });
 
-  test('Countdown decrements after one second', async () => {
+  test('Countdown decrements after one second', () => {
     const waitTimeout = new Date(Date.now() + 120_000).toISOString();
 
     render(
@@ -129,14 +129,14 @@ describe('Countdown timer', () => {
 
     expect(screen.getByText(/120 seconds/)).toBeVisible();
 
-    await act(async () => {
+    act(() => {
       vi.advanceTimersByTime(1000);
     });
 
     expect(screen.getByText(/119 seconds/)).toBeVisible();
   });
 
-  test('Shows expired message when countdown reaches zero', async () => {
+  test('Shows expired message when countdown reaches zero', () => {
     const waitTimeout = new Date(Date.now() + 1000).toISOString();
 
     render(
@@ -152,11 +152,13 @@ describe('Countdown timer', () => {
       </ThemeProvider>,
     );
 
-    await act(async () => {
+    act(() => {
       vi.advanceTimersByTime(2000);
     });
 
-    const expiredText = screen.getByText(/This test has expired. Click CANCEL to restart the test./);
+    const expiredText = screen.getByText(
+      /This test has expired. Click CANCEL to restart the test./,
+    );
     expect(expiredText).toBeVisible();
     expect(screen.queryByText(/This test will expire in/)).toBeNull();
   });

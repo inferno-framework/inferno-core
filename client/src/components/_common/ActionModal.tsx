@@ -18,7 +18,12 @@ export interface ActionModalProps {
   waitTimeout?: string;
 }
 
-const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTestRun, waitTimeout }) => {
+const ActionModal: FC<ActionModalProps> = ({
+  modalVisible,
+  message,
+  cancelTestRun,
+  waitTimeout,
+}) => {
   const [secondsRemaining, setSecondsRemaining] = useState<number | null>(null);
 
   useEffect(() => {
@@ -47,10 +52,7 @@ const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTestRu
 
     if (secondsRemaining === 0) {
       return (
-        <Typography
-          variant="body2"
-          sx={{ fontWeight: 'bold', color: 'error.main' }}
-        >
+        <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'error.main' }}>
           This test has expired. Click CANCEL to restart the test.
         </Typography>
       );
@@ -60,7 +62,9 @@ const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTestRu
       <Typography variant="body2">
         {'This test will expire in '}
         <strong>{secondsRemaining} seconds</strong>
-        {'. Perform the needed action before the time expires or cancel the test to reset the timer.'}
+        {
+          '. Perform the needed action before the time expires or cancel the test to reset the timer.'
+        }
       </Typography>
     );
   };
@@ -73,7 +77,9 @@ const ActionModal: FC<ActionModalProps> = ({ modalVisible, message, cancelTestRu
           <Markdown remarkPlugins={[remarkGfm]}>{message || ''}</Markdown>
         </DialogContentText>
       </DialogContent>
-      <DialogActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <DialogActions
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+      >
         {renderCountdown()}
         <Button
           color="secondary"
