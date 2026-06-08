@@ -53,18 +53,15 @@ const ActionModal: FC<ActionModalProps> = ({
     if (secondsRemaining === 0) {
       return (
         <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'error.main' }}>
-          This test has expired. Click CANCEL to restart the test.
+          This test run has expired. Click CANCEL to continue the session.
         </Typography>
       );
     }
 
     return (
       <Typography variant="body2">
-        {'This test will expire in '}
-        <strong>{secondsRemaining} seconds</strong>
-        {
-          '. Perform the needed action before the time expires or cancel the test to reset the timer.'
-        }
+        {'This test run expires and will stop responding in '}
+        <strong>{secondsRemaining} seconds.</strong>
       </Typography>
     );
   };
@@ -78,7 +75,7 @@ const ActionModal: FC<ActionModalProps> = ({
         </DialogContentText>
       </DialogContent>
       <DialogActions
-        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+        sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pl: 3 }}
       >
         {renderCountdown()}
         <Button

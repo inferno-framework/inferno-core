@@ -57,8 +57,8 @@ test('No countdown shown when waitTimeout prop is absent (component fallback)', 
     </ThemeProvider>,
   );
 
-  expect(screen.queryByText(/This test will expire in/)).toBeNull();
-  expect(screen.queryByText(/This test has expired/)).toBeNull();
+  expect(screen.queryByText(/This test run expires and will stop responding in/)).toBeNull();
+  expect(screen.queryByText(/This test run has expired/)).toBeNull();
 });
 
 describe('Countdown timer', () => {
@@ -86,9 +86,8 @@ describe('Countdown timer', () => {
       </ThemeProvider>,
     );
 
-    expect(screen.getByText(/This test will expire in/)).toBeVisible();
+    expect(screen.getByText(/This test run expires and will stop responding in/)).toBeVisible();
     expect(screen.getByText(/120 seconds/)).toBeVisible();
-    expect(screen.getByText(/Perform the needed action before the time expires/)).toBeVisible();
   });
 
   test('Countdown seconds value is rendered in a bold element', () => {
@@ -157,10 +156,10 @@ describe('Countdown timer', () => {
     });
 
     const expiredText = screen.getByText(
-      /This test has expired. Click CANCEL to restart the test./,
+      /This test run has expired. Click CANCEL to continue the session./,
     );
     expect(expiredText).toBeVisible();
-    expect(screen.queryByText(/This test will expire in/)).toBeNull();
+    expect(screen.queryByText(/This test run expires and will stop responding in/)).toBeNull();
   });
 
   test('No countdown shown when modal is not visible', () => {
@@ -179,7 +178,7 @@ describe('Countdown timer', () => {
       </ThemeProvider>,
     );
 
-    expect(screen.queryByText(/This test will expire in/)).toBeNull();
-    expect(screen.queryByText(/This test has expired/)).toBeNull();
+    expect(screen.queryByText(/This test run expires and will stop responding in/)).toBeNull();
+    expect(screen.queryByText(/This test run has expired/)).toBeNull();
   });
 });
