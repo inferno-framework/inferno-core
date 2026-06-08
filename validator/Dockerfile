@@ -42,4 +42,4 @@ EXPOSE 3500
 
 # The last line instructs Docker to run java with G10s GC,  assigns 79% of the system's available memory, and indicates the packaged application.
 # CMD ["java", "-server", "${JAVA_OPTS}", "-jar", "validator-wrapper.jar", "-startServer"]
-CMD ["sh", "-c", "java -server ${JAVA_OPTS} -jar validator-wrapper.jar -startServer"]
+CMD ["sh", "-c", "exec java -server ${JAVA_OPTS} -jar validator-wrapper.jar -startServer"]
