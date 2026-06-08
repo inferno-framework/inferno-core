@@ -35,7 +35,7 @@ ENV ENVIRONMENT=prod
 ENV SESSION_CACHE_IMPLEMENTATION=PassiveExpiringSessionCache
 ENV SESSION_CACHE_DURATION=-1
 ENV VALIDATION_SERVICE_PRESETS_FILE_PATH=ignore-this-do-not-load-presets
-ENV JAVA_OPTS="-Xmx10g -XX:+UnlockExperimentalVMOptions -XX:InitialRAMPercentage=79 -XX:MinRAMPercentage=79 -XX:MaxRAMPercentage=79 -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+UseStringDeduplication -XX:+CrashOnOutOfMemoryError "
+ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:InitialRAMPercentage=79 -XX:MinRAMPercentage=79 -XX:MaxRAMPercentage=79 -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+UseStringDeduplication -XX:+CrashOnOutOfMemoryError "
 
 
 EXPOSE 3500
