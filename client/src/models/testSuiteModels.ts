@@ -161,6 +161,7 @@ export interface TestRun {
   test_id?: string;
   test_session_id?: string;
   test_suite_id?: string;
+  wait_timeout?: string;
 }
 
 export interface TestSession {

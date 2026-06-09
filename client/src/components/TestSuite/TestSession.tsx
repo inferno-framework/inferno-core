@@ -457,6 +457,7 @@ const TestSessionComponent: FC<TestSessionComponentProps> = ({
             cancelTestRun={cancelTestRun}
             message={waitingTestId ? resultsMap.get(waitingTestId)?.result_message : ''}
             modalVisible={!!waitingTestId}
+            waitTimeout={testRun?.wait_timeout}
           />
         </Box>
       </main>

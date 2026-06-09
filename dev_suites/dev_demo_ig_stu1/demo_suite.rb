@@ -52,7 +52,8 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       wait_test_fail_url: "#{Inferno::Application['base_url']}/custom/demo/resume_fail",
       wait_test_skip_url: "#{Inferno::Application['base_url']}/custom/demo/resume_skip",
       wait_test_omit_url: "#{Inferno::Application['base_url']}/custom/demo/resume_omit",
-      wait_test_cancel_url: "#{Inferno::Application['base_url']}/custom/demo/resume_cancel"
+      wait_test_cancel_url: "#{Inferno::Application['base_url']}/custom/demo/resume_cancel",
+      wait_expire_demo_url: "#{Inferno::Application['base_url']}/custom/demo/resume_expire_demo"
     }
 
     group do
@@ -605,6 +606,34 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         input :patient_identifier_select, title: 'Patient ID (Select)', type: 'text', optional: true,
                                           enable_when: { input_name: 'get_type_select', value: 'summary_op' }
         run { pass }
+      end
+    end
+
+    group do
+      id 'wait_cancel_group'
+      title 'Wait Cancellation Group'
+      optional
+
+      resume_test_route :get, '/resume_expire_demo' do |request|
+        request.query_parameters['xyz']
+      end
+
+      test do
+        title 'Wait timeout expiry demo'
+        receives_request :resume_expire_demo
+
+        run do
+          identifier = 'expire_demo'
+
+          wait(
+            identifier:,
+            timeout: 3,
+            message: %(
+              This test is to show off the wait UI when time expires.
+              Watch the countdown below reach zero, then click CANCEL to finish the test.
+            )
+          )
+        end
       end
     end
   end
