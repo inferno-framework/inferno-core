@@ -61,7 +61,9 @@ const ActionModal: FC<ActionModalProps> = ({
     return (
       <Typography variant="body2">
         {'This test run expires and will stop responding in '}
-        <strong>{secondsRemaining} {secondsRemaining === 1 ? 'second' : 'seconds'}.</strong>
+        <strong>
+          {secondsRemaining} {secondsRemaining === 1 ? 'second' : 'seconds'}.
+        </strong>
       </Typography>
     );
   };
