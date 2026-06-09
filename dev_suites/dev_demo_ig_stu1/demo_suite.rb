@@ -53,7 +53,9 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       wait_test_skip_url: "#{Inferno::Application['base_url']}/custom/demo/resume_skip",
       wait_test_omit_url: "#{Inferno::Application['base_url']}/custom/demo/resume_omit",
       wait_test_cancel_url: "#{Inferno::Application['base_url']}/custom/demo/resume_cancel",
-      wait_expire_demo_url: "#{Inferno::Application['base_url']}/custom/demo/resume_expire_demo"
+      wait_expire_demo_url: "#{Inferno::Application['base_url']}/custom/demo/resume_expire_demo",
+      attest_true_url: "#{Inferno::Application['base_url']}/custom/demo/resume_attest",
+      attest_false_url: "#{Inferno::Application['base_url']}/custom/demo/resume_attest_fail"
     }
 
     group do
@@ -531,6 +533,60 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         end
       end
     end
+
+    group do
+      id 'attestation_group'
+      title 'Attestation Group'
+      description %(
+        This group demonstrates attestation-style tests where a user manually
+        attests to a behavior that Inferno cannot independently verify.
+      )
+
+      resume_test_route :get, '/resume_attest' do |request|
+        request.query_parameters['xyz']
+      end
+
+      resume_test_route :get, '/resume_attest_fail', result: 'fail' do |request|
+        request.query_parameters['xyz']
+      end
+
+      test do
+        title 'Attest to system behavior'
+        description %(
+          Since Inferno cannot independently verify this behavior, this test provides
+          testers with an opportunity to attest to whether their system supports it.
+        )
+        attestation
+
+        output :attest_true_url
+        output :attest_false_url
+
+        run do
+          identifier = 'attest_demo'
+          url_suffix = "?xyz=#{identifier}"
+          attest_true_url = "#{config.options[:attest_true_url]}#{url_suffix}"
+          attest_false_url = "#{config.options[:attest_false_url]}#{url_suffix}"
+
+          output(attest_true_url:)
+          output(attest_false_url:)
+
+          wait(
+            identifier:,
+            message: %(
+              **Attestation**:
+
+              I attest that the system supports a behavior that Inferno cannot
+              independently verify.
+
+              [Click here](#{attest_true_url}) if the above statement is **true**.
+
+              [Click here](#{attest_false_url}) if the above statement is **false**.
+            )
+          )
+        end
+      end
+    end
+
     group do
       id 'message_normalization_sort_group'
       title 'Execute Script Message Normalization Sort Group'

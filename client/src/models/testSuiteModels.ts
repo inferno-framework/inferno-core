@@ -202,6 +202,7 @@ export type Test = Runnable & {
   outputs: TestOutput[];
   user_runnable?: boolean;
   is_simulation_verification?: boolean;
+  is_attestation?: boolean;
 };
 
 export type TestGroup = Runnable & {

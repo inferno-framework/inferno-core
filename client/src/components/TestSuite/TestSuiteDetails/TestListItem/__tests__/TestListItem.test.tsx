@@ -264,4 +264,74 @@ describe('The TestListItem component', () => {
       expect(screen.queryByText('Simulation Verification')).not.toBeInTheDocument();
     });
   });
+
+  describe('Attestation Badge', () => {
+    const outputs: TestOutput[] = [{ name: 'One', value: 'one' }];
+    const inputs: TestInput[] = [{ name: 'two', value: 'two' }];
+
+    it('renders the badge when is_attestation is true', () => {
+      const test: Test = {
+        id: 'test_id',
+        title: 'Test Title',
+        inputs: inputs,
+        short_id: 'short_id',
+        outputs: outputs,
+        user_runnable: false,
+        is_attestation: true,
+      };
+
+      render(
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>,
+      );
+
+      expect(screen.getByText('Attestation')).toBeInTheDocument();
+    });
+
+    it('does not render the badge when is_attestation is false', () => {
+      const test: Test = {
+        id: 'test_id',
+        title: 'Test Title',
+        inputs: inputs,
+        short_id: 'short_id',
+        outputs: outputs,
+        user_runnable: false,
+        is_attestation: false,
+      };
+
+      render(
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>,
+      );
+
+      expect(screen.queryByText('Attestation')).not.toBeInTheDocument();
+    });
+
+    it('does not render the badge when is_attestation is undefined', () => {
+      const test: Test = {
+        id: 'test_id',
+        title: 'Test Title',
+        inputs: inputs,
+        short_id: 'short_id',
+        outputs: outputs,
+        user_runnable: false,
+      };
+
+      render(
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>,
+      );
+
+      expect(screen.queryByText('Attestation')).not.toBeInTheDocument();
+    });
+  });
 });
