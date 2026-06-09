@@ -23,7 +23,7 @@ comparison_config:
 steps:
   - status: created
     start_run:
-      runnable: 12
+      runnable: 13
       inputs:
         normalization_sort_url: 'http://zzz.example.com'
 
