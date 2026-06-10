@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import ThemeProvider from 'components/ThemeProvider';
 import { describe, expect, test } from 'vitest';
 
@@ -14,7 +14,7 @@ describe('The AttestationBadge component', () => {
     );
 
     const badge = screen.getByText('Attestation');
-    expect(badge).toBeDefined();
+    expect(badge).not.toBeNull();
   });
 
   test('it renders with a person icon', () => {
@@ -25,17 +25,20 @@ describe('The AttestationBadge component', () => {
     );
 
     const icon = container.querySelector('.MuiChip-icon');
-    expect(icon).toBeDefined();
+    expect(icon).not.toBeNull();
   });
 
-  test('it renders the tooltip with the correct text', () => {
+  test('it renders the tooltip with the correct text', async () => {
     render(
       <ThemeProvider>
         <AttestationBadge />
       </ThemeProvider>,
     );
 
-    const chip = screen.getByText('Attestation').closest('.MuiChip-root');
-    expect(chip).toBeDefined();
+    const chip = screen.getByText('Attestation').closest('.MuiChip-root') as Element;
+    fireEvent.mouseOver(chip);
+
+    const tooltip = await screen.findByText('Inferno cannot independently verify this behavior.');
+    expect(tooltip).not.toBeNull();
   });
 });
