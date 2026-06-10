@@ -170,4 +170,14 @@ export default makeStyles()((theme: Theme) => ({
       color: theme.palette.common.orangeDark,
     },
   },
+  attestationChip: {
+    backgroundColor: theme.palette.common.yellowLight,
+    color: theme.palette.common.yellowDark,
+    fontWeight: 'bold',
+    marginLeft: '8px',
+    height: '24px',
+    '& .MuiChip-icon': {
+      color: theme.palette.common.yellowDark,
+    },
+  },
 }));
