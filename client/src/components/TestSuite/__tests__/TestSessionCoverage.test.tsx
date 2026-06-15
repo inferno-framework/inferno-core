@@ -1,10 +1,9 @@
 import React, { act } from 'react';
 import { MemoryRouter } from 'react-router';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { screen, waitFor } from '@testing-library/react';
+import { type UserEvent } from '@testing-library/user-event';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { SnackbarProvider } from 'notistack';
-import ThemeProvider from 'components/ThemeProvider';
+import { renderWithProviders } from '~/test-utils';
 import TestSessionComponent from '../TestSession';
 import { mockedTestSession } from '../__mocked_data__/mockData';
 import * as RequirementsApi from '~/api/RequirementsApi';
@@ -101,7 +100,7 @@ async function renderTestSession(
     testSession?: TestSession;
     drawerOpen?: boolean;
   } = {},
-) {
+): Promise<{ user: UserEvent }> {
   const {
     hash = '',
     initialTestRun = null,
@@ -109,28 +108,32 @@ async function renderTestSession(
     drawerOpen = false,
   } = options;
 
+  // TestSession needs MemoryRouter with hash support (initialEntries accepts location objects).
+  // Pass the router as the child of renderWithProviders so ThemeProvider/SnackbarProvider
+  // are provided by the shared utility rather than constructed inline.
+  let user!: UserEvent;
+
   // First pass: synchronous render
   act(() => {
-    render(
+    ({ user } = renderWithProviders(
       <MemoryRouter initialEntries={[{ pathname: '/', hash }]}>
-        <ThemeProvider>
-          <SnackbarProvider>
-            <TestSessionComponent
-              testSession={testSession}
-              previousResults={[]}
-              initialTestRun={initialTestRun}
-              sessionData={new Map()}
-              setSessionData={() => {}}
-              drawerOpen={drawerOpen}
-              toggleDrawer={() => {}}
-            />
-          </SnackbarProvider>
-        </ThemeProvider>
+        <TestSessionComponent
+          testSession={testSession}
+          previousResults={[]}
+          initialTestRun={initialTestRun}
+          sessionData={new Map()}
+          setSessionData={() => {}}
+          drawerOpen={drawerOpen}
+          toggleDrawer={() => {}}
+        />
       </MemoryRouter>,
-    );
+      { noRouter: true },
+    ));
   });
   // Second pass: flush async effects (fetchRequirements promise chain)
   await act(async () => {});
+
+  return { user };
 }
 
 // ─── suite ───────────────────────────────────────────────────────────────────
@@ -209,11 +212,11 @@ describe('TestSession additional coverage', () => {
     const postSpy = vi.spyOn(TestRunsApi, 'postTestRun').mockResolvedValue(doneTestRun);
     vi.spyOn(TestRunsApi, 'getTestRunWithResults').mockResolvedValue(doneTestRun);
 
-    await renderTestSession({ testSession: sessionWithExpandedGroup });
+    const { user } = await renderTestSession({ testSession: sessionWithExpandedGroup });
 
     // Wrap in act(async) so React 18 flushes the full createTestRun.then() + poll chain
     await act(async () => {
-      await userEvent.click(screen.getByTestId('runButton-demo-Group01'));
+      await user.click(screen.getByTestId('runButton-demo-Group01'));
     });
 
     expect(postSpy).toHaveBeenCalledWith(
@@ -227,10 +230,10 @@ describe('TestSession additional coverage', () => {
   it('opens InputsModal instead of running when the group has visible inputs', async () => {
     const postSpy = vi.spyOn(TestRunsApi, 'postTestRun');
 
-    await renderTestSession({ testSession: sessionWithInputGroup });
+    const { user } = await renderTestSession({ testSession: sessionWithInputGroup });
 
     await act(async () => {
-      await userEvent.click(screen.getByTestId('runButton-demo-Group01'));
+      await user.click(screen.getByTestId('runButton-demo-Group01'));
     });
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -242,10 +245,10 @@ describe('TestSession additional coverage', () => {
     const postSpy = vi.spyOn(TestRunsApi, 'postTestRun').mockResolvedValue(doneTestRun);
     vi.spyOn(TestRunsApi, 'getTestRunWithResults').mockResolvedValue(doneTestRun);
 
-    await renderTestSession({ testSession: sessionWithHiddenInputGroup });
+    const { user } = await renderTestSession({ testSession: sessionWithHiddenInputGroup });
 
     await act(async () => {
-      await userEvent.click(screen.getByTestId('runButton-demo-Group01'));
+      await user.click(screen.getByTestId('runButton-demo-Group01'));
     });
 
     expect(postSpy).toHaveBeenCalledWith(
@@ -259,10 +262,10 @@ describe('TestSession additional coverage', () => {
   it('opens InputsModal in readOnly mode when the group has visible inputs', async () => {
     useTestSessionStore.setState({ readOnly: true });
 
-    await renderTestSession({ testSession: sessionWithInputGroup });
+    const { user } = await renderTestSession({ testSession: sessionWithInputGroup });
 
     await act(async () => {
-      await userEvent.click(screen.getByTestId('runButton-demo-Group01'));
+      await user.click(screen.getByTestId('runButton-demo-Group01'));
     });
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
@@ -273,10 +276,10 @@ describe('TestSession additional coverage', () => {
   it('shows an error snackbar when postTestRun fails', async () => {
     vi.spyOn(TestRunsApi, 'postTestRun').mockRejectedValue(new Error('Server error'));
 
-    await renderTestSession({ testSession: sessionWithExpandedGroup });
+    const { user } = await renderTestSession({ testSession: sessionWithExpandedGroup });
 
     await act(async () => {
-      await userEvent.click(screen.getByTestId('runButton-demo-Group01'));
+      await user.click(screen.getByTestId('runButton-demo-Group01'));
     });
 
     await waitFor(() => {
@@ -293,7 +296,7 @@ describe('TestSession additional coverage', () => {
       .mockResolvedValueOnce(runningTestRun)
       .mockResolvedValue(doneTestRun);
 
-    await renderTestSession({ initialTestRun: runningTestRun });
+    const { user } = await renderTestSession({ initialTestRun: runningTestRun });
 
     await waitFor(() => {
       // Cancel button is enabled when status is 'running'
@@ -302,7 +305,7 @@ describe('TestSession additional coverage', () => {
 
     // Wrap in act(async) so setTestRunCancelled(true) from deleteTestRun.then() is within act()
     await act(async () => {
-      await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+      await user.click(screen.getByRole('button', { name: /cancel/i }));
     });
 
     expect(deleteSpy).toHaveBeenCalledWith(runningTestRun.id);
@@ -314,14 +317,14 @@ describe('TestSession additional coverage', () => {
       .mockResolvedValueOnce(runningTestRun)
       .mockResolvedValue(doneTestRun);
 
-    await renderTestSession({ initialTestRun: runningTestRun });
+    const { user } = await renderTestSession({ initialTestRun: runningTestRun });
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /cancel/i })).not.toBeDisabled();
     });
 
     await act(async () => {
-      await userEvent.click(screen.getByRole('button', { name: /cancel/i }));
+      await user.click(screen.getByRole('button', { name: /cancel/i }));
     });
 
     await waitFor(() => {

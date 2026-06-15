@@ -439,7 +439,7 @@ describe('Input Components', () => {
   describe('InputOAuthCredentials additional coverage', () => {
     const makeOAuthInput = (overrides: Partial<TestInput> = {}): TestInput => ({
       name: 'oauthInput',
-      type: 'oauth_credentials' as TestInput['type'],
+      type: 'oauth_credentials',
       optional: true,
       ...overrides,
     });
@@ -503,7 +503,7 @@ describe('Input Components', () => {
     });
 
     it('onBlur sets hasBeenModified and getIsMissingInput shows RequiredInputWarning for required empty field', () => {
-      const { container } = render(
+      render(
         <ThemeProvider>
           <SnackbarProvider>
             <InputOAuthCredentials
@@ -517,13 +517,13 @@ describe('Input Components', () => {
       );
 
       // No warning before the field has been touched
-      expect(container.querySelector('.MuiSvgIcon-colorError')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('required-input-warning')).not.toBeInTheDocument();
 
       // Direct blur satisfies e.currentTarget === e.target guard and fires setHasBeenModified
       fireEvent.blur(screen.getByRole('textbox', { name: /access token \(required\)/i }));
 
       // getIsMissingInput now returns true → RequiredInputWarning (error-coloured icon) appears
-      expect(container.querySelector('.MuiSvgIcon-colorError')).toBeInTheDocument();
+      expect(screen.queryByTestId('required-input-warning')).toBeInTheDocument();
     });
 
     it('renders "(required)" suffix on oAuthField label when field.optional is false (line 114)', () => {

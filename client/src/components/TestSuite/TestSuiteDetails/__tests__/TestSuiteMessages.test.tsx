@@ -1,18 +1,12 @@
 import React from 'react';
-import { MemoryRouter } from 'react-router';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { renderWithMemoryRouter, screen, fireEvent } from '~/test-utils';
 import { describe, expect, it } from 'vitest';
-import ThemeProvider from 'components/ThemeProvider';
 import TestSuiteMessages from '../TestSuiteMessages';
 import { Message } from '~/models/testSuiteModels';
 
 function wrap(messages: Message[], testSuiteId = 'suite-1') {
-  return render(
-    <MemoryRouter>
-      <ThemeProvider>
-        <TestSuiteMessages messages={messages} testSuiteId={testSuiteId} />
-      </ThemeProvider>
-    </MemoryRouter>,
+  return renderWithMemoryRouter(
+    <TestSuiteMessages messages={messages} testSuiteId={testSuiteId} />,
   );
 }
 
@@ -58,8 +52,7 @@ describe('TestSuiteMessages', () => {
       { message: 'Info one', type: 'info' },
       { message: 'Info two', type: 'info' },
     ]);
-    // plural info branch has a copy-paste bug: reads "configuration errors" instead of "messages"
-    expect(screen.getByText('There are 2 configuration errors.')).toBeInTheDocument();
+    expect(screen.getByText('There are 2 configuration messages.')).toBeInTheDocument();
   });
 
   it('renders alerts for all three message types simultaneously', () => {

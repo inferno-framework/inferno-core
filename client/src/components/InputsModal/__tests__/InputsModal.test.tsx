@@ -5,6 +5,7 @@ import InputsModal from '../InputsModal';
 import { RunnableType, TestInput } from '~/models/testSuiteModels';
 import ThemeProvider from 'components/ThemeProvider';
 import { SnackbarProvider } from 'notistack';
+import { renderWithProviders } from '~/test-utils';
 
 import { beforeEach, expect, test, vi } from 'vitest';
 import {
@@ -218,39 +219,33 @@ test('Values in Field Inputs shown in JSON and YAML', async () => {
 // ── runnableTypeReadable switch ────────────────────────────────────────────────
 
 test('instruction text uses "test suite" for RunnableType.TestSuite', () => {
-  render(
-    <ThemeProvider>
-      <SnackbarProvider>
-        <InputsModal
-          modalVisible={true}
-          hideModal={hideModalMock}
-          runnable={mockedTestSuite}
-          runnableType={RunnableType.TestSuite}
-          inputs={testInputs}
-          sessionData={mockedSessionData}
-          createTestRun={createTestRunMock}
-        />
-      </SnackbarProvider>
-    </ThemeProvider>,
+  renderWithProviders(
+    <InputsModal
+      modalVisible={true}
+      hideModal={hideModalMock}
+      runnable={mockedTestSuite}
+      runnableType={RunnableType.TestSuite}
+      inputs={testInputs}
+      sessionData={mockedSessionData}
+      createTestRun={createTestRunMock}
+    />,
+    { noRouter: true },
   );
   expect(screen.getByText(/run the test suite/)).toBeInTheDocument();
 });
 
 test('instruction text uses "test" for RunnableType.Test', () => {
-  render(
-    <ThemeProvider>
-      <SnackbarProvider>
-        <InputsModal
-          modalVisible={true}
-          hideModal={hideModalMock}
-          runnable={mockedTest}
-          runnableType={RunnableType.Test}
-          inputs={testInputs}
-          sessionData={mockedSessionData}
-          createTestRun={createTestRunMock}
-        />
-      </SnackbarProvider>
-    </ThemeProvider>,
+  renderWithProviders(
+    <InputsModal
+      modalVisible={true}
+      hideModal={hideModalMock}
+      runnable={mockedTest}
+      runnableType={RunnableType.Test}
+      inputs={testInputs}
+      sessionData={mockedSessionData}
+      createTestRun={createTestRunMock}
+    />,
+    { noRouter: true },
   );
   // regex anchors to the literal period so it won't match "test suite" or "test group"
   expect(screen.getByText(/run the test\./)).toBeInTheDocument();
@@ -259,23 +254,20 @@ test('instruction text uses "test" for RunnableType.Test', () => {
 // ── serial input (handleSerialChanges + parsedChanges.forEach) ─────────────────
 
 test('typing valid JSON in the serial input exercises handleSerialChanges', async () => {
-  render(
-    <ThemeProvider>
-      <SnackbarProvider>
-        <InputsModal
-          modalVisible={true}
-          hideModal={hideModalMock}
-          runnable={mockedTestGroup}
-          runnableType={RunnableType.TestGroup}
-          inputs={testInputs}
-          sessionData={mockedSessionData}
-          createTestRun={createTestRunMock}
-        />
-      </SnackbarProvider>
-    </ThemeProvider>,
+  const { user } = renderWithProviders(
+    <InputsModal
+      modalVisible={true}
+      hideModal={hideModalMock}
+      runnable={mockedTestGroup}
+      runnableType={RunnableType.TestGroup}
+      inputs={testInputs}
+      sessionData={mockedSessionData}
+      createTestRun={createTestRunMock}
+    />,
+    { noRouter: true },
   );
 
-  await userEvent.click(screen.getByTestId('json-button'));
+  await user.click(screen.getByTestId('json-button'));
 
   const validJson = JSON.stringify([
     { name: 'url', value: 'http://example.com' },
@@ -302,23 +294,20 @@ test('file upload populates the serial input via handleFileUpload', async () => 
   }
   vi.stubGlobal('FileReader', MockFileReader);
 
-  render(
-    <ThemeProvider>
-      <SnackbarProvider>
-        <InputsModal
-          modalVisible={true}
-          hideModal={hideModalMock}
-          runnable={mockedTestGroup}
-          runnableType={RunnableType.TestGroup}
-          inputs={testInputs}
-          sessionData={mockedSessionData}
-          createTestRun={createTestRunMock}
-        />
-      </SnackbarProvider>
-    </ThemeProvider>,
+  const { user } = renderWithProviders(
+    <InputsModal
+      modalVisible={true}
+      hideModal={hideModalMock}
+      runnable={mockedTestGroup}
+      runnableType={RunnableType.TestGroup}
+      inputs={testInputs}
+      sessionData={mockedSessionData}
+      createTestRun={createTestRunMock}
+    />,
+    { noRouter: true },
   );
 
-  await userEvent.click(screen.getByTestId('json-button'));
+  await user.click(screen.getByTestId('json-button'));
 
   const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
   const file = new File([fileContent], 'inputs.json', { type: 'application/json' });
@@ -332,63 +321,54 @@ test('file upload populates the serial input via handleFileUpload', async () => 
 // ── cancel / close interactions ────────────────────────────────────────────────
 
 test('X cancel IconButton calls hideModal', async () => {
-  render(
-    <ThemeProvider>
-      <SnackbarProvider>
-        <InputsModal
-          modalVisible={true}
-          hideModal={hideModalMock}
-          runnable={mockedTestGroup}
-          runnableType={RunnableType.TestGroup}
-          inputs={testInputs}
-          sessionData={mockedSessionData}
-          createTestRun={createTestRunMock}
-        />
-      </SnackbarProvider>
-    </ThemeProvider>,
+  const { user } = renderWithProviders(
+    <InputsModal
+      modalVisible={true}
+      hideModal={hideModalMock}
+      runnable={mockedTestGroup}
+      runnableType={RunnableType.TestGroup}
+      inputs={testInputs}
+      sessionData={mockedSessionData}
+      createTestRun={createTestRunMock}
+    />,
+    { noRouter: true },
   );
 
   // aria-label="cancel" uniquely identifies the X IconButton (Cancel button text is capitalised)
-  await userEvent.click(screen.getByRole('button', { name: 'cancel' }));
+  await user.click(screen.getByRole('button', { name: 'cancel' }));
   expect(hideModalMock).toHaveBeenCalled();
 });
 
 test('closing the dialog via onClose calls hideModal when inputs are unedited', async () => {
-  render(
-    <ThemeProvider>
-      <SnackbarProvider>
-        <InputsModal
-          modalVisible={true}
-          hideModal={hideModalMock}
-          runnable={mockedTestGroup}
-          runnableType={RunnableType.TestGroup}
-          inputs={testInputs}
-          sessionData={mockedSessionData}
-          createTestRun={createTestRunMock}
-        />
-      </SnackbarProvider>
-    </ThemeProvider>,
+  const { user } = renderWithProviders(
+    <InputsModal
+      modalVisible={true}
+      hideModal={hideModalMock}
+      runnable={mockedTestGroup}
+      runnableType={RunnableType.TestGroup}
+      inputs={testInputs}
+      sessionData={mockedSessionData}
+      createTestRun={createTestRunMock}
+    />,
+    { noRouter: true },
   );
 
-  await userEvent.keyboard('{Escape}');
+  await user.keyboard('{Escape}');
   expect(hideModalMock).toHaveBeenCalled();
 });
 
 test('closing the dialog via onClose does not call hideModal after inputs are edited', async () => {
-  render(
-    <ThemeProvider>
-      <SnackbarProvider>
-        <InputsModal
-          modalVisible={true}
-          hideModal={hideModalMock}
-          runnable={mockedTestGroup}
-          runnableType={RunnableType.TestGroup}
-          inputs={testInputs}
-          sessionData={mockedSessionData}
-          createTestRun={createTestRunMock}
-        />
-      </SnackbarProvider>
-    </ThemeProvider>,
+  const { user } = renderWithProviders(
+    <InputsModal
+      modalVisible={true}
+      hideModal={hideModalMock}
+      runnable={mockedTestGroup}
+      runnableType={RunnableType.TestGroup}
+      inputs={testInputs}
+      sessionData={mockedSessionData}
+      createTestRun={createTestRunMock}
+    />,
+    { noRouter: true },
   );
 
   // Editing a field sets inputsEdited=true; InputTextField calls setInputsMap without edited=false
@@ -396,7 +376,7 @@ test('closing the dialog via onClose does not call hideModal after inputs are ed
   const textboxes = screen.getAllByRole('textbox');
   fireEvent.change(textboxes[0], { target: { value: 'edited value' } });
 
-  await userEvent.keyboard('{Escape}');
+  await user.keyboard('{Escape}');
   expect(hideModalMock).not.toHaveBeenCalled();
 });
 
@@ -410,20 +390,17 @@ test('Cmd+Enter submits the form when all required inputs are filled', async () 
   ]);
 
   await act(() =>
-    render(
-      <ThemeProvider>
-        <SnackbarProvider>
-          <InputsModal
-            modalVisible={true}
-            hideModal={hideModalMock}
-            runnable={mockedTestGroup}
-            runnableType={RunnableType.TestGroup}
-            inputs={testInputs}
-            sessionData={filledSessionData}
-            createTestRun={createTestRunMock}
-          />
-        </SnackbarProvider>
-      </ThemeProvider>,
+    renderWithProviders(
+      <InputsModal
+        modalVisible={true}
+        hideModal={hideModalMock}
+        runnable={mockedTestGroup}
+        runnableType={RunnableType.TestGroup}
+        inputs={testInputs}
+        sessionData={filledSessionData}
+        createTestRun={createTestRunMock}
+      />,
+      { noRouter: true },
     ),
   );
 

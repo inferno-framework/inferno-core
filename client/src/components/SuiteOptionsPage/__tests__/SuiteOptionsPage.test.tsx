@@ -1,9 +1,7 @@
 import React, { act } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { render, screen, waitFor } from '@testing-library/react';
-import { SnackbarProvider } from 'notistack';
+import { renderWithProviders, screen, waitFor } from '~/test-utils';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import ThemeProvider from 'components/ThemeProvider';
 import SuiteOptionsPage from '../SuiteOptionsPage';
 import * as TestSessionApi from '~/api/TestSessionApi';
 import { TestSuite } from '~/models/testSuiteModels';
@@ -14,22 +12,18 @@ const mockCreatedSession = {
   test_suite: { id: 'suite-1', title: 'Suite One', inputs: [] },
 };
 
+// SuiteOptionsPage calls useParams(), so it must be rendered inside a Route that
+// matches a path with a :test_suite_id param. We pass the MemoryRouter+Routes tree
+// to renderWithProviders with noRouter:true so ThemeProvider/SnackbarProvider are
+// still provided by the shared utility.
 function wrapWithRouter(testSuite?: TestSuite) {
-  return render(
+  return renderWithProviders(
     <MemoryRouter initialEntries={['/suite-1']}>
       <Routes>
-        <Route
-          path="/:test_suite_id"
-          element={
-            <ThemeProvider>
-              <SnackbarProvider>
-                <SuiteOptionsPage testSuite={testSuite} />
-              </SnackbarProvider>
-            </ThemeProvider>
-          }
-        />
+        <Route path="/:test_suite_id" element={<SuiteOptionsPage testSuite={testSuite} />} />
       </Routes>
     </MemoryRouter>,
+    { noRouter: true },
   );
 }
 

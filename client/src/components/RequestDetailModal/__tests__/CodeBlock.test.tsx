@@ -59,8 +59,7 @@ describe('CodeBlock', () => {
     // Initially collapsed — pre element not visible
     expect(screen.queryByTestId('pre')).not.toBeVisible();
 
-    const header = screen.getByTestId('code-block').querySelector('.MuiCardHeader-root');
-    await user.click(header as HTMLElement);
+    await user.click(screen.getByTestId('code-block-header'));
 
     expect(screen.getByTestId('pre')).toBeVisible();
   });

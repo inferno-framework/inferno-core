@@ -35,6 +35,7 @@ const CodeBlock: FC<CodeBlockProps> = ({ body, headers, title }) => {
         <CardHeader
           title={fullTitle}
           titleTypographyProps={{ sx: { fontSize: 20 } }}
+          data-testid="code-block-header"
           action={
             <Box display="flex">
               <CopyButton copyText={jsonBody} />

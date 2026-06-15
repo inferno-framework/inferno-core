@@ -29,6 +29,9 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
+    # The lockfile may be committed from macOS, which omits Linux-specific optional
+    # packages (e.g. platform-native bindings). Regenerating it here adds those
+    # entries so the subsequent `npm ci` can resolve them on this Linux runner.
     - run: npm install --package-lock-only --ignore-scripts
     - run: npm ci
 
@@ -54,6 +57,9 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
+    # The lockfile is committed from macOS, which omits Linux-specific optional
+    # packages (e.g. platform-native bindings). Regenerating it here adds those
+    # entries so the subsequent `npm ci` can resolve them on this Linux runner.
     - run: npm install --package-lock-only --ignore-scripts
     - run: npm ci
     # `npm run coverage` is run tests with coverage flags, rather than repeating them here
@@ -87,6 +93,9 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
+    # The lockfile is committed from macOS, which omits Linux-specific optional
+    # packages (e.g. platform-native bindings). Regenerating it here adds those
+    # entries so the subsequent `npm ci` can resolve them on this Linux runner.
     - run: npm install --package-lock-only --ignore-scripts
     - run: npm ci
     - run: npm run lint

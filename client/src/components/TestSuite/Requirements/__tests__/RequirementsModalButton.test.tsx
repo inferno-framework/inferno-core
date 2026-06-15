@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter } from 'react-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SnackbarProvider } from 'notistack';
 import ThemeProvider from 'components/ThemeProvider';
 import RequirementsModalButton from '../RequirementsModalButton';
@@ -38,6 +38,8 @@ function wrap(runnable: Runnable) {
 }
 
 describe('RequirementsModalButton', () => {
+  afterEach(() => vi.restoreAllMocks());
+
   it('renders the link button', () => {
     wrap(runnableWithRequirements);
     expect(screen.getByText('View Specification Requirements')).toBeInTheDocument();
