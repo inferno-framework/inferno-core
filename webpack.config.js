@@ -17,6 +17,9 @@ module.exports = (env, argv) => {
       static: '/public/',
       host: '0.0.0.0',
       port: 3000,
+      // Required so the Rails host (different port) can load assets from this
+      // dev server without the browser blocking them under CORS.
+      // Not used by test kits (static bundle used instead of the wekpack server)
       headers: {
         'Cross-Origin-Resource-Policy': 'cross-origin',
       },
