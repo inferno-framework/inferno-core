@@ -1,28 +1,23 @@
 import React from 'react';
-import { Router, BrowserRouter } from 'react-router';
+import { Router } from 'react-router';
 import { createMemoryHistory } from 'history';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { screen } from '@testing-library/react';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import TreeItemLabel from 'components/TestSuite/TestSuiteTree/TreeItemLabel';
-import ThemeProvider from 'components/ThemeProvider';
+import { renderWithProviders } from '~/test-utils';
 import CustomTreeItem from '../CustomTreeItem';
 import { mockedTestSuite } from '../__mocked_data__/mockData';
 import { expect, test } from 'vitest';
 
 test('renders custom TreeItem', () => {
-  render(
-    <BrowserRouter>
-      <ThemeProvider>
-        <SimpleTreeView>
-          <CustomTreeItem
-            itemId={mockedTestSuite.id}
-            label={<TreeItemLabel runnable={mockedTestSuite} />}
-            ContentProps={{ testId: mockedTestSuite.id } as any}
-          />
-        </SimpleTreeView>
-      </ThemeProvider>
-    </BrowserRouter>,
+  renderWithProviders(
+    <SimpleTreeView>
+      <CustomTreeItem
+        itemId={mockedTestSuite.id}
+        label={<TreeItemLabel runnable={mockedTestSuite} />}
+        ContentProps={{ testId: mockedTestSuite.id } as any}
+      />
+    </SimpleTreeView>,
   );
 
   const treeItemElement = screen.getByRole('treeitem');
@@ -30,20 +25,16 @@ test('renders custom TreeItem', () => {
 });
 
 test('TreeItem expansion should not be toggled when label is clicked', async () => {
-  render(
-    <BrowserRouter>
-      <ThemeProvider>
-        <SimpleTreeView expandedItems={[mockedTestSuite.id]}>
-          <CustomTreeItem
-            itemId={mockedTestSuite.id}
-            label={<TreeItemLabel runnable={mockedTestSuite} />}
-            ContentProps={{ testId: mockedTestSuite.id } as any}
-          >
-            <></>
-          </CustomTreeItem>
-        </SimpleTreeView>
-      </ThemeProvider>
-    </BrowserRouter>,
+  const { user } = renderWithProviders(
+    <SimpleTreeView expandedItems={[mockedTestSuite.id]}>
+      <CustomTreeItem
+        itemId={mockedTestSuite.id}
+        label={<TreeItemLabel runnable={mockedTestSuite} />}
+        ContentProps={{ testId: mockedTestSuite.id } as any}
+      >
+        <></>
+      </CustomTreeItem>
+    </SimpleTreeView>,
   );
 
   const labelElement = screen.getAllByTestId('tiLabel', { exact: false })[0];
@@ -51,7 +42,7 @@ test('TreeItem expansion should not be toggled when label is clicked', async () 
   expect(labelElement).toBeInTheDocument();
   expect(treeItemElement).toHaveAttribute('aria-expanded', 'true');
 
-  await userEvent.click(labelElement);
+  await user.click(labelElement);
   expect(treeItemElement).toHaveAttribute('aria-expanded', 'true');
 });
 
@@ -59,23 +50,23 @@ test('clicking on TreeItem should navigate to group or test instance', async () 
   const history = createMemoryHistory();
   history.push(`/${mockedTestSuite.id}/:test_session_id`);
 
-  render(
+  const { user } = renderWithProviders(
     <Router location={history.location} navigator={history}>
-      <ThemeProvider>
-        <SimpleTreeView>
-          <CustomTreeItem
-            itemId={mockedTestSuite.id}
-            label={<TreeItemLabel runnable={mockedTestSuite} />}
-            ContentProps={{ testId: mockedTestSuite.id } as any}
-          />
-        </SimpleTreeView>
-      </ThemeProvider>
+      <SimpleTreeView>
+        <CustomTreeItem
+          itemId={mockedTestSuite.id}
+          label={<TreeItemLabel runnable={mockedTestSuite} />}
+          ContentProps={{ testId: mockedTestSuite.id } as any}
+        />
+      </SimpleTreeView>
     </Router>,
+    { noRouter: true },
   );
 
   const labelElement = screen.getAllByTestId('tiLabel', { exact: false })[0];
   expect(labelElement).toBeInTheDocument();
 
-  await userEvent.click(labelElement);
+  await user.click(labelElement);
   expect(history.location.hash).toBe(`#${mockedTestSuite.id}`);
 });
+

@@ -1,9 +1,7 @@
 import React from 'react';
-import { render, renderHook, screen } from '@testing-library/react';
-import ThemeProvider from 'components/ThemeProvider';
+import { renderWithMemoryRouter, renderHook, screen } from '~/test-utils';
 import Header from '../Header';
 
-import { MemoryRouter } from 'react-router';
 import { useAppStore } from '~/store/app';
 import { beforeEach, expect, test } from 'vitest';
 
@@ -16,16 +14,12 @@ beforeEach(() => {
 test('renders wide screen Inferno Header', () => {
   let drawerOpen = true;
 
-  render(
-    <MemoryRouter>
-      <ThemeProvider>
-        <Header
-          suiteTitle="Suite Title"
-          drawerOpen={drawerOpen}
-          toggleDrawer={() => (drawerOpen = !drawerOpen)}
-        />
-      </ThemeProvider>
-    </MemoryRouter>,
+  renderWithMemoryRouter(
+    <Header
+      suiteTitle="Suite Title"
+      drawerOpen={drawerOpen}
+      toggleDrawer={() => (drawerOpen = !drawerOpen)}
+    />,
   );
 
   const logoElement = screen.getByRole('img');
@@ -33,4 +27,19 @@ test('renders wide screen Inferno Header', () => {
 
   const titleElement = screen.getAllByRole('heading')[0];
   expect(titleElement).toHaveTextContent('Suite Title');
+});
+
+test('clicking Help link opens HelpModal', async () => {
+  const { user } = renderWithMemoryRouter(
+    <Header
+      suiteTitle="Suite Title"
+      drawerOpen={false}
+      toggleDrawer={() => {}}
+    />,
+  );
+
+  const helpLink = screen.getByText('Help');
+  await user.click(helpLink);
+
+  expect(screen.getByTestId('HelpModal')).toBeVisible();
 });

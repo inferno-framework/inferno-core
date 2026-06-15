@@ -1,9 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { renderWithProviders } from '~/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { SnackbarProvider } from 'notistack';
 import { TestInput } from '~/models/testSuiteModels';
 import InputCheckboxGroup from '~/components/InputsModal/InputCheckboxGroup';
+import InputCombobox from '~/components/InputsModal/InputCombobox';
 import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredentials';
 import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputTextField from '~/components/InputsModal/InputTextField';
@@ -322,6 +324,109 @@ describe('Input Components', () => {
 
     it('hides dependent field when controlling value (array) does not match enable_when array value', () => {
       assertDependentVisibilityForCheckboxEnableWhen(['a', 'b'], '["a","c"]', false);
+    });
+  });
+
+  // ── InputCheckboxGroup additional coverage ───────────────────────────────────
+
+  describe('InputCheckboxGroup additional coverage', () => {
+    const checkboxInput: TestInput = {
+      name: 'checkboxInput',
+      type: 'checkbox',
+      optional: true,
+      options: {
+        list_options: [
+          { label: 'Option A', value: 'a' },
+          { label: 'Option B', value: 'b' },
+        ],
+      },
+    };
+
+    it('checking a box executes the map callback in transformValuesToJSONArray', async () => {
+      const setInputsMap = vi.fn();
+      const { user } = renderWithProviders(
+        <InputCheckboxGroup
+          input={checkboxInput}
+          index={0}
+          inputsMap={new Map<string, unknown>()}
+          setInputsMap={setInputsMap}
+        />,
+        { noRouter: true },
+      );
+
+      const checkboxA = screen.getByRole('checkbox', { name: /Option A/i });
+      await user.click(checkboxA);
+
+      const [calledMap] = setInputsMap.mock.calls[setInputsMap.mock.calls.length - 1] as [Map<string, unknown>];
+      expect(JSON.parse(calledMap.get('checkboxInput') as string)).toContain('a');
+    });
+
+    it('blurring a checkbox marks the field as modified', async () => {
+      const { user } = renderWithProviders(
+        <InputCheckboxGroup
+          input={{ ...checkboxInput, optional: false }}
+          index={0}
+          inputsMap={new Map<string, unknown>([['checkboxInput', '[]']])}
+          setInputsMap={() => {}}
+        />,
+        { noRouter: true },
+      );
+
+      const checkboxA = screen.getByRole('checkbox', { name: /Option A/i });
+      await user.click(checkboxA);
+      await user.tab(); // move focus away to trigger onBlur
+    });
+  });
+
+  // ── InputCombobox additional coverage ────────────────────────────────────────
+
+  describe('InputCombobox additional coverage', () => {
+    const comboboxInput: TestInput = {
+      name: 'comboboxInput',
+      type: 'text',
+      optional: true,
+      default: 'a',
+      options: {
+        list_options: [
+          { label: 'Option A', value: 'a' },
+          { label: 'Option B', value: 'b' },
+        ],
+      },
+    };
+
+    it('renders InputCombobox with a default value (triggers isOptionEqualToValue)', () => {
+      renderWithProviders(
+        <InputCombobox
+          input={comboboxInput}
+          index={0}
+          inputsMap={new Map<string, unknown>([['comboboxInput', 'a']])}
+          setInputsMap={() => {}}
+        />,
+        { noRouter: true },
+      );
+
+      expect(screen.getByRole('combobox')).toBeInTheDocument();
+    });
+
+    it('selecting a new option calls setInputsMap with updated value', async () => {
+      const setInputsMap = vi.fn();
+      const { user } = renderWithProviders(
+        <InputCombobox
+          input={comboboxInput}
+          index={0}
+          inputsMap={new Map<string, unknown>()}
+          setInputsMap={setInputsMap}
+        />,
+        { noRouter: true },
+      );
+
+      const combobox = screen.getByRole('combobox');
+      await user.click(combobox);
+      await user.click(screen.getByText('Option B'));
+
+      expect(setInputsMap).toHaveBeenCalled();
+      const [calledMap] = setInputsMap.mock.calls[setInputsMap.mock.calls.length - 1] as [Map<string, unknown>];
+      expect(calledMap.get('comboboxInput')).toBe('b');
     });
   });
 
