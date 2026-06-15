@@ -29,6 +29,7 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
+    - run: npm install --package-lock-only --ignore-scripts
     - run: npm ci
 
   test:
@@ -53,6 +54,7 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
+    - run: npm install --package-lock-only --ignore-scripts
     - run: npm ci
     # `npm run coverage` is run tests with coverage flags, rather than repeating them here
     - run: npm run coverage
@@ -85,5 +87,6 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
+    - run: npm install --package-lock-only --ignore-scripts
     - run: npm ci
     - run: npm run lint
