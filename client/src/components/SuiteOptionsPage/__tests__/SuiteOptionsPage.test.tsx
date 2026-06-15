@@ -35,7 +35,8 @@ function wrapWithRouter(testSuite?: TestSuite) {
 
 describe('SuiteOptionsPage', () => {
   beforeEach(() => {
-    // jsdom doesn't implement window.location.href navigation; stub it to suppress "not implemented" errors
+    // jsdom doesn't implement window.location.href navigation;
+    // stub it to suppress "not implemented" errors
     vi.stubGlobal('location', { href: '', origin: 'http://localhost' });
   });
 
@@ -107,9 +108,7 @@ describe('SuiteOptionsPage', () => {
   });
 
   it('shows an error snackbar when session creation fails', async () => {
-    vi.spyOn(TestSessionApi, 'postTestSessions').mockRejectedValue(
-      new Error('Server unavailable'),
-    );
+    vi.spyOn(TestSessionApi, 'postTestSessions').mockRejectedValue(new Error('Server unavailable'));
     const suite: TestSuite = { id: 'suite-1', title: 'Suite One', inputs: [] };
 
     await act(() => wrapWithRouter(suite));

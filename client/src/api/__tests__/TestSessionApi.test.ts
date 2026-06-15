@@ -179,9 +179,10 @@ describe('postTestSessions', () => {
 
     await postTestSessions('suite-1', 'preset-1', suiteOptions);
 
-    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string);
-    expect(body.preset_id).toBe('preset-1');
-    expect(body.suite_options).toEqual([{ id: 'opt-1', value: 'val-1' }]);
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(init.body as string) as Record<string, unknown>;
+    expect(body['preset_id']).toBe('preset-1');
+    expect(body['suite_options']).toEqual([{ id: 'opt-1', value: 'val-1' }]);
   });
 
   it('sends undefined suite_options when null is passed', async () => {
@@ -190,9 +191,10 @@ describe('postTestSessions', () => {
 
     await postTestSessions('suite-1', null, null);
 
-    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string);
-    expect(body.suite_options).toBeUndefined();
-    expect(body.preset_id).toBeNull();
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(init.body as string) as Record<string, unknown>;
+    expect(body['suite_options']).toBeUndefined();
+    expect(body['preset_id']).toBeNull();
   });
 });
 
@@ -223,7 +225,7 @@ describe('applyPreset', () => {
 
     await applyPreset('session-1', 'preset-1');
 
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(String(url)).toContain('preset_id=preset-1');
     expect(init.method).toBe('PUT');
   });

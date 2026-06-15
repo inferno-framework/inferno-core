@@ -16,9 +16,12 @@ const mockRequest = {
 
 describe('getRequestDetails', () => {
   it('fetches and returns request details', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue(mockRequest),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue(mockRequest),
+      }),
+    );
 
     const result = await getRequestDetails('req-1');
     expect(result).toEqual(mockRequest);

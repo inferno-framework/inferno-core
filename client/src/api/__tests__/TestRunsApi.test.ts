@@ -17,8 +17,9 @@ describe('postTestRun', () => {
 
     await postTestRun('session-1', RunnableType.TestSuite, 'suite-1', []);
 
-    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string);
-    expect(body.test_suite_id).toBe('suite-1');
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(init.body as string) as Record<string, unknown>;
+    expect(body['test_suite_id']).toBe('suite-1');
     expect(body).not.toHaveProperty('test_group_id');
     expect(body).not.toHaveProperty('test_id');
   });
@@ -29,8 +30,9 @@ describe('postTestRun', () => {
 
     await postTestRun('session-1', RunnableType.TestGroup, 'group-1', []);
 
-    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string);
-    expect(body.test_group_id).toBe('group-1');
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(init.body as string) as Record<string, unknown>;
+    expect(body['test_group_id']).toBe('group-1');
     expect(body).not.toHaveProperty('test_suite_id');
     expect(body).not.toHaveProperty('test_id');
   });
@@ -41,8 +43,9 @@ describe('postTestRun', () => {
 
     await postTestRun('session-1', RunnableType.Test, 'test-1', []);
 
-    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string);
-    expect(body.test_id).toBe('test-1');
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(init.body as string) as Record<string, unknown>;
+    expect(body['test_id']).toBe('test-1');
     expect(body).not.toHaveProperty('test_group_id');
     expect(body).not.toHaveProperty('test_suite_id');
   });
@@ -54,9 +57,10 @@ describe('postTestRun', () => {
 
     await postTestRun('session-1', RunnableType.TestSuite, 'suite-1', inputs);
 
-    const body = JSON.parse(fetchMock.mock.calls[0][1].body as string);
-    expect(body.test_session_id).toBe('session-1');
-    expect(body.inputs).toEqual(inputs);
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
+    const body = JSON.parse(init.body as string) as Record<string, unknown>;
+    expect(body['test_session_id']).toBe('session-1');
+    expect(body['inputs']).toEqual(inputs);
   });
 
   it('uses POST method with application/json content-type', async () => {
@@ -65,7 +69,7 @@ describe('postTestRun', () => {
 
     await postTestRun('session-1', RunnableType.TestSuite, 'suite-1', []);
 
-    const init = fetchMock.mock.calls[0][1];
+    const init = fetchMock.mock.calls[0][1] as RequestInit;
     expect(init.method).toBe('POST');
     expect((init.headers as Record<string, string>)['Content-Type']).toBe('application/json');
   });
@@ -85,7 +89,7 @@ describe('deleteTestRun', () => {
 
     await deleteTestRun('run-1');
 
-    const [url, init] = fetchMock.mock.calls[0];
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(String(url)).toContain('run-1');
     expect(init.method).toBe('DELETE');
   });

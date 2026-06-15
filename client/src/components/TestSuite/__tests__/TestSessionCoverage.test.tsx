@@ -110,7 +110,7 @@ async function renderTestSession(
   } = options;
 
   // First pass: synchronous render
-  await act(async () => {
+  act(() => {
     render(
       <MemoryRouter initialEntries={[{ pathname: '/', hash }]}>
         <ThemeProvider>
@@ -199,9 +199,7 @@ describe('TestSession additional coverage', () => {
     await renderTestSession();
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/Error fetching specification requirements/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Error fetching specification requirements/)).toBeInTheDocument();
     });
   });
 
@@ -335,7 +333,8 @@ describe('TestSession additional coverage', () => {
 
   it('shows the progress bar and starts polling when initialTestRun is in progress', async () => {
     // Return running once so the progress bar is still visible after the first poll
-    const pollSpy = vi.spyOn(TestRunsApi, 'getTestRunWithResults')
+    const pollSpy = vi
+      .spyOn(TestRunsApi, 'getTestRunWithResults')
       .mockResolvedValueOnce(runningTestRun)
       .mockResolvedValue(doneTestRun);
 

@@ -89,17 +89,13 @@ describe('RequirementsModalButton', () => {
   });
 
   it('shows an error snackbar when the API call rejects', async () => {
-    vi.spyOn(RequirementsApi, 'getSingleRequirement').mockRejectedValue(
-      new Error('API failure'),
-    );
+    vi.spyOn(RequirementsApi, 'getSingleRequirement').mockRejectedValue(new Error('API failure'));
 
     wrap(runnableWithRequirements);
     await userEvent.click(screen.getByText('View Specification Requirements'));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/Error fetching specification requirements/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Error fetching specification requirements/)).toBeInTheDocument();
     });
   });
 });

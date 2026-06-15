@@ -58,7 +58,7 @@ describe('TestSuiteMessages', () => {
       { message: 'Info one', type: 'info' },
       { message: 'Info two', type: 'info' },
     ]);
-    // Note: the plural info branch in the source reads "configuration errors" (copy-paste in source)
+    // plural info branch has a copy-paste bug: reads "configuration errors" instead of "messages"
     expect(screen.getByText('There are 2 configuration errors.')).toBeInTheDocument();
   });
 

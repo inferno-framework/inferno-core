@@ -6,18 +6,24 @@ afterEach(() => vi.unstubAllGlobals());
 describe('getTestSuites', () => {
   it('fetches and returns a list of test suites', async () => {
     const mockSuites = [{ id: 'suite-1', title: 'Suite One', inputs: [] }];
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue(mockSuites),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue(mockSuites),
+      }),
+    );
 
     const result = await getTestSuites();
     expect(result).toEqual(mockSuites);
   });
 
   it('returns an empty array when the response is null', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue(null),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue(null),
+      }),
+    );
 
     const result = await getTestSuites();
     expect(result).toEqual([]);

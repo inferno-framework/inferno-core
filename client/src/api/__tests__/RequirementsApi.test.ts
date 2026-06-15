@@ -15,18 +15,24 @@ const mockRequirement: Requirement = {
 
 describe('getTestSuiteRequirements', () => {
   it('fetches and returns a requirements list', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue([mockRequirement]),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue([mockRequirement]),
+      }),
+    );
 
     const result = await getTestSuiteRequirements('suite-1', 'session-1');
     expect(result).toEqual([mockRequirement]);
   });
 
   it('returns an empty array when the response is null', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue(null),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue(null),
+      }),
+    );
 
     const result = await getTestSuiteRequirements('suite-1', 'session-1');
     expect(result).toEqual([]);
@@ -42,18 +48,24 @@ describe('getTestSuiteRequirements', () => {
 
 describe('getSingleRequirement', () => {
   it('fetches and returns a single requirement', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue(mockRequirement),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue(mockRequirement),
+      }),
+    );
 
     const result = await getSingleRequirement('req-1');
     expect(result).toEqual(mockRequirement);
   });
 
   it('returns null when the response is null', async () => {
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
-      json: vi.fn().mockResolvedValue(null),
-    }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        json: vi.fn().mockResolvedValue(null),
+      }),
+    );
 
     const result = await getSingleRequirement('req-1');
     expect(result).toBeNull();
