@@ -1,6 +1,6 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
 import { SnackbarProvider } from 'notistack';
 import { TestInput } from '~/models/testSuiteModels';
 import InputCheckboxGroup from '~/components/InputsModal/InputCheckboxGroup';
@@ -322,6 +322,133 @@ describe('Input Components', () => {
 
     it('hides dependent field when controlling value (array) does not match enable_when array value', () => {
       assertDependentVisibilityForCheckboxEnableWhen(['a', 'b'], '["a","c"]', false);
+    });
+  });
+
+  // ── InputOAuthCredentials additional coverage ────────────────────────────────
+
+  describe('InputOAuthCredentials additional coverage', () => {
+    const makeOAuthInput = (overrides: Partial<TestInput> = {}): TestInput => ({
+      name: 'oauthInput',
+      type: 'oauth_credentials' as TestInput['type'],
+      optional: true,
+      ...overrides,
+    });
+
+    it('onChange → updateInputsMap serialises updated credential and calls setInputsMap', () => {
+      const setInputsMapMock = vi.fn();
+      const prePopulated = new Map<string, unknown>([
+        ['oauthInput', JSON.stringify({ access_token: 'old-token' })],
+      ]);
+
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputOAuthCredentials
+              input={makeOAuthInput()}
+              index={0}
+              inputsMap={prePopulated}
+              setInputsMap={setInputsMapMock}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      fireEvent.change(screen.getByRole('textbox', { name: /access token/i }), {
+        target: { value: 'new-token' },
+      });
+
+      expect(setInputsMapMock).toHaveBeenCalledTimes(1);
+      const [calledMap] = setInputsMapMock.mock.calls[0] as [Map<string, unknown>];
+      const parsed = JSON.parse(calledMap.get('oauthInput') as string) as Record<string, unknown>;
+      expect(parsed['access_token']).toBe('new-token');
+    });
+
+    it('empty credential values are omitted from the serialised output (if (inputValue) branch)', () => {
+      const setInputsMapMock = vi.fn();
+
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputOAuthCredentials
+              input={makeOAuthInput()}
+              index={0}
+              inputsMap={
+                new Map<string, unknown>([
+                  ['oauthInput', JSON.stringify({ access_token: 'token' })],
+                ])
+              }
+              setInputsMap={setInputsMapMock}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      fireEvent.change(screen.getByRole('textbox', { name: /access token/i }), {
+        target: { value: '' },
+      });
+
+      const [calledMap] = setInputsMapMock.mock.calls[0] as [Map<string, unknown>];
+      const parsed = JSON.parse(calledMap.get('oauthInput') as string) as Record<string, unknown>;
+      expect(parsed).not.toHaveProperty('access_token');
+    });
+
+    it('onBlur sets hasBeenModified and getIsMissingInput shows RequiredInputWarning for required empty field', () => {
+      const { container } = render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputOAuthCredentials
+              input={makeOAuthInput({ optional: false })}
+              index={0}
+              inputsMap={new Map<string, unknown>([['oauthInput', '{}']])}
+              setInputsMap={() => {}}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      // No warning before the field has been touched
+      expect(container.querySelector('.MuiSvgIcon-colorError')).not.toBeInTheDocument();
+
+      // Direct blur satisfies e.currentTarget === e.target guard and fires setHasBeenModified
+      fireEvent.blur(screen.getByRole('textbox', { name: /access token \(required\)/i }));
+
+      // getIsMissingInput now returns true → RequiredInputWarning (error-coloured icon) appears
+      expect(container.querySelector('.MuiSvgIcon-colorError')).toBeInTheDocument();
+    });
+
+    it('renders "(required)" suffix on oAuthField label when field.optional is false (line 114)', () => {
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputOAuthCredentials
+              input={makeOAuthInput({ optional: false })}
+              index={0}
+              inputsMap={new Map<string, unknown>()}
+              setInputsMap={() => {}}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      expect(screen.getByText(/access token \(required\)/i)).toBeInTheDocument();
+    });
+
+    it('renders input.description as a Typography element in the card view (lines 184–187)', () => {
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputOAuthCredentials
+              input={makeOAuthInput({ description: 'Provide your bearer token.' })}
+              index={0}
+              inputsMap={new Map<string, unknown>()}
+              setInputsMap={() => {}}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      expect(screen.getByText('Provide your bearer token.')).toBeVisible();
     });
   });
 });
