@@ -17,6 +17,9 @@ module.exports = (env, argv) => {
       static: '/public/',
       host: '0.0.0.0',
       port: 3000,
+      headers: {
+        'Cross-Origin-Resource-Policy': 'cross-origin',
+      },
     },
     module: {
       rules: [
