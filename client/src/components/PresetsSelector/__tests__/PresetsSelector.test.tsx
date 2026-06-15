@@ -11,12 +11,16 @@ describe('The PresetsSelector Component', () => {
   afterEach(() => vi.restoreAllMocks());
 
   test('renders empty PresetsSelector', () => {
-    renderWithProviders(<PresetsSelector presets={[]} testSessionId="test-id" getSessionData={() => {}} />);
+    renderWithProviders(
+      <PresetsSelector presets={[]} testSessionId="test-id" getSessionData={() => {}} />,
+    );
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
   test('renders PresetsSelector with options', () => {
-    renderWithProviders(<PresetsSelector presets={presets} testSessionId="test-id" getSessionData={() => {}} />);
+    renderWithProviders(
+      <PresetsSelector presets={presets} testSessionId="test-id" getSessionData={() => {}} />,
+    );
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
