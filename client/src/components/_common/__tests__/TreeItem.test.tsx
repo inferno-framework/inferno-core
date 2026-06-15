@@ -69,4 +69,3 @@ test('clicking on TreeItem should navigate to group or test instance', async () 
   await user.click(labelElement);
   expect(history.location.hash).toBe(`#${mockedTestSuite.id}`);
 });
-

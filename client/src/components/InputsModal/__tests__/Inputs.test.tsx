@@ -357,7 +357,9 @@ describe('Input Components', () => {
       const checkboxA = screen.getByRole('checkbox', { name: /Option A/i });
       await user.click(checkboxA);
 
-      const [calledMap] = setInputsMap.mock.calls[setInputsMap.mock.calls.length - 1] as [Map<string, unknown>];
+      const [calledMap] = setInputsMap.mock.calls[setInputsMap.mock.calls.length - 1] as [
+        Map<string, unknown>,
+      ];
       expect(JSON.parse(calledMap.get('checkboxInput') as string)).toContain('a');
     });
 
@@ -425,7 +427,9 @@ describe('Input Components', () => {
       await user.click(screen.getByText('Option B'));
 
       expect(setInputsMap).toHaveBeenCalled();
-      const [calledMap] = setInputsMap.mock.calls[setInputsMap.mock.calls.length - 1] as [Map<string, unknown>];
+      const [calledMap] = setInputsMap.mock.calls[setInputsMap.mock.calls.length - 1] as [
+        Map<string, unknown>,
+      ];
       expect(calledMap.get('comboboxInput')).toBe('b');
     });
   });

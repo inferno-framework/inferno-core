@@ -31,11 +31,7 @@ test('renders wide screen Inferno Header', () => {
 
 test('clicking Help link opens HelpModal', async () => {
   const { user } = renderWithMemoryRouter(
-    <Header
-      suiteTitle="Suite Title"
-      drawerOpen={false}
-      toggleDrawer={() => {}}
-    />,
+    <Header suiteTitle="Suite Title" drawerOpen={false} toggleDrawer={() => {}} />,
   );
 
   const helpLink = screen.getByText('Help');

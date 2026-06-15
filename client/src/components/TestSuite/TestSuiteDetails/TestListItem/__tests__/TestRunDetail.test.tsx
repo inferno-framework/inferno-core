@@ -15,12 +15,7 @@ const tabs = [
 describe('TestRunDetail', () => {
   test('renders test run detail card', () => {
     renderWithProviders(
-      <TestRunDetail
-        test={mockedTest}
-        currentTabIndex={0}
-        setTabIndex={vi.fn()}
-        tabs={tabs}
-      />,
+      <TestRunDetail test={mockedTest} currentTabIndex={0} setTabIndex={vi.fn()} tabs={tabs} />,
     );
     expect(screen.getByTestId('test-run-detail')).toBeInTheDocument();
   });
@@ -28,12 +23,7 @@ describe('TestRunDetail', () => {
   test('clicking a tab calls setTabIndex with new index', async () => {
     const setTabIndex = vi.fn();
     const { user } = renderWithProviders(
-      <TestRunDetail
-        test={mockedTest}
-        currentTabIndex={0}
-        setTabIndex={setTabIndex}
-        tabs={tabs}
-      />,
+      <TestRunDetail test={mockedTest} currentTabIndex={0} setTabIndex={setTabIndex} tabs={tabs} />,
     );
 
     const aboutTab = screen.getByRole('tab', { name: /About/i });
@@ -62,12 +52,7 @@ describe('TestRunDetail', () => {
 
   test('does not show RequirementsModalButton when test has no requirements', () => {
     renderWithProviders(
-      <TestRunDetail
-        test={mockedTest}
-        currentTabIndex={4}
-        setTabIndex={vi.fn()}
-        tabs={tabs}
-      />,
+      <TestRunDetail test={mockedTest} currentTabIndex={4} setTabIndex={vi.fn()} tabs={tabs} />,
     );
 
     expect(screen.queryByText('View Specification Requirements')).not.toBeInTheDocument();
