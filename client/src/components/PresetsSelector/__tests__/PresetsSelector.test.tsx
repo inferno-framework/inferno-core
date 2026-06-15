@@ -1,10 +1,7 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router';
-import { SnackbarProvider } from 'notistack';
 import { describe, expect, test, vi, afterEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import ThemeProvider from '~/components/ThemeProvider';
+import { screen } from '~/test-utils';
+import { renderWithProviders } from '~/test-utils';
 import PresetsSelector from '../PresetsSelector';
 import { presets } from '../__mocked_data__/mockData';
 import * as TestSessionApi from '~/api/TestSessionApi';
@@ -12,52 +9,27 @@ import { PresetSummary } from '~/models/testSuiteModels';
 
 describe('The PresetsSelector Component', () => {
   afterEach(() => vi.restoreAllMocks());
-  test('renders empty PresetsSelector', () => {
-    render(
-      <BrowserRouter>
-        <ThemeProvider>
-          <SnackbarProvider>
-            <PresetsSelector presets={[]} testSessionId="test-id" getSessionData={() => {}} />
-          </SnackbarProvider>
-        </ThemeProvider>
-      </BrowserRouter>,
-    );
 
-    const selectionElement = screen.getByRole('combobox');
-    expect(selectionElement).toBeInTheDocument();
+  test('renders empty PresetsSelector', () => {
+    renderWithProviders(<PresetsSelector presets={[]} testSessionId="test-id" getSessionData={() => {}} />);
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
   test('renders PresetsSelector with options', () => {
-    render(
-      <BrowserRouter>
-        <ThemeProvider>
-          <SnackbarProvider>
-            <PresetsSelector presets={presets} testSessionId="test-id" getSessionData={() => {}} />
-          </SnackbarProvider>
-        </ThemeProvider>
-      </BrowserRouter>,
-    );
-
-    const selectionElement = screen.getByRole('combobox');
-    expect(selectionElement).toBeInTheDocument();
+    renderWithProviders(<PresetsSelector presets={presets} testSessionId="test-id" getSessionData={() => {}} />);
+    expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
   test('selects a preset', async () => {
-    render(
-      <BrowserRouter>
-        <ThemeProvider>
-          <SnackbarProvider>
-            <PresetsSelector presets={presets} testSessionId="test-id" getSessionData={() => {}} />
-          </SnackbarProvider>
-        </ThemeProvider>
-      </BrowserRouter>,
+    const { user } = renderWithProviders(
+      <PresetsSelector presets={presets} testSessionId="test-id" getSessionData={() => {}} />,
     );
 
     const selectionElement = screen.getByRole('combobox');
-    await userEvent.click(selectionElement);
+    await user.click(selectionElement);
 
     const presetChoice = screen.getByText('Preset One');
-    await userEvent.click(presetChoice);
+    await user.click(presetChoice);
 
     expect(selectionElement.textContent).toEqual('Preset One');
   });
@@ -70,21 +42,15 @@ describe('The PresetsSelector Component', () => {
       { id: 'a', title: 'Alpha' },
     ];
 
-    render(
-      <BrowserRouter>
-        <ThemeProvider>
-          <SnackbarProvider>
-            <PresetsSelector
-              presets={reversedPresets}
-              testSessionId="test-id"
-              getSessionData={() => {}}
-            />
-          </SnackbarProvider>
-        </ThemeProvider>
-      </BrowserRouter>,
+    const { user } = renderWithProviders(
+      <PresetsSelector
+        presets={reversedPresets}
+        testSessionId="test-id"
+        getSessionData={() => {}}
+      />,
     );
 
-    await userEvent.click(screen.getByRole('combobox'));
+    await user.click(screen.getByRole('combobox'));
 
     const options = screen.getAllByRole('option');
     // options[0] is always "None"; then ascending: Alpha before Zeta
@@ -98,21 +64,15 @@ describe('The PresetsSelector Component', () => {
       { id: '2', title: 'Same Preset' },
     ];
 
-    render(
-      <BrowserRouter>
-        <ThemeProvider>
-          <SnackbarProvider>
-            <PresetsSelector
-              presets={duplicatePresets}
-              testSessionId="test-id"
-              getSessionData={() => {}}
-            />
-          </SnackbarProvider>
-        </ThemeProvider>
-      </BrowserRouter>,
+    const { user } = renderWithProviders(
+      <PresetsSelector
+        presets={duplicatePresets}
+        testSessionId="test-id"
+        getSessionData={() => {}}
+      />,
     );
 
-    await userEvent.click(screen.getByRole('combobox'));
+    await user.click(screen.getByRole('combobox'));
 
     const options = screen.getAllByRole('option');
     // "None" + two identical-title presets
