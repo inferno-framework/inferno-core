@@ -17,11 +17,19 @@ describe('The PresetsSelector Component', () => {
     expect(screen.getByRole('combobox')).toBeInTheDocument();
   });
 
-  test('renders PresetsSelector with options', () => {
-    renderWithProviders(
-      <PresetsSelector presets={presets} testSessionId="test-id" getSessionData={() => {}} />,
+  test('calls applyPreset and getSessionData when a preset is selected', async () => {
+    vi.spyOn(TestSessionApi, 'applyPreset').mockResolvedValue(null);
+    const getSessionData = vi.fn();
+
+    const { user } = renderWithProviders(
+      <PresetsSelector presets={presets} testSessionId="test-id" getSessionData={getSessionData} />,
     );
-    expect(screen.getByRole('combobox')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('combobox'));
+    await user.click(screen.getByText('Preset One'));
+
+    expect(TestSessionApi.applyPreset).toHaveBeenCalledWith('test-id', 'one');
+    await vi.waitFor(() => expect(getSessionData).toHaveBeenCalledWith('test-id'));
   });
 
   test('selects a preset', async () => {
