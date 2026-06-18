@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pastel', '~> 0.8.0'
   spec.add_dependency 'pry'
   spec.add_dependency 'pry-byebug'
-  spec.add_dependency 'puma', '~> 5.6.7'
+  spec.add_dependency 'puma', '~> 8.0', '>= 8.0.2'
   spec.add_dependency 'rake', '~> 13.0'
   spec.add_dependency 'roo', '~> 2.10.1'
   spec.add_dependency 'sequel', '~> 5.42.0'
