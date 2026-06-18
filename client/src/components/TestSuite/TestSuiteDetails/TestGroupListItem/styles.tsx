@@ -31,7 +31,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   accordionSummary: {
-    userSelect: 'auto',
+    userSelect: 'text',
     '@media print': {
       minHeight: 'unset',
     },
