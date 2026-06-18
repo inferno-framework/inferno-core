@@ -324,6 +324,21 @@ module Inferno
         !!@is_simulation_verification
       end
 
+      # Mark as attestation. Tests are not attestation by default.
+      #
+      # @param attestation [Boolean]
+      # @return [void]
+      def attestation(attestation = true) # rubocop:disable Style/OptionalBooleanParameter
+        @is_attestation = attestation
+      end
+
+      # The test is attestation if true
+      #
+      # @return [Boolean]
+      def attestation?
+        !!@is_attestation
+      end
+
       # @private
       def default_id
         to_s

@@ -35,8 +35,10 @@ ENV ENVIRONMENT=prod
 ENV SESSION_CACHE_IMPLEMENTATION=PassiveExpiringSessionCache
 ENV SESSION_CACHE_DURATION=-1
 ENV VALIDATION_SERVICE_PRESETS_FILE_PATH=ignore-this-do-not-load-presets
+# By default, java will be run using the G10s GC and assigned 79% of the system's available memory
+ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:InitialRAMPercentage=79 -XX:MinRAMPercentage=79 -XX:MaxRAMPercentage=79 -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -XX:+UseStringDeduplication -XX:+CrashOnOutOfMemoryError "
 
 EXPOSE 3500
 
-# The last line instructs Docker to run java with G10s GC,  assigns 79% of the system's available memory, and indicates the packaged application.
-CMD ["java", "-server", "-XX:+UnlockExperimentalVMOptions", "-XX:InitialRAMPercentage=79", "-XX:MinRAMPercentage=79", "-XX:MaxRAMPercentage=79", "-XX:+UseG1GC", "-XX:MaxGCPauseMillis=100", "-XX:+UseStringDeduplication", "-XX:+CrashOnOutOfMemoryError", "-jar", "validator-wrapper.jar", "-startServer"]
+# The last line instructs Docker to run java with the JAVA_OPTS and indicates the packaged application.
+CMD ["sh", "-c", "exec java -server ${JAVA_OPTS} -jar validator-wrapper.jar -startServer"]

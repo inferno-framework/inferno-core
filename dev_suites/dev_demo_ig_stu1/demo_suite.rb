@@ -52,7 +52,10 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       wait_test_fail_url: "#{Inferno::Application['base_url']}/custom/demo/resume_fail",
       wait_test_skip_url: "#{Inferno::Application['base_url']}/custom/demo/resume_skip",
       wait_test_omit_url: "#{Inferno::Application['base_url']}/custom/demo/resume_omit",
-      wait_test_cancel_url: "#{Inferno::Application['base_url']}/custom/demo/resume_cancel"
+      wait_test_cancel_url: "#{Inferno::Application['base_url']}/custom/demo/resume_cancel",
+      wait_expire_demo_url: "#{Inferno::Application['base_url']}/custom/demo/resume_expire_demo",
+      attest_true_url: "#{Inferno::Application['base_url']}/custom/demo/resume_attest",
+      attest_false_url: "#{Inferno::Application['base_url']}/custom/demo/resume_attest_fail"
     }
 
     group do
@@ -530,6 +533,60 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         end
       end
     end
+
+    group do
+      id 'attestation_group'
+      title 'Attestation Group'
+      description %(
+        This group demonstrates attestation-style tests where a user manually
+        attests to a behavior that Inferno cannot independently verify.
+      )
+
+      resume_test_route :get, '/resume_attest' do |request|
+        request.query_parameters['xyz']
+      end
+
+      resume_test_route :get, '/resume_attest_fail', result: 'fail' do |request|
+        request.query_parameters['xyz']
+      end
+
+      test do
+        title 'Attest to system behavior'
+        description %(
+          Since Inferno cannot independently verify this behavior, this test provides
+          testers with an opportunity to attest to whether their system supports it.
+        )
+        attestation
+
+        output :attest_true_url
+        output :attest_false_url
+
+        run do
+          identifier = 'attest_demo'
+          url_suffix = "?xyz=#{identifier}"
+          attest_true_url = "#{config.options[:attest_true_url]}#{url_suffix}"
+          attest_false_url = "#{config.options[:attest_false_url]}#{url_suffix}"
+
+          output(attest_true_url:)
+          output(attest_false_url:)
+
+          wait(
+            identifier:,
+            message: %(
+              **Attestation**:
+
+              I attest that the system supports a behavior that Inferno cannot
+              independently verify.
+
+              [Click here](#{attest_true_url}) if the above statement is **true**.
+
+              [Click here](#{attest_false_url}) if the above statement is **false**.
+            )
+          )
+        end
+      end
+    end
+
     group do
       id 'message_normalization_sort_group'
       title 'Execute Script Message Normalization Sort Group'
@@ -605,6 +662,34 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
         input :patient_identifier_select, title: 'Patient ID (Select)', type: 'text', optional: true,
                                           enable_when: { input_name: 'get_type_select', value: 'summary_op' }
         run { pass }
+      end
+    end
+
+    group do
+      id 'wait_cancel_group'
+      title 'Wait Cancellation Group'
+      optional
+
+      resume_test_route :get, '/resume_expire_demo' do |request|
+        request.query_parameters['xyz']
+      end
+
+      test do
+        title 'Wait timeout expiry demo'
+        receives_request :resume_expire_demo
+
+        run do
+          identifier = 'expire_demo'
+
+          wait(
+            identifier:,
+            timeout: 3,
+            message: %(
+              This test is to show off the wait UI when time expires.
+              Watch the countdown below reach zero, then click CANCEL to finish the test.
+            )
+          )
+        end
       end
     end
   end
