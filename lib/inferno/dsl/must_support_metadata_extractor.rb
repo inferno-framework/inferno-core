@@ -198,11 +198,22 @@ module Inferno
             system: pattern_element.patternCoding.system
           }
         elsif pattern_element.patternIdentifier
-          {
-            type: 'patternIdentifier',
-            path: runtime_path,
-            system: pattern_element.patternIdentifier.system
-          }
+          identifier_type_coding = pattern_element.patternIdentifier.type&.coding&.first
+          if identifier_type_coding
+            type_path = runtime_path.present? ? "#{runtime_path}.type" : 'type'
+            {
+              type: 'patternCodeableConcept',
+              path: type_path,
+              code: identifier_type_coding.code,
+              system: identifier_type_coding.system
+            }
+          else
+            {
+              type: 'patternIdentifier',
+              path: runtime_path,
+              system: pattern_element.patternIdentifier.system
+            }
+          end
         elsif required_binding_pattern?(pattern_element)
           {
             type: 'requiredBinding',

@@ -384,6 +384,52 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
         }
       )
     end
+
+    it 'emits a patternCodeableConcept discriminator for a patternIdentifier slice with type.coding' do
+      discriminator = FHIR::ElementDefinition::Slicing::Discriminator.new(type: 'value', path: '$this')
+      slicing = FHIR::ElementDefinition::Slicing.new(discriminator: [discriminator])
+      identifier_type = FHIR::CodeableConcept.new(
+        coding: [FHIR::Coding.new(system: 'http://terminology.hl7.org/CodeSystem/v2-0203', code: 'PI')]
+      )
+      profile_elements = [
+        FHIR::ElementDefinition.new(
+          id: 'Organization.identifier',
+          path: 'Organization.identifier',
+          mustSupport: false,
+          slicing:
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Organization.identifier:PI',
+          path: 'Organization.identifier',
+          sliceName: 'PI',
+          mustSupport: true,
+          patternIdentifier: FHIR::Identifier.new(type: identifier_type)
+        )
+      ]
+      org_profile = instance_double(
+        FHIR::StructureDefinition,
+        baseDefinition: 'baseDefinition',
+        name: 'organization',
+        type: 'Organization',
+        version: '2.2.0'
+      )
+
+      slices = described_class.new(profile_elements, org_profile, 'Organization', ig_resources).value_slices
+
+      expect(slices).to contain_exactly(
+        {
+          slice_id: 'Organization.identifier:PI',
+          slice_name: 'PI',
+          path: 'identifier',
+          discriminator: {
+            type: 'patternCodeableConcept',
+            path: 'type',
+            code: 'PI',
+            system: 'http://terminology.hl7.org/CodeSystem/v2-0203'
+          }
+        }
+      )
+    end
   end
 
   describe '#must_support_elements' do
