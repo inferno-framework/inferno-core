@@ -198,22 +198,7 @@ module Inferno
             system: pattern_element.patternCoding.system
           }
         elsif pattern_element.patternIdentifier
-          identifier_type_coding = pattern_element.patternIdentifier.type&.coding&.first
-          if identifier_type_coding
-            type_path = runtime_path.present? ? "#{runtime_path}.type" : 'type'
-            {
-              type: 'patternCodeableConcept',
-              path: type_path,
-              code: identifier_type_coding.code,
-              system: identifier_type_coding.system
-            }
-          else
-            {
-              type: 'patternIdentifier',
-              path: runtime_path,
-              system: pattern_element.patternIdentifier.system
-            }
-          end
+          save_pattern_identifier_slice(pattern_element.patternIdentifier, runtime_path)
         elsif required_binding_pattern?(pattern_element)
           {
             type: 'requiredBinding',
@@ -231,6 +216,25 @@ module Inferno
 
       def required_binding_pattern?(pattern_element)
         pattern_element.binding&.strength == 'required' && pattern_element.binding&.valueSet
+      end
+
+      def save_pattern_identifier_slice(pattern_identifier, runtime_path)
+        identifier_type_coding = pattern_identifier.type&.coding&.first
+        if identifier_type_coding
+          type_path = runtime_path.present? ? "#{runtime_path}.type" : 'type'
+          {
+            type: 'patternCodeableConcept',
+            path: type_path,
+            code: identifier_type_coding.code,
+            system: identifier_type_coding.system
+          }
+        else
+          {
+            type: 'patternIdentifier',
+            path: runtime_path,
+            system: pattern_identifier.system
+          }
+        end
       end
 
       def extract_required_binding_values(pattern_element, metadata)
