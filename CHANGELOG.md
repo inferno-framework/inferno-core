@@ -1,3 +1,13 @@
+## 1.4.0
+* Container configuration updates as per recommendations by @arunkumarhk in https://github.com/inferno-framework/inferno-core/pull/787
+* Add countdown for wait modals, with error message when modal expires by @ljtucker in https://github.com/inferno-framework/inferno-core/pull/786
+* Added Attestation banner by @ljtucker in https://github.com/inferno-framework/inferno-core/pull/788
+* ID-158: Frontend dependency updates by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/789
+* ID-163: update sidekiq by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/793
+* ID-162: Make accordion summary text selectable by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/792
+* ID-161: puma dependency update by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/791
+* ID-159: Update the docs publishing pipeline by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/790
+
 ## 1.3.1
 * Allow checkbox inputs to be suppressed by the enable_when feature by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/784
 
