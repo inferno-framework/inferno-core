@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'kramdown', '~> 2.5.2'
   spec.add_dependency 'kramdown-parser-gfm', '~> 1.1.0'
   spec.add_dependency 'mutex_m', '~> 0.3.0'
-  spec.add_dependency 'oj', '3.11.0'
+  spec.add_dependency 'oj', '~> 3.17', '>= 3.17.3'
   spec.add_dependency 'pastel', '~> 0.8.0'
   spec.add_dependency 'pry'
   spec.add_dependency 'pry-byebug'
