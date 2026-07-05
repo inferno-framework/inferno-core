@@ -93,6 +93,35 @@ RSpec.describe Inferno::TestRunner do
         expect(output['type']).to be_present
       end
     end
+
+    it 'wraps each test with #around_test' do
+      wrapped = []
+      allow(runner).to receive(:around_test).and_wrap_original do |_original, test, &block|
+        wrapped << test
+        block.call
+      end
+
+      results = runner.start
+      test_results = results.select { |result| result.runnable < Inferno::Entities::Test }
+
+      expect(wrapped).to_not be_empty
+      expect(wrapped).to all(be < Inferno::Entities::Test)
+      expect(wrapped.length).to eq(test_results.length)
+    end
+  end
+
+  describe '#around_test' do
+    let(:test_run) do
+      repo_create(:test_run, runnable: { test_group_id: 'demo-simple_group' }, test_session_id: test_session.id)
+    end
+
+    it 'yields by default' do
+      expect { |block| runner.around_test(nil, &block) }.to yield_control
+    end
+
+    it 'returns the value of the block by default' do
+      expect(runner.around_test(nil) { :test_result }).to eq(:test_result)
+    end
   end
 
   describe 'when running wait group' do
