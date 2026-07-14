@@ -16,6 +16,11 @@ module Inferno
         # or writes from another. WAL mode lets readers proceed without blocking on a
         # concurrent writer, and a longer busy_timeout gives a blocked writer more
         # room to wait its turn instead of immediately raising SQLITE_BUSY.
+        #
+        # If you change this, run `bundle exec rake db:check_concurrency` to verify
+        # SQLITE_BUSY is still avoided under concurrent test-run writes and status
+        # polling (see lib/inferno/utils/db_concurrency_check.rb for why that's a
+        # rake task and not a spec).
         def configure_sqlite_pragmas!(config)
           return config unless config['adapter'] == 'sqlite'
 

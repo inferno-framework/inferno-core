@@ -260,6 +260,11 @@ module Inferno
       # requests, headers, tags). Wrapping them in one transaction turns that
       # into a single lock acquisition instead of one per insert, cutting
       # down on sqlite write-lock contention with concurrent readers/writers.
+      #
+      # If you change this, run `bundle exec rake db:check_concurrency` to verify
+      # SQLITE_BUSY is still avoided under concurrent test-run writes and status
+      # polling (see lib/inferno/utils/db_concurrency_check.rb for why that's a
+      # rake task and not a spec).
       result = Inferno::Application['db.connection'].transaction do
         results_repo.create(
           params.merge(test_run_id: test_run.id, test_session_id: test_session.id)
