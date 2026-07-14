@@ -25,10 +25,25 @@ Since there are many test kits that depend on this validator service, the follow
 5. Submit a PR on g10 to update the the version in `docker-compose.background.yml` and `lib/onc_certification_g10_test_kit/configuration_checker.rb`, and update the message filters if necessary.
 
 ## Publishing a new version
-A script `build_and_push.sh` is provided to assist with publishing a new version. The version of the wrapper service to use must be provided as the first command-line argument (required).
+A script `build_and_push.sh` is provided to assist with publishing a new version. The version of the wrapper service to use must be provided as a command-line argument (required).
 The available versions are listed at https://github.com/hapifhir/org.hl7.fhir.validator-wrapper/releases .
-Replace `1.0.50` in the example below with the appropriate number and run the following command to build & push a multi-arch image to Docker Hub. Images will be tagged as both the provided version number and as `latest`
+
+### Standard release
+Replace `1.0.50` in the example below with the appropriate version number and run the following command to build & push a multi-arch image to Docker Hub. Images will be tagged as both the provided version number and as `latest`.
 
 ```sh
 ./build_and_push.sh 1.0.50
+```
+
+### Pre-release
+To publish a pre-release image for testing before a full release, use the `--pre-release` flag. This builds and pushes an image tagged as `<version>-pre` (e.g. `1.0.50-pre`) without updating the `latest` tag.
+
+```sh
+./build_and_push.sh --pre-release 1.0.50
+```
+
+When you are ready to do a full release, run the standard release command. It will automatically delete the `<version>-pre` tag from Docker Hub before pushing the release tags. Deletion requires `DOCKER_USERNAME` and `DOCKER_PASSWORD` (or a Docker Hub access token) to be set in the environment; if they are not set, deletion is skipped (perform manually within docker hub) and the release build proceeds normally.
+
+```sh
+DOCKER_USERNAME=myuser DOCKER_PASSWORD=mytoken ./build_and_push.sh 1.0.50
 ```
