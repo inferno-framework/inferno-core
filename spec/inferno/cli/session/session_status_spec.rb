@@ -58,6 +58,50 @@ RSpec.describe Inferno::CLI::Session::SessionStatus do
       end.to output("#{JSON.pretty_generate(expected_output)}\n").to_stdout
     end
 
+    it 'uses the wait result to identify last_test_executed when timestamps collide' do
+      run_data = { 'id' => run_id, 'status' => 'waiting' }
+      wait_outputs = [{ 'name' => 'redirect_url', 'value' => 'http://example.com/redirect' }]
+      results = [
+        { 'test_id' => 'waiting_test', 'result' => 'wait', 'updated_at' => '2026-07-13 10:00:00 -0400',
+          'outputs' => wait_outputs, 'result_message' => 'waiting' },
+        { 'test_id' => 'prior_test', 'result' => 'pass', 'updated_at' => '2026-07-13 10:00:00 -0400' }
+      ]
+      stub_last_test_run(body: run_data.to_json)
+      stub_run_results(body: results.to_json)
+
+      expected_output = run_data.merge(
+        'last_test_executed' => 'waiting_test',
+        'wait_outputs' => wait_outputs,
+        'wait_result_message' => 'waiting'
+      )
+      expect do
+        expect { described_class.new(session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
+      end.to output("#{JSON.pretty_generate(expected_output)}\n").to_stdout
+    end
+
+    it 'uses the latest wait result when a resumed wait result is present' do
+      run_data = { 'id' => run_id, 'status' => 'waiting' }
+      results = [
+        { 'test_id' => 'resumed_test', 'result' => 'wait', 'updated_at' => '2026-07-13 10:00:00 -0400' },
+        { 'test_id' => 'resumed_test', 'result' => 'pass', 'updated_at' => '2026-07-13 10:00:05 -0400' },
+        { 'test_id' => 'waiting_test', 'result' => 'wait', 'updated_at' => '2026-07-13 10:00:10 -0400',
+          'outputs' => [], 'result_message' => 'waiting again' }
+      ]
+      stub_last_test_run(body: run_data.to_json)
+      stub_run_results(body: results.to_json)
+
+      expected_output = run_data.merge(
+        'last_test_executed' => 'waiting_test',
+        'wait_outputs' => [],
+        'wait_result_message' => 'waiting again'
+      )
+      expect do
+        expect { described_class.new(session_id, options).run }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 0)))
+      end.to output("#{JSON.pretty_generate(expected_output)}\n").to_stdout
+    end
+
     it 'adds wait_outputs and wait_result_message when the run is waiting and exits 0' do
       wait_outputs = [{ 'name' => 'redirect_url', 'value' => 'http://example.com/redirect' }]
       wait_message = 'Follow the redirect to authorize'
