@@ -256,9 +256,15 @@ module Inferno
     end
 
     def persist_result(params)
-      result = results_repo.create(
-        params.merge(test_run_id: test_run.id, test_session_id: test_session.id)
-      )
+      # A single result can cascade into many separate inserts (messages,
+      # requests, headers, tags). Wrapping them in one transaction turns that
+      # into a single lock acquisition instead of one per insert, cutting
+      # down on sqlite write-lock contention with concurrent readers/writers.
+      result = Inferno::Application['db.connection'].transaction do
+        results_repo.create(
+          params.merge(test_run_id: test_run.id, test_session_id: test_session.id)
+        )
+      end
 
       run_results[result.runnable.id] = result
     end
