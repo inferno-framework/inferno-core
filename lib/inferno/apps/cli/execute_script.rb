@@ -137,7 +137,7 @@ module Inferno
       )
 
       ExecutionStatus = Struct.new(
-        :done, :failed, :timed_out, :current_session, :current_timeout, :last_log_time,
+        :done, :failed, :timed_out, :cancel_pending, :current_session, :current_timeout, :last_log_time,
         :cross_session_status, :last_step_signatures
       )
 
@@ -152,6 +152,7 @@ module Inferno
           done: false,
           failed: false,
           timed_out: false,
+          cancel_pending: false,
           current_session: sessions.first,
           current_timeout: options[:default_poll_timeout],
           cross_session_status: {},
@@ -442,6 +443,10 @@ module Inferno
 
       # Returns a step hash to act on, or nil to keep polling.
       def handle_actionable_status(status, session, timeout)
+        # A cancelled run's done status is indistinguishable from the
+        # runnable completing normally, so don't match steps against it.
+        return handle_cancel_completion(status, session, timeout) if execution_status.cancel_pending
+
         matched_step = match_step(status, session.key)
 
         if matched_step
@@ -463,8 +468,14 @@ module Inferno
         last_completed = format_last_completed(last_completed_from_status(status), session.key)
         warn "UNHANDLED WAIT - Canceling: session=#{session.key} last_completed=#{last_completed}"
         execution_status.failed = true
+        execution_status.cancel_pending = true
         attempt_cancel(session.session_id, status)
         nil
+      end
+
+      def handle_cancel_completion(status, session, timeout)
+        warn "Cancellation complete: session=#{session.key} status=#{status['status']}"
+        { command: nil, timeout: timeout, next_poll_session: nil }
       end
 
       def handle_unmatched_status(status, session, timeout)
@@ -485,6 +496,7 @@ module Inferno
           execution_status.failed = true
           if run_status == 'waiting'
             warn "Loop detected - Canceling: session=#{session.key} last_completed=#{last_completed}"
+            execution_status.cancel_pending = true
             attempt_cancel(session.session_id, status)
             return nil
           else
