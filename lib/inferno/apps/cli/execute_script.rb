@@ -235,13 +235,15 @@ module Inferno
         creator = Session::CreateSession.new(suite, session_create_options(session_config))
         session_details = creator.create_session
         key = session_config['name'] || suite
-        warn "Session created: #{session_details['id']}"
-        ScriptSession.new(
+        script_session = ScriptSession.new(
           key: key,
           suite_id: session_details['test_suite_id'],
           session_id: session_details['id'],
           short_id_map: extract_short_ids_from_session_details(session_details)
         )
+        warn "Session created: #{session_details['id']}"
+        warn "  Available at #{session_display_url(script_session)}"
+        script_session
       end
 
       def session_create_options(session_config)
