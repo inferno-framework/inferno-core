@@ -518,8 +518,12 @@ module Inferno
         last_completed = last_completed_from_status(status)
         poll_status_last_test =
           last_completed.present? ? " - last test: #{format_last_completed(last_completed, session_key)}" : ''
-        warn "  [#{session_key}] #{status['status']}#{poll_status_last_test}"
+        warn "  [#{session_key}] #{status['status']} (#{test_progress(status)})#{poll_status_last_test}"
         execution_status.last_log_time = Time.now
+      end
+
+      def test_progress(status)
+        "#{status['completed_test_count']}/#{status['test_count']} tests"
       end
 
       def fetch_session_status(session_id)

@@ -27,7 +27,10 @@ module Inferno
 
           if session_status['id'].present?
             run_id = session_status['id']
-            last_test_executed = last_test_executed(run_id, session_status['status'])
+            test_results = run_results(run_id).select { |result| result['test_id'].present? }
+            session_status['completed_test_count'] = test_results.size
+
+            last_test_executed = last_test_executed(test_results, session_status['status'])
             if last_test_executed.present?
               session_status['last_test_executed'] = last_test_executed['test_id']
               if session_status['status'] == 'waiting'
@@ -56,9 +59,7 @@ module Inferno
         # Serialized updated_at values can collide when results are written in
         # quick succession, so when the run is waiting, identify the waiting
         # test by its 'wait' result rather than by timestamp order alone.
-        def last_test_executed(run_id, run_status)
-          test_results = run_results(run_id).select { |result| result['test_id'].present? }
-
+        def last_test_executed(test_results, run_status)
           if run_status == 'waiting'
             wait_results = test_results.select { |result| result['result'] == 'wait' }
             test_results = wait_results if wait_results.any?
