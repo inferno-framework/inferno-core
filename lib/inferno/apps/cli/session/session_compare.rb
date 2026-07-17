@@ -84,7 +84,7 @@ module Inferno
 
         def save_actual_results_to_file
           actual_results_file_name = "#{output_file_prefix}actual_results_#{results_timestamp}#{host_suffix}.json"
-          File.write(File.join(output_directory, actual_results_file_name), session_results.to_json)
+          File.write(File.join(output_directory, actual_results_file_name), JSON.pretty_generate(session_results))
         end
 
         def save_comparison_csv_to_file
