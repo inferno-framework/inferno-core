@@ -14,7 +14,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'activesupport', '~> 7.2.3.1'
   spec.add_dependency 'base62-rb', '0.3.1'
   spec.add_dependency 'blueprinter', '0.25.2'
-  spec.add_dependency 'concurrent-ruby', '1.3.4' # Fix activesupport https://github.com/rails/rails/issues/54272
+  spec.add_dependency 'concurrent-ruby', '~> 1.3', '>= 1.3.7'
   spec.add_dependency 'csv', '~> 3.3.5'
   spec.add_dependency 'dotenv', '~> 2.7'
   spec.add_dependency 'dry-configurable', '1.0.0'
@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dry-core', '1.0.0'
   spec.add_dependency 'dry-inflector', '1.0.0'
   spec.add_dependency 'dry-system', '1.0.0'
-  spec.add_dependency 'faraday', '~> 1.10.5'
+  spec.add_dependency 'faraday', '~> 1.10.6'
   spec.add_dependency 'faraday_middleware', '~> 1.2'
   spec.add_dependency 'fhir_client', '>= 6.2.0'
   spec.add_dependency 'fhir_models', '>= 5.1.0'
