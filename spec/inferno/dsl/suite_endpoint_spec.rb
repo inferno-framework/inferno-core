@@ -29,6 +29,17 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
     expect(last_response.body).to eq('EXPECTED_RESPONSE_BODY')
   end
 
+  describe '.error_response_format' do
+    it 'raises an ArgumentError when given an unrecognized format' do
+      expect do
+        Class.new(described_class) { error_response_format :bogus_format }
+      end.to raise_error(
+        ArgumentError,
+        'Unknown error_response_format `:bogus_format`. Must be one of text, operation_outcome.'
+      )
+    end
+  end
+
   describe 'when no matching test session is found' do
     it 'defaults to a plain text 500 response' do
       post '/custom/infra_test/no_session_test'
