@@ -1,7 +1,11 @@
 require_relative 'empty_group'
 require_relative 'external_outer_group'
 require_relative 'failing_optional_group'
+require_relative 'blank_identifier_test_endpoint'
+require_relative 'custom_no_session_response_test_endpoint'
 require_relative 'json_test_endpoint'
+require_relative 'no_session_test_endpoint'
+require_relative 'operation_outcome_test_endpoint'
 require_relative 'mixed_optional_group'
 require_relative 'passing_optional_group'
 
@@ -31,6 +35,10 @@ module InfrastructureTest
     ]
 
     suite_endpoint :post, '/json_test', JSONTestEndpoint
+    suite_endpoint :post, '/blank_identifier_test', BlankIdentifierTestEndpoint
+    suite_endpoint :post, '/custom_no_session_response_test', CustomNoSessionResponseTestEndpoint
+    suite_endpoint :post, '/no_session_test', NoSessionTestEndpoint
+    suite_endpoint :post, '/operation_outcome_test', OperationOutcomeTestEndpoint
 
     input :suite_input
     output :suite_output

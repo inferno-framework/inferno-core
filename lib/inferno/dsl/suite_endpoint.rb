@@ -1,5 +1,6 @@
 require 'hanami/controller'
 require 'rack/request'
+require 'fhir_models'
 require_relative '../ext/rack'
 
 module Inferno
@@ -14,6 +15,8 @@ module Inferno
     #       def test_run_identifier
     #         request.headers['authorization']&.delete_prefix('Bearer ')
     #       end
+    #
+    #       no_session_response_format :operation_outcome
     #
     #       # Return a json FHIR Patient resource
     #       def make_response
@@ -57,8 +60,49 @@ module Inferno
     #         end
     #       end
     #     end
+    #
+    # If no waiting test session can be found for an incoming request, Inferno
+    # returns a `500` response with a plain text message by default. Call
+    # `no_session_response_format :operation_outcome` in a subclass to return a
+    # FHIR `OperationOutcome` as `application/fhir+json` instead, or override
+    # {#no_session_response} for full control.
     class SuiteEndpoint < Hanami::Action
       attr_reader :req, :res
+
+      # The built-in options for `no_session_response_format`
+      NO_SESSION_RESPONSE_FORMATS = [:text, :operation_outcome].freeze
+
+      class << self
+        # Select one of Inferno's standard responses to be returned when no
+        # waiting test session can be found for the incoming request.
+        # Override {#no_session_response} if neither option is appropriate.
+        #
+        # * `:text` (default): a `500` response with a plain text message
+        # * `:operation_outcome`: a `500` response with a FHIR
+        #   `OperationOutcome` serialized as `application/fhir+json`
+        #
+        # @param format [Symbol] `:text` or `:operation_outcome`
+        # @return [void]
+        #
+        # @example
+        #   class MyEndpoint < Inferno::DSL::SuiteEndpoint
+        #     no_session_response_format :operation_outcome
+        #   end
+        def no_session_response_format(format)
+          unless NO_SESSION_RESPONSE_FORMATS.include?(format)
+            raise ArgumentError,
+                  "Unknown no_session_response_format `#{format.inspect}`. " \
+                  "Must be one of #{NO_SESSION_RESPONSE_FORMATS.join(', ')}."
+          end
+
+          @no_session_response_format_value = format
+        end
+
+        # @private
+        def no_session_response_format_value
+          @no_session_response_format_value ||= :text
+        end
+      end
 
       # @!group Overrides These methods should be overridden by subclasses to
       #   define the behavior of the endpoint
@@ -128,6 +172,31 @@ module Inferno
         true
       end
 
+      # Override this method to fully customize the response returned when no
+      # waiting test run/session can be found for the incoming request. Set
+      # `response.status` and `response.body` (and `response.content_type`, if
+      # needed) — Inferno halts the request with those values. By default, this
+      # dispatches to one of Inferno's standard responses based on the format
+      # selected with `no_session_response_format` (a plain text `500`
+      # response if none was selected).
+      #
+      # @return [Void]
+      #
+      # @example
+      #   def no_session_response
+      #     response.status = 404
+      #     response.format = :json
+      #     response.body = { error: 'no matching session' }.to_json
+      #   end
+      def no_session_response
+        case self.class.no_session_response_format_value
+        when :operation_outcome
+          operation_outcome_no_session_response
+        else
+          text_no_session_response
+        end
+      end
+
       # @!endgroup
 
       # @private
@@ -192,7 +261,10 @@ module Inferno
       def test_run
         @test_run ||=
           test_runs_repo.find_latest_waiting_by_identifier(find_test_run_identifier).tap do |test_run|
-            halt 500, "Unable to find test run with identifier '#{test_run_identifier}'." if test_run.nil?
+            if test_run.nil?
+              no_session_response
+              halt response.status, response.body.join
+            end
           end
       end
 
@@ -221,6 +293,38 @@ module Inferno
         @test_run_identifier ||= test_run_identifier
       rescue StandardError => e
         halt 500, "Unable to determine test run identifier:\n#{e.full_message}"
+      end
+
+      # @private
+      def no_session_message
+        if test_run_identifier.blank?
+          'No test identifier found.'
+        else
+          "Unable to find test run with identifier '#{test_run_identifier}'."
+        end
+      end
+
+      # @private
+      def text_no_session_response
+        response.status = 500
+        response.body = no_session_message
+      end
+
+      # @private
+      def operation_outcome_no_session_response
+        outcome = FHIR::OperationOutcome.new(
+          issue: [
+            FHIR::OperationOutcome::Issue.new(
+              severity: 'fatal',
+              code: 'not-found',
+              details: FHIR::CodeableConcept.new(text: no_session_message)
+            )
+          ]
+        )
+
+        response.status = 500
+        response.content_type = 'application/fhir+json'
+        response.body = outcome.to_json
       end
 
       # @private
