@@ -1,3 +1,6 @@
+## 1.4.1
+* bump dependencies by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/800
+
 ## 1.4.0
 * Container configuration updates as per recommendations by @arunkumarhk in https://github.com/inferno-framework/inferno-core/pull/787
 * Add countdown for wait modals, with error message when modal expires by @ljtucker in https://github.com/inferno-framework/inferno-core/pull/786
