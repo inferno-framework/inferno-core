@@ -68,4 +68,58 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
       expect(JSON.parse(last_response.body)).to eq('error' => 'no matching session')
     end
   end
+
+  describe 'when an error is raised while determining the test run identifier' do
+    it 'logs the error and defaults to a plain text 500 response' do
+      allow(Inferno::Application[:logger]).to receive(:error)
+
+      post '/custom/infra_test/identifier_error_test'
+
+      expect(Inferno::Application[:logger]).to have_received(:error).with(/BOOM_IDENTIFIER/)
+      expect(last_response.status).to eq(500)
+      expect(last_response.body).to include('An error occurred while determining the test run identifier')
+      expect(last_response.body).to include('BOOM_IDENTIFIER')
+    end
+
+    it 'returns a FHIR OperationOutcome as application/fhir+json when configured to do so' do
+      post '/custom/infra_test/identifier_error_operation_outcome_test'
+
+      expect(last_response.status).to eq(500)
+      expect(last_response.headers['Content-Type']).to eq('application/fhir+json')
+
+      outcome = FHIR::OperationOutcome.new(JSON.parse(last_response.body))
+      expect(outcome.issue.first.severity).to eq('fatal')
+      expect(outcome.issue.first.code).to eq('exception')
+      expect(outcome.issue.first.details.text).to eq(
+        'An error occurred while determining the test run identifier for this request.'
+      )
+      expect(outcome.issue.first.diagnostics).to include('BOOM_IDENTIFIER')
+    end
+  end
+
+  describe 'when an unhandled exception is raised while processing the request' do
+    it 'logs the error and defaults to a plain text 500 response' do
+      allow(Inferno::Application[:logger]).to receive(:error)
+
+      post '/custom/infra_test/exception_test'
+
+      expect(Inferno::Application[:logger]).to have_received(:error).with(/BOOM_MAKE_RESPONSE/)
+      expect(last_response.status).to eq(500)
+      expect(last_response.body).to include('An error occurred while processing this request')
+      expect(last_response.body).to include('BOOM_MAKE_RESPONSE')
+    end
+
+    it 'returns a FHIR OperationOutcome as application/fhir+json when configured to do so' do
+      post '/custom/infra_test/exception_operation_outcome_test'
+
+      expect(last_response.status).to eq(500)
+      expect(last_response.headers['Content-Type']).to eq('application/fhir+json')
+
+      outcome = FHIR::OperationOutcome.new(JSON.parse(last_response.body))
+      expect(outcome.issue.first.severity).to eq('fatal')
+      expect(outcome.issue.first.code).to eq('exception')
+      expect(outcome.issue.first.details.text).to eq('An error occurred while processing this request.')
+      expect(outcome.issue.first.diagnostics).to include('BOOM_MAKE_RESPONSE')
+    end
+  end
 end

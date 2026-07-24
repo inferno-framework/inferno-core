@@ -16,7 +16,7 @@ module Inferno
     #         request.headers['authorization']&.delete_prefix('Bearer ')
     #       end
     #
-    #       no_session_response_format :operation_outcome
+    #       error_response_format :operation_outcome
     #
     #       # Return a json FHIR Patient resource
     #       def make_response
@@ -61,21 +61,18 @@ module Inferno
     #       end
     #     end
     #
-    # If no waiting test session can be found for an incoming request, Inferno
-    # returns a `500` response with a plain text message by default. Call
-    # `no_session_response_format :operation_outcome` in a subclass to return a
-    # FHIR `OperationOutcome` as `application/fhir+json` instead, or override
-    # {#no_session_response} for full control.
     class SuiteEndpoint < Hanami::Action
       attr_reader :req, :res
 
-      # The built-in options for `no_session_response_format`
-      NO_SESSION_RESPONSE_FORMATS = [:text, :operation_outcome].freeze
+      # The built-in options for `error_response_format`
+      ERROR_RESPONSE_FORMATS = [:text, :operation_outcome].freeze
 
       class << self
-        # Select one of Inferno's standard responses to be returned when no
-        # waiting test session can be found for the incoming request.
-        # Override {#no_session_response} if neither option is appropriate.
+        # Select one of Inferno's standard response formats to be returned
+        # whenever Inferno has to render an error response of its own due
+        # to problems finding the target session or an unhandled exception.
+        # You can override {#no_session_response} to customize the response
+        # in the no-session case.
         #
         # * `:text` (default): a `500` response with a plain text message
         # * `:operation_outcome`: a `500` response with a FHIR
@@ -86,21 +83,21 @@ module Inferno
         #
         # @example
         #   class MyEndpoint < Inferno::DSL::SuiteEndpoint
-        #     no_session_response_format :operation_outcome
+        #     error_response_format :operation_outcome
         #   end
-        def no_session_response_format(format)
-          unless NO_SESSION_RESPONSE_FORMATS.include?(format)
+        def error_response_format(format)
+          unless ERROR_RESPONSE_FORMATS.include?(format)
             raise ArgumentError,
-                  "Unknown no_session_response_format `#{format.inspect}`. " \
-                  "Must be one of #{NO_SESSION_RESPONSE_FORMATS.join(', ')}."
+                  "Unknown error_response_format `#{format.inspect}`. " \
+                  "Must be one of #{ERROR_RESPONSE_FORMATS.join(', ')}."
           end
 
-          @no_session_response_format_value = format
+          @error_response_format_value = format
         end
 
         # @private
-        def no_session_response_format_value
-          @no_session_response_format_value ||= :text
+        def error_response_format_value
+          @error_response_format_value ||= :text
         end
       end
 
@@ -175,10 +172,10 @@ module Inferno
       # Override this method to fully customize the response returned when no
       # waiting test run/session can be found for the incoming request. Set
       # `response.status` and `response.body` (and `response.content_type`, if
-      # needed) — Inferno halts the request with those values. By default, this
-      # dispatches to one of Inferno's standard responses based on the format
-      # selected with `no_session_response_format` (a plain text `500`
-      # response if none was selected).
+      # needed) — Inferno halts the request with those values. By default,
+      # this renders one of Inferno's standard responses based on the format
+      # selected with `error_response_format` (a plain text `500` response if
+      # none was selected).
       #
       # @return [Void]
       #
@@ -189,12 +186,7 @@ module Inferno
       #     response.body = { error: 'no matching session' }.to_json
       #   end
       def no_session_response
-        case self.class.no_session_response_format_value
-        when :operation_outcome
-          operation_outcome_no_session_response
-        else
-          text_no_session_response
-        end
+        error_response(no_session_message, code: 'not-found')
       end
 
       # @!endgroup
@@ -261,10 +253,7 @@ module Inferno
       def test_run
         @test_run ||=
           test_runs_repo.find_latest_waiting_by_identifier(find_test_run_identifier).tap do |test_run|
-            if test_run.nil?
-              no_session_response
-              halt response.status, response.body.join
-            end
+            render_error_and_halt { no_session_response } if test_run.nil?
           end
       end
 
@@ -292,7 +281,14 @@ module Inferno
       def find_test_run_identifier
         @test_run_identifier ||= test_run_identifier
       rescue StandardError => e
-        halt 500, "Unable to determine test run identifier:\n#{e.full_message}"
+        logger.error(e.full_message)
+        render_error_and_halt do
+          error_response(
+            'An error occurred while determining the test run identifier for this request.',
+            code: 'exception',
+            diagnostics: e.full_message
+          )
+        end
       end
 
       # @private
@@ -305,26 +301,48 @@ module Inferno
       end
 
       # @private
-      def text_no_session_response
-        response.status = 500
-        response.body = no_session_message
+      # Yields to build the response, then halts with whatever ended up in
+      # `response.status`/`response.body`. Centralizing the halt here means
+      # overrides of the response-building hooks (e.g. #no_session_response)
+      # never need to remember to call `halt` themselves.
+      def render_error_and_halt
+        yield
+        halt response.status, response.body.join
       end
 
       # @private
-      def operation_outcome_no_session_response
-        outcome = FHIR::OperationOutcome.new(
-          issue: [
-            FHIR::OperationOutcome::Issue.new(
-              severity: 'fatal',
-              code: 'not-found',
-              details: FHIR::CodeableConcept.new(text: no_session_message)
-            )
-          ]
+      # `message` is a short, human-readable summary (goes in the
+      # OperationOutcome issue's `details.text`, or stands alone as the whole
+      # plain text body). `diagnostics`, if given, is technical detail — e.g.
+      # an exception's full backtrace — that goes in the issue's
+      # `diagnostics` element, or is appended to the plain text body.
+      def error_response(message, code:, diagnostics: nil)
+        case self.class.error_response_format_value
+        when :operation_outcome
+          operation_outcome_error_response(message, code:, diagnostics:)
+        else
+          text_error_response(message, diagnostics:)
+        end
+      end
+
+      # @private
+      def text_error_response(message, diagnostics: nil)
+        response.status = 500
+        response.body = diagnostics ? "#{message}\n#{diagnostics}" : message
+      end
+
+      # @private
+      def operation_outcome_error_response(message, code:, diagnostics: nil)
+        issue = FHIR::OperationOutcome::Issue.new(
+          severity: 'fatal',
+          code:,
+          details: FHIR::CodeableConcept.new(text: message)
         )
+        issue.diagnostics = diagnostics if diagnostics
 
         response.status = 500
         response.content_type = 'application/fhir+json'
-        response.body = outcome.to_json
+        response.body = FHIR::OperationOutcome.new(issue: [issue]).to_json
       end
 
       # @private
@@ -374,7 +392,14 @@ module Inferno
 
         make_response
       rescue StandardError => e
-        halt 500, e.full_message
+        logger.error(e.full_message)
+        render_error_and_halt do
+          error_response(
+            'An error occurred while processing this request.',
+            code: 'exception',
+            diagnostics: e.full_message
+          )
+        end
       end
 
       # @private
