@@ -279,7 +279,9 @@ module Inferno
 
       # @private
       def find_test_run_identifier
-        @test_run_identifier ||= test_run_identifier
+        return @test_run_identifier if defined?(@test_run_identifier) # handle memoization in the nil case
+
+        @test_run_identifier = test_run_identifier
       rescue StandardError => e
         logger.error(e.full_message)
         render_error_and_halt do
@@ -293,10 +295,10 @@ module Inferno
 
       # @private
       def no_session_message
-        if test_run_identifier.blank?
+        if find_test_run_identifier.blank?
           'No test identifier found.'
         else
-          "Unable to find test run with identifier '#{test_run_identifier}'."
+          "Unable to find test run with identifier '#{find_test_run_identifier}'."
         end
       end
 
