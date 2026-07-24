@@ -2,12 +2,13 @@
 
 This Dockerfile is based on the Dockerfile for org.hl7.fhir.validator-wrapper (see https://github.com/hapifhir/org.hl7.fhir.validator-wrapper/blob/master/Dockerfile ) with the following differences relevant to Inferno:
 1. It fetches the built JAR from GitHub instead of locally, or building from source
-2. It adds MITRE certs, for ease of use by the MITRE development team
-3. It uses an Ubuntu-based base image instead of Alpine to support both AMD64 and ARM architectures
-4. It defaults the following environment variables:
+2. It uses an Ubuntu-based base image instead of Alpine to support both AMD64 and ARM architectures
+3. It defaults the following environment variables:
    - SESSION_CACHE_IMPLEMENTATION=PassiveExpiringSessionCache
    - SESSION_CACHE_DURATION=-1
      - These enable the old session cache implementation, and configure the session cache to never expire sessions.
+   - TERMINOLOGY_CLIENT_USE_CACHE_ID=false
+     - This disable terminology caches on tx.fhir.org because they are not long-running like validator sessions in Inferno and were causing errors 
    - VALIDATION_SERVICE_PRESETS_FILE_PATH=ignore-this-do-not-load-presets
      - This disables loading presets at service startup by pointing it to a non-existent file. (There is no other explicit value or setting for "do not load presets")
 
@@ -21,6 +22,7 @@ Since there are many test kits that depend on this validator service, the follow
 1. Watch https://github.com/hapifhir/org.hl7.fhir.validator-wrapper for new releases.
 2. When there is a new release, build this dockerfile locally and test g10 (all versions of US Core) against it by updating the version in `docker-compose.background.yml`
 3. If there are changes needed to this dockerfile, submit that PR first.
+4. Publish a pre-release version of this image and deploy to QA to verify behavior more broadly on a running system.
 4. Publish a new version of this image once it's ready. IMPORTANT: any test kit that doesn't pin a specific version of the validator will now use this latest image.
 5. Submit a PR on g10 to update the the version in `docker-compose.background.yml` and `lib/onc_certification_g10_test_kit/configuration_checker.rb`, and update the message filters if necessary.
 
