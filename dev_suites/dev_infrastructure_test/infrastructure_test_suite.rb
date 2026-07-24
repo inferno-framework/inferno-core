@@ -4,6 +4,7 @@ require_relative 'failing_optional_group'
 require_relative 'json_test_endpoint'
 require_relative 'mixed_optional_group'
 require_relative 'passing_optional_group'
+require_relative 'resume_test_endpoint'
 
 module InfrastructureTest
   class Suite < Inferno::TestSuite
@@ -31,6 +32,7 @@ module InfrastructureTest
     ]
 
     suite_endpoint :post, '/json_test', JSONTestEndpoint
+    suite_endpoint :post, '/resume_test', ResumeTestEndpoint
 
     input :suite_input
     output :suite_output
