@@ -52,6 +52,34 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       expect(v1_inputs).to include(:v1_input, :all_versions_input)
       expect(v2_inputs).to include(:v2_input, :all_versions_input)
     end
+
+    it 'walks each child subtree only once' do
+      suite = Class.new(Inferno::Entities::TestSuite) do
+        id SecureRandom.uuid
+        input :a, :b, :c
+
+        group do
+          input :a, :b, :c
+          test do
+            input :a, :b, :c
+            run { nil }
+          end
+        end
+      end
+
+      call_count = 0
+      counter = Module.new do
+        define_method(:children_available_inputs) do |*args|
+          call_count += 1
+          super(*args)
+        end
+      end
+      suite.singleton_class.prepend(counter)
+
+      suite.available_inputs
+
+      expect(call_count).to eq(1)
+    end
   end
 
   describe '.missing_inputs' do
