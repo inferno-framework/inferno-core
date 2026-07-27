@@ -3,7 +3,7 @@ class IdentifierDescriptionTestEndpoint < Inferno::DSL::SuiteEndpoint
     'NONEXISTENT_IDENTIFIER'
   end
 
-  def test_run_identifier_description
+  def test_run_identifier_location_description
     "the 'code' query parameter"
   end
 end

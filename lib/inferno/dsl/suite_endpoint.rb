@@ -128,10 +128,10 @@ module Inferno
       # @return [String]
       #
       # @example
-      #   def test_run_identifier_description
+      #   def test_run_identifier_location_description
       #     "the 'code' query parameter"
       #   end
-      def test_run_identifier_description
+      def test_run_identifier_location_description
         ''
       end
 
@@ -317,16 +317,17 @@ module Inferno
 
       # @private
       def no_session_message
-        message =
-          if find_test_run_identifier.blank?
-            "No test identifier found on request to '#{request.url}'."
-          else
-            "Unable to find test run with identifier '#{find_test_run_identifier}' " \
-              "on request to '#{request.url}'."
-          end
+        base_message = "Unable to find test run for request to '#{request.url}'"
+        location = test_run_identifier_location_description
+        identifier = find_test_run_identifier
 
-        description = test_run_identifier_description
-        description.present? ? "#{message} Expected in #{description}." : message
+        if identifier.blank?
+          detail = location.present? ? " in #{location}" : ''
+          "#{base_message}: no identifier found#{detail}."
+        else
+          detail = location.present? ? ", found in #{location}," : ''
+          "#{base_message}: identifier '#{identifier}'#{detail} is not associated with a waiting session."
+        end
       end
 
       # @private

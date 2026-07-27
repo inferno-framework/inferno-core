@@ -46,8 +46,8 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       expect(last_response.status).to eq(500)
       expect(last_response.body).to eq(
-        "Unable to find test run with identifier 'NONEXISTENT_IDENTIFIER' " \
-        "on request to 'http://example.org/custom/infra_test/no_session_test'."
+        "Unable to find test run for request to 'http://example.org/custom/infra_test/no_session_test': " \
+        "identifier 'NONEXISTENT_IDENTIFIER' is not associated with a waiting session."
       )
     end
 
@@ -56,18 +56,20 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       expect(last_response.status).to eq(500)
       expect(last_response.body).to eq(
-        "No test identifier found on request to 'http://example.org/custom/infra_test/blank_identifier_test'."
+        "Unable to find test run for request to 'http://example.org/custom/infra_test/blank_identifier_test': " \
+        'no identifier found.'
       )
     end
 
-    it 'appends the test_run_identifier_description when the endpoint provides one' do
+    it 'appends the test_run_identifier_location_description when the endpoint provides one' do
       post '/custom/infra_test/identifier_description_test'
 
       expect(last_response.status).to eq(500)
       expect(last_response.body).to eq(
-        "Unable to find test run with identifier 'NONEXISTENT_IDENTIFIER' " \
-        "on request to 'http://example.org/custom/infra_test/identifier_description_test'. " \
-        "Expected in the 'code' query parameter."
+        'Unable to find test run for request to ' \
+        "'http://example.org/custom/infra_test/identifier_description_test': " \
+        "identifier 'NONEXISTENT_IDENTIFIER', found in the 'code' query parameter, " \
+        'is not associated with a waiting session.'
       )
     end
 
@@ -81,8 +83,8 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
       expect(outcome.issue.first.severity).to eq('fatal')
       expect(outcome.issue.first.code).to eq('not-found')
       expect(outcome.issue.first.details.text).to eq(
-        "Unable to find test run with identifier 'NONEXISTENT_IDENTIFIER' " \
-        "on request to 'http://example.org/custom/infra_test/operation_outcome_test'."
+        "Unable to find test run for request to 'http://example.org/custom/infra_test/operation_outcome_test': " \
+        "identifier 'NONEXISTENT_IDENTIFIER' is not associated with a waiting session."
       )
     end
 
