@@ -37,7 +37,14 @@ module Inferno
 
             persist_inputs(session_data_repo, req.params, test_run.runnable)
 
-            Jobs.perform(Jobs::ExecuteTestRun, test_run.id)
+            Jobs.perform(
+              Jobs::ExecuteTestRun,
+              test_run.id,
+              tags: [
+                "session:#{test_session.id}",
+                "run:#{test_run.test_suite_id || test_run.test_group_id || test_run.test_id}"
+              ]
+            )
           rescue Sequel::ValidationFailed, Sequel::ForeignKeyConstraintViolation,
                  Inferno::Exceptions::RequiredInputsNotFound,
                  Inferno::Exceptions::NotUserRunnableException => e

@@ -1,5 +1,6 @@
 require 'csv'
 require 'cgi'
+require 'uri'
 require_relative 'session_details'
 require_relative 'session_results'
 
@@ -82,14 +83,37 @@ module Inferno
         end
 
         def save_actual_results_to_file
-          actual_results_file_name = "#{output_file_prefix}actual_results_#{results_timestamp}.json"
-          File.write(File.join(output_directory, actual_results_file_name), session_results.to_json)
+          actual_results_file_name = "#{output_file_prefix}actual_results_#{results_timestamp}#{host_suffix}.json"
+          File.write(File.join(output_directory, actual_results_file_name), JSON.pretty_generate(session_results))
         end
 
         def save_comparison_csv_to_file
-          compared_csv_file_name = "#{output_file_prefix}compared_results_#{results_timestamp}.csv"
+          compared_csv_file_name = "#{output_file_prefix}compared_results_#{results_timestamp}#{host_suffix}.csv"
           File.write(File.join(output_directory, compared_csv_file_name),
                      compared_results_as_csv)
+        end
+
+        # Filesystem-safe "_<host>" (plus non-default port, if any) suffix derived from
+        # the --inferno-base-url (-I) option, so output filenames can be disambiguated
+        # by target server. Empty when -I was not passed or the URL has no host.
+        def host_suffix
+          inferno_host_slug ? "_#{inferno_host_slug}" : ''
+        end
+
+        def inferno_host_slug
+          return nil unless options[:inferno_base_url].present?
+
+          uri = begin
+            URI.parse(options[:inferno_base_url])
+          rescue URI::InvalidURIError
+            nil
+          end
+          host = uri&.host
+          return nil unless host
+
+          slug = host.dup
+          slug << "_#{uri.port}" if uri.port && uri.port != uri.default_port
+          slug.gsub(/[^a-zA-Z0-9.-]/, '_')
         end
 
         def display_compared_results

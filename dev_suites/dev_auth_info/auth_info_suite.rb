@@ -88,7 +88,7 @@ module AuthInfoConstants
     end
 
     def issue_time
-      @issue_time ||= Time.now.iso8601
+      '2025-06-01T12:00:00-04:00'
     end
 
     def token_info
