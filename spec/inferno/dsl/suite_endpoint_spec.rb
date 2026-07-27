@@ -156,4 +156,35 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
       expect(outcome.issue.first.diagnostics).to include('BOOM_MAKE_RESPONSE')
     end
   end
+
+  describe 'when update_result causes the test run to resume' do
+    it 'resumes the test run and exposes the repo accessor methods' do
+      allow(Inferno::Jobs).to receive(:perform)
+
+      post '/custom/infra_test/resume_test'
+
+      expect(last_response.status).to eq(200)
+      body = JSON.parse(last_response.body)
+      expect(body['test_id']).to eq(InfrastructureTest::Suite.groups.first.groups.first.tests.first.id)
+      expect(body['requests_repo_class']).to eq('Inferno::Repositories::Requests')
+
+      expect(Inferno::Jobs).to have_received(:perform).with(Inferno::Jobs::ResumeTestRun, test_run.id)
+      expect(Inferno::Repositories::TestRuns.new.find(test_run.id).status).to eq('queued')
+    end
+  end
+
+  describe 'when persisting the incoming request fails' do
+    it 'logs the error instead of raising' do
+      allow(Inferno::Application[:logger]).to receive(:error)
+      allow_any_instance_of(Inferno::Repositories::Requests)
+        .to receive(:create).and_raise(StandardError, 'BOOM_PERSIST')
+
+      post '/custom/infra_test/json_test',
+           { json_param: 'EXPECTED_RESPONSE_BODY' }.to_json,
+           'CONTENT_TYPE' => 'application/json'
+
+      expect(last_response.body).to eq('EXPECTED_RESPONSE_BODY')
+      expect(Inferno::Application[:logger]).to have_received(:error).with(/BOOM_PERSIST/)
+    end
+  end
 end

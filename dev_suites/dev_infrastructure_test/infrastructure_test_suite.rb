@@ -11,6 +11,7 @@ require_relative 'identifier_description_test_endpoint'
 require_relative 'json_test_endpoint'
 require_relative 'no_session_test_endpoint'
 require_relative 'operation_outcome_test_endpoint'
+require_relative 'resume_test_endpoint'
 require_relative 'mixed_optional_group'
 require_relative 'passing_optional_group'
 
@@ -49,6 +50,7 @@ module InfrastructureTest
     suite_endpoint :post, '/identifier_description_test', IdentifierDescriptionTestEndpoint
     suite_endpoint :post, '/no_session_test', NoSessionTestEndpoint
     suite_endpoint :post, '/operation_outcome_test', OperationOutcomeTestEndpoint
+    suite_endpoint :post, '/resume_test', ResumeTestEndpoint
 
     input :suite_input
     output :suite_output
