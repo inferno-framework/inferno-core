@@ -119,6 +119,22 @@ module Inferno
         nil
       end
 
+      # Override this method to provide a short narrative description of
+      # where the test run identifier is expected to be found in an
+      # incoming request. When provided, this description is appended to
+      # the {#no_session_message} to help implementers debug requests that
+      # don't match a waiting test run.
+      #
+      # @return [String]
+      #
+      # @example
+      #   def test_run_identifier_description
+      #     "the 'code' query parameter"
+      #   end
+      def test_run_identifier_description
+        ''
+      end
+
       # Override this method to build the response.
       #
       # @return [Void]
@@ -278,12 +294,18 @@ module Inferno
       end
 
       # @private
+      def log_error(error, url: request.url)
+        session_prefix = @test_run ? " session=#{@test_run.test_session_id}" : ''
+        logger.error("[#{url}]#{session_prefix} #{error.full_message}")
+      end
+
+      # @private
       def find_test_run_identifier
         return @test_run_identifier if defined?(@test_run_identifier) # handle memoization in the nil case
 
         @test_run_identifier = test_run_identifier
       rescue StandardError => e
-        logger.error(e.full_message)
+        log_error(e)
         render_error_and_halt do
           error_response(
             'An error occurred while determining the test run identifier for this request.',
@@ -295,11 +317,16 @@ module Inferno
 
       # @private
       def no_session_message
-        if find_test_run_identifier.blank?
-          'No test identifier found.'
-        else
-          "Unable to find test run with identifier '#{find_test_run_identifier}'."
-        end
+        message =
+          if find_test_run_identifier.blank?
+            "No test identifier found on request to '#{request.url}'."
+          else
+            "Unable to find test run with identifier '#{find_test_run_identifier}' " \
+              "on request to '#{request.url}'."
+          end
+
+        description = test_run_identifier_description
+        description.present? ? "#{message} Expected in #{description}." : message
       end
 
       # @private
@@ -394,7 +421,7 @@ module Inferno
 
         make_response
       rescue StandardError => e
-        logger.error(e.full_message)
+        log_error(e)
         render_error_and_halt do
           error_response(
             'An error occurred while processing this request.',
@@ -406,7 +433,6 @@ module Inferno
 
       # @private
       def add_persistence_callback # rubocop:disable Metrics/CyclomaticComplexity
-        logger = Application['logger']
         env = req.env
         env['rack.after_reply'] ||= []
         env['rack.after_reply'] << proc do
@@ -452,7 +478,7 @@ module Inferno
             Inferno::Jobs.perform(Jobs::ResumeTestRun, test_run_id)
           end
         rescue StandardError => e
-          logger.error(e.full_message)
+          log_error(e, url:)
         end
       end
     end
