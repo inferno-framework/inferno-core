@@ -51,6 +51,19 @@ RSpec.describe '/test_runs' do
           expect(value).to eq(input[:value])
         end
       end
+
+      it 'enqueues an ExecuteTestRun job tagged with the session and run' do
+        Inferno::Repositories::TestRuns.new.mark_as_done(test_run.id)
+        allow(Inferno::Jobs).to receive(:perform)
+
+        post_json create_path, test_run_definition.merge(inputs:)
+
+        expect(Inferno::Jobs).to have_received(:perform).with(
+          Inferno::Jobs::ExecuteTestRun,
+          an_instance_of(String),
+          tags: contain_exactly("session:#{test_session.id}", "run:#{test_group_id}")
+        )
+      end
     end
 
     context 'with a test_run currently in progress' do
@@ -145,6 +158,77 @@ RSpec.describe '/test_runs' do
       delete router.path(:api_test_runs_destroy, id: test_run.id)
 
       expect(last_response.status).to eq(204)
+    end
+
+    it 'marks the test run as cancelling' do
+      delete router.path(:api_test_runs_destroy, id: test_run.id)
+
+      updated_run = Inferno::Repositories::TestRuns.new.find(test_run.id)
+
+      expect(updated_run.status).to eq('cancelling')
+    end
+
+    it 'does not enqueue a job when the test run is not waiting' do
+      allow(Inferno::Jobs).to receive(:perform)
+
+      delete router.path(:api_test_runs_destroy, id: test_run.id)
+
+      expect(Inferno::Jobs).to_not have_received(:perform)
+    end
+
+    context 'when the test run is waiting' do
+      let(:test_run) do
+        repo_create(:test_run, runnable: { test_group_id: }, status: 'waiting', wait_timeout: Time.now + 5.minutes)
+      end
+      let!(:waiting_result) do
+        repo_create(
+          :result,
+          test_run_id: test_run.id,
+          test_id: test_suite.groups.first.tests.first.id,
+          test_suite_id: nil,
+          test_group_id: nil,
+          result: 'wait'
+        )
+      end
+
+      it 'enqueues a ResumeTestRun job tagged with the source, session, run, and test' do
+        allow(Inferno::Jobs).to receive(:perform)
+
+        delete router.path(:api_test_runs_destroy, id: test_run.id)
+
+        expect(Inferno::Jobs).to have_received(:perform).with(
+          Inferno::Jobs::ResumeTestRun,
+          test_run.id,
+          tags: contain_exactly(
+            'source:delete',
+            "session:#{test_session.id}",
+            "run:#{test_group_id}",
+            "test:#{waiting_result.test_id}"
+          )
+        )
+      end
+
+      it 'marks the test run as cancelling before the resume job runs' do
+        # Stub the resume job so we can observe the state destroy.rb itself
+        # writes, rather than the end state after TestRunner's synchronous
+        # (in test) cascade completes the run.
+        allow(Inferno::Jobs).to receive(:perform)
+
+        delete router.path(:api_test_runs_destroy, id: test_run.id)
+
+        updated_run = Inferno::Repositories::TestRuns.new.find(test_run.id)
+
+        expect(updated_run.status).to eq('cancelling')
+      end
+
+      it 'marks the waiting result as cancelled' do
+        delete router.path(:api_test_runs_destroy, id: test_run.id)
+
+        updated_result = Inferno::Repositories::Results.new.find(waiting_result.id)
+
+        expect(updated_result.result).to eq('cancel')
+        expect(updated_result.result_message).to eq('Test cancelled by user')
+      end
     end
   end
 

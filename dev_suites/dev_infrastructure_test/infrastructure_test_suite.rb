@@ -14,6 +14,7 @@ require_relative 'operation_outcome_test_endpoint'
 require_relative 'resume_test_endpoint'
 require_relative 'mixed_optional_group'
 require_relative 'passing_optional_group'
+require_relative 'resume_test_endpoint'
 
 module InfrastructureTest
   class Suite < Inferno::TestSuite

@@ -406,6 +406,8 @@ module Inferno
       def resume
         req.env['inferno.resume_test_run'] = true
         req.env['inferno.test_run_id'] = test_run.id
+        req.env['inferno.run_identifier'] = test_run.test_suite_id || test_run.test_group_id || test_run.test_id
+        req.env['inferno.waiting_test_id'] = test.id
       end
 
       # @private
@@ -476,7 +478,16 @@ module Inferno
             test_run_id = env['inferno.test_run_id']
             Inferno::Repositories::TestRuns.new.mark_as_no_longer_waiting(test_run_id)
 
-            Inferno::Jobs.perform(Jobs::ResumeTestRun, test_run_id)
+            Inferno::Jobs.perform(
+              Jobs::ResumeTestRun,
+              test_run_id,
+              tags: [
+                'source:suite_endpoint',
+                "session:#{env['inferno.test_session_id']}",
+                "run:#{env['inferno.run_identifier']}",
+                "test:#{env['inferno.waiting_test_id']}"
+              ]
+            )
           end
         rescue StandardError => e
           log_error(e, url:)

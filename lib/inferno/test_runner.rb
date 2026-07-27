@@ -75,20 +75,27 @@ module Inferno
       outputs = save_outputs(test_instance)
       output_json_string = JSON.generate(outputs)
 
-      if result == 'wait'
-        test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
-      end
+      result_params = {
+        messages: test_instance.messages,
+        requests: test_instance.requests,
+        result:,
+        result_message: test_instance.result_message,
+        input_json: input_json_string,
+        output_json: output_json_string
+      }.merge(test.reference_hash)
 
-      test_result = persist_result(
-        {
-          messages: test_instance.messages,
-          requests: test_instance.requests,
-          result:,
-          result_message: test_instance.result_message,
-          input_json: input_json_string,
-          output_json: output_json_string
-        }.merge(test.reference_hash)
-      )
+      test_result =
+        if result == 'wait'
+          # The waiting status and the wait result must become visible to
+          # readers atomically, so that pollers never see the run waiting
+          # without the waiting test's result being present.
+          Inferno::Application['db.connection'].transaction do
+            test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
+            persist_result(result_params)
+          end
+        else
+          persist_result(result_params)
+        end
 
       # If running a single test, update its parents' results. If running a
       # group or suite, #run_group handles updating the parents.
@@ -249,9 +256,20 @@ module Inferno
     end
 
     def persist_result(params)
-      result = results_repo.create(
-        params.merge(test_run_id: test_run.id, test_session_id: test_session.id)
-      )
+      # A single result can cascade into many separate inserts (messages,
+      # requests, headers, tags). Wrapping them in one transaction turns that
+      # into a single lock acquisition instead of one per insert, cutting
+      # down on sqlite write-lock contention with concurrent readers/writers.
+      #
+      # If you change this, run `bundle exec rake db:check_concurrency` to verify
+      # SQLITE_BUSY is still avoided under concurrent test-run writes and status
+      # polling (see lib/inferno/utils/db_concurrency_check.rb for why that's a
+      # rake task and not a spec).
+      result = Inferno::Application['db.connection'].transaction do
+        results_repo.create(
+          params.merge(test_run_id: test_run.id, test_session_id: test_session.id)
+        )
+      end
 
       run_results[result.runnable.id] = result
     end

@@ -114,6 +114,17 @@ RSpec.describe Inferno::TestRunner do
 
       expect(results.length).to eq(3)
     end
+
+    it 'marks the test run as waiting and persists the wait result together' do
+      runner.run(group)
+
+      updated_run = Inferno::Repositories::TestRuns.new.find(test_run.id)
+      wait_result = results_repo.current_results_for_test_session(test_session.id).find { |r| r.result == 'wait' }
+
+      expect(updated_run.status).to eq('waiting')
+      expect(updated_run.identifier).to be_present
+      expect(wait_result).to be_present
+    end
   end
 
   describe 'when a request can not be loaded' do

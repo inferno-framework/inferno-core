@@ -97,7 +97,16 @@ module Inferno
         update_result(waiting_result, result_message)
         persist_request(request, test_run, waiting_result, test)
 
-        Jobs.perform(Jobs::ResumeTestRun, test_run.id)
+        Jobs.perform(
+          Jobs::ResumeTestRun,
+          test_run.id,
+          tags: [
+            'source:route',
+            "session:#{test_run.test_session_id}",
+            "run:#{test_run.test_suite_id || test_run.test_group_id || test_run.test_id}",
+            "test:#{test.id}"
+          ]
+        )
 
         res.redirect_to redirect_route(test_run, test)
       end
