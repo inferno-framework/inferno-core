@@ -168,7 +168,12 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
       expect(body['test_id']).to eq(InfrastructureTest::Suite.groups.first.groups.first.tests.first.id)
       expect(body['requests_repo_class']).to eq('Inferno::Repositories::Requests')
 
-      expect(Inferno::Jobs).to have_received(:perform).with(Inferno::Jobs::ResumeTestRun, test_run.id)
+      expect(Inferno::Jobs).to have_received(:perform)
+        .with(Inferno::Jobs::ResumeTestRun, test_run.id,
+              { tags: ['source:suite_endpoint',
+                       "session:#{test_run.test_session_id}",
+                       'run:basic',
+                       'test:infra_test-outer_inline_group-inner_inline_group-inline_test_1'] })
       expect(Inferno::Repositories::TestRuns.new.find(test_run.id).status).to eq('queued')
     end
   end
