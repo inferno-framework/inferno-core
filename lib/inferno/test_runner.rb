@@ -111,6 +111,15 @@ module Inferno
     # or timing metric per test instead of one that spans the whole run. The default
     # implementation just yields.
     #
+    # An override is responsible for actually running the test, so it must call
+    # `yield` (or `super` when prepended as a module) exactly once and return that
+    # value unchanged: it is the test's result, and the caller uses it to roll up
+    # parent results. An override that never yields silently skips the test and
+    # persists no result for it, and one that yields twice runs the test twice.
+    # Exceptions from the block are test runner failures rather than test failures
+    # (test failures are already recorded as results), so an override should let
+    # them propagate, re-raising after recording if it needs to observe them.
+    #
     # @param test [Class] the test being run (an Inferno::Entities::Test subclass)
     # @yield executes the test and returns its result
     # @return the value returned by the block
