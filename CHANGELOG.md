@@ -1,3 +1,7 @@
+## 1.4.2
+* ID-178: oj upgrade cleanup and execution scripts and logging improvements by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/799
+* Compute children_available_inputs once per available_inputs call by @KyleOps in https://github.com/inferno-framework/inferno-core/pull/803
+
 ## 1.4.1
 * bump dependencies by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/800
 
