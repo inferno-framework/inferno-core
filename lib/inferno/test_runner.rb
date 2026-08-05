@@ -106,13 +106,13 @@ module Inferno
       end
     end
 
-    # Wraps the execution of a single test. Override or prepend this method to run
-    # instrumentation around each test, for example to emit a distinct trace, span,
-    # or timing metric per test instead of one that spans the whole run.
+    # Wraps the execution of a single test. Prepend a module overriding this method
+    # to run instrumentation around each test, for example to emit a distinct trace,
+    # span, or timing metric per test instead of one that spans the whole run.
     #
-    # An override must `yield` (or `super`) exactly once and return that value
-    # unchanged: it is the test's result, and parent results are rolled up from it.
-    # An override that does not yield silently skips the test.
+    # An override must call `super` exactly once and return its value unchanged:
+    # it is the test's result, and parent results are rolled up from it. An
+    # override that does not call `super` silently skips the test.
     #
     # @param test [Class] the test being run (an Inferno::Entities::Test subclass)
     # @yield executes the test and returns its result
