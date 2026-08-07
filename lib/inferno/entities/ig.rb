@@ -31,8 +31,8 @@ module Inferno
       #        unpacked one
       # @param standalone_resources_directory [String] optional path to a directory of loose
       #        `*.json` FHIR resource files to merge in alongside the IG, eg author-maintained
-      #        resources (extra examples, local overrides) that aren't part of the IG package
-      #        itself. Primarily useful for test kit generator scripts.
+      #        resources (extra examples under 'package/example', local overrides) that aren't
+      #        part of the IG package itself. Primarily useful for test kit generator scripts.
       # @return [IG]
       def self.from_file(ig_path, standalone_resources_directory: nil)
         raise "#{ig_path} does not exist" unless File.exist?(ig_path)
@@ -138,12 +138,20 @@ module Inferno
       # itself, eg author-maintained resources (extra examples, local SearchParameter overrides,
       # etc) that a test kit generator keeps alongside a downloaded package. Files that aren't
       # valid FHIR resources are skipped. Does nothing if the directory doesn't exist.
-      # @param directory [String] path to a directory of loose `*.json` FHIR resource files
+      #
+      # Files are classified the same way as within an IG package: those under a `package/example`
+      # subdirectory are added to {#examples}, everything else (including files directly in
+      # `directory`) is added to {#resources_by_type}.
+      # @param directory [String] path to a directory of loose `*.json` FHIR resource files,
+      #        optionally nested under a `package/example` subdirectory
       # @return [self]
       def merge_standalone_resources(directory)
         return self unless File.directory?(directory)
 
-        Dir.glob(File.join(directory, '*.json')).each do |file_path|
+        base_path = Pathname.new(directory)
+        Dir.glob(File.join(directory, '**', '*.json')).each do |file_path|
+          relative_path = Pathname.new(file_path).relative_path_from(base_path).to_s
+
           begin
             resource = FHIR::Json.from_json(File.read(file_path))
             next if resource.nil?
@@ -151,7 +159,7 @@ module Inferno
             next
           end
 
-          handle_resource(resource, file_path)
+          handle_resource(resource, relative_path)
         end
 
         self

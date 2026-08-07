@@ -58,7 +58,7 @@ module Inferno
       # A MustSupport flag on an element under such a segment (eg Questionnaire.item.text)
       # should be considered met if it's populated at any depth of nesting
       # (item.text, item.item.text, item.item.item.text, ...), not just the literal depth
-      # at which the flag is declared.
+      # at which the flag is declared. NOTE: does not currently handle sliced recursive elements.
       # @return [Array<String>]
       def recursive_element_segments
         profile_elements

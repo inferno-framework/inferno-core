@@ -75,7 +75,9 @@ RSpec.describe Inferno::Entities::IG do
       after { FileUtils.remove_entry(standalone_resources_dir) }
 
       def write_standalone_resource(dir, file_name, resource)
-        File.write(File.join(dir, file_name), resource.to_json)
+        path = File.join(dir, file_name)
+        FileUtils.mkdir_p(File.dirname(path))
+        File.write(path, resource.to_json)
       end
 
       it 'merges in loose FHIR resource files from the given directory' do
@@ -86,6 +88,18 @@ RSpec.describe Inferno::Entities::IG do
         ig = described_class.from_file(uscore3_package, standalone_resources_directory: standalone_resources_dir)
 
         expect(ig.resources_by_type['Patient'].map(&:id)).to include('extra-patient')
+      end
+
+      it 'adds resources under a package/example subdirectory to examples, not resources_by_type' do
+        write_standalone_resource(
+          standalone_resources_dir, 'package/example/extra-example-patient.json',
+          FHIR::Patient.new(id: 'extra-example-patient')
+        )
+
+        ig = described_class.from_file(uscore3_package, standalone_resources_directory: standalone_resources_dir)
+
+        expect(ig.examples.map(&:id)).to include('extra-example-patient')
+        expect(ig.resources_by_type['Patient'].map(&:id)).to_not include('extra-example-patient')
       end
 
       it 'skips files that are not valid FHIR resources' do
@@ -132,6 +146,21 @@ RSpec.describe Inferno::Entities::IG do
 
       expect(ig.resources_by_type['Observation'].map(&:id)).to include('extra-observation')
       expect(ig.examples.map(&:id)).to_not include('extra-observation')
+    end
+
+    it 'adds resources nested under package/example to examples' do
+      nested_dir = File.join(standalone_resources_dir, 'package', 'example')
+      FileUtils.mkdir_p(nested_dir)
+      File.write(
+        File.join(nested_dir, 'extra-example-observation.json'),
+        FHIR::Observation.new(id: 'extra-example-observation').to_json
+      )
+
+      ig = described_class.from_file(uscore3_package)
+      ig.merge_standalone_resources(standalone_resources_dir)
+
+      expect(ig.examples.map(&:id)).to include('extra-example-observation')
+      expect(ig.resources_by_type['Observation'].map(&:id)).to_not include('extra-example-observation')
     end
   end
 end

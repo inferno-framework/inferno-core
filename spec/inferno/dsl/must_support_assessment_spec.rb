@@ -256,6 +256,133 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
     end
   end
 
+  describe 'must support test for an extension under a recursive element' do
+    let(:item_control_url) { 'http://example.org/StructureDefinition/item-control' }
+    let(:questionnaire_extension_metadata) do
+      OpenStruct.new(
+        must_supports: {
+          elements: [],
+          extensions: [
+            {
+              id: 'Questionnaire.item.extension:itemControl',
+              path: 'item.extension',
+              url: item_control_url
+            }
+          ],
+          slices: [],
+          recursive_elements: ['item']
+        }
+      )
+    end
+
+    it 'passes when the extension is only populated at the top level' do
+      questionnaire = FHIR::Questionnaire.new(
+        item: [{ linkId: '1', type: 'string', extension: [{ url: item_control_url, valueString: 'text-box' }] }]
+      )
+
+      result = run_with_metadata([questionnaire], questionnaire_extension_metadata)
+      expect(result).to be_empty
+    end
+
+    it 'passes when the extension is only populated several levels deeper' do
+      questionnaire = FHIR::Questionnaire.new(
+        item: [{
+          linkId: '1',
+          type: 'group',
+          item: [{
+            linkId: '1.1',
+            type: 'group',
+            item: [{ linkId: '1.1.1', type: 'string', extension: [{ url: item_control_url, valueString: 'text-box' }] }]
+          }]
+        }]
+      )
+
+      result = run_with_metadata([questionnaire], questionnaire_extension_metadata)
+      expect(result).to be_empty
+    end
+
+    it 'fails when the extension is absent at every depth' do
+      questionnaire = FHIR::Questionnaire.new(
+        item: [{ linkId: '1', type: 'group', item: [{ linkId: '1.1', type: 'group' }] }]
+      )
+
+      result = run_with_metadata([questionnaire], questionnaire_extension_metadata)
+      expect(result).to include('Questionnaire.item.extension:itemControl')
+    end
+  end
+
+  describe 'must support test for a slice under a recursive element' do
+    # Slices the recursive `item` array itself (rather than a plain element under it), by a
+    # patternCoding discriminator on `item.code`, to confirm slice-matching also searches at any
+    # depth of item nesting.
+    let(:questionnaire_slice_metadata) do
+      OpenStruct.new(
+        must_supports: {
+          elements: [],
+          extensions: [],
+          slices: [
+            {
+              slice_id: 'Questionnaire.item:demographics',
+              slice_name: 'demographics',
+              path: 'item',
+              discriminator: {
+                type: 'patternCoding',
+                path: 'code',
+                code: 'demo',
+                system: 'http://example.org/codes'
+              }
+            }
+          ],
+          recursive_elements: ['item']
+        }
+      )
+    end
+
+    def questionnaire_item_with_code(link_id, code, nested_item: nil)
+      {
+        linkId: link_id,
+        type: nested_item ? 'group' : 'string',
+        code: [{ system: 'http://example.org/codes', code: }],
+        item: nested_item
+      }.compact
+    end
+
+    it 'passes when the sliced item is only present at the top level' do
+      questionnaire = FHIR::Questionnaire.new(item: [questionnaire_item_with_code('1', 'demo')])
+
+      result = run_with_metadata([questionnaire], questionnaire_slice_metadata)
+      expect(result).to be_empty
+    end
+
+    it 'passes when the sliced item is only present several levels deeper' do
+      questionnaire = FHIR::Questionnaire.new(
+        item: [
+          questionnaire_item_with_code(
+            '1', 'other',
+            nested_item: [questionnaire_item_with_code('1.1', 'demo')]
+          )
+        ]
+      )
+
+      result = run_with_metadata([questionnaire], questionnaire_slice_metadata)
+      expect(result).to be_empty
+    end
+
+    it 'fails when the sliced item is absent at every depth' do
+      questionnaire = FHIR::Questionnaire.new(
+        item: [
+          questionnaire_item_with_code(
+            '1', 'other',
+            nested_item: [questionnaire_item_with_code('1.1', 'other')]
+          )
+        ]
+      )
+
+      result = run_with_metadata([questionnaire], questionnaire_slice_metadata)
+      expect(result).to include('Questionnaire.item:demographics')
+    end
+  end
+
   describe 'must support test for extensions' do
     let(:patient_profile) { fixture('StructureDefinition-us-core-patient.json') }
 
