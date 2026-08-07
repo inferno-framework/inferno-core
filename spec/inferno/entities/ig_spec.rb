@@ -110,6 +110,14 @@ RSpec.describe Inferno::Entities::IG do
         end.to_not raise_error
       end
 
+      it 'skips files that are not valid JSON at all' do
+        File.write(File.join(standalone_resources_dir, 'not-json.json'), '{not valid json')
+
+        expect do
+          described_class.from_file(uscore3_package, standalone_resources_directory: standalone_resources_dir)
+        end.to_not raise_error
+      end
+
       it 'does nothing when no directory is given' do
         ig = described_class.from_file(uscore3_package)
 
