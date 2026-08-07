@@ -19,6 +19,17 @@ RSpec.describe Inferno::Entities::IG do
       expect_uscore3_loaded_properly(ig)
     end
 
+    it 'raises an error when the path is neither a directory nor a .tgz file' do
+      invalid_dir = Dir.mktmpdir('invalid_ig')
+      invalid_path = File.join(invalid_dir, 'not-an-ig.txt')
+      File.write(invalid_path, 'not an ig')
+
+      expect { described_class.from_file(invalid_path) }
+        .to raise_error(/does not appear to be a directory or a .tgz file/)
+    ensure
+      FileUtils.remove_entry(invalid_dir)
+    end
+
     def expect_uscore3_loaded_properly(ig) # rubocop:disable Metrics/CyclomaticComplexity
       # For each artifact type in the IG, check:
       # the right number are loaded,
