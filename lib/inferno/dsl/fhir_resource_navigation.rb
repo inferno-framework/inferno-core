@@ -42,8 +42,13 @@ module Inferno
       # @param given_element [FHIR::Model, Array<FHIR::Model>]
       # @param path [String]
       # @param include_dar [Boolean]
+      # @param recursive_segments [Array<String>] names of path segments that are
+      #   self-referential (eg. `item` in Questionnaire.item.item, via a FHIR
+      #   `contentReference`). When a segment matches, the search also continues
+      #   into deeper repeats of that segment (item.item.item...) if the value
+      #   isn't found at the literal path depth.
       # @return a single matching value (which can include `false`) or `nil` if not found
-      def find_a_value_at(given_element, path, include_dar: false, &block)
+      def find_a_value_at(given_element, path, include_dar: false, recursive_segments: [], &block)
         return nil if given_element.nil?
 
         elements = Array.wrap(given_element)
@@ -56,8 +61,13 @@ module Inferno
         remaining_path = path_segments.join('.')
         elements.each do |element|
           child = get_next_value(element, segment)
-          element_found = find_a_value_at(child, remaining_path, include_dar:, &block)
+          element_found = find_a_value_at(child, remaining_path, include_dar:, recursive_segments:, &block)
           return element_found if value_not_empty?(element_found)
+
+          next unless recursive_segments.include?(segment)
+
+          nested_found = find_a_value_at(child, path, include_dar:, recursive_segments:, &block)
+          return nested_found if value_not_empty?(nested_found)
         end
 
         nil

@@ -53,6 +53,40 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
     end
   end
 
+  describe '#recursive_element_segments' do
+    let(:item_element) do
+      element = double
+      allow(element).to receive_messages(id: 'Questionnaire.item', contentReference: nil)
+      element
+    end
+
+    let(:nested_item_element) do
+      element = double
+      allow(element).to receive_messages(id: 'Questionnaire.item.item', contentReference: '#Questionnaire.item')
+      element
+    end
+
+    let(:text_element) do
+      element = double
+      allow(element).to receive_messages(id: 'Questionnaire.item.text', contentReference: nil)
+      element
+    end
+
+    it 'identifies the segment name of an element with a contentReference' do
+      extractor = described_class.new(
+        [item_element, nested_item_element, text_element], profile, 'Questionnaire', ig_resources
+      )
+
+      expect(extractor.recursive_element_segments).to eq(['item'])
+    end
+
+    it 'returns an empty array when no elements have a contentReference' do
+      extractor = described_class.new([item_element, text_element], profile, 'Questionnaire', ig_resources)
+
+      expect(extractor.recursive_element_segments).to eq([])
+    end
+  end
+
   describe '#get_type_must_support_metadata' do
     let(:metadata) do
       { path: 'path' }

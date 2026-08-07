@@ -199,6 +199,12 @@ module Inferno
           metadata.must_supports[:extensions]
         end
 
+        # Names of path segments that are self-referential (eg 'item' in Questionnaire.item.item)
+        # and so should be searched at any depth of nesting, not just the literal depth of a path.
+        def recursive_element_segments
+          Array.wrap(metadata.must_supports[:recursive_elements])
+        end
+
         def missing_extensions(resources = [])
           @missing_extensions ||=
             must_support_extensions.select do |extension_definition|
@@ -212,7 +218,7 @@ module Inferno
                     normalized_extension_url(extension.url) == expected_url
                   end
                 else
-                  extension = find_a_value_at(resource, path) do |el|
+                  extension = find_a_value_at(resource, path, recursive_segments: recursive_element_segments) do |el|
                     normalized_extension_url(el.url) == expected_url
                   end
 
@@ -243,9 +249,10 @@ module Inferno
           ms_extension_urls = must_support_extensions.select { |ex| ex[:path] == "#{raw_path}.extension" }
             .map { |ex| ex[:url] }
 
-          value_found = find_a_value_at(resource, path) do |potential_value|
-            matching_without_extensions?(potential_value, ms_extension_urls, element_definition[:fixed_value])
-          end
+          value_found =
+            find_a_value_at(resource, path, recursive_segments: recursive_element_segments) do |potential_value|
+              matching_without_extensions?(potential_value, ms_extension_urls, element_definition[:fixed_value])
+            end
 
           # Note that false.present? => false, which is why we need to add this extra check
           value_found.present? || value_found == false
@@ -369,7 +376,7 @@ module Inferno
           # TODO: there is a lot of similarity
           # between this and FHIRResourceNavigation.matching_slice?
           # Can these be combined?
-          find_a_value_at(resource, path) do |element|
+          find_a_value_at(resource, path, recursive_segments: recursive_element_segments) do |element|
             case discriminator[:type]
             when 'patternCodeableConcept'
               find_pattern_codeable_concept_slice(element, discriminator)

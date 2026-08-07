@@ -194,6 +194,68 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
     end
   end
 
+  describe 'must support test for a recursive element' do
+    # Questionnaire.item is self-referential (Questionnaire.item.item has a contentReference
+    # back to #Questionnaire.item), so a MustSupport flag declared once at `item.text`
+    # should be satisfiable at any depth of item nesting.
+    let(:questionnaire_metadata) do
+      OpenStruct.new(
+        must_supports: {
+          elements: [{ path: 'item.text' }],
+          extensions: [],
+          slices: [],
+          recursive_elements: ['item']
+        }
+      )
+    end
+
+    it 'passes when the element is only populated at the top level' do
+      questionnaire = FHIR::Questionnaire.new(item: [{ linkId: '1', type: 'string', text: 'top level text' }])
+
+      result = run_with_metadata([questionnaire], questionnaire_metadata)
+      expect(result).to be_empty
+    end
+
+    it 'passes when the element is only populated one level deeper (item.item.text)' do
+      questionnaire = FHIR::Questionnaire.new(
+        item: [{
+          linkId: '1',
+          type: 'group',
+          item: [{ linkId: '1.1', type: 'string', text: 'nested text' }]
+        }]
+      )
+
+      result = run_with_metadata([questionnaire], questionnaire_metadata)
+      expect(result).to be_empty
+    end
+
+    it 'passes when the element is only populated several levels deeper' do
+      questionnaire = FHIR::Questionnaire.new(
+        item: [{
+          linkId: '1',
+          type: 'group',
+          item: [{
+            linkId: '1.1',
+            type: 'group',
+            item: [{ linkId: '1.1.1', type: 'string', text: 'deeply nested text' }]
+          }]
+        }]
+      )
+
+      result = run_with_metadata([questionnaire], questionnaire_metadata)
+      expect(result).to be_empty
+    end
+
+    it 'fails when the element is absent at every depth' do
+      questionnaire = FHIR::Questionnaire.new(
+        item: [{ linkId: '1', type: 'group', item: [{ linkId: '1.1', type: 'group' }] }]
+      )
+
+      result = run_with_metadata([questionnaire], questionnaire_metadata)
+      expect(result).to eq(['item.text'])
+    end
+  end
+
   describe 'must support test for extensions' do
     let(:patient_profile) { fixture('StructureDefinition-us-core-patient.json') }
 

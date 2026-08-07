@@ -30,8 +30,25 @@ module Inferno
         @must_supports ||= {
           extensions: must_support_extensions,
           slices: must_support_slices,
-          elements: must_support_elements
+          elements: must_support_elements,
+          recursive_elements: recursive_element_segments
         }
+      end
+
+      # Names of path segments that are self-referential, ie, they may repeat at
+      # arbitrary depth. FHIR marks this with a `contentReference` back to an
+      # ancestor element instead of re-declaring the element's children, eg,
+      # Questionnaire.item.item has a contentReference of "#Questionnaire.item".
+      # A MustSupport flag on an element under such a segment (eg Questionnaire.item.text)
+      # should be considered met if it's populated at any depth of nesting
+      # (item.text, item.item.text, item.item.item.text, ...), not just the literal depth
+      # at which the flag is declared.
+      # @return [Array<String>]
+      def recursive_element_segments
+        profile_elements
+          .select { |element| element.contentReference.present? }
+          .map { |element| element.id.split('.').last }
+          .uniq
       end
 
       def by_requirement_extension_only?(element)
