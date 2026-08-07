@@ -68,5 +68,70 @@ RSpec.describe Inferno::Entities::IG do
       expect(race_ethnicity_cs.resourceType).to eq('CodeSystem')
       expect(race_ethnicity_cs.title).to eq('Race & Ethnicity - CDC')
     end
+
+    context 'with standalone_resources_directory' do
+      let(:standalone_resources_dir) { Dir.mktmpdir('standalone_resources') }
+
+      after { FileUtils.remove_entry(standalone_resources_dir) }
+
+      def write_standalone_resource(dir, file_name, resource)
+        File.write(File.join(dir, file_name), resource.to_json)
+      end
+
+      it 'merges in loose FHIR resource files from the given directory' do
+        write_standalone_resource(
+          standalone_resources_dir, 'extra-patient.json', FHIR::Patient.new(id: 'extra-patient')
+        )
+
+        ig = described_class.from_file(uscore3_package, standalone_resources_directory: standalone_resources_dir)
+
+        expect(ig.resources_by_type['Patient'].map(&:id)).to include('extra-patient')
+      end
+
+      it 'skips files that are not valid FHIR resources' do
+        File.write(File.join(standalone_resources_dir, 'not-fhir.json'), '{"not": "a fhir resource"}')
+
+        expect do
+          described_class.from_file(uscore3_package, standalone_resources_directory: standalone_resources_dir)
+        end.to_not raise_error
+      end
+
+      it 'does nothing when no directory is given' do
+        ig = described_class.from_file(uscore3_package)
+
+        expect_uscore3_loaded_properly(ig)
+      end
+
+      it 'does nothing when the given directory does not exist' do
+        ig = described_class.from_file(uscore3_package, standalone_resources_directory: '/no/such/directory')
+
+        expect_uscore3_loaded_properly(ig)
+      end
+    end
+  end
+
+  describe '#merge_standalone_resources' do
+    let(:standalone_resources_dir) { Dir.mktmpdir('standalone_resources') }
+
+    after { FileUtils.remove_entry(standalone_resources_dir) }
+
+    it 'returns self' do
+      ig = described_class.from_file(uscore3_package)
+
+      expect(ig.merge_standalone_resources(standalone_resources_dir)).to eq(ig)
+    end
+
+    it 'adds resources to resources_by_type rather than examples' do
+      File.write(
+        File.join(standalone_resources_dir, 'extra-observation.json'),
+        FHIR::Observation.new(id: 'extra-observation').to_json
+      )
+
+      ig = described_class.from_file(uscore3_package)
+      ig.merge_standalone_resources(standalone_resources_dir)
+
+      expect(ig.resources_by_type['Observation'].map(&:id)).to include('extra-observation')
+      expect(ig.examples.map(&:id)).to_not include('extra-observation')
+    end
   end
 end

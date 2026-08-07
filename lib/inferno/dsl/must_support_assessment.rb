@@ -15,10 +15,14 @@ module Inferno
       # @param resources [Array<FHIR::Resource>]
       # @param profile_url [String]
       # @param validator_name [Symbol] Name of the FHIR Validator that references the IG the profile is in
-      # @param metadata [Hash] MustSupport Metadata (optional),
-      #        if provided the check will use this instead of re-generating metadata from the profile
+      # @param metadata [Inferno::DSL::ProfileMetadata, #must_supports] MustSupport Metadata (optional),
+      #        if provided the check will use this instead of re-generating metadata from the profile.
+      #        Must respond to `#must_supports`, returning a Hash with `:elements`, `:extensions`, and
+      #        `:slices` keys (and optionally `:choices` and `:recursive_elements`) -- the shape produced by
+      #        {MustSupportMetadataExtractor#must_supports}. {Inferno::DSL::ProfileMetadata} is a base class
+      #        test kits can subclass to build these objects, eg from generated YAML, instead of hand-rolling one.
       # @param requirement_extension [String] Extension URL that implies "required" as an alternative to the MS flag
-      # @yield [Metadata] Customize the metadata before running the test
+      # @yield [MustSupportMetadataExtractor] Customize the metadata before running the test
       # @return [Array<String>] List of missing elements
       def missing_must_support_elements(resources, profile_url, validator_name: :default, metadata: nil,
                                         requirement_extension: nil, &)

@@ -24,6 +24,22 @@ module Inferno
         self.requirement_extension_url = requirement_extension_url
       end
 
+      # @return [String] the canonical URL of the profile
+      def profile_url
+        profile.url
+      end
+
+      # @return [String] the human-readable name of the profile, eg for display purposes.
+      #   Collapses any runs of repeated whitespace, since profile titles occasionally have them.
+      def profile_name
+        profile.title&.squeeze(' ')
+      end
+
+      # @return [String] the version of the profile itself (distinct from the IG's own version)
+      def profile_version
+        profile.version
+      end
+
       # Retrieval method for the must support metadata
       # @return [Hash]
       def must_supports

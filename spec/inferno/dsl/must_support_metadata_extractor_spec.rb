@@ -11,7 +11,8 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
 
   let(:profile) do
     profile = double
-    allow(profile).to receive_messages(baseDefinition: 'baseDefinition', name: 'name', type: 'type', version: 'version')
+    allow(profile).to receive_messages(baseDefinition: 'baseDefinition', name: 'name', type: 'type',
+                                       version: 'version', url: 'http://example.org/profile', title: 'Profile Title')
     profile
   end
   let(:ig_resources) do
@@ -50,6 +51,36 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
           }
         ]
       )
+    end
+  end
+
+  describe '#profile_url' do
+    it 'returns the url of the profile' do
+      expect(extractor.profile_url).to eq('http://example.org/profile')
+    end
+  end
+
+  describe '#profile_name' do
+    it 'returns the title of the profile' do
+      expect(extractor.profile_name).to eq('Profile Title')
+    end
+
+    it 'collapses runs of repeated whitespace' do
+      allow(profile).to receive(:title).and_return('Profile   With  Extra Spaces')
+
+      expect(extractor.profile_name).to eq('Profile With Extra Spaces')
+    end
+
+    it 'returns nil when the profile has no title' do
+      allow(profile).to receive(:title).and_return(nil)
+
+      expect(extractor.profile_name).to be_nil
+    end
+  end
+
+  describe '#profile_version' do
+    it 'returns the version of the profile' do
+      expect(extractor.profile_version).to eq('version')
     end
   end
 
