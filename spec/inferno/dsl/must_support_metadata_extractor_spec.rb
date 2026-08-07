@@ -47,10 +47,26 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
             id: 'id',
             path: 'foo.extension',
             url: 'http://example.org/StructureDefinition/example-extension',
-            modifier_extension: false
+            modifier_extension: false,
+            slice_name: nil
           }
         ]
       )
+    end
+  end
+
+  describe '#extension_slice_name' do
+    it 'returns the slice name from a simple sliced extension id' do
+      expect(extractor.extension_slice_name('Patient.extension:us-core-race')).to eq('us-core-race')
+    end
+
+    it 'returns the deepest slice name from a nested sliced extension id' do
+      id = 'Patient.extension:us-core-race.extension:ombCategory'
+      expect(extractor.extension_slice_name(id)).to eq('ombCategory')
+    end
+
+    it 'returns nil when the id has no slice' do
+      expect(extractor.extension_slice_name('Patient.extension')).to be_nil
     end
   end
 

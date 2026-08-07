@@ -86,6 +86,7 @@ module Inferno
         must_support_extension_elements.map do |element|
           {
             id: element.id,
+            slice_name: extension_slice_name(element.id),
             path: element.path.gsub("#{resource}.", ''),
             url: canonical_url_without_version(element.type.first.profile.first),
             modifier_extension: element.path.end_with?('modifierExtension')
@@ -93,6 +94,15 @@ module Inferno
             metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(element)
           end
         end
+      end
+
+      # The name of the deepest slice in a FHIR ElementDefinition id, eg "us-core-race" for
+      # "Patient.extension:us-core-race" or "ombCategory" for
+      # "Patient.extension:us-core-race.extension:ombCategory".
+      # @param element_id [String]
+      # @return [String, nil]
+      def extension_slice_name(element_id)
+        element_id.split('.').reverse.find { |segment| segment.include?(':') }&.split(':', 2)&.last
       end
 
       def canonical_url_without_version(url)

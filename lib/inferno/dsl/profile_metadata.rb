@@ -79,6 +79,35 @@ module Inferno
           hash[name] = value unless value.nil?
         end
       end
+
+      # Every Must Support element, slice, and extension in `must_supports`, each represented as a
+      # single string and sorted alphabetically. Unlike the list returned by a missing-elements
+      # check, this includes everything that's expected to be supported, not just what's absent
+      # from a particular set of resources.
+      #
+      # Elements are represented as their `path`, with the matched `fixed_value` appended after a
+      # colon where present (eg `"code.coding.code:45473-6"`). Slices and extensions are
+      # represented as their `path`, with their `slice_name` appended after a colon where present
+      # (eg `"category:us-core"`, `"extension:us-core-race"`).
+      # @return [Array<String>]
+      def must_support_strings
+        element_strings =
+          Array.wrap(must_supports[:elements]).map do |element|
+            must_support_string(element[:path], element[:fixed_value])
+          end
+        slice_strings =
+          Array.wrap(must_supports[:slices]).map { |slice| must_support_string(slice[:path], slice[:slice_name]) }
+        extension_strings =
+          Array.wrap(must_supports[:extensions]).map { |ext| must_support_string(ext[:path], ext[:slice_name]) }
+
+        (element_strings + slice_strings + extension_strings).sort
+      end
+
+      private
+
+      def must_support_string(path, suffix)
+        suffix.present? ? "#{path}:#{suffix}" : path
+      end
     end
   end
 end

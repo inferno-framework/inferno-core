@@ -34,6 +34,45 @@ RSpec.describe Inferno::DSL::ProfileMetadata do
     end
   end
 
+  describe '#must_support_strings' do
+    it 'combines elements, slices, and extensions into a single sorted list' do
+      metadata = described_class.new(
+        must_supports: {
+          elements: [{ path: 'status' }, { path: 'code.coding.code', fixed_value: '45473-6' }],
+          slices: [{ path: 'category', slice_name: 'us-core' }],
+          extensions: [{ path: 'extension', slice_name: 'us-core-race' }]
+        }
+      )
+
+      expect(metadata.must_support_strings).to eq(
+        [
+          'category:us-core',
+          'code.coding.code:45473-6',
+          'extension:us-core-race',
+          'status'
+        ]
+      )
+    end
+
+    it 'omits the colon suffix when there is no fixed_value or slice_name' do
+      metadata = described_class.new(
+        must_supports: {
+          elements: [{ path: 'status' }],
+          slices: [{ path: 'category' }],
+          extensions: [{ path: 'extension' }]
+        }
+      )
+
+      expect(metadata.must_support_strings).to eq(['category', 'extension', 'status'])
+    end
+
+    it 'returns an empty array when there are no must supports' do
+      metadata = described_class.new
+
+      expect(metadata.must_support_strings).to eq([])
+    end
+  end
+
   context 'with a subclass that declares additional attributes' do
     let(:subclass) do
       Class.new(described_class) do
