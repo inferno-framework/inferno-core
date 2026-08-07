@@ -11,7 +11,8 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
 
   let(:profile) do
     profile = double
-    allow(profile).to receive_messages(baseDefinition: 'baseDefinition', name: 'name', type: 'type', version: 'version')
+    allow(profile).to receive_messages(baseDefinition: 'baseDefinition', name: 'name', type: 'type',
+                                       version: 'version', url: 'http://example.org/profile', title: 'Profile Title')
     profile
   end
   let(:ig_resources) do
@@ -46,10 +47,90 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
             id: 'id',
             path: 'foo.extension',
             url: 'http://example.org/StructureDefinition/example-extension',
-            modifier_extension: false
+            modifier_extension: false,
+            slice_name: nil
           }
         ]
       )
+    end
+  end
+
+  describe '#extension_slice_name' do
+    it 'returns the slice name from a simple sliced extension id' do
+      expect(extractor.extension_slice_name('Patient.extension:us-core-race')).to eq('us-core-race')
+    end
+
+    it 'returns the deepest slice name from a nested sliced extension id' do
+      id = 'Patient.extension:us-core-race.extension:ombCategory'
+      expect(extractor.extension_slice_name(id)).to eq('ombCategory')
+    end
+
+    it 'returns nil when the id has no slice' do
+      expect(extractor.extension_slice_name('Patient.extension')).to be_nil
+    end
+  end
+
+  describe '#profile_url' do
+    it 'returns the url of the profile' do
+      expect(extractor.profile_url).to eq('http://example.org/profile')
+    end
+  end
+
+  describe '#profile_name' do
+    it 'returns the title of the profile' do
+      expect(extractor.profile_name).to eq('Profile Title')
+    end
+
+    it 'collapses runs of repeated whitespace' do
+      allow(profile).to receive(:title).and_return('Profile   With  Extra Spaces')
+
+      expect(extractor.profile_name).to eq('Profile With Extra Spaces')
+    end
+
+    it 'returns nil when the profile has no title' do
+      allow(profile).to receive(:title).and_return(nil)
+
+      expect(extractor.profile_name).to be_nil
+    end
+  end
+
+  describe '#profile_version' do
+    it 'returns the version of the profile' do
+      expect(extractor.profile_version).to eq('version')
+    end
+  end
+
+  describe '#recursive_element_segments' do
+    let(:item_element) do
+      element = double
+      allow(element).to receive_messages(id: 'Questionnaire.item', contentReference: nil)
+      element
+    end
+
+    let(:nested_item_element) do
+      element = double
+      allow(element).to receive_messages(id: 'Questionnaire.item.item', contentReference: '#Questionnaire.item')
+      element
+    end
+
+    let(:text_element) do
+      element = double
+      allow(element).to receive_messages(id: 'Questionnaire.item.text', contentReference: nil)
+      element
+    end
+
+    it 'identifies the segment name of an element with a contentReference' do
+      extractor = described_class.new(
+        [item_element, nested_item_element, text_element], profile, 'Questionnaire', ig_resources
+      )
+
+      expect(extractor.recursive_element_segments).to eq(['item'])
+    end
+
+    it 'returns an empty array when no elements have a contentReference' do
+      extractor = described_class.new([item_element, text_element], profile, 'Questionnaire', ig_resources)
+
+      expect(extractor.recursive_element_segments).to eq([])
     end
   end
 

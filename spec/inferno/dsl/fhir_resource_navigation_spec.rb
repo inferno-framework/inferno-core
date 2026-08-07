@@ -136,6 +136,44 @@ RSpec.describe Inferno::DSL::FHIRResourceNavigation do
 
       expect(result).to eq('2024-01-01')
     end
+
+    context 'with recursive_segments' do
+      let(:nested_questionnaire) do
+        FHIR::Questionnaire.new(
+          item: [{
+            linkId: '1',
+            type: 'group',
+            item: [{ linkId: '1.1', type: 'string', text: 'nested text' }]
+          }]
+        )
+      end
+
+      it 'finds a value nested deeper than the literal path when the segment is recursive' do
+        result = must_support_coverage_test.find_a_value_at(
+          nested_questionnaire, 'item.text', recursive_segments: ['item']
+        )
+
+        expect(result).to eq('nested text')
+      end
+
+      it 'does not search deeper occurrences of a segment when it is not marked recursive' do
+        result = must_support_coverage_test.find_a_value_at(nested_questionnaire, 'item.text')
+
+        expect(result).to be_nil
+      end
+
+      it 'still finds a value at the literal depth when the segment is recursive' do
+        top_level_questionnaire = FHIR::Questionnaire.new(
+          item: [{ linkId: '1', type: 'string', text: 'top level text' }]
+        )
+
+        result = must_support_coverage_test.find_a_value_at(
+          top_level_questionnaire, 'item.text', recursive_segments: ['item']
+        )
+
+        expect(result).to eq('top level text')
+      end
+    end
   end
 
   describe '#matching_type_slice?' do
