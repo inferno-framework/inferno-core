@@ -1,10 +1,19 @@
 require_relative 'empty_group'
 require_relative 'external_outer_group'
 require_relative 'failing_optional_group'
+require_relative 'blank_identifier_test_endpoint'
+require_relative 'custom_no_session_response_test_endpoint'
+require_relative 'exception_operation_outcome_test_endpoint'
+require_relative 'exception_test_endpoint'
+require_relative 'identifier_error_operation_outcome_test_endpoint'
+require_relative 'identifier_error_test_endpoint'
+require_relative 'identifier_description_test_endpoint'
 require_relative 'json_test_endpoint'
+require_relative 'no_session_test_endpoint'
+require_relative 'operation_outcome_test_endpoint'
+require_relative 'resume_test_endpoint'
 require_relative 'mixed_optional_group'
 require_relative 'passing_optional_group'
-require_relative 'resume_test_endpoint'
 
 module InfrastructureTest
   class Suite < Inferno::TestSuite
@@ -32,6 +41,15 @@ module InfrastructureTest
     ]
 
     suite_endpoint :post, '/json_test', JSONTestEndpoint
+    suite_endpoint :post, '/blank_identifier_test', BlankIdentifierTestEndpoint
+    suite_endpoint :post, '/custom_no_session_response_test', CustomNoSessionResponseTestEndpoint
+    suite_endpoint :post, '/exception_test', ExceptionTestEndpoint
+    suite_endpoint :post, '/exception_operation_outcome_test', ExceptionOperationOutcomeTestEndpoint
+    suite_endpoint :post, '/identifier_error_test', IdentifierErrorTestEndpoint
+    suite_endpoint :post, '/identifier_error_operation_outcome_test', IdentifierErrorOperationOutcomeTestEndpoint
+    suite_endpoint :post, '/identifier_description_test', IdentifierDescriptionTestEndpoint
+    suite_endpoint :post, '/no_session_test', NoSessionTestEndpoint
+    suite_endpoint :post, '/operation_outcome_test', OperationOutcomeTestEndpoint
     suite_endpoint :post, '/resume_test', ResumeTestEndpoint
 
     input :suite_input
