@@ -8,7 +8,7 @@ This Dockerfile is based on the Dockerfile for org.hl7.fhir.validator-wrapper (s
    - SESSION_CACHE_DURATION=-1
      - These enable the old session cache implementation, and configure the session cache to never expire sessions.
    - TERMINOLOGY_CLIENT_USE_CACHE_ID=false
-     - This disable terminology caches on tx.fhir.org because they are not long-running like validator sessions in Inferno and were causing errors 
+     - This disables terminology caches on tx.fhir.org because they are not long-running like validator sessions in Inferno and were causing errors 
    - VALIDATION_SERVICE_PRESETS_FILE_PATH=ignore-this-do-not-load-presets
      - This disables loading presets at service startup by pointing it to a non-existent file. (There is no other explicit value or setting for "do not load presets")
 
