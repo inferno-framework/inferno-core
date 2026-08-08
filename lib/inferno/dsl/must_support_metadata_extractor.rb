@@ -24,13 +24,18 @@ module Inferno
         self.requirement_extension_url = requirement_extension_url
       end
 
-      # Retrieval method for the must support metadata
+      # Retrieval method for the must support metadata.
+      #
+      # The :elements list now includes both must-support entries (no must_support flag,
+      # defaulting to true) and non-must-support entries (explicitly tagged
+      # must_support: false) - see {#non_must_support_elements}. Consumers that only
+      # want MS entries must filter on `entry[:must_support] != false`.
       # @return [Hash]
       def must_supports
         @must_supports ||= {
           extensions: must_support_extensions,
           slices: must_support_slices,
-          elements: must_support_elements
+          elements: must_support_elements + non_must_support_elements
         }
       end
 
@@ -478,6 +483,53 @@ module Inferno
         must_support_elements_metadata.delete_if do |metadata|
           metadata[:path] == current_metadata[:path] && metadata[:fixed_value].blank?
         end
+      end
+
+      # Enumerate non-must-support, non-required profile elements that are direct
+      # children of either the resource root or a must-support element. These are
+      # the elements a conforming client request must NOT contain (see Da Vinci
+      # CRD conf-10 / conf-13 and PAS conf-12).
+      #
+      # Each entry is tagged `must_support: false` so consumers can distinguish
+      # them from the must-support entries that share the same list.
+      # @return [Array<Hash>]
+      def non_must_support_elements
+        ms_element_ids = all_must_support_elements.to_set(&:id)
+        allowed_parent_ids = ms_element_ids + [resource]
+
+        candidate_non_ms_elements.filter_map do |element|
+          parent_id = parent_element_id(element.id)
+          next unless allowed_parent_ids.include?(parent_id)
+
+          { path: element.id.gsub("#{resource}.", ''), must_support: false }
+        end
+      end
+
+      def candidate_non_ms_elements
+        profile_elements.reject { |element| skip_for_non_ms_check?(element) }
+      end
+
+      def skip_for_non_ms_check?(element)
+        element.id == resource ||
+          element.path.end_with?('xtension') ||
+          element.sliceName.present? ||
+          element.mustSupport ||
+          by_requirement_extension_only?(element) ||
+          required_element?(element)
+      end
+
+      def required_element?(element)
+        element.min.is_a?(Integer) && element.min.positive?
+      end
+
+      def parent_element_id(id)
+        # Drop the last '.' segment to get the parent id. Slice suffixes (":sliceName")
+        # remain attached to their segment, so allowed-parent comparisons still work
+        # because we built the allowed set from element ids.
+        parts = id.split('.')
+        return nil if parts.length <= 1
+
+        parts[0..-2].join('.')
       end
     end
   end

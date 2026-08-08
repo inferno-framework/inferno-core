@@ -32,6 +32,44 @@ module Inferno
         end
       end
 
+      # Find any non-Must-Support elements that ARE present in the given resources.
+      #
+      # Implements the Da Vinci Burden Reduction conformance rules (CRD conf-10/13,
+      # PAS conf-12) for client requests: a conforming client must not depend on
+      # non-must-support elements, which we verify by ensuring it does not populate
+      # them. Reports both populated non-MS elements and any extensions whose URLs
+      # are not defined as must-support in the profile.
+      #
+      # The metadata schema mirrors {#missing_must_support_elements}: entries in
+      # `must_supports[:elements]` are treated as non-MS when tagged with
+      # `must_support: false`. Entries without the flag are assumed to be MS, which
+      # preserves the behavior of existing metadata generated before this method
+      # was added.
+      #
+      # @param resources [Array<FHIR::Resource>]
+      # @param profile_url [String]
+      # @param validator_name [Symbol]
+      # @param metadata [Hash] Pre-built metadata (skips re-extraction)
+      # @param requirement_extension [String]
+      # @yield [Metadata] Customize the metadata before running the check
+      # @return [Array<String>] non-MS element paths and unexpected extension URLs that were found
+      def non_must_support_elements_present(resources, profile_url, validator_name: :default, metadata: nil,
+                                            requirement_extension: nil, &)
+        debug_metadata = config.options[:debug_must_support_metadata]
+
+        if metadata.present?
+          InternalMustSupportLogic.new
+            .perform_non_must_support_check_with_metadata(resources, metadata, debug_metadata:)
+        else
+          ig, profile = find_ig_and_profile(profile_url, validator_name)
+          test_impl = InternalMustSupportLogic.new
+          profile_metadata = test_impl.extract_metadata(profile, ig, requirement_extension:)
+          yield profile_metadata if block_given?
+
+          test_impl.perform_non_must_support_check_with_metadata(resources, profile_metadata, debug_metadata:)
+        end
+      end
+
       # perform_must_support_assessment allows customizing the metadata with a block.
       # Customizing the metadata may add, modify, or remove items.
       # For instance, US Core 3.1.1 Patient "Previous Name" is defined as MS only in narrative.
@@ -187,6 +225,89 @@ module Inferno
             missing_extensions.map { |extension_definition| extension_definition[:id] }
         end
 
+        # Run the non-must-support presence check (CRD conf-10/13, PAS conf-12).
+        # If the metadata has no entries explicitly flagged as must_support: false,
+        # the check is skipped entirely so that callers using pre-existing metadata
+        # (which never carried non-MS entries) continue to behave as before.
+        # @param resources [Array<FHIR::Model>]
+        # @param profile_metadata [Metadata]
+        # @param debug_metadata [Boolean]
+        # @return [Array<String>] paths/URLs of non-MS elements or undefined extensions that were found
+        def perform_non_must_support_check_with_metadata(resources, profile_metadata, debug_metadata: false)
+          return [] if resources.blank?
+
+          @metadata = profile_metadata
+
+          write_metadata_for_debugging if debug_metadata
+
+          return [] unless metadata_opts_into_non_must_support_check?
+
+          present_non_must_support_elements(resources) + unexpected_extensions(resources)
+        end
+
+        # Metadata produced by the current extractor enumerates non-MS entries with
+        # `must_support: false`. Older metadata (or metadata customized to suppress
+        # the check) has no such entries, in which case we don't run the analysis.
+        def metadata_opts_into_non_must_support_check?
+          metadata.must_supports[:elements].any? { |element| element[:must_support] == false }
+        end
+
+        # @return [Array<String>] paths of non-MS elements found in any resource
+        def present_non_must_support_elements(resources)
+          present = non_must_support_elements.select do |element_definition|
+            resources.any? { |resource| resource_populates_element?(resource, element_definition) }
+          end
+          present.map { |element_definition| missing_element_string(element_definition) }
+        end
+
+        # @return [Array<String>] URLs of extensions present on any resource that are
+        #   not declared as must-support in the profile metadata. Recursively walks
+        #   sibling/child FHIR elements, but does NOT recurse into the internal
+        #   structure of an extension - sub-extensions of a complex extension belong
+        #   to the parent extension's definition and would otherwise produce noise
+        #   (e.g., `ombCategory` inside `us-core-race`).
+        def unexpected_extensions(resources)
+          allowed_urls = must_support_extensions.to_set { |extension| normalized_extension_url(extension[:url]) }
+
+          resources.flat_map { |resource| collect_extension_urls(resource) }
+            .uniq
+            .reject { |url| allowed_urls.include?(normalized_extension_url(url)) }
+        end
+
+        def collect_extension_urls(element)
+          return [] unless element.is_a?(FHIR::Model)
+
+          urls = direct_extension_urls(element)
+
+          non_extension_child_models(element).each do |child|
+            urls.concat(collect_extension_urls(child))
+          end
+
+          urls
+        end
+
+        def direct_extension_urls(element)
+          urls = []
+          [:extension, :modifierExtension].each do |field|
+            next unless element.respond_to?(field)
+
+            Array.wrap(element.public_send(field)).each do |extension|
+              urls << extension.url if extension.respond_to?(:url) && extension.url.present?
+            end
+          end
+          urls
+        end
+
+        def non_extension_child_models(element)
+          element.instance_variables.flat_map do |name|
+            next [] if [:@extension, :@modifierExtension].include?(name)
+
+            Array.wrap(element.instance_variable_get(name)).select do |value|
+              value.is_a?(FHIR::Model) && !value.is_a?(FHIR::Extension)
+            end
+          end
+        end
+
         def missing_element_string(element_definition)
           if element_definition[:fixed_value].present?
             "#{element_definition[:path]}:#{element_definition[:fixed_value]}"
@@ -196,7 +317,7 @@ module Inferno
         end
 
         def must_support_extensions
-          metadata.must_supports[:extensions]
+          metadata.must_supports[:extensions].reject { |extension| extension[:must_support] == false }
         end
 
         def missing_extensions(resources = [])
@@ -223,7 +344,11 @@ module Inferno
         end
 
         def must_support_elements
-          metadata.must_supports[:elements]
+          metadata.must_supports[:elements].reject { |element| element[:must_support] == false }
+        end
+
+        def non_must_support_elements
+          metadata.must_supports[:elements].select { |element| element[:must_support] == false }
         end
 
         def missing_elements(resources = [])

@@ -1402,4 +1402,188 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       expect(result).to include('subject')
     end
   end
+
+  describe 'non-must-support element check (CRD conf-10/13, PAS conf-12)' do
+    def run_non_ms_with_metadata(resources, metadata)
+      test_impl.non_must_support_elements_present(resources, nil, metadata:)
+    end
+
+    let(:patient_metadata) do
+      OpenStruct.new(
+        must_supports: {
+          extensions: [
+            {
+              id: 'Patient.extension:race',
+              path: 'extension',
+              url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-race'
+            }
+          ],
+          slices: [],
+          elements: [
+            { path: 'identifier' },
+            { path: 'name' },
+            { path: 'name.family' },
+            { path: 'gender' },
+            { path: 'communication', must_support: false },
+            { path: 'birthDate', must_support: false }
+          ]
+        }
+      )
+    end
+
+    let(:bare_patient) do
+      FHIR::Patient.new(
+        identifier: [{ system: 'system', value: 'value' }],
+        name: [{ family: 'family' }],
+        gender: 'male',
+        extension: [
+          {
+            url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-race',
+            extension: [{ url: 'ombCategory', valueCoding: { display: 'display' } }]
+          }
+        ]
+      )
+    end
+
+    it 'passes when only must-support elements are populated' do
+      result = run_non_ms_with_metadata([bare_patient], patient_metadata)
+      expect(result).to be_empty
+    end
+
+    it 'flags a populated non-must-support element' do
+      bare_patient.birthDate = '2020-01-01'
+
+      result = run_non_ms_with_metadata([bare_patient], patient_metadata)
+      expect(result).to include('birthDate')
+    end
+
+    it 'flags multiple populated non-must-support elements' do
+      bare_patient.birthDate = '2020-01-01'
+      bare_patient.communication = [{ language: { text: 'en' } }]
+
+      result = run_non_ms_with_metadata([bare_patient], patient_metadata)
+      expect(result).to include('birthDate', 'communication')
+    end
+
+    it 'passes when metadata has no explicit must_support flags (backwards compatibility)' do
+      legacy_metadata = OpenStruct.new(
+        must_supports: {
+          extensions: [],
+          slices: [],
+          elements: [
+            { path: 'identifier' },
+            { path: 'name' },
+            { path: 'gender' }
+          ]
+        }
+      )
+
+      bare_patient.birthDate = '2020-01-01'
+
+      result = run_non_ms_with_metadata([bare_patient], legacy_metadata)
+      expect(result).to be_empty
+    end
+
+    it 'flags an extension whose url is not defined as must-support' do
+      bare_patient.extension << FHIR::Extension.new(
+        url: 'http://example.org/StructureDefinition/undefined-extension',
+        valueString: 'value'
+      )
+
+      result = run_non_ms_with_metadata([bare_patient], patient_metadata)
+      expect(result).to include('http://example.org/StructureDefinition/undefined-extension')
+    end
+
+    it 'does not flag an extension defined as must-support' do
+      result = run_non_ms_with_metadata([bare_patient], patient_metadata)
+      expect(result).to_not include('http://hl7.org/fhir/us/core/StructureDefinition/us-core-race')
+    end
+
+    it 'matches must-support extensions even when the url carries a canonical version' do
+      versioned_metadata = OpenStruct.new(
+        must_supports: {
+          extensions: [
+            {
+              id: 'Patient.extension:race',
+              path: 'extension',
+              url: 'http://hl7.org/fhir/us/core/StructureDefinition/us-core-race|1.0.0'
+            }
+          ],
+          slices: [],
+          elements: []
+        }
+      )
+
+      result = run_non_ms_with_metadata([bare_patient], versioned_metadata)
+      expect(result).to_not include(a_string_starting_with('http://hl7.org/fhir/us/core/StructureDefinition/us-core-race'))
+    end
+
+    it 'does not flag sub-extensions inside a known must-support complex extension' do
+      # `ombCategory` is a sub-slice of us-core-race; it is part of the extension's
+      # own definition, not a separate extension used by the client.
+      result = run_non_ms_with_metadata([bare_patient], patient_metadata)
+      expect(result).to_not include('ombCategory')
+    end
+
+    it 'flags an unknown extension nested on a non-extension sub-element' do
+      bare_patient.name.first.extension = [
+        FHIR::Extension.new(
+          url: 'http://example.org/StructureDefinition/name-quirk',
+          valueString: 'value'
+        )
+      ]
+
+      result = run_non_ms_with_metadata([bare_patient], patient_metadata)
+      expect(result).to include('http://example.org/StructureDefinition/name-quirk')
+    end
+
+    it 'returns an empty array when no resources are provided' do
+      result = run_non_ms_with_metadata([], patient_metadata)
+      expect(result).to eq([])
+    end
+
+    it 'does not flag entries explicitly marked must_support: true' do
+      explicit_ms_metadata = OpenStruct.new(
+        must_supports: {
+          extensions: [],
+          slices: [],
+          elements: [
+            { path: 'gender', must_support: true },
+            { path: 'identifier', must_support: true },
+            { path: 'name', must_support: true }
+          ]
+        }
+      )
+
+      result = run_non_ms_with_metadata([bare_patient], explicit_ms_metadata)
+      expect(result).to_not include('gender', 'identifier', 'name')
+    end
+  end
+
+  describe 'non_must_support_elements via the metadata extractor' do
+    let(:patient_profile) { fixture('StructureDefinition-us-core-patient.json') }
+    let(:patient_extractor) do
+      Inferno::DSL::MustSupportMetadataExtractor.new(
+        patient_profile.snapshot.element, patient_profile, patient_profile.type, nil
+      )
+    end
+
+    it 'enumerates non-MS elements with the must_support: false flag' do
+      non_ms = patient_extractor.non_must_support_elements
+
+      expect(non_ms).to be_an(Array)
+      expect(non_ms).to all(include(must_support: false))
+      # US Core 3 patient does not mark `active` as MS; it should appear in the non-MS list.
+      expect(non_ms.map { |entry| entry[:path] }).to include('active')
+    end
+
+    it 'merges must-support and non-must-support entries into must_supports[:elements]' do
+      elements = patient_extractor.must_supports[:elements]
+      ms_paths = elements.reject { |entry| entry[:must_support] == false }.map { |entry| entry[:path] }
+      non_ms_paths = elements.select { |entry| entry[:must_support] == false }.map { |entry| entry[:path] }
+
+      expect(ms_paths).to include('identifier', 'name', 'gender')
+      expect(non_ms_paths).to include('active')
+    end
+  end
 end
