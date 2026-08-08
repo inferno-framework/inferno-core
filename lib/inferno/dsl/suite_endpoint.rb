@@ -1,5 +1,6 @@
 require 'hanami/controller'
 require 'rack/request'
+require 'fhir_models'
 require_relative '../ext/rack'
 
 module Inferno
@@ -14,6 +15,8 @@ module Inferno
     #       def test_run_identifier
     #         request.headers['authorization']&.delete_prefix('Bearer ')
     #       end
+    #
+    #       error_response_format :operation_outcome
     #
     #       # Return a json FHIR Patient resource
     #       def make_response
@@ -57,8 +60,46 @@ module Inferno
     #         end
     #       end
     #     end
+    #
     class SuiteEndpoint < Hanami::Action
       attr_reader :req, :res
+
+      # The built-in options for `error_response_format`
+      ERROR_RESPONSE_FORMATS = [:text, :operation_outcome].freeze
+
+      class << self
+        # Select one of Inferno's standard response formats to be returned
+        # whenever Inferno has to render an error response of its own due
+        # to problems finding the target session or an unhandled exception.
+        # You can override {#no_session_response} to customize the response
+        # in the no-session case.
+        #
+        # * `:text` (default): a `500` response with a plain text message
+        # * `:operation_outcome`: a `500` response with a FHIR
+        #   `OperationOutcome` serialized as `application/fhir+json`
+        #
+        # @param format [Symbol] `:text` or `:operation_outcome`
+        # @return [void]
+        #
+        # @example
+        #   class MyEndpoint < Inferno::DSL::SuiteEndpoint
+        #     error_response_format :operation_outcome
+        #   end
+        def error_response_format(format)
+          unless ERROR_RESPONSE_FORMATS.include?(format)
+            raise ArgumentError,
+                  "Unknown error_response_format `#{format.inspect}`. " \
+                  "Must be one of #{ERROR_RESPONSE_FORMATS.join(', ')}."
+          end
+
+          @error_response_format_value = format
+        end
+
+        # @private
+        def error_response_format_value
+          @error_response_format_value ||= :text
+        end
+      end
 
       # @!group Overrides These methods should be overridden by subclasses to
       #   define the behavior of the endpoint
@@ -76,6 +117,22 @@ module Inferno
       #   end
       def test_run_identifier
         nil
+      end
+
+      # Override this method to provide a short narrative description of
+      # where the test run identifier is expected to be found in an
+      # incoming request. When provided, this description is appended to
+      # the {#no_session_message} to help implementers debug requests that
+      # don't match a waiting test run.
+      #
+      # @return [String]
+      #
+      # @example
+      #   def test_run_identifier_location_description
+      #     "the 'code' query parameter"
+      #   end
+      def test_run_identifier_location_description
+        ''
       end
 
       # Override this method to build the response.
@@ -126,6 +183,26 @@ module Inferno
       # @return [Boolean]
       def persist_request?
         true
+      end
+
+      # Override this method to fully customize the response returned when no
+      # waiting test run/session can be found for the incoming request. Set
+      # `response.status` and `response.body` (and `response.content_type`, if
+      # needed) — Inferno halts the request with those values. By default,
+      # this renders one of Inferno's standard responses based on the format
+      # selected with `error_response_format` (a plain text `500` response if
+      # none was selected).
+      #
+      # @return [Void]
+      #
+      # @example
+      #   def no_session_response
+      #     response.status = 404
+      #     response.format = :json
+      #     response.body = { error: 'no matching session' }.to_json
+      #   end
+      def no_session_response
+        error_response(no_session_message, code: 'not-found')
       end
 
       # @!endgroup
@@ -192,7 +269,7 @@ module Inferno
       def test_run
         @test_run ||=
           test_runs_repo.find_latest_waiting_by_identifier(find_test_run_identifier).tap do |test_run|
-            halt 500, "Unable to find test run with identifier '#{test_run_identifier}'." if test_run.nil?
+            render_error_and_halt { no_session_response } if test_run.nil?
           end
       end
 
@@ -217,10 +294,85 @@ module Inferno
       end
 
       # @private
+      def log_error(error, url: request.url)
+        session_prefix = @test_run ? " session=#{@test_run.test_session_id}" : ''
+        logger.error("[#{url}]#{session_prefix} #{error.full_message}")
+      end
+
+      # @private
       def find_test_run_identifier
-        @test_run_identifier ||= test_run_identifier
+        return @test_run_identifier if defined?(@test_run_identifier) # handle memoization in the nil case
+
+        @test_run_identifier = test_run_identifier
       rescue StandardError => e
-        halt 500, "Unable to determine test run identifier:\n#{e.full_message}"
+        log_error(e)
+        render_error_and_halt do
+          error_response(
+            'An error occurred while determining the test run identifier for this request.',
+            code: 'exception',
+            diagnostics: e.full_message
+          )
+        end
+      end
+
+      # @private
+      def no_session_message
+        base_message = "Unable to find test run for request to '#{request.url}'"
+        location = test_run_identifier_location_description
+        identifier = find_test_run_identifier
+
+        if identifier.blank?
+          detail = location.present? ? " in #{location}" : ''
+          "#{base_message}: no identifier found#{detail}."
+        else
+          detail = location.present? ? ", found in #{location}," : ''
+          "#{base_message}: identifier '#{identifier}'#{detail} is not associated with a waiting session."
+        end
+      end
+
+      # @private
+      # Yields to build the response, then halts with whatever ended up in
+      # `response.status`/`response.body`. Centralizing the halt here means
+      # overrides of the response-building hooks (e.g. #no_session_response)
+      # never need to remember to call `halt` themselves.
+      def render_error_and_halt
+        yield
+        halt response.status, response.body.join
+      end
+
+      # @private
+      # `message` is a short, human-readable summary (goes in the
+      # OperationOutcome issue's `details.text`, or stands alone as the whole
+      # plain text body). `diagnostics`, if given, is technical detail — e.g.
+      # an exception's full backtrace — that goes in the issue's
+      # `diagnostics` element, or is appended to the plain text body.
+      def error_response(message, code:, diagnostics: nil)
+        case self.class.error_response_format_value
+        when :operation_outcome
+          operation_outcome_error_response(message, code:, diagnostics:)
+        else
+          text_error_response(message, diagnostics:)
+        end
+      end
+
+      # @private
+      def text_error_response(message, diagnostics: nil)
+        response.status = 500
+        response.body = diagnostics ? "#{message}\n#{diagnostics}" : message
+      end
+
+      # @private
+      def operation_outcome_error_response(message, code:, diagnostics: nil)
+        issue = FHIR::OperationOutcome::Issue.new(
+          severity: 'fatal',
+          code:,
+          details: FHIR::CodeableConcept.new(text: message)
+        )
+        issue.diagnostics = diagnostics if diagnostics
+
+        response.status = 500
+        response.content_type = 'application/fhir+json'
+        response.body = FHIR::OperationOutcome.new(issue: [issue]).to_json
       end
 
       # @private
@@ -254,6 +406,8 @@ module Inferno
       def resume
         req.env['inferno.resume_test_run'] = true
         req.env['inferno.test_run_id'] = test_run.id
+        req.env['inferno.run_identifier'] = test_run.test_suite_id || test_run.test_group_id || test_run.test_id
+        req.env['inferno.waiting_test_id'] = test.id
       end
 
       # @private
@@ -270,12 +424,18 @@ module Inferno
 
         make_response
       rescue StandardError => e
-        halt 500, e.full_message
+        log_error(e)
+        render_error_and_halt do
+          error_response(
+            'An error occurred while processing this request.',
+            code: 'exception',
+            diagnostics: e.full_message
+          )
+        end
       end
 
       # @private
       def add_persistence_callback # rubocop:disable Metrics/CyclomaticComplexity
-        logger = Application['logger']
         env = req.env
         env['rack.after_reply'] ||= []
         env['rack.after_reply'] << proc do
@@ -318,10 +478,19 @@ module Inferno
             test_run_id = env['inferno.test_run_id']
             Inferno::Repositories::TestRuns.new.mark_as_no_longer_waiting(test_run_id)
 
-            Inferno::Jobs.perform(Jobs::ResumeTestRun, test_run_id)
+            Inferno::Jobs.perform(
+              Jobs::ResumeTestRun,
+              test_run_id,
+              tags: [
+                'source:suite_endpoint',
+                "session:#{env['inferno.test_session_id']}",
+                "run:#{env['inferno.run_identifier']}",
+                "test:#{env['inferno.waiting_test_id']}"
+              ]
+            )
           end
         rescue StandardError => e
-          logger.error(e.full_message)
+          log_error(e, url:)
         end
       end
     end

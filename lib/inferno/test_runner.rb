@@ -59,28 +59,24 @@ module Inferno
     end
 
     def run_test(test, scratch)
-      inputs = load_inputs(test)
-      input_json_string = inputs_as_json(test, inputs)
+      around_test(test) do
+        inputs = load_inputs(test)
+        input_json_string = inputs_as_json(test, inputs)
 
-      test_instance =
-        test.new(
-          inputs:,
-          test_session_id: test_session.id,
-          scratch:,
-          suite_options: test_session.suite_options_hash
-        )
+        test_instance =
+          test.new(
+            inputs:,
+            test_session_id: test_session.id,
+            scratch:,
+            suite_options: test_session.suite_options_hash
+          )
 
-      result = evaluate_runnable_result(test, test_instance, inputs)
+        result = evaluate_runnable_result(test, test_instance, inputs)
 
-      outputs = save_outputs(test_instance)
-      output_json_string = JSON.generate(outputs)
+        outputs = save_outputs(test_instance)
+        output_json_string = JSON.generate(outputs)
 
-      if result == 'wait'
-        test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
-      end
-
-      test_result = persist_result(
-        {
+        result_params = {
           messages: test_instance.messages,
           requests: test_instance.requests,
           result:,
@@ -88,15 +84,41 @@ module Inferno
           input_json: input_json_string,
           output_json: output_json_string
         }.merge(test.reference_hash)
-      )
 
-      # If running a single test, update its parents' results. If running a
-      # group or suite, #run_group handles updating the parents.
-      return test_result if test_run.test_id.blank?
+        test_result =
+          if result == 'wait'
+            # The waiting status and the wait result must become visible to
+            # readers atomically, so that pollers never see the run waiting
+            # without the waiting test's result being present.
+            Inferno::Application['db.connection'].transaction do
+              test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
+              persist_result(result_params)
+            end
+          else
+            persist_result(result_params)
+          end
 
-      update_parent_result(test.parent)
+        # If running a single test, update its parents' results. If running a
+        # group or suite, #run_group handles updating the parents.
+        update_parent_result(test.parent) if test_run.test_id.present?
 
-      test_result
+        test_result
+      end
+    end
+
+    # Wraps the execution of a single test. Prepend a module overriding this method
+    # to run instrumentation around each test, for example to emit a distinct trace,
+    # span, or timing metric per test instead of one that spans the whole run.
+    #
+    # An override must call `super` exactly once and return its value unchanged:
+    # it is the test's result, and parent results are rolled up from it. An
+    # override that does not call `super` silently skips the test.
+    #
+    # @param test [Class] the test being run (an Inferno::Entities::Test subclass)
+    # @yield executes the test and returns its result
+    # @return the value returned by the block
+    def around_test(_test)
+      yield
     end
 
     def check_inputs(test, _test_instance, inputs)
@@ -249,9 +271,20 @@ module Inferno
     end
 
     def persist_result(params)
-      result = results_repo.create(
-        params.merge(test_run_id: test_run.id, test_session_id: test_session.id)
-      )
+      # A single result can cascade into many separate inserts (messages,
+      # requests, headers, tags). Wrapping them in one transaction turns that
+      # into a single lock acquisition instead of one per insert, cutting
+      # down on sqlite write-lock contention with concurrent readers/writers.
+      #
+      # If you change this, run `bundle exec rake db:check_concurrency` to verify
+      # SQLITE_BUSY is still avoided under concurrent test-run writes and status
+      # polling (see lib/inferno/utils/db_concurrency_check.rb for why that's a
+      # rake task and not a spec).
+      result = Inferno::Application['db.connection'].transaction do
+        results_repo.create(
+          params.merge(test_run_id: test_run.id, test_session_id: test_session.id)
+        )
+      end
 
       run_results[result.runnable.id] = result
     end
