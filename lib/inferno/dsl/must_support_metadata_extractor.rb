@@ -24,14 +24,47 @@ module Inferno
         self.requirement_extension_url = requirement_extension_url
       end
 
+      # @return [String] the canonical URL of the profile
+      def profile_url
+        profile.url
+      end
+
+      # @return [String] the human-readable name of the profile, eg for display purposes.
+      #   Collapses any runs of repeated whitespace, since profile titles occasionally have them.
+      def profile_name
+        profile.title&.squeeze(' ')
+      end
+
+      # @return [String] the version of the profile itself (distinct from the IG's own version)
+      def profile_version
+        profile.version
+      end
+
       # Retrieval method for the must support metadata
       # @return [Hash]
       def must_supports
         @must_supports ||= {
           extensions: must_support_extensions,
           slices: must_support_slices,
-          elements: must_support_elements
+          elements: must_support_elements,
+          recursive_elements: recursive_element_segments
         }
+      end
+
+      # Names of path segments that are self-referential, ie, they may repeat at
+      # arbitrary depth. FHIR marks this with a `contentReference` back to an
+      # ancestor element instead of re-declaring the element's children, eg,
+      # Questionnaire.item.item has a contentReference of "#Questionnaire.item".
+      # A MustSupport flag on an element under such a segment (eg Questionnaire.item.text)
+      # should be considered met if it's populated at any depth of nesting
+      # (item.text, item.item.text, item.item.item.text, ...), not just the literal depth
+      # at which the flag is declared. NOTE: does not currently handle sliced recursive elements.
+      # @return [Array<String>]
+      def recursive_element_segments
+        profile_elements
+          .select { |element| element.contentReference.present? }
+          .map { |element| element.id.split('.').last }
+          .uniq
       end
 
       def by_requirement_extension_only?(element)
@@ -53,6 +86,7 @@ module Inferno
         must_support_extension_elements.map do |element|
           {
             id: element.id,
+            slice_name: extension_slice_name(element.id),
             path: element.path.gsub("#{resource}.", ''),
             url: canonical_url_without_version(element.type.first.profile.first),
             modifier_extension: element.path.end_with?('modifierExtension')
@@ -60,6 +94,15 @@ module Inferno
             metadata[:by_requirement_extension_only] = true if by_requirement_extension_only?(element)
           end
         end
+      end
+
+      # The name of the deepest slice in a FHIR ElementDefinition id, eg "us-core-race" for
+      # "Patient.extension:us-core-race" or "ombCategory" for
+      # "Patient.extension:us-core-race.extension:ombCategory".
+      # @param element_id [String]
+      # @return [String, nil]
+      def extension_slice_name(element_id)
+        element_id.split('.').reverse.find { |segment| segment.include?(':') }&.split(':', 2)&.last
       end
 
       def canonical_url_without_version(url)

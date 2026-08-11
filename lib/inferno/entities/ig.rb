@@ -27,7 +27,14 @@ module Inferno
         @examples = []
       end
 
-      def self.from_file(ig_path)
+      # @param ig_path [String] path to either a `.tgz` IG package or a directory containing an
+      #        unpacked one
+      # @param standalone_resources_directory [String] optional path to a directory of loose
+      #        `*.json` FHIR resource files to merge in alongside the IG, eg author-maintained
+      #        resources (extra examples under 'package/example', local overrides) that aren't
+      #        part of the IG package itself. Primarily useful for test kit generator scripts.
+      # @return [IG]
+      def self.from_file(ig_path, standalone_resources_directory: nil)
         raise "#{ig_path} does not exist" unless File.exist?(ig_path)
 
         # fhir_models by default logs the entire content of non-FHIR files
@@ -35,13 +42,18 @@ module Inferno
         original_logger = FHIR.logger
         FHIR.logger = Logger.new('/dev/null')
 
-        if File.directory?(ig_path)
-          from_directory(ig_path)
-        elsif ig_path.end_with? '.tgz'
-          from_tgz(ig_path)
-        else
-          raise "Unable to load #{ig_path} as it does not appear to be a directory or a .tgz file"
-        end
+        ig =
+          if File.directory?(ig_path)
+            from_directory(ig_path)
+          elsif ig_path.end_with? '.tgz'
+            from_tgz(ig_path)
+          else
+            raise "Unable to load #{ig_path} as it does not appear to be a directory or a .tgz file"
+          end
+
+        ig.merge_standalone_resources(standalone_resources_directory) if standalone_resources_directory
+
+        ig
       ensure
         FHIR.logger = original_logger if defined? original_logger
       end
@@ -120,6 +132,37 @@ module Inferno
         else
           resources_by_type[resource.resourceType] << resource
         end
+      end
+
+      # Merge in loose FHIR resource files from a directory that isn't part of the IG package
+      # itself, eg author-maintained resources (extra examples, local SearchParameter overrides,
+      # etc) that a test kit generator keeps alongside a downloaded package. Files that aren't
+      # valid FHIR resources are skipped. Does nothing if the directory doesn't exist.
+      #
+      # Files are classified the same way as within an IG package: those under a `package/example`
+      # subdirectory are added to {#examples}, everything else (including files directly in
+      # `directory`) is added to {#resources_by_type}.
+      # @param directory [String] path to a directory of loose `*.json` FHIR resource files,
+      #        optionally nested under a `package/example` subdirectory
+      # @return [self]
+      def merge_standalone_resources(directory)
+        return self unless File.directory?(directory)
+
+        base_path = Pathname.new(directory)
+        Dir.glob(File.join(directory, '**', '*.json')).each do |file_path|
+          relative_path = Pathname.new(file_path).relative_path_from(base_path).to_s
+
+          begin
+            resource = FHIR::Json.from_json(File.read(file_path))
+            next if resource.nil?
+          rescue StandardError
+            next
+          end
+
+          handle_resource(resource, relative_path)
+        end
+
+        self
       end
 
       def self.extract_package_id(ig_resource)
