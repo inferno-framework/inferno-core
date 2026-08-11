@@ -119,7 +119,7 @@ module Inferno
             suite_runnables.select { |runnable| runnable.verifies_requirements.include? requirement_id }
 
           runnables_for_requirement.map do |runnable|
-            [requirement_id, runnable.short_id, runnable.id]
+            [requirement_id, runnable < Inferno::Entities::TestSuite ? 'suite' : runnable.short_id, runnable.id]
           end
         end
       end
