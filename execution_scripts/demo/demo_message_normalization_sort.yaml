@@ -23,10 +23,10 @@ comparison_config:
 steps:
   - status: created
     start_run:
-      runnable: 12
+      runnable: 13
       inputs:
         normalization_sort_url: 'http://zzz.example.com'
 
   - status: done
-    last_completed: 12
+    last_completed: 13
     action: END_SCRIPT

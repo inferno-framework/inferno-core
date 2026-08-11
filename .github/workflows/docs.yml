@@ -4,33 +4,49 @@ on:
   push:
     branches: [ main ]
 
-jobs:
-  generate:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby-version: ['3.3.6']
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby-version }}
-        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+        ruby-version: '3.3.6'
+        bundler-cache: true
     - name: Remove /docs/docs from .gitignore
       run: sed -i '/\/docs\/docs/d' .gitignore
     - name: Generate yard docs
       run: bundle exec bin/docs
-    - name: Set github author
-      run: |
-          git config --global user.email "inferno-developers@groups.mitre.org"
-          git config --global user.name "Inferno CI"
-    - name: Commit docs
-      run: git add docs/docs && git commit -m 'generate docs'
-    - name: Push to gh-pages branch
-      uses: ad-m/github-push-action@master
+    - name: Install Jekyll dependencies
+      run: bundle install
+      working-directory: docs
+    - name: Build Jekyll site
+      run: bundle exec jekyll build
+      working-directory: docs
+      env:
+        JEKYLL_ENV: production
+    - name: Upload Pages artifact
+      uses: actions/upload-pages-artifact@v3
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: gh-pages
-        force: true
+        path: docs/_site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

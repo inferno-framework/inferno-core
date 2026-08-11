@@ -137,7 +137,7 @@ module Inferno
       )
 
       ExecutionStatus = Struct.new(
-        :done, :failed, :timed_out, :current_session, :current_timeout, :last_log_time,
+        :done, :failed, :timed_out, :cancel_pending, :current_session, :current_timeout, :last_log_time,
         :cross_session_status, :last_step_signatures
       )
 
@@ -152,6 +152,7 @@ module Inferno
           done: false,
           failed: false,
           timed_out: false,
+          cancel_pending: false,
           current_session: sessions.first,
           current_timeout: options[:default_poll_timeout],
           cross_session_status: {},
@@ -234,13 +235,15 @@ module Inferno
         creator = Session::CreateSession.new(suite, session_create_options(session_config))
         session_details = creator.create_session
         key = session_config['name'] || suite
-        warn "Session created: #{session_details['id']}"
-        ScriptSession.new(
+        script_session = ScriptSession.new(
           key: key,
           suite_id: session_details['test_suite_id'],
           session_id: session_details['id'],
           short_id_map: extract_short_ids_from_session_details(session_details)
         )
+        warn "Session created: #{session_details['id']}"
+        warn "  Available at #{session_display_url(script_session)}"
+        script_session
       end
 
       def session_create_options(session_config)
@@ -442,6 +445,10 @@ module Inferno
 
       # Returns a step hash to act on, or nil to keep polling.
       def handle_actionable_status(status, session, timeout)
+        # A cancelled run's done status is indistinguishable from the
+        # runnable completing normally, so don't match steps against it.
+        return handle_cancel_completion(status, session, timeout) if execution_status.cancel_pending
+
         matched_step = match_step(status, session.key)
 
         if matched_step
@@ -463,8 +470,14 @@ module Inferno
         last_completed = format_last_completed(last_completed_from_status(status), session.key)
         warn "UNHANDLED WAIT - Canceling: session=#{session.key} last_completed=#{last_completed}"
         execution_status.failed = true
+        execution_status.cancel_pending = true
         attempt_cancel(session.session_id, status)
         nil
+      end
+
+      def handle_cancel_completion(status, session, timeout)
+        warn "Cancellation complete: session=#{session.key} status=#{status['status']}"
+        { command: nil, timeout: timeout, next_poll_session: nil }
       end
 
       def handle_unmatched_status(status, session, timeout)
@@ -485,6 +498,7 @@ module Inferno
           execution_status.failed = true
           if run_status == 'waiting'
             warn "Loop detected - Canceling: session=#{session.key} last_completed=#{last_completed}"
+            execution_status.cancel_pending = true
             attempt_cancel(session.session_id, status)
             return nil
           else
@@ -504,8 +518,12 @@ module Inferno
         last_completed = last_completed_from_status(status)
         poll_status_last_test =
           last_completed.present? ? " - last test: #{format_last_completed(last_completed, session_key)}" : ''
-        warn "  [#{session_key}] #{status['status']}#{poll_status_last_test}"
+        warn "  [#{session_key}] #{status['status']} (#{test_progress(status)})#{poll_status_last_test}"
         execution_status.last_log_time = Time.now
+      end
+
+      def test_progress(status)
+        "#{status['completed_test_count']}/#{status['test_count']} tests"
       end
 
       def fetch_session_status(session_id)

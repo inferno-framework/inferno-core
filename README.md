@@ -51,7 +51,7 @@ any FHIR-based data exchange, and the team welcomes contributions.
 
 Developers
 interested in contributing to the Inferno Core gem must have [Ruby
-3.1+](https://www.ruby-lang.org/en/), [Node.js and
+3.3.6](https://www.ruby-lang.org/en/), [Node.js and
 NPM](https://www.npmjs.com/get-npm), and [Docker
 Desktop](https://www.docker.com/products/docker-desktop/) installed.
 [Podman](https://podman.io/) may be used an alternative to Docker Desktop.
@@ -145,13 +145,24 @@ GET http://localhost:4567/inferno/api/test_sessions/TEST_SESSION_ID/results
 ```
 
 ## Development in a Ruby console
-To get to an interactive console, run `bundle exec bin/inferno console`
+To get to an interactive console, run `bundle exec inferno console`
 
 ## Updating the FHIR Resource Validator
 Inferno relies on a java service to validate FHIR resources. [The validator
 directory](https://github.com/inferno-framework/inferno-core/tree/main/validator)
 contains the Dockerfile used to build this validator and instructions for
 updating it.
+
+## Updating NPM Packages
+
+When updating the node packages recorded in the `package-lock.json` file, the file
+needs to be generated as if from a linux system to match checks performed during
+CI. A reliable way to do this is to use Docker to generate the file within a
+linux environment regardless of your local development system.
+
+```
+docker run --rm -v $(pwd):/app -w /app node:24 npm install --package-lock-only
+```
 
 ## Documentation
 Inferno Core documentation has primarily moved to the

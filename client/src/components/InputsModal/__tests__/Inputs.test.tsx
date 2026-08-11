@@ -1,9 +1,11 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { renderWithProviders } from '~/test-utils';
+import { describe, expect, it, vi } from 'vitest';
 import { SnackbarProvider } from 'notistack';
 import { TestInput } from '~/models/testSuiteModels';
 import InputCheckboxGroup from '~/components/InputsModal/InputCheckboxGroup';
+import InputCombobox from '~/components/InputsModal/InputCombobox';
 import InputOAuthCredentials from '~/components/InputsModal/InputOAuthCredentials';
 import InputRadioGroup from '~/components/InputsModal/InputRadioGroup';
 import InputTextField from '~/components/InputsModal/InputTextField';
@@ -322,6 +324,240 @@ describe('Input Components', () => {
 
     it('hides dependent field when controlling value (array) does not match enable_when array value', () => {
       assertDependentVisibilityForCheckboxEnableWhen(['a', 'b'], '["a","c"]', false);
+    });
+  });
+
+  // ── InputCheckboxGroup additional coverage ───────────────────────────────────
+
+  describe('InputCheckboxGroup additional coverage', () => {
+    const checkboxInput: TestInput = {
+      name: 'checkboxInput',
+      type: 'checkbox',
+      optional: true,
+      options: {
+        list_options: [
+          { label: 'Option A', value: 'a' },
+          { label: 'Option B', value: 'b' },
+        ],
+      },
+    };
+
+    it('checking a box executes the map callback in transformValuesToJSONArray', async () => {
+      const setInputsMap = vi.fn();
+      const { user } = renderWithProviders(
+        <InputCheckboxGroup
+          input={checkboxInput}
+          index={0}
+          inputsMap={new Map<string, unknown>()}
+          setInputsMap={setInputsMap}
+        />,
+        { noRouter: true },
+      );
+
+      const checkboxA = screen.getByRole('checkbox', { name: /Option A/i });
+      await user.click(checkboxA);
+
+      const [calledMap] = setInputsMap.mock.calls[setInputsMap.mock.calls.length - 1] as [
+        Map<string, unknown>,
+      ];
+      expect(JSON.parse(calledMap.get('checkboxInput') as string)).toContain('a');
+    });
+
+    it('blurring a checkbox marks the field as modified', async () => {
+      const { user } = renderWithProviders(
+        <InputCheckboxGroup
+          input={{ ...checkboxInput, optional: false }}
+          index={0}
+          inputsMap={new Map<string, unknown>([['checkboxInput', '[]']])}
+          setInputsMap={() => {}}
+        />,
+        { noRouter: true },
+      );
+
+      const checkboxA = screen.getByRole('checkbox', { name: /Option A/i });
+      await user.click(checkboxA);
+      await user.tab(); // move focus away to trigger onBlur
+    });
+  });
+
+  // ── InputCombobox additional coverage ────────────────────────────────────────
+
+  describe('InputCombobox additional coverage', () => {
+    const comboboxInput: TestInput = {
+      name: 'comboboxInput',
+      type: 'text',
+      optional: true,
+      default: 'a',
+      options: {
+        list_options: [
+          { label: 'Option A', value: 'a' },
+          { label: 'Option B', value: 'b' },
+        ],
+      },
+    };
+
+    it('renders InputCombobox with a default value (triggers isOptionEqualToValue)', () => {
+      renderWithProviders(
+        <InputCombobox
+          input={comboboxInput}
+          index={0}
+          inputsMap={new Map<string, unknown>([['comboboxInput', 'a']])}
+          setInputsMap={() => {}}
+        />,
+        { noRouter: true },
+      );
+
+      expect(screen.getByRole('combobox')).toBeInTheDocument();
+    });
+
+    it('selecting a new option calls setInputsMap with updated value', async () => {
+      const setInputsMap = vi.fn();
+      const { user } = renderWithProviders(
+        <InputCombobox
+          input={comboboxInput}
+          index={0}
+          inputsMap={new Map<string, unknown>()}
+          setInputsMap={setInputsMap}
+        />,
+        { noRouter: true },
+      );
+
+      const combobox = screen.getByRole('combobox');
+      await user.click(combobox);
+      await user.click(screen.getByText('Option B'));
+
+      expect(setInputsMap).toHaveBeenCalled();
+      const [calledMap] = setInputsMap.mock.calls[setInputsMap.mock.calls.length - 1] as [
+        Map<string, unknown>,
+      ];
+      expect(calledMap.get('comboboxInput')).toBe('b');
+    });
+  });
+
+  // ── InputOAuthCredentials additional coverage ────────────────────────────────
+
+  describe('InputOAuthCredentials additional coverage', () => {
+    const makeOAuthInput = (overrides: Partial<TestInput> = {}): TestInput => ({
+      name: 'oauthInput',
+      type: 'oauth_credentials',
+      optional: true,
+      ...overrides,
+    });
+
+    it('onChange → updateInputsMap serialises updated credential and calls setInputsMap', () => {
+      const setInputsMapMock = vi.fn();
+      const prePopulated = new Map<string, unknown>([
+        ['oauthInput', JSON.stringify({ access_token: 'old-token' })],
+      ]);
+
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputOAuthCredentials
+              input={makeOAuthInput()}
+              index={0}
+              inputsMap={prePopulated}
+              setInputsMap={setInputsMapMock}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      fireEvent.change(screen.getByRole('textbox', { name: /access token/i }), {
+        target: { value: 'new-token' },
+      });
+
+      expect(setInputsMapMock).toHaveBeenCalledTimes(1);
+      const [calledMap] = setInputsMapMock.mock.calls[0] as [Map<string, unknown>];
+      const parsed = JSON.parse(calledMap.get('oauthInput') as string) as Record<string, unknown>;
+      expect(parsed['access_token']).toBe('new-token');
+    });
+
+    it('empty credential values are omitted from the serialised output (if (inputValue) branch)', () => {
+      const setInputsMapMock = vi.fn();
+
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputOAuthCredentials
+              input={makeOAuthInput()}
+              index={0}
+              inputsMap={
+                new Map<string, unknown>([
+                  ['oauthInput', JSON.stringify({ access_token: 'token' })],
+                ])
+              }
+              setInputsMap={setInputsMapMock}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      fireEvent.change(screen.getByRole('textbox', { name: /access token/i }), {
+        target: { value: '' },
+      });
+
+      const [calledMap] = setInputsMapMock.mock.calls[0] as [Map<string, unknown>];
+      const parsed = JSON.parse(calledMap.get('oauthInput') as string) as Record<string, unknown>;
+      expect(parsed).not.toHaveProperty('access_token');
+    });
+
+    it('onBlur sets hasBeenModified and getIsMissingInput shows RequiredInputWarning for required empty field', () => {
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputOAuthCredentials
+              input={makeOAuthInput({ optional: false })}
+              index={0}
+              inputsMap={new Map<string, unknown>([['oauthInput', '{}']])}
+              setInputsMap={() => {}}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      // No warning before the field has been touched
+      expect(screen.queryByTestId('required-input-warning')).not.toBeInTheDocument();
+
+      // Direct blur satisfies e.currentTarget === e.target guard and fires setHasBeenModified
+      fireEvent.blur(screen.getByRole('textbox', { name: /access token \(required\)/i }));
+
+      // getIsMissingInput now returns true → RequiredInputWarning (error-coloured icon) appears
+      expect(screen.queryByTestId('required-input-warning')).toBeInTheDocument();
+    });
+
+    it('renders "(required)" suffix on oAuthField label when field.optional is false (line 114)', () => {
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputOAuthCredentials
+              input={makeOAuthInput({ optional: false })}
+              index={0}
+              inputsMap={new Map<string, unknown>()}
+              setInputsMap={() => {}}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      expect(screen.getByText(/access token \(required\)/i)).toBeInTheDocument();
+    });
+
+    it('renders input.description as a Typography element in the card view (lines 184–187)', () => {
+      render(
+        <ThemeProvider>
+          <SnackbarProvider>
+            <InputOAuthCredentials
+              input={makeOAuthInput({ description: 'Provide your bearer token.' })}
+              index={0}
+              inputsMap={new Map<string, unknown>()}
+              setInputsMap={() => {}}
+            />
+          </SnackbarProvider>
+        </ThemeProvider>,
+      );
+
+      expect(screen.getByText('Provide your bearer token.')).toBeVisible();
     });
   });
 });

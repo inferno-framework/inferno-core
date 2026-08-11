@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2017",
     "lib": [
       "dom",
       "dom.iterable",
@@ -14,15 +14,19 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "baseUrl": "./client/src",
     "paths": {
-      "~/*": ["./*"],
-    }
+      "~/*": ["./client/src/*"],
+      "components/*": ["./client/src/components/*"],
+      "styles/*": ["./client/src/styles/*"],
+      "models/*": ["./client/src/models/*"],
+      "api/*": ["./client/src/api/*"]
+    },
+    "types": ["vitest/globals"]
   },
   "include": [
     "client/src",
@@ -30,8 +34,7 @@
     "eslint.config.mjs",
     "vite.config.mts"
   ],
-  "types": ["vitest/globals"],
   "exclude": [
-    "node_modules",
+    "node_modules"
   ]
 }

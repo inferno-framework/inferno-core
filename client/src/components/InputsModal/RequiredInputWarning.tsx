@@ -9,6 +9,7 @@ const RequiredInputWarning: FC = () => {
         color="error"
         aria-hidden={false}
         tabIndex={0}
+        data-testid="required-input-warning"
         sx={{
           marginRight: '4px',
           verticalAlign: 'bottom',

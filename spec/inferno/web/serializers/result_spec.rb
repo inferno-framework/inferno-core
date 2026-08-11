@@ -13,6 +13,12 @@ RSpec.describe Inferno::Web::Serializers::Result do
     expect(serialized_result['inputs'].first['type']).to eq('some_type')
   end
 
+  it 'serializes timestamps with millisecond precision' do
+    serialized_result = JSON.parse(described_class.render(result))
+
+    expect(serialized_result['updated_at']).to match(/\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}[+-]\d{2}:\d{2}\z/)
+  end
+
   it 'includes output types' do
     serialized_result = JSON.parse(described_class.render(result))
 

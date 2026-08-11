@@ -16,6 +16,7 @@ module Inferno
         field :test_group_id, if: :field_present?
         field :test_suite_id, if: :field_present?
         field :test_id, if: :field_present?
+        field :wait_timeout, if: :field_present?
 
         association :results, blueprint: Result
         association :inputs, blueprint: Input

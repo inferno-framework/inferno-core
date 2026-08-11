@@ -93,6 +93,35 @@ RSpec.describe Inferno::TestRunner do
         expect(output['type']).to be_present
       end
     end
+
+    it 'wraps each test with #around_test' do
+      wrapped = []
+      allow(runner).to receive(:around_test).and_wrap_original do |_original, test, &block|
+        wrapped << test
+        block.call
+      end
+
+      results = runner.start
+      test_results = results.select { |result| result.runnable < Inferno::Entities::Test }
+
+      expect(wrapped).to_not be_empty
+      expect(wrapped).to all(be < Inferno::Entities::Test)
+      expect(wrapped.length).to eq(test_results.length)
+    end
+  end
+
+  describe '#around_test' do
+    let(:test_run) do
+      repo_create(:test_run, runnable: { test_group_id: 'demo-simple_group' }, test_session_id: test_session.id)
+    end
+
+    it 'yields by default' do
+      expect { |block| runner.around_test(nil, &block) }.to yield_control
+    end
+
+    it 'returns the value of the block by default' do
+      expect(runner.around_test(nil) { :test_result }).to eq(:test_result)
+    end
   end
 
   describe 'when running wait group' do
@@ -113,6 +142,17 @@ RSpec.describe Inferno::TestRunner do
       results = results_repo.current_results_for_test_session(test_session.id)
 
       expect(results.length).to eq(3)
+    end
+
+    it 'marks the test run as waiting and persists the wait result together' do
+      runner.run(group)
+
+      updated_run = Inferno::Repositories::TestRuns.new.find(test_run.id)
+      wait_result = results_repo.current_results_for_test_session(test_session.id).find { |r| r.result == 'wait' }
+
+      expect(updated_run.status).to eq('waiting')
+      expect(updated_run.identifier).to be_present
+      expect(wait_result).to be_present
     end
   end
 

@@ -1,6 +1,4 @@
-/// <reference types="vitest" />
-
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import path from 'path';
 import eslint from 'vite-plugin-eslint2';
 
@@ -8,9 +6,10 @@ export default defineConfig({
   clearScreen: true,
   test: {
     root: './client',
-    setupFiles: ['./client/src/setupTests.ts'],
+    setupFiles: ['./src/setupTests.ts'],
     environment: 'jsdom',
     globals: true,
+    clearMocks: true,
     coverage: {
       reportsDirectory: path.resolve(__dirname, './client/coverage'),
     },

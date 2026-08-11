@@ -63,14 +63,14 @@ module Inferno
 
       # Returns the results for required runnables
       #
-      # @return Array<Inferno::Entities::Result>
+      # @return [Array<Inferno::Entities::Result>]
       def required_results
         results.select(&:required?)
       end
 
       # Returns the results for optional runnables
       #
-      # @return Array<Inferno::Entities::Result>
+      # @return [Array<Inferno::Entities::Result>]
       def optional_results
         results.select(&:optional?)
       end

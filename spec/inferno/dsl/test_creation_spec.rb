@@ -193,6 +193,22 @@ RSpec.describe InfrastructureTest::Suite do
 
         expect(sim_group.tests.first.simulation_verification?).to be(true)
       end
+
+      it 'sets attestation when declared on a test' do
+        attest_group = Class.new(Inferno::TestGroup) do
+          id 'attest_group'
+
+          test do
+            title 'Attestation test'
+            id 'attest_test'
+            attestation
+
+            run { pass }
+          end
+        end
+
+        expect(attest_group.tests.first.attestation?).to be(true)
+      end
     end
 
     describe 'inner inline group' do

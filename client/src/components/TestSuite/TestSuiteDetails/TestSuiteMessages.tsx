@@ -62,7 +62,7 @@ const TestSuiteMessages: FC<TestSuiteMessagesProps> = ({ messages, testSuiteId }
         alert(
           'info',
           infoMessages.length > 1
-            ? `There are ${infoMessages.length} configuration errors.`
+            ? `There are ${infoMessages.length} configuration messages.`
             : `There is 1 configuration message.`,
         )}
     </>

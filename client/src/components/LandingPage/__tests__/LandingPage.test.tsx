@@ -1,11 +1,7 @@
-import React, { act } from 'react';
-import { BrowserRouter } from 'react-router';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import React from 'react';
+import { renderWithProviders, screen, waitFor } from '~/test-utils';
 import { expect, test, vi } from 'vitest';
-import { SnackbarProvider } from 'notistack';
 import * as testSessionApi from '~/api/TestSessionApi';
-import ThemeProvider from '~/components/ThemeProvider';
 import LandingPage from '~/components/LandingPage/LandingPage';
 import { mockedTestSuitesReturnValue } from '../__mocked_data__/mockData';
 import { singleTestSuite, testSession } from '~/components/App/__mocked_data__/mockData';
@@ -13,15 +9,7 @@ import { singleTestSuite, testSession } from '~/components/App/__mocked_data__/m
 test('renders Inferno Landing Page', () => {
   const testSuites = mockedTestSuitesReturnValue;
 
-  render(
-    <BrowserRouter>
-      <ThemeProvider>
-        <SnackbarProvider>
-          <LandingPage testSuites={testSuites} />
-        </SnackbarProvider>
-      </ThemeProvider>
-    </BrowserRouter>,
-  );
+  renderWithProviders(<LandingPage testSuites={testSuites} />);
 
   const headerElements = screen.getAllByRole('heading');
   expect(headerElements[0]).toHaveTextContent('FHIR Testing with Inferno');
@@ -30,15 +18,7 @@ test('renders Inferno Landing Page', () => {
 test('Start Testing button should be disabled when test suite is not selected', () => {
   const testSuites = mockedTestSuitesReturnValue;
 
-  render(
-    <BrowserRouter>
-      <ThemeProvider>
-        <SnackbarProvider>
-          <LandingPage testSuites={testSuites} />
-        </SnackbarProvider>
-      </ThemeProvider>
-    </BrowserRouter>,
-  );
+  renderWithProviders(<LandingPage testSuites={testSuites} />);
 
   const buttonElement = screen.getByTestId('go-button');
   expect(buttonElement).toBeDisabled();
@@ -47,20 +27,12 @@ test('Start Testing button should be disabled when test suite is not selected', 
 test('should enable Start Testing when test suite is selected', async () => {
   const testSuites = mockedTestSuitesReturnValue;
 
-  render(
-    <BrowserRouter>
-      <ThemeProvider>
-        <SnackbarProvider>
-          <LandingPage testSuites={testSuites} />
-        </SnackbarProvider>
-      </ThemeProvider>
-    </BrowserRouter>,
-  );
+  const { user } = renderWithProviders(<LandingPage testSuites={testSuites} />);
 
   const testSuiteElement = screen.getAllByTestId('list-option')[0];
   const buttonElement = screen.getByTestId('go-button');
 
-  await userEvent.click(testSuiteElement);
+  await user.click(testSuiteElement);
   expect(testSuiteElement).toHaveFocus();
   expect(buttonElement).toBeEnabled();
 });
@@ -69,19 +41,26 @@ test('sets the Test Session if there is a single Test Suite', async () => {
   const postTestSessions = vi.spyOn(testSessionApi, 'postTestSessions');
   postTestSessions.mockResolvedValue(testSession);
 
-  act(() => {
-    render(
-      <BrowserRouter>
-        <ThemeProvider>
-          <SnackbarProvider>
-            <LandingPage testSuites={singleTestSuite} />
-          </SnackbarProvider>
-        </ThemeProvider>
-      </BrowserRouter>,
-    );
-  });
+  renderWithProviders(<LandingPage testSuites={singleTestSuite} />);
 
   await waitFor(() => {
     expect(postTestSessions).toBeCalledTimes(1);
+  });
+});
+
+test('shows error snackbar when test session creation fails', async () => {
+  const postTestSessions = vi.spyOn(testSessionApi, 'postTestSessions');
+  postTestSessions.mockRejectedValue(new Error('network error'));
+
+  const { user } = renderWithProviders(<LandingPage testSuites={mockedTestSuitesReturnValue} />);
+
+  const testSuiteElement = screen.getAllByTestId('list-option')[0];
+  await user.click(testSuiteElement);
+
+  const buttonElement = screen.getByTestId('go-button');
+  await user.click(buttonElement);
+
+  await waitFor(() => {
+    expect(screen.getByText(/Error while creating test session/)).toBeInTheDocument();
   });
 });

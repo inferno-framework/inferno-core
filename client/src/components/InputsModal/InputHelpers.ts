@@ -219,7 +219,7 @@ export const conditionalShowInput = (
   inputsMap: Map<string, unknown>,
 ): boolean => {
   const enableWhen = input.enable_when;
-  if (!enableWhen?.input_name || input.type === 'checkbox') {
+  if (!enableWhen?.input_name) {
     return true;
   }
   const inputValue = inputsMap.get(enableWhen.input_name);

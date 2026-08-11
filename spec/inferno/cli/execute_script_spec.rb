@@ -629,7 +629,25 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       result = instance.send(:handle_actionable_status, status, session, timeout)
       expect(result).to be_nil
       expect(instance.execution_status.failed).to be true
+      expect(instance.execution_status.cancel_pending).to be true
       expect(a_request(:delete, "#{inferno_host}/api/test_runs/#{run_id}")).to have_been_made
+    end
+
+    it 'returns command nil without matching steps once a cancel is pending' do
+      cancelled_group_id = 'cancelled-group'
+      config = {
+        'sessions' => [{ 'suite' => suite_id }],
+        'steps' => [
+          { 'status' => 'done', 'last_completed' => cancelled_group_id,
+            'start_run' => { 'runnable' => 'next-group' } }
+        ]
+      }
+      instance = build_instance(config)
+      instance.execution_status.cancel_pending = true
+      status = { 'status' => 'done', 'test_group_id' => cancelled_group_id }
+
+      result = instance.send(:handle_actionable_status, status, instance.send(:sessions).first, timeout)
+      expect(result).to eq({ command: nil, timeout: timeout, next_poll_session: nil })
     end
   end
 
@@ -694,6 +712,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       result = instance.send(:verify_step, matched_step, status, session, timeout)
       expect(result).to be_nil
       expect(instance.execution_status.failed).to be true
+      expect(instance.execution_status.cancel_pending).to be true
       expect(a_request(:delete, "#{inferno_host}/api/test_runs/#{run_id}")).to have_been_made
     end
 

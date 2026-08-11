@@ -193,14 +193,16 @@ module Inferno
               inputs[input.name.to_sym] = Entities::Input.new(**input.to_hash)
             end
 
+        # children_available_inputs walks the entire subtree, so it is computed once here
+        # rather than once per input. merge_with_child only mutates its receiver, so the
+        # child definitions are safe to reuse for the merge below.
+        child_inputs = children_available_inputs(selected_suite_options)
+
         available_inputs.each do |input, current_definition|
-          child_definition = children_available_inputs(selected_suite_options)[input]
-          current_definition.merge_with_child(child_definition)
+          current_definition.merge_with_child(child_inputs[input])
         end
 
-        available_inputs = children_available_inputs(selected_suite_options).merge(available_inputs)
-
-        order_available_inputs(available_inputs)
+        order_available_inputs(child_inputs.merge(available_inputs))
       end
     end
   end

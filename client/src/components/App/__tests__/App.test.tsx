@@ -1,10 +1,8 @@
-import React, { act } from 'react';
-import { render, waitFor } from '@testing-library/react';
+import React from 'react';
+import { renderWithProviders, waitFor } from '~/test-utils';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { SnackbarProvider } from 'notistack';
 
-import ThemeProvider from 'components/ThemeProvider';
 import App from '../App';
 import * as testSuitesApi from '~/api/TestSuitesApi';
 import { testSuites } from '../__mocked_data__/mockData';
@@ -26,15 +24,18 @@ describe('The App Root Component', () => {
     const getTestSuites = vi.spyOn(testSuitesApi, 'getTestSuites');
     getTestSuites.mockResolvedValue(testSuites);
 
-    await act(() =>
-      render(
-        <ThemeProvider>
-          <SnackbarProvider>
-            <App />
-          </SnackbarProvider>
-        </ThemeProvider>,
-      ),
-    );
+    renderWithProviders(<App />, { noRouter: true });
+
+    await waitFor(() => {
+      expect(getTestSuites).toBeCalledTimes(1);
+    });
+  });
+
+  it('handles test suite fetch error gracefully', async () => {
+    const getTestSuites = vi.spyOn(testSuitesApi, 'getTestSuites');
+    getTestSuites.mockRejectedValue(new Error('network error'));
+
+    renderWithProviders(<App />, { noRouter: true });
 
     await waitFor(() => {
       expect(getTestSuites).toBeCalledTimes(1);

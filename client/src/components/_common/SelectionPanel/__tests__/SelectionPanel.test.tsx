@@ -1,26 +1,19 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router';
-import { render, screen, waitFor } from '@testing-library/react';
-import ThemeProvider from 'components/ThemeProvider';
+import { renderWithProviders, screen, waitFor } from '~/test-utils';
 import { mockedSelectionPanelData } from '../__mocked_data__/mockData';
 import SelectionPanel from '../SelectionPanel';
-import userEvent from '@testing-library/user-event';
 import { describe, expect, test, vi } from 'vitest';
 
 describe('SelectionPanel component', () => {
   test('renders SelectionPanel for list options', () => {
-    render(
-      <BrowserRouter>
-        <ThemeProvider>
-          <SelectionPanel
-            title="Selection Title"
-            options={mockedSelectionPanelData.listOptions}
-            setSelection={mockedSelectionPanelData.setSelected}
-            submitAction={mockedSelectionPanelData.submitAction}
-            submitText="Submit"
-          />
-        </ThemeProvider>
-      </BrowserRouter>,
+    renderWithProviders(
+      <SelectionPanel
+        title="Selection Title"
+        options={mockedSelectionPanelData.listOptions}
+        setSelection={mockedSelectionPanelData.setSelected}
+        submitAction={mockedSelectionPanelData.submitAction}
+        submitText="Submit"
+      />,
     );
 
     const options = screen.getAllByTestId('list-option');
@@ -28,18 +21,14 @@ describe('SelectionPanel component', () => {
   });
 
   test('renders SelectionPanel for radio options', () => {
-    render(
-      <BrowserRouter>
-        <ThemeProvider>
-          <SelectionPanel
-            title="Selection Title"
-            options={mockedSelectionPanelData.radioOptions}
-            setSelection={mockedSelectionPanelData.setSelected}
-            submitAction={mockedSelectionPanelData.submitAction}
-            submitText="Submit"
-          />
-        </ThemeProvider>
-      </BrowserRouter>,
+    renderWithProviders(
+      <SelectionPanel
+        title="Selection Title"
+        options={mockedSelectionPanelData.radioOptions}
+        setSelection={mockedSelectionPanelData.setSelected}
+        submitAction={mockedSelectionPanelData.submitAction}
+        submitText="Submit"
+      />,
     );
 
     const options = screen.getAllByTestId('radio-option-group');
@@ -55,28 +44,43 @@ describe('SelectionPanel component', () => {
   test('clicking submit calls submitAction', async () => {
     const submitAction = vi.spyOn(mockedSelectionPanelData, 'submitAction');
 
-    render(
-      <BrowserRouter>
-        <ThemeProvider>
-          <SelectionPanel
-            title="Selection Title"
-            options={mockedSelectionPanelData.listOptions}
-            setSelection={mockedSelectionPanelData.setSelected}
-            submitAction={mockedSelectionPanelData.submitAction}
-            submitText="Submit"
-          />
-        </ThemeProvider>
-      </BrowserRouter>,
+    const { user } = renderWithProviders(
+      <SelectionPanel
+        title="Selection Title"
+        options={mockedSelectionPanelData.listOptions}
+        setSelection={mockedSelectionPanelData.setSelected}
+        submitAction={mockedSelectionPanelData.submitAction}
+        submitText="Submit"
+      />,
     );
 
     const submitButton = screen.getByText('Submit');
     expect(submitButton).toBeDisabled();
 
     const options = screen.getAllByTestId('list-option');
-    await userEvent.click(options[0]); // select first option
+    await user.click(options[0]);
 
     expect(submitButton).toBeEnabled();
-    await userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => expect(submitAction).toBeCalled());
+  });
+
+  test('clicking a radio option calls setSelection', async () => {
+    const setSelection = vi.spyOn(mockedSelectionPanelData, 'setSelected');
+
+    const { user } = renderWithProviders(
+      <SelectionPanel
+        title="Selection Title"
+        options={mockedSelectionPanelData.radioOptions}
+        setSelection={mockedSelectionPanelData.setSelected}
+        submitAction={mockedSelectionPanelData.submitAction}
+        submitText="Submit"
+      />,
+    );
+
+    const radioButtons = screen.getAllByTestId('radio-option-button');
+    await user.click(radioButtons[1]);
+
+    expect(setSelection).toBeCalled();
   });
 });

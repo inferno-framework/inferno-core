@@ -69,6 +69,23 @@ RSpec.describe Inferno::DSL::Runnable do
         expect(updated_result.result_message).to be_nil
       end
 
+      it 'enqueues a ResumeTestRun job tagged with the source, session, run, and test' do
+        allow(Inferno::Jobs).to receive(:perform)
+
+        get '/custom/demo/resume?xyz=IDENTIFIER'
+
+        expect(Inferno::Jobs).to have_received(:perform).with(
+          Inferno::Jobs::ResumeTestRun,
+          test_run.id,
+          tags: contain_exactly(
+            'source:route',
+            "session:#{test_session.id}",
+            "run:#{test_group.id}",
+            "test:#{wait_test.id}"
+          )
+        )
+      end
+
       it 'updates the waiting test run' do
         get '/custom/demo/resume?xyz=IDENTIFIER'
 

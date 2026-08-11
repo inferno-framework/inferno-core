@@ -13,6 +13,15 @@ namespace :db do
 
     Inferno::CLI::Migration.new.run
   end
+
+  desc 'Verify that sqlite WAL/busy_timeout/transaction-wrapping prevent SQLITE_BUSY under concurrent test-run ' \
+       'writes and status polling. Not part of the default test suite - see ' \
+       'lib/inferno/utils/db_concurrency_check.rb for why. Run after changing lib/inferno/config/boot/db.rb, ' \
+       'lib/inferno/test_runner.rb, or the results/requests repositories.'
+  task :check_concurrency do
+    require_relative 'lib/inferno/utils/db_concurrency_check'
+    raise 'db:check_concurrency failed - see output above' unless Inferno::Utils::DbConcurrencyCheck.run
+  end
 end
 
 namespace :execute_scripts do

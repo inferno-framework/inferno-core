@@ -1,10 +1,7 @@
 import React from 'react';
-import { render, renderHook, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import ThemeProvider from 'components/ThemeProvider';
+import { renderWithMemoryRouter, renderHook, screen } from '~/test-utils';
 import Header from '../Header';
 
-import { MemoryRouter } from 'react-router';
 import { useAppStore } from '~/store/app';
 import { beforeEach, expect, test } from 'vitest';
 
@@ -17,16 +14,12 @@ beforeEach(() => {
 test('renders narrow screen Inferno Header', async () => {
   let drawerOpen = false;
 
-  render(
-    <MemoryRouter>
-      <ThemeProvider>
-        <Header
-          suiteTitle="Suite Title"
-          drawerOpen={drawerOpen}
-          toggleDrawer={() => (drawerOpen = !drawerOpen)}
-        />
-      </ThemeProvider>
-    </MemoryRouter>,
+  const { user } = renderWithMemoryRouter(
+    <Header
+      suiteTitle="Suite Title"
+      drawerOpen={drawerOpen}
+      toggleDrawer={() => (drawerOpen = !drawerOpen)}
+    />,
   );
 
   const buttonElement = screen.getAllByRole('button')[0];
@@ -34,6 +27,6 @@ test('renders narrow screen Inferno Header', async () => {
 
   // test icon drawer control
   expect(drawerOpen).toBe(false);
-  await userEvent.click(buttonElement);
+  await user.click(buttonElement);
   expect(drawerOpen).toBe(true);
 });

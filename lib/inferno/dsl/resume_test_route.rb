@@ -84,7 +84,10 @@ module Inferno
 
         test_run = find_test_run(test_run_identifier)
 
-        halt 500, "Unable to find test run with identifier '#{test_run_identifier}'." if test_run.nil?
+        if test_run.nil?
+          halt 500, "Unable to find test run with identifier '#{test_run_identifier}' " \
+                    "on request to '#{request.url}'."
+        end
 
         test_runs_repo.mark_as_no_longer_waiting(test_run.id)
 
@@ -94,7 +97,16 @@ module Inferno
         update_result(waiting_result, result_message)
         persist_request(request, test_run, waiting_result, test)
 
-        Jobs.perform(Jobs::ResumeTestRun, test_run.id)
+        Jobs.perform(
+          Jobs::ResumeTestRun,
+          test_run.id,
+          tags: [
+            'source:route',
+            "session:#{test_run.test_session_id}",
+            "run:#{test_run.test_suite_id || test_run.test_group_id || test_run.test_id}",
+            "test:#{test.id}"
+          ]
+        )
 
         res.redirect_to redirect_route(test_run, test)
       end

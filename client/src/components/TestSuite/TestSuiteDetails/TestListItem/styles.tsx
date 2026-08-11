@@ -76,7 +76,7 @@ export default makeStyles()((theme: Theme) => ({
     },
   },
   accordionSummary: {
-    userSelect: 'auto',
+    userSelect: 'text',
     '@media print': {
       minHeight: 'unset',
     },
@@ -168,6 +168,16 @@ export default makeStyles()((theme: Theme) => ({
     height: '24px',
     '& .MuiChip-icon': {
       color: theme.palette.common.orangeDark,
+    },
+  },
+  attestationChip: {
+    backgroundColor: theme.palette.common.yellowLight,
+    color: theme.palette.common.yellowDark,
+    fontWeight: 'bold',
+    marginLeft: '8px',
+    height: '24px',
+    '& .MuiChip-icon': {
+      color: theme.palette.common.yellowDark,
     },
   },
 }));

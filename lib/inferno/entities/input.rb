@@ -165,8 +165,8 @@ module Inferno
 
       # @private
       # Merge component hashes.
-      # @param primary_source [Input]
-      # @param secondary_source [Input]
+      # @param primary_components [Input]
+      # @param secondary_components [Input]
       def merge_components(primary_components:, secondary_components:) # rubocop:disable Metrics/CyclomaticComplexity
         primary_components
           .each { |component| component[:name] = component[:name].to_sym }

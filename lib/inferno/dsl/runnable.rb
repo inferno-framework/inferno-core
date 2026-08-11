@@ -264,7 +264,7 @@ module Inferno
       # Set/Get the IDs of requirements verified by this runnable
       # Set with [] to clear the list
       #
-      # @param requirements [Array<String>]
+      # @param requirement_ids [Array<String>]
       # @return [Array<String>] the requirement IDs
       def verifies_requirements(*requirement_ids)
         if requirement_ids.empty?
@@ -322,6 +322,21 @@ module Inferno
       # @return [Boolean]
       def simulation_verification?
         !!@is_simulation_verification
+      end
+
+      # Mark as attestation. Tests are not attestation by default.
+      #
+      # @param attestation [Boolean]
+      # @return [void]
+      def attestation(attestation = true) # rubocop:disable Style/OptionalBooleanParameter
+        @is_attestation = attestation
+      end
+
+      # The test is attestation if true
+      #
+      # @return [Boolean]
+      def attestation?
+        !!@is_attestation
       end
 
       # @private
@@ -416,7 +431,7 @@ module Inferno
       #   [Any of the path options available in Hanami
       #   Router](https://github.com/hanami/router/tree/f41001d4c3ee9e2d2c7bb142f74b43f8e1d3a265#a-beautiful-dsl)
       #   can be used here.
-      # @param [Class] a subclass of Inferno::DSL::SuiteEndpoint
+      # @param endpoint_class [Class] a subclass of Inferno::DSL::SuiteEndpoint
       # @return [void]
       def suite_endpoint(method, path, endpoint_class)
         route(method, path, endpoint_class)
