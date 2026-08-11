@@ -84,7 +84,10 @@ module Inferno
 
         test_run = find_test_run(test_run_identifier)
 
-        halt 500, "Unable to find test run with identifier '#{test_run_identifier}'." if test_run.nil?
+        if test_run.nil?
+          halt 500, "Unable to find test run with identifier '#{test_run_identifier}' " \
+                    "on request to '#{request.url}'."
+        end
 
         test_runs_repo.mark_as_no_longer_waiting(test_run.id)
 
