@@ -1,3 +1,11 @@
+## 1.4.3
+* Add around_test hook so instrumentation can be scoped per test by @KyleOps in https://github.com/inferno-framework/inferno-core/pull/797
+* ID-167 suite endpoint error response customization by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/802
+* ID-179: Disable Validator Terminology Cache by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/801
+* ID-184: recursive must support definitions by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/805
+* ID-82: fix suite-level unmatched requirements bug by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/779
+* ID-219: support expansion-parameters on validator calls by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/806
+
 ## 1.4.2
 * ID-178: oj upgrade cleanup and execution scripts and logging improvements by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/799
 * Compute children_available_inputs once per available_inputs call by @KyleOps in https://github.com/inferno-framework/inferno-core/pull/803
