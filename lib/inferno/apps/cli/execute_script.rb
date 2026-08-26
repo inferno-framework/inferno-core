@@ -138,7 +138,7 @@ module Inferno
 
       ExecutionStatus = Struct.new(
         :done, :failed, :timed_out, :cancel_pending, :current_session, :current_timeout, :last_log_time,
-        :cross_session_status, :last_step_signatures
+        :poll_start_time, :cross_session_status, :last_step_signatures
       )
 
       attr_accessor :yaml_file, :options, :execution_status
@@ -155,6 +155,7 @@ module Inferno
           cancel_pending: false,
           current_session: sessions.first,
           current_timeout: options[:default_poll_timeout],
+          poll_start_time: nil,
           cross_session_status: {},
           last_step_signatures: {}
         )
@@ -416,6 +417,7 @@ module Inferno
         warn ''
         warn "Polling session: #{session.key} (#{session.session_id}) timeout=#{timeout}s"
         deadline = Time.now + timeout
+        execution_status.poll_start_time = Time.now
         execution_status.last_log_time = Time.now - LOG_INTERVAL_SECONDS
 
         loop do
@@ -518,12 +520,14 @@ module Inferno
         last_completed = last_completed_from_status(status)
         poll_status_last_test =
           last_completed.present? ? " - last test: #{format_last_completed(last_completed, session_key)}" : ''
-        warn "  [#{session_key}] #{status['status']} (#{test_progress(status)})#{poll_status_last_test}"
+        elapsed = (Time.now - execution_status.poll_start_time).round
+        warn "  [#{session_key}] #{status['status']} (#{test_progress(status, elapsed)})" \
+             "#{poll_status_last_test}"
         execution_status.last_log_time = Time.now
       end
 
-      def test_progress(status)
-        "#{status['completed_test_count']}/#{status['test_count']} tests"
+      def test_progress(status, elapsed)
+        "completed #{status['completed_test_count']}/#{status['test_count']} tests in #{elapsed}s"
       end
 
       def fetch_session_status(session_id)

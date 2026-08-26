@@ -26,6 +26,7 @@ module Inferno
     #       allowExampleUrls true
     #       txServer nil
     #     end
+    #     expansion_parameters 'path/to/expansion_parameters.json'
     #   end
     module FHIRResourceValidation
       def self.included(klass)
@@ -117,6 +118,99 @@ module Inferno
         end
 
         alias cli_context validation_context
+
+        # Environment variable containing the default expansion parameters.
+        # Used by {#expansion_parameters} when no value has been set
+        # explicitly. May contain either the raw JSON content of a FHIR
+        # Parameters resource (if it starts with `{`) or a path to a file
+        # containing one.
+        EXPANSION_PARAMETERS_ENV_VAR = 'FHIR_RESOURCE_VALIDATOR_EXPANSION_PARAMETERS'.freeze
+
+        # Set the expansion parameters to be sent with each validation
+        # request. This configures how the validator's terminology engine
+        # expands value sets during validation (e.g. designation
+        # preferences, forcing the use of the latest terminology versions,
+        # etc.). The content is sent inline with every validation request
+        # made by this validator, since the validator does not have access
+        # to Inferno's filesystem.
+        #
+        # Accepts either a Hash containing the contents of a FHIR Parameters
+        # resource, or a String path to a file (JSON or XML) containing one.
+        # The file is read once, the first time it's needed.
+        #
+        # If never set explicitly, this falls back to the
+        # `FHIR_RESOURCE_VALIDATOR_EXPANSION_PARAMETERS` environment
+        # variable, if present. This allows a shared set of expansion
+        # parameters to be configured once for every test kit that uses a
+        # given validator instance, while still letting individual test
+        # kits opt out or override it by calling this method themselves.
+        # The environment variable's content is treated as raw JSON if it
+        # starts with `{`, and otherwise as a file path.
+        #
+        # @example
+        #   # Passing a Hash
+        #   fhir_resource_validator do
+        #     url 'http://example.com/validator'
+        #     expansion_parameters({
+        #       resourceType: 'Parameters',
+        #       parameter: [{ name: 'excludeNested', valueBoolean: true }]
+        #     })
+        #   end
+        #
+        # @example
+        #   # Passing a file path
+        #   fhir_resource_validator do
+        #     url 'http://example.com/validator'
+        #     expansion_parameters 'path/to/expansion_parameters.json'
+        #   end
+        #
+        # @param value [Hash, String, nil] contents of a Parameters resource
+        #   as a Hash, or a path to a file (JSON or XML) containing one
+        def expansion_parameters(value = nil)
+          if value
+            @expansion_parameters = build_expansion_parameters(value)
+          elsif !@expansion_parameters_resolved
+            env_value = ENV.fetch(EXPANSION_PARAMETERS_ENV_VAR, nil)
+            @expansion_parameters = build_expansion_parameters_from_env(env_value) if env_value
+          end
+          @expansion_parameters_resolved = true
+
+          @expansion_parameters
+        end
+
+        # @private
+        # Determines whether the environment variable's content is raw JSON
+        # or a file path based on its first non-whitespace character.
+        def build_expansion_parameters_from_env(env_value)
+          if env_value.lstrip.start_with?('{')
+            build_expansion_parameters_from_json_content(env_value)
+          else
+            build_expansion_parameters(env_value)
+          end
+        end
+
+        # @private
+        def build_expansion_parameters(value)
+          case value
+          when Hash
+            build_expansion_parameters_from_json_content(value.to_json)
+          else
+            {
+              fileName: File.basename(value),
+              fileContent: File.read(value),
+              fileType: nil
+            }
+          end
+        end
+
+        # @private
+        def build_expansion_parameters_from_json_content(json_content)
+          {
+            fileName: 'expansion_parameters.json',
+            fileContent: json_content,
+            fileType: nil
+          }
+        end
 
         # @private
         # Used internally by perform_additional_validation
@@ -622,6 +716,8 @@ module Inferno
             ],
             sessionId: @session_id
           }
+          wrapped_resource[:expansionParameters] = expansion_parameters if expansion_parameters
+
           wrapped_resource.to_json
         end
       end

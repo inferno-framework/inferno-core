@@ -701,6 +701,204 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
     end
   end
 
+  describe '#expansion_parameters' do
+    let(:expansion_parameters_path) { File.join(__dir__, '..', '..', 'fixtures', 'expansion_parameters.json') }
+    let(:expansion_parameters_content) { File.read(expansion_parameters_path) }
+    let(:expansion_parameters_hash) { JSON.parse(expansion_parameters_content) }
+
+    def expected_request_body(expansion_parameters: nil)
+      body = {
+        cliContext: {
+          sv: '4.0.1',
+          doNative: false,
+          extensions: ['any'],
+          disableDefaultResourceFetcher: true,
+          profiles: [profile_url]
+        },
+        filesToValidate: [
+          {
+            fileName: "#{profile_url}.json",
+            fileContent: resource.source_contents,
+            fileType: 'json'
+          }
+        ],
+        sessionId: nil
+      }
+      body[:expansionParameters] = expansion_parameters if expansion_parameters
+      body.to_json
+    end
+
+    before do
+      allow(Inferno::Feature).to receive(:use_validation_context_key?).and_return(false)
+    end
+
+    it 'is nil when not configured and the environment variable is unset' do
+      v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url 'http://example.com'
+      end
+
+      expect(v.expansion_parameters).to be_nil
+    end
+
+    context 'when given a file path' do
+      it 'reads and stores the file contents as a FileInfo hash' do
+        v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+          url 'http://example.com'
+        end
+
+        v.expansion_parameters(expansion_parameters_path)
+
+        expect(v.expansion_parameters).to eq(
+          {
+            fileName: 'expansion_parameters.json',
+            fileContent: expansion_parameters_content,
+            fileType: nil
+          }
+        )
+      end
+
+      it 'includes expansionParameters in the request body' do
+        v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+          url 'http://example.com'
+          expansion_parameters File.join(__dir__, '..', '..', 'fixtures', 'expansion_parameters.json')
+        end
+
+        stub_request(:post, 'http://example.com/validate')
+          .with(body: expected_request_body(expansion_parameters: {
+                                              fileName: 'expansion_parameters.json',
+                                              fileContent: expansion_parameters_content,
+                                              fileType: nil
+                                            }))
+          .to_return(status: 200, body: '{}')
+
+        expect(v.validate(resource, profile_url)).to eq('{}')
+      end
+    end
+
+    context 'when given a Hash' do
+      it 'serializes it to JSON and stores it as a FileInfo hash' do
+        v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+          url 'http://example.com'
+        end
+
+        v.expansion_parameters(expansion_parameters_hash)
+
+        expect(v.expansion_parameters).to eq(
+          {
+            fileName: 'expansion_parameters.json',
+            fileContent: expansion_parameters_hash.to_json,
+            fileType: nil
+          }
+        )
+      end
+
+      it 'includes expansionParameters in the request body' do
+        v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+          url 'http://example.com'
+        end
+        v.expansion_parameters(expansion_parameters_hash)
+
+        stub_request(:post, 'http://example.com/validate')
+          .with(body: expected_request_body(expansion_parameters: {
+                                              fileName: 'expansion_parameters.json',
+                                              fileContent: expansion_parameters_hash.to_json,
+                                              fileType: nil
+                                            }))
+          .to_return(status: 200, body: '{}')
+
+        expect(v.validate(resource, profile_url)).to eq('{}')
+      end
+    end
+
+    context 'when the FHIR_RESOURCE_VALIDATOR_EXPANSION_PARAMETERS environment variable is set' do
+      def stub_env_var(value)
+        allow(ENV).to receive(:fetch).and_call_original
+        allow(ENV).to receive(:fetch)
+          .with('FHIR_RESOURCE_VALIDATOR_EXPANSION_PARAMETERS', nil)
+          .and_return(value)
+      end
+
+      context 'with a value that starts with `{`' do
+        before { stub_env_var(expansion_parameters_content) }
+
+        it 'is treated as raw JSON content and used as the default' do
+          v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+            url 'http://example.com'
+          end
+
+          expect(v.expansion_parameters).to eq(
+            {
+              fileName: 'expansion_parameters.json',
+              fileContent: expansion_parameters_content,
+              fileType: nil
+            }
+          )
+        end
+
+        it 'is overridden when configured explicitly' do
+          override_hash = { resourceType: 'Parameters', parameter: [] }
+
+          v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+            url 'http://example.com'
+            expansion_parameters({ resourceType: 'Parameters', parameter: [] })
+          end
+
+          expect(v.expansion_parameters).to eq(
+            {
+              fileName: 'expansion_parameters.json',
+              fileContent: override_hash.to_json,
+              fileType: nil
+            }
+          )
+        end
+      end
+
+      context 'with a value that does not start with `{`' do
+        before { stub_env_var(expansion_parameters_path) }
+
+        it 'is treated as a file path and used as the default' do
+          v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+            url 'http://example.com'
+          end
+
+          expect(v.expansion_parameters).to eq(
+            {
+              fileName: 'expansion_parameters.json',
+              fileContent: expansion_parameters_content,
+              fileType: nil
+            }
+          )
+        end
+      end
+
+      context 'with leading whitespace before the `{`' do
+        before { stub_env_var("  \n#{expansion_parameters_content}") }
+
+        it 'is still treated as raw JSON content' do
+          v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+            url 'http://example.com'
+          end
+
+          expect(v.expansion_parameters).to eq(
+            {
+              fileName: 'expansion_parameters.json',
+              fileContent: "  \n#{expansion_parameters_content}",
+              fileType: nil
+            }
+          )
+        end
+      end
+    end
+
+    it 'does not include expansionParameters in the request body when not configured' do
+      stub_request(:post, 'http://example.com/validate')
+        .with(body: expected_request_body)
+        .to_return(status: 200, body: '{}')
+
+      expect(validator.validate(resource, profile_url)).to eq('{}')
+    end
+  end
+
   describe '.find_validator' do
     it 'finds the correct validator based on suite options' do
       suite = OptionsSuite::Suite
