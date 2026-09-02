@@ -55,6 +55,19 @@ module Inferno
           @validator_session_repo ||= Inferno::Repositories::ValidatorSessions.new
         end
 
+        # Environment variable that, when set to a truthy-looking value,
+        # enables verbose validation logging (the validationContext sent
+        # with each request, and the resulting issues including which were
+        # filtered out) through Inferno's normal application logger, tagged
+        # with the validator definition and, when available, the test
+        # session and test that triggered the request.
+        VALIDATOR_DEBUG_LOGGING_ENV_VAR = 'FHIR_RESOURCE_VALIDATOR_DEBUG_LOGGING'.freeze
+
+        # @private
+        def debug_logging_enabled?
+          ENV.fetch(VALIDATOR_DEBUG_LOGGING_ENV_VAR, nil).present?
+        end
+
         # Set the url of the validator service
         #
         # @param validator_url [String]
@@ -212,6 +225,36 @@ module Inferno
           }
         end
 
+        # Environment variable that, when set, enables terminology server
+        # request logging by the validator itself. Its value is sent as
+        # `txLog` in the validationContext of every validation request,
+        # telling the validator where to log the terminology server
+        # requests it makes. Note that the log will appear within
+        # the container running the validator.
+        TX_LOG_ENV_VAR = 'FHIR_RESOURCE_VALIDATOR_TX_LOG'.freeze
+
+        # @private
+        def tx_log
+          ENV.fetch(TX_LOG_ENV_VAR, nil).presence
+        end
+
+        # @private
+        # Builds the validationContext sent with a request for the given
+        # profile. Pulled out on its own (rather than inlined in
+        # `wrap_target_for_hl7_wrapper`) so the same, resource-content-free
+        # context can also be used for logging in `log_validation_result`.
+        #
+        # @param profile_url [String]
+        # @return [Hash]
+        def build_validation_context(profile_url)
+          context = {
+            **validation_context.definition,
+            profiles: [profile_url]
+          }
+          context[:txLog] = tx_log if tx_log
+          context
+        end
+
         # @private
         # Used internally by perform_additional_validation
         def additional_validations
@@ -334,6 +377,7 @@ module Inferno
 
           # 4. Mark resources as filtered
           mark_issues_for_filtering(issues)
+          log_validation_result(profile_url, issues, runnable) if debug_logging_enabled?
 
           # 5. Add error messages to runnable
           filtered_issues = issues.reject(&:filtered)
@@ -447,10 +491,53 @@ module Inferno
         # @private
         def call_validator(target, profile_url)
           request_body = wrap_target_for_hl7_wrapper(target, profile_url)
+
           Faraday.new(
             url,
             request: { timeout: 600 }
           ).post('validate', request_body, content_type: 'application/json')
+        end
+
+        # @private
+        # Logs the validationContext sent with a request together with the
+        # resulting issues (including which were filtered out) in a single
+        # entry, tagged with enough context to trace it back to the
+        # validator definition and triggering test run.
+        #
+        # Deliberately omits the resource content itself (sent separately as
+        # `filesToValidate`): only the small, non-PHI-bearing
+        # validationContext is logged, not the full request body.
+        #
+        # @param profile_url [String] the profile URL validated against
+        # @param issues [Array<ValidatorIssue>] the resulting issues, already marked for filtering
+        # @param runnable [Object] the runnable (typically a Test) that triggered the request
+        def log_validation_result(profile_url, issues, runnable)
+          payload = {
+            validator_name: name,
+            test_suite_id: test_suite_id,
+            test_session_id: runnable.respond_to?(:test_session_id) ? runnable.test_session_id : nil,
+            test_id: runnable.id,
+            validation_context: build_validation_context(profile_url),
+            issues: issues.map { |issue| issue_summary(issue) }
+          }.compact
+
+          Application[:logger].info("FHIR validation result: #{payload.to_json}")
+        end
+
+        # @private
+        # Recursively builds a loggable summary of a validation issue,
+        # including nested slice_info, without any resource content.
+        #
+        # @param issue [ValidatorIssue]
+        # @return [Hash]
+        def issue_summary(issue)
+          {
+            severity: issue.severity,
+            location: issue.location,
+            message: issue.message,
+            filtered: issue.filtered,
+            slice_info: issue.slice_info.any? ? issue.slice_info.map { |nested| issue_summary(nested) } : nil
+          }.compact
         end
 
         # @private
@@ -703,10 +790,7 @@ module Inferno
             end
 
           wrapped_resource = {
-            context_key => {
-              **validation_context.definition,
-              profiles: [profile_url]
-            },
+            context_key => build_validation_context(profile_url),
             filesToValidate: [
               {
                 fileName: "#{profile_url.split('/').last}.json",

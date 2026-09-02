@@ -1823,6 +1823,90 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
     end
   end
 
+  describe '#log_validation_result' do
+    def stub_debug_logging_env_var(value)
+      allow(ENV).to receive(:fetch).and_call_original
+      allow(ENV).to receive(:fetch)
+        .with('FHIR_RESOURCE_VALIDATOR_DEBUG_LOGGING', nil)
+        .and_return(value)
+    end
+
+    let(:logged_messages) { [] }
+
+    def logged_payload
+      JSON.parse(logged_messages.first.delete_prefix('FHIR validation result: '))
+    end
+
+    before do
+      stub_request(:post, "#{validation_url}/validate")
+        .to_return(status: 200, body: {
+          outcomes: [{
+            issues: [
+              {
+                'level' => 'ERROR',
+                'location' => 'Patient.name',
+                'message' => 'Name is required'
+              }
+            ]
+          }]
+        }.to_json)
+      allow(Inferno::Application[:logger]).to receive(:info) { |message| logged_messages << message }
+    end
+
+    context 'when the FHIR_RESOURCE_VALIDATOR_DEBUG_LOGGING environment variable is not set' do
+      before { stub_debug_logging_env_var(nil) }
+
+      it 'does not log anything' do
+        validator.resource_is_valid?(resource, profile_url, runnable)
+
+        expect(logged_messages).to be_empty
+      end
+    end
+
+    context 'when the FHIR_RESOURCE_VALIDATOR_DEBUG_LOGGING environment variable is set' do
+      before { stub_debug_logging_env_var('true') }
+
+      it 'logs a single entry (through the primary logger) with the validator definition, ' \
+         'the validationContext, and the issues (including filtering), but no resource content' do
+        validator.resource_is_valid?(resource, profile_url, runnable)
+
+        expect(logged_messages.length).to eq(1)
+        expect(logged_messages.first).to start_with('FHIR validation result: ')
+
+        payload = logged_payload
+        expect(payload).to include('validator_name' => 'test_validator', 'test_suite_id' => 'test_suite')
+        expect(payload).to_not have_key('test_session_id')
+        expect(payload['validation_context']).to eq(
+          'sv' => '4.0.1',
+          'doNative' => false,
+          'extensions' => ['any'],
+          'disableDefaultResourceFetcher' => true,
+          'profiles' => [profile_url]
+        )
+        expect(payload['issues']).to eq(
+          [
+            {
+              'severity' => 'error',
+              'location' => 'Patient.name',
+              'message' => 'Patient: Patient.name: Name is required',
+              'filtered' => false
+            }
+          ]
+        )
+      end
+
+      context 'when the runnable has a test_session_id' do
+        let(:runnable) { Inferno::Entities::Test.new(test_session_id: 'session-abc') }
+
+        it 'includes the test_session_id so entries can be correlated to a session' do
+          validator.resource_is_valid?(resource, profile_url, runnable)
+
+          expect(logged_payload['test_session_id']).to eq('session-abc')
+        end
+      end
+    end
+  end
+
   describe 'helper method unit tests' do
     describe '#convert_raw_issue_to_validator_issue' do
       it 'converts a basic raw issue to ValidatorIssue' do
