@@ -24,6 +24,7 @@ jobs:
 
   test:
     needs: find-execution-scripts
+    if: ${{ needs.find-execution-scripts.outputs.scripts != '[]' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false          # let all files run even if one fails
