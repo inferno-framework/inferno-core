@@ -1893,6 +1893,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
             }
           ]
         )
+        expect(payload).to_not have_key('expansion_parameters')
       end
 
       context 'when the runnable has a test_session_id' do
@@ -1902,6 +1903,22 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
           validator.resource_is_valid?(resource, profile_url, runnable)
 
           expect(logged_payload['test_session_id']).to eq('session-abc')
+        end
+      end
+
+      context 'when the validator has expansion_parameters configured' do
+        before do
+          validator.expansion_parameters({ resourceType: 'Parameters', parameter: [] })
+        end
+
+        it 'includes the expansion_parameters sent with the request' do
+          validator.resource_is_valid?(resource, profile_url, runnable)
+
+          expect(logged_payload['expansion_parameters']).to eq(
+            'fileName' => 'expansion_parameters.json',
+            'fileContent' => { resourceType: 'Parameters', parameter: [] }.to_json,
+            'fileType' => nil
+          )
         end
       end
     end

@@ -499,14 +499,15 @@ module Inferno
         end
 
         # @private
-        # Logs the validationContext sent with a request together with the
-        # resulting issues (including which were filtered out) in a single
-        # entry, tagged with enough context to trace it back to the
-        # validator definition and triggering test run.
+        # Logs the validationContext and expansionParameters sent with a
+        # request together with the resulting issues (including which were
+        # filtered out) in a single entry, tagged with enough context to
+        # trace it back to the validator definition and triggering test run.
         #
         # Deliberately omits the resource content itself (sent separately as
         # `filesToValidate`): only the small, non-PHI-bearing
-        # validationContext is logged, not the full request body.
+        # validationContext and expansionParameters are logged, not the full
+        # request body.
         #
         # @param profile_url [String] the profile URL validated against
         # @param issues [Array<ValidatorIssue>] the resulting issues, already marked for filtering
@@ -518,6 +519,7 @@ module Inferno
             test_session_id: runnable.respond_to?(:test_session_id) ? runnable.test_session_id : nil,
             test_id: runnable.id,
             validation_context: build_validation_context(profile_url),
+            expansion_parameters:,
             issues: issues.map { |issue| issue_summary(issue) }
           }.compact
 
