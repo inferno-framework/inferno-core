@@ -9,6 +9,7 @@ require_relative 'suites'
 require_relative 'new'
 require_relative 'execute'
 require_relative 'execute_script'
+require_relative '../../utils/execution_script_runner'
 require_relative '../../version'
 
 module Inferno
@@ -78,8 +79,28 @@ module Inferno
       desc 'requirements SUBCOMMAND ...ARGS', 'Perform requirements operations'
       subcommand 'requirements', Requirements
 
-      desc 'execute_script YAML_FILE',
-           'Run a session orchestration script defined by a YAML config file.'
+      desc 'execute_script PATTERN',
+           'Run one or more session orchestration scripts defined by YAML config file(s).'
+      long_desc <<-LONGDESC
+        Run a session orchestration script defined by a YAML config file.
+
+        PATTERN may be a single YAML file, or it may contain wildcards (e.g. glob
+        patterns like `*` or `**`) to match and run multiple scripts in sequence.
+        When PATTERN matches more than one file, each matching script is run in a
+        separate process; a summary of passed and failed scripts is printed at the
+        end, and the command exits non-zero if any script failed.
+
+        Examples:
+
+        # Run a single script
+        `bundle exec inferno execute_script execution_scripts/demo/demo_individual_tests.yaml`
+
+        # Run every script in a directory
+        `bundle exec inferno execute_script "execution_scripts/demo/*.yaml"`
+
+        # Run every script under execution_scripts
+        `bundle exec inferno execute_script "execution_scripts/**/*.yaml"`
+      LONGDESC
       option :inferno_base_url,
              aliases: ['-I'],
              type: :string,
@@ -113,9 +134,21 @@ module Inferno
              type: :boolean,
              default: false,
              desc: 'Allow execution script steps that run arbitrary shell commands. ' \
-                   'Scripts with command: steps will fail unless this flag is set.'
-      def execute_script(yaml_file)
-        ExecuteScript.new(yaml_file, options).run
+                   'Scripts with command: steps will fail unless this flag is set. ' \
+                   'When PATTERN matches multiple scripts, this also applies to all of them ' \
+                   '(in addition to any individual script whose filename contains "_with_commands").'
+      def execute_script(pattern)
+        matches = Dir.glob(pattern).select { |file| file.end_with?('.yaml', '.yml') }.sort
+
+        if matches.length > 1 || (matches.empty? && pattern.match?(/[*?\[\]{}]/))
+          Utils::ExecutionScriptRunner.run_all(
+            pattern:,
+            inferno_base_url: options[:inferno_base_url],
+            allow_commands: options[:allow_commands]
+          )
+        else
+          ExecuteScript.new(matches.first || pattern, options).run
+        end
       end
 
       desc 'session SUBCOMMAND ...ARGS', 'Perform session operations'

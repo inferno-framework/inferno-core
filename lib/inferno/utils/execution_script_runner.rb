@@ -3,7 +3,8 @@ require 'open3'
 module Inferno
   module Utils
     module ExecutionScriptRunner
-      def self.run_all(pattern: 'execution_scripts/**/*.yaml', inferno_base_url: nil, allow_known_errors: false)
+      def self.run_all(pattern: 'execution_scripts/**/*.yaml', inferno_base_url: nil,
+                       allow_known_errors: false, allow_commands: false)
         scripts = Dir.glob(pattern)
 
         if scripts.empty?
@@ -22,7 +23,7 @@ module Inferno
             next
           end
 
-          result = run_script(config, inferno_base_url:, allow_known_errors:)
+          result = run_script(config, inferno_base_url:, allow_known_errors:, allow_commands:)
           (result == :pass ? passed : failed) << config
 
           puts
@@ -31,19 +32,37 @@ module Inferno
         print_summary(passed, failed)
       end
 
-      def self.run_script(config, inferno_base_url:, allow_known_errors:)
+      def self.run_script(config, inferno_base_url:, allow_known_errors:, allow_commands: false)
         puts '=' * 60
         puts "Running: #{config}"
         puts '=' * 60
 
-        allow_commands = File.basename(config, '.yaml').include?('_with_commands')
+        allow_commands ||= File.basename(config, '.yaml').include?('_with_commands')
         cmd = ['bundle', 'exec', 'inferno', 'execute_script', config]
         cmd += ['--inferno-base-url', inferno_base_url] if inferno_base_url
         cmd += ['--allow-commands'] if allow_commands
-        output, status = Open3.capture2e(*cmd)
-        puts output
+        output, exitstatus = stream_command(*cmd)
 
-        determine_result(config, status.exitstatus, output, allow_known_errors)
+        determine_result(config, exitstatus, output, allow_known_errors)
+      end
+
+      # Runs +cmd+ as a subprocess, echoing its combined stdout/stderr to the console
+      # line-by-line as it's produced (rather than buffering until the process exits),
+      # while still returning the full captured output for result determination.
+      def self.stream_command(*cmd)
+        output = +''
+        exitstatus = nil
+
+        Open3.popen2e(*cmd) do |stdin, stdout_and_stderr, wait_thread|
+          stdin.close
+          stdout_and_stderr.each_line do |line|
+            puts line
+            output << line
+          end
+          exitstatus = wait_thread.value.exitstatus
+        end
+
+        [output, exitstatus]
       end
 
       def self.determine_result(config, return_code, output, allow_known_errors)
