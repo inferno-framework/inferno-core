@@ -228,6 +228,27 @@ RSpec.describe Inferno::DSL::Runnable do
     end
   end
 
+  # Regression test for a bug where calling `.id` on the shared
+  # `Inferno::Entities::Test`/`TestGroup`/`TestSuite` classes directly (e.g. via
+  # `Inferno::Test.new` used as a bare double in another spec) memoized @id/@base_id
+  # onto those classes permanently, which then leaked into every subsequently-defined
+  # anonymous subclass (via `copy_instance_variables`) and caused
+  # DuplicateEntityIdException collisions in unrelated, later-running examples.
+  # `order: :defined` keeps these two examples in sequence regardless of the global
+  # `config.order = :random` setting, since the second depends on the first having run.
+  describe 'id isolation between examples', order: :defined do
+    it 'pollutes the shared base class id (setup for the next example)' do
+      Inferno::Test.id
+
+      expect(Inferno::Test.instance_variable_get(:@base_id)).to eq('Inferno::Entities::Test')
+    end
+
+    it 'has been reset by the global after(:each) hook in spec_helper' do
+      expect(Inferno::Test.instance_variable_get(:@id)).to be_nil
+      expect(Inferno::Test.instance_variable_get(:@base_id)).to be_nil
+    end
+  end
+
   describe '.remove' do
     it 'removes a child' do
       group = Class.new(Inferno::TestGroup) do

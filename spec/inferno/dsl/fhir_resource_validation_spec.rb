@@ -1925,6 +1925,9 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
         .and_return(value)
     end
 
+    let(:runnable_class) { Class.new(Inferno::Entities::Test) { id SecureRandom.uuid } }
+    let(:runnable) { runnable_class.new }
+
     let(:logged_messages) { [] }
 
     def logged_payload
@@ -1991,7 +1994,7 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
       end
 
       context 'when the runnable has a test_session_id' do
-        let(:runnable) { Inferno::Entities::Test.new(test_session_id: 'session-abc') }
+        let(:runnable) { runnable_class.new(test_session_id: 'session-abc') }
 
         it 'includes the test_session_id so entries can be correlated to a session' do
           validator.resource_is_valid?(resource, profile_url, runnable)
