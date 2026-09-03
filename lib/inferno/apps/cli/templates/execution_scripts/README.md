@@ -10,6 +10,7 @@ as `tx.fhir.org`.
 
 Execution scripts defined here will
 be [executed](https://inferno-framework.github.io/docs/advanced-test-features/scripting-execution.html#execution)
-automatically on pull requests as a part of the github
+automatically on pull requests as a part of the GitHub
 workflows and can also be executed locally using the
 [`execute_script` CLI](https://inferno-framework.github.io/docs/getting-started/inferno-cli.html#complex-scripted-execution).
+If no `.yaml` files are found under this directory, the GitHub workflow will be skipped.
