@@ -62,12 +62,23 @@ jobs:
         ruby-version: ['3.3.6']
     steps:
       - uses: actions/checkout@v2
+      - name: Check for requirements files
+        id: check_requirements
+        run: |
+          if compgen -G "lib/*/requirements/*.xlsx" > /dev/null; then
+            echo "has_requirements=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_requirements=false" >> "$GITHUB_OUTPUT"
+          fi
       - name: Set up Ruby
+        if: steps.check_requirements.outputs.has_requirements == 'true'
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
       - name: Check Export
+        if: steps.check_requirements.outputs.has_requirements == 'true'
         run: bundle exec inferno requirements check
       - name: Check Coverage
+        if: steps.check_requirements.outputs.has_requirements == 'true'
         run: bundle exec inferno requirements check_coverage
