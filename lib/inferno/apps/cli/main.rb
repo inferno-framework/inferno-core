@@ -79,7 +79,7 @@ module Inferno
       desc 'requirements SUBCOMMAND ...ARGS', 'Perform requirements operations'
       subcommand 'requirements', Requirements
 
-      desc 'execute_script PATTERN',
+      desc 'execute_script [PATTERN]',
            'Run one or more session orchestration scripts defined by YAML config file(s).'
       long_desc <<-LONGDESC
         Run a session orchestration script defined by a YAML config file.
@@ -90,16 +90,19 @@ module Inferno
         separate process; a summary of passed and failed scripts is printed at the
         end, and the command exits non-zero if any script failed.
 
+        If PATTERN is omitted, it defaults to `execution_scripts/**/*.yaml`, running
+        every script under the execution_scripts directory.
+
         Examples:
+
+        # Run every script under execution_scripts
+        `bundle exec inferno execute_script`
 
         # Run a single script
         `bundle exec inferno execute_script execution_scripts/demo/demo_individual_tests.yaml`
 
         # Run every script in a directory
         `bundle exec inferno execute_script "execution_scripts/demo/*.yaml"`
-
-        # Run every script under execution_scripts
-        `bundle exec inferno execute_script "execution_scripts/**/*.yaml"`
       LONGDESC
       option :inferno_base_url,
              aliases: ['-I'],
@@ -137,7 +140,7 @@ module Inferno
                    'Scripts with command: steps will fail unless this flag is set. ' \
                    'When PATTERN matches multiple scripts, this also applies to all of them ' \
                    '(in addition to any individual script whose filename contains "_with_commands").'
-      def execute_script(pattern)
+      def execute_script(pattern = 'execution_scripts/**/*.yaml')
         matches = Dir.glob(pattern).select { |file| file.end_with?('.yaml', '.yml') }.sort
 
         if matches.length > 1 || (matches.empty? && pattern.match?(/[*?\[\]{}]/))
