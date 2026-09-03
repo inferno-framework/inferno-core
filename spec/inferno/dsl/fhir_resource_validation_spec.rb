@@ -701,6 +701,100 @@ RSpec.describe Inferno::DSL::FHIRResourceValidation do
     end
   end
 
+  describe '#tx_log' do
+    def stub_tx_log_env_var(value)
+      allow(ENV).to receive(:fetch).and_call_original
+      allow(ENV).to receive(:fetch)
+        .with('FHIR_RESOURCE_VALIDATOR_TX_LOG', nil)
+        .and_return(value)
+    end
+
+    before do
+      allow(Inferno::Feature).to receive(:use_validation_context_key?).and_return(false)
+    end
+
+    it 'is nil when the environment variable is unset' do
+      v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url 'http://example.com'
+      end
+
+      expect(v.tx_log).to be_nil
+    end
+
+    context 'when the FHIR_RESOURCE_VALIDATOR_TX_LOG environment variable is set' do
+      before { stub_tx_log_env_var('/var/log/tx.log') }
+
+      it 'returns the configured value' do
+        v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+          url 'http://example.com'
+        end
+
+        expect(v.tx_log).to eq('/var/log/tx.log')
+      end
+
+      it 'includes txLog in the validationContext sent with the validation request' do
+        v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+          url 'http://example.com'
+        end
+
+        expected_request_body = {
+          cliContext: {
+            sv: '4.0.1',
+            doNative: false,
+            extensions: ['any'],
+            disableDefaultResourceFetcher: true,
+            profiles: [profile_url],
+            txLog: '/var/log/tx.log'
+          },
+          filesToValidate: [
+            {
+              fileName: "#{profile_url}.json",
+              fileContent: resource.source_contents,
+              fileType: 'json'
+            }
+          ],
+          sessionId: nil
+        }.to_json
+
+        stub_request(:post, 'http://example.com/validate')
+          .with(body: expected_request_body)
+          .to_return(status: 200, body: '{}')
+
+        expect(v.validate(resource, profile_url)).to eq('{}')
+      end
+    end
+
+    it 'does not include txLog in the validationContext when the environment variable is unset' do
+      v = Inferno::DSL::FHIRResourceValidation::Validator.new do
+        url 'http://example.com'
+      end
+
+      expected_request_body = {
+        cliContext: {
+          sv: '4.0.1',
+          doNative: false,
+          extensions: ['any'],
+          disableDefaultResourceFetcher: true,
+          profiles: [profile_url]
+        },
+        filesToValidate: [
+          {
+            fileName: "#{profile_url}.json",
+            fileContent: resource.source_contents,
+            fileType: 'json'
+          }
+        ],
+        sessionId: nil
+      }.to_json
+
+      stub_request(:post, 'http://example.com/validate')
+        .with(body: expected_request_body)
+        .to_return(status: 200, body: '{}')
+
+      expect(v.validate(resource, profile_url)).to eq('{}')
+    end
+  end
+
   describe '#expansion_parameters' do
     let(:expansion_parameters_path) { File.join(__dir__, '..', '..', 'fixtures', 'expansion_parameters.json') }
     let(:expansion_parameters_content) { File.read(expansion_parameters_path) }
