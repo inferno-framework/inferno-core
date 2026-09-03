@@ -147,7 +147,12 @@ module Inferno
           Utils::ExecutionScriptRunner.run_all(
             pattern:,
             inferno_base_url: options[:inferno_base_url],
-            allow_commands: options[:allow_commands]
+            allow_commands: options[:allow_commands],
+            compare_messages: options[:compare_messages],
+            compare_result_message: options[:compare_result_message],
+            poll_interval: options[:poll_interval],
+            default_poll_timeout: options[:default_poll_timeout],
+            only_different_messages: options[:only_different_messages]
           )
         else
           ExecuteScript.new(matches.first || pattern, options).run

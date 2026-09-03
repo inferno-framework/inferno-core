@@ -120,6 +120,91 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
       end
     end
 
+    context 'when poll_interval differs from the default' do
+      it 'passes --poll-interval to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--poll-interval', '5',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(poll_interval: 5)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--poll-interval', '5'
+        )
+      end
+    end
+
+    context 'when default_poll_timeout differs from the default' do
+      it 'passes --default-poll-timeout to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--default-poll-timeout', '600',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(default_poll_timeout: 600)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--default-poll-timeout', '600'
+        )
+      end
+    end
+
+    context 'when compare_messages is false' do
+      it 'passes --no-compare-messages to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-messages',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(compare_messages: false)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-messages'
+        )
+      end
+    end
+
+    context 'when compare_result_message is false' do
+      it 'passes --no-compare-result-message to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-result-message',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(compare_result_message: false)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-result-message'
+        )
+      end
+    end
+
+    context 'when only_different_messages is false' do
+      it 'passes --no-only-different-messages to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-only-different-messages',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(only_different_messages: false)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-only-different-messages'
+        )
+      end
+    end
+
     context 'when a non-YAML file is in the glob results' do
       before do
         allow(Dir).to receive(:glob)

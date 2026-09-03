@@ -4,7 +4,10 @@ module Inferno
   module Utils
     module ExecutionScriptRunner
       def self.run_all(pattern: 'execution_scripts/**/*.yaml', inferno_base_url: nil,
-                       allow_known_errors: false, allow_commands: false)
+                       allow_known_errors: false, allow_commands: false,
+                       compare_messages: true, compare_result_message: true,
+                       poll_interval: 3, default_poll_timeout: 120,
+                       only_different_messages: true)
         scripts = Dir.glob(pattern)
 
         if scripts.empty?
@@ -23,7 +26,10 @@ module Inferno
             next
           end
 
-          result = run_script(config, inferno_base_url:, allow_known_errors:, allow_commands:)
+          result = run_script(config, inferno_base_url:, allow_known_errors:, allow_commands:,
+                                      compare_messages:, compare_result_message:,
+                                      poll_interval:, default_poll_timeout:,
+                                      only_different_messages:)
           (result == :pass ? passed : failed) << config
 
           puts
@@ -32,18 +38,42 @@ module Inferno
         print_summary(passed, failed)
       end
 
-      def self.run_script(config, inferno_base_url:, allow_known_errors:, allow_commands: false)
+      def self.run_script(config, inferno_base_url:, allow_known_errors:, allow_commands: false,
+                          compare_messages: true, compare_result_message: true,
+                          poll_interval: 3, default_poll_timeout: 120,
+                          only_different_messages: true)
         puts '=' * 60
         puts "Running: #{config}"
         puts '=' * 60
 
         allow_commands ||= File.basename(config, '.yaml').include?('_with_commands')
-        cmd = ['bundle', 'exec', 'inferno', 'execute_script', config]
-        cmd += ['--inferno-base-url', inferno_base_url] if inferno_base_url
-        cmd += ['--allow-commands'] if allow_commands
+        cmd = build_command(config, inferno_base_url:, allow_commands:, compare_messages:,
+                                    compare_result_message:, poll_interval:, default_poll_timeout:,
+                                    only_different_messages:)
         output, exitstatus = stream_command(*cmd)
 
         determine_result(config, exitstatus, output, allow_known_errors)
+      end
+
+      # @private
+      def self.build_command(config, inferno_base_url:, allow_commands:, compare_messages:,
+                             compare_result_message:, poll_interval:, default_poll_timeout:,
+                             only_different_messages:)
+        cmd = ['bundle', 'exec', 'inferno', 'execute_script', config]
+        cmd += ['--inferno-base-url', inferno_base_url] if inferno_base_url
+        cmd += ['--allow-commands'] if allow_commands
+        cmd += ['--poll-interval', poll_interval.to_s] if poll_interval != 3
+        cmd += ['--default-poll-timeout', default_poll_timeout.to_s] if default_poll_timeout != 120
+        cmd + comparison_flags(compare_messages:, compare_result_message:, only_different_messages:)
+      end
+
+      # @private
+      def self.comparison_flags(compare_messages:, compare_result_message:, only_different_messages:)
+        flags = []
+        flags << '--no-compare-messages' unless compare_messages
+        flags << '--no-compare-result-message' unless compare_result_message
+        flags << '--no-only-different-messages' unless only_different_messages
+        flags
       end
 
       # Runs +cmd+ as a subprocess, echoing its combined stdout/stderr to the console
