@@ -1,4 +1,3 @@
-version: '3'
 services:
   inferno:
     build:
@@ -6,7 +5,7 @@ services:
     volumes:
       - ./data:/opt/inferno/data
     depends_on:
-      - validator_service
+      - hl7_validator_service
   worker:
     build:
       context: ./
@@ -19,14 +18,6 @@ services:
     extends:
       file: docker-compose.background.yml
       service: hl7_validator_service
-  validator_service:
-    extends:
-      file: docker-compose.background.yml
-      service: validator_service
-  fhir_validator_app:
-    extends:
-      file: docker-compose.background.yml
-      service: fhir_validator_app
   fhirpath:
     extends:
       file: docker-compose.background.yml

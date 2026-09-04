@@ -2,12 +2,21 @@ require_relative '../../../lib/inferno/utils/execution_script_runner'
 
 RSpec.describe Inferno::Utils::ExecutionScriptRunner do
   describe '.run_all' do
-    let(:passing_status) { instance_double(Process::Status, exitstatus: 0) }
     let(:default_scripts) { ['execution_scripts/my_test.yaml'] }
+
+    # Stubs Open3.popen2e to yield fake stdin/output/wait_thread objects, mirroring
+    # how the real method yields to the block passed by stream_command.
+    def stub_subprocess(*cmd_args, output: '', exitstatus: 0)
+      stdin = instance_double(IO, close: nil)
+      wait_thread = instance_double(Thread, value: instance_double(Process::Status, exitstatus:))
+      stub = allow(Open3).to receive(:popen2e)
+      stub = stub.with(*cmd_args) if cmd_args.any?
+      stub.and_yield(stdin, StringIO.new(output), wait_thread)
+    end
 
     before do
       allow(Dir).to receive(:glob).and_return(default_scripts)
-      allow(Open3).to receive(:capture2e).and_return(['', passing_status])
+      stub_subprocess(output: '', exitstatus: 0)
       allow(described_class).to receive(:puts)
       allow(described_class).to receive(:warn)
     end
@@ -26,22 +35,30 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
       end
 
       it 'invokes the execute_script CLI command for each script' do
-        allow(Open3).to receive(:capture2e).with(
-          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml'
-        ).and_return(['', passing_status])
+        stub_subprocess('bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+                        output: '', exitstatus: 0)
 
         described_class.run_all
 
-        expect(Open3).to have_received(:capture2e).with(
+        expect(Open3).to have_received(:popen2e).with(
           'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml'
         )
       end
     end
 
-    context 'when a script fails' do
-      let(:failing_status) { instance_double(Process::Status, exitstatus: 1) }
+    context 'when the subprocess produces output' do
+      it 'streams each line to the console as it is produced, rather than buffering it' do
+        stub_subprocess(output: "line one\nline two\n", exitstatus: 0)
 
-      before { allow(Open3).to receive(:capture2e).and_return(['', failing_status]) }
+        described_class.run_all
+
+        expect(described_class).to have_received(:puts).with("line one\n").ordered
+        expect(described_class).to have_received(:puts).with("line two\n").ordered
+      end
+    end
+
+    context 'when a script fails' do
+      before { stub_subprocess(output: '', exitstatus: 1) }
 
       it 'exits with code 1' do
         expect { described_class.run_all }.to raise_error(SystemExit) { |e| expect(e.status).to eq(1) }
@@ -50,14 +67,15 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
 
     context 'when inferno_base_url is provided' do
       it 'passes --inferno-base-url to the command' do
-        allow(Open3).to receive(:capture2e).with(
+        stub_subprocess(
           'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
-          '--inferno-base-url', 'http://localhost:4567'
-        ).and_return(['', passing_status])
+          '--inferno-base-url', 'http://localhost:4567',
+          output: '', exitstatus: 0
+        )
 
         described_class.run_all(inferno_base_url: 'http://localhost:4567')
 
-        expect(Open3).to have_received(:capture2e).with(
+        expect(Open3).to have_received(:popen2e).with(
           'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
           '--inferno-base-url', 'http://localhost:4567'
         )
@@ -70,16 +88,119 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
       end
 
       it 'passes --allow-commands to the command' do
-        allow(Open3).to receive(:capture2e).with(
+        stub_subprocess(
           'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test_with_commands.yaml',
-          '--allow-commands'
-        ).and_return(['', passing_status])
+          '--allow-commands',
+          output: '', exitstatus: 0
+        )
 
         described_class.run_all
 
-        expect(Open3).to have_received(:capture2e).with(
+        expect(Open3).to have_received(:popen2e).with(
           'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test_with_commands.yaml',
           '--allow-commands'
+        )
+      end
+    end
+
+    context 'when allow_commands is explicitly passed' do
+      it 'passes --allow-commands even when the filename lacks the _with_commands convention' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--allow-commands',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(allow_commands: true)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--allow-commands'
+        )
+      end
+    end
+
+    context 'when poll_interval differs from the default' do
+      it 'passes --poll-interval to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--poll-interval', '5',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(poll_interval: 5)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--poll-interval', '5'
+        )
+      end
+    end
+
+    context 'when default_poll_timeout differs from the default' do
+      it 'passes --default-poll-timeout to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--default-poll-timeout', '600',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(default_poll_timeout: 600)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--default-poll-timeout', '600'
+        )
+      end
+    end
+
+    context 'when compare_messages is false' do
+      it 'passes --no-compare-messages to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-messages',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(compare_messages: false)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-messages'
+        )
+      end
+    end
+
+    context 'when compare_result_message is false' do
+      it 'passes --no-compare-result-message to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-result-message',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(compare_result_message: false)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-result-message'
+        )
+      end
+    end
+
+    context 'when only_different_messages is false' do
+      it 'passes --no-only-different-messages to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-only-different-messages',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(only_different_messages: false)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-only-different-messages'
         )
       end
     end
@@ -93,16 +214,14 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
       it 'skips the non-YAML file' do
         described_class.run_all
 
-        expect(Open3).to have_received(:capture2e).once
+        expect(Open3).to have_received(:popen2e).once
       end
     end
 
     context 'with allow_known_errors: false (default)' do
-      let(:exit_3_status) { instance_double(Process::Status, exitstatus: 3) }
-
       before do
         allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test_error.yaml'])
-        allow(Open3).to receive(:capture2e).and_return(['', exit_3_status])
+        stub_subprocess(output: '', exitstatus: 3)
       end
 
       it 'treats exit code 3 on a _error script as failure' do
@@ -111,14 +230,11 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
     end
 
     context 'with allow_known_errors: true' do
-      let(:exit_3_status) { instance_double(Process::Status, exitstatus: 3) }
-
       before { allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test_error.yaml']) }
 
       context 'when a _error script exits with an error before comparison and no expected file exists' do
         before do
-          allow(Open3).to receive(:capture2e)
-            .and_return(["{\"errors\": \"something went wrong\"}\n", exit_3_status])
+          stub_subprocess(output: "{\"errors\": \"something went wrong\"}\n", exitstatus: 3)
           allow(File).to receive(:exist?).and_call_original
           allow(File).to receive(:exist?)
             .with('execution_scripts/my_test_error_expected.json')
@@ -132,8 +248,7 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
 
       context 'when a _error script exits with an error before comparison but an expected file exists' do
         before do
-          allow(Open3).to receive(:capture2e)
-            .and_return(["{\"errors\": \"something went wrong\"}\n", exit_3_status])
+          stub_subprocess(output: "{\"errors\": \"something went wrong\"}\n", exitstatus: 3)
           allow(File).to receive(:exist?).and_call_original
           allow(File).to receive(:exist?)
             .with('execution_scripts/my_test_error_expected.json')
@@ -148,8 +263,7 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
 
       context 'when a _error script exits 3 and results matched expected' do
         before do
-          allow(Open3).to receive(:capture2e)
-            .and_return(["Actual results matched expected results? true\n", exit_3_status])
+          stub_subprocess(output: "Actual results matched expected results? true\n", exitstatus: 3)
         end
 
         it 'treats it as a pass' do
@@ -159,8 +273,7 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
 
       context 'when a _error script exits 3 but results did not match expected' do
         before do
-          allow(Open3).to receive(:capture2e)
-            .and_return(["Actual results matched expected results? false\n", exit_3_status])
+          stub_subprocess(output: "Actual results matched expected results? false\n", exitstatus: 3)
         end
 
         it 'treats it as a failure' do
@@ -172,7 +285,7 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
       context 'when a non-_error script exits 3' do
         before do
           allow(Dir).to receive(:glob).and_return(['execution_scripts/my_test.yaml'])
-          allow(Open3).to receive(:capture2e).and_return(['', exit_3_status])
+          stub_subprocess(output: '', exitstatus: 3)
         end
 
         it 'treats it as a failure' do

@@ -18,6 +18,8 @@ script execution or of inferno in general such as
 These scripts must
 include the `_error.yaml` suffix so that the github workflow
 and the rake file execution know to expect an error in the execution.
+This suffix is recognized by the GitHub CI/CD action and the rake task,
+but not by CLI execution.
 
 Note that this is different than expected `fail` results, which are valid
 non-passing results for tests: these can be recorded as expected within

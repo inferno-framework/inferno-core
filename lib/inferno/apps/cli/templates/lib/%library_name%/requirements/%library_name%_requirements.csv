@@ -1,0 +1,3 @@
+﻿Req Set,ID,URL,Requirement,Conformance,Actors,Sub-Requirement(s),Conditionality,Not Tested Reason,Not Tested Details
+sample_v1,12,www.example.com/page.html#section,Requirement text SHALL go here,SHALL,Server,sample_v1@13,false,Not Tested,We've decided not to test this requirement
+sample_v1,13,www.example.com/page.html#section,"This is a subsrequirement, and it SHOULD be implemented.",SHOULD,Server,,false,,

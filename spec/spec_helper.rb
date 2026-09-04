@@ -128,6 +128,24 @@ RSpec.configure do |config|
     DatabaseCleaner.cleaning { example.run }
   end
 
+  # Inferno::Entities::Test/TestGroup/TestSuite are meant to be used only as
+  # abstract bases -- real tests/groups/suites are always DSL-defined subclasses.
+  # Some specs instantiate the bare classes directly (e.g. `Inferno::Test.new`) as
+  # lightweight doubles. If anything then reads `.id` on one of those, `Runnable#id`
+  # permanently memoizes @id/@base_id/@database_id onto that *shared* class object
+  # (since it's a genuinely named Ruby class, `default_id` returns its `Module#name`).
+  # Left in place, that id leaks into every subsequently-defined anonymous subclass
+  # via `copy_instance_variables`, causing DuplicateEntityIdException collisions in
+  # unrelated, later-running examples. Reset it after every example so it can never
+  # survive to pollute a different example.
+  config.after do
+    [Inferno::Entities::Test, Inferno::Entities::TestGroup, Inferno::Entities::TestSuite].each do |klass|
+      klass.instance_variable_set(:@id, nil)
+      klass.instance_variable_set(:@base_id, nil)
+      klass.instance_variable_set(:@database_id, nil)
+    end
+  end
+
   config.include FactoryBot::Syntax::Methods
 
   config.before(:suite) do
