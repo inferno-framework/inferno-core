@@ -1,3 +1,6 @@
+## 1.4.4
+* ID-227: General cleanup and minor enhancements by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/809
+
 ## 1.4.3
 * Add around_test hook so instrumentation can be scoped per test by @KyleOps in https://github.com/inferno-framework/inferno-core/pull/797
 * ID-167 suite endpoint error response customization by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/802
