@@ -340,6 +340,55 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
       )
     end
 
+    it 'extracts patternString slice discriminators as value metadata' do
+      slicing = FHIR::ElementDefinition::Slicing.new(
+        discriminator: [
+          FHIR::ElementDefinition::Slicing::Discriminator.new(type: 'value', path: 'linkId'),
+          FHIR::ElementDefinition::Slicing::Discriminator.new(type: 'value', path: 'type')
+        ]
+      )
+      profile_elements = [
+        FHIR::ElementDefinition.new(
+          id: 'Questionnaire.item',
+          path: 'Questionnaire.item',
+          slicing:
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Questionnaire.item:demographics',
+          path: 'Questionnaire.item',
+          sliceName: 'demographics',
+          mustSupport: true
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Questionnaire.item:demographics.linkId',
+          path: 'Questionnaire.item.linkId',
+          patternString: 'demographics'
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Questionnaire.item:demographics.type',
+          path: 'Questionnaire.item.type',
+          fixedCode: 'group'
+        )
+      ]
+
+      slices = described_class.new(profile_elements, profile, 'Questionnaire', ig_resources).value_slices
+
+      expect(slices).to contain_exactly(
+        {
+          slice_id: 'Questionnaire.item:demographics',
+          slice_name: 'demographics',
+          path: 'item',
+          discriminator: {
+            type: 'value',
+            values: [
+              { path: 'linkId', value: 'demographics' },
+              { path: 'type', value: 'group' }
+            ]
+          }
+        }
+      )
+    end
+
     it 'preserves fixed false discriminator values and normalizes discriminator paths' do
       extension_url = 'http://example.org/StructureDefinition/careTeamClaimScope'
       discriminator = FHIR::ElementDefinition::Slicing::Discriminator.new(

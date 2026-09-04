@@ -364,6 +364,11 @@ module Inferno
                   path: navigation_compatible_discriminator_path(discriminator_path),
                   value: pattern_element.fixed
                 }
+              elsif pattern_element.patternString
+                fixed_values << {
+                  path: navigation_compatible_discriminator_path(discriminator_path),
+                  value: pattern_element.patternString
+                }
               elsif pattern_value.present?
                 raise StandardError, "Found more than one pattern slices for the same element #{pattern_element}."
               else
