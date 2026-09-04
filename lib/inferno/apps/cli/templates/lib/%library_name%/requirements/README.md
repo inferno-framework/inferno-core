@@ -1,6 +1,6 @@
 # Using Core Requirements Tools
 
-This directory contains [requirement artifacts](https://inferno-framework.github.io//docs/advanced-test-features/requirements.html)
+This directory contains [requirement artifacts](https://inferno-framework.github.io/docs/advanced-test-features/requirements.html)
 that contain example requirements that could be linked to tests
 within this test kit and displayed within the UI as justification
 for the tests.
