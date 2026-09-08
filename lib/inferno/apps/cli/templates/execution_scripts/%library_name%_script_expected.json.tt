@@ -127,15 +127,7 @@
         "type": "info"
       },
       {
-        "message": "Patient/85: Patient.extension[0].extension[0].value.ofType(Coding): The definition for the Code System with URI 'urn:oid:2.16.840.1.113883.6.238' doesn't provide any codes so the code cannot be validated",
-        "type": "info"
-      },
-      {
         "message": "Patient/85: Patient.extension[1]: Unknown extension http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
-        "type": "info"
-      },
-      {
-        "message": "Patient/85: Patient.extension[1].extension[0].value.ofType(Coding): The definition for the Code System with URI 'urn:oid:2.16.840.1.113883.6.238' doesn't provide any codes so the code cannot be validated",
         "type": "info"
       },
       {

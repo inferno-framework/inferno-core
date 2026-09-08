@@ -46,7 +46,7 @@ RSpec.describe <%= module_name %>::PatientGroup do
       result = run(test, url: url, patient_id: patient_id)
 
       expect(result.result).to eq('fail'), result.result_message
-      expect(result.result_message).to match(/200/)
+      expect(result.result_message).to include('200')
     end
 
     it 'fails if a Patient is not received' do
@@ -57,7 +57,7 @@ RSpec.describe <%= module_name %>::PatientGroup do
       result = run(test, url: url, patient_id: patient_id)
 
       expect(result.result).to eq('fail'), result.result_message
-      expect(result.result_message).to match(/Patient/)
+      expect(result.result_message).to include('Patient')
     end
 
     it 'fails if the id received does not match the one requested' do
@@ -68,7 +68,7 @@ RSpec.describe <%= module_name %>::PatientGroup do
       result = run(test, url: url, patient_id: patient_id)
 
       expect(result.result).to eq('fail'), result.result_message
-      expect(result.result_message).to match(/resource with id/)
+      expect(result.result_message).to include('resource with id')
     end
   end
 
