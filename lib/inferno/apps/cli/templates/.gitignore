@@ -1,4 +1,4 @@
-/data/*.db
+/data/*.db*
 /data/igs/*.tgz
 /data/redis/**/*.rdb
 /data/redis/**/*.aof
