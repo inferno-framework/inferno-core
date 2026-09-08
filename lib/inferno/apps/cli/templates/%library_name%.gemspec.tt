@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   # DESCRIPTION
   # spec.homepage      = 'TODO'
   spec.license       = 'Apache-2.0'
-  spec.add_dependency 'inferno_core', '~> <%= Inferno::VERSION %>'
+  spec.add_dependency 'inferno_core', '~> <%= Inferno::VERSION.split('.').first(2).join('.') %>', '>= <%= Inferno::VERSION %>'
   spec.required_ruby_version = Gem::Requirement.new('>= 3.3.6')
   spec.metadata['inferno_test_kit'] = 'true'
   # spec.metadata['homepage_uri'] = spec.homepage
