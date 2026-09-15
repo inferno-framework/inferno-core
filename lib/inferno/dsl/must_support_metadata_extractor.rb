@@ -75,7 +75,20 @@ module Inferno
       end
 
       def all_must_support_elements
-        profile_elements.select { |element| element.mustSupport || by_requirement_extension_only?(element) }
+        profile_elements.select do |element|
+          (element.mustSupport || by_requirement_extension_only?(element)) && !prohibited_by_cardinality?(element)
+        end
+      end
+
+      # A profile can inherit mustSupport flags from a base profile while constraining the element to a max
+      # cardinality of 0. Such an element, and its descendants, cannot appear in a conformant resource.
+      def prohibited_by_cardinality?(element)
+        profile_elements.any? do |profile_element|
+          profile_element.max == '0' &&
+            (element.id == profile_element.id ||
+              element.id.start_with?("#{profile_element.id}.") ||
+              element.id.start_with?("#{profile_element.id}:"))
+        end
       end
 
       def must_support_extension_elements
