@@ -1,3 +1,5 @@
+require 'json'
+
 require_relative 'attributes'
 require_relative '../exceptions'
 
@@ -89,6 +91,17 @@ module Inferno
         value_string_exists = enable_when.key?(:value) && enable_when[:value].is_a?(String)
 
         type_is_hash && input_name_string_exists && value_string_exists
+      end
+
+      # @private
+      # Whether this input is enabled for a map of submitted input values.
+      # An input without an enable_when condition is always enabled.
+      def enabled?(input_values)
+        return true if enable_when.blank?
+        return false unless input_values.key?(enable_when[:input_name])
+
+        normalize_enable_when_value(input_values[enable_when[:input_name]]) ==
+          normalize_enable_when_value(enable_when[:value])
       end
 
       # @private
@@ -210,6 +223,18 @@ module Inferno
         return false unless other.is_a? Input
 
         ATTRIBUTES.all? { |attribute| send(attribute) == other.send(attribute) }
+      end
+
+      private
+
+      # Normalize values using the same rules as the client-side enable_when
+      # comparison. Checkbox values may be submitted as arrays by API clients.
+      def normalize_enable_when_value(value)
+        return '' if value.nil?
+        return JSON.generate(value.sort_by(&:to_s)) if value.is_a?(Array)
+        return JSON.generate(value) if value.is_a?(Hash)
+
+        value.to_s
       end
     end
   end

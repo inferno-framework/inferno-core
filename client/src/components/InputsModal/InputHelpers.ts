@@ -5,6 +5,8 @@ import { AuthType, getAuthFields, getAccessFields } from './Auth/AuthSettings';
 
 export const getMissingRequiredInput = (inputs: TestInput[], inputsMap: Map<string, unknown>) => {
   return inputs.some((input: TestInput) => {
+    if (!conditionalShowInput(input, inputsMap)) return false;
+
     // Radio inputs will always be required and have a default value
     if (input.type === 'radio') return false;
 

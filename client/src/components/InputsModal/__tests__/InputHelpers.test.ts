@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  getMissingRequiredInput,
   normalizeValue,
   conditionalShowInput,
   showInput,
@@ -63,6 +64,40 @@ const makeInput = (overrides: Partial<TestInput> = {}): TestInput => ({
   name: 'dep',
   type: 'text',
   ...overrides,
+});
+
+describe('getMissingRequiredInput', () => {
+  const inputs: TestInput[] = [
+    { name: 'mode', optional: true },
+    {
+      name: 'details',
+      enable_when: { input_name: 'mode', value: 'advanced' },
+    },
+  ];
+
+  it('does not require a conditionally disabled input', () => {
+    expect(
+      getMissingRequiredInput(
+        inputs,
+        new Map([
+          ['mode', 'basic'],
+          ['details', ''],
+        ]),
+      ),
+    ).toBe(false);
+  });
+
+  it('requires an enabled conditional input with no value', () => {
+    expect(
+      getMissingRequiredInput(
+        inputs,
+        new Map([
+          ['mode', 'advanced'],
+          ['details', ''],
+        ]),
+      ),
+    ).toBe(true);
+  });
 });
 
 describe('conditionalShowInput', () => {
