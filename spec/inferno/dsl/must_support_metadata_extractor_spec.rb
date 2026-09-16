@@ -30,7 +30,9 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
   let(:profile_element) { double }
 
   before do
-    allow(profile_element).to receive_messages(mustSupport: true, path: 'foo.extension', id: 'id', type: [type])
+    allow(profile_element).to receive_messages(
+      mustSupport: true, path: 'foo.extension', id: 'id', max: nil, type: [type]
+    )
   end
 
   describe '#must_support_extensions' do
@@ -97,6 +99,43 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
   describe '#profile_version' do
     it 'returns the version of the profile' do
       expect(extractor.profile_version).to eq('version')
+    end
+  end
+
+  describe '#all_must_support_elements' do
+    it 'excludes elements prohibited by their own or an ancestor cardinality' do
+      profile_elements = [
+        FHIR::ElementDefinition.new(
+          id: 'Questionnaire.extension:assemble-expectation',
+          path: 'Questionnaire.extension',
+          max: '0',
+          mustSupport: true
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Questionnaire.item',
+          path: 'Questionnaire.item',
+          max: '0'
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Questionnaire.item.linkId',
+          path: 'Questionnaire.item.linkId',
+          mustSupport: true
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Questionnaire.item:administrative',
+          path: 'Questionnaire.item',
+          mustSupport: true
+        ),
+        FHIR::ElementDefinition.new(
+          id: 'Questionnaire.status',
+          path: 'Questionnaire.status',
+          mustSupport: true
+        )
+      ]
+
+      extractor = described_class.new(profile_elements, profile, 'Questionnaire', ig_resources)
+
+      expect(extractor.all_must_support_elements.map(&:id)).to eq(['Questionnaire.status'])
     end
   end
 
@@ -211,6 +250,7 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
           path: 'Bundle.entry',
           sliceName: nil,
           mustSupport: false,
+          max: nil,
           slicing:,
           type: [backbone_type]
         ),
@@ -220,6 +260,7 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
           path: 'Bundle.entry',
           sliceName: 'Claim',
           mustSupport: true,
+          max: nil,
           slicing: nil,
           type: [backbone_type]
         ),
@@ -229,6 +270,7 @@ RSpec.describe Inferno::DSL::MustSupportMetadataExtractor do
           path: 'Bundle.entry.resource',
           sliceName: nil,
           mustSupport: false,
+          max: nil,
           slicing: nil,
           type: [claim_type]
         )
