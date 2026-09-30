@@ -101,8 +101,9 @@ module Inferno
       def required_inputs(selected_suite_options, submitted_inputs = nil)
         input_values = (submitted_inputs || []).to_h { |input| [input[:name].to_s, input[:value]] }
 
-        available_inputs(selected_suite_options)
-          .reject { |_, input| input.optional || !input.enabled?(input_values) }
+        available = available_inputs(selected_suite_options)
+        available
+          .reject { |_, input| input.optional || !input.enabled?(input_values, available) }
           .map { |_, input| input.name }
       end
 

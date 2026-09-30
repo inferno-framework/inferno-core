@@ -21,6 +21,16 @@ RSpec.describe Inferno::TestRunner do
           run { pass }
         end
       )
+      Inferno::Repositories::Tests.new.insert(
+        Class.new(Inferno::Entities::Test) do
+          id 'checkbox_conditional_input_test'
+          input :selections, type: 'checkbox', optional: true,
+                             options: { list_options: [{ label: 'A', value: 'a' }, { label: 'B', value: 'b' }] }
+          input :details, enable_when: { input_name: 'selections', value: '["a","b"]' }
+
+          run { pass }
+        end
+      )
     end
 
     let(:conditional_input_test) { Inferno::Repositories::Tests.new.find('conditional_input_test') }
@@ -53,6 +63,22 @@ RSpec.describe Inferno::TestRunner do
 
         expect(result.result).to eq('skip')
         expect(result.result_message).to include("Input 'details' is nil")
+      end
+    end
+
+    context 'when a checkbox group enables a required input' do
+      let(:checkbox_test) { Inferno::Repositories::Tests.new.find('checkbox_conditional_input_test') }
+      let(:test_run) do
+        repo_create(:test_run, runnable: { test_id: checkbox_test.id }, test_session_id: test_session.id)
+      end
+      let(:mode) { 'option_b' }
+
+      it 'skips without the required input regardless of selection order' do
+        session_data_repo.save(
+          test_session_id: test_session.id, name: 'selections', value: %w[b a], type: 'checkbox'
+        )
+
+        expect(runner.run(checkbox_test).result).to eq('skip')
       end
     end
   end
