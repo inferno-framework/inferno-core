@@ -16,7 +16,8 @@ module Inferno
       # @option input_params [Hash] :options Possible input option formats based on input type
       # @option options [Array] :list_options Array of options for input formats
       #   that require a list of possible values (radio and checkbox)
-      # @option input_params [Hash] :enable_when Conditions for showing the input. Must be a Hash
+      # @option input_params [Hash] :enable_when Conditions for showing the input and determining
+      #   whether it is required. Must be a Hash
       #   with String :input_name (the name of the controlling input) and String :value (the value
       #   that triggers visibility). For checkbox inputs the value must be a JSON-encoded sorted
       #   array, e.g. '["a","b"]'.
@@ -97,9 +98,12 @@ module Inferno
       end
 
       # @private
-      def required_inputs(selected_suite_options)
-        available_inputs(selected_suite_options)
-          .reject { |_, input| input.optional }
+      def required_inputs(selected_suite_options, submitted_inputs = nil)
+        input_values = (submitted_inputs || []).to_h { |input| [input[:name].to_s, input[:value]] }
+
+        available = available_inputs(selected_suite_options)
+        available
+          .reject { |_, input| input.optional || !input.enabled?(input_values, available) }
           .map { |_, input| input.name }
       end
 
@@ -107,7 +111,10 @@ module Inferno
       def missing_inputs(submitted_inputs, selected_suite_options)
         submitted_inputs = [] if submitted_inputs.nil?
 
-        required_inputs(selected_suite_options).map(&:to_s) - submitted_inputs.map { |input| input[:name] }
+        required_input_names = required_inputs(selected_suite_options, submitted_inputs).map(&:to_s)
+        submitted_input_names = submitted_inputs.map { |input| input[:name] }
+
+        required_input_names - submitted_input_names
       end
 
       # Define a particular order for inputs to be presented in the API/UI

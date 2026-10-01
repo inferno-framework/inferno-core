@@ -175,7 +175,17 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
         { name: 'fhir_server_url_select', _type: 'text', _title: 'FHIR Server URL (Select)',
           _optional: true, value: nil, _enable_when: { input_name: 'get_type_select', value: 'summary_op' } },
         { name: 'patient_identifier_select', _type: 'text', _title: 'Patient ID (Select)',
-          _optional: true, value: nil, _enable_when: { input_name: 'get_type_select', value: 'summary_op' } }
+          _optional: true, value: nil, _enable_when: { input_name: 'get_type_select', value: 'summary_op' } },
+        { name: 'get_type_checkbox', _type: 'checkbox', _title: 'How to get Bundle (Checkbox)',
+          _options: { list_options: [
+            { value: 'copy_paste', label: 'Paste JSON' },
+            { value: 'url', label: 'URL to FHIR Bundle' },
+            { value: 'summary_op', label: '$summary Operation' }
+          ] }, value: ['copy_paste'] },
+        { name: 'bundle_url_and_summary_checkbox', _type: 'text',
+          _title: 'Shown when URL + $summary are both selected (Checkbox)',
+          _optional: false, value: nil,
+          _enable_when: { input_name: 'get_type_checkbox', value: '["summary_op","url"]' } }
       ] }
   end
 

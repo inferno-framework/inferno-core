@@ -20,7 +20,7 @@ const InputFields: FC<InputFieldsProps> = ({ inputs, inputsMap, setInputsMap }) 
   return (
     <List>
       {inputs.map((input: TestInput, index: number) => {
-        if (showInput(input, inputsMap)) {
+        if (showInput(input, inputsMap, inputs)) {
           switch (input.type) {
             case 'auth_info':
               if (input.options?.mode === 'auth') {

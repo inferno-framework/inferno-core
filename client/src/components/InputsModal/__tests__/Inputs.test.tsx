@@ -322,6 +322,29 @@ describe('Input Components', () => {
       assertDependentVisibilityForCheckboxEnableWhen(['b', 'a'], '["a","b"]', true);
     });
 
+    it('renders dependent field for a JSON-encoded checkbox selection in a different order', () => {
+      const inputs: TestInput[] = [
+        {
+          name: 'trigger',
+          type: 'checkbox',
+          options: {
+            list_options: [
+              { label: 'B', value: 'b' },
+              { label: 'A', value: 'a' },
+            ],
+          },
+        },
+        {
+          name: 'dependent',
+          enable_when: { input_name: 'trigger', value: '["a","b"]' },
+        },
+      ];
+
+      renderInputFields(inputs, new Map([['trigger', '["b","a"]']]));
+
+      expect(screen.getByRole('textbox', { name: /dependent/i })).toBeInTheDocument();
+    });
+
     it('hides dependent field when controlling value (array) does not match enable_when array value', () => {
       assertDependentVisibilityForCheckboxEnableWhen(['a', 'b'], '["a","c"]', false);
     });

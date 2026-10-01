@@ -5,6 +5,8 @@ import { AuthType, getAuthFields, getAccessFields } from './Auth/AuthSettings';
 
 export const getMissingRequiredInput = (inputs: TestInput[], inputsMap: Map<string, unknown>) => {
   return inputs.some((input: TestInput) => {
+    if (!conditionalShowInput(input, inputsMap, inputs)) return false;
+
     // Radio inputs will always be required and have a default value
     if (input.type === 'radio') return false;
 
@@ -204,19 +206,36 @@ export const normalizeValue = (value: unknown): string => {
   }
 };
 
+const normalizeCheckboxValues = (value: unknown): string[] | null => {
+  try {
+    const parsedValue = typeof value === 'string' ? (JSON.parse(value) as unknown) : value;
+    if (!Array.isArray(parsedValue)) {
+      return null;
+    }
+    const values: unknown[] = parsedValue;
+    if (!values.every((item): item is string => typeof item === 'string')) {
+      return null;
+    }
+    return values.slice().sort();
+  } catch {
+    return null;
+  }
+};
+
 /**
  * Returns whether the input should be shown from its `enable_when` rule and `inputsMap`.
  *
  * - No `enable_when`, or no `input_name` on it → always show (rule ignored).
  * - With `input_name`: hide when the referenced key is absent from `inputsMap` (`undefined`).
  *   A console warning is emitted in this case to help catch authoring mistakes (e.g. typos).
- * - Otherwise show when {@link normalizeValue} of the referenced value equals
- *   {@link normalizeValue} of `enable_when.value` (arrays are sorted before comparison, so
- *   checkbox selection order does not matter; other objects are compared via JSON.stringify).
+ * - Checkbox groups compare selected values regardless of selection order,
+ *   whether the submitted value is an array or a JSON-encoded array.
+ * - Other inputs compare via {@link normalizeValue}.
  */
 export const conditionalShowInput = (
   input: TestInput,
   inputsMap: Map<string, unknown>,
+  inputs: TestInput[],
 ): boolean => {
   const enableWhen = input.enable_when;
   if (!enableWhen?.input_name) {
@@ -226,9 +245,23 @@ export const conditionalShowInput = (
   if (inputValue === undefined) {
     return false;
   }
+  const controllingInput = inputs.find((candidate) => candidate.name === enableWhen.input_name);
+  if (controllingInput?.type === 'checkbox' && controllingInput.options?.list_options?.length) {
+    const actualValues = normalizeCheckboxValues(inputValue);
+    const expectedValues = normalizeCheckboxValues(enableWhen.value);
+    return (
+      actualValues !== null &&
+      expectedValues !== null &&
+      JSON.stringify(actualValues) === JSON.stringify(expectedValues)
+    );
+  }
   return normalizeValue(inputValue) === normalizeValue(enableWhen.value);
 };
 
-export const showInput = (input: TestInput, inputsMap: Map<string, unknown>): boolean => {
-  return !input.hidden && conditionalShowInput(input, inputsMap);
+export const showInput = (
+  input: TestInput,
+  inputsMap: Map<string, unknown>,
+  inputs: TestInput[],
+): boolean => {
+  return !input.hidden && conditionalShowInput(input, inputsMap, inputs);
 };

@@ -83,6 +83,49 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
   end
 
   describe '.missing_inputs' do
+    it 'requires a conditional input only when its condition matches' do
+      example_test = Class.new(Inferno::Entities::Test)
+      example_test.input :mode, optional: true
+      example_test.input :details, enable_when: { input_name: 'mode', value: 'advanced' }
+
+      expect(example_test.missing_inputs([], nil)).to eq([])
+      expect(example_test.missing_inputs([{ name: 'mode', value: 'basic' }], nil)).to eq([])
+      expect(example_test.missing_inputs([{ name: 'mode', value: 'advanced' }], nil)).to eq(['details'])
+    end
+
+    it 'normalizes array values when evaluating conditional inputs' do
+      example_test = Class.new(Inferno::Entities::Test)
+      example_test.input :selections, type: 'checkbox', optional: true,
+                                      options: { list_options: [
+                                        { label: 'A', value: 'a' }, { label: 'B', value: 'b' }
+                                      ] }
+      example_test.input :details, enable_when: { input_name: 'selections', value: '["a","b"]' }
+
+      missing_inputs = example_test.missing_inputs([{ name: 'selections', value: %w[b a] }], nil)
+
+      expect(missing_inputs).to eq(['details'])
+    end
+
+    it 'requires a checkbox-controlled input when serialized selections match in a different order' do
+      example_test = Class.new(Inferno::Entities::Test)
+      example_test.input :selections, type: 'checkbox', optional: true,
+                                      options: { list_options: [
+                                        { label: 'A', value: 'a' }, { label: 'B', value: 'b' }
+                                      ] }
+      example_test.input :details, enable_when: { input_name: 'selections', value: '["a","b"]' }
+
+      expect(example_test.missing_inputs([{ name: 'selections', value: '["b","a"]' }], nil)).to eq(['details'])
+      expect(example_test.missing_inputs([{ name: 'selections', value: '["b"]' }], nil)).to eq([])
+    end
+
+    it 'compares a text input containing JSON literally' do
+      example_test = Class.new(Inferno::Entities::Test)
+      example_test.input :selections, optional: true
+      example_test.input :details, enable_when: { input_name: 'selections', value: '["a","b"]' }
+
+      expect(example_test.missing_inputs([{ name: 'selections', value: '["b","a"]' }], nil)).to eq([])
+    end
+
     it 'returns missing inputs for a test' do
       example_test = Class.new(Inferno::Entities::Test)
       example_test.input :a, :b, :c

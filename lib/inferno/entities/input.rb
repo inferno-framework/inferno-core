@@ -1,3 +1,5 @@
+require 'json'
+
 require_relative 'attributes'
 require_relative '../exceptions'
 
@@ -89,6 +91,20 @@ module Inferno
         value_string_exists = enable_when.key?(:value) && enable_when[:value].is_a?(String)
 
         type_is_hash && input_name_string_exists && value_string_exists
+      end
+
+      # @private
+      # Whether this input is enabled for a map of submitted input values.
+      # An input without an enable_when condition is always enabled.
+      def enabled?(input_values, available_inputs)
+        return true if enable_when.blank?
+        return false unless input_values.key?(enable_when[:input_name])
+
+        controlling_input = available_inputs[enable_when[:input_name].to_sym]
+        return checkbox_group_enabled?(input_values[enable_when[:input_name]]) if checkbox_group?(controlling_input)
+
+        normalize_enable_when_value(input_values[enable_when[:input_name]]) ==
+          normalize_enable_when_value(enable_when[:value])
       end
 
       # @private
@@ -210,6 +226,37 @@ module Inferno
         return false unless other.is_a? Input
 
         ATTRIBUTES.all? { |attribute| send(attribute) == other.send(attribute) }
+      end
+
+      private
+
+      def checkbox_group?(input)
+        input&.type.to_s == 'checkbox' && input.options&.dig(:list_options)&.any?
+      end
+
+      def checkbox_group_enabled?(value)
+        actual_values = normalize_checkbox_values(value)
+        expected_values = normalize_checkbox_values(enable_when[:value])
+        !actual_values.nil? && actual_values == expected_values
+      end
+
+      def normalize_checkbox_values(value)
+        value = JSON.parse(value) if value.is_a?(String)
+        return unless value.is_a?(Array) && value.all? { |item| item.is_a?(String) }
+
+        value.sort
+      rescue JSON::ParserError
+        nil
+      end
+
+      # Normalize values using the same rules as the client-side enable_when
+      # comparison for non-checkbox-group inputs.
+      def normalize_enable_when_value(value)
+        return '' if value.nil?
+        return JSON.generate(value.sort_by(&:to_s)) if value.is_a?(Array)
+        return JSON.generate(value) if value.is_a?(Hash)
+
+        value.to_s
       end
     end
   end
