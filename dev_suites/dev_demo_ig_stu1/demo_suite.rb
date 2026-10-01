@@ -689,6 +689,42 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
         run { pass }
       end
+
+      test do
+        title 'Conditional input chain'
+        description %(
+          Demonstrate that when one conditional input is dependent on another
+          conditional input, the first cannot be enabled when the input it
+          is dependent on is disabled.
+        )
+
+        input :make_requests,
+              title: 'Get data?',
+              description: %(
+                Whether to fetch data or not
+              ),
+              type: 'radio',
+              default: 'true',
+              options: {
+                list_options: [
+                  { label: 'Yes', value: 'true' },
+                  { label: 'No', value: 'false' }
+                ]
+              }
+        input :get_type_select_sub, title: 'How to get Bundle', type: 'radio', default: 'copy_paste', options: {
+          list_options: list_options
+        }, enable_when: { input_name: 'make_requests', value: 'true' }
+        input :bundle_copy_paste_select_sub, title: 'Paste JSON (Select)', type: 'textarea', optional: false,
+                                             enable_when: { input_name: 'get_type_select_sub', value: 'copy_paste' }
+        input :bundle_url_select_sub, title: 'URL to FHIR Bundle (Select)', type: 'text', optional: false,
+                                      enable_when: { input_name: 'get_type_select_sub', value: 'url' }
+        input :fhir_server_url_select_sub, title: 'FHIR Server URL (Select)', type: 'text', optional: false,
+                                           enable_when: { input_name: 'get_type_select_sub', value: 'summary_op' }
+        input :patient_identifier_select_sub, title: 'Patient ID (Select)', type: 'text', optional: false,
+                                              enable_when: { input_name: 'get_type_select_sub', value: 'summary_op' }
+
+        run { pass }
+      end
     end
 
     group do
