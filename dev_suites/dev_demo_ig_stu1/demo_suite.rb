@@ -663,6 +663,32 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
                                           enable_when: { input_name: 'get_type_select', value: 'summary_op' }
         run { pass }
       end
+
+      test 'Conditional, required, empty input test (Checkbox)' do
+        title 'Conditional, optional, empty input test (Checkbox)'
+        description %(
+          Demonstrates enable_when for a checkbox input, whose value is a
+          JSON-encoded array. Select 'URL to FHIR Bundle' and '$summary
+          Operation' (in either order) to trigger the dependent field below.
+          Note that list_options defines 'url' before 'summary_op', so the
+          submitted value is serialized as '["url","summary_op"]' regardless
+          of click order, while enable_when.value here is written in the
+          documented sorted-array form '["summary_op","url"]'. The dependent
+          field only appears if these are compared as normalized/sorted sets
+          rather than as raw strings. Also the dependent field is only
+          required if it is enabled.
+        )
+        input :get_type_checkbox, title: 'How to get Bundle (Checkbox)', type: 'checkbox', default: [checkbox_default],
+                                  options: {
+                                    list_options: checkbox_options
+                                  }
+        input :bundle_url_and_summary_checkbox, title: 'Shown when URL + $summary are both selected (Checkbox)',
+                                                type: 'text', optional: false,
+                                                enable_when: { input_name: 'get_type_checkbox',
+                                                               value: '["summary_op","url"]' }
+
+        run { pass }
+      end
     end
 
     group do
