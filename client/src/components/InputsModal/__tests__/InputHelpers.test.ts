@@ -203,6 +203,60 @@ describe('conditionalShowInput', () => {
     expect(conditionalShowInput(input, new Map([['ctrl', 'no']]), [input])).toBe(false);
     expect(conditionalShowInput(input, new Map([['ctrl', 'yes']]), [input])).toBe(true);
   });
+
+  it('returns false when the controlling input is itself disabled by its own enable_when', () => {
+    const mode = makeInput({ name: 'mode', optional: true });
+    const subMode = makeInput({
+      name: 'sub_mode',
+      optional: true,
+      enable_when: { input_name: 'mode', value: 'advanced' },
+    });
+    const details = makeInput({
+      name: 'details',
+      enable_when: { input_name: 'sub_mode', value: 'x' },
+    });
+    const inputs = [mode, subMode, details];
+
+    // sub_mode has a matching value, but it is not itself enabled since mode != 'advanced'
+    const inputsMap = new Map([
+      ['mode', 'basic'],
+      ['sub_mode', 'x'],
+    ]);
+    expect(conditionalShowInput(details, inputsMap, inputs)).toBe(false);
+
+    const enabledMap = new Map([
+      ['mode', 'advanced'],
+      ['sub_mode', 'x'],
+    ]);
+    expect(conditionalShowInput(details, enabledMap, inputs)).toBe(true);
+  });
+
+  it('returns true when the controlling input is merely hidden, not conditionally disabled', () => {
+    const ctrl = makeInput({ name: 'ctrl', optional: true, hidden: true });
+    const details = makeInput({ enable_when: { input_name: 'ctrl', value: 'x' } });
+    // `hidden` alone is a static display flag, not a conditional disable, so it
+    // should not block an enable_when chain
+    expect(conditionalShowInput(details, new Map([['ctrl', 'x']]), [ctrl, details])).toBe(true);
+  });
+
+  it('does not loop forever on a circular enable_when chain', () => {
+    const a = makeInput({
+      name: 'a',
+      optional: true,
+      enable_when: { input_name: 'b', value: 'x' },
+    });
+    const b = makeInput({
+      name: 'b',
+      optional: true,
+      enable_when: { input_name: 'a', value: 'y' },
+    });
+    const inputsMap = new Map([
+      ['a', 'y'],
+      ['b', 'x'],
+    ]);
+    expect(conditionalShowInput(a, inputsMap, [a, b])).toBe(false);
+    expect(conditionalShowInput(b, inputsMap, [a, b])).toBe(false);
+  });
 });
 
 describe('showInput', () => {
