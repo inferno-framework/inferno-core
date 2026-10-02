@@ -497,6 +497,65 @@ describe('Input Components', () => {
 
       expect(screen.getByRole('combobox')).toHaveValue('');
     });
+
+    it('falls back to the first option when there is no stored value and no default', () => {
+      const noDefaultInput: TestInput = { ...comboboxInput, default: undefined };
+      renderWithProviders(
+        <InputCombobox
+          input={noDefaultInput}
+          index={0}
+          inputsMap={new Map<string, unknown>()}
+          setInputsMap={() => {}}
+        />,
+        { noRouter: true },
+      );
+
+      expect(screen.getByRole('combobox')).toHaveValue('Option A');
+    });
+
+    it('falls back to the first option when the stored value does not match any option', () => {
+      renderWithProviders(
+        <InputCombobox
+          input={comboboxInput}
+          index={0}
+          inputsMap={new Map<string, unknown>([['comboboxInput', 'stale_value']])}
+          setInputsMap={() => {}}
+        />,
+        { noRouter: true },
+      );
+
+      expect(screen.getByRole('combobox')).toHaveValue('Option A');
+    });
+
+    it('falls back to the first option when the default does not match any option', () => {
+      const staleDefaultInput: TestInput = { ...comboboxInput, default: 'stale_default' };
+      renderWithProviders(
+        <InputCombobox
+          input={staleDefaultInput}
+          index={0}
+          inputsMap={new Map<string, unknown>()}
+          setInputsMap={() => {}}
+        />,
+        { noRouter: true },
+      );
+
+      expect(screen.getByRole('combobox')).toHaveValue('Option A');
+    });
+
+    it('shows no selection when list_options is an empty array', () => {
+      const emptyOptionsInput: TestInput = { ...comboboxInput, options: { list_options: [] } };
+      renderWithProviders(
+        <InputCombobox
+          input={emptyOptionsInput}
+          index={0}
+          inputsMap={new Map<string, unknown>()}
+          setInputsMap={() => {}}
+        />,
+        { noRouter: true },
+      );
+
+      expect(screen.getByRole('combobox')).toHaveValue('');
+    });
   });
 
   // ── InputOAuthCredentials additional coverage ────────────────────────────────
