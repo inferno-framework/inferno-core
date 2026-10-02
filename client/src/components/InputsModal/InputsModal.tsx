@@ -81,11 +81,23 @@ const InputsModal: FC<InputsModalProps> = ({
           group, or test will be saved. The intended use of this view is to provide a template \
           for users to copy/paste in order to avoid filling out individual fields every time.');
 
-  // Set persisted values and defaults at render
+  // Set persisted values and defaults at render. Radio and select inputs
+  // always visually show a selection (falling back to their first
+  // list_option when no value or default is set), so that first option's
+  // value is seeded here too -- otherwise enable_when evaluation, required
+  // checks, and serialization would see an empty value that doesn't match
+  // what the control actually displays.
   useEffect(() => {
     inputsMap.clear();
     inputs.forEach((input: TestInput) => {
-      inputsMap.set(input.name, sessionData.get(input.name) || input.default || '');
+      const firstOptionValue =
+        (input.type === 'radio' || input.type === 'select') && input.options?.list_options?.length
+          ? input.options.list_options[0]?.value
+          : undefined;
+      inputsMap.set(
+        input.name,
+        sessionData.get(input.name) || input.default || firstOptionValue || '',
+      );
     });
     setInputsMap(new Map(inputsMap));
   }, [inputs, sessionData]);

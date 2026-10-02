@@ -25,16 +25,32 @@ const InputCombobox: FC<InputComboboxProps> = ({
   const { classes } = useStyles();
   const readOnly = useTestSessionStore((state) => state.readOnly);
 
-  const getDefaultValue = (): InputOption | null => {
+  // Resolves to the stored value in inputsMap, falling back to the input's
+  // default, then the first option. Used as a controlled `value` (rather than
+  // `defaultValue`) so a stored value is reflected even when inputsMap is
+  // populated after this component has already mounted.
+  //
+  // inputsMap always holds a string for this input once the modal's seeding
+  // effect has run (persisted session value, default, or ''); `undefined`
+  // only occurs when the user has explicitly cleared the selection, so that
+  // case is treated as "no selection" rather than falling back to a default.
+  const getCurrentValue = (): InputOption | null => {
     const options = input.options?.list_options;
     if (!options) return null;
 
-    let defaultValue = options[0]; // set to first option if no default provided
-    if (input.default && typeof input.default === 'string') {
-      const discoveredOption = options.find((option) => option.value === input.default);
-      if (discoveredOption) defaultValue = discoveredOption;
+    if (inputsMap.has(input.name) && inputsMap.get(input.name) === undefined) {
+      return null;
     }
-    return defaultValue;
+
+    const storedValue = inputsMap.get(input.name);
+    const preferredValue =
+      typeof storedValue === 'string' && storedValue ? storedValue : input.default;
+
+    if (preferredValue && typeof preferredValue === 'string') {
+      const discoveredOption = options.find((option) => option.value === preferredValue);
+      if (discoveredOption) return discoveredOption;
+    }
+    return options[0] ?? null; // fall back to first option if no stored/default value matches
   };
 
   return (
@@ -60,7 +76,7 @@ const InputCombobox: FC<InputComboboxProps> = ({
         <Autocomplete
           id={`input${index}_autocomplete`}
           options={input.options?.list_options || []}
-          defaultValue={getDefaultValue()}
+          value={getCurrentValue()}
           tabIndex={0}
           disabled={input.locked || readOnly}
           aria-disabled={input.locked || readOnly}

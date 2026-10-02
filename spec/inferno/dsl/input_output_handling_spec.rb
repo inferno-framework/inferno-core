@@ -126,6 +126,39 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       expect(example_test.missing_inputs([{ name: 'selections', value: '["b","a"]' }], nil)).to eq([])
     end
 
+    it 'does not require an input whose controlling input is itself disabled' do
+      example_test = Class.new(Inferno::Entities::Test)
+      example_test.input :mode, optional: true
+      example_test.input :sub_mode, optional: true, enable_when: { input_name: 'mode', value: 'advanced' }
+      example_test.input :details, enable_when: { input_name: 'sub_mode', value: 'x' }
+
+      submitted = [{ name: 'mode', value: 'basic' }, { name: 'sub_mode', value: 'x' }]
+      # sub_mode has a matching value, but it is not itself enabled since mode != 'advanced'
+      expect(example_test.missing_inputs(submitted, nil)).to eq([])
+
+      submitted = [{ name: 'mode', value: 'advanced' }, { name: 'sub_mode', value: 'x' }]
+      expect(example_test.missing_inputs(submitted, nil)).to eq(['details'])
+    end
+
+    it 'requires an input whose controlling input is merely hidden, not conditionally disabled' do
+      example_test = Class.new(Inferno::Entities::Test)
+      example_test.input :ctrl, optional: true, hidden: true
+      example_test.input :details, enable_when: { input_name: 'ctrl', value: 'x' }
+
+      # `hidden` alone is a static display flag, not a conditional disable, so it
+      # should not block an enable_when chain
+      expect(example_test.missing_inputs([{ name: 'ctrl', value: 'x' }], nil)).to eq(['details'])
+    end
+
+    it 'does not loop forever on a circular enable_when chain' do
+      example_test = Class.new(Inferno::Entities::Test)
+      example_test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
+      example_test.input :b, optional: true, enable_when: { input_name: 'a', value: 'y' }
+
+      submitted = [{ name: 'a', value: 'y' }, { name: 'b', value: 'x' }]
+      expect(example_test.missing_inputs(submitted, nil)).to eq([])
+    end
+
     it 'returns missing inputs for a test' do
       example_test = Class.new(Inferno::Entities::Test)
       example_test.input :a, :b, :c

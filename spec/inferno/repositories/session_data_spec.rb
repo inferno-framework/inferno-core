@@ -132,6 +132,35 @@ RSpec.describe Inferno::Repositories::SessionData do
         expect(persisted_value).to eq(value)
       end
     end
+
+    context 'with a select input' do
+      it 'stores the value as a string' do
+        value = 'chosen_option'
+        name = 'select'
+        params = {
+          name:,
+          value:,
+          type: 'select',
+          test_session_id: test_session.id
+        }
+
+        repo.save(params)
+
+        persisted_value = repo.class.db.where(name:).first[:value]
+        expect(persisted_value).to eq(value)
+      end
+    end
+
+    it 'raises UnknownSessionDataType for an unrecognized type' do
+      expect do
+        repo.save(
+          name: 'unknown',
+          value: 'value',
+          type: 'not_a_real_type',
+          test_session_id: test_session.id
+        )
+      end.to raise_error(Inferno::Exceptions::UnknownSessionDataType)
+    end
   end
 
   describe '#load' do

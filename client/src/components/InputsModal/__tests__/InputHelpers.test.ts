@@ -3,6 +3,7 @@ import {
   getMissingRequiredInput,
   normalizeValue,
   conditionalShowInput,
+  serializeMap,
   showInput,
 } from '~/components/InputsModal/InputHelpers';
 import { TestInput } from '~/models/testSuiteModels';
@@ -134,6 +135,80 @@ describe('getMissingRequiredInput', () => {
       ),
     ).toBe(false);
   });
+
+  describe('select inputs', () => {
+    const selectInputs: TestInput[] = [
+      {
+        name: 'sel',
+        type: 'select',
+        optional: false,
+        options: {
+          list_options: [
+            { label: 'A', value: 'a' },
+            { label: 'B', value: 'b' },
+          ],
+        },
+      },
+    ];
+
+    it('is not missing when no value has been stored yet (first option is displayed)', () => {
+      expect(getMissingRequiredInput(selectInputs, new Map([['sel', '']]))).toBe(false);
+    });
+
+    it('is not missing once a real value is stored', () => {
+      expect(getMissingRequiredInput(selectInputs, new Map([['sel', 'b']]))).toBe(false);
+    });
+
+    it('is missing once explicitly cleared', () => {
+      expect(getMissingRequiredInput(selectInputs, new Map([['sel', undefined]]))).toBe(true);
+    });
+
+    it('is not missing when optional and cleared', () => {
+      const optionalSelect: TestInput[] = [{ ...selectInputs[0], optional: true }];
+      expect(getMissingRequiredInput(optionalSelect, new Map([['sel', undefined]]))).toBe(false);
+    });
+  });
+});
+
+describe('serializeMap', () => {
+  const listOptions = [
+    { label: 'A', value: 'a' },
+    { label: 'B', value: 'b' },
+  ];
+
+  it.each(['radio', 'select'] as const)(
+    'falls back to the first list_option for a %s input with no stored value or default',
+    (type) => {
+      const input: TestInput = { name: 'opt', type, options: { list_options: listOptions } };
+      const json = JSON.parse(serializeMap('JSON', [input], new Map())) as TestInput[];
+      expect(json[0].value).toBe('a');
+    },
+  );
+
+  it.each(['radio', 'select'] as const)(
+    'falls back to the default for a %s input with no stored value',
+    (type) => {
+      const input: TestInput = {
+        name: 'opt',
+        type,
+        default: 'b',
+        options: { list_options: listOptions },
+      };
+      const json = JSON.parse(serializeMap('JSON', [input], new Map())) as TestInput[];
+      expect(json[0].value).toBe('b');
+    },
+  );
+
+  it.each(['radio', 'select'] as const)('prefers the stored value for a %s input', (type) => {
+    const input: TestInput = {
+      name: 'opt',
+      type,
+      default: 'a',
+      options: { list_options: listOptions },
+    };
+    const json = JSON.parse(serializeMap('JSON', [input], new Map([['opt', 'b']]))) as TestInput[];
+    expect(json[0].value).toBe('b');
+  });
 });
 
 describe('conditionalShowInput', () => {
@@ -202,6 +277,60 @@ describe('conditionalShowInput', () => {
     });
     expect(conditionalShowInput(input, new Map([['ctrl', 'no']]), [input])).toBe(false);
     expect(conditionalShowInput(input, new Map([['ctrl', 'yes']]), [input])).toBe(true);
+  });
+
+  it('returns false when the controlling input is itself disabled by its own enable_when', () => {
+    const mode = makeInput({ name: 'mode', optional: true });
+    const subMode = makeInput({
+      name: 'sub_mode',
+      optional: true,
+      enable_when: { input_name: 'mode', value: 'advanced' },
+    });
+    const details = makeInput({
+      name: 'details',
+      enable_when: { input_name: 'sub_mode', value: 'x' },
+    });
+    const inputs = [mode, subMode, details];
+
+    // sub_mode has a matching value, but it is not itself enabled since mode != 'advanced'
+    const inputsMap = new Map([
+      ['mode', 'basic'],
+      ['sub_mode', 'x'],
+    ]);
+    expect(conditionalShowInput(details, inputsMap, inputs)).toBe(false);
+
+    const enabledMap = new Map([
+      ['mode', 'advanced'],
+      ['sub_mode', 'x'],
+    ]);
+    expect(conditionalShowInput(details, enabledMap, inputs)).toBe(true);
+  });
+
+  it('returns true when the controlling input is merely hidden, not conditionally disabled', () => {
+    const ctrl = makeInput({ name: 'ctrl', optional: true, hidden: true });
+    const details = makeInput({ enable_when: { input_name: 'ctrl', value: 'x' } });
+    // `hidden` alone is a static display flag, not a conditional disable, so it
+    // should not block an enable_when chain
+    expect(conditionalShowInput(details, new Map([['ctrl', 'x']]), [ctrl, details])).toBe(true);
+  });
+
+  it('does not loop forever on a circular enable_when chain', () => {
+    const a = makeInput({
+      name: 'a',
+      optional: true,
+      enable_when: { input_name: 'b', value: 'x' },
+    });
+    const b = makeInput({
+      name: 'b',
+      optional: true,
+      enable_when: { input_name: 'a', value: 'y' },
+    });
+    const inputsMap = new Map([
+      ['a', 'y'],
+      ['b', 'x'],
+    ]);
+    expect(conditionalShowInput(a, inputsMap, [a, b])).toBe(false);
+    expect(conditionalShowInput(b, inputsMap, [a, b])).toBe(false);
   });
 });
 

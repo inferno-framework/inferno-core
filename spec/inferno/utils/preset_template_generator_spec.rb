@@ -185,7 +185,31 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
         { name: 'bundle_url_and_summary_checkbox', _type: 'text',
           _title: 'Shown when URL + $summary are both selected (Checkbox)',
           _optional: false, value: nil,
-          _enable_when: { input_name: 'get_type_checkbox', value: '["summary_op","url"]' } }
+          _enable_when: { input_name: 'get_type_checkbox', value: '["summary_op","url"]' } },
+        { name: 'make_requests', _type: 'radio', _title: 'Get data?',
+          _description: %(
+                Whether to fetch data or not
+              ),
+          _options: { list_options: [{ label: 'Yes', value: 'true' }, { label: 'No', value: 'false' }] },
+          value: 'true' },
+        { name: 'get_type_select_sub', _type: 'radio', _title: 'How to get Bundle',
+          _options: { list_options: [
+            { value: 'copy_paste', label: 'Paste JSON' },
+            { value: 'url', label: 'URL to FHIR Bundle' },
+            { value: 'summary_op', label: '$summary Operation' }
+          ] }, value: 'copy_paste', _enable_when: { input_name: 'make_requests', value: 'true' } },
+        { name: 'bundle_copy_paste_select_sub', _type: 'textarea', _title: 'Paste JSON (Select)',
+          _optional: false, value: nil,
+          _enable_when: { input_name: 'get_type_select_sub', value: 'copy_paste' } },
+        { name: 'bundle_url_select_sub', _type: 'text', _title: 'URL to FHIR Bundle (Select)',
+          _optional: false, value: nil,
+          _enable_when: { input_name: 'get_type_select_sub', value: 'url' } },
+        { name: 'fhir_server_url_select_sub', _type: 'text', _title: 'FHIR Server URL (Select)',
+          _optional: false, value: nil,
+          _enable_when: { input_name: 'get_type_select_sub', value: 'summary_op' } },
+        { name: 'patient_identifier_select_sub', _type: 'text', _title: 'Patient ID (Select)',
+          _optional: false, value: nil,
+          _enable_when: { input_name: 'get_type_select_sub', value: 'summary_op' } }
       ] }
   end
 

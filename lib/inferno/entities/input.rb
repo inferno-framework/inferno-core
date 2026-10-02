@@ -95,12 +95,22 @@ module Inferno
 
       # @private
       # Whether this input is enabled for a map of submitted input values.
-      # An input without an enable_when condition is always enabled.
-      def enabled?(input_values, available_inputs)
+      # An input without an enable_when condition is always enabled. An input
+      # whose controlling input is itself conditionally disabled (i.e. has its
+      # own enable_when condition that is not met) is never enabled, regardless
+      # of the controlling input's current value.
+      # @param visited [Array<Symbol>] names of inputs already visited in this
+      #   evaluation chain, used to guard against circular enable_when references.
+      def enabled?(input_values, available_inputs, visited = [])
         return true if enable_when.blank?
+        return false if visited.include?(name)
         return false unless input_values.key?(enable_when[:input_name])
 
         controlling_input = available_inputs[enable_when[:input_name].to_sym]
+        if controlling_input && !controlling_input.enabled?(input_values, available_inputs, visited + [name])
+          return false
+        end
+
         return checkbox_group_enabled?(input_values[enable_when[:input_name]]) if checkbox_group?(controlling_input)
 
         normalize_enable_when_value(input_values[enable_when[:input_name]]) ==
