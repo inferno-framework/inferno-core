@@ -382,6 +382,50 @@ test('closing the dialog via onClose does not call hideModal after inputs are ed
 
 // ── keyboard submit (handleSubmitKeydown) ──────────────────────────────────────
 
+// ── enable_when with no default on the controlling radio/select ───────────────
+
+test('enable_when dependent field shows by default when its controlling select has no explicit default', () => {
+  const conditionalInputs: TestInput[] = [
+    {
+      name: 'select_no_default',
+      type: 'select',
+      options: {
+        list_options: [
+          { label: 'Option A', value: 'a' },
+          { label: 'Option B', value: 'b' },
+        ],
+      },
+    },
+    {
+      name: 'dependent',
+      type: 'text',
+      optional: true,
+      enable_when: { input_name: 'select_no_default', value: 'a' },
+    },
+  ];
+  const sessionData = conditionalInputs.reduce((acc, input) => acc.set(input.name, ''), new Map());
+
+  render(
+    <ThemeProvider>
+      <SnackbarProvider>
+        <InputsModal
+          modalVisible={true}
+          hideModal={hideModalMock}
+          runnable={mockedTestGroup}
+          runnableType={RunnableType.TestGroup}
+          inputs={conditionalInputs}
+          sessionData={sessionData}
+          createTestRun={createTestRunMock}
+        />
+      </SnackbarProvider>
+    </ThemeProvider>,
+  );
+
+  // The select visually defaults to its first option ('Option A' / value 'a')
+  // with no user interaction, so the dependent field should be shown.
+  expect(screen.getByLabelText('dependent')).toBeVisible();
+});
+
 test('Cmd+Enter submits the form when all required inputs are filled', async () => {
   const filledSessionData = new Map([
     ['url', 'http://example.com'],

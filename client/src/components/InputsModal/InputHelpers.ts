@@ -10,6 +10,16 @@ export const getMissingRequiredInput = (inputs: TestInput[], inputsMap: Map<stri
     // Radio inputs will always be required and have a default value
     if (input.type === 'radio') return false;
 
+    // Select inputs with list_options always display a resolved value (stored
+    // value, default, or first option) once rendered, even if inputsMap still
+    // holds a raw '' (e.g. before the seeding effect resolves it). Only an
+    // explicit clear (which stores `undefined`) should count as missing.
+    if (input.type === 'select' && input.options?.list_options?.length) {
+      return (
+        !input.optional && inputsMap.has(input.name) && inputsMap.get(input.name) === undefined
+      );
+    }
+
     const inputValue = inputsMap.get(input.name);
 
     // If required, checkbox inputs must have at least one checked value
@@ -139,7 +149,7 @@ export const serializeMap = (
         description: parsedDescription,
         value: JSON.parse((map.get(requirement.name) as string) || '{}') as Auth,
       };
-    } else if (requirement.type === 'radio') {
+    } else if (requirement.type === 'radio' || requirement.type === 'select') {
       const firstVal =
         requirement.options?.list_options && requirement.options?.list_options?.length > 0
           ? requirement.options?.list_options[0]?.value

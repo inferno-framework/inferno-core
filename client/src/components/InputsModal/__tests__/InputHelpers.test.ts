@@ -3,6 +3,7 @@ import {
   getMissingRequiredInput,
   normalizeValue,
   conditionalShowInput,
+  serializeMap,
   showInput,
 } from '~/components/InputsModal/InputHelpers';
 import { TestInput } from '~/models/testSuiteModels';
@@ -133,6 +134,80 @@ describe('getMissingRequiredInput', () => {
         ]),
       ),
     ).toBe(false);
+  });
+
+  describe('select inputs', () => {
+    const selectInputs: TestInput[] = [
+      {
+        name: 'sel',
+        type: 'select',
+        optional: false,
+        options: {
+          list_options: [
+            { label: 'A', value: 'a' },
+            { label: 'B', value: 'b' },
+          ],
+        },
+      },
+    ];
+
+    it('is not missing when no value has been stored yet (first option is displayed)', () => {
+      expect(getMissingRequiredInput(selectInputs, new Map([['sel', '']]))).toBe(false);
+    });
+
+    it('is not missing once a real value is stored', () => {
+      expect(getMissingRequiredInput(selectInputs, new Map([['sel', 'b']]))).toBe(false);
+    });
+
+    it('is missing once explicitly cleared', () => {
+      expect(getMissingRequiredInput(selectInputs, new Map([['sel', undefined]]))).toBe(true);
+    });
+
+    it('is not missing when optional and cleared', () => {
+      const optionalSelect: TestInput[] = [{ ...selectInputs[0], optional: true }];
+      expect(getMissingRequiredInput(optionalSelect, new Map([['sel', undefined]]))).toBe(false);
+    });
+  });
+});
+
+describe('serializeMap', () => {
+  const listOptions = [
+    { label: 'A', value: 'a' },
+    { label: 'B', value: 'b' },
+  ];
+
+  it.each(['radio', 'select'] as const)(
+    'falls back to the first list_option for a %s input with no stored value or default',
+    (type) => {
+      const input: TestInput = { name: 'opt', type, options: { list_options: listOptions } };
+      const json = JSON.parse(serializeMap('JSON', [input], new Map())) as TestInput[];
+      expect(json[0].value).toBe('a');
+    },
+  );
+
+  it.each(['radio', 'select'] as const)(
+    'falls back to the default for a %s input with no stored value',
+    (type) => {
+      const input: TestInput = {
+        name: 'opt',
+        type,
+        default: 'b',
+        options: { list_options: listOptions },
+      };
+      const json = JSON.parse(serializeMap('JSON', [input], new Map())) as TestInput[];
+      expect(json[0].value).toBe('b');
+    },
+  );
+
+  it.each(['radio', 'select'] as const)('prefers the stored value for a %s input', (type) => {
+    const input: TestInput = {
+      name: 'opt',
+      type,
+      default: 'a',
+      options: { list_options: listOptions },
+    };
+    const json = JSON.parse(serializeMap('JSON', [input], new Map([['opt', 'b']]))) as TestInput[];
+    expect(json[0].value).toBe('b');
   });
 });
 

@@ -455,6 +455,48 @@ describe('Input Components', () => {
       ];
       expect(calledMap.get('comboboxInput')).toBe('b');
     });
+
+    it('displays the stored value rather than the default on initial render', () => {
+      renderWithProviders(
+        <InputCombobox
+          input={comboboxInput}
+          index={0}
+          inputsMap={new Map<string, unknown>([['comboboxInput', 'b']])}
+          setInputsMap={() => {}}
+        />,
+        { noRouter: true },
+      );
+
+      expect(screen.getByRole('combobox')).toHaveValue('Option B');
+    });
+
+    it('falls back to the default when no value is stored yet', () => {
+      renderWithProviders(
+        <InputCombobox
+          input={comboboxInput}
+          index={0}
+          inputsMap={new Map<string, unknown>()}
+          setInputsMap={() => {}}
+        />,
+        { noRouter: true },
+      );
+
+      expect(screen.getByRole('combobox')).toHaveValue('Option A');
+    });
+
+    it('shows no selection after the value is explicitly cleared', () => {
+      renderWithProviders(
+        <InputCombobox
+          input={comboboxInput}
+          index={0}
+          inputsMap={new Map<string, unknown>([['comboboxInput', undefined]])}
+          setInputsMap={() => {}}
+        />,
+        { noRouter: true },
+      );
+
+      expect(screen.getByRole('combobox')).toHaveValue('');
+    });
   });
 
   // ── InputOAuthCredentials additional coverage ────────────────────────────────

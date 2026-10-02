@@ -209,7 +209,17 @@ RSpec.describe Inferno::Utils::PresetTemplateGenerator do
           _enable_when: { input_name: 'get_type_select_sub', value: 'summary_op' } },
         { name: 'patient_identifier_select_sub', _type: 'text', _title: 'Patient ID (Select)',
           _optional: false, value: nil,
-          _enable_when: { input_name: 'get_type_select_sub', value: 'summary_op' } }
+          _enable_when: { input_name: 'get_type_select_sub', value: 'summary_op' } },
+        { name: 'get_type_no_default', _type: 'select', _title: 'How to get Bundle (Select, no default)',
+          _options: { list_options: [
+            { value: 'copy_paste', label: 'Paste JSON' },
+            { value: 'url', label: 'URL to FHIR Bundle' },
+            { value: 'summary_op', label: '$summary Operation' }
+          ] }, value: nil },
+        { name: 'bundle_copy_paste_no_default', _type: 'textarea',
+          _title: 'Paste JSON (should be shown by default once this issue is fixed)',
+          _optional: false, value: nil,
+          _enable_when: { input_name: 'get_type_no_default', value: 'copy_paste' } }
       ] }
   end
 
