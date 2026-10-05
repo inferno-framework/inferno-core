@@ -689,6 +689,72 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
         run { pass }
       end
+
+      test do
+        title 'Conditional input chain'
+        description %(
+          Demonstrate that when one conditional input is dependent on another
+          conditional input, the first cannot be enabled when the input it
+          is dependent on is disabled.
+        )
+
+        input :make_requests,
+              title: 'Get data?',
+              description: %(
+                Whether to fetch data or not
+              ),
+              type: 'radio',
+              default: 'true',
+              options: {
+                list_options: [
+                  { label: 'Yes', value: 'true' },
+                  { label: 'No', value: 'false' }
+                ]
+              }
+        input :get_type_radio_sub, title: 'How to get Bundle', type: 'radio', default: 'copy_paste', options: {
+          list_options: list_options
+        }, enable_when: { input_name: 'make_requests', value: 'true' }
+        input :bundle_copy_paste_radio_sub, title: 'Paste JSON (Select)', type: 'textarea', optional: false,
+                                            enable_when: { input_name: 'get_type_radio_sub', value: 'copy_paste' }
+        input :bundle_url_radio_sub, title: 'URL to FHIR Bundle (Select)', type: 'text', optional: false,
+                                     enable_when: { input_name: 'get_type_radio_sub', value: 'url' }
+        input :fhir_server_url_radio_sub, title: 'FHIR Server URL (Select)', type: 'text', optional: false,
+                                          enable_when: { input_name: 'get_type_radio_sub', value: 'summary_op' }
+        input :patient_identifier_radio_sub, title: 'Patient ID (Select)', type: 'text', optional: false,
+                                             enable_when: { input_name: 'get_type_radio_sub', value: 'summary_op' }
+
+        run { pass }
+      end
+
+      # Test with circular enable_when dependencies, which causes boot-time errors
+      # and prevents Inferno from starting. Un-comment to verify that behavior
+      # test do
+      #   title 'enable_when input cycle test'
+      #   id 'enable_when_input_cycle_test'
+      #   input :a,
+      #         title: 'A',
+      #         enable_when: { input_name: 'b', value: 'anything' }
+      #   input :b,
+      #         title: 'B',
+      #         enable_when: { input_name: 'a', value: 'anything' }
+      #   input :c,
+      #         title: 'C',
+      #         enable_when: { input_name: 'c', value: 'anything' }
+
+      #   run { pass }
+      # end
+
+      # Test with an enable_when dependency that points to a non-existent input, which
+      # causes boot-time errors and prevents Inferno from starting. Un-comment to verify
+      # that behavior
+      # test do
+      #   title 'enable_when undefined reference test'
+      #   id 'enable_when_undefined_reference_test'
+      #   input :a,
+      #         title: 'A',
+      #         enable_when: { input_name: 'b', value: 'anything' }
+      #   run { pass }
+      # end
     end
 
     group do

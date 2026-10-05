@@ -227,25 +227,40 @@ const normalizeCheckboxValues = (value: unknown): string[] | null => {
  *
  * - No `enable_when`, or no `input_name` on it → always show (rule ignored).
  * - With `input_name`: hide when the referenced key is absent from `inputsMap` (`undefined`).
- *   A console warning is emitted in this case to help catch authoring mistakes (e.g. typos).
+ * - If the controlling input is itself conditionally disabled (i.e. has its own
+ *   `enable_when` condition that is not met), this input is never enabled,
+ *   regardless of the controlling input's current value.
  * - Checkbox groups compare selected values regardless of selection order,
  *   whether the submitted value is an array or a JSON-encoded array.
  * - Other inputs compare via {@link normalizeValue}.
+ *
+ * @param visited - names of inputs already visited in this evaluation chain, used
+ *   to guard against circular enable_when references.
  */
 export const conditionalShowInput = (
   input: TestInput,
   inputsMap: Map<string, unknown>,
   inputs: TestInput[],
+  visited: Set<string> = new Set(),
 ): boolean => {
   const enableWhen = input.enable_when;
   if (!enableWhen?.input_name) {
     return true;
+  }
+  if (visited.has(input.name)) {
+    return false;
   }
   const inputValue = inputsMap.get(enableWhen.input_name);
   if (inputValue === undefined) {
     return false;
   }
   const controllingInput = inputs.find((candidate) => candidate.name === enableWhen.input_name);
+  if (
+    controllingInput &&
+    !conditionalShowInput(controllingInput, inputsMap, inputs, new Set(visited).add(input.name))
+  ) {
+    return false;
+  }
   if (controllingInput?.type === 'checkbox' && controllingInput.options?.list_options?.length) {
     const actualValues = normalizeCheckboxValues(inputValue);
     const expectedValues = normalizeCheckboxValues(enableWhen.value);

@@ -126,6 +126,39 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       expect(example_test.missing_inputs([{ name: 'selections', value: '["b","a"]' }], nil)).to eq([])
     end
 
+    it 'does not require an input whose controlling input is itself disabled' do
+      example_test = Class.new(Inferno::Entities::Test)
+      example_test.input :mode, optional: true
+      example_test.input :sub_mode, optional: true, enable_when: { input_name: 'mode', value: 'advanced' }
+      example_test.input :details, enable_when: { input_name: 'sub_mode', value: 'x' }
+
+      submitted = [{ name: 'mode', value: 'basic' }, { name: 'sub_mode', value: 'x' }]
+      # sub_mode has a matching value, but it is not itself enabled since mode != 'advanced'
+      expect(example_test.missing_inputs(submitted, nil)).to eq([])
+
+      submitted = [{ name: 'mode', value: 'advanced' }, { name: 'sub_mode', value: 'x' }]
+      expect(example_test.missing_inputs(submitted, nil)).to eq(['details'])
+    end
+
+    it 'requires an input whose controlling input is merely hidden, not conditionally disabled' do
+      example_test = Class.new(Inferno::Entities::Test)
+      example_test.input :ctrl, optional: true, hidden: true
+      example_test.input :details, enable_when: { input_name: 'ctrl', value: 'x' }
+
+      # `hidden` alone is a static display flag, not a conditional disable, so it
+      # should not block an enable_when chain
+      expect(example_test.missing_inputs([{ name: 'ctrl', value: 'x' }], nil)).to eq(['details'])
+    end
+
+    it 'does not loop forever on a circular enable_when chain' do
+      example_test = Class.new(Inferno::Entities::Test)
+      example_test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
+      example_test.input :b, optional: true, enable_when: { input_name: 'a', value: 'y' }
+
+      submitted = [{ name: 'a', value: 'y' }, { name: 'b', value: 'x' }]
+      expect(example_test.missing_inputs(submitted, nil)).to eq([])
+    end
+
     it 'returns missing inputs for a test' do
       example_test = Class.new(Inferno::Entities::Test)
       example_test.input :a, :b, :c
@@ -210,6 +243,94 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
 
       missing_inputs = suite.missing_inputs([{ name: 'v2_input', value: 'abc' }], [v1_option])
       expect(missing_inputs).to contain_exactly('v1_input', 'all_versions_input')
+    end
+  end
+
+  describe '.enable_when_problem_messages' do
+    it 'is available on Test, TestGroup, and TestSuite' do
+      test = Class.new(Inferno::Entities::Test)
+      group = Class.new(Inferno::Entities::TestGroup)
+      suite = Class.new(Inferno::Entities::TestSuite) { id SecureRandom.uuid }
+
+      expect(test.enable_when_problem_messages).to eq([])
+      expect(group.enable_when_problem_messages).to eq([])
+      expect(suite.enable_when_problem_messages).to eq([])
+    end
+
+    it 'detects a cycle local to a single test' do
+      test = Class.new(Inferno::Entities::Test)
+      test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
+      test.input :b, optional: true, enable_when: { input_name: 'a', value: 'y' }
+
+      cycle_messages = test.enable_when_problem_messages
+
+      expect(cycle_messages.length).to eq(1)
+      expect(cycle_messages.first).to include("in input 'a'").and include('a -> b -> a')
+    end
+
+    it 'can be hidden from a suite-level check when a parent redeclares the input without enable_when' do
+      suite = Class.new(Inferno::Entities::TestSuite) do
+        id SecureRandom.uuid
+
+        group do
+          id 'g'
+          # Redeclaring :a here with no enable_when is the normal pattern for
+          # "pulling up"/reusing an input at a higher level; enable_when only
+          # has meaning at the level it's declared, so this intentionally
+          # does not propagate up.
+          input :a
+
+          test do
+            id 't'
+            input :a, enable_when: { input_name: 'b', value: 'x' }
+            input :b, enable_when: { input_name: 'a', value: 'y' }
+            run { pass }
+          end
+        end
+      end
+
+      # The suite's own merged view no longer sees :a's enable_when, so it
+      # misses the cycle...
+      expect(suite.enable_when_problem_messages).to eq([])
+
+      # ...but checking every runnable in the tree (not just the suite)
+      # still catches it, at the level (the test) where it's actually
+      # declared.
+      all_messages = [suite, *suite.all_descendants].flat_map(&:enable_when_problem_messages)
+      expect(all_messages.length).to eq(1)
+    end
+
+    it 'detects an enable_when that references an input not declared on the same runnable' do
+      test = Class.new(Inferno::Entities::Test)
+      test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
+
+      messages = test.enable_when_problem_messages
+
+      expect(messages.length).to eq(1)
+      expect(messages.first).to include("Input 'a'").and include("'b'")
+    end
+
+    it 'does not flag a reference to an input declared on the same runnable' do
+      test = Class.new(Inferno::Entities::Test)
+      test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
+      test.input :b, optional: true
+
+      expect(test.enable_when_problem_messages).to eq([])
+    end
+
+    it 'does not treat a reference to an input only declared on a child as valid' do
+      group = Class.new(Inferno::Entities::TestGroup) do
+        id 'g'
+        input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
+
+        test do
+          id 't'
+          input :b, optional: true
+          run { pass }
+        end
+      end
+
+      expect(group.enable_when_problem_messages.length).to eq(1)
     end
   end
 
