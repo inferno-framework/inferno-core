@@ -737,6 +737,9 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       #   input :b,
       #         title: 'B',
       #         enable_when: { input_name: 'a', value: 'anything' }
+      #   input :c,
+      #         title: 'C',
+      #         enable_when: { input_name: 'c', value: 'anything' }
 
       #   run { pass }
       # end

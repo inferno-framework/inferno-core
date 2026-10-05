@@ -226,29 +226,29 @@ module Inferno
       # local to a group or test can be masked if a parent re-declares the
       # same input name without repeating `enable_when`; checking every
       # runnable in the tree (not just the suite) is what catches those.
-      def enable_when_cycle_messages
-        inputs_by_name = local_inputs
+      def enable_when_problem_messages
+        inputs_by_name = enable_when_local_inputs
         edges = enable_when_edges(inputs_by_name)
 
-        undefined_reference_messages(edges, inputs_by_name) + cycle_messages(edges)
+        enable_when_undefined_reference_messages(edges, inputs_by_name) + enable_when_calculated_cycle_messages(edges)
       end
 
       # @private
       # Flags any `enable_when.input_name` that doesn't name an input
       # declared on this same runnable.
-      def undefined_reference_messages(edges, inputs_by_name)
+      def enable_when_undefined_reference_messages(edges, inputs_by_name)
         local_names = inputs_by_name.values.map(&:name)
 
         edges.filter_map do |name, referenced_name|
           next if local_names.include?(referenced_name)
 
           "Input '#{name}' has an enable_when condition that references '#{referenced_name}', " \
-            'which is not an input defined on the same test/group/suite. '
+            'which is not an input defined on the same test/group/suite.'
         end
       end
 
       # @private
-      def cycle_messages(edges)
+      def enable_when_calculated_cycle_messages(edges)
         globally_visited = {}
 
         edges.each_key.filter_map do |start_name|
@@ -269,14 +269,14 @@ module Inferno
       # so it's unaffected by the child merge in `available_inputs` -- reading
       # straight from this runnable's own local input config avoids that
       # merge's subtree walk entirely.
-      def enable_when_edges(inputs_by_name = local_inputs)
+      def enable_when_edges(inputs_by_name = enable_when_local_inputs)
         inputs_by_name.each_with_object({}) do |(_, input), depends_on|
           depends_on[input.name] = input.enable_when[:input_name] if input.enable_when.present?
         end
       end
 
       # @private
-      def local_inputs
+      def enable_when_local_inputs
         config.inputs.slice(*inputs)
       end
 

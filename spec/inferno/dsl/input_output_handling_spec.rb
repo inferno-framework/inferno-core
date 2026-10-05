@@ -246,15 +246,15 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
     end
   end
 
-  describe '.enable_when_cycle_messages' do
+  describe '.enable_when_problem_messages' do
     it 'is available on Test, TestGroup, and TestSuite' do
       test = Class.new(Inferno::Entities::Test)
       group = Class.new(Inferno::Entities::TestGroup)
       suite = Class.new(Inferno::Entities::TestSuite) { id SecureRandom.uuid }
 
-      expect(test.enable_when_cycle_messages).to eq([])
-      expect(group.enable_when_cycle_messages).to eq([])
-      expect(suite.enable_when_cycle_messages).to eq([])
+      expect(test.enable_when_problem_messages).to eq([])
+      expect(group.enable_when_problem_messages).to eq([])
+      expect(suite.enable_when_problem_messages).to eq([])
     end
 
     it 'detects a cycle local to a single test' do
@@ -262,7 +262,7 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
       test.input :b, optional: true, enable_when: { input_name: 'a', value: 'y' }
 
-      cycle_messages = test.enable_when_cycle_messages
+      cycle_messages = test.enable_when_problem_messages
 
       expect(cycle_messages.length).to eq(1)
       expect(cycle_messages.first).to include("in input 'a'").and include('a -> b -> a')
@@ -291,12 +291,12 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
 
       # The suite's own merged view no longer sees :a's enable_when, so it
       # misses the cycle...
-      expect(suite.enable_when_cycle_messages).to eq([])
+      expect(suite.enable_when_problem_messages).to eq([])
 
       # ...but checking every runnable in the tree (not just the suite)
       # still catches it, at the level (the test) where it's actually
       # declared.
-      all_messages = [suite, *suite.all_descendants].flat_map(&:enable_when_cycle_messages)
+      all_messages = [suite, *suite.all_descendants].flat_map(&:enable_when_problem_messages)
       expect(all_messages.length).to eq(1)
     end
 
@@ -304,7 +304,7 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       test = Class.new(Inferno::Entities::Test)
       test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
 
-      messages = test.enable_when_cycle_messages
+      messages = test.enable_when_problem_messages
 
       expect(messages.length).to eq(1)
       expect(messages.first).to include("Input 'a'").and include("'b'")
@@ -315,7 +315,7 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
       test.input :b, optional: true
 
-      expect(test.enable_when_cycle_messages).to eq([])
+      expect(test.enable_when_problem_messages).to eq([])
     end
 
     it 'does not treat a reference to an input only declared on a child as valid' do
@@ -330,7 +330,7 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
         end
       end
 
-      expect(group.enable_when_cycle_messages.length).to eq(1)
+      expect(group.enable_when_problem_messages.length).to eq(1)
     end
   end
 

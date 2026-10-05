@@ -18,12 +18,12 @@ module Inferno
         # suite, is what catches that case.
         def check_enable_when_errors!(descendant)
           [*descendant.all_descendants.reverse, descendant].each do |runnable|
-            enable_when_errors = runnable.enable_when_cycle_messages
+            enable_when_errors = runnable.enable_when_problem_messages
             next if enable_when_errors.empty?
 
             raise StandardError,
-                  "Error initializing test suite #{descendant.name} (id: #{descendant.id}), " \
-                  "in '#{runnable.title || runnable.id}' (id: #{runnable.id}): #{enable_when_errors.join}"
+                  "Error initializing test suite #{descendant.name} (id: #{descendant.id}) " \
+                  "in '#{runnable.title || runnable.id}' (id: #{runnable.id}):\n- #{enable_when_errors.join("\n- ")}"
           end
         end
       end

@@ -198,14 +198,14 @@ RSpec.describe Inferno::Entities::TestSuite do
         suite_class.input :a, optional: true
         suite_class.input :b, optional: true, enable_when: { input_name: 'a', value: 'x' }
 
-        expect(suite_class.enable_when_cycle_messages).to eq([])
+        expect(suite_class.enable_when_problem_messages).to eq([])
       end
 
       it 'reports a message for a two-input cycle' do
         suite_class.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
         suite_class.input :b, optional: true, enable_when: { input_name: 'a', value: 'y' }
 
-        cycle_messages = suite_class.enable_when_cycle_messages
+        cycle_messages = suite_class.enable_when_problem_messages
 
         expect(cycle_messages.length).to eq(1)
         expect(cycle_messages.first).to include("in input 'a'").and include('a -> b -> a')
@@ -214,7 +214,7 @@ RSpec.describe Inferno::Entities::TestSuite do
       it 'reports a message for a self-referencing input' do
         suite_class.input :a, optional: true, enable_when: { input_name: 'a', value: 'x' }
 
-        cycle_messages = suite_class.enable_when_cycle_messages
+        cycle_messages = suite_class.enable_when_problem_messages
 
         expect(cycle_messages.length).to eq(1)
         expect(cycle_messages.first).to include("in input 'a'").and include('a -> a')
