@@ -227,7 +227,6 @@ const normalizeCheckboxValues = (value: unknown): string[] | null => {
  *
  * - No `enable_when`, or no `input_name` on it → always show (rule ignored).
  * - With `input_name`: hide when the referenced key is absent from `inputsMap` (`undefined`).
- *   A console warning is emitted in this case to help catch authoring mistakes (e.g. typos).
  * - If the controlling input is itself conditionally disabled (i.e. has its own
  *   `enable_when` condition that is not met), this input is never enabled,
  *   regardless of the controlling input's current value.

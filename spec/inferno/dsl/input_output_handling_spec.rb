@@ -299,6 +299,39 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       all_messages = [suite, *suite.all_descendants].flat_map(&:enable_when_cycle_messages)
       expect(all_messages.length).to eq(1)
     end
+
+    it 'detects an enable_when that references an input not declared on the same runnable' do
+      test = Class.new(Inferno::Entities::Test)
+      test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
+
+      messages = test.enable_when_cycle_messages
+
+      expect(messages.length).to eq(1)
+      expect(messages.first).to include("Input 'a'").and include("'b'")
+    end
+
+    it 'does not flag a reference to an input declared on the same runnable' do
+      test = Class.new(Inferno::Entities::Test)
+      test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
+      test.input :b, optional: true
+
+      expect(test.enable_when_cycle_messages).to eq([])
+    end
+
+    it 'does not treat a reference to an input only declared on a child as valid' do
+      group = Class.new(Inferno::Entities::TestGroup) do
+        id 'g'
+        input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
+
+        test do
+          id 't'
+          input :b, optional: true
+          run { pass }
+        end
+      end
+
+      expect(group.enable_when_cycle_messages.length).to eq(1)
+    end
   end
 
   describe '.input_order' do

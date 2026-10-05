@@ -213,41 +213,75 @@ module Inferno
       end
 
       # @private
-      # Automatically detect circular `enable_when` dependencies among this
-      # runnable's own available inputs (e.g. input `a` is enabled_when `b`,
-      # which is itself enabled_when `a`). Such inputs silently evaluate as
-      # disabled at runtime (see `Entities::Input#enabled?`'s `visited`
-      # guard). Note `enable_when` is an uninheritable attribute -- it only
-      # has meaning at the level it's declared -- so a cycle local to a group
-      # or test can be masked if a parent re-declares the same input name
-      # without repeating `enable_when`; checking every runnable in the tree
-      # (not just the suite) is what catches those.
+      # Automatically detect, among this runnable's own inputs: circular
+      # `enable_when` dependencies (e.g. input `a` is enabled_when `b`, which
+      # is itself enabled_when `a`), and `enable_when` conditions that
+      # reference an input not declared on this same runnable (e.g. a typo'd
+      # `input_name`). Both silently evaluate as permanently disabled at
+      # runtime with no other diagnostic (see `Entities::Input#enabled?`'s
+      # `visited` guard and its `input_values.key?` check), so they're
+      # treated as fatal at load time instead. Note `enable_when` is an
+      # uninheritable attribute -- it only has meaning, and can only
+      # reference another input, at the level it's declared -- so a problem
+      # local to a group or test can be masked if a parent re-declares the
+      # same input name without repeating `enable_when`; checking every
+      # runnable in the tree (not just the suite) is what catches those.
       def enable_when_cycle_messages
-        detect_enable_when_cycles.map do |cycle|
+        edges = enable_when_edges
+
+        undefined_reference_messages(edges) + cycle_messages(edges)
+      end
+
+      # @private
+      # Flags any `enable_when.input_name` that doesn't name an input
+      # declared on this same runnable.
+      def undefined_reference_messages(edges)
+        local_names = local_input_names
+
+        edges.filter_map do |name, referenced_name|
+          next if local_names.include?(referenced_name)
+
+          "Input '#{name}' has an enable_when condition that references '#{referenced_name}', " \
+            'which is not an input defined on the same test/group/suite. '
+        end
+      end
+
+      # @private
+      def cycle_messages(edges)
+        globally_visited = {}
+
+        edges.each_key.filter_map do |start_name|
+          next if globally_visited[start_name]
+
+          cycle = follow_enable_when_chain(start_name, edges, globally_visited)
+          next unless cycle
+
           chain = (cycle + [cycle.first]).join(' -> ')
           "Circular enable_when dependency detected in input '#{cycle.first}': #{chain}. "
         end
       end
 
       # @private
-      def detect_enable_when_cycles
-        depends_on = enable_when_edges
-        globally_visited = {}
-
-        depends_on.each_key.filter_map do |start_name|
-          next if globally_visited[start_name]
-
-          follow_enable_when_chain(start_name, depends_on, globally_visited)
+      # Maps each input's name to the name of the input it depends on via
+      # `enable_when`, for every input in this runnable that has one.
+      # `enable_when` is uninheritable (see `Entities::Input::UNINHERITABLE_ATTRIBUTES`),
+      # so it's unaffected by the child merge in `available_inputs` -- reading
+      # straight from this runnable's own local input config avoids that
+      # merge's subtree walk entirely.
+      def enable_when_edges
+        local_inputs.each_with_object({}) do |(_, input), depends_on|
+          depends_on[input.name] = input.enable_when[:input_name] if input.enable_when.present?
         end
       end
 
       # @private
-      # Maps each input's name to the name of the input it depends on via
-      # `enable_when`, for every input in this runnable that has one.
-      def enable_when_edges
-        available_inputs.each_value.with_object({}) do |input, depends_on|
-          depends_on[input.name] = input.enable_when[:input_name] if input.enable_when.present?
-        end
+      def local_inputs
+        config.inputs.slice(*inputs)
+      end
+
+      # @private
+      def local_input_names
+        local_inputs.values.map(&:name)
       end
 
       # @private

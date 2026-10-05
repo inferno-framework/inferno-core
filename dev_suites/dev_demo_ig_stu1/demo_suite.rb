@@ -730,7 +730,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       # and prevents Inferno from starting. Un-comment to verify that behavior
       # test do
       #   title 'enable_when input cycle test'
-      #   id 'enable_when_input_cycle_group'
+      #   id 'enable_when_input_cycle_test'
       #   input :a,
       #         title: 'A',
       #         enable_when: { input_name: 'b', value: 'anything' }
@@ -738,6 +738,18 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
       #         title: 'B',
       #         enable_when: { input_name: 'a', value: 'anything' }
 
+      #   run { pass }
+      # end
+
+      # Test with an enable_when dependency that points to a non-existent input, which
+      # causes boot-time errors and prevents Inferno from starting. Un-comment to verify
+      # that behavior
+      # test do
+      #   title 'enable_when undefined reference test'
+      #   id 'enable_when_undefined_reference_test'
+      #   input :a,
+      #         title: 'A',
+      #         enable_when: { input_name: 'b', value: 'anything' }
       #   run { pass }
       # end
     end
