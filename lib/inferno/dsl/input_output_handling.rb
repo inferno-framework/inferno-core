@@ -211,6 +211,65 @@ module Inferno
 
         order_available_inputs(child_inputs.merge(available_inputs))
       end
+
+      # @private
+      # Automatically detect circular `enable_when` dependencies among this
+      # runnable's own available inputs (e.g. input `a` is enabled_when `b`,
+      # which is itself enabled_when `a`). Such inputs silently evaluate as
+      # disabled at runtime (see `Entities::Input#enabled?`'s `visited`
+      # guard). Note `enable_when` is an uninheritable attribute -- it only
+      # has meaning at the level it's declared -- so a cycle local to a group
+      # or test can be masked if a parent re-declares the same input name
+      # without repeating `enable_when`; checking every runnable in the tree
+      # (not just the suite) is what catches those.
+      def enable_when_cycle_messages
+        detect_enable_when_cycles.map do |cycle|
+          chain = (cycle + [cycle.first]).join(' -> ')
+          "Circular enable_when dependency detected: #{chain}. "
+        end
+      end
+
+      # @private
+      def detect_enable_when_cycles
+        depends_on = enable_when_edges
+        globally_visited = {}
+
+        depends_on.each_key.filter_map do |start_name|
+          next if globally_visited[start_name]
+
+          follow_enable_when_chain(start_name, depends_on, globally_visited)
+        end
+      end
+
+      # @private
+      # Maps each input's name to the name of the input it depends on via
+      # `enable_when`, for every input in this runnable that has one.
+      def enable_when_edges
+        available_inputs.each_value.with_object({}) do |input, depends_on|
+          depends_on[input.name] = input.enable_when[:input_name] if input.enable_when.present?
+        end
+      end
+
+      # @private
+      # Follows the `enable_when` chain starting at `start_name`, marking
+      # every node visited along the way. Returns the cycle (as an array of
+      # input names) if one is found, otherwise nil.
+      def follow_enable_when_chain(start_name, depends_on, globally_visited)
+        path = []
+        node = start_name
+
+        until node.nil? || globally_visited[node]
+          break if path.index(node)
+
+          path << node
+          node = depends_on[node]
+        end
+
+        path.each { |name| globally_visited[name] = true }
+
+        cycle_start_index = path.index(node)
+        cycle_start_index && path[cycle_start_index..]
+      end
     end
   end
 end

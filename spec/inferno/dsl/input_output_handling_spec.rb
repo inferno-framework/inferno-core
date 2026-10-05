@@ -246,6 +246,58 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
     end
   end
 
+  describe '.enable_when_cycle_messages' do
+    it 'is available on Test, TestGroup, and TestSuite' do
+      test = Class.new(Inferno::Entities::Test)
+      group = Class.new(Inferno::Entities::TestGroup)
+      suite = Class.new(Inferno::Entities::TestSuite) { id SecureRandom.uuid }
+
+      expect(test.enable_when_cycle_messages).to eq([])
+      expect(group.enable_when_cycle_messages).to eq([])
+      expect(suite.enable_when_cycle_messages).to eq([])
+    end
+
+    it 'detects a cycle local to a single test' do
+      test = Class.new(Inferno::Entities::Test)
+      test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
+      test.input :b, optional: true, enable_when: { input_name: 'a', value: 'y' }
+
+      expect(test.enable_when_cycle_messages.length).to eq(1)
+    end
+
+    it 'can be hidden from a suite-level check when a parent redeclares the input without enable_when' do
+      suite = Class.new(Inferno::Entities::TestSuite) do
+        id SecureRandom.uuid
+
+        group do
+          id 'g'
+          # Redeclaring :a here with no enable_when is the normal pattern for
+          # "pulling up"/reusing an input at a higher level; enable_when only
+          # has meaning at the level it's declared, so this intentionally
+          # does not propagate up.
+          input :a
+
+          test do
+            id 't'
+            input :a, enable_when: { input_name: 'b', value: 'x' }
+            input :b, enable_when: { input_name: 'a', value: 'y' }
+            run { pass }
+          end
+        end
+      end
+
+      # The suite's own merged view no longer sees :a's enable_when, so it
+      # misses the cycle...
+      expect(suite.enable_when_cycle_messages).to eq([])
+
+      # ...but checking every runnable in the tree (not just the suite)
+      # still catches it, at the level (the test) where it's actually
+      # declared.
+      all_messages = [suite, *suite.all_descendants].flat_map(&:enable_when_cycle_messages)
+      expect(all_messages.length).to eq(1)
+    end
+  end
+
   describe '.input_order' do
     let(:group) do
       Class.new(Inferno::Entities::TestGroup) do

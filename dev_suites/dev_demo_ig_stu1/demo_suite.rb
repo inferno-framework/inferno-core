@@ -725,6 +725,21 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
         run { pass }
       end
+
+      # Test with circular enable_when dependencies, which causes boot-time errors
+      # and prevents Inferno from starting. Un-comment to verify that behavior
+      # test do
+      #   title 'enable_when input cycle test'
+      #   id 'enable_when_input_cycle_group'
+      #   input :a,
+      #         title: 'A',
+      #         enable_when: { input_name: 'b', value: 'anything' }
+      #   input :b,
+      #         title: 'B',
+      #         enable_when: { input_name: 'a', value: 'anything' }
+
+      #   run { pass }
+      # end
     end
 
     group do

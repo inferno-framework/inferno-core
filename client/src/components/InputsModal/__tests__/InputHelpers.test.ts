@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   getMissingRequiredInput,
   normalizeValue,
@@ -256,6 +256,30 @@ describe('conditionalShowInput', () => {
     ]);
     expect(conditionalShowInput(a, inputsMap, [a, b])).toBe(false);
     expect(conditionalShowInput(b, inputsMap, [a, b])).toBe(false);
+  });
+
+  it('warns in the console when a circular enable_when chain is detected', () => {
+    const a = makeInput({
+      name: 'a',
+      optional: true,
+      enable_when: { input_name: 'b', value: 'x' },
+    });
+    const b = makeInput({
+      name: 'b',
+      optional: true,
+      enable_when: { input_name: 'a', value: 'y' },
+    });
+    const inputsMap = new Map([
+      ['a', 'y'],
+      ['b', 'x'],
+    ]);
+
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    conditionalShowInput(a, inputsMap, [a, b]);
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining('Circular enable_when dependency'),
+    );
+    warnSpy.mockRestore();
   });
 });
 

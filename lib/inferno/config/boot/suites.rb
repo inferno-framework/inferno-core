@@ -46,6 +46,22 @@ Inferno::Application.register_provider(:suites) do
         raise StandardError, "Error initializing test suite #{descendant.name}: test suite ID is not set"
       end
 
+      # A circular enable_when dependency means the inputs involved can never
+      # be enabled, so this is treated as fatal at load time rather than left
+      # for developers to discover once the suite is already running.
+      # `enable_when` is uninheritable, so a cycle local to a group or test
+      # can be hidden from the suite's own merged view if a parent re-declares
+      # the same input name without repeating `enable_when` -- checking every
+      # runnable in the tree, not just the suite, is what catches that case.
+      [*descendant.all_descendants.reverse, descendant].each do |runnable|
+        cycle_errors = runnable.enable_when_cycle_messages
+        next if cycle_errors.empty?
+
+        raise StandardError,
+              "Error initializing test suite #{descendant.name} (id: #{descendant.id}), " \
+              "in '#{runnable.title}' (id: #{runnable.id}): #{cycle_errors.join('; ')}"
+      end
+
       # This will lock the short IDs if a short ID map for this suite is present
       descendant.assign_short_ids
     end
