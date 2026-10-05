@@ -262,7 +262,10 @@ RSpec.describe Inferno::DSL::InputOutputHandling do
       test.input :a, optional: true, enable_when: { input_name: 'b', value: 'x' }
       test.input :b, optional: true, enable_when: { input_name: 'a', value: 'y' }
 
-      expect(test.enable_when_cycle_messages.length).to eq(1)
+      cycle_messages = test.enable_when_cycle_messages
+
+      expect(cycle_messages.length).to eq(1)
+      expect(cycle_messages.first).to include("in input 'a'").and include('a -> b -> a')
     end
 
     it 'can be hidden from a suite-level check when a parent redeclares the input without enable_when' do

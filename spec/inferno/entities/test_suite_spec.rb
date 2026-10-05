@@ -208,7 +208,7 @@ RSpec.describe Inferno::Entities::TestSuite do
         cycle_messages = suite_class.enable_when_cycle_messages
 
         expect(cycle_messages.length).to eq(1)
-        expect(cycle_messages.first).to include('a').and include('b')
+        expect(cycle_messages.first).to include("in input 'a'").and include('a -> b -> a')
       end
 
       it 'reports a message for a self-referencing input' do
@@ -217,7 +217,7 @@ RSpec.describe Inferno::Entities::TestSuite do
         cycle_messages = suite_class.enable_when_cycle_messages
 
         expect(cycle_messages.length).to eq(1)
-        expect(cycle_messages.first).to include('a -> a')
+        expect(cycle_messages.first).to include("in input 'a'").and include('a -> a')
       end
     end
   end
