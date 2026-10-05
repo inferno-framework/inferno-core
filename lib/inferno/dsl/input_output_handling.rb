@@ -227,16 +227,17 @@ module Inferno
       # same input name without repeating `enable_when`; checking every
       # runnable in the tree (not just the suite) is what catches those.
       def enable_when_cycle_messages
-        edges = enable_when_edges
+        inputs_by_name = local_inputs
+        edges = enable_when_edges(inputs_by_name)
 
-        undefined_reference_messages(edges) + cycle_messages(edges)
+        undefined_reference_messages(edges, inputs_by_name) + cycle_messages(edges)
       end
 
       # @private
       # Flags any `enable_when.input_name` that doesn't name an input
       # declared on this same runnable.
-      def undefined_reference_messages(edges)
-        local_names = local_input_names
+      def undefined_reference_messages(edges, inputs_by_name)
+        local_names = inputs_by_name.values.map(&:name)
 
         edges.filter_map do |name, referenced_name|
           next if local_names.include?(referenced_name)
@@ -268,8 +269,8 @@ module Inferno
       # so it's unaffected by the child merge in `available_inputs` -- reading
       # straight from this runnable's own local input config avoids that
       # merge's subtree walk entirely.
-      def enable_when_edges
-        local_inputs.each_with_object({}) do |(_, input), depends_on|
+      def enable_when_edges(inputs_by_name = local_inputs)
+        inputs_by_name.each_with_object({}) do |(_, input), depends_on|
           depends_on[input.name] = input.enable_when[:input_name] if input.enable_when.present?
         end
       end
@@ -277,11 +278,6 @@ module Inferno
       # @private
       def local_inputs
         config.inputs.slice(*inputs)
-      end
-
-      # @private
-      def local_input_names
-        local_inputs.values.map(&:name)
       end
 
       # @private
