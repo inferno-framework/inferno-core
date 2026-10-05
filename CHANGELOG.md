@@ -3,6 +3,7 @@
 * FQM-470: Add support for patternString slice discriminator by @tstrass in https://github.com/inferno-framework/inferno-core/pull/811
 * FQM-477: Filter out elements with max cardinality of 0 in MS metadata extraction by @tstrass in https://github.com/inferno-framework/inferno-core/pull/813
 * FQM-476: Allow for disabling of required inputs by @tstrass in https://github.com/inferno-framework/inferno-core/pull/814
+* ID-267: enable when chain by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/815
 
 ## 1.4.4
 * ID-227: General cleanup and minor enhancements by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/809
