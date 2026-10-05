@@ -1,3 +1,36 @@
+module Inferno
+  module Config
+    module Boot
+      # Extracted from the :suites provider below so the enable_when
+      # validation can be unit tested against plain Test/TestGroup/TestSuite
+      # classes, instead of requiring a full application boot (which only
+      # happens once per process) just to exercise the raise.
+      module Suites
+        module_function
+
+        # A circular or undefined enable_when dependency means the input
+        # involved can never be enabled, so this is treated as fatal at load
+        # time rather than left for developers to discover once the suite is
+        # already running. `enable_when` is uninheritable, so a problem local
+        # to a group or test can be hidden from the suite's own merged view if
+        # a parent re-declares the same input name without repeating
+        # `enable_when` -- checking every runnable in the tree, not just the
+        # suite, is what catches that case.
+        def check_enable_when_errors!(descendant)
+          [*descendant.all_descendants.reverse, descendant].each do |runnable|
+            enable_when_errors = runnable.enable_when_cycle_messages
+            next if enable_when_errors.empty?
+
+            raise StandardError,
+                  "Error initializing test suite #{descendant.name} (id: #{descendant.id}), " \
+                  "in '#{runnable.title || runnable.id}' (id: #{runnable.id}): #{enable_when_errors.join}"
+          end
+        end
+      end
+    end
+  end
+end
+
 Inferno::Application.register_provider(:suites) do
   prepare do
     target_container.start :logging
@@ -46,22 +79,7 @@ Inferno::Application.register_provider(:suites) do
         raise StandardError, "Error initializing test suite #{descendant.name}: test suite ID is not set"
       end
 
-      # A circular or undefined enable_when dependency means the input
-      # involved can never be enabled, so this is treated as fatal at load
-      # time rather than left for developers to discover once the suite is
-      # already running. `enable_when` is uninheritable, so a problem local
-      # to a group or test can be hidden from the suite's own merged view if
-      # a parent re-declares the same input name without repeating
-      # `enable_when` -- checking every runnable in the tree, not just the
-      # suite, is what catches that case.
-      [*descendant.all_descendants.reverse, descendant].each do |runnable|
-        enable_when_errors = runnable.enable_when_cycle_messages
-        next if enable_when_errors.empty?
-
-        raise StandardError,
-              "Error initializing test suite #{descendant.name} (id: #{descendant.id}), " \
-              "in '#{runnable.title || runnable.id}' (id: #{runnable.id}): #{enable_when_errors.join}"
-      end
+      Inferno::Config::Boot::Suites.check_enable_when_errors!(descendant)
 
       # This will lock the short IDs if a short ID map for this suite is present
       descendant.assign_short_ids
