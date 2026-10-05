@@ -57,7 +57,7 @@ jobs:
     # `npm run coverage` is run tests with coverage flags, rather than repeating them here
     - run: npm run coverage
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         name: frontend-coverage
         flags: frontend
