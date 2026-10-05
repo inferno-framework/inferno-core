@@ -249,10 +249,6 @@ export const conditionalShowInput = (
     return true;
   }
   if (visited.has(input.name)) {
-    console.warn(
-      `Circular enable_when dependency detected involving input '${input.name}' ` +
-        `(chain: ${[...visited, input.name].join(' -> ')}). Treating as disabled.`,
-    );
     return false;
   }
   const inputValue = inputsMap.get(enableWhen.input_name);

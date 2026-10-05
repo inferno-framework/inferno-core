@@ -225,7 +225,7 @@ module Inferno
       def enable_when_cycle_messages
         detect_enable_when_cycles.map do |cycle|
           chain = (cycle + [cycle.first]).join(' -> ')
-          "Circular enable_when dependency detected: #{chain}. "
+          "Circular enable_when dependency detected in input '#{cycle.first}': #{chain}. "
         end
       end
 
