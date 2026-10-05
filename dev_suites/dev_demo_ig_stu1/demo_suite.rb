@@ -711,17 +711,17 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
                   { label: 'No', value: 'false' }
                 ]
               }
-        input :get_type_select_sub, title: 'How to get Bundle', type: 'radio', default: 'copy_paste', options: {
+        input :get_type_radio_sub, title: 'How to get Bundle', type: 'radio', default: 'copy_paste', options: {
           list_options: list_options
         }, enable_when: { input_name: 'make_requests', value: 'true' }
-        input :bundle_copy_paste_select_sub, title: 'Paste JSON (Select)', type: 'textarea', optional: false,
-                                             enable_when: { input_name: 'get_type_select_sub', value: 'copy_paste' }
-        input :bundle_url_select_sub, title: 'URL to FHIR Bundle (Select)', type: 'text', optional: false,
-                                      enable_when: { input_name: 'get_type_select_sub', value: 'url' }
-        input :fhir_server_url_select_sub, title: 'FHIR Server URL (Select)', type: 'text', optional: false,
-                                           enable_when: { input_name: 'get_type_select_sub', value: 'summary_op' }
-        input :patient_identifier_select_sub, title: 'Patient ID (Select)', type: 'text', optional: false,
-                                              enable_when: { input_name: 'get_type_select_sub', value: 'summary_op' }
+        input :bundle_copy_paste_radio_sub, title: 'Paste JSON (Select)', type: 'textarea', optional: false,
+                                            enable_when: { input_name: 'get_type_radio_sub', value: 'copy_paste' }
+        input :bundle_url_radio_sub, title: 'URL to FHIR Bundle (Select)', type: 'text', optional: false,
+                                     enable_when: { input_name: 'get_type_radio_sub', value: 'url' }
+        input :fhir_server_url_radio_sub, title: 'FHIR Server URL (Select)', type: 'text', optional: false,
+                                          enable_when: { input_name: 'get_type_radio_sub', value: 'summary_op' }
+        input :patient_identifier_radio_sub, title: 'Patient ID (Select)', type: 'text', optional: false,
+                                             enable_when: { input_name: 'get_type_radio_sub', value: 'summary_op' }
 
         run { pass }
       end
