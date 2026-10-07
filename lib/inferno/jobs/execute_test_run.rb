@@ -3,6 +3,9 @@ module Inferno
     class ExecuteTestRun
       include Sidekiq::Worker
 
+      # Retrying would replay the whole test run, so surface failures instead.
+      sidekiq_options retry: false
+
       def perform(test_run_id)
         test_run = Inferno::Repositories::TestRuns.new.find(test_run_id)
         test_session = Inferno::Repositories::TestSessions.new.find(test_run.test_session_id)

@@ -89,8 +89,12 @@ module Inferno
           if result == 'wait'
             # The waiting status and the wait result must become visible to
             # readers atomically, so that pollers never see the run waiting
-            # without the waiting test's result being present.
-            Inferno::Application['db.connection'].transaction do
+            # without the waiting test's result being present. Immediate mode
+            # takes the sqlite write lock up front () mark_as_waiting reads before
+            # it writes) and is used to avoid a SQLITE_BUSY error without waiting
+            # out busy_timeout when it tries to upgrade to a write lock that is
+            # already taken.
+            Inferno::Application['db.connection'].transaction(mode: :immediate) do
               test_runs_repo.mark_as_waiting(test_run.id, test_instance.identifier, test_instance.wait_timeout)
               persist_result(result_params)
             end
@@ -280,11 +284,10 @@ module Inferno
       # into a single lock acquisition instead of one per insert, cutting
       # down on sqlite write-lock contention with concurrent readers/writers.
       #
-      # If you change this, run `bundle exec rake db:check_concurrency` to verify
-      # SQLITE_BUSY is still avoided under concurrent test-run writes and status
-      # polling (see lib/inferno/utils/db_concurrency_check.rb for why that's a
-      # rake task and not a spec).
-      result = Inferno::Application['db.connection'].transaction do
+      # Immediate mode takes the write lock up front so that any reads inside
+      # the transaction can't leave it stuck unable to upgrade to a write lock
+      # (see the wait transaction in #run_test).
+      result = Inferno::Application['db.connection'].transaction(mode: :immediate) do
         results_repo.create(
           params.merge(test_run_id: test_run.id, test_session_id: test_session.id)
         )
