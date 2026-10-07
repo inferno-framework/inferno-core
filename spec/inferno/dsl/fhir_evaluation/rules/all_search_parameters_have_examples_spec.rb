@@ -201,4 +201,83 @@ RSpec.describe Inferno::DSL::FHIREvaluation::Rules::AllSearchParametersHaveExamp
     expect(result.message).to eq("Found SearchParameters with no searchable data in examples: \n\thttp://hl7.org/fhir/us/core/SearchParameter/us-core-practitionerrole-practitioner\n\thttp://hl7.org/fhir/us/core/SearchParameter/us-core-practitionerrole-specialty")
     # rubocop:enable Layout/LineLength
   end
+
+  describe 'with a small IG' do
+    let(:fhirpath_url) { "#{ENV.fetch('FHIRPATH_URL')}/evaluate?path=" }
+    let(:found_body) { '[{"type": "string", "element": "found"}]' }
+    let(:patients) { [FHIR::Patient.new(id: 'patient-1'), FHIR::Patient.new(id: 'patient-2')] }
+    let(:observation) { FHIR::Observation.new(id: 'observation-1', status: 'final') }
+    let(:name_param) do
+      FHIR::SearchParameter.new(url: 'http://example.com/SearchParameter/patient-name', base: ['Patient'],
+                                expression: 'Patient.name')
+    end
+
+    def check(search_params, data)
+      ig = instance_double(Inferno::Entities::IG, resources_by_type: { 'SearchParameter' => search_params })
+      context = Inferno::DSL::FHIREvaluation::EvaluationContext.new(ig, data,
+                                                                    Inferno::DSL::FHIREvaluation::Config.new, nil)
+      described_class.new.check(context)
+      context.results
+    end
+
+    it 'skips the rule with a warning when FHIRPATH_URL is not set' do
+      allow(ENV).to receive(:[]).and_call_original
+      allow(ENV).to receive(:[]).with('FHIRPATH_URL').and_return(nil)
+
+      results = check([name_param], patients)
+
+      expect(results.map(&:severity)).to eq(['warning'])
+      expect(results.first.message).to eq('FHIRPATH_URL is not found. Skipping rule AllSearchParametersHaveExamples.')
+    end
+
+    it 'reports success when every search parameter matches an example' do
+      stub_request(:post, "#{fhirpath_url}Patient.name")
+        .to_return({ status: 200, body: '[]' }, { status: 200, body: found_body })
+
+      results = check([name_param], [observation] + patients)
+
+      expect(results.map(&:severity)).to eq(['success'])
+      expect(results.first.message).to eq('All SearchParameters have examples.')
+    end
+
+    it 'reports information when the IG has no search parameters' do
+      results = check([], patients)
+
+      expect(results.map(&:severity)).to eq(['information'])
+      expect(results.first.message).to eq('IG contains no SearchParameter.')
+    end
+
+    it 'warns about a search parameter with no expression and reports it as unused' do
+      param = FHIR::SearchParameter.new(url: 'http://example.com/SearchParameter/no-expression', base: ['Patient'])
+
+      results = check([param], patients)
+
+      expect(results.map(&:message)).to eq(
+        [
+          "Search parameter #{param.url} doesn't include an expression.",
+          "Found SearchParameters with no searchable data in examples: \n\t#{param.url}"
+        ]
+      )
+    end
+
+    it 'reports an error when the FHIRPath service cannot be reached' do
+      stub_request(:post, "#{fhirpath_url}Patient.name").to_raise(StandardError.new('boom'))
+
+      results = check([name_param], patients)
+
+      expect(results.first.severity).to eq('error')
+      expect(results.first.message).to include('Unable to connect to FHIRPath service')
+    end
+
+    it 'warns when the FHIRPath service fails to evaluate an expression' do
+      stub_request(:post, "#{fhirpath_url}Patient.name").to_return(status: 500, body: 'error')
+
+      results = check([name_param], patients)
+
+      expect(results.first.severity).to eq('warning')
+      expect(results.first.message).to start_with(
+        "SearchParameter #{name_param.url} failed to evaluate due to an error. Expression: Patient.name."
+      )
+    end
+  end
 end
