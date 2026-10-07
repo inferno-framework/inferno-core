@@ -98,7 +98,7 @@ module Inferno
       Inferno.routes.each do |route|
         cleaned_id = route[:suite].id.gsub(/[^a-zA-Z\d\-._~]/, '_')
         path = "/custom/#{cleaned_id}#{route[:path]}"
-        Application['logger'].info("Registering custom route: #{path}")
+        Application['logger'].info("Registering custom route: #{route[:method].to_s.upcase} #{path}")
         if route[:method] == :all
           mount route[:handler], at: path
         else
