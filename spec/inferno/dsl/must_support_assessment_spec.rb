@@ -1591,4 +1591,201 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       expect(result).to include('subject')
     end
   end
+
+  describe 'with hand-built metadata' do
+    def metadata_with(elements: [], extensions: [], slices: [], choices: nil)
+      must_supports = { elements:, extensions:, slices: }
+      must_supports[:choices] = choices if choices
+      OpenStruct.new(must_supports:)
+    end
+
+    describe 'helper methods exposed on the module' do
+      let(:host) do
+        Class.new do
+          include Inferno::DSL::MustSupportAssessment
+
+          attr_accessor :metadata
+        end.new
+      end
+
+      it 'finds missing elements using the metadata on the including object' do
+        host.metadata = metadata_with
+        elements = [{ path: 'gender' }, { path: 'birthDate' }]
+
+        missing = host.find_missing_elements([FHIR::Patient.new(gender: 'male')], elements)
+
+        expect(missing).to eq([{ path: 'birthDate' }])
+      end
+
+      it 'builds a missing element string, including any fixed value' do
+        expect(host.missing_element_string({ path: 'name.use', fixed_value: 'old' })).to eq('name.use:old')
+        expect(host.missing_element_string({ path: 'gender' })).to eq('gender')
+      end
+    end
+
+    it 'returns nil when there are no resources' do
+      expect(run_with_metadata([], metadata_with(elements: [{ path: 'gender' }]))).to be_nil
+    end
+
+    it 'writes the metadata to a temp file when debugging is enabled' do
+      metadata = metadata_with(elements: [{ path: 'gender' }])
+      profile_id = "spec-profile-#{SecureRandom.hex(4)}"
+      metadata.profile = FHIR::StructureDefinition.new(id: profile_id)
+      logic = Inferno::DSL::MustSupportAssessment::InternalMustSupportLogic.new
+
+      expect do
+        logic.perform_must_support_test_with_metadata([FHIR::Patient.new(gender: 'male')], metadata,
+                                                      debug_metadata: true)
+      end.to output(/Wrote MustSupport metadata to/).to_stdout
+
+      written_files = Dir[File.join(Dir.tmpdir, "#{profile_id}-*.yml")]
+      expect(written_files.length).to eq(1)
+      expect(YAML.load_file(written_files.first, permitted_classes: [Symbol])[:must_supports][:elements])
+        .to eq([{ path: 'gender' }])
+    ensure
+      written_files&.each { |file| FileUtils.rm_f(file) }
+    end
+
+    describe 'element choices' do
+      let(:metadata) do
+        metadata_with(
+          elements: [{ path: 'name.use', fixed_value: 'old' }, { path: 'name.period.end' }],
+          choices: [
+            { extension_ids: ['Patient.extension:unrelated'] },
+            { elements: [{ path: 'name.use', fixed_value: 'old' }, { path: 'name.period.end' }] }
+          ]
+        )
+      end
+
+      it 'passes when one of the element choices is present' do
+        patient = FHIR::Patient.new(name: [{ period: { end: '2022-12-12' } }])
+
+        expect(run_with_metadata([patient], metadata)).to be_empty
+      end
+
+      it 'fails when none of the element choices are present' do
+        patient = FHIR::Patient.new(name: [{ family: 'family' }])
+
+        expect(run_with_metadata([patient], metadata)).to contain_exactly('name.use:old', 'name.period.end')
+      end
+    end
+
+    describe 'extension choices' do
+      let(:metadata) do
+        metadata_with(
+          extensions: [
+            { id: 'Patient.extension:race', path: 'extension', url: 'http://example.com/race' },
+            { id: 'Patient.extension:ethnicity', path: 'extension', url: 'http://example.com/ethnicity|1.0.0' }
+          ],
+          choices: [
+            { paths: ['birthDate'] },
+            { extension_ids: ['Patient.extension:race', 'Patient.extension:ethnicity'] }
+          ]
+        )
+      end
+
+      it 'passes when one of the extension choices is present' do
+        patient = FHIR::Patient.new(
+          extension: [{ valueString: 'no url' }, { url: 'http://example.com/race', valueString: 'race' }]
+        )
+
+        expect(run_with_metadata([patient], metadata)).to be_empty
+      end
+
+      it 'fails when none of the extension choices are present' do
+        patient = FHIR::Patient.new(gender: 'male')
+
+        expect(run_with_metadata([patient], metadata))
+          .to contain_exactly('Patient.extension:race', 'Patient.extension:ethnicity')
+      end
+    end
+
+    describe 'elements inside extensions' do
+      let(:metadata) do
+        metadata_with(
+          elements: [{ path: 'extension:nickname.valueString' }, { path: 'extension:unknown.valueString' }],
+          extensions: [
+            { id: 'Patient.name.extension:nickname', path: 'name.extension', url: 'http://example.com/nick' }
+          ]
+        )
+      end
+      let(:patient) do
+        FHIR::Patient.new(
+          name: [{ extension: [{ url: 'http://example.com/nick', valueString: 'Nick' }] }],
+          extension: [{ url: 'http://example.com/nick', valueString: 'Nick' }]
+        )
+      end
+
+      it 'finds an element in an extension defined on a different path' do
+        expect(run_with_metadata([patient], metadata)).to_not include('extension:nickname.valueString')
+      end
+
+      it 'falls back to the raw path when no extension definition matches' do
+        expect(run_with_metadata([patient], metadata)).to include('extension:unknown.valueString')
+      end
+    end
+
+    describe 'slices' do
+      def slice(type, path: 'code', **discriminator)
+        { slice_id: "Observation.#{path}:#{type}", slice_name: type, path:, discriminator: { type:, **discriminator } }
+      end
+
+      let(:observation) do
+        FHIR::Observation.new(
+          status: 'final',
+          code: { coding: [{ system: 'http://loinc.org', code: '1234-5' }] },
+          effectiveDateTime: '2020-01-01',
+          valueString: 'value'
+        )
+      end
+
+      it 'treats a slice with an unsupported discriminator type as missing' do
+        metadata = metadata_with(slices: [slice('exists')])
+
+        expect(run_with_metadata([observation], metadata)).to eq(['Observation.code:exists'])
+      end
+
+      it 'finds a patternCoding slice at a discriminator path' do
+        metadata = metadata_with(
+          slices: [slice('patternCoding', path: 'code', code: '1234-5', system: 'http://loinc.org')]
+        )
+        metadata.must_supports[:slices].first[:discriminator][:path] = 'coding'
+
+        expect(run_with_metadata([observation], metadata)).to be_empty
+      end
+
+      it 'finds Date and String type slices' do
+        metadata = metadata_with(
+          slices: [slice('type', path: 'effective[x]', code: 'Date'), slice('type', path: 'value[x]', code: 'String')]
+        )
+
+        expect(run_with_metadata([observation], metadata)).to be_empty
+      end
+
+      it 'treats a Date type slice with an unparseable value as missing' do
+        observation.effectiveDateTime = 'not a date'
+        metadata = metadata_with(slices: [slice('type', path: 'effective[x]', code: 'Date')])
+
+        expect(run_with_metadata([observation], metadata)).to eq(['Observation.effective[x]:type'])
+      end
+
+      it 'matches a requiredBinding slice when the sliced element is itself a Coding' do
+        metadata = metadata_with(
+          slices: [
+            slice('requiredBinding', path: 'code.coding', values: [{ system: 'http://loinc.org', code: '1234-5' }])
+          ]
+        )
+
+        expect(run_with_metadata([observation], metadata)).to be_empty
+      end
+
+      it 'ignores requiredBinding values that are neither strings nor hashes' do
+        metadata = metadata_with(
+          slices: [slice('requiredBinding', path: 'code.coding', values: [1234])]
+        )
+
+        expect(run_with_metadata([observation], metadata)).to eq(['Observation.code.coding:requiredBinding'])
+      end
+    end
+  end
 end
