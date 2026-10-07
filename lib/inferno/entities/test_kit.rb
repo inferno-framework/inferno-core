@@ -168,9 +168,11 @@ module Inferno
         end
 
         # @private
-        def copy_instance_variables
+        def copy_instance_variables(subclass)
+          # The id must be unique, and the suites and options are memoized from
+          # suite_ids, which the subclass may change.
           instance_variables
-            .reject { |variable| [:id].include? variable }
+            .reject { |variable| [:@id, :@suites, :@options].include? variable }
             .each { |variable| subclass.instance_variable_set(variable, instance_variable_get(variable).dup) }
         end
       end
