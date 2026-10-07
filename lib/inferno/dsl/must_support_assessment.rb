@@ -141,7 +141,9 @@ module Inferno
 
         def handle_must_support_slice_choices
           missing_slices.delete_if do |slice|
-            choices = metadata.must_supports[:choices].find { |choice| choice[:slice_names]&.include?(slice[:name]) }
+            choices = metadata.must_supports[:choices].find do |choice|
+              choice[:slice_names]&.any? { |slice_name| slice_identified_by?(slice, slice_name) }
+            end
             any_choice_supported?(choices)
           end
         end
@@ -172,7 +174,15 @@ module Inferno
         def any_slice_names_choice_supported?(choices)
           return false unless choices[:slice_names].present?
 
-          choices[:slice_names].any? { |slice_name| missing_slices.none? { |slice| slice[:name] == slice_name } }
+          choices[:slice_names].any? do |slice_name|
+            missing_slices.none? { |slice| slice_identified_by?(slice, slice_name) }
+          end
+        end
+
+        # Entries in a choice's slice_names may be either the slice name (eg 'us-core') or the slice id
+        # (eg 'Condition.category:us-core'). The id is unique within a profile while the name may not be.
+        def slice_identified_by?(slice, slice_name_or_id)
+          [slice[:slice_name], slice[:slice_id]].include?(slice_name_or_id)
         end
 
         def any_elements_choice_supported?(choices)
@@ -301,28 +311,6 @@ module Inferno
             [path_matching_extensions, :include?],
             [must_support_extensions, :end_with?]
           ]
-        end
-
-        def process_must_support_element_in_extension(resource, path)
-          return [resource, path] unless path.start_with?('extension:')
-
-          path_without_prefix = path.delete_prefix('extension:')
-          extension_split = path_without_prefix.split('.')
-          extension_name = extension_split.first
-          extension_path = extension_split.last
-
-          found_extension_url =
-            normalized_extension_url(must_support_extensions.find { |ex| ex[:id].include?(extension_name) }[:url])
-          ms_element_extension = resource.extension.find do |extension|
-            normalized_extension_url(extension.url) == found_extension_url
-          end
-
-          if ms_element_extension.present?
-            resource = ms_element_extension
-            path = extension_path
-          end
-
-          [resource, path]
         end
 
         def matching_without_extensions?(value, ms_extension_urls, fixed_value)

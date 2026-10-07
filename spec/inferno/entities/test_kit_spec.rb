@@ -33,6 +33,30 @@ RSpec.describe Inferno::Entities::TestKit do
     end
   end
 
+  describe 'subclassing a test kit' do
+    it 'copies the metadata to the subclass, except for the id' do
+      subclass = Class.new(test_kit)
+
+      expect(subclass.id).to be_nil
+      expect(subclass.title).to eq('Spec Example Test Kit')
+      expect(subclass.suite_ids).to eq([:demo, 'options'])
+    end
+
+    it 'gives the subclass its own copy of the metadata' do
+      subclass = Class.new(test_kit)
+      subclass.tags << 'Subclass Tag'
+
+      expect(test_kit.tags).to eq(['SMART App Launch', 'US Core'])
+    end
+
+    it 'does not copy suites memoized on the parent' do
+      test_kit.suites
+      subclass = Class.new(test_kit) { suite_ids ['options'] }
+
+      expect(subclass.suites.map(&:id)).to eq(['options'])
+    end
+  end
+
   describe '.suites' do
     it 'returns the suites for the suite ids' do
       expect(test_kit.suites.map(&:id)).to eq(['demo', 'options'])

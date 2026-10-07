@@ -1700,6 +1700,52 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       end
     end
 
+    describe 'slice choices' do
+      def category_slice(code)
+        {
+          slice_id: "Observation.category:#{code}",
+          slice_name: code,
+          path: 'category',
+          discriminator: { type: 'patternCodeableConcept', code:, system: 'http://example.com/category' }
+        }
+      end
+
+      let(:metadata) do
+        metadata_with(
+          slices: [category_slice('survey'), category_slice('exam')],
+          choices: [
+            { paths: ['status'] },
+            { slice_names: ['survey', 'exam'] }
+          ]
+        )
+      end
+
+      def observation_with_categories(*codes)
+        FHIR::Observation.new(
+          status: 'final',
+          category: codes.map { |code| { coding: [{ system: 'http://example.com/category', code: }] } }
+        )
+      end
+
+      it 'passes when one of the slice choices is present' do
+        expect(run_with_metadata([observation_with_categories('exam')], metadata)).to be_empty
+      end
+
+      it 'fails when none of the slice choices are present' do
+        expect(run_with_metadata([observation_with_categories], metadata))
+          .to contain_exactly('Observation.category:survey', 'Observation.category:exam')
+      end
+
+      it 'matches slice choices given as slice ids' do
+        metadata.must_supports[:choices].last[:slice_names] =
+          ['Observation.category:survey', 'Observation.category:exam']
+
+        expect(run_with_metadata([observation_with_categories('exam')], metadata)).to be_empty
+        expect(run_with_metadata([observation_with_categories], metadata))
+          .to contain_exactly('Observation.category:survey', 'Observation.category:exam')
+      end
+    end
+
     describe 'elements inside extensions' do
       let(:metadata) do
         metadata_with(
