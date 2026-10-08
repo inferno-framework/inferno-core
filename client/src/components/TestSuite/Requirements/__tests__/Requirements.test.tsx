@@ -42,6 +42,35 @@ describe('filter interactions', () => {
     expect(screen.getByText('No requirements found.')).toBeInTheDocument();
   });
 
+  it('conformance filter matches requirements listing multiple verbs', () => {
+    const multiConformanceRequirement = {
+      ...requirements[0],
+      id: 'sample-criteria-proposal@3',
+      conformance: 'SHALL / SHOULD',
+      requirement: 'requirement with multiple conformance verbs',
+      subrequirements: [],
+    };
+    renderWithProviders(
+      <Requirements
+        requirements={[...requirements, multiConformanceRequirement]}
+        requirementToTests={new Map()}
+        testSuiteTitle={testSuites[0].title}
+      />,
+    );
+
+    const conformanceCombobox = screen.getByRole('combobox', { name: /conformance/i });
+    fireEvent.change(conformanceCombobox, { target: { value: 'SHOULD' } });
+    fireEvent.click(screen.getByRole('option', { name: 'SHOULD' }));
+    expect(screen.getByText('requirement with multiple conformance verbs')).toBeInTheDocument();
+
+    fireEvent.change(conformanceCombobox, { target: { value: 'MAY' } });
+    fireEvent.click(screen.getByRole('option', { name: 'MAY' }));
+    expect(
+      screen.queryByText('requirement with multiple conformance verbs'),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText('No requirements found.')).toBeInTheDocument();
+  });
+
   it('Reset Filters button restores all requirements after filtering', () => {
     renderRequirements();
     const conformanceCombobox = screen.getByRole('combobox', { name: /conformance/i });
