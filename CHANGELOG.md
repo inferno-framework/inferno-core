@@ -1,3 +1,7 @@
+## 1.4.6
+* Code coverage update by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/819
+* ID-275: sqlite wait lock fix by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/818
+
 ## 1.4.5
 * Resolve template errors by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/810
 * FQM-470: Add support for patternString slice discriminator by @tstrass in https://github.com/inferno-framework/inferno-core/pull/811
