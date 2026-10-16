@@ -1833,5 +1833,112 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         expect(run_with_metadata([observation], metadata)).to eq(['Observation.code.coding:requiredBinding'])
       end
     end
+
+    describe 'patternCodeableConcept slices whose discriminator path repeats' do
+      let(:participant_type_system) { 'http://terminology.hl7.org/CodeSystem/v3-ParticipationType' }
+      let(:performer_slice) do
+        {
+          slice_id: 'Appointment.participant:PrimaryPerformer',
+          slice_name: 'PrimaryPerformer',
+          path: 'participant',
+          discriminator: { type: 'patternCodeableConcept', path: 'type', code: 'PPRF', system: participant_type_system }
+        }
+      end
+      let(:metadata) do
+        metadata_with(slices: [performer_slice], elements: [{ path: 'participant:PrimaryPerformer.actor' }])
+      end
+
+      def appointment(*participants)
+        FHIR::Appointment.new(status: 'booked', participant: participants)
+      end
+
+      def participant(reference:, type_code:)
+        type = [FHIR::CodeableConcept.new(coding: [{ system: participant_type_system, code: type_code }])]
+        FHIR::Appointment::Participant.new(actor: { reference: }, type:, status: 'accepted')
+      end
+
+      it 'finds the slice by any coding across the repeating CodeableConcepts' do
+        resource = appointment(participant(reference: 'Patient/1', type_code: 'SBJ'),
+                               participant(reference: 'Practitioner/1', type_code: 'PPRF'))
+
+        expect(run_with_metadata([resource], metadata)).to be_empty
+      end
+
+      it 'finds elements in the slice when only one participant carries the pattern' do
+        resource = appointment(participant(reference: 'Practitioner/1', type_code: 'PPRF'))
+
+        expect(run_with_metadata([resource], metadata)).to be_empty
+      end
+
+      it 'reports the element when no participant carries the pattern' do
+        resource = appointment(participant(reference: 'Practitioner/1', type_code: 'ATND'))
+
+        expect(run_with_metadata([resource], metadata))
+          .to contain_exactly('participant:PrimaryPerformer.actor', 'Appointment.participant:PrimaryPerformer')
+      end
+    end
+
+    describe 'pattern slices whose discriminator path has several segments' do
+      let(:loinc) { 'http://loinc.org' }
+      let(:observation) do
+        FHIR::Observation.new(
+          status: 'final',
+          component: [
+            { code: { coding: [{ system: loinc, code: '8462-4' }] }, valueString: 'diastolic' },
+            { code: { coding: [{ system: loinc, code: '8480-6' }] }, valueString: 'systolic' }
+          ]
+        )
+      end
+
+      def component_slice(type, path)
+        {
+          slice_id: 'Observation.component:systolic',
+          slice_name: 'systolic',
+          path: 'component',
+          discriminator: { type:, path:, code: '8480-6', system: loinc }
+        }
+      end
+
+      it 'finds elements in a patternCodeableConcept slice' do
+        timing_system = 'http://terminology.hl7.org/CodeSystem/v3-GTSAbbreviation'
+        medication_request = FHIR::MedicationRequest.new(
+          dosageInstruction: [
+            { text: 'once daily', timing: { code: { coding: [{ system: timing_system, code: 'QD' }] } } },
+            { text: 'twice daily', timing: { code: { coding: [{ system: timing_system, code: 'BID' }] } } }
+          ]
+        )
+        metadata = metadata_with(
+          slices: [{
+            slice_id: 'MedicationRequest.dosageInstruction:bid',
+            slice_name: 'bid',
+            path: 'dosageInstruction',
+            discriminator: { type: 'patternCodeableConcept', path: 'timing.code', code: 'BID', system: timing_system }
+          }],
+          elements: [{ path: 'dosageInstruction:bid.text', fixed_value: 'twice daily' }]
+        )
+
+        expect(run_with_metadata([medication_request], metadata)).to be_empty
+      end
+
+      it 'finds elements in a patternCoding slice whose path ends in a repeating Coding' do
+        metadata = metadata_with(
+          slices: [component_slice('patternCoding', 'code.coding')],
+          elements: [{ path: 'component:systolic.valueString', fixed_value: 'systolic' }]
+        )
+
+        expect(run_with_metadata([observation], metadata)).to be_empty
+      end
+
+      it 'reports elements in a patternCoding slice when no component carries the pattern' do
+        observation.component.pop
+        metadata = metadata_with(
+          slices: [component_slice('patternCoding', 'code.coding')],
+          elements: [{ path: 'component:systolic.valueString' }]
+        )
+
+        expect(run_with_metadata([observation], metadata))
+          .to contain_exactly('component:systolic.valueString', 'Observation.component:systolic')
+      end
+    end
   end
 end

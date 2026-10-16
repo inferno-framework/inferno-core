@@ -252,16 +252,18 @@ module Inferno
 
       # @private
       def matching_pattern_codeable_concept_slice?(slice, discriminator)
-        slice_value = discriminator[:path].present? ? slice.send((discriminator[:path]).to_s)&.coding : slice.coding
-        slice_value&.any? do |coding|
+        codings = resolve_path(slice, discriminator[:path])
+          .flat_map { |codeable_concept| Array.wrap(codeable_concept.coding) }
+        codings.any? do |coding|
           coding.code == discriminator[:code] && coding.system == discriminator[:system]
         end
       end
 
       # @private
       def matching_pattern_coding_slice?(slice, discriminator)
-        slice_value = discriminator[:path].present? ? slice.send(discriminator[:path]) : slice
-        slice_value&.code == discriminator[:code] && slice_value&.system == discriminator[:system]
+        resolve_path(slice, discriminator[:path]).any? do |coding|
+          coding.code == discriminator[:code] && coding.system == discriminator[:system]
+        end
       end
 
       # @private
