@@ -47,6 +47,7 @@ module Inferno
         def initialize(name = nil, test_suite_id = nil, requirements = nil, &)
           @name = name
           @test_suite_id = test_suite_id
+          @profile_version_pins = {}
           instance_eval(&)
           @requirements = requirements
         end
@@ -87,6 +88,68 @@ module Inferno
           validation_context(igs: validator_igs) if validator_igs.any?
 
           validation_context.igs
+        end
+
+        # Set the version to use when validating profiles under a canonical base.
+        # Appends `|version` to matching unversioned profile URLs before validation.
+        # URLs that already include a version keep that version.
+        #
+        # Bases may include a trailing slash. If several bases match, the longest takes precedence.
+        #
+        # @example
+        #   pin_profile_version 'http://hl7.org/fhir/us/core/', '6.1.0'
+        # @param canonical_base [String] canonical base URL of the profiles
+        # @param version [String] profile version, without the pipe separator
+        # @raise [ArgumentError] if either value is invalid or the base already has a different version
+        def pin_profile_version(canonical_base, version)
+          validate_profile_version_pin(canonical_base, version)
+
+          base = "#{canonical_base.delete_suffix('/')}/"
+          if @profile_version_pins.key?(base) && @profile_version_pins[base] != version
+            raise ArgumentError, "Conflicting profile versions for #{base}: #{@profile_version_pins[base]}, #{version}"
+          end
+
+          @profile_version_pins[base] = version.dup.freeze
+        end
+
+        # Set profile versions for several canonical bases.
+        # Adds each entry using {#pin_profile_version}, with the same matching rules.
+        #
+        # @example
+        #   pin_profile_versions(
+        #     'http://hl7.org/fhir/StructureDefinition/' => '4.0.1',
+        #     'http://fhir.org/guides/onc/us-quality-core/' => '0.5.0',
+        #     'http://hl7.org/fhir/us/core/' => '6.1.0'
+        #   )
+        # @param versions [Hash{String => String}] canonical base URLs mapped to profile versions
+        # @raise [ArgumentError] if the argument is not a hash or an entry is invalid or conflicting
+        def pin_profile_versions(versions)
+          raise ArgumentError, 'versions must be a hash of canonical bases to versions' unless versions.is_a?(Hash)
+
+          versions.each { |canonical_base, version| pin_profile_version(canonical_base, version) }
+        end
+
+        # @private
+        def validate_profile_version_pin(canonical_base, version)
+          unless canonical_base.is_a?(String) && canonical_base.present? && !canonical_base.match?(/[|#\s]/)
+            raise ArgumentError, 'canonical_base must be a nonblank string without a version, fragment, or whitespace'
+          end
+          return if version.is_a?(String) && version.present? && !version.match?(/[|#\s]/)
+
+          raise ArgumentError, 'version must be a nonblank string without a pipe, fragment, or whitespace'
+        end
+
+        # @private
+        def versioned_profile_url(profile_url)
+          return profile_url if profile_url.blank? || profile_url.include?('|')
+
+          pin = @profile_version_pins.select { |base, _version| profile_url.start_with?(base) }
+            .max_by { |base, _version| base.length }
+          return profile_url unless pin
+
+          canonical, fragment = profile_url.split('#', 2)
+          versioned_url = "#{canonical}|#{pin.last}"
+          fragment ? "#{versioned_url}##{fragment}" : versioned_url
         end
 
         # Set the validationContext used as part of each validation request.
@@ -365,6 +428,8 @@ module Inferno
         # @private
         def conformant?(target, profile_url, runnable, add_messages_to_runnable: true,
                         message_prefix: '', validator_response_details: nil)
+
+          profile_url = versioned_profile_url(profile_url)
 
           # 1. Get raw content from validator
           response = get_raw_validator_content(target, profile_url, runnable)
@@ -774,6 +839,8 @@ module Inferno
 
         # @private
         def wrap_target_for_hl7_wrapper(target, profile_url)
+          profile_url = versioned_profile_url(profile_url)
+
           validator_session_id =
             validator_session_repo.find_validator_session_id(test_suite_id,
                                                              name.to_s, requirements)
