@@ -195,18 +195,29 @@ module Inferno
           end
         end
 
+        # Missing elements, slices, and extensions are all reported by their ElementDefinition id
+        # (which includes the names of any parent slices) without the leading resource type,
+        # eg 'category:us-core' rather than 'Condition.category:us-core'.
         def missing_must_support_strings
           missing_elements.map { |element_definition| missing_element_string(element_definition) } +
-            missing_slices.map { |slice_definition| slice_definition[:slice_id] } +
-            missing_extensions.map { |extension_definition| extension_definition[:id] }
+            missing_slices.map { |slice_definition| without_resource_type(slice_definition[:slice_id]) } +
+            missing_extensions.map { |extension_definition| without_resource_type(extension_definition[:id]) }
         end
 
         def missing_element_string(element_definition)
+          path = without_resource_type(element_definition[:path])
+
           if element_definition[:fixed_value].present?
-            "#{element_definition[:path]}:#{element_definition[:fixed_value]}"
+            "#{path}:#{element_definition[:fixed_value]}"
           else
-            element_definition[:path]
+            path
           end
+        end
+
+        # Resource types are PascalCase while element names are camelCase, so a leading
+        # capitalized segment is the resource type prefix of an ElementDefinition id.
+        def without_resource_type(id)
+          id&.sub(/\A[A-Z][A-Za-z0-9]*\./, '')
         end
 
         def must_support_extensions
