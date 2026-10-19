@@ -1657,6 +1657,18 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       expect(result).to include('payload.extension:codeableConcept')
       expect(result).to include('payload.extension:codeableConcept.value[x].extension:BillingOptions')
     end
+
+    it 'reports missing items the same way as the profile metadata lists them' do
+      metadata = Inferno::DSL::ProfileMetadata.new(
+        must_supports: Inferno::DSL::MustSupportMetadataExtractor.new(
+          communication_request_profile.snapshot.element, communication_request_profile,
+          communication_request_profile.type, nil
+        ).must_supports
+      )
+
+      result = run_with_metadata([FHIR::CommunicationRequest.new], metadata)
+      expect(result).to match_array(metadata.must_support_strings)
+    end
   end
 
   describe 'with hand-built metadata' do
