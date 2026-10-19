@@ -14,10 +14,11 @@ module Inferno
       # @param element_definition [Hash] Must Support element metadata
       # @return [String]
       def element_string(element_definition)
-        path = without_resource_type(element_display_path(element_definition))
+        path = element_display_path(element_definition)
 
-        if element_definition[:fixed_value].present?
-          "#{path} = #{element_definition[:fixed_value]}"
+        fixed_value = element_definition[:fixed_value]
+        if fixed_value.present? || fixed_value == false
+          "#{path} = #{fixed_value}"
         else
           path
         end
@@ -26,13 +27,13 @@ module Inferno
       # @param slice_definition [Hash] Must Support slice metadata
       # @return [String]
       def slice_string(slice_definition)
-        id_or_path_string(slice_definition[:slice_id], slice_definition)
+        id_string(slice_definition, :slice_id)
       end
 
       # @param extension_definition [Hash] Must Support extension metadata
       # @return [String]
       def extension_string(extension_definition)
-        id_or_path_string(extension_definition[:id], extension_definition)
+        id_string(extension_definition, :id)
       end
 
       # Elements under a choice type slice (eg value[x]:valueQuantity.value) have their navigation
@@ -44,11 +45,11 @@ module Inferno
         original_path&.include?('[x]:') ? original_path : element_definition[:path]
       end
 
-      # Hand-built metadata may not include an id, so fall back to the path and slice name.
-      def id_or_path_string(id, definition)
-        return without_resource_type(id) if id.present?
+      def id_string(definition, id_key)
+        id = definition[id_key]
+        raise ArgumentError, "Must Support metadata is missing #{id_key.inspect}: #{definition.inspect}" if id.blank?
 
-        definition[:slice_name].present? ? "#{definition[:path]}:#{definition[:slice_name]}" : definition[:path]
+        without_resource_type(id)
       end
 
       # Resource types are PascalCase while element names are camelCase, so a leading
