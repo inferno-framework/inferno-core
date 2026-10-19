@@ -1326,7 +1326,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
 
         result = run(patient_profile, [patient], 'Patient') { |metadata| add_previous_name_metadata(metadata) }
         expect(result).to include('name.period.end')
-        expect(result).to include('name.use:old')
+        expect(result).to include('name.use = old')
       end
     end
 
@@ -1358,7 +1358,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
 
         result = run_with_metadata([patient], patient_metadata)
         expect(result).to include('name.period.end')
-        expect(result).to include('name.use:old')
+        expect(result).to include('name.use = old')
       end
     end
   end
@@ -1685,9 +1685,37 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       end
 
       it 'builds a missing element string, including any fixed value' do
-        expect(host.missing_element_string({ path: 'name.use', fixed_value: 'old' })).to eq('name.use:old')
+        expect(host.missing_element_string({ path: 'name.use', fixed_value: 'old' })).to eq('name.use = old')
         expect(host.missing_element_string({ path: 'gender' })).to eq('gender')
       end
+
+      it 'builds a missing element string from the original path for elements under a choice type slice' do
+        element = { path: 'valueQuantity:valueQuantity.code', original_path: 'value[x]:valueQuantity.code',
+                    fixed_value: '/min' }
+
+        expect(host.missing_element_string(element)).to eq('value[x]:valueQuantity.code = /min')
+      end
+
+      it 'builds a missing element string naming the type for elements with Must Support choice types' do
+        element = { path: 'effectiveDateTime', original_path: 'effective[x]' }
+
+        expect(host.missing_element_string(element)).to eq('effectiveDateTime')
+      end
+    end
+
+    it 'reports missing elements under a choice type slice by their id' do
+      metadata = metadata_fixture('heart_rate_v610.yml')
+      observation = FHIR::Observation.new(status: 'final', valueQuantity: { value: 60 })
+
+      result = run_with_metadata([observation], metadata)
+      expect(result).to include(
+        'value[x]:valueQuantity.unit',
+        'value[x]:valueQuantity.system = http://unitsofmeasure.org',
+        'value[x]:valueQuantity.code = /min',
+        'effectiveDateTime'
+      )
+      expect(result).to_not include('valueQuantity', 'value[x]:valueQuantity.value')
+      expect(result.join).to_not include('valueQuantity:valueQuantity')
     end
 
     it 'returns nil when there are no resources' do
@@ -1733,7 +1761,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       it 'fails when none of the element choices are present' do
         patient = FHIR::Patient.new(name: [{ family: 'family' }])
 
-        expect(run_with_metadata([patient], metadata)).to contain_exactly('name.use:old', 'name.period.end')
+        expect(run_with_metadata([patient], metadata)).to contain_exactly('name.use = old', 'name.period.end')
       end
     end
 

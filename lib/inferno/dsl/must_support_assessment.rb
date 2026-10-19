@@ -205,13 +205,22 @@ module Inferno
         end
 
         def missing_element_string(element_definition)
-          path = without_resource_type(element_definition[:path])
+          path = without_resource_type(element_display_path(element_definition))
 
           if element_definition[:fixed_value].present?
-            "#{path}:#{element_definition[:fixed_value]}"
+            "#{path} = #{element_definition[:fixed_value]}"
           else
             path
           end
+        end
+
+        # Elements under a choice type slice (eg value[x]:valueQuantity.value) have their navigation
+        # path rewritten so the slice name is mangled (eg valueQuantity:valueQuantity.value), so report
+        # the original path instead. Elements where only some types of a choice are Must Support
+        # (eg original path effective[x], path effectiveDateTime) keep their path since it names the type.
+        def element_display_path(element_definition)
+          original_path = element_definition[:original_path]
+          original_path&.include?('[x]:') ? original_path : element_definition[:path]
         end
 
         # Resource types are PascalCase while element names are camelCase, so a leading
