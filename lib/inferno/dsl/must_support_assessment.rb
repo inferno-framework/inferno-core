@@ -452,17 +452,6 @@ module Inferno
         def find_slice_by_values(element, value_definitions)
           Array.wrap(element).find { |el| verify_slice_by_values(el, value_definitions) }
         end
-
-        def required_binding_value_match?(coding, values)
-          values.any? do |value|
-            case value
-            when String
-              value == coding.code
-            when Hash
-              value[:system] == coding.system && value[:code] == coding.code
-            end
-          end
-        end
       end
     end
   end
