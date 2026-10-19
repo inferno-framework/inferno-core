@@ -1730,6 +1730,19 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       expect(result.join).to_not include('valueQuantity:valueQuantity')
     end
 
+    it 'sorts missing elements, slices, and extensions into a single list' do
+      metadata = metadata_with(
+        elements: [{ path: 'status' }, { path: 'category' }],
+        slices: [{ slice_id: 'Observation.category:us-core', slice_name: 'us-core', path: 'category',
+                   discriminator: { type: 'exists' } }],
+        extensions: [{ id: 'Observation.extension:foo', path: 'extension', url: 'http://example.com/foo' }]
+      )
+
+      expect(run_with_metadata([FHIR::Observation.new(code: { text: 'code' })], metadata)).to eq(
+        ['category', 'category:us-core', 'extension:foo', 'status']
+      )
+    end
+
     it 'returns nil when there are no resources' do
       expect(run_with_metadata([], metadata_with(elements: [{ path: 'gender' }]))).to be_nil
     end

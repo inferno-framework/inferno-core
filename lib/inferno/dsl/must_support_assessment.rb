@@ -25,7 +25,7 @@ module Inferno
       #        test kits can subclass to build these objects, eg from generated YAML, instead of hand-rolling one.
       # @param requirement_extension [String] Extension URL that implies "required" as an alternative to the MS flag
       # @yield [MustSupportMetadataExtractor] Customize the metadata before running the test
-      # @return [Array<String>] List of missing elements
+      # @return [Array<String>] List of missing elements, sorted alphabetically
       def missing_must_support_elements(resources, profile_url, validator_name: :default, metadata: nil,
                                         requirement_extension: nil, &)
         debug_metadata = config.options[:debug_must_support_metadata]
@@ -197,11 +197,13 @@ module Inferno
           end
         end
 
-        # See {MustSupportStrings} for how each missing item is represented
+        # See {MustSupportStrings} for how each missing item is represented. Sorted to match
+        # {ProfileMetadata#must_support_strings}.
         def missing_must_support_strings
-          missing_elements.map { |element_definition| missing_element_string(element_definition) } +
+          (missing_elements.map { |element_definition| missing_element_string(element_definition) } +
             missing_slices.map { |slice_definition| MustSupportStrings.slice_string(slice_definition) } +
-            missing_extensions.map { |extension_definition| MustSupportStrings.extension_string(extension_definition) }
+            missing_extensions.map { |extension_definition| MustSupportStrings.extension_string(extension_definition) })
+            .sort
         end
 
         def missing_element_string(element_definition)
