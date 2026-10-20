@@ -39,27 +39,63 @@ RSpec.describe Inferno::DSL::ProfileMetadata do
       metadata = described_class.new(
         must_supports: {
           elements: [{ path: 'status' }, { path: 'code.coding.code', fixed_value: '45473-6' }],
-          slices: [{ path: 'category', slice_name: 'us-core' }],
-          extensions: [{ path: 'extension', slice_name: 'us-core-race' }]
+          slices: [{ slice_id: 'Observation.category:us-core', path: 'category', slice_name: 'us-core' }],
+          extensions: [{ id: 'Observation.extension:us-core-race', path: 'extension', slice_name: 'us-core-race' }]
         }
       )
 
       expect(metadata.must_support_strings).to eq(
         [
           'category:us-core',
-          'code.coding.code:45473-6',
+          'code.coding.code = 45473-6',
           'extension:us-core-race',
           'status'
         ]
       )
     end
 
-    it 'omits the colon suffix when there is no fixed_value or slice_name' do
+    it 'represents slices and extensions by their id without the resource type, including parent slice names' do
+      metadata = described_class.new(
+        must_supports: {
+          slices: [{ slice_id: 'Observation.component:FlowRate', path: 'component', slice_name: 'FlowRate' }],
+          extensions: [
+            {
+              id: 'CommunicationRequest.payload.extension:codeableConcept.value[x].extension:BillingOptions',
+              path: 'payload.extension.value[x].extension',
+              slice_name: 'BillingOptions'
+            }
+          ]
+        }
+      )
+
+      expect(metadata.must_support_strings).to eq(
+        [
+          'component:FlowRate',
+          'payload.extension:codeableConcept.value[x].extension:BillingOptions'
+        ]
+      )
+    end
+
+    it 'represents elements under a choice type slice by their original path' do
+      metadata = described_class.new(
+        must_supports: {
+          elements: [
+            { path: 'effectiveDateTime', original_path: 'effective[x]' },
+            { path: 'valueQuantity:valueQuantity.code', original_path: 'value[x]:valueQuantity.code',
+              fixed_value: '/min' }
+          ]
+        }
+      )
+
+      expect(metadata.must_support_strings).to eq(['effectiveDateTime', 'value[x]:valueQuantity.code = /min'])
+    end
+
+    it 'reports items without a fixed value or slice name by their path or id alone' do
       metadata = described_class.new(
         must_supports: {
           elements: [{ path: 'status' }],
-          slices: [{ path: 'category' }],
-          extensions: [{ path: 'extension' }]
+          slices: [{ slice_id: 'Observation.category', path: 'category' }],
+          extensions: [{ id: 'Observation.extension', path: 'extension' }]
         }
       )
 

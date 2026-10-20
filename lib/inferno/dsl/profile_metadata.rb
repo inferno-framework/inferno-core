@@ -1,3 +1,5 @@
+require_relative 'must_support_strings'
+
 module Inferno
   module DSL
     # A ProfileMetadata object is a small, inheritable data holder for generated metadata about a
@@ -85,28 +87,17 @@ module Inferno
       # check, this includes everything that's expected to be supported, not just what's absent
       # from a particular set of resources.
       #
-      # Elements are represented as their `path`, with the matched `fixed_value` appended after a
-      # colon where present (eg `"code.coding.code:45473-6"`). Slices and extensions are
-      # represented as their `path`, with their `slice_name` appended after a colon where present
-      # (eg `"category:us-core"`, `"extension:us-core-race"`).
+      # Each item is represented the same way as in the list returned by a missing-elements check:
+      # by its ElementDefinition id (including the names of any parent slices) without the leading
+      # resource type (eg `"category:us-core"`, `"extension:us-core-race"`), with any matched
+      # `fixed_value` appended to elements (eg `"code.coding.code = 45473-6"`). See {MustSupportStrings}.
       # @return [Array<String>]
       def must_support_strings
-        element_strings =
-          Array.wrap(must_supports[:elements]).map do |element|
-            must_support_string(element[:path], element[:fixed_value])
-          end
-        slice_strings =
-          Array.wrap(must_supports[:slices]).map { |slice| must_support_string(slice[:path], slice[:slice_name]) }
-        extension_strings =
-          Array.wrap(must_supports[:extensions]).map { |ext| must_support_string(ext[:path], ext[:slice_name]) }
+        element_strings = Array.wrap(must_supports[:elements]).map { |el| MustSupportStrings.element_string(el) }
+        slice_strings = Array.wrap(must_supports[:slices]).map { |slice| MustSupportStrings.slice_string(slice) }
+        extension_strings = Array.wrap(must_supports[:extensions]).map { |ex| MustSupportStrings.extension_string(ex) }
 
         (element_strings + slice_strings + extension_strings).sort
-      end
-
-      private
-
-      def must_support_string(path, suffix)
-        suffix.present? ? "#{path}:#{suffix}" : path
       end
     end
   end
