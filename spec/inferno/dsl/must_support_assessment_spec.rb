@@ -307,7 +307,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       )
 
       result = run_with_metadata([questionnaire], questionnaire_extension_metadata)
-      expect(result).to include('Questionnaire.item.extension:itemControl')
+      expect(result).to include('item.extension:itemControl')
     end
   end
 
@@ -379,7 +379,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       )
 
       result = run_with_metadata([questionnaire], questionnaire_slice_metadata)
-      expect(result).to include('Questionnaire.item:demographics')
+      expect(result).to include('item:demographics')
     end
   end
 
@@ -395,7 +395,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       patient.extension.delete_at(0)
 
       result = run(patient_profile, [patient], 'Patient')
-      expect(result).to include('Patient.extension:race')
+      expect(result).to include('extension:race')
     end
   end
 
@@ -483,7 +483,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         careplan.category.first.coding.first.code = 'something else'
 
         result = run(careplan_profile, [careplan], 'CarePlan')
-        expect(result).to include('CarePlan.category:AssessPlan')
+        expect(result).to include('category:AssessPlan')
       end
     end
 
@@ -622,7 +622,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         observation.effectiveDateTime = 'not a date time'
         result = run_with_metadata([observation], smokingstatus_metadata)
 
-        expect(result).to include('Observation.effective[x]:effectiveDateTime')
+        expect(result).to include('effective[x]:effectiveDateTime')
       end
     end
 
@@ -657,7 +657,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         pas_request_bundle.entry.clear
 
         result = run_with_metadata([pas_request_bundle], pas_request_bundle_metadata)
-        expect(result).to include('Bundle.entry:Claim')
+        expect(result).to include('entry:Claim')
       end
     end
 
@@ -700,7 +700,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         pas_inquiry_bundle.entry.clear
 
         result = run_with_metadata([pas_inquiry_bundle], pas_inquiry_bundle_metadata)
-        expect(result).to include('Bundle.entry:Claim')
+        expect(result).to include('entry:Claim')
         expect(result).to include('entry:Claim.fullUrl')
         expect(result).to include('entry:Claim.resource')
       end
@@ -779,7 +779,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
           condition.category.delete_if { |category| category.coding.first.code == 'problem-list-item' }
 
           result = run_with_metadata([condition], condition_problems_health_concerns_metadata)
-          expect(result).to include('Condition.category:us-core')
+          expect(result).to include('category:us-core')
         end
       end
 
@@ -867,7 +867,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
           it 'fails if server does not support total:adjudicationamounttype slice' do
             eob_inpatient_inst.total.clear
             result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
-            expect(result).to include('ExplanationOfBenefit.total:adjudicationamounttype')
+            expect(result).to include('total:adjudicationamounttype')
           end
         end
 
@@ -884,7 +884,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
           it 'fails if server does not support total:adjudicationamounttype slice' do
             eob_inpatient_inst.total.clear
             result = run_with_metadata([eob_inpatient_inst], eob_inpatient_inst_metadata)
-            expect(result).to include('ExplanationOfBenefit.total:adjudicationamounttype')
+            expect(result).to include('total:adjudicationamounttype')
           end
         end
       end
@@ -938,7 +938,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
           claim.careTeam.first.extension.first.valueBoolean = true
 
           result = run_with_metadata([claim], claim_metadata)
-          expect(result).to include('Claim.careTeam:ItemClaimMember')
+          expect(result).to include('careTeam:ItemClaimMember')
           expect(result).to include('careTeam:ItemClaimMember.sequence')
         end
       end
@@ -1107,13 +1107,13 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         it 'fails when no identifier present' do
           practitioner.identifier = []
           result = run(practitioner_profile, [practitioner], 'Practitioner')
-          expect(result).to include('Practitioner.identifier:NPI')
+          expect(result).to include('identifier:NPI')
         end
 
         it 'fails when identifier slice not present' do
           practitioner.identifier[0].system = 'http://example.com'
           result = run(practitioner_profile, [practitioner], 'Practitioner')
-          expect(result).to include('Practitioner.identifier:NPI')
+          expect(result).to include('identifier:NPI')
         end
       end
 
@@ -1244,7 +1244,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
 
       result = run_with_metadata([condition], condition_problems_health_concerns_metadata)
       expect(result).to include('onsetDateTime')
-      expect(result).to include('Condition.extension:assertedDate')
+      expect(result).to include('extension:assertedDate')
     end
   end
 
@@ -1326,7 +1326,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
 
         result = run(patient_profile, [patient], 'Patient') { |metadata| add_previous_name_metadata(metadata) }
         expect(result).to include('name.period.end')
-        expect(result).to include('name.use:old')
+        expect(result).to include('name.use = old')
       end
     end
 
@@ -1358,7 +1358,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
 
         result = run_with_metadata([patient], patient_metadata)
         expect(result).to include('name.period.end')
-        expect(result).to include('name.use:old')
+        expect(result).to include('name.use = old')
       end
     end
   end
@@ -1447,7 +1447,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       coverage_with_just_group.local_class = [group_class]
 
       result = run_with_metadata([coverage_with_just_group], coverage_metadata)
-      expect(result).to include('class:plan.value', 'class:plan.name', 'Coverage.class:plan')
+      expect(result).to include('class:plan.value', 'class:plan.name', 'class:plan')
     end
 
     it 'passes if resources cover all must support elements over multiple elements' do
@@ -1519,8 +1519,8 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       new_qr = FHIR::QuestionnaireResponse.new(qr.source_hash)
 
       result = run_with_metadata([new_qr], qr_metadata)
-      expect(result).to include('QuestionnaireResponse.questionnaire.extension:questionnaireDisplay')
-      expect(result).to include('QuestionnaireResponse.questionnaire.extension:url')
+      expect(result).to include('questionnaire.extension:questionnaireDisplay')
+      expect(result).to include('questionnaire.extension:url')
     end
 
     it 'fails if both MS extensions and MS element in a primitive are not provided' do
@@ -1530,8 +1530,8 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       new_qr.questionnaire = nil
 
       result = run_with_metadata([new_qr], qr_metadata)
-      expect(result).to include('QuestionnaireResponse.questionnaire.extension:questionnaireDisplay')
-      expect(result).to include('QuestionnaireResponse.questionnaire.extension:url')
+      expect(result).to include('questionnaire.extension:questionnaireDisplay')
+      expect(result).to include('questionnaire.extension:url')
       expect(result).to include('questionnaire')
     end
 
@@ -1540,8 +1540,8 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       new_qr = FHIR::QuestionnaireResponse.new(qr.source_hash)
 
       result = run_with_metadata([new_qr], qr_metadata)
-      expect(result).to include('QuestionnaireResponse.questionnaire.extension:questionnaireDisplay')
-      expect(result).to_not include('QuestionnaireResponse.questionnaire.extension:url')
+      expect(result).to include('questionnaire.extension:questionnaireDisplay')
+      expect(result).to_not include('questionnaire.extension:url')
       expect(result).to_not include('questionnaire')
     end
 
@@ -1592,6 +1592,85 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
     end
   end
 
+  describe 'must support test for an extension nested under an extension slice' do
+    # Da Vinci CRD v2.2.1 CommunicationRequest has a MS BillingOptions extension on the value of
+    # the MS codeableConcept extension slice: payload.extension:codeableConcept.value[x].extension:BillingOptions
+    let(:communication_request_profile) do
+      FHIR.from_contents(File.read('spec/fixtures/StructureDefinition-davinci-crd-communicationrequest_v221.json'))
+    end
+    let(:coverage_information_url) do
+      'http://hl7.org/fhir/us/davinci-crd/StructureDefinition/ext-coverage-information'
+    end
+    let(:payload_content_url) do
+      'http://hl7.org/fhir/5.0/StructureDefinition/extension-CommunicationRequest.payload.content'
+    end
+    let(:billing_options_url) { 'http://hl7.org/fhir/us/davinci-crd/StructureDefinition/ext-billing-options' }
+    let(:communication_request) do
+      FHIR::CommunicationRequest.new(
+        status: 'active',
+        subject: { reference: 'Patient/1' },
+        extension: [{ url: coverage_information_url, valueString: 'coverage' }],
+        payload: [
+          {
+            extension: [
+              {
+                url: payload_content_url,
+                valueCodeableConcept: {
+                  text: 'text',
+                  extension: [
+                    {
+                      url: billing_options_url,
+                      extension: [{ url: 'code', valueCoding: { code: 'code' } }]
+                    }
+                  ]
+                }
+              }
+            ],
+            contentString: 'content'
+          }
+        ]
+      )
+    end
+
+    def run_with_profile(resources)
+      test_impl.perform_must_support_assessment(communication_request_profile, resources, nil)
+    end
+
+    it 'passes when the nested extension is present' do
+      result = run_with_profile([communication_request])
+      expect(result).to_not include('payload.extension:codeableConcept.value[x].extension:BillingOptions')
+      expect(result).to_not include('payload.extension:codeableConcept')
+    end
+
+    it 'reports the missing nested extension by its id, including the parent slice name' do
+      communication_request.payload.first.extension.first.valueCodeableConcept.extension = []
+
+      result = run_with_profile([communication_request])
+      expect(result).to include('payload.extension:codeableConcept.value[x].extension:BillingOptions')
+      expect(result).to_not include('payload.extension:codeableConcept')
+    end
+
+    it 'reports the missing parent extension slice and the nested extension' do
+      communication_request.payload.first.extension = []
+
+      result = run_with_profile([communication_request])
+      expect(result).to include('payload.extension:codeableConcept')
+      expect(result).to include('payload.extension:codeableConcept.value[x].extension:BillingOptions')
+    end
+
+    it 'reports missing items the same way as the profile metadata lists them' do
+      metadata = Inferno::DSL::ProfileMetadata.new(
+        must_supports: Inferno::DSL::MustSupportMetadataExtractor.new(
+          communication_request_profile.snapshot.element, communication_request_profile,
+          communication_request_profile.type, nil
+        ).must_supports
+      )
+
+      result = run_with_metadata([FHIR::CommunicationRequest.new], metadata)
+      expect(result).to match_array(metadata.must_support_strings)
+    end
+  end
+
   describe 'with hand-built metadata' do
     def metadata_with(elements: [], extensions: [], slices: [], choices: nil)
       must_supports = { elements:, extensions:, slices: }
@@ -1618,9 +1697,50 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       end
 
       it 'builds a missing element string, including any fixed value' do
-        expect(host.missing_element_string({ path: 'name.use', fixed_value: 'old' })).to eq('name.use:old')
+        expect(host.missing_element_string({ path: 'name.use', fixed_value: 'old' })).to eq('name.use = old')
         expect(host.missing_element_string({ path: 'gender' })).to eq('gender')
       end
+
+      it 'builds a missing element string from the original path for elements under a choice type slice' do
+        element = { path: 'valueQuantity:valueQuantity.code', original_path: 'value[x]:valueQuantity.code',
+                    fixed_value: '/min' }
+
+        expect(host.missing_element_string(element)).to eq('value[x]:valueQuantity.code = /min')
+      end
+
+      it 'builds a missing element string naming the type for elements with Must Support choice types' do
+        element = { path: 'effectiveDateTime', original_path: 'effective[x]' }
+
+        expect(host.missing_element_string(element)).to eq('effectiveDateTime')
+      end
+    end
+
+    it 'reports missing elements under a choice type slice by their id' do
+      metadata = metadata_fixture('heart_rate_v610.yml')
+      observation = FHIR::Observation.new(status: 'final', valueQuantity: { value: 60 })
+
+      result = run_with_metadata([observation], metadata)
+      expect(result).to include(
+        'value[x]:valueQuantity.unit',
+        'value[x]:valueQuantity.system = http://unitsofmeasure.org',
+        'value[x]:valueQuantity.code = /min',
+        'effectiveDateTime'
+      )
+      expect(result).to_not include('valueQuantity', 'value[x]:valueQuantity.value')
+      expect(result.join).to_not include('valueQuantity:valueQuantity')
+    end
+
+    it 'sorts missing elements, slices, and extensions into a single list' do
+      metadata = metadata_with(
+        elements: [{ path: 'status' }, { path: 'category' }],
+        slices: [{ slice_id: 'Observation.category:us-core', slice_name: 'us-core', path: 'category',
+                   discriminator: { type: 'exists' } }],
+        extensions: [{ id: 'Observation.extension:foo', path: 'extension', url: 'http://example.com/foo' }]
+      )
+
+      expect(run_with_metadata([FHIR::Observation.new(code: { text: 'code' })], metadata)).to eq(
+        ['category', 'category:us-core', 'extension:foo', 'status']
+      )
     end
 
     it 'returns nil when there are no resources' do
@@ -1666,7 +1786,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       it 'fails when none of the element choices are present' do
         patient = FHIR::Patient.new(name: [{ family: 'family' }])
 
-        expect(run_with_metadata([patient], metadata)).to contain_exactly('name.use:old', 'name.period.end')
+        expect(run_with_metadata([patient], metadata)).to contain_exactly('name.use = old', 'name.period.end')
       end
     end
 
@@ -1696,7 +1816,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         patient = FHIR::Patient.new(gender: 'male')
 
         expect(run_with_metadata([patient], metadata))
-          .to contain_exactly('Patient.extension:race', 'Patient.extension:ethnicity')
+          .to contain_exactly('extension:race', 'extension:ethnicity')
       end
     end
 
@@ -1733,7 +1853,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
 
       it 'fails when none of the slice choices are present' do
         expect(run_with_metadata([observation_with_categories], metadata))
-          .to contain_exactly('Observation.category:survey', 'Observation.category:exam')
+          .to contain_exactly('category:survey', 'category:exam')
       end
 
       it 'matches slice choices given as slice ids' do
@@ -1742,7 +1862,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
 
         expect(run_with_metadata([observation_with_categories('exam')], metadata)).to be_empty
         expect(run_with_metadata([observation_with_categories], metadata))
-          .to contain_exactly('Observation.category:survey', 'Observation.category:exam')
+          .to contain_exactly('category:survey', 'category:exam')
       end
     end
 
@@ -1788,7 +1908,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       it 'treats a slice with an unsupported discriminator type as missing' do
         metadata = metadata_with(slices: [slice('exists')])
 
-        expect(run_with_metadata([observation], metadata)).to eq(['Observation.code:exists'])
+        expect(run_with_metadata([observation], metadata)).to eq(['code:exists'])
       end
 
       it 'finds a patternCoding slice at a discriminator path' do
@@ -1812,7 +1932,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         observation.effectiveDateTime = 'not a date'
         metadata = metadata_with(slices: [slice('type', path: 'effective[x]', code: 'Date')])
 
-        expect(run_with_metadata([observation], metadata)).to eq(['Observation.effective[x]:type'])
+        expect(run_with_metadata([observation], metadata)).to eq(['effective[x]:type'])
       end
 
       it 'matches a requiredBinding slice when the sliced element is itself a Coding' do
@@ -1830,7 +1950,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
           slices: [slice('requiredBinding', path: 'code.coding', values: [1234])]
         )
 
-        expect(run_with_metadata([observation], metadata)).to eq(['Observation.code.coding:requiredBinding'])
+        expect(run_with_metadata([observation], metadata)).to eq(['code.coding:requiredBinding'])
       end
     end
 
@@ -1874,7 +1994,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         resource = appointment(participant(reference: 'Practitioner/1', type_code: 'ATND'))
 
         expect(run_with_metadata([resource], metadata))
-          .to contain_exactly('participant:PrimaryPerformer.actor', 'Appointment.participant:PrimaryPerformer')
+          .to contain_exactly('participant:PrimaryPerformer.actor', 'participant:PrimaryPerformer')
       end
     end
 
@@ -1937,7 +2057,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
         )
 
         expect(run_with_metadata([observation], metadata))
-          .to contain_exactly('component:systolic.valueString', 'Observation.component:systolic')
+          .to contain_exactly('component:systolic.valueString', 'component:systolic')
       end
     end
   end
