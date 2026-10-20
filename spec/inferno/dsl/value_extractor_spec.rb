@@ -173,9 +173,10 @@ RSpec.describe Inferno::DSL::ValueExtractor do
                                   binding: { strength: 'required', valueSet: value_set_url })
     end
 
-    def codings(includes)
-      value_set = FHIR::ValueSet.new(url: value_set_url, compose: { include: includes })
-      ig_resources = instance_double(Inferno::Entities::IG, value_set_by_url: value_set)
+    def codings(includes, value_sets: {})
+      value_sets = value_sets.merge(value_set_url => FHIR::ValueSet.new(compose: { include: includes }))
+      ig_resources = instance_double(Inferno::Entities::IG)
+      allow(ig_resources).to receive(:value_set_by_url) { |url| value_sets[url] }
       allow(ig_resources).to receive(:code_system_by_url) { |url| code_systems[url] }
 
       described_class.new(ig_resources, 'Appointment', []).codings_from_value_set_binding(element)
@@ -201,6 +202,14 @@ RSpec.describe Inferno::DSL::ValueExtractor do
       filtered = { system: act_code_system, filter: [{ property: 'concept', op: 'is-a', value: '_ActEncounterCode' }] }
 
       expect(codings([filtered])).to be_empty
+    end
+
+    it 'does not treat a code system narrowed by a value set as the whole code system' do
+      narrowing_url = 'http://example.org/ValueSet/narrowing'
+      narrowing = FHIR::ValueSet.new(compose: { include: [{ system: x12_system, concept: [{ code: '3' }] }] })
+
+      expect(codings([{ system: x12_system, valueSet: [narrowing_url] }], value_sets: { narrowing_url => narrowing }))
+        .to eq([{ system: x12_system, code: '3' }])
     end
 
     it 'combines enumerated codes and whole code systems' do

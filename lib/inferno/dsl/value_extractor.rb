@@ -60,8 +60,7 @@ module Inferno
       def bound_systems_from_valueset_include_element(include_element)
         if include_element.concept.present?
           include_element
-        elsif include_element.system.present? && include_element.filter&.empty?
-          # Cannot process intensional value set with filters
+        elsif whole_code_system_include?(include_element)
           whole_code_system(include_element)
         elsif include_element.valueSet.present?
           include_element.valueSet.map do |vs|
@@ -69,6 +68,11 @@ module Inferno
             bound_systems_from_valueset(a_value_set)
           end
         end
+      end
+
+      def whole_code_system_include?(include_element)
+        include_element.system.present? && include_element.concept.blank? &&
+          include_element.filter&.empty? && include_element.valueSet.blank?
       end
 
       # An include of a whole code system lists no codes. Use the code system's concepts when the IG
