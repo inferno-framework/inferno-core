@@ -2020,12 +2020,12 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
 
       it 'does not match a code from another system' do
         expect(run_with_metadata([with_category('http://example.org/other', '3')], metadata))
-          .to eq(['Appointment.serviceCategory:x12'])
+          .to eq(['serviceCategory:x12'])
       end
 
       it 'does not match a coding from the bound system without a code' do
         expect(run_with_metadata([with_category(x12_system, nil)], metadata))
-          .to eq(['Appointment.serviceCategory:x12'])
+          .to eq(['serviceCategory:x12'])
       end
 
       it 'still matches enumerated system and code pairs alongside whole systems' do
@@ -2034,7 +2034,7 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
 
         expect(run_with_metadata([with_category(enumerated[:system], 'AMB')], metadata)).to be_empty
         expect(run_with_metadata([with_category(enumerated[:system], 'EMER')], metadata))
-          .to eq(['Appointment.serviceCategory:x12'])
+          .to eq(['serviceCategory:x12'])
       end
     end
 
