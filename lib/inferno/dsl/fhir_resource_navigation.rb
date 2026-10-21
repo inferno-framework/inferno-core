@@ -325,7 +325,10 @@ module Inferno
           when String
             value == coding.code
           when Hash
-            value[:system] == coding.system && value[:code] == coding.code
+            next false unless value[:system] == coding.system
+
+            # A value without a code stands for every code in its system
+            value[:code].nil? ? coding.code.present? : value[:code] == coding.code
           end
         end
       end

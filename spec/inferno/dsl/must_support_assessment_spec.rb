@@ -1998,6 +1998,46 @@ RSpec.describe Inferno::DSL::MustSupportAssessment do
       end
     end
 
+    describe 'requiredBinding values covering a whole code system' do
+      let(:x12_system) { 'https://codesystem.x12.org/005010/1365' }
+      let(:category_slice) do
+        {
+          slice_id: 'Appointment.serviceCategory:x12',
+          slice_name: 'x12',
+          path: 'serviceCategory',
+          discriminator: { type: 'requiredBinding', path: '', values: [{ system: x12_system }] }
+        }
+      end
+      let(:metadata) { metadata_with(slices: [category_slice]) }
+
+      def with_category(system, code)
+        FHIR::Appointment.new(status: 'booked', serviceCategory: [{ coding: [{ system:, code: }] }])
+      end
+
+      it 'matches any code from the bound system' do
+        expect(run_with_metadata([with_category(x12_system, '3')], metadata)).to be_empty
+      end
+
+      it 'does not match a code from another system' do
+        expect(run_with_metadata([with_category('http://example.org/other', '3')], metadata))
+          .to eq(['serviceCategory:x12'])
+      end
+
+      it 'does not match a coding from the bound system without a code' do
+        expect(run_with_metadata([with_category(x12_system, nil)], metadata))
+          .to eq(['serviceCategory:x12'])
+      end
+
+      it 'still matches enumerated system and code pairs alongside whole systems' do
+        enumerated = { system: 'http://terminology.hl7.org/CodeSystem/v3-ActCode', code: 'AMB' }
+        category_slice[:discriminator][:values] << enumerated
+
+        expect(run_with_metadata([with_category(enumerated[:system], 'AMB')], metadata)).to be_empty
+        expect(run_with_metadata([with_category(enumerated[:system], 'EMER')], metadata))
+          .to eq(['serviceCategory:x12'])
+      end
+    end
+
     describe 'pattern slices whose discriminator path has several segments' do
       let(:loinc) { 'http://loinc.org' }
       let(:observation) do

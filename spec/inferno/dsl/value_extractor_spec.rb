@@ -163,6 +163,63 @@ RSpec.describe Inferno::DSL::ValueExtractor do
     end
   end
 
+  describe '#codings_from_value_set_binding' do
+    let(:value_set_url) { 'http://example.org/ValueSet/bound' }
+    let(:x12_system) { 'https://codesystem.x12.org/005010/1365' }
+    let(:act_code_system) { 'http://terminology.hl7.org/CodeSystem/v3-ActCode' }
+    let(:code_systems) { {} }
+    let(:element) do
+      FHIR::ElementDefinition.new(path: 'Appointment.serviceCategory',
+                                  binding: { strength: 'required', valueSet: value_set_url })
+    end
+
+    def codings(includes, value_sets: {})
+      value_sets = value_sets.merge(value_set_url => FHIR::ValueSet.new(compose: { include: includes }))
+      ig_resources = instance_double(Inferno::Entities::IG)
+      allow(ig_resources).to receive(:value_set_by_url) { |url| value_sets[url] }
+      allow(ig_resources).to receive(:code_system_by_url) { |url| code_systems[url] }
+
+      described_class.new(ig_resources, 'Appointment', []).codings_from_value_set_binding(element)
+    end
+
+    it 'gives a system-only value for a whole code system the IG does not have' do
+      expect(codings([{ system: x12_system }])).to eq([{ system: x12_system }])
+    end
+
+    it 'lists the codes of a whole code system the IG has' do
+      code_systems[act_code_system] = FHIR::CodeSystem.new(url: act_code_system, concept: [{ code: 'AMB' }])
+
+      expect(codings([{ system: act_code_system }])).to eq([{ system: act_code_system, code: 'AMB' }])
+    end
+
+    it 'gives a system-only value for a whole code system the IG has without concepts' do
+      code_systems[x12_system] = FHIR::CodeSystem.new(url: x12_system, content: 'not-present')
+
+      expect(codings([{ system: x12_system }])).to eq([{ system: x12_system }])
+    end
+
+    it 'skips includes with filters' do
+      filtered = { system: act_code_system, filter: [{ property: 'concept', op: 'is-a', value: '_ActEncounterCode' }] }
+
+      expect(codings([filtered])).to be_empty
+    end
+
+    it 'does not treat a code system narrowed by a value set as the whole code system' do
+      narrowing_url = 'http://example.org/ValueSet/narrowing'
+      narrowing = FHIR::ValueSet.new(compose: { include: [{ system: x12_system, concept: [{ code: '3' }] }] })
+
+      expect(codings([{ system: x12_system, valueSet: [narrowing_url] }], value_sets: { narrowing_url => narrowing }))
+        .to eq([{ system: x12_system, code: '3' }])
+    end
+
+    it 'combines enumerated codes and whole code systems' do
+      enumerated = { system: act_code_system, concept: [{ code: 'AMB' }] }
+
+      expect(codings([enumerated, { system: x12_system }]))
+        .to contain_exactly({ system: act_code_system, code: 'AMB' }, { system: x12_system })
+    end
+  end
+
   describe '#values_from_resource_metadata' do
     it 'extracts fixed values for a given field' do
       extractor = described_class.new(nil, 'Location', nil)
