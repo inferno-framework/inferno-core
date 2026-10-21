@@ -60,15 +60,26 @@ module Inferno
       def bound_systems_from_valueset_include_element(include_element)
         if include_element.concept.present?
           include_element
-        elsif include_element.system.present? && include_element.filter&.empty?
-          # Cannot process intensional value set with filters
-          ig_resources.code_system_by_url(include_element.system)
+        elsif whole_code_system_include?(include_element)
+          whole_code_system(include_element)
         elsif include_element.valueSet.present?
           include_element.valueSet.map do |vs|
             a_value_set = ig_resources.value_set_by_url(vs)
             bound_systems_from_valueset(a_value_set)
           end
         end
+      end
+
+      def whole_code_system_include?(include_element)
+        include_element.system.present? && include_element.concept.blank? &&
+          include_element.filter&.empty? && include_element.valueSet.blank?
+      end
+
+      # An include of a whole code system lists no codes. Use the code system's concepts when the IG
+      # has them, otherwise keep the include so that any code from its system is accepted.
+      def whole_code_system(include_element)
+        code_system = ig_resources.code_system_by_url(include_element.system)
+        code_system&.concept.present? ? code_system : include_element
       end
 
       def codes_from_value_set_binding(the_element)
@@ -99,13 +110,20 @@ module Inferno
         bound_systems.flat_map do |bound_system|
           case bound_system
           when FHIR::ValueSet::Compose::Include
-            bound_system.concept.map { |concept| { system: bound_system.system, code: concept.code } }
+            codings_from_include(bound_system)
           when FHIR::CodeSystem
             bound_system.concept.map { |concept| { system: bound_system.url, code: concept.code } }
           else
             []
           end
         end.uniq
+      end
+
+      # A whole code system include becomes a system-only value
+      def codings_from_include(include_element)
+        return [{ system: include_element.system }] if include_element.concept.blank?
+
+        include_element.concept.map { |concept| { system: include_element.system, code: concept.code } }
       end
 
       def value_set_expansion_contains(element)
