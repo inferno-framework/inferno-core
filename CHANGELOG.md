@@ -1,5 +1,10 @@
 ## 1.5.0
-* ID-283: standardize must support string output by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/824. This update hardens implicit rules around metadata extracted for the purpose of must support analysis that may cause existing test kits to fail with runtime errors if hand-coded metadata is in use. With metadata YAML files like those used in the us_core_test_kit and many others, entries within the `must_supports.extensions` list must have an `id` field and the entries within the `must_supports.slices` list must have a `slice_id` field with the id of corresponding item within the FHIR StructureDefinition. This requirement was not previously enforced but was always necessary to provide actionable feedback. The requirement is now enforced at runtime.
+* ID-283: standardize must support string output by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/824. 
+  * NOTE: This update hardens implicit rules around metadata extracted for the purpose of must support analysis that may cause existing test kits to fail with runtime errors if hand-coded metadata is in use. With metadata YAML files like those used in the us_core_test_kit and many others, entries within the `must_supports.extensions` list must have an `id` field and the entries within the `must_supports.slices` list must have a `slice_id` field with the id of corresponding item within the FHIR StructureDefinition. This requirement was not previously enforced but was always necessary to provide actionable feedback. The requirement is now enforced at runtime.
+* ID-276: Rework patternCodeableConcept / patternCoding slice matching by @FlexonyoPizza in https://github.com/inferno-framework/inferno-core/pull/822
+* ID-276: Support Required Bindings to ValueSets that include a whole code system by @FlexonyoPizza in https://github.com/inferno-framework/inferno-core/pull/825
+  * NOTE: this update can change generated profile metadata for must support checks.
+* ID-266: Upgrade roo dependency to version 3.0 by @abhinandan2012 in https://github.com/inferno-framework/inferno-core/pull/826
 
 ## 1.4.6
 * Code coverage update by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/819
