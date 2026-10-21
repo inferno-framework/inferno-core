@@ -27,6 +27,33 @@ RSpec.describe Inferno::CLI::RequirementsExporter do
 
       expect(requirements).to all(include(*described_class::INPUT_HEADERS))
     end
+
+    context 'when a Sub-Requirement(s) cell is an email hyperlink' do
+      # Excel auto-links "package@version" text as an email address, and roo
+      # emits a hyperlinked cell as its URL in to_csv, so the value arrives
+      # with a "mailto:" prefix. Cell F8 of the fixture has such a link.
+      let(:sub_requirement) { 'hl7.fhir.us.davinci-hrex_1.0.0@21-32' }
+
+      it 'receives the mailto: prefixed value from roo' do
+        worksheet = Roo::Spreadsheet.open(exporter.available_input_worksheets.first)
+        raw_sub_requirements =
+          CSV.parse(worksheet.sheet('Requirements').to_csv, headers: true)
+            .map { |row| row['Sub-Requirement(s)'] }
+            .compact
+
+        expect(raw_sub_requirements).to include("mailto:#{sub_requirement}")
+      end
+
+      it 'strips the mailto: prefix' do
+        sub_requirements =
+          exporter.input_requirement_sets.values.first
+            .map { |row| row['Sub-Requirement(s)'] }
+            .compact
+
+        expect(sub_requirements).to include(sub_requirement)
+        expect(sub_requirements.grep(/\Amailto:/)).to be_empty
+      end
+    end
   end
 
   describe '#new_requriments_csv' do
@@ -44,6 +71,14 @@ RSpec.describe Inferno::CLI::RequirementsExporter do
       expect(parsed_csv.first.slice(1..-1)).to eq(described_class::REQUIREMENTS_OUTPUT_HEADERS.slice(1..-1))
 
       expect(parsed_csv.length).to eq(exporter.input_requirement_sets.values.first.length + 1)
+    end
+
+    it 'does not carry mailto: prefixes into the Sub-Requirement(s) column' do
+      parsed_csv = CSV.parse(exporter.new_requirements_csv, headers: true)
+      sub_requirements = parsed_csv.map { |row| row['Sub-Requirement(s)'] }.compact
+
+      expect(sub_requirements).to include('hl7.fhir.us.davinci-hrex_1.0.0@21-32')
+      expect(sub_requirements.grep(/\Amailto:/)).to be_empty
     end
   end
 end
