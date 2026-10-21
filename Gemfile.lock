@@ -28,7 +28,7 @@ PATH
       pry-byebug
       puma (~> 8.0, >= 8.0.2)
       rake (~> 13.0)
-      roo (~> 3.0)
+      roo (~> 3.0.0)
       sequel (~> 5.42.0)
       sidekiq (~> 7.3.10)
       sqlite3 (~> 1.4)
