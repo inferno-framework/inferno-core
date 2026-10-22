@@ -34,7 +34,7 @@ const Requirements: FC<RequirementsProps> = ({
       ),
     ]),
   );
-  const conformances = ['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD'];
+  const conformances = ['Any', 'MAY', 'SHALL', 'SHALL NOT', 'SHOULD', 'SHOULD NOT'];
 
   // Requirements should never change once the session has been loaded, but if it does,
   // reset filters. This is also required to handle effects on session load.
@@ -47,9 +47,14 @@ const Requirements: FC<RequirementsProps> = ({
     let requirementsCopy = requirements;
     Object.entries(filters).forEach(([filterName, value]) => {
       if (!value || value === 'Any') return;
-      requirementsCopy = requirementsCopy.filter(
-        (requirement) => requirement[filterName as keyof Requirement] === value,
-      );
+      requirementsCopy = requirementsCopy.filter((requirement) => {
+        const fieldValue = requirement[filterName as keyof Requirement];
+        // Conformance can list multiple verbs separated by '/' (e.g. 'SHALL / SHOULD')
+        if (filterName === 'conformance' && typeof fieldValue === 'string') {
+          return fieldValue.split('/').some((verb) => verb.trim() === value);
+        }
+        return fieldValue === value;
+      });
     });
     setFilteredRequirements(requirementsCopy);
   };
