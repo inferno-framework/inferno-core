@@ -459,7 +459,7 @@ module Inferno
 
           response_headers = response_headers.map { |name, value| { name:, value: } }
 
-          repo.create(
+          persisted_request = repo.create(
             verb:,
             url:,
             direction: 'incoming',
@@ -473,6 +473,15 @@ module Inferno
             response_headers:,
             tags: env['inferno.tags']
           )
+
+          # Display the request with the waiting test's result. Failures are
+          # logged rather than raised so that they cannot prevent the test run
+          # from resuming.
+          begin
+            Inferno::Repositories::Results.new.add_request(env['inferno.result_id'], persisted_request.id)
+          rescue StandardError => e
+            log_error(e, url:)
+          end
 
           if env['inferno.resume_test_run']
             test_run_id = env['inferno.test_run_id']

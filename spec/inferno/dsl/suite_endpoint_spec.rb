@@ -3,7 +3,7 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
     repo_create(:test_run, identifier: 'ABC', status: 'waiting', wait_timeout: Time.now + 5.minutes)
   end
 
-  before do
+  let!(:waiting_result) do
     repo_create(
       :result,
       test_run_id: test_run.id,
@@ -11,6 +11,18 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
       test_id: InfrastructureTest::Suite.groups.first.groups.first.tests.first.id,
       test_suite_id: nil
     )
+  end
+
+  it 'displays the persisted incoming request with the waiting result' do
+    post '/custom/infra_test/json_test',
+         { json_param: 'EXPECTED_RESPONSE_BODY' }.to_json,
+         'CONTENT_TYPE' => 'application/json'
+
+    associated_requests = Inferno::Repositories::Results::Model.find(id: waiting_result.id).requests
+    expect(associated_requests.length).to eq(1)
+    expect(associated_requests.first.verb).to eq('POST')
+    expect(associated_requests.first.direction).to eq('incoming')
+    expect(associated_requests.first.response_body).to eq('EXPECTED_RESPONSE_BODY')
   end
 
   it 'automatically parses application/json bodies' do
@@ -190,6 +202,23 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       expect(last_response.body).to eq('EXPECTED_RESPONSE_BODY')
       expect(Inferno::Application[:logger]).to have_received(:error).with(/BOOM_PERSIST/)
+    end
+  end
+
+  describe 'when associating the incoming request with the waiting result fails' do
+    it 'logs the error and still resumes the test run' do
+      allow(Inferno::Application[:logger]).to receive(:error)
+      allow(Inferno::Jobs).to receive(:perform)
+      allow_any_instance_of(Inferno::Repositories::Results)
+        .to receive(:add_request).and_raise(StandardError, 'BOOM_ADD_REQUEST')
+
+      post '/custom/infra_test/resume_test'
+
+      expect(last_response.status).to eq(200)
+      expect(Inferno::Application[:logger]).to have_received(:error).with(/BOOM_ADD_REQUEST/)
+      expect(Inferno::Jobs).to have_received(:perform)
+        .with(Inferno::Jobs::ResumeTestRun, test_run.id, anything)
+      expect(Inferno::Repositories::TestRuns.new.find(test_run.id).status).to eq('queued')
     end
   end
 end

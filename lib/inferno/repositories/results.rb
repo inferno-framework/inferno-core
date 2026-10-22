@@ -30,6 +30,18 @@ module Inferno
         end
       end
 
+      # Associate an already persisted request with a result so that it is
+      # displayed with that result, e.g., an incoming request received while a
+      # test is waiting.
+      # @private
+      def add_request(result_id, request_id)
+        result_model = self.class::Model.find(id: result_id)
+        request_model = requests_repo.class::Model.find(id: request_id)
+        return if result_model.nil? || request_model.nil?
+
+        result_model.add_request(request_model)
+      end
+
       # Get the current result for a particular test/group
       # @private
       # @example
