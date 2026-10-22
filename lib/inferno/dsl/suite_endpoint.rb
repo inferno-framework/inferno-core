@@ -478,7 +478,7 @@ module Inferno
           # logged rather than raised so that they cannot prevent the test run
           # from resuming.
           begin
-            Inferno::Repositories::Results.new.add_request(env['inferno.result_id'], persisted_request.id)
+            results_repo.add_request(env['inferno.result_id'], persisted_request.id)
           rescue StandardError => e
             log_error(e, url:)
           end
