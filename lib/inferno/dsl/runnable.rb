@@ -309,16 +309,16 @@ module Inferno
         !optional?
       end
 
-      # Mark as simulation verification. Tests are not simulation verification by default.
+      # Flag as simulation verification. Tests are not simulation verification by default.
       #
       # @param simulation_verification [Boolean]
       # @return [void]
-      def simulation_verification(simulation_verification = true) # rubocop:disable Style/OptionalBooleanParameter
+      def flag_as_simulation_verification(simulation_verification = true) # rubocop:disable Style/OptionalBooleanParameter
         @is_simulation_verification = simulation_verification
       end
 
-      # Alias for {#simulation_verification}
-      alias flag_as_simulation_verification simulation_verification
+      # Alias for {#flag_as_simulation_verification}
+      alias simulation_verification flag_as_simulation_verification
 
       # The test is simulation verification if true
       #
@@ -327,16 +327,16 @@ module Inferno
         !!@is_simulation_verification
       end
 
-      # Mark as attestation. Tests are not attestation by default.
+      # Flag as attestation. Tests are not attestation by default.
       #
       # @param attestation [Boolean]
       # @return [void]
-      def attestation(attestation = true) # rubocop:disable Style/OptionalBooleanParameter
+      def flag_as_attestation(attestation = true) # rubocop:disable Style/OptionalBooleanParameter
         @is_attestation = attestation
       end
 
-      # Alias for {#attestation}
-      alias flag_as_attestation attestation
+      # Alias for {#flag_as_attestation}
+      alias attestation flag_as_attestation
 
       # The test is attestation if true
       #

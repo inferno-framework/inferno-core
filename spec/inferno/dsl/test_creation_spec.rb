@@ -185,7 +185,7 @@ RSpec.describe InfrastructureTest::Suite do
           test do
             title 'Simulation verification test'
             id 'sim_test'
-            simulation_verification
+            flag_as_simulation_verification
 
             run { pass }
           end
@@ -201,7 +201,7 @@ RSpec.describe InfrastructureTest::Suite do
           test do
             title 'Attestation test'
             id 'attest_test'
-            attestation
+            flag_as_attestation
 
             run { pass }
           end
@@ -210,15 +210,15 @@ RSpec.describe InfrastructureTest::Suite do
         expect(attest_group.tests.first.attestation?).to be(true)
       end
 
-      it 'sets simulation_verification and attestation when declared with flag_as_ aliases' do
+      it 'sets simulation_verification and attestation when declared with short aliases' do
         alias_group = Class.new(Inferno::TestGroup) do
           id 'alias_group'
 
           test do
             title 'Aliased flags test'
             id 'alias_test'
-            flag_as_simulation_verification
-            flag_as_attestation
+            simulation_verification
+            attestation
 
             run { pass }
           end
