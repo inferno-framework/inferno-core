@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import ThemeProvider from 'components/ThemeProvider';
 import { BrowserRouter } from 'react-router';
 import { describe, expect, test } from 'vitest';
@@ -29,9 +29,7 @@ describe('TestGroupListItem simulation badge', () => {
     );
 
     const summary = screen.getByTestId('agg-tg-summary');
-    fireEvent.click(summary);
-
-    expect(screen.getByText('Simulation Verification')).toBeInTheDocument();
+    expect(within(summary).getByText('Simulation Verification')).toBeInTheDocument();
   });
 
   test('navigable (collapsed) group shows badge', () => {
@@ -77,9 +75,7 @@ describe('TestGroupListItem tester-initiated exchange badge', () => {
     );
 
     const summary = screen.getByTestId('agg-tg-summary');
-    fireEvent.click(summary);
-
-    expect(screen.getByText('Tester-Initiated Exchange')).toBeInTheDocument();
+    expect(within(summary).getByText('Tester-Initiated Exchange')).toBeInTheDocument();
   });
 
   test('navigable (collapsed) group shows badge', () => {
