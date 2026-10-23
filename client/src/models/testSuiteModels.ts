@@ -203,6 +203,7 @@ export type Test = Runnable & {
   user_runnable?: boolean;
   is_simulation_verification?: boolean;
   is_attestation?: boolean;
+  is_tester_initiated_exchange?: boolean;
 };
 
 export type TestGroup = Runnable & {
@@ -214,6 +215,7 @@ export type TestGroup = Runnable & {
   run_as_group?: boolean;
   user_runnable?: boolean;
   is_simulation_verification?: boolean;
+  is_tester_initiated_exchange?: boolean;
   test_count?: number;
   expanded?: boolean;
 };
@@ -238,6 +240,13 @@ export const isTest = (object: Runnable): object is Test => {
 export const isTestGroup = (object: Runnable): object is TestGroup => {
   return 'test_groups' in object && 'tests' in object;
 };
+
+// True if the group or any of its descendant groups or tests is flagged as a
+// tester-initiated exchange. Used where a group's children are hidden or can be.
+export const containsTesterInitiatedExchange = (testGroup: TestGroup): boolean =>
+  !!testGroup.is_tester_initiated_exchange ||
+  testGroup.tests.some((test) => test.is_tester_initiated_exchange) ||
+  testGroup.test_groups.some(containsTesterInitiatedExchange);
 
 export const isTestSuite = (object: Runnable): object is TestSuite => {
   return 'test_groups' in object && !('tests' in object);

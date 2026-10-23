@@ -317,6 +317,9 @@ module Inferno
         @is_simulation_verification = simulation_verification
       end
 
+      # Alias for {#simulation_verification}
+      alias flag_as_simulation_verification simulation_verification
+
       # The test is simulation verification if true
       #
       # @return [Boolean]
@@ -332,11 +335,29 @@ module Inferno
         @is_attestation = attestation
       end
 
+      # Alias for {#attestation}
+      alias flag_as_attestation attestation
+
       # The test is attestation if true
       #
       # @return [Boolean]
       def attestation?
         !!@is_attestation
+      end
+
+      # Flag as tester-initiated exchange. Tests are not tester-initiated exchanges by default.
+      #
+      # @param tester_initiated_exchange [Boolean]
+      # @return [void]
+      def flag_as_tester_initiated_exchange(tester_initiated_exchange = true) # rubocop:disable Style/OptionalBooleanParameter
+        @is_tester_initiated_exchange = tester_initiated_exchange
+      end
+
+      # The test is a tester-initiated exchange if true
+      #
+      # @return [Boolean]
+      def tester_initiated_exchange?
+        !!@is_tester_initiated_exchange
       end
 
       # @private

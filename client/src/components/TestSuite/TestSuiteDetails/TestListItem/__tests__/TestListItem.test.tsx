@@ -334,4 +334,74 @@ describe('The TestListItem component', () => {
       expect(screen.queryByText('Attestation')).not.toBeInTheDocument();
     });
   });
+
+  describe('Tester-Initiated Exchange Badge', () => {
+    const outputs: TestOutput[] = [{ name: 'One', value: 'one' }];
+    const inputs: TestInput[] = [{ name: 'two', value: 'two' }];
+
+    it('renders the badge when is_tester_initiated_exchange is true', () => {
+      const test: Test = {
+        id: 'test_id',
+        title: 'Test Title',
+        inputs: inputs,
+        short_id: 'short_id',
+        outputs: outputs,
+        user_runnable: false,
+        is_tester_initiated_exchange: true,
+      };
+
+      render(
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>,
+      );
+
+      expect(screen.getByText('Tester-Initiated Exchange')).toBeInTheDocument();
+    });
+
+    it('does not render the badge when is_tester_initiated_exchange is false', () => {
+      const test: Test = {
+        id: 'test_id',
+        title: 'Test Title',
+        inputs: inputs,
+        short_id: 'short_id',
+        outputs: outputs,
+        user_runnable: false,
+        is_tester_initiated_exchange: false,
+      };
+
+      render(
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>,
+      );
+
+      expect(screen.queryByText('Tester-Initiated Exchange')).not.toBeInTheDocument();
+    });
+
+    it('does not render the badge when is_tester_initiated_exchange is undefined', () => {
+      const test: Test = {
+        id: 'test_id',
+        title: 'Test Title',
+        inputs: inputs,
+        short_id: 'short_id',
+        outputs: outputs,
+        user_runnable: false,
+      };
+
+      render(
+        <BrowserRouter>
+          <ThemeProvider>
+            <TestListItem test={test} view="run" />
+          </ThemeProvider>
+        </BrowserRouter>,
+      );
+
+      expect(screen.queryByText('Tester-Initiated Exchange')).not.toBeInTheDocument();
+    });
+  });
 });

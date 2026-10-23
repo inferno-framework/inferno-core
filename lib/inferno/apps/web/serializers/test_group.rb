@@ -18,6 +18,7 @@ module Inferno
         field :user_runnable?, name: :user_runnable
         field :optional?, name: :optional
         field :simulation_verification?, name: :is_simulation_verification
+        field :tester_initiated_exchange?, name: :is_tester_initiated_exchange
 
         field :test_count do |group, options|
           group.test_count(options[:suite_options])
