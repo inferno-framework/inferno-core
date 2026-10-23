@@ -9,6 +9,8 @@ declare module '@mui/material/styles/createPalette' {
     orangeDark: string;
     yellowLight: string;
     yellowDark: string;
+    tealLight: string;
+    tealDark: string;
     blueLightest: string;
     blueLight: string;
     blue: string;
@@ -25,6 +27,8 @@ const colors = {
   orangeDark: '#c05702',
   yellowLight: '#feedce',
   yellowDark: '#9a6500',
+  tealLight: '#d3eef3',
+  tealDark: '#00677f',
   blueLightest: '#f1f8ff',
   blueLight: '#9ad2f0',
   blue: '#316DB1',

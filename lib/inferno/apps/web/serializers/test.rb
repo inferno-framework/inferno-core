@@ -23,6 +23,7 @@ module Inferno
         field :optional?, name: :optional
         field :simulation_verification?, name: :is_simulation_verification
         field :attestation?, name: :is_attestation
+        field :tester_initiated_exchange?, name: :is_tester_initiated_exchange
         field :verifies_requirements, if: :field_present?, extractor: RequirementsFilteringExtractor
       end
     end

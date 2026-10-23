@@ -1,12 +1,13 @@
 import React, { FC } from 'react';
 import { Box, Divider, Link, List, ListItem, ListItemText, Typography } from '@mui/material';
 import FolderIcon from '@mui/icons-material/Folder';
-import { TestGroup } from '~/models/testSuiteModels';
+import { containsTesterInitiatedExchange, TestGroup } from '~/models/testSuiteModels';
 import ResultIcon from '~/components/TestSuite/TestSuiteDetails/ResultIcon';
 import { useTestSessionStore } from '~/store/testSession';
 import theme from '~/styles/theme';
 import useStyles from './styles';
 import SimulationVerificationBadge from '~/components/TestSuite/TestSuiteDetails/TestListItem/SimulationVerificationBadge';
+import TesterInitiatedExchangeBadge from '~/components/TestSuite/TestSuiteDetails/TestListItem/TesterInitiatedExchangeBadge';
 
 interface NavigableGroupListItemProps {
   testGroup: TestGroup;
@@ -43,6 +44,7 @@ const NavigableGroupListItem: FC<NavigableGroupListItemProps> = ({ testGroup }) 
                     {testGroup.title}
                   </Link>
                   {testGroup.is_simulation_verification && <SimulationVerificationBadge />}
+                  {containsTesterInitiatedExchange(testGroup) && <TesterInitiatedExchangeBadge />}
                 </>
               }
               secondary={testGroup.result?.result_message}

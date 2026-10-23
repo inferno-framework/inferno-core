@@ -412,6 +412,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
 
       test do
         title 'Wait for request to suite endpoint'
+        flag_as_tester_initiated_exchange
 
         run do
           wait(
@@ -556,7 +557,7 @@ module DemoIG_STU1 # rubocop:disable Naming/ClassAndModuleCamelCase
           Since Inferno cannot independently verify this behavior, this test provides
           testers with an opportunity to attest to whether their system supports it.
         )
-        attestation
+        flag_as_attestation
 
         output :attest_true_url
         output :attest_false_url
