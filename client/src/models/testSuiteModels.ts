@@ -245,8 +245,8 @@ export const isTestGroup = (object: Runnable): object is TestGroup => {
 // tester-initiated exchange. Used where a group's children are hidden or can be.
 export const containsTesterInitiatedExchange = (testGroup: TestGroup): boolean =>
   !!testGroup.is_tester_initiated_exchange ||
-  testGroup.tests.some((test) => test.is_tester_initiated_exchange) ||
-  testGroup.test_groups.some(containsTesterInitiatedExchange);
+  !!testGroup.tests?.some((test) => test.is_tester_initiated_exchange) ||
+  !!testGroup.test_groups?.some(containsTesterInitiatedExchange);
 
 export const isTestSuite = (object: Runnable): object is TestSuite => {
   return 'test_groups' in object && !('tests' in object);

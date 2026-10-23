@@ -154,10 +154,13 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
                         className={classes.shortId}
                       >{`${testGroup.short_id} `}</Typography>
                     )}
-                    <Typography className={classes.labelText}>
+                    <Typography className={classes.labelText} component="span">
                       {testGroup.title}
                       {testGroup.is_simulation_verification && <SimulationVerificationBadge />}
-                      {containsTesterInitiatedExchange(testGroup) && (
+                      {/* Reports always show children, so only show the group's own flag */}
+                      {(view === 'report'
+                        ? testGroup.is_tester_initiated_exchange
+                        : containsTesterInitiatedExchange(testGroup)) && (
                         <TesterInitiatedExchangeBadge />
                       )}
                     </Typography>
