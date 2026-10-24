@@ -50,6 +50,25 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
         'Unknown error_response_format `:bogus_format`. Must be one of text, operation_outcome.'
       )
     end
+
+    it 'defaults to :text' do
+      expect(Class.new(described_class).error_response_format_value).to eq(:text)
+    end
+
+    it 'is inherited by subclasses' do
+      parent = Class.new(described_class) { error_response_format :operation_outcome }
+      child = Class.new(parent)
+
+      expect(child.error_response_format_value).to eq(:operation_outcome)
+    end
+
+    it 'can be overridden by subclasses without affecting the parent' do
+      parent = Class.new(described_class) { error_response_format :operation_outcome }
+      child = Class.new(parent) { error_response_format :text }
+
+      expect(child.error_response_format_value).to eq(:text)
+      expect(parent.error_response_format_value).to eq(:operation_outcome)
+    end
   end
 
   describe 'when no matching test session is found' do

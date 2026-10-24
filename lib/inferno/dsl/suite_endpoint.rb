@@ -97,7 +97,9 @@ module Inferno
 
         # @private
         def error_response_format_value
-          @error_response_format_value ||= :text
+          return @error_response_format_value if @error_response_format_value.present?
+
+          superclass.respond_to?(:error_response_format_value) ? superclass.error_response_format_value : :text
         end
       end
 
