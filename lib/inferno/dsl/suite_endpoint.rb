@@ -310,7 +310,8 @@ module Inferno
         log_error(e)
         render_error_and_halt do
           error_response(
-            'An error occurred while determining the test run identifier for this request.',
+            'Inferno encountered an error while determining the test run identifier ' \
+            "for this request to '#{request.url}'.",
             code: 'exception',
             diagnostics: e.full_message
           )
@@ -319,7 +320,7 @@ module Inferno
 
       # @private
       def no_session_message
-        base_message = "Unable to find test run for request to '#{request.url}'"
+        base_message = "Inferno could not find an active test run for this request to '#{request.url}'"
         location = test_run_identifier_location_description
         identifier = find_test_run_identifier
 
@@ -371,10 +372,11 @@ module Inferno
           details: FHIR::CodeableConcept.new(text: message)
         )
         issue.diagnostics = diagnostics if diagnostics
+        meta = FHIR::Meta.new(source: Application['base_url'])
 
         response.status = 500
         response.content_type = 'application/fhir+json'
-        response.body = FHIR::OperationOutcome.new(issue: [issue]).to_json
+        response.body = FHIR::OperationOutcome.new(meta:, issue: [issue]).to_json
       end
 
       # @private
@@ -429,7 +431,7 @@ module Inferno
         log_error(e)
         render_error_and_halt do
           error_response(
-            'An error occurred while processing this request.',
+            "Inferno encountered an error while processing this request to '#{request.url}'.",
             code: 'exception',
             diagnostics: e.full_message
           )

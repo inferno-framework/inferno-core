@@ -77,7 +77,8 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       expect(last_response.status).to eq(500)
       expect(last_response.body).to eq(
-        "Unable to find test run for request to 'http://example.org/custom/infra_test/no_session_test': " \
+        'Inferno could not find an active test run for this request to ' \
+        "'http://example.org/custom/infra_test/no_session_test': " \
         "identifier 'NONEXISTENT_IDENTIFIER' is not associated with a waiting session."
       )
     end
@@ -87,8 +88,8 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       expect(last_response.status).to eq(500)
       expect(last_response.body).to eq(
-        "Unable to find test run for request to 'http://example.org/custom/infra_test/blank_identifier_test': " \
-        'no identifier found.'
+        'Inferno could not find an active test run for this request to ' \
+        "'http://example.org/custom/infra_test/blank_identifier_test': no identifier found."
       )
     end
 
@@ -97,7 +98,7 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       expect(last_response.status).to eq(500)
       expect(last_response.body).to eq(
-        'Unable to find test run for request to ' \
+        'Inferno could not find an active test run for this request to ' \
         "'http://example.org/custom/infra_test/identifier_description_test': " \
         "identifier 'NONEXISTENT_IDENTIFIER', found in the 'code' query parameter, " \
         'is not associated with a waiting session.'
@@ -112,9 +113,11 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       outcome = FHIR::OperationOutcome.new(JSON.parse(last_response.body))
       expect(outcome.issue.first.severity).to eq('fatal')
+      expect(outcome.meta.source).to eq(Inferno::Application['base_url'])
       expect(outcome.issue.first.code).to eq('not-found')
       expect(outcome.issue.first.details.text).to eq(
-        "Unable to find test run for request to 'http://example.org/custom/infra_test/operation_outcome_test': " \
+        'Inferno could not find an active test run for this request to ' \
+        "'http://example.org/custom/infra_test/operation_outcome_test': " \
         "identifier 'NONEXISTENT_IDENTIFIER' is not associated with a waiting session."
       )
     end
@@ -138,7 +141,10 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
       expect(Inferno::Application[:logger]).to have_received(:error)
         .with(%r{\A\[http://example.org/custom/infra_test/identifier_error_test\] (?!session=).*BOOM_IDENTIFIER}m)
       expect(last_response.status).to eq(500)
-      expect(last_response.body).to include('An error occurred while determining the test run identifier')
+      expect(last_response.body).to include(
+        'Inferno encountered an error while determining the test run identifier for this request to ' \
+        "'http://example.org/custom/infra_test/identifier_error_test'."
+      )
       expect(last_response.body).to include('BOOM_IDENTIFIER')
     end
 
@@ -150,9 +156,11 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       outcome = FHIR::OperationOutcome.new(JSON.parse(last_response.body))
       expect(outcome.issue.first.severity).to eq('fatal')
+      expect(outcome.meta.source).to eq(Inferno::Application['base_url'])
       expect(outcome.issue.first.code).to eq('exception')
       expect(outcome.issue.first.details.text).to eq(
-        'An error occurred while determining the test run identifier for this request.'
+        'Inferno encountered an error while determining the test run identifier for this request to ' \
+        "'http://example.org/custom/infra_test/identifier_error_operation_outcome_test'."
       )
       expect(outcome.issue.first.diagnostics).to include('BOOM_IDENTIFIER')
     end
@@ -170,7 +178,10 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
         /\A\[#{log_url}\] session=#{test_run.test_session_id}.*BOOM_MAKE_RESPONSE/m
       )
       expect(last_response.status).to eq(500)
-      expect(last_response.body).to include('An error occurred while processing this request')
+      expect(last_response.body).to include(
+        'Inferno encountered an error while processing this request to ' \
+        "'http://example.org/custom/infra_test/exception_test'."
+      )
       expect(last_response.body).to include('BOOM_MAKE_RESPONSE')
     end
 
@@ -182,8 +193,12 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       outcome = FHIR::OperationOutcome.new(JSON.parse(last_response.body))
       expect(outcome.issue.first.severity).to eq('fatal')
+      expect(outcome.meta.source).to eq(Inferno::Application['base_url'])
       expect(outcome.issue.first.code).to eq('exception')
-      expect(outcome.issue.first.details.text).to eq('An error occurred while processing this request.')
+      expect(outcome.issue.first.details.text).to eq(
+        'Inferno encountered an error while processing this request to ' \
+        "'http://example.org/custom/infra_test/exception_operation_outcome_test'."
+      )
       expect(outcome.issue.first.diagnostics).to include('BOOM_MAKE_RESPONSE')
     end
   end
