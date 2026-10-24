@@ -310,8 +310,8 @@ module Inferno
         log_error(e)
         render_error_and_halt do
           error_response(
-            'Inferno encountered an error while determining the test run identifier ' \
-            "for this request to '#{request.url}'.",
+            "Inferno could not find an active test run for this request to '#{request.url}':" \
+            'error encountered while determining the test run identifier.',
             code: 'exception',
             diagnostics: e.full_message
           )

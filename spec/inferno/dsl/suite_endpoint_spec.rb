@@ -142,8 +142,9 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
         .with(%r{\A\[http://example.org/custom/infra_test/identifier_error_test\] (?!session=).*BOOM_IDENTIFIER}m)
       expect(last_response.status).to eq(500)
       expect(last_response.body).to include(
-        'Inferno encountered an error while determining the test run identifier for this request to ' \
-        "'http://example.org/custom/infra_test/identifier_error_test'."
+        'Inferno could not find an active test run for this request to ' \
+        "'http://example.org/custom/infra_test/identifier_error_test': " \
+        'error encountered while determining the test run identifier.'
       )
       expect(last_response.body).to include('BOOM_IDENTIFIER')
     end
@@ -159,8 +160,9 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
       expect(outcome.meta.source).to eq(Inferno::Application['base_url'])
       expect(outcome.issue.first.code).to eq('exception')
       expect(outcome.issue.first.details.text).to eq(
-        'Inferno encountered an error while determining the test run identifier for this request to ' \
-        "'http://example.org/custom/infra_test/identifier_error_operation_outcome_test'."
+        'Inferno could not find an active test run for this request to ' \
+        "'http://example.org/custom/infra_test/identifier_error_operation_outcome_test': " \
+        'error encountered while determining the test run identifier.'
       )
       expect(outcome.issue.first.diagnostics).to include('BOOM_IDENTIFIER')
     end
