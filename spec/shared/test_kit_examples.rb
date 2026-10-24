@@ -60,8 +60,8 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
       expect(test_kit.description).to include('<!-- break -->'), error_message
     end
 
-    it 'has a maturity of "Low", "Medium", or "High"' do
-      expect(['Low', 'Medium', 'High']).to include(test_kit.maturity) # rubocop:disable RSpec/ExpectActual
+    it 'has a maturity of "Low", "Medium", "High", or "Certification"' do
+      expect(['Low', 'Medium', 'High', 'Certification']).to include(test_kit.maturity) # rubocop:disable RSpec/ExpectActual
     end
 
     it 'uses the correct ruby version in its Dockerfile' do
