@@ -12,7 +12,14 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Error, Warning } from '@mui/icons-material';
-import { Request, RunnableType, Test, TestGroup, ViewType } from '~/models/testSuiteModels';
+import {
+  containsTesterInitiatedExchange,
+  Request,
+  RunnableType,
+  Test,
+  TestGroup,
+  ViewType,
+} from '~/models/testSuiteModels';
 import InputOutputList from '~/components/TestSuite/TestSuiteDetails/TestListItem/InputOutputList';
 import NavigableGroupListItem from '~/components/TestSuite/TestSuiteDetails/TestGroupListItem/NavigableGroupListItem';
 import NestedDescriptionPanel from '~/components/TestSuite/TestSuiteDetails/TestGroupListItem/NestedDescriptionPanel';
@@ -22,6 +29,7 @@ import TestListItem from '~/components/TestSuite/TestSuiteDetails/TestListItem/T
 import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import useStyles from './styles';
 import SimulationVerificationBadge from '~/components/TestSuite/TestSuiteDetails/TestListItem/SimulationVerificationBadge';
+import TesterInitiatedExchangeBadge from '~/components/TestSuite/TestSuiteDetails/TestListItem/TesterInitiatedExchangeBadge';
 
 interface TestGroupListItemProps {
   testGroup: TestGroup;
@@ -146,9 +154,15 @@ const TestGroupListItem: FC<TestGroupListItemProps> = ({
                         className={classes.shortId}
                       >{`${testGroup.short_id} `}</Typography>
                     )}
-                    <Typography className={classes.labelText}>
+                    <Typography className={classes.labelText} component="span">
                       {testGroup.title}
                       {testGroup.is_simulation_verification && <SimulationVerificationBadge />}
+                      {/* Reports always show children, so only show the group's own flag */}
+                      {(view === 'report'
+                        ? testGroup.is_tester_initiated_exchange
+                        : containsTesterInitiatedExchange(testGroup)) && (
+                        <TesterInitiatedExchangeBadge />
+                      )}
                     </Typography>
                   </>
                 }

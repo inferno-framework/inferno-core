@@ -309,13 +309,16 @@ module Inferno
         !optional?
       end
 
-      # Mark as simulation verification. Tests are not simulation verification by default.
+      # Flag as simulation verification. Tests are not simulation verification by default.
       #
       # @param simulation_verification [Boolean]
       # @return [void]
-      def simulation_verification(simulation_verification = true) # rubocop:disable Style/OptionalBooleanParameter
+      def flag_as_simulation_verification(simulation_verification = true) # rubocop:disable Style/OptionalBooleanParameter
         @is_simulation_verification = simulation_verification
       end
+
+      # Alias for {#flag_as_simulation_verification}
+      alias simulation_verification flag_as_simulation_verification
 
       # The test is simulation verification if true
       #
@@ -324,19 +327,37 @@ module Inferno
         !!@is_simulation_verification
       end
 
-      # Mark as attestation. Tests are not attestation by default.
+      # Flag as attestation. Tests are not attestation by default.
       #
       # @param attestation [Boolean]
       # @return [void]
-      def attestation(attestation = true) # rubocop:disable Style/OptionalBooleanParameter
+      def flag_as_attestation(attestation = true) # rubocop:disable Style/OptionalBooleanParameter
         @is_attestation = attestation
       end
+
+      # Alias for {#flag_as_attestation}
+      alias attestation flag_as_attestation
 
       # The test is attestation if true
       #
       # @return [Boolean]
       def attestation?
         !!@is_attestation
+      end
+
+      # Flag as tester-initiated exchange. Tests are not tester-initiated exchanges by default.
+      #
+      # @param tester_initiated_exchange [Boolean]
+      # @return [void]
+      def flag_as_tester_initiated_exchange(tester_initiated_exchange = true) # rubocop:disable Style/OptionalBooleanParameter
+        @is_tester_initiated_exchange = tester_initiated_exchange
+      end
+
+      # The test is a tester-initiated exchange if true
+      #
+      # @return [Boolean]
+      def tester_initiated_exchange?
+        !!@is_tester_initiated_exchange
       end
 
       # @private

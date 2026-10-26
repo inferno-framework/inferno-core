@@ -24,6 +24,7 @@ import ResultIcon from '../ResultIcon';
 import ProblemBadge from './ProblemBadge';
 import SimulationVerificationBadge from './SimulationVerificationBadge';
 import AttestationBadge from './AttestationBadge';
+import TesterInitiatedExchangeBadge from './TesterInitiatedExchangeBadge';
 import TestRunDetail from './TestRunDetail';
 import type { TabProps } from './TestRunDetail';
 import { MessageCounts, countMessageTypes } from './helper';
@@ -82,6 +83,7 @@ const TestListItem: FC<TestListItemProps> = ({
       <Typography className={classes.labelText}>{test.title}</Typography>
       {test.is_simulation_verification && <SimulationVerificationBadge />}
       {test.is_attestation && <AttestationBadge />}
+      {test.is_tester_initiated_exchange && <TesterInitiatedExchangeBadge />}
     </>
   );
 

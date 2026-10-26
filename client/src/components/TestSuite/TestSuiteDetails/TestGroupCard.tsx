@@ -14,6 +14,7 @@ import TestRunButton from '~/components/TestSuite/TestRunButton/TestRunButton';
 import { useTestSessionStore } from '~/store/testSession';
 import useStyles from './styles';
 import SimulationVerificationBadge from '~/components/TestSuite/TestSuiteDetails/TestListItem/SimulationVerificationBadge';
+import TesterInitiatedExchangeBadge from '~/components/TestSuite/TestSuiteDetails/TestListItem/TesterInitiatedExchangeBadge';
 
 interface TestGroupCardProps {
   children: React.ReactNode;
@@ -49,6 +50,9 @@ const TestGroupCard: FC<TestGroupCardProps> = ({ children, runnable, runTests, v
             {runnable.title}
             {isTestGroup(runnable) && runnable.is_simulation_verification && (
               <SimulationVerificationBadge />
+            )}
+            {isTestGroup(runnable) && runnable.is_tester_initiated_exchange && (
+              <TesterInitiatedExchangeBadge />
             )}
           </Typography>
         </span>
