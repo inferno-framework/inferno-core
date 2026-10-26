@@ -74,6 +74,30 @@ RSpec.describe Inferno::Repositories::Results do
     end
   end
 
+  describe '#add_request' do
+    let(:result) { repo.create(result_params) }
+    let(:request) do
+      Inferno::Repositories::Requests.new.create(request_definition.merge(result_id: result.id))
+    end
+
+    it 'associates a persisted request with the result' do
+      repo.add_request(result.id, request.id)
+
+      associated_requests = described_class::Model.find(id: result.id).requests
+      expect(associated_requests.map(&:id)).to eq([request.id])
+    end
+
+    it 'does nothing if the result does not exist' do
+      expect { repo.add_request(SecureRandom.uuid, request.id) }.to_not raise_error
+    end
+
+    it 'does nothing if the request does not exist' do
+      repo.add_request(result.id, SecureRandom.uuid)
+
+      expect(described_class::Model.find(id: result.id).requests).to be_empty
+    end
+  end
+
   describe '#current_results_for_test_session' do
     let(:test_group) { test_suite.groups.first }
     let(:test) { test_group.tests.first }

@@ -38,6 +38,22 @@ RSpec.describe Inferno::DSL::Runnable do
       it 'renders a 500 error' do
         get '/custom/demo/resume?xyz=BAD_IDENTIFIER'
         expect(last_response.status).to eq(500)
+        expect(last_response.body).to eq(
+          'Inferno could not find an active test run for this request to ' \
+          "'http://example.org/custom/demo/resume?xyz=BAD_IDENTIFIER': " \
+          "identifier 'BAD_IDENTIFIER' is not associated with a waiting session."
+        )
+      end
+    end
+
+    context 'when the request has no identifier' do
+      it 'renders a 500 error noting that no identifier was found' do
+        get '/custom/demo/resume'
+        expect(last_response.status).to eq(500)
+        expect(last_response.body).to eq(
+          "Inferno could not find an active test run for this request to 'http://example.org/custom/demo/resume': " \
+          'no identifier found.'
+        )
       end
     end
 
@@ -46,6 +62,11 @@ RSpec.describe Inferno::DSL::Runnable do
         Inferno::Repositories::TestRuns.new.update(test_run.id, wait_timeout: Time.now - 5.seconds)
         get '/custom/demo/resume?xyz=IDENTIFIER'
         expect(last_response.status).to eq(500)
+        expect(last_response.body).to eq(
+          'Inferno could not find an active test run for this request to ' \
+          "'http://example.org/custom/demo/resume?xyz=IDENTIFIER': " \
+          "identifier 'IDENTIFIER' is not associated with a waiting session."
+        )
       end
     end
 
