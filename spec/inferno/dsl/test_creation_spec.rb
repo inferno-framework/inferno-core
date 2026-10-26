@@ -185,7 +185,7 @@ RSpec.describe InfrastructureTest::Suite do
           test do
             title 'Simulation verification test'
             id 'sim_test'
-            simulation_verification
+            flag_as_simulation_verification
 
             run { pass }
           end
@@ -201,13 +201,47 @@ RSpec.describe InfrastructureTest::Suite do
           test do
             title 'Attestation test'
             id 'attest_test'
-            attestation
+            flag_as_attestation
 
             run { pass }
           end
         end
 
         expect(attest_group.tests.first.attestation?).to be(true)
+      end
+
+      it 'sets simulation_verification and attestation when declared with short aliases' do
+        alias_group = Class.new(Inferno::TestGroup) do
+          id 'alias_group'
+
+          test do
+            title 'Aliased flags test'
+            id 'alias_test'
+            simulation_verification
+            attestation
+
+            run { pass }
+          end
+        end
+
+        expect(alias_group.tests.first.simulation_verification?).to be(true)
+        expect(alias_group.tests.first.attestation?).to be(true)
+      end
+
+      it 'sets tester_initiated_exchange when declared on a test' do
+        tester_initiated_exchange_group = Class.new(Inferno::TestGroup) do
+          id 'tester_initiated_exchange_group'
+
+          test do
+            title 'Tester-initiated exchange test'
+            id 'tester_initiated_exchange_test'
+            flag_as_tester_initiated_exchange
+
+            run { pass }
+          end
+        end
+
+        expect(tester_initiated_exchange_group.tests.first.tester_initiated_exchange?).to be(true)
       end
     end
 

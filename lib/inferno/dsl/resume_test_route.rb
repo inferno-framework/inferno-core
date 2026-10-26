@@ -76,6 +76,17 @@ module Inferno
       end
 
       # @private
+      def no_test_run_message(test_run_identifier, url)
+        base_message = "Inferno could not find an active test run for this request to '#{url}'"
+
+        if test_run_identifier.blank?
+          "#{base_message}: no identifier found."
+        else
+          "#{base_message}: identifier '#{test_run_identifier}' is not associated with a waiting session."
+        end
+      end
+
+      # @private
       def handle(req, res)
         request = Inferno::Entities::Request.from_hanami_request(req)
 
@@ -84,10 +95,7 @@ module Inferno
 
         test_run = find_test_run(test_run_identifier)
 
-        if test_run.nil?
-          halt 500, "Unable to find test run with identifier '#{test_run_identifier}' " \
-                    "on request to '#{request.url}'."
-        end
+        halt 500, no_test_run_message(test_run_identifier, request.url) if test_run.nil?
 
         test_runs_repo.mark_as_no_longer_waiting(test_run.id)
 

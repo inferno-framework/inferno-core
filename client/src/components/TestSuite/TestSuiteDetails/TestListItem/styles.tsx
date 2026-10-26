@@ -180,4 +180,14 @@ export default makeStyles()((theme: Theme) => ({
       color: theme.palette.common.yellowDark,
     },
   },
+  testerInitiatedExchangeChip: {
+    backgroundColor: theme.palette.common.tealLight,
+    color: theme.palette.common.tealDark,
+    fontWeight: 'bold',
+    marginLeft: '8px',
+    height: '24px',
+    '& .MuiChip-icon': {
+      color: theme.palette.common.tealDark,
+    },
+  },
 }));

@@ -97,7 +97,9 @@ module Inferno
 
         # @private
         def error_response_format_value
-          @error_response_format_value ||= :text
+          return @error_response_format_value if @error_response_format_value.present?
+
+          superclass.respond_to?(:error_response_format_value) ? superclass.error_response_format_value : :text
         end
       end
 
@@ -308,7 +310,8 @@ module Inferno
         log_error(e)
         render_error_and_halt do
           error_response(
-            'An error occurred while determining the test run identifier for this request.',
+            "Inferno could not find an active test run for this request to '#{request.url}': " \
+            'error encountered while determining the test run identifier.',
             code: 'exception',
             diagnostics: e.full_message
           )
@@ -317,7 +320,7 @@ module Inferno
 
       # @private
       def no_session_message
-        base_message = "Unable to find test run for request to '#{request.url}'"
+        base_message = "Inferno could not find an active test run for this request to '#{request.url}'"
         location = test_run_identifier_location_description
         identifier = find_test_run_identifier
 
@@ -369,10 +372,11 @@ module Inferno
           details: FHIR::CodeableConcept.new(text: message)
         )
         issue.diagnostics = diagnostics if diagnostics
+        meta = FHIR::Meta.new(source: Application['base_url'])
 
         response.status = 500
         response.content_type = 'application/fhir+json'
-        response.body = FHIR::OperationOutcome.new(issue: [issue]).to_json
+        response.body = FHIR::OperationOutcome.new(meta:, issue: [issue]).to_json
       end
 
       # @private
@@ -427,7 +431,7 @@ module Inferno
         log_error(e)
         render_error_and_halt do
           error_response(
-            'An error occurred while processing this request.',
+            "Inferno encountered an error while processing this request to '#{request.url}'.",
             code: 'exception',
             diagnostics: e.full_message
           )
@@ -459,7 +463,7 @@ module Inferno
 
           response_headers = response_headers.map { |name, value| { name:, value: } }
 
-          repo.create(
+          persisted_request = repo.create(
             verb:,
             url:,
             direction: 'incoming',
@@ -473,6 +477,15 @@ module Inferno
             response_headers:,
             tags: env['inferno.tags']
           )
+
+          # Display the request with the waiting test's result. Failures are
+          # logged rather than raised so that they cannot prevent the test run
+          # from resuming.
+          begin
+            results_repo.add_request(env['inferno.result_id'], persisted_request.id)
+          rescue StandardError => e
+            log_error(e, url:)
+          end
 
           if env['inferno.resume_test_run']
             test_run_id = env['inferno.test_run_id']

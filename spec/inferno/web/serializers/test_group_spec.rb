@@ -25,7 +25,8 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
                      'title', 'test_count', 'test_groups', 'tests',
                      'run_as_group', 'user_runnable', 'optional', 'short_title',
                      'short_description', 'input_instructions',
-                     'verifies_requirements', 'is_simulation_verification']
+                     'verifies_requirements', 'is_simulation_verification',
+                     'is_tester_initiated_exchange']
 
     expect(serialized_group.keys).to match_array(expected_keys)
     expect(serialized_group['id']).to eq(group.id.to_s)
@@ -81,6 +82,21 @@ RSpec.describe Inferno::Web::Serializers::TestGroup do
     expect(received_tests).to eq(expected_tests)
     expect(recieved_groups).to eq(expected_groups)
     expect(serialized_group['test_count']).to eq(4)
+  end
+
+  it 'serializes is_tester_initiated_exchange from the group flag only' do
+    flagged_group = Class.new(Inferno::TestGroup) do
+      id SecureRandom.uuid
+      flag_as_tester_initiated_exchange
+    end
+    group_with_flagged_test = Class.new(Inferno::TestGroup) do
+      id SecureRandom.uuid
+      run_as_group
+      test { flag_as_tester_initiated_exchange }
+    end
+
+    expect(JSON.parse(described_class.render(flagged_group))['is_tester_initiated_exchange']).to be(true)
+    expect(JSON.parse(described_class.render(group_with_flagged_test))['is_tester_initiated_exchange']).to be(false)
   end
 
   context 'when part of a session' do
