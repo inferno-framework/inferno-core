@@ -15,19 +15,24 @@ module Inferno
         messages = params.delete(:messages) || []
         requests = params.delete(:requests) || []
         super(params).tap do |result|
-          result_model = self.class::Model.find(id: result.id)
           messages.each { |message| messages_repo.create(message.merge(result_id: result.id)) }
           requests.each do |request|
-            request_id =
-              if request.id.present?
-                request.id
-              else
-                requests_repo.create(request.to_hash.merge(result_id: result.id)).id
-              end
-            request_model = requests_repo.class::Model.find(id: request_id)
-            result_model.add_request(request_model)
+            request_id = request.id.presence || requests_repo.create(request.to_hash.merge(result_id: result.id)).id
+            add_request(result.id, request_id)
           end
         end
+      end
+
+      # Associate an already persisted request with a result so that it is
+      # displayed with that result, e.g., an incoming request received while a
+      # test is waiting.
+      # @private
+      def add_request(result_id, request_id)
+        result_model = self.class::Model.find(id: result_id)
+        request_model = requests_repo.class::Model.find(id: request_id)
+        return if result_model.nil? || request_model.nil?
+
+        result_model.add_request(request_model)
       end
 
       # Get the current result for a particular test/group

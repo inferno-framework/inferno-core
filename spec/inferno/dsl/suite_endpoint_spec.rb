@@ -3,7 +3,7 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
     repo_create(:test_run, identifier: 'ABC', status: 'waiting', wait_timeout: Time.now + 5.minutes)
   end
 
-  before do
+  let!(:waiting_result) do
     repo_create(
       :result,
       test_run_id: test_run.id,
@@ -11,6 +11,18 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
       test_id: InfrastructureTest::Suite.groups.first.groups.first.tests.first.id,
       test_suite_id: nil
     )
+  end
+
+  it 'displays the persisted incoming request with the waiting result' do
+    post '/custom/infra_test/json_test',
+         { json_param: 'EXPECTED_RESPONSE_BODY' }.to_json,
+         'CONTENT_TYPE' => 'application/json'
+
+    associated_requests = Inferno::Repositories::Results::Model.find(id: waiting_result.id).requests
+    expect(associated_requests.length).to eq(1)
+    expect(associated_requests.first.verb).to eq('POST')
+    expect(associated_requests.first.direction).to eq('incoming')
+    expect(associated_requests.first.response_body).to eq('EXPECTED_RESPONSE_BODY')
   end
 
   it 'automatically parses application/json bodies' do
@@ -38,6 +50,25 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
         'Unknown error_response_format `:bogus_format`. Must be one of text, operation_outcome.'
       )
     end
+
+    it 'defaults to :text' do
+      expect(Class.new(described_class).error_response_format_value).to eq(:text)
+    end
+
+    it 'is inherited by subclasses' do
+      parent = Class.new(described_class) { error_response_format :operation_outcome }
+      child = Class.new(parent)
+
+      expect(child.error_response_format_value).to eq(:operation_outcome)
+    end
+
+    it 'can be overridden by subclasses without affecting the parent' do
+      parent = Class.new(described_class) { error_response_format :operation_outcome }
+      child = Class.new(parent) { error_response_format :text }
+
+      expect(child.error_response_format_value).to eq(:text)
+      expect(parent.error_response_format_value).to eq(:operation_outcome)
+    end
   end
 
   describe 'when no matching test session is found' do
@@ -46,7 +77,8 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       expect(last_response.status).to eq(500)
       expect(last_response.body).to eq(
-        "Unable to find test run for request to 'http://example.org/custom/infra_test/no_session_test': " \
+        'Inferno could not find an active test run for this request to ' \
+        "'http://example.org/custom/infra_test/no_session_test': " \
         "identifier 'NONEXISTENT_IDENTIFIER' is not associated with a waiting session."
       )
     end
@@ -56,8 +88,8 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       expect(last_response.status).to eq(500)
       expect(last_response.body).to eq(
-        "Unable to find test run for request to 'http://example.org/custom/infra_test/blank_identifier_test': " \
-        'no identifier found.'
+        'Inferno could not find an active test run for this request to ' \
+        "'http://example.org/custom/infra_test/blank_identifier_test': no identifier found."
       )
     end
 
@@ -66,7 +98,7 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       expect(last_response.status).to eq(500)
       expect(last_response.body).to eq(
-        'Unable to find test run for request to ' \
+        'Inferno could not find an active test run for this request to ' \
         "'http://example.org/custom/infra_test/identifier_description_test': " \
         "identifier 'NONEXISTENT_IDENTIFIER', found in the 'code' query parameter, " \
         'is not associated with a waiting session.'
@@ -81,9 +113,11 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       outcome = FHIR::OperationOutcome.new(JSON.parse(last_response.body))
       expect(outcome.issue.first.severity).to eq('fatal')
+      expect(outcome.meta.source).to eq(Inferno::Application['base_url'])
       expect(outcome.issue.first.code).to eq('not-found')
       expect(outcome.issue.first.details.text).to eq(
-        "Unable to find test run for request to 'http://example.org/custom/infra_test/operation_outcome_test': " \
+        'Inferno could not find an active test run for this request to ' \
+        "'http://example.org/custom/infra_test/operation_outcome_test': " \
         "identifier 'NONEXISTENT_IDENTIFIER' is not associated with a waiting session."
       )
     end
@@ -107,7 +141,11 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
       expect(Inferno::Application[:logger]).to have_received(:error)
         .with(%r{\A\[http://example.org/custom/infra_test/identifier_error_test\] (?!session=).*BOOM_IDENTIFIER}m)
       expect(last_response.status).to eq(500)
-      expect(last_response.body).to include('An error occurred while determining the test run identifier')
+      expect(last_response.body).to include(
+        'Inferno could not find an active test run for this request to ' \
+        "'http://example.org/custom/infra_test/identifier_error_test': " \
+        'error encountered while determining the test run identifier.'
+      )
       expect(last_response.body).to include('BOOM_IDENTIFIER')
     end
 
@@ -119,9 +157,12 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       outcome = FHIR::OperationOutcome.new(JSON.parse(last_response.body))
       expect(outcome.issue.first.severity).to eq('fatal')
+      expect(outcome.meta.source).to eq(Inferno::Application['base_url'])
       expect(outcome.issue.first.code).to eq('exception')
       expect(outcome.issue.first.details.text).to eq(
-        'An error occurred while determining the test run identifier for this request.'
+        'Inferno could not find an active test run for this request to ' \
+        "'http://example.org/custom/infra_test/identifier_error_operation_outcome_test': " \
+        'error encountered while determining the test run identifier.'
       )
       expect(outcome.issue.first.diagnostics).to include('BOOM_IDENTIFIER')
     end
@@ -139,7 +180,10 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
         /\A\[#{log_url}\] session=#{test_run.test_session_id}.*BOOM_MAKE_RESPONSE/m
       )
       expect(last_response.status).to eq(500)
-      expect(last_response.body).to include('An error occurred while processing this request')
+      expect(last_response.body).to include(
+        'Inferno encountered an error while processing this request to ' \
+        "'http://example.org/custom/infra_test/exception_test'."
+      )
       expect(last_response.body).to include('BOOM_MAKE_RESPONSE')
     end
 
@@ -151,8 +195,12 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       outcome = FHIR::OperationOutcome.new(JSON.parse(last_response.body))
       expect(outcome.issue.first.severity).to eq('fatal')
+      expect(outcome.meta.source).to eq(Inferno::Application['base_url'])
       expect(outcome.issue.first.code).to eq('exception')
-      expect(outcome.issue.first.details.text).to eq('An error occurred while processing this request.')
+      expect(outcome.issue.first.details.text).to eq(
+        'Inferno encountered an error while processing this request to ' \
+        "'http://example.org/custom/infra_test/exception_operation_outcome_test'."
+      )
       expect(outcome.issue.first.diagnostics).to include('BOOM_MAKE_RESPONSE')
     end
   end
@@ -190,6 +238,23 @@ RSpec.describe Inferno::DSL::SuiteEndpoint, :request do
 
       expect(last_response.body).to eq('EXPECTED_RESPONSE_BODY')
       expect(Inferno::Application[:logger]).to have_received(:error).with(/BOOM_PERSIST/)
+    end
+  end
+
+  describe 'when associating the incoming request with the waiting result fails' do
+    it 'logs the error and still resumes the test run' do
+      allow(Inferno::Application[:logger]).to receive(:error)
+      allow(Inferno::Jobs).to receive(:perform)
+      allow_any_instance_of(Inferno::Repositories::Results)
+        .to receive(:add_request).and_raise(StandardError, 'BOOM_ADD_REQUEST')
+
+      post '/custom/infra_test/resume_test'
+
+      expect(last_response.status).to eq(200)
+      expect(Inferno::Application[:logger]).to have_received(:error).with(/BOOM_ADD_REQUEST/)
+      expect(Inferno::Jobs).to have_received(:perform)
+        .with(Inferno::Jobs::ResumeTestRun, test_run.id, anything)
+      expect(Inferno::Repositories::TestRuns.new.find(test_run.id).status).to eq('queued')
     end
   end
 end
