@@ -92,7 +92,8 @@ module Inferno
 
         # Set/get the maturity level for the test kit
         #
-        # @param new_maturity [String]
+        # @param new_maturity [String] one of 'Low', 'Medium', 'High', or
+        #   'Certification'
         # @return [String]
         def maturity(new_maturity = nil)
           return @maturity if new_maturity.nil?
