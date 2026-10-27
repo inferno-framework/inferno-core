@@ -1,3 +1,8 @@
+## 1.6.0
+* ID-290: wait test request association by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/828
+* ID-292: tester interaction badge by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/829
+* ID-293: "certification" maturity by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/830
+
 ## 1.5.0
 * ID-283: standardize must support string output by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/824. 
   * NOTE: This update hardens implicit rules around metadata extracted for the purpose of must support analysis that may cause existing test kits to fail with runtime errors if hand-coded metadata is in use. With metadata YAML files like those used in the us_core_test_kit and many others, entries within the `must_supports.extensions` list must have an `id` field and the entries within the `must_supports.slices` list must have a `slice_id` field with the id of corresponding item within the FHIR StructureDefinition. This requirement was not previously enforced but was always necessary to provide actionable feedback. The requirement is now enforced at runtime.
