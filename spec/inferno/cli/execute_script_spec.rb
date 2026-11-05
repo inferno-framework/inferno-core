@@ -394,13 +394,56 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(mock_compare).to have_received(:save_comparison_csv_to_file)
     end
 
-    it 'returns false and writes actual results when the expected file does not exist' do
+    it 'returns false and writes pretty-printed actual results when the expected file does not exist' do
+      results = [{ 'result' => 'pass' }]
       allow(File).to receive(:exist?).with(expected_file).and_return(false)
-      allow(mock_results).to receive(:results_for_session).with(session_id).and_return([{ 'result' => 'pass' }])
+      allow(mock_results).to receive(:results_for_session).with(session_id).and_return(results)
       allow(File).to receive(:write).with(expected_file, anything)
 
       expect(instance.send(:compare_session, session)).to be(false)
-      expect(File).to have_received(:write).with(expected_file, anything)
+      expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
+    end
+
+    context 'with update_expected' do
+      subject(:instance) do
+        build_instance({
+                         'sessions' => [{ 'suite' => suite_id }],
+                         'steps' => [],
+                         'comparison_config' => { 'expected_results_file' => expected_file }
+                       }, base_options.merge(update_expected: true))
+      end
+
+      let(:results) { [{ 'test_id' => 'test-1', 'result' => 'fail' }] }
+
+      before { allow(File).to receive(:write).with(expected_file, anything) }
+
+      it 'overwrites the expected file with pretty-printed results and returns true on a mismatch' do
+        allow(File).to receive(:exist?).with(expected_file).and_return(true)
+        allow(mock_compare).to receive_messages(results_match?: false, session_results: results)
+        allow(mock_compare).to receive(:save_actual_results_to_file)
+        allow(mock_compare).to receive(:save_comparison_csv_to_file)
+
+        expect(instance.send(:compare_session, session)).to be(true)
+        expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
+        expect(mock_compare).to_not have_received(:save_actual_results_to_file)
+        expect(mock_compare).to_not have_received(:save_comparison_csv_to_file)
+      end
+
+      it 'does not rewrite the expected file when results match' do
+        allow(File).to receive(:exist?).with(expected_file).and_return(true)
+        allow(mock_compare).to receive(:results_match?).and_return(true)
+
+        expect(instance.send(:compare_session, session)).to be(true)
+        expect(File).to_not have_received(:write)
+      end
+
+      it 'writes the expected file and returns true when it does not exist' do
+        allow(File).to receive(:exist?).with(expected_file).and_return(false)
+        allow(mock_results).to receive(:results_for_session).with(session_id).and_return(results)
+
+        expect(instance.send(:compare_session, session)).to be(true)
+        expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
+      end
     end
   end
 

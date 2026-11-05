@@ -140,6 +140,13 @@ module Inferno
                    'Scripts with command: steps will fail unless this flag is set. ' \
                    'When PATTERN matches multiple scripts, this also applies to all of them ' \
                    '(in addition to any individual script whose filename contains "_with_commands").'
+      option :update_expected,
+             aliases: ['-u'],
+             type: :boolean,
+             default: false,
+             desc: 'When results do not match, overwrite the expected results file with the actual results ' \
+                   '(instead of writing actual results and comparison files) and treat the comparison as passing. ' \
+                   'Review the changes with git diff.'
       def execute_script(pattern = 'execution_scripts/**/*.yaml')
         matches = Dir.glob(pattern).select { |file| file.end_with?('.yaml', '.yml') }.sort
 
@@ -148,6 +155,7 @@ module Inferno
             pattern:,
             inferno_base_url: options[:inferno_base_url],
             allow_commands: options[:allow_commands],
+            update_expected: options[:update_expected],
             compare_messages: options[:compare_messages],
             compare_result_message: options[:compare_result_message],
             poll_interval: options[:poll_interval],

@@ -904,6 +904,11 @@ module Inferno
           matched = cmp.results_match?
           warn "  Comparing against #{File.basename(expected_file)}"
           warn "  Actual results matched expected results? #{matched}"
+          if !matched && options[:update_expected]
+            write_expected_results(expected_file, cmp.session_results)
+            warn "  Expected results updated: wrote actual results to #{expected_file}"
+            return true
+          end
           unless matched
             cmp.save_actual_results_to_file
             cmp.save_comparison_csv_to_file
@@ -912,9 +917,13 @@ module Inferno
         else
           warn "  Expected results file not found; writing actual results to #{expected_file}"
           results = Session::SessionResults.new(session.session_id, options).results_for_session(session.session_id)
-          File.write(expected_file, results.to_json)
-          false
+          write_expected_results(expected_file, results)
+          options[:update_expected].present?
         end
+      end
+
+      def write_expected_results(expected_file, results)
+        File.write(expected_file, JSON.pretty_generate(results))
       end
 
       def resolve_expected_file_for_comparison(session)

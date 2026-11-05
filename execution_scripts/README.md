@@ -25,6 +25,18 @@ Note that this is different than expected `fail` results, which are valid
 non-passing results for tests: these can be recorded as expected within
 the expected results file.
 
+## Updating Expected Results
+
+When a change intentionally alters results, run the affected scripts with
+`--update-expected` (`-u`). Expected results files that don't match are
+overwritten with the actual results (pretty-printed) instead of writing
+actual results and comparison files, and the comparison is treated as passing.
+Review the changes with `git diff` before committing.
+
+```
+bundle exec inferno execute_script -u execution_scripts/path/to/script.yaml
+```
+
 ## Cleaning Up Result Files
 
 When a script's results don't match its expected results file, the

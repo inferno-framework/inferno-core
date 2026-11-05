@@ -120,6 +120,23 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
       end
     end
 
+    context 'when update_expected is passed' do
+      it 'passes --update-expected to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--update-expected',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(update_expected: true)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--update-expected'
+        )
+      end
+    end
+
     context 'when poll_interval differs from the default' do
       it 'passes --poll-interval to the command' do
         stub_subprocess(
