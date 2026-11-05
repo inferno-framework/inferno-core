@@ -19,8 +19,8 @@ module Inferno
     #                                              #   a session for each indicated suite will be created and
     #                                              #   a successful run will have the expected results for all sessions.
     #     - suite: my_suite                        # internal ID, title, or short title
-    #       name: my_name                          # optional; used as key in multi-session; must be unique
-    #                                              #           and not contain whitespace, '.', '{', or '}'
+    #       name: my_name                          # required (and unique) in multi-session scripts, optional
+    #                                              #           otherwise; must not contain whitespace, '.', '{', or '}'
     #       preset: my-preset                      # optional; internal ID or title
     #       suite_options:                         # optional; option_key and option_value can be the
     #         option_key: option_value             #           internal values or the displayed titles
@@ -243,15 +243,25 @@ module Inferno
         exit(1)
       end
 
-      # Session keys (name, or suite when no name is given) are used in template tokens
-      # and must be unique and free of characters that would prevent token matching.
+      # Session names are used in template tokens and must be free of characters that would
+      # prevent token matching. Multi-session scripts must name every session uniquely.
       def validate_session_names!
         session_configs = Array(script_config['sessions'])
-        errors = invalid_session_name_errors(session_configs) + duplicate_session_name_errors(session_configs)
+        errors = missing_session_name_errors(session_configs) +
+                 invalid_session_name_errors(session_configs) +
+                 duplicate_session_name_errors(session_configs)
         return if errors.empty?
 
         puts JSON.pretty_generate({ errors: errors.join(' ') })
         exit(1)
+      end
+
+      def missing_session_name_errors(session_configs)
+        return [] unless multi_session_script?
+
+        session_configs.reject { |session_config| session_config['name'].present? }.map do |session_config|
+          "Session for suite '#{session_config['suite']}' must have a name when a script has multiple sessions."
+        end
       end
 
       def invalid_session_name_errors(session_configs)
@@ -262,10 +272,9 @@ module Inferno
       end
 
       def duplicate_session_name_errors(session_configs)
-        keys = session_configs.map { |session_config| (session_config['name'] || session_config['suite']).to_s }
-        keys.tally.select { |_key, count| count > 1 }.keys.map do |key|
-          "Duplicate session name '#{key}'. Give each session a unique name " \
-            '(sessions without a name use their suite).'
+        names = session_configs.filter_map { |session_config| session_config['name']&.to_s }
+        names.tally.select { |_name, count| count > 1 }.keys.map do |name|
+          "Duplicate session name '#{name}'. Give each session a unique name."
         end
       end
 
@@ -882,7 +891,7 @@ module Inferno
         end
 
         response = Faraday.new(request: { timeout: 600 }).get(uri)
-        warn "http_get received HTTP #{response.status} from #{url}" unless response.success?
+        warn "http_get received HTTP #{response.status} from #{url}" if response.status >= 400
         true
       rescue URI::InvalidURIError, Faraday::Error => e
         warn "http_get request to #{url} failed: #{e.message}"

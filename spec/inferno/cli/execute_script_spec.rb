@@ -837,9 +837,15 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect_exit_with_error(config, /Duplicate session name 'receiver'/)
     end
 
-    it 'exits 1 when two unnamed sessions use the same suite' do
-      config = { 'sessions' => [{ 'suite' => suite_id }, { 'suite' => suite_id }], 'steps' => [] }
-      expect_exit_with_error(config, /Duplicate session name '#{suite_id}'/)
+    it 'exits 1 when a session in a multi-session script has no name' do
+      config = { 'sessions' => [{ 'suite' => suite_id, 'name' => 'sender' }, { 'suite' => suite_id }], 'steps' => [] }
+      expect_exit_with_error(config, /Session for suite '#{suite_id}' must have a name/)
+    end
+
+    it 'does not exit when the only session has no name, even if the suite is a title' do
+      config = { 'sessions' => [{ 'suite' => 'Demonstration Suite' }], 'steps' => [] }
+      allow_any_instance_of(Inferno::CLI::Session::CreateSession).to receive(:suite_id).and_return(suite_id)
+      expect { build_instance(config) }.to_not raise_error
     end
 
     it 'does not exit for unique, valid session names' do
@@ -877,11 +883,18 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(request).to have_been_made
     end
 
-    it 'returns true and logs a warning on a non-2xx response' do
+    it 'returns true and logs a warning on an error response' do
       stub_request(:get, url).to_return(status: 500)
       allow(instance).to receive(:warn)
       expect(instance.send(:execute_http_get, url)).to be true
       expect(instance).to have_received(:warn).with(/HTTP 500/)
+    end
+
+    it 'returns true without a warning on a redirect response (e.g., from a resume route)' do
+      stub_request(:get, url).to_return(status: 302, headers: { 'Location' => "#{inferno_host}/demo" })
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, url)).to be true
+      expect(instance).to_not have_received(:warn)
     end
 
     it 'returns false when the request cannot be made' do
