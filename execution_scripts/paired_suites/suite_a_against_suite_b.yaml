@@ -27,7 +27,7 @@ steps:
     session: sender
     status: waiting
     last_completed: 1.02
-    command: "curl -o /dev/null -s '{sender.wait_outputs.wait_test_url}'"
+    http_get: "{sender.wait_outputs.wait_test_url}"
     next_poll_session: receiver
     action_description: Confirm receipt of Signal One, start waiting for Signal Two
 
@@ -50,7 +50,7 @@ steps:
     session: sender
     status: waiting
     last_completed: 1.04
-    command: "curl -o /dev/null -s '{sender.wait_outputs.wait_test_url}'"
+    http_get: "{sender.wait_outputs.wait_test_url}"
     action_description: Confirm receipt of Signal Two
 
   - state_description: Finished Suite B (Sender) Group 1

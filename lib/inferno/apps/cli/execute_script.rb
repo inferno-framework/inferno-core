@@ -80,10 +80,15 @@ module Inferno
     #       session: my_name                       # optional; required when multiple sessions to indicate which session
     #                                              #           can match this step
     #       action: END_SCRIPT|NOOP|WAIT           # optional; built-in action (case-insensitive)
-    #                                              #           (mutually exclusive with command/start_run)
+    #                                              #           (mutually exclusive with command/http_get/start_run)
     #       # OR
     #       command: "bundle exec ..."             # optional; arbitrary shell command (requires
     #                                              #           --allow-commands CLI flag)
+    #       # OR
+    #       http_get: "{wait_outputs.KEY}"         # optional; http(s) URL to send a GET request to
+    #                                              #           (e.g. to resume a waiting test); does not
+    #                                              #           require --allow-commands. Fails the script
+    #                                              #           only if the request cannot be made.
     #       # OR
     #       start_run:
     #         session: "my_name"                   # optional; session name or template token
@@ -119,7 +124,7 @@ module Inferno
     #   by default and require the --allow-commands CLI flag to run. Scripts that contain no
     #   command: steps are unaffected and do not need the flag.
     #
-    # Template tokens in command strings and start_run input values (including the
+    # Template tokens in command strings, http_get URLs, and start_run input values (including the
     # content of @path file inputs):
     #   {session_id}              — current session's Inferno session ID
     #   {NAME.session_id}         — named session's ID
@@ -375,6 +380,10 @@ module Inferno
           target_session_id = start_run_target_session(matched_step[:start_run])
           warn "Executing: #{start_run_description(matched_step[:start_run], session_id: target_session_id)}"
           execute_start_run(matched_step[:start_run], target_session_id)
+        elsif matched_step[:command] == 'HTTP_GET'
+          warn "Executing: GET #{matched_step[:url]}"
+          execution_status.failed = true unless execute_http_get(matched_step[:url])
+          execution_status.done = execution_status.failed
         else
           warn "Executing: #{matched_step[:command]}"
           execution_status.failed = true unless execute_command(matched_step[:command])
@@ -613,6 +622,8 @@ module Inferno
           start_run_description(step['start_run'] || {})
         elsif step.key?('action')
           "action: #{step['action']}"
+        elsif step.key?('http_get')
+          "http_get: #{step['http_get']}"
         else
           step['command'].to_s
         end
@@ -643,6 +654,8 @@ module Inferno
           { command: 'START_RUN', start_run: }
         elsif step.key?('action')
           { command: step['action'].upcase }
+        elsif step.key?('http_get')
+          { command: 'HTTP_GET', url: apply_templates(step['http_get'].to_s, status, session_key) }
         else
           cmd = step['command'].to_s
           { command: cmd.include?('{') ? apply_templates(cmd, status, session_key) : cmd }
@@ -804,6 +817,24 @@ module Inferno
       def execute_command(cmd)
         system(cmd)
         $CHILD_STATUS.success?
+      end
+
+      # Sends a GET request to +url+ and discards the response body. Only http(s) URLs
+      # are allowed. Returns false if the URL is invalid or the request cannot be made;
+      # a non-2xx response is logged but does not count as a failure.
+      def execute_http_get(url)
+        uri = URI.parse(url)
+        unless uri.is_a?(URI::HTTP) && uri.host.present?
+          warn "Invalid http_get URL (must be http or https): #{url}"
+          return false
+        end
+
+        response = Faraday.new(request: { timeout: 600 }).get(uri)
+        warn "http_get received HTTP #{response.status} from #{url}" unless response.success?
+        true
+      rescue URI::InvalidURIError, Faraday::Error => e
+        warn "http_get request to #{url} failed: #{e.message}"
+        false
       end
 
       # ---------------------------------------------------------------------------

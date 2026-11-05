@@ -745,6 +745,84 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
+  describe '#execute_http_get' do
+    let(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
+
+    let(:url) { "#{inferno_host}/custom/demo/resume?token=abc" }
+
+    it 'sends a GET request and returns true on success' do
+      request = stub_request(:get, url).to_return(status: 200)
+      expect(instance.send(:execute_http_get, url)).to be true
+      expect(request).to have_been_made
+    end
+
+    it 'returns true and logs a warning on a non-2xx response' do
+      stub_request(:get, url).to_return(status: 500)
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, url)).to be true
+      expect(instance).to have_received(:warn).with(/HTTP 500/)
+    end
+
+    it 'returns false when the request cannot be made' do
+      stub_request(:get, url).to_raise(Faraday::ConnectionFailed.new('connection refused'))
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, url)).to be false
+      expect(instance).to have_received(:warn).with(/connection refused/)
+    end
+
+    it 'returns false without making a request for a non-http(s) URL' do
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, 'file:///etc/passwd')).to be false
+      expect(instance).to have_received(:warn).with(/must be http or https/)
+    end
+
+    it 'returns false for an unparseable URL' do
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, 'http://exa mple.com')).to be false
+      expect(instance).to have_received(:warn).with(/failed/)
+    end
+  end
+
+  describe 'http_get steps' do
+    let(:url) { "#{inferno_host}/custom/demo/resume" }
+    let(:config) do
+      {
+        'sessions' => [{ 'suite' => suite_id }],
+        'steps' => [{ 'status' => 'waiting', 'last_completed' => 'wait-test', 'http_get' => '{wait_outputs.url}' }]
+      }
+    end
+    let(:status) do
+      { 'status' => 'waiting', 'last_test_executed' => 'wait-test',
+        'wait_outputs' => [{ 'name' => 'url', 'value' => url }] }
+    end
+
+    it 'does not require --allow-commands' do
+      expect { build_instance(config, base_options.merge(allow_commands: false)) }.to_not raise_error
+    end
+
+    it 'resolves template tokens in the URL' do
+      instance = build_instance(config)
+      step = instance.send(:resolve_command, config['steps'].first, status, suite_id)
+      expect(step).to eq({ command: 'HTTP_GET', url: })
+    end
+
+    it 'sends the GET request when the step is taken' do
+      instance = build_instance(config)
+      request = stub_request(:get, url).to_return(status: 200)
+      instance.send(:take_step, { command: 'HTTP_GET', url: })
+      expect(request).to have_been_made
+      expect(instance.execution_status.failed).to be_falsey
+    end
+
+    it 'marks the script failed and done when the request cannot be made' do
+      instance = build_instance(config)
+      stub_request(:get, url).to_raise(Faraday::ConnectionFailed.new('connection refused'))
+      instance.send(:take_step, { command: 'HTTP_GET', url: })
+      expect(instance.execution_status.failed).to be true
+      expect(instance.execution_status.done).to be true
+    end
+  end
+
   describe '#verify_step' do
     subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
 
