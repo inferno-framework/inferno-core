@@ -25,12 +25,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_1",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -58,12 +54,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_2",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -91,12 +83,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_3",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -124,12 +112,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_4",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -170,12 +154,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "infra_test-outer_inline_group-inner_inline_group",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -216,12 +196,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "infra_test-outer_inline_group",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -239,12 +215,8 @@
       }
     ],
     "optional": true,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "infra_test-passing_optional_group-Test01",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -262,12 +234,8 @@
       }
     ],
     "optional": true,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "fail",
     "test_id": "infra_test-passing_optional_group-Test02",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -287,12 +255,8 @@
       }
     ],
     "optional": true,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "infra_test-passing_optional_group",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -310,12 +274,8 @@
       }
     ],
     "optional": true,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "fail",
     "test_id": "infra_test-failing_optional_group-Test01",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -335,12 +295,8 @@
       }
     ],
     "optional": true,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "fail",
     "test_group_id": "infra_test-failing_optional_group",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -358,12 +314,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "infra_test-mixed_optional_group-Test02",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -383,12 +335,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "infra_test-mixed_optional_group",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -408,12 +356,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "omit",
     "result_message": "No tests defined",
     "test_group_id": "infra_test-empty_group",
@@ -447,12 +391,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "infra_test-external_outer_group-external_inner_group-external_test1",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -493,12 +433,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "infra_test-external_outer_group-external_inner_group",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -539,12 +475,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "infra_test-external_outer_group",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
@@ -606,12 +538,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_run_id": "3893d37b-ac41-4af7-827f-1f31384fbb49",
     "test_session_id": "gsjaJJAEUhu",

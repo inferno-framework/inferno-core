@@ -10,12 +10,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "auth_info-auth_info_demo-Group01-public_auth",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
@@ -33,12 +29,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "auth_info-auth_info_demo-Group01-symmetric_auth",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
@@ -56,12 +48,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "auth_info-auth_info_demo-Group01-asymmetric_auth",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
@@ -79,12 +67,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "auth_info-auth_info_demo-Group01-backend_services_auth",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
@@ -125,12 +109,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "auth_info-auth_info_demo-Group01",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
@@ -148,12 +128,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "auth_info-auth_info_demo-Group02-public_auth",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
@@ -171,12 +147,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "auth_info-auth_info_demo-Group02-symmetric_auth",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
@@ -194,12 +166,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "auth_info-auth_info_demo-Group02-asymmetric_auth",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
@@ -217,12 +185,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_id": "auth_info-auth_info_demo-Group02-backend_services_auth",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
@@ -263,12 +227,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "auth_info-auth_info_demo-Group02",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
@@ -337,12 +297,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_group_id": "auth_info-auth_info_demo",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
@@ -411,12 +367,8 @@
       }
     ],
     "optional": false,
-    "outputs": [
-
-    ],
-    "requests": [
-
-    ],
+    "outputs": [],
+    "requests": [],
     "result": "pass",
     "test_run_id": "74d2feb9-83e8-45b5-b453-21bf9bbdcd33",
     "test_session_id": "e78qHJtARIq",
