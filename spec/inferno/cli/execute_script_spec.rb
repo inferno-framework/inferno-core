@@ -317,6 +317,40 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['list_input']).to eq(array_value.to_json)
     end
+
+    context 'when a substituted value contains characters that must be escaped in JSON' do
+      let(:status) { { 'wait_result_message' => %(Say "hi"\\\nthere) } }
+
+      it 'JSON-escapes values substituted into a Hash input' do
+        start_run = { 'runnable' => 'suite', 'inputs' => { 'auth_info' => { 'note' => '{result_message}' } } }
+        result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+        expect(JSON.parse(result['inputs']['auth_info'])).to eq({ 'note' => status['wait_result_message'] })
+      end
+
+      it 'JSON-escapes values substituted into a .json file input' do
+        path = File.expand_path('data.json', '.')
+        allow(File).to receive(:exist?).with(path).and_return(true)
+        allow(File).to receive(:read).with(path).and_return('{"note": "{result_message}"}')
+        start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@data.json' } }
+        result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+        expect(JSON.parse(result['inputs']['data'])).to eq({ 'note' => status['wait_result_message'] })
+      end
+
+      it 'does not escape values substituted into a non-JSON file input' do
+        path = File.expand_path('note.txt', '.')
+        allow(File).to receive(:exist?).with(path).and_return(true)
+        allow(File).to receive(:read).with(path).and_return('note: {result_message}')
+        start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@note.txt' } }
+        result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+        expect(result['inputs']['data']).to eq("note: #{status['wait_result_message']}")
+      end
+
+      it 'does not escape values substituted into a plain string input' do
+        start_run = { 'runnable' => 'suite', 'inputs' => { 'note' => 'note: {result_message}' } }
+        result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+        expect(result['inputs']['note']).to eq("note: #{status['wait_result_message']}")
+      end
+    end
   end
 
   describe '#compare_session' do

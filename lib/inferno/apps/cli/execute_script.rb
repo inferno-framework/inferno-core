@@ -96,6 +96,7 @@ module Inferno
     #                                              #           relative paths are resolved from the
     #                                              #           directory containing this script file;
     #                                              #           template tokens in the file are substituted
+    #                                              #           (JSON-escaped for .json files)
     #           input_name:                        #           YAML mappings and sequences are
     #             key: value                       #           automatically JSON-serialized, useful
     #           input_name:                        #           for auth_info and other JSON inputs
@@ -128,6 +129,9 @@ module Inferno
     #   {NAME.wait_outputs.KEY}   — named session's wait output by name
     #   {inferno_base_url}        — the Inferno base URL (--inferno-base-url option, or the
     #                               configured base_url when not provided)
+    # In JSON contexts (YAML mapping/sequence inputs and .json file inputs), tokens are
+    # assumed to appear inside double-quoted JSON strings, and substituted values are
+    # JSON-escaped accordingly.
     class ExecuteScript
       SHORT_ID_PATTERN = /\A[0-9][0-9.]*\z/
       # Seconds subtracted from the initial last_log_time so the first
@@ -653,15 +657,20 @@ module Inferno
       # Cross-session tokens trigger an on-demand status fetch (cached in
       # execution_status.cross_session_status, reset each poll cycle in poll_for_next_step).
       #
+      # When +json_string+ is true, +str+ is JSON and tokens are assumed to appear inside
+      # JSON string literals, so substituted values are escaped (quotes, backslashes,
+      # control characters) to keep the result valid JSON.
+      #
       # Returns the resolved string or exits 3 if a token cannot be resolved.
-      def apply_templates(str, status, session_key)
+      def apply_templates(str, status, session_key, json_string: false)
         result = str.dup
+        escape = json_string ? ->(value) { value.to_s.to_json[1..-2] } : ->(value) { value }
 
         # {inferno_base_url} — the Inferno base URL
-        result.gsub!('{inferno_base_url}') { inferno_base_url }
+        result.gsub!('{inferno_base_url}') { escape.call(inferno_base_url) }
 
         # {session_id} — current session
-        result.gsub!('{session_id}') { session_name_to_id_map[session_key] }
+        result.gsub!('{session_id}') { escape.call(session_name_to_id_map[session_key]) }
 
         # {NAME.session_id} — named session
         result.gsub!(/\{([^}.]+)\.session_id\}/) do
@@ -671,7 +680,7 @@ module Inferno
             puts JSON.pretty_generate({ errors: "Unknown session name '#{name}' in token {#{name}.session_id}" })
             exit(3)
           end
-          id
+          escape.call(id)
         end
 
         # {result_message} — current session wait result message
@@ -681,7 +690,7 @@ module Inferno
             puts JSON.pretty_generate({ errors: 'Token {result_message} used but session is not in waiting state' })
             exit(3)
           end
-          msg
+          escape.call(msg)
         end
 
         # {NAME.result_message} — another session's wait result message
@@ -695,7 +704,7 @@ module Inferno
             )
             exit(3)
           end
-          msg
+          escape.call(msg)
         end
 
         # {wait_outputs.KEY} — current session wait output
@@ -706,7 +715,7 @@ module Inferno
             puts JSON.pretty_generate({ errors: "Wait output '#{key}' not found in current session" })
             exit(3)
           end
-          output
+          escape.call(output)
         end
 
         # {NAME.wait_outputs.KEY} — another session's wait output
@@ -721,7 +730,7 @@ module Inferno
             )
             exit(3)
           end
-          output
+          escape.call(output)
         end
 
         result
@@ -750,8 +759,9 @@ module Inferno
         end
         start_run['inputs']&.each_key do |input_name|
           raw = start_run['inputs'][input_name]
-          raw = raw.to_json if raw.is_a?(Array) || raw.is_a?(Hash)
-          value = expand_file_input_path(apply_templates(raw.to_s, status, session_key))
+          json_string = raw.is_a?(Array) || raw.is_a?(Hash)
+          raw = raw.to_json if json_string
+          value = expand_file_input_path(apply_templates(raw.to_s, status, session_key, json_string:))
           start_run['inputs'][input_name] = apply_templates_to_file_input(value, status, session_key)
         end
 
@@ -759,15 +769,17 @@ module Inferno
       end
 
       # For an @path input, substitutes template tokens within the file's content.
+      # Substituted values are JSON-escaped for .json files.
       # Returns the substituted content when any token was replaced; otherwise returns
       # the @path unchanged so that start_run reads the file as-is.
       def apply_templates_to_file_input(value, status, session_key)
         return value unless value.start_with?('@')
 
-        content = File.read(value[1..])
+        path = value[1..]
+        content = File.read(path)
         return value unless content.valid_encoding?
 
-        templated = apply_templates(content, status, session_key)
+        templated = apply_templates(content, status, session_key, json_string: File.extname(path).casecmp?('.json'))
         templated == content ? value : templated
       end
 
