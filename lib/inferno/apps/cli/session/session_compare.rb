@@ -36,6 +36,12 @@ module Inferno
             default: false,
             desc: 'Compare result_message when comparing results.'
           },
+          compare_requests: {
+            type: :boolean,
+            default: false,
+            desc: 'Compare requests (direction, verb, URL, and status) when comparing results. ' \
+                  'Normalized strings are applied to the URL.'
+          },
           normalized_strings: {
             aliases: ['-n'],
             type: :array,
@@ -46,7 +52,7 @@ module Inferno
             aliases: ['-d'],
             type: :boolean,
             default: false,
-            desc: 'When displaying messages in CSV output, only show mismatched messages ' \
+            desc: 'When displaying messages and requests in CSV output, only show mismatched ones ' \
                   '(hide matching ones).'
           }
         }.freeze
@@ -151,6 +157,11 @@ module Inferno
             header_row << 'messages different?'
             header_row << "expected messages#{normalized_suffix}"
             header_row << "actual messages#{normalized_suffix}"
+          end
+          if options[:compare_requests]
+            header_row << 'requests different?'
+            header_row << "expected requests#{normalized_suffix}"
+            header_row << "actual requests#{normalized_suffix}"
           end
 
           header_row
@@ -280,17 +291,67 @@ module Inferno
             options[:normalized_strings].present?
           end
 
+          # Option enabling each optional comparison => method checking that it matches
+          OPTIONAL_COMPARISONS = {
+            compare_result_message: :same_result_message?,
+            compare_messages: :same_messages?,
+            compare_requests: :same_requests?
+          }.freeze
+
           def same_results?
             return false unless type == 'Compared'
             return false unless expected_result['result'] == actual_result['result']
 
-            if options[:compare_result_message] &&
-               normalize_string(expected_result['result_message']) != normalize_string(actual_result['result_message'])
-              return false
-            end
-            return false if options[:compare_messages] && !same_messages?
+            OPTIONAL_COMPARISONS.all? { |option, check| !options[option] || send(check) }
+          end
 
-            true
+          def same_result_message?
+            normalize_string(expected_result['result_message']) == normalize_string(actual_result['result_message'])
+          end
+
+          # A request is compared by its direction, verb, URL, and response status.
+          # Normalized strings are applied to the URL.
+          def request_signature(request)
+            [
+              request['direction'],
+              request['verb'].to_s.upcase,
+              normalize_string(request['url'].to_s),
+              request['status']
+            ].join(' ')
+          end
+
+          def sorted_request_signatures(result)
+            Array(result&.dig('requests')).map { |request| request_signature(request) }.sort
+          end
+
+          # Requests are compared as an unordered collection since concurrent requests
+          # may be recorded in a different order between runs.
+          # Returns [{ signature:, expected: bool, actual: bool }] sorted by signature,
+          # where a request is matched when it is present on both sides.
+          def request_comparisons
+            @request_comparisons ||= build_request_comparisons
+          end
+
+          def build_request_comparisons
+            expected_counts = sorted_request_signatures(expected_result).tally
+            actual_counts = sorted_request_signatures(actual_result).tally
+            (expected_counts.keys | actual_counts.keys).sort.flat_map do |signature|
+              expected_count = expected_counts.fetch(signature, 0)
+              actual_count = actual_counts.fetch(signature, 0)
+              Array.new([expected_count, actual_count].max) do |index|
+                { signature:, expected: index < expected_count, actual: index < actual_count }
+              end
+            end
+          end
+
+          def same_requests?
+            request_comparisons.all? { |entry| entry[:expected] && entry[:actual] }
+          end
+
+          def different_requests?
+            return false unless type == 'Compared'
+
+            !same_requests?
           end
 
           def message_comparisons
@@ -419,7 +480,16 @@ module Inferno
               fields[:expected_messages] = expected_result&.dig('messages')
               fields[:actual_messages] = actual_result&.dig('messages')
             end
-            fields
+            fields.merge(requests_to_h_fields)
+          end
+
+          def requests_to_h_fields
+            return {} unless options[:compare_requests]
+
+            {
+              expected_requests: expected_result && sorted_request_signatures(expected_result),
+              actual_requests: actual_result && sorted_request_signatures(actual_result)
+            }
           end
 
           def comparison_csv_row
@@ -434,7 +504,13 @@ module Inferno
               row << format_messages_for_csv(expected_result)
               row << format_messages_for_csv(actual_result)
             end
-            row
+            row.concat(requests_csv_columns)
+          end
+
+          def requests_csv_columns
+            return [] unless options[:compare_requests]
+
+            [different_requests?, format_requests_for_csv(:expected), format_requests_for_csv(:actual)]
           end
 
           def type
@@ -468,6 +544,18 @@ module Inferno
             lines.chunk_while { |a, b| a == b }.map do |group|
               group.size > 1 ? "(#{group.size}) #{group.first}" : group.first
             end
+          end
+
+          def format_requests_for_csv(side)
+            lines = request_comparisons.filter_map do |entry|
+              next unless entry[side]
+
+              matches = entry[:expected] && entry[:actual]
+              next if options[:only_different_messages] && matches
+
+              "#{matches ? '- ' : '! '}#{entry[:signature]}"
+            end
+            collapse_message_lines(lines).join("\n")
           end
 
           def message_text_for_csv(message, matches)

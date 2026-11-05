@@ -548,5 +548,101 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
         end
       end
     end
+
+    describe 'request comparison' do
+      def request(url, direction: 'outgoing', verb: 'get', status: 200)
+        { 'id' => SecureRandom.uuid, 'direction' => direction, 'verb' => verb, 'url' => url,
+          'status' => status, 'timestamp' => Time.now.iso8601, 'index' => rand(1000) }
+      end
+
+      def with_requests(*requests)
+        base_result.merge('requests' => requests)
+      end
+
+      let(:options) { { compare_requests: true } }
+
+      it 'matches when requests differ only in id, index, and timestamp' do
+        expected = with_requests(request('http://localhost:4567/inferno/custom/demo/resume?xyz=abc'))
+        actual = with_requests(request('http://localhost:4567/inferno/custom/demo/resume?xyz=abc'))
+        expect(compared(expected, actual, options).same_result?).to be(true)
+      end
+
+      it 'does not match when only the host differs unless the host is normalized' do
+        expected = with_requests(request('http://localhost:4567/inferno/custom/demo/resume'))
+        actual = with_requests(request('https://inferno.example.com/inferno/custom/demo/resume'))
+        normalizing_options = options.merge(normalized_strings: ['/https?:\/\/[^\/]+/'])
+        expect(compared(expected, actual, options).same_result?).to be(false)
+        expect(compared(expected, actual, normalizing_options).same_result?).to be(true)
+      end
+
+      it 'matches regardless of request order' do
+        first = request('http://server/fhir/Patient/1')
+        second = request('http://server/fhir/Patient/2')
+        expect(compared(with_requests(first, second), with_requests(second, first), options).same_result?)
+          .to be(true)
+      end
+
+      it 'does not match when a request is missing' do
+        expected = with_requests(request('http://server/fhir/Patient/1'), request('http://server/fhir/Patient/2'))
+        actual = with_requests(request('http://server/fhir/Patient/1'))
+        expect(compared(expected, actual, options).same_result?).to be(false)
+      end
+
+      it 'does not match when a request is repeated' do
+        expected = with_requests(request('http://server/fhir/Patient/1'))
+        actual = with_requests(request('http://server/fhir/Patient/1'), request('http://server/fhir/Patient/1'))
+        expect(compared(expected, actual, options).same_result?).to be(false)
+      end
+
+      it 'does not match when the URL, verb, direction, or status differ' do
+        expected = with_requests(request('http://server/fhir/Patient?name=a'))
+        [
+          request('http://server/fhir/Observation?name=a'),
+          request('http://server/fhir/Patient?name=b'),
+          request('http://server/fhir/Patient?name=a', verb: 'post'),
+          request('http://server/fhir/Patient?name=a', direction: 'incoming'),
+          request('http://server/fhir/Patient?name=a', status: 404)
+        ].each do |different|
+          expect(compared(expected, with_requests(different), options).same_result?).to be(false)
+        end
+      end
+
+      it 'applies normalized strings to the URL' do
+        expected = with_requests(request('http://server/redirect?code=abc123&state=1'))
+        actual = with_requests(request('http://server/redirect?code=xyz789&state=1'))
+        normalizing_options = options.merge(normalized_strings: ['/code=[a-z0-9]+/'])
+        expect(compared(expected, actual, options).same_result?).to be(false)
+        expect(compared(expected, actual, normalizing_options).same_result?).to be(true)
+      end
+
+      it 'ignores requests when compare_requests is not set' do
+        expected = with_requests(request('http://server/fhir/Patient/1'))
+        expect(compared(expected, with_requests, {}).same_result?).to be(true)
+      end
+
+      it 'treats a result without requests the same as one with no requests' do
+        expect(compared(base_result, with_requests, options).same_result?).to be(true)
+      end
+
+      it 'formats requests for CSV, marking mismatches' do
+        expected = with_requests(request('http://server/fhir/Patient/1'), request('http://server/fhir/Patient/2'))
+        actual = with_requests(request('http://server/fhir/Patient/1', status: 500),
+                               request('http://server/fhir/Patient/2'))
+        r = compared(expected, actual, options)
+        expect(r.format_requests_for_csv(:expected))
+          .to eq("! outgoing GET http://server/fhir/Patient/1 200\n- outgoing GET http://server/fhir/Patient/2 200")
+        expect(r.format_requests_for_csv(:actual))
+          .to eq("! outgoing GET http://server/fhir/Patient/1 500\n- outgoing GET http://server/fhir/Patient/2 200")
+        expect(r.comparison_csv_row.last(3).first).to be(true)
+      end
+
+      it 'hides matching requests in CSV with only_different_messages' do
+        expected = with_requests(request('http://server/fhir/Patient/1'), request('http://server/fhir/Patient/2'))
+        actual = with_requests(request('http://server/fhir/Patient/2'))
+        r = compared(expected, actual, options.merge(only_different_messages: true))
+        expect(r.format_requests_for_csv(:expected)).to eq('! outgoing GET http://server/fhir/Patient/1 200')
+        expect(r.format_requests_for_csv(:actual)).to eq('')
+      end
+    end
   end
 end

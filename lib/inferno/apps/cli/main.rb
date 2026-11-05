@@ -120,6 +120,11 @@ module Inferno
              type: :boolean,
              default: true,
              desc: 'Compare result_message field when comparing results.'
+      option :compare_requests,
+             type: :boolean,
+             default: true,
+             desc: 'Compare requests (direction, verb, URL, and status) when comparing results. ' \
+                   'Normalized strings from the script are applied to the URL.'
       option :poll_interval,
              aliases: ['-p'],
              type: :numeric,
@@ -134,7 +139,7 @@ module Inferno
              aliases: ['-d'],
              type: :boolean,
              default: true,
-             desc: 'Only show messages that differ when comparing results.'
+             desc: 'Only show messages and requests that differ when comparing results.'
       option :allow_commands,
              type: :boolean,
              default: false,
@@ -158,6 +163,7 @@ module Inferno
             update_expected: options[:update_expected],
             compare_messages: options[:compare_messages],
             compare_result_message: options[:compare_result_message],
+            compare_requests: options[:compare_requests],
             poll_interval: options[:poll_interval],
             default_poll_timeout: options[:default_poll_timeout],
             only_different_messages: options[:only_different_messages]

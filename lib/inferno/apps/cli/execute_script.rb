@@ -38,8 +38,13 @@ module Inferno
     #                                              #    the expected results, an actual results JSON file and a CSV diff
     #                                              #    are written to the directory of the expected results file for
     #                                              #    use in evaluating the failure.
+    #                                              #    Session ids are always normalized before comparing: each
+    #                                              #    session's id in this run and in its expected results file
+    #                                              #    are replaced with <NAME.session_id> (NAME is the session
+    #                                              #    name or suite id).
     #     normalized_strings:                      # optional; global normalization rules applied to
-    #       - "http://my-server.example.com"       # both expected and actual before comparing.
+    #       - "http://my-server.example.com"       # both expected and actual before comparing
+    #                                              # (result messages, messages, and request URLs).
     #       - "http://other-value.example.com"     # plain string: replaced with <NORMALIZED>;
     #                                              # URL-encoded form is also replaced automatically.
     #       - "/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/"  # regex string (wrapped in /…/): compiled
@@ -959,7 +964,7 @@ module Inferno
       end
 
       def compare_session(session)
-        expected_file = resolve_expected_file_for_comparison(session)
+        expected_file = expected_file_for_comparison(session)
 
         if File.exist?(expected_file)
           cmp = Session::SessionCompare.new(session.session_id, compare_options(expected_file))
@@ -986,6 +991,34 @@ module Inferno
 
       def write_expected_results(expected_file, results)
         File.write(expected_file, JSON.pretty_generate(results))
+      end
+
+      def expected_file_for_comparison(session)
+        @expected_files_for_comparison ||= {}
+        @expected_files_for_comparison[session.key] ||= resolve_expected_file_for_comparison(session)
+      end
+
+      # Session ids differ between runs and can appear anywhere in results (e.g., in
+      # request URLs and messages). For every session in the script, both its id in this
+      # run and its id in the run recorded in its expected results file are normalized to
+      # a "<NAME.session_id>" placeholder, so they compare equal. All sessions are included
+      # because one session's results can contain another session's id.
+      def session_id_normalized_strings
+        @session_id_normalized_strings ||= sessions.flat_map do |session|
+          replacement = "<#{session.key}.session_id>"
+          [session.session_id, expected_session_id(session)].compact.uniq.map do |id|
+            { 'pattern' => id, 'replacement' => replacement }
+          end
+        end
+      end
+
+      def expected_session_id(session)
+        expected_file = expected_file_for_comparison(session)
+        return unless File.exist?(expected_file)
+
+        Array(JSON.parse(File.read(expected_file))).filter_map { |result| result['test_session_id'] }.first
+      rescue JSON::ParserError
+        nil
       end
 
       def resolve_expected_file_for_comparison(session)
@@ -1066,9 +1099,10 @@ module Inferno
           expected_results_file: expected_file,
           compare_messages: options[:compare_messages],
           compare_result_message: options[:compare_result_message],
+          compare_requests: options[:compare_requests],
           only_different_messages: options[:only_different_messages],
           inferno_base_url: options[:inferno_base_url],
-          normalized_strings: Array(comparison_config['normalized_strings'])
+          normalized_strings: session_id_normalized_strings + Array(comparison_config['normalized_strings'])
         }
       end
     end

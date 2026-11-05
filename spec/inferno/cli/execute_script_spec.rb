@@ -23,12 +23,15 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     { 'id' => session_id, 'test_suite' => { 'test_groups' => [], 'tests' => [] } }
   end
 
-  def build_instance(config, opts = base_options)
+  before { allow(File).to receive(:exist?).and_call_original }
+
+  def build_instance(config, opts = base_options, session_ids: [session_id])
     allow(YAML).to receive(:safe_load_file).and_return(config)
     allow(File).to receive(:exist?).with('script.yaml').and_return(true)
     stub_request(:get, "#{inferno_host}/api/test_suites")
       .to_return(status: 200, body: [{ 'id' => suite_id, 'title' => suite_id }].to_json)
-    stub_request(:post, create_url).to_return(status: 200, body: session_response.to_json)
+    stub_request(:post, create_url)
+      .to_return(*session_ids.map { |id| { status: 200, body: session_response.merge('id' => id).to_json } })
     described_class.new('script.yaml', opts)
   end
 
@@ -452,6 +455,71 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
+  describe '#session_id_normalized_strings' do
+    let(:config) do
+      {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 'receiver' }, { 'suite' => suite_id, 'name' => 'sender' }],
+        'steps' => []
+      }
+    end
+    let(:receiver_expected_file) { File.join(Dir.pwd, 'script_receiver_expected.json') }
+    let(:sender_expected_file) { File.join(Dir.pwd, 'script_sender_expected.json') }
+
+    def stub_expected_file(path, content)
+      allow(File).to receive(:exist?).with(path).and_return(true)
+      allow(File).to receive(:read).with(path).and_return(content)
+    end
+
+    before { allow(File).to receive(:read).and_call_original }
+
+    it 'maps the actual and expected ids of every session to a per-session placeholder' do
+      stub_expected_file(receiver_expected_file, [{ 'test_session_id' => 'old-receiver' }].to_json)
+      stub_expected_file(sender_expected_file, [{ 'test_session_id' => 'old-sender' }].to_json)
+      instance = build_instance(config, session_ids: ['new-receiver', 'new-sender'])
+
+      expect(instance.send(:session_id_normalized_strings)).to eq(
+        [
+          { 'pattern' => 'new-receiver', 'replacement' => '<receiver.session_id>' },
+          { 'pattern' => 'old-receiver', 'replacement' => '<receiver.session_id>' },
+          { 'pattern' => 'new-sender', 'replacement' => '<sender.session_id>' },
+          { 'pattern' => 'old-sender', 'replacement' => '<sender.session_id>' }
+        ]
+      )
+    end
+
+    it 'only maps the actual id when the expected file is missing, invalid, or has no session id' do
+      stub_expected_file(receiver_expected_file, 'not json')
+      stub_expected_file(sender_expected_file, [{ 'result' => 'pass' }].to_json)
+      instance = build_instance(config, session_ids: ['new-receiver', 'new-sender'])
+
+      expect(instance.send(:session_id_normalized_strings)).to eq(
+        [
+          { 'pattern' => 'new-receiver', 'replacement' => '<receiver.session_id>' },
+          { 'pattern' => 'new-sender', 'replacement' => '<sender.session_id>' }
+        ]
+      )
+    end
+
+    it 'makes results that differ only by session ids compare equal' do
+      expected = { 'test_id' => 'test-1', 'result' => 'pass', 'test_session_id' => 'old-sender',
+                   'requests' => [{ 'direction' => 'outgoing', 'verb' => 'get', 'status' => 200,
+                                    'url' => 'http://host/inferno/demo/old-receiver' }] }
+      actual = expected.merge('test_session_id' => 'new-sender',
+                              'requests' => [expected['requests'].first.merge(
+                                'url' => 'http://host/inferno/demo/new-receiver'
+                              )])
+      stub_expected_file(receiver_expected_file, [{ 'test_session_id' => 'old-receiver' }].to_json)
+      stub_expected_file(sender_expected_file, [expected].to_json)
+      instance = build_instance(config, session_ids: ['new-receiver', 'new-sender'])
+
+      compared = Inferno::CLI::Session::SessionCompare::ComparedTestResult.new(
+        'test-1', expected, actual,
+        { compare_requests: true, normalized_strings: instance.send(:session_id_normalized_strings) }
+      )
+      expect(compared.same_result?).to be(true)
+    end
+  end
+
   describe '#compare_session' do
     subject(:instance) do
       build_instance({
@@ -473,6 +541,8 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     before do
       allow(Inferno::CLI::Session::SessionCompare).to receive(:new).and_return(mock_compare)
       allow(Inferno::CLI::Session::SessionResults).to receive(:new).and_return(mock_results)
+      allow(File).to receive(:read).and_call_original
+      allow(File).to receive(:read).with(expected_file).and_return([{ 'test_session_id' => 'old-id' }].to_json)
     end
 
     it 'returns true when the expected file exists and results match' do
@@ -548,18 +618,24 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
   describe '#compare_options' do
     let(:base_config) { { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] } }
+    let(:session_id_rule) { { 'pattern' => session_id, 'replacement' => "<#{suite_id}.session_id>" } }
 
-    it 'returns an empty array for normalized_strings when not in YAML' do
-      instance = build_instance(base_config)
-      opts = instance.send(:compare_options, '/tmp/expected.json')
-      expect(opts[:normalized_strings]).to eq([])
+    it 'passes compare_requests through from the CLI options' do
+      instance = build_instance(base_config, base_options.merge(compare_requests: true))
+      expect(instance.send(:compare_options, '/tmp/expected.json')[:compare_requests]).to be(true)
     end
 
-    it 'reads normalized_strings from comparison_config' do
+    it 'includes only the session id normalization when normalized_strings is not in YAML' do
+      instance = build_instance(base_config)
+      opts = instance.send(:compare_options, '/tmp/expected.json')
+      expect(opts[:normalized_strings]).to eq([session_id_rule])
+    end
+
+    it 'reads normalized_strings from comparison_config, after the session id normalization' do
       config = base_config.merge('comparison_config' => { 'normalized_strings' => ['http://new.server.com'] })
       instance = build_instance(config)
       opts = instance.send(:compare_options, '/tmp/expected.json')
-      expect(opts[:normalized_strings]).to eq(['http://new.server.com'])
+      expect(opts[:normalized_strings]).to eq([session_id_rule, 'http://new.server.com'])
     end
 
     it 'passes the expected_file through as expected_results_file' do

@@ -66,7 +66,7 @@
         "result_id": "7dbe9923-c833-473a-9274-d54afd65e30c",
         "status": null,
         "timestamp": "2026-02-20T15:50:41.494-05:00",
-        "url": "http://localhost:4567/inferno/custom/demo/resume?xyz=abc",
+        "url": "http://localhost:4567/inferno/custom/demo/resume_fail?message=User%20clicked%20fail&xyz=abc",
         "verb": "get"
       }
     ],
