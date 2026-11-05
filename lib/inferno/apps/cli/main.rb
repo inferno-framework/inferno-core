@@ -158,6 +158,7 @@ module Inferno
           ExecuteScript.new(matches.first || pattern, options).run
         end
       end
+      map %w[execute_scripts execution_scripts] => :execute_script
 
       desc 'session SUBCOMMAND ...ARGS', 'Perform session operations'
       subcommand 'session', Session::SessionCommands
