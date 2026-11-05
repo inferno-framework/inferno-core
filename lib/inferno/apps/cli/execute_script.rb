@@ -124,7 +124,8 @@ module Inferno
     #   {NAME.result_message}     — named session's wait_result_message
     #   {wait_outputs.KEY}        — current session's wait output by name
     #   {NAME.wait_outputs.KEY}   — named session's wait output by name
-    #   {inferno_base_url}        — the Inferno base URL (--inferno-base-url option)
+    #   {inferno_base_url}        — the Inferno base URL (--inferno-base-url option, or the
+    #                               configured base_url when not provided)
     class ExecuteScript
       SHORT_ID_PATTERN = /\A[0-9][0-9.]*\z/
       # Seconds subtracted from the initial last_log_time so the first
@@ -655,7 +656,7 @@ module Inferno
         result = str.dup
 
         # {inferno_base_url} — the Inferno base URL
-        result.gsub!('{inferno_base_url}') { options[:inferno_base_url] }
+        result.gsub!('{inferno_base_url}') { inferno_base_url }
 
         # {session_id} — current session
         result.gsub!('{session_id}') { session_name_to_id_map[session_key] }
@@ -799,9 +800,14 @@ module Inferno
         end.all?
       end
 
+      # The --inferno-base-url option, falling back to the configured base_url
+      # (matching the fallback used by Session::Connection).
+      def inferno_base_url
+        (options[:inferno_base_url].presence || Inferno::Application['base_url']).to_s
+      end
+
       def session_display_url(session)
-        base_url = (options[:inferno_base_url].presence || Inferno::Application['base_url']).to_s.delete_suffix('/')
-        "#{base_url}/#{session.suite_id}/#{session.session_id}"
+        "#{inferno_base_url.delete_suffix('/')}/#{session.suite_id}/#{session.session_id}"
       end
 
       def any_error_results?(session)

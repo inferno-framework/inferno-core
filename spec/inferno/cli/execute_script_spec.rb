@@ -144,6 +144,12 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(result).to eq("connect to #{inferno_host}/auth")
     end
 
+    it 'substitutes {inferno_base_url} with the configured base_url when no option is given' do
+      instance.send(:options=, base_options.except(:inferno_base_url))
+      result = instance.send(:apply_templates, 'connect to {inferno_base_url}/auth', status, session_key)
+      expect(result).to eq("connect to #{Inferno::Application['base_url']}/auth")
+    end
+
     it 'substitutes {session_id} with the current session id' do
       result = instance.send(:apply_templates, 'session={session_id}', status, session_key)
       expect(result).to eq("session=#{session_id}")
