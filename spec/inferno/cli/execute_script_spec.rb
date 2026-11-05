@@ -32,6 +32,31 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     described_class.new('script.yaml', opts)
   end
 
+  describe 'session creation logging' do
+    # warn is silent when $VERBOSE is nil
+    around do |example|
+      verbose = $VERBOSE
+      $VERBOSE = false
+      example.run
+    ensure
+      $VERBOSE = verbose
+    end
+
+    it 'includes the session name after the suite when a name is given' do
+      config = { 'sessions' => [{ 'suite' => suite_id, 'name' => 'consumer' }], 'steps' => [] }
+      expect { build_instance(config) }
+        .to output(/Creating session for suite '#{suite_id}' with name 'consumer'\.\.\./)
+        .to_stderr
+    end
+
+    it 'only includes the suite when no name is given' do
+      config = { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }
+      expect { build_instance(config) }
+        .to output(/Creating session for suite '#{suite_id}'\.\.\./)
+        .to_stderr
+    end
+  end
+
   describe '#validate_yaml_file!' do
     it 'exits 1 with an error message when the file does not exist' do
       allow(File).to receive(:exist?).with('missing.yaml').and_return(false)
@@ -176,6 +201,19 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     it 'substitutes {NAME.session_id} with the named session id' do
       result = instance.send(:apply_templates, 'id={primary.session_id}', status, session_key)
       expect(result).to eq("id=#{session_id}")
+    end
+
+    it 'substitutes {NAME.session_id} inside a multi-line JSON object' do
+      result = instance.send(:apply_templates, %({\n  "id": "{primary.session_id}"\n}), status, session_key)
+      expect(result).to eq(%({\n  "id": "#{session_id}"\n}))
+    end
+
+    it 'substitutes {NAME.wait_outputs.KEY} inside a multi-line JSON object' do
+      instance.execution_status.cross_session_status['primary'] =
+        { 'wait_outputs' => [{ 'name' => 'note', 'value' => 'a "quoted" value' }] }
+      result = instance.send(:apply_templates, %({\n  "note": "{primary.wait_outputs.note}"\n}), status, session_key,
+                             json_string: true)
+      expect(JSON.parse(result)).to eq({ 'note' => 'a "quoted" value' })
     end
 
     it 'exits 3 when {NAME.session_id} refers to an unknown session' do

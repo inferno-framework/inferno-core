@@ -244,10 +244,11 @@ module Inferno
 
       def create_session_from_config(session_config)
         suite = session_config['suite']
-        warn "Creating '#{suite}' session..."
+        key = session_config['name'] || suite
+        name_detail = session_config['name'] ? " with name '#{session_config['name']}'" : ''
+        warn "Creating session for suite '#{suite}'#{name_detail}..."
         creator = Session::CreateSession.new(suite, session_create_options(session_config))
         session_details = creator.create_session
-        key = session_config['name'] || suite
         script_session = ScriptSession.new(
           key: key,
           suite_id: session_details['test_suite_id'],
@@ -674,6 +675,9 @@ module Inferno
       # JSON string literals, so substituted values are escaped (quotes, backslashes,
       # control characters) to keep the result valid JSON.
       #
+      # Session names and wait output keys in tokens cannot contain braces or whitespace,
+      # so that a token inside larger text (e.g., a JSON object) is matched on its own.
+      #
       # Returns the resolved string or exits 3 if a token cannot be resolved.
       def apply_templates(str, status, session_key, json_string: false)
         result = str.dup
@@ -686,7 +690,7 @@ module Inferno
         result.gsub!('{session_id}') { escape.call(session_name_to_id_map[session_key]) }
 
         # {NAME.session_id} — named session
-        result.gsub!(/\{([^}.]+)\.session_id\}/) do
+        result.gsub!(/\{([^{}.\s]+)\.session_id\}/) do
           name = Regexp.last_match(1)
           id   = session_name_to_id_map[name]
           unless id
@@ -707,7 +711,7 @@ module Inferno
         end
 
         # {NAME.result_message} — another session's wait result message
-        result.gsub!(/\{([^}.]+)\.result_message\}/) do
+        result.gsub!(/\{([^{}.\s]+)\.result_message\}/) do
           name       = Regexp.last_match(1)
           other_stat = cross_session_status(name)
           msg        = other_stat['wait_result_message']
@@ -721,7 +725,7 @@ module Inferno
         end
 
         # {wait_outputs.KEY} — current session wait output
-        result.gsub!(/\{wait_outputs\.([^}]+)\}/) do
+        result.gsub!(/\{wait_outputs\.([^{}\s]+)\}/) do
           key    = Regexp.last_match(1)
           output = find_wait_output(status['wait_outputs'], key)
           unless output
@@ -732,7 +736,7 @@ module Inferno
         end
 
         # {NAME.wait_outputs.KEY} — another session's wait output
-        result.gsub!(/\{([^}.]+)\.wait_outputs\.([^}]+)\}/) do
+        result.gsub!(/\{([^{}.\s]+)\.wait_outputs\.([^{}\s]+)\}/) do
           name       = Regexp.last_match(1)
           key        = Regexp.last_match(2)
           other_stat = cross_session_status(name)
