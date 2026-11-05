@@ -290,7 +290,7 @@ module Inferno
 
       def create_session_from_config(session_config)
         suite = session_config['suite']
-        key = session_config['name'] || suite
+        key = session_config['name']&.to_s || suite
         name_detail = session_config['name'] ? " with name '#{session_config['name']}'" : ''
         warn "Creating session for suite '#{suite}'#{name_detail}..."
         creator = Session::CreateSession.new(suite, session_create_options(session_config))
@@ -850,7 +850,7 @@ module Inferno
         return value unless value.start_with?('@')
 
         path = value[1..]
-        content = File.read(path)
+        content = File.read(path, encoding: 'UTF-8')
         return value unless content.valid_encoding?
 
         templated = apply_templates(content, status, session_key, json_string: File.extname(path).casecmp?('.json'))

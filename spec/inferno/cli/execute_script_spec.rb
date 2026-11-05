@@ -293,7 +293,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     it 'expands relative @paths in inputs to absolute paths after template substitution' do
       expected_path = File.expand_path('data.json', '.')
       allow(File).to receive(:exist?).with(expected_path).and_return(true)
-      allow(File).to receive(:read).with(expected_path).and_return('{"no": "tokens"}')
+      allow(File).to receive(:read).with(expected_path, encoding: 'UTF-8').and_return('{"no": "tokens"}')
       start_run = { 'runnable' => 'suite', 'inputs' => { 'coverage_json' => '@data.json' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['coverage_json']).to eq("@#{expected_path}")
@@ -308,7 +308,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     it 'replaces an @path input with its content when the file contains template tokens' do
       path = File.expand_path('data.json', '.')
       allow(File).to receive(:exist?).with(path).and_return(true)
-      allow(File).to receive(:read).with(path).and_return('{"url": "{inferno_base_url}/fhir"}')
+      allow(File).to receive(:read).with(path, encoding: 'UTF-8').and_return('{"url": "{inferno_base_url}/fhir"}')
       start_run = { 'runnable' => 'suite', 'inputs' => { 'url' => '{inferno_base_url}', 'data' => '@data.json' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['url']).to eq(inferno_host)
@@ -318,7 +318,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     it 'leaves an @path input unchanged when the file contains no template tokens' do
       path = File.expand_path('data.json', '.')
       allow(File).to receive(:exist?).with(path).and_return(true)
-      allow(File).to receive(:read).with(path).and_return('{"url": "https://example.com"}')
+      allow(File).to receive(:read).with(path, encoding: 'UTF-8').and_return('{"url": "https://example.com"}')
       start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@data.json' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['data']).to eq("@#{path}")
@@ -327,15 +327,33 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     it 'leaves an @path input unchanged when the file is not valid text' do
       path = File.expand_path('data.bin', '.')
       allow(File).to receive(:exist?).with(path).and_return(true)
-      allow(File).to receive(:read).with(path).and_return("\xFF{session_id}".dup.force_encoding('UTF-8'))
+      allow(File).to receive(:read).with(path, encoding: 'UTF-8')
+        .and_return("\xFF{session_id}".dup.force_encoding('UTF-8'))
       start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@data.bin' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['data']).to eq("@#{path}")
     end
 
+    it 'substitutes tokens in a UTF-8 file with non-ASCII content regardless of the default encoding' do
+      Dir.mktmpdir do |dir|
+        path = File.join(dir, 'data.json')
+        File.write(path, '{"name": "José", "url": "{inferno_base_url}"}', encoding: 'UTF-8')
+        allow(File).to receive(:exist?).and_call_original
+        original_external = Encoding.default_external
+        begin
+          silence_warnings { Encoding.default_external = Encoding::US_ASCII }
+          start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => "@#{path}" } }
+          result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+          expect(result['inputs']['data']).to eq(%({"name": "José", "url": "#{inferno_host}"}))
+        ensure
+          silence_warnings { Encoding.default_external = original_external }
+        end
+      end
+    end
+
     it 'leaves absolute @paths unchanged when the file exists' do
       allow(File).to receive(:exist?).with('/etc/ssl/cert.pem').and_return(true)
-      allow(File).to receive(:read).with('/etc/ssl/cert.pem').and_return('CERT')
+      allow(File).to receive(:read).with('/etc/ssl/cert.pem', encoding: 'UTF-8').and_return('CERT')
       start_run = { 'runnable' => 'suite', 'inputs' => { 'cert' => '@/etc/ssl/cert.pem' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['cert']).to eq('@/etc/ssl/cert.pem')
@@ -368,7 +386,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       it 'JSON-escapes values substituted into a .json file input' do
         path = File.expand_path('data.json', '.')
         allow(File).to receive(:exist?).with(path).and_return(true)
-        allow(File).to receive(:read).with(path).and_return('{"note": "{result_message}"}')
+        allow(File).to receive(:read).with(path, encoding: 'UTF-8').and_return('{"note": "{result_message}"}')
         start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@data.json' } }
         result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
         expect(JSON.parse(result['inputs']['data'])).to eq({ 'note' => status['wait_result_message'] })
@@ -377,7 +395,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       it 'does not escape values substituted into a non-JSON file input' do
         path = File.expand_path('note.txt', '.')
         allow(File).to receive(:exist?).with(path).and_return(true)
-        allow(File).to receive(:read).with(path).and_return('note: {result_message}')
+        allow(File).to receive(:read).with(path, encoding: 'UTF-8').and_return('note: {result_message}')
         start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@note.txt' } }
         result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
         expect(result['inputs']['data']).to eq("note: #{status['wait_result_message']}")
@@ -854,6 +872,15 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         'steps' => []
       }
       expect { build_instance(config) }.to_not raise_error
+    end
+
+    it 'resolves tokens for numeric session names' do
+      config = {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 1 }, { 'suite' => suite_id, 'name' => 2 }],
+        'steps' => []
+      }
+      instance = build_instance(config)
+      expect(instance.send(:apply_templates, '{1.session_id}', {}, '2')).to eq(session_id)
     end
   end
 
