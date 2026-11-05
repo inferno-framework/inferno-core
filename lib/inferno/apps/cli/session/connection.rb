@@ -2,6 +2,11 @@ module Inferno
   module CLI
     module Session
       module Connection
+        # The --inferno-base-url option, falling back to the configured base_url, without a trailing slash.
+        def self.inferno_base_url(options)
+          (options[:inferno_base_url].presence || Inferno::Application['base_url']).to_s.delete_suffix('/')
+        end
+
         def connection
           @connection ||= Faraday.new(
             base_url,
@@ -10,8 +15,7 @@ module Inferno
         end
 
         def base_url
-          @base_url ||=
-            "#{(options[:inferno_base_url].presence || Inferno::Application['base_url']).to_s.delete_suffix('/')}/"
+          @base_url ||= "#{Connection.inferno_base_url(options)}/"
         end
 
         def get(path, params = nil, headers = {})

@@ -19,7 +19,8 @@ module Inferno
     #                                              #   a session for each indicated suite will be created and
     #                                              #   a successful run will have the expected results for all sessions.
     #     - suite: my_suite                        # internal ID, title, or short title
-    #       name: my_name                          # optional; used as key in multi-session
+    #       name: my_name                          # optional; used as key in multi-session; must be unique
+    #                                              #           and not contain whitespace, '.', '{', or '}'
     #       preset: my-preset                      # optional; internal ID or title
     #       suite_options:                         # optional; option_key and option_value can be the
     #         option_key: option_value             #           internal values or the displayed titles
@@ -139,6 +140,15 @@ module Inferno
     # JSON-escaped accordingly.
     class ExecuteScript
       SHORT_ID_PATTERN = /\A[0-9][0-9.]*\z/
+      # Session names and wait output keys may not contain braces or whitespace (and names may not
+      # contain '.') so that tokens are matched on their own within larger text such as JSON.
+      SESSION_NAME = /[^{}.\s]+/
+      WAIT_OUTPUT_KEY = /[^{}\s]+/
+      SESSION_NAME_FORMAT = /\A#{SESSION_NAME}\z/
+      NAMED_SESSION_ID_TOKEN = /\{(#{SESSION_NAME})\.session_id\}/
+      NAMED_RESULT_MESSAGE_TOKEN = /\{(#{SESSION_NAME})\.result_message\}/
+      WAIT_OUTPUT_TOKEN = /\{wait_outputs\.(#{WAIT_OUTPUT_KEY})\}/
+      NAMED_WAIT_OUTPUT_TOKEN = /\{(#{SESSION_NAME})\.wait_outputs\.(#{WAIT_OUTPUT_KEY})\}/
       # Seconds subtracted from the initial last_log_time so the first
       # active-status line is logged immediately rather than after one interval.
       LOG_INTERVAL_SECONDS = 30
@@ -160,6 +170,7 @@ module Inferno
         self.options = options
         validate_yaml_file!
         validate_commands_allowed!
+        validate_session_names!
         self.execution_status = ExecutionStatus.new(
           done: false,
           failed: false,
@@ -230,6 +241,32 @@ module Inferno
                     'Re-run with --allow-commands to permit arbitrary shell command execution.' }
         )
         exit(1)
+      end
+
+      # Session keys (name, or suite when no name is given) are used in template tokens
+      # and must be unique and free of characters that would prevent token matching.
+      def validate_session_names!
+        session_configs = Array(script_config['sessions'])
+        errors = invalid_session_name_errors(session_configs) + duplicate_session_name_errors(session_configs)
+        return if errors.empty?
+
+        puts JSON.pretty_generate({ errors: errors.join(' ') })
+        exit(1)
+      end
+
+      def invalid_session_name_errors(session_configs)
+        names = session_configs.filter_map { |session_config| session_config['name']&.to_s }
+        names.grep_v(SESSION_NAME_FORMAT).map do |name|
+          "Session name '#{name}' must not contain whitespace, '.', '{', or '}'."
+        end
+      end
+
+      def duplicate_session_name_errors(session_configs)
+        keys = session_configs.map { |session_config| (session_config['name'] || session_config['suite']).to_s }
+        keys.tally.select { |_key, count| count > 1 }.keys.map do |key|
+          "Duplicate session name '#{key}'. Give each session a unique name " \
+            '(sessions without a name use their suite).'
+        end
       end
 
       # ---------------------------------------------------------------------------
@@ -641,17 +678,21 @@ module Inferno
           end
         runnable_token = start_run_details['runnable'].present? ? " '#{start_run_details['runnable']}'" : ''
         parts = ["bundle exec inferno session start_run '#{session_token}'#{runnable_token}"]
-        if start_run_details['inputs'].present?
-          parts << "-i #{start_run_details['inputs'].map do |k, v|
-            "#{k}:#{v}"
-          end.join(' ')}"
-        end
+        parts << start_run_inputs_description(start_run_details) if start_run_details['inputs'].present?
         parts.join(' ')
+      end
+
+      # Templated file inputs show their @path rather than the substituted content.
+      def start_run_inputs_description(start_run_details)
+        templated_files = start_run_details['templated_files'] || {}
+        "-i #{start_run_details['inputs'].map do |k, v|
+          templated_files.key?(k) ? "#{k}:#{templated_files[k]} (templated)" : "#{k}:#{v}"
+        end.join(' ')}"
       end
 
       def resolve_command(step, status, session_key)
         if step.key?('start_run')
-          start_run = apply_templates_to_start_run(step['start_run'] || {}, status, session_key)
+          start_run = apply_templates_to_start_run((step['start_run'] || {}).deep_dup, status, session_key)
           { command: 'START_RUN', start_run: }
         elsif step.key?('action')
           { command: step['action'].upcase }
@@ -690,7 +731,7 @@ module Inferno
         result.gsub!('{session_id}') { escape.call(session_name_to_id_map[session_key]) }
 
         # {NAME.session_id} — named session
-        result.gsub!(/\{([^{}.\s]+)\.session_id\}/) do
+        result.gsub!(NAMED_SESSION_ID_TOKEN) do
           name = Regexp.last_match(1)
           id   = session_name_to_id_map[name]
           unless id
@@ -711,7 +752,7 @@ module Inferno
         end
 
         # {NAME.result_message} — another session's wait result message
-        result.gsub!(/\{([^{}.\s]+)\.result_message\}/) do
+        result.gsub!(NAMED_RESULT_MESSAGE_TOKEN) do
           name       = Regexp.last_match(1)
           other_stat = cross_session_status(name)
           msg        = other_stat['wait_result_message']
@@ -725,7 +766,7 @@ module Inferno
         end
 
         # {wait_outputs.KEY} — current session wait output
-        result.gsub!(/\{wait_outputs\.([^{}\s]+)\}/) do
+        result.gsub!(WAIT_OUTPUT_TOKEN) do
           key    = Regexp.last_match(1)
           output = find_wait_output(status['wait_outputs'], key)
           unless output
@@ -736,7 +777,7 @@ module Inferno
         end
 
         # {NAME.wait_outputs.KEY} — another session's wait output
-        result.gsub!(/\{([^{}.\s]+)\.wait_outputs\.([^{}\s]+)\}/) do
+        result.gsub!(NAMED_WAIT_OUTPUT_TOKEN) do
           name       = Regexp.last_match(1)
           key        = Regexp.last_match(2)
           other_stat = cross_session_status(name)
@@ -775,14 +816,21 @@ module Inferno
           start_run['session'] = apply_templates(start_run['session'], status, session_key)
         end
         start_run['inputs']&.each_key do |input_name|
-          raw = start_run['inputs'][input_name]
-          json_string = raw.is_a?(Array) || raw.is_a?(Hash)
-          raw = raw.to_json if json_string
-          value = expand_file_input_path(apply_templates(raw.to_s, status, session_key, json_string:))
-          start_run['inputs'][input_name] = apply_templates_to_file_input(value, status, session_key)
+          apply_templates_to_start_run_input(start_run, input_name, status, session_key)
         end
 
         start_run
+      end
+
+      def apply_templates_to_start_run_input(start_run, input_name, status, session_key)
+        raw = start_run['inputs'][input_name]
+        json_string = raw.is_a?(Array) || raw.is_a?(Hash)
+        raw = raw.to_json if json_string
+        value = expand_file_input_path(apply_templates(raw.to_s, status, session_key, json_string:))
+        templated = apply_templates_to_file_input(value, status, session_key)
+        # Remember the @path of templated files so logging can show it instead of the content
+        (start_run['templated_files'] ||= {})[input_name] = value unless templated == value
+        start_run['inputs'][input_name] = templated
       end
 
       # For an @path input, substitutes template tokens within the file's content.
@@ -862,14 +910,12 @@ module Inferno
         end.all?
       end
 
-      # The --inferno-base-url option, falling back to the configured base_url
-      # (matching the fallback used by Session::Connection).
       def inferno_base_url
-        (options[:inferno_base_url].presence || Inferno::Application['base_url']).to_s
+        Session::Connection.inferno_base_url(options)
       end
 
       def session_display_url(session)
-        "#{inferno_base_url.delete_suffix('/')}/#{session.suite_id}/#{session.session_id}"
+        "#{inferno_base_url}/#{session.suite_id}/#{session.session_id}"
       end
 
       def any_error_results?(session)

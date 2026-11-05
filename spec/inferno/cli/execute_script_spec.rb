@@ -811,6 +811,46 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
+  describe '#validate_session_names!' do
+    def expect_exit_with_error(config, message)
+      expect do
+        expect { build_instance(config) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+      end.to output(message).to_stdout
+    end
+
+    it 'exits 1 when a session name contains whitespace' do
+      config = { 'sessions' => [{ 'suite' => suite_id, 'name' => 'my receiver' }], 'steps' => [] }
+      expect_exit_with_error(config, /Session name 'my receiver' must not contain whitespace/)
+    end
+
+    it "exits 1 when a session name contains '.'" do
+      config = { 'sessions' => [{ 'suite' => suite_id, 'name' => 'my.receiver' }], 'steps' => [] }
+      expect_exit_with_error(config, /Session name 'my\.receiver' must not contain/)
+    end
+
+    it 'exits 1 when two sessions have the same name' do
+      config = {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 'receiver' }, { 'suite' => 'other', 'name' => 'receiver' }],
+        'steps' => []
+      }
+      expect_exit_with_error(config, /Duplicate session name 'receiver'/)
+    end
+
+    it 'exits 1 when two unnamed sessions use the same suite' do
+      config = { 'sessions' => [{ 'suite' => suite_id }, { 'suite' => suite_id }], 'steps' => [] }
+      expect_exit_with_error(config, /Duplicate session name '#{suite_id}'/)
+    end
+
+    it 'does not exit for unique, valid session names' do
+      config = {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 'sender' }, { 'suite' => suite_id, 'name' => 'receiver-2' }],
+        'steps' => []
+      }
+      expect { build_instance(config) }.to_not raise_error
+    end
+  end
+
   describe '#execute_command' do
     subject(:instance) do
       build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] },
