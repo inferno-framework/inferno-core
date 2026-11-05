@@ -24,3 +24,22 @@ but not by CLI execution.
 Note that this is different than expected `fail` results, which are valid
 non-passing results for tests: these can be recorded as expected within
 the expected results file.
+
+## Cleaning Up Result Files
+
+When a script's results don't match its expected results file, the
+`*_actual_results_<timestamp>.json` and `*_compared_results_<timestamp>.csv`
+files are written next to the expected results file. These files are
+ignored by git, so once they are no longer needed they can be removed with
+`git clean`:
+
+```
+# List the files that would be removed
+git clean -nX execution_scripts
+
+# Remove them
+git clean -fX execution_scripts
+```
+
+Note that `-X` removes all git-ignored files under `execution_scripts`, not only
+result files, so check the dry run output first if you keep other ignored files there.
