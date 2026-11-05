@@ -94,7 +94,8 @@ module Inferno
     #           input_name: "value"                #           for the input
     #           input_name: "@path/to/file.txt"    #           prefix value with @ to read from a file;
     #                                              #           relative paths are resolved from the
-    #                                              #           directory containing this script file
+    #                                              #           directory containing this script file;
+    #                                              #           template tokens in the file are substituted
     #           input_name:                        #           YAML mappings and sequences are
     #             key: value                       #           automatically JSON-serialized, useful
     #           input_name:                        #           for auth_info and other JSON inputs
@@ -117,7 +118,8 @@ module Inferno
     #   by default and require the --allow-commands CLI flag to run. Scripts that contain no
     #   command: steps are unaffected and do not need the flag.
     #
-    # Template tokens in command strings and start_run input values:
+    # Template tokens in command strings and start_run input values (including the
+    # content of @path file inputs):
     #   {session_id}              — current session's Inferno session ID
     #   {NAME.session_id}         — named session's ID
     #   {result_message}          — current session's wait_result_message
@@ -749,11 +751,24 @@ module Inferno
         start_run['inputs']&.each_key do |input_name|
           raw = start_run['inputs'][input_name]
           raw = raw.to_json if raw.is_a?(Array) || raw.is_a?(Hash)
-          value = apply_templates(raw.to_s, status, session_key)
-          start_run['inputs'][input_name] = expand_file_input_path(value)
+          value = expand_file_input_path(apply_templates(raw.to_s, status, session_key))
+          start_run['inputs'][input_name] = apply_templates_to_file_input(value, status, session_key)
         end
 
         start_run
+      end
+
+      # For an @path input, substitutes template tokens within the file's content.
+      # Returns the substituted content when any token was replaced; otherwise returns
+      # the @path unchanged so that start_run reads the file as-is.
+      def apply_templates_to_file_input(value, status, session_key)
+        return value unless value.start_with?('@')
+
+        content = File.read(value[1..])
+        return value unless content.valid_encoding?
+
+        templated = apply_templates(content, status, session_key)
+        templated == content ? value : templated
       end
 
       def expand_file_input_path(value)

@@ -255,6 +255,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     it 'expands relative @paths in inputs to absolute paths after template substitution' do
       expected_path = File.expand_path('data.json', '.')
       allow(File).to receive(:exist?).with(expected_path).and_return(true)
+      allow(File).to receive(:read).with(expected_path).and_return('{"no": "tokens"}')
       start_run = { 'runnable' => 'suite', 'inputs' => { 'coverage_json' => '@data.json' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['coverage_json']).to eq("@#{expected_path}")
@@ -266,21 +267,37 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(result['inputs']['url']).to eq('https://example.com')
     end
 
-    it 'does not apply template substitution to @path contents (file content is verbatim)' do
-      # Template substitution runs on the raw YAML value before file expansion.
-      # A plain string with a token is substituted; an @path is expanded but its
-      # content (read at run time by start_run) is never touched by apply_templates.
-      allow(File).to receive(:exist?).with(File.expand_path('data.json', '.')).and_return(true)
+    it 'replaces an @path input with its content when the file contains template tokens' do
+      path = File.expand_path('data.json', '.')
+      allow(File).to receive(:exist?).with(path).and_return(true)
+      allow(File).to receive(:read).with(path).and_return('{"url": "{inferno_base_url}/fhir"}')
       start_run = { 'runnable' => 'suite', 'inputs' => { 'url' => '{inferno_base_url}', 'data' => '@data.json' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
-      # The plain token is substituted
       expect(result['inputs']['url']).to eq(inferno_host)
-      # The @path is expanded but still an @path (file content not read here)
-      expect(result['inputs']['data']).to start_with('@/')
+      expect(result['inputs']['data']).to eq(%({"url": "#{inferno_host}/fhir"}))
+    end
+
+    it 'leaves an @path input unchanged when the file contains no template tokens' do
+      path = File.expand_path('data.json', '.')
+      allow(File).to receive(:exist?).with(path).and_return(true)
+      allow(File).to receive(:read).with(path).and_return('{"url": "https://example.com"}')
+      start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@data.json' } }
+      result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+      expect(result['inputs']['data']).to eq("@#{path}")
+    end
+
+    it 'leaves an @path input unchanged when the file is not valid text' do
+      path = File.expand_path('data.bin', '.')
+      allow(File).to receive(:exist?).with(path).and_return(true)
+      allow(File).to receive(:read).with(path).and_return("\xFF{session_id}".dup.force_encoding('UTF-8'))
+      start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@data.bin' } }
+      result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+      expect(result['inputs']['data']).to eq("@#{path}")
     end
 
     it 'leaves absolute @paths unchanged when the file exists' do
       allow(File).to receive(:exist?).with('/etc/ssl/cert.pem').and_return(true)
+      allow(File).to receive(:read).with('/etc/ssl/cert.pem').and_return('CERT')
       start_run = { 'runnable' => 'suite', 'inputs' => { 'cert' => '@/etc/ssl/cert.pem' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['cert']).to eq('@/etc/ssl/cert.pem')
