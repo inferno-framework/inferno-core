@@ -1033,6 +1033,18 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(instance.execution_status.failed).to be_falsey
     end
 
+    it "uses the step's timeout for the request, falling back to the default poll timeout" do
+      instance = build_instance(config)
+      stub_request(:get, url).to_return(status: 200)
+      allow(Faraday).to receive(:new).and_call_original
+
+      instance.send(:take_step, { command: 'HTTP_GET', url:, timeout: 45 })
+      expect(Faraday).to have_received(:new).with(request: { timeout: 45 })
+
+      instance.send(:take_step, { command: 'HTTP_GET', url: })
+      expect(Faraday).to have_received(:new).with(request: { timeout: base_options[:default_poll_timeout] })
+    end
+
     it 'marks the script failed and done when the request cannot be made' do
       instance = build_instance(config)
       stub_request(:get, url).to_raise(Faraday::ConnectionFailed.new('connection refused'))
