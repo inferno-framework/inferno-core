@@ -33,6 +33,12 @@ overwritten with the actual results (pretty-printed) instead of writing
 actual results and comparison files, and the comparison is treated as passing.
 Review the changes with `git diff` before committing.
 
+Expected results files (and the actual results files written on a mismatch)
+contain only the fields used in comparison: the result's test, group, or suite id,
+`result`, `result_message`, `messages` (type and message), `requests` (direction,
+verb, URL, and status), and `inputs`/`outputs` (name and value), plus
+`test_session_id`, which is used to normalize session ids when comparing.
+
 ```
 bundle exec inferno execute_script -u execution_scripts/path/to/script.yaml
 ```

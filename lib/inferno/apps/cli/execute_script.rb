@@ -44,7 +44,8 @@ module Inferno
     #                                              #    name or suite id).
     #     normalized_strings:                      # optional; global normalization rules applied to
     #       - "http://my-server.example.com"       # both expected and actual before comparing
-    #                                              # (result messages, messages, and request URLs).
+    #                                              # (result messages, messages, request URLs, and
+    #                                              # input/output values).
     #       - "http://other-value.example.com"     # plain string: replaced with <NORMALIZED>;
     #                                              # URL-encoded form is also replaced automatically.
     #       - "/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/"  # regex string (wrapped in /…/): compiled
@@ -990,7 +991,7 @@ module Inferno
       end
 
       def write_expected_results(expected_file, results)
-        File.write(expected_file, JSON.pretty_generate(results))
+        File.write(expected_file, JSON.pretty_generate(Session::SessionCompare.compared_fields_only(results)))
       end
 
       def expected_file_for_comparison(session)
@@ -1100,6 +1101,7 @@ module Inferno
           compare_messages: options[:compare_messages],
           compare_result_message: options[:compare_result_message],
           compare_requests: options[:compare_requests],
+          compare_io: options[:compare_io],
           only_different_messages: options[:only_different_messages],
           inferno_base_url: options[:inferno_base_url],
           normalized_strings: session_id_normalized_strings + Array(comparison_config['normalized_strings'])

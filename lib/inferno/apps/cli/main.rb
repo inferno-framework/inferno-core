@@ -125,6 +125,11 @@ module Inferno
              default: true,
              desc: 'Compare requests (direction, verb, URL, and status) when comparing results. ' \
                    'Normalized strings from the script are applied to the URL.'
+      option :compare_io,
+             type: :boolean,
+             default: true,
+             desc: 'Compare inputs and outputs (name and value) when comparing results. ' \
+                   'Normalized strings from the script are applied to the values.'
       option :poll_interval,
              aliases: ['-p'],
              type: :numeric,
@@ -164,6 +169,7 @@ module Inferno
             compare_messages: options[:compare_messages],
             compare_result_message: options[:compare_result_message],
             compare_requests: options[:compare_requests],
+            compare_io: options[:compare_io],
             poll_interval: options[:poll_interval],
             default_poll_timeout: options[:default_poll_timeout],
             only_different_messages: options[:only_different_messages]

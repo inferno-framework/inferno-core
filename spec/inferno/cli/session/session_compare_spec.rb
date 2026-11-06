@@ -488,6 +488,54 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
     end
   end
 
+  describe '.compared_fields_only' do
+    it 'keeps only compared fields and test_session_id' do
+      results = [
+        {
+          'id' => 'result-id', 'created_at' => 'now', 'test_id' => 'test-1', 'test_session_id' => 'session-1',
+          'test_run_id' => 'run-1', 'result' => 'fail', 'result_message' => 'failed',
+          'inputs' => [{ 'name' => 'url', 'value' => 'http://x', 'type' => 'text', 'title' => 'URL' }],
+          'outputs' => [{ 'name' => 'token', 'value' => 'abc', 'type' => 'text' }],
+          'messages' => [{ 'id' => 'message-id', 'type' => 'error', 'message' => 'bad', 'result_id' => 'result-id' }],
+          'requests' => [{ 'id' => 'request-id', 'direction' => 'outgoing', 'verb' => 'get', 'url' => 'http://x',
+                           'status' => 200, 'index' => 1, 'timestamp' => 'now' }]
+        },
+        { 'test_group_id' => 'group-1', 'result' => 'pass', 'messages' => [], 'outputs' => [] }
+      ]
+
+      expect(described_class.compared_fields_only(results)).to eq(
+        [
+          {
+            'test_id' => 'test-1', 'test_session_id' => 'session-1', 'result' => 'fail', 'result_message' => 'failed',
+            'inputs' => [{ 'name' => 'url', 'value' => 'http://x' }],
+            'outputs' => [{ 'name' => 'token', 'value' => 'abc' }],
+            'messages' => [{ 'type' => 'error', 'message' => 'bad' }],
+            'requests' => [{ 'direction' => 'outgoing', 'verb' => 'get', 'url' => 'http://x', 'status' => 200 }]
+          },
+          { 'test_group_id' => 'group-1', 'result' => 'pass' }
+        ]
+      )
+    end
+  end
+
+  describe '#save_actual_results_to_file' do
+    it 'writes only the compared fields of the actual results next to the expected results file' do
+      Dir.mktmpdir do |dir|
+        expected_file = File.join(dir, 'script_expected.json')
+        compare = described_class.new(actual_results_session_id, { expected_results_file: expected_file })
+        allow(compare).to receive(:session_results).and_return(actual_results_parsed)
+
+        compare.save_actual_results_to_file
+
+        written = Dir.glob(File.join(dir, 'script_actual_results_*.json'))
+        expect(written.length).to eq(1)
+        expect(JSON.parse(File.read(written.first)))
+          .to eq(described_class.compared_fields_only(actual_results_parsed))
+        expect(JSON.parse(File.read(written.first)).first).to_not include('id', 'created_at', 'test_run_id')
+      end
+    end
+  end
+
   describe described_class::ComparedTestResult do
     let(:base_result) do
       { 'result' => 'pass', 'test_id' => 'test-id-1' }
@@ -629,9 +677,9 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
         actual = with_requests(request('http://server/fhir/Patient/1', status: 500),
                                request('http://server/fhir/Patient/2'))
         r = compared(expected, actual, options)
-        expect(r.format_requests_for_csv(:expected))
+        expect(r.format_unordered_comparisons_for_csv(r.request_comparisons, :expected))
           .to eq("! outgoing GET http://server/fhir/Patient/1 200\n- outgoing GET http://server/fhir/Patient/2 200")
-        expect(r.format_requests_for_csv(:actual))
+        expect(r.format_unordered_comparisons_for_csv(r.request_comparisons, :actual))
           .to eq("! outgoing GET http://server/fhir/Patient/1 500\n- outgoing GET http://server/fhir/Patient/2 200")
         expect(r.comparison_csv_row.last(3).first).to be(true)
       end
@@ -640,8 +688,79 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
         expected = with_requests(request('http://server/fhir/Patient/1'), request('http://server/fhir/Patient/2'))
         actual = with_requests(request('http://server/fhir/Patient/2'))
         r = compared(expected, actual, options.merge(only_different_messages: true))
-        expect(r.format_requests_for_csv(:expected)).to eq('! outgoing GET http://server/fhir/Patient/1 200')
-        expect(r.format_requests_for_csv(:actual)).to eq('')
+        expect(r.format_unordered_comparisons_for_csv(r.request_comparisons, :expected))
+          .to eq('! outgoing GET http://server/fhir/Patient/1 200')
+        expect(r.format_unordered_comparisons_for_csv(r.request_comparisons, :actual)).to eq('')
+      end
+    end
+
+    describe 'input and output comparison' do
+      def io(name, value)
+        { 'name' => name, 'value' => value, 'type' => 'text' }
+      end
+
+      def with_io(inputs: [], outputs: [])
+        base_result.merge('inputs' => inputs, 'outputs' => outputs)
+      end
+
+      let(:options) { { compare_io: true } }
+
+      it 'matches when names and values match, regardless of order or other fields' do
+        expected = with_io(inputs: [io('a', '1'), io('b', '2')], outputs: [io('c', '3')])
+        actual = with_io(inputs: [io('b', '2').merge('type' => 'textarea'), io('a', '1')], outputs: [io('c', '3')])
+        expect(compared(expected, actual, options).same_result?).to be(true)
+      end
+
+      it 'does not match when a value differs, an entry is missing, or an input becomes an output' do
+        expected = with_io(inputs: [io('a', '1')], outputs: [io('c', '3')])
+        [
+          with_io(inputs: [io('a', '2')], outputs: [io('c', '3')]),
+          with_io(inputs: [io('a', '1')]),
+          with_io(inputs: [io('a', '1'), io('c', '3')])
+        ].each do |different|
+          expect(compared(expected, different, options).same_result?).to be(false)
+        end
+      end
+
+      it 'compares non-string values as JSON' do
+        expected = with_io(inputs: [io('auth', { 'auth_type' => 'public' })])
+        actual = with_io(inputs: [io('auth', '{"auth_type":"public"}')])
+        expect(compared(expected, actual, options).same_result?).to be(true)
+      end
+
+      it 'applies normalized strings to the values' do
+        expected = with_io(outputs: [io('url', 'http://localhost:4567/inferno/resume')])
+        actual = with_io(outputs: [io('url', 'https://inferno.example.com/inferno/resume')])
+        normalizing_options = options.merge(normalized_strings: ['/https?:\/\/[^\/]+/'])
+        expect(compared(expected, actual, options).same_result?).to be(false)
+        expect(compared(expected, actual, normalizing_options).same_result?).to be(true)
+      end
+
+      it 'compares large values only by being large, since their placeholder link varies by run' do
+        large = lambda do |host, result_id|
+          "Input is too large to display, please visit\n" \
+            "#{host}/api/test_sessions/abc/results/#{result_id}/io/inputs/patient_json\nfor details\n"
+        end
+        expected = with_io(inputs: [io('patient_json', large.call('http://localhost:4567/inferno', '1111'))])
+        actual = with_io(inputs: [io('patient_json', large.call('https://inferno.example.com', '2222'))])
+        expect(compared(expected, actual, options).same_result?).to be(true)
+        expect(compared(expected, with_io(inputs: [io('patient_json', '{}')]), options).same_result?).to be(false)
+      end
+
+      it 'ignores inputs and outputs when compare_io is not set' do
+        expected = with_io(inputs: [io('a', '1')])
+        expect(compared(expected, with_io, {}).same_result?).to be(true)
+      end
+
+      it 'formats inputs and outputs for CSV, marking mismatches' do
+        expected = with_io(inputs: [io('a', '1')], outputs: [io('c', '3')])
+        actual = with_io(inputs: [io('a', '2')], outputs: [io('c', '3')])
+        r = compared(expected, actual, options)
+        expect(r.format_unordered_comparisons_for_csv(r.io_comparisons, :expected))
+          .to eq("! input a: 1\n- output c: 3")
+        expect(r.format_unordered_comparisons_for_csv(r.io_comparisons, :actual))
+          .to eq("! input a: 2\n- output c: 3")
+        expect(r.comparison_csv_row.last(3).first).to be(true)
       end
     end
   end

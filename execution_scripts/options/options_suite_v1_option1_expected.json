@@ -1,188 +1,96 @@
 [
   {
-    "id": "be0f0605-9ae6-4c48-9392-72ef33e4761a",
-    "created_at": "2026-11-05T13:41:36.895-05:00",
-    "inputs": [
-      {
-        "name": "all_versions_input",
-        "value": "v1 & other option 1 selected",
-        "type": "text"
-      }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
     "test_id": "options-all_versions_group-all_versions_test1",
-    "test_run_id": "719853ae-03d6-4aba-997b-b0a5b07391c8",
+    "result": "pass",
     "test_session_id": "lhyoHmUYRpX",
-    "updated_at": "2026-11-05T13:41:36.895-05:00"
-  },
-  {
-    "id": "87322f58-1c2f-44b8-86d0-ab544d7fb945",
-    "created_at": "2026-11-05T13:41:36.897-05:00",
     "inputs": [
       {
         "name": "all_versions_input",
-        "value": "v1 & other option 1 selected",
-        "type": "text"
+        "value": "v1 & other option 1 selected"
       }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
+    ]
+  },
+  {
     "test_id": "options-all_versions_group-all_versions_test2",
-    "test_run_id": "719853ae-03d6-4aba-997b-b0a5b07391c8",
+    "result": "pass",
     "test_session_id": "lhyoHmUYRpX",
-    "updated_at": "2026-11-05T13:41:36.897-05:00"
-  },
-  {
-    "id": "b2118125-622a-4ad5-bdba-b88d31facfa3",
-    "created_at": "2026-11-05T13:41:36.898-05:00",
     "inputs": [
       {
         "name": "all_versions_input",
-        "label": null,
-        "description": null,
-        "value": "v1 & other option 1 selected",
-        "type": "text"
+        "value": "v1 & other option 1 selected"
       }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
+    ]
+  },
+  {
     "test_group_id": "options-all_versions_group",
-    "test_run_id": "719853ae-03d6-4aba-997b-b0a5b07391c8",
-    "test_session_id": "lhyoHmUYRpX",
-    "updated_at": "2026-11-05T13:41:36.898-05:00"
-  },
-  {
-    "id": "f3e41f51-33b8-4077-a28b-290c32e8b6f3",
-    "created_at": "2026-11-05T13:41:36.900-05:00",
-    "inputs": [],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
     "result": "pass",
-    "test_id": "options-display_options_group-simulation_verification_group-simulation_verification_test",
-    "test_run_id": "719853ae-03d6-4aba-997b-b0a5b07391c8",
     "test_session_id": "lhyoHmUYRpX",
-    "updated_at": "2026-11-05T13:41:36.900-05:00"
-  },
-  {
-    "id": "7620f616-dca8-432e-91eb-39847c5b9517",
-    "created_at": "2026-11-05T13:41:36.901-05:00",
-    "inputs": [],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
-    "test_id": "options-display_options_group-simulation_verification_group-regular_test",
-    "test_run_id": "719853ae-03d6-4aba-997b-b0a5b07391c8",
-    "test_session_id": "lhyoHmUYRpX",
-    "updated_at": "2026-11-05T13:41:36.901-05:00"
-  },
-  {
-    "id": "104e85c3-dc7c-4e1d-b8a8-344164e8a2f2",
-    "created_at": "2026-11-05T13:41:36.901-05:00",
-    "inputs": [],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
-    "test_group_id": "options-display_options_group-simulation_verification_group",
-    "test_run_id": "719853ae-03d6-4aba-997b-b0a5b07391c8",
-    "test_session_id": "lhyoHmUYRpX",
-    "updated_at": "2026-11-05T13:41:36.901-05:00"
-  },
-  {
-    "id": "079fbdc4-4ac9-42e7-b554-6f3cb477d20f",
-    "created_at": "2026-11-05T13:41:36.905-05:00",
-    "inputs": [],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
-    "test_group_id": "options-display_options_group",
-    "test_run_id": "719853ae-03d6-4aba-997b-b0a5b07391c8",
-    "test_session_id": "lhyoHmUYRpX",
-    "updated_at": "2026-11-05T13:41:36.905-05:00"
-  },
-  {
-    "id": "96b673e2-c626-49cd-b86d-60baa5dd6c40",
-    "created_at": "2026-11-05T13:41:36.906-05:00",
-    "inputs": [
-      {
-        "name": "v1_input",
-        "value": "unused",
-        "type": "text"
-      }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
-    "test_id": "options-v1_group-v1_test",
-    "test_run_id": "719853ae-03d6-4aba-997b-b0a5b07391c8",
-    "test_session_id": "lhyoHmUYRpX",
-    "updated_at": "2026-11-05T13:41:36.906-05:00"
-  },
-  {
-    "id": "ca654712-bce2-4b1b-a07f-15b6e9d53c35",
-    "created_at": "2026-11-05T13:41:36.907-05:00",
-    "inputs": [
-      {
-        "name": "v1_input",
-        "label": null,
-        "description": null,
-        "value": "unused",
-        "type": "text"
-      }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
-    "test_group_id": "options-v1_group",
-    "test_run_id": "719853ae-03d6-4aba-997b-b0a5b07391c8",
-    "test_session_id": "lhyoHmUYRpX",
-    "updated_at": "2026-11-05T13:41:36.907-05:00"
-  },
-  {
-    "id": "ad9d5c6b-35cd-4fcc-a83f-411a59d7b49b",
-    "created_at": "2026-11-05T13:41:36.910-05:00",
     "inputs": [
       {
         "name": "all_versions_input",
-        "label": null,
-        "description": null,
-        "value": "v1 & other option 1 selected",
-        "type": "text"
+        "value": "v1 & other option 1 selected"
+      }
+    ]
+  },
+  {
+    "test_id": "options-display_options_group-simulation_verification_group-simulation_verification_test",
+    "result": "pass",
+    "test_session_id": "lhyoHmUYRpX"
+  },
+  {
+    "test_id": "options-display_options_group-simulation_verification_group-regular_test",
+    "result": "pass",
+    "test_session_id": "lhyoHmUYRpX"
+  },
+  {
+    "test_group_id": "options-display_options_group-simulation_verification_group",
+    "result": "pass",
+    "test_session_id": "lhyoHmUYRpX"
+  },
+  {
+    "test_group_id": "options-display_options_group",
+    "result": "pass",
+    "test_session_id": "lhyoHmUYRpX"
+  },
+  {
+    "test_id": "options-v1_group-v1_test",
+    "result": "pass",
+    "test_session_id": "lhyoHmUYRpX",
+    "inputs": [
+      {
+        "name": "v1_input",
+        "value": "unused"
+      }
+    ]
+  },
+  {
+    "test_group_id": "options-v1_group",
+    "result": "pass",
+    "test_session_id": "lhyoHmUYRpX",
+    "inputs": [
+      {
+        "name": "v1_input",
+        "value": "unused"
+      }
+    ]
+  },
+  {
+    "test_suite_id": "options",
+    "result": "pass",
+    "test_session_id": "lhyoHmUYRpX",
+    "inputs": [
+      {
+        "name": "all_versions_input",
+        "value": "v1 & other option 1 selected"
       },
       {
         "name": "v1_input",
-        "label": null,
-        "description": null,
-        "value": "unused",
-        "type": "text"
+        "value": "unused"
       },
       {
         "name": "v2_input",
-        "label": null,
-        "description": null,
-        "value": null,
-        "type": "text"
+        "value": null
       }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
-    "test_run_id": "719853ae-03d6-4aba-997b-b0a5b07391c8",
-    "test_session_id": "lhyoHmUYRpX",
-    "test_suite_id": "options",
-    "updated_at": "2026-11-05T13:41:36.910-05:00"
+    ]
   }
 ]

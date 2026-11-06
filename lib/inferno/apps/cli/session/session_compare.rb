@@ -42,6 +42,12 @@ module Inferno
             desc: 'Compare requests (direction, verb, URL, and status) when comparing results. ' \
                   'Normalized strings are applied to the URL.'
           },
+          compare_io: {
+            type: :boolean,
+            default: false,
+            desc: 'Compare inputs and outputs (name and value) when comparing results. ' \
+                  'Normalized strings are applied to the values.'
+          },
           normalized_strings: {
             aliases: ['-n'],
             type: :array,
@@ -56,6 +62,30 @@ module Inferno
                   '(hide matching ones).'
           }
         }.freeze
+
+        COMPARED_RESULT_FIELDS = %w[test_id test_group_id test_suite_id result result_message].freeze
+        # Compared list field => fields kept for each entry
+        COMPARED_LIST_FIELDS = {
+          'inputs' => %w[name value],
+          'outputs' => %w[name value],
+          'messages' => %w[type message],
+          'requests' => %w[direction verb url status]
+        }.freeze
+
+        # Reduces results to the fields used in comparison, plus test_session_id, which is
+        # used to normalize session ids in compared strings.
+        def self.compared_fields_only(results)
+          results.map do |result|
+            reduced = result.slice(*COMPARED_RESULT_FIELDS, 'test_session_id')
+            COMPARED_LIST_FIELDS.each do |list_field, entry_fields|
+              next unless result[list_field].present?
+
+              reduced[list_field] = result[list_field].map { |entry| entry.slice(*entry_fields) }
+            end
+            reduced
+          end
+        end
+
         def run
           display_compared_results
           if output_directory.present? && !results_match?
@@ -90,7 +120,8 @@ module Inferno
 
         def save_actual_results_to_file
           actual_results_file_name = "#{output_file_prefix}actual_results_#{results_timestamp}#{host_suffix}.json"
-          File.write(File.join(output_directory, actual_results_file_name), JSON.pretty_generate(session_results))
+          File.write(File.join(output_directory, actual_results_file_name),
+                     JSON.pretty_generate(self.class.compared_fields_only(session_results)))
         end
 
         def save_comparison_csv_to_file
@@ -162,6 +193,11 @@ module Inferno
             header_row << 'requests different?'
             header_row << "expected requests#{normalized_suffix}"
             header_row << "actual requests#{normalized_suffix}"
+          end
+          if options[:compare_io]
+            header_row << 'inputs/outputs different?'
+            header_row << "expected inputs/outputs#{normalized_suffix}"
+            header_row << "actual inputs/outputs#{normalized_suffix}"
           end
 
           header_row
@@ -295,7 +331,8 @@ module Inferno
           OPTIONAL_COMPARISONS = {
             compare_result_message: :same_result_message?,
             compare_messages: :same_messages?,
-            compare_requests: :same_requests?
+            compare_requests: :same_requests?,
+            compare_io: :same_io?
           }.freeze
 
           def same_results?
@@ -326,15 +363,52 @@ module Inferno
 
           # Requests are compared as an unordered collection since concurrent requests
           # may be recorded in a different order between runs.
-          # Returns [{ signature:, expected: bool, actual: bool }] sorted by signature,
-          # where a request is matched when it is present on both sides.
           def request_comparisons
-            @request_comparisons ||= build_request_comparisons
+            @request_comparisons ||= unordered_comparisons(
+              sorted_request_signatures(expected_result), sorted_request_signatures(actual_result)
+            )
           end
 
-          def build_request_comparisons
-            expected_counts = sorted_request_signatures(expected_result).tally
-            actual_counts = sorted_request_signatures(actual_result).tally
+          # Inferno replaces large values with a message containing a link that varies by run
+          # (result id, session id, and host), so only the fact that the value was large is compared.
+          LARGE_IO_VALUE_PATTERN = /\A(Input|Output) is too large to display/
+          LARGE_IO_VALUE_SIGNATURE = '<too large to compare>'.freeze
+
+          # An input or output is compared by its name and value.
+          # Normalized strings are applied to the value.
+          def io_signature(kind, entry)
+            value = entry['value']
+            value = value.to_json unless value.nil? || value.is_a?(String)
+            value = value.to_s.match?(LARGE_IO_VALUE_PATTERN) ? LARGE_IO_VALUE_SIGNATURE : normalize_string(value.to_s)
+            "#{kind} #{entry['name']}: #{value}"
+          end
+
+          def sorted_io_signatures(result)
+            (Array(result&.dig('inputs')).map { |input| io_signature('input', input) } +
+              Array(result&.dig('outputs')).map { |output| io_signature('output', output) }).sort
+          end
+
+          # Inputs and outputs are compared as an unordered collection.
+          def io_comparisons
+            @io_comparisons ||=
+              unordered_comparisons(sorted_io_signatures(expected_result), sorted_io_signatures(actual_result))
+          end
+
+          def same_io?
+            io_comparisons.all? { |entry| entry[:expected] && entry[:actual] }
+          end
+
+          def different_io?
+            return false unless type == 'Compared'
+
+            !same_io?
+          end
+
+          # Returns [{ signature:, expected: bool, actual: bool }] sorted by signature,
+          # where an entry is matched when it is present on both sides.
+          def unordered_comparisons(expected_signatures, actual_signatures)
+            expected_counts = expected_signatures.tally
+            actual_counts = actual_signatures.tally
             (expected_counts.keys | actual_counts.keys).sort.flat_map do |signature|
               expected_count = expected_counts.fetch(signature, 0)
               actual_count = actual_counts.fetch(signature, 0)
@@ -480,7 +554,7 @@ module Inferno
               fields[:expected_messages] = expected_result&.dig('messages')
               fields[:actual_messages] = actual_result&.dig('messages')
             end
-            fields.merge(requests_to_h_fields)
+            fields.merge(requests_to_h_fields, io_to_h_fields)
           end
 
           def requests_to_h_fields
@@ -489,6 +563,15 @@ module Inferno
             {
               expected_requests: expected_result && sorted_request_signatures(expected_result),
               actual_requests: actual_result && sorted_request_signatures(actual_result)
+            }
+          end
+
+          def io_to_h_fields
+            return {} unless options[:compare_io]
+
+            {
+              expected_io: expected_result && sorted_io_signatures(expected_result),
+              actual_io: actual_result && sorted_io_signatures(actual_result)
             }
           end
 
@@ -504,13 +587,23 @@ module Inferno
               row << format_messages_for_csv(expected_result)
               row << format_messages_for_csv(actual_result)
             end
-            row.concat(requests_csv_columns)
+            row.concat(requests_csv_columns, io_csv_columns)
           end
 
           def requests_csv_columns
             return [] unless options[:compare_requests]
 
-            [different_requests?, format_requests_for_csv(:expected), format_requests_for_csv(:actual)]
+            [different_requests?,
+             format_unordered_comparisons_for_csv(request_comparisons, :expected),
+             format_unordered_comparisons_for_csv(request_comparisons, :actual)]
+          end
+
+          def io_csv_columns
+            return [] unless options[:compare_io]
+
+            [different_io?,
+             format_unordered_comparisons_for_csv(io_comparisons, :expected),
+             format_unordered_comparisons_for_csv(io_comparisons, :actual)]
           end
 
           def type
@@ -546,8 +639,8 @@ module Inferno
             end
           end
 
-          def format_requests_for_csv(side)
-            lines = request_comparisons.filter_map do |entry|
+          def format_unordered_comparisons_for_csv(comparisons, side)
+            lines = comparisons.filter_map do |entry|
               next unless entry[side]
 
               matches = entry[:expected] && entry[:actual]

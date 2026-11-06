@@ -625,6 +625,11 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(instance.send(:compare_options, '/tmp/expected.json')[:compare_requests]).to be(true)
     end
 
+    it 'passes compare_io through from the CLI options' do
+      instance = build_instance(base_config, base_options.merge(compare_io: true))
+      expect(instance.send(:compare_options, '/tmp/expected.json')[:compare_io]).to be(true)
+    end
+
     it 'includes only the session id normalization when normalized_strings is not in YAML' do
       instance = build_instance(base_config)
       opts = instance.send(:compare_options, '/tmp/expected.json')
