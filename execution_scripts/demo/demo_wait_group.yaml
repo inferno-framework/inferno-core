@@ -8,8 +8,7 @@ steps:
   
   - status: waiting
     last_completed: 5.02
-    command: "curl -o /dev/null -s 'http://inferno.healthit.gov/'"
-    action_description: demonstrate loop detection and ending
+    http_get: "{wait_outputs.wait_test_fail_url}"
   
   - status: done
     last_completed: 5

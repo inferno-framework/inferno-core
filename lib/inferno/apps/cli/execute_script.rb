@@ -19,7 +19,8 @@ module Inferno
     #                                              #   a session for each indicated suite will be created and
     #                                              #   a successful run will have the expected results for all sessions.
     #     - suite: my_suite                        # internal ID, title, or short title
-    #       name: my_name                          # optional; used as key in multi-session
+    #       name: my_name                          # required (and unique) in multi-session scripts, optional
+    #                                              #           otherwise; must not contain whitespace, '.', '{', or '}'
     #       preset: my-preset                      # optional; internal ID or title
     #       suite_options:                         # optional; option_key and option_value can be the
     #         option_key: option_value             #           internal values or the displayed titles
@@ -80,10 +81,17 @@ module Inferno
     #       session: my_name                       # optional; required when multiple sessions to indicate which session
     #                                              #           can match this step
     #       action: END_SCRIPT|NOOP|WAIT           # optional; built-in action (case-insensitive)
-    #                                              #           (mutually exclusive with command/start_run)
+    #                                              #           (mutually exclusive with command/http_get/start_run)
     #       # OR
     #       command: "bundle exec ..."             # optional; arbitrary shell command (requires
     #                                              #           --allow-commands CLI flag)
+    #       # OR
+    #       http_get: "{wait_outputs.KEY}"         # optional; http(s) URL to send a GET request to
+    #                                              #           (e.g. to resume a waiting test); does not
+    #                                              #           require --allow-commands. Fails the script
+    #                                              #           only if the request cannot be made.
+    #                                              #           The request times out after the step's
+    #                                              #           timeout (or the default poll timeout).
     #       # OR
     #       start_run:
     #         session: "my_name"                   # optional; session name or template token
@@ -94,7 +102,9 @@ module Inferno
     #           input_name: "value"                #           for the input
     #           input_name: "@path/to/file.txt"    #           prefix value with @ to read from a file;
     #                                              #           relative paths are resolved from the
-    #                                              #           directory containing this script file
+    #                                              #           directory containing this script file;
+    #                                              #           template tokens in the file are substituted
+    #                                              #           (JSON-escaped for .json files)
     #           input_name:                        #           YAML mappings and sequences are
     #             key: value                       #           automatically JSON-serialized, useful
     #           input_name:                        #           for auth_info and other JSON inputs
@@ -117,16 +127,30 @@ module Inferno
     #   by default and require the --allow-commands CLI flag to run. Scripts that contain no
     #   command: steps are unaffected and do not need the flag.
     #
-    # Template tokens in command strings and start_run input values:
+    # Template tokens in command strings, http_get URLs, and start_run input values (including the
+    # content of @path file inputs):
     #   {session_id}              — current session's Inferno session ID
     #   {NAME.session_id}         — named session's ID
     #   {result_message}          — current session's wait_result_message
     #   {NAME.result_message}     — named session's wait_result_message
     #   {wait_outputs.KEY}        — current session's wait output by name
     #   {NAME.wait_outputs.KEY}   — named session's wait output by name
-    #   {inferno_base_url}        — the Inferno base URL (--inferno-base-url option)
+    #   {inferno_base_url}        — the Inferno base URL (--inferno-base-url option, or the
+    #                               configured base_url when not provided)
+    # In JSON contexts (YAML mapping/sequence inputs and .json file inputs), tokens are
+    # assumed to appear inside double-quoted JSON strings, and substituted values are
+    # JSON-escaped accordingly.
     class ExecuteScript
       SHORT_ID_PATTERN = /\A[0-9][0-9.]*\z/
+      # Session names and wait output keys may not contain braces or whitespace (and names may not
+      # contain '.') so that tokens are matched on their own within larger text such as JSON.
+      SESSION_NAME = /[^{}.\s]+/
+      WAIT_OUTPUT_KEY = /[^{}\s]+/
+      SESSION_NAME_FORMAT = /\A#{SESSION_NAME}\z/
+      NAMED_SESSION_ID_TOKEN = /\{(#{SESSION_NAME})\.session_id\}/
+      NAMED_RESULT_MESSAGE_TOKEN = /\{(#{SESSION_NAME})\.result_message\}/
+      WAIT_OUTPUT_TOKEN = /\{wait_outputs\.(#{WAIT_OUTPUT_KEY})\}/
+      NAMED_WAIT_OUTPUT_TOKEN = /\{(#{SESSION_NAME})\.wait_outputs\.(#{WAIT_OUTPUT_KEY})\}/
       # Seconds subtracted from the initial last_log_time so the first
       # active-status line is logged immediately rather than after one interval.
       LOG_INTERVAL_SECONDS = 30
@@ -148,6 +172,7 @@ module Inferno
         self.options = options
         validate_yaml_file!
         validate_commands_allowed!
+        validate_session_names!
         self.execution_status = ExecutionStatus.new(
           done: false,
           failed: false,
@@ -220,6 +245,41 @@ module Inferno
         exit(1)
       end
 
+      # Session names are used in template tokens and must be free of characters that would
+      # prevent token matching. Multi-session scripts must name every session uniquely.
+      def validate_session_names!
+        session_configs = Array(script_config['sessions'])
+        errors = missing_session_name_errors(session_configs) +
+                 invalid_session_name_errors(session_configs) +
+                 duplicate_session_name_errors(session_configs)
+        return if errors.empty?
+
+        puts JSON.pretty_generate({ errors: errors.join(' ') })
+        exit(1)
+      end
+
+      def missing_session_name_errors(session_configs)
+        return [] unless multi_session_script?
+
+        session_configs.reject { |session_config| session_config['name'].present? }.map do |session_config|
+          "Session for suite '#{session_config['suite']}' must have a name when a script has multiple sessions."
+        end
+      end
+
+      def invalid_session_name_errors(session_configs)
+        names = session_configs.filter_map { |session_config| session_config['name']&.to_s }
+        names.grep_v(SESSION_NAME_FORMAT).map do |name|
+          "Session name '#{name}' must not contain whitespace, '.', '{', or '}'."
+        end
+      end
+
+      def duplicate_session_name_errors(session_configs)
+        names = session_configs.filter_map { |session_config| session_config['name']&.to_s }
+        names.tally.select { |_name, count| count > 1 }.keys.map do |name|
+          "Duplicate session name '#{name}'. Give each session a unique name."
+        end
+      end
+
       # ---------------------------------------------------------------------------
       # Session creation
       # ---------------------------------------------------------------------------
@@ -232,10 +292,11 @@ module Inferno
 
       def create_session_from_config(session_config)
         suite = session_config['suite']
-        warn "Creating '#{suite}' session..."
+        key = session_config['name']&.to_s || suite
+        name_detail = session_config['name'] ? " with name '#{session_config['name']}'" : ''
+        warn "Creating session for suite '#{suite}'#{name_detail}..."
         creator = Session::CreateSession.new(suite, session_create_options(session_config))
         session_details = creator.create_session
-        key = session_config['name'] || suite
         script_session = ScriptSession.new(
           key: key,
           suite_id: session_details['test_suite_id'],
@@ -368,6 +429,10 @@ module Inferno
           target_session_id = start_run_target_session(matched_step[:start_run])
           warn "Executing: #{start_run_description(matched_step[:start_run], session_id: target_session_id)}"
           execute_start_run(matched_step[:start_run], target_session_id)
+        elsif matched_step[:command] == 'HTTP_GET'
+          warn "Executing: GET #{matched_step[:url]}"
+          execution_status.failed = true unless execute_http_get(matched_step[:url])
+          execution_status.done = execution_status.failed
         else
           warn "Executing: #{matched_step[:command]}"
           execution_status.failed = true unless execute_command(matched_step[:command])
@@ -606,6 +671,8 @@ module Inferno
           start_run_description(step['start_run'] || {})
         elsif step.key?('action')
           "action: #{step['action']}"
+        elsif step.key?('http_get')
+          "http_get: #{step['http_get']}"
         else
           step['command'].to_s
         end
@@ -622,20 +689,26 @@ module Inferno
           end
         runnable_token = start_run_details['runnable'].present? ? " '#{start_run_details['runnable']}'" : ''
         parts = ["bundle exec inferno session start_run '#{session_token}'#{runnable_token}"]
-        if start_run_details['inputs'].present?
-          parts << "-i #{start_run_details['inputs'].map do |k, v|
-            "#{k}:#{v}"
-          end.join(' ')}"
-        end
+        parts << start_run_inputs_description(start_run_details) if start_run_details['inputs'].present?
         parts.join(' ')
+      end
+
+      # Templated file inputs show their @path rather than the substituted content.
+      def start_run_inputs_description(start_run_details)
+        templated_files = start_run_details['templated_files'] || {}
+        "-i #{start_run_details['inputs'].map do |k, v|
+          templated_files.key?(k) ? "#{k}:#{templated_files[k]} (templated)" : "#{k}:#{v}"
+        end.join(' ')}"
       end
 
       def resolve_command(step, status, session_key)
         if step.key?('start_run')
-          start_run = apply_templates_to_start_run(step['start_run'] || {}, status, session_key)
+          start_run = apply_templates_to_start_run((step['start_run'] || {}).deep_dup, status, session_key)
           { command: 'START_RUN', start_run: }
         elsif step.key?('action')
           { command: step['action'].upcase }
+        elsif step.key?('http_get')
+          { command: 'HTTP_GET', url: apply_templates(step['http_get'].to_s, status, session_key) }
         else
           cmd = step['command'].to_s
           { command: cmd.include?('{') ? apply_templates(cmd, status, session_key) : cmd }
@@ -650,25 +723,33 @@ module Inferno
       # Cross-session tokens trigger an on-demand status fetch (cached in
       # execution_status.cross_session_status, reset each poll cycle in poll_for_next_step).
       #
+      # When +json_string+ is true, +str+ is JSON and tokens are assumed to appear inside
+      # JSON string literals, so substituted values are escaped (quotes, backslashes,
+      # control characters) to keep the result valid JSON.
+      #
+      # Session names and wait output keys in tokens cannot contain braces or whitespace,
+      # so that a token inside larger text (e.g., a JSON object) is matched on its own.
+      #
       # Returns the resolved string or exits 3 if a token cannot be resolved.
-      def apply_templates(str, status, session_key)
+      def apply_templates(str, status, session_key, json_string: false)
         result = str.dup
+        escape = json_string ? ->(value) { value.to_s.to_json[1..-2] } : ->(value) { value }
 
         # {inferno_base_url} — the Inferno base URL
-        result.gsub!('{inferno_base_url}') { options[:inferno_base_url] }
+        result.gsub!('{inferno_base_url}') { escape.call(inferno_base_url) }
 
         # {session_id} — current session
-        result.gsub!('{session_id}') { session_name_to_id_map[session_key] }
+        result.gsub!('{session_id}') { escape.call(session_name_to_id_map[session_key]) }
 
         # {NAME.session_id} — named session
-        result.gsub!(/\{([^}.]+)\.session_id\}/) do
+        result.gsub!(NAMED_SESSION_ID_TOKEN) do
           name = Regexp.last_match(1)
           id   = session_name_to_id_map[name]
           unless id
             puts JSON.pretty_generate({ errors: "Unknown session name '#{name}' in token {#{name}.session_id}" })
             exit(3)
           end
-          id
+          escape.call(id)
         end
 
         # {result_message} — current session wait result message
@@ -678,11 +759,11 @@ module Inferno
             puts JSON.pretty_generate({ errors: 'Token {result_message} used but session is not in waiting state' })
             exit(3)
           end
-          msg
+          escape.call(msg)
         end
 
         # {NAME.result_message} — another session's wait result message
-        result.gsub!(/\{([^}.]+)\.result_message\}/) do
+        result.gsub!(NAMED_RESULT_MESSAGE_TOKEN) do
           name       = Regexp.last_match(1)
           other_stat = cross_session_status(name)
           msg        = other_stat['wait_result_message']
@@ -692,22 +773,22 @@ module Inferno
             )
             exit(3)
           end
-          msg
+          escape.call(msg)
         end
 
         # {wait_outputs.KEY} — current session wait output
-        result.gsub!(/\{wait_outputs\.([^}]+)\}/) do
+        result.gsub!(WAIT_OUTPUT_TOKEN) do
           key    = Regexp.last_match(1)
           output = find_wait_output(status['wait_outputs'], key)
           unless output
             puts JSON.pretty_generate({ errors: "Wait output '#{key}' not found in current session" })
             exit(3)
           end
-          output
+          escape.call(output)
         end
 
         # {NAME.wait_outputs.KEY} — another session's wait output
-        result.gsub!(/\{([^}.]+)\.wait_outputs\.([^}]+)\}/) do
+        result.gsub!(NAMED_WAIT_OUTPUT_TOKEN) do
           name       = Regexp.last_match(1)
           key        = Regexp.last_match(2)
           other_stat = cross_session_status(name)
@@ -718,7 +799,7 @@ module Inferno
             )
             exit(3)
           end
-          output
+          escape.call(output)
         end
 
         result
@@ -746,13 +827,36 @@ module Inferno
           start_run['session'] = apply_templates(start_run['session'], status, session_key)
         end
         start_run['inputs']&.each_key do |input_name|
-          raw = start_run['inputs'][input_name]
-          raw = raw.to_json if raw.is_a?(Array) || raw.is_a?(Hash)
-          value = apply_templates(raw.to_s, status, session_key)
-          start_run['inputs'][input_name] = expand_file_input_path(value)
+          apply_templates_to_start_run_input(start_run, input_name, status, session_key)
         end
 
         start_run
+      end
+
+      def apply_templates_to_start_run_input(start_run, input_name, status, session_key)
+        raw = start_run['inputs'][input_name]
+        json_string = raw.is_a?(Array) || raw.is_a?(Hash)
+        raw = raw.to_json if json_string
+        value = expand_file_input_path(apply_templates(raw.to_s, status, session_key, json_string:))
+        templated = apply_templates_to_file_input(value, status, session_key)
+        # Remember the @path of templated files so logging can show it instead of the content
+        (start_run['templated_files'] ||= {})[input_name] = value unless templated == value
+        start_run['inputs'][input_name] = templated
+      end
+
+      # For an @path input, substitutes template tokens within the file's content.
+      # Substituted values are JSON-escaped for .json files.
+      # Returns the substituted content when any token was replaced; otherwise returns
+      # the @path unchanged so that start_run reads the file as-is.
+      def apply_templates_to_file_input(value, status, session_key)
+        return value unless value.start_with?('@')
+
+        path = value[1..]
+        content = File.read(path, encoding: 'UTF-8')
+        return value unless content.valid_encoding?
+
+        templated = apply_templates(content, status, session_key, json_string: File.extname(path).casecmp?('.json'))
+        templated == content ? value : templated
       end
 
       def expand_file_input_path(value)
@@ -778,6 +882,25 @@ module Inferno
         $CHILD_STATUS.success?
       end
 
+      # Sends a GET request to +url+ and discards the response body. Only http(s) URLs
+      # are allowed. Returns false if the URL is invalid or the request cannot be made;
+      # an error (4xx or 5xx) response is logged but does not count as a failure. The request
+      # times out after the current step timeout.
+      def execute_http_get(url, timeout: execution_status.current_timeout)
+        uri = URI.parse(url)
+        unless uri.is_a?(URI::HTTP) && uri.host.present?
+          warn "Invalid http_get URL (must be http or https): #{url}"
+          return false
+        end
+
+        response = Faraday.new(request: { timeout: }).get(uri)
+        warn "http_get received HTTP #{response.status} from #{url}" if response.status >= 400
+        true
+      rescue URI::InvalidURIError, Faraday::Error => e
+        warn "http_get request to #{url} failed: #{e.message}"
+        false
+      end
+
       # ---------------------------------------------------------------------------
       # check results
       # ---------------------------------------------------------------------------
@@ -799,9 +922,12 @@ module Inferno
         end.all?
       end
 
+      def inferno_base_url
+        Session::Connection.inferno_base_url(options)
+      end
+
       def session_display_url(session)
-        base_url = (options[:inferno_base_url].presence || Inferno::Application['base_url']).to_s.delete_suffix('/')
-        "#{base_url}/#{session.suite_id}/#{session.session_id}"
+        "#{inferno_base_url}/#{session.suite_id}/#{session.session_id}"
       end
 
       def any_error_results?(session)
@@ -840,6 +966,11 @@ module Inferno
           matched = cmp.results_match?
           warn "  Comparing against #{File.basename(expected_file)}"
           warn "  Actual results matched expected results? #{matched}"
+          if !matched && options[:update_expected]
+            write_expected_results(expected_file, cmp.session_results)
+            warn "  Expected results updated: wrote actual results to #{expected_file}"
+            return true
+          end
           unless matched
             cmp.save_actual_results_to_file
             cmp.save_comparison_csv_to_file
@@ -848,9 +979,13 @@ module Inferno
         else
           warn "  Expected results file not found; writing actual results to #{expected_file}"
           results = Session::SessionResults.new(session.session_id, options).results_for_session(session.session_id)
-          File.write(expected_file, results.to_json)
-          false
+          write_expected_results(expected_file, results)
+          options[:update_expected].present?
         end
+      end
+
+      def write_expected_results(expected_file, results)
+        File.write(expected_file, JSON.pretty_generate(results))
       end
 
       def resolve_expected_file_for_comparison(session)

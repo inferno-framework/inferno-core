@@ -1,0 +1,65 @@
+# Demonstrates template token substitution in start_run inputs:
+#   - json_file_input: in the content of an @file input, JSON-escaped because the
+#     file is .json (script_tokens_file_and_json_inputs_json_input.json)
+#   - json_mapping_input: in an inline YAML mapping input, JSON-escaped because
+#     mappings are serialized to JSON before tokens are substituted
+#   - text_file_input: in the content of an @file input, not escaped because the
+#     file is not .json (script_tokens_file_and_json_inputs_text_input.txt)
+#
+# The provider session's token_value wait output is: He said "hi" \ then left
+# Its double quotes and backslash must be escaped inside a JSON string, so the
+# consumer's JSON input tests error if escaping does not happen, and its text
+# input test fails if escaping happens where it shouldn't.
+#
+# Two sessions are needed because wait outputs are only available to tokens while a
+# test is waiting, and a session with a waiting test cannot start another run.
+# The tokens use the {provider.wait_outputs.KEY} form, which works from any session.
+#
+# Flow:
+#   1. provider runs group 1, which waits with token_value and resume_url outputs
+#   2. while provider waits, consumer runs group 2 with the token value in its inputs
+#   3. when consumer finishes, http_get resume_url to resume provider
+#   4. when provider finishes, end the script
+sessions:
+  - suite: script_tokens
+    name: provider
+  - suite: script_tokens
+    name: consumer
+
+steps:
+  - state_description: Provider session created
+    session: provider
+    status: created
+    start_run:
+      session: provider
+      runnable: 1
+    action_description: Start the provider group, which waits with the token value as an output
+
+  - state_description: Provider waiting with the token value
+    session: provider
+    status: waiting
+    last_completed: 1.01
+    start_run:
+      session: consumer
+      runnable: 2
+      inputs:
+        json_file_input: '@script_tokens_file_and_json_inputs_json_input.json'
+        json_mapping_input:
+          note: '{provider.wait_outputs.token_value}'
+        text_file_input: '@script_tokens_file_and_json_inputs_text_input.txt'
+    next_poll_session: consumer
+    action_description: Run the consumer group with the token value substituted into its inputs
+
+  - state_description: Consumer group finished
+    session: consumer
+    status: done
+    last_completed: 2
+    http_get: '{provider.wait_outputs.resume_url}'
+    next_poll_session: provider
+    action_description: Resume the provider
+
+  - state_description: Provider group finished
+    session: provider
+    status: done
+    last_completed: 1
+    action: END_SCRIPT

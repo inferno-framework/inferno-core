@@ -86,9 +86,11 @@ module Inferno
 
         PATTERN may be a single YAML file, or it may contain wildcards (e.g. glob
         patterns like `*` or `**`) to match and run multiple scripts in sequence.
-        When PATTERN matches more than one file, each matching script is run in a
-        separate process; a summary of passed and failed scripts is printed at the
-        end, and the command exits non-zero if any script failed.
+        When PATTERN contains wildcards (or is omitted), each matching script is run
+        in a separate process, even if only one script matches; scripts whose filename
+        contains "_with_commands" are run with --allow-commands, a summary of passed
+        and failed scripts is printed at the end, and the command exits non-zero if
+        any script failed.
 
         If PATTERN is omitted, it defaults to `execution_scripts/**/*.yaml`, running
         every script under the execution_scripts directory.
@@ -138,16 +140,22 @@ module Inferno
              default: false,
              desc: 'Allow execution script steps that run arbitrary shell commands. ' \
                    'Scripts with command: steps will fail unless this flag is set. ' \
-                   'When PATTERN matches multiple scripts, this also applies to all of them ' \
+                   'When PATTERN contains wildcards, this also applies to all matching scripts ' \
                    '(in addition to any individual script whose filename contains "_with_commands").'
+      option :update_expected,
+             aliases: ['-u'],
+             type: :boolean,
+             default: false,
+             desc: 'When results do not match, overwrite the expected results file with the actual results ' \
+                   '(instead of writing actual results and comparison files) and treat the comparison as passing. ' \
+                   'Review the changes with git diff.'
       def execute_script(pattern = 'execution_scripts/**/*.yaml')
-        matches = Dir.glob(pattern).select { |file| file.end_with?('.yaml', '.yml') }.sort
-
-        if matches.length > 1 || (matches.empty? && pattern.match?(/[*?\[\]{}]/))
+        if pattern.match?(/[*?\[\]{}]/)
           Utils::ExecutionScriptRunner.run_all(
             pattern:,
             inferno_base_url: options[:inferno_base_url],
             allow_commands: options[:allow_commands],
+            update_expected: options[:update_expected],
             compare_messages: options[:compare_messages],
             compare_result_message: options[:compare_result_message],
             poll_interval: options[:poll_interval],
@@ -155,9 +163,10 @@ module Inferno
             only_different_messages: options[:only_different_messages]
           )
         else
-          ExecuteScript.new(matches.first || pattern, options).run
+          ExecuteScript.new(pattern, options).run
         end
       end
+      map %w[execute_scripts execution_scripts] => :execute_script
 
       desc 'session SUBCOMMAND ...ARGS', 'Perform session operations'
       subcommand 'session', Session::SessionCommands

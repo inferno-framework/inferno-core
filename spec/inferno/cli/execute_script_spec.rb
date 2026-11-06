@@ -32,6 +32,31 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     described_class.new('script.yaml', opts)
   end
 
+  describe 'session creation logging' do
+    # warn is silent when $VERBOSE is nil
+    around do |example|
+      verbose = $VERBOSE
+      $VERBOSE = false
+      example.run
+    ensure
+      $VERBOSE = verbose
+    end
+
+    it 'includes the session name after the suite when a name is given' do
+      config = { 'sessions' => [{ 'suite' => suite_id, 'name' => 'consumer' }], 'steps' => [] }
+      expect { build_instance(config) }
+        .to output(/Creating session for suite '#{suite_id}' with name 'consumer'\.\.\./)
+        .to_stderr
+    end
+
+    it 'only includes the suite when no name is given' do
+      config = { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }
+      expect { build_instance(config) }
+        .to output(/Creating session for suite '#{suite_id}'\.\.\./)
+        .to_stderr
+    end
+  end
+
   describe '#validate_yaml_file!' do
     it 'exits 1 with an error message when the file does not exist' do
       allow(File).to receive(:exist?).with('missing.yaml').and_return(false)
@@ -144,6 +169,12 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(result).to eq("connect to #{inferno_host}/auth")
     end
 
+    it 'substitutes {inferno_base_url} with the configured base_url when no option is given' do
+      instance.send(:options=, base_options.except(:inferno_base_url))
+      result = instance.send(:apply_templates, 'connect to {inferno_base_url}/auth', status, session_key)
+      expect(result).to eq("connect to #{Inferno::Application['base_url']}/auth")
+    end
+
     it 'substitutes {session_id} with the current session id' do
       result = instance.send(:apply_templates, 'session={session_id}', status, session_key)
       expect(result).to eq("session=#{session_id}")
@@ -170,6 +201,19 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     it 'substitutes {NAME.session_id} with the named session id' do
       result = instance.send(:apply_templates, 'id={primary.session_id}', status, session_key)
       expect(result).to eq("id=#{session_id}")
+    end
+
+    it 'substitutes {NAME.session_id} inside a multi-line JSON object' do
+      result = instance.send(:apply_templates, %({\n  "id": "{primary.session_id}"\n}), status, session_key)
+      expect(result).to eq(%({\n  "id": "#{session_id}"\n}))
+    end
+
+    it 'substitutes {NAME.wait_outputs.KEY} inside a multi-line JSON object' do
+      instance.execution_status.cross_session_status['primary'] =
+        { 'wait_outputs' => [{ 'name' => 'note', 'value' => 'a "quoted" value' }] }
+      result = instance.send(:apply_templates, %({\n  "note": "{primary.wait_outputs.note}"\n}), status, session_key,
+                             json_string: true)
+      expect(JSON.parse(result)).to eq({ 'note' => 'a "quoted" value' })
     end
 
     it 'exits 3 when {NAME.session_id} refers to an unknown session' do
@@ -240,6 +284,49 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
+  describe '#resolve_command' do
+    subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
+
+    let(:path) { File.expand_path('data.json', '.') }
+    let(:step) do
+      {
+        'status' => 'waiting',
+        'last_completed' => 'wait-test',
+        'start_run' => {
+          'runnable' => 'suite',
+          'inputs' => { 'url' => '{wait_outputs.url}', 'data' => '@data.json' }
+        }
+      }
+    end
+
+    def waiting_status(url)
+      { 'status' => 'waiting', 'wait_outputs' => [{ 'name' => 'url', 'value' => url }] }
+    end
+
+    before do
+      allow(File).to receive(:exist?).with(path).and_return(true)
+      allow(File).to receive(:read).with(path, encoding: 'UTF-8').and_return('{"url": "{wait_outputs.url}"}')
+    end
+
+    it 'does not modify the step when substituting template tokens in start_run inputs' do
+      original_step = step.deep_dup
+      instance.send(:resolve_command, step, waiting_status('http://first.example.com'), suite_id)
+      expect(step).to eq(original_step)
+    end
+
+    it 'substitutes values from the current status each time the step is resolved' do
+      first = instance.send(:resolve_command, step, waiting_status('http://first.example.com'), suite_id)
+      second = instance.send(:resolve_command, step, waiting_status('http://second.example.com'), suite_id)
+
+      expect(first[:start_run]['inputs']).to eq(
+        'url' => 'http://first.example.com', 'data' => '{"url": "http://first.example.com"}'
+      )
+      expect(second[:start_run]['inputs']).to eq(
+        'url' => 'http://second.example.com', 'data' => '{"url": "http://second.example.com"}'
+      )
+    end
+  end
+
   describe '#apply_templates_to_start_run' do
     subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
 
@@ -249,6 +336,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     it 'expands relative @paths in inputs to absolute paths after template substitution' do
       expected_path = File.expand_path('data.json', '.')
       allow(File).to receive(:exist?).with(expected_path).and_return(true)
+      allow(File).to receive(:read).with(expected_path, encoding: 'UTF-8').and_return('{"no": "tokens"}')
       start_run = { 'runnable' => 'suite', 'inputs' => { 'coverage_json' => '@data.json' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['coverage_json']).to eq("@#{expected_path}")
@@ -260,21 +348,55 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(result['inputs']['url']).to eq('https://example.com')
     end
 
-    it 'does not apply template substitution to @path contents (file content is verbatim)' do
-      # Template substitution runs on the raw YAML value before file expansion.
-      # A plain string with a token is substituted; an @path is expanded but its
-      # content (read at run time by start_run) is never touched by apply_templates.
-      allow(File).to receive(:exist?).with(File.expand_path('data.json', '.')).and_return(true)
+    it 'replaces an @path input with its content when the file contains template tokens' do
+      path = File.expand_path('data.json', '.')
+      allow(File).to receive(:exist?).with(path).and_return(true)
+      allow(File).to receive(:read).with(path, encoding: 'UTF-8').and_return('{"url": "{inferno_base_url}/fhir"}')
       start_run = { 'runnable' => 'suite', 'inputs' => { 'url' => '{inferno_base_url}', 'data' => '@data.json' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
-      # The plain token is substituted
       expect(result['inputs']['url']).to eq(inferno_host)
-      # The @path is expanded but still an @path (file content not read here)
-      expect(result['inputs']['data']).to start_with('@/')
+      expect(result['inputs']['data']).to eq(%({"url": "#{inferno_host}/fhir"}))
+    end
+
+    it 'leaves an @path input unchanged when the file contains no template tokens' do
+      path = File.expand_path('data.json', '.')
+      allow(File).to receive(:exist?).with(path).and_return(true)
+      allow(File).to receive(:read).with(path, encoding: 'UTF-8').and_return('{"url": "https://example.com"}')
+      start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@data.json' } }
+      result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+      expect(result['inputs']['data']).to eq("@#{path}")
+    end
+
+    it 'leaves an @path input unchanged when the file is not valid text' do
+      path = File.expand_path('data.bin', '.')
+      allow(File).to receive(:exist?).with(path).and_return(true)
+      allow(File).to receive(:read).with(path, encoding: 'UTF-8')
+        .and_return("\xFF{session_id}".dup.force_encoding('UTF-8'))
+      start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@data.bin' } }
+      result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+      expect(result['inputs']['data']).to eq("@#{path}")
+    end
+
+    it 'substitutes tokens in a UTF-8 file with non-ASCII content regardless of the default encoding' do
+      Dir.mktmpdir do |dir|
+        path = File.join(dir, 'data.json')
+        File.write(path, '{"name": "José", "url": "{inferno_base_url}"}', encoding: 'UTF-8')
+        allow(File).to receive(:exist?).and_call_original
+        original_external = Encoding.default_external
+        begin
+          silence_warnings { Encoding.default_external = Encoding::US_ASCII }
+          start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => "@#{path}" } }
+          result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+          expect(result['inputs']['data']).to eq(%({"name": "José", "url": "#{inferno_host}"}))
+        ensure
+          silence_warnings { Encoding.default_external = original_external }
+        end
+      end
     end
 
     it 'leaves absolute @paths unchanged when the file exists' do
       allow(File).to receive(:exist?).with('/etc/ssl/cert.pem').and_return(true)
+      allow(File).to receive(:read).with('/etc/ssl/cert.pem', encoding: 'UTF-8').and_return('CERT')
       start_run = { 'runnable' => 'suite', 'inputs' => { 'cert' => '@/etc/ssl/cert.pem' } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['cert']).to eq('@/etc/ssl/cert.pem')
@@ -293,6 +415,40 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       start_run = { 'runnable' => 'suite', 'inputs' => { 'list_input' => array_value } }
       result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
       expect(result['inputs']['list_input']).to eq(array_value.to_json)
+    end
+
+    context 'when a substituted value contains characters that must be escaped in JSON' do
+      let(:status) { { 'wait_result_message' => %(Say "hi"\\\nthere) } }
+
+      it 'JSON-escapes values substituted into a Hash input' do
+        start_run = { 'runnable' => 'suite', 'inputs' => { 'auth_info' => { 'note' => '{result_message}' } } }
+        result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+        expect(JSON.parse(result['inputs']['auth_info'])).to eq({ 'note' => status['wait_result_message'] })
+      end
+
+      it 'JSON-escapes values substituted into a .json file input' do
+        path = File.expand_path('data.json', '.')
+        allow(File).to receive(:exist?).with(path).and_return(true)
+        allow(File).to receive(:read).with(path, encoding: 'UTF-8').and_return('{"note": "{result_message}"}')
+        start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@data.json' } }
+        result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+        expect(JSON.parse(result['inputs']['data'])).to eq({ 'note' => status['wait_result_message'] })
+      end
+
+      it 'does not escape values substituted into a non-JSON file input' do
+        path = File.expand_path('note.txt', '.')
+        allow(File).to receive(:exist?).with(path).and_return(true)
+        allow(File).to receive(:read).with(path, encoding: 'UTF-8').and_return('note: {result_message}')
+        start_run = { 'runnable' => 'suite', 'inputs' => { 'data' => '@note.txt' } }
+        result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+        expect(result['inputs']['data']).to eq("note: #{status['wait_result_message']}")
+      end
+
+      it 'does not escape values substituted into a plain string input' do
+        start_run = { 'runnable' => 'suite', 'inputs' => { 'note' => 'note: {result_message}' } }
+        result = instance.send(:apply_templates_to_start_run, start_run, status, session_key)
+        expect(result['inputs']['note']).to eq("note: #{status['wait_result_message']}")
+      end
     end
   end
 
@@ -337,13 +493,56 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(mock_compare).to have_received(:save_comparison_csv_to_file)
     end
 
-    it 'returns false and writes actual results when the expected file does not exist' do
+    it 'returns false and writes pretty-printed actual results when the expected file does not exist' do
+      results = [{ 'result' => 'pass' }]
       allow(File).to receive(:exist?).with(expected_file).and_return(false)
-      allow(mock_results).to receive(:results_for_session).with(session_id).and_return([{ 'result' => 'pass' }])
+      allow(mock_results).to receive(:results_for_session).with(session_id).and_return(results)
       allow(File).to receive(:write).with(expected_file, anything)
 
       expect(instance.send(:compare_session, session)).to be(false)
-      expect(File).to have_received(:write).with(expected_file, anything)
+      expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
+    end
+
+    context 'with update_expected' do
+      subject(:instance) do
+        build_instance({
+                         'sessions' => [{ 'suite' => suite_id }],
+                         'steps' => [],
+                         'comparison_config' => { 'expected_results_file' => expected_file }
+                       }, base_options.merge(update_expected: true))
+      end
+
+      let(:results) { [{ 'test_id' => 'test-1', 'result' => 'fail' }] }
+
+      before { allow(File).to receive(:write).with(expected_file, anything) }
+
+      it 'overwrites the expected file with pretty-printed results and returns true on a mismatch' do
+        allow(File).to receive(:exist?).with(expected_file).and_return(true)
+        allow(mock_compare).to receive_messages(results_match?: false, session_results: results)
+        allow(mock_compare).to receive(:save_actual_results_to_file)
+        allow(mock_compare).to receive(:save_comparison_csv_to_file)
+
+        expect(instance.send(:compare_session, session)).to be(true)
+        expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
+        expect(mock_compare).to_not have_received(:save_actual_results_to_file)
+        expect(mock_compare).to_not have_received(:save_comparison_csv_to_file)
+      end
+
+      it 'does not rewrite the expected file when results match' do
+        allow(File).to receive(:exist?).with(expected_file).and_return(true)
+        allow(mock_compare).to receive(:results_match?).and_return(true)
+
+        expect(instance.send(:compare_session, session)).to be(true)
+        expect(File).to_not have_received(:write)
+      end
+
+      it 'writes the expected file and returns true when it does not exist' do
+        allow(File).to receive(:exist?).with(expected_file).and_return(false)
+        allow(mock_results).to receive(:results_for_session).with(session_id).and_return(results)
+
+        expect(instance.send(:compare_session, session)).to be(true)
+        expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
+      end
     end
   end
 
@@ -673,6 +872,61 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
+  describe '#validate_session_names!' do
+    def expect_exit_with_error(config, message)
+      expect do
+        expect { build_instance(config) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+      end.to output(message).to_stdout
+    end
+
+    it 'exits 1 when a session name contains whitespace' do
+      config = { 'sessions' => [{ 'suite' => suite_id, 'name' => 'my receiver' }], 'steps' => [] }
+      expect_exit_with_error(config, /Session name 'my receiver' must not contain whitespace/)
+    end
+
+    it "exits 1 when a session name contains '.'" do
+      config = { 'sessions' => [{ 'suite' => suite_id, 'name' => 'my.receiver' }], 'steps' => [] }
+      expect_exit_with_error(config, /Session name 'my\.receiver' must not contain/)
+    end
+
+    it 'exits 1 when two sessions have the same name' do
+      config = {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 'receiver' }, { 'suite' => 'other', 'name' => 'receiver' }],
+        'steps' => []
+      }
+      expect_exit_with_error(config, /Duplicate session name 'receiver'/)
+    end
+
+    it 'exits 1 when a session in a multi-session script has no name' do
+      config = { 'sessions' => [{ 'suite' => suite_id, 'name' => 'sender' }, { 'suite' => suite_id }], 'steps' => [] }
+      expect_exit_with_error(config, /Session for suite '#{suite_id}' must have a name/)
+    end
+
+    it 'does not exit when the only session has no name, even if the suite is a title' do
+      config = { 'sessions' => [{ 'suite' => 'Demonstration Suite' }], 'steps' => [] }
+      allow_any_instance_of(Inferno::CLI::Session::CreateSession).to receive(:suite_id).and_return(suite_id)
+      expect { build_instance(config) }.to_not raise_error
+    end
+
+    it 'does not exit for unique, valid session names' do
+      config = {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 'sender' }, { 'suite' => suite_id, 'name' => 'receiver-2' }],
+        'steps' => []
+      }
+      expect { build_instance(config) }.to_not raise_error
+    end
+
+    it 'resolves tokens for numeric session names' do
+      config = {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 1 }, { 'suite' => suite_id, 'name' => 2 }],
+        'steps' => []
+      }
+      instance = build_instance(config)
+      expect(instance.send(:apply_templates, '{1.session_id}', {}, '2')).to eq(session_id)
+    end
+  end
+
   describe '#execute_command' do
     subject(:instance) do
       build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] },
@@ -685,6 +939,118 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
     it 'returns false when the command fails' do
       expect(instance.send(:execute_command, 'false')).to be false
+    end
+  end
+
+  describe '#execute_http_get' do
+    let(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
+
+    let(:url) { "#{inferno_host}/custom/demo/resume?token=abc" }
+
+    it 'sends a GET request and returns true on success' do
+      request = stub_request(:get, url).to_return(status: 200)
+      expect(instance.send(:execute_http_get, url)).to be true
+      expect(request).to have_been_made
+    end
+
+    it 'returns true and logs a warning on an error response' do
+      stub_request(:get, url).to_return(status: 500)
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, url)).to be true
+      expect(instance).to have_received(:warn).with(/HTTP 500/)
+    end
+
+    it 'returns true without a warning on a redirect response (e.g., from a resume route)' do
+      stub_request(:get, url).to_return(status: 302, headers: { 'Location' => "#{inferno_host}/demo" })
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, url)).to be true
+      expect(instance).to_not have_received(:warn)
+    end
+
+    it 'returns false when the request cannot be made' do
+      stub_request(:get, url).to_raise(Faraday::ConnectionFailed.new('connection refused'))
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, url)).to be false
+      expect(instance).to have_received(:warn).with(/connection refused/)
+    end
+
+    it 'returns false without making a request for a non-http(s) URL' do
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, 'file:///etc/passwd')).to be false
+      expect(instance).to have_received(:warn).with(/must be http or https/)
+    end
+
+    it 'returns false for an unparseable URL' do
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, 'http://exa mple.com')).to be false
+      expect(instance).to have_received(:warn).with(/failed/)
+    end
+
+    it 'uses the current step timeout for the request' do
+      stub_request(:get, url).to_return(status: 200)
+      allow(Faraday).to receive(:new).and_call_original
+      instance.execution_status.current_timeout = 45
+      instance.send(:execute_http_get, url)
+      expect(Faraday).to have_received(:new).with(request: { timeout: 45 })
+    end
+
+    it 'returns false when the request times out' do
+      stub_request(:get, url).to_timeout
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, url)).to be false
+      expect(instance).to have_received(:warn).with(/http_get request to .* failed/)
+    end
+  end
+
+  describe 'http_get steps' do
+    let(:url) { "#{inferno_host}/custom/demo/resume" }
+    let(:config) do
+      {
+        'sessions' => [{ 'suite' => suite_id }],
+        'steps' => [{ 'status' => 'waiting', 'last_completed' => 'wait-test', 'http_get' => '{wait_outputs.url}' }]
+      }
+    end
+    let(:status) do
+      { 'status' => 'waiting', 'last_test_executed' => 'wait-test',
+        'wait_outputs' => [{ 'name' => 'url', 'value' => url }] }
+    end
+
+    it 'does not require --allow-commands' do
+      expect { build_instance(config, base_options.merge(allow_commands: false)) }.to_not raise_error
+    end
+
+    it 'resolves template tokens in the URL' do
+      instance = build_instance(config)
+      step = instance.send(:resolve_command, config['steps'].first, status, suite_id)
+      expect(step).to eq({ command: 'HTTP_GET', url: })
+    end
+
+    it 'sends the GET request when the step is taken' do
+      instance = build_instance(config)
+      request = stub_request(:get, url).to_return(status: 200)
+      instance.send(:take_step, { command: 'HTTP_GET', url: })
+      expect(request).to have_been_made
+      expect(instance.execution_status.failed).to be_falsey
+    end
+
+    it "uses the step's timeout for the request, falling back to the default poll timeout" do
+      instance = build_instance(config)
+      stub_request(:get, url).to_return(status: 200)
+      allow(Faraday).to receive(:new).and_call_original
+
+      instance.send(:take_step, { command: 'HTTP_GET', url:, timeout: 45 })
+      expect(Faraday).to have_received(:new).with(request: { timeout: 45 })
+
+      instance.send(:take_step, { command: 'HTTP_GET', url: })
+      expect(Faraday).to have_received(:new).with(request: { timeout: base_options[:default_poll_timeout] })
+    end
+
+    it 'marks the script failed and done when the request cannot be made' do
+      instance = build_instance(config)
+      stub_request(:get, url).to_raise(Faraday::ConnectionFailed.new('connection refused'))
+      instance.send(:take_step, { command: 'HTTP_GET', url: })
+      expect(instance.execution_status.failed).to be true
+      expect(instance.execution_status.done).to be true
     end
   end
 

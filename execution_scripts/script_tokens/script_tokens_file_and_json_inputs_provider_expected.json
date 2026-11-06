@@ -1,0 +1,39 @@
+[
+  {
+    "id": "d76d8108-2999-4a02-bbe1-e238475db320",
+    "created_at": "2026-11-05T12:26:16.601-05:00",
+    "inputs": [],
+    "optional": false,
+    "outputs": [
+      {
+        "name": "token_value",
+        "type": "text",
+        "value": "He said \"hi\" \\ then left"
+      },
+      {
+        "name": "resume_url",
+        "type": "text",
+        "value": "http://localhost:4567/inferno/custom/script_tokens/resume?xyz=script_tokens"
+      }
+    ],
+    "requests": [],
+    "result": "pass",
+    "test_id": "script_tokens-provide_value-wait_with_value",
+    "test_run_id": "8d527f6c-1fb8-4362-9810-11ffb62ad774",
+    "test_session_id": "6k8OpAk0ftU",
+    "updated_at": "2026-11-05T12:26:22.679-05:00"
+  },
+  {
+    "id": "474eeb29-9f94-4d30-bd29-d7f0d9e49898",
+    "created_at": "2026-11-05T12:26:22.688-05:00",
+    "inputs": [],
+    "optional": false,
+    "outputs": [],
+    "requests": [],
+    "result": "pass",
+    "test_group_id": "script_tokens-provide_value",
+    "test_run_id": "8d527f6c-1fb8-4362-9810-11ffb62ad774",
+    "test_session_id": "6k8OpAk0ftU",
+    "updated_at": "2026-11-05T12:26:22.688-05:00"
+  }
+]
