@@ -538,16 +538,20 @@ module Inferno
             lcs_align(sorted_messages(expected_result), sorted_messages(actual_result))
           end
 
+          # Messages are aligned by their comparison keys (see message_key), computed once per
+          # message rather than for each of the O(n*m) comparisons the alignment makes.
           def lcs_align(expected, actual)
-            lcs_backtrack(lcs_matrix(expected, actual), expected, actual)
+            expected_keys = expected.map { |message| message_key(message) }
+            actual_keys = actual.map { |message| message_key(message) }
+            lcs_backtrack(lcs_matrix(expected_keys, actual_keys), expected, actual, expected_keys, actual_keys)
           end
 
-          def lcs_matrix(expected, actual)
-            matrix = Array.new(expected.size + 1) { Array.new(actual.size + 1, 0) }
-            (1..expected.size).each do |expected_index|
-              (1..actual.size).each do |actual_index|
+          def lcs_matrix(expected_keys, actual_keys)
+            matrix = Array.new(expected_keys.size + 1) { Array.new(actual_keys.size + 1, 0) }
+            (1..expected_keys.size).each do |expected_index|
+              (1..actual_keys.size).each do |actual_index|
                 matrix[expected_index][actual_index] =
-                  if same_message?(expected[expected_index - 1], actual[actual_index - 1])
+                  if expected_keys[expected_index - 1] == actual_keys[actual_index - 1]
                     matrix[expected_index - 1][actual_index - 1] + 1
                   else
                     [matrix[expected_index - 1][actual_index],
@@ -558,13 +562,15 @@ module Inferno
             matrix
           end
 
-          def lcs_backtrack(matrix, expected, actual)
+          def lcs_backtrack(matrix, expected, actual, expected_keys, actual_keys)
             alignment = []
             expected_index = expected.size
             actual_index = actual.size
 
             while expected_index.positive? || actual_index.positive?
-              step = lcs_backtrack_step(matrix, expected, actual, expected_index, actual_index)
+              same = expected_index.positive? && actual_index.positive? &&
+                     expected_keys[expected_index - 1] == actual_keys[actual_index - 1]
+              step = lcs_backtrack_step(matrix, expected, actual, expected_index, actual_index, same)
               alignment.unshift(step[:entry])
               expected_index = step[:next_expected_index]
               actual_index = step[:next_actual_index]
@@ -574,11 +580,8 @@ module Inferno
 
           # Each step returns { entry:, next_expected_index:, next_actual_index: }.
           # entry is { expected: msg_or_nil, actual: msg_or_nil, match: bool }.
-          def lcs_backtrack_step(matrix, expected, actual, expected_index, actual_index)
-            if expected_index.positive? &&
-               actual_index.positive? &&
-               same_message?(expected[expected_index - 1], actual[actual_index - 1])
-
+          def lcs_backtrack_step(matrix, expected, actual, expected_index, actual_index, same)
+            if same
               # Items match: consume both
               entry = { expected: expected[expected_index - 1], actual: actual[actual_index - 1], match: true }
               { entry:, next_expected_index: expected_index - 1, next_actual_index: actual_index - 1 }
@@ -608,9 +611,9 @@ module Inferno
             message_comparisons.all? { |entry| entry[:match] }
           end
 
-          def same_message?(expected_message, actual_message)
-            expected_message['type'] == actual_message['type'] &&
-              normalize_string(expected_message['message']) == normalize_string(actual_message['message'])
+          # Messages match when their type and normalized text are the same.
+          def message_key(message)
+            [message['type'], normalize_string(message['message'])]
           end
 
           def same_result?
