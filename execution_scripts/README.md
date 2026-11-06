@@ -63,9 +63,11 @@ Normalization is also applied when comparing, so adding a rule doesn't require
 regenerating, but after changing or removing a rule (or renaming a session),
 regenerate the affected expected results with `-u`.
 
-Because the placeholders come from the script's sessions and the Inferno it runs
-against, these files can only be compared by running the script: the standalone
-`inferno session compare -f` command doesn't apply the same normalizations.
+The standalone `inferno session compare -f` command applies the default
+normalizations (steps 2 and 4) for the Inferno given with `-I` (or the default
+base URL), but it doesn't know the script's sessions or its `normalized_strings`.
+Compare files that contain `<NAME.session_id>` placeholders or depend on the
+script's rules by running the script.
 
 ```
 bundle exec inferno execute_script -u execution_scripts/path/to/script.yaml

@@ -574,6 +574,144 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
     end
   end
 
+  describe '.standard_normalized_strings' do
+    let(:base_url) { 'http://localhost:4567' }
+    let(:base_url_rule) do
+      { 'patterns' => described_class.inferno_base_url_patterns(base_url), 'replacement' => '<inferno_base_url>' }
+    end
+
+    it 'wraps the given rules in the default normalizations' do
+      expect(described_class.standard_normalized_strings(['http://other.example.com'], base_url))
+        .to eq([base_url_rule, described_class::TIMESTAMP_NORMALIZATION, 'http://other.example.com',
+                described_class::RANDOM_64_CHAR_HEX_NORMALIZATION])
+    end
+
+    it 'returns only the given rules when default normalizations are off' do
+      expect(described_class.standard_normalized_strings(['http://other.example.com'], base_url,
+                                                         default_normalizations: false))
+        .to eq(['http://other.example.com'])
+    end
+
+    it 'omits the base URL rule when there is no base URL' do
+      expect(described_class.standard_normalized_strings(nil, ''))
+        .to eq([described_class::TIMESTAMP_NORMALIZATION, described_class::RANDOM_64_CHAR_HEX_NORMALIZATION])
+    end
+
+    it 'normalizes exactly 64 lowercase hex characters with the default random hex rule' do
+      rule = [described_class::RANDOM_64_CHAR_HEX_NORMALIZATION]
+      normalize = ->(str) { described_class.normalize_string(str, rule) }
+      hex64 = SecureRandom.hex(32)
+
+      expect(normalize.call("resume?id=#{hex64}&x=1")).to eq('resume?id=<RANDOM_64_CHAR_HEX>&x=1')
+      expect(normalize.call(hex64[0, 63])).to eq(hex64[0, 63])
+      expect(normalize.call("#{hex64}a")).to eq("#{hex64}a")
+      expect(normalize.call('4b49a739d1eb115b3225f4cf9beb6d1b')).to eq('4b49a739d1eb115b3225f4cf9beb6d1b')
+      expect(normalize.call(hex64.upcase)).to eq(hex64.upcase)
+    end
+
+    def normalized_strings_for_base_url(base_url)
+      described_class.standard_normalized_strings([], base_url)
+    end
+
+    it 'normalizes the base URL with or without its default port spelled out' do
+      normalized_strings = normalized_strings_for_base_url('https://inferno.example.com/suites')
+      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
+
+      expect(normalize.call('https://inferno.example.com/suites/custom/x')).to eq('<inferno_base_url>/custom/x')
+      expect(normalize.call('https://inferno.example.com:443/suites/custom/x')).to eq('<inferno_base_url>/custom/x')
+      expect(normalize.call('https://inferno.example.com:8443/suites/custom/x'))
+        .to eq('https://inferno.example.com:8443/suites/custom/x')
+    end
+
+    it 'normalizes a base URL without a path when the default port is spelled out' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost')
+      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
+
+      expect(normalize.call('http://localhost/custom/x')).to eq('<inferno_base_url>/custom/x')
+      expect(normalize.call('http://localhost:80/custom/x')).to eq('<inferno_base_url>/custom/x')
+    end
+
+    it 'treats an explicit default port in the base URL the same as none' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost:80/inferno')
+
+      expect(described_class.normalize_string('http://localhost/inferno/x', normalized_strings))
+        .to eq('<inferno_base_url>/x')
+    end
+
+    it 'uses the base URL with and without its default port' do
+      expect(described_class.inferno_base_url_forms('https://inferno.example.com/suites'))
+        .to eq(['https://inferno.example.com:443/suites', 'https://inferno.example.com/suites'])
+    end
+
+    it 'only uses the base URL as given when it has a non-default port' do
+      expect(described_class.inferno_base_url_forms('http://localhost:4567/inferno'))
+        .to eq(['http://localhost:4567/inferno'])
+    end
+
+    it 'does not normalize the base URL within a longer host, port, or path segment' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost:4567')
+      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
+
+      ['http://localhost:45678/x', 'http://localhost:4567.evil.com/x', 'http://localhost:4567-x/y',
+       CGI.escape('http://localhost:45678/x')].each do |str|
+        expect(normalize.call(str)).to eq(str)
+      end
+    end
+
+    it 'does not normalize the base URL path within a longer path segment' do
+      normalized_strings = normalized_strings_for_base_url('https://inferno.example.com/suites')
+
+      expect(described_class.normalize_string('https://inferno.example.com/suites.json', normalized_strings))
+        .to eq('https://inferno.example.com/suites.json')
+    end
+
+    it 'does not normalize a base URL without a port within the same host with a port' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost')
+      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
+
+      expect(normalize.call('http://localhost:4567/x')).to eq('http://localhost:4567/x')
+      expect(normalize.call(CGI.escape('http://localhost:4567/x'))).to eq(CGI.escape('http://localhost:4567/x'))
+    end
+
+    it 'normalizes the base URL followed by a query, quote, whitespace, or sentence-ending period' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost:4567')
+      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
+
+      expect(normalize.call('http://localhost:4567?a=b')).to eq('<inferno_base_url>?a=b')
+      expect(normalize.call("Visit 'http://localhost:4567' now")).to eq("Visit '<inferno_base_url>' now")
+      expect(normalize.call('Redirected to http://localhost:4567.')).to eq('Redirected to <inferno_base_url>.')
+      expect(normalize.call('http://localhost:4567')).to eq('<inferno_base_url>')
+    end
+
+    it 'normalizes the URL-encoded base URL' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost:4567')
+
+      expect(described_class.normalize_string(
+               "redirect_uri=#{CGI.escape('http://localhost:4567/custom/x')}", normalized_strings
+             )).to eq('redirect_uri=<inferno_base_url>%2Fcustom%2Fx')
+    end
+
+    it 'normalizes ISO 8601 timestamps with the default timestamp rule' do
+      rule = [described_class::TIMESTAMP_NORMALIZATION]
+      %w[2026-03-30T23:59:12-04:00 2026-03-02T22:36:46.497-05:00 2026-03-02T22:36:46Z 2026-03-02T22:36:46+0000]
+        .each do |timestamp|
+          expect(described_class.normalize_string("issued #{timestamp}.", rule))
+            .to eq('issued <TIMESTAMP>.')
+        end
+    end
+  end
+
+  describe '.command_options' do
+    it 'adds the default normalizations for the -I base URL around the given rules' do
+      options = described_class.command_options({ inferno_base_url: "#{inferno_host}/", normalized_strings: ['abc'] })
+
+      expect(options[:normalized_strings]).to eq(
+        described_class.standard_normalized_strings(['abc'], inferno_host)
+      )
+      expect(options[:inferno_base_url]).to eq("#{inferno_host}/")
+    end
+  end
+
   describe '#save_actual_results_to_file' do
     it 'writes the actual results in stored form next to the expected results file' do
       Dir.mktmpdir do |dir|
