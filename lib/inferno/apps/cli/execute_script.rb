@@ -90,6 +90,8 @@ module Inferno
     #                                              #           (e.g. to resume a waiting test); does not
     #                                              #           require --allow-commands. Fails the script
     #                                              #           only if the request cannot be made.
+    #                                              #           The request times out after the step's
+    #                                              #           timeout (or the default poll timeout).
     #       # OR
     #       start_run:
     #         session: "my_name"                   # optional; session name or template token
@@ -882,15 +884,16 @@ module Inferno
 
       # Sends a GET request to +url+ and discards the response body. Only http(s) URLs
       # are allowed. Returns false if the URL is invalid or the request cannot be made;
-      # a non-2xx response is logged but does not count as a failure.
-      def execute_http_get(url)
+      # an error (4xx or 5xx) response is logged but does not count as a failure. The request
+      # times out after the current step timeout.
+      def execute_http_get(url, timeout: execution_status.current_timeout)
         uri = URI.parse(url)
         unless uri.is_a?(URI::HTTP) && uri.host.present?
           warn "Invalid http_get URL (must be http or https): #{url}"
           return false
         end
 
-        response = Faraday.new(request: { timeout: 600 }).get(uri)
+        response = Faraday.new(request: { timeout: }).get(uri)
         warn "http_get received HTTP #{response.status} from #{url}" if response.status >= 400
         true
       rescue URI::InvalidURIError, Faraday::Error => e

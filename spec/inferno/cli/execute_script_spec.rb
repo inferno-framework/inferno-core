@@ -284,6 +284,49 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
+  describe '#resolve_command' do
+    subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
+
+    let(:path) { File.expand_path('data.json', '.') }
+    let(:step) do
+      {
+        'status' => 'waiting',
+        'last_completed' => 'wait-test',
+        'start_run' => {
+          'runnable' => 'suite',
+          'inputs' => { 'url' => '{wait_outputs.url}', 'data' => '@data.json' }
+        }
+      }
+    end
+
+    def waiting_status(url)
+      { 'status' => 'waiting', 'wait_outputs' => [{ 'name' => 'url', 'value' => url }] }
+    end
+
+    before do
+      allow(File).to receive(:exist?).with(path).and_return(true)
+      allow(File).to receive(:read).with(path, encoding: 'UTF-8').and_return('{"url": "{wait_outputs.url}"}')
+    end
+
+    it 'does not modify the step when substituting template tokens in start_run inputs' do
+      original_step = step.deep_dup
+      instance.send(:resolve_command, step, waiting_status('http://first.example.com'), suite_id)
+      expect(step).to eq(original_step)
+    end
+
+    it 'substitutes values from the current status each time the step is resolved' do
+      first = instance.send(:resolve_command, step, waiting_status('http://first.example.com'), suite_id)
+      second = instance.send(:resolve_command, step, waiting_status('http://second.example.com'), suite_id)
+
+      expect(first[:start_run]['inputs']).to eq(
+        'url' => 'http://first.example.com', 'data' => '{"url": "http://first.example.com"}'
+      )
+      expect(second[:start_run]['inputs']).to eq(
+        'url' => 'http://second.example.com', 'data' => '{"url": "http://second.example.com"}'
+      )
+    end
+  end
+
   describe '#apply_templates_to_start_run' do
     subject(:instance) { build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }) }
 
@@ -941,6 +984,21 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       allow(instance).to receive(:warn)
       expect(instance.send(:execute_http_get, 'http://exa mple.com')).to be false
       expect(instance).to have_received(:warn).with(/failed/)
+    end
+
+    it 'uses the current step timeout for the request' do
+      stub_request(:get, url).to_return(status: 200)
+      allow(Faraday).to receive(:new).and_call_original
+      instance.execution_status.current_timeout = 45
+      instance.send(:execute_http_get, url)
+      expect(Faraday).to have_received(:new).with(request: { timeout: 45 })
+    end
+
+    it 'returns false when the request times out' do
+      stub_request(:get, url).to_timeout
+      allow(instance).to receive(:warn)
+      expect(instance.send(:execute_http_get, url)).to be false
+      expect(instance).to have_received(:warn).with(/http_get request to .* failed/)
     end
   end
 

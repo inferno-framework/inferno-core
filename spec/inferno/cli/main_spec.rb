@@ -32,6 +32,20 @@ RSpec.describe Inferno::CLI::Main do
         .to have_received(:new).with('execution_scripts/demo/demo_wait_group.yaml', anything)
       expect(Inferno::Utils::ExecutionScriptRunner).to_not have_received(:run_all)
     end
+
+    %w[execute_scripts execution_scripts].each do |alias_name|
+      # An unknown command makes Thor exit, so a missing alias is caught as an unexpected SystemExit
+      it "is also available as #{alias_name}" do
+        expect { described_class.start([alias_name, 'execution_scripts/demo/demo_wait_group.yaml']) }
+          .to_not raise_error
+        expect(Inferno::CLI::ExecuteScript)
+          .to have_received(:new).with('execution_scripts/demo/demo_wait_group.yaml', anything)
+
+        expect { described_class.start([alias_name]) }.to_not raise_error
+        expect(Inferno::Utils::ExecutionScriptRunner)
+          .to have_received(:run_all).with(hash_including(pattern: 'execution_scripts/**/*.yaml'))
+      end
+    end
   end
 
   context 'with version command' do
