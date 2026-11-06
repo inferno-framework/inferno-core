@@ -462,34 +462,8 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         'steps' => []
       }
     end
-    let(:receiver_expected_file) { File.join(Dir.pwd, 'script_receiver_expected.json') }
-    let(:sender_expected_file) { File.join(Dir.pwd, 'script_sender_expected.json') }
 
-    def stub_expected_file(path, content)
-      allow(File).to receive(:exist?).with(path).and_return(true)
-      allow(File).to receive(:read).with(path).and_return(content)
-    end
-
-    before { allow(File).to receive(:read).and_call_original }
-
-    it 'maps the actual and expected ids of every session to a per-session placeholder' do
-      stub_expected_file(receiver_expected_file, [{ 'test_session_id' => 'old-receiver' }].to_json)
-      stub_expected_file(sender_expected_file, [{ 'test_session_id' => 'old-sender' }].to_json)
-      instance = build_instance(config, session_ids: ['new-receiver', 'new-sender'])
-
-      expect(instance.send(:session_id_normalized_strings)).to eq(
-        [
-          { 'pattern' => 'new-receiver', 'replacement' => '<receiver.session_id>' },
-          { 'pattern' => 'old-receiver', 'replacement' => '<receiver.session_id>' },
-          { 'pattern' => 'new-sender', 'replacement' => '<sender.session_id>' },
-          { 'pattern' => 'old-sender', 'replacement' => '<sender.session_id>' }
-        ]
-      )
-    end
-
-    it 'only maps the actual id when the expected file is missing, invalid, or has no session id' do
-      stub_expected_file(receiver_expected_file, 'not json')
-      stub_expected_file(sender_expected_file, [{ 'result' => 'pass' }].to_json)
+    it 'maps the id of every session to a per-session placeholder' do
       instance = build_instance(config, session_ids: ['new-receiver', 'new-sender'])
 
       expect(instance.send(:session_id_normalized_strings)).to eq(
@@ -500,16 +474,13 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       )
     end
 
-    it 'makes results that differ only by session ids compare equal' do
-      expected = { 'test_id' => 'test-1', 'result' => 'pass', 'test_session_id' => 'old-sender',
+    it 'makes actual results match expected results stored with session id placeholders' do
+      expected = { 'test_id' => 'test-1', 'result' => 'pass',
                    'requests' => [{ 'direction' => 'outgoing', 'verb' => 'get', 'status' => 200,
-                                    'url' => 'http://host/inferno/demo/old-receiver' }] }
-      actual = expected.merge('test_session_id' => 'new-sender',
-                              'requests' => [expected['requests'].first.merge(
-                                'url' => 'http://host/inferno/demo/new-receiver'
-                              )])
-      stub_expected_file(receiver_expected_file, [{ 'test_session_id' => 'old-receiver' }].to_json)
-      stub_expected_file(sender_expected_file, [expected].to_json)
+                                    'url' => 'http://host/inferno/demo/<receiver.session_id>' }] }
+      actual = expected.merge('requests' => [expected['requests'].first.merge(
+        'url' => 'http://host/inferno/demo/new-receiver'
+      )])
       instance = build_instance(config, session_ids: ['new-receiver', 'new-sender'])
 
       compared = Inferno::CLI::Session::SessionCompare::ComparedTestResult.new(
@@ -542,7 +513,6 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       allow(Inferno::CLI::Session::SessionCompare).to receive(:new).and_return(mock_compare)
       allow(Inferno::CLI::Session::SessionResults).to receive(:new).and_return(mock_results)
       allow(File).to receive(:read).and_call_original
-      allow(File).to receive(:read).with(expected_file).and_return([{ 'test_session_id' => 'old-id' }].to_json)
     end
 
     it 'returns true when the expected file exists and results match' do
@@ -604,6 +574,8 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
       it 'overwrites the expected file with pretty-printed results and returns true on a mismatch' do
         allow(File).to receive(:exist?).with(expected_file).and_return(true)
+        allow(File).to receive(:read).with(expected_file)
+          .and_return(JSON.pretty_generate([{ 'test_id' => 'test-1', 'result' => 'pass' }]))
         allow(mock_compare).to receive_messages(results_match?: false, session_results: results)
         allow(mock_compare).to receive(:save_actual_results_to_file)
         allow(mock_compare).to receive(:save_comparison_csv_to_file)

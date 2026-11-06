@@ -1050,25 +1050,11 @@ module Inferno
       # request URLs and messages). For every session in the script, its id in this run is
       # normalized to a "<NAME.session_id>" placeholder, which is also how it is stored in
       # expected results files. All sessions are included because one session's results can
-      # contain another session's id. Expected results files written before they were stored
-      # normalized record the session's id in test_session_id; that id is normalized too so
-      # those files still compare until they are regenerated.
+      # contain another session's id.
       def session_id_normalized_strings
-        @session_id_normalized_strings ||= sessions.flat_map do |session|
-          replacement = "<#{session.key}.session_id>"
-          [session.session_id, expected_session_id(session)].compact.uniq.map do |id|
-            { 'pattern' => id, 'replacement' => replacement }
-          end
+        @session_id_normalized_strings ||= sessions.map do |session|
+          { 'pattern' => session.session_id, 'replacement' => "<#{session.key}.session_id>" }
         end
-      end
-
-      def expected_session_id(session)
-        expected_file = expected_file_for_comparison(session)
-        return unless File.exist?(expected_file)
-
-        Array(JSON.parse(File.read(expected_file))).filter_map { |result| result['test_session_id'] }.first
-      rescue JSON::ParserError
-        nil
       end
 
       def resolve_expected_file_for_comparison(session)
