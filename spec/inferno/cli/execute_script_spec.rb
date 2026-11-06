@@ -823,6 +823,25 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(instance.send(:session_detail_condition_matches?, cond, {}, [])).to be true
     end
 
+    it 'matches inferno_base_url without a trailing slash, as used in {inferno_base_url}' do
+      slash_instance = build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] },
+                                      base_options.merge(inferno_base_url: "#{inferno_host}/"))
+      cond = { 'field' => 'inferno_base_url', 'matches' => "^#{Regexp.escape(inferno_host)}$" }
+      expect(slash_instance.send(:session_detail_condition_matches?, cond, {}, [])).to be true
+    end
+
+    it 'matches inferno_base_url against the configured base_url when the option is not given' do
+      configured_base_url = Inferno::Application['base_url'].to_s.delete_suffix('/')
+      stub_request(:get, "#{configured_base_url}/api/test_suites")
+        .to_return(status: 200, body: [{ 'id' => suite_id, 'title' => suite_id }].to_json)
+      stub_request(:post, "#{configured_base_url}/api/test_sessions")
+        .to_return(status: 200, body: session_response.to_json)
+      default_instance = build_instance({ 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] },
+                                        base_options.except(:inferno_base_url))
+      cond = { 'field' => 'inferno_base_url', 'matches' => "^#{Regexp.escape(configured_base_url)}$" }
+      expect(default_instance.send(:session_detail_condition_matches?, cond, {}, [])).to be true
+    end
+
     it 'returns false for unsupported field names' do
       cond = { 'field' => 'test_suite_id', 'matches' => 'my_' }
       expect(instance.send(:session_detail_condition_matches?, cond, { 'test_suite_id' => 'my_suite' }, [])).to be false
@@ -950,6 +969,47 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     it 'does not exit when the script has no command steps and --allow-commands is not set' do
       config = { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] }
       expect { build_instance(config, base_options.merge(allow_commands: false)) }.to_not raise_error
+    end
+  end
+
+  describe '#validate_step_commands!' do
+    def config_with_step(step)
+      { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [step] }
+    end
+
+    it 'exits 1 when a step has none of start_run, action, http_get, or command' do
+      expect do
+        expect { build_instance(config_with_step({ 'status' => 'done', 'last_completed' => '1.01' })) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+      end.to output(/Step 1 \(status: done, last_completed: 1\.01\) must have exactly one of .*found: none/).to_stdout
+    end
+
+    it 'exits 1 when a step has more than one of start_run, action, http_get, or command' do
+      step = { 'status' => 'waiting', 'last_completed' => '1.02', 'action' => 'NOOP', 'command' => 'echo hi' }
+      expect do
+        expect { build_instance(config_with_step(step)) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+      end.to output(/found: action, command/).to_stdout
+    end
+
+    it 'reports a mixed step instead of the --allow-commands error' do
+      step = { 'status' => 'waiting', 'last_completed' => '1.02', 'http_get' => 'http://x', 'command' => 'echo hi' }
+      expect do
+        expect { build_instance(config_with_step(step), base_options.merge(allow_commands: false)) }
+          .to raise_error(SystemExit)
+      end.to output(satisfy { |out| out.include?('exactly one of') && !out.include?('allow-commands') }).to_stdout
+    end
+
+    it 'does not exit when each step has exactly one' do
+      config = {
+        'sessions' => [{ 'suite' => suite_id }],
+        'steps' => [
+          { 'status' => 'created', 'start_run' => nil },
+          { 'status' => 'waiting', 'last_completed' => '1.01', 'http_get' => 'http://x' },
+          { 'status' => 'done', 'last_completed' => '1.02', 'action' => 'END_SCRIPT' }
+        ]
+      }
+      expect { build_instance(config) }.to_not raise_error
     end
   end
 

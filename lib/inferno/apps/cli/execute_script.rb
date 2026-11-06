@@ -86,6 +86,8 @@ module Inferno
     #                                              #           can be a full ID, short ID (e.g. "1.01"), or 'suite'
     #       session: my_name                       # optional; required when multiple sessions to indicate which session
     #                                              #           can match this step
+    #                                              # each step requires exactly one of action, command,
+    #                                              #   http_get, or start_run
     #       action: END_SCRIPT|NOOP|WAIT           # optional; built-in action (case-insensitive)
     #                                              #           (mutually exclusive with command/http_get/start_run)
     #       # OR
@@ -177,6 +179,7 @@ module Inferno
         self.yaml_file = yaml_file
         self.options = options
         validate_yaml_file!
+        validate_step_commands!
         validate_commands_allowed!
         validate_session_names!
         self.execution_status = ExecutionStatus.new(
@@ -237,6 +240,24 @@ module Inferno
         puts JSON.pretty_generate(
           { errors: "'#{yaml_file}' does not appear to be a YAML file (.yaml or .yml extension required)." }
         )
+        exit(1)
+      end
+
+      STEP_COMMAND_KEYS = %w[start_run action http_get command].freeze
+
+      # Each step must specify exactly one way to continue the script.
+      def validate_step_commands!
+        errors = Array(script_config['steps']).each_with_index.filter_map do |step, index|
+          found = STEP_COMMAND_KEYS & step.keys
+          next if found.length == 1
+
+          "Step #{index + 1} (status: #{step['status']}, last_completed: #{step['last_completed']}) " \
+            "must have exactly one of #{STEP_COMMAND_KEYS.join(', ')}; " \
+            "found: #{found.empty? ? 'none' : found.join(', ')}."
+        end
+        return if errors.empty?
+
+        puts JSON.pretty_generate({ errors: errors.join(' ') })
         exit(1)
       end
 
@@ -1054,7 +1075,7 @@ module Inferno
         if field == 'configuration_messages'
           configuration_messages_match?(session_details['test_suite'] || {}, matches_pattern, not_matches_pattern)
         elsif field == 'inferno_base_url'
-          string_matches?(options[:inferno_base_url].to_s, matches_pattern, not_matches_pattern)
+          string_matches?(inferno_base_url, matches_pattern, not_matches_pattern)
         elsif field.start_with?('inputs.')
           input_name = field.delete_prefix('inputs.')
           test_suite_input_matches?(session_inputs || [], input_name, matches_pattern, not_matches_pattern)
