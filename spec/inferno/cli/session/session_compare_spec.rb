@@ -557,14 +557,11 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
       expect(stored['outputs'].first['value']).to eq('<too large to compare>')
     end
 
-    it 'parses each list of rules only once' do
-      # rules are cached across examples, so use a list no other example uses
-      host = "http://#{SecureRandom.hex(4)}.example.com"
-      normalized_strings = [host, '/q=\\d+/']
+    it 'parses the rules once for all results' do
+      normalized_strings = [{ 'pattern' => 'abc123', 'replacement' => '<s.session_id>' }, '/q=\\d+/']
       allow(described_class).to receive(:parse_normalize_entry).and_call_original
-      3.times { described_class.normalize_string("#{host}?q=1", normalized_strings) }
+      described_class.results_for_storage(results, normalized_strings)
       expect(described_class).to have_received(:parse_normalize_entry).twice
-      expect(described_class.normalize_string("#{host}?q=1", normalized_strings)).to eq('<NORMALIZED>?<NORMALIZED>')
     end
 
     it 'does not change results that are already stored' do
@@ -701,6 +698,30 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
     end
   end
 
+  describe 'common normalizations documented in the execution scripts README' do
+    let(:normalized_strings) do
+      readme = File.read(File.join(__dir__, '..', '..', '..', '..', 'execution_scripts', 'README.md'))
+      section = readme[/^## Common Normalizations\n(.*?)^## /m, 1]
+      YAML.safe_load(section[/```yaml\n(.*?)```/m, 1]).dig('comparison_config', 'normalized_strings')
+    end
+    let(:normalize) { ->(str) { described_class.normalize_string(str, normalized_strings) } }
+
+    it 'normalizes UUIDs in either case' do
+      expect(normalize.call('Patient/0f8fad5b-d9cb-469f-a165-70867728950e and 0F8FAD5B-D9CB-469F-A165-70867728950E'))
+        .to eq('Patient/<UUID> and <UUID>')
+    end
+
+    it 'normalizes signed and unsigned JWTs' do
+      expect(normalize.call('Bearer eyJhbGciOiJSUzI1NiJ9.eyJpYXQiOjF9.c2ln, eyJhbGciOiJub25lIn0.eyJzdWIiOiIxIn0.'))
+        .to eq('Bearer <JWT>, <JWT>')
+    end
+
+    it 'normalizes OAuth code and state query parameters, keeping the parameter name' do
+      expect(normalize.call('https://x/cb?code=abc123&state=xyz.%2F&scope=openid zipcode=12345'))
+        .to eq('https://x/cb?code=<OAUTH_VALUE>&state=<OAUTH_VALUE>&scope=openid zipcode=12345')
+    end
+  end
+
   describe '.command_options' do
     it 'adds the default normalizations for the -I base URL around the given rules' do
       options = described_class.command_options({ inferno_base_url: "#{inferno_host}/", normalized_strings: ['abc'] })
@@ -749,6 +770,35 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
             .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
         end.to output(/must contain a JSON array of results/).to_stdout
       end
+    end
+  end
+
+  describe '#compared_results' do
+    it 'compares the results only once' do
+      compare = described_class.new(actual_results_session_id, { inferno_base_url: inferno_host })
+      allow(compare).to receive_messages(expected_results: expected_results_parsed,
+                                         session_results: actual_results_parsed)
+      allow(compare).to receive(:match_result_ids).and_call_original
+
+      2.times { compare.results_match? }
+      compare.compared_results_as_csv
+
+      expect(compare).to have_received(:match_result_ids).once
+    end
+
+    it 'parses the rules once for all compared results' do
+      normalized_strings = ['http://other.example.com', '/q=\\d+/']
+      compare = described_class.new(actual_results_session_id, { inferno_base_url: inferno_host, compare_messages: true,
+                                                                 normalized_strings: })
+      allow(compare).to receive_messages(expected_results: expected_results_parsed,
+                                         session_results: actual_results_parsed)
+      allow(described_class).to receive(:parse_normalize_entry).and_call_original
+
+      compare.results_match?
+      compare.compared_results_as_csv
+
+      expect(compare.compared_results.size).to be > 1
+      expect(described_class).to have_received(:parse_normalize_entry).twice
     end
   end
 

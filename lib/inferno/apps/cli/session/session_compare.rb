@@ -164,10 +164,11 @@ module Inferno
         # stored results (expected results files and actual results written on a mismatch) only
         # change when compared content changes.
         def self.results_for_storage(results, normalized_strings = [])
+          normalizer = Normalizer.for(normalized_strings)
           results.map do |result|
             stored = result.slice(*COMPARED_RESULT_FIELDS)
             if stored['result_message'].present?
-              stored['result_message'] = normalize_string(stored['result_message'], normalized_strings)
+              stored['result_message'] = normalizer.normalize(stored['result_message'])
             end
             COMPARED_LIST_FIELDS.each do |list_field, (entry_fields, normalized_field)|
               next unless result[list_field].present?
@@ -176,9 +177,9 @@ module Inferno
                 stored_entry = entry.slice(*entry_fields)
                 stored_entry[normalized_field] =
                   if IO_LIST_FIELDS.include?(list_field)
-                    stored_io_value(entry[normalized_field], normalized_strings)
+                    stored_io_value(entry[normalized_field], normalizer)
                   else
-                    normalize_string(entry[normalized_field], normalized_strings)
+                    normalizer.normalize(entry[normalized_field])
                   end
                 stored_entry.compact
               end
@@ -194,7 +195,7 @@ module Inferno
           value = value.to_json unless value.is_a?(String)
           return LARGE_IO_VALUE_SIGNATURE if value.match?(LARGE_IO_VALUE_PATTERN)
 
-          normalize_string(value, normalized_strings)
+          Normalizer.for(normalized_strings).normalize(value)
         end
 
         # Applies normalized_strings entries to a string. Entries may be:
@@ -208,21 +209,16 @@ module Inferno
         #         - '/code_challenge=[A-Za-z0-9+\/=_-]{20,}/'
         #         - '/code_verifier=[A-Za-z0-9+\/=_-]{20,}/'
         #       replacement: '<PKCE_VALUE>'
-        # The URL-encoded form of plain strings is also replaced.
+        # The URL-encoded form of plain strings is also replaced. normalized_strings may also be a
+        # Normalizer, which callers normalizing many strings use so that the rules are parsed once.
         def self.normalize_string(str, normalized_strings)
-          return str unless str.present?
-
-          normalization_pairs(normalized_strings).reduce(str) do |s, (pattern, replacement)|
-            s.gsub(pattern, replacement)
-          end
+          Normalizer.for(normalized_strings).normalize(str)
         end
 
-        # [pattern, replacement] pairs for normalized_strings, parsed once per list of rules since
-        # normalize_string is called many times per comparison (e.g., while aligning messages).
-        # Plain strings yield a second pair for their URL-encoded form.
+        # [pattern, replacement] pairs for normalized_strings. Plain strings yield a second pair for
+        # their URL-encoded form.
         def self.normalization_pairs(normalized_strings)
-          @normalization_pairs ||= {}
-          @normalization_pairs[normalized_strings] ||= Array(normalized_strings).flat_map do |entry|
+          Array(normalized_strings).flat_map do |entry|
             parse_normalize_entry(entry).flat_map do |pattern, replacement|
               patterns = pattern.is_a?(Regexp) ? [pattern] : [pattern, CGI.escape(pattern)]
               patterns.map { |each_pattern| [each_pattern, replacement] }
@@ -239,6 +235,24 @@ module Inferno
             end
           else
             [[parse_pattern_string(entry.to_s), '<NORMALIZED>']]
+          end
+        end
+
+        # normalized_strings parsed once into [pattern, replacement] pairs, for applying to many
+        # strings (e.g., every message, request, and input/output in a comparison).
+        class Normalizer
+          def self.for(normalized_strings)
+            normalized_strings.is_a?(Normalizer) ? normalized_strings : new(normalized_strings)
+          end
+
+          def initialize(normalized_strings)
+            @pairs = SessionCompare.normalization_pairs(normalized_strings).freeze
+          end
+
+          def normalize(str)
+            return str unless str.present?
+
+            @pairs.reduce(str) { |normalized, (pattern, replacement)| normalized.gsub(pattern, replacement) }
           end
         end
 
@@ -267,7 +281,7 @@ module Inferno
         end
 
         def results_timestamp
-          @results_timestamp = Time.now.strftime('%Y%m%d_%H%M%S')
+          @results_timestamp ||= Time.now.strftime('%Y%m%d_%H%M%S')
         end
 
         # Output directory is the dirname of the expected results file (-f).
@@ -395,7 +409,7 @@ module Inferno
         end
 
         def compared_results
-          @compared_results = match_result_ids(expected_results, session_results)
+          @compared_results ||= match_result_ids(expected_results, session_results)
         end
 
         def session_details
@@ -419,11 +433,13 @@ module Inferno
           expected_hash = results_hash_by_id(expected)
           actual_hash = results_hash_by_id(actual)
 
+          # Every compared result shares one Normalizer, so the rules are parsed once per comparison
+          result_options = options.merge(normalized_strings: Normalizer.for(options[:normalized_strings]))
           compared_results = expected_hash.map do |id, result|
-            ComparedTestResult.new(id, result, actual_hash[id], options, short_id_map)
+            ComparedTestResult.new(id, result, actual_hash[id], result_options, short_id_map)
           end
           actual_hash.keys.reject { |id| expected_hash.key?(id) }.each do |id|
-            compared_results << ComparedTestResult.new(id, nil, actual_hash[id], options, short_id_map)
+            compared_results << ComparedTestResult.new(id, nil, actual_hash[id], result_options, short_id_map)
           end
 
           compared_results
@@ -453,7 +469,11 @@ module Inferno
           end
 
           def normalize_string(str)
-            SessionCompare.normalize_string(str, options[:normalized_strings])
+            normalizer.normalize(str)
+          end
+
+          def normalizer
+            @normalizer ||= Normalizer.for(options[:normalized_strings])
           end
 
           # Option enabling each optional comparison => method checking that it matches
@@ -500,7 +520,7 @@ module Inferno
 
           # An input or output is compared by its name and value, normalized as when stored.
           def io_signature(kind, entry)
-            "#{kind} #{entry['name']}: #{SessionCompare.stored_io_value(entry['value'], options[:normalized_strings])}"
+            "#{kind} #{entry['name']}: #{SessionCompare.stored_io_value(entry['value'], normalizer)}"
           end
 
           def sorted_io_signatures(result)
@@ -555,15 +575,11 @@ module Inferno
           MESSAGE_TYPE_ORDER = { 'error' => 0, 'warning' => 1, 'info' => 2 }.freeze
           UNKNOWN_MESSAGE_TYPE_ORDER = 99
 
-          def build_message_comparisons
-            lcs_align(sorted_messages(expected_result), sorted_messages(actual_result))
-          end
-
           # Messages are aligned by their comparison keys (see message_key), computed once per
           # message rather than for each of the O(n*m) comparisons the alignment makes.
-          def lcs_align(expected, actual)
-            expected_keys = expected.map { |message| message_key(message) }
-            actual_keys = actual.map { |message| message_key(message) }
+          def build_message_comparisons
+            expected, expected_keys = sorted_messages_and_keys(expected_result)
+            actual, actual_keys = sorted_messages_and_keys(actual_result)
             lcs_backtrack(lcs_matrix(expected_keys, actual_keys), expected, actual, expected_keys, actual_keys)
           end
 
@@ -621,11 +637,13 @@ module Inferno
             end
           end
 
-          def sorted_messages(result)
-            Array(result&.dig('messages')).sort_by do |m|
-              [MESSAGE_TYPE_ORDER.fetch(m['type'].to_s, UNKNOWN_MESSAGE_TYPE_ORDER),
-               normalize_string(m['message'].to_s)]
+          # A result's messages sorted by type and normalized text, and their keys in the same order.
+          def sorted_messages_and_keys(result)
+            keyed = Array(result&.dig('messages')).map { |message| [message, message_key(message)] }
+            keyed.sort_by! do |_message, (type, text)|
+              [MESSAGE_TYPE_ORDER.fetch(type.to_s, UNKNOWN_MESSAGE_TYPE_ORDER), text.to_s]
             end
+            [keyed.map(&:first), keyed.map(&:last)]
           end
 
           def same_messages?

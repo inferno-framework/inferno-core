@@ -65,6 +65,37 @@ script's rules by running the script.
 bundle exec inferno execute_script -u execution_scripts/path/to/script.yaml
 ```
 
+## Common Normalizations
+
+Only values that change on every run and are unlikely to be mistaken for anything
+else are normalized by default. Other values often change between runs too, but
+whether they do depends on the test kit, and normalizing a value that doesn't vary
+hides real differences (e.g., a test returning the wrong resource id). Add rules
+for these to a script's `comparison_config.normalized_strings` when its results
+need them:
+
+```yaml
+comparison_config:
+  normalized_strings:
+    # UUIDs. Use only if the script's UUIDs are generated on each run: fixed
+    # UUIDs, such as resource ids from fixtures, should usually be compared.
+    - pattern: '/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/i'
+      replacement: '<UUID>'
+    # JWTs, which usually contain issued-at and expiration times. The signature
+    # segment is empty for unsigned (alg: none) tokens.
+    - pattern: '/eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]*/'
+      replacement: '<JWT>'
+    # OAuth authorization codes and state values in query strings, keeping the
+    # parameter name (\1 is the text matched by the parenthesized group).
+    - pattern: '/\b(state|code)=[^&\s"]+/'
+      replacement: '\1=<OAUTH_VALUE>'
+```
+
+Prefer rules tied to where a value appears, like the OAuth rule above, over rules
+for a value's general shape. A rule for any long base64 string, for example, also
+matches attachments and other fixed content. Unlike plain strings, regex rules
+aren't also applied to the URL-encoded form of what they match.
+
 ## Cleaning Up Result Files
 
 When a script's results don't match its expected results file, the

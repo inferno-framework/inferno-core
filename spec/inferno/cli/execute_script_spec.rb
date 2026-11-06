@@ -525,13 +525,44 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
     it 'returns false and saves files when the expected file exists but results do not match' do
       allow(File).to receive(:exist?).with(expected_file).and_return(true)
-      allow(mock_compare).to receive(:results_match?).and_return(false)
+      allow(mock_compare).to receive_messages(results_match?: false, expected_results: [])
       allow(mock_compare).to receive(:save_actual_results_to_file)
       allow(mock_compare).to receive(:save_comparison_csv_to_file)
 
       expect(instance.send(:compare_session, session)).to be(false)
       expect(mock_compare).to have_received(:save_actual_results_to_file)
       expect(mock_compare).to have_received(:save_comparison_csv_to_file)
+    end
+
+    context 'when results do not match' do
+      around do |example|
+        verbose = $VERBOSE
+        $VERBOSE = false
+        example.run
+      ensure
+        $VERBOSE = verbose
+      end
+
+      before do
+        allow(File).to receive(:exist?).with(expected_file).and_return(true)
+        allow(mock_compare).to receive(:results_match?).and_return(false)
+        allow(mock_compare).to receive(:save_actual_results_to_file)
+        allow(mock_compare).to receive(:save_comparison_csv_to_file)
+      end
+
+      it 'suggests regenerating expected results that are in the older format' do
+        allow(mock_compare).to receive(:expected_results)
+          .and_return([{ 'test_id' => 'test-1', 'result' => 'pass', 'test_session_id' => 'old-id' }])
+
+        expect { instance.send(:compare_session, session) }
+          .to output(/older format.*regenerate them with -u/).to_stderr
+      end
+
+      it 'does not suggest regenerating expected results in the stored format' do
+        allow(mock_compare).to receive(:expected_results).and_return([{ 'test_id' => 'test-1', 'result' => 'pass' }])
+
+        expect { instance.send(:compare_session, session) }.to_not output(/older format/).to_stderr
+      end
     end
 
     it 'returns false and writes pretty-printed actual results when the expected file does not exist' do
@@ -1102,6 +1133,13 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       alternate = expected_path('alternate.json', 'not json')
       expect_exit_with_error(config_with_expected(expected_path('expected.json', '[]'), alternate),
                              /'#{Regexp.escape(alternate)}' is not valid JSON/)
+    end
+
+    it 'exits 1 when an alternate expected file entry has no file' do
+      config = config_with_expected(expected_path('expected.json', '[]'))
+      config['comparison_config']['alternate_expected_files'] =
+        [{ 'when' => [{ 'field' => 'inferno_base_url', 'matches' => 'x' }] }]
+      expect_exit_with_error(config, /Alternate expected file 1 for session '#{suite_id}' must have a file\./)
     end
 
     it 'checks the expected files of every session in a multi-session script' do

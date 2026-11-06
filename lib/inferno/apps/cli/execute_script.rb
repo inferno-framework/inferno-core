@@ -86,7 +86,6 @@ module Inferno
     #                                              # Conditions on any other field never match.
     #             matches: ^http://                # regex; a condition needs matches, not_matches, or both
     #
-
     #     # Multi-session scripts: per-session config is nested under sessions.<name>.
     #     sessions:
     #       my_name:                               # matches session name key (sessions[*].name or suite)
@@ -305,26 +304,46 @@ module Inferno
         exit(1)
       end
 
-      # Checked before running so that a malformed expected results file doesn't stop the script at
-      # comparison time. Every file a session could compare against is checked, since alternate
-      # files are chosen after the run. Files that don't exist yet are written by the run.
+      # Checked before running so that a malformed expected results file or alternate_expected_files
+      # entry doesn't stop the script at comparison time. Every file a session could compare against
+      # is checked, since alternate files are chosen after the run. Files that don't exist yet are
+      # written by the run.
       def validate_expected_files!
-        errors = candidate_expected_files.select { |file| File.exist?(file) }.filter_map do |file|
+        errors = alternate_expected_file_errors
+        malformed = candidate_expected_files.select { |file| File.exist?(file) }.filter_map do |file|
           Session::SessionCompare.read_expected_results(file).last
         end
+        errors << "#{malformed.join(' ')} Fix or delete the file before running the script." if malformed.any?
         return if errors.empty?
 
-        puts JSON.pretty_generate({ errors: "#{errors.join(' ')} Fix or delete the file before running the script." })
+        puts JSON.pretty_generate({ errors: errors.join(' ') })
         exit(1)
       end
 
-      def candidate_expected_files
-        Array(script_config['sessions']).flat_map do |session_config|
+      # [session key, alternate_expected_files entries] for each session in the script.
+      def alternate_expected_file_configs
+        Array(script_config['sessions']).map do |session_config|
           key = session_config['name']&.to_s || session_config['suite']
-          alternates = Array(comparison_session_config(key)['alternate_expected_files']).filter_map do |alt|
-            File.expand_path(alt['file'], yaml_directory) if alt['file'].present?
+          [key, Array(comparison_session_config(key)['alternate_expected_files'])]
+        end
+      end
+
+      def alternate_expected_file_errors
+        alternate_expected_file_configs.flat_map do |key, alternates|
+          alternates.each_with_index.filter_map do |alt, index|
+            next if alt.is_a?(Hash) && alt['file'].present?
+
+            "Alternate expected file #{index + 1} for session '#{key}' must have a file."
           end
-          [resolve_expected_file(key)] + alternates
+        end
+      end
+
+      def candidate_expected_files
+        alternate_expected_file_configs.flat_map do |key, alternates|
+          alternate_files = alternates.filter_map do |alt|
+            File.expand_path(alt['file'], yaml_directory) if alt.is_a?(Hash) && alt['file'].present?
+          end
+          [resolve_expected_file(key)] + alternate_files
         end.uniq
       end
 
@@ -1039,6 +1058,7 @@ module Inferno
           return update_expected_results(expected_file, cmp.session_results) if options[:update_expected]
 
           unless matched
+            warn_if_older_format(cmp.expected_results)
             cmp.save_actual_results_to_file
             cmp.save_comparison_csv_to_file
           end
@@ -1049,6 +1069,15 @@ module Inferno
           write_expected_results(expected_file, results)
           options[:update_expected].present?
         end
+      end
+
+      # Expected results files written before results were stored normalized hold full results,
+      # which include test_session_id; they don't compare until regenerated.
+      def warn_if_older_format(expected_results)
+        return unless expected_results.any? { |result| result.key?('test_session_id') }
+
+        warn '  Expected results appear to be in an older format (full, unnormalized results); ' \
+             'regenerate them with -u (--update-expected) and review the changes'
       end
 
       # Expected results are stored normalized so that regenerating them only changes the file
