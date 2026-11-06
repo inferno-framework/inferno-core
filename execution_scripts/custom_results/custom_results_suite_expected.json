@@ -1,45 +1,37 @@
 [
   {
     "test_id": "custom_result_suite-passing_custom_result_group-Test01",
-    "result": "pass",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "pass"
   },
   {
     "test_id": "custom_result_suite-passing_custom_result_group-Test02",
-    "result": "pass",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "pass"
   },
   {
     "test_id": "custom_result_suite-passing_custom_result_group-Test03",
-    "result": "fail",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "fail"
   },
   {
     "test_group_id": "custom_result_suite-passing_custom_result_group",
     "result": "pass",
-    "result_message": "Test 1 passed",
-    "test_session_id": "cix6BkvJ5EA"
+    "result_message": "Test 1 passed"
   },
   {
     "test_id": "custom_result_suite-non_passing_custom_result_group-Test01",
-    "result": "fail",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "fail"
   },
   {
     "test_id": "custom_result_suite-non_passing_custom_result_group-Test02",
-    "result": "pass",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "pass"
   },
   {
     "test_id": "custom_result_suite-non_passing_custom_result_group-Test03",
-    "result": "skip",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "skip"
   },
   {
     "test_group_id": "custom_result_suite-non_passing_custom_result_group",
     "result": "fail",
     "result_message": "Either test 1, or test 2 and test 3 must pass",
-    "test_session_id": "cix6BkvJ5EA",
     "messages": [
       {
         "type": "info",
@@ -49,38 +41,31 @@
   },
   {
     "test_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group01-Test01",
-    "result": "fail",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "fail"
   },
   {
     "test_group_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group01",
-    "result": "fail",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "fail"
   },
   {
     "test_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group02-Test01",
-    "result": "pass",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "pass"
   },
   {
     "test_group_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group02",
-    "result": "pass",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "pass"
   },
   {
     "test_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group03-Test01",
-    "result": "pass",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "pass"
   },
   {
     "test_group_id": "custom_result_suite-passing_custom_result_group_with_nested_groups-Group03",
-    "result": "pass",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "pass"
   },
   {
     "test_group_id": "custom_result_suite-passing_custom_result_group_with_nested_groups",
     "result": "pass",
-    "test_session_id": "cix6BkvJ5EA",
     "messages": [
       {
         "type": "info",
@@ -90,7 +75,6 @@
   },
   {
     "test_suite_id": "custom_result_suite",
-    "result": "pass",
-    "test_session_id": "cix6BkvJ5EA"
+    "result": "pass"
   }
 ]

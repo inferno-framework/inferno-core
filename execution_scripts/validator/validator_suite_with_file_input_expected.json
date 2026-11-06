@@ -2,7 +2,6 @@
   {
     "test_id": "dev_validator-patient_group-patient_read_test",
     "result": "pass",
-    "test_session_id": "5YOs7mUYiWB",
     "inputs": [
       {
         "name": "url",
@@ -29,7 +28,6 @@
   {
     "test_id": "dev_validator-patient_group-patient_validate_test",
     "result": "pass",
-    "test_session_id": "5YOs7mUYiWB",
     "inputs": [
       {
         "name": "url",
@@ -62,7 +60,6 @@
   {
     "test_id": "dev_validator-patient_group-patient_validate_from_file_test",
     "result": "pass",
-    "test_session_id": "5YOs7mUYiWB",
     "inputs": [
       {
         "name": "url",
@@ -78,7 +75,7 @@
       },
       {
         "name": "patient_json",
-        "value": "Input is too large to display, please visit\nhttp://localhost:4567/inferno/api/test_sessions/5YOs7mUYiWB/results/6e4ede2b-fa95-47d7-b0ab-4d60faef2976/io/inputs/patient_json\nfor details\n"
+        "value": "<too large to compare>"
       }
     ],
     "messages": [
@@ -91,7 +88,6 @@
   {
     "test_group_id": "dev_validator-patient_group",
     "result": "pass",
-    "test_session_id": "5YOs7mUYiWB",
     "inputs": [
       {
         "name": "url",
@@ -107,7 +103,7 @@
       },
       {
         "name": "patient_json",
-        "value": "Input is too large to display, please visit\nhttp://localhost:4567/inferno/api/test_sessions/5YOs7mUYiWB/results/78f74bef-91d4-4925-bd91-89844b1797e8/io/inputs/patient_json\nfor details\n"
+        "value": "<too large to compare>"
       }
     ]
   }

@@ -2,7 +2,6 @@
   {
     "test_id": "script_tokens-provide_value-wait_with_value",
     "result": "pass",
-    "test_session_id": "6k8OpAk0ftU",
     "outputs": [
       {
         "name": "token_value",
@@ -10,13 +9,12 @@
       },
       {
         "name": "resume_url",
-        "value": "http://localhost:4567/inferno/custom/script_tokens/resume?xyz=script_tokens"
+        "value": "<inferno_base_url>/custom/script_tokens/resume?xyz=<RANDOM_64_CHAR_HEX>"
       }
     ]
   },
   {
     "test_group_id": "script_tokens-provide_value",
-    "result": "pass",
-    "test_session_id": "6k8OpAk0ftU"
+    "result": "pass"
   }
 ]

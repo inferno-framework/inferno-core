@@ -2,17 +2,16 @@
   {
     "test_id": "demo-message_normalization_sort_group-Test01",
     "result": "pass",
-    "test_session_id": "ckHew9B6a9b",
     "inputs": [
       {
         "name": "normalization_sort_url",
-        "value": "http://zzz.example.com"
+        "value": "<NORMALIZED>"
       }
     ],
     "messages": [
       {
         "type": "info",
-        "message": "http://zzz.example.com: response received"
+        "message": "<NORMALIZED>: response received"
       },
       {
         "type": "info",
@@ -23,11 +22,10 @@
   {
     "test_group_id": "demo-message_normalization_sort_group",
     "result": "pass",
-    "test_session_id": "ckHew9B6a9b",
     "inputs": [
       {
         "name": "normalization_sort_url",
-        "value": "http://zzz.example.com"
+        "value": "<NORMALIZED>"
       }
     ]
   }

@@ -1,46 +1,42 @@
 [
   {
     "test_id": "demo-wait_group-Test01",
-    "result": "pass",
-    "test_session_id": "cvSrdkxBJwb"
+    "result": "pass"
   },
   {
     "test_id": "demo-wait_group-Test02",
     "result": "cancel",
     "result_message": "Test cancelled by user",
-    "test_session_id": "cvSrdkxBJwb",
     "outputs": [
       {
         "name": "wait_test_url",
-        "value": "http://localhost:4567/inferno/custom/demo/resume?xyz=abc"
+        "value": "<inferno_base_url>/custom/demo/resume?xyz=abc"
       },
       {
         "name": "wait_test_fail_url",
-        "value": "http://localhost:4567/inferno/custom/demo/resume_fail?xyz=abc&message=User%20clicked%20fail"
+        "value": "<inferno_base_url>/custom/demo/resume_fail?xyz=abc&message=User%20clicked%20fail"
       },
       {
         "name": "wait_test_skip_url",
-        "value": "http://localhost:4567/inferno/custom/demo/resume_skip?xyz=abc"
+        "value": "<inferno_base_url>/custom/demo/resume_skip?xyz=abc"
       },
       {
         "name": "wait_test_omit_url",
-        "value": "http://localhost:4567/inferno/custom/demo/resume_omit?xyz=abc"
+        "value": "<inferno_base_url>/custom/demo/resume_omit?xyz=abc"
       },
       {
         "name": "wait_test_cancel_url",
-        "value": "http://localhost:4567/inferno/custom/demo/resume_cancel?xyz=abc"
+        "value": "<inferno_base_url>/custom/demo/resume_cancel?xyz=abc"
       }
     ]
   },
   {
     "test_id": "demo-wait_group-Test03",
     "result": "cancel",
-    "result_message": "Test cancelled by user",
-    "test_session_id": "cvSrdkxBJwb"
+    "result_message": "Test cancelled by user"
   },
   {
     "test_group_id": "demo-wait_group",
-    "result": "cancel",
-    "test_session_id": "cvSrdkxBJwb"
+    "result": "cancel"
   }
 ]

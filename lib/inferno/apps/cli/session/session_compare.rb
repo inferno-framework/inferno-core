@@ -64,26 +64,97 @@ module Inferno
         }.freeze
 
         COMPARED_RESULT_FIELDS = %w[test_id test_group_id test_suite_id result result_message].freeze
-        # Compared list field => fields kept for each entry
+        # Compared list field => [fields kept for each entry, field that normalization applies to]
         COMPARED_LIST_FIELDS = {
-          'inputs' => %w[name value],
-          'outputs' => %w[name value],
-          'messages' => %w[type message],
-          'requests' => %w[direction verb url status]
+          'inputs' => [%w[name value], 'value'],
+          'outputs' => [%w[name value], 'value'],
+          'messages' => [%w[type message], 'message'],
+          'requests' => [%w[direction verb url status], 'url']
         }.freeze
 
-        # Reduces results to the fields used in comparison, plus test_session_id, which is
-        # used to normalize session ids in compared strings.
-        def self.compared_fields_only(results)
+        # Inferno replaces large input and output values with a message containing a link that
+        # varies by run (result id, session id, and host), so only the fact that the value was
+        # large is compared.
+        LARGE_IO_VALUE_PATTERN = /\A(Input|Output) is too large to display/
+        LARGE_IO_VALUE_SIGNATURE = '<too large to compare>'.freeze
+
+        # Reduces results to the fields used in comparison and applies normalized_strings, so that
+        # stored results (expected results files and actual results written on a mismatch) only
+        # change when compared content changes.
+        def self.results_for_storage(results, normalized_strings = [])
           results.map do |result|
-            reduced = result.slice(*COMPARED_RESULT_FIELDS, 'test_session_id')
-            COMPARED_LIST_FIELDS.each do |list_field, entry_fields|
+            stored = result.slice(*COMPARED_RESULT_FIELDS)
+            if stored['result_message'].present?
+              stored['result_message'] = normalize_string(stored['result_message'], normalized_strings)
+            end
+            COMPARED_LIST_FIELDS.each do |list_field, (entry_fields, normalized_field)|
               next unless result[list_field].present?
 
-              reduced[list_field] = result[list_field].map { |entry| entry.slice(*entry_fields) }
+              stored[list_field] = result[list_field].map do |entry|
+                stored_entry = entry.slice(*entry_fields)
+                stored_entry[normalized_field] = stored_value(entry[normalized_field], normalized_strings)
+                stored_entry.compact
+              end
             end
-            reduced
+            stored
           end
+        end
+
+        def self.stored_value(value, normalized_strings)
+          return if value.nil?
+
+          value = value.to_json unless value.is_a?(String)
+          return LARGE_IO_VALUE_SIGNATURE if value.match?(LARGE_IO_VALUE_PATTERN)
+
+          normalize_string(value, normalized_strings)
+        end
+
+        # Applies normalized_strings entries to a string. Entries may be:
+        #   - A plain string: literal match, replacement defaults to '<NORMALIZED>'
+        #   - A "/pattern/[flags]" string: compiled to Regexp, replacement defaults to '<NORMALIZED>'
+        #   - A hash with 'pattern' or 'patterns' and optional 'replacement' keys (from YAML):
+        #       pattern: '/code_challenge=[A-Za-z0-9+\/=_-]{20,}/'
+        #       replacement: '<CODE_CHALLENGE>'
+        #     Or multiple patterns sharing one replacement:
+        #       patterns:
+        #         - '/code_challenge=[A-Za-z0-9+\/=_-]{20,}/'
+        #         - '/code_verifier=[A-Za-z0-9+\/=_-]{20,}/'
+        #       replacement: '<PKCE_VALUE>'
+        # The URL-encoded form of plain strings is also replaced.
+        def self.normalize_string(str, normalized_strings)
+          return str unless str.present?
+
+          Array(normalized_strings).reduce(str) do |s, entry|
+            parse_normalize_entry(entry).reduce(s) do |s2, (pattern, replacement)|
+              if pattern.is_a?(Regexp)
+                s2.gsub(pattern, replacement)
+              else
+                s2.gsub(pattern, replacement).gsub(CGI.escape(pattern), replacement)
+              end
+            end
+          end
+        end
+
+        # Parses a normalized_strings entry into an array of [pattern, replacement] pairs.
+        def self.parse_normalize_entry(entry)
+          if entry.is_a?(Hash)
+            replacement = entry.fetch('replacement', '<NORMALIZED>')
+            Array(entry['patterns'] || entry['pattern']).map do |pattern|
+              [parse_pattern_string(pattern.to_s), replacement]
+            end
+          else
+            [[parse_pattern_string(entry.to_s), '<NORMALIZED>']]
+          end
+        end
+
+        def self.parse_pattern_string(str)
+          return str unless (parsed_regex = str.match(%r{\A/(.+)/([imx]*)\z}m))
+
+          flags = 0
+          flags |= Regexp::IGNORECASE if parsed_regex[2].include?('i')
+          flags |= Regexp::MULTILINE  if parsed_regex[2].include?('m')
+          flags |= Regexp::EXTENDED   if parsed_regex[2].include?('x')
+          Regexp.new(parsed_regex[1], flags)
         end
 
         def run
@@ -121,7 +192,9 @@ module Inferno
         def save_actual_results_to_file
           actual_results_file_name = "#{output_file_prefix}actual_results_#{results_timestamp}#{host_suffix}.json"
           File.write(File.join(output_directory, actual_results_file_name),
-                     JSON.pretty_generate(self.class.compared_fields_only(session_results)))
+                     JSON.pretty_generate(
+                       self.class.results_for_storage(session_results, options[:normalized_strings])
+                     ))
         end
 
         def save_comparison_csv_to_file
@@ -276,51 +349,8 @@ module Inferno
             short_id_map[id]
           end
 
-          # Parses a normalize entry into an array of [pattern, replacement] pairs.
-          # Entries may be:
-          #   - A plain string: literal match, replacement defaults to '<NORMALIZED>'
-          #   - A "/pattern/[flags]" string: compiled to Regexp, replacement defaults to '<NORMALIZED>'
-          #   - A hash with 'pattern' or 'patterns' and optional 'replacement' keys (from YAML):
-          #       pattern: '/code_challenge=[A-Za-z0-9+\/=_-]{20,}/'
-          #       replacement: '<CODE_CHALLENGE>'
-          #     Or multiple patterns sharing one replacement:
-          #       patterns:
-          #         - '/code_challenge=[A-Za-z0-9+\/=_-]{20,}/'
-          #         - '/code_verifier=[A-Za-z0-9+\/=_-]{20,}/'
-          #       replacement: '<PKCE_VALUE>'
-          def parse_normalize_entry(entry)
-            if entry.is_a?(Hash)
-              replacement = entry.fetch('replacement', '<NORMALIZED>')
-              Array(entry['patterns'] || entry['pattern']).map do |pattern|
-                [parse_pattern_string(pattern.to_s), replacement]
-              end
-            else
-              [[parse_pattern_string(entry.to_s), '<NORMALIZED>']]
-            end
-          end
-
-          def parse_pattern_string(str)
-            return str unless (parsed_regex = str.match(%r{\A/(.+)/([imx]*)\z}m))
-
-            flags = 0
-            flags |= Regexp::IGNORECASE if parsed_regex[2].include?('i')
-            flags |= Regexp::MULTILINE  if parsed_regex[2].include?('m')
-            flags |= Regexp::EXTENDED   if parsed_regex[2].include?('x')
-            Regexp.new(parsed_regex[1], flags)
-          end
-
           def normalize_string(str)
-            return str unless str.present?
-
-            Array(options[:normalized_strings]).reduce(str) do |s, entry|
-              parse_normalize_entry(entry).reduce(s) do |s2, (pattern, replacement)|
-                if pattern.is_a?(Regexp)
-                  s2.gsub(pattern, replacement)
-                else
-                  s2.gsub(pattern, replacement).gsub(CGI.escape(pattern), replacement)
-                end
-              end
-            end
+            SessionCompare.normalize_string(str, options[:normalized_strings])
           end
 
           def normalizing?
@@ -369,18 +399,9 @@ module Inferno
             )
           end
 
-          # Inferno replaces large values with a message containing a link that varies by run
-          # (result id, session id, and host), so only the fact that the value was large is compared.
-          LARGE_IO_VALUE_PATTERN = /\A(Input|Output) is too large to display/
-          LARGE_IO_VALUE_SIGNATURE = '<too large to compare>'.freeze
-
-          # An input or output is compared by its name and value.
-          # Normalized strings are applied to the value.
+          # An input or output is compared by its name and value, normalized as when stored.
           def io_signature(kind, entry)
-            value = entry['value']
-            value = value.to_json unless value.nil? || value.is_a?(String)
-            value = value.to_s.match?(LARGE_IO_VALUE_PATTERN) ? LARGE_IO_VALUE_SIGNATURE : normalize_string(value.to_s)
-            "#{kind} #{entry['name']}: #{value}"
+            "#{kind} #{entry['name']}: #{SessionCompare.stored_value(entry['value'], options[:normalized_strings])}"
           end
 
           def sorted_io_signatures(result)

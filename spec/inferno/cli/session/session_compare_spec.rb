@@ -488,41 +488,79 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
     end
   end
 
-  describe '.compared_fields_only' do
-    it 'keeps only compared fields and test_session_id' do
-      results = [
+  describe '.results_for_storage' do
+    let(:results) do
+      [
         {
-          'id' => 'result-id', 'created_at' => 'now', 'test_id' => 'test-1', 'test_session_id' => 'session-1',
-          'test_run_id' => 'run-1', 'result' => 'fail', 'result_message' => 'failed',
-          'inputs' => [{ 'name' => 'url', 'value' => 'http://x', 'type' => 'text', 'title' => 'URL' }],
+          'id' => 'result-id', 'created_at' => 'now', 'test_id' => 'test-1', 'test_session_id' => 'abc123',
+          'test_run_id' => 'run-1', 'result' => 'fail', 'result_message' => 'failed for session abc123',
+          'inputs' => [{ 'name' => 'url', 'value' => 'http://x/abc123', 'type' => 'text', 'title' => 'URL' },
+                       { 'name' => 'auth', 'value' => { 'token' => 'abc123' }, 'type' => 'auth_info' },
+                       { 'name' => 'big', 'value' => "Input is too large to display, please visit\nhttp://x/1\n" }],
           'outputs' => [{ 'name' => 'token', 'value' => 'abc', 'type' => 'text' }],
-          'messages' => [{ 'id' => 'message-id', 'type' => 'error', 'message' => 'bad', 'result_id' => 'result-id' }],
-          'requests' => [{ 'id' => 'request-id', 'direction' => 'outgoing', 'verb' => 'get', 'url' => 'http://x',
-                           'status' => 200, 'index' => 1, 'timestamp' => 'now' }]
+          'messages' => [{ 'id' => 'message-id', 'type' => 'error', 'message' => 'bad abc123', 'result_id' => 'r' }],
+          'requests' => [{ 'id' => 'request-id', 'direction' => 'outgoing', 'verb' => 'get',
+                           'url' => 'http://x/abc123?q=1', 'status' => 200, 'index' => 1, 'timestamp' => 'now' }]
         },
         { 'test_group_id' => 'group-1', 'result' => 'pass', 'messages' => [], 'outputs' => [] }
       ]
+    end
 
-      expect(described_class.compared_fields_only(results)).to eq(
+    it 'keeps only compared fields, without test_session_id' do
+      expect(described_class.results_for_storage(results)).to eq(
         [
           {
-            'test_id' => 'test-1', 'test_session_id' => 'session-1', 'result' => 'fail', 'result_message' => 'failed',
-            'inputs' => [{ 'name' => 'url', 'value' => 'http://x' }],
+            'test_id' => 'test-1', 'result' => 'fail', 'result_message' => 'failed for session abc123',
+            'inputs' => [{ 'name' => 'url', 'value' => 'http://x/abc123' },
+                         { 'name' => 'auth', 'value' => '{"token":"abc123"}' },
+                         { 'name' => 'big', 'value' => '<too large to compare>' }],
             'outputs' => [{ 'name' => 'token', 'value' => 'abc' }],
-            'messages' => [{ 'type' => 'error', 'message' => 'bad' }],
-            'requests' => [{ 'direction' => 'outgoing', 'verb' => 'get', 'url' => 'http://x', 'status' => 200 }]
+            'messages' => [{ 'type' => 'error', 'message' => 'bad abc123' }],
+            'requests' => [{ 'direction' => 'outgoing', 'verb' => 'get', 'url' => 'http://x/abc123?q=1',
+                             'status' => 200 }]
           },
           { 'test_group_id' => 'group-1', 'result' => 'pass' }
         ]
       )
     end
+
+    it 'applies normalized strings to result messages, messages, request URLs, and input and output values' do
+      normalized_strings = [{ 'pattern' => 'abc123', 'replacement' => '<s.session_id>' }]
+      stored = described_class.results_for_storage(results, normalized_strings).first
+
+      expect(stored['result_message']).to eq('failed for session <s.session_id>')
+      expect(stored['messages'].first['message']).to eq('bad <s.session_id>')
+      expect(stored['requests'].first['url']).to eq('http://x/<s.session_id>?q=1')
+      expect(stored['inputs'].map { |input| input['value'] })
+        .to eq(['http://x/<s.session_id>', '{"token":"<s.session_id>"}', '<too large to compare>'])
+    end
+
+    it 'stores results that compare equal to the unnormalized results' do
+      normalized_strings = [{ 'pattern' => 'abc123', 'replacement' => '<s.session_id>' }, '/q=\\d+/']
+      stored = described_class.results_for_storage(results, normalized_strings)
+      options = { compare_messages: true, compare_result_message: true, compare_requests: true, compare_io: true,
+                  normalized_strings: }
+
+      results.zip(stored).each do |actual, expected|
+        id = actual['test_id'] || actual['test_group_id']
+        expect(described_class::ComparedTestResult.new(id, expected, actual, options).same_result?).to be(true)
+      end
+    end
+
+    it 'does not change results that are already stored' do
+      normalized_strings = [{ 'pattern' => 'abc123', 'replacement' => '<s.session_id>' }, '/q=\\d+/']
+      stored = described_class.results_for_storage(results, normalized_strings)
+      expect(described_class.results_for_storage(stored, normalized_strings)).to eq(stored)
+    end
   end
 
   describe '#save_actual_results_to_file' do
-    it 'writes only the compared fields of the actual results next to the expected results file' do
+    it 'writes the actual results in stored form next to the expected results file' do
       Dir.mktmpdir do |dir|
         expected_file = File.join(dir, 'script_expected.json')
-        compare = described_class.new(actual_results_session_id, { expected_results_file: expected_file })
+        normalized_strings = [{ 'pattern' => actual_results_session_id, 'replacement' => '<s.session_id>' }]
+        compare = described_class.new(actual_results_session_id, { expected_results_file: expected_file,
+                                                                   normalized_strings: })
         allow(compare).to receive(:session_results).and_return(actual_results_parsed)
 
         compare.save_actual_results_to_file
@@ -530,8 +568,8 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
         written = Dir.glob(File.join(dir, 'script_actual_results_*.json'))
         expect(written.length).to eq(1)
         expect(JSON.parse(File.read(written.first)))
-          .to eq(described_class.compared_fields_only(actual_results_parsed))
-        expect(JSON.parse(File.read(written.first)).first).to_not include('id', 'created_at', 'test_run_id')
+          .to eq(described_class.results_for_storage(actual_results_parsed, normalized_strings))
+        expect(File.read(written.first)).to_not include(actual_results_session_id)
       end
     end
   end

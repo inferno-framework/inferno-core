@@ -36,8 +36,29 @@ Review the changes with `git diff` before committing.
 Expected results files (and the actual results files written on a mismatch)
 contain only the fields used in comparison: the result's test, group, or suite id,
 `result`, `result_message`, `messages` (type and message), `requests` (direction,
-verb, URL, and status), and `inputs`/`outputs` (name and value), plus
-`test_session_id`, which is used to normalize session ids when comparing.
+verb, URL, and status), and `inputs`/`outputs` (name and value).
+
+These files are stored in normalized form, so regenerating expected results only
+changes the file when compared content changes. Normalizations are applied in this
+order:
+
+1. Session ids are replaced with `<NAME.session_id>` placeholders.
+2. The Inferno base URL is replaced with `<inferno_base_url>` and ISO 8601
+   timestamps with `<TIMESTAMP>`.
+3. The script's `normalized_strings` are applied. Because they run after the steps
+   above, rules can match those placeholders, e.g.
+   `/<inferno_base_url>\/custom\/demo\/resume\?token=\w+/` normalizes a whole resume
+   URL regardless of which Inferno the script runs against.
+4. Any remaining 64-character lowercase hex values (e.g., wait identifiers created
+   with `SecureRandom.hex(32)`) are replaced with `<RANDOM_64_CHAR_HEX>`. This runs
+   last so that a script's own rules for these values take precedence.
+
+Set `comparison_config.default_normalizations: false` in a script to skip steps 2
+and 4 and compare those values exactly.
+
+Normalization is also applied when comparing, so adding a rule doesn't require
+regenerating, but after changing or removing a rule (or renaming a session),
+regenerate the affected expected results with `-u`.
 
 ```
 bundle exec inferno execute_script -u execution_scripts/path/to/script.yaml

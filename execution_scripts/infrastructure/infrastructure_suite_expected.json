@@ -2,7 +2,6 @@
   {
     "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_1",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -25,7 +24,6 @@
   {
     "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_2",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -44,7 +42,6 @@
   {
     "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_3",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -63,7 +60,6 @@
   {
     "test_id": "infra_test-outer_inline_group-inner_inline_group-inline_test_4",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -82,7 +78,6 @@
   {
     "test_group_id": "infra_test-outer_inline_group-inner_inline_group",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -105,7 +100,6 @@
   {
     "test_group_id": "infra_test-outer_inline_group",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -128,7 +122,6 @@
   {
     "test_id": "infra_test-passing_optional_group-Test01",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -139,7 +132,6 @@
   {
     "test_id": "infra_test-passing_optional_group-Test02",
     "result": "fail",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -150,7 +142,6 @@
   {
     "test_group_id": "infra_test-passing_optional_group",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -161,7 +152,6 @@
   {
     "test_id": "infra_test-failing_optional_group-Test01",
     "result": "fail",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -172,7 +162,6 @@
   {
     "test_group_id": "infra_test-failing_optional_group",
     "result": "fail",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -183,7 +172,6 @@
   {
     "test_id": "infra_test-mixed_optional_group-Test02",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -194,7 +182,6 @@
   {
     "test_group_id": "infra_test-mixed_optional_group",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -206,7 +193,6 @@
     "test_group_id": "infra_test-empty_group",
     "result": "omit",
     "result_message": "No tests defined",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",
@@ -217,7 +203,6 @@
   {
     "test_id": "infra_test-external_outer_group-external_inner_group-external_test1",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "external_test1_input",
@@ -240,7 +225,6 @@
   {
     "test_group_id": "infra_test-external_outer_group-external_inner_group",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "external_test1_input",
@@ -263,7 +247,6 @@
   {
     "test_group_id": "infra_test-external_outer_group",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "external_test1_input",
@@ -286,7 +269,6 @@
   {
     "test_suite_id": "infra_test",
     "result": "pass",
-    "test_session_id": "gsjaJJAEUhu",
     "inputs": [
       {
         "name": "suite_input",

@@ -2,7 +2,6 @@
   {
     "test_id": "script_tokens-use_value-json_file_input",
     "result": "pass",
-    "test_session_id": "3CLkNmAeUVv",
     "inputs": [
       {
         "name": "json_file_input",
@@ -19,7 +18,6 @@
   {
     "test_id": "script_tokens-use_value-json_mapping_input",
     "result": "pass",
-    "test_session_id": "3CLkNmAeUVv",
     "inputs": [
       {
         "name": "json_mapping_input",
@@ -36,7 +34,6 @@
   {
     "test_id": "script_tokens-use_value-text_file_input",
     "result": "pass",
-    "test_session_id": "3CLkNmAeUVv",
     "inputs": [
       {
         "name": "text_file_input",
@@ -53,7 +50,6 @@
   {
     "test_group_id": "script_tokens-use_value",
     "result": "pass",
-    "test_session_id": "3CLkNmAeUVv",
     "inputs": [
       {
         "name": "json_file_input",

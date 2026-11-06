@@ -1,13 +1,11 @@
 [
   {
     "test_id": "demo-wait_group-Test01",
-    "result": "pass",
-    "test_session_id": "hZ8xSo8RUzC"
+    "result": "pass"
   },
   {
     "test_id": "demo-wait_group-Test03",
     "result": "skip",
-    "result_message": "Request `resume` was not made in a previous test as expected.",
-    "test_session_id": "hZ8xSo8RUzC"
+    "result_message": "Request `resume` was not made in a previous test as expected."
   }
 ]

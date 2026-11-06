@@ -573,6 +573,22 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
     end
 
+    it 'writes expected results in normalized form, with session ids replaced and test_session_id dropped' do
+      results = [{ 'test_id' => 'test-1', 'result' => 'pass', 'test_session_id' => session_id,
+                   'requests' => [{ 'direction' => 'outgoing', 'verb' => 'get', 'status' => 200,
+                                    'url' => "#{inferno_host}/custom/#{session_id}/resume" }] }]
+      allow(File).to receive(:exist?).with(expected_file).and_return(false)
+      allow(mock_results).to receive(:results_for_session).with(session_id).and_return(results)
+      allow(File).to receive(:write).with(expected_file, anything)
+
+      instance.send(:compare_session, session)
+
+      expected = [{ 'test_id' => 'test-1', 'result' => 'pass',
+                    'requests' => [{ 'direction' => 'outgoing', 'verb' => 'get', 'status' => 200,
+                                     'url' => "<inferno_base_url>/custom/<#{suite_id}.session_id>/resume" }] }]
+      expect(File).to have_received(:write).with(expected_file, satisfy { |json| JSON.parse(json) == expected })
+    end
+
     context 'with update_expected' do
       subject(:instance) do
         build_instance({
@@ -620,6 +636,11 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     let(:base_config) { { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [] } }
     let(:session_id_rule) { { 'pattern' => session_id, 'replacement' => "<#{suite_id}.session_id>" } }
 
+    let(:default_rules) do
+      [{ 'pattern' => inferno_host, 'replacement' => '<inferno_base_url>' },
+       described_class::TIMESTAMP_NORMALIZATION]
+    end
+
     it 'passes compare_requests through from the CLI options' do
       instance = build_instance(base_config, base_options.merge(compare_requests: true))
       expect(instance.send(:compare_options, '/tmp/expected.json')[:compare_requests]).to be(true)
@@ -630,17 +651,76 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(instance.send(:compare_options, '/tmp/expected.json')[:compare_io]).to be(true)
     end
 
-    it 'includes only the session id normalization when normalized_strings is not in YAML' do
+    it 'includes the session id and default normalizations when normalized_strings is not in YAML' do
       instance = build_instance(base_config)
+      opts = instance.send(:compare_options, '/tmp/expected.json')
+      expect(opts[:normalized_strings])
+        .to eq([session_id_rule] + default_rules + [described_class::RANDOM_64_CHAR_HEX_NORMALIZATION])
+    end
+
+    it 'reads normalized_strings from comparison_config, after the session id and default normalizations' do
+      config = base_config.merge('comparison_config' => { 'normalized_strings' => ['http://new.server.com'] })
+      instance = build_instance(config)
+      opts = instance.send(:compare_options, '/tmp/expected.json')
+      expect(opts[:normalized_strings]).to eq(
+        [session_id_rule] + default_rules + ['http://new.server.com', described_class::RANDOM_64_CHAR_HEX_NORMALIZATION]
+      )
+    end
+
+    it 'omits the default normalizations when default_normalizations is false' do
+      config = base_config.merge('comparison_config' => { 'default_normalizations' => false })
+      instance = build_instance(config)
       opts = instance.send(:compare_options, '/tmp/expected.json')
       expect(opts[:normalized_strings]).to eq([session_id_rule])
     end
 
-    it 'reads normalized_strings from comparison_config, after the session id normalization' do
-      config = base_config.merge('comparison_config' => { 'normalized_strings' => ['http://new.server.com'] })
-      instance = build_instance(config)
+    it 'normalizes the base URL without a trailing slash' do
+      instance = build_instance(base_config, base_options.merge(inferno_base_url: "#{inferno_host}/"))
       opts = instance.send(:compare_options, '/tmp/expected.json')
-      expect(opts[:normalized_strings]).to eq([session_id_rule, 'http://new.server.com'])
+      expect(opts[:normalized_strings]).to include({ 'pattern' => inferno_host, 'replacement' => '<inferno_base_url>' })
+    end
+
+    it 'lets declared rules match placeholders from the session id and default normalizations' do
+      rule = { 'pattern' => "/<inferno_base_url>\\/custom\\/<#{suite_id}.session_id>\\/resume\\?token=\\w+/",
+               'replacement' => '<RESUME_URL>' }
+      config = base_config.merge('comparison_config' => { 'normalized_strings' => [rule] })
+      instance = build_instance(config)
+      normalized_strings = instance.send(:compare_options, '/tmp/expected.json')[:normalized_strings]
+
+      url = "#{inferno_host}/custom/#{session_id}/resume?token=abc123"
+      expect(Inferno::CLI::Session::SessionCompare.normalize_string("resume at #{url}", normalized_strings))
+        .to eq('resume at <RESUME_URL>')
+    end
+
+    it 'normalizes exactly 64 lowercase hex characters with the default random hex rule' do
+      rule = [described_class::RANDOM_64_CHAR_HEX_NORMALIZATION]
+      normalize = ->(str) { Inferno::CLI::Session::SessionCompare.normalize_string(str, rule) }
+      hex64 = SecureRandom.hex(32)
+
+      expect(normalize.call("resume?id=#{hex64}&x=1")).to eq('resume?id=<RANDOM_64_CHAR_HEX>&x=1')
+      expect(normalize.call(hex64[0, 63])).to eq(hex64[0, 63])
+      expect(normalize.call("#{hex64}a")).to eq("#{hex64}a")
+      expect(normalize.call('4b49a739d1eb115b3225f4cf9beb6d1b')).to eq('4b49a739d1eb115b3225f4cf9beb6d1b')
+      expect(normalize.call(hex64.upcase)).to eq(hex64.upcase)
+    end
+
+    it 'applies the random hex rule after declared rules so they can match the raw value' do
+      rule = { 'pattern' => '/token=[0-9a-f]{64}/', 'replacement' => 'token=<TOKEN>' }
+      config = base_config.merge('comparison_config' => { 'normalized_strings' => [rule] })
+      normalized_strings = build_instance(config).send(:compare_options, '/tmp/expected.json')[:normalized_strings]
+      hex64 = SecureRandom.hex(32)
+
+      expect(Inferno::CLI::Session::SessionCompare.normalize_string("token=#{hex64} id=#{hex64}", normalized_strings))
+        .to eq('token=<TOKEN> id=<RANDOM_64_CHAR_HEX>')
+    end
+
+    it 'normalizes ISO 8601 timestamps with the default timestamp rule' do
+      rule = [described_class::TIMESTAMP_NORMALIZATION]
+      %w[2026-03-30T23:59:12-04:00 2026-03-02T22:36:46.497-05:00 2026-03-02T22:36:46Z 2026-03-02T22:36:46+0000]
+        .each do |timestamp|
+          expect(Inferno::CLI::Session::SessionCompare.normalize_string("issued #{timestamp}.", rule))
+            .to eq('issued <TIMESTAMP>.')
+        end
     end
 
     it 'passes the expected_file through as expected_results_file' do

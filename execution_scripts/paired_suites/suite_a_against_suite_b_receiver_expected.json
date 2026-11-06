@@ -2,44 +2,39 @@
   {
     "test_id": "paired_suite_a-wait_for_signals-wait_for_signal_one",
     "result": "pass",
-    "test_session_id": "iPl2nPBXk29",
     "outputs": [
       {
         "name": "wait_test_url",
-        "value": "http://localhost:4567/inferno/custom/paired_suite_a/resume?xyz=one"
+        "value": "<inferno_base_url>/custom/paired_suite_a/resume?xyz=one"
       }
     ]
   },
   {
     "test_id": "paired_suite_a-wait_for_signals-wait_for_signal_two",
     "result": "pass",
-    "test_session_id": "iPl2nPBXk29",
     "outputs": [
       {
         "name": "wait_test_url",
-        "value": "http://localhost:4567/inferno/custom/paired_suite_a/resume?xyz=two"
+        "value": "<inferno_base_url>/custom/paired_suite_a/resume?xyz=two"
       }
     ]
   },
   {
     "test_id": "paired_suite_a-wait_for_signals-wait_for_signal_three",
     "result": "pass",
-    "test_session_id": "iPl2nPBXk29",
     "outputs": [
       {
         "name": "wait_test_url",
-        "value": "http://localhost:4567/inferno/custom/paired_suite_a/resume?xyz=three"
+        "value": "<inferno_base_url>/custom/paired_suite_a/resume?xyz=three"
       }
     ]
   },
   {
     "test_group_id": "paired_suite_a-wait_for_signals",
-    "result": "pass",
-    "test_session_id": "iPl2nPBXk29"
+    "result": "pass"
   },
   {
     "test_suite_id": "paired_suite_a",
-    "result": "pass",
-    "test_session_id": "iPl2nPBXk29"
+    "result": "pass"
   }
 ]

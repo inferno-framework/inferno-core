@@ -2,12 +2,11 @@
   {
     "test_id": "paired_suite_b-send_signals-send_signal_one",
     "result": "pass",
-    "test_session_id": "dTO7yJYtKsi",
     "requests": [
       {
         "direction": "outgoing",
         "verb": "get",
-        "url": "http://localhost:4567/inferno/paired_suite_a/iPl2nPBXk29",
+        "url": "<inferno_base_url>/paired_suite_a/<receiver.session_id>",
         "status": 200
       }
     ]
@@ -15,23 +14,21 @@
   {
     "test_id": "paired_suite_b-send_signals-attest_signal_one",
     "result": "pass",
-    "test_session_id": "dTO7yJYtKsi",
     "outputs": [
       {
         "name": "wait_test_url",
-        "value": "http://localhost:4567/inferno/custom/paired_suite_b/resume?xyz=one"
+        "value": "<inferno_base_url>/custom/paired_suite_b/resume?xyz=one"
       }
     ]
   },
   {
     "test_id": "paired_suite_b-send_signals-send_signal_two",
     "result": "pass",
-    "test_session_id": "dTO7yJYtKsi",
     "requests": [
       {
         "direction": "outgoing",
         "verb": "get",
-        "url": "http://localhost:4567/inferno/paired_suite_a/iPl2nPBXk29",
+        "url": "<inferno_base_url>/paired_suite_a/<receiver.session_id>",
         "status": 200
       }
     ]
@@ -39,35 +36,31 @@
   {
     "test_id": "paired_suite_b-send_signals-attest_signal_two",
     "result": "pass",
-    "test_session_id": "dTO7yJYtKsi",
     "outputs": [
       {
         "name": "wait_test_url",
-        "value": "http://localhost:4567/inferno/custom/paired_suite_b/resume?xyz=two"
+        "value": "<inferno_base_url>/custom/paired_suite_b/resume?xyz=two"
       }
     ]
   },
   {
     "test_id": "paired_suite_b-send_signals-send_signal_three",
     "result": "pass",
-    "test_session_id": "dTO7yJYtKsi",
     "requests": [
       {
         "direction": "outgoing",
         "verb": "get",
-        "url": "http://localhost:4567/inferno/paired_suite_a/iPl2nPBXk29",
+        "url": "<inferno_base_url>/paired_suite_a/<receiver.session_id>",
         "status": 200
       }
     ]
   },
   {
     "test_group_id": "paired_suite_b-send_signals",
-    "result": "pass",
-    "test_session_id": "dTO7yJYtKsi"
+    "result": "pass"
   },
   {
     "test_suite_id": "paired_suite_b",
-    "result": "pass",
-    "test_session_id": "dTO7yJYtKsi"
+    "result": "pass"
   }
 ]

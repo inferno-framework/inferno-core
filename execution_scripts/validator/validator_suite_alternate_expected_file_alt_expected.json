@@ -2,7 +2,6 @@
   {
     "test_id": "dev_validator-patient_group-patient_read_test",
     "result": "pass",
-    "test_session_id": "cJSUaa72NDp",
     "inputs": [
       {
         "name": "url",
@@ -29,7 +28,6 @@
   {
     "test_id": "dev_validator-patient_group-patient_validate_test",
     "result": "pass",
-    "test_session_id": "cJSUaa72NDp",
     "inputs": [
       {
         "name": "url",
@@ -63,7 +61,6 @@
     "test_id": "dev_validator-patient_group-patient_validate_from_file_test",
     "result": "omit",
     "result_message": "No patient to validate.",
-    "test_session_id": "cJSUaa72NDp",
     "inputs": [
       {
         "name": "url",
@@ -78,15 +75,13 @@
         "value": "85"
       },
       {
-        "name": "patient_json",
-        "value": null
+        "name": "patient_json"
       }
     ]
   },
   {
     "test_group_id": "dev_validator-patient_group",
     "result": "pass",
-    "test_session_id": "cJSUaa72NDp",
     "inputs": [
       {
         "name": "url",
@@ -101,8 +96,7 @@
         "value": "85"
       },
       {
-        "name": "patient_json",
-        "value": null
+        "name": "patient_json"
       }
     ]
   }

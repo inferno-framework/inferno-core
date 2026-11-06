@@ -2,7 +2,6 @@
   {
     "test_id": "options-all_versions_group-all_versions_test1",
     "result": "pass",
-    "test_session_id": "6rkCaM3I8Mm",
     "inputs": [
       {
         "name": "all_versions_input",
@@ -13,7 +12,6 @@
   {
     "test_id": "options-all_versions_group-all_versions_test3",
     "result": "pass",
-    "test_session_id": "6rkCaM3I8Mm",
     "inputs": [
       {
         "name": "all_versions_input",
@@ -24,7 +22,6 @@
   {
     "test_group_id": "options-all_versions_group",
     "result": "pass",
-    "test_session_id": "6rkCaM3I8Mm",
     "inputs": [
       {
         "name": "all_versions_input",
@@ -34,28 +31,23 @@
   },
   {
     "test_id": "options-display_options_group-simulation_verification_group-simulation_verification_test",
-    "result": "pass",
-    "test_session_id": "6rkCaM3I8Mm"
+    "result": "pass"
   },
   {
     "test_id": "options-display_options_group-simulation_verification_group-regular_test",
-    "result": "pass",
-    "test_session_id": "6rkCaM3I8Mm"
+    "result": "pass"
   },
   {
     "test_group_id": "options-display_options_group-simulation_verification_group",
-    "result": "pass",
-    "test_session_id": "6rkCaM3I8Mm"
+    "result": "pass"
   },
   {
     "test_group_id": "options-display_options_group",
-    "result": "pass",
-    "test_session_id": "6rkCaM3I8Mm"
+    "result": "pass"
   },
   {
     "test_id": "options-v2_group-v2_test1",
     "result": "pass",
-    "test_session_id": "6rkCaM3I8Mm",
     "inputs": [
       {
         "name": "v2_input",
@@ -66,7 +58,6 @@
   {
     "test_id": "options-v2_group-v2_test2",
     "result": "pass",
-    "test_session_id": "6rkCaM3I8Mm",
     "inputs": [
       {
         "name": "v2_input",
@@ -77,7 +68,6 @@
   {
     "test_group_id": "options-v2_group",
     "result": "pass",
-    "test_session_id": "6rkCaM3I8Mm",
     "inputs": [
       {
         "name": "v2_input",
@@ -88,15 +78,13 @@
   {
     "test_suite_id": "options",
     "result": "pass",
-    "test_session_id": "6rkCaM3I8Mm",
     "inputs": [
       {
         "name": "all_versions_input",
         "value": "ig version 1 not selected"
       },
       {
-        "name": "v1_input",
-        "value": null
+        "name": "v1_input"
       },
       {
         "name": "v2_input",
