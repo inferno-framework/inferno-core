@@ -22,7 +22,10 @@ module Inferno
             type: :string,
             desc: 'Path to a file that contains the expected results. When the session ' \
                   'results do not match the expected results in the file, generated ' \
-                  'comparison files will be placed in the same directory.'
+                  'comparison files will be placed in the same directory. Expected results ' \
+                  'files written by execute_script are stored normalized (e.g., with ' \
+                  '<NAME.session_id> and <inferno_base_url> placeholders) and are not supported here; ' \
+                  'compare those by running the script.'
           },
           compare_messages: {
             aliases: ['-m'],
@@ -77,6 +80,7 @@ module Inferno
         # large is compared.
         LARGE_IO_VALUE_PATTERN = /\A(Input|Output) is too large to display/
         LARGE_IO_VALUE_SIGNATURE = '<too large to compare>'.freeze
+        IO_LIST_FIELDS = %w[inputs outputs].freeze
 
         # Reduces results to the fields used in comparison and applies normalized_strings, so that
         # stored results (expected results files and actual results written on a mismatch) only
@@ -92,7 +96,12 @@ module Inferno
 
               stored[list_field] = result[list_field].map do |entry|
                 stored_entry = entry.slice(*entry_fields)
-                stored_entry[normalized_field] = stored_value(entry[normalized_field], normalized_strings)
+                stored_entry[normalized_field] =
+                  if IO_LIST_FIELDS.include?(list_field)
+                    stored_io_value(entry[normalized_field], normalized_strings)
+                  else
+                    normalize_string(entry[normalized_field], normalized_strings)
+                  end
                 stored_entry.compact
               end
             end
@@ -100,7 +109,8 @@ module Inferno
           end
         end
 
-        def self.stored_value(value, normalized_strings)
+        # Inputs and outputs may have non-string or large values (see LARGE_IO_VALUE_PATTERN).
+        def self.stored_io_value(value, normalized_strings)
           return if value.nil?
 
           value = value.to_json unless value.is_a?(String)
@@ -124,13 +134,20 @@ module Inferno
         def self.normalize_string(str, normalized_strings)
           return str unless str.present?
 
-          Array(normalized_strings).reduce(str) do |s, entry|
-            parse_normalize_entry(entry).reduce(s) do |s2, (pattern, replacement)|
-              if pattern.is_a?(Regexp)
-                s2.gsub(pattern, replacement)
-              else
-                s2.gsub(pattern, replacement).gsub(CGI.escape(pattern), replacement)
-              end
+          normalization_pairs(normalized_strings).reduce(str) do |s, (pattern, replacement)|
+            s.gsub(pattern, replacement)
+          end
+        end
+
+        # [pattern, replacement] pairs for normalized_strings, parsed once per list of rules since
+        # normalize_string is called many times per comparison (e.g., while aligning messages).
+        # Plain strings yield a second pair for their URL-encoded form.
+        def self.normalization_pairs(normalized_strings)
+          @normalization_pairs ||= {}
+          @normalization_pairs[normalized_strings] ||= Array(normalized_strings).flat_map do |entry|
+            parse_normalize_entry(entry).flat_map do |pattern, replacement|
+              patterns = pattern.is_a?(Regexp) ? [pattern] : [pattern, CGI.escape(pattern)]
+              patterns.map { |each_pattern| [each_pattern, replacement] }
             end
           end
         end
@@ -353,10 +370,6 @@ module Inferno
             SessionCompare.normalize_string(str, options[:normalized_strings])
           end
 
-          def normalizing?
-            options[:normalized_strings].present?
-          end
-
           # Option enabling each optional comparison => method checking that it matches
           OPTIONAL_COMPARISONS = {
             compare_result_message: :same_result_message?,
@@ -401,7 +414,7 @@ module Inferno
 
           # An input or output is compared by its name and value, normalized as when stored.
           def io_signature(kind, entry)
-            "#{kind} #{entry['name']}: #{SessionCompare.stored_value(entry['value'], options[:normalized_strings])}"
+            "#{kind} #{entry['name']}: #{SessionCompare.stored_io_value(entry['value'], options[:normalized_strings])}"
           end
 
           def sorted_io_signatures(result)
@@ -567,15 +580,20 @@ module Inferno
 
           def optional_to_h_fields
             fields = {}
+            # Both sides are shown normalized, since expected results are stored normalized
             if options[:compare_result_message]
-              fields[:expected_result_message] = expected_result&.dig('result_message')
-              fields[:actual_result_message] = actual_result&.dig('result_message')
+              fields[:expected_result_message] = normalize_string(expected_result&.dig('result_message'))
+              fields[:actual_result_message] = normalize_string(actual_result&.dig('result_message'))
             end
             if options[:compare_messages]
-              fields[:expected_messages] = expected_result&.dig('messages')
-              fields[:actual_messages] = actual_result&.dig('messages')
+              fields[:expected_messages] = normalized_messages(expected_result)
+              fields[:actual_messages] = normalized_messages(actual_result)
             end
             fields.merge(requests_to_h_fields, io_to_h_fields)
+          end
+
+          def normalized_messages(result)
+            result&.dig('messages')&.map { |message| message.merge('message' => normalize_string(message['message'])) }
           end
 
           def requests_to_h_fields

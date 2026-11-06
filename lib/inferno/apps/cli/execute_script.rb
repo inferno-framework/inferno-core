@@ -42,7 +42,8 @@ module Inferno
     #                                              #    session's id is replaced with <NAME.session_id> (NAME is
     #                                              #    the session name or suite id). Expected results files are
     #                                              #    stored with all normalizations applied.
-    #     default_normalizations: false            # optional; by default the Inferno base URL is replaced with
+    #     default_normalizations: false            # optional; by default the Inferno base URL (with or without
+    #                                              #    its default port) is replaced with
     #                                              #    <inferno_base_url> and ISO 8601 timestamps with
     #                                              #    <TIMESTAMP> (before normalized_strings), and 64-character
     #                                              #    lowercase hex values (e.g., SecureRandom.hex(32)) with
@@ -1012,11 +1013,8 @@ module Inferno
           matched = cmp.results_match?
           warn "  Comparing against #{File.basename(expected_file)}"
           warn "  Actual results matched expected results? #{matched}"
-          if !matched && options[:update_expected]
-            write_expected_results(expected_file, cmp.session_results)
-            warn "  Expected results updated: wrote actual results to #{expected_file}"
-            return true
-          end
+          return update_expected_results(expected_file, cmp.session_results) if options[:update_expected]
+
           unless matched
             cmp.save_actual_results_to_file
             cmp.save_comparison_csv_to_file
@@ -1033,9 +1031,25 @@ module Inferno
       # Expected results are stored normalized so that regenerating them only changes the file
       # when compared content changes.
       def write_expected_results(expected_file, results)
+        File.write(expected_file, stored_expected_results(expected_file, results))
+      end
+
+      # Rewrites the expected results file whenever its stored content would change, even if
+      # the results match (e.g., a file in an older format or written with other normalizations).
+      def update_expected_results(expected_file, results)
+        content = stored_expected_results(expected_file, results)
+        if File.read(expected_file) == content
+          warn '  Expected results already up to date'
+        else
+          File.write(expected_file, content)
+          warn "  Expected results updated: wrote actual results to #{expected_file}"
+        end
+        true
+      end
+
+      def stored_expected_results(expected_file, results)
         normalized_strings = compare_options(expected_file)[:normalized_strings]
-        File.write(expected_file,
-                   JSON.pretty_generate(Session::SessionCompare.results_for_storage(results, normalized_strings)))
+        JSON.pretty_generate(Session::SessionCompare.results_for_storage(results, normalized_strings))
       end
 
       def expected_file_for_comparison(session)
@@ -1157,7 +1171,7 @@ module Inferno
       end
 
       def default_normalizations?
-        comparison_config['default_normalizations'] != false
+        comparison_config['default_normalizations'].to_s.downcase != 'false'
       end
 
       # Values that vary by run or by the Inferno being run against, normalized before the
@@ -1165,8 +1179,20 @@ module Inferno
       def default_normalized_strings
         return [] unless default_normalizations?
 
-        base_url_rule = { 'pattern' => inferno_base_url, 'replacement' => '<inferno_base_url>' }
+        base_url_rule = { 'patterns' => inferno_base_url_forms, 'replacement' => '<inferno_base_url>' }
         [(base_url_rule if inferno_base_url.present?), TIMESTAMP_NORMALIZATION].compact
+      end
+
+      # The base URL both with and without its scheme's default port (e.g., :443 for https), since
+      # recorded request URLs may spell out the default port.
+      def inferno_base_url_forms
+        uri = URI.parse(inferno_base_url)
+        return [inferno_base_url] unless uri.host.present? && uri.port == uri.default_port
+
+        without_port = "#{uri.scheme}://#{uri.host}#{uri.path}"
+        [without_port, "#{uri.scheme}://#{uri.host}:#{uri.port}#{uri.path}"]
+      rescue URI::InvalidURIError
+        [inferno_base_url]
       end
 
       # Catch-all normalizations applied after the script's normalized_strings, so that more

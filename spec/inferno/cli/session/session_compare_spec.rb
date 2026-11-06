@@ -547,6 +547,26 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
       end
     end
 
+    it 'only treats input and output values as too large to compare' do
+      large_text = "Output is too large to display, please visit\nhttp://x/1\nfor details\n"
+      result = { 'test_id' => 't', 'result' => 'pass', 'messages' => [{ 'type' => 'info', 'message' => large_text }],
+                 'outputs' => [{ 'name' => 'o', 'value' => large_text }] }
+      stored = described_class.results_for_storage([result]).first
+
+      expect(stored['messages'].first['message']).to eq(large_text)
+      expect(stored['outputs'].first['value']).to eq('<too large to compare>')
+    end
+
+    it 'parses each list of rules only once' do
+      # rules are cached across examples, so use a list no other example uses
+      host = "http://#{SecureRandom.hex(4)}.example.com"
+      normalized_strings = [host, '/q=\\d+/']
+      allow(described_class).to receive(:parse_normalize_entry).and_call_original
+      3.times { described_class.normalize_string("#{host}?q=1", normalized_strings) }
+      expect(described_class).to have_received(:parse_normalize_entry).twice
+      expect(described_class.normalize_string("#{host}?q=1", normalized_strings)).to eq('<NORMALIZED>?<NORMALIZED>')
+    end
+
     it 'does not change results that are already stored' do
       normalized_strings = [{ 'pattern' => 'abc123', 'replacement' => '<s.session_id>' }, '/q=\\d+/']
       stored = described_class.results_for_storage(results, normalized_strings)
@@ -632,6 +652,21 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
           expect(r.format_messages_for_csv(expected)).to eq('! (info) "aaa message"')
           expect(r.format_messages_for_csv(actual)).to eq('! (info) "bbb message"')
         end
+      end
+    end
+
+    describe '#to_h' do
+      it 'shows both sides of result messages and messages normalized' do
+        options = { compare_result_message: true, compare_messages: true, normalized_strings: ['http://x'] }
+        expected = base_result.merge('result_message' => 'see <NORMALIZED>/a',
+                                     'messages' => [{ 'type' => 'info', 'message' => 'at <NORMALIZED>/b' }])
+        actual = base_result.merge('result_message' => 'see http://x/a',
+                                   'messages' => [{ 'type' => 'info', 'message' => 'at http://x/b' }])
+        hash = compared(expected, actual, options).to_h
+
+        expect(hash[:expected_result_message]).to eq(hash[:actual_result_message])
+        expect(hash[:expected_messages]).to eq(hash[:actual_messages])
+        expect(hash[:actual_messages]).to eq([{ 'type' => 'info', 'message' => 'at <NORMALIZED>/b' }])
       end
     end
 

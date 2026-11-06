@@ -614,12 +614,26 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         expect(mock_compare).to_not have_received(:save_comparison_csv_to_file)
       end
 
-      it 'does not rewrite the expected file when results match' do
+      it 'does not rewrite the expected file when its stored content would not change' do
         allow(File).to receive(:exist?).with(expected_file).and_return(true)
-        allow(mock_compare).to receive(:results_match?).and_return(true)
+        allow(File).to receive(:read).with(expected_file).and_return(JSON.pretty_generate(results))
+        allow(mock_compare).to receive_messages(results_match?: true, session_results: results)
 
         expect(instance.send(:compare_session, session)).to be(true)
         expect(File).to_not have_received(:write)
+      end
+
+      it 'rewrites the expected file when results match but its stored content would change' do
+        old_format = [{ 'test_id' => 'test-1', 'result' => 'fail', 'test_session_id' => 'old-id',
+                        'created_at' => '2026-01-01T00:00:00Z' }]
+        allow(File).to receive(:exist?).with(expected_file).and_return(true)
+        allow(File).to receive(:read).with(expected_file).and_return(JSON.pretty_generate(old_format))
+        allow(mock_compare).to receive_messages(results_match?: true, session_results: results)
+        allow(mock_compare).to receive(:save_actual_results_to_file)
+
+        expect(instance.send(:compare_session, session)).to be(true)
+        expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
+        expect(mock_compare).to_not have_received(:save_actual_results_to_file)
       end
 
       it 'writes the expected file and returns true when it does not exist' do
@@ -637,7 +651,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     let(:session_id_rule) { { 'pattern' => session_id, 'replacement' => "<#{suite_id}.session_id>" } }
 
     let(:default_rules) do
-      [{ 'pattern' => inferno_host, 'replacement' => '<inferno_base_url>' },
+      [{ 'patterns' => [inferno_host, "#{inferno_host}:443"], 'replacement' => '<inferno_base_url>' },
        described_class::TIMESTAMP_NORMALIZATION]
     end
 
@@ -667,17 +681,20 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       )
     end
 
-    it 'omits the default normalizations when default_normalizations is false' do
-      config = base_config.merge('comparison_config' => { 'default_normalizations' => false })
-      instance = build_instance(config)
-      opts = instance.send(:compare_options, '/tmp/expected.json')
-      expect(opts[:normalized_strings]).to eq([session_id_rule])
+    [false, 'false', 'FALSE'].each do |value|
+      it "omits the default normalizations when default_normalizations is #{value.inspect}" do
+        config = base_config.merge('comparison_config' => { 'default_normalizations' => value })
+        instance = build_instance(config)
+        opts = instance.send(:compare_options, '/tmp/expected.json')
+        expect(opts[:normalized_strings]).to eq([session_id_rule])
+      end
     end
 
     it 'normalizes the base URL without a trailing slash' do
       instance = build_instance(base_config, base_options.merge(inferno_base_url: "#{inferno_host}/"))
       opts = instance.send(:compare_options, '/tmp/expected.json')
-      expect(opts[:normalized_strings]).to include({ 'pattern' => inferno_host, 'replacement' => '<inferno_base_url>' })
+      expect(opts[:normalized_strings])
+        .to include({ 'patterns' => [inferno_host, "#{inferno_host}:443"], 'replacement' => '<inferno_base_url>' })
     end
 
     it 'lets declared rules match placeholders from the session id and default normalizations' do
@@ -712,6 +729,34 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
       expect(Inferno::CLI::Session::SessionCompare.normalize_string("token=#{hex64} id=#{hex64}", normalized_strings))
         .to eq('token=<TOKEN> id=<RANDOM_64_CHAR_HEX>')
+    end
+
+    def normalized_strings_for_base_url(base_url)
+      instance = build_instance(base_config)
+      allow(instance).to receive(:inferno_base_url).and_return(base_url)
+      instance.send(:compare_options, '/tmp/expected.json')[:normalized_strings]
+    end
+
+    it 'normalizes the base URL with or without its default port spelled out' do
+      normalized_strings = normalized_strings_for_base_url('https://inferno.example.com/suites')
+      normalize = ->(str) { Inferno::CLI::Session::SessionCompare.normalize_string(str, normalized_strings) }
+
+      expect(normalize.call('https://inferno.example.com/suites/custom/x')).to eq('<inferno_base_url>/custom/x')
+      expect(normalize.call('https://inferno.example.com:443/suites/custom/x')).to eq('<inferno_base_url>/custom/x')
+      expect(normalize.call('https://inferno.example.com:8443/suites/custom/x'))
+        .to eq('https://inferno.example.com:8443/suites/custom/x')
+    end
+
+    it 'treats an explicit default port in the base URL the same as none' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost:80/inferno')
+
+      expect(Inferno::CLI::Session::SessionCompare.normalize_string('http://localhost/inferno/x', normalized_strings))
+        .to eq('<inferno_base_url>/x')
+    end
+
+    it 'only uses the base URL as given when it has a non-default port' do
+      expect(normalized_strings_for_base_url('http://localhost:4567/inferno'))
+        .to include({ 'patterns' => ['http://localhost:4567/inferno'], 'replacement' => '<inferno_base_url>' })
     end
 
     it 'normalizes ISO 8601 timestamps with the default timestamp rule' do

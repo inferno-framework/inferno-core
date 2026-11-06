@@ -156,8 +156,9 @@ module Inferno
              aliases: ['-u'],
              type: :boolean,
              default: false,
-             desc: 'When results do not match, overwrite the expected results file with the actual results ' \
-                   '(instead of writing actual results and comparison files) and treat the comparison as passing. ' \
+             desc: 'Overwrite the expected results file with the actual results whenever its stored content ' \
+                   'would change, even if results match (e.g., to migrate a file to the current format), ' \
+                   'instead of writing actual results and comparison files, and treat the comparison as passing. ' \
                    'Review the changes with git diff.'
       def execute_script(pattern = 'execution_scripts/**/*.yaml')
         if pattern.match?(/[*?\[\]{}]/)
