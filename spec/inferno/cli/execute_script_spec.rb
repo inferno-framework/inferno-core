@@ -513,6 +513,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       allow(Inferno::CLI::Session::SessionCompare).to receive(:new).and_return(mock_compare)
       allow(Inferno::CLI::Session::SessionResults).to receive(:new).and_return(mock_results)
       allow(File).to receive(:read).and_call_original
+      allow(File).to receive(:read).with(expected_file).and_return('[]')
     end
 
     it 'returns true when the expected file exists and results match' do
@@ -1039,6 +1040,15 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       end.to output(/found: action, command/).to_stdout
     end
 
+    it 'exits 1 when a step is not a mapping' do
+      { 'NOOP' => 'String', ['action', 'NOOP'] => 'Array' }.each do |step, type|
+        expect do
+          expect { build_instance(config_with_step(step)) }
+            .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+        end.to output(/Step 1 must be a mapping of step keys; found a #{type}\./).to_stdout
+      end
+    end
+
     it 'reports a mixed step instead of the --allow-commands error' do
       step = { 'status' => 'waiting', 'last_completed' => '1.02', 'http_get' => 'http://x', 'command' => 'echo hi' }
       expect do
@@ -1056,6 +1066,57 @@ RSpec.describe Inferno::CLI::ExecuteScript do
           { 'status' => 'done', 'last_completed' => '1.02', 'action' => 'END_SCRIPT' }
         ]
       }
+      expect { build_instance(config) }.to_not raise_error
+    end
+  end
+
+  describe '#validate_expected_files!' do
+    let(:dir) { Dir.mktmpdir }
+
+    after { FileUtils.remove_entry(dir) }
+
+    def expected_path(name, content = nil)
+      File.join(dir, name).tap { |path| File.write(path, content) if content }
+    end
+
+    def config_with_expected(expected_file, alternate_file = nil)
+      comparison_config = { 'expected_results_file' => expected_file }
+      comparison_config['alternate_expected_files'] = [{ 'file' => alternate_file }] if alternate_file
+      { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [], 'comparison_config' => comparison_config }
+    end
+
+    def expect_exit_with_error(config, message)
+      expect do
+        expect { build_instance(config) }
+          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+      end.to output(message).to_stdout
+    end
+
+    it 'exits 1 when an expected file does not hold a JSON array of results' do
+      file = expected_path('expected.json', { 'matched' => true, 'results' => [] }.to_json)
+      expect_exit_with_error(config_with_expected(file),
+                             /'#{Regexp.escape(file)}' must contain a JSON array of results.*Fix or delete/)
+    end
+
+    it 'exits 1 when an alternate expected file is not valid JSON' do
+      alternate = expected_path('alternate.json', 'not json')
+      expect_exit_with_error(config_with_expected(expected_path('expected.json', '[]'), alternate),
+                             /'#{Regexp.escape(alternate)}' is not valid JSON/)
+    end
+
+    it 'checks the expected files of every session in a multi-session script' do
+      file = expected_path('sender.json', '[1, 2]')
+      config = {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 'receiver' }, { 'suite' => suite_id, 'name' => 'sender' }],
+        'steps' => [],
+        'comparison_config' => { 'sessions' => { 'sender' => { 'expected_results_file' => file } } }
+      }
+      expect_exit_with_error(config, /'#{Regexp.escape(file)}' must contain a JSON array of results/)
+    end
+
+    it 'does not exit when expected files are valid or do not exist yet' do
+      config = config_with_expected(expected_path('expected.json', [{ 'test_id' => 't', 'result' => 'pass' }].to_json),
+                                    expected_path('missing.json'))
       expect { build_instance(config) }.to_not raise_error
     end
   end

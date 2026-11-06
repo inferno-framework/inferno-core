@@ -29,7 +29,9 @@ Review the changes with `git diff` before committing.
 Expected results files (and the actual results files written on a mismatch)
 contain only the fields used in comparison: the result's test, group, or suite id,
 `result`, `result_message`, `messages` (type and message), `requests` (direction,
-verb, URL, and status), and `inputs`/`outputs` (name and value).
+verb, URL, and status), and `inputs`/`outputs` (name and value). To get a
+session's full results (including result and request ids and timestamps), use
+`inferno session results SESSION_ID`.
 
 These files are stored in normalized form, so regenerating expected results only
 changes the file when compared content changes. Normalizations are applied in this

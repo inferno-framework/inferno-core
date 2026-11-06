@@ -712,6 +712,46 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
     end
   end
 
+  describe '.read_expected_results' do
+    def read_content(content)
+      Dir.mktmpdir do |dir|
+        file = File.join(dir, 'expected.json')
+        File.write(file, content)
+        described_class.read_expected_results(file)
+      end
+    end
+
+    it 'returns the results when the file holds a JSON array of results' do
+      expect(read_content([{ 'test_id' => 't', 'result' => 'pass' }].to_json))
+        .to eq([[{ 'test_id' => 't', 'result' => 'pass' }], nil])
+    end
+
+    it 'returns an error when the file holds a JSON object or an array of non-objects' do
+      [{ 'matched' => true }.to_json, '[1, 2]'].each do |content|
+        expect(read_content(content)).to match([nil, /must contain a JSON array of results/])
+      end
+    end
+
+    it 'returns an error when the file is not valid JSON' do
+      expect(read_content('not json')).to match([nil, /is not valid JSON/])
+    end
+  end
+
+  describe '#expected_results' do
+    it 'prints an error and exits 3 when the expected results file is malformed' do
+      Dir.mktmpdir do |dir|
+        file = File.join(dir, 'expected.json')
+        File.write(file, { 'matched' => true }.to_json)
+        compare = described_class.new(actual_results_session_id, { expected_results_file: file })
+
+        expect do
+          expect { compare.expected_results }
+            .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+        end.to output(/must contain a JSON array of results/).to_stdout
+      end
+    end
+  end
+
   describe '#save_actual_results_to_file' do
     it 'writes the actual results in stored form next to the expected results file' do
       Dir.mktmpdir do |dir|

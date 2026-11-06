@@ -74,11 +74,19 @@ module Inferno
     #     alternate_expected_files:                # optional; tried in order; first matching wins
     #       - file: alt_expected.json              # required; relative to yaml file
     #         when:                                # required; all conditions must match (AND logic)
-    #           - field: inputs.url                # required: can be inputs.<name>, configuration_messages,
-    #                                              #   or inferno_base_url
-    #             matches: ^http://                # other values are top-level session detail fields.
-    #                                              # Evaluated against GET api/test_sessions/{id}.
+    #           - field: inputs.url                # required; one of:
+    #                                              #   inputs.<name>: the session's value for the input
+    #                                              #     (GET api/test_sessions/{id}/session_data)
+    #                                              #   configuration_messages: the suite's configuration
+    #                                              #     messages (GET api/test_sessions/{id}); matches
+    #                                              #     if any message matches, not_matches if none do
+    #                                              #   inferno_base_url: the --inferno-base-url option, or
+    #                                              #     the configured base_url when not provided, without
+    #                                              #     a trailing slash
+    #                                              # Conditions on any other field never match.
+    #             matches: ^http://                # regex; a condition needs matches, not_matches, or both
     #
+
     #     # Multi-session scripts: per-session config is nested under sessions.<name>.
     #     sessions:
     #       my_name:                               # matches session name key (sessions[*].name or suite)
@@ -191,6 +199,7 @@ module Inferno
         validate_step_commands!
         validate_commands_allowed!
         validate_session_names!
+        validate_expected_files!
         self.execution_status = ExecutionStatus.new(
           done: false,
           failed: false,
@@ -254,9 +263,11 @@ module Inferno
 
       STEP_COMMAND_KEYS = %w[start_run action http_get command].freeze
 
-      # Each step must specify exactly one way to continue the script.
+      # Each step must be a mapping that specifies exactly one way to continue the script.
       def validate_step_commands!
         errors = Array(script_config['steps']).each_with_index.filter_map do |step, index|
+          next "Step #{index + 1} must be a mapping of step keys; found a #{step.class}." unless step.is_a?(Hash)
+
           found = STEP_COMMAND_KEYS & step.keys
           next if found.length == 1
 
@@ -292,6 +303,29 @@ module Inferno
 
         puts JSON.pretty_generate({ errors: errors.join(' ') })
         exit(1)
+      end
+
+      # Checked before running so that a malformed expected results file doesn't stop the script at
+      # comparison time. Every file a session could compare against is checked, since alternate
+      # files are chosen after the run. Files that don't exist yet are written by the run.
+      def validate_expected_files!
+        errors = candidate_expected_files.select { |file| File.exist?(file) }.filter_map do |file|
+          Session::SessionCompare.read_expected_results(file).last
+        end
+        return if errors.empty?
+
+        puts JSON.pretty_generate({ errors: "#{errors.join(' ')} Fix or delete the file before running the script." })
+        exit(1)
+      end
+
+      def candidate_expected_files
+        Array(script_config['sessions']).flat_map do |session_config|
+          key = session_config['name']&.to_s || session_config['suite']
+          alternates = Array(comparison_session_config(key)['alternate_expected_files']).filter_map do |alt|
+            File.expand_path(alt['file'], yaml_directory) if alt['file'].present?
+          end
+          [resolve_expected_file(key)] + alternates
+        end.uniq
       end
 
       def missing_session_name_errors(session_configs)
