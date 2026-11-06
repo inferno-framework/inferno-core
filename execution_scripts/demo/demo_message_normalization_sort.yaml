@@ -4,11 +4,11 @@
 #   1. "#{normalization_sort_url}: response received"  (varies by run)
 #   2. "http://middle.example.com: fixed message"      (constant)
 #
-# With the expected URL (http://aaa.example.com), message 1 sorts before message 2
-# in raw alphabetical order ('a' < 'm' after "http://"). With the URL used here
-# (http://zzz.example.com), message 1 sorts after message 2 ('z' > 'm'). After
-# normalization both URLs become '<NORMALIZED>', which sorts before "http://middle..."
-# ('<' < 'h'), so the normalized order is the same in both runs.
+# With the URL used here (http://zzz.example.com), message 1 sorts after message 2
+# in raw alphabetical order ('z' > 'm' after "http://"). After normalization the URL
+# becomes '<NORMALIZED>', which sorts before "http://middle..." ('<' < 'h'), matching
+# the order in the expected results file, which is stored normalized. (With
+# http://aaa.example.com, the input's default, raw and normalized order agree.)
 #
 # Run with --compare-messages to exercise this behavior.
 

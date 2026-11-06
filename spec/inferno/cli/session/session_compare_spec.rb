@@ -488,6 +488,290 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
     end
   end
 
+  describe '.results_for_storage' do
+    let(:results) do
+      [
+        {
+          'id' => 'result-id', 'created_at' => 'now', 'test_id' => 'test-1', 'test_session_id' => 'abc123',
+          'test_run_id' => 'run-1', 'result' => 'fail', 'result_message' => 'failed for session abc123',
+          'inputs' => [{ 'name' => 'url', 'value' => 'http://x/abc123', 'type' => 'text', 'title' => 'URL' },
+                       { 'name' => 'auth', 'value' => { 'token' => 'abc123' }, 'type' => 'auth_info' },
+                       { 'name' => 'big', 'value' => "Input is too large to display, please visit\nhttp://x/1\n" }],
+          'outputs' => [{ 'name' => 'token', 'value' => 'abc', 'type' => 'text' }],
+          'messages' => [{ 'id' => 'message-id', 'type' => 'error', 'message' => 'bad abc123', 'result_id' => 'r' }],
+          'requests' => [{ 'id' => 'request-id', 'direction' => 'outgoing', 'verb' => 'get',
+                           'url' => 'http://x/abc123?q=1', 'status' => 200, 'index' => 1, 'timestamp' => 'now' }]
+        },
+        { 'test_group_id' => 'group-1', 'result' => 'pass', 'messages' => [], 'outputs' => [] }
+      ]
+    end
+
+    it 'keeps only compared fields, without test_session_id' do
+      expect(described_class.results_for_storage(results)).to eq(
+        [
+          {
+            'test_id' => 'test-1', 'result' => 'fail', 'result_message' => 'failed for session abc123',
+            'inputs' => [{ 'name' => 'url', 'value' => 'http://x/abc123' },
+                         { 'name' => 'auth', 'value' => '{"token":"abc123"}' },
+                         { 'name' => 'big', 'value' => '<too large to compare>' }],
+            'outputs' => [{ 'name' => 'token', 'value' => 'abc' }],
+            'messages' => [{ 'type' => 'error', 'message' => 'bad abc123' }],
+            'requests' => [{ 'direction' => 'outgoing', 'verb' => 'get', 'url' => 'http://x/abc123?q=1',
+                             'status' => 200 }]
+          },
+          { 'test_group_id' => 'group-1', 'result' => 'pass' }
+        ]
+      )
+    end
+
+    it 'applies normalized strings to result messages, messages, request URLs, and input and output values' do
+      normalized_strings = [{ 'pattern' => 'abc123', 'replacement' => '<s.session_id>' }]
+      stored = described_class.results_for_storage(results, normalized_strings).first
+
+      expect(stored['result_message']).to eq('failed for session <s.session_id>')
+      expect(stored['messages'].first['message']).to eq('bad <s.session_id>')
+      expect(stored['requests'].first['url']).to eq('http://x/<s.session_id>?q=1')
+      expect(stored['inputs'].map { |input| input['value'] })
+        .to eq(['http://x/<s.session_id>', '{"token":"<s.session_id>"}', '<too large to compare>'])
+    end
+
+    it 'stores results that compare equal to the unnormalized results' do
+      normalized_strings = [{ 'pattern' => 'abc123', 'replacement' => '<s.session_id>' }, '/q=\\d+/']
+      stored = described_class.results_for_storage(results, normalized_strings)
+      options = { compare_messages: true, compare_result_message: true, compare_requests: true, compare_io: true,
+                  normalized_strings: }
+
+      results.zip(stored).each do |actual, expected|
+        id = actual['test_id'] || actual['test_group_id']
+        expect(described_class::ComparedTestResult.new(id, expected, actual, options).same_result?).to be(true)
+      end
+    end
+
+    it 'only treats input and output values as too large to compare' do
+      large_text = "Output is too large to display, please visit\nhttp://x/1\nfor details\n"
+      result = { 'test_id' => 't', 'result' => 'pass', 'messages' => [{ 'type' => 'info', 'message' => large_text }],
+                 'outputs' => [{ 'name' => 'o', 'value' => large_text }] }
+      stored = described_class.results_for_storage([result]).first
+
+      expect(stored['messages'].first['message']).to eq(large_text)
+      expect(stored['outputs'].first['value']).to eq('<too large to compare>')
+    end
+
+    it 'parses each list of rules only once' do
+      # rules are cached across examples, so use a list no other example uses
+      host = "http://#{SecureRandom.hex(4)}.example.com"
+      normalized_strings = [host, '/q=\\d+/']
+      allow(described_class).to receive(:parse_normalize_entry).and_call_original
+      3.times { described_class.normalize_string("#{host}?q=1", normalized_strings) }
+      expect(described_class).to have_received(:parse_normalize_entry).twice
+      expect(described_class.normalize_string("#{host}?q=1", normalized_strings)).to eq('<NORMALIZED>?<NORMALIZED>')
+    end
+
+    it 'does not change results that are already stored' do
+      normalized_strings = [{ 'pattern' => 'abc123', 'replacement' => '<s.session_id>' }, '/q=\\d+/']
+      stored = described_class.results_for_storage(results, normalized_strings)
+      expect(described_class.results_for_storage(stored, normalized_strings)).to eq(stored)
+    end
+  end
+
+  describe '.standard_normalized_strings' do
+    let(:base_url) { 'http://localhost:4567' }
+    let(:base_url_rule) do
+      { 'patterns' => described_class.inferno_base_url_patterns(base_url), 'replacement' => '<inferno_base_url>' }
+    end
+
+    it 'wraps the given rules in the default normalizations' do
+      expect(described_class.standard_normalized_strings(['http://other.example.com'], base_url))
+        .to eq([base_url_rule, described_class::TIMESTAMP_NORMALIZATION, 'http://other.example.com',
+                described_class::RANDOM_64_CHAR_HEX_NORMALIZATION])
+    end
+
+    it 'returns only the given rules when default normalizations are off' do
+      expect(described_class.standard_normalized_strings(['http://other.example.com'], base_url,
+                                                         default_normalizations: false))
+        .to eq(['http://other.example.com'])
+    end
+
+    it 'omits the base URL rule when there is no base URL' do
+      expect(described_class.standard_normalized_strings(nil, ''))
+        .to eq([described_class::TIMESTAMP_NORMALIZATION, described_class::RANDOM_64_CHAR_HEX_NORMALIZATION])
+    end
+
+    it 'normalizes exactly 64 lowercase hex characters with the default random hex rule' do
+      rule = [described_class::RANDOM_64_CHAR_HEX_NORMALIZATION]
+      normalize = ->(str) { described_class.normalize_string(str, rule) }
+      hex64 = SecureRandom.hex(32)
+
+      expect(normalize.call("resume?id=#{hex64}&x=1")).to eq('resume?id=<RANDOM_64_CHAR_HEX>&x=1')
+      expect(normalize.call(hex64[0, 63])).to eq(hex64[0, 63])
+      expect(normalize.call("#{hex64}a")).to eq("#{hex64}a")
+      expect(normalize.call('4b49a739d1eb115b3225f4cf9beb6d1b')).to eq('4b49a739d1eb115b3225f4cf9beb6d1b')
+      expect(normalize.call(hex64.upcase)).to eq(hex64.upcase)
+    end
+
+    def normalized_strings_for_base_url(base_url)
+      described_class.standard_normalized_strings([], base_url)
+    end
+
+    it 'normalizes the base URL with or without its default port spelled out' do
+      normalized_strings = normalized_strings_for_base_url('https://inferno.example.com/suites')
+      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
+
+      expect(normalize.call('https://inferno.example.com/suites/custom/x')).to eq('<inferno_base_url>/custom/x')
+      expect(normalize.call('https://inferno.example.com:443/suites/custom/x')).to eq('<inferno_base_url>/custom/x')
+      expect(normalize.call('https://inferno.example.com:8443/suites/custom/x'))
+        .to eq('https://inferno.example.com:8443/suites/custom/x')
+    end
+
+    it 'normalizes a base URL without a path when the default port is spelled out' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost')
+      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
+
+      expect(normalize.call('http://localhost/custom/x')).to eq('<inferno_base_url>/custom/x')
+      expect(normalize.call('http://localhost:80/custom/x')).to eq('<inferno_base_url>/custom/x')
+    end
+
+    it 'treats an explicit default port in the base URL the same as none' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost:80/inferno')
+
+      expect(described_class.normalize_string('http://localhost/inferno/x', normalized_strings))
+        .to eq('<inferno_base_url>/x')
+    end
+
+    it 'uses the base URL with and without its default port' do
+      expect(described_class.inferno_base_url_forms('https://inferno.example.com/suites'))
+        .to eq(['https://inferno.example.com:443/suites', 'https://inferno.example.com/suites'])
+    end
+
+    it 'only uses the base URL as given when it has a non-default port' do
+      expect(described_class.inferno_base_url_forms('http://localhost:4567/inferno'))
+        .to eq(['http://localhost:4567/inferno'])
+    end
+
+    it 'does not normalize the base URL within a longer host, port, or path segment' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost:4567')
+      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
+
+      ['http://localhost:45678/x', 'http://localhost:4567.evil.com/x', 'http://localhost:4567-x/y',
+       CGI.escape('http://localhost:45678/x')].each do |str|
+        expect(normalize.call(str)).to eq(str)
+      end
+    end
+
+    it 'does not normalize the base URL path within a longer path segment' do
+      normalized_strings = normalized_strings_for_base_url('https://inferno.example.com/suites')
+
+      expect(described_class.normalize_string('https://inferno.example.com/suites.json', normalized_strings))
+        .to eq('https://inferno.example.com/suites.json')
+    end
+
+    it 'does not normalize a base URL without a port within the same host with a port' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost')
+      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
+
+      expect(normalize.call('http://localhost:4567/x')).to eq('http://localhost:4567/x')
+      expect(normalize.call(CGI.escape('http://localhost:4567/x'))).to eq(CGI.escape('http://localhost:4567/x'))
+    end
+
+    it 'normalizes the base URL followed by a query, quote, whitespace, or sentence-ending period' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost:4567')
+      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
+
+      expect(normalize.call('http://localhost:4567?a=b')).to eq('<inferno_base_url>?a=b')
+      expect(normalize.call("Visit 'http://localhost:4567' now")).to eq("Visit '<inferno_base_url>' now")
+      expect(normalize.call('Redirected to http://localhost:4567.')).to eq('Redirected to <inferno_base_url>.')
+      expect(normalize.call('http://localhost:4567')).to eq('<inferno_base_url>')
+    end
+
+    it 'normalizes the URL-encoded base URL' do
+      normalized_strings = normalized_strings_for_base_url('http://localhost:4567')
+
+      expect(described_class.normalize_string(
+               "redirect_uri=#{CGI.escape('http://localhost:4567/custom/x')}", normalized_strings
+             )).to eq('redirect_uri=<inferno_base_url>%2Fcustom%2Fx')
+    end
+
+    it 'normalizes ISO 8601 timestamps with the default timestamp rule' do
+      rule = [described_class::TIMESTAMP_NORMALIZATION]
+      %w[2026-03-30T23:59:12-04:00 2026-03-02T22:36:46.497-05:00 2026-03-02T22:36:46Z 2026-03-02T22:36:46+0000]
+        .each do |timestamp|
+          expect(described_class.normalize_string("issued #{timestamp}.", rule))
+            .to eq('issued <TIMESTAMP>.')
+        end
+    end
+  end
+
+  describe '.command_options' do
+    it 'adds the default normalizations for the -I base URL around the given rules' do
+      options = described_class.command_options({ inferno_base_url: "#{inferno_host}/", normalized_strings: ['abc'] })
+
+      expect(options[:normalized_strings]).to eq(
+        described_class.standard_normalized_strings(['abc'], inferno_host)
+      )
+      expect(options[:inferno_base_url]).to eq("#{inferno_host}/")
+    end
+  end
+
+  describe '.read_expected_results' do
+    def read_content(content)
+      Dir.mktmpdir do |dir|
+        file = File.join(dir, 'expected.json')
+        File.write(file, content)
+        described_class.read_expected_results(file)
+      end
+    end
+
+    it 'returns the results when the file holds a JSON array of results' do
+      expect(read_content([{ 'test_id' => 't', 'result' => 'pass' }].to_json))
+        .to eq([[{ 'test_id' => 't', 'result' => 'pass' }], nil])
+    end
+
+    it 'returns an error when the file holds a JSON object or an array of non-objects' do
+      [{ 'matched' => true }.to_json, '[1, 2]'].each do |content|
+        expect(read_content(content)).to match([nil, /must contain a JSON array of results/])
+      end
+    end
+
+    it 'returns an error when the file is not valid JSON' do
+      expect(read_content('not json')).to match([nil, /is not valid JSON/])
+    end
+  end
+
+  describe '#expected_results' do
+    it 'prints an error and exits 3 when the expected results file is malformed' do
+      Dir.mktmpdir do |dir|
+        file = File.join(dir, 'expected.json')
+        File.write(file, { 'matched' => true }.to_json)
+        compare = described_class.new(actual_results_session_id, { expected_results_file: file })
+
+        expect do
+          expect { compare.expected_results }
+            .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 3)))
+        end.to output(/must contain a JSON array of results/).to_stdout
+      end
+    end
+  end
+
+  describe '#save_actual_results_to_file' do
+    it 'writes the actual results in stored form next to the expected results file' do
+      Dir.mktmpdir do |dir|
+        expected_file = File.join(dir, 'script_expected.json')
+        normalized_strings = [{ 'pattern' => actual_results_session_id, 'replacement' => '<s.session_id>' }]
+        compare = described_class.new(actual_results_session_id, { expected_results_file: expected_file,
+                                                                   normalized_strings: })
+        allow(compare).to receive(:session_results).and_return(actual_results_parsed)
+
+        compare.save_actual_results_to_file
+
+        written = Dir.glob(File.join(dir, 'script_actual_results_*.json'))
+        expect(written.length).to eq(1)
+        expect(JSON.parse(File.read(written.first)))
+          .to eq(described_class.results_for_storage(actual_results_parsed, normalized_strings))
+        expect(File.read(written.first)).to_not include(actual_results_session_id)
+      end
+    end
+  end
+
   describe described_class::ComparedTestResult do
     let(:base_result) do
       { 'result' => 'pass', 'test_id' => 'test-id-1' }
@@ -546,6 +830,188 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
           expect(r.format_messages_for_csv(expected)).to eq('! (info) "aaa message"')
           expect(r.format_messages_for_csv(actual)).to eq('! (info) "bbb message"')
         end
+      end
+    end
+
+    describe '#to_h' do
+      it 'shows both sides of result messages and messages normalized' do
+        options = { compare_result_message: true, compare_messages: true, normalized_strings: ['http://x'] }
+        expected = base_result.merge('result_message' => 'see <NORMALIZED>/a',
+                                     'messages' => [{ 'type' => 'info', 'message' => 'at <NORMALIZED>/b' }])
+        actual = base_result.merge('result_message' => 'see http://x/a',
+                                   'messages' => [{ 'type' => 'info', 'message' => 'at http://x/b' }])
+        hash = compared(expected, actual, options).to_h
+
+        expect(hash[:expected_result_message]).to eq(hash[:actual_result_message])
+        expect(hash[:expected_messages]).to eq(hash[:actual_messages])
+        expect(hash[:actual_messages]).to eq([{ 'type' => 'info', 'message' => 'at <NORMALIZED>/b' }])
+      end
+    end
+
+    describe 'request comparison' do
+      def request(url, direction: 'outgoing', verb: 'get', status: 200)
+        { 'id' => SecureRandom.uuid, 'direction' => direction, 'verb' => verb, 'url' => url,
+          'status' => status, 'timestamp' => Time.now.iso8601, 'index' => rand(1000) }
+      end
+
+      def with_requests(*requests)
+        base_result.merge('requests' => requests)
+      end
+
+      let(:options) { { compare_requests: true } }
+
+      it 'matches when requests differ only in id, index, and timestamp' do
+        expected = with_requests(request('http://localhost:4567/inferno/custom/demo/resume?xyz=abc'))
+        actual = with_requests(request('http://localhost:4567/inferno/custom/demo/resume?xyz=abc'))
+        expect(compared(expected, actual, options).same_result?).to be(true)
+      end
+
+      it 'does not match when only the host differs unless the host is normalized' do
+        expected = with_requests(request('http://localhost:4567/inferno/custom/demo/resume'))
+        actual = with_requests(request('https://inferno.example.com/inferno/custom/demo/resume'))
+        normalizing_options = options.merge(normalized_strings: ['/https?:\/\/[^\/]+/'])
+        expect(compared(expected, actual, options).same_result?).to be(false)
+        expect(compared(expected, actual, normalizing_options).same_result?).to be(true)
+      end
+
+      it 'matches regardless of request order' do
+        first = request('http://server/fhir/Patient/1')
+        second = request('http://server/fhir/Patient/2')
+        expect(compared(with_requests(first, second), with_requests(second, first), options).same_result?)
+          .to be(true)
+      end
+
+      it 'does not match when a request is missing' do
+        expected = with_requests(request('http://server/fhir/Patient/1'), request('http://server/fhir/Patient/2'))
+        actual = with_requests(request('http://server/fhir/Patient/1'))
+        expect(compared(expected, actual, options).same_result?).to be(false)
+      end
+
+      it 'does not match when a request is repeated' do
+        expected = with_requests(request('http://server/fhir/Patient/1'))
+        actual = with_requests(request('http://server/fhir/Patient/1'), request('http://server/fhir/Patient/1'))
+        expect(compared(expected, actual, options).same_result?).to be(false)
+      end
+
+      it 'does not match when the URL, verb, direction, or status differ' do
+        expected = with_requests(request('http://server/fhir/Patient?name=a'))
+        [
+          request('http://server/fhir/Observation?name=a'),
+          request('http://server/fhir/Patient?name=b'),
+          request('http://server/fhir/Patient?name=a', verb: 'post'),
+          request('http://server/fhir/Patient?name=a', direction: 'incoming'),
+          request('http://server/fhir/Patient?name=a', status: 404)
+        ].each do |different|
+          expect(compared(expected, with_requests(different), options).same_result?).to be(false)
+        end
+      end
+
+      it 'applies normalized strings to the URL' do
+        expected = with_requests(request('http://server/redirect?code=abc123&state=1'))
+        actual = with_requests(request('http://server/redirect?code=xyz789&state=1'))
+        normalizing_options = options.merge(normalized_strings: ['/code=[a-z0-9]+/'])
+        expect(compared(expected, actual, options).same_result?).to be(false)
+        expect(compared(expected, actual, normalizing_options).same_result?).to be(true)
+      end
+
+      it 'ignores requests when compare_requests is not set' do
+        expected = with_requests(request('http://server/fhir/Patient/1'))
+        expect(compared(expected, with_requests, {}).same_result?).to be(true)
+      end
+
+      it 'treats a result without requests the same as one with no requests' do
+        expect(compared(base_result, with_requests, options).same_result?).to be(true)
+      end
+
+      it 'formats requests for CSV, marking mismatches' do
+        expected = with_requests(request('http://server/fhir/Patient/1'), request('http://server/fhir/Patient/2'))
+        actual = with_requests(request('http://server/fhir/Patient/1', status: 500),
+                               request('http://server/fhir/Patient/2'))
+        r = compared(expected, actual, options)
+        expect(r.format_unordered_comparisons_for_csv(r.request_comparisons, :expected))
+          .to eq("! outgoing GET http://server/fhir/Patient/1 200\n- outgoing GET http://server/fhir/Patient/2 200")
+        expect(r.format_unordered_comparisons_for_csv(r.request_comparisons, :actual))
+          .to eq("! outgoing GET http://server/fhir/Patient/1 500\n- outgoing GET http://server/fhir/Patient/2 200")
+        expect(r.comparison_csv_row.last(3).first).to be(true)
+      end
+
+      it 'hides matching requests in CSV with only_different_messages' do
+        expected = with_requests(request('http://server/fhir/Patient/1'), request('http://server/fhir/Patient/2'))
+        actual = with_requests(request('http://server/fhir/Patient/2'))
+        r = compared(expected, actual, options.merge(only_different_messages: true))
+        expect(r.format_unordered_comparisons_for_csv(r.request_comparisons, :expected))
+          .to eq('! outgoing GET http://server/fhir/Patient/1 200')
+        expect(r.format_unordered_comparisons_for_csv(r.request_comparisons, :actual)).to eq('')
+      end
+    end
+
+    describe 'input and output comparison' do
+      def io(name, value)
+        { 'name' => name, 'value' => value, 'type' => 'text' }
+      end
+
+      def with_io(inputs: [], outputs: [])
+        base_result.merge('inputs' => inputs, 'outputs' => outputs)
+      end
+
+      let(:options) { { compare_io: true } }
+
+      it 'matches when names and values match, regardless of order or other fields' do
+        expected = with_io(inputs: [io('a', '1'), io('b', '2')], outputs: [io('c', '3')])
+        actual = with_io(inputs: [io('b', '2').merge('type' => 'textarea'), io('a', '1')], outputs: [io('c', '3')])
+        expect(compared(expected, actual, options).same_result?).to be(true)
+      end
+
+      it 'does not match when a value differs, an entry is missing, or an input becomes an output' do
+        expected = with_io(inputs: [io('a', '1')], outputs: [io('c', '3')])
+        [
+          with_io(inputs: [io('a', '2')], outputs: [io('c', '3')]),
+          with_io(inputs: [io('a', '1')]),
+          with_io(inputs: [io('a', '1'), io('c', '3')])
+        ].each do |different|
+          expect(compared(expected, different, options).same_result?).to be(false)
+        end
+      end
+
+      it 'compares non-string values as JSON' do
+        expected = with_io(inputs: [io('auth', { 'auth_type' => 'public' })])
+        actual = with_io(inputs: [io('auth', '{"auth_type":"public"}')])
+        expect(compared(expected, actual, options).same_result?).to be(true)
+      end
+
+      it 'applies normalized strings to the values' do
+        expected = with_io(outputs: [io('url', 'http://localhost:4567/inferno/resume')])
+        actual = with_io(outputs: [io('url', 'https://inferno.example.com/inferno/resume')])
+        normalizing_options = options.merge(normalized_strings: ['/https?:\/\/[^\/]+/'])
+        expect(compared(expected, actual, options).same_result?).to be(false)
+        expect(compared(expected, actual, normalizing_options).same_result?).to be(true)
+      end
+
+      it 'compares large values only by being large, since their placeholder link varies by run' do
+        large = lambda do |host, result_id|
+          "Input is too large to display, please visit\n" \
+            "#{host}/api/test_sessions/abc/results/#{result_id}/io/inputs/patient_json\nfor details\n"
+        end
+        expected = with_io(inputs: [io('patient_json', large.call('http://localhost:4567/inferno', '1111'))])
+        actual = with_io(inputs: [io('patient_json', large.call('https://inferno.example.com', '2222'))])
+        expect(compared(expected, actual, options).same_result?).to be(true)
+        expect(compared(expected, with_io(inputs: [io('patient_json', '{}')]), options).same_result?).to be(false)
+      end
+
+      it 'ignores inputs and outputs when compare_io is not set' do
+        expected = with_io(inputs: [io('a', '1')])
+        expect(compared(expected, with_io, {}).same_result?).to be(true)
+      end
+
+      it 'formats inputs and outputs for CSV, marking mismatches' do
+        expected = with_io(inputs: [io('a', '1')], outputs: [io('c', '3')])
+        actual = with_io(inputs: [io('a', '2')], outputs: [io('c', '3')])
+        r = compared(expected, actual, options)
+        expect(r.format_unordered_comparisons_for_csv(r.io_comparisons, :expected))
+          .to eq("! input a: 1\n- output c: 3")
+        expect(r.format_unordered_comparisons_for_csv(r.io_comparisons, :actual))
+          .to eq("! input a: 2\n- output c: 3")
+        expect(r.comparison_csv_row.last(3).first).to be(true)
       end
     end
   end

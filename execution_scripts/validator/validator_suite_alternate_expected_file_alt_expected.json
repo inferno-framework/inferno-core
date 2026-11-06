@@ -1,165 +1,103 @@
 [
   {
-    "id": "32c4c634-56bb-475f-8006-1692fdc55833",
-    "created_at": "2026-05-25T21:28:36.285-04:00",
+    "test_id": "dev_validator-patient_group-patient_read_test",
+    "result": "pass",
     "inputs": [
       {
         "name": "url",
-        "value": "http://inferno.healthit.gov/reference-server/r4",
-        "type": "text"
+        "value": "http://inferno.healthit.gov/reference-server/r4"
       },
       {
         "name": "access_token",
-        "value": "SAMPLE_TOKEN",
-        "type": "text"
+        "value": "SAMPLE_TOKEN"
       },
       {
         "name": "patient_id",
-        "value": "85",
-        "type": "text"
+        "value": "85"
       }
     ],
-    "optional": false,
-    "outputs": [],
     "requests": [
       {
-        "id": "3d6d9b86-d8c4-47ad-b3e5-ea0ecd2b356d",
         "direction": "outgoing",
-        "index": 36392,
-        "result_id": "32c4c634-56bb-475f-8006-1692fdc55833",
-        "status": 200,
-        "timestamp": "2026-05-25T21:28:36.288-04:00",
+        "verb": "get",
         "url": "http://inferno.healthit.gov/reference-server/r4/Patient/85",
-        "verb": "get"
+        "status": 200
       }
-    ],
-    "result": "pass",
-    "test_id": "dev_validator-patient_group-patient_read_test",
-    "test_run_id": "166530a6-5a88-4701-8a42-57efef80013f",
-    "test_session_id": "cJSUaa72NDp",
-    "updated_at": "2026-05-25T21:28:36.285-04:00"
+    ]
   },
   {
-    "id": "0cb1ff6c-2879-4795-a9e4-b30256b80c6e",
-    "created_at": "2026-05-25T21:28:36.376-04:00",
+    "test_id": "dev_validator-patient_group-patient_validate_test",
+    "result": "pass",
     "inputs": [
       {
         "name": "url",
-        "value": "http://inferno.healthit.gov/reference-server/r4",
-        "type": "text"
+        "value": "http://inferno.healthit.gov/reference-server/r4"
       },
       {
         "name": "access_token",
-        "value": "SAMPLE_TOKEN",
-        "type": "text"
+        "value": "SAMPLE_TOKEN"
       },
       {
         "name": "patient_id",
-        "value": "85",
-        "type": "text"
+        "value": "85"
       }
     ],
     "messages": [
       {
-        "message": "Patient/85: Patient.identifier[2].type: None of the codings provided are in the value set 'IdentifierType' (http://hl7.org/fhir/ValueSet/identifier-type|4.0.1), and a coding should come from this value set unless it has no suitable code (note that the validator cannot judge what is suitable) (codes = http://terminology.hl7.org/CodeSystem/v2-0203#SS)",
-        "type": "warning"
+        "type": "warning",
+        "message": "Patient/85: Patient.identifier[2].type: None of the codings provided are in the value set 'IdentifierType' (http://hl7.org/fhir/ValueSet/identifier-type|4.0.1), and a coding should come from this value set unless it has no suitable code (note that the validator cannot judge what is suitable) (codes = http://terminology.hl7.org/CodeSystem/v2-0203#SS)"
       }
     ],
-    "optional": false,
-    "outputs": [],
     "requests": [
       {
-        "id": "3d6d9b86-d8c4-47ad-b3e5-ea0ecd2b356d",
         "direction": "outgoing",
-        "index": 36392,
-        "result_id": "32c4c634-56bb-475f-8006-1692fdc55833",
-        "status": 200,
-        "timestamp": "2026-05-25T21:28:36.288-04:00",
+        "verb": "get",
         "url": "http://inferno.healthit.gov/reference-server/r4/Patient/85",
-        "verb": "get"
+        "status": 200
       }
-    ],
-    "result": "pass",
-    "test_id": "dev_validator-patient_group-patient_validate_test",
-    "test_run_id": "166530a6-5a88-4701-8a42-57efef80013f",
-    "test_session_id": "cJSUaa72NDp",
-    "updated_at": "2026-05-25T21:28:36.376-04:00"
+    ]
   },
   {
-    "id": "a7109d21-3f9e-4965-aac7-e13bd466dce6",
-    "created_at": "2026-05-25T21:28:36.384-04:00",
-    "inputs": [
-      {
-        "name": "url",
-        "value": "http://inferno.healthit.gov/reference-server/r4",
-        "type": "text"
-      },
-      {
-        "name": "access_token",
-        "value": "SAMPLE_TOKEN",
-        "type": "text"
-      },
-      {
-        "name": "patient_id",
-        "value": "85",
-        "type": "text"
-      },
-      {
-        "name": "patient_json",
-        "value": null,
-        "type": "textarea"
-      }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
+    "test_id": "dev_validator-patient_group-patient_validate_from_file_test",
     "result": "omit",
     "result_message": "No patient to validate.",
-    "test_id": "dev_validator-patient_group-patient_validate_from_file_test",
-    "test_run_id": "166530a6-5a88-4701-8a42-57efef80013f",
-    "test_session_id": "cJSUaa72NDp",
-    "updated_at": "2026-05-25T21:28:36.384-04:00"
-  },
-  {
-    "id": "06917302-342b-459c-ab3c-99c84c6332ab",
-    "created_at": "2026-05-25T21:28:36.385-04:00",
     "inputs": [
       {
         "name": "url",
-        "label": "FHIR Server Base Url",
-        "description": null,
-        "value": "http://inferno.healthit.gov/reference-server/r4",
-        "type": "text"
+        "value": "http://inferno.healthit.gov/reference-server/r4"
       },
       {
         "name": "access_token",
-        "label": "Bearer/Access Token",
-        "description": null,
-        "value": "SAMPLE_TOKEN",
-        "type": "text"
+        "value": "SAMPLE_TOKEN"
       },
       {
         "name": "patient_id",
-        "label": "Patient ID",
-        "description": null,
-        "value": "85",
-        "type": "text"
+        "value": "85"
       },
       {
-        "name": "patient_json",
-        "label": "Patient Resource JSON",
-        "description": "JSON content of a US Core 6.1.0 Patient resource.",
-        "value": null,
-        "type": "textarea"
+        "name": "patient_json"
       }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
+    ]
+  },
+  {
     "test_group_id": "dev_validator-patient_group",
-    "test_run_id": "166530a6-5a88-4701-8a42-57efef80013f",
-    "test_session_id": "cJSUaa72NDp",
-    "updated_at": "2026-05-25T21:28:36.385-04:00"
+    "result": "pass",
+    "inputs": [
+      {
+        "name": "url",
+        "value": "http://inferno.healthit.gov/reference-server/r4"
+      },
+      {
+        "name": "access_token",
+        "value": "SAMPLE_TOKEN"
+      },
+      {
+        "name": "patient_id",
+        "value": "85"
+      },
+      {
+        "name": "patient_json"
+      }
+    ]
   }
 ]

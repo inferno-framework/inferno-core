@@ -120,6 +120,16 @@ module Inferno
              type: :boolean,
              default: true,
              desc: 'Compare result_message field when comparing results.'
+      option :compare_requests,
+             type: :boolean,
+             default: true,
+             desc: 'Compare requests (direction, verb, URL, and status) when comparing results. ' \
+                   'Normalized strings from the script are applied to the URL.'
+      option :compare_io,
+             type: :boolean,
+             default: true,
+             desc: 'Compare inputs and outputs (name and value) when comparing results. ' \
+                   'Normalized strings from the script are applied to the values.'
       option :poll_interval,
              aliases: ['-p'],
              type: :numeric,
@@ -134,7 +144,7 @@ module Inferno
              aliases: ['-d'],
              type: :boolean,
              default: true,
-             desc: 'Only show messages that differ when comparing results.'
+             desc: 'Only show messages and requests that differ when comparing results.'
       option :allow_commands,
              type: :boolean,
              default: false,
@@ -146,8 +156,9 @@ module Inferno
              aliases: ['-u'],
              type: :boolean,
              default: false,
-             desc: 'When results do not match, overwrite the expected results file with the actual results ' \
-                   '(instead of writing actual results and comparison files) and treat the comparison as passing. ' \
+             desc: 'Overwrite the expected results file with the actual results whenever its stored content ' \
+                   'would change, even if results match (e.g., to migrate a file to the current format), ' \
+                   'instead of writing actual results and comparison files, and treat the comparison as passing. ' \
                    'Review the changes with git diff.'
       def execute_script(pattern = 'execution_scripts/**/*.yaml')
         if pattern.match?(/[*?\[\]{}]/)
@@ -158,6 +169,8 @@ module Inferno
             update_expected: options[:update_expected],
             compare_messages: options[:compare_messages],
             compare_result_message: options[:compare_result_message],
+            compare_requests: options[:compare_requests],
+            compare_io: options[:compare_io],
             poll_interval: options[:poll_interval],
             default_poll_timeout: options[:default_poll_timeout],
             only_different_messages: options[:only_different_messages]

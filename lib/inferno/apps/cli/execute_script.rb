@@ -38,8 +38,23 @@ module Inferno
     #                                              #    the expected results, an actual results JSON file and a CSV diff
     #                                              #    are written to the directory of the expected results file for
     #                                              #    use in evaluating the failure.
+    #                                              #    Session ids are always normalized before comparing: each
+    #                                              #    session's id is replaced with <NAME.session_id> (NAME is
+    #                                              #    the session name or suite id). Expected results files are
+    #                                              #    stored with all normalizations applied.
+    #     default_normalizations: false            # optional; by default the Inferno base URL (with or without
+    #                                              #    its default port) is replaced with
+    #                                              #    <inferno_base_url> and ISO 8601 timestamps with
+    #                                              #    <TIMESTAMP> (before normalized_strings), and 64-character
+    #                                              #    lowercase hex values (e.g., SecureRandom.hex(32)) with
+    #                                              #    <RANDOM_64_CHAR_HEX> (after normalized_strings).
+    #                                              #    Set to false to compare them exactly.
     #     normalized_strings:                      # optional; global normalization rules applied to
-    #       - "http://my-server.example.com"       # both expected and actual before comparing.
+    #       - "http://my-server.example.com"       # both expected and actual before comparing
+    #                                              # (result messages, messages, request URLs, and
+    #                                              # input/output values). Applied after the session id
+    #                                              # and default normalizations, so rules can refer to
+    #                                              # their placeholders (e.g. <inferno_base_url>).
     #       - "http://other-value.example.com"     # plain string: replaced with <NORMALIZED>;
     #                                              # URL-encoded form is also replaced automatically.
     #       - "/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/"  # regex string (wrapped in /…/): compiled
@@ -59,11 +74,19 @@ module Inferno
     #     alternate_expected_files:                # optional; tried in order; first matching wins
     #       - file: alt_expected.json              # required; relative to yaml file
     #         when:                                # required; all conditions must match (AND logic)
-    #           - field: inputs.url                # required: can be inputs.<name>, configuration_messages,
-    #                                              #   or inferno_base_url
-    #             matches: ^http://                # other values are top-level session detail fields.
-    #                                              # Evaluated against GET api/test_sessions/{id}.
+    #           - field: inputs.url                # required; one of:
+    #                                              #   inputs.<name>: the session's value for the input
+    #                                              #     (GET api/test_sessions/{id}/session_data)
+    #                                              #   configuration_messages: the suite's configuration
+    #                                              #     messages (GET api/test_sessions/{id}); matches
+    #                                              #     if any message matches, not_matches if none do
+    #                                              #   inferno_base_url: the --inferno-base-url option, or
+    #                                              #     the configured base_url when not provided, without
+    #                                              #     a trailing slash
+    #                                              # Conditions on any other field never match.
+    #             matches: ^http://                # regex; a condition needs matches, not_matches, or both
     #
+
     #     # Multi-session scripts: per-session config is nested under sessions.<name>.
     #     sessions:
     #       my_name:                               # matches session name key (sessions[*].name or suite)
@@ -80,6 +103,8 @@ module Inferno
     #                                              #           can be a full ID, short ID (e.g. "1.01"), or 'suite'
     #       session: my_name                       # optional; required when multiple sessions to indicate which session
     #                                              #           can match this step
+    #                                              # each step requires exactly one of action, command,
+    #                                              #   http_get, or start_run
     #       action: END_SCRIPT|NOOP|WAIT           # optional; built-in action (case-insensitive)
     #                                              #           (mutually exclusive with command/http_get/start_run)
     #       # OR
@@ -171,8 +196,10 @@ module Inferno
         self.yaml_file = yaml_file
         self.options = options
         validate_yaml_file!
+        validate_step_commands!
         validate_commands_allowed!
         validate_session_names!
+        validate_expected_files!
         self.execution_status = ExecutionStatus.new(
           done: false,
           failed: false,
@@ -234,6 +261,26 @@ module Inferno
         exit(1)
       end
 
+      STEP_COMMAND_KEYS = %w[start_run action http_get command].freeze
+
+      # Each step must be a mapping that specifies exactly one way to continue the script.
+      def validate_step_commands!
+        errors = Array(script_config['steps']).each_with_index.filter_map do |step, index|
+          next "Step #{index + 1} must be a mapping of step keys; found a #{step.class}." unless step.is_a?(Hash)
+
+          found = STEP_COMMAND_KEYS & step.keys
+          next if found.length == 1
+
+          "Step #{index + 1} (status: #{step['status']}, last_completed: #{step['last_completed']}) " \
+            "must have exactly one of #{STEP_COMMAND_KEYS.join(', ')}; " \
+            "found: #{found.empty? ? 'none' : found.join(', ')}."
+        end
+        return if errors.empty?
+
+        puts JSON.pretty_generate({ errors: errors.join(' ') })
+        exit(1)
+      end
+
       def validate_commands_allowed!
         return if options[:allow_commands]
         return if Array(script_config['steps']).none? { |step| step['command'].present? }
@@ -256,6 +303,29 @@ module Inferno
 
         puts JSON.pretty_generate({ errors: errors.join(' ') })
         exit(1)
+      end
+
+      # Checked before running so that a malformed expected results file doesn't stop the script at
+      # comparison time. Every file a session could compare against is checked, since alternate
+      # files are chosen after the run. Files that don't exist yet are written by the run.
+      def validate_expected_files!
+        errors = candidate_expected_files.select { |file| File.exist?(file) }.filter_map do |file|
+          Session::SessionCompare.read_expected_results(file).last
+        end
+        return if errors.empty?
+
+        puts JSON.pretty_generate({ errors: "#{errors.join(' ')} Fix or delete the file before running the script." })
+        exit(1)
+      end
+
+      def candidate_expected_files
+        Array(script_config['sessions']).flat_map do |session_config|
+          key = session_config['name']&.to_s || session_config['suite']
+          alternates = Array(comparison_session_config(key)['alternate_expected_files']).filter_map do |alt|
+            File.expand_path(alt['file'], yaml_directory) if alt['file'].present?
+          end
+          [resolve_expected_file(key)] + alternates
+        end.uniq
       end
 
       def missing_session_name_errors(session_configs)
@@ -959,18 +1029,15 @@ module Inferno
       end
 
       def compare_session(session)
-        expected_file = resolve_expected_file_for_comparison(session)
+        expected_file = expected_file_for_comparison(session)
 
         if File.exist?(expected_file)
           cmp = Session::SessionCompare.new(session.session_id, compare_options(expected_file))
           matched = cmp.results_match?
           warn "  Comparing against #{File.basename(expected_file)}"
           warn "  Actual results matched expected results? #{matched}"
-          if !matched && options[:update_expected]
-            write_expected_results(expected_file, cmp.session_results)
-            warn "  Expected results updated: wrote actual results to #{expected_file}"
-            return true
-          end
+          return update_expected_results(expected_file, cmp.session_results) if options[:update_expected]
+
           unless matched
             cmp.save_actual_results_to_file
             cmp.save_comparison_csv_to_file
@@ -984,8 +1051,44 @@ module Inferno
         end
       end
 
+      # Expected results are stored normalized so that regenerating them only changes the file
+      # when compared content changes.
       def write_expected_results(expected_file, results)
-        File.write(expected_file, JSON.pretty_generate(results))
+        File.write(expected_file, stored_expected_results(expected_file, results))
+      end
+
+      # Rewrites the expected results file whenever its stored content would change, even if
+      # the results match (e.g., a file in an older format or written with other normalizations).
+      def update_expected_results(expected_file, results)
+        content = stored_expected_results(expected_file, results)
+        if File.read(expected_file) == content
+          warn '  Expected results already up to date'
+        else
+          File.write(expected_file, content)
+          warn "  Expected results updated: wrote actual results to #{expected_file}"
+        end
+        true
+      end
+
+      def stored_expected_results(expected_file, results)
+        normalized_strings = compare_options(expected_file)[:normalized_strings]
+        JSON.pretty_generate(Session::SessionCompare.results_for_storage(results, normalized_strings))
+      end
+
+      def expected_file_for_comparison(session)
+        @expected_files_for_comparison ||= {}
+        @expected_files_for_comparison[session.key] ||= resolve_expected_file_for_comparison(session)
+      end
+
+      # Session ids differ between runs and can appear anywhere in results (e.g., in
+      # request URLs and messages). For every session in the script, its id in this run is
+      # normalized to a "<NAME.session_id>" placeholder, which is also how it is stored in
+      # expected results files. All sessions are included because one session's results can
+      # contain another session's id.
+      def session_id_normalized_strings
+        @session_id_normalized_strings ||= sessions.map do |session|
+          { 'pattern' => session.session_id, 'replacement' => "<#{session.key}.session_id>" }
+        end
       end
 
       def resolve_expected_file_for_comparison(session)
@@ -1020,7 +1123,7 @@ module Inferno
         if field == 'configuration_messages'
           configuration_messages_match?(session_details['test_suite'] || {}, matches_pattern, not_matches_pattern)
         elsif field == 'inferno_base_url'
-          string_matches?(options[:inferno_base_url].to_s, matches_pattern, not_matches_pattern)
+          string_matches?(inferno_base_url, matches_pattern, not_matches_pattern)
         elsif field.start_with?('inputs.')
           input_name = field.delete_prefix('inputs.')
           test_suite_input_matches?(session_inputs || [], input_name, matches_pattern, not_matches_pattern)
@@ -1062,14 +1165,25 @@ module Inferno
       end
 
       def compare_options(expected_file)
+        normalized_strings = session_id_normalized_strings +
+                             Session::SessionCompare.standard_normalized_strings(
+                               comparison_config['normalized_strings'], inferno_base_url,
+                               default_normalizations: default_normalizations?
+                             )
         {
           expected_results_file: expected_file,
           compare_messages: options[:compare_messages],
           compare_result_message: options[:compare_result_message],
+          compare_requests: options[:compare_requests],
+          compare_io: options[:compare_io],
           only_different_messages: options[:only_different_messages],
           inferno_base_url: options[:inferno_base_url],
-          normalized_strings: Array(comparison_config['normalized_strings'])
+          normalized_strings:
         }
+      end
+
+      def default_normalizations?
+        comparison_config['default_normalizations'].to_s.downcase != 'false'
       end
     end
   end

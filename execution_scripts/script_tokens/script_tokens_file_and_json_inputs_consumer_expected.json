@@ -1,112 +1,68 @@
 [
   {
-    "id": "1abf663c-40b9-437e-8ee9-6e8ba487ad82",
-    "created_at": "2026-11-05T12:26:19.632-05:00",
-    "inputs": [
-      {
-        "name": "json_file_input",
-        "value": "{\n  \"note\": \"He said \\\"hi\\\" \\\\ then left\"\n}\n",
-        "type": "text"
-      }
-    ],
-    "messages": [
-      {
-        "message": "json_file_input note: He said \"hi\" \\ then left",
-        "type": "info"
-      }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
     "test_id": "script_tokens-use_value-json_file_input",
-    "test_run_id": "e479acc5-4f10-4dc0-bf37-4df238618949",
-    "test_session_id": "3CLkNmAeUVv",
-    "updated_at": "2026-11-05T12:26:19.632-05:00"
-  },
-  {
-    "id": "760afd1f-9305-461b-b5bf-2ee0f2559e1c",
-    "created_at": "2026-11-05T12:26:19.635-05:00",
-    "inputs": [
-      {
-        "name": "json_mapping_input",
-        "value": "{\"note\":\"He said \\\"hi\\\" \\\\ then left\"}",
-        "type": "text"
-      }
-    ],
-    "messages": [
-      {
-        "message": "json_mapping_input note: He said \"hi\" \\ then left",
-        "type": "info"
-      }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
     "result": "pass",
-    "test_id": "script_tokens-use_value-json_mapping_input",
-    "test_run_id": "e479acc5-4f10-4dc0-bf37-4df238618949",
-    "test_session_id": "3CLkNmAeUVv",
-    "updated_at": "2026-11-05T12:26:19.635-05:00"
-  },
-  {
-    "id": "171d04aa-72f8-4c3c-9219-a23db0f5583d",
-    "created_at": "2026-11-05T12:26:19.637-05:00",
-    "inputs": [
-      {
-        "name": "text_file_input",
-        "value": "note: He said \"hi\" \\ then left\n",
-        "type": "text"
-      }
-    ],
-    "messages": [
-      {
-        "message": "text_file_input: note: He said \"hi\" \\ then left",
-        "type": "info"
-      }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
-    "test_id": "script_tokens-use_value-text_file_input",
-    "test_run_id": "e479acc5-4f10-4dc0-bf37-4df238618949",
-    "test_session_id": "3CLkNmAeUVv",
-    "updated_at": "2026-11-05T12:26:19.637-05:00"
-  },
-  {
-    "id": "f21c957f-60a1-42d2-90e0-d38bd67726f2",
-    "created_at": "2026-11-05T12:26:19.639-05:00",
     "inputs": [
       {
         "name": "json_file_input",
-        "label": null,
-        "description": null,
-        "value": "{\n  \"note\": \"He said \\\"hi\\\" \\\\ then left\"\n}\n",
-        "type": "text"
+        "value": "{\n  \"note\": \"He said \\\"hi\\\" \\\\ then left\"\n}\n"
+      }
+    ],
+    "messages": [
+      {
+        "type": "info",
+        "message": "json_file_input note: He said \"hi\" \\ then left"
+      }
+    ]
+  },
+  {
+    "test_id": "script_tokens-use_value-json_mapping_input",
+    "result": "pass",
+    "inputs": [
+      {
+        "name": "json_mapping_input",
+        "value": "{\"note\":\"He said \\\"hi\\\" \\\\ then left\"}"
+      }
+    ],
+    "messages": [
+      {
+        "type": "info",
+        "message": "json_mapping_input note: He said \"hi\" \\ then left"
+      }
+    ]
+  },
+  {
+    "test_id": "script_tokens-use_value-text_file_input",
+    "result": "pass",
+    "inputs": [
+      {
+        "name": "text_file_input",
+        "value": "note: He said \"hi\" \\ then left\n"
+      }
+    ],
+    "messages": [
+      {
+        "type": "info",
+        "message": "text_file_input: note: He said \"hi\" \\ then left"
+      }
+    ]
+  },
+  {
+    "test_group_id": "script_tokens-use_value",
+    "result": "pass",
+    "inputs": [
+      {
+        "name": "json_file_input",
+        "value": "{\n  \"note\": \"He said \\\"hi\\\" \\\\ then left\"\n}\n"
       },
       {
         "name": "json_mapping_input",
-        "label": null,
-        "description": null,
-        "value": "{\"note\":\"He said \\\"hi\\\" \\\\ then left\"}",
-        "type": "text"
+        "value": "{\"note\":\"He said \\\"hi\\\" \\\\ then left\"}"
       },
       {
         "name": "text_file_input",
-        "label": null,
-        "description": null,
-        "value": "note: He said \"hi\" \\ then left\n",
-        "type": "text"
+        "value": "note: He said \"hi\" \\ then left\n"
       }
-    ],
-    "optional": false,
-    "outputs": [],
-    "requests": [],
-    "result": "pass",
-    "test_group_id": "script_tokens-use_value",
-    "test_run_id": "e479acc5-4f10-4dc0-bf37-4df238618949",
-    "test_session_id": "3CLkNmAeUVv",
-    "updated_at": "2026-11-05T12:26:19.639-05:00"
+    ]
   }
 ]
