@@ -170,6 +170,13 @@ module Inferno
         'pattern' => '/(?<![0-9a-f])[0-9a-f]{64}(?![0-9a-f])/',
         'replacement' => '<RANDOM_64_CHAR_HEX>'
       }.freeze
+      # Follows the base URL in its normalization patterns so that it doesn't match a longer host,
+      # port, or path segment (e.g., 'http://localhost:4567' within 'http://localhost:45678'), while
+      # still allowing a following '/', '?', quote, or sentence-ending '.'.
+      BASE_URL_BOUNDARY = '(?![A-Za-z0-9_~%:-]|\.[A-Za-z0-9])'.freeze
+      # The same for the URL-encoded base URL, where a following '%' usually starts an encoded
+      # '/' or '?', but an encoded ':' ('%3A') would start a port.
+      ENCODED_BASE_URL_BOUNDARY = '(?![A-Za-z0-9_~-]|\.[A-Za-z0-9]|%3[Aa])'.freeze
       # Session names and wait output keys may not contain braces or whitespace (and names may not
       # contain '.') so that tokens are matched on their own within larger text such as JSON.
       SESSION_NAME = /[^{}.\s]+/
@@ -1179,8 +1186,17 @@ module Inferno
       def default_normalized_strings
         return [] unless default_normalizations?
 
-        base_url_rule = { 'patterns' => inferno_base_url_forms, 'replacement' => '<inferno_base_url>' }
+        base_url_rule = { 'patterns' => inferno_base_url_patterns, 'replacement' => '<inferno_base_url>' }
         [(base_url_rule if inferno_base_url.present?), TIMESTAMP_NORMALIZATION].compact
+      end
+
+      # Regex pattern strings for each form of the base URL, as is and URL-encoded (regex patterns
+      # don't get the automatic URL-encoded variant that plain strings do).
+      def inferno_base_url_patterns
+        inferno_base_url_forms.flat_map do |form|
+          ["/#{Regexp.escape(form)}#{BASE_URL_BOUNDARY}/",
+           "/#{Regexp.escape(CGI.escape(form))}#{ENCODED_BASE_URL_BOUNDARY}/"]
+        end
       end
 
       # The base URL both with and without its scheme's default port (e.g., :443 for https), since
@@ -1189,8 +1205,8 @@ module Inferno
         uri = URI.parse(inferno_base_url)
         return [inferno_base_url] unless uri.host.present? && uri.port == uri.default_port
 
-        without_port = "#{uri.scheme}://#{uri.host}#{uri.path}"
-        [without_port, "#{uri.scheme}://#{uri.host}:#{uri.port}#{uri.path}"]
+        with_port = "#{uri.scheme}://#{uri.host}:#{uri.port}#{uri.path}"
+        [with_port, "#{uri.scheme}://#{uri.host}#{uri.path}"]
       rescue URI::InvalidURIError
         [inferno_base_url]
       end
