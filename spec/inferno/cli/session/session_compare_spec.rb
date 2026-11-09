@@ -610,29 +610,67 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
       described_class.standard_normalized_strings([], base_url)
     end
 
-    it 'normalizes the base URL with or without its default port spelled out' do
-      normalized_strings = normalized_strings_for_base_url('https://inferno.example.com/suites')
-      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
+    # [base URL, text, text after normalization]. Each row pins down one case of the base URL
+    # normalization rule (see SessionCompare::BASE_URL_BOUNDARY); change a row only deliberately.
+    base_url_cases = [
+      # Continues the URL to the same server, or ends it
+      ['http://localhost:4567', 'http://localhost:4567/x', '<inferno_base_url>/x'],
+      ['http://localhost:4567', 'http://localhost:4567?a=1', '<inferno_base_url>?a=1'],
+      ['http://localhost:4567', 'http://localhost:4567#f', '<inferno_base_url>#f'],
+      ['http://localhost:4567', 'http://localhost:4567', '<inferno_base_url>'],
+      ['http://localhost:4567', "'http://localhost:4567'", "'<inferno_base_url>'"],
+      ['http://localhost:4567', '"http://localhost:4567"', '"<inferno_base_url>"'],
+      ['http://localhost:4567', '(http://localhost:4567)', '(<inferno_base_url>)'],
+      ['http://localhost:4567', '<http://localhost:4567>', '<<inferno_base_url>>'],
+      ['http://localhost:4567', 'http://localhost:4567, next', '<inferno_base_url>, next'],
+      ['http://localhost:4567', 'http://localhost:4567; next', '<inferno_base_url>; next'],
+      ['http://localhost:4567', "http://localhost:4567\nnext", "<inferno_base_url>\nnext"],
+      ['http://localhost:4567', 'Redirected to http://localhost:4567.', 'Redirected to <inferno_base_url>.'],
+      ['http://localhost:4567', 'Redirect to http://localhost:4567: failed', 'Redirect to <inferno_base_url>: failed'],
+      ['http://localhost', 'Redirect to http://localhost: failed', 'Redirect to <inferno_base_url>: failed'],
+      ['https://h.example.com/suites', 'see https://h.example.com/suites: failed', 'see <inferno_base_url>: failed'],
+      # The scheme's default port, spelled out or not
+      ['http://localhost', 'http://localhost/x', '<inferno_base_url>/x'],
+      ['http://localhost', 'http://localhost:80/x', '<inferno_base_url>/x'],
+      ['https://h.example.com/suites', 'https://h.example.com:443/suites/x', '<inferno_base_url>/x'],
+      ['http://localhost:80/inferno', 'http://localhost/inferno/x', '<inferno_base_url>/x'],
+      # A different server or resource
+      ['http://localhost:4567', 'http://localhost:45678/x', 'http://localhost:45678/x'],
+      ['http://localhost:4567', 'http://localhost:4567.evil.com/x', 'http://localhost:4567.evil.com/x'],
+      ['http://localhost:4567', 'http://localhost:4567-x/y', 'http://localhost:4567-x/y'],
+      ['http://localhost', 'http://localhost:4567/x', 'http://localhost:4567/x'],
+      ['http://localhost', 'http://localhost.evil.com/x', 'http://localhost.evil.com/x'],
+      ['http://localhost', 'http://localhost2/x', 'http://localhost2/x'],
+      ['https://h.example.com/suites', 'https://h.example.com/suites.json', 'https://h.example.com/suites.json'],
+      ['https://h.example.com/suites', 'https://h.example.com/suites2/x', 'https://h.example.com/suites2/x'],
+      ['https://h.example.com/suites', 'https://h.example.com/suites-dev/x', 'https://h.example.com/suites-dev/x'],
+      ['https://h.example.com/suites', 'https://h.example.com/suites%20x', 'https://h.example.com/suites%20x'],
+      ['https://h.example.com/suites', 'https://h.example.com:8443/suites/x', 'https://h.example.com:8443/suites/x'],
+      # URL-encoded, e.g., in a redirect_uri value
+      ['http://localhost:4567', 'u=http%3A%2F%2Flocalhost%3A4567%2Fcb&x=1', 'u=<inferno_base_url>%2Fcb&x=1'],
+      ['http://localhost:4567', 'u=http%3A%2F%2Flocalhost%3A4567&x=1', 'u=<inferno_base_url>&x=1'],
+      ['http://localhost', 'u=http%3A%2F%2Flocalhost%3A80%2Fcb', 'u=<inferno_base_url>%2Fcb'],
+      ['http://localhost:4567', 'u=http%3A%2F%2Flocalhost%3A45678%2Fcb', 'u=http%3A%2F%2Flocalhost%3A45678%2Fcb'],
+      ['http://localhost', 'u=http%3A%2F%2Flocalhost%3A4567%2Fcb', 'u=http%3A%2F%2Flocalhost%3A4567%2Fcb'],
+      ['https://h.example.com/suites', 'u=https%3A%2F%2Fh.example.com%2Fsuites.json',
+       'u=https%3A%2F%2Fh.example.com%2Fsuites.json'],
+      # URL-encoded with lowercase percent-escapes (e.g., by .NET's HttpUtility.UrlEncode)
+      ['http://localhost:4567', 'u=http%3a%2f%2flocalhost%3a4567%2fcb', 'u=<inferno_base_url>%2fcb'],
+      ['http://localhost', 'u=http%3a%2f%2flocalhost%3a80%2fcb', 'u=<inferno_base_url>%2fcb'],
+      ['https://h.example.com/suites', 'u=https%3a%2f%2fh.example.com%2fsuites%2fx', 'u=<inferno_base_url>%2fx'],
+      ['http://localhost:4567', 'u=http%3a%2f%2flocalhost%3a45678%2fcb', 'u=http%3a%2f%2flocalhost%3a45678%2fcb'],
+      ['http://localhost', 'u=http%3a%2f%2flocalhost%3a4567%2fcb', 'u=http%3a%2f%2flocalhost%3a4567%2fcb'],
+      # Known gaps, documented in the execution scripts README: not normalized
+      ['http://localhost:4567', 'HTTP://LOCALHOST:4567/x', 'HTTP://LOCALHOST:4567/x'],
+      ['http://localhost:4567', 'http:\/\/localhost:4567\/x', 'http:\/\/localhost:4567\/x'],
+      ['http://localhost:4567', 'host is localhost:4567', 'host is localhost:4567'],
+      ['http://localhost:4567', 'u=http%253A%252F%252Flocalhost%253A4567', 'u=http%253A%252F%252Flocalhost%253A4567']
+    ].freeze
 
-      expect(normalize.call('https://inferno.example.com/suites/custom/x')).to eq('<inferno_base_url>/custom/x')
-      expect(normalize.call('https://inferno.example.com:443/suites/custom/x')).to eq('<inferno_base_url>/custom/x')
-      expect(normalize.call('https://inferno.example.com:8443/suites/custom/x'))
-        .to eq('https://inferno.example.com:8443/suites/custom/x')
-    end
-
-    it 'normalizes a base URL without a path when the default port is spelled out' do
-      normalized_strings = normalized_strings_for_base_url('http://localhost')
-      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
-
-      expect(normalize.call('http://localhost/custom/x')).to eq('<inferno_base_url>/custom/x')
-      expect(normalize.call('http://localhost:80/custom/x')).to eq('<inferno_base_url>/custom/x')
-    end
-
-    it 'treats an explicit default port in the base URL the same as none' do
-      normalized_strings = normalized_strings_for_base_url('http://localhost:80/inferno')
-
-      expect(described_class.normalize_string('http://localhost/inferno/x', normalized_strings))
-        .to eq('<inferno_base_url>/x')
+    base_url_cases.each do |base_url, text, normalized|
+      it "normalizes #{text.inspect} to #{normalized.inspect} for base URL #{base_url}" do
+        expect(described_class.normalize_string(text, normalized_strings_for_base_url(base_url))).to eq(normalized)
+      end
     end
 
     it 'uses the base URL with and without its default port' do
@@ -643,49 +681,6 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
     it 'only uses the base URL as given when it has a non-default port' do
       expect(described_class.inferno_base_url_forms('http://localhost:4567/inferno'))
         .to eq(['http://localhost:4567/inferno'])
-    end
-
-    it 'does not normalize the base URL within a longer host, port, or path segment' do
-      normalized_strings = normalized_strings_for_base_url('http://localhost:4567')
-      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
-
-      ['http://localhost:45678/x', 'http://localhost:4567.evil.com/x', 'http://localhost:4567-x/y',
-       CGI.escape('http://localhost:45678/x')].each do |str|
-        expect(normalize.call(str)).to eq(str)
-      end
-    end
-
-    it 'does not normalize the base URL path within a longer path segment' do
-      normalized_strings = normalized_strings_for_base_url('https://inferno.example.com/suites')
-
-      expect(described_class.normalize_string('https://inferno.example.com/suites.json', normalized_strings))
-        .to eq('https://inferno.example.com/suites.json')
-    end
-
-    it 'does not normalize a base URL without a port within the same host with a port' do
-      normalized_strings = normalized_strings_for_base_url('http://localhost')
-      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
-
-      expect(normalize.call('http://localhost:4567/x')).to eq('http://localhost:4567/x')
-      expect(normalize.call(CGI.escape('http://localhost:4567/x'))).to eq(CGI.escape('http://localhost:4567/x'))
-    end
-
-    it 'normalizes the base URL followed by a query, quote, whitespace, or sentence-ending period' do
-      normalized_strings = normalized_strings_for_base_url('http://localhost:4567')
-      normalize = ->(str) { described_class.normalize_string(str, normalized_strings) }
-
-      expect(normalize.call('http://localhost:4567?a=b')).to eq('<inferno_base_url>?a=b')
-      expect(normalize.call("Visit 'http://localhost:4567' now")).to eq("Visit '<inferno_base_url>' now")
-      expect(normalize.call('Redirected to http://localhost:4567.')).to eq('Redirected to <inferno_base_url>.')
-      expect(normalize.call('http://localhost:4567')).to eq('<inferno_base_url>')
-    end
-
-    it 'normalizes the URL-encoded base URL' do
-      normalized_strings = normalized_strings_for_base_url('http://localhost:4567')
-
-      expect(described_class.normalize_string(
-               "redirect_uri=#{CGI.escape('http://localhost:4567/custom/x')}", normalized_strings
-             )).to eq('redirect_uri=<inferno_base_url>%2Fcustom%2Fx')
     end
 
     it 'normalizes ISO 8601 timestamps with the default timestamp rule' do
@@ -1063,6 +1058,13 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
         expect(r.format_unordered_comparisons_for_csv(r.io_comparisons, :actual))
           .to eq("! input a: 2\n- output c: 3")
         expect(r.comparison_csv_row.last(3).first).to be(true)
+      end
+
+      it 'keeps each multi-line input or output value on one line in the CSV' do
+        expected = with_io(inputs: [io('a', "line 1\r\nline 2\n\tindented")], outputs: [io('c', '3')])
+        r = compared(expected, expected, options)
+        expect(r.format_unordered_comparisons_for_csv(r.io_comparisons, :expected))
+          .to eq("- input a: line 1\\nline 2\\n\\tindented\n- output c: 3")
       end
     end
   end

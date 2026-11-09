@@ -48,6 +48,17 @@ order:
    with `SecureRandom.hex(32)`) are replaced with `<RANDOM_64_CHAR_HEX>`. This runs
    last so that a script's own rules for these values take precedence.
 
+The base URL is replaced only where it's a URL to the same Inferno: where it's
+followed by `/`, `?`, `#`, or the end of the URL (whitespace, a quote or bracket, or
+punctuation such as a sentence-ending `.` or `:`). This includes its URL-encoded
+form, e.g., in a `redirect_uri` value. It isn't replaced within a different host,
+port, or path: with a base URL of `http://localhost:4567`, `http://localhost:45678`
+and `http://localhost:4567.example.com` are left as is, as is `.../suites.json`
+when the base URL ends in `/suites`. It also isn't replaced in a different case
+(`HTTP://LOCALHOST:4567`), with JSON-escaped slashes (`http:\/\/localhost:4567`),
+without its scheme (`localhost:4567`), or when URL-encoded twice. Add rules for
+these to a script's `normalized_strings` if its results need them.
+
 Set `comparison_config.default_normalizations: false` in a script to skip steps 2
 and 4 and compare those values exactly.
 

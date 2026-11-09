@@ -791,26 +791,6 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
       expect(instance.send(:resolve_expected_file_for_comparison, session)).to end_with('alt_expected.json')
     end
-
-    it 'skips alternates with no when conditions' do
-      config = {
-        'sessions' => [{ 'suite' => suite_id }],
-        'steps' => [],
-        'comparison_config' => base_comparison_config.merge(
-          'alternate_expected_files' => [{ 'file' => 'alt_expected.json' }]
-        )
-      }
-      instance = build_instance(config)
-      session = Inferno::CLI::ExecuteScript::ScriptSession.new(
-        key: suite_id, suite_id:, session_id:, short_id_map: {}
-      )
-      stub_request(:get, session_details_url)
-        .to_return(status: 200, body: { 'test_suite' => {} }.to_json)
-      stub_request(:get, session_data_url)
-        .to_return(status: 200, body: [].to_json)
-
-      expect(instance.send(:resolve_expected_file_for_comparison, session)).to eq(default_file)
-    end
   end
 
   describe '#session_detail_condition_matches?' do
@@ -1103,6 +1083,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
   describe '#validate_expected_files!' do
     let(:dir) { Dir.mktmpdir }
+    let(:valid_condition) { { 'field' => 'inferno_base_url', 'matches' => 'x' } }
 
     after { FileUtils.remove_entry(dir) }
 
@@ -1112,8 +1093,16 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
     def config_with_expected(expected_file, alternate_file = nil)
       comparison_config = { 'expected_results_file' => expected_file }
-      comparison_config['alternate_expected_files'] = [{ 'file' => alternate_file }] if alternate_file
+      if alternate_file
+        comparison_config['alternate_expected_files'] = [{ 'file' => alternate_file, 'when' => [valid_condition] }]
+      end
       { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [], 'comparison_config' => comparison_config }
+    end
+
+    def config_with_alternate(alternate)
+      config_with_expected(expected_path('expected.json', '[]')).tap do |config|
+        config['comparison_config']['alternate_expected_files'] = [alternate]
+      end
     end
 
     def expect_exit_with_error(config, message)
@@ -1136,10 +1125,48 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
 
     it 'exits 1 when an alternate expected file entry has no file' do
-      config = config_with_expected(expected_path('expected.json', '[]'))
-      config['comparison_config']['alternate_expected_files'] =
-        [{ 'when' => [{ 'field' => 'inferno_base_url', 'matches' => 'x' }] }]
-      expect_exit_with_error(config, /Alternate expected file 1 for session '#{suite_id}' must have a file\./)
+      expect_exit_with_error(config_with_alternate({ 'when' => [valid_condition] }),
+                             /Alternate expected file 1 for session '#{suite_id}' must have a file\./)
+    end
+
+    [nil, [], { 'field' => 'inferno_base_url', 'matches' => 'x' }].each do |when_value|
+      it "exits 1 when an alternate expected file entry's when is #{when_value.inspect}" do
+        expect_exit_with_error(config_with_alternate({ 'file' => 'alt.json', 'when' => when_value }),
+                               /Alternate expected file 1 for session '#{suite_id}' must have a when list/)
+      end
+    end
+
+    {
+      'a condition that is not a mapping' => ['inferno_base_url', /must be a mapping with field and matches/],
+      'a condition with no field' => [{ 'matches' => 'x' }, /has unsupported field ''/],
+      'a condition with an unsupported field' =>
+        [{ 'field' => 'test_suite_id', 'matches' => 'x' }, /has unsupported field 'test_suite_id'; use inputs/],
+      'a condition with an empty input name' => [{ 'field' => 'inputs.', 'matches' => 'x' },
+                                                 /has unsupported field 'inputs\.'/],
+      'a condition with no pattern' =>
+        [{ 'field' => 'inferno_base_url' }, /must have matches, not_matches, or both/],
+      'a condition with an invalid regex' =>
+        [{ 'field' => 'inputs.url', 'not_matches' => '[' }, /has an invalid not_matches regex '\['/]
+    }.each do |description, (condition, message)|
+      it "exits 1 for #{description}" do
+        expect_exit_with_error(config_with_alternate({ 'file' => 'alt.json', 'when' => [valid_condition, condition] }),
+                               /Condition 2 of alternate expected file 1 for session '#{suite_id}' #{message.source}/)
+      end
+    end
+
+    it 'reports every invalid alternate expected file entry' do
+      config = config_with_alternate({ 'when' => [valid_condition] })
+      config['comparison_config']['alternate_expected_files'] << { 'file' => 'alt.json',
+                                                                   'when' => [{ 'field' => 'x' }] }
+      expect_exit_with_error(config, /must have a file\..*Condition 1 of alternate expected file 2/)
+    end
+
+    it 'accepts every supported condition field and numeric patterns' do
+      conditions = [{ 'field' => 'inputs.url', 'matches' => '^http' },
+                    { 'field' => 'configuration_messages', 'not_matches' => 'error' },
+                    { 'field' => 'inferno_base_url', 'matches' => 4567 }]
+      expect { build_instance(config_with_alternate({ 'file' => 'alt.json', 'when' => conditions })) }
+        .to_not raise_error
     end
 
     it 'checks the expected files of every session in a multi-session script' do

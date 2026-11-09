@@ -98,13 +98,17 @@ module Inferno
           'pattern' => '/(?<![0-9a-f])[0-9a-f]{64}(?![0-9a-f])/',
           'replacement' => '<RANDOM_64_CHAR_HEX>'
         }.freeze
-        # Follows the base URL in its normalization patterns so that it doesn't match a longer host,
-        # port, or path segment (e.g., 'http://localhost:4567' within 'http://localhost:45678'), while
-        # still allowing a following '/', '?', quote, or sentence-ending '.'.
-        BASE_URL_BOUNDARY = '(?![A-Za-z0-9_~%:-]|\.[A-Za-z0-9])'.freeze
+        # Follows the base URL in its normalization patterns so that it only matches a URL to the
+        # same server: it doesn't match when the following characters make a longer host, port, or
+        # path segment ('http://localhost:4567' within 'http://localhost:45678',
+        # 'http://localhost:4567.evil.com', or 'http://localhost/suites.json' for '.../suites'), or
+        # add a port ('http://localhost' within 'http://localhost:4567'). A following '/', '?', '#',
+        # quote, bracket, whitespace, or punctuation (including a sentence-ending '.' or ':') ends
+        # the URL. The cases are listed in session_compare_spec.
+        BASE_URL_BOUNDARY = '(?![A-Za-z0-9_~%-]|\.[A-Za-z0-9]|:\d)'.freeze
         # The same for the URL-encoded base URL, where a following '%' usually starts an encoded
-        # '/' or '?', but an encoded ':' ('%3A') would start a port.
-        ENCODED_BASE_URL_BOUNDARY = '(?![A-Za-z0-9_~-]|\.[A-Za-z0-9]|%3[Aa])'.freeze
+        # '/' or '?', and an encoded ':' ('%3A') followed by a digit starts a port.
+        ENCODED_BASE_URL_BOUNDARY = '(?![A-Za-z0-9_~-]|\.[A-Za-z0-9]|%3[Aa]\d)'.freeze
 
         # The given normalized_strings wrapped in the default normalizations: values that vary by
         # run or by the Inferno being run against come first so that the given rules can refer to
@@ -124,7 +128,15 @@ module Inferno
         def self.inferno_base_url_patterns(inferno_base_url)
           inferno_base_url_forms(inferno_base_url).flat_map do |form|
             ["/#{Regexp.escape(form)}#{BASE_URL_BOUNDARY}/",
-             "/#{Regexp.escape(CGI.escape(form))}#{ENCODED_BASE_URL_BOUNDARY}/"]
+             "/#{encoded_base_url_pattern(form)}#{ENCODED_BASE_URL_BOUNDARY}/"]
+          end
+        end
+
+        # The URL-encoded form, matching percent-escapes in either case since some encoders (e.g.,
+        # .NET's HttpUtility.UrlEncode) write them in lowercase ('%3a%2f%2f').
+        def self.encoded_base_url_pattern(form)
+          Regexp.escape(CGI.escape(form)).gsub(/%\h\h/) do |escape|
+            escape.gsub(/[A-F]/) { |hex| "[#{hex}#{hex.downcase}]" }
           end
         end
 
@@ -796,19 +808,21 @@ module Inferno
               matches = entry[:expected] && entry[:actual]
               next if options[:only_different_messages] && matches
 
-              "#{matches ? '- ' : '! '}#{entry[:signature]}"
+              "#{matches ? '- ' : '! '}#{single_line_for_csv(entry[:signature])}"
             end
             collapse_message_lines(lines).join("\n")
           end
 
           def message_text_for_csv(message, matches)
             prefix = matches ? '- ' : '! '
-            text = normalize_string(message['message'].to_s)
-              .gsub("\r\n", '\n')
-              .gsub("\n", '\n')
-              .gsub("\r", '\r')
-              .gsub("\t", '\t')
+            text = single_line_for_csv(normalize_string(message['message'].to_s))
             "#{prefix}(#{message['type']}) \"#{text}\""
+          end
+
+          # Each message, request, or input/output is one line within its CSV cell, so line breaks and
+          # tabs in its text are shown escaped.
+          def single_line_for_csv(text)
+            text.gsub("\r\n", '\n').gsub("\n", '\n').gsub("\r", '\r').gsub("\t", '\t')
           end
         end
       end

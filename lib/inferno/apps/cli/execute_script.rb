@@ -83,7 +83,8 @@ module Inferno
     #                                              #   inferno_base_url: the --inferno-base-url option, or
     #                                              #     the configured base_url when not provided, without
     #                                              #     a trailing slash
-    #                                              # Conditions on any other field never match.
+    #                                              # Other fields are reported as errors before the
+    #                                              # script runs.
     #             matches: ^http://                # regex; a condition needs matches, not_matches, or both
     #
     #     # Multi-session scripts: per-session config is nested under sessions.<name>.
@@ -330,12 +331,44 @@ module Inferno
 
       def alternate_expected_file_errors
         alternate_expected_file_configs.flat_map do |key, alternates|
-          alternates.each_with_index.filter_map do |alt, index|
-            next if alt.is_a?(Hash) && alt['file'].present?
-
-            "Alternate expected file #{index + 1} for session '#{key}' must have a file."
+          alternates.each_with_index.flat_map do |alt, index|
+            alternate_errors(alt, "alternate expected file #{index + 1} for session '#{key}'")
           end
         end
+      end
+
+      def alternate_errors(alt, label)
+        return ["#{label.upcase_first} must have a file."] unless alt.is_a?(Hash) && alt['file'].present?
+        unless alt['when'].is_a?(Array) && alt['when'].present?
+          return ["#{label.upcase_first} must have a when list of conditions."]
+        end
+
+        alt['when'].each_with_index.flat_map do |condition, index|
+          condition_errors(condition, "Condition #{index + 1} of #{label}")
+        end
+      end
+
+      CONDITION_FIELDS_DESCRIPTION = 'inputs.<name>, configuration_messages, or inferno_base_url'.freeze
+
+      def condition_errors(condition, label)
+        return ["#{label} must be a mapping with field and matches or not_matches."] unless condition.is_a?(Hash)
+        unless supported_condition_field?(condition['field'].to_s)
+          return ["#{label} has unsupported field '#{condition['field']}'; use #{CONDITION_FIELDS_DESCRIPTION}."]
+        end
+
+        patterns = condition.slice('matches', 'not_matches').select { |_key, pattern| pattern.present? }
+        return ["#{label} must have matches, not_matches, or both."] if patterns.empty?
+
+        patterns.filter_map do |key, pattern|
+          condition_regexp(pattern)
+          nil
+        rescue RegexpError => e
+          "#{label} has an invalid #{key} regex '#{pattern}': #{e.message}."
+        end
+      end
+
+      def supported_condition_field?(field)
+        %w[configuration_messages inferno_base_url].include?(field) || field.match?(/\Ainputs\..+/)
       end
 
       def candidate_expected_files
@@ -1048,7 +1081,7 @@ module Inferno
       end
 
       def compare_session(session)
-        expected_file = expected_file_for_comparison(session)
+        expected_file = resolve_expected_file_for_comparison(session)
 
         if File.exist?(expected_file)
           cmp = Session::SessionCompare.new(session.session_id, compare_options(expected_file))
@@ -1104,11 +1137,6 @@ module Inferno
         Session::SessionCompare.stored_results_json(results, normalized_strings)
       end
 
-      def expected_file_for_comparison(session)
-        @expected_files_for_comparison ||= {}
-        @expected_files_for_comparison[session.key] ||= resolve_expected_file_for_comparison(session)
-      end
-
       # Session ids differ between runs and can appear anywhere in results (e.g., in
       # request URLs and messages). For every session in the script, its id in this run is
       # normalized to a "<NAME.session_id>" placeholder, which is also how it is stored in
@@ -1129,8 +1157,7 @@ module Inferno
         session_inputs = Session::SessionData.new(session.session_id, options).session_data
 
         alternates.each do |alt|
-          conditions = Array(alt['when'])
-          next if conditions.empty?
+          conditions = alt['when']
           unless conditions.all? { |cond| session_detail_condition_matches?(cond, session_details, session_inputs) }
             next
           end
@@ -1166,18 +1193,24 @@ module Inferno
       end
 
       def string_matches?(value, matches_pattern, not_matches_pattern)
-        return false if matches_pattern && !Regexp.new(matches_pattern).match?(value)
-        return false if not_matches_pattern && Regexp.new(not_matches_pattern).match?(value)
+        return false if matches_pattern && !condition_regexp(matches_pattern).match?(value)
+        return false if not_matches_pattern && condition_regexp(not_matches_pattern).match?(value)
 
         true
       end
 
+      # Patterns may be written as YAML numbers (e.g., matches: 4567), so they're used as strings.
+      def condition_regexp(pattern)
+        Regexp.new(pattern.to_s)
+      end
+
       def configuration_messages_match?(test_suite, matches_pattern, not_matches_pattern)
         messages = Array(test_suite['configuration_messages'])
-        if matches_pattern && messages.none? { |msg| Regexp.new(matches_pattern).match?(msg['message'].to_s) }
+        if matches_pattern && messages.none? { |msg| condition_regexp(matches_pattern).match?(msg['message'].to_s) }
           return false
         end
-        if not_matches_pattern && messages.any? { |msg| Regexp.new(not_matches_pattern).match?(msg['message'].to_s) }
+        if not_matches_pattern &&
+           messages.any? { |msg| condition_regexp(not_matches_pattern).match?(msg['message'].to_s) }
           return false
         end
 
