@@ -85,7 +85,9 @@ module Inferno
     #                                              #     a trailing slash
     #                                              # Other fields are reported as errors before the
     #                                              # script runs.
-    #             matches: ^http://                # regex; a condition needs matches, not_matches, or both
+    #             matches: ^http://                # regex string (quote values YAML would read as numbers,
+    #                                              #   e.g. '4567'); a condition needs matches,
+    #                                              #   not_matches, or both
     #
     #     # Multi-session scripts: per-session config is nested under sessions.<name>.
     #     sessions:
@@ -356,10 +358,24 @@ module Inferno
           return ["#{label} has unsupported field '#{condition['field']}'; use #{CONDITION_FIELDS_DESCRIPTION}."]
         end
 
-        patterns = condition.slice('matches', 'not_matches').select { |_key, pattern| pattern.present? }
+        # Only nil and blank strings count as missing, so that a YAML boolean (e.g., matches: off) is
+        # reported as needing quotes. Blank strings are missing when evaluated too.
+        patterns = condition.slice('matches', 'not_matches').reject do |_key, pattern|
+          pattern.nil? || (pattern.is_a?(String) && pattern.blank?)
+        end
         return ["#{label} must have matches, not_matches, or both."] if patterns.empty?
 
+        pattern_errors(patterns, label)
+      end
+
+      def pattern_errors(patterns, label)
         patterns.filter_map do |key, pattern|
+          # YAML reads some unquoted values as numbers or lists (e.g., 10:30 as 37800), which can't
+          # be turned back into the pattern as written
+          unless pattern.is_a?(String)
+            next "#{label} has a #{key} value that is not a string; quote the pattern (e.g., #{key}: '4567')."
+          end
+
           condition_regexp(pattern)
           nil
         rescue RegexpError => e
@@ -1199,9 +1215,8 @@ module Inferno
         true
       end
 
-      # Patterns may be written as YAML numbers (e.g., matches: 4567), so they're used as strings.
       def condition_regexp(pattern)
-        Regexp.new(pattern.to_s)
+        Regexp.new(pattern)
       end
 
       def configuration_messages_match?(test_suite, matches_pattern, not_matches_pattern)

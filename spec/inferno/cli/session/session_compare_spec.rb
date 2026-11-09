@@ -1066,6 +1066,14 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
         expect(r.format_unordered_comparisons_for_csv(r.io_comparisons, :expected))
           .to eq("- input a: line 1\\nline 2\\n\\tindented\n- output c: 3")
       end
+
+      it 'shows a literal backslash-n differently from a line break in the CSV' do
+        expected = with_io(outputs: [io('c', "a\nb")])
+        actual = with_io(outputs: [io('c', 'a\nb')])
+        r = compared(expected, actual, options)
+        expect(r.format_unordered_comparisons_for_csv(r.io_comparisons, :expected)).to eq('! output c: a\nb')
+        expect(r.format_unordered_comparisons_for_csv(r.io_comparisons, :actual)).to eq('! output c: a\\\\nb')
+      end
     end
   end
 end

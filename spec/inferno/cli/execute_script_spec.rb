@@ -1145,6 +1145,15 @@ RSpec.describe Inferno::CLI::ExecuteScript do
                                                  /has unsupported field 'inputs\.'/],
       'a condition with no pattern' =>
         [{ 'field' => 'inferno_base_url' }, /must have matches, not_matches, or both/],
+      'a condition with a number pattern' =>
+        [{ 'field' => 'inferno_base_url', 'matches' => 37_800 }, /has a matches value that is not a string; quote/],
+      'a condition with a boolean pattern' =>
+        [{ 'field' => 'inferno_base_url', 'matches' => false }, /has a matches value that is not a string; quote/],
+      'a condition with a blank pattern' =>
+        [{ 'field' => 'inferno_base_url', 'matches' => '  ' }, /must have matches, not_matches, or both/],
+      'a condition with a list pattern' =>
+        [{ 'field' => 'inferno_base_url', 'not_matches' => %w[localhost 127.0.0.1] },
+         /has a not_matches value that is not a string; quote/],
       'a condition with an invalid regex' =>
         [{ 'field' => 'inputs.url', 'not_matches' => '[' }, /has an invalid not_matches regex '\['/]
     }.each do |description, (condition, message)|
@@ -1161,10 +1170,10 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect_exit_with_error(config, /must have a file\..*Condition 1 of alternate expected file 2/)
     end
 
-    it 'accepts every supported condition field and numeric patterns' do
+    it 'accepts every supported condition field' do
       conditions = [{ 'field' => 'inputs.url', 'matches' => '^http' },
                     { 'field' => 'configuration_messages', 'not_matches' => 'error' },
-                    { 'field' => 'inferno_base_url', 'matches' => 4567 }]
+                    { 'field' => 'inferno_base_url', 'matches' => '4567' }]
       expect { build_instance(config_with_alternate({ 'file' => 'alt.json', 'when' => conditions })) }
         .to_not raise_error
     end

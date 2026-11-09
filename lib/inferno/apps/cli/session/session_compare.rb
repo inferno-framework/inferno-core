@@ -820,9 +820,11 @@ module Inferno
           end
 
           # Each message, request, or input/output is one line within its CSV cell, so line breaks and
-          # tabs in its text are shown escaped.
+          # tabs in its text are shown escaped. Backslashes are escaped first, so that a literal '\n'
+          # in the text ('\\n' in the CSV) looks different from an escaped line break.
           def single_line_for_csv(text)
-            text.gsub("\r\n", '\n').gsub("\n", '\n').gsub("\r", '\r').gsub("\t", '\t')
+            text.gsub('\\') { '\\\\' }
+              .gsub("\r\n", '\n').gsub("\n", '\n').gsub("\r", '\r').gsub("\t", '\t')
           end
         end
       end
