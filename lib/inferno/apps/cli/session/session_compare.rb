@@ -188,6 +188,12 @@ module Inferno
           end
         end
 
+        # Results in stored form as the contents of a results file, ending with a newline as most
+        # editors and tools expect.
+        def self.stored_results_json(results, normalized_strings = [])
+          "#{JSON.pretty_generate(results_for_storage(results, normalized_strings))}\n"
+        end
+
         # Inputs and outputs may have non-string or large values (see LARGE_IO_VALUE_PATTERN).
         def self.stored_io_value(value, normalized_strings)
           return if value.nil?
@@ -301,9 +307,7 @@ module Inferno
         def save_actual_results_to_file
           actual_results_file_name = "#{output_file_prefix}actual_results_#{results_timestamp}#{host_suffix}.json"
           File.write(File.join(output_directory, actual_results_file_name),
-                     JSON.pretty_generate(
-                       self.class.results_for_storage(session_results, options[:normalized_strings])
-                     ))
+                     self.class.stored_results_json(session_results, options[:normalized_strings]))
         end
 
         def save_comparison_csv_to_file

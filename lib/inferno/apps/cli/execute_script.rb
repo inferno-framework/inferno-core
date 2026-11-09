@@ -1101,7 +1101,7 @@ module Inferno
 
       def stored_expected_results(expected_file, results)
         normalized_strings = compare_options(expected_file)[:normalized_strings]
-        JSON.pretty_generate(Session::SessionCompare.results_for_storage(results, normalized_strings))
+        Session::SessionCompare.stored_results_json(results, normalized_strings)
       end
 
       def expected_file_for_comparison(session)

@@ -572,7 +572,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       allow(File).to receive(:write).with(expected_file, anything)
 
       expect(instance.send(:compare_session, session)).to be(false)
-      expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
+      expect(File).to have_received(:write).with(expected_file, "#{JSON.pretty_generate(results)}\n")
     end
 
     it 'writes expected results in normalized form, with session ids replaced and test_session_id dropped' do
@@ -613,14 +613,14 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         allow(mock_compare).to receive(:save_comparison_csv_to_file)
 
         expect(instance.send(:compare_session, session)).to be(true)
-        expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
+        expect(File).to have_received(:write).with(expected_file, "#{JSON.pretty_generate(results)}\n")
         expect(mock_compare).to_not have_received(:save_actual_results_to_file)
         expect(mock_compare).to_not have_received(:save_comparison_csv_to_file)
       end
 
       it 'does not rewrite the expected file when its stored content would not change' do
         allow(File).to receive(:exist?).with(expected_file).and_return(true)
-        allow(File).to receive(:read).with(expected_file).and_return(JSON.pretty_generate(results))
+        allow(File).to receive(:read).with(expected_file).and_return("#{JSON.pretty_generate(results)}\n")
         allow(mock_compare).to receive_messages(results_match?: true, session_results: results)
 
         expect(instance.send(:compare_session, session)).to be(true)
@@ -636,7 +636,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         allow(mock_compare).to receive(:save_actual_results_to_file)
 
         expect(instance.send(:compare_session, session)).to be(true)
-        expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
+        expect(File).to have_received(:write).with(expected_file, "#{JSON.pretty_generate(results)}\n")
         expect(mock_compare).to_not have_received(:save_actual_results_to_file)
       end
 
@@ -645,7 +645,7 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         allow(mock_results).to receive(:results_for_session).with(session_id).and_return(results)
 
         expect(instance.send(:compare_session, session)).to be(true)
-        expect(File).to have_received(:write).with(expected_file, JSON.pretty_generate(results))
+        expect(File).to have_received(:write).with(expected_file, "#{JSON.pretty_generate(results)}\n")
       end
     end
   end

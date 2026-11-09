@@ -818,6 +818,7 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
         expect(JSON.parse(File.read(written.first)))
           .to eq(described_class.results_for_storage(actual_results_parsed, normalized_strings))
         expect(File.read(written.first)).to_not include(actual_results_session_id)
+        expect(File.read(written.first)).to end_with("]\n")
       end
     end
   end
