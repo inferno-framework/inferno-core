@@ -51,7 +51,7 @@ any FHIR-based data exchange, and the team welcomes contributions.
 
 Developers
 interested in contributing to the Inferno Core gem must have [Ruby
-3.3.6](https://www.ruby-lang.org/en/), [Node.js and
+3.3.14](https://www.ruby-lang.org/en/), [Node.js and
 NPM](https://www.npmjs.com/get-npm), and [Docker
 Desktop](https://www.docker.com/products/docker-desktop/) installed.
 [Podman](https://podman.io/) may be used an alternative to Docker Desktop.

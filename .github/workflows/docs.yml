@@ -15,13 +15,13 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: '3.3.6'
+        ruby-version: '3.3.14'
         bundler-cache: true
     - name: Remove /docs/docs from .gitignore
       run: sed -i '/\/docs\/docs/d' .gitignore
@@ -42,7 +42,7 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
