@@ -31,9 +31,7 @@ When a change intentionally alters results, run the affected scripts with
 `--update-expected` (`-u`). Expected results files are overwritten with the
 actual results (pretty-printed) whenever their stored content would change,
 instead of writing actual results and comparison files, and the comparison is
-treated as passing. This includes files whose results still match but that were
-written in an older format or with different normalizations, so `-u` also
-brings those up to date. Files that are already current aren't rewritten.
+treated as passing. Files that are already current aren't rewritten.
 Review the changes with `git diff` before committing.
 
 Expected results files (and the actual results files written on a mismatch)

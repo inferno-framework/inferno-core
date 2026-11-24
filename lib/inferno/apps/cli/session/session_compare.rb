@@ -24,10 +24,7 @@ module Inferno
                   'results do not match the expected results in the file, generated ' \
                   'comparison files will be placed in the same directory. The actual results ' \
                   'file written there contains only the compared fields, normalized; use ' \
-                  '`inferno session results` for full results. Expected results ' \
-                  'files written by execute_script can be compared unless they contain ' \
-                  '<NAME.session_id> placeholders or depend on the script\'s normalized_strings; ' \
-                  'compare those by running the script.'
+                  '`inferno session results` for full results.'
           },
           compare_messages: {
             aliases: ['-m'],
@@ -66,8 +63,8 @@ module Inferno
             aliases: ['-d'],
             type: :boolean,
             default: false,
-            desc: 'When displaying messages and requests in CSV output, only show mismatched ones ' \
-                  '(hide matching ones).'
+            desc: 'When displaying messages, requests, and inputs/outputs in CSV output, only show ' \
+                  'mismatched ones (hide matching ones).'
           }
         }.freeze
 

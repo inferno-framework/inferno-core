@@ -48,21 +48,23 @@ module Inferno
     #                                              #    <TIMESTAMP> (before normalized_strings), and 64-character
     #                                              #    lowercase hex values (e.g., SecureRandom.hex(32)) with
     #                                              #    <RANDOM_64_CHAR_HEX> (after normalized_strings).
-    #                                              #    Set to false to compare them exactly.
+    #                                              #    Set to false to disable these default normalizations.
     #     normalized_strings:                      # optional; global normalization rules applied to
-    #       - "http://my-server.example.com"       # both expected and actual before comparing
-    #                                              # (result messages, messages, request URLs, and
-    #                                              # input/output values). Applied after the session id
-    #                                              # and default normalizations, so rules can refer to
-    #                                              # their placeholders (e.g. <inferno_base_url>).
+    #                                              #    both expected and actual before comparing
+    #                                              #    (result messages, messages, request URLs, and
+    #                                              #    input/output values). Applied after the session id
+    #                                              #    and default normalizations, except the 64-character
+    #                                              #    lowercase hex value normalization, so rules can refer to
+    #                                              #    their placeholders (e.g. <inferno_base_url>).
+    #                                              #    potential formats for normalized_strings entries:
     #       - "http://other-value.example.com"     # plain string: replaced with <NORMALIZED>;
-    #                                              # URL-encoded form is also replaced automatically.
+    #                                              #    URL-encoded form is also replaced automatically.
     #       - "/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/"  # regex string (wrapped in /…/): compiled
-    #                                              # to a Regexp and replaced with <NORMALIZED>.
-    #                                              # Supports flags: /pattern/i, /pattern/m, etc.
-    #                                              # URL-encoded form is NOT auto-replaced for regex.
+    #                                              #    to a Regexp and replaced with <NORMALIZED>.
+    #                                              #    Supports flags: /pattern/i, /pattern/m, etc.
+    #                                              #    URL-encoded form is NOT auto-replaced for regex.
     #       - pattern: '/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/'  # hash form: use when you need
-    #         replacement: '<CODE_CHALLENGE>'      # a named placeholder instead of <NORMALIZED>.
+    #         replacement: '<CODE_CHALLENGE>'      #    a named placeholder instead of <NORMALIZED>.
     #       - patterns:                            # 'patterns' (plural) shares one replacement
     #           - '/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/'  # across multiple patterns.
     #           - '/code_verifier=[A-Za-z0-9+\\/=_-]{20,}/'
@@ -75,15 +77,15 @@ module Inferno
     #       - file: alt_expected.json              # required; relative to yaml file
     #         when:                                # required; all conditions must match (AND logic)
     #           - field: inputs.url                # required; one of:
-    #                                              #   inputs.<name>: the session's value for the input
-    #                                              #     (GET api/test_sessions/{id}/session_data)
-    #                                              #   configuration_messages: the suite's configuration
-    #                                              #     messages (GET api/test_sessions/{id}); matches
+    #                                              #   - inputs.<name>: the session's value for the input
+    #                                              #     (from GET api/test_sessions/{id}/session_data)
+    #                                              #   - configuration_messages: the suite's configuration
+    #                                              #     messages (from GET api/test_sessions/{id}); matches
     #                                              #     if any message matches, not_matches if none do
-    #                                              #   inferno_base_url: the --inferno-base-url option, or
+    #                                              #   - inferno_base_url: the --inferno-base-url (-I) option, or
     #                                              #     the configured base_url when not provided, without
     #                                              #     a trailing slash
-    #                                              # Other fields are reported as errors before the
+    #                                              # Other referenced fields are reported as errors before the
     #                                              # script runs.
     #             matches: ^http://                # regex string (quote values YAML would read as numbers,
     #                                              #   e.g. '4567'); a condition needs matches,

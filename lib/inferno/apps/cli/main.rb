@@ -144,7 +144,7 @@ module Inferno
              aliases: ['-d'],
              type: :boolean,
              default: true,
-             desc: 'Only show messages and requests that differ when comparing results.'
+             desc: 'Only show messages, requests, and inputs/outputs that differ when comparing results.'
       option :allow_commands,
              type: :boolean,
              default: false,
@@ -157,9 +157,8 @@ module Inferno
              type: :boolean,
              default: false,
              desc: 'Overwrite the expected results file with the actual results whenever its stored content ' \
-                   'would change, even if results match (e.g., to migrate a file to the current format), ' \
-                   'instead of writing actual results and comparison files, and treat the comparison as passing. ' \
-                   'Review the changes with git diff.'
+                   'would change instead of writing actual results and comparison files, and treat the ' \
+                   'comparison as passing. Review the changes with git diff.'
       def execute_script(pattern = 'execution_scripts/**/*.yaml')
         if pattern.match?(/[*?\[\]{}]/)
           Utils::ExecutionScriptRunner.run_all(
