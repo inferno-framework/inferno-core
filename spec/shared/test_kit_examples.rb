@@ -68,7 +68,7 @@ RSpec.shared_examples 'platform_deployable_test_kit' do
       dockerfile_path = File.join(base_path, 'Dockerfile')
       dockerfile_contents = File.read(dockerfile_path)
 
-      expect(dockerfile_contents.lines.first.chomp).to eq('FROM ruby:3.3.6')
+      expect(dockerfile_contents.lines.first.chomp).to eq('FROM ruby:3.3.14')
     end
 
     context 'when it contains a validator service' do

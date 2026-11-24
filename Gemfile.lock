@@ -420,7 +420,7 @@ DEPENDENCIES
   yard-junk
 
 RUBY VERSION
-   ruby 3.3.6p108
+   ruby 3.3.14p208
 
 BUNDLED WITH
    2.4.22
