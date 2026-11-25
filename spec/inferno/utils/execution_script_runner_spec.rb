@@ -205,6 +205,40 @@ RSpec.describe Inferno::Utils::ExecutionScriptRunner do
       end
     end
 
+    context 'when compare_requests is false' do
+      it 'passes --no-compare-requests to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-requests',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(compare_requests: false)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-requests'
+        )
+      end
+    end
+
+    context 'when compare_io is false' do
+      it 'passes --no-compare-io to the command' do
+        stub_subprocess(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-io',
+          output: '', exitstatus: 0
+        )
+
+        described_class.run_all(compare_io: false)
+
+        expect(Open3).to have_received(:popen2e).with(
+          'bundle', 'exec', 'inferno', 'execute_script', 'execution_scripts/my_test.yaml',
+          '--no-compare-io'
+        )
+      end
+    end
+
     context 'when only_different_messages is false' do
       it 'passes --no-only-different-messages to the command' do
         stub_subprocess(

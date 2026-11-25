@@ -38,7 +38,7 @@ module ScriptTokens
         output :token_value, :resume_url
 
         run do
-          identifier = 'script_tokens'
+          identifier = SecureRandom.hex(32)
           resume_url = "#{Inferno::Application['base_url']}/custom/script_tokens/resume?xyz=#{identifier}"
           output(token_value: TOKEN_VALUE, resume_url:)
           wait(identifier:, message: 'Waiting for the consumer session to use the token value')

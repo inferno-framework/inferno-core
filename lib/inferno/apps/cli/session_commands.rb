@@ -58,7 +58,7 @@ module Inferno
              'Compare the results of a session to expected results (from file or another session).'
         SessionCompare::COMMAND_OPTIONS.each { |name, opts| option name, **opts }
         def compare(session_id)
-          SessionCompare.new(session_id, options).run
+          SessionCompare.new(session_id, SessionCompare.command_options(options)).run
         end
       end
     end

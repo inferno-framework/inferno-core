@@ -1,3 +1,11 @@
+## 1.7.0
+* ID-304: Execution script updates by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/832
+* ID-304: step 2 - add message comparison by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/833
+  * NOTE: This update changes the format of execution script expected results files and what is compared, so existing expected results files will not match until they are regenerated. Run `bundle exec inferno execute_script -u` for each script and review the changes with `git diff` before committing. Expected results files now contain only the compared fields, stored in normalized form: session ids, the Inferno base URL, ISO 8601 timestamps, and 64-character lowercase hex values are replaced with placeholders, along with script-specific normalizations. As a result, regenerating a file only changes it when compared content changes.
+  * NOTE: `execute_script` now compares requests (direction, verb, URL, and status) and inputs/outputs (name and value) by default, in addition to result messages and messages. These values may require scripts to add additional normalizations to account for details that vary between runs, such as UUIDs or tokens. These new comparisons can also be disabled within the script configuration file.
+  * NOTE: Execution scripts are now validated before they run. Existing scripts with errors may fail until the reported issues are addressed.
+  * NOTE: Execution scripts are an experimental feature and breaking changes like those here may continue until formal release.
+
 ## 1.6.0
 * ID-290: wait test request association by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/828
 * ID-292: tester interaction badge by @karlnaden in https://github.com/inferno-framework/inferno-core/pull/829

@@ -38,16 +38,40 @@ module Inferno
     #                                              #    the expected results, an actual results JSON file and a CSV diff
     #                                              #    are written to the directory of the expected results file for
     #                                              #    use in evaluating the failure.
+    #                                              #    Session ids are always normalized before comparing: each
+    #                                              #    session's id is replaced with <NAME.session_id> (NAME is
+    #                                              #    the session name or suite id). Expected results files are
+    #                                              #    stored with all normalizations applied.
+    #     default_normalizations: false            # optional; by default the Inferno base URL (with or without
+    #                                              #    its default port) is replaced with
+    #                                              #    <inferno_base_url> and ISO 8601 timestamps with
+    #                                              #    <TIMESTAMP> (before normalized_strings), and 64-character
+    #                                              #    lowercase hex values (e.g., SecureRandom.hex(32)) with
+    #                                              #    <RANDOM_64_CHAR_HEX> (after normalized_strings).
+    #                                              #    Set to false to disable these default normalizations.
+    #     compare_messages: false                  # optional; set any of these to false to skip that comparison
+    #     compare_result_message: false            #    for this script even when the command line enables it
+    #     compare_requests: false                  #    (e.g., when a script's requests vary between runs). The
+    #     compare_io: false                        #    fields of comparisons turned off here aren't stored in
+    #                                              #    expected results files (the command line flags don't
+    #                                              #    change what's stored); regenerate them with -u after
+    #                                              #    changing these.
     #     normalized_strings:                      # optional; global normalization rules applied to
-    #       - "http://my-server.example.com"       # both expected and actual before comparing.
+    #                                              #    both expected and actual before comparing
+    #                                              #    (result messages, messages, request URLs, and
+    #                                              #    input/output values). Applied after the session id
+    #                                              #    and default normalizations, except the 64-character
+    #                                              #    lowercase hex value normalization, so rules can refer to
+    #                                              #    their placeholders (e.g. <inferno_base_url>).
+    #                                              #    potential formats for normalized_strings entries:
     #       - "http://other-value.example.com"     # plain string: replaced with <NORMALIZED>;
-    #                                              # URL-encoded form is also replaced automatically.
+    #                                              #    URL-encoded form is also replaced automatically.
     #       - "/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/"  # regex string (wrapped in /…/): compiled
-    #                                              # to a Regexp and replaced with <NORMALIZED>.
-    #                                              # Supports flags: /pattern/i, /pattern/m, etc.
-    #                                              # URL-encoded form is NOT auto-replaced for regex.
+    #                                              #    to a Regexp and replaced with <NORMALIZED>.
+    #                                              #    Supports flags: /pattern/i, /pattern/m, etc.
+    #                                              #    URL-encoded form is NOT auto-replaced for regex.
     #       - pattern: '/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/'  # hash form: use when you need
-    #         replacement: '<CODE_CHALLENGE>'      # a named placeholder instead of <NORMALIZED>.
+    #         replacement: '<CODE_CHALLENGE>'      #    a named placeholder instead of <NORMALIZED>.
     #       - patterns:                            # 'patterns' (plural) shares one replacement
     #           - '/code_challenge=[A-Za-z0-9+\\/=_-]{20,}/'  # across multiple patterns.
     #           - '/code_verifier=[A-Za-z0-9+\\/=_-]{20,}/'
@@ -59,15 +83,30 @@ module Inferno
     #     alternate_expected_files:                # optional; tried in order; first matching wins
     #       - file: alt_expected.json              # required; relative to yaml file
     #         when:                                # required; all conditions must match (AND logic)
-    #           - field: inputs.url                # required: can be inputs.<name>, configuration_messages,
-    #                                              #   or inferno_base_url
-    #             matches: ^http://                # other values are top-level session detail fields.
-    #                                              # Evaluated against GET api/test_sessions/{id}.
+    #           - field: inputs.url                # required; one of:
+    #                                              #   - inputs.<name>: the session's value for the input
+    #                                              #     (from GET api/test_sessions/{id}/session_data)
+    #                                              #   - configuration_messages: the suite's configuration
+    #                                              #     messages (from GET api/test_sessions/{id}); matches
+    #                                              #     if any message matches, not_matches if none do
+    #                                              #   - inferno_base_url: the --inferno-base-url (-I) option, or
+    #                                              #     the configured base_url when not provided, without
+    #                                              #     a trailing slash
+    #                                              # Other referenced fields are reported as errors before the
+    #                                              # script runs.
+    #             matches: ^http://                # regex string (quote values YAML would read as numbers,
+    #                                              #   e.g. '4567'); a condition needs matches,
+    #                                              #   not_matches, or both
     #
     #     # Multi-session scripts: per-session config is nested under sessions.<name>.
     #     sessions:
     #       my_name:                               # matches session name key (sessions[*].name or suite)
     #         expected_results_file: expected.json # optional; defaults to <yaml basename>_<name>_expected.json
+    #         compare_requests: false              # optional; compare_messages, compare_result_message,
+    #                                              #   compare_requests, and compare_io can also be set for a
+    #                                              #   single session, taking precedence over the script's
+    #                                              #   setting (e.g., true to compare requests for only this
+    #                                              #   session)
     #         alternate_expected_files:            # optional; same structure as single-session above
     #           - file: alt_expected.json
     #             when:
@@ -80,6 +119,8 @@ module Inferno
     #                                              #           can be a full ID, short ID (e.g. "1.01"), or 'suite'
     #       session: my_name                       # optional; required when multiple sessions to indicate which session
     #                                              #           can match this step
+    #                                              # each step requires exactly one of action, command,
+    #                                              #   http_get, or start_run
     #       action: END_SCRIPT|NOOP|WAIT           # optional; built-in action (case-insensitive)
     #                                              #           (mutually exclusive with command/http_get/start_run)
     #       # OR
@@ -171,8 +212,11 @@ module Inferno
         self.yaml_file = yaml_file
         self.options = options
         validate_yaml_file!
+        validate_step_commands!
         validate_commands_allowed!
         validate_session_names!
+        validate_comparison_settings!
+        validate_expected_files!
         self.execution_status = ExecutionStatus.new(
           done: false,
           failed: false,
@@ -222,27 +266,58 @@ module Inferno
       end
 
       def validate_yaml_file!
-        unless File.exist?(yaml_file)
-          puts JSON.pretty_generate({ errors: "File not found: #{yaml_file}" })
-          exit(1)
-        end
+        exit_with_errors!(["File not found: #{yaml_file}"]) unless File.exist?(yaml_file)
         return if yaml_file.end_with?('.yaml', '.yml')
 
-        puts JSON.pretty_generate(
-          { errors: "'#{yaml_file}' does not appear to be a YAML file (.yaml or .yml extension required)." }
-        )
+        exit_with_errors!(["'#{yaml_file}' does not appear to be a YAML file (.yaml or .yml extension required)."])
+      end
+
+      # Reports problems found before the script runs as JSON and exits.
+      def exit_with_errors!(errors)
+        puts JSON.pretty_generate({ errors: errors.join(' ') })
         exit(1)
+      end
+
+      STEP_COMMAND_KEYS = %w[start_run action http_get command].freeze
+      STEP_ACTIONS = %w[END_SCRIPT NOOP WAIT].freeze
+
+      # Each step must be a mapping that specifies exactly one way to continue the script, with a
+      # value it can be continued with.
+      def validate_step_commands!
+        errors = Array(script_config['steps']).each_with_index.filter_map do |step, index|
+          next "Step #{index + 1} must be a mapping of step keys; found a #{step.class}." unless step.is_a?(Hash)
+
+          label = "Step #{index + 1} (status: #{step['status']}, last_completed: #{step['last_completed']})"
+          found = STEP_COMMAND_KEYS & step.keys
+          next step_command_value_error(step, found.first, label) if found.length == 1
+
+          "#{label} must have exactly one of #{STEP_COMMAND_KEYS.join(', ')}; " \
+            "found: #{found.empty? ? 'none' : found.join(', ')}."
+        end
+        return if errors.empty?
+
+        exit_with_errors!(errors)
+      end
+
+      # start_run may be empty (run the whole suite). An action other than the built-in ones would
+      # otherwise be run as a shell command.
+      def step_command_value_error(step, key, label)
+        value = step[key]
+        if key == 'action'
+          return if value.is_a?(String) && STEP_ACTIONS.include?(value.upcase)
+
+          "#{label} has action #{value.inspect}; use #{STEP_ACTIONS.join(', ')}."
+        elsif key != 'start_run' && value.to_s.blank?
+          "#{label} must have a value for #{key}."
+        end
       end
 
       def validate_commands_allowed!
         return if options[:allow_commands]
         return if Array(script_config['steps']).none? { |step| step['command'].present? }
 
-        puts JSON.pretty_generate(
-          { errors: "Script contains 'command' steps but --allow-commands was not set. " \
-                    'Re-run with --allow-commands to permit arbitrary shell command execution.' }
-        )
-        exit(1)
+        exit_with_errors!(["Script contains 'command' steps but --allow-commands was not set. " \
+                           'Re-run with --allow-commands to permit arbitrary shell command execution.'])
       end
 
       # Session names are used in template tokens and must be free of characters that would
@@ -254,8 +329,233 @@ module Inferno
                  duplicate_session_name_errors(session_configs)
         return if errors.empty?
 
-        puts JSON.pretty_generate({ errors: errors.join(' ') })
-        exit(1)
+        exit_with_errors!(errors)
+      end
+
+      # Checked before running so that a malformed expected results file or alternate_expected_files
+      # entry doesn't stop the script at comparison time. Every file a session could compare against
+      # is checked, since alternate files are chosen after the run. Files that don't exist yet are
+      # written by the run.
+      def validate_expected_files!
+        errors = alternate_expected_file_errors
+        malformed = candidate_expected_files.select { |file| File.exist?(file) }.filter_map do |file|
+          Session::SessionCompare.read_expected_results(file).last
+        end
+        errors << "#{malformed.join(' ')} Fix or delete the file before running the script." if malformed.any?
+        return if errors.empty?
+
+        exit_with_errors!(errors)
+      end
+
+      # [session key, alternate_expected_files entries] for each session in the script.
+      def alternate_expected_file_configs
+        script_session_keys.map do |key|
+          [key, Array(comparison_session_config(key)['alternate_expected_files'])]
+        end
+      end
+
+      def script_session_keys
+        Array(script_config['sessions']).map { |session_config| session_key(session_config) }
+      end
+
+      # A session's key: its name, or its suite when it has none.
+      def session_key(session_config)
+        session_config['name']&.to_s || session_config['suite']
+      end
+
+      COMPARISON_SETTINGS = Session::SessionCompare::OPTIONAL_COMPARISON_FIELDS.keys.map(&:to_s).freeze
+      BOOLEAN_COMPARISON_SETTINGS = (COMPARISON_SETTINGS + %w[default_normalizations]).freeze
+      # Settings that apply to the whole script, and so are only read directly under comparison_config
+      SCRIPT_COMPARISON_KEYS = %w[default_normalizations normalized_strings].freeze
+      # Settings that are read for each session: directly under comparison_config in a single-session
+      # script, and under comparison_config.sessions.<name> in a multi-session script
+      SESSION_COMPARISON_KEYS = %w[expected_results_file alternate_expected_files].freeze
+      SESSION_MISPLACED_KEY_HINTS = SCRIPT_COMPARISON_KEYS.index_with do
+        'applies to the whole script; put it directly under comparison_config.'
+      end.freeze
+
+      # Checked before running so that a misspelled, misplaced, or non-boolean comparison setting
+      # isn't silently ignored (e.g., leaving on a comparison the script meant to turn off).
+      def validate_comparison_settings!
+        unless comparison_config.is_a?(Hash)
+          exit_with_errors!(['comparison_config must be a mapping of comparison settings.'])
+        end
+
+        errors = comparison_config_errors(comparison_config, 'comparison_config', script_comparison_keys,
+                                          script_misplaced_key_hints)
+        errors += normalized_strings_errors(comparison_config['normalized_strings'])
+        errors += comparison_sessions_errors if multi_session_script?
+        exit_with_errors!(errors) if errors.any?
+      end
+
+      NORMALIZED_STRING_RULE_KEYS = %w[pattern patterns replacement].freeze
+
+      # Rules are otherwise only parsed when results are compared, after the script has run.
+      def normalized_strings_errors(rules)
+        return [] if rules.nil?
+        return ['comparison_config.normalized_strings must be a list of rules.'] unless rules.is_a?(Array)
+
+        rules.each_with_index.flat_map do |rule, index|
+          normalized_string_rule_errors(rule, "Rule #{index + 1} of comparison_config.normalized_strings")
+        end
+      end
+
+      def normalized_string_rule_errors(rule, label)
+        return normalized_string_pattern_errors([rule], label) unless rule.is_a?(Hash)
+
+        shape_error = normalized_string_rule_shape_error(rule, label)
+        return [shape_error] if shape_error
+
+        patterns = rule.key?('patterns') ? rule['patterns'] : [rule['pattern']]
+        return ["#{label} must have a list of patterns."] unless patterns.is_a?(Array) && patterns.any?
+
+        normalized_string_pattern_errors(patterns, label)
+      end
+
+      def normalized_string_rule_shape_error(rule, label)
+        unknown = rule.keys.map(&:to_s) - NORMALIZED_STRING_RULE_KEYS
+        if unknown.any?
+          "#{label} has unknown keys #{unknown.join(', ')}; use #{NORMALIZED_STRING_RULE_KEYS.join(', ')}."
+        elsif rule.key?('pattern') == rule.key?('patterns')
+          "#{label} must have pattern or patterns, not both."
+        elsif !(rule['replacement'].nil? || rule['replacement'].is_a?(String))
+          "#{label} has a replacement that is not a string."
+        end
+      end
+
+      # Patterns are plain strings (numbers are read as their text) or /regex/ strings.
+      def normalized_string_pattern_errors(patterns, label)
+        patterns.filter_map do |pattern|
+          next "#{label} has a pattern that is not a string: #{pattern.inspect}." unless
+            pattern.is_a?(String) || pattern.is_a?(Numeric)
+          next "#{label} has an empty pattern." if pattern.to_s.empty?
+
+          Session::SessionCompare.parse_pattern_string(pattern.to_s)
+          nil
+        rescue RegexpError => e
+          "#{label} has an invalid regex '#{pattern}': #{e.message}."
+        end
+      end
+
+      def script_comparison_keys
+        SCRIPT_COMPARISON_KEYS + COMPARISON_SETTINGS + (multi_session_script? ? %w[sessions] : SESSION_COMPARISON_KEYS)
+      end
+
+      def script_misplaced_key_hints
+        if multi_session_script?
+          SESSION_COMPARISON_KEYS.index_with do
+            'is set for each session in a multi-session script; put it under comparison_config.sessions.<name>.'
+          end
+        else
+          { 'sessions' => 'is only used in multi-session scripts; put its settings directly under comparison_config.' }
+        end
+      end
+
+      # Errors for keys that aren't allowed (with a hint for those that belong elsewhere) and for
+      # boolean settings that aren't true or false.
+      def comparison_config_errors(config, label, allowed_keys, misplaced_key_hints)
+        key_errors = (config.keys.map(&:to_s) - allowed_keys).map do |key|
+          next "#{label}.#{key} #{misplaced_key_hints[key]}" if misplaced_key_hints.key?(key)
+
+          "#{label} has unknown setting '#{key}'; use #{allowed_keys.join(', ')}."
+        end
+        key_errors + (allowed_keys & BOOLEAN_COMPARISON_SETTINGS).filter_map do |setting|
+          value = config[setting]
+          next if value.nil? || %w[true false].include?(value.to_s.downcase)
+
+          "#{label}.#{setting} must be true or false; found #{value.inspect}."
+        end
+      end
+
+      def comparison_sessions_errors
+        sessions_config = comparison_config['sessions']
+        return [] if sessions_config.nil?
+        unless sessions_config.is_a?(Hash)
+          return ['comparison_config.sessions must be a mapping of session names to settings.']
+        end
+
+        # e.g., both 1 and '1', which YAML reads as different keys
+        duplicate_errors = sessions_config.keys.map(&:to_s).tally.select { |_name, count| count > 1 }.keys.map do |name|
+          "comparison_config.sessions has more than one entry for session '#{name}'."
+        end
+        duplicate_errors + sessions_config.flat_map { |name, config| comparison_session_errors(name, config) }
+      end
+
+      def comparison_session_errors(name, config)
+        label = "comparison_config.sessions.#{name}"
+        unless script_session_keys.include?(name.to_s)
+          return ["#{label} does not match a session in the script; use #{script_session_keys.join(', ')}."]
+        end
+        return [] if config.nil?
+        return ["#{label} must be a mapping of settings."] unless config.is_a?(Hash)
+
+        comparison_config_errors(config, label, SESSION_COMPARISON_KEYS + COMPARISON_SETTINGS,
+                                 SESSION_MISPLACED_KEY_HINTS)
+      end
+
+      def alternate_expected_file_errors
+        alternate_expected_file_configs.flat_map do |key, alternates|
+          alternates.each_with_index.flat_map do |alt, index|
+            alternate_errors(alt, "alternate expected file #{index + 1} for session '#{key}'")
+          end
+        end
+      end
+
+      def alternate_errors(alt, label)
+        return ["#{label.upcase_first} must have a file."] unless alt.is_a?(Hash) && alt['file'].present?
+        unless alt['when'].is_a?(Array) && alt['when'].present?
+          return ["#{label.upcase_first} must have a when list of conditions."]
+        end
+
+        alt['when'].each_with_index.flat_map do |condition, index|
+          condition_errors(condition, "Condition #{index + 1} of #{label}")
+        end
+      end
+
+      CONDITION_FIELDS_DESCRIPTION = 'inputs.<name>, configuration_messages, or inferno_base_url'.freeze
+
+      def condition_errors(condition, label)
+        return ["#{label} must be a mapping with field and matches or not_matches."] unless condition.is_a?(Hash)
+        unless supported_condition_field?(condition['field'].to_s)
+          return ["#{label} has unsupported field '#{condition['field']}'; use #{CONDITION_FIELDS_DESCRIPTION}."]
+        end
+
+        # Only nil and blank strings count as missing, so that a YAML boolean (e.g., matches: off) is
+        # reported as needing quotes. Blank strings are missing when evaluated too.
+        patterns = condition.slice('matches', 'not_matches').reject do |_key, pattern|
+          pattern.nil? || (pattern.is_a?(String) && pattern.blank?)
+        end
+        return ["#{label} must have matches, not_matches, or both."] if patterns.empty?
+
+        pattern_errors(patterns, label)
+      end
+
+      def pattern_errors(patterns, label)
+        patterns.filter_map do |key, pattern|
+          # YAML reads some unquoted values as numbers or lists (e.g., 10:30 as 37800), which can't
+          # be turned back into the pattern as written
+          unless pattern.is_a?(String)
+            next "#{label} has a #{key} value that is not a string; quote the pattern (e.g., #{key}: '4567')."
+          end
+
+          condition_regexp(pattern)
+          nil
+        rescue RegexpError => e
+          "#{label} has an invalid #{key} regex '#{pattern}': #{e.message}."
+        end
+      end
+
+      def supported_condition_field?(field)
+        %w[configuration_messages inferno_base_url].include?(field) || field.match?(/\Ainputs\..+/)
+      end
+
+      def candidate_expected_files
+        alternate_expected_file_configs.flat_map do |key, alternates|
+          alternate_files = alternates.filter_map do |alt|
+            File.expand_path(alt['file'], yaml_directory) if alt.is_a?(Hash) && alt['file'].present?
+          end
+          [resolve_expected_file(key)] + alternate_files
+        end.uniq
       end
 
       def missing_session_name_errors(session_configs)
@@ -292,7 +592,7 @@ module Inferno
 
       def create_session_from_config(session_config)
         suite = session_config['suite']
-        key = session_config['name']&.to_s || suite
+        key = session_key(session_config)
         name_detail = session_config['name'] ? " with name '#{session_config['name']}'" : ''
         warn "Creating session for suite '#{suite}'#{name_detail}..."
         creator = Session::CreateSession.new(suite, session_create_options(session_config))
@@ -952,26 +1252,31 @@ module Inferno
 
       def comparison_session_config(key)
         if multi_session_script?
-          (comparison_config['sessions'] || {})[key] || {}
+          comparison_sessions_config[key] || {}
         else
           comparison_config
         end
       end
 
+      # comparison_config.sessions with string keys, since YAML reads a numeric session name key as
+      # an Integer (see validate_comparison_settings!, which reports keys that collide).
+      def comparison_sessions_config
+        @comparison_sessions_config ||= (comparison_config['sessions'] || {}).transform_keys(&:to_s)
+      end
+
       def compare_session(session)
         expected_file = resolve_expected_file_for_comparison(session)
+        session_compare_options = compare_options(expected_file, session.key)
 
         if File.exist?(expected_file)
-          cmp = Session::SessionCompare.new(session.session_id, compare_options(expected_file))
+          cmp = Session::SessionCompare.new(session.session_id, session_compare_options)
           matched = cmp.results_match?
           warn "  Comparing against #{File.basename(expected_file)}"
           warn "  Actual results matched expected results? #{matched}"
-          if !matched && options[:update_expected]
-            write_expected_results(expected_file, cmp.session_results)
-            warn "  Expected results updated: wrote actual results to #{expected_file}"
-            return true
-          end
+          return update_expected_results(session_compare_options, cmp.session_results) if options[:update_expected]
+
           unless matched
+            warn_if_older_format(cmp.expected_results)
             cmp.save_actual_results_to_file
             cmp.save_comparison_csv_to_file
           end
@@ -979,13 +1284,57 @@ module Inferno
         else
           warn "  Expected results file not found; writing actual results to #{expected_file}"
           results = Session::SessionResults.new(session.session_id, options).results_for_session(session.session_id)
-          write_expected_results(expected_file, results)
+          write_expected_results(session_compare_options, results)
           options[:update_expected].present?
         end
       end
 
-      def write_expected_results(expected_file, results)
-        File.write(expected_file, JSON.pretty_generate(results))
+      # Expected results files written before results were stored normalized hold full results,
+      # which include test_session_id; they don't compare until regenerated.
+      def warn_if_older_format(expected_results)
+        return unless expected_results.any? { |result| result.key?('test_session_id') }
+
+        warn '  Expected results appear to be in an older format (full, unnormalized results); ' \
+             'regenerate them with -u (--update-expected) and review the changes'
+      end
+
+      # Expected results are stored normalized so that regenerating them only changes the file
+      # when compared content changes.
+      def write_expected_results(session_compare_options, results)
+        File.write(session_compare_options[:expected_results_file],
+                   stored_expected_results(session_compare_options, results))
+      end
+
+      # Rewrites the expected results file whenever its stored content would change, even if
+      # the results match (e.g., a file in an older format or written with other normalizations).
+      def update_expected_results(session_compare_options, results)
+        expected_file = session_compare_options[:expected_results_file]
+        content = stored_expected_results(session_compare_options, results)
+        if File.read(expected_file) == content
+          warn '  Expected results already up to date'
+        else
+          File.write(expected_file, content)
+          warn "  Expected results updated: wrote actual results to #{expected_file}"
+        end
+        true
+      end
+
+      # The fields of comparisons the script turns off aren't stored, so that values it doesn't
+      # compare don't change the file.
+      def stored_expected_results(session_compare_options, results)
+        Session::SessionCompare.stored_results_json(results, session_compare_options[:normalized_strings],
+                                                    omitted_fields: session_compare_options[:omitted_fields])
+      end
+
+      # Session ids differ between runs and can appear anywhere in results (e.g., in
+      # request URLs and messages). For every session in the script, its id in this run is
+      # normalized to a "<NAME.session_id>" placeholder, which is also how it is stored in
+      # expected results files. All sessions are included because one session's results can
+      # contain another session's id.
+      def session_id_normalized_strings
+        @session_id_normalized_strings ||= sessions.map do |session|
+          { 'pattern' => session.session_id, 'replacement' => "<#{session.key}.session_id>" }
+        end
       end
 
       def resolve_expected_file_for_comparison(session)
@@ -997,8 +1346,7 @@ module Inferno
         session_inputs = Session::SessionData.new(session.session_id, options).session_data
 
         alternates.each do |alt|
-          conditions = Array(alt['when'])
-          next if conditions.empty?
+          conditions = alt['when']
           unless conditions.all? { |cond| session_detail_condition_matches?(cond, session_details, session_inputs) }
             next
           end
@@ -1020,7 +1368,7 @@ module Inferno
         if field == 'configuration_messages'
           configuration_messages_match?(session_details['test_suite'] || {}, matches_pattern, not_matches_pattern)
         elsif field == 'inferno_base_url'
-          string_matches?(options[:inferno_base_url].to_s, matches_pattern, not_matches_pattern)
+          string_matches?(inferno_base_url, matches_pattern, not_matches_pattern)
         elsif field.start_with?('inputs.')
           input_name = field.delete_prefix('inputs.')
           test_suite_input_matches?(session_inputs || [], input_name, matches_pattern, not_matches_pattern)
@@ -1034,18 +1382,23 @@ module Inferno
       end
 
       def string_matches?(value, matches_pattern, not_matches_pattern)
-        return false if matches_pattern && !Regexp.new(matches_pattern).match?(value)
-        return false if not_matches_pattern && Regexp.new(not_matches_pattern).match?(value)
+        return false if matches_pattern && !condition_regexp(matches_pattern).match?(value)
+        return false if not_matches_pattern && condition_regexp(not_matches_pattern).match?(value)
 
         true
       end
 
+      def condition_regexp(pattern)
+        Regexp.new(pattern)
+      end
+
       def configuration_messages_match?(test_suite, matches_pattern, not_matches_pattern)
         messages = Array(test_suite['configuration_messages'])
-        if matches_pattern && messages.none? { |msg| Regexp.new(matches_pattern).match?(msg['message'].to_s) }
+        if matches_pattern && messages.none? { |msg| condition_regexp(matches_pattern).match?(msg['message'].to_s) }
           return false
         end
-        if not_matches_pattern && messages.any? { |msg| Regexp.new(not_matches_pattern).match?(msg['message'].to_s) }
+        if not_matches_pattern &&
+           messages.any? { |msg| condition_regexp(not_matches_pattern).match?(msg['message'].to_s) }
           return false
         end
 
@@ -1061,15 +1414,49 @@ module Inferno
         @comparison_config ||= script_config['comparison_config'] || {}
       end
 
-      def compare_options(expected_file)
+      def compare_options(expected_file, session_key = nil)
+        normalized_strings = session_id_normalized_strings +
+                             Session::SessionCompare.standard_normalized_strings(
+                               comparison_config['normalized_strings'], inferno_base_url,
+                               default_normalizations: default_normalizations?
+                             )
+        script_disabled = script_disabled_comparisons(session_key)
         {
           expected_results_file: expected_file,
-          compare_messages: options[:compare_messages],
-          compare_result_message: options[:compare_result_message],
+          **optional_comparisons(script_disabled),
           only_different_messages: options[:only_different_messages],
           inferno_base_url: options[:inferno_base_url],
-          normalized_strings: Array(comparison_config['normalized_strings'])
+          normalized_strings:,
+          omitted_fields: Session::SessionCompare::OPTIONAL_COMPARISON_FIELDS.values_at(*script_disabled).flatten
         }
+      end
+
+      # Optional comparisons that the script's comparison_config turns off: a session's setting, when
+      # it has one, takes precedence over the script's. Unlike the command line flags, which only skip
+      # a comparison in the current run, these also leave the comparison's fields out of stored results.
+      def script_disabled_comparisons(session_key)
+        session_config = comparison_session_config(session_key)
+        Session::SessionCompare::OPTIONAL_COMPARISON_FIELDS.keys.select do |option|
+          value = session_config[option.to_s]
+          config_false?(value.nil? ? comparison_config[option.to_s] : value)
+        end
+      end
+
+      # Boolean settings are validated (see validate_comparison_settings!) to be true or false,
+      # either as YAML booleans or as strings in any case.
+      def config_false?(value)
+        value.to_s.downcase == 'false'
+      end
+
+      # Each optional comparison is enabled unless the command line or the script turns it off.
+      def optional_comparisons(script_disabled)
+        Session::SessionCompare::OPTIONAL_COMPARISON_FIELDS.keys.index_with do |option|
+          options[option].present? && script_disabled.exclude?(option)
+        end
+      end
+
+      def default_normalizations?
+        !config_false?(comparison_config['default_normalizations'])
       end
     end
   end
