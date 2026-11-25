@@ -511,9 +511,9 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
         [
           {
             'test_id' => 'test-1', 'result' => 'fail', 'result_message' => 'failed for session abc123',
-            'inputs' => [{ 'name' => 'url', 'value' => 'http://x/abc123' },
-                         { 'name' => 'auth', 'value' => '{"token":"abc123"}' },
-                         { 'name' => 'big', 'value' => '<too large to compare>' }],
+            'inputs' => [{ 'name' => 'auth', 'value' => '{"token":"abc123"}' },
+                         { 'name' => 'big', 'value' => '<too large to compare>' },
+                         { 'name' => 'url', 'value' => 'http://x/abc123' }],
             'outputs' => [{ 'name' => 'token', 'value' => 'abc' }],
             'messages' => [{ 'type' => 'error', 'message' => 'bad abc123' }],
             'requests' => [{ 'direction' => 'outgoing', 'verb' => 'get', 'url' => 'http://x/abc123?q=1',
@@ -541,7 +541,28 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
       expect(stored['messages'].first['message']).to eq('bad <s.session_id>')
       expect(stored['requests'].first['url']).to eq('http://x/<s.session_id>?q=1')
       expect(stored['inputs'].map { |input| input['value'] })
-        .to eq(['http://x/<s.session_id>', '{"token":"<s.session_id>"}', '<too large to compare>'])
+        .to eq(['{"token":"<s.session_id>"}', '<too large to compare>', 'http://x/<s.session_id>'])
+    end
+
+    it 'stores lists in a stable order regardless of the order their entries were recorded in' do
+      result = {
+        'test_id' => 'test-1', 'result' => 'pass',
+        'messages' => [{ 'type' => 'info', 'message' => 'a' }, { 'type' => 'warning', 'message' => 'b' },
+                       { 'type' => 'error', 'message' => 'c' }, { 'type' => 'error', 'message' => 'b' }],
+        'requests' => [{ 'direction' => 'outgoing', 'verb' => 'get', 'url' => 'http://x/2', 'status' => 200 },
+                       { 'direction' => 'incoming', 'verb' => 'post', 'url' => 'http://x/1', 'status' => 201 },
+                       { 'direction' => 'outgoing', 'verb' => 'get', 'url' => 'http://x/1', 'status' => 200 }],
+        'outputs' => [{ 'name' => 'z', 'value' => '1' }, { 'name' => 'a', 'value' => '2' }]
+      }
+      reordered = result.transform_values { |value| value.is_a?(Array) ? value.reverse : value }
+      stored = described_class.results_for_storage([result]).first
+
+      expect(described_class.results_for_storage([reordered]).first).to eq(stored)
+      expect(stored['messages'].map { |message| message.values_at('type', 'message') })
+        .to eq([%w[error b], %w[error c], %w[warning b], %w[info a]])
+      expect(stored['requests'].map { |request| request.values_at('direction', 'url') })
+        .to eq([%w[incoming http://x/1], %w[outgoing http://x/1], %w[outgoing http://x/2]])
+      expect(stored['outputs'].map { |output| output['name'] }).to eq(%w[a z])
     end
 
     it 'stores results that compare equal to the unnormalized results' do

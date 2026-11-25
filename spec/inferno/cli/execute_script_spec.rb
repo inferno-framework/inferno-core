@@ -1211,10 +1211,30 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         'steps' => [
           { 'status' => 'created', 'start_run' => nil },
           { 'status' => 'waiting', 'last_completed' => '1.01', 'http_get' => 'http://x' },
-          { 'status' => 'done', 'last_completed' => '1.02', 'action' => 'END_SCRIPT' }
+          { 'status' => 'waiting', 'last_completed' => '1.02', 'action' => 'wait' },
+          { 'status' => 'done', 'last_completed' => '1.03', 'action' => 'END_SCRIPT' }
         ]
       }
       expect { build_instance(config) }.to_not raise_error
+    end
+
+    def step_config(step)
+      { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [{ 'status' => 'done' }.merge(step)] }
+    end
+
+    [nil, 'ls', 5].each do |action|
+      it "exits 1 when a step's action is #{action.inspect}" do
+        expect_exit_with_error(step_config({ 'action' => action }),
+                               /Step 1 .* has action \S*#{action}\S*; use END_SCRIPT, NOOP, WAIT/)
+      end
+    end
+
+    %w[http_get command].each do |key|
+      [nil, ''].each do |value|
+        it "exits 1 when a step's #{key} is #{value.inspect}" do
+          expect_exit_with_error(step_config({ key => value }), /Step 1 .* must have a value for #{key}/)
+        end
+      end
     end
   end
 
@@ -1326,6 +1346,62 @@ RSpec.describe Inferno::CLI::ExecuteScript do
   end
 
   describe '#validate_comparison_settings!' do
+    context 'with normalized_strings' do
+      def expect_rule_error(rules, message)
+        expect_exit_with_error(single_session_config({ 'normalized_strings' => rules }), message)
+      end
+
+      it 'exits 1 when normalized_strings is not a list' do
+        expect_rule_error({ 'pattern' => 'x' }, /comparison_config.normalized_strings must be a list of rules/)
+      end
+
+      it 'exits 1 for an invalid regex' do
+        expect_rule_error(['/code=[A-Z/'],
+                          %r{Rule 1 of comparison_config.normalized_strings has an invalid regex '/code=\[A-Z/'})
+      end
+
+      it 'exits 1 for an invalid regex in a patterns list' do
+        expect_rule_error(['ok', { 'patterns' => ['fine', '/(/'] }], /Rule 2 .* has an invalid regex/)
+      end
+
+      it 'exits 1 for an empty pattern' do
+        expect_rule_error([''], /Rule 1 .* has an empty pattern/)
+      end
+
+      [true, nil, ['x']].each do |rule|
+        it "exits 1 for a #{rule.inspect} rule" do
+          expect_rule_error([rule], /Rule 1 .* has a pattern that is not a string/)
+        end
+      end
+
+      it 'exits 1 for unknown rule keys' do
+        expect_rule_error([{ 'pattern' => 'x', 'replace' => 'y' }], /Rule 1 .* has unknown keys replace/)
+      end
+
+      [{ 'replacement' => 'y' }, { 'pattern' => 'x', 'patterns' => ['y'] }].each do |rule|
+        it "exits 1 for a rule with #{rule.keys.join(' and ')}" do
+          expect_rule_error([rule], /Rule 1 .* must have pattern or patterns, not both/)
+        end
+      end
+
+      [[], 'x'].each do |patterns|
+        it "exits 1 when patterns is #{patterns.inspect}" do
+          expect_rule_error([{ 'patterns' => patterns }], /Rule 1 .* must have a list of patterns/)
+        end
+      end
+
+      it 'exits 1 for a replacement that is not a string' do
+        expect_rule_error([{ 'pattern' => 'x', 'replacement' => 1 }],
+                          /Rule 1 .* has a replacement that is not a string/)
+      end
+
+      it 'does not exit for valid rules' do
+        rules = ['plain', 4567, '/code=\\w+/i', { 'pattern' => '/a/', 'replacement' => '<A>' },
+                 { 'patterns' => ['b', '/c/'] }]
+        expect { build_instance(single_session_config({ 'normalized_strings' => rules })) }.to_not raise_error
+      end
+    end
+
     it 'exits 1 for an unknown compare_ setting' do
       expect_exit_with_error(single_session_config({ 'compare_request' => false }),
                              /comparison_config has unknown setting 'compare_request'; use .*compare_requests/)

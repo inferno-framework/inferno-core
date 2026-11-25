@@ -193,21 +193,41 @@ module Inferno
             if stored['result_message'].present?
               stored['result_message'] = normalizer.normalize(stored['result_message'])
             end
-            COMPARED_LIST_FIELDS.except(*omitted_fields).each do |list_field, (entry_fields, normalized_field)|
+            COMPARED_LIST_FIELDS.keys.excluding(omitted_fields).each do |list_field|
               next unless result[list_field].present?
 
-              stored[list_field] = result[list_field].map do |entry|
-                stored_entry = entry.slice(*entry_fields)
-                stored_entry[normalized_field] =
-                  if IO_LIST_FIELDS.include?(list_field)
-                    stored_io_value(entry[normalized_field], normalizer)
-                  else
-                    normalizer.normalize(entry[normalized_field])
-                  end
-                stored_entry.compact
-              end
+              stored[list_field] = stored_list(list_field, result[list_field], normalizer)
             end
             stored
+          end
+        end
+
+        # A list is stored in a stable order, since it's compared regardless of the order its entries
+        # were recorded in (e.g., concurrent requests), so that the order doesn't change the file.
+        def self.stored_list(list_field, entries, normalizer)
+          entry_fields, normalized_field = COMPARED_LIST_FIELDS[list_field]
+          stored_entries = entries.map do |entry|
+            stored_entry = entry.slice(*entry_fields)
+            stored_entry[normalized_field] =
+              if IO_LIST_FIELDS.include?(list_field)
+                stored_io_value(entry[normalized_field], normalizer)
+              else
+                normalizer.normalize(entry[normalized_field])
+              end
+            stored_entry.compact
+          end
+          stored_entries.sort_by { |entry| stored_entry_sort_key(list_field, entry) }
+        end
+
+        # Messages are in the order they're compared in (by type, then text), and other entries are
+        # ordered by their fields.
+        def self.stored_entry_sort_key(list_field, entry)
+          if list_field == 'messages'
+            [ComparedTestResult::MESSAGE_TYPE_ORDER.fetch(entry['type'].to_s,
+                                                          ComparedTestResult::UNKNOWN_MESSAGE_TYPE_ORDER),
+             entry['message'].to_s]
+          else
+            COMPARED_LIST_FIELDS[list_field].first.map { |field| entry[field].to_s }
           end
         end
 

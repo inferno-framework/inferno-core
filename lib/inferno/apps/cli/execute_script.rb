@@ -279,22 +279,37 @@ module Inferno
       end
 
       STEP_COMMAND_KEYS = %w[start_run action http_get command].freeze
+      STEP_ACTIONS = %w[END_SCRIPT NOOP WAIT].freeze
 
-      # Each step must be a mapping that specifies exactly one way to continue the script.
+      # Each step must be a mapping that specifies exactly one way to continue the script, with a
+      # value it can be continued with.
       def validate_step_commands!
         errors = Array(script_config['steps']).each_with_index.filter_map do |step, index|
           next "Step #{index + 1} must be a mapping of step keys; found a #{step.class}." unless step.is_a?(Hash)
 
+          label = "Step #{index + 1} (status: #{step['status']}, last_completed: #{step['last_completed']})"
           found = STEP_COMMAND_KEYS & step.keys
-          next if found.length == 1
+          next step_command_value_error(step, found.first, label) if found.length == 1
 
-          "Step #{index + 1} (status: #{step['status']}, last_completed: #{step['last_completed']}) " \
-            "must have exactly one of #{STEP_COMMAND_KEYS.join(', ')}; " \
+          "#{label} must have exactly one of #{STEP_COMMAND_KEYS.join(', ')}; " \
             "found: #{found.empty? ? 'none' : found.join(', ')}."
         end
         return if errors.empty?
 
         exit_with_errors!(errors)
+      end
+
+      # start_run may be empty (run the whole suite). An action other than the built-in ones would
+      # otherwise be run as a shell command.
+      def step_command_value_error(step, key, label)
+        value = step[key]
+        if key == 'action'
+          return if value.is_a?(String) && STEP_ACTIONS.include?(value.upcase)
+
+          "#{label} has action #{value.inspect}; use #{STEP_ACTIONS.join(', ')}."
+        elsif key != 'start_run' && value.to_s.blank?
+          "#{label} must have a value for #{key}."
+        end
       end
 
       def validate_commands_allowed!
@@ -368,8 +383,58 @@ module Inferno
 
         errors = comparison_config_errors(comparison_config, 'comparison_config', script_comparison_keys,
                                           script_misplaced_key_hints)
+        errors += normalized_strings_errors(comparison_config['normalized_strings'])
         errors += comparison_sessions_errors if multi_session_script?
         exit_with_errors!(errors) if errors.any?
+      end
+
+      NORMALIZED_STRING_RULE_KEYS = %w[pattern patterns replacement].freeze
+
+      # Rules are otherwise only parsed when results are compared, after the script has run.
+      def normalized_strings_errors(rules)
+        return [] if rules.nil?
+        return ['comparison_config.normalized_strings must be a list of rules.'] unless rules.is_a?(Array)
+
+        rules.each_with_index.flat_map do |rule, index|
+          normalized_string_rule_errors(rule, "Rule #{index + 1} of comparison_config.normalized_strings")
+        end
+      end
+
+      def normalized_string_rule_errors(rule, label)
+        return normalized_string_pattern_errors([rule], label) unless rule.is_a?(Hash)
+
+        shape_error = normalized_string_rule_shape_error(rule, label)
+        return [shape_error] if shape_error
+
+        patterns = rule.key?('patterns') ? rule['patterns'] : [rule['pattern']]
+        return ["#{label} must have a list of patterns."] unless patterns.is_a?(Array) && patterns.any?
+
+        normalized_string_pattern_errors(patterns, label)
+      end
+
+      def normalized_string_rule_shape_error(rule, label)
+        unknown = rule.keys.map(&:to_s) - NORMALIZED_STRING_RULE_KEYS
+        if unknown.any?
+          "#{label} has unknown keys #{unknown.join(', ')}; use #{NORMALIZED_STRING_RULE_KEYS.join(', ')}."
+        elsif rule.key?('pattern') == rule.key?('patterns')
+          "#{label} must have pattern or patterns, not both."
+        elsif !(rule['replacement'].nil? || rule['replacement'].is_a?(String))
+          "#{label} has a replacement that is not a string."
+        end
+      end
+
+      # Patterns are plain strings (numbers are read as their text) or /regex/ strings.
+      def normalized_string_pattern_errors(patterns, label)
+        patterns.filter_map do |pattern|
+          next "#{label} has a pattern that is not a string: #{pattern.inspect}." unless
+            pattern.is_a?(String) || pattern.is_a?(Numeric)
+          next "#{label} has an empty pattern." if pattern.to_s.empty?
+
+          Session::SessionCompare.parse_pattern_string(pattern.to_s)
+          nil
+        rescue RegexpError => e
+          "#{label} has an invalid regex '#{pattern}': #{e.message}."
+        end
       end
 
       def script_comparison_keys
