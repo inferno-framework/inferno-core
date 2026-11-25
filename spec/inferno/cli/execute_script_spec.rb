@@ -14,6 +14,8 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       inferno_base_url: inferno_host,
       compare_messages: false,
       compare_result_message: false,
+      compare_requests: true,
+      compare_io: true,
       poll_interval: 0,
       default_poll_timeout: 5
     }
@@ -591,6 +593,44 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(File).to have_received(:write).with(expected_file, satisfy { |json| JSON.parse(json) == expected })
     end
 
+    it 'keeps the fields of comparisons turned off on the command line in the written expected results' do
+      instance = build_instance({
+                                  'sessions' => [{ 'suite' => suite_id }],
+                                  'steps' => [],
+                                  'comparison_config' => { 'expected_results_file' => expected_file }
+                                }, base_options.merge(compare_io: false))
+      results = [{ 'test_id' => 'test-1', 'result' => 'pass',
+                   'outputs' => [{ 'name' => 'token', 'value' => 'abc' }] }]
+      allow(File).to receive(:exist?).with(expected_file).and_return(false)
+      allow(mock_results).to receive(:results_for_session).with(session_id).and_return(results)
+      allow(File).to receive(:write).with(expected_file, anything)
+
+      instance.send(:compare_session, session)
+
+      expect(File).to have_received(:write).with(expected_file, satisfy { |json| JSON.parse(json) == results })
+    end
+
+    it 'leaves the fields of comparisons turned off in comparison_config out of the written expected results' do
+      instance = build_instance({
+                                  'sessions' => [{ 'suite' => suite_id }],
+                                  'steps' => [],
+                                  'comparison_config' => { 'expected_results_file' => expected_file,
+                                                           'compare_requests' => false }
+                                })
+      results = [{ 'test_id' => 'test-1', 'result' => 'pass',
+                   'outputs' => [{ 'name' => 'token', 'value' => 'abc' }],
+                   'requests' => [{ 'direction' => 'outgoing', 'verb' => 'get', 'status' => 200,
+                                    'url' => 'http://example.com/varies' }] }]
+      allow(File).to receive(:exist?).with(expected_file).and_return(false)
+      allow(mock_results).to receive(:results_for_session).with(session_id).and_return(results)
+      allow(File).to receive(:write).with(expected_file, anything)
+
+      instance.send(:compare_session, session)
+
+      expected = [{ 'test_id' => 'test-1', 'result' => 'pass', 'outputs' => [{ 'name' => 'token', 'value' => 'abc' }] }]
+      expect(File).to have_received(:write).with(expected_file, satisfy { |json| JSON.parse(json) == expected })
+    end
+
     context 'with update_expected' do
       subject(:instance) do
         build_instance({
@@ -622,6 +662,22 @@ RSpec.describe Inferno::CLI::ExecuteScript do
         allow(File).to receive(:exist?).with(expected_file).and_return(true)
         allow(File).to receive(:read).with(expected_file).and_return("#{JSON.pretty_generate(results)}\n")
         allow(mock_compare).to receive_messages(results_match?: true, session_results: results)
+
+        expect(instance.send(:compare_session, session)).to be(true)
+        expect(File).to_not have_received(:write)
+      end
+
+      it 'keeps the fields of comparisons turned off on the command line when updating' do
+        io_results = [{ 'test_id' => 'test-1', 'result' => 'pass',
+                        'outputs' => [{ 'name' => 'token', 'value' => 'abc' }] }]
+        instance = build_instance({
+                                    'sessions' => [{ 'suite' => suite_id }],
+                                    'steps' => [],
+                                    'comparison_config' => { 'expected_results_file' => expected_file }
+                                  }, base_options.merge(update_expected: true, compare_io: false))
+        allow(File).to receive(:exist?).with(expected_file).and_return(true)
+        allow(File).to receive(:read).with(expected_file).and_return("#{JSON.pretty_generate(io_results)}\n")
+        allow(mock_compare).to receive_messages(results_match?: true, session_results: io_results)
 
         expect(instance.send(:compare_session, session)).to be(true)
         expect(File).to_not have_received(:write)
@@ -720,6 +776,47 @@ RSpec.describe Inferno::CLI::ExecuteScript do
 
       expect(Inferno::CLI::Session::SessionCompare.normalize_string("token=#{hex64} id=#{hex64}", normalized_strings))
         .to eq('token=<TOKEN> id=<RANDOM_64_CHAR_HEX>')
+    end
+
+    %w[compare_messages compare_result_message compare_requests compare_io].each do |option|
+      it "turns off #{option} when comparison_config sets it to false, even when the CLI enables it" do
+        config = base_config.merge('comparison_config' => { option => false })
+        instance = build_instance(config, base_options.merge(option.to_sym => true))
+        expect(instance.send(:compare_options, '/tmp/expected.json', suite_id)[option.to_sym]).to be(false)
+      end
+    end
+
+    it 'does not turn on a comparison the CLI turns off when comparison_config sets it to true' do
+      config = base_config.merge('comparison_config' => { 'compare_requests' => true })
+      instance = build_instance(config, base_options.merge(compare_requests: false))
+      expect(instance.send(:compare_options, '/tmp/expected.json', suite_id)[:compare_requests]).to be(false)
+    end
+
+    it "accepts 'false' strings in comparison_config" do
+      config = base_config.merge('comparison_config' => { 'compare_io' => 'False' })
+      expect(build_instance(config).send(:compare_options, '/tmp/expected.json', suite_id)[:compare_io]).to be(false)
+    end
+
+    it 'turns off a comparison for only the session whose comparison_config sets it to false' do
+      config = {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 'receiver' }, { 'suite' => suite_id, 'name' => 'sender' }],
+        'steps' => [],
+        'comparison_config' => { 'sessions' => { 'sender' => { 'compare_requests' => false } } }
+      }
+      instance = build_instance(config, session_ids: %w[receiver-id sender-id])
+      expect(instance.send(:compare_options, '/tmp/expected.json', 'sender')[:compare_requests]).to be(false)
+      expect(instance.send(:compare_options, '/tmp/expected.json', 'receiver')[:compare_requests]).to be(true)
+    end
+
+    it 'omits the fields of comparisons the script turns off from stored results' do
+      config = base_config.merge('comparison_config' => { 'compare_io' => false, 'compare_requests' => 'false' })
+      opts = build_instance(config).send(:compare_options, '/tmp/expected.json', suite_id)
+      expect(opts[:omitted_fields]).to contain_exactly('requests', 'inputs', 'outputs')
+    end
+
+    it 'does not omit the fields of comparisons the command line turns off from stored results' do
+      instance = build_instance(base_config, base_options.merge(compare_io: false, compare_requests: false))
+      expect(instance.send(:compare_options, '/tmp/expected.json', suite_id)[:omitted_fields]).to eq([])
     end
 
     it 'passes the expected_file through as expected_results_file' do

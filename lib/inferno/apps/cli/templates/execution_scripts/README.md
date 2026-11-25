@@ -21,9 +21,7 @@ When a change intentionally alters results, run the affected scripts with
 `--update-expected` (`-u`). Expected results files are overwritten with the
 actual results (pretty-printed) whenever their stored content would change,
 instead of writing actual results and comparison files, and the comparison is
-treated as passing. This includes files whose results still match but that were
-written in an older format or with different normalizations, so `-u` also
-brings those up to date. Files that are already current aren't rewritten.
+treated as passing. Files that are already current aren't rewritten.
 Review the changes with `git diff` before committing.
 
 Expected results files (and the actual results files written on a mismatch)
@@ -32,6 +30,22 @@ contain only the fields used in comparison: the result's test, group, or suite i
 verb, URL, and status), and `inputs`/`outputs` (name and value). To get a
 session's full results (including result and request ids and timestamps), use
 `inferno session results SESSION_ID`.
+
+To skip a comparison for every script in a run, use its command line flag
+(`--no-compare-messages`, `--no-compare-result-message`, `--no-compare-requests`, or
+`--no-compare-io`). The flags don't change what's stored. To turn a comparison off
+for a script, e.g., when its requests vary between runs, set it to `false` in the
+script's `comparison_config` (in a multi-session script, it can also be set for one
+session under `comparison_config.sessions.<name>`):
+
+```yaml
+comparison_config:
+  compare_requests: false
+```
+
+The fields of comparisons a script turns off aren't stored in its expected results
+files. A comparison runs only when neither the command line nor the script turns it
+off. After changing these settings, regenerate the affected expected results with `-u`.
 
 These files are stored in normalized form, so regenerating expected results only
 changes the file when compared content changes. Normalizations are applied in this
@@ -62,9 +76,9 @@ these to a script's `normalized_strings` if its results need them.
 Set `comparison_config.default_normalizations: false` in a script to skip steps 2
 and 4 and compare those values exactly.
 
-Normalization is also applied when comparing, so adding a rule doesn't require
-regenerating, but after changing or removing a rule (or renaming a session),
-regenerate the affected expected results with `-u`.
+Expected results are stored already normalized, so after adding, changing, or
+removing a rule (or renaming a session), regenerate the affected expected results
+with `-u` and review the diff.
 
 The standalone `inferno session compare -f` command applies the default
 normalizations (steps 2 and 4) for the Inferno given with `-I` (or the default

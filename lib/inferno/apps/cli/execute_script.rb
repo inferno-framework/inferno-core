@@ -49,6 +49,13 @@ module Inferno
     #                                              #    lowercase hex values (e.g., SecureRandom.hex(32)) with
     #                                              #    <RANDOM_64_CHAR_HEX> (after normalized_strings).
     #                                              #    Set to false to disable these default normalizations.
+    #     compare_messages: false                  # optional; set any of these to false to skip that comparison
+    #     compare_result_message: false            #    for this script even when the command line enables it
+    #     compare_requests: false                  #    (e.g., when a script's requests vary between runs). The
+    #     compare_io: false                        #    fields of comparisons turned off here aren't stored in
+    #                                              #    expected results files (the command line flags don't
+    #                                              #    change what's stored); regenerate them with -u after
+    #                                              #    changing these.
     #     normalized_strings:                      # optional; global normalization rules applied to
     #                                              #    both expected and actual before comparing
     #                                              #    (result messages, messages, request URLs, and
@@ -95,6 +102,9 @@ module Inferno
     #     sessions:
     #       my_name:                               # matches session name key (sessions[*].name or suite)
     #         expected_results_file: expected.json # optional; defaults to <yaml basename>_<name>_expected.json
+    #         compare_requests: false              # optional; compare_messages, compare_result_message,
+    #                                              #   compare_requests, and compare_io can also be set to false
+    #                                              #   for a single session
     #         alternate_expected_files:            # optional; same structure as single-session above
     #           - file: alt_expected.json
     #             when:
@@ -1100,13 +1110,14 @@ module Inferno
 
       def compare_session(session)
         expected_file = resolve_expected_file_for_comparison(session)
+        session_compare_options = compare_options(expected_file, session.key)
 
         if File.exist?(expected_file)
-          cmp = Session::SessionCompare.new(session.session_id, compare_options(expected_file))
+          cmp = Session::SessionCompare.new(session.session_id, session_compare_options)
           matched = cmp.results_match?
           warn "  Comparing against #{File.basename(expected_file)}"
           warn "  Actual results matched expected results? #{matched}"
-          return update_expected_results(expected_file, cmp.session_results) if options[:update_expected]
+          return update_expected_results(session_compare_options, cmp.session_results) if options[:update_expected]
 
           unless matched
             warn_if_older_format(cmp.expected_results)
@@ -1117,7 +1128,7 @@ module Inferno
         else
           warn "  Expected results file not found; writing actual results to #{expected_file}"
           results = Session::SessionResults.new(session.session_id, options).results_for_session(session.session_id)
-          write_expected_results(expected_file, results)
+          write_expected_results(session_compare_options, results)
           options[:update_expected].present?
         end
       end
@@ -1133,14 +1144,16 @@ module Inferno
 
       # Expected results are stored normalized so that regenerating them only changes the file
       # when compared content changes.
-      def write_expected_results(expected_file, results)
-        File.write(expected_file, stored_expected_results(expected_file, results))
+      def write_expected_results(session_compare_options, results)
+        File.write(session_compare_options[:expected_results_file],
+                   stored_expected_results(session_compare_options, results))
       end
 
       # Rewrites the expected results file whenever its stored content would change, even if
       # the results match (e.g., a file in an older format or written with other normalizations).
-      def update_expected_results(expected_file, results)
-        content = stored_expected_results(expected_file, results)
+      def update_expected_results(session_compare_options, results)
+        expected_file = session_compare_options[:expected_results_file]
+        content = stored_expected_results(session_compare_options, results)
         if File.read(expected_file) == content
           warn '  Expected results already up to date'
         else
@@ -1150,9 +1163,11 @@ module Inferno
         true
       end
 
-      def stored_expected_results(expected_file, results)
-        normalized_strings = compare_options(expected_file)[:normalized_strings]
-        Session::SessionCompare.stored_results_json(results, normalized_strings)
+      # The fields of comparisons the script turns off aren't stored, so that values it doesn't
+      # compare don't change the file.
+      def stored_expected_results(session_compare_options, results)
+        Session::SessionCompare.stored_results_json(results, session_compare_options[:normalized_strings],
+                                                    omitted_fields: session_compare_options[:omitted_fields])
       end
 
       # Session ids differ between runs and can appear anywhere in results (e.g., in
@@ -1243,22 +1258,38 @@ module Inferno
         @comparison_config ||= script_config['comparison_config'] || {}
       end
 
-      def compare_options(expected_file)
+      def compare_options(expected_file, session_key = nil)
         normalized_strings = session_id_normalized_strings +
                              Session::SessionCompare.standard_normalized_strings(
                                comparison_config['normalized_strings'], inferno_base_url,
                                default_normalizations: default_normalizations?
                              )
+        script_disabled = script_disabled_comparisons(session_key)
         {
           expected_results_file: expected_file,
-          compare_messages: options[:compare_messages],
-          compare_result_message: options[:compare_result_message],
-          compare_requests: options[:compare_requests],
-          compare_io: options[:compare_io],
+          **optional_comparisons(script_disabled),
           only_different_messages: options[:only_different_messages],
           inferno_base_url: options[:inferno_base_url],
-          normalized_strings:
+          normalized_strings:,
+          omitted_fields: Session::SessionCompare::OPTIONAL_COMPARISON_FIELDS.values_at(*script_disabled).flatten
         }
+      end
+
+      # Optional comparisons that the script's comparison_config (globally or for the session) turns
+      # off. Unlike the command line flags, which only skip a comparison in the current run, these
+      # also leave the comparison's fields out of stored results.
+      def script_disabled_comparisons(session_key)
+        configs = [comparison_config, comparison_session_config(session_key)]
+        Session::SessionCompare::OPTIONAL_COMPARISON_FIELDS.keys.select do |option|
+          configs.any? { |config| config[option.to_s].to_s.downcase == 'false' }
+        end
+      end
+
+      # Each optional comparison is enabled unless the command line or the script turns it off.
+      def optional_comparisons(script_disabled)
+        Session::SessionCompare::OPTIONAL_COMPARISON_FIELDS.keys.index_with do |option|
+          options[option].present? && script_disabled.exclude?(option)
+        end
       end
 
       def default_normalizations?

@@ -23,8 +23,8 @@ module Inferno
             desc: 'Path to a file that contains the expected results. When the session ' \
                   'results do not match the expected results in the file, generated ' \
                   'comparison files will be placed in the same directory. The actual results ' \
-                  'file written there contains only the compared fields, normalized; use ' \
-                  '`inferno session results` for full results. Expected results ' \
+                  'file written there contains only the fields that can be compared, normalized; ' \
+                  'use `inferno session results` for full results. Expected results ' \
                   'files written by execute_script can be compared unless they contain ' \
                   '<NAME.session_id> placeholders or depend on the script\'s normalized_strings; ' \
                   'compare those by running the script.'
@@ -79,6 +79,13 @@ module Inferno
           'messages' => [%w[type message], 'message'],
           'requests' => [%w[direction verb url status], 'url']
         }.freeze
+        # Option enabling each optional comparison => result fields it compares
+        OPTIONAL_COMPARISON_FIELDS = {
+          compare_result_message: %w[result_message],
+          compare_messages: %w[messages],
+          compare_requests: %w[requests],
+          compare_io: %w[inputs outputs]
+        }.freeze
 
         # Inferno replaces large input and output values with a message containing a link that
         # varies by run (result id, session id, and host), so only the fact that the value was
@@ -117,10 +124,12 @@ module Inferno
         def self.standard_normalized_strings(normalized_strings, inferno_base_url, default_normalizations: true)
           return Array(normalized_strings) unless default_normalizations
 
-          base_url_rule = { 'patterns' => inferno_base_url_patterns(inferno_base_url),
-                            'replacement' => '<inferno_base_url>' }
-          [(base_url_rule if inferno_base_url.present?), TIMESTAMP_NORMALIZATION].compact +
-            Array(normalized_strings) + [RANDOM_64_CHAR_HEX_NORMALIZATION]
+          leading_rules = [TIMESTAMP_NORMALIZATION]
+          if inferno_base_url.present?
+            leading_rules.unshift({ 'patterns' => inferno_base_url_patterns(inferno_base_url),
+                                    'replacement' => '<inferno_base_url>' })
+          end
+          leading_rules + Array(normalized_strings) + [RANDOM_64_CHAR_HEX_NORMALIZATION]
         end
 
         # Regex pattern strings for each form of the base URL, as is and URL-encoded (regex patterns
@@ -174,15 +183,16 @@ module Inferno
 
         # Reduces results to the fields used in comparison and applies normalized_strings, so that
         # stored results (expected results files and actual results written on a mismatch) only
-        # change when compared content changes.
-        def self.results_for_storage(results, normalized_strings = [])
+        # change when compared content changes. omitted_fields are left out, e.g., the fields of
+        # comparisons a script turns off, so that values it doesn't compare aren't stored.
+        def self.results_for_storage(results, normalized_strings = [], omitted_fields: [])
           normalizer = Normalizer.for(normalized_strings)
           results.map do |result|
-            stored = result.slice(*COMPARED_RESULT_FIELDS)
+            stored = result.slice(*(COMPARED_RESULT_FIELDS - omitted_fields))
             if stored['result_message'].present?
               stored['result_message'] = normalizer.normalize(stored['result_message'])
             end
-            COMPARED_LIST_FIELDS.each do |list_field, (entry_fields, normalized_field)|
+            COMPARED_LIST_FIELDS.except(*omitted_fields).each do |list_field, (entry_fields, normalized_field)|
               next unless result[list_field].present?
 
               stored[list_field] = result[list_field].map do |entry|
@@ -202,8 +212,8 @@ module Inferno
 
         # Results in stored form as the contents of a results file, ending with a newline as most
         # editors and tools expect.
-        def self.stored_results_json(results, normalized_strings = [])
-          "#{JSON.pretty_generate(results_for_storage(results, normalized_strings))}\n"
+        def self.stored_results_json(results, normalized_strings = [], omitted_fields: [])
+          "#{JSON.pretty_generate(results_for_storage(results, normalized_strings, omitted_fields:))}\n"
         end
 
         # Inputs and outputs may have non-string or large values (see LARGE_IO_VALUE_PATTERN).
@@ -319,7 +329,8 @@ module Inferno
         def save_actual_results_to_file
           actual_results_file_name = "#{output_file_prefix}actual_results_#{results_timestamp}#{host_suffix}.json"
           File.write(File.join(output_directory, actual_results_file_name),
-                     self.class.stored_results_json(session_results, options[:normalized_strings]))
+                     self.class.stored_results_json(session_results, options[:normalized_strings],
+                                                    omitted_fields: Array(options[:omitted_fields])))
         end
 
         def save_comparison_csv_to_file

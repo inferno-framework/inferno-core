@@ -524,6 +524,15 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
       )
     end
 
+    it 'leaves out omitted fields' do
+      stored = described_class.results_for_storage(results, [], omitted_fields: %w[result_message requests inputs])
+      expect(stored.first).to eq(
+        'test_id' => 'test-1', 'result' => 'fail',
+        'outputs' => [{ 'name' => 'token', 'value' => 'abc' }],
+        'messages' => [{ 'type' => 'error', 'message' => 'bad abc123' }]
+      )
+    end
+
     it 'applies normalized strings to result messages, messages, request URLs, and input and output values' do
       normalized_strings = [{ 'pattern' => 'abc123', 'replacement' => '<s.session_id>' }]
       stored = described_class.results_for_storage(results, normalized_strings).first
@@ -589,9 +598,11 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
         .to eq(['http://other.example.com'])
     end
 
-    it 'omits the base URL rule when there is no base URL' do
-      expect(described_class.standard_normalized_strings(nil, ''))
-        .to eq([described_class::TIMESTAMP_NORMALIZATION, described_class::RANDOM_64_CHAR_HEX_NORMALIZATION])
+    ['', nil].each do |base_url|
+      it "omits the base URL rule when the base URL is #{base_url.inspect}" do
+        expect(described_class.standard_normalized_strings(nil, base_url))
+          .to eq([described_class::TIMESTAMP_NORMALIZATION, described_class::RANDOM_64_CHAR_HEX_NORMALIZATION])
+      end
     end
 
     it 'normalizes exactly 64 lowercase hex characters with the default random hex rule' do
@@ -814,6 +825,22 @@ RSpec.describe Inferno::CLI::Session::SessionCompare do
           .to eq(described_class.results_for_storage(actual_results_parsed, normalized_strings))
         expect(File.read(written.first)).to_not include(actual_results_session_id)
         expect(File.read(written.first)).to end_with("]\n")
+      end
+    end
+
+    it 'leaves out the given omitted_fields' do
+      Dir.mktmpdir do |dir|
+        expected_file = File.join(dir, 'script_expected.json')
+        compare = described_class.new(actual_results_session_id, { expected_results_file: expected_file,
+                                                                   omitted_fields: %w[requests] })
+        allow(compare).to receive(:session_results).and_return(actual_results_parsed)
+
+        compare.save_actual_results_to_file
+
+        written = JSON.parse(File.read(Dir.glob(File.join(dir, 'script_actual_results_*.json')).first))
+        expect(written).to eq(described_class.results_for_storage(actual_results_parsed, [],
+                                                                  omitted_fields: %w[requests]))
+        expect(written.flat_map(&:keys)).to_not include('requests')
       end
     end
   end
