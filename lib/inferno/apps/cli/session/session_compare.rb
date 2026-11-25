@@ -26,8 +26,9 @@ module Inferno
                   'file written there contains only the fields that can be compared, normalized; ' \
                   'use `inferno session results` for full results. Expected results ' \
                   'files written by execute_script can be compared unless they contain ' \
-                  '<NAME.session_id> placeholders or depend on the script\'s normalized_strings; ' \
-                  'compare those by running the script.'
+                  '<NAME.session_id> placeholders, depend on the script\'s normalized_strings, ' \
+                  'or lack the fields of comparisons the script turns off; compare those by ' \
+                  'running the script.'
           },
           compare_messages: {
             aliases: ['-m'],

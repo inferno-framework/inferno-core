@@ -103,8 +103,10 @@ module Inferno
     #       my_name:                               # matches session name key (sessions[*].name or suite)
     #         expected_results_file: expected.json # optional; defaults to <yaml basename>_<name>_expected.json
     #         compare_requests: false              # optional; compare_messages, compare_result_message,
-    #                                              #   compare_requests, and compare_io can also be set to false
-    #                                              #   for a single session
+    #                                              #   compare_requests, and compare_io can also be set for a
+    #                                              #   single session, taking precedence over the script's
+    #                                              #   setting (e.g., true to compare requests for only this
+    #                                              #   session)
     #         alternate_expected_files:            # optional; same structure as single-session above
     #           - file: alt_expected.json
     #             when:
@@ -213,6 +215,7 @@ module Inferno
         validate_step_commands!
         validate_commands_allowed!
         validate_session_names!
+        validate_comparison_settings!
         validate_expected_files!
         self.execution_status = ExecutionStatus.new(
           done: false,
@@ -263,15 +266,15 @@ module Inferno
       end
 
       def validate_yaml_file!
-        unless File.exist?(yaml_file)
-          puts JSON.pretty_generate({ errors: "File not found: #{yaml_file}" })
-          exit(1)
-        end
+        exit_with_errors!(["File not found: #{yaml_file}"]) unless File.exist?(yaml_file)
         return if yaml_file.end_with?('.yaml', '.yml')
 
-        puts JSON.pretty_generate(
-          { errors: "'#{yaml_file}' does not appear to be a YAML file (.yaml or .yml extension required)." }
-        )
+        exit_with_errors!(["'#{yaml_file}' does not appear to be a YAML file (.yaml or .yml extension required)."])
+      end
+
+      # Reports problems found before the script runs as JSON and exits.
+      def exit_with_errors!(errors)
+        puts JSON.pretty_generate({ errors: errors.join(' ') })
         exit(1)
       end
 
@@ -291,19 +294,15 @@ module Inferno
         end
         return if errors.empty?
 
-        puts JSON.pretty_generate({ errors: errors.join(' ') })
-        exit(1)
+        exit_with_errors!(errors)
       end
 
       def validate_commands_allowed!
         return if options[:allow_commands]
         return if Array(script_config['steps']).none? { |step| step['command'].present? }
 
-        puts JSON.pretty_generate(
-          { errors: "Script contains 'command' steps but --allow-commands was not set. " \
-                    'Re-run with --allow-commands to permit arbitrary shell command execution.' }
-        )
-        exit(1)
+        exit_with_errors!(["Script contains 'command' steps but --allow-commands was not set. " \
+                           'Re-run with --allow-commands to permit arbitrary shell command execution.'])
       end
 
       # Session names are used in template tokens and must be free of characters that would
@@ -315,8 +314,7 @@ module Inferno
                  duplicate_session_name_errors(session_configs)
         return if errors.empty?
 
-        puts JSON.pretty_generate({ errors: errors.join(' ') })
-        exit(1)
+        exit_with_errors!(errors)
       end
 
       # Checked before running so that a malformed expected results file or alternate_expected_files
@@ -331,16 +329,103 @@ module Inferno
         errors << "#{malformed.join(' ')} Fix or delete the file before running the script." if malformed.any?
         return if errors.empty?
 
-        puts JSON.pretty_generate({ errors: errors.join(' ') })
-        exit(1)
+        exit_with_errors!(errors)
       end
 
       # [session key, alternate_expected_files entries] for each session in the script.
       def alternate_expected_file_configs
-        Array(script_config['sessions']).map do |session_config|
-          key = session_config['name']&.to_s || session_config['suite']
+        script_session_keys.map do |key|
           [key, Array(comparison_session_config(key)['alternate_expected_files'])]
         end
+      end
+
+      def script_session_keys
+        Array(script_config['sessions']).map { |session_config| session_key(session_config) }
+      end
+
+      # A session's key: its name, or its suite when it has none.
+      def session_key(session_config)
+        session_config['name']&.to_s || session_config['suite']
+      end
+
+      COMPARISON_SETTINGS = Session::SessionCompare::OPTIONAL_COMPARISON_FIELDS.keys.map(&:to_s).freeze
+      BOOLEAN_COMPARISON_SETTINGS = (COMPARISON_SETTINGS + %w[default_normalizations]).freeze
+      # Settings that apply to the whole script, and so are only read directly under comparison_config
+      SCRIPT_COMPARISON_KEYS = %w[default_normalizations normalized_strings].freeze
+      # Settings that are read for each session: directly under comparison_config in a single-session
+      # script, and under comparison_config.sessions.<name> in a multi-session script
+      SESSION_COMPARISON_KEYS = %w[expected_results_file alternate_expected_files].freeze
+      SESSION_MISPLACED_KEY_HINTS = SCRIPT_COMPARISON_KEYS.index_with do
+        'applies to the whole script; put it directly under comparison_config.'
+      end.freeze
+
+      # Checked before running so that a misspelled, misplaced, or non-boolean comparison setting
+      # isn't silently ignored (e.g., leaving on a comparison the script meant to turn off).
+      def validate_comparison_settings!
+        unless comparison_config.is_a?(Hash)
+          exit_with_errors!(['comparison_config must be a mapping of comparison settings.'])
+        end
+
+        errors = comparison_config_errors(comparison_config, 'comparison_config', script_comparison_keys,
+                                          script_misplaced_key_hints)
+        errors += comparison_sessions_errors if multi_session_script?
+        exit_with_errors!(errors) if errors.any?
+      end
+
+      def script_comparison_keys
+        SCRIPT_COMPARISON_KEYS + COMPARISON_SETTINGS + (multi_session_script? ? %w[sessions] : SESSION_COMPARISON_KEYS)
+      end
+
+      def script_misplaced_key_hints
+        if multi_session_script?
+          SESSION_COMPARISON_KEYS.index_with do
+            'is set for each session in a multi-session script; put it under comparison_config.sessions.<name>.'
+          end
+        else
+          { 'sessions' => 'is only used in multi-session scripts; put its settings directly under comparison_config.' }
+        end
+      end
+
+      # Errors for keys that aren't allowed (with a hint for those that belong elsewhere) and for
+      # boolean settings that aren't true or false.
+      def comparison_config_errors(config, label, allowed_keys, misplaced_key_hints)
+        key_errors = (config.keys.map(&:to_s) - allowed_keys).map do |key|
+          next "#{label}.#{key} #{misplaced_key_hints[key]}" if misplaced_key_hints.key?(key)
+
+          "#{label} has unknown setting '#{key}'; use #{allowed_keys.join(', ')}."
+        end
+        key_errors + (allowed_keys & BOOLEAN_COMPARISON_SETTINGS).filter_map do |setting|
+          value = config[setting]
+          next if value.nil? || %w[true false].include?(value.to_s.downcase)
+
+          "#{label}.#{setting} must be true or false; found #{value.inspect}."
+        end
+      end
+
+      def comparison_sessions_errors
+        sessions_config = comparison_config['sessions']
+        return [] if sessions_config.nil?
+        unless sessions_config.is_a?(Hash)
+          return ['comparison_config.sessions must be a mapping of session names to settings.']
+        end
+
+        # e.g., both 1 and '1', which YAML reads as different keys
+        duplicate_errors = sessions_config.keys.map(&:to_s).tally.select { |_name, count| count > 1 }.keys.map do |name|
+          "comparison_config.sessions has more than one entry for session '#{name}'."
+        end
+        duplicate_errors + sessions_config.flat_map { |name, config| comparison_session_errors(name, config) }
+      end
+
+      def comparison_session_errors(name, config)
+        label = "comparison_config.sessions.#{name}"
+        unless script_session_keys.include?(name.to_s)
+          return ["#{label} does not match a session in the script; use #{script_session_keys.join(', ')}."]
+        end
+        return [] if config.nil?
+        return ["#{label} must be a mapping of settings."] unless config.is_a?(Hash)
+
+        comparison_config_errors(config, label, SESSION_COMPARISON_KEYS + COMPARISON_SETTINGS,
+                                 SESSION_MISPLACED_KEY_HINTS)
       end
 
       def alternate_expected_file_errors
@@ -442,7 +527,7 @@ module Inferno
 
       def create_session_from_config(session_config)
         suite = session_config['suite']
-        key = session_config['name']&.to_s || suite
+        key = session_key(session_config)
         name_detail = session_config['name'] ? " with name '#{session_config['name']}'" : ''
         warn "Creating session for suite '#{suite}'#{name_detail}..."
         creator = Session::CreateSession.new(suite, session_create_options(session_config))
@@ -1102,10 +1187,16 @@ module Inferno
 
       def comparison_session_config(key)
         if multi_session_script?
-          (comparison_config['sessions'] || {})[key] || {}
+          comparison_sessions_config[key] || {}
         else
           comparison_config
         end
+      end
+
+      # comparison_config.sessions with string keys, since YAML reads a numeric session name key as
+      # an Integer (see validate_comparison_settings!, which reports keys that collide).
+      def comparison_sessions_config
+        @comparison_sessions_config ||= (comparison_config['sessions'] || {}).transform_keys(&:to_s)
       end
 
       def compare_session(session)
@@ -1275,14 +1366,21 @@ module Inferno
         }
       end
 
-      # Optional comparisons that the script's comparison_config (globally or for the session) turns
-      # off. Unlike the command line flags, which only skip a comparison in the current run, these
-      # also leave the comparison's fields out of stored results.
+      # Optional comparisons that the script's comparison_config turns off: a session's setting, when
+      # it has one, takes precedence over the script's. Unlike the command line flags, which only skip
+      # a comparison in the current run, these also leave the comparison's fields out of stored results.
       def script_disabled_comparisons(session_key)
-        configs = [comparison_config, comparison_session_config(session_key)]
+        session_config = comparison_session_config(session_key)
         Session::SessionCompare::OPTIONAL_COMPARISON_FIELDS.keys.select do |option|
-          configs.any? { |config| config[option.to_s].to_s.downcase == 'false' }
+          value = session_config[option.to_s]
+          config_false?(value.nil? ? comparison_config[option.to_s] : value)
         end
+      end
+
+      # Boolean settings are validated (see validate_comparison_settings!) to be true or false,
+      # either as YAML booleans or as strings in any case.
+      def config_false?(value)
+        value.to_s.downcase == 'false'
       end
 
       # Each optional comparison is enabled unless the command line or the script turns it off.
@@ -1293,7 +1391,7 @@ module Inferno
       end
 
       def default_normalizations?
-        comparison_config['default_normalizations'].to_s.downcase != 'false'
+        !config_false?(comparison_config['default_normalizations'])
       end
     end
   end

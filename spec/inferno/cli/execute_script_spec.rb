@@ -37,6 +37,25 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     described_class.new('script.yaml', opts)
   end
 
+  def expect_exit_with_error(config, message)
+    expect do
+      expect { build_instance(config) }
+        .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
+    end.to output(message).to_stdout
+  end
+
+  def single_session_config(comparison_config)
+    { 'sessions' => [{ 'suite' => suite_id }], 'steps' => [], 'comparison_config' => comparison_config }
+  end
+
+  def multi_session_config(comparison_config)
+    {
+      'sessions' => [{ 'suite' => suite_id, 'name' => 'receiver' }, { 'suite' => suite_id, 'name' => 'sender' }],
+      'steps' => [],
+      'comparison_config' => comparison_config
+    }
+  end
+
   describe 'session creation logging' do
     # warn is silent when $VERBOSE is nil
     around do |example|
@@ -808,6 +827,27 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       expect(instance.send(:compare_options, '/tmp/expected.json', 'receiver')[:compare_requests]).to be(true)
     end
 
+    it "lets a session's setting turn on a comparison the script turns off" do
+      config = multi_session_config({ 'compare_requests' => false,
+                                      'sessions' => { 'sender' => { 'compare_requests' => true } } })
+      instance = build_instance(config, session_ids: %w[receiver-id sender-id])
+      expect(instance.send(:compare_options, '/tmp/expected.json', 'sender')).to include(compare_requests: true,
+                                                                                         omitted_fields: [])
+      expect(instance.send(:compare_options, '/tmp/expected.json', 'receiver'))
+        .to include(compare_requests: false, omitted_fields: ['requests'])
+    end
+
+    it 'reads the settings of a session with a numeric name' do
+      config = {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 1 }, { 'suite' => suite_id, 'name' => 2 }],
+        'steps' => [],
+        'comparison_config' => { 'sessions' => { 1 => { 'compare_io' => false } } }
+      }
+      instance = build_instance(config, session_ids: %w[one-id two-id])
+      expect(instance.send(:compare_options, '/tmp/expected.json', '1')[:compare_io]).to be(false)
+      expect(instance.send(:compare_options, '/tmp/expected.json', '2')[:compare_io]).to be(true)
+    end
+
     it 'omits the fields of comparisons the script turns off from stored results' do
       config = base_config.merge('comparison_config' => { 'compare_io' => false, 'compare_requests' => 'false' })
       opts = build_instance(config).send(:compare_options, '/tmp/expected.json', suite_id)
@@ -1202,13 +1242,6 @@ RSpec.describe Inferno::CLI::ExecuteScript do
       end
     end
 
-    def expect_exit_with_error(config, message)
-      expect do
-        expect { build_instance(config) }
-          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
-      end.to output(message).to_stdout
-    end
-
     it 'exits 1 when an expected file does not hold a JSON array of results' do
       file = expected_path('expected.json', { 'matched' => true, 'results' => [] }.to_json)
       expect_exit_with_error(config_with_expected(file),
@@ -1292,14 +1325,100 @@ RSpec.describe Inferno::CLI::ExecuteScript do
     end
   end
 
-  describe '#validate_session_names!' do
-    def expect_exit_with_error(config, message)
-      expect do
-        expect { build_instance(config) }
-          .to raise_error(an_instance_of(SystemExit).and(having_attributes(status: 1)))
-      end.to output(message).to_stdout
+  describe '#validate_comparison_settings!' do
+    it 'exits 1 for an unknown compare_ setting' do
+      expect_exit_with_error(single_session_config({ 'compare_request' => false }),
+                             /comparison_config has unknown setting 'compare_request'; use .*compare_requests/)
     end
 
+    [0, 'no', 'off', ['false']].each do |value|
+      it "exits 1 when a comparison setting is #{value.inspect}" do
+        expect_exit_with_error(single_session_config({ 'compare_requests' => value }),
+                               /comparison_config.compare_requests must be true or false/)
+      end
+    end
+
+    it 'exits 1 when default_normalizations is not a boolean' do
+      expect_exit_with_error(single_session_config({ 'default_normalizations' => 'no' }),
+                             /comparison_config.default_normalizations must be true or false/)
+    end
+
+    it 'exits 1 for an unknown setting that does not start with compare_' do
+      expect_exit_with_error(single_session_config({ 'default_normalization' => false }),
+                             /comparison_config has unknown setting 'default_normalization'/)
+    end
+
+    ['none', ['compare_requests']].each do |value|
+      it "exits 1 when comparison_config is #{value.inspect}" do
+        expect_exit_with_error(single_session_config(value), /comparison_config must be a mapping/)
+      end
+    end
+
+    %w[expected_results_file alternate_expected_files].each do |key|
+      it "exits 1 for #{key} directly under comparison_config in a multi-session script" do
+        expect_exit_with_error(multi_session_config({ key => 'expected.json' }),
+                               /comparison_config.#{key} is set for each session.*comparison_config.sessions/)
+      end
+    end
+
+    %w[default_normalizations normalized_strings].each do |key|
+      it "exits 1 for #{key} in a session's settings" do
+        config = multi_session_config({ 'sessions' => { 'sender' => { key => false } } })
+        expect_exit_with_error(config, /comparison_config.sessions.sender.#{key} applies to the whole script/)
+      end
+    end
+
+    it 'exits 1 when sessions has more than one entry for a session' do
+      config = {
+        'sessions' => [{ 'suite' => suite_id, 'name' => 1 }, { 'suite' => suite_id, 'name' => 2 }],
+        'steps' => [],
+        'comparison_config' => { 'sessions' => { 1 => { 'compare_io' => false }, '1' => { 'compare_io' => true } } }
+      }
+      expect_exit_with_error(config, /comparison_config.sessions has more than one entry for session '1'/)
+    end
+
+    it 'exits 1 when sessions is used in a single-session script' do
+      config = single_session_config({ 'sessions' => { suite_id => { 'compare_requests' => false } } })
+      expect_exit_with_error(config, /comparison_config.sessions is only used in multi-session scripts/)
+    end
+
+    it 'exits 1 when sessions is not a mapping' do
+      expect_exit_with_error(multi_session_config({ 'sessions' => ['sender'] }),
+                             /comparison_config.sessions must be a mapping/)
+    end
+
+    it 'exits 1 when a sessions entry does not match a session in the script' do
+      config = multi_session_config({ 'sessions' => { 'sendr' => { 'compare_requests' => false } } })
+      expect_exit_with_error(config, /comparison_config.sessions.sendr does not match a session.*receiver, sender/)
+    end
+
+    it 'exits 1 when a sessions entry is not a mapping' do
+      expect_exit_with_error(multi_session_config({ 'sessions' => { 'sender' => 'compare_requests' } }),
+                             /comparison_config.sessions.sender must be a mapping of settings/)
+    end
+
+    it "exits 1 for an invalid setting in a session's settings" do
+      config = multi_session_config({ 'sessions' => { 'sender' => { 'compare_io' => 'off', 'compare_ios' => true } } })
+      expect_exit_with_error(config,
+                             /sessions.sender has unknown setting 'compare_ios'.*sessions.sender.compare_io must/)
+    end
+
+    it 'does not exit for valid settings' do
+      config = multi_session_config({ 'compare_requests' => 'False', 'default_normalizations' => true,
+                                      'normalized_strings' => ['x'],
+                                      'sessions' => { 'sender' => { 'compare_requests' => true,
+                                                                    'expected_results_file' => 'sender.json' },
+                                                      'receiver' => nil } })
+      expect { build_instance(config, session_ids: %w[receiver-id sender-id]) }.to_not raise_error
+    end
+
+    it 'does not exit for expected file settings directly under comparison_config in a single-session script' do
+      config = single_session_config({ 'expected_results_file' => 'expected.json', 'normalized_strings' => ['x'] })
+      expect { build_instance(config) }.to_not raise_error
+    end
+  end
+
+  describe '#validate_session_names!' do
     it 'exits 1 when a session name contains whitespace' do
       config = { 'sessions' => [{ 'suite' => suite_id, 'name' => 'my receiver' }], 'steps' => [] }
       expect_exit_with_error(config, /Session name 'my receiver' must not contain whitespace/)

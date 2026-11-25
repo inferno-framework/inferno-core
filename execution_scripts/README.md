@@ -45,8 +45,11 @@ To skip a comparison for every script in a run, use its command line flag
 (`--no-compare-messages`, `--no-compare-result-message`, `--no-compare-requests`, or
 `--no-compare-io`). The flags don't change what's stored. To turn a comparison off
 for a script, e.g., when its requests vary between runs, set it to `false` in the
-script's `comparison_config` (in a multi-session script, it can also be set for one
-session under `comparison_config.sessions.<name>`):
+script's `comparison_config`. In a multi-session script, it can also be set for one
+session under `comparison_config.sessions.<name>`, which takes precedence over the
+script's setting (e.g., `true` to compare requests for only that session). Settings
+must be `true` or `false`, and unknown or misplaced settings and session names are
+reported as errors before the script runs:
 
 ```yaml
 comparison_config:
